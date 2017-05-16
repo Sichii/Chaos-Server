@@ -2,22 +2,22 @@
 
 namespace Insert_Creative_Name
 {
-    public struct Location : IComparable
+    internal struct Location : IComparable
     {
-        public short MapId { get; set; }
-        public short X { get; set; }
-        public short Y { get; set; }
+        internal short MapId { get; set; }
+        internal short X { get; set; }
+        internal short Y { get; set; }
 
-        public Point Point => new Point(X, Y);
+        internal Point Point => new Point(X, Y);
 
-        public Location(short id, short x, short y)
+        internal Location(short id, short x, short y)
         {
             MapId = id;
             X = x;
             Y = y;
         }
 
-        public Location(short id, Point point)
+        internal Location(short id, Point point)
         {
             MapId = id;
             X = point.X;

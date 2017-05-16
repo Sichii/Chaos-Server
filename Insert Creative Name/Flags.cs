@@ -21,7 +21,7 @@ namespace Insert_Creative_Name
         Timeout = 258,
     }
     [Flags]
-    public enum Direction : byte
+    internal enum Direction : byte
     {
         North = 0,
         East = 1,
@@ -35,5 +35,27 @@ namespace Insert_Creative_Name
         Temuair,
         Medenia,
         Miscellaneous,
+    }
+    [Flags]
+    internal enum Stat
+    {
+        STR = 1,
+        DEX = 2,
+        INT = 4,
+        WIS = 8,
+        CON = 16
+    }
+    [Flags]
+    internal enum UserOption
+    {
+        Request = 0,
+        Whisper = 1,
+        Group = 2,
+        LShout = 3,
+        Wisdom = 4,
+        Magic = 5,
+        Exchange = 6,
+        FastMove = 7,
+        GuildChat = 8
     }
 }

@@ -50,6 +50,16 @@
     <Compile Include="Crypto.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="KruCRC.cs" />
+    <Compile Include="Objects\Creature.cs" />
+    <Compile Include="Objects\GroundItem.cs" />
+    <Compile Include="Objects\Map.cs" />
+    <Compile Include="Objects\MapObject.cs" />
+    <Compile Include="Objects\Merchant.cs" />
+    <Compile Include="Objects\Monster.cs" />
+    <Compile Include="Objects\User.cs" />
+    <Compile Include="Objects\VisibleObject.cs" />
+    <Compile Include="Objects\Warp.cs" />
+    <Compile Include="Objects\WorldObject.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,16 +67,16 @@
     <Compile Include="Client.cs" />
     <Compile Include="ServerPacket.cs" />
     <Compile Include="ServerPackets.cs" />
+    <Compile Include="Objects\Door.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\Point.cs" />
+    <Compile Include="Structs\Tile.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Objects\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

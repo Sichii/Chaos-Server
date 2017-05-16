@@ -2,12 +2,12 @@
 
 namespace Insert_Creative_Name
 {
-    public struct Point
+    internal struct Point
     {
-        public short X { get; set; }
-        public short Y { get; set; }
+        internal short X { get; set; }
+        internal short Y { get; set; }
 
-        public Point(short x, short y)
+        internal Point(short x, short y)
         {
             X = x;
             Y = y;
@@ -23,17 +23,17 @@ namespace Insert_Creative_Name
             return !pt1.Equals(pt2);
         }
 
-        public int Distance(Point pt)
+        internal int Distance(Point pt)
         {
             return Distance(pt.X, pt.Y);
         }
 
-        public int Distance(short x, short y)
+        internal int Distance(short x, short y)
         {
             return Math.Abs(x - X) + Math.Abs(y - Y);
         }
 
-        public void Offset(Direction direction)
+        internal void Offset(Direction direction)
         {
             switch (direction)
             {
@@ -52,7 +52,7 @@ namespace Insert_Creative_Name
             }
         }
 
-        public Point Offsetter(Direction direction)
+        internal Point Offsetter(Direction direction)
         {
             switch (direction)
             {
@@ -69,7 +69,7 @@ namespace Insert_Creative_Name
             }
         }
 
-        public Direction Relation(Point point)
+        internal Direction Relation(Point point)
         {
             if (Y < point.Y)
                 return Direction.North;

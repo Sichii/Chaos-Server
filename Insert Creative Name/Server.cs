@@ -14,7 +14,7 @@ namespace Insert_Creative_Name
         internal static readonly object SyncObj = new object();
         private const int BufferSize = 1024;
         private IPAddress LocalIp;
-        private int LocalPort;
+        private int LocalPort; //25252
         private IPEndPoint LocalEndPoint;
         internal Socket ServerSocket;
         internal ConcurrentDictionary<Socket, Client> Clients;
@@ -174,21 +174,13 @@ namespace Insert_Creative_Name
         {
             /*
             0 = options request
-            the request is sent back to the client with a
+            the request sends the client a long string
             SendSystemMessage(7, options);
             where options is literally a giant string containing the text for the whole pane
-            1 = listen to whisper
-            2 = join a group
-            3 = listen to shout
-            4 = believe in wisdom
-            5 = believe in magic
-            6 = exchange
-            7 = fast move (hidden and not used in client)
-            8 = clan whisper
             Use Group Window and the rest are client side
             */
 
-            byte option = packet.ReadByte();
+            UserOption option = (UserOption)packet.ReadByte();
             return true;
         }
         private bool PacketHandler_0x1C_UseItem(Client client, ClientPacket packet)
@@ -200,9 +192,10 @@ namespace Insert_Creative_Name
         private bool PacketHandler_0x30_SwapSlot(Client client, ClientPacket packet)
         {
             //0 = Items
-            //1 = All Spells - there's 90 slots total between tem, med, and world, dont use 0. (tem)1 - 35, (med)37 - 72, , (world)74 - 89
-            //2 = All Skills - ^
+            //1 = All Spells
+            //2 = All Skills
             byte pane = packet.ReadByte();
+            //(tem)1 - 35, (med)37 - 71, , (world)73 - 88 
             byte origSlot = packet.ReadByte();
             byte endSlot = packet.ReadByte();
             return true;
@@ -273,12 +266,8 @@ namespace Insert_Creative_Name
         private bool PacketHandler_0x47_AdjustStat(Client client, ClientPacket packet)
         {
             //Possibly create an enum to show which stat was improved last to allow for a *correct* and fast allocation of stats later on.
-            packet.ReadByte();
-            //Wis = 8
-            //STR = 1
-            //Con = 16
-            //Dex = 2
-            //Int = 4
+            Stat stat = (Stat)packet.ReadByte();
+
             return true;
         }
         private bool PacketHandler_0x4A_ExchangeWindow(Client client, ClientPacket packet)

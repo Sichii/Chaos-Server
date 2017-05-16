@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
-    public static class Utility
+    internal static class Utility
     {
         private static Random m_random = new Random();
 
-        public static int Random()
+        internal static int Random()
         {
             return m_random.Next();
         }
 
-        public static int Random(int maxValue)
+        internal static int Random(int maxValue)
         {
             return m_random.Next(maxValue);
         }
 
-        public static int Random(int minValue, int maxValue)
+        internal static int Random(int minValue, int maxValue)
         {
             return m_random.Next(minValue, maxValue);
         }
