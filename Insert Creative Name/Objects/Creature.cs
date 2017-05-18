@@ -110,7 +110,7 @@ namespace Insert_Creative_Name.Objects
             }
         }
 
-        internal Creature(int id, string name, ushort sprite, byte type, Point point, Map map, Direction direction)
+        internal Creature(uint id, string name, ushort sprite, byte type, Point point, Map map, Direction direction)
             : base(id, name, sprite, point, map)
         {
             Direction = direction;

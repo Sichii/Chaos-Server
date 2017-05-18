@@ -82,7 +82,7 @@ namespace Insert_Creative_Name
                 if (index2 != sequence)
                     data[index1] ^= crypto.Salt[sequence];
             }
-            Array.Resize<byte>(ref data, newSize);
+            Array.Resize(ref data, newSize);
         }
         internal ServerPacket Copy()
         {

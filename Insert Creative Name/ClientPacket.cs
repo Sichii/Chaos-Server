@@ -152,7 +152,7 @@ namespace Insert_Creative_Name
         }
         internal void EncryptDialog()
         {
-            Array.Resize<byte>(ref data, data.Length + 6);
+            Array.Resize(ref data, data.Length + 6);
             Buffer.BlockCopy(data, 0, data, 6, data.Length - 6);
             GenerateDialogHeader();
             int num1 = data[2] << 8 | data[3];
@@ -175,7 +175,7 @@ namespace Insert_Creative_Name
             for (int index = 0; index < num4; ++index)
                 data[4 + index] ^= (byte)((num3 + index) % 256);
             Buffer.BlockCopy(data, 6, data, 0, data.Length - 6);
-            Array.Resize<byte>(ref data, data.Length - 6);
+            Array.Resize(ref data, data.Length - 6);
         }
         internal ClientPacket Copy()
         {

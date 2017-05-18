@@ -1,198 +1,324 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
-    internal static class ServerPackets
+    internal class ServerPackets
     {
-        internal static ServerPacket LoginMessage
+        internal ServerPackets() { }
+
+        internal ServerPacket LobbyMessage(byte type, string message)
         {
-            get { return new ServerPacket(2); }
+            //type is the type of dialog box, message is what's in it
+            var packet = new ServerPacket(2);
+            packet.WriteByte(type);
+            packet.WriteString8(message);
+
+            return packet;
         }
-        internal static ServerPacket Redirect
+        internal ServerPacket Redirect(IPAddress address, short port, byte length, byte seed, byte key, string name, int id)
         {
-            get { return new ServerPacket(3); }
+            var packet = new ServerPacket(3);
+            packet.Write(address.GetAddressBytes());
+            packet.WriteInt16(port);
+            packet.WriteByte(length);
+            packet.WriteByte(seed);
+            packet.WriteByte(key);
+            packet.WriteString8(name);
+            packet.WriteInt32(id);
+
+            return packet;
         }
-        internal static ServerPacket Location
+        internal ServerPacket Location(Point point)
         {
-            get { return new ServerPacket(4); }
+            var packet = new ServerPacket(4);
+            packet.WritePoint(point);
+
+            return packet;
         }
-        internal static ServerPacket UserId
+        internal ServerPacket UserId(uint userId, TemClass userClass)
         {
-            get { return new ServerPacket(5); }
+            var packet = new ServerPacket(5);
+            packet.WriteUInt32(userId);
+            packet.WriteInt16(0);//dunno
+            packet.WriteByte((byte)userClass);
+            packet.WriteInt16(0);//dunno
+
+            return packet;
         }
-        internal static ServerPacket DisplayItemMonster
+        internal ServerPacket DisplayItemMonster(List<Objects.VisibleObject> objects)
         {
-            get { return new ServerPacket(7); }
+            var packet = new ServerPacket(7);
+            packet.WriteUInt16((ushort)objects.Count);
+            foreach(var obj in objects)
+            {
+                packet.WritePoint(obj.Point);
+                packet.WriteUInt32(obj.Id);
+                packet.WriteUInt16(obj.Sprite);
+                if(obj.Sprite < 32768) //monster sprites
+                {
+                    Objects.Creature newObj = obj as Objects.Creature;
+                    packet.Write(new byte[4]); //dunno
+                    packet.WriteByte((byte)newObj.Direction);
+                    packet.WriteByte(0); //dunno
+                    packet.WriteByte(newObj.Type);
+                    if (newObj.Type == 2) //merchant type
+                        packet.WriteString8(newObj.Name);
+                }
+                else //item sprites
+                    packet.Write(new byte[3]); //dunno
+            }
+
+            return packet;
         }
-        internal static ServerPacket Attributes
+        internal ServerPacket Attributes(StatUpdateFlags updateType, Attributes stats)
         {
-            get { return new ServerPacket(8); }
+            var packet = new ServerPacket(8);
+            packet.WriteByte((byte)updateType);
+            if (updateType.HasFlag(StatUpdateFlags.Primary))
+            {
+                packet.Write(new byte[3]); //dunno
+                packet.WriteByte(stats.Level);
+                packet.WriteByte(stats.Ability);
+                packet.WriteUInt32(stats.MaximumHp);
+                packet.WriteUInt32(stats.MaximumMp);
+                packet.WriteByte(stats.Str);
+                packet.WriteByte(stats.Int);
+                packet.WriteByte(stats.Wis);
+                packet.WriteByte(stats.Con);
+                packet.WriteByte(stats.Dex);
+                packet.WriteBoolean(stats.HasUnspentPoints);
+                packet.WriteByte(stats.UnspentPoints);
+                packet.WriteInt16(stats.MaximumWeight);
+                packet.WriteInt16(stats.CurrentWeight);
+                packet.Write(new byte[4]); //dunno
+            }
+            if (updateType.HasFlag(StatUpdateFlags.Current))
+            {
+                packet.WriteUInt32(stats.HP);
+                packet.WriteUInt32(stats.MP);
+            }
+            if (updateType.HasFlag(StatUpdateFlags.Experience))
+            {
+                packet.WriteUInt32(stats.Experience);
+                packet.WriteUInt32(stats.ToNextLevel);
+                packet.WriteUInt32(stats.AbilityExp);
+                packet.WriteUInt32(stats.ToNextAbility);
+                packet.WriteUInt32(stats.GamePoints);
+                packet.WriteUInt32(stats.Gold);
+            }
+            if (updateType.HasFlag(StatUpdateFlags.Secondary))
+            {
+                packet.Write(new byte[1]); //dunno
+                packet.WriteByte(stats.Blind);
+                packet.Write(new byte[4]); //dunno
+                packet.WriteByte((byte)stats.OffenseElement);
+                packet.WriteByte((byte)stats.DefenseElement);
+                packet.WriteByte(stats.MagicResistance);
+                packet.Write(new byte[1]); //dunno
+                packet.WriteSByte(stats.ArmorClass);
+                packet.WriteByte(stats.Dmg);
+                packet.WriteByte(stats.Hit);
+            }
+
+            return packet;
         }
-        internal static ServerPacket SystemMessage
+        internal ServerPacket SystemMessage(byte type, string message)
         {
-            get { return new ServerPacket(10); }
+            var packet = new ServerPacket(10);
+            packet.WriteByte(type);
+            packet.WriteString16(message);
+
+            return packet;
         }
-        internal static ServerPacket ClientWalk
+        internal ServerPacket ClientWalk(Direction direction, Point nextPoint)
         {
-            get { return new ServerPacket(11); }
+            var packet = new ServerPacket(11);
+            packet.WriteByte((byte)direction);
+            packet.WritePoint(nextPoint);
+
+            return packet;
         }
-        internal static ServerPacket CreatureWalk
+        internal ServerPacket CreatureWalk(Objects.Creature creature, Direction direction)
         {
-            get { return new ServerPacket(12); }
+            var packet = new ServerPacket(12);
+            packet.WriteUInt32(creature.Id);
+            packet.WritePoint(creature.Point);
+            packet.WriteByte((byte)creature.Direction);
+
+            return packet;
         }
-        internal static ServerPacket PublicChat
+        internal ServerPacket PublicChat(byte type, string message)
         {
-            get { return new ServerPacket(13); }
+            var packet = new ServerPacket(13);
+            packet.WriteByte(type);
+            packet.WriteString8(message);
+
+            return packet;
         }
-        internal static ServerPacket RemoveObject
+        internal ServerPacket RemoveObject(Objects.VisibleObject obj)
         {
-            get { return new ServerPacket(14); }
+            var packet = new ServerPacket(14);
+            packet.WriteUInt32(obj.Id);
+
+            return packet;
         }
-        internal static ServerPacket AddItem
+        internal ServerPacket AddItem(Objects.Item item)
         {
-            get { return new ServerPacket(15); }
+            var packet = new ServerPacket(15);
+            packet.WriteByte(item.Slot);
+            packet.WriteUInt16(item.Sprite);
+            packet.WriteByte(item.Color);
+            packet.WriteString8(item.Name);
+            packet.WriteInt32(item.Count);
+            packet.WriteBoolean(true); //stackable, need to implement this
+            packet.WriteInt32(item.MaxDurability);
+            packet.WriteInt32(item.CurrentDurability);
+            //if stackable packet.WryteByte(0); dunno why
+
+            return packet;           
         }
-        internal static ServerPacket RemoveItem
+        internal ServerPacket RemoveItem
         {
             get { return new ServerPacket(16); }
         }
-        internal static ServerPacket CreatureTurn
+        internal ServerPacket CreatureTurn
         {
             get { return new ServerPacket(17); }
         }
-        internal static ServerPacket HealthBar
+        internal ServerPacket HealthBar
         {
             get { return new ServerPacket(19); }
         }
-        internal static ServerPacket MapInfo
+        internal ServerPacket MapInfo
         {
             get { return new ServerPacket(21); }
         }
-        internal static ServerPacket AddSpell
+        internal ServerPacket AddSpell
         {
             get { return new ServerPacket(23); }
         }
-        internal static ServerPacket RemoveSpell
+        internal ServerPacket RemoveSpell
         {
             get { return new ServerPacket(24); }
         }
-        internal static ServerPacket Sound
+        internal ServerPacket Sound
         {
             get { return new ServerPacket(25); }
         }
-        internal static ServerPacket MapChangeComplete
+        internal ServerPacket MapChangeComplete
         {
             get { return new ServerPacket(31); }
         }
-        internal static ServerPacket RefreshResponse
+        internal ServerPacket RefreshResponse
         {
             get { return new ServerPacket(34); }
         }
-        internal static ServerPacket Effect
+        internal ServerPacket Effect
         {
             get { return new ServerPacket(41); }
         }
-        internal static ServerPacket AddSkill
+        internal ServerPacket AddSkill
         {
             get { return new ServerPacket(44); }
         }
-        internal static ServerPacket RemoveSkill
+        internal ServerPacket RemoveSkill
         {
             get { return new ServerPacket(45); }
         }
-        internal static ServerPacket WorldMap
+        internal ServerPacket WorldMap
         {
             get { return new ServerPacket(46); }
         }
-        internal static ServerPacket MerchantMenu
+        internal ServerPacket MerchantMenu
         {
             get { return new ServerPacket(47); }
         }
-        internal static ServerPacket Dialog
+        internal ServerPacket Dialog
         {
             get { return new ServerPacket(48); }
         }
-        internal static ServerPacket BulletinBoard
+        internal ServerPacket BulletinBoard
         {
             get { return new ServerPacket(49); }
         }
-        internal static ServerPacket Door
+        internal ServerPacket Door
         {
             get { return new ServerPacket(50); }
         }
-        internal static ServerPacket DisplayUser
+        internal ServerPacket DisplayUser
         {
             get { return new ServerPacket(51); }
         }
-        internal static ServerPacket Profile
+        internal ServerPacket Profile
         {
             get { return new ServerPacket(52); }
         }
-        internal static ServerPacket WorldList
+        internal ServerPacket WorldList
         {
             get { return new ServerPacket(54); }
         }
-        internal static ServerPacket AddEquipment
+        internal ServerPacket AddEquipment
         {
             get { return new ServerPacket(55); }
         }
-        internal static ServerPacket RemoveEquipment
+        internal ServerPacket RemoveEquipment
         {
             get { return new ServerPacket(56); }
         }
-        internal static ServerPacket ProfileSelf
+        internal ServerPacket ProfileSelf
         {
             get { return new ServerPacket(57); }
         }
-        internal static ServerPacket SpellBar
+        internal ServerPacket SpellBar
         {
             get { return new ServerPacket(58); }
         }
-        internal static ServerPacket HeartbeatA
+        internal ServerPacket HeartbeatA
         {
             get { return new ServerPacket(59); }
         }
-        internal static ServerPacket MapData
+        internal ServerPacket MapData
         {
             get { return new ServerPacket(60); }
         }
-        internal static ServerPacket Cooldown
+        internal ServerPacket Cooldown
         {
             get { return new ServerPacket(63); }
         }
-        internal static ServerPacket Exchange
+        internal ServerPacket Exchange
         {
             get { return new ServerPacket(66); }
         }
-        internal static ServerPacket CancelCasting
+        internal ServerPacket CancelCasting
         {
             get { return new ServerPacket(72); }
         }
-        internal static ServerPacket MapLoadComplete
+        internal ServerPacket MapLoadComplete
         {
             get { return new ServerPacket(88); }
         }
-        internal static ServerPacket LobbyMessage
+        internal ServerPacket LobbyNotification
         {
             get { return new ServerPacket(96); }
         }
-        internal static ServerPacket Website
+        internal ServerPacket Website
         {
             get { return new ServerPacket(102); }
         }
-        internal static ServerPacket MapChangePending
+        internal ServerPacket MapChangePending
         {
             get { return new ServerPacket(103); }
         }
-        internal static ServerPacket HeartbeatB
+        internal ServerPacket HeartbeatB
         {
             get { return new ServerPacket(104); }
         }
-        internal static ServerPacket Metafile
+        internal ServerPacket Metafile
         {
             get { return new ServerPacket(111); }
         }

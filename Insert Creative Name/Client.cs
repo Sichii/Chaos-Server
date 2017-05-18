@@ -21,6 +21,8 @@ namespace Insert_Creative_Name
         private byte ClientSequence;
         private byte ServerSequence;
         internal Crypto Crypto;
+        private Attributes Stats;
+        private ServerPackets ServerPackets;
 
         //creates a new user with reference to the server, and the user's socket
         internal Client(Server server, Socket socket)
@@ -32,6 +34,8 @@ namespace Insert_Creative_Name
             SendQueue = new Queue<Packet>();
             ProcessQueue = new Queue<Packet>();
             Crypto = new Crypto(0, "UrkcnItnI");
+            Stats = new Attributes();
+            ServerPackets = new ServerPackets();
         }
 
         internal Client() { }

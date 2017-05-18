@@ -62,7 +62,7 @@ namespace Insert_Creative_Name.Objects
             }
         }
 
-        internal User(int id, string name, Point point, Map map, Direction direction)
+        internal User(uint id, string name, Point point, Map map, Direction direction)
           : base(id, name, 0, 4, point, map, direction)
         {
             Type = 4;

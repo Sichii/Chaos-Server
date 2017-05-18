@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ClientPacket.cs" />
     <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="ClientPackets.cs" />
     <Compile Include="CRC16.cs" />
     <Compile Include="CRC32.cs" />
     <Compile Include="Crypto.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="KruCRC.cs" />
     <Compile Include="Objects\Creature.cs" />
     <Compile Include="Objects\GroundItem.cs" />
+    <Compile Include="Objects\Item.cs" />
     <Compile Include="Objects\Map.cs" />
     <Compile Include="Objects\MapObject.cs" />
     <Compile Include="Objects\Merchant.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="ServerPacket.cs" />
     <Compile Include="ServerPackets.cs" />
     <Compile Include="Objects\Door.cs" />
+    <Compile Include="Structs\Attributes.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\Point.cs" />
     <Compile Include="Structs\Tile.cs" />

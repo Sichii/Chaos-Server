@@ -224,7 +224,7 @@ namespace Insert_Creative_Name
             int num = position + buffer.Length;
             if (num > data.Length)
             {
-                Array.Resize<byte>(ref data, num);
+                Array.Resize(ref data, num);
             }
             Array.Copy(buffer, 0, data, position, buffer.Length);
             position += buffer.Length;

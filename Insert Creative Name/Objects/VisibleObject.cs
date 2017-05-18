@@ -12,7 +12,7 @@ namespace Insert_Creative_Name.Objects
         internal Point Point { get; set; }
         internal Map Map { get; set; }
 
-        internal VisibleObject(int id, string name, ushort sprite, Point point, Map map)
+        internal VisibleObject(uint id, string name, ushort sprite, Point point, Map map)
           : base(id, name)
         {
             Sprite = sprite;
