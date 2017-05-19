@@ -175,10 +175,11 @@ namespace Insert_Creative_Name
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
             packet.WriteInt32(item.Count);
-            packet.WriteBoolean(true); //stackable, need to implement this
+            packet.WriteBoolean(item.Stackable);
             packet.WriteInt32(item.MaxDurability);
             packet.WriteInt32(item.CurrentDurability);
-            //if stackable packet.WryteByte(0); dunno why
+            if (item.Stackable)
+                packet.WriteByte(0);
 
             return packet;           
         }

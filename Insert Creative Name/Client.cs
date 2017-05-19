@@ -102,6 +102,7 @@ namespace Insert_Creative_Name
             ((Socket)ar.AsyncState).EndSend(ar);
         }
 
+        //sends packets to the process/send thread
         internal void Enqueue(params Packet[] packets)
         {
             lock (SendQueue)
@@ -123,16 +124,20 @@ namespace Insert_Creative_Name
                 //we send server packets
                 lock (SendQueue)
                 {
+                    //while there are packets to send
                     while (SendQueue.Count > 0)
                     {
+                        //get the next packet in the queue, convert to serverpacket
                         ServerPacket packet = SendQueue.Dequeue() as ServerPacket;
                         if (packet == null) continue;
 
+                        //if it should be encrypted, do it
                         if (packet.ShouldEncrypt)
                         {
                             packet.Sequence = ServerSequence++;
                             packet.Encrypt(Crypto);
                         }
+                        //get the packet's data and try to send it
                         byte[] data = packet.ToArray();
                         try
                         {
@@ -144,28 +149,34 @@ namespace Insert_Creative_Name
                 //and receive client packets
                 lock (ProcessQueue)
                 {
+                    //while there are packets to process
                     while (ProcessQueue.Count > 0)
                     {
+                        //get the next packet in the queue, conver to clientpacket
                         ClientPacket packet = ProcessQueue.Dequeue() as ClientPacket;
                         if (packet == null) continue;
 
+                        //if it is encrypted, decrypt it
                         if (packet.ShouldEncrypt)
                             packet.Decrypt(Crypto);
-                        if (packet is ClientPacket)
-                        {
-                            if (packet.IsDialog)
-                                packet.DecryptDialog();
-                            ClientPacketHandler handler = Server.ClientPacketHandlers[packet.Opcode];
-                            if (handler != null)
-                                lock (Server.SyncObj)
-                                {
-                                    try { handler(this, packet); }
-                                    catch { }
-                                }
-                        }
+                        //if packet is a dialog, decrypt it
+                        if (packet.IsDialog)
+                            packet.DecryptDialog();
+
+                        //get the handler for this packet
+                        ClientPacketHandler handler = Server.ClientPacketHandlers[packet.Opcode];
+                        //if we have a handler for this packet
+                        if (handler != null)
+                            //lock the server for synchronization
+                            lock (Server.SyncObj)
+                            {
+                                //process the packet
+                                try { handler(this, packet); }
+                                catch { }
+                            }
                     }
                 }
-                Thread.Sleep(5);
+                Thread.Sleep(10);
             }
         }
     }
