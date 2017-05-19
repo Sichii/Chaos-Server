@@ -8,7 +8,7 @@ namespace Insert_Creative_Name.Objects
 {
     internal abstract class VisibleObject : WorldObject
     {
-        internal ushort Sprite { get; set; }
+        internal ushort Sprite { get; }
         internal Point Point { get; set; }
         internal Map Map { get; set; }
 
@@ -18,13 +18,6 @@ namespace Insert_Creative_Name.Objects
             Sprite = sprite;
             Point = point;
             Map = map;
-        }
-
-        internal bool WithinRange(VisibleObject vo, int range = 12)
-        {
-            if (Map == vo.Map)
-                return Point.Distance(vo.Point) <= range;
-            return false;
         }
     }
 }

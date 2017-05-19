@@ -8,11 +8,11 @@ namespace Insert_Creative_Name.Objects
 {
     internal abstract class WorldObject
     {
-        protected internal uint Id { get; set; }
+        protected internal uint Id { get; }
         protected internal string Name { get; set; }
-        protected internal DateTime Creation { get; set; }
+        protected internal DateTime Creation { get; }
 
-        internal WorldObject(uint id, string name)
+        protected internal WorldObject(uint id, string name)
         {
             Id = id;
             Name = name;

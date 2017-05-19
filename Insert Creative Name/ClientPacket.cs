@@ -51,59 +51,8 @@ namespace Insert_Creative_Name
         internal ClientPacket(byte[] buffer) : base(buffer)
         {
         }
-        internal override void Encrypt(Crypto crypto)
-        {
-            byte[] cryptoKey;
-            position = data.Length;
 
-            ushort a = (ushort)(Utility.Random(65277) + 256);
-            byte b = (byte)(Utility.Random(155) + 100);
-
-            switch (EncryptMethod)
-            {
-                case EncryptMethod.Normal:
-                    WriteByte(0);
-                    cryptoKey = crypto.Key;
-                    break;
-                case EncryptMethod.MD5Key:
-                    WriteByte(0);
-                    WriteByte(opCode);
-                    cryptoKey = crypto.GenerateKey(a, b);
-                    break;
-                default:
-                    return;
-            }
-
-            for (int i = 0; i < data.Length; ++i)
-            {
-                int saltIndex = i / crypto.Key.Length % 256;
-
-                data[i] ^= (byte)(crypto.Salt[saltIndex] ^ (uint)cryptoKey[i % cryptoKey.Length]);
-
-                if (saltIndex != sequence)
-                {
-                    data[i] ^= crypto.Salt[sequence];
-                }
-            }
-
-            byte[] bytesToHash = new byte[data.Length + 2];
-            bytesToHash[0] = opCode;
-            bytesToHash[1] = sequence;
-            Buffer.BlockCopy(data, 0, bytesToHash, 2, data.Length);
-
-            var md5 = MD5.Create();
-            byte[] hash = md5.ComputeHash(bytesToHash);
-
-            WriteByte(hash[13]);
-            WriteByte(hash[3]);
-            WriteByte(hash[11]);
-            WriteByte(hash[7]);
-
-            WriteByte((byte)(a % 256 ^ 0x70));
-            WriteByte((byte)(b ^ 0x23));
-            WriteByte((byte)((a >> 8) % 256 ^ 0x74));
-        }
-        internal override void Decrypt(Crypto crypto)
+        internal void Decrypt(Crypto crypto)
         {
             int length = data.Length - 7;
 
@@ -186,41 +135,47 @@ namespace Insert_Creative_Name
         }
         public override string ToString()
         {
-            if (GetHexString().StartsWith("06"))
-                return $"[Walk] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("11"))
-                return $"[Turn] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("07"))
-                return $"[Pickup] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("0E"))
-                return $"[Chat] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("19"))
-                return $"[Whisper] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("0F"))
-                return $"[Spell] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("18"))
-                return $"[Worldlist] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("1C"))
-                return $"[Item] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("30"))
-                return $"[Slot] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("39"))
-                return $"[Gossip] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("3A"))
-                return $"[Pursuit] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("3B"))
-                return $"[Board] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("43"))
-                return $"[ObjClick] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("47"))
-                return $"[Stat] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("4A"))
-                return $"[Exchange] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("1B"))
-                return $"[UOptions] Send> {GetHexString()}";
-            if (GetHexString().StartsWith("1D"))
-                return $"[SendEmote] Send> {GetHexString()}";
-            return GetHexString().StartsWith("3F") ? $"[ClickMap] Send> {GetHexString()}" : $"[Unknown] Send> {GetHexString()}";
+            switch (GetHexString().Substring(0, 2))
+            {
+                case "06":
+                    return $"[Walk] Recv> {GetHexString()}";
+                case "11":
+                    return $"[Turn] Recv> {GetHexString()}";
+                case "07":
+                    return $"[Pickup] Recv> {GetHexString()}";
+                case "0E":
+                    return $"[Chat] Recv> {GetHexString()}";
+                case "19":
+                    return $"[Whisper] Recv> {GetHexString()}";
+                case "0F":
+                    return $"[Spell] Recv> {GetHexString()}";
+                case "18":
+                    return $"[Worldlist] Recv> {GetHexString()}";
+                case "1C":
+                    return $"[Item] Recv> {GetHexString()}";
+                case "30":
+                    return $"[Slot] Recv> {GetHexString()}";
+                case "39":
+                    return $"[Gossip] Recv> {GetHexString()}";
+                case "3A":
+                    return $"[Pursuit] Recv> {GetHexString()}";
+                case "3B":
+                    return $"[Board] Recv> {GetHexString()}";
+                case "43":
+                    return $"[ObjClick] Recv> {GetHexString()}";
+                case "47":
+                    return $"[Stat] Recv> {GetHexString()}";
+                case "4A":
+                    return $"[Exchange] Recv> {GetHexString()}";
+                case "1B":
+                    return $"[UOptions] Recv> {GetHexString()}";
+                case "1D":
+                    return $"[SendEmote] Recv> {GetHexString()}";
+                case "3F":
+                    return $"[ClickMap] Recv> {GetHexString()}";
+                default:
+                    return $"[**Unknown**] Recv> {GetHexString()}";
+            }
         }
     }
 }

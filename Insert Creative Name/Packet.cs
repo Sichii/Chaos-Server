@@ -99,8 +99,6 @@ namespace Insert_Creative_Name
             data = new byte[num];
             Array.Copy(buffer, buffer.Length - num, data, 0, num);
         }
-        internal abstract void Encrypt(Crypto crypto);
-        internal abstract void Decrypt(Crypto crypto);
         internal void Clear()
         {
             position = 0;

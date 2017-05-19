@@ -125,12 +125,13 @@ namespace Insert_Creative_Name
                 {
                     while (SendQueue.Count > 0)
                     {
-                        Packet packet = SendQueue.Dequeue();
-                        ServerPacket local_3 = (ServerPacket)packet;
-                        if (local_3.ShouldEncrypt)
+                        ServerPacket packet = SendQueue.Dequeue() as ServerPacket;
+                        if (packet == null) continue;
+
+                        if (packet.ShouldEncrypt)
                         {
-                            local_3.Sequence = ServerSequence++;
-                            local_3.Encrypt(Crypto);
+                            packet.Sequence = ServerSequence++;
+                            packet.Encrypt(Crypto);
                         }
                         byte[] data = packet.ToArray();
                         try
@@ -145,19 +146,20 @@ namespace Insert_Creative_Name
                 {
                     while (ProcessQueue.Count > 0)
                     {
-                        Packet packet = ProcessQueue.Dequeue();
+                        ClientPacket packet = ProcessQueue.Dequeue() as ClientPacket;
+                        if (packet == null) continue;
+
                         if (packet.ShouldEncrypt)
                             packet.Decrypt(Crypto);
                         if (packet is ClientPacket)
                         {
-                            ClientPacket clientPacket = (ClientPacket)packet;
-                            if (clientPacket.IsDialog)
-                                clientPacket.DecryptDialog();
-                            ClientPacketHandler handler = Server.ClientPacketHandlers[clientPacket.Opcode];
+                            if (packet.IsDialog)
+                                packet.DecryptDialog();
+                            ClientPacketHandler handler = Server.ClientPacketHandlers[packet.Opcode];
                             if (handler != null)
                                 lock (Server.SyncObj)
                                 {
-                                    try { handler(this, clientPacket); }
+                                    try { handler(this, packet); }
                                     catch { }
                                 }
                         }

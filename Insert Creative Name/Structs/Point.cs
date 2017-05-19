@@ -77,17 +77,19 @@ namespace Insert_Creative_Name
                 return Direction.East;
             if (Y > point.Y)
                 return Direction.South;
-            return X < point.X ? Direction.West : Direction.Invalid;
+            if (X < point.X)
+                return Direction.West;
+
+            return Direction.Invalid;
         }
 
         public override bool Equals(object obj)
         {
             if (!(obj is Point))
                 return false;
+
             Point point = (Point)obj;
-            if (point.X == X)
-                return point.Y == Y;
-            return false;
+            return point.X == X && point.Y == Y;
         }
 
         public override int GetHashCode()

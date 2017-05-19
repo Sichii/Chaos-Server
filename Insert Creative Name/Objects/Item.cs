@@ -6,27 +6,22 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name.Objects
 {
-    internal sealed class Item
+    internal sealed class Item : PanelObject
     {
-        internal byte Slot { get; set; }
-        internal ushort Sprite { get; set; }
-        internal string Name { get; set; }
-        internal byte Color { get; set; }
+        internal byte Color { get; }
         internal int Count { get; set; }
-        internal int MaxDurability { get; set; }
+        internal bool Stackable { get; }
+        internal int MaxDurability { get; }
         internal int CurrentDurability { get; set; }
-        internal DateTime LastUse { get; set; }
 
-        internal Item(byte slot, ushort sprite, byte color, string name, int count, int maximumDurability, int currentDurability)
+        internal Item(byte slot, ushort sprite, byte color, string name, int count, bool stackable, int maximumDurability, int currentDurability, TimeSpan cooldown)
+            :base(slot, sprite, name, cooldown)
         {
-            Slot = slot;
-            Sprite = sprite;
             Color = color;
-            Name = name;
             Count = count;
+            Stackable = stackable;
             MaxDurability = maximumDurability;
             CurrentDurability = currentDurability;
-            LastUse = DateTime.MinValue;
         }
     }
 }

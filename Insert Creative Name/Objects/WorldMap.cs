@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Insert_Creative_Name.Objects
+{
+    internal sealed class WorldMap
+    {
+        internal string Field { get; set; }
+        internal List<WorldMapNode> Nodes { get; }
+
+        internal WorldMap(string field, params WorldMapNode[] nodes)
+        {
+            Field = field;
+            Nodes = new List<WorldMapNode>(nodes);
+        }
+
+        internal uint GetCrc32()
+        {
+            byte[] buffer;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
+                {
+                    binaryWriter.Write((byte)Nodes.Count);
+                    foreach (WorldMapNode worldMapNode in Nodes)
+                    {
+                        binaryWriter.Write(worldMapNode.ScreenPosition.X);
+                        binaryWriter.Write(worldMapNode.ScreenPosition.Y);
+                        binaryWriter.Write(worldMapNode.Name);
+                        binaryWriter.Write(worldMapNode.MapId);
+                    }
+                    binaryWriter.Flush();
+                    buffer = memoryStream.ToArray();
+                }
+            }
+            return CRC32.Calculate(buffer);
+        }
+    }
+}

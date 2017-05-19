@@ -30,7 +30,7 @@ namespace Insert_Creative_Name
         }
         internal ServerPacket(byte opcode) : base(opcode) { }
         internal ServerPacket(byte[] buffer) : base(buffer) { }
-        internal override void Encrypt(Crypto crypto)
+        internal void Encrypt(Crypto crypto)
         {
             position = data.Length;
             ushort a = (ushort)(Utility.Random(65277) + 256);
@@ -58,32 +58,7 @@ namespace Insert_Creative_Name
             WriteByte((byte)(b ^ 36U));
             WriteByte((byte)((a >> 8) % 256 ^ 100));
         }
-        internal override void Decrypt(Crypto crypto)
-        {
-            int newSize = data.Length - 3;
-            ushort a = (ushort)((data[newSize + 2] << 8 | data[newSize]) ^ 25716);
-            byte b = (byte)(data[newSize + 1] ^ 36U);
-            byte[] numArray;
-            switch (EncryptMethod)
-            {
-                case EncryptMethod.Normal:
-                    numArray = crypto.Key;
-                    break;
-                case EncryptMethod.MD5Key:
-                    numArray = crypto.GenerateKey(a, b);
-                    break;
-                default:
-                    return;
-            }
-            for (int index1 = 0; index1 < newSize; ++index1)
-            {
-                int index2 = index1 / crypto.Key.Length % 256;
-                data[index1] ^= (byte)(crypto.Salt[index2] ^ (uint)numArray[index1 % numArray.Length]);
-                if (index2 != sequence)
-                    data[index1] ^= crypto.Salt[sequence];
-            }
-            Array.Resize(ref data, newSize);
-        }
+
         internal ServerPacket Copy()
         {
             ServerPacket serverPacket = new ServerPacket(opCode);
@@ -93,98 +68,101 @@ namespace Insert_Creative_Name
         }
         public override string ToString()
         {
-            if (base.GetHexString().StartsWith("03"))
-                return string.Format("[Redirect] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("05"))
-                return string.Format("[UserID] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("07"))
-                return string.Format("[Display] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("08"))
-                return string.Format("[Attrib] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("0A"))
-                return string.Format("[SysMsg] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("0B"))
-                return string.Format("[ClientWalk] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("0C"))
-                return string.Format("[CreatureWalk] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("0D"))
-                return string.Format("[Chat] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("0E"))
-                return string.Format("[RemoveObj] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("0F"))
-                return string.Format("[AddItem] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("10"))
-                return string.Format("[RemItem] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("11"))
-                return string.Format("[CreatureTurn] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("13"))
-                return string.Format("[HPBar] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("15"))
-                return string.Format("[MapInfo] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("17"))
-                return string.Format("[AddSpell] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("18"))
-                return string.Format("[RemSpell] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("19"))
-                return string.Format("[Sound] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("1F"))
-                return string.Format("[MapChange] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("1A"))
-                return string.Format("[RecvEmote] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("22"))
-                return string.Format("[RefreshR] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("29"))
-                return string.Format("[SpellAni] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("2C"))
-                return string.Format("[AddSkill] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("2D"))
-                return string.Format("[RemSkill] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("2E"))
-                return string.Format("[WorldMap] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("2F"))
-                return string.Format("[MerchMenu] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("30"))
-                return string.Format("[Pursuit] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("31"))
-                return string.Format("[Board] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("32"))
-                return string.Format("[ClientWalkF] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("33"))
-                return string.Format("[DisplayUser] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("34"))
-                return string.Format("[ProfileUser] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("36"))
-                return string.Format("[Userlist] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("37"))
-                return string.Format("[AddEquip] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("38"))
-                return string.Format("[RemEquip] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("39"))
-                return string.Format("[ProfileSelf] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("3A"))
-                return string.Format("[SpellBar] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("3B"))
-                return string.Format("[Ping(a)] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("3C"))
-                return string.Format("[MapData] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("3F"))
-                return string.Format("[Cooldown] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("42"))
-                return string.Format("[Exchange] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("48"))
-                return string.Format("[CancelCast] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("58"))
-                return string.Format("[MapLoad] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("60"))
-                return string.Format("[Notif] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("67"))
-                return string.Format("[MapChangePend] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("68"))
-                return string.Format("[Ping(b)] Recv> {0}", base.GetHexString());
-            else if (base.GetHexString().StartsWith("6F"))
-                return string.Format("[Metafile] Recv> {0}", base.GetHexString());
-            else
-                return string.Format("[**Unknown**] Recv> {0}", base.GetHexString());
+            switch (GetHexString().Substring(0, 2))
+            {
+                case "03":
+                    return $"[Redirect] Send> {GetHexString()}";
+                case "05":
+                    return $"[UserID] Send> {GetHexString()}";
+                case "07":
+                    return $"[Display] Send> {GetHexString()}";
+                case "08":
+                    return $"[Attrib] Send> {GetHexString()}";
+                case "0A":
+                    return $"[SysMsg] Send> {GetHexString()}";
+                case "0B":
+                    return $"[ClientWalk] Send> {GetHexString()}";
+                case "0C":
+                    return $"[CreatureWalk] Send> {GetHexString()}";
+                case "0D":
+                    return $"[Chat] Send> {GetHexString()}";
+                case "0E":
+                    return $"[RemoveObj] Send> {GetHexString()}";
+                case "0F":
+                    return $"[AddItem] Send> {GetHexString()}";
+                case "10":
+                    return $"[RemItem] Send> {GetHexString()}";
+                case "11":
+                    return $"[CreatureTurn] Send> {GetHexString()}";
+                case "13":
+                    return $"[HPBar] Send> {GetHexString()}";
+                case "15":
+                    return $"[MapInfo] Send> {GetHexString()}";
+                case "17":
+                    return $"[AddSpell] Send> {GetHexString()}";
+                case "18":
+                    return $"[RemSpell] Send> {GetHexString()}";
+                case "19":
+                    return $"[Sound] Send> {GetHexString()}";
+                case "1F":
+                    return $"[MapChange] Send> {GetHexString()}";
+                case "1A":
+                    return $"[CreatureAnim] Send> {GetHexString()}";
+                case "22":
+                    return $"[RefreshR] Send> {GetHexString()}";
+                case "29":
+                    return $"[SpellAni] Send> {GetHexString()}";
+                case "2C":
+                    return $"[AddSkill] Send> {GetHexString()}";
+                case "2D":
+                    return $"[RemSkill] Send> {GetHexString()}";
+                case "2E":
+                    return $"[WorldMap] Send> {GetHexString()}";
+                case "2F":
+                    return $"[MerchMenu] Send> {GetHexString()}";
+                case "30":
+                    return $"[Pursuit] Send> {GetHexString()}";
+                case "31":
+                    return $"[Board] Send> {GetHexString()}";
+                case "32":
+                    return $"[ClientWalkF] Send> {GetHexString()}";
+                case "33":
+                    return $"[DisplayUser] Send> {GetHexString()}";
+                case "34":
+                    return $"[ProfileUser] Send> {GetHexString()}";
+                case "36":
+                    return $"[Userlist] Send> {GetHexString()}";
+                case "37":
+                    return $"[AddEquip] Send> {GetHexString()}";
+                case "38":
+                    return $"[RemEquip] Send> {GetHexString()}";
+                case "39":
+                    return $"[ProfileSelf] Send> {GetHexString()}";
+                case "3A":
+                    return $"[SpellBar] Send> {GetHexString()}";
+                case "3B":
+                    return $"[HeartBeatA] Send> {GetHexString()}";
+                case "3C":
+                    return $"[MapData] Send> {GetHexString()}";
+                case "3F":
+                    return $"[Cooldown] Send> {GetHexString()}";
+                case "42":
+                    return $"[Exchange] Send> {GetHexString()}";
+                case "48":
+                    return $"[CancelCast] Send> {GetHexString()}";
+                case "58":
+                    return $"[MapLoad] Send> {GetHexString()}";
+                case "60":
+                    return $"[Notif] Send> {GetHexString()}";
+                case "67":
+                    return $"[MapChangePend] Send> {GetHexString()}";
+                case "68":
+                    return $"[HeartBeatB] Send> {GetHexString()}";
+                case "6F":
+                    return $"[Metafile] Send> {GetHexString()}";
+                default:
+                    return $"[**Unknown**] Send> {GetHexString()}";
+            }
         }
     }
 }

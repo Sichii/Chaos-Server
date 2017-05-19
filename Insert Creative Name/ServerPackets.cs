@@ -84,23 +84,23 @@ namespace Insert_Creative_Name
                 packet.Write(new byte[3]); //dunno
                 packet.WriteByte(stats.Level);
                 packet.WriteByte(stats.Ability);
-                packet.WriteUInt32(stats.MaximumHp);
-                packet.WriteUInt32(stats.MaximumMp);
-                packet.WriteByte(stats.Str);
-                packet.WriteByte(stats.Int);
-                packet.WriteByte(stats.Wis);
-                packet.WriteByte(stats.Con);
-                packet.WriteByte(stats.Dex);
+                packet.WriteUInt32(stats.MaximumHP);
+                packet.WriteUInt32(stats.MaximumMP);
+                packet.WriteByte(stats.CurrentStr);
+                packet.WriteByte(stats.CurrentInt);
+                packet.WriteByte(stats.CurrentWis);
+                packet.WriteByte(stats.CurrentCon);
+                packet.WriteByte(stats.CurrentDex);
                 packet.WriteBoolean(stats.HasUnspentPoints);
                 packet.WriteByte(stats.UnspentPoints);
                 packet.WriteInt16(stats.MaximumWeight);
                 packet.WriteInt16(stats.CurrentWeight);
                 packet.Write(new byte[4]); //dunno
             }
-            if (updateType.HasFlag(StatUpdateFlags.Current))
+            if (updateType.HasFlag(StatUpdateFlags.Vitality))
             {
-                packet.WriteUInt32(stats.HP);
-                packet.WriteUInt32(stats.MP);
+                packet.WriteUInt32(stats.CurrentHP);
+                packet.WriteUInt32(stats.CurrentMP);
             }
             if (updateType.HasFlag(StatUpdateFlags.Experience))
             {
@@ -219,7 +219,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket AddSpell(Spell spell)
+        internal ServerPacket AddSpell(Objects.Spell spell)
         {
             var packet = new ServerPacket(23);
             packet.WriteByte(spell.Slot);
@@ -289,7 +289,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket AddSkill(Skill skill)
+        internal ServerPacket AddSkill(Objects.Skill skill)
         {
             var packet = new ServerPacket(44);
             packet.WriteByte(skill.Slot);
@@ -305,7 +305,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket WorldMap(WorldMap worldMap)
+        internal ServerPacket WorldMap(Objects.WorldMap worldMap)
         {
             var packet = new ServerPacket(46);
             packet.WriteString8(worldMap.Field);
@@ -313,11 +313,11 @@ namespace Insert_Creative_Name
             packet.WriteByte(1); //dunno
             foreach(var node in worldMap.Nodes)
             {
-                packet.WritePoint(node.Position); //position on the map
+                packet.WritePoint(node.ScreenPosition); //position on the map
                 packet.WriteString8(node.Name);
                 packet.Write(new byte[2]); //dunno
                 packet.WriteUInt16(node.MapId); //map you'll spawn on
-                packet.WritePoint(node.Point); //point you'll spawn on
+                packet.WritePoint(node.TargetPoint); //point you'll spawn on
             }
 
             return packet;

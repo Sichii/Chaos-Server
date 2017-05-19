@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Insert_Creative_Name.Objects
+{
+    internal sealed class Tile : MapObject
+    {
+        internal static byte[] sotp;
+        internal short Background { get; }
+        internal short LeftForeground { get; }
+        internal short RightForeground { get; }
+        public bool IsWall => (LeftForeground > 0 && (sotp[LeftForeground - 1] & 15) == 15) || (RightForeground > 0 && (sotp[RightForeground - 1] & 15) == 15);
+
+        static Tile()
+        {
+            using (Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Insert_Creative_Name.sotp.dat"))
+            {
+                int num = (int)manifestResourceStream.Length;
+                sotp = new byte[num];
+                manifestResourceStream.Read(sotp, 0, num);
+            }
+        }
+        internal Tile(ushort mapId, short x, short y, short background, short leftForeground, short rightForeground)
+            :base(mapId, x, y)
+        {
+            Background = background;
+            LeftForeground = leftForeground;
+            RightForeground = rightForeground;
+        }
+    }
+}

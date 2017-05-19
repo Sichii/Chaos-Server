@@ -108,11 +108,17 @@ namespace Insert_Creative_Name
         Unknown = 2,
         Secondary = 4,
         Experience = 8,
-        Current = 16,
+        Vitality = 16,
         Primary = 32,
         GameMasterA = 64,
         GameMasterB = 128,
         Swimming = GameMasterB | GameMasterA,
-        Full = Primary | Current | Experience | Secondary,
+        Full = Primary | Vitality | Experience | Secondary,
+    }
+    [Flags]
+    public enum Status : ulong
+    {
+        None = 0U
+        //add more statuses here, double each time
     }
 }

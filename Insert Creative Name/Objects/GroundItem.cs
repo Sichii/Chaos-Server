@@ -8,12 +8,9 @@ namespace Insert_Creative_Name.Objects
 {
     internal sealed class GroundItem : VisibleObject
     {
-        internal bool IsItem { get; }
-
         internal GroundItem(uint id, ushort sprite, Point point, Map map)
           : base(id, string.Empty, sprite, point, map)
         {
-            IsItem = true;
         }
     }
 }
