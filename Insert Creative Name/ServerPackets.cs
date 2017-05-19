@@ -182,57 +182,145 @@ namespace Insert_Creative_Name
 
             return packet;           
         }
-        internal ServerPacket RemoveItem
+        internal ServerPacket RemoveItem(byte slot)
         {
-            get { return new ServerPacket(16); }
+            var packet = new ServerPacket(16);
+            packet.WriteByte(slot);
+
+            return packet;
         }
-        internal ServerPacket CreatureTurn
+        internal ServerPacket CreatureTurn(uint id, Direction direction)
         {
-            get { return new ServerPacket(17); }
+            var packet = new ServerPacket(17);
+            packet.WriteUInt32(id);
+            packet.WriteByte((byte)direction);
+
+            return packet;
         }
-        internal ServerPacket HealthBar
+        internal ServerPacket HealthBar(uint id, byte hpPct)
         {
-            get { return new ServerPacket(19); }
+            var packet = new ServerPacket(19);
+            packet.WriteUInt32(id);
+            packet.WriteByte(0); //i've seen this as 0 if you get hit by someone else, or 2 if you're hitting something else... but it doesnt change anything
+            packet.WriteByte(hpPct);
+
+            return packet;
         }
-        internal ServerPacket MapInfo
+        internal ServerPacket MapInfo(Objects.Map map)
         {
-            get { return new ServerPacket(21); }
+            var packet = new ServerPacket(21);
+            packet.WriteUInt16(map.Id);
+            packet.WriteByte(map.SizeX);
+            packet.WriteByte(map.SizeY);
+            packet.WriteByte(map.Flags);
+            packet.Write(new byte[2]); //dunno
+            packet.WriteUInt16(map.CRC);
+            packet.WriteString8(map.Name);
+
+            return packet;
         }
-        internal ServerPacket AddSpell
+        internal ServerPacket AddSpell(Spell spell)
         {
-            get { return new ServerPacket(23); }
+            var packet = new ServerPacket(23);
+            packet.WriteByte(spell.Slot);
+            packet.WriteUInt16(spell.Sprite);
+            packet.WriteByte(spell.Type);
+            packet.WriteString8(spell.Name); //this is where youd have "Spell Name (Lev:100/100)" if you wanted it, spell leveling is completely server side and optional
+            packet.WriteString8(spell.Prompt);
+            packet.WriteByte(spell.CastLines);
+
+            return packet;
         }
-        internal ServerPacket RemoveSpell
+        internal ServerPacket RemoveSpell(byte slot)
         {
-            get { return new ServerPacket(24); }
+            var packet = new ServerPacket(24);
+            packet.WriteByte(slot);
+
+            return packet;
         }
-        internal ServerPacket Sound
+        internal ServerPacket Sound(byte index)
         {
-            get { return new ServerPacket(25); }
+            var packet = new ServerPacket(25);
+            packet.WriteByte(index);
+
+            return packet;
         }
-        internal ServerPacket MapChangeComplete
+        internal ServerPacket CreatureAnimation(uint id, byte index, ushort speed, bool sound = false)
         {
-            get { return new ServerPacket(31); }
+            var packet = new ServerPacket(26);
+            packet.WriteUInt32(id);
+            packet.WriteByte(index);
+            packet.WriteUInt16(speed);
+            //this packet had a trailing 01 if a sound packet followed it, or a trailing FF if no sound followed it.
+            //it changed nothing when i left off the end of the packet
+
+            return packet;
         }
-        internal ServerPacket RefreshResponse
+        internal ServerPacket MapChangeComplete()
         {
-            get { return new ServerPacket(34); }
+            var packet = new ServerPacket(31);
+            packet.Write(new byte[2]); //pretty sure these are nothing
+
+            return packet;
         }
-        internal ServerPacket Effect
+        internal ServerPacket RefreshResponse()
         {
-            get { return new ServerPacket(41); }
+            return new ServerPacket(34); //literally nothing here
         }
-        internal ServerPacket AddSkill
+        internal ServerPacket Animation(Animation animation)
         {
-            get { return new ServerPacket(44); }
+            var packet = new ServerPacket(41);
+            packet.WriteUInt32(animation.TargetId);
+            packet.WriteUInt32(animation.SourceId);
+            packet.WriteUInt16(animation.TargetAnimation);
+            packet.WriteUInt16(animation.SourceAnimation);
+            packet.WriteUInt16(animation.AnimationSpeed);
+
+            return packet;
         }
-        internal ServerPacket RemoveSkill
+
+        internal ServerPacket Animation(Animation animation, Point point)
         {
-            get { return new ServerPacket(45); }
+            var packet = new ServerPacket(41);
+            packet.WriteUInt32(0U);
+            packet.WriteUInt16(animation.TargetAnimation);
+            packet.WriteUInt16(animation.AnimationSpeed);
+            packet.WritePoint(point);
+
+            return packet;
         }
-        internal ServerPacket WorldMap
+        internal ServerPacket AddSkill(Skill skill)
         {
-            get { return new ServerPacket(46); }
+            var packet = new ServerPacket(44);
+            packet.WriteByte(skill.Slot);
+            packet.WriteUInt16(skill.Sprite);
+            packet.WriteString8(skill.Name); //this is where youd have "Skill Name (Lev:100/100)" if you wanted it, skill leveling is completely server side and optional
+
+            return packet;
+        }
+        internal ServerPacket RemoveSkill(byte slot)
+        {
+            var packet = new ServerPacket(45);
+            packet.WriteByte(slot);
+
+            return packet;
+        }
+        internal ServerPacket WorldMap(WorldMap worldMap)
+        {
+            var packet = new ServerPacket(46);
+            packet.WriteString8(worldMap.Field);
+            packet.WriteByte((byte)worldMap.Nodes.Count);
+            packet.WriteByte(1); //dunno
+            foreach(var node in worldMap.Nodes)
+            {
+                packet.WritePoint(node.Position); //position on the map
+                packet.WriteString8(node.Name);
+                packet.Write(new byte[2]); //dunno
+                packet.WriteUInt16(node.MapId); //map you'll spawn on
+                packet.WritePoint(node.Point); //point you'll spawn on
+            }
+
+            return packet;
         }
         internal ServerPacket MerchantMenu
         {

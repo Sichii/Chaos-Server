@@ -4,20 +4,20 @@ namespace Insert_Creative_Name
 {
     internal struct Location : IComparable
     {
-        internal short MapId { get; set; }
+        internal ushort MapId { get; set; }
         internal short X { get; set; }
         internal short Y { get; set; }
 
         internal Point Point => new Point(X, Y);
 
-        internal Location(short id, short x, short y)
+        internal Location(ushort id, short x, short y)
         {
             MapId = id;
             X = x;
             Y = y;
         }
 
-        internal Location(short id, Point point)
+        internal Location(ushort id, Point point)
         {
             MapId = id;
             X = point.X;

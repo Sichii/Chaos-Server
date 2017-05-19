@@ -5,7 +5,7 @@ namespace Insert_Creative_Name.Objects
 {
     internal sealed class Map
     {
-        internal short Id { get; }
+        internal ushort Id { get; }
         internal byte SizeX { get; }
         internal byte SizeY { get; }
         internal byte Flags { get; set; }
@@ -19,7 +19,7 @@ namespace Insert_Creative_Name.Objects
         internal Tile this[Point point] => Tiles[point];
 
 
-        internal Map(short number, byte sizeX, byte sizeY, byte flags, ushort crc, string name)
+        internal Map(ushort number, byte sizeX, byte sizeY, byte flags, ushort crc, string name)
         {
             Id = number;
             SizeX = sizeX;

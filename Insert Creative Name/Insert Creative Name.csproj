@@ -70,10 +70,15 @@
     <Compile Include="ServerPacket.cs" />
     <Compile Include="ServerPackets.cs" />
     <Compile Include="Objects\Door.cs" />
+    <Compile Include="Structs\Animation.cs" />
     <Compile Include="Structs\Attributes.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\Point.cs" />
+    <Compile Include="Structs\Skill.cs" />
+    <Compile Include="Structs\Spell.cs" />
     <Compile Include="Structs\Tile.cs" />
+    <Compile Include="Structs\WorldMap.cs" />
+    <Compile Include="Structs\WorldMapNode.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

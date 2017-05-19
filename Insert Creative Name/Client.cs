@@ -38,8 +38,6 @@ namespace Insert_Creative_Name
             ServerPackets = new ServerPackets();
         }
 
-        internal Client() { }
-
         //connects to the socket and begins receiving data
         internal void Connect()
         {
@@ -137,8 +135,7 @@ namespace Insert_Creative_Name
                         byte[] data = packet.ToArray();
                         try
                         {
-                            ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None,
-                                new AsyncCallback(EndSend), ClientSocket);
+                            ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket);
                         }
                         catch { }
                     }

@@ -12,6 +12,6 @@ namespace Insert_Creative_Name.Objects
         protected Location MSourceLocation => new Location(MSourceMapId, MSourcePoint);
         protected short MSourceX;
         protected short MSourceY;
-        protected short MSourceMapId;
+        protected ushort MSourceMapId;
     }
 }

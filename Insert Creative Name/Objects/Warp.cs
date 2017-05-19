@@ -12,13 +12,13 @@ namespace Insert_Creative_Name.Objects
         internal short SourceY => MSourceY;
         internal short TargetX { get; }
         internal short TargetY { get; }
-        internal short TargetMapId { get; }
+        internal ushort TargetMapId { get; }
         internal Point SourcePoint => MSourcePoint;
         internal Location SourceLocation => MSourceLocation;
         internal Point TargetPoint => new Point(TargetX, TargetY);
         internal Location TargetLocation => new Location(TargetMapId, TargetX, TargetY);
 
-        internal Warp(short sourceX, short sourceY, short targetX, short targetY, short sourceMapId, short targetMapId)
+        internal Warp(short sourceX, short sourceY, short targetX, short targetY, ushort sourceMapId, ushort targetMapId)
         {
             MSourceX = sourceX;
             MSourceY = sourceY;

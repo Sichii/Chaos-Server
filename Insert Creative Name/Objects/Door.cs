@@ -12,7 +12,7 @@ namespace Insert_Creative_Name.Objects
         internal Point Point => MSourcePoint;
         internal short X => MSourceX;
         internal short Y => MSourceY;
-        internal short MapId => MSourceMapId;
+        internal ushort MapId => MSourceMapId;
         internal bool RecentlyClicked => DateTime.UtcNow.Subtract(LastClick).TotalSeconds < 1.5;
         internal bool Closed { get; set; }
         internal DateTime LastClick { get; set; }
@@ -26,7 +26,7 @@ namespace Insert_Creative_Name.Objects
             LastClick = DateTime.MinValue;
         }
 
-        internal Door(Point point, short mapId, bool closed)
+        internal Door(Point point, ushort mapId, bool closed)
         {
             MSourceX = point.X;
             MSourceY = point.Y;
@@ -35,7 +35,7 @@ namespace Insert_Creative_Name.Objects
             LastClick = DateTime.MinValue;
         }
 
-        internal Door(short x, short y, short mapId, bool closed)
+        internal Door(short x, short y, ushort mapId, bool closed)
         {
             MSourceX = x;
             MSourceY = y;
