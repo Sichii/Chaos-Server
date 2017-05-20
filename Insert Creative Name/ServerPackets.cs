@@ -152,10 +152,10 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket PublicChat(byte type, string message)
+        internal ServerPacket PublicChat(bool isShout, string message)
         {
             var packet = new ServerPacket(13);
-            packet.WriteByte(type);
+            packet.WriteBoolean(isShout);
             packet.WriteString8(message);
 
             return packet;

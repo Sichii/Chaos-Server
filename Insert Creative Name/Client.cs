@@ -22,7 +22,6 @@ namespace Insert_Creative_Name
         private byte ServerSequence;
         internal Crypto Crypto;
         private Attributes Stats;
-        private ServerPackets ServerPackets;
 
         //creates a new user with reference to the server, and the user's socket
         internal Client(Server server, Socket socket)
@@ -35,7 +34,6 @@ namespace Insert_Creative_Name
             ProcessQueue = new Queue<Packet>();
             Crypto = new Crypto(0, "UrkcnItnI");
             Stats = new Attributes();
-            ServerPackets = new ServerPackets();
         }
 
         //connects to the socket and begins receiving data
@@ -164,14 +162,14 @@ namespace Insert_Creative_Name
                             packet.DecryptDialog();
 
                         //get the handler for this packet
-                        ClientPacketHandler handler = Server.ClientPacketHandlers[packet.Opcode];
+                        ClientPacketHandler handle = Server.ClientPacketHandlers[packet.OpCode];
                         //if we have a handler for this packet
-                        if (handler != null)
+                        if (handle != null)
                             //lock the server for synchronization
                             lock (Server.SyncObj)
                             {
                                 //process the packet
-                                try { handler(this, packet); }
+                                try { handle(this, packet); }
                                 catch { }
                             }
                     }

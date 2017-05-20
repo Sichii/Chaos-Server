@@ -9,14 +9,14 @@ namespace Insert_Creative_Name
         {
             get
             {
-                return opCode == 57 || opCode == 58;
+                return OpCode == 57 || OpCode == 58;
             }
         }
         internal override EncryptMethod EncryptMethod
         {
             get
             {
-                switch(opCode)
+                switch(OpCode)
                 {
 
                     case 2:
@@ -54,10 +54,10 @@ namespace Insert_Creative_Name
 
         internal void Decrypt(Crypto crypto)
         {
-            int length = data.Length - 7;
+            int length = Data.Length - 7;
 
-            ushort a = (ushort)((data[length + 6] << 8 | data[length + 4]) ^ 0x7470);
-            byte b = (byte)(data[length + 5] ^ 0x23);
+            ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 0x7470);
+            byte b = (byte)(Data[length + 5] ^ 0x23);
 
             byte[] key;
 
@@ -79,58 +79,58 @@ namespace Insert_Creative_Name
             {
                 int saltIndex = (i / crypto.Key.Length) % 256;
 
-                data[i] ^= (byte)(crypto.Salt[saltIndex] ^ key[i % key.Length]);
+                Data[i] ^= (byte)(crypto.Salt[saltIndex] ^ key[i % key.Length]);
 
-                if (saltIndex != sequence)
+                if (saltIndex != Sequence)
                 {
-                    data[i] ^= crypto.Salt[sequence];
+                    Data[i] ^= crypto.Salt[Sequence];
                 }
             }
 
-            Array.Resize(ref data, length);
+            ResizeArray(length);
         }
         internal void GenerateDialogHeader()
         {
-            ushort num = CRC16.Calculate(data, 6, data.Length - 6);
-            data[0] = (byte)Utility.Random();
-            data[1] = (byte)Utility.Random();
-            data[2] = (byte)((data.Length - 4) / 256);
-            data[3] = (byte)((data.Length - 4) % 256);
-            data[4] = (byte)(num / 256);
-            data[5] = (byte)(num % 256);
+            ushort num = CRC16.Calculate(Data, 6, Data.Length - 6);
+            Data[0] = (byte)Utility.Random();
+            Data[1] = (byte)Utility.Random();
+            Data[2] = (byte)((Data.Length - 4) / 256);
+            Data[3] = (byte)((Data.Length - 4) % 256);
+            Data[4] = (byte)(num / 256);
+            Data[5] = (byte)(num % 256);
         }
         internal void EncryptDialog()
         {
-            Array.Resize(ref data, data.Length + 6);
-            Buffer.BlockCopy(data, 0, data, 6, data.Length - 6);
+            ResizeArray(Data.Length + 6);
+            Buffer.BlockCopy(Data, 0, Data, 6, Data.Length - 6);
             GenerateDialogHeader();
-            int num1 = data[2] << 8 | data[3];
-            byte num2 = (byte)(data[1] ^ (uint)(byte)(data[0] - 45U));
+            int num1 = Data[2] << 8 | Data[3];
+            byte num2 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45U));
             byte num3 = (byte)(num2 + 114U);
             byte num4 = (byte)(num2 + 40U);
-            data[2] ^= num3;
-            data[3] ^= (byte)((num3 + 1) % 256);
+            Data[2] ^= num3;
+            Data[3] ^= (byte)((num3 + 1) % 256);
             for (int index = 0; index < num1; ++index)
-                data[4 + index] ^= (byte)((num4 + index) % 256);
+                Data[4 + index] ^= (byte)((num4 + index) % 256);
         }
         internal void DecryptDialog()
         {
-            byte num1 = (byte)(data[1] ^ (uint)(byte)(data[0] - 45U));
+            byte num1 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45U));
             byte num2 = (byte)(num1 + 114U);
             byte num3 = (byte)(num1 + 40U);
-            data[2] ^= num2;
-            data[3] ^= (byte)((num2 + 1) % 256);
-            int num4 = data[2] << 8 | data[3];
+            Data[2] ^= num2;
+            Data[3] ^= (byte)((num2 + 1) % 256);
+            int num4 = Data[2] << 8 | Data[3];
             for (int index = 0; index < num4; ++index)
-                data[4 + index] ^= (byte)((num3 + index) % 256);
-            Buffer.BlockCopy(data, 6, data, 0, data.Length - 6);
-            Array.Resize(ref data, data.Length - 6);
+                Data[4 + index] ^= (byte)((num3 + index) % 256);
+            Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
+            ResizeArray(Data.Length - 6);
         }
         internal ClientPacket Copy()
         {
-            ClientPacket clientPacket = new ClientPacket(opCode);
-            clientPacket.Write(data);
-            clientPacket.timeStamp = timeStamp;
+            ClientPacket clientPacket = new ClientPacket(OpCode);
+            clientPacket.Write(Data);
+            clientPacket.TimeStamp = TimeStamp;
             return clientPacket;
         }
         public override string ToString()

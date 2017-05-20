@@ -116,6 +116,18 @@ namespace Insert_Creative_Name
         Full = Primary | Vitality | Experience | Secondary,
     }
     [Flags]
+    public enum SocialStatus : byte
+    {
+        Awake = 0,
+        DoNotDisturb = 1,
+        DayDreaming = 2,
+        NeedGroup = 3,
+        Grouped = 4,
+        LoneHunter = 5,
+        GroupHunting = 6,
+        NeedHelp = 7
+    }
+    [Flags]
     public enum Status : ulong
     {
         None = 0U

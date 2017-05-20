@@ -19,7 +19,8 @@ namespace Insert_Creative_Name
         internal Socket ServerSocket;
         internal ConcurrentDictionary<Socket, Client> Clients;
         private ConcurrentDictionary<int, object> Objects;
-        internal ClientPacketHandler[] ClientPacketHandlers { get; private set; }
+        internal ClientPacketHandler[] ClientPacketHandlers { get; }
+        internal ServerPackets Packets { get; }
 
         internal Server(IPAddress ip, int port)
         {
@@ -29,6 +30,7 @@ namespace Insert_Creative_Name
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Clients = new ConcurrentDictionary<Socket, Client>();
             ClientPacketHandlers = new ClientPackets().Handlers;
+            Packets = new ServerPackets();
         }
 
         internal void Start()

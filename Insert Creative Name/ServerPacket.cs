@@ -7,7 +7,7 @@ namespace Insert_Creative_Name
         {
             get
             {
-                switch (opCode)
+                switch (OpCode)
                 {
                     case 0:
                     case 3:
@@ -32,7 +32,7 @@ namespace Insert_Creative_Name
         internal ServerPacket(byte[] buffer) : base(buffer) { }
         internal void Encrypt(Crypto crypto)
         {
-            position = data.Length;
+            Position = Data.Length;
             ushort a = (ushort)(Utility.Random(65277) + 256);
             byte b = (byte)(Utility.Random(155) + 100);
             byte[] numArray;
@@ -47,12 +47,12 @@ namespace Insert_Creative_Name
                 default:
                     return;
             }
-            for (int index1 = 0; index1 < data.Length; ++index1)
+            for (int index1 = 0; index1 < Data.Length; ++index1)
             {
                 int index2 = index1 / crypto.Key.Length % 256;
-                data[index1] ^= (byte)(crypto.Salt[index2] ^ (uint)numArray[index1 % numArray.Length]);
-                if (index2 != sequence)
-                    data[index1] ^= crypto.Salt[sequence];
+                Data[index1] ^= (byte)(crypto.Salt[index2] ^ (uint)numArray[index1 % numArray.Length]);
+                if (index2 != Sequence)
+                    Data[index1] ^= crypto.Salt[Sequence];
             }
             WriteByte((byte)(a % 256 ^ 116));
             WriteByte((byte)(b ^ 36U));
@@ -61,9 +61,9 @@ namespace Insert_Creative_Name
 
         internal ServerPacket Copy()
         {
-            ServerPacket serverPacket = new ServerPacket(opCode);
-            serverPacket.Write(data);
-            serverPacket.timeStamp = timeStamp;
+            ServerPacket serverPacket = new ServerPacket(OpCode);
+            serverPacket.Write(Data);
+            serverPacket.TimeStamp = TimeStamp;
             return serverPacket;
         }
         public override string ToString()

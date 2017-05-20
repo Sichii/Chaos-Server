@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,6 +83,7 @@
     <Compile Include="Objects\Tile.cs" />
     <Compile Include="Objects\WorldMap.cs" />
     <Compile Include="Objects\WorldMapNode.cs" />
+    <Compile Include="Structs\Portrait.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
