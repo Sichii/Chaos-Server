@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Insert_Creative_Name
+﻿namespace Insert_Creative_Name
 {
     internal struct Location
     {

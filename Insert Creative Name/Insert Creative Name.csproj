@@ -44,9 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientPacket.cs" />
-    <Compile Include="ClientPacketHandler.cs" />
-    <Compile Include="ClientPackets.cs" />
+    <Compile Include="Client\Panel.cs" />
+    <Compile Include="Packets\ClientPacket.cs" />
+    <Compile Include="Packets\ClientPacketHandler.cs" />
+    <Compile Include="Packets\ClientPackets.cs" />
     <Compile Include="CRC16.cs" />
     <Compile Include="CRC32.cs" />
     <Compile Include="Crypto.cs" />
@@ -65,17 +66,17 @@
     <Compile Include="Objects\VisibleObject.cs" />
     <Compile Include="Objects\Warp.cs" />
     <Compile Include="Objects\WorldObject.cs" />
-    <Compile Include="Packet.cs" />
+    <Compile Include="Packets\Packet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="ServerPacket.cs" />
-    <Compile Include="ServerPackets.cs" />
+    <Compile Include="Client\Client.cs" />
+    <Compile Include="Packets\ServerPacket.cs" />
+    <Compile Include="Packets\ServerPackets.cs" />
     <Compile Include="Objects\Door.cs" />
     <Compile Include="Structs\Animation.cs" />
-    <Compile Include="Structs\Attributes.cs" />
-    <Compile Include="Structs\DisplayData.cs" />
+    <Compile Include="Client\Attributes.cs" />
+    <Compile Include="Client\DisplayData.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\Point.cs" />
     <Compile Include="Objects\Skill.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Objects\Tile.cs" />
     <Compile Include="Objects\WorldMap.cs" />
     <Compile Include="Objects\WorldMapNode.cs" />
-    <Compile Include="Structs\Portrait.cs" />
+    <Compile Include="Client\Portrait.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

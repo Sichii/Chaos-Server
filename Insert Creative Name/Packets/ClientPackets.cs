@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
@@ -109,7 +103,8 @@ namespace Insert_Creative_Name
         {
             bool requestExit = packet.ReadBoolean();
             //if requestexit, send exit confirmation 4C
-            //otherwise log off
+            //when the client gets exit confirmation, it will resend this packet except false
+            //then log off
             return true;
         }
         private bool PacketHandler_0x0E_PublicChat(Client client, ClientPacket packet)
@@ -171,7 +166,7 @@ namespace Insert_Creative_Name
                     packet.WriteByte(151);
                 else
                     packet.WriteSByte(-1);
-                packet.WriteByte(groupStatus);
+                packet.WriteByte(SocialStatus);
                 packet.WriteString8(title);
                 packet.WriteBoolean(isMaster);
                 packet.WriteString8(userName);
@@ -392,7 +387,7 @@ namespace Insert_Creative_Name
             {
                 case 1:
                     //they clicked an object, this is it's id
-                    int objectId = packet.ReadInt32();
+                    uint objectId = packet.ReadUInt32();
                     break;
                 case 3:
                     //they clicked a random spot, or something without an id, this is where

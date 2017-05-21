@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
@@ -34,7 +30,7 @@ namespace Insert_Creative_Name
     {
         Temuair,
         Medenia,
-        Miscellaneous,
+        World,
     }
     [Flags]
     internal enum Stat

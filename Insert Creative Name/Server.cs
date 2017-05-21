@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
-    internal class Server
+    internal sealed class Server
     {
         internal static readonly object SyncObj = new object();
         private const int BufferSize = 1024;
@@ -18,7 +14,9 @@ namespace Insert_Creative_Name
         private IPEndPoint LocalEndPoint;
         internal Socket ServerSocket;
         internal ConcurrentDictionary<Socket, Client> Clients;
-        private ConcurrentDictionary<int, object> Objects;
+        private ConcurrentDictionary<uint, Objects.WorldObject> Objects;
+        private ConcurrentDictionary<ushort, Objects.Map> Maps;
+        private ConcurrentDictionary<uint, Objects.WorldMap> WorldMaps;
         internal ClientPacketHandler[] ClientPacketHandlers { get; }
         internal ServerPackets Packets { get; }
 

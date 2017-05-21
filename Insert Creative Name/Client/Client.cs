@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
-    internal class Client
+    internal sealed class Client
     {
         private Server Server;
-        internal Socket ClientSocket;
-        private bool Connected;
-        private byte[] ClientBuffer;
-        private List<byte> FullClientBuffer;
-        private Queue<Packet> SendQueue;
-        private Queue<Packet> ProcessQueue;
-        private byte ClientSequence;
-        private byte ServerSequence;
-        internal Crypto Crypto;
-        private Attributes Stats;
+        private bool Connected = false;
+        private byte[] ClientBuffer = new byte[4096];
+        private List<byte> FullClientBuffer = new List<byte>();
+        private Queue<Packet> SendQueue = new Queue<Packet>();
+        private Queue<Packet> ProcessQueue = new Queue<Packet>();
+        internal Panel<Objects.Skill> SkillBook { get; }
+        internal Panel<Objects.Spell> SpellBook { get; }
+        internal Panel<Objects.Item> Inventory { get; }
+        internal Socket ClientSocket { get; }
+        internal Objects.User User { get; }
+        internal byte ClientSequence { get; set; }
+        internal byte ServerSequence { get; set; }
+        internal Crypto Crypto { get; set; }
+        internal Attributes Attributes { get; set; }
+        internal Portrait Portrait { get; set; }
 
         //creates a new user with reference to the server, and the user's socket
         internal Client(Server server, Socket socket)
         {
             Server = server;
             ClientSocket = socket;
-            ClientBuffer = new byte[4096];
-            FullClientBuffer = new List<byte>();
-            SendQueue = new Queue<Packet>();
-            ProcessQueue = new Queue<Packet>();
             Crypto = new Crypto(0, "UrkcnItnI");
-            Stats = new Attributes();
+            SkillBook = new Panel<Objects.Skill>(90);
+            SpellBook = new Panel<Objects.Spell>(90);
+            Inventory = new Panel<Objects.Item>(60);
         }
 
         //connects to the socket and begins receiving data
@@ -168,7 +167,7 @@ namespace Insert_Creative_Name
                             //lock the server for synchronization
                             lock (Server.SyncObj)
                             {
-                                //process the packet
+                                //no srsly, please handle it
                                 try { handle(this, packet); }
                                 catch { }
                             }
