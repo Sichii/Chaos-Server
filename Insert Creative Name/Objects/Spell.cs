@@ -2,6 +2,7 @@
 
 namespace Insert_Creative_Name.Objects
 {
+    [Serializable]
     internal sealed class Spell : PanelObject
     {
         internal byte Type { get; set; }

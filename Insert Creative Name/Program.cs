@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -14,6 +15,12 @@ namespace Insert_Creative_Name
 
             //display dns ip for others to connect to
             Console.WriteLine($"Server IP: {Dns.GetHostAddresses("accoserver.dynu.com")[0]}");
+
+            if (!File.Exists(Paths.UserHash))
+                File.Create(Paths.UserHash);
+
+            if (!Directory.Exists(Paths.Chars))
+                Directory.CreateDirectory(Paths.Chars);
 
             //create the server, start it in a new thread
             Server = new Server(IPAddress.Any, 25252);

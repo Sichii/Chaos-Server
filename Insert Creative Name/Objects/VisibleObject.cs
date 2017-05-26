@@ -1,5 +1,8 @@
-﻿namespace Insert_Creative_Name.Objects
+﻿using System;
+
+namespace Insert_Creative_Name.Objects
 {
+    [Serializable]
     internal abstract class VisibleObject : WorldObject
     {
         internal ushort Sprite { get; }
@@ -13,5 +16,8 @@
             Point = point;
             Map = map;
         }
+
+        internal bool WithinRange(Point p) => Point.Distance(p) < 12;
+        internal bool WithinRange(VisibleObject v) => Point.Distance(v.Point) < 12;
     }
 }

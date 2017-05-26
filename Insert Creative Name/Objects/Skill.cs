@@ -2,6 +2,7 @@
 
 namespace Insert_Creative_Name.Objects
 {
+    [Serializable]
     internal sealed class Skill : PanelObject
     {
         internal bool CanUse => LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown;

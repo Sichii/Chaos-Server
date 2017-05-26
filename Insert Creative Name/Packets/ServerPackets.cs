@@ -3,11 +3,9 @@ using System.Net;
 
 namespace Insert_Creative_Name
 {
-    internal class ServerPackets
+    internal static class ServerPackets
     {
-        internal ServerPackets() { }
-
-        internal ServerPacket LobbyMessage(byte type, string message)
+        internal static ServerPacket LobbyMessage(byte type, string message)
         {
             //type is the type of dialog box, message is what's in it
             var packet = new ServerPacket(2);
@@ -16,7 +14,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket Redirect(IPAddress address, short port, byte length, byte seed, byte key, string name, int id)
+        internal static ServerPacket Redirect(IPAddress address, short port, byte length, byte seed, byte key, string name, int id)
         {
             var packet = new ServerPacket(3);
             packet.Write(address.GetAddressBytes());
@@ -29,14 +27,14 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket Location(Point point)
+        internal static ServerPacket Location(Point point)
         {
             var packet = new ServerPacket(4);
             packet.WritePoint(point);
 
             return packet;
         }
-        internal ServerPacket UserId(uint userId, TemClass userClass)
+        internal static ServerPacket UserId(uint userId, TemClass userClass)
         {
             var packet = new ServerPacket(5);
             packet.WriteUInt32(userId);
@@ -46,10 +44,10 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket DisplayItemMonster(List<Objects.VisibleObject> objects)
+        internal static ServerPacket DisplayItemMonster(params Objects.VisibleObject[] objects)
         {
             var packet = new ServerPacket(7);
-            packet.WriteUInt16((ushort)objects.Count);
+            packet.WriteUInt16((ushort)objects.Length);
             foreach(var obj in objects)
             {
                 packet.WritePoint(obj.Point);
@@ -71,7 +69,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket Attributes(StatUpdateFlags updateType, Attributes stats)
+        internal static ServerPacket Attributes(StatUpdateFlags updateType, Attributes stats)
         {
             var packet = new ServerPacket(8);
             packet.WriteByte((byte)updateType);
@@ -123,7 +121,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket SystemMessage(byte type, string message)
+        internal static ServerPacket SystemMessage(byte type, string message)
         {
             var packet = new ServerPacket(10);
             packet.WriteByte(type);
@@ -131,7 +129,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket ClientWalk(Direction direction, Point nextPoint)
+        internal static ServerPacket ClientWalk(Direction direction, Point nextPoint)
         {
             var packet = new ServerPacket(11);
             packet.WriteByte((byte)direction);
@@ -139,7 +137,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket CreatureWalk(Objects.Creature creature, Direction direction)
+        internal static ServerPacket CreatureWalk(Objects.Creature creature, Direction direction)
         {
             var packet = new ServerPacket(12);
             packet.WriteUInt32(creature.Id);
@@ -148,7 +146,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket PublicChat(bool isShout, string message)
+        internal static ServerPacket PublicChat(bool isShout, string message)
         {
             var packet = new ServerPacket(13);
             packet.WriteBoolean(isShout);
@@ -156,14 +154,14 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket RemoveObject(Objects.VisibleObject obj)
+        internal static ServerPacket RemoveObject(Objects.VisibleObject obj)
         {
             var packet = new ServerPacket(14);
             packet.WriteUInt32(obj.Id);
 
             return packet;
         }
-        internal ServerPacket AddItem(Objects.Item item)
+        internal static ServerPacket AddItem(Objects.Item item)
         {
             var packet = new ServerPacket(15);
             packet.WriteByte(item.Slot);
@@ -179,14 +177,14 @@ namespace Insert_Creative_Name
 
             return packet;           
         }
-        internal ServerPacket RemoveItem(byte slot)
+        internal static ServerPacket RemoveItem(byte slot)
         {
             var packet = new ServerPacket(16);
             packet.WriteByte(slot);
 
             return packet;
         }
-        internal ServerPacket CreatureTurn(uint id, Direction direction)
+        internal static ServerPacket CreatureTurn(uint id, Direction direction)
         {
             var packet = new ServerPacket(17);
             packet.WriteUInt32(id);
@@ -194,7 +192,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket HealthBar(uint id, byte hpPct)
+        internal static ServerPacket HealthBar(uint id, byte hpPct)
         {
             var packet = new ServerPacket(19);
             packet.WriteUInt32(id);
@@ -203,7 +201,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket MapInfo(Objects.Map map)
+        internal static ServerPacket MapInfo(Objects.Map map)
         {
             var packet = new ServerPacket(21);
             packet.WriteUInt16(map.Id);
@@ -216,7 +214,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket AddSpell(Objects.Spell spell)
+        internal static ServerPacket AddSpell(Objects.Spell spell)
         {
             var packet = new ServerPacket(23);
             packet.WriteByte(spell.Slot);
@@ -228,21 +226,21 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket RemoveSpell(byte slot)
+        internal static ServerPacket RemoveSpell(byte slot)
         {
             var packet = new ServerPacket(24);
             packet.WriteByte(slot);
 
             return packet;
         }
-        internal ServerPacket Sound(byte index)
+        internal static ServerPacket Sound(byte index)
         {
             var packet = new ServerPacket(25);
             packet.WriteByte(index);
 
             return packet;
         }
-        internal ServerPacket CreatureAnimation(uint id, byte index, ushort speed, bool sound = false)
+        internal static ServerPacket CreatureAnimation(uint id, byte index, ushort speed, bool sound = false)
         {
             var packet = new ServerPacket(26);
             packet.WriteUInt32(id);
@@ -253,18 +251,18 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket MapChangeComplete()
+        internal static ServerPacket MapChangeComplete()
         {
             var packet = new ServerPacket(31);
             packet.Write(new byte[2]); //pretty sure these are nothing
 
             return packet;
         }
-        internal ServerPacket RefreshResponse()
+        internal static ServerPacket RefreshResponse()
         {
             return new ServerPacket(34); //literally nothing here
         }
-        internal ServerPacket Animation(Animation animation)
+        internal static ServerPacket Animation(Animation animation)
         {
             var packet = new ServerPacket(41);
             packet.WriteUInt32(animation.TargetId);
@@ -276,7 +274,7 @@ namespace Insert_Creative_Name
             return packet;
         }
 
-        internal ServerPacket Animation(Animation animation, Point point)
+        internal static ServerPacket Animation(Animation animation, Point point)
         {
             var packet = new ServerPacket(41);
             packet.WriteUInt32(0U);
@@ -286,7 +284,7 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket AddSkill(Objects.Skill skill)
+        internal static ServerPacket AddSkill(Objects.Skill skill)
         {
             var packet = new ServerPacket(44);
             packet.WriteByte(skill.Slot);
@@ -295,14 +293,14 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket RemoveSkill(byte slot)
+        internal static ServerPacket RemoveSkill(byte slot)
         {
             var packet = new ServerPacket(45);
             packet.WriteByte(slot);
 
             return packet;
         }
-        internal ServerPacket WorldMap(Objects.WorldMap worldMap)
+        internal static ServerPacket WorldMap(Objects.WorldMap worldMap)
         {
             var packet = new ServerPacket(46);
             packet.WriteString8(worldMap.Field);
@@ -319,91 +317,91 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal ServerPacket MerchantMenu
+        internal static ServerPacket MerchantMenu
         {
             get { return new ServerPacket(47); }
         }
-        internal ServerPacket Dialog
+        internal static ServerPacket Dialog
         {
             get { return new ServerPacket(48); }
         }
-        internal ServerPacket BulletinBoard
+        internal static ServerPacket BulletinBoard
         {
             get { return new ServerPacket(49); }
         }
-        internal ServerPacket Door
+        internal static ServerPacket Door
         {
             get { return new ServerPacket(50); }
         }
-        internal ServerPacket DisplayUser
+        internal static ServerPacket DisplayUser
         {
             get { return new ServerPacket(51); }
         }
-        internal ServerPacket Profile
+        internal static ServerPacket Profile
         {
             get { return new ServerPacket(52); }
         }
-        internal ServerPacket WorldList
+        internal static ServerPacket WorldList
         {
             get { return new ServerPacket(54); }
         }
-        internal ServerPacket AddEquipment
+        internal static ServerPacket AddEquipment
         {
             get { return new ServerPacket(55); }
         }
-        internal ServerPacket RemoveEquipment
+        internal static ServerPacket RemoveEquipment
         {
             get { return new ServerPacket(56); }
         }
-        internal ServerPacket ProfileSelf
+        internal static ServerPacket ProfileSelf
         {
             get { return new ServerPacket(57); }
         }
-        internal ServerPacket SpellBar
+        internal static ServerPacket SpellBar
         {
             get { return new ServerPacket(58); }
         }
-        internal ServerPacket HeartbeatA
+        internal static ServerPacket HeartbeatA
         {
             get { return new ServerPacket(59); }
         }
-        internal ServerPacket MapData
+        internal static ServerPacket MapData
         {
             get { return new ServerPacket(60); }
         }
-        internal ServerPacket Cooldown
+        internal static ServerPacket Cooldown
         {
             get { return new ServerPacket(63); }
         }
-        internal ServerPacket Exchange
+        internal static ServerPacket Exchange
         {
             get { return new ServerPacket(66); }
         }
-        internal ServerPacket CancelCasting
+        internal static ServerPacket CancelCasting
         {
             get { return new ServerPacket(72); }
         }
-        internal ServerPacket MapLoadComplete
+        internal static ServerPacket MapLoadComplete
         {
             get { return new ServerPacket(88); }
         }
-        internal ServerPacket LobbyNotification
+        internal static ServerPacket LobbyNotification
         {
             get { return new ServerPacket(96); }
         }
-        internal ServerPacket Website
+        internal static ServerPacket Website
         {
             get { return new ServerPacket(102); }
         }
-        internal ServerPacket MapChangePending
+        internal static ServerPacket MapChangePending
         {
             get { return new ServerPacket(103); }
         }
-        internal ServerPacket HeartbeatB
+        internal static ServerPacket HeartbeatB
         {
             get { return new ServerPacket(104); }
         }
-        internal ServerPacket Metafile
+        internal static ServerPacket Metafile
         {
             get { return new ServerPacket(111); }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Insert_Creative_Name
 {
@@ -8,8 +9,9 @@ namespace Insert_Creative_Name
 
         internal ClientPackets()
         {
+            Handlers[2] = new ClientPacketHandler(PacketHandler_0x02_CreatCharA);
             Handlers[3] = new ClientPacketHandler(PacketHandler_0x03_Login);
-            Handlers[4] = new ClientPacketHandler(PacketHandler_0x04_CreateCharacter);
+            Handlers[4] = new ClientPacketHandler(PacketHandler_0x04_CreateCharB);
             Handlers[5] = new ClientPacketHandler(PacketHandler_0x05_RequestMapData);
             Handlers[6] = new ClientPacketHandler(PacketHandler_0x06_Walk);
             Handlers[7] = new ClientPacketHandler(PacketHandler_0x07_Pickup);
@@ -52,6 +54,15 @@ namespace Insert_Creative_Name
             Handlers[123] = new ClientPacketHandler(PacketHandler_0x7B_MetafileRequest);
         }
 
+        private bool PacketHandler_0x02_CreatCharA(Client client, ClientPacket packet)
+        {
+            string name = packet.ReadString8();
+            string password = packet.ReadString8();
+
+            ProcessPacket.CreateCharA(client, name, password);
+            return true;
+        }
+
         private bool PacketHandler_0x03_Login(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
@@ -66,7 +77,7 @@ namespace Insert_Creative_Name
             return true;
         }
 
-        private bool PacketHandler_0x04_CreateCharacter(Client client, ClientPacket packet)
+        private bool PacketHandler_0x04_CreateCharB(Client client, ClientPacket packet)
         {
             byte hairStyle = packet.ReadByte(); //1-17
             byte gender = packet.ReadByte(); //1 or 2

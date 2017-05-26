@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Insert_Creative_Name.Objects
 {
+    [Serializable]
     internal sealed class Map
     {
+        internal ConcurrentDictionary<uint, WorldObject> Objects { get; set; }
         internal ushort Id { get; }
         internal byte SizeX { get; }
         internal byte SizeY { get; }
@@ -29,6 +33,7 @@ namespace Insert_Creative_Name.Objects
             Tiles = new Dictionary<Point, Tile>();
             CanUseSkills = true;
             CanUseSpells = true;
+            Objects = new ConcurrentDictionary<uint, WorldObject>();
             for (short x = 0; x < sizeX; x++)
                 for (short y = 0; y < sizeY; y++)
                     Tiles[new Point(x, y)] = new Tile(Id, x, y, 0, 0, 0);

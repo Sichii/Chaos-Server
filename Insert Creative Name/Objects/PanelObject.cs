@@ -2,6 +2,7 @@
 
 namespace Insert_Creative_Name.Objects
 {
+    [Serializable]
     internal abstract class PanelObject
     {
         internal byte Slot { get; set; }

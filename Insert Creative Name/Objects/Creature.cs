@@ -1,5 +1,8 @@
-﻿namespace Insert_Creative_Name.Objects
+﻿using System;
+
+namespace Insert_Creative_Name.Objects
 {
+    [Serializable]
     internal class Creature : VisibleObject
     {
         internal Direction Direction { get; set; }

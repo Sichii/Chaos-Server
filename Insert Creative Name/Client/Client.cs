@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 namespace Insert_Creative_Name
 {
     internal sealed class Client
     {
-        private Server Server;
         private bool Connected = false;
         private byte[] ClientBuffer = new byte[4096];
         private List<byte> FullClientBuffer = new List<byte>();
         private Queue<Packet> SendQueue = new Queue<Packet>();
         private Queue<Packet> ProcessQueue = new Queue<Packet>();
-        internal Panel<Objects.Skill> SkillBook { get; }
-        internal Panel<Objects.Spell> SpellBook { get; }
-        internal Panel<Objects.Item> Inventory { get; }
+        private byte ClientSequence = 0;
+        internal Server Server { get; }
         internal Socket ClientSocket { get; }
-        internal Objects.User User { get; }
-        internal byte ClientSequence { get; set; }
-        internal byte ServerSequence { get; set; }
         internal Crypto Crypto { get; set; }
-        internal Attributes Attributes { get; set; }
-        internal Portrait Portrait { get; set; }
+        internal Objects.User User { get; set; }
+
+        internal string NewCharName;
+        internal string NewCharPw;
 
         //creates a new user with reference to the server, and the user's socket
         internal Client(Server server, Socket socket)
@@ -30,9 +29,6 @@ namespace Insert_Creative_Name
             Server = server;
             ClientSocket = socket;
             Crypto = new Crypto(0, "UrkcnItnI");
-            SkillBook = new Panel<Objects.Skill>(90);
-            SpellBook = new Panel<Objects.Spell>(90);
-            Inventory = new Panel<Objects.Item>(60);
         }
 
         //connects to the socket and begins receiving data
@@ -53,8 +49,10 @@ namespace Insert_Creative_Name
                 return;
 
             Client dis = this;
-            if(Server.Clients.TryRemove(ClientSocket, out dis))
+            if (Server.World.Clients.TryRemove(ClientSocket, out dis))
+            {
                 ClientSocket.Disconnect(false);
+            }
         }
 
         //this is how the server gets information from the client
@@ -131,7 +129,7 @@ namespace Insert_Creative_Name
                         //if it should be encrypted, do it
                         if (packet.ShouldEncrypt)
                         {
-                            packet.Sequence = ServerSequence++;
+                            packet.Sequence = ClientSequence++;
                             packet.Encrypt(Crypto);
                         }
                         //get the packet's data and try to send it
@@ -149,14 +147,14 @@ namespace Insert_Creative_Name
                     //while there are packets to process
                     while (ProcessQueue.Count > 0)
                     {
-                        //get the next packet in the queue, conver to clientpacket
+                        //get the next packet in the queue, convert to clientpacket
                         ClientPacket packet = ProcessQueue.Dequeue() as ClientPacket;
                         if (packet == null) continue;
 
                         //if it is encrypted, decrypt it
                         if (packet.ShouldEncrypt)
                             packet.Decrypt(Crypto);
-                        //if packet is a dialog, decrypt it
+                        //if packet is a dialog, decrypt the header
                         if (packet.IsDialog)
                             packet.DecryptDialog();
 

@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Insert_Creative_Name
 {
+    [Serializable]
     internal sealed class Panel<T> : IEnumerable where T : Objects.PanelObject
     {
         public IEnumerator GetEnumerator() => Objects.GetEnumerator();
@@ -13,7 +14,7 @@ namespace Insert_Creative_Name
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         internal T this[byte slot]
         {
-            get { return Valid(slot) ? Objects[slot] : default(T); }
+            get { return Valid(slot) ? Objects[slot] : null; }
             set { if (value.Slot == slot) Add(value); }
         }
         private byte[] Invalid;
@@ -41,7 +42,7 @@ namespace Insert_Creative_Name
                 Objects[obj.Slot] = obj;
         }
 
-        //attempted set the value of the slot to null, otherwise return false
+        //attempts to set the value of the slot to null, otherwise return false
         internal bool TryRemove(byte slot)
         {
             if (Valid(slot))

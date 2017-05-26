@@ -1,5 +1,8 @@
-﻿namespace Insert_Creative_Name
+﻿using System;
+
+namespace Insert_Creative_Name
 {
+    [Serializable]
     internal struct Location
     {
         internal ushort MapId { get; set; }
