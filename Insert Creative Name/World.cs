@@ -14,12 +14,14 @@ namespace Insert_Creative_Name
         internal ConcurrentDictionary<Socket, Client> Clients { get; set; }
         internal ConcurrentDictionary<ushort, Map> Maps { get; set; }
         internal ConcurrentDictionary<uint, WorldMap> WorldMaps { get; set; }
+        internal ConcurrentDictionary<uint, WorldObject> Objects { get; set; }
 
         internal World()
         {
             Clients = new ConcurrentDictionary<Socket, Client>();
             Maps = new ConcurrentDictionary<ushort, Map>();
             WorldMaps = new ConcurrentDictionary<uint, WorldMap>();
+            Objects = new ConcurrentDictionary<uint, WorldObject>();
         }
 
         internal void AddCreatureToMap(Creature c)

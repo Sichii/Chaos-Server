@@ -45,7 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Legend.cs" />
     <Compile Include="Client\Panel.cs" />
+    <Compile Include="Client\UserOptions.cs" />
+    <Compile Include="Constructs\Bank.cs" />
+    <Compile Include="Constructs\Guild.cs" />
     <Compile Include="Packets\ClientPacket.cs" />
     <Compile Include="Packets\ClientPacketHandler.cs" />
     <Compile Include="Packets\ClientPackets.cs" />

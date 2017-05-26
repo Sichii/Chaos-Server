@@ -40,7 +40,7 @@
 
         //Secondary
         internal byte Blind;
-        internal MailFlags MailFlags;
+        internal MailFlag MailFlags;
         internal Element OffenseElement;
         internal Element DefenseElement;
         internal byte MagicResistance;

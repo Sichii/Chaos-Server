@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace Insert_Creative_Name.Objects
 {
     [Serializable]
@@ -8,18 +9,29 @@ namespace Insert_Creative_Name.Objects
         internal Panel<Skill> SkillBook { get; set; }
         internal Panel<Spell> SpellBook { get; set; }
         internal Panel<Item> Inventory { get; set; }
+        internal Panel<Item> Equipment { get; set; }
+        internal UserOptions Options { get; set; }
         internal DisplayData DisplayData { get; set; }
         internal Attributes Attributes { get; set; }
+        internal Guild Guild { get; set; }
+        internal Legend Legend { get; set; }
         internal Portrait Portrait { get; set; }
         internal Client Client { get; set; }
+        internal Nation Nation { get; set; }
+        internal BaseClass BaseClass { get; set; }
+        internal AdvClass AdvClass { get; set; }
+        internal MailFlag MailFlag { get; set; }
+        internal bool Grouped { get; set; }
 
         internal User(uint id, string name, Point point, Map map, Direction direction)
           : base(id, name, 0, 4, point, map, direction)
         {
-            DisplayData = new DisplayData();
             SkillBook = new Panel<Skill>(90);
             SpellBook = new Panel<Spell>(90);
-            Inventory = new Panel<Item>(60);
+            Inventory = new Panel<Item>(61);
+            Equipment = new Panel<Item>(20);
+            Options = new UserOptions();
+            DisplayData = new DisplayData();
             Attributes = new Attributes();
         }
 
@@ -29,7 +41,8 @@ namespace Insert_Creative_Name.Objects
             DisplayData = displayData;
             SkillBook = new Panel<Skill>(90);
             SpellBook = new Panel<Spell>(90);
-            Inventory = new Panel<Item>(60);
+            Inventory = new Panel<Item>(61);
+            Equipment = new Panel<Item>(20);
             Attributes = new Attributes();
         }
 

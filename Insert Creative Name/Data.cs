@@ -23,17 +23,5 @@ namespace Insert_Creative_Name
             using (FileStream file = File.OpenRead(path))
                 return bf.Deserialize(file);
         }
-
-        internal static byte[] ReadBinaryFile(string path)
-        {
-            using (MemoryStream m = new MemoryStream())
-            {
-                using (FileStream f = File.OpenRead(path))
-                {
-                    f.CopyTo(m);
-                    return m.ToArray();
-                }
-            }
-        }
     }
 }

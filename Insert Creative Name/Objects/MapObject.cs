@@ -4,8 +4,8 @@ namespace Insert_Creative_Name.Objects
 {
     internal abstract class MapObject
     {
-        protected Point Point => new Point(X, Y);
-        protected Location Location => new Location(MapId, Point);
+        internal Point Point => new Point(X, Y);
+        internal Location Location => new Location(MapId, Point);
         protected short X;
         protected short Y;
         protected ushort MapId;

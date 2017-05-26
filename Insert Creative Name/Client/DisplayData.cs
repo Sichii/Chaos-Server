@@ -2,7 +2,6 @@
 
 namespace Insert_Creative_Name
 {
-    [Serializable]
     internal sealed class DisplayData
     {
         //Head
@@ -38,7 +37,7 @@ namespace Insert_Creative_Name
         internal byte LanternSize;
         internal byte NameTagStyle;
         internal string GroupName;
-        internal bool RestPosition;
+        internal byte RestPosition;
         internal bool IsHidden;
     }
 }

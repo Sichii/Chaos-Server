@@ -258,7 +258,12 @@ namespace Insert_Creative_Name
             WriteUInt16((ushort)bytes.Length);
             Write(bytes);
         }
-        internal void WritePoint(Point value)
+        internal void WritePoint8(Point value)
+        {
+            WriteByte((byte)value.X);
+            WriteByte((byte)value.Y);
+        }
+        internal void WritePoint16(Point value)
         {
             WriteInt16(value.X);
             WriteInt16(value.Y);
@@ -286,7 +291,7 @@ namespace Insert_Creative_Name
                 else if (current is string)
                     WriteString8((string)current);
                 else if (current is Point)
-                    WritePoint((Point)current);
+                    WritePoint16((Point)current);
                 else if (current is Array)
                     WriteArray((Array)current);
             }

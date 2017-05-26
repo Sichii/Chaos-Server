@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Insert_Creative_Name
@@ -9,6 +10,7 @@ namespace Insert_Creative_Name
         {
             //type is the type of dialog box, message is what's in it
             var packet = new ServerPacket(2);
+
             packet.WriteByte(type);
             packet.WriteString8(message);
 
@@ -17,6 +19,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket Redirect(IPAddress address, short port, byte length, byte seed, byte key, string name, int id)
         {
             var packet = new ServerPacket(3);
+
             packet.Write(address.GetAddressBytes());
             packet.WriteInt16(port);
             packet.WriteByte(length);
@@ -30,13 +33,15 @@ namespace Insert_Creative_Name
         internal static ServerPacket Location(Point point)
         {
             var packet = new ServerPacket(4);
-            packet.WritePoint(point);
+
+            packet.WritePoint16(point);
 
             return packet;
         }
-        internal static ServerPacket UserId(uint userId, TemClass userClass)
+        internal static ServerPacket UserId(uint userId, BaseClass userClass)
         {
             var packet = new ServerPacket(5);
+
             packet.WriteUInt32(userId);
             packet.WriteInt16(0);//dunno
             packet.WriteByte((byte)userClass);
@@ -47,10 +52,11 @@ namespace Insert_Creative_Name
         internal static ServerPacket DisplayItemMonster(params Objects.VisibleObject[] objects)
         {
             var packet = new ServerPacket(7);
+
             packet.WriteUInt16((ushort)objects.Length);
             foreach(var obj in objects)
             {
-                packet.WritePoint(obj.Point);
+                packet.WritePoint16(obj.Point);
                 packet.WriteUInt32(obj.Id);
                 packet.WriteUInt16(obj.Sprite);
                 if(obj.Sprite < 32768) //monster sprites
@@ -72,6 +78,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket Attributes(StatUpdateFlags updateType, Attributes stats)
         {
             var packet = new ServerPacket(8);
+
             packet.WriteByte((byte)updateType);
             if (updateType.HasFlag(StatUpdateFlags.Primary))
             {
@@ -124,6 +131,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket SystemMessage(byte type, string message)
         {
             var packet = new ServerPacket(10);
+
             packet.WriteByte(type);
             packet.WriteString16(message);
 
@@ -132,16 +140,18 @@ namespace Insert_Creative_Name
         internal static ServerPacket ClientWalk(Direction direction, Point nextPoint)
         {
             var packet = new ServerPacket(11);
+
             packet.WriteByte((byte)direction);
-            packet.WritePoint(nextPoint);
+            packet.WritePoint16(nextPoint);
 
             return packet;
         }
         internal static ServerPacket CreatureWalk(Objects.Creature creature, Direction direction)
         {
             var packet = new ServerPacket(12);
+
             packet.WriteUInt32(creature.Id);
-            packet.WritePoint(creature.Point);
+            packet.WritePoint16(creature.Point);
             packet.WriteByte((byte)creature.Direction);
 
             return packet;
@@ -149,6 +159,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket PublicChat(bool isShout, string message)
         {
             var packet = new ServerPacket(13);
+
             packet.WriteBoolean(isShout);
             packet.WriteString8(message);
 
@@ -157,6 +168,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket RemoveObject(Objects.VisibleObject obj)
         {
             var packet = new ServerPacket(14);
+
             packet.WriteUInt32(obj.Id);
 
             return packet;
@@ -164,6 +176,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket AddItem(Objects.Item item)
         {
             var packet = new ServerPacket(15);
+
             packet.WriteByte(item.Slot);
             packet.WriteUInt16(item.Sprite);
             packet.WriteByte(item.Color);
@@ -180,6 +193,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket RemoveItem(byte slot)
         {
             var packet = new ServerPacket(16);
+
             packet.WriteByte(slot);
 
             return packet;
@@ -187,6 +201,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket CreatureTurn(uint id, Direction direction)
         {
             var packet = new ServerPacket(17);
+
             packet.WriteUInt32(id);
             packet.WriteByte((byte)direction);
 
@@ -195,6 +210,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket HealthBar(uint id, byte hpPct)
         {
             var packet = new ServerPacket(19);
+
             packet.WriteUInt32(id);
             packet.WriteByte(0); //i've seen this as 0 if you get hit by someone else, or 2 if you're hitting something else... but it doesnt change anything
             packet.WriteByte(hpPct);
@@ -204,6 +220,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket MapInfo(Objects.Map map)
         {
             var packet = new ServerPacket(21);
+
             packet.WriteUInt16(map.Id);
             packet.WriteByte(map.SizeX);
             packet.WriteByte(map.SizeY);
@@ -217,6 +234,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket AddSpell(Objects.Spell spell)
         {
             var packet = new ServerPacket(23);
+
             packet.WriteByte(spell.Slot);
             packet.WriteUInt16(spell.Sprite);
             packet.WriteByte(spell.Type);
@@ -229,6 +247,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket RemoveSpell(byte slot)
         {
             var packet = new ServerPacket(24);
+
             packet.WriteByte(slot);
 
             return packet;
@@ -236,6 +255,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket Sound(byte index)
         {
             var packet = new ServerPacket(25);
+
             packet.WriteByte(index);
 
             return packet;
@@ -243,6 +263,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket CreatureAnimation(uint id, byte index, ushort speed, bool sound = false)
         {
             var packet = new ServerPacket(26);
+
             packet.WriteUInt32(id);
             packet.WriteByte(index);
             packet.WriteUInt16(speed);
@@ -254,6 +275,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket MapChangeComplete()
         {
             var packet = new ServerPacket(31);
+
             packet.Write(new byte[2]); //pretty sure these are nothing
 
             return packet;
@@ -265,6 +287,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket Animation(Animation animation)
         {
             var packet = new ServerPacket(41);
+
             packet.WriteUInt32(animation.TargetId);
             packet.WriteUInt32(animation.SourceId);
             packet.WriteUInt16(animation.TargetAnimation);
@@ -277,16 +300,18 @@ namespace Insert_Creative_Name
         internal static ServerPacket Animation(Animation animation, Point point)
         {
             var packet = new ServerPacket(41);
+
             packet.WriteUInt32(0U);
             packet.WriteUInt16(animation.TargetAnimation);
             packet.WriteUInt16(animation.AnimationSpeed);
-            packet.WritePoint(point);
+            packet.WritePoint16(point);
 
             return packet;
         }
         internal static ServerPacket AddSkill(Objects.Skill skill)
         {
             var packet = new ServerPacket(44);
+
             packet.WriteByte(skill.Slot);
             packet.WriteUInt16(skill.Sprite);
             packet.WriteString8(skill.Name); //this is where youd have "Skill Name (Lev:100/100)" if you wanted it, skill leveling is completely server side and optional
@@ -296,6 +321,7 @@ namespace Insert_Creative_Name
         internal static ServerPacket RemoveSkill(byte slot)
         {
             var packet = new ServerPacket(45);
+
             packet.WriteByte(slot);
 
             return packet;
@@ -303,16 +329,17 @@ namespace Insert_Creative_Name
         internal static ServerPacket WorldMap(Objects.WorldMap worldMap)
         {
             var packet = new ServerPacket(46);
+
             packet.WriteString8(worldMap.Field);
             packet.WriteByte((byte)worldMap.Nodes.Count);
             packet.WriteByte(1); //dunno
             foreach(var node in worldMap.Nodes)
             {
-                packet.WritePoint(node.ScreenPosition); //position on the map
+                packet.WritePoint16(node.ScreenPosition); //position on the map
                 packet.WriteString8(node.Name);
                 packet.Write(new byte[2]); //dunno
                 packet.WriteUInt16(node.MapId); //map you'll spawn on
-                packet.WritePoint(node.TargetPoint); //point you'll spawn on
+                packet.WritePoint16(node.TargetPoint); //point you'll spawn on
             }
 
             return packet;
@@ -329,17 +356,87 @@ namespace Insert_Creative_Name
         {
             get { return new ServerPacket(49); }
         }
-        internal static ServerPacket Door
+        internal static ServerPacket Door(params Objects.Door[] doors)
         {
-            get { return new ServerPacket(50); }
+            var packet = new ServerPacket(50);
+
+            packet.WriteByte((byte)doors.Length);
+            foreach(var door in doors)
+            {
+                packet.WritePoint8(door.Point);
+                packet.WriteBoolean(door.Opened);
+                packet.WriteBoolean(door.OpenRight);
+            }
+
+            return packet;
         }
-        internal static ServerPacket DisplayUser
+        internal static ServerPacket DisplayUser(Objects.User user)
         {
-            get { return new ServerPacket(51); }
+            DisplayData display = user.DisplayData;
+            var packet = new ServerPacket(51);
+
+            packet.WritePoint16(user.Point);
+            packet.WriteByte((byte)user.Direction);
+            packet.WriteUInt32(user.Id);
+            if(user.Sprite == 0)
+            {
+                packet.WriteUInt16(display.HeadSprite);
+                packet.WriteByte(display.BodySprite);
+                packet.WriteUInt16(display.ArmorSprite1);
+                packet.WriteByte(display.BootsSprite);
+                packet.WriteUInt16(display.ArmorSprite2);
+                packet.WriteByte(display.ShieldSprite);
+                packet.WriteUInt16(display.WeaponSprite);
+                packet.WriteByte(display.HeadColor);
+                packet.WriteByte(display.BootsColor);
+                packet.WriteByte(display.AccessoryColor1);
+                packet.WriteUInt16(display.AccessorySprite1);
+                packet.WriteByte(display.AccessoryColor2);
+                packet.WriteUInt16(display.AccessorySprite2);
+                packet.WriteByte(display.AccessoryColor3);
+                packet.WriteUInt16(display.AccessorySprite3);
+                packet.WriteByte(display.LanternSize);
+                packet.WriteByte(display.RestPosition);
+                packet.WriteUInt16(display.OvercoatSprite);
+                packet.WriteByte(display.OvercoatColor);
+                packet.WriteByte(display.BodyColor);
+                packet.WriteBoolean(display.IsHidden);
+                packet.WriteByte(display.FaceSprite);
+            }
+            else
+            {
+                packet.WriteUInt16(ushort.MaxValue);
+                packet.WriteUInt16((ushort)(user.Sprite + 16384U));
+                packet.WriteByte(display.HeadColor);
+                packet.WriteByte(display.BootsColor);
+                packet.Write(new byte[6]); //dunno
+            }
+            packet.WriteByte(display.NameTagStyle);
+            packet.WriteString8(display.BodySprite == 0 ? string.Empty : (user.Name ?? string.Empty));
+            packet.WriteString8(display.GroupName ?? string.Empty);
+
+            return packet;
         }
-        internal static ServerPacket Profile
+        internal static ServerPacket Profile(Objects.User user)
         {
-            get { return new ServerPacket(52); }
+            var packet = new ServerPacket(52);
+
+            packet.WriteUInt32(user.Id);
+            for(byte slot = 1; slot < user.Equipment.Length; slot++)
+            {
+                packet.WriteUInt16(user.Equipment[slot].Sprite);
+                packet.WriteByte(user.Equipment[slot].Color);
+            }
+            packet.WriteBoolean(user.Options.Group);
+            packet.WriteString8(user.Name);
+            packet.WriteByte((byte)user.Nation);
+            packet.WriteString8(user.Guild.TitleOf(user.Name));
+            packet.WriteString8(user.AdvClass == 0 ? user.BaseClass.ToString() : user.AdvClass.ToString());
+            packet.WriteString8(user.Guild.Name);
+
+
+
+            return packet;
         }
         internal static ServerPacket WorldList
         {

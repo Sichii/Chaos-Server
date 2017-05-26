@@ -7,8 +7,6 @@
         internal short TargetX { get; }
         internal short TargetY { get; }
         internal ushort TargetMapId { get; }
-        internal Point SourcePoint => Point;
-        internal Location SourceLocation => Location;
         internal Point TargetPoint => new Point(TargetX, TargetY);
         internal Location TargetLocation => new Location(TargetMapId, TargetX, TargetY);
 

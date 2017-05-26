@@ -26,10 +26,12 @@ namespace Insert_Creative_Name
             for (byte i = 0; i < length; i++)
                 Objects[i] = null;
 
-            if(length == 90) //skillbook and spellbook
+            if (length == 90) //skillbook and spellbook
                 Invalid = new byte[] { 36, 72, 89 };
-            else //inventory
+            else if (length == 61) //inventory
                 Invalid = new byte[] { 60 };
+            else if (length == 20) //equipment
+                Invalid = new byte[] { 19 };
         }
 
         //validates the slot
