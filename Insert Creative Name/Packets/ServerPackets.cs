@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Linq;
 
 namespace Insert_Creative_Name
 {
@@ -8,9 +9,9 @@ namespace Insert_Creative_Name
     {
         internal static ServerPacket LobbyMessage(byte type, string message)
         {
-            //type is the type of dialog box, message is what's in it
             var packet = new ServerPacket(2);
 
+            //type is the type of dialog box, message is what's in it
             packet.WriteByte(type);
             packet.WriteString8(message);
 
@@ -214,6 +215,7 @@ namespace Insert_Creative_Name
             packet.WriteUInt32(id);
             packet.WriteByte(0); //i've seen this as 0 if you get hit by someone else, or 2 if you're hitting something else... but it doesnt change anything
             packet.WriteByte(hpPct);
+            //packet.WriteByte()  This byte indicates a sound to play when the hp bar hits.(1 for normal assail, etc) You can either (255) or leave off this byte entirely for no sound
 
             return packet;
         }
@@ -431,28 +433,92 @@ namespace Insert_Creative_Name
             packet.WriteString8(user.Name);
             packet.WriteByte((byte)user.Nation);
             packet.WriteString8(user.Guild.TitleOf(user.Name));
-            packet.WriteString8(user.AdvClass == 0 ? user.BaseClass.ToString() : user.AdvClass.ToString());
+            packet.WriteString8(user.AdvClass == AdvClass.None ? user.BaseClass.ToString() : user.AdvClass.ToString());
             packet.WriteString8(user.Guild.Name);
-
-
+            packet.WriteByte(user.Legend.Length);
+            foreach(var mark in user.Legend)
+            {
+                packet.WriteByte(mark.Icon);
+                packet.WriteByte(mark.Color);
+                packet.WriteString8(mark.Key);
+                packet.WriteString8(mark.ToString());
+            }
+            packet.WriteUInt16((ushort)(user.Personal.Portrait.Length + user.Personal.Message.Length));
+            packet.Write(user.Personal.Portrait);
+            packet.WriteString16(user.Personal.Message);
 
             return packet;
         }
-        internal static ServerPacket WorldList
+        internal static ServerPacket WorldList(List<Objects.User> users, byte UserLevel)
         {
-            get { return new ServerPacket(54); }
+            var packet = new ServerPacket(54);
+
+            packet.WriteUInt16((ushort)users.Count);
+            packet.WriteUInt16((ushort)users.Count);
+            foreach(var user in users)
+            {
+                byte range = (byte)((UserLevel / 5) + 3);
+                packet.WriteByte((byte)(Math.Abs(user.Attributes.Level - UserLevel) <= range ? 151 : 255));
+                packet.WriteByte((byte)user.SocialStatus);
+                packet.WriteString8(user.Titles.FirstOrDefault() ?? "");
+                packet.WriteString8(user.Name);
+            }
+
+            return packet;
         }
-        internal static ServerPacket AddEquipment
+        internal static ServerPacket AddEquipment(Objects.Item item, EquipmentSlot slot)
         {
-            get { return new ServerPacket(55); }
+            var packet = new ServerPacket(55);
+
+            packet.WriteByte((byte)slot);
+            packet.WriteUInt16((ushort)(item.Sprite + 32768));
+            packet.WriteByte(item.Color);
+            packet.WriteString8(item.Name);
+            packet.WriteByte(0);
+            packet.WriteUInt32(item.MaxDurability);
+            packet.WriteUInt32(item.CurrentDurability);
+
+            return packet;
         }
-        internal static ServerPacket RemoveEquipment
+        internal static ServerPacket RemoveEquipment(EquipmentSlot slot)
         {
-            get { return new ServerPacket(56); }
+            var packet = new ServerPacket(56);
+
+            packet.WriteByte((byte)slot);
+
+            return packet;
         }
-        internal static ServerPacket ProfileSelf
+        internal static ServerPacket ProfileSelf(Objects.User user)
         {
-            get { return new ServerPacket(57); }
+            var packet = new ServerPacket(57);
+
+            packet.WriteByte((byte)user.Nation);
+            packet.WriteString8(user.Guild.TitleOf(user.Name));
+            packet.WriteString8(""); //idk?
+            packet.WriteString8(user.Group?.ToString() ?? (user.Spouse != null ? $@"Spouse: {user.Spouse}" : "Adventuring alone"));
+            packet.WriteBoolean(user.Options.Group);
+            packet.WriteBoolean(user.Group.Box != null);
+            if(user.Group.Box != null)
+            {
+                packet.WriteString8(user.Group.Box.GroupLeader.Name);
+                packet.WriteString8(user.Group.Box.Name);
+                packet.Write(new byte[13]); //other groupbox stuff will add later
+            }
+            packet.WriteByte((byte)user.BaseClass);
+            packet.WriteBoolean(user.AdvClass != AdvClass.None); //is med class
+            packet.WriteBoolean(user.IsMaster);
+            packet.WriteString8(user.AdvClass != AdvClass.None ? user.AdvClass.ToString() : user.BaseClass.ToString()); //class string
+            packet.WriteString8(user.Guild.Name);
+            packet.WriteByte(user.Legend.Length);
+            foreach(var mark in user.Legend)
+            {
+                packet.WriteByte(mark.Icon);
+                packet.WriteByte(mark.Color);
+                packet.WriteString8(mark.Key);
+                packet.WriteString8(mark.ToString());
+            }
+
+            return packet;
         }
         internal static ServerPacket SpellBar
         {

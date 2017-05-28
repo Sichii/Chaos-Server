@@ -49,7 +49,9 @@
     <Compile Include="Client\Panel.cs" />
     <Compile Include="Client\UserOptions.cs" />
     <Compile Include="Constructs\Bank.cs" />
+    <Compile Include="Constructs\Group.cs" />
     <Compile Include="Constructs\Guild.cs" />
+    <Compile Include="Objects\GroupBox.cs" />
     <Compile Include="Packets\ClientPacket.cs" />
     <Compile Include="Packets\ClientPacketHandler.cs" />
     <Compile Include="Packets\ClientPackets.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Structs\Animation.cs" />
     <Compile Include="Client\Attributes.cs" />
     <Compile Include="Client\DisplayData.cs" />
+    <Compile Include="Structs\GameTime.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\Point.cs" />
     <Compile Include="Objects\Skill.cs" />

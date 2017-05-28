@@ -8,10 +8,10 @@ namespace Insert_Creative_Name.Objects
         internal byte Color { get; }
         internal int Count { get; set; }
         internal bool Stackable { get; }
-        internal int MaxDurability { get; }
-        internal int CurrentDurability { get; set; }
+        internal uint MaxDurability { get; }
+        internal uint CurrentDurability { get; set; }
 
-        internal Item(byte slot, ushort sprite, byte color, string name, int count, bool stackable, int maximumDurability, int currentDurability, TimeSpan cooldown)
+        internal Item(byte slot, ushort sprite, byte color, string name, int count, bool stackable, uint maximumDurability, uint currentDurability, TimeSpan cooldown)
             :base(slot, sprite, name, cooldown)
         {
             Color = color;

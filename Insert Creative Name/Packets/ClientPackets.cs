@@ -67,6 +67,7 @@ namespace Insert_Creative_Name
         {
             string name = packet.ReadString8();
             string pw = packet.ReadString8();
+            //useless crap
             packet.ReadByte();
             packet.ReadByte();
             packet.ReadUInt32();
@@ -254,9 +255,24 @@ namespace Insert_Creative_Name
         }
         private bool PacketHandler_0x2E_GroupRequest(Client client, ClientPacket packet)
         {
-            //2 = invite, 3 = join
+            //2 = invite, 3 = join, 4 = groupBox, 6 = remove group box
             byte type = packet.ReadByte();
+            if (type == 4)
+            {
+                string leader = packet.ReadString8();
+                string groupName = packet.ReadString8();
+                packet.ReadByte();
+                byte minLevel = packet.ReadByte();
+                byte maxLevel = packet.ReadByte();
+                byte[] maxOfEach = new byte[6];
+                maxOfEach[(byte)BaseClass.Warrior] = packet.ReadByte();
+                maxOfEach[(byte)BaseClass.Wizard] = packet.ReadByte();
+                maxOfEach[(byte)BaseClass.Rogue] = packet.ReadByte();
+                maxOfEach[(byte)BaseClass.Priest] = packet.ReadByte();
+                maxOfEach[(byte)BaseClass.Monk] = packet.ReadByte();
+            }
             string targetName = packet.ReadString8();
+
 
             return true;
         }
@@ -487,9 +503,10 @@ namespace Insert_Creative_Name
         }
         private bool PacketHandler_0x4F_PortraitText(Client client, ClientPacket packet)
         {
-            packet.ReadInt16(); //dunno
-            Portrait portrait = new Portrait(packet.ReadBytes(packet.ReadUInt16()));
-            string profileText = packet.ReadString16();
+            ushort totalLength = packet.ReadUInt16();
+            ushort portraitLength = packet.ReadUInt16();
+            byte[] portraitData = packet.ReadBytes(portraitLength);
+            string profileMsg = packet.ReadString16();
 
             return true;
         }

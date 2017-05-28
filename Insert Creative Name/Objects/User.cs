@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 
 namespace Insert_Creative_Name.Objects
 {
@@ -15,13 +15,18 @@ namespace Insert_Creative_Name.Objects
         internal Attributes Attributes { get; set; }
         internal Guild Guild { get; set; }
         internal Legend Legend { get; set; }
-        internal Portrait Portrait { get; set; }
+        internal Personal Personal { get; set; }
+        internal Group Group { get; set; }
         internal Client Client { get; set; }
+        internal SocialStatus SocialStatus { get; set; }
         internal Nation Nation { get; set; }
         internal BaseClass BaseClass { get; set; }
         internal AdvClass AdvClass { get; set; }
         internal MailFlag MailFlag { get; set; }
         internal bool Grouped { get; set; }
+        internal bool IsMaster { get; set; }
+        internal string Spouse { get; set; }
+        internal List<string> Titles { get; set; }
 
         internal User(uint id, string name, Point point, Map map, Direction direction)
           : base(id, name, 0, 4, point, map, direction)
@@ -33,6 +38,10 @@ namespace Insert_Creative_Name.Objects
             Options = new UserOptions();
             DisplayData = new DisplayData();
             Attributes = new Attributes();
+            Legend = new Legend();
+            Titles = new List<string>();
+            Group = null;
+            Spouse = null;
         }
 
         internal User(uint id, string name, Point point, Map map, DisplayData displayData, Direction direction)

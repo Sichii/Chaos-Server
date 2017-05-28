@@ -6,9 +6,10 @@ using System.Linq;
 namespace Insert_Creative_Name
 {
     [Serializable]
-    internal sealed class Panel<T> : IEnumerable where T : Objects.PanelObject
+    internal sealed class Panel<T> : IEnumerable<T> where T : Objects.PanelObject
     {
-        public IEnumerator GetEnumerator() => Objects.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal SortedDictionary<byte, T> Objects { get; private set; }
         internal byte Length { get; }
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));

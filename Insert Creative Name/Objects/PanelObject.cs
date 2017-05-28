@@ -10,6 +10,7 @@ namespace Insert_Creative_Name.Objects
         internal string Name { get; }
         internal TimeSpan Cooldown { get; }
         internal DateTime LastUse { get; set; }
+        internal bool CanUse => LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown;
 
         internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown)
         {

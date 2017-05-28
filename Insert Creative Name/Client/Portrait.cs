@@ -3,13 +3,15 @@
 namespace Insert_Creative_Name
 {
     [Serializable]
-    internal sealed class Portrait
+    internal sealed class Personal
     {
-        internal byte[] Data { get; }
+        internal byte[] Portrait { get; set; }
+        internal string Message { get; set; }
 
-        internal Portrait(byte[] data)
+        internal Personal(byte[] data, string msg)
         {
-            Data = data;
+            Portrait = data;
+            Message = msg;
         }
     }
 }

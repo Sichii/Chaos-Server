@@ -37,9 +37,5 @@ namespace Insert_Creative_Name
             }
             return byteArray;
         }
-        internal static string GetHash(string str)
-        {
-            return Encoding.ASCII.GetString(MD5.Create().ComputeHash(Encoding.ASCII.GetBytes(str)));
-        }
     }
 }

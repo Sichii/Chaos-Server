@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 namespace Insert_Creative_Name
 {
     internal sealed class Crypto
     {
+        private static string key1 = GetHashString("inhOrig", "MD5").Substring(0, 8);
+        private static string key2 = GetHashString(key1, "MD5").Substring(0, 8);
         internal static byte[][] Salts { get; }
         internal byte Seed { get; }
         internal byte[] Key { get; }
@@ -205,6 +208,36 @@ namespace Insert_Creative_Name
             byte[] bytes = Encoding.ASCII.GetBytes(value);
             byte[] value2 = hashAlgorithm.ComputeHash(bytes);
             return BitConverter.ToString(value2).Replace("-", string.Empty).ToLower();
+        }
+
+        internal static void EncryptFile(MemoryStream fileData, string path)
+        {
+            DESCryptoServiceProvider DES = new DESCryptoServiceProvider();
+            DES.Key = Encoding.ASCII.GetBytes(key1);
+            DES.IV = Encoding.ASCII.GetBytes(key2);
+
+            using (FileStream file = File.Create(path))
+            using (ICryptoTransform encryptor = DES.CreateEncryptor())
+            using (CryptoStream crypt = new CryptoStream(fileData, encryptor, CryptoStreamMode.Write))
+            {
+                byte[] data = fileData.ToArray();
+                crypt.Write(data, 0, data.Length);
+            }
+        }
+
+        internal static MemoryStream DecryptFile(string path)
+        {
+            DESCryptoServiceProvider DES = new DESCryptoServiceProvider();
+            DES.Key = Encoding.ASCII.GetBytes(key1);
+            DES.IV = Encoding.ASCII.GetBytes(key2);
+
+            using (FileStream file = File.OpenRead(path))
+            using (ICryptoTransform decryptor = DES.CreateDecryptor())
+            using (CryptoStream crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read))
+            using (StreamReader reader = new StreamReader(crypt))
+            {
+                return new MemoryStream(Encoding.Unicode.GetBytes(reader.ReadToEnd()));
+            }
         }
     }
 }

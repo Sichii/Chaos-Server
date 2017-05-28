@@ -60,7 +60,7 @@ namespace Insert_Creative_Name
     [Flags]
     public enum AdvClass : byte
     {
-        NonMed = 0,
+        None = 0,
         Gladiator = 1,
         Druid = 2,
         Archer = 3,

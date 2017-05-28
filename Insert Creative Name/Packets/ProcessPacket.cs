@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
+    
+
     internal static class ProcessPacket
     {
         internal static Server Server = null;
@@ -21,8 +23,7 @@ namespace Insert_Creative_Name
                 client.Enqueue(ServerPackets.LobbyMessage(3, "Password must be 4-8 characters long."));
             else if (Regex.Match(name, @"^[A-Za-z]{4, 12}$").Success)
             {
-                using (FileStream userHash = File.OpenRead(Paths.UserHash))
-                using (BinaryReader reader = new BinaryReader(userHash))
+                using (BinaryReader reader = new BinaryReader(Crypto.DecryptFile(Paths.UserHash)))
                     while (reader.BaseStream.Position != reader.BaseStream.Length)
                     {
                         if (reader.ReadString().Equals(name, StringComparison.CurrentCultureIgnoreCase))
@@ -33,7 +34,6 @@ namespace Insert_Creative_Name
                         //skips the hash
                         reader.BaseStream.Position += 33;
                     }
-
 
                 client.NewCharName = name;
                 client.NewCharPw = password;
@@ -53,8 +53,8 @@ namespace Insert_Creative_Name
                 return;
             }
 
-            using (FileStream userHash = File.OpenRead(Paths.UserHash))
-            using (BinaryReader reader = new BinaryReader(userHash))
+            password = Crypto.GetHashString(password, "MD5");
+            using (BinaryReader reader = new BinaryReader(Crypto.DecryptFile(Paths.UserHash)))
                 while (reader.BaseStream.Position != reader.BaseStream.Length)
                 {
                     if (reader.ReadString().Equals(name, StringComparison.CurrentCultureIgnoreCase))
@@ -69,7 +69,7 @@ namespace Insert_Creative_Name
 
                         return;
                     }
-
+                    //skip the hash
                     reader.BaseStream.Position += 33;
                 }
         }

@@ -4,13 +4,8 @@ namespace Insert_Creative_Name
 {
     internal sealed class ClientPacket : Packet
     {
-        internal bool IsDialog
-        {
-            get
-            {
-                return OpCode == 57 || OpCode == 58;
-            }
-        }
+        internal bool IsDialog => OpCode == 57 || OpCode == 58;
+
         internal override EncryptMethod EncryptMethod
         {
             get
@@ -44,21 +39,15 @@ namespace Insert_Creative_Name
                 }
             }
         }
-        internal ClientPacket(byte opcode) : base(opcode)
-        {
-        }
-        internal ClientPacket(byte[] buffer) : base(buffer)
-        {
-        }
+        internal ClientPacket(byte opcode) : base(opcode) { }
+        internal ClientPacket(byte[] buffer) : base(buffer) { }
 
         internal void Decrypt(Crypto crypto)
         {
+            byte[] key;
             int length = Data.Length - 7;
-
             ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 0x7470);
             byte b = (byte)(Data[length + 5] ^ 0x23);
-
-            byte[] key;
 
             switch (EncryptMethod)
             {
@@ -77,15 +66,11 @@ namespace Insert_Creative_Name
             for (int i = 0; i < length; ++i)
             {
                 int saltIndex = (i / crypto.Key.Length) % 256;
-
                 Data[i] ^= (byte)(crypto.Salt[saltIndex] ^ key[i % key.Length]);
 
                 if (saltIndex != Sequence)
-                {
                     Data[i] ^= crypto.Salt[Sequence];
-                }
             }
-
             ResizeArray(length);
         }
         internal void GenerateDialogHeader()
@@ -122,6 +107,7 @@ namespace Insert_Creative_Name
             int num4 = Data[2] << 8 | Data[3];
             for (int index = 0; index < num4; ++index)
                 Data[4 + index] ^= (byte)((num3 + index) % 256);
+
             Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
             ResizeArray(Data.Length - 6);
         }

@@ -12,9 +12,9 @@ namespace Insert_Creative_Name
         private bool Connected = false;
         private byte[] ClientBuffer = new byte[4096];
         private List<byte> FullClientBuffer = new List<byte>();
-        private Queue<Packet> SendQueue = new Queue<Packet>();
-        private Queue<Packet> ProcessQueue = new Queue<Packet>();
-        private byte ClientSequence = 0;
+        private Queue<ServerPacket> SendQueue = new Queue<ServerPacket>();
+        private Queue<ClientPacket> ProcessQueue = new Queue<ClientPacket>();
+        private byte ServerSequence = 0;
         internal Server Server { get; }
         internal Socket ClientSocket { get; }
         internal Crypto Crypto { get; set; }
@@ -98,16 +98,12 @@ namespace Insert_Creative_Name
         }
 
         //sends packets to the process/send thread
-        internal void Enqueue(params Packet[] packets)
+        internal void Enqueue(params ServerPacket[] packets)
         {
             lock (SendQueue)
             {
-                Packet[] packets2 = packets;
-                for (int i = 0; i < packets2.Length; i++)
-                {
-                    Packet item = packets2[i];
-                    SendQueue.Enqueue(item);
-                }
+                for (int i = 0; i < packets.Length; i++)
+                    SendQueue.Enqueue(packets[i]);
             }
         }
 
@@ -123,13 +119,13 @@ namespace Insert_Creative_Name
                     while (SendQueue.Count > 0)
                     {
                         //get the next packet in the queue, convert to serverpacket
-                        ServerPacket packet = SendQueue.Dequeue() as ServerPacket;
+                        ServerPacket packet = SendQueue.Dequeue();
                         if (packet == null) continue;
 
                         //if it should be encrypted, do it
                         if (packet.ShouldEncrypt)
                         {
-                            packet.Sequence = ClientSequence++;
+                            packet.Sequence = ServerSequence++;
                             packet.Encrypt(Crypto);
                         }
                         //get the packet's data and try to send it
@@ -148,7 +144,7 @@ namespace Insert_Creative_Name
                     while (ProcessQueue.Count > 0)
                     {
                         //get the next packet in the queue, convert to clientpacket
-                        ClientPacket packet = ProcessQueue.Dequeue() as ClientPacket;
+                        ClientPacket packet = ProcessQueue.Dequeue();
                         if (packet == null) continue;
 
                         //if it is encrypted, decrypt it
