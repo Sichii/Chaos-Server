@@ -15,6 +15,7 @@ namespace Insert_Creative_Name
         internal ConcurrentDictionary<ushort, Map> Maps { get; set; }
         internal ConcurrentDictionary<uint, WorldMap> WorldMaps { get; set; }
         internal ConcurrentDictionary<uint, WorldObject> Objects { get; set; }
+        internal string LobbyNotification = "UNDER CONSTRUCTION";
 
         internal World()
         {

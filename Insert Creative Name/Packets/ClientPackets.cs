@@ -9,6 +9,7 @@ namespace Insert_Creative_Name
 
         internal ClientPackets()
         {
+            Handlers[0] = new ClientPacketHandler(PacketHnadler_0x00_ClientVersion);
             Handlers[2] = new ClientPacketHandler(PacketHandler_0x02_CreatCharA);
             Handlers[3] = new ClientPacketHandler(PacketHandler_0x03_Login);
             Handlers[4] = new ClientPacketHandler(PacketHandler_0x04_CreateCharB);
@@ -52,6 +53,11 @@ namespace Insert_Creative_Name
             Handlers[117] = new ClientPacketHandler(PacketHandler_0x75_HeartBeatTimer);
             Handlers[121] = new ClientPacketHandler(PacketHandler_0x79_SocialStatus);
             Handlers[123] = new ClientPacketHandler(PacketHandler_0x7B_MetafileRequest);
+        }
+
+        private bool PacketHnadler_0x00_ClientVersion(Client client, ClientPacket packet)
+        {
+            return true;
         }
 
         private bool PacketHandler_0x02_CreatCharA(Client client, ClientPacket packet)
@@ -121,8 +127,7 @@ namespace Insert_Creative_Name
         }
         private bool PacketHandler_0x0E_PublicChat(Client client, ClientPacket packet)
         {
-            //shout= 1  normal=0
-            bool isShout = packet.ReadBoolean();
+            ClientMessageType type = (ClientMessageType)packet.ReadByte();
             string message = packet.ReadString8();
 
             return false;
@@ -517,8 +522,9 @@ namespace Insert_Creative_Name
         }
         private bool PacketHandler_0x75_HeartBeatTimer(Client client, ClientPacket packet)
         {
-            TimeSpan serverTimer = new TimeSpan(packet.ReadUInt32());
-            TimeSpan clientTimer = new TimeSpan(packet.ReadUInt32());
+            //use this to make sure we're in sync
+            TimeSpan serverTimer = new TimeSpan(packet.ReadUInt32()); //server ticks
+            TimeSpan clientTimer = new TimeSpan(packet.ReadUInt32()); //client ticks
             return true;
         }
         private bool PacketHandler_0x79_SocialStatus(Client client, ClientPacket packet)

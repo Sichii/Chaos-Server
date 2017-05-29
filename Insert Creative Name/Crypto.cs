@@ -218,7 +218,7 @@ namespace Insert_Creative_Name
 
             using (FileStream file = File.Create(path))
             using (ICryptoTransform encryptor = DES.CreateEncryptor())
-            using (CryptoStream crypt = new CryptoStream(fileData, encryptor, CryptoStreamMode.Write))
+            using (CryptoStream crypt = new CryptoStream(file, encryptor, CryptoStreamMode.Write))
             {
                 byte[] data = fileData.ToArray();
                 crypt.Write(data, 0, data.Length);
@@ -235,9 +235,7 @@ namespace Insert_Creative_Name
             using (ICryptoTransform decryptor = DES.CreateDecryptor())
             using (CryptoStream crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read))
             using (StreamReader reader = new StreamReader(crypt))
-            {
                 return new MemoryStream(Encoding.Unicode.GetBytes(reader.ReadToEnd()));
-            }
         }
     }
 }

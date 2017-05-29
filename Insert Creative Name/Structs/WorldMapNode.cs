@@ -1,6 +1,6 @@
 ﻿namespace Insert_Creative_Name.Objects
 {
-    internal sealed class WorldMapNode
+    internal struct WorldMapNode
     {
         internal Point ScreenPosition { get; }
         internal string Name { get; }

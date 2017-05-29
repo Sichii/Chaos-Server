@@ -23,7 +23,7 @@ namespace Insert_Creative_Name
                 Directory.CreateDirectory(Paths.Chars);
 
             //create the server, start it in a new thread
-            Server = new Server(IPAddress.Any, 25252);
+            Server = new Server(IPAddress.Any, 2610);
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
 

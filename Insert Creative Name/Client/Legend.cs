@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
+    [Serializable]
     internal sealed class Legend : IEnumerable<LegendMark>
     {
         public IEnumerator<LegendMark> GetEnumerator() => Marks.Values.ToList().GetEnumerator();
@@ -38,13 +39,14 @@ namespace Insert_Creative_Name
         internal bool TryRemove(string key) => Marks.Remove(key);
     }
 
+    [Serializable]
     internal sealed class LegendMark
     {
         private GameTime added;
         internal string Mark { get; set; }
         internal string Key { get; set; }
-        internal byte Icon { get; set; }
-        internal byte Color { get; set; }
+        internal MarkIcon Icon { get; set; }
+        internal MarkColor Color { get; set; }
         internal int Count { get; set; }
         internal DateTime Added
         {
@@ -52,10 +54,12 @@ namespace Insert_Creative_Name
             set { added = GameTime.FromDateTime(value); }
         }
 
-        internal LegendMark(string key, string mark, DateTime now)
+        internal LegendMark(string key, string mark, DateTime now, MarkIcon icon, MarkColor color)
         {
             Key = key;
             Count = 1;
+            Icon = icon;
+            Color = color;
             Added = now;
         }
 

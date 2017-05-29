@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Insert_Creative_Name.Objects
 {
-    internal sealed class Tile : MapObject
+    internal struct Tile
     {
         internal static byte[] sotp;
         internal short Background { get; }
@@ -22,7 +22,6 @@ namespace Insert_Creative_Name.Objects
             }
         }
         internal Tile(ushort mapId, short x, short y, short background, short leftForeground, short rightForeground)
-            :base(mapId, x, y)
         {
             Background = background;
             LeftForeground = leftForeground;

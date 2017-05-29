@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -14,6 +15,7 @@ namespace Insert_Creative_Name
         internal Socket ServerSocket;
         internal ClientPacketHandler[] ClientPacketHandlers { get; }
         internal World World { get; }
+        internal byte[] Table { get; }
 
         internal Server(IPAddress ip, int port)
         {
@@ -25,6 +27,7 @@ namespace Insert_Creative_Name
             World = new World();
             ProcessPacket.Server = this;
             ProcessPacket.World = World;
+            Table = Properties.Resources.mServer;
         }
 
         internal void Start()

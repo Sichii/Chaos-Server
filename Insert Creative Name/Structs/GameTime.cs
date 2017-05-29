@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
+    [Serializable]
     internal struct GameTime
     {
         byte some, weird, shit;

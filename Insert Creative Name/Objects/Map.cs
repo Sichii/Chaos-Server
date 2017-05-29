@@ -12,10 +12,11 @@ namespace Insert_Creative_Name.Objects
         internal ushort Id { get; }
         internal byte SizeX { get; }
         internal byte SizeY { get; }
-        internal byte Flags { get; set; }
+        internal byte[] Data { get; }
         internal ushort CRC { get; }
-        internal string Name { get; set; }
         internal Dictionary<Point, Tile> Tiles { get; }
+        internal byte Flags { get; set; }
+        internal string Name { get; set; }
         internal bool CanUseSkills { get; set; }
         internal bool CanUseSpells { get; set; }
         internal Tile this[short x, short y] => Tiles[new Point(x, y)];

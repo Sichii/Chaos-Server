@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
+    [Serializable]
     internal sealed class Guild : IEnumerable
     {
         public IEnumerator GetEnumerator() => Members.GetEnumerator();

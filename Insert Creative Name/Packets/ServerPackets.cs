@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.IO;
+using System.Text;
 
 namespace Insert_Creative_Name
 {
@@ -157,11 +160,11 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal static ServerPacket PublicChat(bool isShout, string message)
+        internal static ServerPacket PublicChat(ClientMessageType type, string message)
         {
             var packet = new ServerPacket(13);
 
-            packet.WriteBoolean(isShout);
+            packet.WriteByte((byte)type);
             packet.WriteString8(message);
 
             return packet;
@@ -184,8 +187,8 @@ namespace Insert_Creative_Name
             packet.WriteString8(item.Name);
             packet.WriteInt32(item.Count);
             packet.WriteBoolean(item.Stackable);
-            packet.WriteInt32(item.MaxDurability);
-            packet.WriteInt32(item.CurrentDurability);
+            packet.WriteUInt32(item.MaxDurability);
+            packet.WriteUInt32(item.CurrentDurability);
             if (item.Stackable)
                 packet.WriteByte(0);
 
@@ -438,8 +441,8 @@ namespace Insert_Creative_Name
             packet.WriteByte(user.Legend.Length);
             foreach(var mark in user.Legend)
             {
-                packet.WriteByte(mark.Icon);
-                packet.WriteByte(mark.Color);
+                packet.WriteByte((byte)mark.Icon);
+                packet.WriteByte((byte)mark.Color);
                 packet.WriteString8(mark.Key);
                 packet.WriteString8(mark.ToString());
             }
@@ -512,61 +515,157 @@ namespace Insert_Creative_Name
             packet.WriteByte(user.Legend.Length);
             foreach(var mark in user.Legend)
             {
-                packet.WriteByte(mark.Icon);
-                packet.WriteByte(mark.Color);
+                packet.WriteByte((byte)mark.Icon);
+                packet.WriteByte((byte)mark.Color);
                 packet.WriteString8(mark.Key);
                 packet.WriteString8(mark.ToString());
             }
 
             return packet;
         }
-        internal static ServerPacket SpellBar
+        internal static ServerPacket EffectsBar(ushort effect, EffectsBarColor color)
         {
-            get { return new ServerPacket(58); }
+            var packet = new ServerPacket(58);
+
+            packet.WriteUInt16(effect);
+            packet.WriteByte((byte)color);
+
+            return packet;
         }
-        internal static ServerPacket HeartbeatA
+        internal static ServerPacket HeartbeatA(byte a, byte b)
         {
-            get { return new ServerPacket(59); }
+            var packet = new ServerPacket(59);
+
+            packet.WriteByte(a);
+            packet.WriteByte(b);
+
+            return packet;
         }
-        internal static ServerPacket MapData
+        internal static ServerPacket[] MapData(Objects.Map map)
         {
-            get { return new ServerPacket(60); }
+            List<ServerPacket> staggeredData = new List<ServerPacket>();
+            int key = 0;
+            for(ushort y = 0; y < map.SizeY; y++)
+            {
+                var packet = new ServerPacket(60);
+                packet.WriteUInt16(y);
+                for(int x = 0; x < map.SizeX * 6; x += 2)
+                {
+                    packet.WriteByte(map.Data[key + 1]);
+                    packet.WriteByte(map.Data[key]);
+                    key += 2;
+                }
+                staggeredData.Add(packet);
+            }
+
+            return staggeredData.ToArray();
         }
-        internal static ServerPacket Cooldown
+        internal static ServerPacket Cooldown(bool isSkill, byte slot, uint ticks)
         {
-            get { return new ServerPacket(63); }
+            var packet = new ServerPacket(63);
+
+            packet.WriteBoolean(isSkill);
+            packet.WriteByte(slot);
+            packet.WriteUInt32(ticks);
+
+            return packet;
         }
         internal static ServerPacket Exchange
         {
+            //i'll do this later, its cancer
             get { return new ServerPacket(66); }
         }
-        internal static ServerPacket CancelCasting
+        internal static ServerPacket CancelCasting()
         {
-            get { return new ServerPacket(72); }
+            //i dont belive there's anything here
+            return new ServerPacket(72);
         }
-        internal static ServerPacket MapLoadComplete
+        internal static ServerPacket ServerTable()
         {
-            get { return new ServerPacket(88); }
+            var packet = new ServerPacket(86);
+
+            return packet;
         }
-        internal static ServerPacket LobbyNotification
+        internal static ServerPacket MapLoadComplete()
         {
-            get { return new ServerPacket(96); }
+            //i dont belive there's anything here
+            return new ServerPacket(88);
         }
-        internal static ServerPacket Website
+        internal static ServerPacket LobbyNotification(bool sendNotif, string message = "")
         {
-            get { return new ServerPacket(102); }
+            var packet = new ServerPacket(96);
+
+            packet.WriteBoolean(sendNotif);
+            if(sendNotif)
+            {
+                //some formatting here, can change this
+                message = Regex.Replace(message, @"[\r\n]+-", "\n{=e-{=g");
+                message = Regex.Replace(message, @"(?'1'\[[a-zA-Z -+!]+\])", "{=c${1}{=g");
+                message += "\n\n- Brandon";
+
+                using (MemoryStream compressor = ZLIB.Compress(Encoding.GetEncoding(949).GetBytes(message)))
+                    packet.WriteArray16(compressor.ToArray());
+            }
+
+            return packet;
         }
-        internal static ServerPacket MapChangePending
+        internal static ServerPacket LobbyControls(byte type, string message)
         {
-            get { return new ServerPacket(103); }
+            var packet = new ServerPacket(102);
+            //1 = Exit and load directory
+            //2 = load directory
+            //3 = website
+            //there's more to the 1 and 2 bytes, will figure out later
+            packet.WriteByte(type);
+            packet.WriteString8(message);
+
+            return packet;
         }
-        internal static ServerPacket HeartbeatB
+        internal static ServerPacket MapChangePending()
         {
-            get { return new ServerPacket(104); }
+            //i dont belive there's anything here
+            return new ServerPacket(103);
         }
-        internal static ServerPacket Metafile
+        internal static ServerPacket HeartbeatB()
         {
-            get { return new ServerPacket(111); }
+            var packet = new ServerPacket(104);
+
+            //helps the client keep synchronized
+            packet.WriteInt32(Environment.TickCount);
+
+            return packet;
+        }
+        internal static ServerPacket[] Metafile(bool sendData, params MetaFile[] metafiles)
+        {
+            List<ServerPacket> packets = new List<ServerPacket>();
+
+            if (!sendData)
+            {
+                var packet = new ServerPacket(111);
+                packet.WriteBoolean(true);
+                packet.WriteUInt16((ushort)metafiles.Length);
+                foreach (var metafile in metafiles)
+                {
+                    packet.WriteString8(metafile.Name);
+                    packet.WriteUInt32(CRC32.Calculate(metafile.Data));
+                }
+                packets.Add(packet);
+            }
+            else
+            {
+                foreach (var metafile in metafiles)
+                {
+                    var packet = new ServerPacket(111);
+                    packet.WriteBoolean(false);
+                    packet.WriteString8(metafile.Name);
+                    packet.WriteUInt32(CRC32.Calculate(metafile.Data));
+                    packet.WriteArray16(metafile.Data);
+
+                    packets.Add(packet);
+                }
+            }
+
+            return packets.ToArray();
         }
     }
 }

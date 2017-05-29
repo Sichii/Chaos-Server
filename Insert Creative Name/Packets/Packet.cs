@@ -296,6 +296,12 @@ namespace Insert_Creative_Name
                     WriteArray((Array)current);
             }
         }
+
+        internal void WriteArray16(Array value)
+        {
+            WriteUInt16((ushort)value.Length);
+            WriteArray(value);
+        }
         internal byte[] ToArray()
         {
             int num = Data.Length + (ShouldEncrypt ? 5 : 4) - 3;

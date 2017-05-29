@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Insert_Creative_Name
 {
+    [Serializable]
     internal sealed class Group : IEnumerable<Objects.User>
     {
         public IEnumerator<Objects.User> GetEnumerator() => Users.GetEnumerator();

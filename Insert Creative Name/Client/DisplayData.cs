@@ -2,6 +2,7 @@
 
 namespace Insert_Creative_Name
 {
+    [Serializable]
     internal sealed class DisplayData
     {
         //Head
