@@ -6,10 +6,20 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal static class ServerPackets
     {
+        internal static ServerPacket ClientVersion(uint tableCrc, byte seed, string key)
+        {
+            var packet = new ServerPacket(0);
+
+            packet.WriteUInt32(tableCrc);
+            packet.WriteByte(seed);
+            packet.WriteString8(key);
+
+            return packet;
+        }
         internal static ServerPacket LobbyMessage(byte type, string message)
         {
             var packet = new ServerPacket(2);
@@ -20,17 +30,17 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal static ServerPacket Redirect(IPAddress address, short port, byte length, byte seed, byte key, string name, int id)
+        internal static ServerPacket Redirect(IPAddress address, short port, byte seed, string key, string name, uint id)
         {
             var packet = new ServerPacket(3);
 
             packet.Write(address.GetAddressBytes());
             packet.WriteInt16(port);
-            packet.WriteByte(length);
+            packet.WriteByte((byte)(key.Length + Encoding.GetEncoding(49).GetBytes(name).Length + 7));
             packet.WriteByte(seed);
-            packet.WriteByte(key);
+            packet.WriteString8(key);
             packet.WriteString8(name);
-            packet.WriteInt32(id);
+            packet.WriteUInt32(id);
 
             return packet;
         }
@@ -120,7 +130,8 @@ namespace Insert_Creative_Name
             {
                 packet.Write(new byte[1]); //dunno
                 packet.WriteByte(stats.Blind);
-                packet.Write(new byte[4]); //dunno
+                packet.Write(new byte[3]); //dunno
+                packet.WriteByte((byte)stats.MailFlags);
                 packet.WriteByte((byte)stats.OffenseElement);
                 packet.WriteByte((byte)stats.DefenseElement);
                 packet.WriteByte(stats.MagicResistance);
@@ -337,12 +348,12 @@ namespace Insert_Creative_Name
 
             packet.WriteString8(worldMap.Field);
             packet.WriteByte((byte)worldMap.Nodes.Count);
-            packet.WriteByte(1); //dunno
+            packet.WriteByte(1); //image
             foreach(var node in worldMap.Nodes)
             {
                 packet.WritePoint16(node.ScreenPosition); //position on the map
                 packet.WriteString8(node.Name);
-                packet.Write(new byte[2]); //dunno
+                packet.WriteUInt16(node.CRC);
                 packet.WriteUInt16(node.MapId); //map you'll spawn on
                 packet.WritePoint16(node.TargetPoint); //point you'll spawn on
             }
@@ -461,9 +472,11 @@ namespace Insert_Creative_Name
             foreach(var user in users)
             {
                 byte range = (byte)((UserLevel / 5) + 3);
+                packet.WriteByte((byte)user.BaseClass);
                 packet.WriteByte((byte)(Math.Abs(user.Attributes.Level - UserLevel) <= range ? 151 : 255));
                 packet.WriteByte((byte)user.SocialStatus);
                 packet.WriteString8(user.Titles.FirstOrDefault() ?? "");
+                packet.WriteBoolean(user.IsMaster);
                 packet.WriteString8(user.Name);
             }
 
@@ -580,9 +593,11 @@ namespace Insert_Creative_Name
             //i dont belive there's anything here
             return new ServerPacket(72);
         }
-        internal static ServerPacket ServerTable()
+        internal static ServerPacket ServerTable(byte[] serverTbl)
         {
             var packet = new ServerPacket(86);
+
+            packet.WriteArray16(serverTbl);
 
             return packet;
         }
@@ -635,11 +650,12 @@ namespace Insert_Creative_Name
 
             return packet;
         }
-        internal static ServerPacket[] Metafile(bool sendData, params MetaFile[] metafiles)
+        internal static ServerPacket[] Metafile(bool sendPath, params MetaFile[] metafiles)
         {
             List<ServerPacket> packets = new List<ServerPacket>();
 
-            if (!sendData)
+            //if sendpath, you're just sending filenames, client will respond if it needs the file
+            if (sendPath)
             {
                 var packet = new ServerPacket(111);
                 packet.WriteBoolean(true);
@@ -653,6 +669,7 @@ namespace Insert_Creative_Name
             }
             else
             {
+                //(here we just send them all, but you can send a single one)
                 foreach (var metafile in metafiles)
                 {
                     var packet = new ServerPacket(111);

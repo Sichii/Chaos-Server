@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Insert_Creative_Name.Objects
+namespace Chaos.Objects
 {
     internal sealed class WorldMap
     {

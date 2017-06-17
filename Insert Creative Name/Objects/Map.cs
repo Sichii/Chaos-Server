@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Insert_Creative_Name.Objects
+namespace Chaos.Objects
 {
     [Serializable]
     internal sealed class Map

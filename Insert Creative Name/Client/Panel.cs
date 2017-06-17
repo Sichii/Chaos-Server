@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     [Serializable]
     internal sealed class Panel<T> : IEnumerable<T> where T : Objects.PanelObject

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Insert_Creative_Name.Objects
+namespace Chaos.Objects
 {
     internal abstract class MapObject
     {

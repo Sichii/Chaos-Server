@@ -4,7 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal static class Utility
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal abstract class Packet
     {

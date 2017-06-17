@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal sealed class Crypto
     {
@@ -172,9 +172,7 @@ namespace Insert_Creative_Name
                 }
             };
         }
-        internal Crypto() : this(0, "UrkcnItnI")
-        {
-        }
+        internal Crypto() : this(0, "UrkcnItnI") { }
         internal Crypto(byte seed, string key)
         {
             Seed = seed;

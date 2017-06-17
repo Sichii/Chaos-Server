@@ -1,4 +1,4 @@
-﻿namespace Insert_Creative_Name.Objects
+﻿namespace Chaos.Objects
 {
     internal sealed class Warp : MapObject
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using zlib;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal static class ZLIB
     {

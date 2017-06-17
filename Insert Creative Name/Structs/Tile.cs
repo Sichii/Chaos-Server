@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace Insert_Creative_Name.Objects
+namespace Chaos.Objects
 {
     internal struct Tile
     {
@@ -14,7 +14,7 @@ namespace Insert_Creative_Name.Objects
 
         static Tile()
         {
-            using (Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Insert_Creative_Name.sotp.dat"))
+            using (Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chaos.sotp.dat"))
             {
                 int num = (int)manifestResourceStream.Length;
                 sotp = new byte[num];

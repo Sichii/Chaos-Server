@@ -1,4 +1,4 @@
-﻿namespace Insert_Creative_Name
+﻿namespace Chaos
 {
     internal static class KruCRC
     {

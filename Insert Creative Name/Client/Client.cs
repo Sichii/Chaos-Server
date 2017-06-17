@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal sealed class Client
     {
@@ -15,7 +15,7 @@ namespace Insert_Creative_Name
         private Queue<ServerPacket> SendQueue = new Queue<ServerPacket>();
         private Queue<ClientPacket> ProcessQueue = new Queue<ClientPacket>();
         private byte ServerSequence = 0;
-        internal Server Server { get; }
+        internal WorldServer Server { get; }
         internal Socket ClientSocket { get; }
         internal Crypto Crypto { get; set; }
         internal Objects.User User { get; set; }
@@ -24,7 +24,7 @@ namespace Insert_Creative_Name
         internal string NewCharPw;
 
         //creates a new user with reference to the server, and the user's socket
-        internal Client(Server server, Socket socket)
+        internal Client(WorldServer server, Socket socket)
         {
             Server = server;
             ClientSocket = socket;
@@ -92,10 +92,7 @@ namespace Insert_Creative_Name
             }
         }
 
-        private void EndSend(IAsyncResult ar)
-        {
-            ((Socket)ar.AsyncState).EndSend(ar);
-        }
+        private void EndSend(IAsyncResult ar) => ((Socket)ar.AsyncState).EndSend(ar);
 
         //sends packets to the process/send thread
         internal void Enqueue(params ServerPacket[] packets)
@@ -159,7 +156,7 @@ namespace Insert_Creative_Name
                         //if we have a handler for this packet
                         if (handle != null)
                             //lock the server for synchronization
-                            lock (Server.SyncObj)
+                            lock (WorldServer.SyncObj)
                             {
                                 //no srsly, please handle it
                                 try { handle(this, packet); }

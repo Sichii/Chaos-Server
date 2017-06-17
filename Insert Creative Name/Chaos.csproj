@@ -7,8 +7,8 @@
     <ProjectGuid>{032C0163-368F-4D73-9542-C265BE0F94DB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Insert_Creative_Name</RootNamespace>
-    <AssemblyName>Insert Creative Name</AssemblyName>
+    <RootNamespace>Chaos</RootNamespace>
+    <AssemblyName>Chaos</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -92,7 +92,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Server.cs" />
+    <Compile Include="WorldServer.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="Packets\ServerPacket.cs" />
     <Compile Include="Packets\ServerPackets.cs" />

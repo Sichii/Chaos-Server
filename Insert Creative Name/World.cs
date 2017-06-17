@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Insert_Creative_Name.Objects;
+using Chaos.Objects;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal class World
     {

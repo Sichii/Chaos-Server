@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal sealed class ClientPacket : Packet
     {

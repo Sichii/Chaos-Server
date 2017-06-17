@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Insert_Creative_Name.Objects
+namespace Chaos.Objects
 {
     [Serializable]
     internal sealed class User : Creature

@@ -1,4 +1,4 @@
-﻿namespace Insert_Creative_Name
+﻿namespace Chaos
 {
-    internal delegate bool ClientPacketHandler(Client client, ClientPacket packet);
+    internal delegate void ClientPacketHandler(Client client, ClientPacket packet);
 }

@@ -3,11 +3,11 @@ using System.IO;
 using System.Net;
 using System.Threading;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
     internal class Program
     {
-        private static Server Server;
+        private static WorldServer Server;
         private static Thread ServerThread;
         private static void Main(string[] args)
         {
@@ -23,7 +23,7 @@ namespace Insert_Creative_Name
                 Directory.CreateDirectory(Paths.Chars);
 
             //create the server, start it in a new thread
-            Server = new Server(IPAddress.Any, 2610);
+            Server = new WorldServer(IPAddress.Any, 2610);
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
 

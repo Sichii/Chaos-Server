@@ -7,19 +7,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Insert_Creative_Name
+namespace Chaos
 {
-    
-
     internal static class ProcessPacket
     {
-        internal static Server Server = null;
+        internal static WorldServer Server = null;
         internal static World World = null;
         internal static void CreateCharA(Client client, string name, string password)
         {
             if (name.Length < 4 || name.Length > 12)
                 client.Enqueue(ServerPackets.LobbyMessage(3, "Name must be 4-12 letters long."));
-            else if (password.Length < 4 || password.Length > 12)
+            else if (password.Length < 4 || password.Length > 8)
                 client.Enqueue(ServerPackets.LobbyMessage(3, "Password must be 4-8 characters long."));
             else if (Regex.Match(name, @"^[A-Za-z]{4, 12}$").Success)
             {
