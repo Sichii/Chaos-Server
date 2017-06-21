@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using zlib;
 
 namespace Chaos
@@ -12,80 +7,70 @@ namespace Chaos
     {
         internal static MemoryStream Compress(byte[] buffer)
         {
-            MemoryStream memoryStream1 = new MemoryStream();
-            using (MemoryStream memoryStream2 = new MemoryStream(buffer))
+            MemoryStream compressed = new MemoryStream();
+            using (MemoryStream uncompressed = new MemoryStream(buffer))
+            using (ZOutputStream compressor = new ZOutputStream(compressed, -1))
             {
-                using (ZOutputStream zoutputStream = new ZOutputStream(memoryStream1, -1))
-                {
-                    memoryStream2.Seek(0L, SeekOrigin.Begin);
-                    byte[] buffer1 = new byte[2000];
-                    int count;
-                    while ((count = memoryStream2.Read(buffer1, 0, 2000)) > 0)
-                        zoutputStream.Write(buffer1, 0, count);
-                    zoutputStream.Flush();
-                }
+                uncompressed.Seek(0L, SeekOrigin.Begin);
+                byte[] buffer1 = new byte[2000];
+                int count;
+                while ((count = uncompressed.Read(buffer1, 0, 2000)) > 0)
+                    compressor.Write(buffer1, 0, count);
+                compressor.Flush();
             }
-            return memoryStream1;
+            return compressed;
         }
 
         internal static MemoryStream Decompress(byte[] buffer)
         {
-            MemoryStream memoryStream = new MemoryStream();
-            ZOutputStream zoutputStream = new ZOutputStream(memoryStream);
-            int offset = 0;
-            while (offset < buffer.Length)
+            MemoryStream uncompressed = new MemoryStream();
+            using (ZOutputStream decompressor = new ZOutputStream(uncompressed))
             {
-                int num = buffer.Length - offset;
-                int count = num > 2000 ? 2000 : num;
-                zoutputStream.Write(buffer, offset, count);
-                offset += count;
+                int offset = 0;
+                while (offset < buffer.Length)
+                {
+                    int num = buffer.Length - offset;
+                    int count = num > 2000 ? 2000 : num;
+                    decompressor.Write(buffer, offset, count);
+                    offset += count;
+                }
+                decompressor.Flush();
+                uncompressed.Seek(0L, SeekOrigin.Begin);
             }
-            zoutputStream.Flush();
-            memoryStream.Seek(0L, SeekOrigin.Begin);
-            return memoryStream;
+            return uncompressed;
         }
 
         internal static void Compress(string inFile, string outFile)
         {
-            FileStream fileStream1 = new FileStream(outFile, FileMode.Create);
-            ZOutputStream zoutputStream = new ZOutputStream(fileStream1, -1);
-            FileStream fileStream2 = new FileStream(inFile, FileMode.Open);
-            try
+            using (FileStream uncompressed = new FileStream(outFile, FileMode.Create))
+            using (ZOutputStream compressor = new ZOutputStream(uncompressed, -1))
+            using (FileStream compressed = new FileStream(inFile, FileMode.Open))
             {
-                ZLIB.CopyStream(fileStream2, zoutputStream);
-            }
-            finally
-            {
-                zoutputStream.Close();
-                fileStream1.Close();
-                fileStream2.Close();
+                CopyWriteStream(uncompressed, compressor);
             }
         }
 
         internal static void Decompress(string inFile, string outFile)
         {
-            FileStream fileStream1 = new FileStream(outFile, FileMode.Create);
-            ZOutputStream zoutputStream = new ZOutputStream(fileStream1);
-            FileStream fileStream2 = new FileStream(inFile, FileMode.Open);
-            try
+            using (FileStream compressed = new FileStream(outFile, FileMode.Create))
+            using (ZOutputStream decompressor = new ZOutputStream(compressed))
+            using (FileStream uncompressed = new FileStream(inFile, FileMode.Open))
             {
-                ZLIB.CopyStream(fileStream2, zoutputStream);
-            }
-            finally
-            {
-                zoutputStream.Close();
-                fileStream1.Close();
-                fileStream2.Close();
+                CopyWriteStream(uncompressed, decompressor);
             }
         }
 
-        internal static void CopyStream(Stream input, Stream output)
+        internal static void CopyWriteStream(Stream input, Stream output)
         {
-            byte[] buffer = new byte[2000];
-            int count;
-            while ((count = input.Read(buffer, 0, 2000)) > 0)
-                output.Write(buffer, 0, count);
-            output.Flush();
+            try
+            {
+                byte[] buffer = new byte[2000];
+                int count;
+                while ((count = input.Read(buffer, 0, 2000)) > 0)
+                    output.Write(buffer, 0, count);
+                output.Flush();
+            }
+            catch { }
         }
     }
 }

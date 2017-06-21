@@ -12,7 +12,6 @@ namespace Chaos
             {
                 switch(OpCode)
                 {
-
                     case 2:
                     case 3:
                     case 4:

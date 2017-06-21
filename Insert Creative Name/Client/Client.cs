@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 namespace Chaos
@@ -10,12 +8,13 @@ namespace Chaos
     internal sealed class Client
     {
         private bool Connected = false;
+        private byte ServerType { get; set; } //0 = lobby, 1 = login, 2 = world
         private byte[] ClientBuffer = new byte[4096];
         private List<byte> FullClientBuffer = new List<byte>();
         private Queue<ServerPacket> SendQueue = new Queue<ServerPacket>();
         private Queue<ClientPacket> ProcessQueue = new Queue<ClientPacket>();
         private byte ServerSequence = 0;
-        internal WorldServer Server { get; }
+        internal Server Server { get; }
         internal Socket ClientSocket { get; }
         internal Crypto Crypto { get; set; }
         internal Objects.User User { get; set; }
@@ -24,11 +23,12 @@ namespace Chaos
         internal string NewCharPw;
 
         //creates a new user with reference to the server, and the user's socket
-        internal Client(WorldServer server, Socket socket)
+        internal Client(Server server, Socket socket)
         {
             Server = server;
+            ServerType = 0;
             ClientSocket = socket;
-            Crypto = new Crypto(0, "UrkcnItnI");
+            Crypto = new Crypto();
         }
 
         //connects to the socket and begins receiving data
@@ -36,6 +36,7 @@ namespace Chaos
         {
             ClientSocket.Connect(ClientSocket.RemoteEndPoint);
             Connected = true;
+            Enqueue(ServerPackets.AcceptConnection());
 
             //when we receive data, copy the readable data to the client buffer and call endreceive
             ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), null);
@@ -156,7 +157,7 @@ namespace Chaos
                         //if we have a handler for this packet
                         if (handle != null)
                             //lock the server for synchronization
-                            lock (WorldServer.SyncObj)
+                            lock (Server.SyncObj)
                             {
                                 //no srsly, please handle it
                                 try { handle(this, packet); }
@@ -166,6 +167,11 @@ namespace Chaos
                 }
                 Thread.Sleep(10);
             }
+        }
+
+        internal void Redirect(Redirect redirect)
+        {
+            ServerType = redirect.Type;
         }
     }
 }

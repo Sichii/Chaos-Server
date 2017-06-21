@@ -10,13 +10,13 @@ namespace Chaos
 {
     internal static class ServerPackets
     {
-        internal static ServerPacket ClientVersion(uint tableCrc, byte seed, string key)
+        internal static ServerPacket ConnectionInfo(uint tableCrc, byte seed, byte[] key)
         {
             var packet = new ServerPacket(0);
 
             packet.WriteUInt32(tableCrc);
             packet.WriteByte(seed);
-            packet.WriteString8(key);
+            packet.WriteArray8(key);
 
             return packet;
         }
@@ -30,17 +30,17 @@ namespace Chaos
 
             return packet;
         }
-        internal static ServerPacket Redirect(IPAddress address, short port, byte seed, string key, string name, uint id)
+        internal static ServerPacket Redirect(Redirect redirect)
         {
             var packet = new ServerPacket(3);
 
-            packet.Write(address.GetAddressBytes());
-            packet.WriteInt16(port);
-            packet.WriteByte((byte)(key.Length + Encoding.GetEncoding(49).GetBytes(name).Length + 7));
-            packet.WriteByte(seed);
-            packet.WriteString8(key);
-            packet.WriteString8(name);
-            packet.WriteUInt32(id);
+            packet.Write(redirect.EndPoint.Address.GetAddressBytes());
+            packet.WriteInt16((short)redirect.EndPoint.Port);
+            packet.WriteByte((byte)(redirect.Key.Length + Encoding.GetEncoding(49).GetBytes(redirect.Name).Length + 7));
+            packet.WriteByte(redirect.Seed);
+            packet.WriteArray8(redirect.Key);
+            packet.WriteString8(redirect.Name);
+            packet.WriteUInt32(redirect.Id);
 
             return packet;
         }
@@ -583,10 +583,10 @@ namespace Chaos
 
             return packet;
         }
-        internal static ServerPacket Exchange
+        internal static ServerPacket Exchange()
         {
             //i'll do this later, its cancer
-            get { return new ServerPacket(66); }
+            return new ServerPacket(66);
         }
         internal static ServerPacket CancelCasting()
         {
@@ -644,7 +644,6 @@ namespace Chaos
         internal static ServerPacket HeartbeatB()
         {
             var packet = new ServerPacket(104);
-
             //helps the client keep synchronized
             packet.WriteInt32(Environment.TickCount);
 
@@ -669,7 +668,7 @@ namespace Chaos
             }
             else
             {
-                //(here we just send them all, but you can send a single one)
+                //here we just send them all, but you can send a single one
                 foreach (var metafile in metafiles)
                 {
                     var packet = new ServerPacket(111);
@@ -683,6 +682,16 @@ namespace Chaos
             }
 
             return packets.ToArray();
+        }
+
+        internal static ServerPacket AcceptConnection()
+        {
+            var packet = new ServerPacket(126);
+
+            packet.WriteByte(27);
+            packet.WriteString("CONNECTED SERVER\n");
+
+            return packet;
         }
     }
 }

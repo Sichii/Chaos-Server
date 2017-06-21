@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace Chaos
 {
@@ -9,7 +8,7 @@ namespace Chaos
 
         internal ClientPackets()
         {
-            Handlers[0] = new ClientPacketHandler(PacketHandler_0x00_ClientVersionRequest);
+            Handlers[0] = new ClientPacketHandler(PacketHandler_0x00_JoinServer);
             Handlers[2] = new ClientPacketHandler(PacketHandler_0x02_CreatCharA);
             Handlers[3] = new ClientPacketHandler(PacketHandler_0x03_Login);
             Handlers[4] = new ClientPacketHandler(PacketHandler_0x04_CreateCharB);
@@ -47,7 +46,7 @@ namespace Chaos
             Handlers[69] = new ClientPacketHandler(PacketHandler_0x45_HeartBeat);
             Handlers[71] = new ClientPacketHandler(PacketHandler_0x47_AdjustStat);
             Handlers[74] = new ClientPacketHandler(PacketHandler_0x4A_ExchangeWindow);
-            Handlers[75] = new ClientPacketHandler(PacketHandler_0x4B_RequestNotif);
+            Handlers[75] = new ClientPacketHandler(PacketHandler_0x4B_RequestNotification);
             Handlers[77] = new ClientPacketHandler(PacketHandler_0x4D_BeginChant);
             Handlers[78] = new ClientPacketHandler(PacketHandler_0x4E_Chant);
             Handlers[79] = new ClientPacketHandler(PacketHandler_0x4F_PortraitText);
@@ -58,9 +57,9 @@ namespace Chaos
             Handlers[123] = new ClientPacketHandler(PacketHandler_0x7B_MetafileRequest);
         }
 
-        private void PacketHandler_0x00_ClientVersionRequest(Client client, ClientPacket packet)
+        private void PacketHandler_0x00_JoinServer(Client client, ClientPacket packet)
         {
-            //send client version
+            ProcessPacket.JoinServer(client);
         }
 
         private void PacketHandler_0x02_CreatCharA(Client client, ClientPacket packet)
@@ -83,38 +82,50 @@ namespace Chaos
             packet.ReadUInt32();
             packet.ReadUInt16();
             packet.ReadByte();
+
+            ProcessPacket.Login(client, name, pw);
         }
 
         private void PacketHandler_0x04_CreateCharB(Client client, ClientPacket packet)
         {
             byte hairStyle = packet.ReadByte(); //1-17
             byte gender = packet.ReadByte(); //1 or 2
-            byte hairColor = packet.ReadByte(); //1-13}
+            byte hairColor = packet.ReadByte(); //1-13
+
+            ProcessPacket.CreateCharB(client, hairStyle, gender, hairColor);
+        }
+
         private void PacketHandler_0x05_RequestMapData(Client client, ClientPacket packet)
         {
-            /*
-            client.Enqueue(client.ServerPackets.MapData);
-            */
+            ProcessPacket.RequestMapData(client);
         }
         private void PacketHandler_0x06_Walk(Client client, ClientPacket packet)
         {
             Direction direction = (Direction)packet.ReadByte();
             int stepCount = packet.ReadByte();
+
+            ProcessPacket.Walk(client, direction, stepCount);
         }
         private void PacketHandler_0x07_Pickup(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
+
+            ProcessPacket.Pickup(client, inventorySlot, groundPoint);
         }
         private void PacketHandler_0x08_Drop(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
             int count = packet.ReadInt32();
+
+            ProcessPacket.Drop(client, inventorySlot, groundPoint, count);
         }
         private void PacketHandler_0x0B_ClientExit(Client client, ClientPacket packet)
         {
             bool requestExit = packet.ReadBoolean();
+
+            ProcessPacket.ClientExit(client, requestExit);
             //if requestexit, send exit confirmation 4C
             //when the client gets exit confirmation, it will resend this packet except false
             //then log off
@@ -123,10 +134,14 @@ namespace Chaos
         {
             ClientMessageType type = (ClientMessageType)packet.ReadByte();
             string message = packet.ReadString8();
+
+            ProcessPacket.PublicChat(client, type, message);
         }
         private void PacketHandler_0x0F_UseSpell(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
+            uint targetId = client.User.Id;
+            Point targetPoint = client.User.Point;
             //if this is the end of the packet
             if (packet.Position == packet.Data.Length - 1)
             {
@@ -135,9 +150,11 @@ namespace Chaos
             else
             {
                 //otherwise, they casted on a target
-                int targetId = packet.ReadInt32();
-                Point targetPoint = packet.ReadPoint();
+                targetId = packet.ReadUInt32();
+                targetPoint = packet.ReadPoint();
             }
+
+            ProcessPacket.UseSpell(client, slot, targetId, targetPoint);
         }
         private void PacketHandler_0x10_ClientJoin(Client client, ClientPacket packet)
         {
@@ -145,19 +162,24 @@ namespace Chaos
             string key = packet.ReadString8();
             string name = packet.ReadString8();
             uint id = packet.ReadUInt32();
-            client.Crypto = new Crypto(seed, key, name);
+
+            ProcessPacket.ClientJoin(client, seed, key, name, id);
         }
         private void PacketHandler_0x11_Turn(Client client, ClientPacket packet)
         {
             Direction direction = (Direction)packet.ReadByte();
+
+            ProcessPacket.Turn(client, direction);
         }
 
         private void PacketHandler_0x13_Spacebar(Client client, ClientPacket packet)
         {
-            //use all assails, cancel casting
+            ProcessPacket.Spacebar(client);
         }
         private void PacketHandler_0x18_RequestWorldList(Client client, ClientPacket packet)
         {
+            ProcessPacket.RequestWorldList(client);
+
             //there's nothing in this packet, when you receive it it's just a request for the userlist
             //userlist format is
             /*
@@ -180,6 +202,8 @@ namespace Chaos
         {
             string targetName = packet.ReadString8();
             string message = packet.ReadString8();
+
+            ProcessPacket.Whisper(client, targetName, message);
         }
         private void PacketHandler_0x1B_UserOptions(Client client, ClientPacket packet)
         {
@@ -192,10 +216,14 @@ namespace Chaos
             */
 
             UserOption option = (UserOption)packet.ReadByte();
+
+            ProcessPacket.UserOptions(client, option);
         }
         private void PacketHandler_0x1C_UseItem(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
+
+            ProcessPacket.UseItem(client, slot);
         }
         private void PacketHandler_0x1D_Emote(Client client, ClientPacket packet)
         {
@@ -203,24 +231,32 @@ namespace Chaos
             if (index <= 35)
                 index += 9;
 
+            ProcessPacket.Emote(client, index);
+
             //client.Enqueue(client.ServerPackets.CreatureAnimation(client.user.id, index, 120));
         }
         private void PacketHandler_0x24_DropGold(Client client, ClientPacket packet)
         {
             uint amount = packet.ReadUInt32();
             Point groundPoint = packet.ReadPoint();
+
+            ProcessPacket.DropGold(client, amount, groundPoint);
         }
         private void PacketHandler_0x26_ChangePassword(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
             string currentPw = packet.ReadString8();
             string newPw = packet.ReadString8();
+
+            ProcessPacket.ChangePassword(client, name, currentPw, newPw);
         }
         private void PacketHandler_0x29_DropItemOnCreature(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
             uint targetId = packet.ReadUInt32();
             byte count = packet.ReadByte();
+
+            ProcessPacket.DropItemOnCreature(client, inventorySlot, targetId, count);
 
             //if target is an merchant or monster, put it in their drop pile
             //if it's a user start an exchange
@@ -230,17 +266,20 @@ namespace Chaos
             uint amount = packet.ReadUInt32();
             uint targetId = packet.ReadUInt32();
 
+            ProcessPacket.DropGoldOnCreature(client, amount, targetId);
             //if target is an merchant or monster, put it in their drop pile
             //if it's a user start an exchange
         }
         private void PacketHandler_0x2D_ProfileRequest(Client client, ClientPacket packet)
         {
+            ProcessPacket.ProfileRequest(client);
             /*
              client.Enqueue(client.ServerPackets.ProfileSelf);
              */
         }
         private void PacketHandler_0x2E_GroupRequest(Client client, ClientPacket packet)
         {
+            Objects.GroupBox box = null;
             //2 = invite, 3 = join, 4 = groupBox, 6 = remove group box
             byte type = packet.ReadByte();
             if (type == 4)
@@ -256,11 +295,16 @@ namespace Chaos
                 maxOfEach[(byte)BaseClass.Rogue] = packet.ReadByte();
                 maxOfEach[(byte)BaseClass.Priest] = packet.ReadByte();
                 maxOfEach[(byte)BaseClass.Monk] = packet.ReadByte();
+
+                box = new Objects.GroupBox(client.User, groupName, maxLevel, maxOfEach);
             }
             string targetName = packet.ReadString8();
+
+            ProcessPacket.GroupRequest(client, type, targetName, box);
         }
         private void PacketHandler_0x2F_ToggleGroup(Client client, ClientPacket packet)
         {
+            ProcessPacket.ToggleGroup(client);
             //toggle group allowance
         }
         private void PacketHandler_0x30_SwapSlot(Client client, ClientPacket packet)
@@ -273,17 +317,21 @@ namespace Chaos
             //items: 1-59
             byte origSlot = packet.ReadByte();
             byte endSlot = packet.ReadByte();
+
+            ProcessPacket.SwapSlot(client, pane, origSlot, endSlot);
         }
         private void PacketHandler_0x38_RefreshRequest(Client client, ClientPacket packet)
         {
             //send them things
             //client.Enqueue(client.ServerPackets.RefreshResponse());
+
+            ProcessPacket.RefreshRequest(client);
         }
         private void PacketHandler_0x39_Pursuit(Client client, ClientPacket packet)
         {
             byte objType = packet.ReadByte(); //almost always 1
-            int objId = packet.ReadInt32(); //id of object
-            int pursuitId = packet.ReadUInt16(); //what they want to do
+            uint objId = packet.ReadUInt32(); //id of object
+            uint pursuitId = packet.ReadUInt16(); //what they want to do
             /*
             usually this is the end, but sometimes theres more
             the only thing i know uses this is repairing specific items
@@ -292,13 +340,17 @@ namespace Chaos
             byte slot = packet.Readbyte(); //slot of item to replair
             */
             byte[] args = packet.ReadBytes((packet.Data.Length - 1) - packet.Position);
+
+            ProcessPacket.Pursuit(client, objType, objId, pursuitId, args);
         }
         private void PacketHandler_0x3A_DialogResponse(Client client, ClientPacket packet)
         {
             byte objType = packet.ReadByte(); //almost always 1
-            int objId = packet.ReadInt32(); //id of object
+            uint objId = packet.ReadUInt32(); //id of object
             ushort pursuitId = packet.ReadUInt16(); //the pursuit theyre on
             ushort dialogId = packet.ReadUInt16(); //id of the dialog that comes next
+
+            ProcessPacket.DialogResponse(client, objType, objId, pursuitId, dialogId);
         }
 
         //this packet is literally retarded
@@ -366,10 +418,14 @@ namespace Chaos
                         break;
                     }
             }
+
+            ProcessPacket.Boards();
         }
         private void PacketHandler_0x3E_UseSkill(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
+
+            ProcessPacket.UseSkill(client, slot);
         }
 
         private void PacketHandler_0x3F_ClickWorldMap(Client client, ClientPacket packet)
@@ -377,26 +433,33 @@ namespace Chaos
             uint mapId = packet.ReadUInt32();
             Point point = packet.ReadPoint();
 
+            ProcessPacket.ClickWorldMap(client, mapId, point);
             //theyre clicking a worldMapNode here
         }
         private void PacketHandler_0x43_ClickObject(Client client, ClientPacket packet)
         {
-            switch (packet.ReadByte()) //click type
+            byte type = packet.ReadByte();
+            switch (type) //click type
             {
                 case 1:
                     //they clicked an object, this is it's id
                     uint objectId = packet.ReadUInt32();
+                    ProcessPacket.ClickObject(client, objectId);
                     break;
                 case 3:
                     //they clicked a random spot, or something without an id, this is where
                     Point clickPoint = packet.ReadPoint();
+                    ProcessPacket.ClickObject(client, clickPoint);
                     break;
             }
+
         }
         private void PacketHandler_0x44_RemoveEquipment(Client client, ClientPacket packet)
         {
             //slot to take off
             byte slot = packet.ReadByte();
+
+            ProcessPacket.RemoveEquipment(client, slot);
         }
         private void PacketHandler_0x45_HeartBeat(Client client, ClientPacket packet)
         {
@@ -404,6 +467,8 @@ namespace Chaos
             //we receive the same bytes in reverse order from the client
             byte b = packet.ReadByte();
             byte a = packet.ReadByte();
+
+            ProcessPacket.HeartBeat(client, a, b);
             //check these against what we sent
             //check how long it took to receive them from when we sent them
             //generate new values for the next heartbeat
@@ -412,21 +477,26 @@ namespace Chaos
         {
             //Possibly create an enum to show which stat was improved last to allow for a *correct* and fast allocation of stats later on.
             Stat stat = (Stat)packet.ReadByte();
+
+            ProcessPacket.AdjustStat(client, stat);
         }
         private void PacketHandler_0x4A_ExchangeWindow(Client client, ClientPacket packet)
         {
-            switch (packet.ReadByte()) //opt
+            byte type = packet.ReadByte();
+            switch (type) //opt
             {
                 case 0: //begin trade
                     {
                         uint targetId = packet.ReadUInt32();
-                        //send exchange to target
+                        ProcessPacket.ExchangeWindow(client, type, targetId);
                         break;
                     }
                 case 1: //add nonstackable item
                     {
                         uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
+
+                        ProcessPacket.ExchangeWindow(client, type, targetId, slot);
                         break;
                     }
                 case 2: //add stackable item
@@ -434,34 +504,40 @@ namespace Chaos
                         uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
                         byte count = packet.ReadByte();
+                        ProcessPacket.ExchangeWindow(client, type, targetId, slot, count);
                         break;
                     }
                 case 3: //add gold
                     {
                         uint targetId = packet.ReadUInt32();
                         uint amount = packet.ReadUInt32();
+                        ProcessPacket.ExchangeWindow(client, type, targetId, amount);
                         break;
                     }
                 case 4: //cancel trade
                     //trade was canceled by this client
-                    break;
                 case 5: //accept trade
                     //trade was accepted by this client
+                    ProcessPacket.ExchangeWindow(client, type);
                     break;
             }
         }
-        private void PacketHandler_0x4B_RequestNotif(Client client, ClientPacket packet)
+        private void PacketHandler_0x4B_RequestNotification(Client client, ClientPacket packet)
         {
             //i don't believe there's anything here
+            ProcessPacket.RequestNotification(client);
         }
 
         private void PacketHandler_0x4D_BeginChant(Client client, ClientPacket packet)
         {
             //this client is chanting
+            ProcessPacket.BeginChant(client);
         }
         private void PacketHandler_0x4E_Chant(Client client, ClientPacket packet)
         {
             string chant = packet.ReadString8();
+
+            ProcessPacket.Chant(client, chant);
             //check if theyre chanting
             //if theyre chanting send a caption
         }
@@ -471,40 +547,35 @@ namespace Chaos
             ushort portraitLength = packet.ReadUInt16();
             byte[] portraitData = packet.ReadBytes(portraitLength);
             string profileMsg = packet.ReadString16();
+
+            ProcessPacket.PortraitText(client, totalLength, portraitLength, portraitData, profileMsg);
         }
         private void PacketHandler_0x57_ServerTable(Client client, ClientPacket packet)
         {
             byte type = packet.ReadByte(); //1 = table request, else server number in the table
-
-            if(type == 1)
-            {
-                //send server table
-            }
-            else
-            {
-                //redirect to server type
-            }
+            ProcessPacket.ServerTable(client, type);
         }
         private void PacketHandler_0x68_RequestHomepage(Client client, ClientPacket packet)
         {
+            ProcessPacket.RequestHomepage(client);
             //i don't believe there's anything here
         }
         private void PacketHandler_0x75_HeartBeatTimer(Client client, ClientPacket packet)
         {
             //use this to make sure we're in sync
-            TimeSpan serverTimer = new TimeSpan(packet.ReadUInt32()); //server ticks
-            TimeSpan clientTimer = new TimeSpan(packet.ReadUInt32()); //client ticks
+            TimeSpan serverTicks = new TimeSpan(packet.ReadUInt32()); //server ticks
+            TimeSpan clientTicks = new TimeSpan(packet.ReadUInt32()); //client ticks
+            ProcessPacket.HeartBeatTimer(client, serverTicks, clientTicks);
         }
         private void PacketHandler_0x79_SocialStatus(Client client, ClientPacket packet)
         {
             SocialStatus status = (SocialStatus)packet.ReadByte();
+            ProcessPacket.SocialStatus(client, status);
         }
         private void PacketHandler_0x7B_MetafileRequest(Client client, ClientPacket packet)
         {
-            /*
-            if (packet.ReadBoolean())
-                client.Enqueue(client.ServerPackets.Metafile);
-                */
+            bool all = packet.ReadBoolean();
+            ProcessPacket.MetafileRequest(client, all);
         }
     }
 }

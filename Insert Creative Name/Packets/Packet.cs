@@ -296,6 +296,11 @@ namespace Chaos
                     WriteArray((Array)current);
             }
         }
+        internal void WriteArray8(Array value)
+        {
+            WriteByte((byte)value.Length);
+            WriteArray(value);
+        }
 
         internal void WriteArray16(Array value)
         {

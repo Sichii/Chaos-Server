@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using Chaos.Objects;
 
 namespace Chaos
@@ -15,7 +12,6 @@ namespace Chaos
         internal ConcurrentDictionary<ushort, Map> Maps { get; set; }
         internal ConcurrentDictionary<uint, WorldMap> WorldMaps { get; set; }
         internal ConcurrentDictionary<uint, WorldObject> Objects { get; set; }
-        internal string LobbyNotification = "UNDER CONSTRUCTION";
 
         internal World()
         {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Chaos.Objects
+﻿namespace Chaos.Objects
 {
     internal abstract class MapObject
     {

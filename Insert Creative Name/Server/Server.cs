@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
 namespace Chaos
 {
-    internal sealed class WorldServer
+    internal sealed class Server
     {
         internal static readonly object SyncObj = new object();
         private IPAddress LocalIp;
@@ -14,10 +13,12 @@ namespace Chaos
         private IPEndPoint LocalEndPoint;
         internal Socket ServerSocket;
         internal ClientPacketHandler[] ClientPacketHandlers { get; }
+        internal ConcurrentDictionary<Socket, Client> LoginClients { get; }
+        internal ConcurrentDictionary<Socket, Client> LobbyClients { get; }
         internal World World { get; }
         internal byte[] Table { get; }
 
-        internal WorldServer(IPAddress ip, int port)
+        internal Server(IPAddress ip, int port)
         {
             LocalIp = ip;
             LocalPort = port;
@@ -25,6 +26,8 @@ namespace Chaos
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ClientPacketHandlers = new ClientPackets().Handlers;
             World = new World();
+            LoginClients = new ConcurrentDictionary<Socket, Client>();
+            LobbyClients = new ConcurrentDictionary<Socket, Client>();
             ProcessPacket.Server = this;
             ProcessPacket.World = World;
             Table = Properties.Resources.mServer;
@@ -33,7 +36,7 @@ namespace Chaos
         internal void Start()
         {
             ServerSocket.Bind(LocalEndPoint);
-            ServerSocket.Listen(10);
+            ServerSocket.Listen(100);
             ServerSocket.BeginAccept(new AsyncCallback(EndAccept), null);
         }
 
@@ -41,7 +44,8 @@ namespace Chaos
         {
             //create the user, and add them to the userlist
             Client newClient = new Client(this, ServerSocket.EndAccept(ar));
-            World.Clients.TryAdd(newClient.ClientSocket, newClient);
+            if (LoginClients.TryAdd(newClient.ClientSocket, newClient))
+                newClient.Connect();
 
             //start listening on the socket again
             LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);

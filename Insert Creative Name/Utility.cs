@@ -1,29 +1,16 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Chaos
 {
     internal static class Utility
     {
-        private static Random m_random = new Random();
+        private static Random random = new Random();
 
-        internal static int Random()
-        {
-            return m_random.Next();
-        }
-
-        internal static int Random(int maxValue)
-        {
-            return m_random.Next(maxValue);
-        }
-
-        internal static int Random(int minValue, int maxValue)
-        {
-            return m_random.Next(minValue, maxValue);
-        }
+        internal static int Random() => random.Next();
+        internal static int Random(int maxValue) => random.Next(maxValue);
+        internal static int Random(int minValue, int maxValue) => random.Next(minValue, maxValue);
 
         internal static byte[] ImageToByteArray(Image img)
         {

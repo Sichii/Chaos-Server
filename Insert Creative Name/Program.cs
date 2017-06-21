@@ -7,7 +7,7 @@ namespace Chaos
 {
     internal class Program
     {
-        private static WorldServer Server;
+        private static Server Server;
         private static Thread ServerThread;
         private static void Main(string[] args)
         {
@@ -23,7 +23,7 @@ namespace Chaos
                 Directory.CreateDirectory(Paths.Chars);
 
             //create the server, start it in a new thread
-            Server = new WorldServer(IPAddress.Any, 2610);
+            Server = new Server(IPAddress.Any, 2610);
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
 
