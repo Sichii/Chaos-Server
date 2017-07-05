@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Chaos
 {
-    [Serializable]
     internal sealed class Panel<T> : IEnumerable<T> where T : Objects.PanelObject
     {
         public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
@@ -35,17 +34,26 @@ namespace Chaos
                 Invalid = new byte[] { 19 };
         }
 
-        //validates the slot
+        /// <summary>
+        /// Makes sure the slot is valid.
+        /// </summary>
+        /// <param name="slot">Slot to check.</param>
         private bool Valid(byte slot) => slot > 0 && !Invalid.Contains(slot) && slot < Length;
 
-        //if the slot is taken, overwrite it, if it's not then create it
+        /// <summary>
+        /// Overwrites or adds an object at the object's slot location.
+        /// </summary>
+        /// <param name="obj">Object to add.</param>
         internal void Add(T obj)
         {
             if (Valid(obj.Slot))
                 Objects[obj.Slot] = obj;
         }
 
-        //attempts to set the value of the slot to null, otherwise return false
+        /// <summary>
+        /// Sets the value of the slot to null. Returns false if invalid slot.
+        /// </summary>
+        /// <param name="slot">Slot to remove.</param>
         internal bool TryRemove(byte slot)
         {
             if (Valid(slot))
@@ -56,7 +64,11 @@ namespace Chaos
             return false;
         }
 
-        //attempts to remove the object at the specified slot and return it. returns false if invalid slot/doesnt exist/fails to remove
+        /// <summary>
+        /// Attempts <see cref="TryRemove(byte)"/> while returning the value.
+        /// </summary>
+        /// <param name="slot">Slot to remove.</param>
+        /// <param name="obj">Return object if successful.</param>
         internal bool TryGetRemove(byte slot, out T obj)
         {
             obj = Objects[slot];
@@ -67,11 +79,15 @@ namespace Chaos
             return false;
         }
 
-        //attempts to swap two objects. returns false if it fails to remove either object for any reason.
+        /// <summary>
+        /// Attempts <see cref="TryGetRemove(byte, out T)"/> on each slot, then <see cref="Add(T)"/> to swap places.
+        /// If either fails, items will be put back.
+        /// </summary>
+        /// <param name="slot1">First slot to swap.</param>
+        /// <param name="slot2">Second slot to swap.</param>
         internal bool TrySwap(byte slot1, byte slot2)
         {
             T one, two;
-
             if (TryGetRemove(slot1, out one) && TryGetRemove(slot2, out two))
             {
                 one.Slot = slot2;

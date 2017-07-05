@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using Chaos.Objects;
 
-namespace Chaos.Objects
+namespace Chaos
 {
-    [Serializable]
     internal sealed class Map
     {
         internal ConcurrentDictionary<uint, WorldObject> Objects { get; set; }

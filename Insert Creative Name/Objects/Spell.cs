@@ -2,7 +2,6 @@
 
 namespace Chaos.Objects
 {
-    [Serializable]
     internal sealed class Spell : PanelObject
     {
         internal byte Type { get; set; }

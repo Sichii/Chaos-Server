@@ -2,7 +2,7 @@
 
 namespace Chaos
 {
-    internal class MetafileNode
+    internal struct MetafileNode
     {
         internal string Name { get; private set; }
         internal List<string> Properties { get; private set; }

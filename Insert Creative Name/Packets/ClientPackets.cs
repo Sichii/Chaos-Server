@@ -142,14 +142,10 @@ namespace Chaos
             byte slot = packet.ReadByte();
             uint targetId = client.User.Id;
             Point targetPoint = client.User.Point;
-            //if this is the end of the packet
-            if (packet.Position == packet.Data.Length - 1)
+
+            //if this isnt the end of the packet
+            if (packet.Position != packet.Data.Length - 1)
             {
-                //then they casted the spell on themself
-            }
-            else
-            {
-                //otherwise, they casted on a target
                 targetId = packet.ReadUInt32();
                 targetPoint = packet.ReadPoint();
             }

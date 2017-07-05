@@ -10,17 +10,27 @@ namespace Chaos
         internal byte[] Data { get; }
         internal List<MetafileNode> Nodes { get; private set; }
 
+        /// <summary>
+        /// Serverside representation of the MetaFiles. This will hold MetaFile data.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="data"></param>
         private MetaFile(string name, byte[] data)
         {
             Name = name;
+            Data = data;
             Nodes = new List<MetafileNode>();
         }
 
+        /// <summary>
+        /// Loads the metafile with the given name.
+        /// </summary>
+        /// <param name="name"></param>
         internal static MetaFile Load(string name)
         {
             MetaFile metaFile;
 
-            using (FileStream fileStream = File.Open(Paths.Metafiles + @"\name", FileMode.Open, FileAccess.Read, FileShare.Read))
+            FileStream fileStream = File.Open(Paths.Metafiles + name, FileMode.Open, FileAccess.Read, FileShare.Read);
             using (MemoryStream dataStream = new MemoryStream())
             using (BinaryReader binaryReader = new BinaryReader(fileStream, Encoding.GetEncoding(949)))
             {

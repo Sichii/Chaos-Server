@@ -214,8 +214,9 @@ namespace Chaos
             DES.Key = Encoding.ASCII.GetBytes(key1);
             DES.IV = Encoding.ASCII.GetBytes(key2);
 
-            using (FileStream file = File.Create(path))
-            using (ICryptoTransform encryptor = DES.CreateEncryptor())
+            FileStream file = File.Create(path);
+            ICryptoTransform encryptor = DES.CreateEncryptor();
+
             using (CryptoStream crypt = new CryptoStream(file, encryptor, CryptoStreamMode.Write))
             {
                 byte[] data = fileData.ToArray();
@@ -229,9 +230,10 @@ namespace Chaos
             DES.Key = Encoding.ASCII.GetBytes(key1);
             DES.IV = Encoding.ASCII.GetBytes(key2);
 
-            using (FileStream file = File.OpenRead(path))
-            using (ICryptoTransform decryptor = DES.CreateDecryptor())
-            using (CryptoStream crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read))
+            FileStream file = File.OpenRead(path);
+            ICryptoTransform decryptor = DES.CreateDecryptor();
+            CryptoStream crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read);
+
             using (StreamReader reader = new StreamReader(crypt))
                 return new MemoryStream(Encoding.Unicode.GetBytes(reader.ReadToEnd()));
         }

@@ -2,7 +2,6 @@
 
 namespace Chaos
 {
-    [Serializable]
     internal struct Point
     {
         internal short X { get; set; }
@@ -14,25 +13,13 @@ namespace Chaos
             Y = y;
         }
 
-        public static bool operator ==(Point pt1, Point pt2)
-        {
-            return pt1.Equals(pt2);
-        }
+        public static bool operator ==(Point pt1, Point pt2) => pt1.Equals(pt2);
+        public static bool operator !=(Point pt1, Point pt2) => !pt1.Equals(pt2);
+        internal int Distance(Point pt) => Distance(pt.X, pt.Y);
+        internal int Distance(short x, short y) => Math.Abs(x - X) + Math.Abs(y - Y);
+        public override int GetHashCode() => (X << 16) + Y;
+        public override string ToString() => $@"{X},{Y}";
 
-        public static bool operator !=(Point pt1, Point pt2)
-        {
-            return !pt1.Equals(pt2);
-        }
-
-        internal int Distance(Point pt)
-        {
-            return Distance(pt.X, pt.Y);
-        }
-
-        internal int Distance(short x, short y)
-        {
-            return Math.Abs(x - X) + Math.Abs(y - Y);
-        }
 
         internal void Offset(Direction direction)
         {
@@ -72,16 +59,31 @@ namespace Chaos
 
         internal Direction Relation(Point point)
         {
-            if (Y < point.Y)
-                return Direction.North;
-            if (X > point.X)
-                return Direction.East;
-            if (Y > point.Y)
-                return Direction.South;
-            if (X < point.X)
-                return Direction.West;
+            Direction direction = Direction.Invalid;
+            int degree = 0;
 
-            return Direction.Invalid;
+            if (Y < point.Y && point.Y - Y > degree)
+            {
+                degree = point.Y - Y;
+                direction = Direction.North;
+            }
+            if (X > point.X && X - point.X > degree)
+            {
+                degree = point.X - X;
+                direction = Direction.East;
+            }
+            if (Y > point.Y && Y - point.Y > degree)
+            {
+                degree = Y - point.Y;
+                direction = Direction.South;
+            }
+            if (X < point.X && point.X - X > degree)
+            {
+                degree = point.X - X;
+                direction = Direction.West;
+            }
+
+            return direction;
         }
 
         public override bool Equals(object obj)
@@ -91,16 +93,6 @@ namespace Chaos
 
             Point point = (Point)obj;
             return point.X == X && point.Y == Y;
-        }
-
-        public override int GetHashCode()
-        {
-            return (X << 16) + Y;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0},{1}", X, Y);
         }
     }
 }

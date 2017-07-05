@@ -69,14 +69,20 @@
         {
             switch (GetHexString().Substring(0, 2))
             {
+                case "00":
+                    return $"[ConnectionInfo] Send> {GetHexString()}";
+                case "02":
+                    return $"[LobbyMessage] Send> {GetHexString()}";
                 case "03":
                     return $"[Redirect] Send> {GetHexString()}";
+                case "04":
+                    return $"[Location] Send> {GetHexString()}";
                 case "05":
                     return $"[UserID] Send> {GetHexString()}";
                 case "07":
-                    return $"[Display] Send> {GetHexString()}";
+                    return $"[DisplayItemMonster] Send> {GetHexString()}";
                 case "08":
-                    return $"[Attrib] Send> {GetHexString()}";
+                    return $"[Attributes] Send> {GetHexString()}";
                 case "0A":
                     return $"[SysMsg] Send> {GetHexString()}";
                 case "0B":
@@ -84,17 +90,17 @@
                 case "0C":
                     return $"[CreatureWalk] Send> {GetHexString()}";
                 case "0D":
-                    return $"[Chat] Send> {GetHexString()}";
+                    return $"[PublicChat] Send> {GetHexString()}";
                 case "0E":
-                    return $"[RemoveObj] Send> {GetHexString()}";
+                    return $"[RemoveObject] Send> {GetHexString()}";
                 case "0F":
                     return $"[AddItem] Send> {GetHexString()}";
                 case "10":
-                    return $"[RemItem] Send> {GetHexString()}";
+                    return $"[RemoveItem] Send> {GetHexString()}";
                 case "11":
                     return $"[CreatureTurn] Send> {GetHexString()}";
                 case "13":
-                    return $"[HPBar] Send> {GetHexString()}";
+                    return $"[HealthBar] Send> {GetHexString()}";
                 case "15":
                     return $"[MapInfo] Send> {GetHexString()}";
                 case "17":
@@ -103,42 +109,42 @@
                     return $"[RemSpell] Send> {GetHexString()}";
                 case "19":
                     return $"[Sound] Send> {GetHexString()}";
-                case "1F":
-                    return $"[MapChange] Send> {GetHexString()}";
                 case "1A":
-                    return $"[CreatureAnim] Send> {GetHexString()}";
+                    return $"[CreatureAnimation] Send> {GetHexString()}";
+                case "1F":
+                    return $"[MapChangeComplete] Send> {GetHexString()}";
                 case "22":
-                    return $"[RefreshR] Send> {GetHexString()}";
+                    return $"[RefreshResponse] Send> {GetHexString()}";
                 case "29":
-                    return $"[SpellAni] Send> {GetHexString()}";
+                    return $"[Animation] Send> {GetHexString()}";
                 case "2C":
                     return $"[AddSkill] Send> {GetHexString()}";
                 case "2D":
-                    return $"[RemSkill] Send> {GetHexString()}";
+                    return $"[RemoveSkill] Send> {GetHexString()}";
                 case "2E":
                     return $"[WorldMap] Send> {GetHexString()}";
                 case "2F":
-                    return $"[MerchMenu] Send> {GetHexString()}";
+                    return $"[MerchantMenu] Send> {GetHexString()}";
                 case "30":
-                    return $"[Pursuit] Send> {GetHexString()}";
+                    return $"[Dialog] Send> {GetHexString()}";
                 case "31":
                     return $"[Board] Send> {GetHexString()}";
                 case "32":
-                    return $"[ClientWalkF] Send> {GetHexString()}";
+                    return $"[Door] Send> {GetHexString()}";
                 case "33":
                     return $"[DisplayUser] Send> {GetHexString()}";
                 case "34":
-                    return $"[ProfileUser] Send> {GetHexString()}";
+                    return $"[Profile] Send> {GetHexString()}";
                 case "36":
-                    return $"[Userlist] Send> {GetHexString()}";
+                    return $"[WorldList] Send> {GetHexString()}";
                 case "37":
-                    return $"[AddEquip] Send> {GetHexString()}";
+                    return $"[AddEquipment] Send> {GetHexString()}";
                 case "38":
-                    return $"[RemEquip] Send> {GetHexString()}";
+                    return $"[RemoveEquipment] Send> {GetHexString()}";
                 case "39":
                     return $"[ProfileSelf] Send> {GetHexString()}";
                 case "3A":
-                    return $"[SpellBar] Send> {GetHexString()}";
+                    return $"[EffectsBar] Send> {GetHexString()}";
                 case "3B":
                     return $"[HeartBeatA] Send> {GetHexString()}";
                 case "3C":
@@ -149,16 +155,22 @@
                     return $"[Exchange] Send> {GetHexString()}";
                 case "48":
                     return $"[CancelCast] Send> {GetHexString()}";
+                case "56":
+                    return $"[ServerTable] Send> {GetHexString()}";
                 case "58":
-                    return $"[MapLoad] Send> {GetHexString()}";
+                    return $"[MapLoadComplete] Send> {GetHexString()}";
                 case "60":
-                    return $"[Notif] Send> {GetHexString()}";
+                    return $"[LobbyNotification] Send> {GetHexString()}";
+                case "66":
+                    return $"[LobbyControls] Send> {GetHexString()}";
                 case "67":
-                    return $"[MapChangePend] Send> {GetHexString()}";
+                    return $"[MapChangePending] Send> {GetHexString()}";
                 case "68":
                     return $"[HeartBeatB] Send> {GetHexString()}";
                 case "6F":
                     return $"[Metafile] Send> {GetHexString()}";
+                case "7E":
+                    return $"[AcceptConnection] Send> {GetHexString()}";
                 default:
                     return $"[**Unknown**] Send> {GetHexString()}";
             }

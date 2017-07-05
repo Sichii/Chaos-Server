@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
-    [Serializable]
     internal sealed class UserOptions
     {
         internal bool Whisper { get; set; }
@@ -15,6 +14,25 @@ namespace Chaos
         internal bool FastMove { get; set; }
         internal bool GuildChat { get; set; }
 
+        /// <summary>
+        /// Object representing the user's options page.
+        /// </summary>
+        internal UserOptions()
+        {
+            Whisper = true;
+            Group = true;
+            Shout = true;
+            Wisdom = true;
+            Magic = true;
+            Exchange = false;
+            FastMove = false;
+            GuildChat = true;
+        }
+
+        /// <summary>
+        /// Toggles the given UserOption.
+        /// </summary>
+        /// <param name="opt">Option to toggle.</param>
         internal void Toggle(UserOption opt)
         {
             switch(opt)
@@ -46,15 +64,19 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Returns string representation of the given UserOption ready for ingame use.
+        /// </summary>
+        /// <param name="opt">UserOption to convert.</param>
         public string ToString(UserOption opt)
         {
-            string format = "{0, 17}, :{0, 3}";
+            string format = "{0, 17}, :{1, 3}";
             switch(opt)
             {
                 case UserOption.Request:
                     return ToString();
                 case UserOption.Whisper:
-                    return string.Format(format, "Listen to whisper", Whisper ? "ON" : "OFF");
+                    return string.Format(format, "Listen to whisper", (Whisper ? "ON" : "OFF"));
                 case UserOption.Group:
                     return string.Format(format, "Join a group", Group ? "ON" : "OFF");
                 case UserOption.Shout:
@@ -74,6 +96,10 @@ namespace Chaos
             return string.Empty;
         }
 
+        /// <summary>
+        /// Returns string representation of the entire UserOptions page, ready for ingame use.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             List<string> req = new List<string>();

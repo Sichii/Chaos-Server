@@ -2,7 +2,6 @@
 
 namespace Chaos.Objects
 {
-    [Serializable]
     internal sealed class Item : PanelObject
     {
         internal byte Color { get; }

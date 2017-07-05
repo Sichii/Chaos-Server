@@ -1,17 +1,17 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal struct Tile
     {
-        internal static byte[] sotp;
+        internal byte[] sotp;
         internal short Background { get; }
         internal short LeftForeground { get; }
         internal short RightForeground { get; }
         public bool IsWall => (LeftForeground > 0 && (sotp[LeftForeground - 1] & 15) == 15) || (RightForeground > 0 && (sotp[RightForeground - 1] & 15) == 15);
 
-        static Tile()
+        internal Tile(ushort mapId, short x, short y, short background, short leftForeground, short rightForeground)
         {
             using (Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chaos.sotp.dat"))
             {
@@ -19,9 +19,7 @@ namespace Chaos.Objects
                 sotp = new byte[num];
                 manifestResourceStream.Read(sotp, 0, num);
             }
-        }
-        internal Tile(ushort mapId, short x, short y, short background, short leftForeground, short rightForeground)
-        {
+
             Background = background;
             LeftForeground = leftForeground;
             RightForeground = rightForeground;

@@ -11,7 +11,7 @@ namespace Chaos
         private IPAddress LocalIp;
         private int LocalPort;
         private IPEndPoint LocalEndPoint;
-        internal Socket ServerSocket;
+        internal Socket ServerSocket { get; set; }
         internal ClientPacketHandler[] ClientPacketHandlers { get; }
         internal ConcurrentDictionary<Socket, Client> LoginClients { get; }
         internal ConcurrentDictionary<Socket, Client> LobbyClients { get; }
@@ -23,7 +23,6 @@ namespace Chaos
             LocalIp = ip;
             LocalPort = port;
             LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);
-            ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ClientPacketHandlers = new ClientPackets().Handlers;
             World = new World();
             LoginClients = new ConcurrentDictionary<Socket, Client>();
@@ -35,6 +34,7 @@ namespace Chaos
 
         internal void Start()
         {
+            ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.Bind(LocalEndPoint);
             ServerSocket.Listen(100);
             ServerSocket.BeginAccept(new AsyncCallback(EndAccept), null);

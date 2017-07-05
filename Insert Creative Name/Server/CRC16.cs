@@ -261,10 +261,20 @@
             3793,
             7920
         };
+        /// <summary>
+        /// Calculates the 16bit CRC of a byte array.
+        /// </summary>
+        /// <param name="data">Data you want the CRC of.</param>
         internal static ushort Calculate(byte[] data)
         {
             return Calculate(data, 0, data.Length);
         }
+        /// <summary>
+        /// Calculate the 16bit CRC of a byte array.
+        /// </summary>
+        /// <param name="data">Data you want the CRC of.</param>
+        /// <param name="index">Starting index in the data.</param>
+        /// <param name="length">How many bytes to calculate.</param>
         internal static ushort Calculate(byte[] data, int index, int length)
         {
             ushort num = 0;

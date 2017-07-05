@@ -90,7 +90,15 @@ namespace Chaos
         }
         internal string ReadString()
         {
+            if (Position >= Data.Length)
+                throw new EndOfStreamException();
+
             int num = Data.Length;
+            if (Position + num > Data.Length)
+            {
+                Position--;
+                throw new EndOfStreamException();
+            }
             for (int i = 0; i < Data.Length; i++)
                 if (Data[i] == 0)
                 {
@@ -296,16 +304,22 @@ namespace Chaos
                     WriteArray((Array)current);
             }
         }
-        internal void WriteArray8(Array value)
+        internal void WriteData(byte[] value, bool terminate = false)
+        {
+            Write(value);
+            if (terminate)
+                WriteByte(0);
+        }
+        internal void WriteData8(byte[] value)
         {
             WriteByte((byte)value.Length);
-            WriteArray(value);
+            WriteData(value);
         }
 
-        internal void WriteArray16(Array value)
+        internal void WriteData16(byte[] value)
         {
             WriteUInt16((ushort)value.Length);
-            WriteArray(value);
+            WriteData(value);
         }
         internal byte[] ToArray()
         {

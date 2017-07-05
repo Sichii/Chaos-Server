@@ -33,12 +33,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Insert_Creative_Name.Program</StartupObject>
+    <StartupObject>Chaos.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.2.4\lib\net45\StackExchange.Redis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="StackExchange.Redis.Extensions.Core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.Extensions.Core.2.2.0\lib\net45\StackExchange.Redis.Extensions.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="StackExchange.Redis.Extensions.Newtonsoft, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.Extensions.Newtonsoft.2.2.0\lib\net45\StackExchange.Redis.Extensions.Newtonsoft.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,6 +76,7 @@
     <Compile Include="Constructs\Group.cs" />
     <Compile Include="Constructs\Guild.cs" />
     <Compile Include="Constructs\MetaFile.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Objects\GroupBox.cs" />
     <Compile Include="Packets\ClientPacket.cs" />
     <Compile Include="Packets\ClientPacketHandler.cs" />
@@ -67,12 +85,12 @@
     <Compile Include="Server\CRC32.cs" />
     <Compile Include="Server\Crypto.cs" />
     <Compile Include="Flags.cs" />
-    <Compile Include="Server\KruCRC.cs" />
+    <Compile Include="Server\DataBase.cs" />
     <Compile Include="Objects\Creature.cs" />
     <Compile Include="Objects\Dialog.cs" />
     <Compile Include="Objects\GroundItem.cs" />
     <Compile Include="Objects\Item.cs" />
-    <Compile Include="Objects\Map.cs" />
+    <Compile Include="Constructs\Map.cs" />
     <Compile Include="Objects\MapObject.cs" />
     <Compile Include="Objects\Merchant.cs" />
     <Compile Include="Objects\Monster.cs" />
@@ -86,7 +104,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Packets\ProcessPacket.cs" />
-    <Compile Include="Data.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -101,7 +118,7 @@
     <Compile Include="Structs\Animation.cs" />
     <Compile Include="Client\Attributes.cs" />
     <Compile Include="Client\DisplayData.cs" />
-    <Compile Include="Structs\GameTime.cs" />
+    <Compile Include="Constructs\GameTime.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\MetaFileNode.cs" />
     <Compile Include="Structs\Point.cs" />

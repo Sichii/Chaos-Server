@@ -2,7 +2,6 @@
 
 namespace Chaos.Objects
 {
-    [Serializable]
     internal abstract class VisibleObject : WorldObject
     {
         internal ushort Sprite { get; }

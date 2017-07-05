@@ -17,21 +17,19 @@ namespace Chaos.Objects
         internal uint GetCrc32()
         {
             byte[] buffer;
-            using (MemoryStream memoryStream = new MemoryStream())
+            MemoryStream memoryStream = new MemoryStream();
+            using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
             {
-                using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
+                binaryWriter.Write((byte)Nodes.Count);
+                foreach (WorldMapNode worldMapNode in Nodes)
                 {
-                    binaryWriter.Write((byte)Nodes.Count);
-                    foreach (WorldMapNode worldMapNode in Nodes)
-                    {
-                        binaryWriter.Write(worldMapNode.ScreenPosition.X);
-                        binaryWriter.Write(worldMapNode.ScreenPosition.Y);
-                        binaryWriter.Write(worldMapNode.Name);
-                        binaryWriter.Write(worldMapNode.MapId);
-                    }
-                    binaryWriter.Flush();
-                    buffer = memoryStream.ToArray();
+                    binaryWriter.Write(worldMapNode.ScreenPosition.X);
+                    binaryWriter.Write(worldMapNode.ScreenPosition.Y);
+                    binaryWriter.Write(worldMapNode.Name);
+                    binaryWriter.Write(worldMapNode.MapId);
                 }
+                binaryWriter.Flush();
+                buffer = memoryStream.ToArray();
             }
             return CRC32.Calculate(buffer);
         }

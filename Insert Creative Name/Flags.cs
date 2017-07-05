@@ -1,4 +1,6 @@
-﻿namespace Chaos
+﻿using System;
+
+namespace Chaos
 {
     #region Crypto
     internal enum EncryptMethod
@@ -176,7 +178,6 @@
         Rucesion = 6,
         Noes = 7
     }
-
     internal enum StatUpdateFlags : byte
     {
         None = 0,
@@ -272,6 +273,16 @@
         Orange = 3,
         Red = 4,
         White = 5
+    }
+
+    internal enum LightLevel : byte
+    {
+        Darkest = 0,
+        Darker = 1,
+        Dark = 2,
+        Light = 3,
+        Lighter = 4,
+        Lightest = 5
     }
 
     internal enum Status : ulong

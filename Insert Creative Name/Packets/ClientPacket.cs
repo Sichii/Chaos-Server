@@ -121,42 +121,100 @@ namespace Chaos
         {
             switch (GetHexString().Substring(0, 2))
             {
+                case "00":
+                    return $"[Join] Recv> {GetHexString()}";
+                case "02":
+                    return $"[CreateA] Recv> {GetHexString()}";
+                case "03":
+                    return $"[Login] Recv> {GetHexString()}";
+                case "04":
+                    return $"[CreateB] Recv> {GetHexString()}";
+                case "05":
+                    return $"[RequestMapData] Recv> {GetHexString()}";
                 case "06":
                     return $"[Walk] Recv> {GetHexString()}";
-                case "11":
-                    return $"[Turn] Recv> {GetHexString()}";
                 case "07":
                     return $"[Pickup] Recv> {GetHexString()}";
+                case "08":
+                    return $"[Drop] Recv> {GetHexString()}";
+                case "0B":
+                    return $"[ClientExit] Recv> {GetHexString()}";
                 case "0E":
-                    return $"[Chat] Recv> {GetHexString()}";
+                    return $"[PublicChat] Recv> {GetHexString()}";
+                case "0F":
+                    return $"[UseSpell] Recv> {GetHexString()}";
+                case "10":
+                    return $"[ClientJoin] Recv> {GetHexString()}";
+                case "11":
+                    return $"[Turn] Recv> {GetHexString()}";
+                case "13":
+                    return $"[Spacebar] Recv> {GetHexString()}";
+                case "18":
+                    return $"[RequestWorldList] Recv> {GetHexString()}";
                 case "19":
                     return $"[Whisper] Recv> {GetHexString()}";
-                case "0F":
-                    return $"[Spell] Recv> {GetHexString()}";
-                case "18":
-                    return $"[Worldlist] Recv> {GetHexString()}";
+                case "1B":
+                    return $"[UserOptions] Recv> {GetHexString()}";
                 case "1C":
-                    return $"[Item] Recv> {GetHexString()}";
+                    return $"[UseItem] Recv> {GetHexString()}";
+                case "1D":
+                    return $"[Emote] Recv> {GetHexString()}";
+                case "24":
+                    return $"[DropGold] Recv> {GetHexString()}";
+                case "26":
+                    return $"[ChangePassword] Recv> {GetHexString()}";
+                case "29":
+                    return $"[DropItemOnCreature] Recv> {GetHexString()}";
+                case "2A":
+                    return $"[DropGoldOnCreature] Recv> {GetHexString()}";
+                case "2D":
+                    return $"[ProfileRequest] Recv> {GetHexString()}";
+                case "2E":
+                    return $"[GroupRequest] Recv> {GetHexString()}";
+                case "2F":
+                    return $"[ToggleGroup] Recv> {GetHexString()}";
                 case "30":
-                    return $"[Slot] Recv> {GetHexString()}";
+                    return $"[SwapSlot] Recv> {GetHexString()}";
+                case "38":
+                    return $"[RefreshRequest] Recv> {GetHexString()}";
                 case "39":
-                    return $"[Gossip] Recv> {GetHexString()}";
-                case "3A":
                     return $"[Pursuit] Recv> {GetHexString()}";
+                case "3A":
+                    return $"[DialogResponse] Recv> {GetHexString()}";
                 case "3B":
                     return $"[Board] Recv> {GetHexString()}";
+                case "3E":
+                    return $"[UseSkill] Recv> {GetHexString()}";
+                case "3F":
+                    return $"[ClickWorldMap] Recv> {GetHexString()}";
                 case "43":
-                    return $"[ObjClick] Recv> {GetHexString()}";
+                    return $"[ClickObject] Recv> {GetHexString()}";
+                case "44":
+                    return $"[RemoveEquipment] Recv> {GetHexString()}";
+                case "45":
+                    return $"[HeartBeat] Recv> {GetHexString()}";
                 case "47":
-                    return $"[Stat] Recv> {GetHexString()}";
+                    return $"[AdjustStat] Recv> {GetHexString()}";
                 case "4A":
                     return $"[Exchange] Recv> {GetHexString()}";
-                case "1B":
-                    return $"[UOptions] Recv> {GetHexString()}";
-                case "1D":
-                    return $"[SendEmote] Recv> {GetHexString()}";
-                case "3F":
-                    return $"[ClickMap] Recv> {GetHexString()}";
+                case "4B":
+                    return $"[RequestNotification] Recv> {GetHexString()}";
+                case "4D":
+                    return $"[BeginChant] Recv> {GetHexString()}";
+                case "4E":
+                    return $"[Chant] Recv> {GetHexString()}";
+                case "4F":
+                    return $"[PortraitText] Recv> {GetHexString()}";
+                case "57":
+                    return $"[ServerTable] Recv> {GetHexString()}";
+                case "68":
+                    return $"[HomePage] Recv> {GetHexString()}";
+                case "75":
+                    return $"[HeartBeatTimer] Recv> {GetHexString()}";
+                case "79":
+                    return $"[SocialStatus] Recv> {GetHexString()}";
+                case "7B":
+                    return $"[MetafileRequest] Recv> {GetHexString()}";
                 default:
                     return $"[**Unknown**] Recv> {GetHexString()}";
             }

@@ -2,7 +2,6 @@
 
 namespace Chaos.Objects
 {
-    [Serializable]
     internal abstract class WorldObject
     {
         protected internal uint Id { get; }

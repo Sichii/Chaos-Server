@@ -2,13 +2,11 @@
 
 namespace Chaos
 {
-    [Serializable]
     internal struct Location
     {
         internal ushort MapId { get; set; }
         internal short X { get; set; }
         internal short Y { get; set; }
-
         internal Point Point => new Point(X, Y);
 
         internal Location(ushort id, short x, short y)
@@ -25,15 +23,10 @@ namespace Chaos
             Y = point.Y;
         }
 
-        public static bool operator ==(Location loc1, Location loc2)
-        {
-            return loc1.Equals(loc2);
-        }
-
-        public static bool operator !=(Location loc1, Location loc2)
-        {
-            return !loc1.Equals(loc2);
-        }
+        public static bool operator ==(Location loc1, Location loc2) => loc1.Equals(loc2);
+        public static bool operator !=(Location loc1, Location loc2) => !loc1.Equals(loc2);
+        public override int GetHashCode() => (MapId << 16) + (X << 8) + Y;
+        public override string ToString() => $"{MapId} {X},{Y}";
 
         public override bool Equals(object obj)
         {
@@ -42,16 +35,6 @@ namespace Chaos
 
             Location location = (Location)obj;
             return location.MapId == MapId && location.X == X && location.Y == Y;
-        }
-
-        public override int GetHashCode()
-        {
-            return (MapId << 16) + (X << 8) + Y;
-        }
-
-        public override string ToString()
-        {
-            return $"{MapId} {X},{Y}";
         }
     }
 }

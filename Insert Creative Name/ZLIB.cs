@@ -42,7 +42,7 @@ namespace Chaos
 
         internal static void Compress(string inFile, string outFile)
         {
-            using (FileStream uncompressed = new FileStream(outFile, FileMode.Create))
+            FileStream uncompressed = new FileStream(outFile, FileMode.Create);
             using (ZOutputStream compressor = new ZOutputStream(uncompressed, -1))
             using (FileStream compressed = new FileStream(inFile, FileMode.Open))
             {
@@ -52,7 +52,7 @@ namespace Chaos
 
         internal static void Decompress(string inFile, string outFile)
         {
-            using (FileStream compressed = new FileStream(outFile, FileMode.Create))
+            FileStream compressed = new FileStream(outFile, FileMode.Create);
             using (ZOutputStream decompressor = new ZOutputStream(compressed))
             using (FileStream uncompressed = new FileStream(inFile, FileMode.Open))
             {

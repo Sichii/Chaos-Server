@@ -57,24 +57,6 @@ namespace Chaos
             }
 
             password = Crypto.GetHashString(password, "MD5");
-            using (BinaryReader reader = new BinaryReader(Crypto.DecryptFile(Paths.UserHash)))
-                while (reader.BaseStream.Position != reader.BaseStream.Length)
-                {
-                    if (reader.ReadString().Equals(name, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        if (reader.ReadString().Equals(password))
-                        {
-                            client.User = (User)Data.Deserialize($@"{Paths.Chars}\{name.ToLower()}");
-                            client.User.Resync(client);
-                        }
-                        else
-                            client.Enqueue(ServerPackets.LobbyMessage(3, "Incorrect password."));
-
-                        return;
-                    }
-                    //skip the hash
-                    reader.BaseStream.Position += 33;
-                }
         }
 
         internal static void CreateCharB(Client client, byte hairStyle, byte gender, byte hairColor)

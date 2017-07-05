@@ -262,6 +262,10 @@
           755167117U
         };
 
+        /// <summary>
+        /// Calculates a 32bit CRC from a byte array.
+        /// </summary>
+        /// <param name="buffer">Data you want the CRC of.</param>
         internal static uint Calculate(byte[] buffer)
         {
             uint num = uint.MaxValue;

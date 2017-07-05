@@ -16,7 +16,7 @@ namespace Chaos
 
             packet.WriteUInt32(tableCrc);
             packet.WriteByte(seed);
-            packet.WriteArray8(key);
+            packet.WriteData8(key);
 
             return packet;
         }
@@ -38,7 +38,7 @@ namespace Chaos
             packet.WriteInt16((short)redirect.EndPoint.Port);
             packet.WriteByte((byte)(redirect.Key.Length + Encoding.GetEncoding(49).GetBytes(redirect.Name).Length + 7));
             packet.WriteByte(redirect.Seed);
-            packet.WriteArray8(redirect.Key);
+            packet.WriteData8(redirect.Key);
             packet.WriteString8(redirect.Name);
             packet.WriteUInt32(redirect.Id);
 
@@ -233,7 +233,7 @@ namespace Chaos
 
             return packet;
         }
-        internal static ServerPacket MapInfo(Objects.Map map)
+        internal static ServerPacket MapInfo(Map map)
         {
             var packet = new ServerPacket(21);
 
@@ -554,7 +554,7 @@ namespace Chaos
 
             return packet;
         }
-        internal static ServerPacket[] MapData(Objects.Map map)
+        internal static ServerPacket[] MapData(Map map)
         {
             List<ServerPacket> staggeredData = new List<ServerPacket>();
             int key = 0;
@@ -597,7 +597,7 @@ namespace Chaos
         {
             var packet = new ServerPacket(86);
 
-            packet.WriteArray16(serverTbl);
+            packet.WriteData16(serverTbl);
 
             return packet;
         }
@@ -619,7 +619,7 @@ namespace Chaos
                 message += "\n\n- Brandon";
 
                 using (MemoryStream compressor = ZLIB.Compress(Encoding.GetEncoding(949).GetBytes(message)))
-                    packet.WriteArray16(compressor.ToArray());
+                    packet.WriteData16(compressor.ToArray());
             }
 
             return packet;
@@ -675,7 +675,7 @@ namespace Chaos
                     packet.WriteBoolean(false);
                     packet.WriteString8(metafile.Name);
                     packet.WriteUInt32(CRC32.Calculate(metafile.Data));
-                    packet.WriteArray16(metafile.Data);
+                    packet.WriteData16(metafile.Data);
 
                     packets.Add(packet);
                 }
@@ -689,7 +689,7 @@ namespace Chaos
             var packet = new ServerPacket(126);
 
             packet.WriteByte(27);
-            packet.WriteString("CONNECTED SERVER\n");
+            packet.WriteString("CONNECTED SERVER", true);
 
             return packet;
         }

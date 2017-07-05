@@ -22,16 +22,23 @@ namespace Chaos
         internal string NewCharName;
         internal string NewCharPw;
 
-        //creates a new user with reference to the server, and the user's socket
+        /// <summary>
+        /// Creates a new user with reference to the server, and the user's socket.
+        /// </summary>
+        /// <param name="server">The game server.</param>
+        /// <param name="socket">The user's socket.</param>
         internal Client(Server server, Socket socket)
         {
             Server = server;
             ServerType = 0;
             ClientSocket = socket;
             Crypto = new Crypto();
+
         }
 
-        //connects to the socket and begins receiving data
+        /// <summary>
+        /// Connects to the socket and begins receiving data.
+        /// </summary>
         internal void Connect()
         {
             ClientSocket.Connect(ClientSocket.RemoteEndPoint);
@@ -42,7 +49,10 @@ namespace Chaos
             ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), null);
         }
 
-        //disconnects the user from the server
+        /// <summary>
+        /// Disconnects the user from the server.
+        /// </summary>
+        /// <param name="wait">False if you want to immediately kill the client. True if you want the client to time out.</param>
         internal void Disconnect(bool wait = false)
         {
             Connected = false;
@@ -51,12 +61,13 @@ namespace Chaos
 
             Client dis = this;
             if (Server.World.Clients.TryRemove(ClientSocket, out dis))
-            {
                 ClientSocket.Disconnect(false);
-            }
         }
 
-        //this is how the server gets information from the client
+        /// <summary>
+        /// Asynchronous operation to receive information from the client
+        /// </summary>
+        /// <param name="ar">Result of the async operation.</param>
         private void ClientEndReceive(IAsyncResult ar)
         {
             //get the length of the packet
@@ -93,9 +104,16 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Asynchronous operation to end a pending send.
+        /// </summary>
+        /// <param name="ar">Result of the async operation.</param>
         private void EndSend(IAsyncResult ar) => ((Socket)ar.AsyncState).EndSend(ar);
 
-        //sends packets to the process/send thread
+        /// <summary>
+        /// Sends packets to the process/send thread.
+        /// </summary>
+        /// <param name="packets">Packet(s) to be sent.</param>
         internal void Enqueue(params ServerPacket[] packets)
         {
             lock (SendQueue)
@@ -105,7 +123,9 @@ namespace Chaos
             }
         }
 
-        //this is where we process information the client sends us, or send the client information
+        /// <summary>
+        /// Thread/Loop where packets from the client are processed, and the server sends packets back to the client.
+        /// </summary>
         private void ClientLoop()
         {
             while (Connected)
@@ -128,10 +148,7 @@ namespace Chaos
                         }
                         //get the packet's data and try to send it
                         byte[] data = packet.ToArray();
-                        try
-                        {
-                            ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket);
-                        }
+                        try { ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket); }
                         catch { }
                     }
                 }
@@ -156,19 +173,19 @@ namespace Chaos
                         ClientPacketHandler handle = Server.ClientPacketHandlers[packet.OpCode];
                         //if we have a handler for this packet
                         if (handle != null)
-                            //lock the server for synchronization
-                            lock (Server.SyncObj)
-                            {
-                                //no srsly, please handle it
-                                try { handle(this, packet); }
-                                catch { }
-                            }
+                            //no srsly, please handle it
+                            try { handle(this, packet); }
+                            catch { }
                     }
                 }
                 Thread.Sleep(10);
             }
         }
 
+        /// <summary>
+        /// Changes updates the location of the client in the path to logging in.
+        /// </summary>
+        /// <param name="redirect">Redirect information.</param>
         internal void Redirect(Redirect redirect)
         {
             ServerType = redirect.Type;
