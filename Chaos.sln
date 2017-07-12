@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos", "Insert Creative Name\Chaos.csproj", "{032C0163-368F-4D73-9542-C265BE0F94DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos", "Chaos\Chaos.csproj", "{032C0163-368F-4D73-9542-C265BE0F94DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapTool", "MapTool\MapTool.csproj", "{3B36B5CA-AC84-4180-9576-A7F47F3B816C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{032C0163-368F-4D73-9542-C265BE0F94DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{032C0163-368F-4D73-9542-C265BE0F94DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{032C0163-368F-4D73-9542-C265BE0F94DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
