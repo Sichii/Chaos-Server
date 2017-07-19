@@ -14,19 +14,20 @@ namespace Chaos
         {
             var packet = new ServerPacket(0);
 
+            packet.WriteByte(0);
             packet.WriteUInt32(tableCrc);
             packet.WriteByte(seed);
             packet.WriteData8(key);
 
             return packet;
         }
-        internal ServerPacket LobbyMessage(byte type, string message)
+        internal ServerPacket LoginMessage(LoginMessageType type, string message = "")
         {
             var packet = new ServerPacket(2);
 
             //type is the type of dialog box, message is what's in it
-            packet.WriteByte(type);
-            packet.WriteString8(message);
+            packet.WriteByte((byte)type);
+            packet.WriteString8(type == LoginMessageType.Confirm ? "\0" : message);
 
             return packet;
         }
@@ -34,9 +35,10 @@ namespace Chaos
         {
             var packet = new ServerPacket(3);
 
-            packet.Write(redirect.EndPoint.Address.GetAddressBytes());
-            packet.WriteInt16((short)redirect.EndPoint.Port);
-            packet.WriteByte((byte)(redirect.Key.Length + Encoding.GetEncoding(49).GetBytes(redirect.Name).Length + 7));
+            packet.Write(redirect.EndPoint.Address.GetAddressBytes().Reverse().ToArray());
+            packet.WriteByte((byte)(redirect.EndPoint.Port / 256));
+            packet.WriteByte((byte)(redirect.EndPoint.Port % 256));
+            packet.WriteByte((byte)(redirect.Key.Length + Encoding.GetEncoding(949).GetBytes(redirect.Name).Length + 7));
             packet.WriteByte(redirect.Seed);
             packet.WriteData8(redirect.Key);
             packet.WriteString8(redirect.Name);
@@ -52,11 +54,11 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket UserId(uint userId, BaseClass userClass)
+        internal ServerPacket UserId(int userId, BaseClass userClass)
         {
             var packet = new ServerPacket(5);
 
-            packet.WriteUInt32(userId);
+            packet.WriteUInt32((uint)userId);
             packet.WriteInt16(0);//dunno
             packet.WriteByte((byte)userClass);
             packet.WriteInt16(0);//dunno
@@ -143,11 +145,11 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket SystemMessage(byte type, string message)
+        internal ServerPacket ServerMessage(ServerMessageType type, string message)
         {
             var packet = new ServerPacket(10);
 
-            packet.WriteByte(type);
+            packet.WriteByte((byte)type);
             packet.WriteString16(message);
 
             return packet;
@@ -171,11 +173,12 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket PublicChat(ClientMessageType type, string message)
+        internal ServerPacket PublicChat(ClientMessageType type, int id, string message)
         {
             var packet = new ServerPacket(13);
 
             packet.WriteByte((byte)type);
+            packet.WriteInt32(id);
             packet.WriteString8(message);
 
             return packet;
@@ -213,11 +216,11 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket CreatureTurn(uint id, Direction direction)
+        internal ServerPacket CreatureTurn(int id, Direction direction)
         {
             var packet = new ServerPacket(17);
 
-            packet.WriteUInt32(id);
+            packet.WriteInt32(id);
             packet.WriteByte((byte)direction);
 
             return packet;
@@ -241,7 +244,8 @@ namespace Chaos
             packet.WriteByte(map.SizeX);
             packet.WriteByte(map.SizeY);
             packet.Write(new byte[3]); //dunno
-            packet.WriteUInt16(map.CRC);
+            packet.WriteByte((byte)(map.CRC / 256));
+            packet.WriteByte((byte)(map.CRC % 256));
             packet.WriteString8(map.Name);
 
             return packet;
@@ -275,12 +279,12 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket CreatureAnimation(uint id, byte index, ushort speed, bool sound = false)
+        internal ServerPacket CreatureAnimation(int id, byte animation, ushort speed, bool sound = false)
         {
             var packet = new ServerPacket(26);
 
-            packet.WriteUInt32(id);
-            packet.WriteByte(index);
+            packet.WriteInt32(id);
+            packet.WriteByte(animation);
             packet.WriteUInt16(speed);
             //this packet had a trailing 01 if a sound packet followed it, or a trailing FF if no sound followed it.
             //it changed nothing when i left off the end of the packet
@@ -292,6 +296,14 @@ namespace Chaos
             var packet = new ServerPacket(31);
 
             packet.Write(new byte[2]); //pretty sure these are nothing
+
+            return packet;
+        }
+        internal ServerPacket LightLevel(LightLevel lightLevel)
+        {
+            var packet = new ServerPacket(32);
+
+            packet.WriteByte((byte)lightLevel);
 
             return packet;
         }
@@ -311,7 +323,6 @@ namespace Chaos
 
             return packet;
         }
-
         internal ServerPacket Animation(Animation animation, Point point)
         {
             var packet = new ServerPacket(41);
@@ -350,11 +361,11 @@ namespace Chaos
             packet.WriteByte(1); //image
             foreach(var node in worldMap.Nodes)
             {
-                packet.WritePoint16(node.ScreenPosition); //position on the map
+                packet.WritePoint16(node.Position); //position on the worldmap
                 packet.WriteString8(node.Name);
                 packet.WriteUInt16(node.CRC);
                 packet.WriteUInt16(node.MapId); //map you'll spawn on
-                packet.WritePoint16(node.TargetPoint); //point you'll spawn on
+                packet.WritePoint16(node.Point); //point you'll spawn on
             }
 
             return packet;
@@ -410,11 +421,11 @@ namespace Chaos
                 packet.WriteUInt16(display.AccessorySprite2);
                 packet.WriteByte(display.AccessoryColor3);
                 packet.WriteUInt16(display.AccessorySprite3);
-                packet.WriteByte(display.LanternSize);
-                packet.WriteByte(display.RestPosition);
+                packet.WriteByte((byte)display.LanternSize);
+                packet.WriteByte((byte)display.RestPosition);
                 packet.WriteUInt16(display.OvercoatSprite);
                 packet.WriteByte(display.OvercoatColor);
-                packet.WriteByte(display.BodyColor);
+                packet.WriteByte((byte)display.BodyColor);
                 packet.WriteBoolean(display.IsHidden);
                 packet.WriteByte(display.FaceSprite);
             }
@@ -426,7 +437,7 @@ namespace Chaos
                 packet.WriteByte(display.BootsColor);
                 packet.Write(new byte[6]); //dunno
             }
-            packet.WriteByte(display.NameTagStyle);
+            packet.WriteByte((byte)display.NameTagStyle);
             packet.WriteString8(display.BodySprite == 0 ? string.Empty : (user.Name ?? string.Empty));
             packet.WriteString8(display.GroupName ?? string.Empty);
 
@@ -442,7 +453,7 @@ namespace Chaos
                 packet.WriteUInt16(user.Equipment[slot].Sprite);
                 packet.WriteByte(user.Equipment[slot].Color);
             }
-            packet.WriteBoolean(user.Options.Group);
+            packet.WriteBoolean(user.UserOptions.Group);
             packet.WriteString8(user.Name);
             packet.WriteByte((byte)user.Nation);
             packet.WriteString8(user.Guild.TitleOf(user.Name));
@@ -462,30 +473,30 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket WorldList(List<Objects.User> users, byte UserLevel)
+        internal ServerPacket WorldList(IEnumerable<Objects.User> users, byte UserLevel)
         {
             var packet = new ServerPacket(54);
 
-            packet.WriteUInt16((ushort)users.Count);
-            packet.WriteUInt16((ushort)users.Count);
+            packet.WriteUInt16((ushort)users.Count());
+            packet.WriteUInt16((ushort)users.Count());
             foreach(var user in users)
             {
                 byte range = (byte)((UserLevel / 5) + 3);
                 packet.WriteByte((byte)user.BaseClass);
                 packet.WriteByte((byte)(Math.Abs(user.Attributes.Level - UserLevel) <= range ? 151 : 255));
                 packet.WriteByte((byte)user.SocialStatus);
-                packet.WriteString8(user.Titles.FirstOrDefault() ?? "");
+                packet.WriteString8(user.Titles?.FirstOrDefault() ?? "");
                 packet.WriteBoolean(user.IsMaster);
                 packet.WriteString8(user.Name);
             }
 
             return packet;
         }
-        internal ServerPacket AddEquipment(Objects.Item item, EquipmentSlot slot)
+        internal ServerPacket AddEquipment(Objects.Item item)
         {
             var packet = new ServerPacket(55);
 
-            packet.WriteByte((byte)slot);
+            packet.WriteByte((byte)item.EquipmentSlot);
             packet.WriteUInt16((ushort)(item.Sprite + 32768));
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
@@ -508,12 +519,12 @@ namespace Chaos
             var packet = new ServerPacket(57);
 
             packet.WriteByte((byte)user.Nation);
-            packet.WriteString8(user.Guild.Name);
-            packet.WriteString8(user.Guild[user.Name]); //idk?
+            packet.WriteString8(user.Guild?.Name ?? "");
+            packet.WriteString8(user.Guild?[user.Name] ?? ""); //idk?
             packet.WriteString8(user.Group?.ToString() ?? (user.Spouse != null ? $@"Spouse: {user.Spouse}" : "Adventuring alone"));
-            packet.WriteBoolean(user.Options.Group);
-            packet.WriteBoolean(user.Group.Box != null);
-            if(user.Group.Box != null)
+            packet.WriteBoolean(user.UserOptions.Group);
+            packet.WriteBoolean(user.Group?.Box != null);
+            if(user.Group?.Box != null)
             {
                 packet.WriteString8(user.Group.Box.GroupLeader.Name);
                 packet.WriteString8(user.Group.Box.Name);
@@ -523,7 +534,7 @@ namespace Chaos
             packet.WriteBoolean(user.AdvClass != AdvClass.None); //is med class
             packet.WriteBoolean(user.IsMaster);
             packet.WriteString8(user.AdvClass != AdvClass.None ? user.AdvClass.ToString() : user.BaseClass.ToString()); //class string
-            packet.WriteString8(user.Guild.Name);
+            packet.WriteString8(user.Guild?.Name ?? "");
             packet.WriteByte(user.Legend.Length);
             foreach(var mark in user.Legend)
             {
@@ -557,12 +568,17 @@ namespace Chaos
         {
             List<ServerPacket> staggeredData = new List<ServerPacket>();
             int key = 0;
-            for(ushort y = 0; y < map.SizeY; y++)
+            
+            for(ushort y = 0; y < map.SizeY; ++y)
             {
                 var packet = new ServerPacket(60);
-
-                for(int x = 0; x < map.SizeX * 6; x++)
-                    packet.WriteByte(map.Data[key++]);
+                packet.WriteUInt16(y);
+                for (int x = 0; x < map.SizeX * 6; x += 2)
+                {
+                    packet.WriteByte(map.Data[key + 1]);
+                    packet.WriteByte(map.Data[key]);
+                    key += 2;
+                }
 
                 staggeredData.Add(packet);
             }
@@ -592,9 +608,18 @@ namespace Chaos
         internal ServerPacket RequestProfileText()
         {
             //i don't believe there's anything here
-            return new ServerPacket(49);
+            return new ServerPacket(73);
         }
-        internal ServerPacket ServerTable(byte[] serverTbl)
+        internal ServerPacket ConfirmExit()
+        {
+            var packet = new ServerPacket(76);
+
+            packet.WriteBoolean(true);
+            packet.Write(new byte[2]);
+
+            return packet;
+        }
+        internal ServerPacket ServerTable(byte[] serverTbl = null)
         {
             var packet = new ServerPacket(86);
 
@@ -607,21 +632,15 @@ namespace Chaos
             //i don't believe there's anything here
             return new ServerPacket(88);
         }
-        internal ServerPacket LobbyNotification(bool sendNotif, string message = "")
+        internal ServerPacket LobbyNotification(bool sendNotif, uint notifCRC = 0, byte[] notif = null)
         {
             var packet = new ServerPacket(96);
 
             packet.WriteBoolean(sendNotif);
-            if(sendNotif)
-            {
-                //some formatting here, can change this
-                message = Regex.Replace(message, @"[\r\n]+-", "\n{=e-{=g");
-                message = Regex.Replace(message, @"(?'1'\[[a-zA-Z -+!]+\])", "{=c${1}{=g");
-                message += "\n\n- Brandon";
-
-                using (MemoryStream compressor = ZLIB.Compress(Encoding.GetEncoding(949).GetBytes(message)))
-                    packet.WriteData16(compressor.ToArray());
-            }
+            if (sendNotif)
+                packet.WriteData16(notif);
+            else
+                packet.WriteUInt32(notifCRC);
 
             return packet;
         }

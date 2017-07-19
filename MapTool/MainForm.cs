@@ -421,7 +421,7 @@ namespace MapTool
             this.sizeYNum.TabIndex = 18;
             this.sizeYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.sizeYNum.Value = new decimal(new int[] {
-            255,
+            1,
             0,
             0,
             0});
@@ -446,7 +446,7 @@ namespace MapTool
             this.sizeXNum.TabIndex = 17;
             this.sizeXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.sizeXNum.Value = new decimal(new int[] {
-            255,
+            1,
             0,
             0,
             0});
@@ -457,7 +457,7 @@ namespace MapTool
             this.mapIdNum.ForeColor = System.Drawing.Color.Black;
             this.mapIdNum.Location = new System.Drawing.Point(51, 22);
             this.mapIdNum.Maximum = new decimal(new int[] {
-            10000,
+            20000,
             0,
             0,
             0});
@@ -471,7 +471,7 @@ namespace MapTool
             this.mapIdNum.TabIndex = 14;
             this.mapIdNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.mapIdNum.Value = new decimal(new int[] {
-            10000,
+            1,
             0,
             0,
             0});
@@ -606,17 +606,19 @@ namespace MapTool
                 if (MapsCache.Maps.ContainsKey(mapId))
                     message = $@"Map ID:{mapIdNum.Value} is already in use. Overwrite? Will delete doors and warps.";
                 else
-                {
                     message = $@"Add this as a new map? Make sure info is correct.";
 
-                    if (uint.TryParse(flagsSumLbl.Text, out flags))
+                if (uint.TryParse(flagsSumLbl.Text, out flags))
+                {
+                    if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
-                        if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                            MapsCache.Maps[mapId] = new Map(mapId, sizeX, sizeY, (MapFlags)flags, mapName, music);
+                        MapsCache.Maps[mapId] = new Map(mapId, sizeX, sizeY, (MapFlags)flags, mapName, music);
+                        MapsCache.Save();
+                        LoadTree();
                     }
-                    else
-                        MessageBox.Show("Flag error.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                else
+                    MessageBox.Show("Flag error.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch
             {
@@ -651,6 +653,8 @@ namespace MapTool
                             MapsCache.Maps[mapId].SizeY = sizeY;
                             MapsCache.Maps[mapId].Music = music;
                             MapsCache.Maps[mapId].Flags = (MapFlags)flags;
+                            MapsCache.Save();
+                            LoadTree();
                         }
                     }
                     else
@@ -676,7 +680,11 @@ namespace MapTool
                 {
                     message = $@"Delete Map ID: {mapId}? This will destroy doors, warps, and the info.";
                     if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                    {
                         MapsCache.Maps.Remove(mapId);
+                        MapsCache.Save();
+                        LoadTree();
+                    }
                 }
             }
             catch
@@ -708,6 +716,11 @@ namespace MapTool
         private void noSkillsCbox_CheckedChanged(object sender, EventArgs e)
         {
             flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)MapFlags.NoSkills).ToString();
+        }
+
+        ~MainForm()
+        {
+            MapsCache.Save();
         }
     }
 }

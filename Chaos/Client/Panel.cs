@@ -1,28 +1,33 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Panel<T> : IEnumerable<T> where T : Objects.PanelObject
     {
+        [JsonProperty]
+        internal byte Length { get; set; }
+        [JsonProperty]
+        internal Dictionary<byte, T> Objects { get; set; }
+        [JsonProperty]
+        internal byte[] Invalid { get; set; }
+        internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal SortedDictionary<byte, T> Objects { get; private set; }
-        internal byte Length { get; }
-        internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         internal T this[byte slot]
         {
             get { return Valid(slot) ? Objects[slot] : null; }
-            set { if (value.Slot == slot) Add(value); }
+            set { if (value.Slot == slot) TryAdd(value); }
         }
-        private byte[] Invalid;
 
         internal Panel(byte length)
         {
             Length = length;
-            Objects = new SortedDictionary<byte, T>();
+            Objects = new Dictionary<byte, T>();
             for (byte i = 0; i < length; i++)
                 Objects[i] = null;
 
@@ -34,6 +39,15 @@ namespace Chaos
                 Invalid = new byte[] { 19 };
         }
 
+        [JsonConstructor]
+        internal Panel(byte length, Dictionary<byte, T> objects, byte[] invalid)
+        {
+            Length = length;
+            Objects = objects;
+            Invalid = invalid;
+        }
+
+
         /// <summary>
         /// Makes sure the slot is valid.
         /// </summary>
@@ -44,10 +58,45 @@ namespace Chaos
         /// Overwrites or adds an object at the object's slot location.
         /// </summary>
         /// <param name="obj">Object to add.</param>
-        internal void Add(T obj)
+        internal bool TryAdd(T obj)
         {
-            if (Valid(obj.Slot))
+            if(obj is Objects.Item)
+            {
+                Objects.Item item = this[obj.Slot] as Objects.Item;
+                if (item != null && item.Stackable)
+                {
+                    item.Count += (obj as Objects.Item).Count;
+                    return true;
+                }
+            }
+
+            if (Valid(obj.Slot) && Objects[obj.Slot] == null)
+            {
                 Objects[obj.Slot] = obj;
+                return true;
+            }
+            return false;
+        }
+
+        internal bool AddToNextSlot(T obj)
+        {
+            if (obj is Objects.Item)
+            {
+                Objects.Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == obj.Sprite && item.Name.Equals(obj.Name)) as Objects.Item;
+                if (existingItem != null)
+                {
+                    existingItem.Count += (obj as Objects.Item).Count;
+                    return true;
+                }
+            }
+
+            foreach (var kvp in Objects)
+                if (Valid(kvp.Key) && kvp.Value == null)
+                {
+                    obj.Slot = kvp.Key;
+                    return TryAdd(obj);
+                }
+            return false;
         }
 
         /// <summary>
@@ -80,7 +129,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts <see cref="TryGetRemove(byte, out T)"/> on each slot, then <see cref="Add(T)"/> to swap places.
+        /// Attempts <see cref="TryGetRemove(byte, out T)"/> on each slot, then <see cref="TryAdd(T)"/> to swap places.
         /// If either fails, items will be put back.
         /// </summary>
         /// <param name="slot1">First slot to swap.</param>
@@ -92,13 +141,13 @@ namespace Chaos
             {
                 one.Slot = slot2;
                 two.Slot = slot1;
-                Add(one);
-                Add(two);
+                TryAdd(one);
+                TryAdd(two);
                 
                 return true;
             } //puts the first object back if it succeeded on the first operation, but failed on the second
             else if (one != null)
-                Add(one);
+                TryAdd(one);
 
             return false;
         }

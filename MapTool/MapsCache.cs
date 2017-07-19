@@ -28,7 +28,6 @@ namespace MapTool
             JsonSerializerSettings jSettings = new JsonSerializerSettings();
             jSettings.TypeNameHandling = TypeNameHandling.All;
             Serializer = new NewtonsoftSerializer(jSettings);
-            ConfigurationOptions config = new ConfigurationOptions();
             DataConnection = ConnectionMultiplexer.Connect("localhost:6379");
             Cache = new StackExchangeRedisCacheClient(DataConnection, Serializer);
 
@@ -38,7 +37,7 @@ namespace MapTool
             MainForm = mainForm;
 
             if (!Cache.Exists(HashKey))
-                Cache.Add(HashKey, new byte[1]);
+                Cache.Add(HashKey, new byte[100]);
         }
         internal void Load()
         {
@@ -55,8 +54,8 @@ namespace MapTool
                     byte nodeCount = reader.ReadByte();
                     for (int i = 0; i < nodeCount; i++)
                     {
-                        short x = reader.ReadInt16();
-                        short y = reader.ReadInt16();
+                        ushort x = reader.ReadUInt16();
+                        ushort y = reader.ReadUInt16();
                         string name = reader.ReadString();
                         ushort mapId = reader.ReadUInt16();
                         byte dX = reader.ReadByte();
@@ -68,7 +67,7 @@ namespace MapTool
                     WorldMaps[crc32] = worldMap;
                 }
 
-                short mapCount = reader.ReadInt16();
+                ushort mapCount = reader.ReadUInt16();
                 for (int map = 0; map < mapCount; map++)
                 {
                     //load map information
@@ -76,7 +75,7 @@ namespace MapTool
                     byte sizeX = reader.ReadByte();
                     byte sizeY = reader.ReadByte();
                     string name = reader.ReadString();
-                    MapFlags flags = (MapFlags)reader.ReadByte();
+                    MapFlags flags = (MapFlags)reader.ReadUInt32();
                     sbyte music = reader.ReadSByte();
                     Map newMap = new Map(mapId, sizeX, sizeY, flags, name, music);
 
@@ -129,7 +128,7 @@ namespace MapTool
                 writer.Write(1);
 
                 //write world maps
-                writer.Write((short)WorldMaps.Count);
+                writer.Write((ushort)WorldMaps.Count);
                 foreach (WorldMap worldMap in WorldMaps.Values)
                 {
                     writer.Write(worldMap.Field);
@@ -146,7 +145,7 @@ namespace MapTool
                 }
 
                 //write maps
-                writer.Write((short)Maps.Count);
+                writer.Write((ushort)Maps.Count);
                 foreach (Map map in Maps.Values)
                 {
                     //write map info
@@ -167,7 +166,7 @@ namespace MapTool
                     }
 
                     //write warps
-                    writer.Write((short)map.Exits.Count);
+                    writer.Write((ushort)map.Exits.Count);
                     foreach (Warp warp in map.Exits.Values)
                     {
                         writer.Write(warp.SourceX);

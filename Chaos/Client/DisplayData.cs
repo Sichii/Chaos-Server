@@ -1,16 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptOut)]
     internal sealed class DisplayData
     {
-        private readonly Objects.User User;
+        [JsonProperty]
+        internal Objects.User User { get; set; }
 
         //Base
+        [JsonProperty]
         internal ushort HairSprite { get; set; }
+        [JsonProperty]
         internal byte HairColor { get; set; }
+        [JsonProperty]
         internal byte BodySprite { get; set; }
-        internal byte BodyColor { get; set; }
+        [JsonProperty]
+        internal BodyColor BodyColor { get; set; }
+        [JsonProperty]
         internal byte FaceSprite { get; set; }
 
         //Head
@@ -19,6 +27,7 @@ namespace Chaos
 
         //Body
         internal ushort ArmorSprite1 => User.Equipment[(byte)EquipmentSlot.Armor]?.Sprite ?? 0;
+        [JsonProperty]
         internal ushort ArmorSprite2 = 0;
         internal ushort OvercoatSprite => User.Equipment[(byte)EquipmentSlot.Overcoat]?.Sprite ?? 0;
         internal byte OvercoatColor => User.Equipment[(byte)EquipmentSlot.Overcoat]?.Color ?? 0;
@@ -40,10 +49,15 @@ namespace Chaos
         internal ushort AccessorySprite3 => User.Equipment[(byte)EquipmentSlot.Accessory3]?.Sprite ?? 0;
 
         //Other
-        internal byte LanternSize { get; set; }
-        internal byte NameTagStyle { get; set; }
+        [JsonProperty]
+        internal LanternSize LanternSize { get; set; }
+        [JsonProperty]
+        internal NameTagStyle NameTagStyle { get; set; }
+        [JsonProperty]
         internal string GroupName { get; set; }
-        internal byte RestPosition { get; set; }
+        [JsonProperty]
+        internal RestPosition RestPosition { get; set; }
+        [JsonProperty]
         internal bool IsHidden { get; set; }
 
         /// <summary>
@@ -59,8 +73,27 @@ namespace Chaos
             HairSprite = hairSprite;
             HairColor = hairColor;
             BodySprite = bodySprite;
-            BodyColor = 1;
+            BodyColor = BodyColor.White;
             FaceSprite = 1;
+            LanternSize = LanternSize.None;
+            NameTagStyle = NameTagStyle.NeutralHover;
+            GroupName = string.Empty;
+            RestPosition = RestPosition.None;
+            IsHidden = false;
+        }
+
+        [JsonConstructor]
+        internal DisplayData(Objects.User user, ushort hairSprite, byte hairColor, byte bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
+        {
+            User = user;
+            HairSprite = hairSprite;
+            HairColor = hairColor;
+            BodySprite = bodySprite;
+            BodyColor = bodyColor;
+            FaceSprite = faceSprite;
+            ArmorSprite2 = armorSprite2;
+            NameTagStyle = nameTagStyle;
+            GroupName = groupName;
         }
     }
 }

@@ -246,7 +246,7 @@ namespace Chaos
         {
             Write(Encoding.GetEncoding(949).GetBytes(value));
             if (terminate)
-                WriteByte(0);
+                WriteByte(10);
         }
         internal void WriteString8(string value)
         {

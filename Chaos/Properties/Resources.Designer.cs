@@ -63,16 +63,6 @@ namespace Chaos.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] mServer {
-            get {
-                object obj = ResourceManager.GetObject("mServer", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] sotp {
             get {
                 object obj = ResourceManager.GetObject("sotp", resourceCulture);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 
 namespace Chaos
 {
@@ -8,6 +10,7 @@ namespace Chaos
 
         internal ClientPackets()
         {
+            Handlers = new ClientPacketHandler[150];
             Handlers[0] = new ClientPacketHandler(PacketHandler_0x00_JoinServer);
             Handlers[2] = new ClientPacketHandler(PacketHandler_0x02_CreatCharA);
             Handlers[3] = new ClientPacketHandler(PacketHandler_0x03_Login);
@@ -89,7 +92,7 @@ namespace Chaos
         private void PacketHandler_0x04_CreateCharB(Client client, ClientPacket packet)
         {
             byte hairStyle = packet.ReadByte(); //1-17
-            byte gender = packet.ReadByte(); //1 or 2
+            Gender gender = (Gender)packet.ReadByte(); //1 or 2
             byte hairColor = packet.ReadByte(); //1-13
 
             ProcessPacket.CreateCharB(client, hairStyle, gender, hairColor);
@@ -155,9 +158,18 @@ namespace Chaos
         private void PacketHandler_0x10_ClientJoin(Client client, ClientPacket packet)
         {
             byte seed = packet.ReadByte();
-            string key = packet.ReadString8();
+            byte keyLength = packet.ReadByte();
+            byte[] key = packet.ReadBytes(keyLength);
             string name = packet.ReadString8();
             uint id = packet.ReadUInt32();
+
+            Redirect redirect = client.Server.Redirects.FirstOrDefault(r => r.Id == id);
+
+            if (redirect != null)
+            {
+                client.ServerType = redirect.Type;
+                client.Server.Redirects.Remove(redirect);
+            }
 
             ProcessPacket.ClientJoin(client, seed, key, name, id);
         }
@@ -203,14 +215,6 @@ namespace Chaos
         }
         private void PacketHandler_0x1B_UserOptions(Client client, ClientPacket packet)
         {
-            /*
-            0 = options request
-            the request sends the client a long string
-            SendSystemMessage(7, options);
-            where options is literally a giant string containing the text for the whole pane
-            Use Group Window and the rest are client side
-            */
-
             UserOption option = (UserOption)packet.ReadByte();
 
             ProcessPacket.UserOptions(client, option);
@@ -269,9 +273,6 @@ namespace Chaos
         private void PacketHandler_0x2D_ProfileRequest(Client client, ClientPacket packet)
         {
             ProcessPacket.ProfileRequest(client);
-            /*
-             client.Enqueue(client.ServerPackets.ProfileSelf);
-             */
         }
         private void PacketHandler_0x2E_GroupRequest(Client client, ClientPacket packet)
         {
@@ -305,12 +306,7 @@ namespace Chaos
         }
         private void PacketHandler_0x30_SwapSlot(Client client, ClientPacket packet)
         {
-            //0 = Items
-            //1 = All Spells
-            //2 = All Skills
-            byte pane = packet.ReadByte();
-            //(tem)1 - 35, (med)37 - 71, , (world)73 - 88
-            //items: 1-59
+            Pane pane = (Pane)packet.ReadByte();
             byte origSlot = packet.ReadByte();
             byte endSlot = packet.ReadByte();
 
@@ -439,7 +435,7 @@ namespace Chaos
             {
                 case 1:
                     //they clicked an object, this is it's id
-                    uint objectId = packet.ReadUInt32();
+                    int objectId = packet.ReadInt32();
                     ProcessPacket.ClickObject(client, objectId);
                     break;
                 case 3:
@@ -520,8 +516,7 @@ namespace Chaos
         }
         private void PacketHandler_0x4B_RequestNotification(Client client, ClientPacket packet)
         {
-            //i don't believe there's anything here
-            ProcessPacket.RequestNotification(client);
+            ProcessPacket.RequestNotification(packet.Position == packet.Data.Length, client);
         }
 
         private void PacketHandler_0x4D_BeginChant(Client client, ClientPacket packet)

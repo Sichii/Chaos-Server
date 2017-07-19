@@ -3,13 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using Chaos.Objects;
+using Newtonsoft.Json;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Map
     {
         internal ConcurrentDictionary<int, WorldObject> Objects { get; set; }
         internal ConcurrentDictionary<Point, Door> Doors { get; set; }
+        [JsonProperty]
         internal ushort Id { get; }
         internal byte SizeX { get; }
         internal byte SizeY { get; }
@@ -18,11 +21,13 @@ namespace Chaos
         internal Dictionary<Point, Tile> Tiles { get; }
         internal MapFlags Flags { get; set; }
         internal string Name { get; set; }
-        internal byte Music { get; set; }
+        internal sbyte Music { get; set; }
+        internal Dictionary<Point, Warp> Exits { get; set; }
+        internal Dictionary<Point, WorldMap> WorldMaps { get; set; }
         internal Tile this[ushort x, ushort y] => Tiles[new Point(x, y)];
         internal Tile this[Point point] => Tiles[point];
 
-        internal Map(ushort id, byte sizeX, byte sizeY, string name, byte music, MapFlags flags)
+        internal Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
         {
             Id = id;
             SizeX = sizeX;
@@ -30,7 +35,16 @@ namespace Chaos
             Flags = flags;
             Name = name;
             Tiles = new Dictionary<Point, Tile>();
+            Exits = new Dictionary<Point, Warp>();
+            WorldMaps = new Dictionary<Point, WorldMap>();
             Objects = new ConcurrentDictionary<int, WorldObject>();
+            Doors = new ConcurrentDictionary<Point, Door>();
+        }
+
+        [JsonConstructor]
+        internal Map(ushort id)
+        {
+            Id = id;
         }
 
         internal void SetData(byte[] data)
@@ -57,5 +71,6 @@ namespace Chaos
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
 
         internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || this[x, y].IsWall;
+        internal bool IsWall(Point p) => IsWall(p.X, p.Y);
     }
 }

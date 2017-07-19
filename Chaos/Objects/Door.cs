@@ -31,7 +31,8 @@ namespace Chaos.Objects
             Opened = opened;
             OpenRight = OpenRight;
             LastClick = DateTime.MinValue;
-
         }
+
+        internal void Toggle() => Opened = !Opened;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,8 @@ namespace Chaos
             Leader = sender;
             Users = new List<Objects.User>() { sender, accepter };
             GroupId = Interlocked.Increment(ref Server.NextId);
-
         }
+
         /// <summary>
         /// Creates a GroupBox for this Group.
         /// </summary>

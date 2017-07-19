@@ -113,6 +113,8 @@
                     return $"[CreatureAnimation] Send> {GetHexString()}";
                 case "1F":
                     return $"[MapChangeComplete] Send> {GetHexString()}";
+                case "20":
+                    return $"[LightLevel] Send> {GetHexString()}";
                 case "22":
                     return $"[RefreshResponse] Send> {GetHexString()}";
                 case "29":

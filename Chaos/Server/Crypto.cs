@@ -179,10 +179,12 @@ namespace Chaos
             Key = Encoding.ASCII.GetBytes(key);
             keySalt = string.Empty;
         }
-        internal Crypto(byte seed, string key, string keySaltSeed) : this(seed, key)
+        internal Crypto(byte seed, string key, string keySaltSeed) 
+            : this(seed, key)
         {
             keySalt = GenerateKeySalt(keySaltSeed);
         }
+
         internal byte[] GenerateKey(ushort a, byte b)
         {
             byte[] array = new byte[9];

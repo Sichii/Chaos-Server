@@ -5,18 +5,18 @@ namespace Chaos
 {
     internal struct WorldMapNode
     {
-        internal Point ScreenPosition { get; }
+        internal Point Position { get; }
         internal string Name { get; }
         internal ushort MapId { get; }
-        internal Point TargetPoint { get; }
-        internal Location TargetLocation => new Location(MapId, TargetPoint);
+        internal Point Point { get; }
+        internal Location Location => new Location(MapId, Point);
 
         public WorldMapNode(Point position, string name, ushort mapId, Point point)
         {
-            ScreenPosition = position;
+            Position = position;
             Name = name;
             MapId = mapId;
-            TargetPoint = point;
+            Point = point;
         }
 
         internal ushort CRC
@@ -28,8 +28,8 @@ namespace Chaos
                 {
                     b.Write(Encoding.Unicode.GetBytes(Name));
                     b.Write(MapId);
-                    b.Write(TargetPoint.X);
-                    b.Write(TargetPoint.Y);
+                    b.Write(Point.X);
+                    b.Write(Point.Y);
 
                     return CRC16.Calculate(m.ToArray());
                 }

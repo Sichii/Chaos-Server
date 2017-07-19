@@ -19,16 +19,33 @@ namespace Chaos
         internal byte Seed { get; }
         internal ServerType Type { get; }
 
-        internal Redirect(Client client, Server server, ServerType type, string name, byte seed, byte[] key)
+        internal Redirect(Client client, ServerType type, string name = null)
         {
             Id = Interlocked.Increment(ref Server.NextId);
             Client = client;
-            Server = server;
+            Server = Client.Server;
             Type = type;
-            Name = name;
-            Seed = seed;
-            Key = key;
-            EndPoint = server.ServerSocket.LocalEndPoint as IPEndPoint;
+            Name = name ?? "Lobby";
+
+            if (type != ServerType.Lobby)
+            {
+                //Seed = (byte)Utility.Random(1, 10);
+                Seed = client.Crypto.Seed;
+                
+                List<byte> key = new List<byte>();
+                for (int i = 0; i < 9; i++)
+                    key.Add((byte)Utility.Random(1, 255));
+
+                Key = key.ToArray();
+            }
+            else
+            {
+                Seed = client.Crypto.Seed;
+                Key = client.Crypto.Key;
+            }
+            
+
+            EndPoint = new IPEndPoint(Dns.GetHostEntry("chaosserver.dynu.net").AddressList[0], Server.LocalPort);
         }
     }
 }

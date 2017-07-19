@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Chaos
 {
     internal struct Point
     {
+        [JsonProperty]
         internal ushort X { get; set; }
+        [JsonProperty]
         internal ushort Y { get; set; }
 
+        [JsonConstructor]
         internal Point(ushort x, ushort y)
         {
             X = x;

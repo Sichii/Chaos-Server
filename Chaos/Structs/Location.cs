@@ -1,17 +1,22 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Chaos
 {
     internal struct Location
     {
+        [JsonProperty]
         internal ushort MapId { get; set; }
+        [JsonProperty]
         internal ushort X { get; set; }
+        [JsonProperty]
         internal ushort Y { get; set; }
         internal Point Point => new Point(X, Y);
 
-        internal Location(ushort id, ushort x, ushort y)
+        [JsonConstructor]
+        internal Location(ushort mapId, ushort x, ushort y)
         {
-            MapId = id;
+            MapId = mapId;
             X = x;
             Y = y;
         }

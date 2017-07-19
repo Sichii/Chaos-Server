@@ -1,16 +1,22 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Guild : IEnumerable
     {
         public IEnumerator GetEnumerator() => Members.GetEnumerator();
+        [JsonProperty]
         internal string Name { get; set; }
+        [JsonProperty]
         internal Bank Bank { get; set; }
+        [JsonProperty]
         internal ConcurrentDictionary<string, string> Members { get; set; } //name, rank
+        [JsonProperty]
         internal List<string> Ranks { get; set; }
         /// <summary>
         /// Used to retreive or change the rank of a member.
@@ -41,6 +47,15 @@ namespace Chaos
 
             foreach (Objects.User member in founders)
                 TryAddMember(member);
+        }
+
+        [JsonConstructor]
+        internal Guild(string name, Bank bank, ConcurrentDictionary<string, string> members, List<string> ranks)
+        {
+            Name = name;
+            Bank = bank;
+            Members = members;
+            Ranks = ranks;
         }
         /// <summary>
         /// Returns the title of user(name)

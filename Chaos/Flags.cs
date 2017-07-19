@@ -9,7 +9,12 @@ namespace Chaos
         Normal = 1,
         MD5Key = 2
     }
-    
+    internal enum ServerType : byte
+    {
+        Lobby = 0,
+        Login = 1,
+        World = 2
+    }
     internal enum WaitEventResult
     {
         Signaled = 0,
@@ -30,6 +35,12 @@ namespace Chaos
         GuildChat = 11,     //olive green text
         ClosePopup = 17,    //closes current popup
         TopRight = 18      //no idea what to call this
+    }
+
+    internal enum LoginMessageType : byte
+    {
+        Confirm = 0,
+        Message = 3
     }
 
     internal enum ClientMessageType : byte
@@ -71,7 +82,11 @@ namespace Chaos
         Heart = 6,
         Victory = 7
     }
-
+    internal enum Quest : ulong
+    {
+        None = 0,
+        //add more quest flags here, double each time
+    }
     internal enum MarkColor : byte
     {
         White = 32,
@@ -92,7 +107,7 @@ namespace Chaos
     #endregion
 
     #region DisplayData
-    internal enum NameStyle : byte
+    internal enum NameTagStyle : byte
     {
         NeutralHover = 0,
         Hostile = 1,
@@ -115,7 +130,7 @@ namespace Chaos
         Sprawl = 3
     }
 
-    internal enum SkinColr : byte
+    internal enum BodyColor : byte
     {
         White = 0,
         Pale = 1,
@@ -136,6 +151,13 @@ namespace Chaos
         South = 2,
         West = 3,
         Invalid = 255,
+    }
+
+    internal enum Gender : byte
+    {
+        Both = 0,
+        Male = 1,
+        Female = 2
     }
     #endregion
 
@@ -164,6 +186,7 @@ namespace Chaos
 
     internal enum MailFlag : byte
     {
+        None = 0,
         HasParcel = 1,
         HasLetter = 16
     }
@@ -217,6 +240,7 @@ namespace Chaos
 
     internal enum EquipmentSlot : byte
     {
+        None = 0,
         Weapon = 1,
         Armor = 2,
         Shield = 3,
@@ -265,16 +289,7 @@ namespace Chaos
     }
     #endregion
 
-    internal enum EffectsBarColor : byte
-    {
-        None = 0,
-        Blue = 1,
-        Green = 2,
-        Orange = 3,
-        Red = 4,
-        White = 5
-    }
-
+    #region GuI
     internal enum LightLevel : byte
     {
         Darkest = 0,
@@ -284,13 +299,22 @@ namespace Chaos
         Lighter = 4,
         Lightest = 5
     }
-
-    internal enum ServerType : byte
+    internal enum EffectsBarColor : byte
     {
-        Lobby = 0,
-        Login = 1,
-        World = 2
+        None = 0,
+        Blue = 1,
+        Green = 2,
+        Orange = 3,
+        Red = 4,
+        White = 5
     }
+    internal enum Pane : byte
+    {
+        Inventory = 0,
+        SpellBook = 1,
+        SkillBook = 2
+    }
+
     [Flags]
     internal enum MapFlags : uint
     {
@@ -303,15 +327,10 @@ namespace Chaos
         PvP = 64
         //and whatever else we decide
     }
-
     internal enum Status : ulong
     {
         None = 0,
         //add more statuses here, double each time
     }
-    internal enum Quest : ulong
-    {
-        None = 0,
-        //add more quest flags here, double each time
-    }
+    #endregion
 }

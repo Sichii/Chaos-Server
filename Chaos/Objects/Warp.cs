@@ -1,4 +1,6 @@
-﻿namespace Chaos.Objects
+﻿using Newtonsoft.Json;
+
+namespace Chaos.Objects
 {
     internal sealed class Warp : MapObject
     {
@@ -16,6 +18,14 @@
             TargetMapId = targetMapId;
             TargetX = targetX;
             TargetY = targetY;
+        }
+
+        internal Warp(Location sourceLocation, Location targetLocation)
+            :base(sourceLocation.MapId, sourceLocation.X, sourceLocation.Y)
+        {
+            TargetMapId = targetLocation.MapId;
+            TargetX = targetLocation.X;
+            TargetY = targetLocation.Y;
         }
     }
 }

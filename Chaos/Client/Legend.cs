@@ -1,16 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Legend : IEnumerable<LegendMark>
     {
         public IEnumerator<LegendMark> GetEnumerator() => Marks.Values.ToList().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal byte Length => (byte)Marks.Count;
-        internal Dictionary<string, LegendMark> Marks;
+        [JsonProperty]
+        internal Dictionary<string, LegendMark> Marks { get; }
 
         /// <summary>
         /// Represents the object containing the user's legend marks.
@@ -18,6 +21,12 @@ namespace Chaos
         internal Legend()
         {
             Marks = new Dictionary<string, LegendMark>();
+        }
+
+        [JsonConstructor]
+        internal Legend(Dictionary<string, LegendMark> marks)
+        {
+            Marks = marks;
         }
 
         /// <summary>
@@ -53,11 +62,17 @@ namespace Chaos
     
     internal sealed class LegendMark
     {
+        [JsonProperty]
         private GameTime added;
+        [JsonProperty]
         internal string Mark { get; set; }
+        [JsonProperty]
         internal string Key { get; set; }
+        [JsonProperty]
         internal MarkIcon Icon { get; set; }
+        [JsonProperty]
         internal MarkColor Color { get; set; }
+        [JsonProperty]
         internal int Count { get; set; }
         internal DateTime Added
         {
@@ -80,6 +95,17 @@ namespace Chaos
             Icon = icon;
             Color = color;
             Added = now;
+        }
+
+        [JsonConstructor]
+        internal LegendMark(GameTime added, string mark, string key, MarkIcon icon, MarkColor color, int count)
+        {
+            this.added = added;
+            Mark = mark;
+            Key = key;
+            Icon = icon;
+            Color = color;
+            Count = count;
         }
 
         /// <summary>

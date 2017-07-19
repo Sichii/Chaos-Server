@@ -1,17 +1,26 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace Chaos
 {
     internal sealed class UserOptions
     {
+        [JsonProperty]
         internal bool Whisper { get; set; }
+        [JsonProperty]
         internal bool Group { get; set; }
+        [JsonProperty]
         internal bool Shout { get; set; }
+        [JsonProperty]
         internal bool Wisdom { get; set; }
+        [JsonProperty]
         internal bool Magic { get; set; }
+        [JsonProperty]
         internal bool Exchange { get; set; }
+        [JsonProperty]
         internal bool FastMove { get; set; }
+        [JsonProperty]
         internal bool GuildChat { get; set; }
 
         /// <summary>
@@ -27,6 +36,19 @@ namespace Chaos
             Exchange = false;
             FastMove = false;
             GuildChat = true;
+        }
+
+        [JsonConstructor]
+        internal UserOptions(bool whisper, bool group, bool shout, bool wisdom, bool magic, bool exchange, bool fastmove, bool guildchat)
+        {
+            Whisper = whisper;
+            Group = group;
+            Shout = shout;
+            Wisdom = wisdom;
+            Magic = magic;
+            Exchange = exchange;
+            FastMove = fastmove;
+            GuildChat = guildchat;
         }
 
         /// <summary>
@@ -70,7 +92,7 @@ namespace Chaos
         /// <param name="opt">UserOption to convert.</param>
         public string ToString(UserOption opt)
         {
-            string format = "{0, 17}, :{1, 3}";
+            string format = "{0,-17}:{1,3}";
             switch(opt)
             {
                 case UserOption.Request:
@@ -106,7 +128,7 @@ namespace Chaos
             for (int i = 1; i <= 8; i++)
                 req.Add(ToString((UserOption)i));
 
-            return string.Join("\t", req);
+            return $"\t{string.Join("\t", req)}";
         }
     }
 }

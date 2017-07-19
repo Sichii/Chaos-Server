@@ -66,5 +66,23 @@ namespace Chaos
         /// </summary>
         /// <param name="format">Optional string format guide.</param>
         internal string ToString(string format = "") => !string.IsNullOrEmpty(format) ? new DateTime(Ticks*24).ToString(format) : new DateTime(Ticks*24).ToString("d MMM y");
+        internal LightLevel TimeOfDay
+        {
+            get
+            {
+                if (Hour >= 10 && Hour <= 14)
+                    return LightLevel.Lightest;
+                else if (Hour >= 8 && Hour <= 16)
+                    return LightLevel.Lighter;
+                else if (Hour >= 6 && Hour <= 18)
+                    return LightLevel.Light;
+                else if (Hour >= 4 && Hour <= 20)
+                    return LightLevel.Dark;
+                else if (Hour >= 2 && Hour <= 22)
+                    return LightLevel.Darker;
+                else
+                    return LightLevel.Darkest;
+            }
+        }
     }
 }

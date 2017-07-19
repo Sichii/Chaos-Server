@@ -14,6 +14,11 @@ namespace Chaos
             Nodes = new List<WorldMapNode>(nodes);
         }
 
+        internal WorldMap()
+        {
+
+        }
+
         internal uint GetCrc32()
         {
             byte[] buffer;
@@ -23,8 +28,8 @@ namespace Chaos
                 binaryWriter.Write((byte)Nodes.Count);
                 foreach (WorldMapNode worldMapNode in Nodes)
                 {
-                    binaryWriter.Write(worldMapNode.ScreenPosition.X);
-                    binaryWriter.Write(worldMapNode.ScreenPosition.Y);
+                    binaryWriter.Write(worldMapNode.Position.X);
+                    binaryWriter.Write(worldMapNode.Position.Y);
                     binaryWriter.Write(worldMapNode.Name);
                     binaryWriter.Write(worldMapNode.MapId);
                 }
