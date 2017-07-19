@@ -50,7 +50,7 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)1);
-                writer.Write(Dns.GetHostEntry("chaosserver.dynu.net").AddressList[0].GetAddressBytes());
+                writer.Write(Dns.GetHostEntry(Paths.DynHost).AddressList[0].GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
                 writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos\n"));

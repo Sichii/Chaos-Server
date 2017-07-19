@@ -45,7 +45,7 @@ namespace Chaos
             }
             
 
-            EndPoint = new IPEndPoint(Dns.GetHostEntry("chaosserver.dynu.net").AddressList[0], Server.LocalPort);
+            EndPoint = new IPEndPoint(Dns.GetHostEntry(Paths.DynHost).AddressList[0], Server.LocalPort);
         }
     }
 }

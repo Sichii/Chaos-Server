@@ -364,7 +364,12 @@ namespace Chaos
 
         internal static void ToggleGroup(Client client)
         {
-            throw new NotImplementedException();
+            if (client.User.Group != null)
+                if (client.User.Group.TryRemove(client.User))
+                    client.User.Group = null;
+            client.Enqueue(Server.Packets.ProfileSelf(client.User));
+            client.User.UserOptions.Toggle(UserOption.Group);
+            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.UserOptions, client.User.UserOptions.ToString(UserOption.Group)));
         }
 
         internal static void SwapSlot(Client client, Pane pane, byte origSlot, byte endSlot)
@@ -418,9 +423,9 @@ namespace Chaos
             throw new NotImplementedException();
         }
 
-        internal static void ClickWorldMap(Client client, uint mapId, Point point)
+        internal static void ClickWorldMap(Client client, ushort mapId, Point point)
         {
-            throw new NotImplementedException();
+            Server.World.AddObjectToMap(client.User, new Location(mapId, point));
         }
 
         internal static void ClickObject(Client client, int objectId)
@@ -506,6 +511,10 @@ namespace Chaos
         internal static void ExchangeWindow(Client client, byte type, uint targetId)
         {
             throw new NotImplementedException();
+
+            //Cap of 16 per trade window?
+            //Set an exchange flag?
+            //Open exchange windows for initiate and target
         }
 
         internal static void ExchangeWindow(Client client, byte type, uint targetId, byte slot)
@@ -526,6 +535,10 @@ namespace Chaos
         internal static void ExchangeWindow(Client client, byte type)
         {
             throw new NotImplementedException();
+
+            //Remove items/gold from initiate and add them to target
+            //Remove items/gold from target and add them to initiate
+            //Remove exchange flag?
         }
 
         internal static void RequestNotification(bool send, Client client)
