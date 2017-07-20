@@ -2,7 +2,7 @@
 
 namespace Chaos
 {
-    #region Crypto
+    #region Server
     internal enum EncryptMethod
     {
         None = 0,
@@ -21,20 +21,43 @@ namespace Chaos
         Abandoned = 128,
         Timeout = 258,
     }
+    [Flags]
+    internal enum MapFlags : uint
+    {
+        Hostile = 1,
+        NonHostile = 2,
+        NoSpells = 4,
+        NoSkills = 8,
+        NoChat = 16,
+        Snowing = 32,
+        PvP = 64
+        //and whatever else we decide
+    }
+    internal enum Status : ulong
+    {
+        None = 0,
+        //add more statuses here, double each time
+    }
     #endregion
 
     #region Messages
     internal enum ServerMessageType : byte
     {
         Whisper = 0,        //blue text
-        SystemMessage = 1,  //orange bar only
+        OrangeBar1 = 1,     //orange bar only
+        OrangeBar2 = 2,
         ActiveMessage = 3,  //orange bar + shiftF
-        PvPMessage = 5,     //xxxx has been killed
+        OrangeBar3 = 4,
+        PrangeBar4 = 5,
+        OrangeBar5 = 6,
         UserOptions = 7,    //user options get sent through this byte
         ScrollWindow = 8,   //window with a scroll bar (like sense)
-        GuildChat = 11,     //olive green text
+        NonScrollWindow = 9,//window without a scroll bar (identify item)
+        WoodenBoard = 10,
+        GroupChat = 11,     //puke green text (group)
+        GuildChat = 12,     //olive green text
         ClosePopup = 17,    //closes current popup
-        TopRight = 18      //no idea what to call this
+        TopRight = 18       //white text top right
     }
 
     internal enum LoginMessageType : byte
@@ -52,21 +75,23 @@ namespace Chaos
 
     internal enum MessageColor : byte
     {
-        Red = 62,
-        Yellow = 63,
-        DarkBlue = 66,
-        DarkGrey = 67,
-        MediumGrey = 68,
-        LightGrey = 69,
-        DarkPurple = 70,
-        BrightGreen = 71,
-        DarkGreen = 72,
-        Orange = 73,
-        DarkOrange = 74,
-        White = 75,
-        Blue = 76,
-        WhisperBlue = 76,
-        Pink = 77
+        Red = 98,
+        Yellow = 99,
+        DarkGreen = 100,
+        Silver = 101,
+        DarkBlue = 102,
+        White = 103,
+        LighterGray = 104,
+        LightGray = 105,
+        Gray = 106,
+        DarkGray = 107,
+        DarkerGray = 108,
+        Black = 109,
+        HotPink = 111,
+        DarkPurple = 112,
+        NeonGreen = 113,
+        Orange = 115,
+        Brown = 116,
     }
     #endregion
 
@@ -114,14 +139,12 @@ namespace Chaos
         FriendlyHover = 2,
         Neutral = 3
     }
-
     internal enum LanternSize : byte
     {
         None = 0,
         Small = 1,
         Large = 2
     }
-
     internal enum RestPosition : byte
     {
         None = 0,
@@ -129,7 +152,6 @@ namespace Chaos
         Lay = 2,
         Sprawl = 3
     }
-
     internal enum BodyColor : byte
     {
         White = 0,
@@ -143,7 +165,6 @@ namespace Chaos
         Orange = 8,
         Purple = 9
     }
-
     internal enum Direction : byte
     {
         North = 0,
@@ -152,7 +173,6 @@ namespace Chaos
         West = 3,
         Invalid = 255,
     }
-
     internal enum Gender : byte
     {
         Both = 0,
@@ -201,6 +221,7 @@ namespace Chaos
         Rucesion = 6,
         Noes = 7
     }
+    [Flags]
     internal enum StatUpdateFlags : byte
     {
         None = 0,
@@ -227,7 +248,6 @@ namespace Chaos
         Priest = 4,
         Monk = 5
     }
-
     internal enum AdvClass : byte
     {
         None = 0,
@@ -237,7 +257,6 @@ namespace Chaos
         Bard = 4,
         Summoner = 5
     }
-
     internal enum EquipmentSlot : byte
     {
         None = 0,
@@ -274,7 +293,6 @@ namespace Chaos
         GroupHunting = 6,
         NeedHelp = 7
     }
-
     internal enum UserOption
     {
         Request = 0,
@@ -313,24 +331,6 @@ namespace Chaos
         Inventory = 0,
         SpellBook = 1,
         SkillBook = 2
-    }
-
-    [Flags]
-    internal enum MapFlags : uint
-    {
-        Hostile = 1,
-        NonHostile = 2,
-        NoSpells = 4,
-        NoSkills = 8,
-        NoChat = 16,
-        Snowing = 32,
-        PvP = 64
-        //and whatever else we decide
-    }
-    internal enum Status : ulong
-    {
-        None = 0,
-        //add more statuses here, double each time
     }
     #endregion
 }

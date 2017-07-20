@@ -185,7 +185,6 @@ namespace MapTool
                         writer.Write(keyValuePair.Value.GetCrc32());
                     }
                 }
-
                 Cache.Replace(HashKey, cacheStream.ToArray());
             }
         }

@@ -45,28 +45,28 @@ namespace Chaos
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
 
+            byte[] notif = Encoding.GetEncoding(949).GetBytes($@"{{={(char)MessageColor.Orange}Under Construction");
+            NotificationCRC = CRC32.Calculate(notif);
+
+            using (MemoryStream compressor = ZLIB.Compress(notif))
+                Notification = compressor.ToArray();
+
             using (MemoryStream tableStream = new MemoryStream())
             using (BinaryWriter writer = new BinaryWriter(tableStream))
             {
                 writer.Write((byte)1);
-                writer.Write((byte)1);
-                writer.Write(Dns.GetHostEntry("chaosserver.dynu.net").AddressList[0].GetAddressBytes());
+                writer.Write((byte)0);
+                writer.Write(Dns.GetHostEntry(Paths.DynHost).AddressList[0].GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
-                writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos\n"));
-                writer.Write(Encoding.GetEncoding(949).GetBytes("UnderConstruction\0"));
+                writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos\0"));
+                writer.Write(notif);
 
                 TableCRC = CRC32.Calculate(tableStream.ToArray());
                 using (MemoryStream table = ZLIB.Compress(tableStream.ToArray()))
                     Table = table.ToArray();
 
             }
-
-            byte[] notif = Encoding.GetEncoding(949).GetBytes("Under Construction");
-            NotificationCRC = CRC32.Calculate(notif);
-
-            using (MemoryStream compressor = ZLIB.Compress(notif))
-                Notification = compressor.ToArray();
         }
 
         internal void Start()
@@ -107,5 +107,7 @@ namespace Chaos
                     writer.Write($@"{message}{Environment.NewLine}");
             }
         }
+
+        internal bool TryGetUser(string name, out Objects.User user) => (user = Clients.Values.FirstOrDefault(client => client.ServerType == ServerType.World && client.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
     }
 }

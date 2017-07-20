@@ -20,7 +20,7 @@ namespace Chaos
             ServerThread.Start();
 
             //display dns ip for others to connect to
-            Server.WriteLog($"Server IP: {Dns.GetHostAddresses("accoserver.dynu.com")[0]}");
+            Server.WriteLog($"Server IP: {Dns.GetHostAddresses(Paths.DynHost)[0]}");
 
             while (Server.ServerSocket == null)
                 Thread.Sleep(10);

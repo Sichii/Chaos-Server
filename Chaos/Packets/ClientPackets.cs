@@ -232,8 +232,6 @@ namespace Chaos
                 index += 9;
 
             ProcessPacket.Emote(client, index);
-
-            //client.Enqueue(client.ServerPackets.CreatureAnimation(client.user.id, index, 120));
         }
         private void PacketHandler_0x24_DropGold(Client client, ClientPacket packet)
         {

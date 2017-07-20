@@ -124,11 +124,11 @@ namespace Chaos
         /// <returns></returns>
         public override string ToString()
         {
-            List<string> req = new List<string>();
+            List<string> options = new List<string>();
             for (int i = 1; i <= 8; i++)
-                req.Add(ToString((UserOption)i));
+                options.Add(ToString((UserOption)i));
 
-            return $"\t{string.Join("\t", req)}";
+            return $"0{string.Join("\t", options)}";
         }
     }
 }

@@ -270,7 +270,7 @@ namespace Chaos
                 WorldObject w;
                 if (vObject.Map.Objects.TryRemove(vObject.Id, out w))
                 {
-                    foreach (User user in ObjectsVisibleFrom(vObject))
+                    foreach (User user in ObjectsVisibleFrom(vObject).OfType<User>())
                         user.Client.Enqueue(Server.Packets.RemoveObject(vObject));
 
                     vObject.Map = null;
@@ -484,12 +484,12 @@ namespace Chaos
             if (!stackable && count > 1)
                 for (int i = 0; i < count; i++)
                 {
-                    Item newItem = new Item(0, sprite, color, name, stackable ? count : 1, stackable, 500000, 500000, new TimeSpan());
+                    Item newItem = new Item(0, sprite, color, name, 1, stackable, 500000, 500000, new TimeSpan());
                     items.Add(newItem);
                 }
             else
             {
-                Item newItem = new Item(0, sprite, color, name, stackable ? count : 1, stackable, uint.MaxValue, uint.MaxValue, new TimeSpan());
+                Item newItem = new Item(0, sprite, color, name, count, stackable, 500000, 500000, new TimeSpan());
                 items.Add(newItem);
             }
 

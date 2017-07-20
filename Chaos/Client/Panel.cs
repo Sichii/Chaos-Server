@@ -21,7 +21,7 @@ namespace Chaos
         internal T this[byte slot]
         {
             get { return Valid(slot) ? Objects[slot] : null; }
-            set { if (value.Slot == slot) TryAdd(value); }
+            set { if (value.Slot == slot && Valid(slot)) Objects[slot] = value; }
         }
 
         internal Panel(byte length)
@@ -47,7 +47,6 @@ namespace Chaos
             Invalid = invalid;
         }
 
-
         /// <summary>
         /// Makes sure the slot is valid.
         /// </summary>
@@ -55,48 +54,60 @@ namespace Chaos
         private bool Valid(byte slot) => slot > 0 && !Invalid.Contains(slot) && slot < Length;
 
         /// <summary>
-        /// Overwrites or adds an object at the object's slot location.
+        /// Checks the collection for a stackable item that matches the given object. Increments the count, and rereferences to the given object.
         /// </summary>
-        /// <param name="obj">Object to add.</param>
-        internal bool TryAdd(T obj)
+        /// <param name="obj">Object to check.</param>
+        /// <returns></returns>
+        internal bool TryAddStack(T obj)
         {
-            if(obj is Objects.Item)
+            if (obj is Objects.Item)
             {
-                Objects.Item item = this[obj.Slot] as Objects.Item;
-                if (item != null && item.Stackable)
+                Objects.Item objItem = obj as Objects.Item;
+                Objects.Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.Sprite && item.Name.Equals(objItem.Name) && (item as Objects.Item)?.Stackable == true) as Objects.Item;
+                if (objItem.Stackable && existingItem?.Stackable == true)
                 {
-                    item.Count += (obj as Objects.Item).Count;
+                    objItem.Count += existingItem.Count;
+                    objItem.Slot = existingItem.Slot;
+                    Objects[existingItem.Slot] = obj;
                     return true;
                 }
-            }
-
-            if (Valid(obj.Slot) && Objects[obj.Slot] == null)
-            {
-                Objects[obj.Slot] = obj;
-                return true;
             }
             return false;
         }
 
+        /// <summary>
+        /// Attempts to add an object to the object's slot.
+        /// </summary>
+        /// <param name="obj">Object to add.</param>
+        internal bool TryAdd(T obj)
+        {
+            if (TryAddStack(obj))
+                return Objects[obj.Slot] == obj;
+
+            if (Objects[obj.Slot] == null)
+                this[obj.Slot] = obj;
+
+            return Objects[obj.Slot] == obj;
+        }
+
+        /// <summary>
+        /// Attempts to add an object to the next existing slot, adding to existing stackables first.
+        /// </summary>
+        /// <param name="obj">Object to add</param>
+        /// <returns></returns>
         internal bool AddToNextSlot(T obj)
         {
-            if (obj is Objects.Item)
+            if (TryAddStack(obj))
+                return Objects[obj.Slot] == obj;
+
+            foreach (byte key in Objects.Keys)
             {
-                Objects.Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == obj.Sprite && item.Name.Equals(obj.Name)) as Objects.Item;
-                if (existingItem != null)
-                {
-                    existingItem.Count += (obj as Objects.Item).Count;
+                obj.Slot = key;
+                if (TryAdd(obj))
                     return true;
-                }
             }
 
-            foreach (var kvp in Objects)
-                if (Valid(kvp.Key) && kvp.Value == null)
-                {
-                    obj.Slot = kvp.Key;
-                    return TryAdd(obj);
-                }
-            return false;
+            return Objects[obj.Slot] == obj;
         }
 
         /// <summary>
@@ -106,11 +117,9 @@ namespace Chaos
         internal bool TryRemove(byte slot)
         {
             if (Valid(slot))
-            {
                 Objects[slot] = null;
-                return true;
-            }
-            return false;
+
+            return Objects[slot] == null;
         }
 
         /// <summary>
@@ -120,12 +129,22 @@ namespace Chaos
         /// <param name="obj">Return object if successful.</param>
         internal bool TryGetRemove(byte slot, out T obj)
         {
-            obj = Objects[slot];
-            if (TryRemove(slot))
+            if (TryGet(slot, out obj) && TryRemove(slot))
                 return true;
 
-            obj = null;
             return false;
+        }
+
+        /// <summary>
+        /// Attempts to retreive the objects at slot location to obj reference.
+        /// </summary>
+        /// <param name="slot">Slot to retreive from.</param>
+        /// <param name="obj">Obj reference to set.</param>
+        /// <returns></returns>
+        internal bool TryGet(byte slot, out T obj)
+        {
+            obj = Objects[slot];
+            return Valid(slot);
         }
 
         /// <summary>
@@ -136,13 +155,19 @@ namespace Chaos
         /// <param name="slot2">Second slot to swap.</param>
         internal bool TrySwap(byte slot1, byte slot2)
         {
-            T one, two;
+            T one;
+            T two;
             if (TryGetRemove(slot1, out one) && TryGetRemove(slot2, out two))
             {
-                one.Slot = slot2;
-                two.Slot = slot1;
-                TryAdd(one);
-                TryAdd(two);
+                if (one != null)
+                    one.Slot = slot2;
+                if (two != null)
+                    two.Slot = slot1;
+
+                if (one != null)
+                    Objects[slot2] = one;
+                if (two != null)
+                    Objects[slot1] = two;
                 
                 return true;
             } //puts the first object back if it succeeded on the first operation, but failed on the second

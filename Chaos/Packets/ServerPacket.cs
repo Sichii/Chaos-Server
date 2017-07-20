@@ -31,31 +31,30 @@
         internal ServerPacket(byte[] buffer) : base(buffer) { }
         internal void Encrypt(Crypto crypto)
         {
-            Position = Data.Length;
-            ushort a = (ushort)(Utility.Random(65277) + 256);
-            byte b = (byte)(Utility.Random(155) + 100);
-            byte[] numArray;
-            switch (EncryptMethod)
+            EncryptMethod method = EncryptMethod;
+            int pos = Data.Length;
+
+            ResizeArray(Data.Length + (method == EncryptMethod.MD5Key ? 5 : 4));
+
+            Data[pos++] = 0;
+            if (method == EncryptMethod.MD5Key)
+                Data[pos++] = OpCode;
+
+            ushort a = (ushort)(Utility.Random(0, 65277) + 256);
+            byte b = (byte)(Utility.Random(0, 155) + 100);
+            byte[] key = method == EncryptMethod.Normal ? crypto.Key : method == EncryptMethod.MD5Key ? crypto.GenerateKey(a, b) : new byte[0];
+
+            for (int index = 0; index < Data.Length - 3; index++)
             {
-                case EncryptMethod.Normal:
-                    numArray = crypto.Key;
-                    break;
-                case EncryptMethod.MD5Key:
-                    numArray = crypto.GenerateKey(a, b);
-                    break;
-                default:
-                    return;
+                int num = index / crypto.Key.Length % 256;
+                Data[index] ^= (byte)(crypto.Salt[num] ^ (uint)key[index % key.Length]);
+                if (num != Sequence)
+                    Data[index] ^= crypto.Salt[Sequence];
             }
-            for (int index1 = 0; index1 < Data.Length; ++index1)
-            {
-                int index2 = index1 / crypto.Key.Length % 256;
-                Data[index1] ^= (byte)(crypto.Salt[index2] ^ (uint)numArray[index1 % numArray.Length]);
-                if (index2 != Sequence)
-                    Data[index1] ^= crypto.Salt[Sequence];
-            }
-            WriteByte((byte)(a % 256 ^ 116));
-            WriteByte((byte)(b ^ 36U));
-            WriteByte((byte)((a >> 8) % 256 ^ 100));
+
+            Data[pos++] = (byte)(a % 256 ^ 116);
+            Data[pos++] = (byte)(b ^ 36U);
+            Data[pos++] = (byte)((a >> 8) % 256 ^ 100);
         }
 
         internal ServerPacket Copy()

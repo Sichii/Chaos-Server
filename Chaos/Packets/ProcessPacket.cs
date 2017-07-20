@@ -21,14 +21,17 @@ namespace Chaos
 
         internal static void CreateCharA(Client client, string name, string password)
         {
-            if (!Regex.Match(name, @"[a-zA-Z]{4,12}").Success)
-                client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "Name must be 4-12 characters long."));
+            //checks if the name is 4-12 characters straight, if not... checks if there's a string 7-12 units long that has a space surrounced by at least 3 chars on each side.
+            if (!Regex.Match(name, @"[a-zA-Z]{4,12}").Success && (!Regex.Match(name, @"[a-z A-Z]{7, 12}").Success || !Regex.Match(name, @"[a-zA-Z]{3} [a-zA-Z]{3}").Success))
+                client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "Name must be 4-12 characters long, or a space surrounded by at least 3 characters on each side, up to 12 total."));
+            //checks if the password is 4-8 units long
             else if (!Regex.Match(password, @".{4,8}").Success)
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "Password must be 4-8 units long."));
+            //check if a user already exists with the given valid name
             else if(Server.DataBase.UserExists(name))
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "That name is taken."));
             else
-            {
+            {   //otherwise set the client's newChar fields so CreateCharB can use the information and send a confirmation to the client
                 client.NewCharName = name;
                 client.NewCharPw = password;
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Confirm));
@@ -37,16 +40,18 @@ namespace Chaos
 
         internal static void Login(Client client, string name, string password)
         {
+            User user;
+            //checks the userhash to see if the given name and password exist
             if (!Server.DataBase.CheckHash(name, Crypto.GetHashString(password, "MD5")))
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "Incorrect user name or password."));
-            else if (Server.Clients.Values.Any(cli => cli?.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true))
+            //checks to see if the user is currently logged on
+            else if (Server.TryGetUser(name, out user))
             {
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "That character is already logged in."));
-                client.Disconnect();
-                Server.Clients.Values.FirstOrDefault(cli => cli?.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.Disconnect();
+                user.Client.Disconnect();
             }
             else
-            {
+            {   //otherwise, confirms the login, sends the login message, and redirects them to the world
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Confirm));
                 client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "Logging in to Chaos"));
                 client.Redirect(new Redirect(client, ServerType.World, name));
@@ -99,21 +104,12 @@ namespace Chaos
             //see if there's actually an item at the spot
             GroundItem groundItem = Server.World.TryGetItem(groundPoint, client.User.Map);
 
-            //if there is
+            //if there's an item
             if (groundItem != null)
             {
-                //if it was double clicked
-                if (slot == 0)
-                {   //add it to the next available slot
-                    if (!client.User.Inventory.AddToNextSlot(groundItem.Item))
-                        return;
-                }
-                else
-                {
-                    groundItem.Item.Slot = slot;
-                    if (!client.User.Inventory.TryAdd(groundItem.Item))
-                        return;
-                }
+                groundItem.Item.Slot = slot;
+                if (!client.User.Inventory.TryAdd(groundItem.Item))
+                    return;
 
                 Server.World.RemoveObjectFromMap(groundItem);
                 client.Enqueue(Server.Packets.AddItem(groundItem.Item));
@@ -128,7 +124,7 @@ namespace Chaos
             Item item;
             
             //retreived the item
-            if(client.User.Inventory.TryGetRemove(slot, out item) && item != null)
+            if(client.User.Inventory.TryGet(slot, out item) && item != null)
             {
                 //if we're trying to drop more than we have, return
                 if (item.Count < count)
@@ -142,7 +138,12 @@ namespace Chaos
                 if (item.Count > 0) //if we're suppose to still be carrying some of this item, update the count
                     client.Enqueue(Server.Packets.AddItem(item));
                 else //otherwise remove the item
-                    client.Enqueue(Server.Packets.RemoveItem(slot));
+                {
+                    if (client.User.Inventory.TryRemove(slot))
+                        client.Enqueue(Server.Packets.RemoveItem(slot));
+                    else
+                        return;
+                }
 
                 //add the grounditem to the map
                 Server.World.AddObjectToMap(groundItem, new Location(groundItem.Map.Id, groundPoint));
@@ -154,15 +155,17 @@ namespace Chaos
             if (requestExit)
                 client.Enqueue(Server.Packets.ConfirmExit());
             else
-            {
                 client.Redirect(new Redirect(client, ServerType.Login));
-                client.Disconnect();
-            }
         }
 
         internal static void PublicChat(Client client, ClientMessageType type, string message)
         {
-            if(message.StartsWith("/") && (client.User.Name.Equals("Sichi", StringComparison.CurrentCultureIgnoreCase) || client.User.Name.Equals("Jinori", StringComparison.CurrentCultureIgnoreCase) || client.User.Name.Equals("Vorlof", StringComparison.CurrentCultureIgnoreCase)))
+            if(message.StartsWith("/") && 
+                (
+                    client.User.Name.Equals("Sichi", StringComparison.CurrentCultureIgnoreCase) || 
+                    client.User.Name.Equals("Jinori", StringComparison.CurrentCultureIgnoreCase) || 
+                    client.User.Name.Equals("Vorlof", StringComparison.CurrentCultureIgnoreCase)
+                ))
             {
                 message = message.Replace("/", "");
                 Match match;
@@ -245,7 +248,7 @@ namespace Chaos
 
         internal static void ClientJoin(Client client, byte seed, byte[] key, string name, uint id)
         {
-            client.Crypto = new Crypto(seed, Encoding.ASCII.GetString(key), name);
+            client.Crypto = new Crypto(seed, key, name);
 
             if (client.ServerType == ServerType.World)
             {
@@ -328,7 +331,7 @@ namespace Chaos
 
         internal static void Emote(Client client, byte index)
         {
-            throw new NotImplementedException();
+            client.Enqueue(Server.Packets.CreatureAnimation(client.User.Id, index, 100));
         }
 
         internal static void DropGold(Client client, uint amount, Point groundPoint)
@@ -364,7 +367,14 @@ namespace Chaos
 
         internal static void ToggleGroup(Client client)
         {
-            throw new NotImplementedException();
+            client.User.UserOptions.Toggle(UserOption.Group);
+
+            if (client.User.Group != null)
+                if (client.User.Group.TryRemove(client.User))
+                    client.User.Group = null;
+
+            client.Enqueue(Server.Packets.ProfileSelf(client.User));
+            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.UserOptions, client.User.UserOptions.ToString(UserOption.Group)));
         }
 
         internal static void SwapSlot(Client client, Pane pane, byte origSlot, byte endSlot)
@@ -388,8 +398,13 @@ namespace Chaos
 
             if (success)
             {
-                client.Enqueue(Server.Packets.AddItem(client.User.Inventory[origSlot]));
-                client.Enqueue(Server.Packets.AddItem(client.User.Inventory[endSlot]));
+                client.Enqueue(Server.Packets.RemoveItem(origSlot));
+                client.Enqueue(Server.Packets.RemoveItem(endSlot));
+
+                if (client.User.Inventory[origSlot] != null)
+                    client.Enqueue(Server.Packets.AddItem(client.User.Inventory[origSlot]));
+                if (client.User.Inventory[endSlot] != null)
+                    client.Enqueue(Server.Packets.AddItem(client.User.Inventory[endSlot]));
             }
         }
 
@@ -438,7 +453,7 @@ namespace Chaos
                 VisibleObject obj = Server.World.TryGetObject(objectId, client.User.Map);
 
                 if (obj is Monster)
-                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.SystemMessage, obj.Name));
+                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.OrangeBar1, obj.Name));
                 //do things
             }
         }

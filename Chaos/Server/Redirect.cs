@@ -13,7 +13,6 @@ namespace Chaos
         internal int Id { get; }
         internal IPEndPoint EndPoint { get; }
         internal Client Client { get; }
-        internal Server Server { get; }
         internal string Name { get; }
         internal byte[] Key { get; }
         internal byte Seed { get; }
@@ -23,18 +22,18 @@ namespace Chaos
         {
             Id = Interlocked.Increment(ref Server.NextId);
             Client = client;
-            Server = Client.Server;
             Type = type;
             Name = name ?? "Lobby";
 
+            /*
             if (type != ServerType.Lobby)
             {
-                //Seed = (byte)Utility.Random(1, 10);
+                //Seed = (byte)Utility.Random(0, 9);
                 Seed = client.Crypto.Seed;
                 
                 List<byte> key = new List<byte>();
                 for (int i = 0; i < 9; i++)
-                    key.Add((byte)Utility.Random(1, 255));
+                    key.Add((byte)Utility.Random(44, 68));
 
                 Key = key.ToArray();
             }
@@ -43,9 +42,14 @@ namespace Chaos
                 Seed = client.Crypto.Seed;
                 Key = client.Crypto.Key;
             }
+            */
+            
+            
+            Seed = client.Crypto.Seed;
+            Key = client.Crypto.Key;
             
 
-            EndPoint = new IPEndPoint(Dns.GetHostEntry("chaosserver.dynu.net").AddressList[0], Server.LocalPort);
+            EndPoint = new IPEndPoint(Dns.GetHostEntry(Paths.DynHost).AddressList[0], Client.Server.LocalPort);
         }
     }
 }

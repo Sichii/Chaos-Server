@@ -75,8 +75,8 @@ namespace Chaos
         internal void GenerateDialogHeader()
         {
             ushort num = CRC16.Calculate(Data, 6, Data.Length - 6);
-            Data[0] = (byte)Utility.Random();
-            Data[1] = (byte)Utility.Random();
+            Data[0] = (byte)Utility.Random(0, 255);
+            Data[1] = (byte)Utility.Random(0, 255);
             Data[2] = (byte)((Data.Length - 4) / 256);
             Data[3] = (byte)((Data.Length - 4) % 256);
             Data[4] = (byte)(num / 256);

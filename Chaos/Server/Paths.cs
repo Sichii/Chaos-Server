@@ -6,5 +6,6 @@
         internal static string LogFiles => $@"{Dir}logs\";
         internal static string MetaFiles => $@"{Dir}metafiles\";
         internal static string MapFiles => $@"{Dir}maps\";
+        internal static string DynHost => @"ChaosServer.dynu.net";
     }
 }

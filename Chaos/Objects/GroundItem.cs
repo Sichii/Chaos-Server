@@ -5,7 +5,6 @@ namespace Chaos.Objects
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class GroundItem : VisibleObject
     {
-        [JsonProperty]
         internal Item Item { get; set; }
 
         [JsonConstructor]

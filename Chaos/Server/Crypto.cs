@@ -9,9 +9,9 @@ namespace Chaos
         private static string key1 = GetHashString("inhOrig", "MD5").Substring(0, 8);
         private static string key2 = GetHashString(key1, "MD5").Substring(0, 8);
         internal static byte[][] Salts { get; }
-        internal byte Seed { get; }
-        internal byte[] Key { get; }
-        private string keySalt;
+        internal byte Seed { get; set; }
+        internal byte[] Key { get; set; }
+        internal byte[] KeySalts { get; set; }
         internal byte[] Salt => Salts[Seed];
         static Crypto()
         {
@@ -172,42 +172,37 @@ namespace Chaos
                 }
             };
         }
-        internal Crypto() : this(0, "UrkcnItnI") { }
-        internal Crypto(byte seed, string key)
+        internal Crypto() : this(0, Encoding.ASCII.GetBytes("UrkcnItnI"), string.Empty) { }
+        internal Crypto(byte seed, byte[] key, string keySaltSeed)
         {
             Seed = seed;
-            Key = Encoding.ASCII.GetBytes(key);
-            keySalt = string.Empty;
-        }
-        internal Crypto(byte seed, string key, string keySaltSeed) 
-            : this(seed, key)
-        {
-            keySalt = GenerateKeySalt(keySaltSeed);
+            Key = key;
+            KeySalts = string.IsNullOrEmpty(keySaltSeed) ? new byte[0] : GenerateKeySalts(keySaltSeed);
         }
 
         internal byte[] GenerateKey(ushort a, byte b)
         {
-            byte[] array = new byte[9];
-            for (int i = 0; i < 9; i++)
-            {
-                int index = (i * (9 * i + b * b) + a) % keySalt.Length;
-                array[i] = (byte)keySalt[index];
-            }
-            return array;
+            byte[] key = new byte[9];
+            for (int i = 0; i < 9; ++i)
+                key[i] = KeySalts[(i * (9 * i + b * b) + a) % KeySalts.Length];
+
+            return key;
         }
-        internal static string GenerateKeySalt(string seed)
+        internal static byte[] GenerateKeySalts(string seed)
         {
-            string text = GetHashString(GetHashString(seed, "MD5"), "MD5");
+            string saltTable = GetHashString(GetHashString(seed, "MD5"), "MD5");
             for (int i = 0; i < 31; i++)
-                text += GetHashString(text, "MD5");
-            return text;
+                saltTable += GetHashString(saltTable, "MD5");
+
+            return Encoding.ASCII.GetBytes(saltTable);
         }
         internal static string GetHashString(string value, string hashName)
         {
             HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashName);
             byte[] bytes = Encoding.ASCII.GetBytes(value);
-            byte[] value2 = hashAlgorithm.ComputeHash(bytes);
-            return BitConverter.ToString(value2).Replace("-", string.Empty).ToLower();
+            byte[] hashBytes = hashAlgorithm.ComputeHash(bytes);
+
+            return BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLower();
         }
 
         internal static void EncryptFile(MemoryStream fileData, string path)

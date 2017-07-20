@@ -35,6 +35,8 @@ namespace Chaos
 
             if (!Cache.Exists(HashKey))
                 Cache.Add(HashKey, new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
+
+
         }
 
         /// <summary>
