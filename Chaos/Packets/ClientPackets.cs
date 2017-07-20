@@ -276,8 +276,9 @@ namespace Chaos
         {
             Objects.GroupBox box = null;
             //2 = invite, 3 = join, 4 = groupBox, 6 = remove group box
-            byte type = packet.ReadByte();
-            if (type == 4)
+
+            GroupRequestType type = (GroupRequestType)packet.ReadByte();
+            if (type == GroupRequestType.Groupbox)
             {
                 string leader = packet.ReadString8();
                 string groupName = packet.ReadString8();

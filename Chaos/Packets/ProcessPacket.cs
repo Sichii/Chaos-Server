@@ -268,6 +268,7 @@ namespace Chaos
 
                 client.Enqueue(packets.ToArray());
                 Server.World.AddObjectToMap(client.User, client.User.Location);
+                client.Enqueue(Server.Packets.RequestProfileText());
             }
             else if(client.ServerType == ServerType.Lobby)
                 client.Enqueue(Server.Packets.LobbyNotification(false, Server.NotificationCRC));
@@ -360,9 +361,47 @@ namespace Chaos
             client.Enqueue(Server.Packets.ProfileSelf(client.User));
         }
 
-        internal static void GroupRequest(Client client, byte type, string targetName, GroupBox box)
+        internal static void GroupRequest(Client client, GroupRequestType type, string targetName, GroupBox box)
         {
-            throw new NotImplementedException();
+                switch (type)
+                {
+                    case GroupRequestType.Invite:
+                    if (client.User.Name.Equals(targetName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You cannot form a group alone."));
+                        break;
+                    }
+                    User targetuser;
+                    if (!Server.TryGetUser(targetName, out targetuser))
+                    {
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "That user is offline."));
+                        break;
+                    }
+                    if (targetuser.Group == client.User.Group)
+                    {
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, targetuser.Name + " has been removed from the group."));
+                        break;
+                    }
+                    if (targetuser.Group == null)
+                    {
+                        if (client.User.Group == null)
+                            new Group(client.User, targetuser);
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, targetuser.Name + " has been added to your group."));
+                        break;
+                    }
+                    break;
+                    case GroupRequestType.Join:
+
+                        break;
+
+                    case GroupRequestType.Groupbox:
+
+                        break;
+
+                    case GroupRequestType.RemoveGroupBox:
+
+                        break;
+                }
         }
 
         internal static void ToggleGroup(Client client)
@@ -454,7 +493,8 @@ namespace Chaos
 
                 if (obj is Monster)
                     client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.OrangeBar1, obj.Name));
-                //do things
+                if (obj is User)
+                    client.Enqueue(Server.Packets.Profile(obj as User));
             }
         }
 

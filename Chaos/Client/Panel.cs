@@ -9,8 +9,9 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Panel<T> : IEnumerable<T> where T : Objects.PanelObject
     {
+        private byte length;
         [JsonProperty]
-        internal byte Length { get; set; }
+        internal byte Length { get { return (byte)(length - 1); } set { length = value; } }
         [JsonProperty]
         internal Dictionary<byte, T> Objects { get; set; }
         [JsonProperty]

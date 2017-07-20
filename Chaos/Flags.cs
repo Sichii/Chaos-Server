@@ -33,6 +33,14 @@ namespace Chaos
         PvP = 64
         //and whatever else we decide
     }
+
+    internal enum GroupRequestType : byte
+    {
+        Invite = 2,
+        Join = 3,
+        Groupbox = 4,
+        RemoveGroupBox = 6
+    }
     internal enum Status : ulong
     {
         None = 0,

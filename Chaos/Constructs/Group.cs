@@ -24,6 +24,8 @@ namespace Chaos
             Leader = sender;
             Users = new List<Objects.User>() { sender, accepter };
             GroupId = Interlocked.Increment(ref Server.NextId);
+            sender.Group = this;
+            accepter.Group = this;
         }
 
         /// <summary>

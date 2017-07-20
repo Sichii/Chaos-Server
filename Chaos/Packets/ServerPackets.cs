@@ -450,15 +450,17 @@ namespace Chaos
             packet.WriteInt32(user.Id);
             for(byte slot = 1; slot < user.Equipment.Length; slot++)
             {
-                packet.WriteUInt16(user.Equipment[slot].Sprite);
-                packet.WriteByte(user.Equipment[slot].Color);
+                packet.WriteUInt16(user.Equipment[slot]?.Sprite ?? 0);
+                packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
             }
             packet.WriteBoolean(user.UserOptions.Group);
             packet.WriteString8(user.Name);
             packet.WriteByte((byte)user.Nation);
-            packet.WriteString8(user.Guild.TitleOf(user.Name));
+            packet.WriteString8(user.Titles.FirstOrDefault() ?? "");
+            packet.WriteBoolean(user.Group != null);
+            packet.WriteString8(user.Guild?.TitleOf(user.Name) ?? "");
             packet.WriteString8(user.AdvClass == AdvClass.None ? user.BaseClass.ToString() : user.AdvClass.ToString());
-            packet.WriteString8(user.Guild.Name);
+            packet.WriteString8(user.Guild?.Name ?? "");
             packet.WriteByte(user.Legend.Length);
             foreach(var mark in user.Legend)
             {
@@ -467,8 +469,8 @@ namespace Chaos
                 packet.WriteString8(mark.Key);
                 packet.WriteString8(mark.ToString());
             }
-            packet.WriteUInt16((ushort)(user.Personal.Portrait.Length + user.Personal.Message.Length));
-            packet.Write(user.Personal.Portrait);
+            packet.WriteUInt16((ushort)(user.Personal.Portrait.Length + user.Personal.Message.Length + 4));
+            packet.WriteData16(user.Personal.Portrait);
             packet.WriteString16(user.Personal.Message);
 
             return packet;
