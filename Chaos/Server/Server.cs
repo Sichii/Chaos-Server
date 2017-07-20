@@ -56,7 +56,7 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
-                writer.Write(Dns.GetHostEntry(Paths.DynHost).AddressList[0].GetAddressBytes());
+                writer.Write(Dns.GetHostEntry(Host.Name).AddressList[0].GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
                 writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos\0"));

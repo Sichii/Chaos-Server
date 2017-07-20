@@ -433,9 +433,9 @@ namespace Chaos
             throw new NotImplementedException();
         }
 
-        internal static void ClickWorldMap(Client client, uint mapId, Point point)
+        internal static void ClickWorldMap(Client client, ushort mapId, Point point)
         {
-            throw new NotImplementedException();
+            Server.World.AddObjectToMap(client.User, new Location(mapId, point));
         }
 
         internal static void ClickObject(Client client, int objectId)

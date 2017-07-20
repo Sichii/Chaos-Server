@@ -101,6 +101,7 @@
     <Compile Include="Objects\Warp.cs" />
     <Compile Include="Objects\WorldObject.cs" />
     <Compile Include="Packets\Packet.cs" />
+    <Compile Include="Server\Host.cs" />
     <Compile Include="Server\Paths.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

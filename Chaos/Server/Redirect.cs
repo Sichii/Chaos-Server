@@ -49,7 +49,7 @@ namespace Chaos
             Key = client.Crypto.Key;
             
 
-            EndPoint = new IPEndPoint(Dns.GetHostEntry(Paths.DynHost).AddressList[0], Client.Server.LocalPort);
+            EndPoint = new IPEndPoint(Dns.GetHostEntry(Host.Name).AddressList[0], Client.Server.LocalPort);
         }
     }
 }
