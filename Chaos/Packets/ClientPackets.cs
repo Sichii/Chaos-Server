@@ -423,7 +423,7 @@ namespace Chaos
             uint mapId = packet.ReadUInt32();
             Point point = packet.ReadPoint();
 
-            ProcessPacket.ClickWorldMap(client, mapId, point);
+            ProcessPacket.ClickWorldMap(client, (ushort)mapId, point);
             //theyre clicking a worldMapNode here
         }
         private void PacketHandler_0x43_ClickObject(Client client, ClientPacket packet)
