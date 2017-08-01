@@ -19,19 +19,20 @@ namespace Chaos
             Point = point;
         }
 
-        internal ushort CRC
+        internal ushort CheckSum
         {
             get
             {
-                MemoryStream m = new MemoryStream();
-                using (BinaryWriter b = new BinaryWriter(m))
+                MemoryStream data = new MemoryStream();
+                using (BinaryWriter writer = new BinaryWriter(data))
                 {
-                    b.Write(Encoding.Unicode.GetBytes(Name));
-                    b.Write(MapId);
-                    b.Write(Point.X);
-                    b.Write(Point.Y);
+                    writer.Write(Encoding.Unicode.GetBytes(Name));
+                    writer.Write(MapId);
+                    writer.Write(Point.X);
+                    writer.Write(Point.Y);
 
-                    return CRC16.Calculate(m.ToArray());
+                    writer.Flush();
+                    return Crypto.Generate16(data.ToArray());
                 }
             }
         }

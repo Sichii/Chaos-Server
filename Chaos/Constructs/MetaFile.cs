@@ -30,26 +30,26 @@ namespace Chaos
         {
             MetaFile metaFile;
 
-            FileStream fileStream = File.Open(Paths.MetaFiles + name, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using (MemoryStream dataStream = new MemoryStream())
-            using (BinaryReader binaryReader = new BinaryReader(fileStream, Encoding.GetEncoding(949)))
+            FileStream file = File.Open(Paths.MetaFiles + name, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using (MemoryStream data = new MemoryStream())
+            using (BinaryReader reader = new BinaryReader(file, Encoding.GetEncoding(949)))
             {
-                fileStream.CopyTo(dataStream);
-                metaFile = new MetaFile(name, dataStream.ToArray());
-                fileStream.Position = 0;
+                file.CopyTo(data);
+                metaFile = new MetaFile(name, data.ToArray());
+                file.Position = 0;
 
-                int num1 = binaryReader.ReadByte() << 8 | binaryReader.ReadByte();
-                for (int index1 = 0; index1 < num1; ++index1)
+                int countX = reader.ReadByte() << 8 | reader.ReadByte();
+                for (int x = 0; x < countX; ++x)
                 {
-                    MetafileNode metafileNode = new MetafileNode(binaryReader.ReadString());
-                    int num2 = binaryReader.ReadByte() << 8 | binaryReader.ReadByte();
-                    for (int index2 = 0; index2 < num2; ++index2)
+                    MetafileNode metaFileNode = new MetafileNode(reader.ReadString());
+                    int countY = reader.ReadByte() << 8 | reader.ReadByte();
+                    for (int y = 0; y < countY; ++y)
                     {
-                        int count = binaryReader.ReadByte() << 8 | binaryReader.ReadByte();
-                        byte[] bytes = binaryReader.ReadBytes(count);
-                        metafileNode.Properties.Add(Encoding.GetEncoding(949).GetString(bytes));
+                        int count = reader.ReadByte() << 8 | reader.ReadByte();
+                        byte[] bytes = reader.ReadBytes(count);
+                        metaFileNode.Properties.Add(Encoding.GetEncoding(949).GetString(bytes));
                     }
-                    metaFile.Nodes.Add(metafileNode);
+                    metaFile.Nodes.Add(metaFileNode);
                 }
             }
             return metaFile;

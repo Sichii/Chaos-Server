@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class User : Creature
@@ -43,8 +43,9 @@ namespace Chaos.Objects
         internal bool IsMaster { get; set; }
         [JsonProperty]
         internal string Spouse { get; set; }
-
+        [JsonProperty]
         internal List<string> Titles { get; set; }
+        internal bool Grouped => Group != null;
 
         internal User(string name, Point point, Map map, Direction direction)
             :base(name, 0, 4, point, map, direction)

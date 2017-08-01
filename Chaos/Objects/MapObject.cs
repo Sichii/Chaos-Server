@@ -1,4 +1,4 @@
-﻿namespace Chaos.Objects
+﻿namespace Chaos
 {
     internal abstract class MapObject
     {

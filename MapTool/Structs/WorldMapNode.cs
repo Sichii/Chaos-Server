@@ -23,15 +23,15 @@ namespace MapTool
         {
             get
             {
-                MemoryStream m = new MemoryStream();
-                using (BinaryWriter b = new BinaryWriter(m))
+                MemoryStream data = new MemoryStream();
+                using (BinaryWriter writer = new BinaryWriter(data))
                 {
-                    b.Write(Encoding.Unicode.GetBytes(Name));
-                    b.Write(MapId);
-                    b.Write(Point.X);
-                    b.Write(Point.Y);
-
-                    return CRC16.Calculate(m.ToArray());
+                    writer.Write(Encoding.Unicode.GetBytes(Name));
+                    writer.Write(MapId);
+                    writer.Write(Point.X);
+                    writer.Write(Point.Y);
+                    writer.Flush();
+                    return CheckSum.Generate16(data.ToArray());
                 }
             }
         }

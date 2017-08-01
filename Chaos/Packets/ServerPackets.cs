@@ -8,14 +8,14 @@ using System.Text;
 
 namespace Chaos
 {
-    internal class ServerPackets
+    internal sealed class ServerPackets
     {
-        internal ServerPacket ConnectionInfo(uint tableCrc, byte seed, byte[] key)
+        internal ServerPacket ConnectionInfo(uint tableCheckSum, byte seed, byte[] key)
         {
             var packet = new ServerPacket(0);
 
             packet.WriteByte(0);
-            packet.WriteUInt32(tableCrc);
+            packet.WriteUInt32(tableCheckSum);
             packet.WriteByte(seed);
             packet.WriteData8(key);
 
@@ -65,7 +65,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket DisplayItemMonster(params Objects.VisibleObject[] objects)
+        internal ServerPacket DisplayItemMonster(params VisibleObject[] objects)
         {
             var packet = new ServerPacket(7);
 
@@ -77,7 +77,7 @@ namespace Chaos
                 packet.WriteUInt16(obj.Sprite);
                 if(obj.Sprite < 32768) //monster sprites
                 {
-                    Objects.Creature newObj = obj as Objects.Creature;
+                    Creature newObj = obj as Creature;
                     packet.Write(new byte[4]); //dunno
                     packet.WriteByte((byte)newObj.Direction);
                     packet.WriteByte(0); //dunno
@@ -163,7 +163,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket CreatureWalk(Objects.Creature creature, Direction direction)
+        internal ServerPacket CreatureWalk(Creature creature, Direction direction)
         {
             var packet = new ServerPacket(12);
 
@@ -183,7 +183,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket RemoveObject(Objects.VisibleObject obj)
+        internal ServerPacket RemoveObject(VisibleObject obj)
         {
             var packet = new ServerPacket(14);
 
@@ -191,7 +191,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket AddItem(Objects.Item item)
+        internal ServerPacket AddItem(Item item)
         {
             var packet = new ServerPacket(15);
 
@@ -244,13 +244,13 @@ namespace Chaos
             packet.WriteByte(map.SizeX);
             packet.WriteByte(map.SizeY);
             packet.Write(new byte[3]); //dunno
-            packet.WriteByte((byte)(map.CRC / 256));
-            packet.WriteByte((byte)(map.CRC % 256));
+            packet.WriteByte((byte)(map.CheckSum / 256));
+            packet.WriteByte((byte)(map.CheckSum % 256));
             packet.WriteString8(map.Name);
 
             return packet;
         }
-        internal ServerPacket AddSpell(Objects.Spell spell)
+        internal ServerPacket AddSpell(Spell spell)
         {
             var packet = new ServerPacket(23);
 
@@ -334,7 +334,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket AddSkill(Objects.Skill skill)
+        internal ServerPacket AddSkill(Skill skill)
         {
             var packet = new ServerPacket(44);
 
@@ -363,7 +363,7 @@ namespace Chaos
             {
                 packet.WritePoint16(node.Position); //position on the worldmap
                 packet.WriteString8(node.Name);
-                packet.WriteUInt16(node.CRC);
+                packet.WriteUInt16(node.CheckSum);
                 packet.WriteUInt16(node.MapId); //map you'll spawn on
                 packet.WritePoint16(node.Point); //point you'll spawn on
             }
@@ -382,7 +382,7 @@ namespace Chaos
         {
             get { return new ServerPacket(49); }
         }
-        internal ServerPacket Door(params Objects.Door[] doors)
+        internal ServerPacket Door(params Door[] doors)
         {
             var packet = new ServerPacket(50);
 
@@ -396,7 +396,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket DisplayUser(Objects.User user)
+        internal ServerPacket DisplayUser(User user)
         {
             DisplayData display = user.DisplayData;
             var packet = new ServerPacket(51);
@@ -443,7 +443,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket Profile(Objects.User user)
+        internal ServerPacket Profile(User user)
         {
             var packet = new ServerPacket(52);
 
@@ -457,7 +457,7 @@ namespace Chaos
             packet.WriteString8(user.Name);
             packet.WriteByte((byte)user.Nation);
             packet.WriteString8(user.Titles.FirstOrDefault() ?? "");
-            packet.WriteBoolean(user.Group != null);
+            packet.WriteBoolean(user.Grouped);
             packet.WriteString8(user.Guild?.TitleOf(user.Name) ?? "");
             packet.WriteString8(user.AdvClass == AdvClass.None ? user.BaseClass.ToString() : user.AdvClass.ToString());
             packet.WriteString8(user.Guild?.Name ?? "");
@@ -475,7 +475,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket WorldList(IEnumerable<Objects.User> users, byte UserLevel)
+        internal ServerPacket WorldList(IEnumerable<User> users, byte UserLevel)
         {
             var packet = new ServerPacket(54);
 
@@ -494,7 +494,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket AddEquipment(Objects.Item item)
+        internal ServerPacket AddEquipment(Item item)
         {
             var packet = new ServerPacket(55);
 
@@ -516,7 +516,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket ProfileSelf(Objects.User user)
+        internal ServerPacket ProfileSelf(User user)
         {
             var packet = new ServerPacket(57);
 
@@ -607,7 +607,7 @@ namespace Chaos
             //i don't believe there's anything here
             return new ServerPacket(72);
         }
-        internal ServerPacket RequestProfileText()
+        internal ServerPacket RequestPersonal()
         {
             //i don't believe there's anything here
             return new ServerPacket(73);
@@ -634,7 +634,7 @@ namespace Chaos
             //i don't believe there's anything here
             return new ServerPacket(88);
         }
-        internal ServerPacket LobbyNotification(bool sendNotif, uint notifCRC = 0, byte[] notif = null)
+        internal ServerPacket LobbyNotification(bool sendNotif, uint loginMsgCheckSum = 0, byte[] notif = null)
         {
             var packet = new ServerPacket(96);
 
@@ -642,7 +642,16 @@ namespace Chaos
             if (sendNotif)
                 packet.WriteData16(notif);
             else
-                packet.WriteUInt32(notifCRC);
+                packet.WriteUInt32(loginMsgCheckSum);
+
+            return packet;
+        }
+        internal ServerPacket GroupRequest(GroupRequestType type, string sender)
+        {
+            var packet = new ServerPacket(99);
+
+            packet.WriteByte((byte)type);
+            packet.WriteString8(sender);
 
             return packet;
         }
@@ -684,7 +693,7 @@ namespace Chaos
                 foreach (var metafile in metafiles)
                 {
                     packet.WriteString8(metafile.Name);
-                    packet.WriteUInt32(CRC32.Calculate(metafile.Data));
+                    packet.WriteUInt32(Crypto.Generate32(metafile.Data));
                 }
                 packets.Add(packet);
             }
@@ -696,7 +705,7 @@ namespace Chaos
                     var packet = new ServerPacket(111);
                     packet.WriteBoolean(false);
                     packet.WriteString8(metafile.Name);
-                    packet.WriteUInt32(CRC32.Calculate(metafile.Data));
+                    packet.WriteUInt32(Crypto.Generate32(metafile.Data));
                     packet.WriteData16(metafile.Data);
 
                     packets.Add(packet);

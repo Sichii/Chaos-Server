@@ -7,7 +7,7 @@ namespace Chaos
     internal sealed class DisplayData
     {
         [JsonProperty]
-        internal Objects.User User { get; set; }
+        internal User User { get; set; }
 
         //Base
         [JsonProperty]
@@ -67,7 +67,7 @@ namespace Chaos
         /// <param name="hairSprite">Base sprite for the hair of the user.</param>
         /// <param name="hairColor">Base color value for the hair of the user.</param>
         /// <param name="bodySprite">Base body value for the user.</param>
-        internal DisplayData(Objects.User user, ushort hairSprite, byte hairColor, byte bodySprite)
+        internal DisplayData(User user, ushort hairSprite, byte hairColor, byte bodySprite)
         {
             User = user;
             HairSprite = hairSprite;
@@ -83,7 +83,7 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal DisplayData(Objects.User user, ushort hairSprite, byte hairColor, byte bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
+        internal DisplayData(User user, ushort hairSprite, byte hairColor, byte bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
         {
             User = user;
             HairSprite = hairSprite;

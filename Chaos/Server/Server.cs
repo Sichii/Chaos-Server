@@ -22,9 +22,9 @@ namespace Chaos
         internal ServerPackets Packets { get; }
         internal World World { get; }
         internal byte[] Table { get; }
-        internal uint TableCRC { get; }
-        internal byte[] Notification { get; }
-        internal uint NotificationCRC { get; }
+        internal uint TableCheckSum { get; }
+        internal byte[] LoginMessage { get; }
+        internal uint LoginMessageCheckSum { get; }
         internal ConcurrentDictionary<Socket, Client> Clients { get; }
         internal List<Client> WorldClients => Clients.Values.Where(c => c.ServerType == ServerType.World).ToList();
         internal DataBase DataBase { get; }
@@ -39,19 +39,19 @@ namespace Chaos
             LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);
             World = new World(this);
             Clients = new ConcurrentDictionary<Socket, Client>();
-            ProcessPacket.Server = this;
-            ProcessPacket.World = World;
+            Game.Server = this;
+            Game.World = World;
             Packets = new ServerPackets();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
 
             byte[] notif = Encoding.GetEncoding(949).GetBytes($@"{{={(char)MessageColor.Orange}Under Construction");
-            NotificationCRC = CRC32.Calculate(notif);
+            LoginMessageCheckSum = Crypto.Generate32(notif);
 
             using (MemoryStream compressor = ZLIB.Compress(notif))
-                Notification = compressor.ToArray();
+                LoginMessage = compressor.ToArray();
 
-            using (MemoryStream tableStream = new MemoryStream())
+            MemoryStream tableStream = new MemoryStream();
             using (BinaryWriter writer = new BinaryWriter(tableStream))
             {
                 writer.Write((byte)1);
@@ -59,10 +59,11 @@ namespace Chaos
                 writer.Write(Dns.GetHostEntry(Host.Name).AddressList[0].GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
-                writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos\0"));
+                writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos"));
                 writer.Write(notif);
+                writer.Flush();
 
-                TableCRC = CRC32.Calculate(tableStream.ToArray());
+                TableCheckSum = Crypto.Generate32(tableStream.ToArray());
                 using (MemoryStream table = ZLIB.Compress(tableStream.ToArray()))
                     Table = table.ToArray();
 
@@ -73,6 +74,7 @@ namespace Chaos
         {
             World.Load();
             WriteLog("Loading completed.");
+
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.Bind(LocalEndPoint);
             ServerSocket.Listen(100);
@@ -108,6 +110,6 @@ namespace Chaos
             }
         }
 
-        internal bool TryGetUser(string name, out Objects.User user) => (user = Clients.Values.FirstOrDefault(client => client.ServerType == ServerType.World && client.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
+        internal bool TryGetUser(string name, out User user) => (user = Clients.Values.FirstOrDefault(client => client.ServerType == ServerType.World && client.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
     }
 }

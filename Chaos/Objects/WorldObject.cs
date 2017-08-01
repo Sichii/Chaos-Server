@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal abstract class WorldObject
     {

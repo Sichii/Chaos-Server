@@ -5,37 +5,30 @@ namespace Chaos
 {
     internal abstract class Packet
     {
-        protected internal byte Signature { internal get; set; }
+        protected internal DateTime Creation { internal get; set; }
+        protected internal byte Identifier { internal get; set; }
         protected internal byte OpCode { internal get; set; }
-        internal byte Sequence { get; set; }
-        protected internal byte[] Data { internal get; set; }
-        internal int Position { get; set; }
-        protected internal byte[] Original { internal get; set; }
-        protected internal DateTime TimeStamp { internal get; set; }
-        internal bool ShouldEncrypt => EncryptMethod != EncryptMethod.None;
-        internal abstract EncryptMethod EncryptMethod { get; }
+        internal bool ShouldEncrypt => EncryptionType != EncryptionType.None;
+        internal abstract EncryptionType EncryptionType { get; }
+        internal byte Counter;
+        protected internal byte[] Data;
+        internal int Position;
 
         internal Packet(byte opcode)
         {
-            Signature = 170;
+            Identifier = 170;
             OpCode = opcode;
             Data = new byte[0];
         }
         internal Packet(byte[] buffer)
         {
-            Original = buffer;
-            Signature = buffer[0];
+            Identifier = buffer[0];
             OpCode = buffer[3];
-            Sequence = buffer[4];
-            TimeStamp = DateTime.UtcNow;
+            Counter = buffer[4];
+            Creation = DateTime.UtcNow;
             int num = buffer.Length - (ShouldEncrypt ? 5 : 4);
             Data = new byte[num];
             Array.Copy(buffer, buffer.Length - num, Data, 0, num);
-        }
-        internal void Clear()
-        {
-            Position = 0;
-            Data = new byte[0];
         }
         internal byte[] ReadBytes(int length)
         {
@@ -180,7 +173,7 @@ namespace Chaos
         {
             int num = Position + buffer.Length;
             if (num > Data.Length)
-                ResizeArray(num);
+                Array.Resize(ref Data, num);
 
             Array.Copy(buffer, 0, Data, Position, buffer.Length);
             Position += buffer.Length;
@@ -252,7 +245,7 @@ namespace Chaos
         {
             byte[] bytes = Encoding.GetEncoding(949).GetBytes(value);
             if (bytes.Length > 255)
-                throw new ArgumentOutOfRangeException("value", value, "Length of string must not exceed 255 characters");
+                throw new ArgumentOutOfRangeException("value", value, "String must be less than 256 chars");
 
             WriteByte((byte)bytes.Length);
             Write(bytes);
@@ -261,7 +254,7 @@ namespace Chaos
         {
             byte[] bytes = Encoding.GetEncoding(949).GetBytes(value);
             if (bytes.Length > 65535)
-                throw new ArgumentOutOfRangeException("value", value, "Length of string must not exceed 65535 characters");
+                throw new ArgumentOutOfRangeException("value", value, "String must be less than 65536 chars");
 
             WriteUInt16((ushort)bytes.Length);
             Write(bytes);
@@ -275,34 +268,6 @@ namespace Chaos
         {
             WriteUInt16(value.X);
             WriteUInt16(value.Y);
-        }
-        internal void WriteArray(Array value)
-        {
-            foreach (object current in value)
-            {
-                if (current is char)
-                    WriteByte((byte)current);
-                else if (current is byte)
-                    WriteByte((byte)current);
-                else if (current is sbyte)
-                    WriteSByte((sbyte)current);
-                else if (current is bool)
-                    WriteBoolean((bool)current);
-                else if (current is short)
-                    WriteInt16((short)current);
-                else if (current is ushort)
-                    WriteUInt16((ushort)current);
-                else if (current is int)
-                    WriteInt32((int)current);
-                else if (current is uint)
-                    WriteUInt32((uint)current);
-                else if (current is string)
-                    WriteString8((string)current);
-                else if (current is Point)
-                    WritePoint16((Point)current);
-                else if (current is Array)
-                    WriteArray((Array)current);
-            }
         }
         internal void WriteData(byte[] value, bool terminate = false)
         {
@@ -325,18 +290,18 @@ namespace Chaos
         {
             int num = Data.Length + (ShouldEncrypt ? 5 : 4) - 3;
             byte[] array = new byte[num + 3];
-            array[0] = Signature;
+            array[0] = Identifier;
             array[1] = (byte)(num / 256);
             array[2] = (byte)(num % 256);
             array[3] = OpCode;
-            array[4] = Sequence;
+            array[4] = Counter;
             Array.Copy(Data, 0, array, array.Length - Data.Length, Data.Length);
             return array;
         }
         internal string GetHexString()
         {
-            int num = Data.Length + 1;
-            byte[] array = new byte[num];
+            int length = Data.Length + 1;
+            byte[] array = new byte[length];
             array[0] = OpCode;
             Array.Copy(Data, 0, array, 1, Data.Length);
             return BitConverter.ToString(array).Replace('-', ' ');
@@ -358,13 +323,6 @@ namespace Chaos
                     array[i] = (char)b;
             }
             return new string(array);
-        }
-
-        protected void ResizeArray(int newLength)
-        {
-            var data = Data;
-            Array.Resize(ref data, newLength);
-            Data = data;
         }
     }
 }

@@ -7,27 +7,27 @@ using System.Linq;
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal sealed class Panel<T> : IEnumerable<T> where T : Objects.PanelObject
+    internal sealed class Panel<T> : IEnumerable<T> where T : PanelObject
     {
-        private byte length;
         [JsonProperty]
-        internal byte Length { get { return (byte)(length - 1); } set { length = value; } }
+        private byte length;
         [JsonProperty]
         internal Dictionary<byte, T> Objects { get; set; }
         [JsonProperty]
-        internal byte[] Invalid { get; set; }
+        internal byte[] Invalid { get; }
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal T this[byte slot]
         {
             get { return Valid(slot) ? Objects[slot] : null; }
-            set { if (value.Slot == slot && Valid(slot)) Objects[slot] = value; }
+            private set { if (value.Slot == slot && Valid(slot)) Objects[slot] = value; }
         }
+        internal byte Length => (byte)(length - 1);
 
         internal Panel(byte length)
         {
-            Length = length;
+            this.length = length;
             Objects = new Dictionary<byte, T>();
             for (byte i = 0; i < length; i++)
                 Objects[i] = null;
@@ -43,7 +43,7 @@ namespace Chaos
         [JsonConstructor]
         internal Panel(byte length, Dictionary<byte, T> objects, byte[] invalid)
         {
-            Length = length;
+            this.length = length;
             Objects = objects;
             Invalid = invalid;
         }
@@ -61,10 +61,10 @@ namespace Chaos
         /// <returns></returns>
         internal bool TryAddStack(T obj)
         {
-            if (obj is Objects.Item)
+            if (obj is Item)
             {
-                Objects.Item objItem = obj as Objects.Item;
-                Objects.Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.Sprite && item.Name.Equals(objItem.Name) && (item as Objects.Item)?.Stackable == true) as Objects.Item;
+                Item objItem = obj as Item;
+                Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.Sprite && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
                 if (objItem.Stackable && existingItem?.Stackable == true)
                 {
                     objItem.Count += existingItem.Count;

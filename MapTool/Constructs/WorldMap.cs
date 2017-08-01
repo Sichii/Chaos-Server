@@ -31,7 +31,7 @@ namespace MapTool
                 binaryWriter.Flush();
                 buffer = memoryStream.ToArray();
             }
-            return CRC32.Calculate(buffer);
+            return CheckSum.Generate32(buffer);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Chaos
             if (!Cache.Exists(HashKey))
                 Cache.Add(HashKey, new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
 
-
+            RemoveUser("sichi");
         }
 
         /// <summary>
@@ -66,16 +66,16 @@ namespace Chaos
         /// Attempts save the given user if it exists. Returns false if the user doesn't exist.
         /// </summary>
         /// <param name="user">User you'd like to save.</param>
-        internal bool TrySaveUser(Objects.User user) => Cache.Replace(user.Name.ToUpper(), user);
+        internal bool TrySaveUser(User user) => Cache.Replace(user.Name.ToUpper(), user);
 
         /// <summary>
         /// Retreives the user corresponding to the name given. Returns null if the user doesn't exist.
         /// </summary>
         /// <param name="name">Name of the user you'd like to retreive.</param>
-        internal Objects.User GetUser(string name)
+        internal User GetUser(string name)
         {
-            Objects.User u = Cache.Get<Objects.User>(name.ToUpper());
-            return UserExists(name) ? Cache.Get<Objects.User>(name.ToUpper()) : null;
+            User u = Cache.Get<User>(name.ToUpper());
+            return UserExists(name) ? Cache.Get<User>(name.ToUpper()) : null;
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Chaos
         /// </summary>
         /// <param name="user">Name of the user you'd like to add.</param>
         /// <param name="password">User's password unhashed.</param>
-        internal bool TryAddUser(Objects.User user, string password)
+        internal bool TryAddUser(User user, string password)
         {
             string hash = Crypto.GetHashString(password, "MD5");
             ConcurrentDictionary<string, string> userHash = UserHash;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal sealed class Door : MapObject
     {

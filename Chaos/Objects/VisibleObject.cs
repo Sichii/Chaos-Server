@@ -1,14 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal abstract class VisibleObject : WorldObject
     {
         [JsonProperty]
-        internal ushort Sprite { get; }
+        internal Point Point;
         [JsonProperty]
-        internal Point Point { get; set; }
+        internal ushort Sprite { get; }
         [JsonProperty]
         internal Map Map { get; set; }
         internal Location Location => new Location(Map.Id, Point);

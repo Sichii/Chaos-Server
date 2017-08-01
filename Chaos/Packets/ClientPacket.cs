@@ -6,7 +6,7 @@ namespace Chaos
     {
         internal bool IsDialog => OpCode == 57 || OpCode == 58;
 
-        internal override EncryptMethod EncryptMethod
+        internal override EncryptionType EncryptionType
         {
             get
             {
@@ -28,79 +28,52 @@ namespace Chaos
                     case 113:
                     case 115:
                     case 123:
-                        return EncryptMethod.Normal;
+                        return EncryptionType.Normal;
                     case 0:
                     case 16:
                     case 72:
-                        return EncryptMethod.None;
+                        return EncryptionType.None;
                     default:
-                        return EncryptMethod.MD5Key;
+                        return EncryptionType.MD5Hash;
                 }
             }
         }
-        internal ClientPacket(byte opcode) : base(opcode) { }
         internal ClientPacket(byte[] buffer) : base(buffer) { }
 
         internal void Decrypt(Crypto crypto)
         {
-            byte[] key;
+            EncryptionType method = EncryptionType;
             int length = Data.Length - 7;
-            ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 0x7470);
-            byte b = (byte)(Data[length + 5] ^ 0x23);
-
-            switch (EncryptMethod)
-            {
-                case EncryptMethod.Normal:
-                    length--;
-                    key = crypto.Key;
-                    break;
-                case EncryptMethod.MD5Key:
-                    length -= 2;
-                    key = crypto.GenerateKey(a, b);
-                    break;
-                default:
-                    return;
-            }
+            ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 29808);
+            byte b = (byte)(Data[length + 5] ^ 35);
+            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5Hash ? crypto.GenerateKey(a, b) : new byte[0];
+            length -= method == EncryptionType.Normal ? 1 : method == EncryptionType.MD5Hash ? 2 : 0;
 
             for (int i = 0; i < length; ++i)
             {
-                int saltIndex = (i / crypto.Key.Length) % 256;
-                Data[i] ^= (byte)(crypto.Salt[saltIndex] ^ key[i % key.Length]);
-
-                if (saltIndex != Sequence)
-                    Data[i] ^= crypto.Salt[Sequence];
+                int x = (i / crypto.Key.Length) % 256;
+                Data[i] ^= (byte)(crypto.Salts[x] ^ key[i % key.Length]);
+                if (x != Counter)
+                    Data[i] ^= crypto.Salts[Counter];
             }
-            ResizeArray(length);
+
+            Array.Resize(ref Data, length);
         }
         internal void GenerateDialogHeader()
         {
-            ushort num = CRC16.Calculate(Data, 6, Data.Length - 6);
+            ushort CheckSum = Crypto.Generate16(Data, 6, Data.Length - 6);
             Data[0] = (byte)Utility.Random(0, 255);
             Data[1] = (byte)Utility.Random(0, 255);
             Data[2] = (byte)((Data.Length - 4) / 256);
             Data[3] = (byte)((Data.Length - 4) % 256);
-            Data[4] = (byte)(num / 256);
-            Data[5] = (byte)(num % 256);
-        }
-        internal void EncryptDialog()
-        {
-            ResizeArray(Data.Length + 6);
-            Buffer.BlockCopy(Data, 0, Data, 6, Data.Length - 6);
-            GenerateDialogHeader();
-            int num1 = Data[2] << 8 | Data[3];
-            byte num2 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45U));
-            byte num3 = (byte)(num2 + 114U);
-            byte num4 = (byte)(num2 + 40U);
-            Data[2] ^= num3;
-            Data[3] ^= (byte)((num3 + 1) % 256);
-            for (int index = 0; index < num1; ++index)
-                Data[4 + index] ^= (byte)((num4 + index) % 256);
+            Data[4] = (byte)(CheckSum / 256);
+            Data[5] = (byte)(CheckSum % 256);
         }
         internal void DecryptDialog()
         {
-            byte num1 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45U));
-            byte num2 = (byte)(num1 + 114U);
-            byte num3 = (byte)(num1 + 40U);
+            byte num1 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45));
+            byte num2 = (byte)(num1 + 114);
+            byte num3 = (byte)(num1 + 40);
             Data[2] ^= num2;
             Data[3] ^= (byte)((num2 + 1) % 256);
             int num4 = Data[2] << 8 | Data[3];
@@ -108,14 +81,7 @@ namespace Chaos
                 Data[4 + index] ^= (byte)((num3 + index) % 256);
 
             Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
-            ResizeArray(Data.Length - 6);
-        }
-        internal ClientPacket Copy()
-        {
-            ClientPacket clientPacket = new ClientPacket(OpCode);
-            clientPacket.Write(Data);
-            clientPacket.TimeStamp = TimeStamp;
-            return clientPacket;
+            Array.Resize(ref Data, Data.Length - 6);
         }
         public override string ToString()
         {

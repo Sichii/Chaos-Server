@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace Chaos
 {
@@ -14,14 +16,8 @@ namespace Chaos
             Nodes = new List<WorldMapNode>(nodes);
         }
 
-        internal WorldMap()
+        internal uint GetCheckSum()
         {
-
-        }
-
-        internal uint GetCrc32()
-        {
-            byte[] buffer;
             MemoryStream memoryStream = new MemoryStream();
             using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
             {
@@ -34,9 +30,8 @@ namespace Chaos
                     binaryWriter.Write(worldMapNode.MapId);
                 }
                 binaryWriter.Flush();
-                buffer = memoryStream.ToArray();
+                return Crypto.Generate32(memoryStream.ToArray());
             }
-            return CRC32.Calculate(buffer);
         }
     }
 }

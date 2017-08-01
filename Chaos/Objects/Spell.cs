@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Spell : PanelObject
@@ -16,7 +16,6 @@ namespace Chaos.Objects
         internal Spell(byte slot, string name, byte type, ushort sprite, string prompt, byte castLines, TimeSpan cooldown)
             :base(slot, sprite, name, cooldown)
         {
-            Slot = slot;
             Type = type;
             Prompt = prompt;
             CastLines = castLines;

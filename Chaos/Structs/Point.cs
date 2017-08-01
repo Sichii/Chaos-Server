@@ -7,9 +7,9 @@ namespace Chaos
     internal struct Point
     {
         [JsonProperty]
-        internal ushort X { get; set; }
+        internal ushort X;
         [JsonProperty]
-        internal ushort Y { get; set; }
+        internal ushort Y;
 
         [JsonConstructor]
         internal Point(ushort x, ushort y)
@@ -31,16 +31,16 @@ namespace Chaos
             switch (direction)
             {
                 case Direction.North:
-                    --Y;
+                    Y--;
                     break;
                 case Direction.East:
-                    ++X;
+                    X++;
                     break;
                 case Direction.South:
-                    ++Y;
+                    Y++;
                     break;
                 case Direction.West:
-                    --X;
+                    X--;
                     break;
             }
         }

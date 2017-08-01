@@ -34,7 +34,7 @@ namespace Chaos
         /// </summary>
         /// <param name="name">Name of the guild.</param>
         /// <param name="founders">Founding members of the guild.</param>
-        internal Guild(string name, List<Objects.User> founders)
+        internal Guild(string name, List<User> founders)
         {
             Name = name;
             Bank = new Bank();
@@ -45,7 +45,7 @@ namespace Chaos
             };
 
 
-            foreach (Objects.User member in founders)
+            foreach (User member in founders)
                 TryAddMember(member);
         }
 
@@ -66,7 +66,7 @@ namespace Chaos
         /// Attempts to add a member to the guild.
         /// </summary>
         /// <param name="user">User you wish added to the guild.</param>
-        internal bool TryAddMember(Objects.User user)
+        internal bool TryAddMember(User user)
         {
             if (user.Guild != null)
                 return false;
@@ -77,7 +77,7 @@ namespace Chaos
         /// Attempts to remove a member from the guild.
         /// </summary>
         /// <param name="user">User you wish removed from the guild.</param>
-        internal bool TryRemoveMember(Objects.User user)
+        internal bool TryRemoveMember(User user)
         {
             if (user.Guild == null)
                 return false;

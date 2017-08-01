@@ -1,8 +1,10 @@
-﻿namespace Chaos
+﻿using System;
+
+namespace Chaos
 {
     internal sealed class ServerPacket : Packet
     {
-        internal override EncryptMethod EncryptMethod
+        internal override EncryptionType EncryptionType
         {
             get
             {
@@ -12,7 +14,7 @@
                     case 3:
                     case 64:
                     case 126:
-                        return EncryptMethod.None;
+                        return EncryptionType.None;
                     case 1:
                     case 2:
                     case 10:
@@ -21,9 +23,9 @@
                     case 98:
                     case 102:
                     case 111:
-                        return EncryptMethod.Normal;
+                        return EncryptionType.Normal;
                     default:
-                        return EncryptMethod.MD5Key;
+                        return EncryptionType.MD5Hash;
                 }
             }
         }
@@ -31,25 +33,25 @@
         internal ServerPacket(byte[] buffer) : base(buffer) { }
         internal void Encrypt(Crypto crypto)
         {
-            EncryptMethod method = EncryptMethod;
+            EncryptionType type = EncryptionType;
             int pos = Data.Length;
 
-            ResizeArray(Data.Length + (method == EncryptMethod.MD5Key ? 5 : 4));
+            Array.Resize(ref Data, Data.Length + (type == EncryptionType.MD5Hash ? 5 : 4));
 
             Data[pos++] = 0;
-            if (method == EncryptMethod.MD5Key)
+            if (type == EncryptionType.MD5Hash)
                 Data[pos++] = OpCode;
 
             ushort a = (ushort)(Utility.Random(0, 65277) + 256);
             byte b = (byte)(Utility.Random(0, 155) + 100);
-            byte[] key = method == EncryptMethod.Normal ? crypto.Key : method == EncryptMethod.MD5Key ? crypto.GenerateKey(a, b) : new byte[0];
+            byte[] key = type == EncryptionType.Normal ? crypto.Key : type == EncryptionType.MD5Hash ? crypto.GenerateKey(a, b) : new byte[0];
 
-            for (int index = 0; index < Data.Length - 3; index++)
+            for (int i = 0; i < Data.Length - 3; i++)
             {
-                int num = index / crypto.Key.Length % 256;
-                Data[index] ^= (byte)(crypto.Salt[num] ^ (uint)key[index % key.Length]);
-                if (num != Sequence)
-                    Data[index] ^= crypto.Salt[Sequence];
+                int saltI = i / crypto.Key.Length % 256;
+                Data[i] ^= (byte)(crypto.Salts[saltI] ^ (uint)key[i % key.Length]);
+                if (saltI != Counter)
+                    Data[i] ^= crypto.Salts[Counter];
             }
 
             Data[pos++] = (byte)(a % 256 ^ 116);
@@ -61,7 +63,7 @@
         {
             ServerPacket serverPacket = new ServerPacket(OpCode);
             serverPacket.Write(Data);
-            serverPacket.TimeStamp = TimeStamp;
+            serverPacket.Creation = Creation;
             return serverPacket;
         }
         public override string ToString()
@@ -162,6 +164,8 @@
                     return $"[MapLoadComplete] Send> {GetHexString()}";
                 case "60":
                     return $"[LobbyNotification] Send> {GetHexString()}";
+                case "63":
+                    return $"[GroupRequest] Send> {GetHexString()}";
                 case "66":
                     return $"[LobbyControls] Send> {GetHexString()}";
                 case "67":

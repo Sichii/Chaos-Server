@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal class Creature : VisibleObject
     {

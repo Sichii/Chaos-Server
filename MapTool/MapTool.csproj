@@ -63,8 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CRC16.cs" />
-    <Compile Include="CRC32.cs" />
+    <Compile Include="CheckSum.cs" />
     <Compile Include="Objects\Door.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="MainForm.cs">

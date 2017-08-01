@@ -26,9 +26,9 @@ namespace Chaos
             Name = name ?? "Lobby";
 
             /*
-            if (type != ServerType.Lobby)
+            if (type == ServerType.World)
             {
-                //Seed = (byte)Utility.Random(0, 9);
+                Seed = (byte)Utility.Random(0, 9);
                 Seed = client.Crypto.Seed;
                 
                 List<byte> key = new List<byte>();
@@ -44,11 +44,8 @@ namespace Chaos
             }
             */
             
-            
             Seed = client.Crypto.Seed;
             Key = client.Crypto.Key;
-            
-
             EndPoint = new IPEndPoint(Dns.GetHostEntry(Host.Name).AddressList[0], Client.Server.LocalPort);
         }
     }

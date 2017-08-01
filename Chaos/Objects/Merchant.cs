@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal sealed class Merchant : Creature
     {

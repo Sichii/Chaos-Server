@@ -4,76 +4,77 @@ using System.Text;
 
 namespace Chaos
 {
-    internal class ClientPackets
+    internal sealed class ClientPackets
     {
-        internal ClientPacketHandler[] Handlers { get; private set; }
+        internal delegate void Handler(Client client, ClientPacket packet);
+        internal Handler[] Handlers { get; private set; }
 
         internal ClientPackets()
         {
-            Handlers = new ClientPacketHandler[150];
-            Handlers[0] = new ClientPacketHandler(PacketHandler_0x00_JoinServer);
-            Handlers[2] = new ClientPacketHandler(PacketHandler_0x02_CreatCharA);
-            Handlers[3] = new ClientPacketHandler(PacketHandler_0x03_Login);
-            Handlers[4] = new ClientPacketHandler(PacketHandler_0x04_CreateCharB);
-            Handlers[5] = new ClientPacketHandler(PacketHandler_0x05_RequestMapData);
-            Handlers[6] = new ClientPacketHandler(PacketHandler_0x06_Walk);
-            Handlers[7] = new ClientPacketHandler(PacketHandler_0x07_Pickup);
-            Handlers[8] = new ClientPacketHandler(PacketHandler_0x08_Drop);
-            Handlers[11] = new ClientPacketHandler(PacketHandler_0x0B_ClientExit);
-            Handlers[14] = new ClientPacketHandler(PacketHandler_0x0E_PublicChat);
-            Handlers[15] = new ClientPacketHandler(PacketHandler_0x0F_UseSpell);
-            Handlers[16] = new ClientPacketHandler(PacketHandler_0x10_ClientJoin);
-            Handlers[17] = new ClientPacketHandler(PacketHandler_0x11_Turn);
-            Handlers[19] = new ClientPacketHandler(PacketHandler_0x13_Spacebar);
-            Handlers[24] = new ClientPacketHandler(PacketHandler_0x18_RequestWorldList);
-            Handlers[25] = new ClientPacketHandler(PacketHandler_0x19_Whisper);
-            Handlers[27] = new ClientPacketHandler(PacketHandler_0x1B_UserOptions);
-            Handlers[28] = new ClientPacketHandler(PacketHandler_0x1C_UseItem);
-            Handlers[29] = new ClientPacketHandler(PacketHandler_0x1D_Emote);
-            Handlers[36] = new ClientPacketHandler(PacketHandler_0x24_DropGold);
-            Handlers[38] = new ClientPacketHandler(PacketHandler_0x26_ChangePassword);
-            Handlers[41] = new ClientPacketHandler(PacketHandler_0x29_DropItemOnCreature);
-            Handlers[42] = new ClientPacketHandler(PacketHandler_0x2A_DropGoldOnCreature);
-            Handlers[45] = new ClientPacketHandler(PacketHandler_0x2D_ProfileRequest);
-            Handlers[46] = new ClientPacketHandler(PacketHandler_0x2E_GroupRequest);
-            Handlers[47] = new ClientPacketHandler(PacketHandler_0x2F_ToggleGroup);
-            Handlers[48] = new ClientPacketHandler(PacketHandler_0x30_SwapSlot);
-            Handlers[56] = new ClientPacketHandler(PacketHandler_0x38_RefreshRequest);
-            Handlers[57] = new ClientPacketHandler(PacketHandler_0x39_Pursuit);
-            Handlers[58] = new ClientPacketHandler(PacketHandler_0x3A_DialogResponse);
-            Handlers[59] = new ClientPacketHandler(PacketHandler_0x3B_Boards);
-            Handlers[62] = new ClientPacketHandler(PacketHandler_0x3E_UseSkill);
-            Handlers[63] = new ClientPacketHandler(PacketHandler_0x3F_ClickWorldMap);
-            Handlers[67] = new ClientPacketHandler(PacketHandler_0x43_ClickObject);
-            Handlers[68] = new ClientPacketHandler(PacketHandler_0x44_RemoveEquipment);
-            Handlers[69] = new ClientPacketHandler(PacketHandler_0x45_HeartBeat);
-            Handlers[71] = new ClientPacketHandler(PacketHandler_0x47_AdjustStat);
-            Handlers[74] = new ClientPacketHandler(PacketHandler_0x4A_ExchangeWindow);
-            Handlers[75] = new ClientPacketHandler(PacketHandler_0x4B_RequestNotification);
-            Handlers[77] = new ClientPacketHandler(PacketHandler_0x4D_BeginChant);
-            Handlers[78] = new ClientPacketHandler(PacketHandler_0x4E_Chant);
-            Handlers[79] = new ClientPacketHandler(PacketHandler_0x4F_PortraitText);
-            Handlers[87] = new ClientPacketHandler(PacketHandler_0x57_ServerTable);
-            Handlers[104] = new ClientPacketHandler(PacketHandler_0x68_RequestHomepage);
-            Handlers[117] = new ClientPacketHandler(PacketHandler_0x75_HeartBeatTimer);
-            Handlers[121] = new ClientPacketHandler(PacketHandler_0x79_SocialStatus);
-            Handlers[123] = new ClientPacketHandler(PacketHandler_0x7B_MetafileRequest);
+            Handlers = new Handler[byte.MaxValue];
+            Handlers[0] = new Handler(JoinServer);
+            Handlers[2] = new Handler(CreateChar1);
+            Handlers[3] = new Handler(Login);
+            Handlers[4] = new Handler(CreateChar2);
+            Handlers[5] = new Handler(RequestMapData);
+            Handlers[6] = new Handler(Walk);
+            Handlers[7] = new Handler(Pickup);
+            Handlers[8] = new Handler(Drop);
+            Handlers[11] = new Handler(ExitClient);
+            Handlers[14] = new Handler(PublicChat);
+            Handlers[15] = new Handler(UseSpell);
+            Handlers[16] = new Handler(JoinClient);
+            Handlers[17] = new Handler(Turn);
+            Handlers[19] = new Handler(SpaceBar);
+            Handlers[24] = new Handler(RequestWorldList);
+            Handlers[25] = new Handler(Whisper);
+            Handlers[27] = new Handler(ToggleUserOption);
+            Handlers[28] = new Handler(UseItem);
+            Handlers[29] = new Handler(AnimateUser);
+            Handlers[36] = new Handler(DropGold);
+            Handlers[38] = new Handler(ChangePassword);
+            Handlers[41] = new Handler(DropItemOnCreature);
+            Handlers[42] = new Handler(DropGoldOnCreature);
+            Handlers[45] = new Handler(RequestProfile);
+            Handlers[46] = new Handler(RequestGroup);
+            Handlers[47] = new Handler(ToggleGroup);
+            Handlers[48] = new Handler(SwapSlot);
+            Handlers[56] = new Handler(RequestRefresh);
+            Handlers[57] = new Handler(RequestDialog);
+            Handlers[58] = new Handler(ActiveDialog);
+            Handlers[59] = new Handler(Board);
+            Handlers[62] = new Handler(UseSkill);
+            Handlers[63] = new Handler(ClickWorldMap);
+            Handlers[67] = new Handler(ClickObject);
+            Handlers[68] = new Handler(RemoveEquipment);
+            Handlers[69] = new Handler(KeepAlive);
+            Handlers[71] = new Handler(ChangeStat);
+            Handlers[74] = new Handler(Exchange);
+            Handlers[75] = new Handler(RequestLoginMessage);
+            Handlers[77] = new Handler(BeginChant);
+            Handlers[78] = new Handler(DisplayChant);
+            Handlers[79] = new Handler(Personal);
+            Handlers[87] = new Handler(RequestServerTable);
+            Handlers[104] = new Handler(RequestHomepage);
+            Handlers[117] = new Handler(SynchronizeTicks);
+            Handlers[121] = new Handler(SocialStatus);
+            Handlers[123] = new Handler(RequestMetaFile);
         }
 
-        private void PacketHandler_0x00_JoinServer(Client client, ClientPacket packet)
+        private void JoinServer(Client client, ClientPacket packet)
         {
-            ProcessPacket.JoinServer(client);
+            Game.JoinServer(client);
         }
 
-        private void PacketHandler_0x02_CreatCharA(Client client, ClientPacket packet)
+        private void CreateChar1(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
             string password = packet.ReadString8();
 
-            ProcessPacket.CreateCharA(client, name, password);
+            Game.CreateChar1(client, name, password);
         }
 
-        private void PacketHandler_0x03_Login(Client client, ClientPacket packet)
+        private void Login(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
             string pw = packet.ReadString8();
@@ -86,61 +87,61 @@ namespace Chaos
             packet.ReadUInt16();
             packet.ReadByte();
 
-            ProcessPacket.Login(client, name, pw);
+            Game.Login(client, name, pw);
         }
 
-        private void PacketHandler_0x04_CreateCharB(Client client, ClientPacket packet)
+        private void CreateChar2(Client client, ClientPacket packet)
         {
             byte hairStyle = packet.ReadByte(); //1-17
             Gender gender = (Gender)packet.ReadByte(); //1 or 2
             byte hairColor = packet.ReadByte(); //1-13
 
-            ProcessPacket.CreateCharB(client, hairStyle, gender, hairColor);
+            Game.CreateChar2(client, hairStyle, gender, hairColor);
         }
 
-        private void PacketHandler_0x05_RequestMapData(Client client, ClientPacket packet)
+        private void RequestMapData(Client client, ClientPacket packet)
         {
-            ProcessPacket.RequestMapData(client);
+            Game.RequestMapData(client);
         }
-        private void PacketHandler_0x06_Walk(Client client, ClientPacket packet)
+        private void Walk(Client client, ClientPacket packet)
         {
             Direction direction = (Direction)packet.ReadByte();
             int stepCount = packet.ReadByte();
 
-            ProcessPacket.Walk(client, direction, stepCount);
+            Game.Walk(client, direction, stepCount);
         }
-        private void PacketHandler_0x07_Pickup(Client client, ClientPacket packet)
+        private void Pickup(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
 
-            ProcessPacket.Pickup(client, inventorySlot, groundPoint);
+            Game.Pickup(client, inventorySlot, groundPoint);
         }
-        private void PacketHandler_0x08_Drop(Client client, ClientPacket packet)
+        private void Drop(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
             int count = packet.ReadInt32();
 
-            ProcessPacket.Drop(client, inventorySlot, groundPoint, count);
+            Game.Drop(client, inventorySlot, groundPoint, count);
         }
-        private void PacketHandler_0x0B_ClientExit(Client client, ClientPacket packet)
+        private void ExitClient(Client client, ClientPacket packet)
         {
             bool requestExit = packet.ReadBoolean();
 
-            ProcessPacket.ClientExit(client, requestExit);
+            Game.ExitClient(client, requestExit);
             //if requestexit, send exit confirmation 4C
             //when the client gets exit confirmation, it will resend this packet except false
             //then log off
         }
-        private void PacketHandler_0x0E_PublicChat(Client client, ClientPacket packet)
+        private void PublicChat(Client client, ClientPacket packet)
         {
             ClientMessageType type = (ClientMessageType)packet.ReadByte();
             string message = packet.ReadString8();
 
-            ProcessPacket.PublicChat(client, type, message);
+            Game.PublicChat(client, type, message);
         }
-        private void PacketHandler_0x0F_UseSpell(Client client, ClientPacket packet)
+        private void UseSpell(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
             int targetId = client.User.Id;
@@ -153,9 +154,9 @@ namespace Chaos
                 targetPoint = packet.ReadPoint();
             }
 
-            ProcessPacket.UseSpell(client, slot, targetId, targetPoint);
+            Game.UseSpell(client, slot, targetId, targetPoint);
         }
-        private void PacketHandler_0x10_ClientJoin(Client client, ClientPacket packet)
+        private void JoinClient(Client client, ClientPacket packet)
         {
             byte seed = packet.ReadByte();
             byte keyLength = packet.ReadByte();
@@ -171,113 +172,94 @@ namespace Chaos
                 client.Server.Redirects.Remove(redirect);
             }
 
-            ProcessPacket.ClientJoin(client, seed, key, name, id);
+            Game.JoinClient(client, seed, key, name, id);
         }
-        private void PacketHandler_0x11_Turn(Client client, ClientPacket packet)
+        private void Turn(Client client, ClientPacket packet)
         {
             Direction direction = (Direction)packet.ReadByte();
 
-            ProcessPacket.Turn(client, direction);
+            Game.Turn(client, direction);
         }
 
-        private void PacketHandler_0x13_Spacebar(Client client, ClientPacket packet)
+        private void SpaceBar(Client client, ClientPacket packet)
         {
-            ProcessPacket.Spacebar(client);
+            Game.SpaceBar(client);
         }
-        private void PacketHandler_0x18_RequestWorldList(Client client, ClientPacket packet)
+        private void RequestWorldList(Client client, ClientPacket packet)
         {
-            ProcessPacket.RequestWorldList(client);
-
-            //there's nothing in this packet, when you receive it it's just a request for the userlist
-            //userlist format is
-            /*
-            packet.WriteInt16(numberOfUsers);
-            for(int counter = 0; counter < numberOfUsers; counter++)
-            {
-                packet.WriteByte(class);
-                if(leveldifference <= 5)
-                    packet.WriteByte(151);
-                else
-                    packet.WriteSByte(-1);
-                packet.WriteByte(SocialStatus);
-                packet.WriteString8(title);
-                packet.WriteBoolean(isMaster);
-                packet.WriteString8(userName);
-            }
-            */
+            Game.RequestWorldList(client);
         }
-        private void PacketHandler_0x19_Whisper(Client client, ClientPacket packet)
+        private void Whisper(Client client, ClientPacket packet)
         {
             string targetName = packet.ReadString8();
             string message = packet.ReadString8();
 
-            ProcessPacket.Whisper(client, targetName, message);
+            Game.Whisper(client, targetName, message);
         }
-        private void PacketHandler_0x1B_UserOptions(Client client, ClientPacket packet)
+        private void ToggleUserOption(Client client, ClientPacket packet)
         {
             UserOption option = (UserOption)packet.ReadByte();
 
-            ProcessPacket.UserOptions(client, option);
+            Game.ToggleUserOption(client, option);
         }
-        private void PacketHandler_0x1C_UseItem(Client client, ClientPacket packet)
+        private void UseItem(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
 
-            ProcessPacket.UseItem(client, slot);
+            Game.UseItem(client, slot);
         }
-        private void PacketHandler_0x1D_Emote(Client client, ClientPacket packet)
+        private void AnimateUser(Client client, ClientPacket packet)
         {
             byte index = packet.ReadByte();
             if (index <= 35)
                 index += 9;
 
-            ProcessPacket.Emote(client, index);
+            Game.AnimateUser(client, index);
         }
-        private void PacketHandler_0x24_DropGold(Client client, ClientPacket packet)
+        private void DropGold(Client client, ClientPacket packet)
         {
             uint amount = packet.ReadUInt32();
             Point groundPoint = packet.ReadPoint();
 
-            ProcessPacket.DropGold(client, amount, groundPoint);
+            Game.DropGold(client, amount, groundPoint);
         }
-        private void PacketHandler_0x26_ChangePassword(Client client, ClientPacket packet)
+        private void ChangePassword(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
             string currentPw = packet.ReadString8();
             string newPw = packet.ReadString8();
 
-            ProcessPacket.ChangePassword(client, name, currentPw, newPw);
+            Game.ChangePassword(client, name, currentPw, newPw);
         }
-        private void PacketHandler_0x29_DropItemOnCreature(Client client, ClientPacket packet)
+        private void DropItemOnCreature(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
             uint targetId = packet.ReadUInt32();
             byte count = packet.ReadByte();
 
-            ProcessPacket.DropItemOnCreature(client, inventorySlot, targetId, count);
+            Game.DropItemOnCreature(client, inventorySlot, targetId, count);
 
             //if target is an merchant or monster, put it in their drop pile
             //if it's a user start an exchange
         }
-        private void PacketHandler_0x2A_DropGoldOnCreature(Client client, ClientPacket packet)
+        private void DropGoldOnCreature(Client client, ClientPacket packet)
         {
             uint amount = packet.ReadUInt32();
             uint targetId = packet.ReadUInt32();
 
-            ProcessPacket.DropGoldOnCreature(client, amount, targetId);
+            Game.DropGoldOnCreature(client, amount, targetId);
             //if target is an merchant or monster, put it in their drop pile
             //if it's a user start an exchange
         }
-        private void PacketHandler_0x2D_ProfileRequest(Client client, ClientPacket packet)
+        private void RequestProfile(Client client, ClientPacket packet)
         {
-            ProcessPacket.ProfileRequest(client);
+            Game.RequestProfile(client);
         }
-        private void PacketHandler_0x2E_GroupRequest(Client client, ClientPacket packet)
+        private void RequestGroup(Client client, ClientPacket packet)
         {
-            Objects.GroupBox box = null;
-            //2 = invite, 3 = join, 4 = groupBox, 6 = remove group box
-
+            GroupBox box = null;
             GroupRequestType type = (GroupRequestType)packet.ReadByte();
+
             if (type == GroupRequestType.Groupbox)
             {
                 string leader = packet.ReadString8();
@@ -292,33 +274,33 @@ namespace Chaos
                 maxOfEach[(byte)BaseClass.Priest] = packet.ReadByte();
                 maxOfEach[(byte)BaseClass.Monk] = packet.ReadByte();
 
-                box = new Objects.GroupBox(client.User, groupName, maxLevel, maxOfEach);
+                box = new GroupBox(client.User, groupName, maxLevel, maxOfEach);
             }
             string targetName = packet.ReadString8();
 
-            ProcessPacket.GroupRequest(client, type, targetName, box);
+            Game.RequestGroup(client, type, targetName, box);
         }
-        private void PacketHandler_0x2F_ToggleGroup(Client client, ClientPacket packet)
+        private void ToggleGroup(Client client, ClientPacket packet)
         {
-            ProcessPacket.ToggleGroup(client);
+            Game.ToggleGroup(client);
             //toggle group allowance
         }
-        private void PacketHandler_0x30_SwapSlot(Client client, ClientPacket packet)
+        private void SwapSlot(Client client, ClientPacket packet)
         {
             Pane pane = (Pane)packet.ReadByte();
             byte origSlot = packet.ReadByte();
             byte endSlot = packet.ReadByte();
 
-            ProcessPacket.SwapSlot(client, pane, origSlot, endSlot);
+            Game.SwapSlot(client, pane, origSlot, endSlot);
         }
-        private void PacketHandler_0x38_RefreshRequest(Client client, ClientPacket packet)
+        private void RequestRefresh(Client client, ClientPacket packet)
         {
             //send them things
             //client.Enqueue(client.ServerPackets.RefreshResponse());
 
-            ProcessPacket.RefreshRequest(client);
+            Game.RequestRefresh(client);
         }
-        private void PacketHandler_0x39_Pursuit(Client client, ClientPacket packet)
+        private void RequestDialog(Client client, ClientPacket packet)
         {
             byte objType = packet.ReadByte(); //almost always 1
             uint objId = packet.ReadUInt32(); //id of object
@@ -332,20 +314,20 @@ namespace Chaos
             */
             byte[] args = packet.ReadBytes((packet.Data.Length - 1) - packet.Position);
 
-            ProcessPacket.Pursuit(client, objType, objId, pursuitId, args);
+            Game.RequestDialog(client, objType, objId, pursuitId, args);
         }
-        private void PacketHandler_0x3A_DialogResponse(Client client, ClientPacket packet)
+        private void ActiveDialog(Client client, ClientPacket packet)
         {
             byte objType = packet.ReadByte(); //almost always 1
             uint objId = packet.ReadUInt32(); //id of object
             ushort pursuitId = packet.ReadUInt16(); //the pursuit theyre on
             ushort dialogId = packet.ReadUInt16(); //id of the dialog that comes next
 
-            ProcessPacket.DialogResponse(client, objType, objId, pursuitId, dialogId);
+            Game.ActiveDialog(client, objType, objId, pursuitId, dialogId);
         }
 
         //this packet is literally retarded
-        private void PacketHandler_0x3B_Boards(Client client, ClientPacket packet)
+        private void Board(Client client, ClientPacket packet)
         {
             switch (packet.ReadByte()) //request type
             {
@@ -410,24 +392,24 @@ namespace Chaos
                     }
             }
 
-            ProcessPacket.Boards();
+            Game.Boards();
         }
-        private void PacketHandler_0x3E_UseSkill(Client client, ClientPacket packet)
+        private void UseSkill(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
 
-            ProcessPacket.UseSkill(client, slot);
+            Game.UseSkill(client, slot);
         }
 
-        private void PacketHandler_0x3F_ClickWorldMap(Client client, ClientPacket packet)
+        private void ClickWorldMap(Client client, ClientPacket packet)
         {
             uint mapId = packet.ReadUInt32();
             Point point = packet.ReadPoint();
 
-            ProcessPacket.ClickWorldMap(client, (ushort)mapId, point);
+            Game.ClickWorldMap(client, (ushort)mapId, point);
             //theyre clicking a worldMapNode here
         }
-        private void PacketHandler_0x43_ClickObject(Client client, ClientPacket packet)
+        private void ClickObject(Client client, ClientPacket packet)
         {
             byte type = packet.ReadByte();
             switch (type) //click type
@@ -435,43 +417,43 @@ namespace Chaos
                 case 1:
                     //they clicked an object, this is it's id
                     int objectId = packet.ReadInt32();
-                    ProcessPacket.ClickObject(client, objectId);
+                    Game.ClickObject(client, objectId);
                     break;
                 case 3:
                     //they clicked a random spot, or something without an id, this is where
                     Point clickPoint = packet.ReadPoint();
-                    ProcessPacket.ClickObject(client, clickPoint);
+                    Game.ClickObject(client, clickPoint);
                     break;
             }
 
         }
-        private void PacketHandler_0x44_RemoveEquipment(Client client, ClientPacket packet)
+        private void RemoveEquipment(Client client, ClientPacket packet)
         {
             //slot to take off
             EquipmentSlot slot = (EquipmentSlot)packet.ReadByte();
 
-            ProcessPacket.RemoveEquipment(client, slot);
+            Game.RemoveEquipment(client, slot);
         }
-        private void PacketHandler_0x45_HeartBeat(Client client, ClientPacket packet)
+        private void KeepAlive(Client client, ClientPacket packet)
         {
             //the server sends a beatA and beatB to the client
             //we receive the same bytes in reverse order from the client
             byte b = packet.ReadByte();
             byte a = packet.ReadByte();
 
-            ProcessPacket.HeartBeat(client, a, b);
+            Game.KeepAlive(client, a, b);
             //check these against what we sent
             //check how long it took to receive them from when we sent them
             //generate new values for the next heartbeat
         }
-        private void PacketHandler_0x47_AdjustStat(Client client, ClientPacket packet)
+        private void ChangeStat(Client client, ClientPacket packet)
         {
             //Possibly create an enum to show which stat was improved last to allow for a *correct* and fast allocation of stats later on.
             Stat stat = (Stat)packet.ReadByte();
 
-            ProcessPacket.AdjustStat(client, stat);
+            Game.ChangeStat(client, stat);
         }
-        private void PacketHandler_0x4A_ExchangeWindow(Client client, ClientPacket packet)
+        private void Exchange(Client client, ClientPacket packet)
         {
             byte type = packet.ReadByte();
             switch (type) //opt
@@ -479,7 +461,7 @@ namespace Chaos
                 case 0: //begin trade
                     {
                         uint targetId = packet.ReadUInt32();
-                        ProcessPacket.ExchangeWindow(client, type, targetId);
+                        Game.Exchange(client, type, targetId);
                         break;
                     }
                 case 1: //add nonstackable item
@@ -487,7 +469,7 @@ namespace Chaos
                         uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
 
-                        ProcessPacket.ExchangeWindow(client, type, targetId, slot);
+                        Game.Exchange(client, type, targetId, slot);
                         break;
                     }
                 case 2: //add stackable item
@@ -495,77 +477,77 @@ namespace Chaos
                         uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
                         byte count = packet.ReadByte();
-                        ProcessPacket.ExchangeWindow(client, type, targetId, slot, count);
+                        Game.Exchange(client, type, targetId, slot, count);
                         break;
                     }
                 case 3: //add gold
                     {
                         uint targetId = packet.ReadUInt32();
                         uint amount = packet.ReadUInt32();
-                        ProcessPacket.ExchangeWindow(client, type, targetId, amount);
+                        Game.Exchange(client, type, targetId, amount);
                         break;
                     }
                 case 4: //cancel trade
                     //trade was canceled by this client
                 case 5: //accept trade
                     //trade was accepted by this client
-                    ProcessPacket.ExchangeWindow(client, type);
+                    Game.Exchange(client, type);
                     break;
             }
         }
-        private void PacketHandler_0x4B_RequestNotification(Client client, ClientPacket packet)
+        private void RequestLoginMessage(Client client, ClientPacket packet)
         {
-            ProcessPacket.RequestNotification(packet.Position == packet.Data.Length, client);
+            Game.RequestLoginMessage(packet.Position == packet.Data.Length, client);
         }
 
-        private void PacketHandler_0x4D_BeginChant(Client client, ClientPacket packet)
+        private void BeginChant(Client client, ClientPacket packet)
         {
             //this client is chanting
-            ProcessPacket.BeginChant(client);
+            Game.BeginChant(client);
         }
-        private void PacketHandler_0x4E_Chant(Client client, ClientPacket packet)
+        private void DisplayChant(Client client, ClientPacket packet)
         {
             string chant = packet.ReadString8();
 
-            ProcessPacket.Chant(client, chant);
+            Game.DisplayChant(client, chant);
             //check if theyre chanting
             //if theyre chanting send a caption
         }
-        private void PacketHandler_0x4F_PortraitText(Client client, ClientPacket packet)
+        private void Personal(Client client, ClientPacket packet)
         {
             ushort totalLength = packet.ReadUInt16();
             ushort portraitLength = packet.ReadUInt16();
             byte[] portraitData = packet.ReadBytes(portraitLength);
             string profileMsg = packet.ReadString16();
 
-            ProcessPacket.PortraitText(client, totalLength, portraitLength, portraitData, profileMsg);
+            Game.Personal(client, totalLength, portraitLength, portraitData, profileMsg);
         }
-        private void PacketHandler_0x57_ServerTable(Client client, ClientPacket packet)
+        private void RequestServerTable(Client client, ClientPacket packet)
         {
             byte type = packet.ReadByte(); //1 = table request, else server number in the table
-            ProcessPacket.ServerTable(client, type);
+            Game.RequestServerTable(client, type);
         }
-        private void PacketHandler_0x68_RequestHomepage(Client client, ClientPacket packet)
+        private void RequestHomepage(Client client, ClientPacket packet)
         {
-            ProcessPacket.RequestHomepage(client);
+            Game.RequestHomepage(client);
             //i don't believe there's anything here
         }
-        private void PacketHandler_0x75_HeartBeatTimer(Client client, ClientPacket packet)
+        private void SynchronizeTicks(Client client, ClientPacket packet)
         {
             //use this to make sure we're in sync
             TimeSpan serverTicks = new TimeSpan(packet.ReadUInt32()); //server ticks
             TimeSpan clientTicks = new TimeSpan(packet.ReadUInt32()); //client ticks
-            ProcessPacket.HeartBeatTimer(client, serverTicks, clientTicks);
+            Game.SynchronizeTicks(client, serverTicks, clientTicks);
         }
-        private void PacketHandler_0x79_SocialStatus(Client client, ClientPacket packet)
+        private void SocialStatus(Client client, ClientPacket packet)
         {
             SocialStatus status = (SocialStatus)packet.ReadByte();
-            ProcessPacket.SocialStatus(client, status);
+            Game.SocialStatus(client, status);
         }
-        private void PacketHandler_0x7B_MetafileRequest(Client client, ClientPacket packet)
+        private void RequestMetaFile(Client client, ClientPacket packet)
         {
             bool all = packet.ReadBoolean();
-            ProcessPacket.MetafileRequest(client, all);
+            Game.RequestMetaFile(client, all);
         }
     }
 }

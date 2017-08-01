@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Chaos.Objects
+namespace Chaos
 {
     internal abstract class PanelObject
     {

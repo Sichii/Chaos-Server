@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using Chaos.Objects;
+using Chaos;
 using Newtonsoft.Json;
 
 namespace Chaos
@@ -10,6 +10,7 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Map
     {
+        internal readonly object Sync = new object();
         internal ConcurrentDictionary<int, WorldObject> Objects { get; set; }
         internal ConcurrentDictionary<Point, Door> Doors { get; set; }
         [JsonProperty]
@@ -17,15 +18,13 @@ namespace Chaos
         internal byte SizeX { get; }
         internal byte SizeY { get; }
         internal byte[] Data { get; private set; }
-        internal ushort CRC => CRC16.Calculate(Data);
+        internal ushort CheckSum => Crypto.Generate16(Data);
         internal Dictionary<Point, Tile> Tiles { get; }
         internal MapFlags Flags { get; set; }
         internal string Name { get; set; }
         internal sbyte Music { get; set; }
         internal Dictionary<Point, Warp> Exits { get; set; }
         internal Dictionary<Point, WorldMap> WorldMaps { get; set; }
-        internal Tile this[ushort x, ushort y] => Tiles[new Point(x, y)];
-        internal Tile this[Point point] => Tiles[point];
 
         internal Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
         {
@@ -47,30 +46,23 @@ namespace Chaos
             Id = id;
         }
 
-        internal void SetData(byte[] data)
-        {
-            Tiles.Clear();
-            Data = data;
-            int num = 0;
-            for (ushort y = 0; y < SizeY; y++)
-                for (ushort x = 0; x < SizeX; x++)
-                {
-                    Point key = new Point(x, y);
-                    short background = (short)(data[num++] | data[num++] << 8);
-                    short leftForeground = (short)(data[num++] | data[num++] << 8);
-                    short rightForeground = (short)(data[num++] | data[num++] << 8);
-                    Tiles[key] = new Tile(background, leftForeground, rightForeground);
-                }
-        }
-        internal void SetData(string path)
+        internal void LoadData(string path)
         {
             if (File.Exists(path))
-                SetData(File.ReadAllBytes(path));
+            {
+                byte[] data = File.ReadAllBytes(path);
+                Tiles.Clear();
+                Data = data;
+
+                int index = 0;
+                for (ushort y = 0; y < SizeY; y++)
+                    for (ushort x = 0; x < SizeX; x++)
+                        Tiles[new Point(x, y)] = new Tile((short)(data[index++] | data[index++] << 8), (short)(data[index++] | data[index++] << 8), (short)(data[index++] | data[index++] << 8));
+            }
         }
 
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
-
-        internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || this[x, y].IsWall;
+        internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || Tiles[new Point(x, y)].IsWall;
         internal bool IsWall(Point p) => IsWall(p.X, p.Y);
     }
 }

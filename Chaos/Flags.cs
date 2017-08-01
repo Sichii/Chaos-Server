@@ -3,11 +3,11 @@
 namespace Chaos
 {
     #region Server
-    internal enum EncryptMethod
+    internal enum EncryptionType
     {
         None = 0,
         Normal = 1,
-        MD5Key = 2
+        MD5Hash = 2
     }
     internal enum ServerType : byte
     {
@@ -36,6 +36,7 @@ namespace Chaos
 
     internal enum GroupRequestType : byte
     {
+        Request = 1,
         Invite = 2,
         Join = 3,
         Groupbox = 4,
@@ -179,7 +180,7 @@ namespace Chaos
         East = 1,
         South = 2,
         West = 3,
-        Invalid = 255,
+        Invalid = 255
     }
     internal enum Gender : byte
     {

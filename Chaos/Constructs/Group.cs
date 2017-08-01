@@ -7,22 +7,38 @@ using System.Threading;
 
 namespace Chaos
 {
-    internal sealed class Group : IEnumerable<Objects.User>
+    internal sealed class Group : IEnumerable<User>
     {
-        public IEnumerator<Objects.User> GetEnumerator() => Users.GetEnumerator();
+        internal readonly object Sync = new object();
+        public IEnumerator<User> GetEnumerator() => Users.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal int GroupId { get; }
-        internal Objects.User Leader { get; set; }
-        internal List<Objects.User> Users { get; set; }
+        internal User Leader => Users[0];
+        internal List<User> Users { get; set; }
         internal byte Size => (byte)Users.Count;
-        internal Objects.User this[string name] => Users.FirstOrDefault(user => user.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-        internal Objects.User this[int id] => Users.FirstOrDefault(user => user.Id == id);
-        internal Objects.GroupBox Box { get; set; }
-
-        internal Group(Objects.User sender, Objects.User accepter)
+        internal GroupBox Box { get; set; }
+        internal User this[string name]
         {
-            Leader = sender;
-            Users = new List<Objects.User>() { sender, accepter };
+            get
+            {
+                User user;
+                TryGet(name, out user);
+                return user;
+            }
+        }
+        internal User this[int id]
+        {
+            get
+            {
+                User user;
+                TryGet(id, out user);
+                return user;
+            }
+        }
+
+        internal Group(User sender, User accepter)
+        {
+            Users = new List<User>() { sender, accepter };
             GroupId = Interlocked.Increment(ref Server.NextId);
             sender.Group = this;
             accepter.Group = this;
@@ -34,33 +50,56 @@ namespace Chaos
         /// <param name="groupName">Name of the group.</param>
         /// <param name="maxLevel">Max allowed level to join.</param>
         /// <param name="maxAmounts">Class amounts, etc.</param>
-        internal Objects.GroupBox CreateBox(string groupName, byte maxLevel, byte[] maxAmounts)
+        internal GroupBox CreateBox(string groupName, byte maxLevel, byte[] maxAmounts)
         {
-            Box = new Objects.GroupBox(Leader, groupName, maxLevel, maxAmounts);
-            return Box;
+            lock (Sync)
+            {
+                Box = new GroupBox(Leader, groupName, maxLevel, maxAmounts);
+                return Box;
+            }
         }
         /// <summary>
         /// Attempts to add a User to the Group.
         /// </summary>
         /// <param name="user">User to be added.</param>
-        internal bool TryAdd(Objects.User user)
+        internal bool TryAdd(User user)
         {
-            if (Users.Contains(user))
-                return false;
+            lock (Sync)
+            {
+                if (Users.Contains(user))
+                    return false;
 
-            Users.Add(user);
-            return true;
+                Users.Add(user);
+                user.Group = this;
+                return true;
+            }
         }
         /// <summary>
         /// Attempts to remove a User from the Group.
         /// </summary>
         /// <param name="user">User to be removed.</param>
-        internal bool TryRemove(Objects.User user)
+        internal bool TryRemove(User user, bool leader = false)
         {
-            if (Users.Contains(user))
-                return Users.Remove(user);
+            lock (Sync)
+            {
+                if (Users.Contains(user))
+                    if (Users.Remove(user))
+                    {
+                        user.Group = null;
 
-            return false;
+                        if (Users.Count == 1)
+                        {
+                            Users[0].Client.Enqueue(Users[0].Client.Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "Group has been disbanded."));
+                            TryRemove(Users[0]);
+                        }
+                        else if (Users.Count > 1)
+                            foreach (User u in Users)
+                                u.Client.Enqueue(u.Client.Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{user.Name} {(leader ? "has been kicked from the group" : "has left the group")}"));
+                        return true;
+                    }
+
+                return false;
+            }
         }
         /// <summary>
         /// Attempts to remove a User from the Group by using the user's id
@@ -68,29 +107,68 @@ namespace Chaos
         /// <param name="id">Id of the user to be removed.</param>
         internal bool TryRemove(int id)
         {
-            Objects.User user = this[id];
+            lock (Sync)
+            {
+                User user = this[id];
 
-            if (user == null)
-                return false;
+                if (user == null)
+                    return false;
 
-            return TryRemove(user);
+                return TryRemove(user);
+            }
         }
+
+        /// <summary>
+        /// Attempts to retreive the user with the given name, if they exist.
+        /// </summary>
+        /// <param name="name">The name to search for.</param>
+        /// <param name="user">The user reference to set.</param>
+        /// <returns></returns>
+        internal bool TryGet(string name, out User user)
+        {
+            lock (Sync)
+            {
+                user = Users.FirstOrDefault(u => u.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+                return user != null;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to retreive the user with the given id, if they exist.
+        /// </summary>
+        /// <param name="id">The id to search for.</param>
+        /// <param name="user">The user reference to set.</param>
+        /// <returns></returns>
+        internal bool TryGet(int id, out User user)
+        {
+            lock (Sync)
+            {
+                user = Users.FirstOrDefault(u => u.Id == id);
+                return user != null;
+            }
+        }
+
+
+
         /// <summary>
         /// String representation of the group, ready for ingame use.
         /// </summary>
         public override string ToString()
         {
-            string groupString = "Group members";
+            lock (Sync)
+            {
+                string groupString = "Group members";
 
-            foreach(Objects.User user in Users)
-                if (user == Leader)
-                    groupString += $@"\n*  {user.Name}";
-                else
-                    groupString += $@"\n   {user.Name}";
+                foreach (User user in Users)
+                    if (user == Leader)
+                        groupString += $@"\n*  {user.Name}";
+                    else
+                        groupString += $@"\n   {user.Name}";
 
-            groupString += $@"\nTotal {Size}";
+                groupString += $@"\nTotal {Size}";
 
-            return groupString;
+                return groupString;
+            }
         }
     }
 }

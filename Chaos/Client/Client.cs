@@ -15,20 +15,21 @@ namespace Chaos
         private List<byte> FullClientBuffer = new List<byte>();
         private Queue<ServerPacket> SendQueue = new Queue<ServerPacket>();
         private Queue<ClientPacket> ProcessQueue = new Queue<ClientPacket>();
-        private byte ServerSequence = 0;
-        private ClientPacketHandler[] PacketHandlers { get; }
+        private byte ServerCount;
+        internal byte StepCount;
+        private ClientPackets.Handler[] PacketHandlers { get; }
         private Thread ClientThread { get; }
         internal IPAddress IpAddress { get; }
         internal ServerType ServerType { get; set; }
         internal Server Server { get; }
         internal Socket ClientSocket { get; }
         internal Crypto Crypto { get; set; }
-        internal Objects.User User { get; set; }
-        internal string NewCharName { get; set; }
-        internal string NewCharPw { get; set; }
-        internal int StepCount;
+        internal User User { get; set; }
+        internal string CreateChar1Name { get; set; }
+        internal string CreateChar1Pw { get; set; }
         internal int Id { get; }
         internal DateTime LastClickObj { get; set; }
+        internal DateTime LastRefresh { get; set; }
 
         /// <summary>
         /// Creates a new user with reference to the server, and the user's socket.
@@ -42,11 +43,14 @@ namespace Chaos
             ClientSocket = socket;
             Crypto = new Crypto();
             PacketHandlers = new ClientPackets().Handlers;
+            ServerCount = 0;
             StepCount = 1;
             Id = Interlocked.Increment(ref Server.NextClientId);
-            LastClickObj = DateTime.MinValue;
             IpAddress = (socket.RemoteEndPoint as IPEndPoint).Address;
             ClientThread = new Thread(ClientLoop);
+
+            LastClickObj = DateTime.MinValue;
+            LastRefresh = DateTime.MinValue;
         }
 
         /// <summary>
@@ -100,21 +104,21 @@ namespace Chaos
                 else
                 {
                     //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
-                    byte[] numArray = new byte[length];
-                    Array.Copy(ClientBuffer, numArray, length);
+                    byte[] data = new byte[length];
+                    Array.Copy(ClientBuffer, data, length);
                     //copy that array into the full client buffer, so we can deal with the information in a properly sized list
-                    FullClientBuffer.AddRange(numArray);
+                    FullClientBuffer.AddRange(data);
                     while (FullClientBuffer.Count > 3)
                     {
                         //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
                         int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
                         if (count <= FullClientBuffer.Count)
                         {
-                            //copy the non-random shit into a new list, remove it from the client buffer
-                            List<byte> range = FullClientBuffer.GetRange(0, count);
+                            //create a clientpacket out of the readable data
+                            ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
+                            //remove the data from the clientbuffer
                             FullClientBuffer.RemoveRange(0, count);
-                            //create a clientpacket out of the readable data, and send it to be processed by the server
-                            ClientPacket clientPacket = new ClientPacket(range.ToArray());
+                            //send it off to be processed by the server
                             lock (ProcessQueue)
                                 ProcessQueue.Enqueue(clientPacket);
                         }
@@ -146,6 +150,13 @@ namespace Chaos
             }
         }
 
+        private void Send(ServerPacket packet)
+        {
+            byte[] data = packet.ToArray();
+            try { ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket); }
+            catch { }
+        }
+
         /// <summary>
         /// Thread/Loop where packets from the client are processed, and the server sends packets back to the client.
         /// </summary>
@@ -158,18 +169,16 @@ namespace Chaos
                     while (SendQueue.Count > 0)//while there are packets to send
                     {
                         ServerPacket packet = SendQueue.Dequeue();//get the next packet in the queue, convert to serverpacket
-                        Server.WriteLog(packet.ToString(), this);
                         if (packet == null) continue;
+                        Server.WriteLog(packet.ToString(), this);
 
                         if (packet.ShouldEncrypt)//if it should be encrypted, do it
                         {
-                            packet.Sequence = ServerSequence++;
+                            packet.Counter = ServerCount++;
                             packet.Encrypt(Crypto);
                         }
-                        
-                        byte[] data = packet.ToArray();//get the packet's data and try to send it
-                        try { ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket); }
-                        catch { }
+
+                        Send(packet);
                     }
                 }
                 lock (ProcessQueue)//lock to receive client packets
@@ -184,11 +193,13 @@ namespace Chaos
                         
                         if (packet.IsDialog)//if packet is a dialog, decrypt the header
                             packet.DecryptDialog();
+
                         Server.WriteLog(packet.ToString(), this);
-                        ClientPacketHandler handle = PacketHandlers[packet.OpCode];//get the handler for this packet
+
+                        var handle = PacketHandlers[packet.OpCode];//get the handler for this packet
                         if (handle != null)//if we have a handler for this packet
                             try { handle(this, packet); } //no srsly, please handle it
-                            catch { }
+                            catch (Exception e) { Server.WriteLog(e.ToString(), this); } //log the exception if it occurs
                     }
                 }
                 Thread.Sleep(10);
