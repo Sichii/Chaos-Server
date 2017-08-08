@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Chaos;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Chaos
 {
@@ -64,5 +65,6 @@ namespace Chaos
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
         internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || Tiles[new Point(x, y)].IsWall;
         internal bool IsWall(Point p) => IsWall(p.X, p.Y);
+        internal bool IsWalkable(Point p) => !IsWall(p) && !Doors.Keys.Contains(p) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
     }
 }

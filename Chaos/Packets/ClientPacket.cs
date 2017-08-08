@@ -34,7 +34,7 @@ namespace Chaos
                     case 72:
                         return EncryptionType.None;
                     default:
-                        return EncryptionType.MD5Hash;
+                        return EncryptionType.MD5;
                 }
             }
         }
@@ -46,8 +46,8 @@ namespace Chaos
             int length = Data.Length - 7;
             ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 29808);
             byte b = (byte)(Data[length + 5] ^ 35);
-            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5Hash ? crypto.GenerateKey(a, b) : new byte[0];
-            length -= method == EncryptionType.Normal ? 1 : method == EncryptionType.MD5Hash ? 2 : 0;
+            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
+            length -= method == EncryptionType.Normal ? 1 : method == EncryptionType.MD5 ? 2 : 0;
 
             for (int i = 0; i < length; ++i)
             {
@@ -105,6 +105,8 @@ namespace Chaos
                     return $"[Drop] Recv> {GetHexString()}";
                 case "0B":
                     return $"[ClientExit] Recv> {GetHexString()}";
+                case "0D":
+                    return $"[Ignore] Recv> {GetHexString()}";
                 case "0E":
                     return $"[PublicChat] Recv> {GetHexString()}";
                 case "0F":

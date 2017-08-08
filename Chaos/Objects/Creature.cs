@@ -10,9 +10,9 @@ namespace Chaos
         [JsonProperty]
         internal byte HealthPercent { get; set; }
         [JsonProperty]
-        internal byte Type { get; }
+        internal CreatureType Type { get; }
 
-        internal Creature(string name, ushort sprite, byte type, Point point, Map map, Direction direction = Direction.South)
+        internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South)
             : base(name, sprite, point, map)
         {
             Direction = direction;

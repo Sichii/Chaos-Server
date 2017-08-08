@@ -26,7 +26,7 @@ namespace Chaos
         internal byte[] LoginMessage { get; }
         internal uint LoginMessageCheckSum { get; }
         internal ConcurrentDictionary<Socket, Client> Clients { get; }
-        internal List<Client> WorldClients => Clients.Values.Where(c => c.ServerType == ServerType.World).ToList();
+        internal List<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World).ToList();
         internal DataBase DataBase { get; }
         internal GameTime GameTime => GameTime.Now;
         internal LightLevel LightLevel => GameTime.TimeOfDay;

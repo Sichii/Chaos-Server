@@ -13,7 +13,7 @@ namespace Chaos
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal byte Length => (byte)Marks.Count;
         [JsonProperty]
-        internal Dictionary<string, LegendMark> Marks { get; }
+        private Dictionary<string, LegendMark> Marks { get; }
 
         /// <summary>
         /// Represents the object containing the user's legend marks.

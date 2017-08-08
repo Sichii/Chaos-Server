@@ -58,5 +58,12 @@ namespace MapTool
                 checkSum = (ushort)(data[index + i] ^ ((checkSum << 8) ^ Table16[checkSum >> 8]));
             return (ushort)checkSum;
         }
+        internal static uint Generate32(byte[] data)
+        {
+            uint checkSum = uint.MaxValue;
+            for (int i = 0; i < data.Length; ++i)
+                checkSum = checkSum >> 8 ^ Table32[(int)(checkSum & byte.MaxValue ^ data[i])];
+            return checkSum;
+        }
     }
 }

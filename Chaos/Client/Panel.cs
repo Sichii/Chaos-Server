@@ -12,9 +12,9 @@ namespace Chaos
         [JsonProperty]
         private byte length;
         [JsonProperty]
-        internal Dictionary<byte, T> Objects { get; set; }
+        private Dictionary<byte, T> Objects { get; set; }
         [JsonProperty]
-        internal byte[] Invalid { get; }
+        private byte[] Invalid { get; }
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

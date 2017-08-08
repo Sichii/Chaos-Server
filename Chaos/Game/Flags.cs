@@ -7,7 +7,7 @@ namespace Chaos
     {
         None = 0,
         Normal = 1,
-        MD5Hash = 2
+        MD5 = 2
     }
     internal enum ServerType : byte
     {
@@ -102,6 +102,13 @@ namespace Chaos
         Orange = 115,
         Brown = 116,
     }
+
+    internal enum IgnoreType : byte
+    {
+        Request = 1,
+        AddUser = 2,
+        RemoveUser = 3
+    }
     #endregion
 
     #region Legend
@@ -187,6 +194,15 @@ namespace Chaos
         Both = 0,
         Male = 1,
         Female = 2
+    }
+    [Flags]
+    internal enum CreatureType : byte
+    {
+        Normal = 0,
+        WalkThrough = 1,
+        Merchant = 2,
+        User = 4,
+        Admin = WalkThrough | User
     }
     #endregion
 

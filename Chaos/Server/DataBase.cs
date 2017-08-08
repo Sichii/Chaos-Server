@@ -37,6 +37,8 @@ namespace Chaos
                 Cache.Add(HashKey, new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
 
             RemoveUser("sichi");
+            RemoveUser("vorlof");
+            RemoveUser("bivins");
         }
 
         /// <summary>

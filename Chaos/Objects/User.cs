@@ -16,6 +16,8 @@ namespace Chaos
         [JsonProperty]
         internal Panel<Item> Equipment { get; set; }
         [JsonProperty]
+        internal IgnoreList IgnoreList { get; set; }
+        [JsonProperty]
         internal UserOptions UserOptions { get; set; }
         [JsonProperty]
         internal DisplayData DisplayData { get; set; }
@@ -45,15 +47,18 @@ namespace Chaos
         internal string Spouse { get; set; }
         [JsonProperty]
         internal List<string> Titles { get; set; }
+        [JsonProperty]
+        internal bool IsAdmin = false;
         internal bool Grouped => Group != null;
 
         internal User(string name, Point point, Map map, Direction direction)
-            :base(name, 0, 4, point, map, direction)
+            :base(name, 0, CreatureType.User, point, map, direction)
         {
             SkillBook = new Panel<Skill>(90);
             SpellBook = new Panel<Spell>(90);
             Inventory = new Panel<Item>(61);
             Equipment = new Panel<Item>(20);
+            IgnoreList = new IgnoreList();
             UserOptions = new UserOptions();
             Attributes = new Attributes();
             Legend = new Legend();
@@ -69,14 +74,15 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal User(string name, Point point, Map map, Direction direction, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, UserOptions userOptions, DisplayData displayData, Attributes attributes,
-               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles)
-            :base(name, 0, 4, point, map)
+        internal User(string name, Point point, Map map, Direction direction, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
+               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, bool isAdmin)
+            : base(name, 0, CreatureType.User, point, map)
         {
             SkillBook = skillBook;
             SpellBook = spellBook;
             Inventory = inventory;
             Equipment = equipment;
+            IgnoreList = ignoreList;
             UserOptions = userOptions;
             DisplayData = displayData;
             Attributes = attributes;
@@ -93,6 +99,7 @@ namespace Chaos
             Client = null;
             Group = null;
             DisplayData.User = this;
+            IsAdmin = isAdmin;
         }
 
         internal void Sync(Client client)

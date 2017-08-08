@@ -7,59 +7,67 @@ namespace Chaos
     internal sealed class ClientPackets
     {
         internal delegate void Handler(Client client, ClientPacket packet);
-        internal Handler[] Handlers { get; private set; }
-
-        internal ClientPackets()
+        internal static Handler[] Handlers
         {
-            Handlers = new Handler[byte.MaxValue];
-            Handlers[0] = new Handler(JoinServer);
-            Handlers[2] = new Handler(CreateChar1);
-            Handlers[3] = new Handler(Login);
-            Handlers[4] = new Handler(CreateChar2);
-            Handlers[5] = new Handler(RequestMapData);
-            Handlers[6] = new Handler(Walk);
-            Handlers[7] = new Handler(Pickup);
-            Handlers[8] = new Handler(Drop);
-            Handlers[11] = new Handler(ExitClient);
-            Handlers[14] = new Handler(PublicChat);
-            Handlers[15] = new Handler(UseSpell);
-            Handlers[16] = new Handler(JoinClient);
-            Handlers[17] = new Handler(Turn);
-            Handlers[19] = new Handler(SpaceBar);
-            Handlers[24] = new Handler(RequestWorldList);
-            Handlers[25] = new Handler(Whisper);
-            Handlers[27] = new Handler(ToggleUserOption);
-            Handlers[28] = new Handler(UseItem);
-            Handlers[29] = new Handler(AnimateUser);
-            Handlers[36] = new Handler(DropGold);
-            Handlers[38] = new Handler(ChangePassword);
-            Handlers[41] = new Handler(DropItemOnCreature);
-            Handlers[42] = new Handler(DropGoldOnCreature);
-            Handlers[45] = new Handler(RequestProfile);
-            Handlers[46] = new Handler(RequestGroup);
-            Handlers[47] = new Handler(ToggleGroup);
-            Handlers[48] = new Handler(SwapSlot);
-            Handlers[56] = new Handler(RequestRefresh);
-            Handlers[57] = new Handler(RequestDialog);
-            Handlers[58] = new Handler(ActiveDialog);
-            Handlers[59] = new Handler(Board);
-            Handlers[62] = new Handler(UseSkill);
-            Handlers[63] = new Handler(ClickWorldMap);
-            Handlers[67] = new Handler(ClickObject);
-            Handlers[68] = new Handler(RemoveEquipment);
-            Handlers[69] = new Handler(KeepAlive);
-            Handlers[71] = new Handler(ChangeStat);
-            Handlers[74] = new Handler(Exchange);
-            Handlers[75] = new Handler(RequestLoginMessage);
-            Handlers[77] = new Handler(BeginChant);
-            Handlers[78] = new Handler(DisplayChant);
-            Handlers[79] = new Handler(Personal);
-            Handlers[87] = new Handler(RequestServerTable);
-            Handlers[104] = new Handler(RequestHomepage);
-            Handlers[117] = new Handler(SynchronizeTicks);
-            Handlers[121] = new Handler(SocialStatus);
-            Handlers[123] = new Handler(RequestMetaFile);
+            get
+            {
+                ClientPackets cp = new ClientPackets();
+
+                Handler[] handles = new Handler[byte.MaxValue];
+                handles[0] = new Handler(cp.JoinServer);
+                handles[2] = new Handler(cp.CreateChar1);
+                handles[3] = new Handler(cp.Login);
+                handles[4] = new Handler(cp.CreateChar2);
+                handles[5] = new Handler(cp.RequestMapData);
+                handles[6] = new Handler(cp.Walk);
+                handles[7] = new Handler(cp.Pickup);
+                handles[8] = new Handler(cp.Drop);
+                handles[11] = new Handler(cp.ExitClient);
+                handles[13] = new Handler(cp.Ignore);
+                handles[14] = new Handler(cp.PublicChat);
+                handles[15] = new Handler(cp.UseSpell);
+                handles[16] = new Handler(cp.JoinClient);
+                handles[17] = new Handler(cp.Turn);
+                handles[19] = new Handler(cp.SpaceBar);
+                handles[24] = new Handler(cp.RequestWorldList);
+                handles[25] = new Handler(cp.Whisper);
+                handles[27] = new Handler(cp.ToggleUserOption);
+                handles[28] = new Handler(cp.UseItem);
+                handles[29] = new Handler(cp.AnimateUser);
+                handles[36] = new Handler(cp.DropGold);
+                handles[38] = new Handler(cp.ChangePassword);
+                handles[41] = new Handler(cp.DropItemOnCreature);
+                handles[42] = new Handler(cp.DropGoldOnCreature);
+                handles[45] = new Handler(cp.RequestProfile);
+                handles[46] = new Handler(cp.RequestGroup);
+                handles[47] = new Handler(cp.ToggleGroup);
+                handles[48] = new Handler(cp.SwapSlot);
+                handles[56] = new Handler(cp.RequestRefresh);
+                handles[57] = new Handler(cp.RequestDialog);
+                handles[58] = new Handler(cp.ActiveDialog);
+                handles[59] = new Handler(cp.Board);
+                handles[62] = new Handler(cp.UseSkill);
+                handles[63] = new Handler(cp.ClickWorldMap);
+                handles[67] = new Handler(cp.ClickObject);
+                handles[68] = new Handler(cp.RemoveEquipment);
+                handles[69] = new Handler(cp.KeepAlive);
+                handles[71] = new Handler(cp.ChangeStat);
+                handles[74] = new Handler(cp.Exchange);
+                handles[75] = new Handler(cp.RequestLoginMessage);
+                handles[77] = new Handler(cp.BeginChant);
+                handles[78] = new Handler(cp.DisplayChant);
+                handles[79] = new Handler(cp.Personal);
+                handles[87] = new Handler(cp.RequestServerTable);
+                handles[104] = new Handler(cp.RequestHomepage);
+                handles[117] = new Handler(cp.SynchronizeTicks);
+                handles[121] = new Handler(cp.ChangeSocialStatus);
+                handles[123] = new Handler(cp.RequestMetaFile);
+
+                return handles;
+            }
         }
+
+        internal ClientPackets() { }
 
         private void JoinServer(Client client, ClientPacket packet)
         {
@@ -130,9 +138,16 @@ namespace Chaos
             bool requestExit = packet.ReadBoolean();
 
             Game.ExitClient(client, requestExit);
-            //if requestexit, send exit confirmation 4C
-            //when the client gets exit confirmation, it will resend this packet except false
-            //then log off
+        }
+        private void Ignore(Client client, ClientPacket packet)
+        {
+            IgnoreType type = (IgnoreType)packet.ReadByte();
+            string targetName = null;
+
+            if (type != IgnoreType.Request)
+                targetName = packet.ReadString8();
+
+            Game.Ignore(client, type, targetName);
         }
         private void PublicChat(Client client, ClientPacket packet)
         {
@@ -263,7 +278,7 @@ namespace Chaos
             if (type == GroupRequestType.Groupbox)
             {
                 string leader = packet.ReadString8();
-                string groupName = packet.ReadString8();
+                string text = packet.ReadString8();
                 packet.ReadByte();
                 byte minLevel = packet.ReadByte();
                 byte maxLevel = packet.ReadByte();
@@ -274,7 +289,7 @@ namespace Chaos
                 maxOfEach[(byte)BaseClass.Priest] = packet.ReadByte();
                 maxOfEach[(byte)BaseClass.Monk] = packet.ReadByte();
 
-                box = new GroupBox(client.User, groupName, maxLevel, maxOfEach);
+                box = new GroupBox(client.User, text, maxLevel, maxOfEach);
             }
             string targetName = packet.ReadString8();
 
@@ -539,10 +554,10 @@ namespace Chaos
             TimeSpan clientTicks = new TimeSpan(packet.ReadUInt32()); //client ticks
             Game.SynchronizeTicks(client, serverTicks, clientTicks);
         }
-        private void SocialStatus(Client client, ClientPacket packet)
+        private void ChangeSocialStatus(Client client, ClientPacket packet)
         {
             SocialStatus status = (SocialStatus)packet.ReadByte();
-            Game.SocialStatus(client, status);
+            Game.ChangeSoocialStatus(client, status);
         }
         private void RequestMetaFile(Client client, ClientPacket packet)
         {

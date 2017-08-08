@@ -25,7 +25,7 @@ namespace Chaos
                     case 111:
                         return EncryptionType.Normal;
                     default:
-                        return EncryptionType.MD5Hash;
+                        return EncryptionType.MD5;
                 }
             }
         }
@@ -36,15 +36,15 @@ namespace Chaos
             EncryptionType type = EncryptionType;
             int pos = Data.Length;
 
-            Array.Resize(ref Data, Data.Length + (type == EncryptionType.MD5Hash ? 5 : 4));
+            Array.Resize(ref Data, Data.Length + (type == EncryptionType.MD5 ? 5 : 4));
 
             Data[pos++] = 0;
-            if (type == EncryptionType.MD5Hash)
+            if (type == EncryptionType.MD5)
                 Data[pos++] = OpCode;
 
             ushort a = (ushort)(Utility.Random(0, 65277) + 256);
             byte b = (byte)(Utility.Random(0, 155) + 100);
-            byte[] key = type == EncryptionType.Normal ? crypto.Key : type == EncryptionType.MD5Hash ? crypto.GenerateKey(a, b) : new byte[0];
+            byte[] key = type == EncryptionType.Normal ? crypto.Key : type == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
 
             for (int i = 0; i < Data.Length - 3; i++)
             {

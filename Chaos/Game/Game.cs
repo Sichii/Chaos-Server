@@ -11,8 +11,10 @@ namespace Chaos
 {
     internal static class Game
     {
+        internal static readonly object Sync = new object();
         internal static Server Server = null;
         internal static World World = null;
+        internal static Dictionary<string, OnUseDelegate> PanelObjects = null;
 
         internal static void JoinServer(Client client)
         {
@@ -31,9 +33,9 @@ namespace Chaos
             else if(Server.DataBase.UserExists(name))
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "That name is taken."));
             else
-            {   //otherwise set the client's newChar fields so CreateCharB can use the information and send a confirmation to the client
-                client.CreateChar1Name = name;
-                client.CreateChar1Pw = password;
+            {   //otherwise set the client's new character fields so CreateChar1 can use the information and send a confirmation to the client
+                client.CreateCharName = name;
+                client.CreateCharPw = password;
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Confirm));
             }
         }
@@ -61,18 +63,32 @@ namespace Chaos
 
         internal static void CreateChar2(Client client, byte hairStyle, Gender gender, byte hairColor)
         {
-            if (string.IsNullOrEmpty(client.CreateChar1Name) || string.IsNullOrEmpty(client.CreateChar1Pw))
+            if (string.IsNullOrEmpty(client.CreateCharName) || string.IsNullOrEmpty(client.CreateCharPw))
                 return;
 
             hairStyle = (byte)(hairStyle < 1 ? 1 : hairStyle > 17 ? 17 : hairStyle);
             hairColor = (byte)(hairColor > 13 ? 13 : hairColor < 0 ? 0 : hairColor);
             gender = gender != Gender.Male && gender != Gender.Female ? Gender.Male : gender;
 
-            User newUser = new User(client.CreateChar1Name, new Point(20, 20), client.Server.World.Maps[5031], Direction.South);
+            User newUser = new User(client.CreateCharName, new Point(20, 20), World.Maps[5031], Direction.South);
             DisplayData data = new DisplayData(newUser, hairStyle, hairColor, (byte)((byte)gender * 16));
             newUser.DisplayData = data;
 
-            if (Server.DataBase.TryAddUser(newUser, client.CreateChar1Pw))
+            if (World.Admins.Contains(newUser.Name, StringComparer.CurrentCultureIgnoreCase))
+            {
+                newUser.IsAdmin = true;
+                newUser.Attributes.BaseHP = 1333337;
+                newUser.Attributes.BaseMP = 1333337;
+                newUser.Attributes.CurrentHP = 1333337;
+                newUser.Attributes.CurrentMP = 1333337;
+                newUser.Attributes.BaseStr = 255;
+                newUser.Attributes.BaseInt = 255;
+                newUser.Attributes.BaseWis = 255;
+                newUser.Attributes.BaseCon = 255;
+                newUser.Attributes.BaseDex = 255;
+            }
+
+            if (Server.DataBase.TryAddUser(newUser, client.CreateCharPw))
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Confirm));
             else
                 client.Enqueue(Server.Packets.LoginMessage(LoginMessageType.Message, "Unable to create character. Possibly already exists???"));
@@ -85,17 +101,72 @@ namespace Chaos
 
         internal static void Walk(Client client, Direction direction, int stepCount)
         {
-            if (stepCount == client.StepCount)
+            lock(client.User.Map.Sync)
             {
-                client.StepCount++;
-                foreach (User user in Server.World.ObjectsVisibleFrom(client.User).OfType<User>())
-                    user.Client.Enqueue(Server.Packets.CreatureWalk(client.User, direction));
+                //if the stepcount matches with what we have
+                if (stepCount == client.StepCount)
+                {
+                    //plus the stepcount
+                    client.StepCount++;
 
-                client.User.Point.Offset(direction);
-                //client.User.Point = client.User.Point.Offsetter(direction);
+                    //check if we can actually walk to the spot
+                    if (!client.User.IsAdmin && !client.User.Map.IsWalkable(client.User.Point.Offsetter(direction)))
+                    {
+                        //if no, set their location back to what it was and return
+                        World.Refresh(client, true);
+                        return;
+                    }
+                    //prepare a list of items and monsters
+                    List<VisibleObject> itemMonster = new List<VisibleObject>();
 
-                client.Enqueue(Server.Packets.ClientWalk(direction, client.User.Point));
+                    //get all objects visible before the walk
+                    List<VisibleObject> visibleBefore = World.ObjectsVisibleFrom(client.User);
 
+                    //send them the walk
+                    foreach (User user in visibleBefore.OfType<User>())
+                        user.Client.Enqueue(Server.Packets.CreatureWalk(client.User, direction));
+
+                    //offset the point and validate the walk to the client
+                    client.User.Point.Offset(direction);
+                    client.Enqueue(Server.Packets.ClientWalk(direction, client.User.Point));
+
+                    //get an updated list of nearby objects
+                    List<VisibleObject> visibleAfter = World.ObjectsVisibleFrom(client.User);
+
+                    //compare what's visible before and after the walk, send packets to users and client accordingly
+                    foreach (VisibleObject obj in visibleAfter.Except(visibleBefore, new WorldObjectComparer()))
+                    {
+                        User user = obj as User;
+
+                        if (user != null)
+                        {
+                            user.Client.Enqueue(Server.Packets.DisplayUser(client.User));
+                            client.Enqueue(Server.Packets.DisplayUser(user));
+                        }
+                        else
+                            itemMonster.Add(obj);
+                    }
+
+                    if (itemMonster.Count > 0)
+                        client.Enqueue(Server.Packets.DisplayItemMonster(itemMonster.ToArray()));
+
+                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter, new WorldObjectComparer()))
+                    {
+                        (obj as User)?.Client.Enqueue(Server.Packets.RemoveObject(client.User));
+                        client.Enqueue(Server.Packets.RemoveObject(obj));
+                    }
+
+                    MapObject mapObj;
+                    if (World.TryGetMapObject(client.User.Point, out mapObj, client.User.Map) && mapObj is Warp)
+                        World.WarpUser(client.User, mapObj as Warp);
+
+                    WorldMap worldMap;
+                    if (World.TryGetWorldMap(client.User.Point, out worldMap, client.User.Map))
+                    {
+                        World.RemoveObjectFromMap(client.User, true);
+                        client.Enqueue(Server.Packets.WorldMap(worldMap));
+                    }
+                }
             }
         }
 
@@ -105,20 +176,21 @@ namespace Chaos
             GroundItem groundItem;
 
             //if there's an item on the point
-            if (Server.World.TryGetItem(groundPoint, out groundItem, client.User.Map))
+            if (World.TryGetGroundItem(groundPoint, out groundItem, client.User.Map))
             {
                 groundItem.Item.Slot = slot;
                 if (!client.User.Inventory.TryAdd(groundItem.Item))
                     return;
 
-                Server.World.RemoveObjectFromMap(groundItem);
+                World.RemoveObjectFromMap(groundItem);
                 client.Enqueue(Server.Packets.AddItem(groundItem.Item));
             }
         }
 
         internal static void Drop(Client client, byte slot, Point groundPoint, int count)
         {
-            if (count == 0 || Server.World.Maps[client.User.Map.Id].IsWall(groundPoint))
+            Map map = client.User.Map;
+            if (count == 0 || map.IsWall(groundPoint) || map.Exits.ContainsKey(groundPoint) || map.Doors.ContainsKey(groundPoint))
                 return;
 
             Item item;
@@ -146,7 +218,7 @@ namespace Chaos
                 }
 
                 //add the grounditem to the map
-                Server.World.AddObjectToMap(groundItem, new Location(groundItem.Map.Id, groundPoint));
+                World.AddObjectToMap(groundItem, new Location(groundItem.Map.Id, groundPoint));
             }
         }
 
@@ -158,51 +230,40 @@ namespace Chaos
                 client.Redirect(new Redirect(client, ServerType.Login));
         }
 
+        internal static void Ignore(Client client, IgnoreType type, string targetName)
+        {
+            switch(type)
+            {
+                //if theyre requesting the user list, send it 1 per line
+                case IgnoreType.Request:
+                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ScrollWindow, string.Join(Environment.NewLine, client.User.IgnoreList.ToArray())));
+                    break;
+                //add a user if it's not blank, and isnt already in the list
+                case IgnoreType.AddUser:
+                    if (string.IsNullOrEmpty(targetName))
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "Blank never loses. He can't be ignored."));
+                    else if (client.User.IgnoreList.TryAdd(targetName))
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already on the list."));
+                    break;
+                //remove a user if it's not blank, and is already in the list
+                case IgnoreType.RemoveUser:
+                    if (string.IsNullOrEmpty(targetName))
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "Blank never loses. He can't be ignored."));
+                    else if (client.User.IgnoreList.TryRemove(targetName))
+                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not on the list"));
+                    break;
+            }
+        }
+
         internal static void PublicChat(Client client, ClientMessageType type, string message)
         {
-            if(message.StartsWith("/") && 
-                (
-                    client.User.Name.Equals("Sichi", StringComparison.CurrentCultureIgnoreCase) || 
-                    client.User.Name.Equals("Jinori", StringComparison.CurrentCultureIgnoreCase) || 
-                    client.User.Name.Equals("Vorlof", StringComparison.CurrentCultureIgnoreCase)
-                ))
+            //ADMIN SLASH COMMANDS (I SHOULD MAKE A TRINKET LUL)
+            if (message.StartsWith("/") && client.User.IsAdmin)
             {
                 message = message.Replace("/", "");
-                Match match;
-                if(message.Equals("help", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"Teleport to map: /teleport <mapId> <X> <Y>"));
-                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"Example: /teleport 5031 50 50"));
-                    foreach (Map map in Server.World.Maps.Values)
-                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{map.Id} - {map.Name}"));
-                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"Create Items: /create <sprite> <color> <name> <count> <stackable>"));
-                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"Example: /create 253 1 dats someshit=50m35h17 5 true"));
 
-                    return;
-                }
-                else if((match = Regex.Match(message, @"teleport (\d+) (\d+) (\d+)", RegexOptions.IgnoreCase)).Success)
-                {
-                    ushort mapId, x, y;
-                    if (ushort.TryParse(match.Groups[1].Value, out mapId) && ushort.TryParse(match.Groups[2].Value, out x) && ushort.TryParse(match.Groups[3].Value, out y))
-                        Server.World.WarpUser(client.User, new Warp(client.User.Location, new Location(mapId, x, y)));
-
-                    return;
-                }
-                else if((match = Regex.Match(message, @"create (\d+) (\d+) (.+) (\d+) (true|false)", RegexOptions.IgnoreCase)).Success)
-                {
-                    ushort sprite;
-                    byte color;
-                    string name = match.Groups[3].Value;
-                    int count;
-                    bool stackable;
-
-                    if (ushort.TryParse(match.Groups[1].Value, out sprite) && byte.TryParse(match.Groups[2].Value, out color) && int.TryParse(match.Groups[4].Value, out count) && bool.TryParse(match.Groups[5].Value, out stackable))
-                        foreach (Item item in Server.World.CreateItems(sprite, color, name, count, stackable))
-                            if (client.User.Inventory.AddToNextSlot(item))
-                                client.Enqueue(Server.Packets.AddItem(item));
-
-                    return;
-                }
+                //admin commands
+                return;
             }
 
             switch(type)
@@ -219,15 +280,19 @@ namespace Chaos
             
             List<VisibleObject> objects = new List<VisibleObject>();
             if (type == ClientMessageType.Normal)
-                objects = Server.World.ObjectsVisibleFrom(client.User);
+                objects = World.ObjectsVisibleFrom(client.User);
             else
-                objects = Server.World.ObjectsVisibleFrom(client.User, 25);
+                objects = World.ObjectsVisibleFrom(client.User, 25);
             objects.Add(client.User);
 
             foreach (var obj in objects)
             {
                 if (obj is User)
-                    (obj as User).Client.Enqueue(Server.Packets.PublicChat(type, client.User.Id, message));
+                {
+                    User user = obj as User;
+                    if (!user.IgnoreList.Contains(client.User.Name))
+                        user.Client.Enqueue(Server.Packets.PublicChat(type, client.User.Id, message));
+                }
                 else if (obj is Monster)
                 {
                     //do things
@@ -254,20 +319,20 @@ namespace Chaos
             {
                 Server.DataBase.GetUser(name).Sync(client);
                 List<ServerPacket> packets = new List<ServerPacket>();
-                foreach (Spell spell in client.User.SpellBook.Where(s => s != null))
+                foreach (Spell spell in client.User.SpellBook.Where(spell => spell != null))
                     packets.Add(Server.Packets.AddSpell(spell));
-                foreach (Skill skill in client.User.SkillBook.Where(s => s != null))
+                foreach (Skill skill in client.User.SkillBook.Where(spell => spell != null))
                     packets.Add(Server.Packets.AddSkill(skill));
-                foreach (Item item in client.User.Equipment.Where(i => i != null))
+                foreach (Item item in client.User.Equipment.Where(skill => skill != null))
                     packets.Add(Server.Packets.AddEquipment(item));
-                packets.Add(Server.Packets.Attributes(StatUpdateFlags.Full, client.User.Attributes));
-                foreach (Item item in client.User.Inventory.Where(i => i != null))
+                packets.Add(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Full, client.User.Attributes));
+                foreach (Item item in client.User.Inventory.Where(skill => skill != null))
                     packets.Add(Server.Packets.AddItem(item));
                 packets.Add(Server.Packets.LightLevel(Server.LightLevel));
                 packets.Add(Server.Packets.UserId(client.User.Id, client.User.BaseClass));
 
                 client.Enqueue(packets.ToArray());
-                Server.World.AddObjectToMap(client.User, client.User.Location);
+                World.AddObjectToMap(client.User, client.User.Location);
                 client.Enqueue(Server.Packets.RequestPersonal());
             }
             else if(client.ServerType == ServerType.Lobby)
@@ -278,7 +343,7 @@ namespace Chaos
         {
             client.User.Direction = direction;
 
-            foreach (User user in Server.World.ObjectsVisibleFrom(client.User).OfType<User>())
+            foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
                 user.Client.Enqueue(Server.Packets.CreatureTurn(client.User.Id, direction));
         }
 
@@ -305,12 +370,20 @@ namespace Chaos
         {
             User targetUser;
 
+            //if the user isnt online, tell them
             if (!Server.TryGetUser(targetName, out targetUser))
                 client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, "That user is not online."));
+            //otherwise, if the use is ignoring them, dont tell them. Make it seem like theyre succeeding, so they dont bother the person
+            else if (targetUser.IgnoreList.Contains(client.User.Name))
+                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{targetName} >> {message}"));
+            //otherwise let them know if the target is on Do Not Disturb
+            else if (targetUser.SocialStatus == SocialStatus.DoNotDisturb)
+                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{targetName} doesn't want to be bothered right now."));
+            //otherwise send the whisper
             else
             {
-                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{targetUser.Name} >> {message}"));
-                targetUser.Client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{client.User.Name} << {message}"));  
+                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{targetName} >> {message}"));
+                targetUser.Client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.Whisper, $@"{client.User.Name} << {message}"));
             }
         }
 
@@ -363,53 +436,79 @@ namespace Chaos
 
         internal static void RequestGroup(Client client, GroupRequestType type, string targetName, GroupBox box)
         {
-            User targetUser;
-
-            switch (type)
+            lock (Sync)
             {
-                case GroupRequestType.Invite:
-                    if (!Server.World.TryGetUser(targetName, out targetUser, client.User.Map))                                                                                      //if target user doesnt exist
-                        client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not near."));
-                    else if (client.User.Grouped)                                                                                                                                   //else if this we are already in a group
-                    {
-                        if (client.User == targetUser)                                                                                                                                  //and we're trying to group ourself
-                        {
-                            if (targetUser.Group.TryRemove(client.User))                                                                                                                    //leave the group
-                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You have left the group."));
-                        }
-                        else if (!targetUser.Grouped)                                                                                                                                   //else if the target isnt grouped
-                            targetUser.Client.Enqueue(Server.Packets.GroupRequest(GroupRequestType.Request, client.User.Name));
-                        else if (targetUser.Group != client.User.Group)                                                                                                                 //else if the target's group isnt the same as our group
-                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group."));
-                        else if (client.User.Group.Leader == client.User)                                                                                                               //else if we're the leader of the group
-                        {
-                            if (client.User.Group.TryRemove(targetUser, true))                                                                                                               //kick them from the group
-                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"You have kicked {targetName} from the group."));
-                        }
-                        else                                                                                                                                                            //else we cant kick them, just say theyre in our group
-                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in your group."));
-                    }
-                    else                                                                                                                                                            //else we're not grouped
-                    {
-                        if (client.User == targetUser)                                                                                                                                  //and we are trying to group ourself
-                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You can't form a group alone."));
-                        else if (targetUser.Grouped)                                                                                                                                    //else if target is grouped
-                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group."));
-                        else                                                                                                                                                            //else send them a group request
-                            targetUser.Client.Enqueue(Server.Packets.GroupRequest(GroupRequestType.Request, client.User.Name));
-                    }
-                    break;
-                case GroupRequestType.Join:
-                        if (!Server.World.TryGetUser(targetName, out targetUser, client.User.Map))
+                User targetUser;
+
+                switch (type)
+                {
+                    case GroupRequestType.Invite:
+                        if (!World.TryGetUser(targetName, out targetUser, client.User.Map))                                                                                     //if target user doesnt exist
                             client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not near."));
-                    break;
-                case GroupRequestType.Groupbox:
+                        else if (targetUser.IgnoreList.Contains(client.User.Name))                                                     //if theyre on the ignore list, return
+                            return;
+                        else if (!client.User.UserOptions.Group)                                                                                                                //if your grouping is turned off, let them know
+                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"Grouping is disabled."));
+                        else if (!targetUser.UserOptions.Group)                                                                                                                 //if the targets grouping is turned off, let them know
+                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not accepting group invites."));
+                        else if (client.User.Grouped)                                                                                                                                   //else if this we are already in a group
+                        {
+                            if (client.User == targetUser)                                                                                                                                  //and we're trying to group ourself
+                            {
+                                if (targetUser.Group.TryRemove(client.User))                                                                                                                    //leave the group
+                                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You have left the group."));
+                            }
+                            else if (!targetUser.Grouped)                                                                                                                                   //else if the target isnt grouped
+                                targetUser.Client.Enqueue(Server.Packets.GroupRequest(GroupRequestType.Request, client.User.Name));
+                            else if (targetUser.Group != client.User.Group)                                                                                                                 //else if the target's group isnt the same as our group
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group."));
+                            else if (client.User.Group.Leader == client.User)                                                                                                               //else if we're the leader of the group
+                            {
+                                if (client.User.Group.TryRemove(targetUser, true))                                                                                                               //kick them from the group
+                                    client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"You have kicked {targetName} from the group."));
+                            }
+                            else                                                                                                                                                            //else we cant kick them, just say theyre in our group
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in your group."));
+                        }
+                        else                                                                                                                                                            //else we're not grouped
+                        {
+                            if (client.User == targetUser)                                                                                                                                  //and we are trying to group ourself
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You can't form a group alone."));
+                            else if (targetUser.Grouped)                                                                                                                                    //else if target is grouped
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group."));
+                            else                                                                                                                                                            //else send them a group request
+                                targetUser.Client.Enqueue(Server.Packets.GroupRequest(GroupRequestType.Request, client.User.Name));
+                        }
+                        break;
+                    case GroupRequestType.Join:
+                        if (!World.TryGetUser(targetName, out targetUser, client.User.Map))
+                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not near."));
+                        else if (targetUser.IgnoreList.Contains(client.User.Name))
+                            return;
+                        else if (client.User.Grouped)
+                            client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You are already in a group."));
+                        else
+                        {
+                            if (client.User == targetUser)
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "You can't form a group alone."));
+                            else if (targetUser.Grouped)
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group."));
+                            else
+                            {
+                                Group group = new Group(targetUser, client.User);
+                                targetUser.Client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"You form a group with {client.User.Name}"));
+                                client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"You form a group with {targetName}"));
+                            }
+                        }
+                        break;
+                    case GroupRequestType.Groupbox:
 
-                    break;
+                        break;
 
-                case GroupRequestType.RemoveGroupBox:
+                    case GroupRequestType.RemoveGroupBox:
 
-                    break;
+                        break;
+                }
             }
         }
 
@@ -458,7 +557,7 @@ namespace Chaos
 
         internal static void RequestRefresh(Client client)
         {
-            Server.World.Refresh(client);
+            World.Refresh(client);
         }
 
         internal static void RequestDialog(Client client, byte objType, uint objId, uint pursuitId, byte[] args)
@@ -483,7 +582,7 @@ namespace Chaos
 
         internal static void ClickWorldMap(Client client, ushort mapId, Point point)
         {
-            Server.World.AddObjectToMap(client.User, new Location(mapId, point));
+            World.AddObjectToMap(client.User, new Location(mapId, point));
         }
 
         internal static void ClickObject(Client client, int objectId)
@@ -499,7 +598,7 @@ namespace Chaos
             else
             {
                 VisibleObject obj;
-                if (Server.World.TryGetVisibleObject(objectId, out obj, client.User.Map))
+                if (World.TryGetVisibleObject(objectId, out obj, client.User.Map))
                 {
                     if (obj is Monster)
                         client.Enqueue(Server.Packets.ServerMessage(ServerMessageType.OrangeBar1, obj.Name));
@@ -519,7 +618,7 @@ namespace Chaos
 
             MapObject obj;
 
-            if (Server.World.TryGetMapObject(clickPoint, out obj, client.User.Map))
+            if (World.TryGetMapObject(clickPoint, out obj, client.User.Map))
             {
 
                 if (obj is Door)
@@ -540,7 +639,7 @@ namespace Chaos
                 client.Enqueue(Server.Packets.RemoveEquipment(slot));
 
                 //set hp/mp?
-                client.Enqueue(Server.Packets.Attributes(StatUpdateFlags.Primary, client.User.Attributes));
+                client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
             }
         }
 
@@ -570,7 +669,7 @@ namespace Chaos
                     break;
             }
 
-            client.Enqueue(Server.Packets.Attributes(StatUpdateFlags.Primary, client.User.Attributes));
+            client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
         }
 
         internal static void Exchange(Client client, byte type, uint targetId)
@@ -636,7 +735,7 @@ namespace Chaos
             client.Enqueue(Server.Packets.HeartbeatB());
         }
 
-        internal static void SocialStatus(Client client, SocialStatus status)
+        internal static void ChangeSoocialStatus(Client client, SocialStatus status)
         {
             client.User.SocialStatus = status;
         }

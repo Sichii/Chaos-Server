@@ -26,19 +26,20 @@ namespace Chaos
             OpCode = buffer[3];
             Counter = buffer[4];
             Creation = DateTime.UtcNow;
-            int num = buffer.Length - (ShouldEncrypt ? 5 : 4);
-            Data = new byte[num];
-            Array.Copy(buffer, buffer.Length - num, Data, 0, num);
+
+            int resultLength = buffer.Length - (ShouldEncrypt ? 5 : 4);
+            Data = new byte[resultLength];
+            Buffer.BlockCopy(buffer, buffer.Length - resultLength, Data, 0, resultLength);
         }
         internal byte[] ReadBytes(int length)
         {
             if (Position + length > Data.Length)
                 throw new EndOfStreamException();
 
-            byte[] array = new byte[length];
-            Array.Copy(Data, Position, array, 0, length);
+            byte[] readData = new byte[length];
+            Buffer.BlockCopy(Data, Position, readData, 0, length);
             Position += length;
-            return array;
+            return readData;
         }
         internal byte ReadByte()
         {
@@ -47,47 +48,17 @@ namespace Chaos
 
             return Data[Position++];
         }
-        internal sbyte ReadSByte()
-        {
-            if (Position >= Data.Length)
-                throw new EndOfStreamException();
+        internal sbyte ReadSByte() => (sbyte)ReadByte();
+        internal bool ReadBoolean() => ReadByte() != 0;
+        internal short ReadInt16() => (short)(ReadByte() << 8 | ReadByte());
+        internal ushort ReadUInt16() => (ushort)(ReadByte() << 8 | ReadByte());
+        internal int ReadInt32() => ReadByte() << 24 | ReadByte() << 16 | ReadByte() << 8 | ReadByte();
+        internal uint ReadUInt32() => (uint)(ReadByte() << 24 | ReadByte() << 16 | ReadByte() << 8 | ReadByte());
 
-            return (sbyte)Data[Position++];
-        }
-        internal bool ReadBoolean()
-        {
-            if (Position >= Data.Length)
-                throw new EndOfStreamException();
-
-            return Data[Position++] != 0;
-        }
-        internal short ReadInt16()
-        {
-            byte[] array = ReadBytes(2);
-            return (short)(array[0] << 8 | array[1]);
-        }
-        internal ushort ReadUInt16()
-        {
-            byte[] array = ReadBytes(2);
-            return (ushort)(array[0] << 8 | array[1]);
-        }
-        internal int ReadInt32()
-        {
-            byte[] array = ReadBytes(4);
-            return array[0] << 24 | array[1] << 16 | array[2] << 8 | array[3];
-        }
-        internal uint ReadUInt32()
-        {
-            byte[] array = ReadBytes(4);
-            return (uint)(array[0] << 24 | array[1] << 16 | array[2] << 8 | array[3]);
-        }
         internal string ReadString()
         {
-            if (Position >= Data.Length)
-                throw new EndOfStreamException();
-
-            int num = Data.Length;
-            if (Position + num > Data.Length)
+            int length = Data.Length;
+            if (Position + length > Data.Length)
             {
                 Position--;
                 throw new EndOfStreamException();
@@ -95,72 +66,72 @@ namespace Chaos
             for (int i = 0; i < Data.Length; i++)
                 if (Data[i] == 0)
                 {
-                    num = i;
+                    length = i;
                     break;
                 }
 
-            byte[] array = new byte[num - Position];
-            Buffer.BlockCopy(Data, Position, array, 0, array.Length);
-            Position = num + 1;
+            byte[] readData = new byte[length - Position];
+            Buffer.BlockCopy(Data, Position, readData, 0, readData.Length);
+            Position = length + 1;
             if (Position > Data.Length)
                 Position = Data.Length;
 
-            return Encoding.GetEncoding(949).GetString(array);
+            return Encoding.GetEncoding(949).GetString(readData);
         }
         internal string ReadString8()
         {
             if (Position >= Data.Length)
                 throw new EndOfStreamException();
 
-            int num = ReadByte();
-            if (Position + num > Data.Length)
+            int lengthPrefix = ReadByte();
+            if (Position + lengthPrefix > Data.Length)
             {
                 Position--;
                 throw new EndOfStreamException();
             }
 
-            byte[] bytes = ReadBytes(num);
-            return Encoding.GetEncoding(949).GetString(bytes);
+            byte[] readData = ReadBytes(lengthPrefix);
+            return Encoding.GetEncoding(949).GetString(readData);
         }
         internal string ReadString16()
         {
             if (Position + 1 > Data.Length)
                 throw new EndOfStreamException();
 
-            int num = ReadUInt16();
-            if (Position + num > Data.Length)
+            int lengthPrefix = ReadUInt16();
+            if (Position + lengthPrefix > Data.Length)
             {
                 Position -= 2;
                 throw new EndOfStreamException();
             }
-            byte[] bytes = ReadBytes(num);
-            return Encoding.GetEncoding(949).GetString(bytes);
+            byte[] readData = ReadBytes(lengthPrefix);
+            return Encoding.GetEncoding(949).GetString(readData);
         }
         internal byte[] ReadData8()
         {
             if (Position >= Data.Length)
                 throw new EndOfStreamException();
 
-            int num = ReadByte();
-            if (Position + num > Data.Length)
+            int lengthPrefix = ReadByte();
+            if (Position + lengthPrefix > Data.Length)
             {
                 Position--;
                 throw new EndOfStreamException();
             }
-            return ReadBytes(num);
+            return ReadBytes(lengthPrefix);
         }
         internal byte[] ReadData16()
         {
             if (Position + 1 > Data.Length)
                 throw new EndOfStreamException();
 
-            int num = ReadUInt16();
-            if (Position + num > Data.Length)
+            int lengthPrefix = ReadUInt16();
+            if (Position + lengthPrefix > Data.Length)
             {
                 Position -= 2;
                 throw new EndOfStreamException();
             }
-            return ReadBytes(num);
+            return ReadBytes(lengthPrefix);
         }
         internal Point ReadPoint()
         {
@@ -171,70 +142,22 @@ namespace Chaos
         }
         internal void Write(byte[] buffer)
         {
-            int num = Position + buffer.Length;
-            if (num > Data.Length)
-                Array.Resize(ref Data, num);
+            int resultLength = Position + buffer.Length;
+            if (resultLength > Data.Length)
+                Array.Resize(ref Data, resultLength);
 
-            Array.Copy(buffer, 0, Data, Position, buffer.Length);
+            Buffer.BlockCopy(buffer, 0, Data, Position, buffer.Length);
             Position += buffer.Length;
         }
-        internal void WriteByte(byte value)
-        {
-            Write(new byte[]
-            {
-                value
-            });
-        }
-        internal void WriteSByte(sbyte value)
-        {
-            Write(new byte[]
-            {
-                (byte)value
-            });
-        }
-        internal void WriteBoolean(bool value)
-        {
-            WriteByte((byte)(value ? 1 : 0));
-        }
-        internal void WriteInt16(short value)
-        {
-            byte[] buffer = new byte[]
-            {
-                (byte)(value >> 8),
-                (byte)value
-            };
-            Write(buffer);
-        }
-        internal void WriteUInt16(ushort value)
-        {
-            Write(new byte[2]
-            {
-                (byte) ((uint) value >> 8),
-                (byte) value
-            });
-        }
-        internal void WriteInt32(int value)
-        {
-            byte[] buffer = new byte[]
-            {
-                (byte)(value >> 24),
-                (byte)(value >> 16),
-                (byte)(value >> 8),
-                (byte)value
-            };
-            Write(buffer);
-        }
-        internal void WriteUInt32(uint value)
-        {
-            byte[] buffer = new byte[]
-            {
-                (byte)(value >> 24),
-                (byte)(value >> 16),
-                (byte)(value >> 8),
-                (byte)value
-            };
-            Write(buffer);
-        }
+
+        internal void WriteByte(byte value) => Write(new byte[] { value });
+        internal void WriteSByte(sbyte value) => Write(new byte[] { (byte)value });
+        internal void WriteBoolean(bool value) => WriteByte((byte)(value ? 1 : 0));
+        internal void WriteInt16(short value) => Write(new byte[] { (byte)(value >> 8), (byte)value });
+        internal void WriteUInt16(ushort value) => Write(new byte[] { (byte)((uint)value >> 8), (byte)value });
+        internal void WriteInt32(int value) => Write(new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value });
+        internal void WriteUInt32(uint value) => Write(new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value });
+
         internal void WriteString(string value, bool terminate = false)
         {
             Write(Encoding.GetEncoding(949).GetBytes(value));
@@ -243,21 +166,21 @@ namespace Chaos
         }
         internal void WriteString8(string value)
         {
-            byte[] bytes = Encoding.GetEncoding(949).GetBytes(value);
-            if (bytes.Length > 255)
-                throw new ArgumentOutOfRangeException("value", value, "String must be less than 256 chars");
+            byte[] writeData = Encoding.GetEncoding(949).GetBytes(value);
+            if (writeData.Length > byte.MaxValue)
+                throw new ArgumentOutOfRangeException("value", value, $@"String must be {byte.MaxValue} chars or less");
 
-            WriteByte((byte)bytes.Length);
-            Write(bytes);
+            WriteByte((byte)writeData.Length);
+            Write(writeData);
         }
         internal void WriteString16(string value)
         {
-            byte[] bytes = Encoding.GetEncoding(949).GetBytes(value);
-            if (bytes.Length > 65535)
-                throw new ArgumentOutOfRangeException("value", value, "String must be less than 65536 chars");
+            byte[] writeData = Encoding.GetEncoding(949).GetBytes(value);
+            if (writeData.Length > ushort.MaxValue)
+                throw new ArgumentOutOfRangeException("value", value, $@"String must be {ushort.MaxValue} chars or less");
 
-            WriteUInt16((ushort)bytes.Length);
-            Write(bytes);
+            WriteUInt16((ushort)writeData.Length);
+            Write(writeData);
         }
         internal void WritePoint8(Point value)
         {
@@ -288,41 +211,41 @@ namespace Chaos
         }
         internal byte[] ToArray()
         {
-            int num = Data.Length + (ShouldEncrypt ? 5 : 4) - 3;
-            byte[] array = new byte[num + 3];
-            array[0] = Identifier;
-            array[1] = (byte)(num / 256);
-            array[2] = (byte)(num % 256);
-            array[3] = OpCode;
-            array[4] = Counter;
-            Array.Copy(Data, 0, array, array.Length - Data.Length, Data.Length);
-            return array;
+            int resultLength = Data.Length + (ShouldEncrypt ? 5 : 4) - 3;
+            byte[] resultData = new byte[resultLength + 3];
+            resultData[0] = Identifier;
+            resultData[1] = (byte)(resultLength / 256);
+            resultData[2] = (byte)(resultLength % 256);
+            resultData[3] = OpCode;
+            resultData[4] = Counter;
+            Buffer.BlockCopy(Data, 0, resultData, resultData.Length - Data.Length, Data.Length);
+            return resultData;
         }
         internal string GetHexString()
         {
-            int length = Data.Length + 1;
-            byte[] array = new byte[length];
-            array[0] = OpCode;
-            Array.Copy(Data, 0, array, 1, Data.Length);
-            return BitConverter.ToString(array).Replace('-', ' ');
+            int resultLength = Data.Length + 1;
+            byte[] resultData = new byte[resultLength];
+            resultData[0] = OpCode;
+            Buffer.BlockCopy(Data, 0, resultData, 1, Data.Length);
+            return BitConverter.ToString(resultData).Replace('-', ' ');
         }
         internal string GetAsciiString(bool replaceNewline = true)
         {
-            char[] array = new char[Data.Length + 1];
-            byte[] array2 = new byte[Data.Length + 1];
-            array2[0] = OpCode;
-            Array.Copy(Data, 0, array2, 1, Data.Length);
-            for (int i = 0; i < array2.Length; i++)
+            char[] resultString = new char[Data.Length + 1];
+            byte[] buffer = new byte[Data.Length + 1];
+            buffer[0] = OpCode;
+            Buffer.BlockCopy(Data, 0, buffer, 1, Data.Length);
+            for (int i = 0; i < buffer.Length; i++)
             {
-                byte b = array2[i];
-                if ((b == 10 || b == 13) && !replaceNewline)
-                    array[i] = (char)b;
-                else if (b < 32 || b > 126)
-                    array[i] = '.';
+                byte charCode = buffer[i];
+                if ((charCode == 10 || charCode == 13) && !replaceNewline)
+                    resultString[i] = (char)charCode;
+                else if (charCode < 32 || charCode > 126)
+                    resultString[i] = '.';
                 else
-                    array[i] = (char)b;
+                    resultString[i] = (char)charCode;
             }
-            return new string(array);
+            return new string(resultString);
         }
     }
 }

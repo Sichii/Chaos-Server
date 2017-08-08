@@ -17,6 +17,7 @@ namespace Chaos
         internal ConcurrentDictionary<string, Guild> Guilds { get; set; }
         internal ConcurrentDictionary<int, Group> Groups { get; set; }
         internal ConcurrentDictionary<int, Exchange> Exchanges { get; set; }
+        internal List<string> Admins { get; set; }
         
         internal World(Server server)
         {
@@ -26,6 +27,7 @@ namespace Chaos
             Guilds = new ConcurrentDictionary<string, Guild>(StringComparer.CurrentCultureIgnoreCase);
             Groups = new ConcurrentDictionary<int, Group>();
             Exchanges = new ConcurrentDictionary<int, Exchange>();
+            Admins = new List<string>() { "Sichi", "Jinori", "Vorlof" };
         }
 
         internal void Load()
@@ -199,7 +201,7 @@ namespace Chaos
                 List<User> usersToSend = new List<User>();
 
                 //get all objects that would be visible to this object and sort them
-                foreach(var obj in ObjectsVisibleFrom(vObject))
+                foreach(VisibleObject obj in ObjectsVisibleFrom(vObject))
                     if(obj is User)
                         usersToSend.Add(obj as User);
                     else
@@ -210,7 +212,7 @@ namespace Chaos
                 {
                     User user = vObject as User;
                     
-                    user.Client.Enqueue(Server.Packets.MapChangePending());     //pending map change
+                    user.Client.Enqueue(Server.Packets.MapChangePending());     //send pending map change
                     user.Client.Enqueue(Server.Packets.MapInfo(user.Map));      //send map info
                     user.Client.Enqueue(Server.Packets.Location(user.Point));   //send location
 
@@ -261,7 +263,8 @@ namespace Chaos
         /// Removes a single object from the map.
         /// </summary>
         /// <param name="vObject">Any visible object you want removed.</param>
-        internal void RemoveObjectFromMap(VisibleObject vObject)
+        /// <param name="worldMap">Whether or not they are stepping into a worldMap.</param>
+        internal void RemoveObjectFromMap(VisibleObject vObject, bool worldMap = false)
         {
             if (vObject == null) return;
 
@@ -273,7 +276,8 @@ namespace Chaos
                     foreach (User user in ObjectsVisibleFrom(vObject).OfType<User>())
                         user.Client.Enqueue(Server.Packets.RemoveObject(vObject));
 
-                    vObject.Map = null;
+                    if (!worldMap)
+                        vObject.Map = null;
                 }
             }
         }
@@ -281,8 +285,10 @@ namespace Chaos
         /// <summary>
         /// Moves a user from one map to another
         /// </summary>
-        /// <param name="user"></param>
-        internal void WarpUser(User user, Warp warp)
+        /// <param name="user">The user to warp from and to a position/map.</param>
+        /// <param name="warp">The warp the user is using to warp.</param>
+        /// <param name="user">Whether or not they are using a worldMap to warp.</param>
+        internal void WarpUser(User user, Warp warp, bool worldMap = false)
         {
             if(warp.Location == user.Location && Maps.ContainsKey(warp.TargetMapId))
             {
@@ -302,7 +308,10 @@ namespace Chaos
 
                     warp = new Warp(warp.Location, new Location(warp.TargetMapId, nearestPoint));
                 }
-                RemoveObjectFromMap(user);
+
+                if (!worldMap)
+                    RemoveObjectFromMap(user);
+
                 AddObjectToMap(user, warp.TargetLocation);
             }
         }
@@ -340,9 +349,9 @@ namespace Chaos
         /// Resends all the current information for the given user.
         /// </summary>
         /// <param name="user">The user to refresh.</param>
-        internal void Refresh(Client client)
+        internal void Refresh(Client client, bool bypass = false)
         {
-            if (DateTime.UtcNow.Subtract(client.LastRefresh).TotalSeconds < 1)
+            if (!bypass && DateTime.UtcNow.Subtract(client.LastRefresh).TotalSeconds < 1)
                 return;
             else
                 client.LastRefresh = DateTime.UtcNow;
@@ -358,8 +367,9 @@ namespace Chaos
                 foreach (VisibleObject obj in ObjectsVisibleFrom(client.User))
                     if (obj is User)
                     {
-                        client.Enqueue(Server.Packets.DisplayUser(obj as User));
-                        (obj as User).Client.Enqueue(Server.Packets.DisplayUser(client.User));
+                        User user = obj as User;
+                        client.Enqueue(Server.Packets.DisplayUser(user));
+                        user.Client.Enqueue(Server.Packets.DisplayUser(client.User));
                     }
                     else
                         itemMonsterToSend.Add(obj);
@@ -376,6 +386,8 @@ namespace Chaos
         /// Attempts to retreive a user by searching through the maps for the given name.
         /// </summary>
         /// <param name="name">The name of the user to search for.</param>
+        /// <param name="user">Reference to the user to set.</param>
+        /// <param name="mapToTry">Map to try retreiving from.</param>
         /// <returns></returns>
         internal bool TryGetUser(string name, out User user, Map mapToTry)
         {
@@ -396,6 +408,8 @@ namespace Chaos
         /// Attempts to retreive an object by searching through the maps for a given Id.
         /// </summary>
         /// <param name="id">Id to search for.</param>
+        /// <param name="obj">Reference to the object to set.</param>
+        /// <param name="mapToTry">Map to try retreiving from.</param>
         /// <returns></returns>
         internal bool TryGetVisibleObject(int id, out VisibleObject obj, Map mapToTry = null)
         {
@@ -419,18 +433,25 @@ namespace Chaos
         /// <summary>
         /// Attempts to retreive an object by searching through the maps at a given point.
         /// </summary>
-        /// <param name="id">Point to check.</param>
+        /// <param name="point">Point to check.</param>
+        /// <param name="obj">Reference to the object to set.</param>
+        /// <param name="mapToTry">Map to try retreiving from.</param>
         /// <returns></returns>
         internal bool TryGetMapObject(Point point, out MapObject obj, Map mapToTry = null)
         {
             Door door;
+            Warp warp;
             obj = null;
 
             if (mapToTry != null)
             {
                 lock (mapToTry.Sync)
+                {
                     if (mapToTry.Doors.TryGetValue(point, out door))
                         obj = door;
+                    else if (mapToTry.Exits.TryGetValue(point, out warp))
+                        obj = warp;
+                }
                     //else if
                         //signposts
                         //boards
@@ -444,21 +465,47 @@ namespace Chaos
         }
 
         /// <summary>
+        /// Attempts to retreive the worldmap at the specified point.
+        /// </summary>
+        /// <param name="point">Point of the worldmap to retreive.</param>
+        /// <param name="worldMap">Reference to the worldMap to set.</param>
+        /// <param name="mapToTry">Map to try retreiving from.</param>
+        /// <returns></returns>
+        internal bool TryGetWorldMap(Point point, out WorldMap worldMap, Map mapToTry = null)
+        {
+            worldMap = null;
+
+            if (mapToTry != null)
+            {
+                lock (mapToTry.Sync)
+                    if (mapToTry.WorldMaps.TryGetValue(point, out worldMap))
+                        return true;
+            }
+            else
+                foreach (Map map in Maps.Values)
+                    if (TryGetWorldMap(point, out worldMap, map))
+                        return true;
+
+            return worldMap != null;
+        }
+
+        /// <summary>
         /// Attempts to retreive the item at the specified point.
         /// </summary>
         /// <param name="point">Point of the item to retreive.</param>
+        /// <param name="groundItem">Reference to the groundItem to set.</param>
         /// <param name="mapToTry">Map to try retreiving from.</param>
         /// <returns></returns>
-        internal bool TryGetItem(Point point, out GroundItem groundItem, Map mapToTry = null)
+        internal bool TryGetGroundItem(Point point, out GroundItem groundItem, Map mapToTry = null)
         {
             groundItem = null;
 
             if (mapToTry != null)
                 lock (mapToTry.Sync)
-                    groundItem = mapToTry.Objects.Values.OfType<GroundItem>().FirstOrDefault(i => i.Point == point);
+                    groundItem = mapToTry.Objects.Values.OfType<GroundItem>().LastOrDefault(i => i.Point == point);
             else
                 foreach (Map map in Maps.Values)
-                    if (TryGetItem(point, out groundItem, map))
+                    if (TryGetGroundItem(point, out groundItem, map))
                         return true;
 
             return groundItem != null;
@@ -473,19 +520,19 @@ namespace Chaos
         /// <param name="count">Number of the item to create.</param>
         /// <param name="stackable">If the item is stackable</param>
         /// <returns></returns>
-        internal List<Item> CreateItems(ushort sprite, byte color, string name, int count, bool stackable)
+        internal List<Item> CreateItems(ushort sprite, byte color, string name, int count, bool stackable, uint durability = 0)
         {
             sprite += 32768;
             List<Item> items = new List<Item>();
             if (!stackable && count > 1)
                 for (int i = 0; i < count; i++)
                 {
-                    Item newItem = new Item(0, sprite, color, name, 1, stackable, 500000, 500000, new TimeSpan());
+                    Item newItem = new Item(0, sprite, color, name, 1, stackable, durability, durability, new TimeSpan());
                     items.Add(newItem);
                 }
             else
             {
-                Item newItem = new Item(0, sprite, color, name, count, stackable, 500000, 500000, new TimeSpan());
+                Item newItem = new Item(0, sprite, color, name, count, stackable, durability, durability, new TimeSpan());
                 items.Add(newItem);
             }
 

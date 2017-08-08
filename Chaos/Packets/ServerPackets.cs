@@ -81,8 +81,8 @@ namespace Chaos
                     packet.Write(new byte[4]); //dunno
                     packet.WriteByte((byte)newObj.Direction);
                     packet.WriteByte(0); //dunno
-                    packet.WriteByte(newObj.Type);
-                    if (newObj.Type == 2) //merchant type
+                    packet.WriteByte((byte)newObj.Type);
+                    if (newObj.Type == CreatureType.Merchant) //merchant type
                         packet.WriteString8(newObj.Name);
                 }
                 else //item sprites
@@ -91,11 +91,12 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket Attributes(StatUpdateFlags updateType, Attributes stats)
+        internal ServerPacket Attributes(bool admin, StatUpdateFlags updateType, Attributes stats)
         {
             var packet = new ServerPacket(8);
 
-            packet.WriteByte((byte)updateType);
+
+            packet.WriteByte((byte)(admin ? updateType |= StatUpdateFlags.GameMasterA : updateType));
             if (updateType.HasFlag(StatUpdateFlags.Primary))
             {
                 packet.Write(new byte[3]); //dunno
@@ -524,12 +525,12 @@ namespace Chaos
             packet.WriteString8(user.Guild?.Name ?? "");
             packet.WriteString8(user.Guild?[user.Name] ?? ""); //idk?
             packet.WriteString8(user.Group?.ToString() ?? (user.Spouse != null ? $@"Spouse: {user.Spouse}" : "Adventuring alone"));
-            packet.WriteBoolean(user.UserOptions.Group);
+            packet.WriteBoolean(!user.UserOptions.Group);
             packet.WriteBoolean(user.Group?.Box != null);
             if(user.Group?.Box != null)
             {
                 packet.WriteString8(user.Group.Box.GroupLeader.Name);
-                packet.WriteString8(user.Group.Box.Name);
+                packet.WriteString8(user.Group.Box.Text);
                 packet.Write(new byte[13]); //other groupbox stuff will add later
             }
             packet.WriteByte((byte)user.BaseClass);

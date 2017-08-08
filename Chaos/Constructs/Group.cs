@@ -14,7 +14,7 @@ namespace Chaos
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal int GroupId { get; }
         internal User Leader => Users[0];
-        internal List<User> Users { get; set; }
+        internal List<User> Users { get; private set; }
         internal byte Size => (byte)Users.Count;
         internal GroupBox Box { get; set; }
         internal User this[string name]
@@ -50,11 +50,11 @@ namespace Chaos
         /// <param name="groupName">Name of the group.</param>
         /// <param name="maxLevel">Max allowed level to join.</param>
         /// <param name="maxAmounts">Class amounts, etc.</param>
-        internal GroupBox CreateBox(string groupName, byte maxLevel, byte[] maxAmounts)
+        internal GroupBox CreateBox(string text, byte maxLevel, byte[] maxAmounts)
         {
             lock (Sync)
             {
-                Box = new GroupBox(Leader, groupName, maxLevel, maxAmounts);
+                Box = new GroupBox(Leader, text, maxLevel, maxAmounts);
                 return Box;
             }
         }

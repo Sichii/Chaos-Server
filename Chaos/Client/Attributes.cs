@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Attributes
     {
         //baseValues
@@ -23,31 +23,33 @@ namespace Chaos
         [JsonProperty]
         internal uint BaseMP { get; set; }
 
+        //addedValues
+        internal byte AddedStr { get; set; }
+        internal byte AddedInt { get; set; }
+        internal byte AddedWis { get; set; }
+        internal byte AddedCon { get; set; }
+        internal byte AddedDex { get; set; }
+        internal byte AddedHP { get; set; }
+        internal byte AddedMP { get; set; }
+
         //Primary
         [JsonProperty]
         internal byte Level { get; set; }
         [JsonProperty]
         internal byte Ability { get; set; }
-        [JsonProperty]
-        internal uint MaximumHP { get; set; }
-        [JsonProperty]
-        internal uint MaximumMP { get; set; }
-        [JsonProperty]
-        internal byte CurrentStr { get; set; }
-        [JsonProperty]
-        internal byte CurrentInt { get; set; }
-        [JsonProperty]
-        internal byte CurrentWis { get; set; }
-        [JsonProperty]
-        internal byte CurrentCon { get; set; }
-        [JsonProperty]
-        internal byte CurrentDex { get; set; }
+
+        internal uint MaximumHP => BaseHP + AddedHP;
+        internal uint MaximumMP => BaseMP + AddedMP;
+        internal byte CurrentStr => (byte)(BaseStr + AddedStr);
+        internal byte CurrentInt => (byte)(BaseInt + AddedInt);
+        internal byte CurrentWis => (byte)(BaseWis + AddedWis);
+        internal byte CurrentCon => (byte)(BaseCon + AddedCon);
+        internal byte CurrentDex => (byte)(BaseDex + AddedDex);
         internal bool HasUnspentPoints => UnspentPoints != 0;
+
         [JsonProperty]
         internal byte UnspentPoints { get; set; }
-        [JsonProperty]
-        internal short MaximumWeight { get; set; }
-        [JsonProperty]
+        internal short MaximumWeight => (short)(40 + (BaseStr / 2));
         internal short CurrentWeight { get; set; }
 
         //Vitality
@@ -71,21 +73,13 @@ namespace Chaos
         internal uint Gold { get; set; }
 
         //Secondary
-        [JsonProperty]
         internal byte Blind { get; set; }
-        [JsonProperty]
         internal MailFlag MailFlags { get; set; }
-        [JsonProperty]
         internal Element OffenseElement { get; set; }
-        [JsonProperty]
         internal Element DefenseElement { get; set; }
-        [JsonProperty]
         internal byte MagicResistance { get; set; }
-        [JsonProperty]
         internal sbyte ArmorClass { get; set; }
-        [JsonProperty]
         internal byte Dmg { get; set; }
-        [JsonProperty]
         internal byte Hit { get; set; }
 
         internal Attributes()
@@ -99,15 +93,14 @@ namespace Chaos
             BaseMP = 100;
             Level = 1;
             Ability = 0;
-            MaximumHP = 100;
-            MaximumMP = 100;
-            CurrentStr = 3;
-            CurrentInt = 3;
-            CurrentWis = 3;
-            CurrentCon = 3;
-            CurrentDex = 3;
+            AddedHP = 0;
+            AddedMP = 0;
+            AddedStr = 0;
+            AddedInt = 0;
+            AddedWis = 0;
+            AddedCon = 0;
+            AddedDex = 0;
             UnspentPoints = 0;
-            MaximumWeight = 50;
             CurrentWeight = 0;
             CurrentHP = 100;
             CurrentMP = 100;
@@ -128,7 +121,7 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal Attributes(byte baseStr, byte baseInt, byte baseWis, byte baseCon, byte baseDex, uint baseHp, uint baseMp, byte level, byte ability)
+        internal Attributes(byte baseStr, byte baseInt, byte baseWis, byte baseCon, byte baseDex, uint baseHp, uint baseMp, byte level, byte ability, byte unspentPoints, uint currentHP, uint currentMP, uint experience, uint toNextLevel, uint abilityExp, uint toNextAbility, uint gamePoints, uint gold)
         {
             BaseStr = baseStr;
             BaseInt = baseInt;
@@ -139,6 +132,15 @@ namespace Chaos
             BaseMP = baseMp;
             Level = level;
             Ability = ability;
+            UnspentPoints = unspentPoints;
+            CurrentHP = currentHP;
+            CurrentMP = currentMP;
+            Experience = experience;
+            ToNextLevel = toNextLevel;
+            AbilityExp = abilityExp;
+            ToNextAbility = toNextAbility;
+            GamePoints = gamePoints;
+            Gold = gold;
         }
     }
 }

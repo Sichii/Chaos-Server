@@ -13,11 +13,11 @@ namespace Chaos
         [JsonProperty]
         internal string Name { get; set; }
         [JsonProperty]
-        internal Bank Bank { get; set; }
+        private Bank Bank { get; set; }
         [JsonProperty]
-        internal ConcurrentDictionary<string, string> Members { get; set; } //name, rank
+        private ConcurrentDictionary<string, string> Members { get; set; } //name, rank
         [JsonProperty]
-        internal List<string> Ranks { get; set; }
+        private List<string> Ranks { get; set; }
         /// <summary>
         /// Used to retreive or change the rank of a member.
         /// </summary>

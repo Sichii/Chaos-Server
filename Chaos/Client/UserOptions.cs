@@ -7,21 +7,21 @@ namespace Chaos
     internal sealed class UserOptions
     {
         [JsonProperty]
-        internal bool Whisper { get; set; }
+        internal bool Whisper { get; private set; }
         [JsonProperty]
-        internal bool Group { get; set; }
+        internal bool Group { get; private set; }
         [JsonProperty]
-        internal bool Shout { get; set; }
+        internal bool Shout { get; private set; }
         [JsonProperty]
-        internal bool Wisdom { get; set; }
+        internal bool Wisdom { get; private set; }
         [JsonProperty]
-        internal bool Magic { get; set; }
+        internal bool Magic { get; private set; }
         [JsonProperty]
-        internal bool Exchange { get; set; }
+        internal bool Exchange { get; private set; }
         [JsonProperty]
-        internal bool FastMove { get; set; }
+        internal bool FastMove { get; private set; }
         [JsonProperty]
-        internal bool GuildChat { get; set; }
+        internal bool GuildChat { get; private set; }
 
         /// <summary>
         /// Object representing the user's options page.
