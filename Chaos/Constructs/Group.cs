@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace Chaos
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal int GroupId { get; }
         internal User Leader => Users[0];
-        internal List<User> Users { get; private set; }
+        private List<User> Users { get; set; }
         internal byte Size => (byte)Users.Count;
         internal GroupBox Box { get; set; }
         internal User this[string name]

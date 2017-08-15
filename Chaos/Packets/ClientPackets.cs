@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 
 namespace Chaos
 {
@@ -44,7 +43,7 @@ namespace Chaos
                 handles[48] = new Handler(cp.SwapSlot);
                 handles[56] = new Handler(cp.RequestRefresh);
                 handles[57] = new Handler(cp.RequestDialog);
-                handles[58] = new Handler(cp.ActiveDialog);
+                handles[58] = new Handler(cp.ReplyDialog);
                 handles[59] = new Handler(cp.Board);
                 handles[62] = new Handler(cp.UseSkill);
                 handles[63] = new Handler(cp.ClickWorldMap);
@@ -151,7 +150,7 @@ namespace Chaos
         }
         private void PublicChat(Client client, ClientPacket packet)
         {
-            ClientMessageType type = (ClientMessageType)packet.ReadByte();
+            PublicMessageType type = (PublicMessageType)packet.ReadByte();
             string message = packet.ReadString8();
 
             Game.PublicChat(client, type, message);
@@ -185,9 +184,11 @@ namespace Chaos
             {
                 client.ServerType = redirect.Type;
                 client.Server.Redirects.Remove(redirect);
+                Game.JoinClient(client, seed, key, name, id);
             }
+            else
+                client.Disconnect();
 
-            Game.JoinClient(client, seed, key, name, id);
         }
         private void Turn(Client client, ClientPacket packet)
         {
@@ -249,7 +250,7 @@ namespace Chaos
         private void DropItemOnCreature(Client client, ClientPacket packet)
         {
             byte inventorySlot = packet.ReadByte();
-            uint targetId = packet.ReadUInt32();
+            int targetId = packet.ReadInt32();
             byte count = packet.ReadByte();
 
             Game.DropItemOnCreature(client, inventorySlot, targetId, count);
@@ -260,7 +261,7 @@ namespace Chaos
         private void DropGoldOnCreature(Client client, ClientPacket packet)
         {
             uint amount = packet.ReadUInt32();
-            uint targetId = packet.ReadUInt32();
+            int targetId = packet.ReadInt32();
 
             Game.DropGoldOnCreature(client, amount, targetId);
             //if target is an merchant or monster, put it in their drop pile
@@ -331,14 +332,14 @@ namespace Chaos
 
             Game.RequestDialog(client, objType, objId, pursuitId, args);
         }
-        private void ActiveDialog(Client client, ClientPacket packet)
+        private void ReplyDialog(Client client, ClientPacket packet)
         {
             byte objType = packet.ReadByte(); //almost always 1
             uint objId = packet.ReadUInt32(); //id of object
             ushort pursuitId = packet.ReadUInt16(); //the pursuit theyre on
             ushort dialogId = packet.ReadUInt16(); //id of the dialog that comes next
 
-            Game.ActiveDialog(client, objType, objId, pursuitId, dialogId);
+            Game.ReplyDialog(client, objType, objId, pursuitId, dialogId);
         }
 
         //this packet is literally retarded
@@ -463,48 +464,47 @@ namespace Chaos
         }
         private void ChangeStat(Client client, ClientPacket packet)
         {
-            //Possibly create an enum to show which stat was improved last to allow for a *correct* and fast allocation of stats later on.
             Stat stat = (Stat)packet.ReadByte();
 
             Game.ChangeStat(client, stat);
         }
         private void Exchange(Client client, ClientPacket packet)
         {
-            byte type = packet.ReadByte();
-            switch (type) //opt
+            ExchangeType type = (ExchangeType)packet.ReadByte();
+            switch (type)
             {
-                case 0: //begin trade
+                case ExchangeType.BeginTrade:
                     {
                         uint targetId = packet.ReadUInt32();
                         Game.Exchange(client, type, targetId);
                         break;
                     }
-                case 1: //add nonstackable item
+                case ExchangeType.AddNonStackable:
                     {
                         uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
 
-                        Game.Exchange(client, type, targetId, slot);
+                        Game.Exchange(client, type, targetId, 0, slot, 0);
                         break;
                     }
-                case 2: //add stackable item
+                case ExchangeType.AddStackable:
                     {
                         uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
                         byte count = packet.ReadByte();
-                        Game.Exchange(client, type, targetId, slot, count);
+                        Game.Exchange(client, type, targetId, 0, slot, count);
                         break;
                     }
-                case 3: //add gold
+                case ExchangeType.AddGold: //add gold
                     {
                         uint targetId = packet.ReadUInt32();
                         uint amount = packet.ReadUInt32();
                         Game.Exchange(client, type, targetId, amount);
                         break;
                     }
-                case 4: //cancel trade
+                case ExchangeType.Cancel:
                     //trade was canceled by this client
-                case 5: //accept trade
+                case ExchangeType.Accept:
                     //trade was accepted by this client
                     Game.Exchange(client, type);
                     break;
@@ -535,17 +535,17 @@ namespace Chaos
             byte[] portraitData = packet.ReadBytes(portraitLength);
             string profileMsg = packet.ReadString16();
 
-            Game.Personal(client, totalLength, portraitLength, portraitData, profileMsg);
+            Game.Personal(client, portraitData, profileMsg);
         }
         private void RequestServerTable(Client client, ClientPacket packet)
         {
-            byte type = packet.ReadByte(); //1 = table request, else server number in the table
-            Game.RequestServerTable(client, type);
+            bool requestTable = packet.ReadBoolean(); //1 = table request, else server number in the table
+            Game.RequestServerTable(client, requestTable);
         }
         private void RequestHomepage(Client client, ClientPacket packet)
         {
-            Game.RequestHomepage(client);
             //i don't believe there's anything here
+            Game.RequestHomepage(client);
         }
         private void SynchronizeTicks(Client client, ClientPacket packet)
         {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 
 namespace Chaos
@@ -74,17 +73,20 @@ namespace Chaos
         /// <param name="wait">False if you want to immediately kill the client. True if you want the client to time out.</param>
         internal void Disconnect(bool wait = false)
         {
-            Connected = false;
-            if (wait)
-                return;
-
-            Client dis = this;
-            if (Server.Clients.TryRemove(ClientSocket, out dis))
+            lock (Sync)
             {
-                if (User != null)
-                    try { Server.World.ScrubUser(User); }
-                    catch { }
-                ClientSocket.Disconnect(false);
+                Connected = false;
+                if (wait)
+                    return;
+
+                Client dis = this;
+                if (Server.Clients.TryRemove(ClientSocket, out dis))
+                {
+                    if (User != null)
+                        try { Game.World.ScrubUser(User); }
+                        catch { }
+                    ClientSocket.Disconnect(false);
+                }
             }
         }
 
@@ -193,7 +195,7 @@ namespace Chaos
                             if (packet.IsDialog)//if packet is a dialog, decrypt the header
                                 packet.DecryptDialog();
 
-                            Server.WriteLog(packet.ToString(), this);
+                            Server.WriteLog(packet.ToString(PacketHandlers), this);
 
                             var handle = PacketHandlers[packet.OpCode];//get the handler for this packet
                             if (handle != null)//if we have a handler for this packet
@@ -204,6 +206,7 @@ namespace Chaos
                 }
                 Thread.Sleep(10);
             }
+            Disconnect();
         }
 
         /// <summary>
@@ -214,6 +217,11 @@ namespace Chaos
         {
             Server.Redirects.Add(redirect);
             Enqueue(Server.Packets.Redirect(redirect));
+        }
+
+        ~Client()
+        {
+            Disconnect();
         }
     }
 }

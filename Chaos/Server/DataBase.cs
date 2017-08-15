@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StackExchange.Redis;
 using Newtonsoft.Json;
 using StackExchange.Redis.Extensions.Newtonsoft;
@@ -12,10 +8,12 @@ using System.Collections.Concurrent;
 
 namespace Chaos
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     internal class DataBase
     {
         private Server Server { get; }
-        private string HashKey => Crypto.GetHashString("UserHash", "MD5");
+        private string HashKey => Crypto.GetMD5Hash("UserHash");
+        internal const string MapKey = "edl396yhvnw85b6kd8vnsj296hj285bq";
         private ConcurrentDictionary<string, string> UserHash => Cache.Get<ConcurrentDictionary<string, string>>(HashKey);
         internal NewtonsoftSerializer Serializer { get; }
         internal StackExchangeRedisCacheClient Cache { get; }
@@ -33,12 +31,13 @@ namespace Chaos
             DataConnection = ConnectionMultiplexer.Connect("localhost:6379");
             Cache = new StackExchangeRedisCacheClient(DataConnection, Serializer);
 
+            //keep the db clear for now (except the map file)
+            foreach (var key in DataConnection.GetServer("localhost:6379").Keys())
+                if (key != MapKey)
+                    Cache.Remove(key);
+
             if (!Cache.Exists(HashKey))
                 Cache.Add(HashKey, new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
-
-            RemoveUser("sichi");
-            RemoveUser("vorlof");
-            RemoveUser("bivins");
         }
 
         /// <summary>
@@ -52,6 +51,7 @@ namespace Chaos
 
             foreach (var kvp in UserHash)
                 userHash.TryAdd(kvp.Key, kvp.Value);
+
             if(userHash.TryRemove(key, out hash))
                 Cache.Replace(HashKey, userHash);
 
@@ -74,11 +74,7 @@ namespace Chaos
         /// Retreives the user corresponding to the name given. Returns null if the user doesn't exist.
         /// </summary>
         /// <param name="name">Name of the user you'd like to retreive.</param>
-        internal User GetUser(string name)
-        {
-            User u = Cache.Get<User>(name.ToUpper());
-            return UserExists(name) ? Cache.Get<User>(name.ToUpper()) : null;
-        }
+        internal User GetUser(string name) => UserExists(name) ? Cache.Get<User>(name.ToUpper()) : null;
 
         /// <summary>
         /// Checks the given name and hash pair in the UserHash. Returns true if they match.
@@ -94,19 +90,10 @@ namespace Chaos
         /// <param name="password">User's password unhashed.</param>
         internal bool TryAddUser(User user, string password)
         {
-            string hash = Crypto.GetHashString(password, "MD5");
+            string hash = Crypto.GetMD5Hash(password);
             ConcurrentDictionary<string, string> userHash = UserHash;
 
-            if (userHash.TryAdd(user.Name, hash))
-                if (Cache.Add(user.Name.ToUpper(), user))
-                {
-                    Cache.Replace(HashKey, userHash);
-                    return true;
-                }
-                else
-                    UserHash.TryRemove(user.Name, out hash);
-
-            return false;
+            return userHash.TryAdd(user.Name, hash) && Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(HashKey, userHash);
         }
 
         /// <summary>
@@ -120,7 +107,7 @@ namespace Chaos
             if (CheckHash(name, currentPw))
             {
                 ConcurrentDictionary<string, string> userHash = UserHash;
-                userHash[name] = Crypto.GetHashString(newPw, "MD5");
+                userHash[name] = Crypto.GetMD5Hash(newPw);
                 if (Cache.Replace(HashKey, userHash))
                     return true;
             }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MapTool
+﻿namespace MapTool
 {
     internal struct Location
     {

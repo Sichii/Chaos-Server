@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Chaos
+﻿namespace Chaos
 {
     internal sealed class Warp : MapObject
     {

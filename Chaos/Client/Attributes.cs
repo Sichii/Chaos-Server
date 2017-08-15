@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Linq;
 
 namespace Chaos
 {
@@ -9,34 +7,34 @@ namespace Chaos
     {
         //baseValues
         [JsonProperty]
-        internal byte BaseStr { get; set; }
+        internal byte BaseStr;
         [JsonProperty]
-        internal byte BaseInt { get; set; }
+        internal byte BaseInt;
         [JsonProperty]
-        internal byte BaseWis { get; set; }
+        internal byte BaseWis;
         [JsonProperty]
-        internal byte BaseCon { get; set; }
+        internal byte BaseCon;
         [JsonProperty]
-        internal byte BaseDex { get; set; }
+        internal byte BaseDex;
         [JsonProperty]
-        internal uint BaseHP { get; set; }
+        internal uint BaseHP;
         [JsonProperty]
-        internal uint BaseMP { get; set; }
+        internal uint BaseMP;
 
         //addedValues
-        internal byte AddedStr { get; set; }
-        internal byte AddedInt { get; set; }
-        internal byte AddedWis { get; set; }
-        internal byte AddedCon { get; set; }
-        internal byte AddedDex { get; set; }
-        internal byte AddedHP { get; set; }
-        internal byte AddedMP { get; set; }
+        internal byte AddedStr;
+        internal byte AddedInt;
+        internal byte AddedWis;
+        internal byte AddedCon;
+        internal byte AddedDex;
+        internal byte AddedHP;
+        internal byte AddedMP;
 
         //Primary
         [JsonProperty]
-        internal byte Level { get; set; }
+        internal byte Level;
         [JsonProperty]
-        internal byte Ability { get; set; }
+        internal byte Ability;
 
         internal uint MaximumHP => BaseHP + AddedHP;
         internal uint MaximumMP => BaseMP + AddedMP;
@@ -48,39 +46,39 @@ namespace Chaos
         internal bool HasUnspentPoints => UnspentPoints != 0;
 
         [JsonProperty]
-        internal byte UnspentPoints { get; set; }
+        internal byte UnspentPoints;
         internal short MaximumWeight => (short)(40 + (BaseStr / 2));
-        internal short CurrentWeight { get; set; }
+        internal short CurrentWeight;
 
         //Vitality
         [JsonProperty]
-        internal uint CurrentHP { get; set; }
+        internal uint CurrentHP;
         [JsonProperty]
-        internal uint CurrentMP { get; set; }
+        internal uint CurrentMP;
 
         //Experience
         [JsonProperty]
-        internal uint Experience { get; set; }
+        internal uint Experience;
         [JsonProperty]
-        internal uint ToNextLevel { get; set; }
+        internal uint ToNextLevel;
         [JsonProperty]
-        internal uint AbilityExp { get; set; }
+        internal uint AbilityExp;
         [JsonProperty]
-        internal uint ToNextAbility { get; set; }
+        internal uint ToNextAbility;
         [JsonProperty]
-        internal uint GamePoints { get; set; }
+        internal uint GamePoints;
         [JsonProperty]
-        internal uint Gold { get; set; }
+        internal uint Gold;
 
         //Secondary
-        internal byte Blind { get; set; }
-        internal MailFlag MailFlags { get; set; }
-        internal Element OffenseElement { get; set; }
-        internal Element DefenseElement { get; set; }
-        internal byte MagicResistance { get; set; }
-        internal sbyte ArmorClass { get; set; }
-        internal byte Dmg { get; set; }
-        internal byte Hit { get; set; }
+        internal byte Blind;
+        internal MailFlag MailFlags;
+        internal Element OffenseElement;
+        internal Element DefenseElement;
+        internal byte MagicResistance;
+        internal sbyte ArmorClass;
+        internal byte Dmg;
+        internal byte Hit;
 
         internal Attributes()
         {

@@ -58,14 +58,6 @@ namespace Chaos
             Data[pos++] = (byte)(b ^ 36U);
             Data[pos++] = (byte)((a >> 8) % 256 ^ 100);
         }
-
-        internal ServerPacket Copy()
-        {
-            ServerPacket serverPacket = new ServerPacket(OpCode);
-            serverPacket.Write(Data);
-            serverPacket.Creation = Creation;
-            return serverPacket;
-        }
         public override string ToString()
         {
             switch (GetHexString().Substring(0, 2))
@@ -158,6 +150,10 @@ namespace Chaos
                     return $"[Exchange] Send> {GetHexString()}";
                 case "48":
                     return $"[CancelCast] Send> {GetHexString()}";
+                case "4B":
+                    return $"[ForceClientPacket] Send> {GetHexString()}";
+                case "4C":
+                    return $"[ConfirmExit] Send> {GetHexString()}";
                 case "56":
                     return $"[ServerTable] Send> {GetHexString()}";
                 case "58":

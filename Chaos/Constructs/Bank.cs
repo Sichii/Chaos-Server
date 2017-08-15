@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Chaos
+﻿namespace Chaos
 {
     internal sealed class Bank
     {

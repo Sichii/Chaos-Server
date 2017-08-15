@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.IO;
 using System.Text;
 
 namespace Chaos
@@ -164,17 +161,17 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket CreatureWalk(Creature creature, Direction direction)
+        internal ServerPacket CreatureWalk(int id, Point point, Direction direction)
         {
             var packet = new ServerPacket(12);
 
-            packet.WriteInt32(creature.Id);
-            packet.WritePoint16(creature.Point);
-            packet.WriteByte((byte)creature.Direction);
+            packet.WriteInt32(id);
+            packet.WritePoint16(point);
+            packet.WriteByte((byte)direction);
 
             return packet;
         }
-        internal ServerPacket PublicChat(ClientMessageType type, int id, string message)
+        internal ServerPacket PublicChat(PublicMessageType type, int id, string message)
         {
             var packet = new ServerPacket(13);
 
@@ -280,7 +277,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket CreatureAnimation(int id, byte animation, ushort speed, bool sound = false)
+        internal ServerPacket AnimateUser(int id, byte animation, ushort speed, bool sound = false)
         {
             var packet = new ServerPacket(26);
 
@@ -598,9 +595,23 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket Exchange()
+        internal ServerPacket Exchange(ExchangeType type, List<object> args = null)
         {
-            //i'll do this later, its cancer
+            switch(type)
+            {
+                case ExchangeType.BeginTrade:
+                    break;
+                case ExchangeType.AddNonStackable:
+                    break;
+                case ExchangeType.AddStackable:
+                    break;
+                case ExchangeType.AddGold:
+                    break;
+                case ExchangeType.Cancel:
+                    break;
+                case ExchangeType.Accept:
+                    break;
+            }
             return new ServerPacket(66);
         }
         internal ServerPacket CancelCasting()
@@ -612,6 +623,16 @@ namespace Chaos
         {
             //i don't believe there's anything here
             return new ServerPacket(73);
+        }
+        internal ServerPacket ForceClientPacket(ClientPacket packetToForce)
+        {
+            var packet = new ServerPacket(75);
+
+            packet.WriteUInt16((ushort)(packetToForce.Data.Length + 1));
+            packet.WriteByte(packetToForce.OpCode);
+            packet.WriteData(packetToForce.Data);
+
+            return packet;
         }
         internal ServerPacket ConfirmExit()
         {

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using Chaos;
 using Newtonsoft.Json;
 using System.Linq;
 
@@ -24,7 +22,7 @@ namespace Chaos
         internal MapFlags Flags { get; set; }
         internal string Name { get; set; }
         internal sbyte Music { get; set; }
-        internal Dictionary<Point, Warp> Exits { get; set; }
+        internal Dictionary<Point, Warp> Warps { get; set; }
         internal Dictionary<Point, WorldMap> WorldMaps { get; set; }
 
         internal Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
@@ -35,7 +33,7 @@ namespace Chaos
             Flags = flags;
             Name = name;
             Tiles = new Dictionary<Point, Tile>();
-            Exits = new Dictionary<Point, Warp>();
+            Warps = new Dictionary<Point, Warp>();
             WorldMaps = new Dictionary<Point, WorldMap>();
             Objects = new ConcurrentDictionary<int, WorldObject>();
             Doors = new ConcurrentDictionary<Point, Door>();
@@ -65,6 +63,6 @@ namespace Chaos
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
         internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || Tiles[new Point(x, y)].IsWall;
         internal bool IsWall(Point p) => IsWall(p.X, p.Y);
-        internal bool IsWalkable(Point p) => !IsWall(p) && !Doors.Keys.Contains(p) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
+        internal bool IsWalkable(Point p) => !IsWall(p) && (Doors.Keys.Contains(p) ? Doors[p].Opened : true) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
     }
 }

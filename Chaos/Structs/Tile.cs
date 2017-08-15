@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.IO;
-using System.Reflection;
-
-namespace Chaos
+﻿namespace Chaos
 {
     internal struct Tile
     {

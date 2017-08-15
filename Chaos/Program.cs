@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -13,9 +12,10 @@ namespace Chaos
         {
             Console.Title = "Chaos Server";
 
+            Server.WriteLog($"Loading world, please wait...");
+
             //create the server, start it in a new thread
             Server = new Server(IPAddress.Any, 2610);
-            Server.WriteLog($"Loading world, please wait...");
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
 

@@ -6,13 +6,13 @@ namespace Chaos
 {
     internal sealed class Crypto
     {
-        private static string key1 = GetHashString("inhOrig", "MD5").Substring(0, 8);
-        private static string key2 = GetHashString(key1, "MD5").Substring(0, 8);
-        internal static byte[][] SaltTables { get; }
+        private static string key1 = GetMD5Hash("inhOrig").Substring(0, 8);
+        private static string key2 = GetMD5Hash(key1).Substring(0, 8);
+        internal static byte[][] SaltTable { get; }
         internal byte Seed { get; set; }
         internal byte[] Key { get; set; }
         internal byte[] KeySalts { get; set; }
-        internal byte[] Salts => SaltTables[Seed];
+        internal byte[] Salts => SaltTable[Seed];
 
         private static uint[] Table16 = new uint[]
         {
@@ -55,7 +55,7 @@ namespace Chaos
 
         static Crypto()
         {
-            SaltTables = new byte[][]
+            SaltTable = new byte[][]
             {
                 new byte[]
                 {
@@ -231,9 +231,9 @@ namespace Chaos
         }
         internal static byte[] GenerateKeySalts(string seed)
         {
-            string saltTable = GetHashString(GetHashString(seed, "MD5"), "MD5");
+            string saltTable = GetMD5Hash(GetMD5Hash(seed));
             for (int i = 0; i < 31; i++)
-                saltTable += GetHashString(saltTable, "MD5");
+                saltTable += GetMD5Hash(saltTable);
 
             return Encoding.ASCII.GetBytes(saltTable);
         }
@@ -255,14 +255,7 @@ namespace Chaos
                 checkSum = checkSum >> 8 ^ Table32[(int)(checkSum & byte.MaxValue ^ data[i])];
             return checkSum;
         }
-        internal static string GetHashString(string value, string hashName)
-        {
-            HashAlgorithm hashAlgorithm = HashAlgorithm.Create(hashName);
-            byte[] bytes = Encoding.ASCII.GetBytes(value);
-            byte[] hashBytes = hashAlgorithm.ComputeHash(bytes);
-
-            return BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLower();
-        }
+        internal static string GetMD5Hash(string value) => Convert.ToBase64String(HashAlgorithm.Create("MD5").ComputeHash(Encoding.ASCII.GetBytes(value))).ToLower();
         internal static void EncryptFile(MemoryStream fileData, string path)
         {
             DESCryptoServiceProvider DES = new DESCryptoServiceProvider();

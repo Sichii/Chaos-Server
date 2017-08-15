@@ -20,7 +20,6 @@ namespace Chaos
         internal int LocalPort;
         internal Socket ServerSocket { get; set; }
         internal ServerPackets Packets { get; }
-        internal World World { get; }
         internal byte[] Table { get; }
         internal uint TableCheckSum { get; }
         internal byte[] LoginMessage { get; }
@@ -28,8 +27,8 @@ namespace Chaos
         internal ConcurrentDictionary<Socket, Client> Clients { get; }
         internal List<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World).ToList();
         internal DataBase DataBase { get; }
-        internal GameTime GameTime => GameTime.Now;
-        internal LightLevel LightLevel => GameTime.TimeOfDay;
+        internal GameTime ServerTime => GameTime.Now;
+        internal LightLevel LightLevel => ServerTime.TimeOfDay;
         internal List<Redirect> Redirects { get; set; }
 
         internal Server(IPAddress ip, int port)
@@ -37,13 +36,11 @@ namespace Chaos
             LocalIp = ip;
             LocalPort = port;
             LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);
-            World = new World(this);
             Clients = new ConcurrentDictionary<Socket, Client>();
-            Game.Server = this;
-            Game.World = World;
             Packets = new ServerPackets();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
+            Game.SetServer(this);
 
             byte[] notif = Encoding.GetEncoding(949).GetBytes($@"{{={(char)MessageColor.Orange}Under Construction");
             LoginMessageCheckSum = Crypto.Generate32(notif);
@@ -72,7 +69,7 @@ namespace Chaos
 
         internal void Start()
         {
-            World.Load();
+            Game.World.Load();
             WriteLog("Loading completed.");
 
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -85,7 +82,7 @@ namespace Chaos
         {
             //create the user, and add them to the userlist
             Client newClient = new Client(this, ServerSocket.EndAccept(ar));
-            WriteLog($@"Incomming connection", newClient);
+            WriteLog($@"Incoming connection", newClient);
 
             if (Clients.TryAdd(newClient.ClientSocket, newClient))
                 newClient.Connect();
@@ -110,6 +107,6 @@ namespace Chaos
             }
         }
 
-        internal bool TryGetUser(string name, out User user) => (user = Clients.Values.FirstOrDefault(client => client.ServerType == ServerType.World && client.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
+        internal bool TryGetUser(string name, out User user) => (user = WorldClients.FirstOrDefault(client => client.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
     }
 }

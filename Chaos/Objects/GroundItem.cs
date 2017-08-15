@@ -3,7 +3,7 @@
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal sealed class GroundItem : VisibleObject
+    internal class GroundItem : VisibleObject
     {
         internal Item Item { get; set; }
 

@@ -1,8 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using Chaos;
 using System;
 using System.IO;
 
@@ -10,7 +8,6 @@ namespace Chaos
 {
     internal class World
     {
-        private string MapKey => "edl396yhvnw85b6kd8vnsj296hj285bq";
         internal Server Server { get; }
         internal ConcurrentDictionary<ushort, Map> Maps { get; set; }
         internal ConcurrentDictionary<uint, WorldMap> WorldMaps { get; set; }
@@ -18,7 +15,8 @@ namespace Chaos
         internal ConcurrentDictionary<int, Group> Groups { get; set; }
         internal ConcurrentDictionary<int, Exchange> Exchanges { get; set; }
         internal List<string> Admins { get; set; }
-        
+        internal static Location STARTING_LOCATION => new Location(5031, 20, 20);
+
         internal World(Server server)
         {
             Server = server;
@@ -32,7 +30,7 @@ namespace Chaos
 
         internal void Load()
         {
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.Cache.Get<byte[]>(MapKey))))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.Cache.Get<byte[]>(DataBase.MapKey))))
             {
                 reader.ReadInt32();
 
@@ -91,7 +89,7 @@ namespace Chaos
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
                         Warp warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
-                        newMap.Exits[new Point(sourceX, sourceY)] = warp;
+                        newMap.Warps[new Point(sourceX, sourceY)] = warp;
                     }
 
                     //load worldmaps for this map
@@ -157,8 +155,8 @@ namespace Chaos
                     }
 
                     //write warps
-                    writer.Write((ushort)map.Exits.Count);
-                    foreach (Warp warp in map.Exits.Values)
+                    writer.Write((ushort)map.Warps.Count);
+                    foreach (Warp warp in map.Warps.Values)
                     {
                         writer.Write(warp.SourceX);
                         writer.Write(warp.SourceY);
@@ -177,7 +175,7 @@ namespace Chaos
                     }
                 }
 
-                Server.DataBase.Cache.Replace(MapKey, cacheStream.ToArray());
+                Server.DataBase.Cache.Replace(DataBase.MapKey, cacheStream.ToArray());
             }
         }
 
@@ -326,9 +324,9 @@ namespace Chaos
             lock (vObject.Map.Sync)
             {
                 if (distance == 0)
-                    return Maps[vObject.Location.MapId].Objects.Values.OfType<VisibleObject>().Where(obj => obj.WithinRange(vObject.Point) && vObject != obj).ToList();
+                    return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.WithinRange(vObject.Point) && vObject != obj).ToList();
                 else
-                    return Maps[vObject.Location.MapId].Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && vObject != obj).ToList();
+                    return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && vObject != obj).ToList();
             }
         }
 
@@ -378,7 +376,6 @@ namespace Chaos
                 client.Enqueue(Server.Packets.MapLoadComplete());
                 client.Enqueue(Server.Packets.DisplayUser(client.User));
                 client.Enqueue(Server.Packets.RefreshResponse());
-
             }
         }
 
@@ -449,7 +446,7 @@ namespace Chaos
                 {
                     if (mapToTry.Doors.TryGetValue(point, out door))
                         obj = door;
-                    else if (mapToTry.Exits.TryGetValue(point, out warp))
+                    else if (mapToTry.Warps.TryGetValue(point, out warp))
                         obj = warp;
                 }
                     //else if
@@ -509,34 +506,6 @@ namespace Chaos
                         return true;
 
             return groundItem != null;
-        }
-
-        /// <summary>
-        /// Creates an amount of items with the given information.
-        /// </summary>
-        /// <param name="sprite">Visible sprite of the item.</param>
-        /// <param name="color">Color of the sprite.</param>
-        /// <param name="name">Name of the item.</param>
-        /// <param name="count">Number of the item to create.</param>
-        /// <param name="stackable">If the item is stackable</param>
-        /// <returns></returns>
-        internal List<Item> CreateItems(ushort sprite, byte color, string name, int count, bool stackable, uint durability = 0)
-        {
-            sprite += 32768;
-            List<Item> items = new List<Item>();
-            if (!stackable && count > 1)
-                for (int i = 0; i < count; i++)
-                {
-                    Item newItem = new Item(0, sprite, color, name, 1, stackable, durability, durability, new TimeSpan());
-                    items.Add(newItem);
-                }
-            else
-            {
-                Item newItem = new Item(0, sprite, color, name, count, stackable, durability, durability, new TimeSpan());
-                items.Add(newItem);
-            }
-
-            return items;
         }
 
         /// <summary>

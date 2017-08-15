@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace Chaos
@@ -102,11 +101,11 @@ namespace Chaos
             IsAdmin = isAdmin;
         }
 
-        internal void Sync(Client client)
+        internal void Resync(Client client)
         {
             Client = client;
             Client.User = this;
-            Map = client.Server.World.Maps[Map.Id];
+            Map = Game.World.Maps[Map.Id];
         }
 
         internal void Save() => Client.Server.DataBase.TrySaveUser(this);

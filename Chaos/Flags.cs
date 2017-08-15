@@ -75,7 +75,7 @@ namespace Chaos
         Message = 3
     }
 
-    internal enum ClientMessageType : byte
+    internal enum PublicMessageType : byte
     {
         Normal = 0,
         Shout = 1,
@@ -123,6 +123,7 @@ namespace Chaos
         Heart = 6,
         Victory = 7
     }
+    [Flags]
     internal enum Quest : ulong
     {
         None = 0,
@@ -191,7 +192,6 @@ namespace Chaos
     }
     internal enum Gender : byte
     {
-        Both = 0,
         Male = 1,
         Female = 2
     }
@@ -232,8 +232,8 @@ namespace Chaos
     internal enum MailFlag : byte
     {
         None = 0,
-        HasParcel = 1,
-        HasLetter = 16
+        Parcel = 1,
+        Letter = 16
     }
 
     internal enum Nation : byte
@@ -356,6 +356,18 @@ namespace Chaos
         Inventory = 0,
         SpellBook = 1,
         SkillBook = 2
+    }
+    #endregion
+
+    #region Exchange
+    internal enum ExchangeType : byte
+    {
+        BeginTrade = 0,
+        AddNonStackable = 1,
+        AddStackable = 2,
+        AddGold = 3,
+        Cancel = 4,
+        Accept = 5
     }
     #endregion
 }

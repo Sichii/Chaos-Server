@@ -16,7 +16,7 @@ namespace Chaos
         [JsonProperty]
         internal DateTime LastUse { get; set; }
         internal bool CanUse => LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown;
-        internal OnUseDelegate Activate { get; }
+        internal OnUseDelegate Activate;
 
         internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown)
         {
@@ -26,6 +26,5 @@ namespace Chaos
             Cooldown = cooldown;
             LastUse = DateTime.MinValue;
         }
-
     }
 }
