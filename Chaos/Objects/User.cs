@@ -48,6 +48,8 @@ namespace Chaos
         internal List<string> Titles { get; set; }
         [JsonProperty]
         internal bool IsAdmin = false;
+        [JsonProperty]
+        internal bool IsAlive = true;
         internal bool Grouped => Group != null;
 
         internal User(string name, Point point, Map map, Direction direction)

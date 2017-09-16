@@ -41,7 +41,7 @@ namespace Chaos
             
             Seed = client.Crypto.Seed;
             Key = client.Crypto.Key;
-            EndPoint = new IPEndPoint(Dns.GetHostEntry(Host.Name).AddressList[0], Client.Server.LocalPort);
+            EndPoint = new IPEndPoint(Dns.GetHostEntry(Host.Name).AddressList[1], Client.Server.LocalPort);
         }
     }
 }

@@ -21,6 +21,8 @@ namespace Chaos
 
         internal DataBase(Server server)
         {
+            Server.WriteLog("Creating the database connection...");
+
             Server = server;
             //create the serializing cache db
             JsonSerializerSettings jSettings = new JsonSerializerSettings();

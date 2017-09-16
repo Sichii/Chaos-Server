@@ -4,8 +4,8 @@ namespace Chaos
 {
     internal struct MetafileNode
     {
-        internal string Name { get; private set; }
-        internal List<string> Properties { get; private set; }
+        internal string Name { get; }
+        internal List<string> Properties { get; set; }
 
         internal MetafileNode(string name)
         {

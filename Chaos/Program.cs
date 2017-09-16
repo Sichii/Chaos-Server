@@ -11,21 +11,18 @@ namespace Chaos
         private static void Main(string[] args)
         {
             Console.Title = "Chaos Server";
-
-            Server.WriteLog($"Loading world, please wait...");
+            Console.WindowWidth = 150;
+            Console.WindowHeight = 30;
 
             //create the server, start it in a new thread
             Server = new Server(IPAddress.Any, 2610);
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
 
-            //display dns ip for others to connect to
-            Server.WriteLog($"Server IP: {Dns.GetHostAddresses(Host.Name)[0]}");
-
             while (Server.ServerSocket == null)
                 Thread.Sleep(10);
 
-            Server.WriteLog($"Server is connected and listening.");
+            Server.WriteLog("Server is ready");
 
             //this thread will block for command line input for use as an admin panel
             while (Server.ServerSocket != null)

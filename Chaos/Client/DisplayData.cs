@@ -14,7 +14,7 @@ namespace Chaos
         [JsonProperty]
         internal byte HairColor { get; set; }
         [JsonProperty]
-        internal byte BodySprite { get; set; }
+        internal BodySprite BodySprite { get; set; }
         [JsonProperty]
         internal BodyColor BodyColor { get; set; }
         [JsonProperty]
@@ -66,7 +66,7 @@ namespace Chaos
         /// <param name="hairSprite">Base sprite for the hair of the user.</param>
         /// <param name="hairColor">Base color value for the hair of the user.</param>
         /// <param name="bodySprite">Base body value for the user.</param>
-        internal DisplayData(User user, ushort hairSprite, byte hairColor, byte bodySprite)
+        internal DisplayData(User user, ushort hairSprite, byte hairColor, BodySprite bodySprite)
         {
             User = user;
             HairSprite = hairSprite;
@@ -82,7 +82,7 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal DisplayData(User user, ushort hairSprite, byte hairColor, byte bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
+        internal DisplayData(User user, ushort hairSprite, byte hairColor, BodySprite bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
         {
             User = user;
             HairSprite = hairSprite;

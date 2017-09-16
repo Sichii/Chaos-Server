@@ -3,12 +3,13 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
-    internal delegate void OnUseDelegate(Client client, Server server);
+    internal delegate void OnUseDelegate(Client client, Server server, Item item);
+    internal delegate Item ItemCreationDelegate(int count);
+    internal delegate Skill SkillCreationDelegate();
+    internal delegate Spell SpellCreationDelegate();
     internal class CreationEngine
     {
-        private delegate Item ItemCreationDelegate(int count);
-        private delegate Skill SkillCreationDelegate();
-        private delegate Spell SpellCreationDelegate();
+
         private Dictionary<string, ItemCreationDelegate> Items { get; }
         private Dictionary<string, SkillCreationDelegate> Skills { get; }
         private Dictionary<string, SpellCreationDelegate> Spells { get; }
@@ -17,10 +18,13 @@ namespace Chaos
         internal CreationEngine()
         {
             Items = new Dictionary<string, ItemCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Skills = new Dictionary<string, SkillCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Spells = new Dictionary<string, SpellCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Effects = new Dictionary<string, OnUseDelegate>(StringComparer.CurrentCultureIgnoreCase);
 
             #region Items
             Items.Add("Admin Trinket", new ItemCreationDelegate(AdminTrinket));
-            Items.Add("Test Equipment", new ItemCreationDelegate(AdminTrinket));
+            Items.Add("Test Item", new ItemCreationDelegate(TestItem));
             #endregion
 
 
@@ -72,13 +76,13 @@ namespace Chaos
         }
         private byte GetGoldSprite(uint amount)
         {
-            if (amount > 5000)
+            if (amount >= 5000)
                 return 140;
-            else if (amount > 1000)
+            else if (amount >= 1000)
                 return 141;
-            else if (amount > 500)
+            else if (amount >= 500)
                 return 142;
-            else if (amount > 100)
+            else if (amount >= 100)
                 return 137;
             else if (amount > 1)
                 return 138;
@@ -101,8 +105,8 @@ namespace Chaos
         }
 
         #region Items
-        private Item AdminTrinket(int count) => new Item(0, 13709, "Admin Trinket", count, TimeSpan.Zero);
-        private Item TestEquipment(int count) => new Item(0, 1108, "Test Equipment", count, TimeSpan.Zero);
+        private Item AdminTrinket(int count) => new Item(0, 13709, "Admin Trinket", count, TimeSpan.Zero, EquipmentSlot.None, true);
+        private Item TestItem(int count) => new Item(0, 1108, "Test Item", count, TimeSpan.Zero, EquipmentSlot.None, false, 0, true);
         #endregion
 
 
@@ -116,22 +120,26 @@ namespace Chaos
         #endregion
 
 
-        #region OnUseDelegates
-        private void AdminTrinket(Client client, Server server)
-        {
-            //do things
-        }
-        private void TestSkill1(Client client, Server server)
-        {
-            //do things
-        }
-        private void TestSpell1(Client client, Server server)
-        {
-            //do things
-        }
-        private void TestEquipment(Client client, Server server)
-        {
+        #region CommonDelegates
+        #endregion
 
+
+        #region OnUseDelegates
+        private void AdminTrinket(Client client, Server server, Item item)
+        {
+            //do things
+        }
+        private void TestSkill1(Client client, Server server, Item item)
+        {
+            //do things
+        }
+        private void TestSpell1(Client client, Server server, Item item)
+        {
+            //do things
+        }
+        private void TestEquipment(Client client, Server server, Item item)
+        {
+            //do things
         }
         #endregion
     }

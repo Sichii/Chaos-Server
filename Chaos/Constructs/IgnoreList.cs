@@ -6,7 +6,7 @@ using System.Linq;
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal class IgnoreList
+    internal sealed class IgnoreList
     {
         [JsonProperty]
         private List<string> Names { get; set; }

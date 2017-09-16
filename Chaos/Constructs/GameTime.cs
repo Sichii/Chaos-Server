@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
-    internal class GameTime
+    internal sealed class GameTime
     {
         private const long TICKS_YEAR = 13140000000000;
         private const long TICKS_MONTH = 1080000000000;

@@ -13,54 +13,54 @@ namespace Chaos
                 ClientPackets cp = new ClientPackets();
 
                 Handler[] handles = new Handler[byte.MaxValue];
-                handles[0] = new Handler(cp.JoinServer);
-                handles[2] = new Handler(cp.CreateChar1);
-                handles[3] = new Handler(cp.Login);
-                handles[4] = new Handler(cp.CreateChar2);
-                handles[5] = new Handler(cp.RequestMapData);
-                handles[6] = new Handler(cp.Walk);
-                handles[7] = new Handler(cp.Pickup);
-                handles[8] = new Handler(cp.Drop);
-                handles[11] = new Handler(cp.ExitClient);
-                handles[13] = new Handler(cp.Ignore);
-                handles[14] = new Handler(cp.PublicChat);
-                handles[15] = new Handler(cp.UseSpell);
-                handles[16] = new Handler(cp.JoinClient);
-                handles[17] = new Handler(cp.Turn);
-                handles[19] = new Handler(cp.SpaceBar);
-                handles[24] = new Handler(cp.RequestWorldList);
-                handles[25] = new Handler(cp.Whisper);
-                handles[27] = new Handler(cp.ToggleUserOption);
-                handles[28] = new Handler(cp.UseItem);
-                handles[29] = new Handler(cp.AnimateUser);
-                handles[36] = new Handler(cp.DropGold);
-                handles[38] = new Handler(cp.ChangePassword);
-                handles[41] = new Handler(cp.DropItemOnCreature);
-                handles[42] = new Handler(cp.DropGoldOnCreature);
-                handles[45] = new Handler(cp.RequestProfile);
-                handles[46] = new Handler(cp.RequestGroup);
-                handles[47] = new Handler(cp.ToggleGroup);
-                handles[48] = new Handler(cp.SwapSlot);
-                handles[56] = new Handler(cp.RequestRefresh);
-                handles[57] = new Handler(cp.RequestDialog);
-                handles[58] = new Handler(cp.ReplyDialog);
-                handles[59] = new Handler(cp.Board);
-                handles[62] = new Handler(cp.UseSkill);
-                handles[63] = new Handler(cp.ClickWorldMap);
-                handles[67] = new Handler(cp.ClickObject);
-                handles[68] = new Handler(cp.RemoveEquipment);
-                handles[69] = new Handler(cp.KeepAlive);
-                handles[71] = new Handler(cp.ChangeStat);
-                handles[74] = new Handler(cp.Exchange);
-                handles[75] = new Handler(cp.RequestLoginMessage);
-                handles[77] = new Handler(cp.BeginChant);
-                handles[78] = new Handler(cp.DisplayChant);
-                handles[79] = new Handler(cp.Personal);
-                handles[87] = new Handler(cp.RequestServerTable);
-                handles[104] = new Handler(cp.RequestHomepage);
-                handles[117] = new Handler(cp.SynchronizeTicks);
-                handles[121] = new Handler(cp.ChangeSocialStatus);
-                handles[123] = new Handler(cp.RequestMetaFile);
+                handles[(byte)ClientOpCodes.JoinServer] = new Handler(cp.JoinServer);
+                handles[(byte)ClientOpCodes.CreateChar1] = new Handler(cp.CreateChar1);
+                handles[(byte)ClientOpCodes.Login] = new Handler(cp.Login);
+                handles[(byte)ClientOpCodes.CreateChar2] = new Handler(cp.CreateChar2);
+                handles[(byte)ClientOpCodes.RequestMapData] = new Handler(cp.RequestMapData);
+                handles[(byte)ClientOpCodes.Walk] = new Handler(cp.Walk);
+                handles[(byte)ClientOpCodes.Pickup] = new Handler(cp.Pickup);
+                handles[(byte)ClientOpCodes.Drop] = new Handler(cp.Drop);
+                handles[(byte)ClientOpCodes.ExitClient] = new Handler(cp.ExitClient);
+                handles[(byte)ClientOpCodes.Ignore] = new Handler(cp.Ignore);
+                handles[(byte)ClientOpCodes.PublicChat] = new Handler(cp.PublicChat);
+                handles[(byte)ClientOpCodes.UseSpell] = new Handler(cp.UseSpell);
+                handles[(byte)ClientOpCodes.JoinClient] = new Handler(cp.JoinClient);
+                handles[(byte)ClientOpCodes.Turn] = new Handler(cp.Turn);
+                handles[(byte)ClientOpCodes.SpaceBar] = new Handler(cp.SpaceBar);
+                handles[(byte)ClientOpCodes.RequestWorldList] = new Handler(cp.RequestWorldList);
+                handles[(byte)ClientOpCodes.Whisper] = new Handler(cp.Whisper);
+                handles[(byte)ClientOpCodes.ToggleUserOption] = new Handler(cp.ToggleUserOption);
+                handles[(byte)ClientOpCodes.UseItem] = new Handler(cp.UseItem);
+                handles[(byte)ClientOpCodes.AnimateUser] = new Handler(cp.AnimateUser);
+                handles[(byte)ClientOpCodes.DropGold] = new Handler(cp.DropGold);
+                handles[(byte)ClientOpCodes.ChangePassword] = new Handler(cp.ChangePassword);
+                handles[(byte)ClientOpCodes.DropItemOnCreature] = new Handler(cp.DropItemOnCreature);
+                handles[(byte)ClientOpCodes.DropGoldOnCreature] = new Handler(cp.DropGoldOnCreature);
+                handles[(byte)ClientOpCodes.RequestProfile] = new Handler(cp.RequestProfile);
+                handles[(byte)ClientOpCodes.RequestGroup] = new Handler(cp.RequestGroup);
+                handles[(byte)ClientOpCodes.ToggleGroup] = new Handler(cp.ToggleGroup);
+                handles[(byte)ClientOpCodes.SwapSlot] = new Handler(cp.SwapSlot);
+                handles[(byte)ClientOpCodes.RequestRefresh] = new Handler(cp.RequestRefresh);
+                handles[(byte)ClientOpCodes.RequestDialog] = new Handler(cp.RequestDialog);
+                handles[(byte)ClientOpCodes.ReplyDialog] = new Handler(cp.ReplyDialog);
+                handles[(byte)ClientOpCodes.Board] = new Handler(cp.Board);
+                handles[(byte)ClientOpCodes.UseSkill] = new Handler(cp.UseSkill);
+                handles[(byte)ClientOpCodes.ClickWorldMap] = new Handler(cp.ClickWorldMap);
+                handles[(byte)ClientOpCodes.ClickObject] = new Handler(cp.ClickObject);
+                handles[(byte)ClientOpCodes.RemoveEquipment] = new Handler(cp.RemoveEquipment);
+                handles[(byte)ClientOpCodes.KeepAlive] = new Handler(cp.KeepAlive);
+                handles[(byte)ClientOpCodes.ChangeStat] = new Handler(cp.ChangeStat);
+                handles[(byte)ClientOpCodes.Exchange] = new Handler(cp.Exchange);
+                handles[(byte)ClientOpCodes.RequestLoginMessage] = new Handler(cp.RequestLoginMessage);
+                handles[(byte)ClientOpCodes.BeginChant] = new Handler(cp.BeginChant);
+                handles[(byte)ClientOpCodes.DisplayChant] = new Handler(cp.DisplayChant);
+                handles[(byte)ClientOpCodes.Personal] = new Handler(cp.Personal);
+                handles[(byte)ClientOpCodes.RequestServerTable] = new Handler(cp.RequestServerTable);
+                handles[(byte)ClientOpCodes.RequestHomepage] = new Handler(cp.RequestHomepage);
+                handles[(byte)ClientOpCodes.SynchronizeTicks] = new Handler(cp.SynchronizeTicks);
+                handles[(byte)ClientOpCodes.ChangeSocialStatus] = new Handler(cp.ChangeSocialStatus);
+                handles[(byte)ClientOpCodes.RequestMetaFile] = new Handler(cp.RequestMetaFile);
 
                 return handles;
             }
@@ -318,7 +318,7 @@ namespace Chaos
         }
         private void RequestDialog(Client client, ClientPacket packet)
         {
-            byte objType = packet.ReadByte(); //almost always 1
+            GameObjectType objType = (GameObjectType)packet.ReadByte(); //gameObjectType
             uint objId = packet.ReadUInt32(); //id of object
             uint pursuitId = packet.ReadUInt16(); //what they want to do
             /*
@@ -334,12 +334,12 @@ namespace Chaos
         }
         private void ReplyDialog(Client client, ClientPacket packet)
         {
-            byte objType = packet.ReadByte(); //almost always 1
+            GameObjectType objType = (GameObjectType)packet.ReadByte();
             uint objId = packet.ReadUInt32(); //id of object
             ushort pursuitId = packet.ReadUInt16(); //the pursuit theyre on
-            ushort dialogId = packet.ReadUInt16(); //id of the dialog that comes next
-
-            Game.ReplyDialog(client, objType, objId, pursuitId, dialogId);
+            ushort dialogId = packet.ReadUInt16(); //+1 current id if next, -1 if previous, same if close
+            byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position); //other arguments
+            Game.ReplyDialog(client, objType, objId, pursuitId, dialogId, args);
         }
 
         //this packet is literally retarded

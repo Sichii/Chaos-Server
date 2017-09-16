@@ -103,6 +103,9 @@ namespace Chaos
 
             foreach (byte key in Objects.Keys)
             {
+                if (!Valid(key))
+                    continue;
+
                 obj.Slot = key;
                 if (TryAdd(obj))
                     return true;

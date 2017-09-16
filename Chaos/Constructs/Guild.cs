@@ -3,30 +3,36 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Guild : IEnumerable
     {
+        private static readonly object Sync = new object();
         public IEnumerator GetEnumerator() => Members.GetEnumerator();
         [JsonProperty]
         internal string Name { get; set; }
         [JsonProperty]
         private Bank Bank { get; set; }
         [JsonProperty]
-        private ConcurrentDictionary<string, string> Members { get; set; } //name, rank
+        private Dictionary<string, string> Members; //name, rank
         [JsonProperty]
         private List<string> Ranks { get; set; }
-        /// <summary>
-        /// Used to retreive or change the rank of a member.
-        /// </summary>
-        /// <param name="name">Name of the member who's rank yould like to change/retreive.</param>
-        /// <returns></returns>
-        internal string this[string name]
+
+        internal Guild()
         {
-            get { return Members.ContainsKey(name) ? Members[name] : null; }
-            private set { Members.AddOrUpdate(name, value, (key, oldValue) => value); }
+            Name = "Chaos Team";
+            Bank = new Bank();
+            Ranks = new List<string>()
+            {
+                "Event Host", "Game Master", "Developer", "Lead Developer"
+            };
+            Members = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            Members.Add(Server.Admins[0], Ranks[3]);
+            Members.Add(Server.Admins[1], Ranks[2]);
+            Members.Add(Server.Admins[2], Ranks[2]);
         }
 
         /// <summary>
@@ -38,30 +44,30 @@ namespace Chaos
         {
             Name = name;
             Bank = new Bank();
-            Members = new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            Members = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             Ranks = new List<string>()
             {
                 "Initiate", "Member", "Council", "Leader"
             };
-
 
             foreach (User member in founders)
                 TryAddMember(member);
         }
 
         [JsonConstructor]
-        internal Guild(string name, Bank bank, ConcurrentDictionary<string, string> members, List<string> ranks)
+        internal Guild(string name, Bank bank, Dictionary<string, string> members, List<string> ranks)
         {
             Name = name;
             Bank = bank;
-            Members = members;
+            Members = new Dictionary<string, string>(members, StringComparer.CurrentCultureIgnoreCase);
             Ranks = ranks;
         }
         /// <summary>
         /// Returns the title of user(name)
         /// </summary>
         /// <param name="name">Name of the user you want the title of.</param>
-        internal string TitleOf(string name) => this[name];
+        internal string TitleOf(string name) => Members.ContainsKey(name) ? Members[name] : null;
+
         /// <summary>
         /// Attempts to add a member to the guild.
         /// </summary>
@@ -71,7 +77,10 @@ namespace Chaos
             if (user.Guild != null)
                 return false;
 
-            return Members.TryAdd(user.Name, Ranks[0]);
+            Members.Add(user.Name, Ranks[0]);
+            user.Guild = this;
+
+            return Members.ContainsKey(user.Name);
         }
         /// <summary>
         /// Attempts to remove a member from the guild.
@@ -82,8 +91,8 @@ namespace Chaos
             if (user.Guild == null)
                 return false;
 
-            string s = string.Empty;
-            return Members.TryRemove(user.Name, out s);
+            user.Guild = null;
+            return Members.Remove(user.Name);
         }
         /// <summary>
         /// Attempts to change the name of a rank.

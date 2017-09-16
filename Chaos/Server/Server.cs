@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Chaos
 {
@@ -30,9 +31,12 @@ namespace Chaos
         internal GameTime ServerTime => GameTime.Now;
         internal LightLevel LightLevel => ServerTime.TimeOfDay;
         internal List<Redirect> Redirects { get; set; }
+        internal static List<string> Admins = new List<string>() { "Sichi", "Jinori", "Vorlof" };
 
         internal Server(IPAddress ip, int port)
         {
+            WriteLog("Initializing server...");
+
             LocalIp = ip;
             LocalPort = port;
             LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);
@@ -40,7 +44,6 @@ namespace Chaos
             Packets = new ServerPackets();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
-            Game.SetServer(this);
 
             byte[] notif = Encoding.GetEncoding(949).GetBytes($@"{{={(char)MessageColor.Orange}Under Construction");
             LoginMessageCheckSum = Crypto.Generate32(notif);
@@ -53,10 +56,10 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
-                writer.Write(Dns.GetHostEntry(Host.Name).AddressList[0].GetAddressBytes());
+                writer.Write(Dns.GetHostEntry(Host.Name).AddressList[1].GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
-                writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos"));
+                writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos;Under Construction\0"));
                 writer.Write(notif);
                 writer.Flush();
 
@@ -69,13 +72,16 @@ namespace Chaos
 
         internal void Start()
         {
-            Game.World.Load();
-            WriteLog("Loading completed.");
+            Game.Set(this);
+
+            //display dns ip for others to connect to
+            WriteLog($"Server IP: {Dns.GetHostAddresses(Host.Name)[1]}");
+            WriteLog("Starting the serverloop...");
 
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ServerSocket.Bind(LocalEndPoint);
-            ServerSocket.Listen(100);
-            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), null);
+            ServerSocket.Listen(10);
+            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
         }
 
         internal void EndAccept(IAsyncResult ar)
@@ -87,12 +93,10 @@ namespace Chaos
             if (Clients.TryAdd(newClient.ClientSocket, newClient))
                 newClient.Connect();
 
-            //accept more connections on the socket again
-            LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);
-            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), null);
+            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
         }
 
-        internal void WriteLog(string message, Client client = null)
+        internal static void WriteLog(string message, Client client = null)
         {
             lock (SyncWrite)
             {

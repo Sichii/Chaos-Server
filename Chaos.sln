@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos", "Chaos\Chaos.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapTool", "MapTool\MapTool.csproj", "{3B36B5CA-AC84-4180-9576-A7F47F3B816C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChaosLauncher", "ChaosLauncher\ChaosLauncher.csproj", "{F7D58CD7-3DF4-42E8-AAF7-E19721FA6B2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B36B5CA-AC84-4180-9576-A7F47F3B816C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D58CD7-3DF4-42E8-AAF7-E19721FA6B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D58CD7-3DF4-42E8-AAF7-E19721FA6B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D58CD7-3DF4-42E8-AAF7-E19721FA6B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D58CD7-3DF4-42E8-AAF7-E19721FA6B2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

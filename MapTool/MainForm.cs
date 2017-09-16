@@ -58,6 +58,7 @@ namespace MapTool
         }
         internal void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MapTree = new System.Windows.Forms.TreeView();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.mapsTab = new System.Windows.Forms.TabPage();
@@ -159,7 +160,7 @@ namespace MapTool
             // addWorldMapNodeLbl
             // 
             this.addWorldMapNodeLbl.AutoSize = true;
-            this.addWorldMapNodeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            this.addWorldMapNodeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.addWorldMapNodeLbl.Location = new System.Drawing.Point(436, 559);
             this.addWorldMapNodeLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.addWorldMapNodeLbl.Name = "addWorldMapNodeLbl";
@@ -516,8 +517,9 @@ namespace MapTool
             this.Controls.Add(this.addMapGbox);
             this.Controls.Add(this.addWorldMapNodeLbl);
             this.Controls.Add(this.mainTabControl);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Text = "Chaos MapTool";

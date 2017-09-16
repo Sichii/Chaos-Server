@@ -14,7 +14,6 @@ namespace Chaos
         internal ConcurrentDictionary<string, Guild> Guilds { get; set; }
         internal ConcurrentDictionary<int, Group> Groups { get; set; }
         internal ConcurrentDictionary<int, Exchange> Exchanges { get; set; }
-        internal List<string> Admins { get; set; }
         internal static Location STARTING_LOCATION => new Location(5031, 20, 20);
 
         internal World(Server server)
@@ -25,11 +24,16 @@ namespace Chaos
             Guilds = new ConcurrentDictionary<string, Guild>(StringComparer.CurrentCultureIgnoreCase);
             Groups = new ConcurrentDictionary<int, Group>();
             Exchanges = new ConcurrentDictionary<int, Exchange>();
-            Admins = new List<string>() { "Sichi", "Jinori", "Vorlof" };
         }
 
         internal void Load()
         {
+            Server.WriteLog("Creating world objects...");
+
+            Guild team = new Guild();
+            Guilds.TryAdd(team.Name, team);
+
+            #region Load Maps
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.Cache.Get<byte[]>(DataBase.MapKey))))
             {
                 reader.ReadInt32();
@@ -108,75 +112,15 @@ namespace Chaos
                         newMap.LoadData($@"{Paths.MapFiles}lod{newMap.Id}.map");
                 }
             }
+            #endregion
         }
-        internal void Save()
+
+        internal void Populate()
         {
-            MemoryStream cacheStream = new MemoryStream();
-            using (BinaryWriter writer = new BinaryWriter(cacheStream))
-            {
-                writer.Write(1);
-
-                //write world maps
-                writer.Write((ushort)WorldMaps.Count);
-                foreach (WorldMap worldMap in WorldMaps.Values)
-                {
-                    writer.Write(worldMap.Field);
-                    writer.Write((byte)worldMap.Nodes.Count);
-                    foreach (WorldMapNode worldMapNode in worldMap.Nodes)
-                    {
-                        writer.Write(worldMapNode.Position.X);
-                        writer.Write(worldMapNode.Position.Y);
-                        writer.Write(worldMapNode.Name);
-                        writer.Write(worldMapNode.MapId);
-                        writer.Write((byte)worldMapNode.Point.X);
-                        writer.Write((byte)worldMapNode.Point.Y);
-                    }
-                }
-
-                //write maps
-                writer.Write((ushort)Maps.Count);
-                foreach (Map map in Maps.Values)
-                {
-                    //write map info
-                    writer.Write(map.Id);
-                    writer.Write(map.SizeX);
-                    writer.Write(map.SizeY);
-                    writer.Write(map.Name);
-                    writer.Write((uint)map.Flags);
-                    writer.Write(map.Music);
-
-                    //write doors
-                    writer.Write((byte)map.Doors.Count);
-                    foreach (Door door in map.Doors.Values)
-                    {
-                        writer.Write(door.Point.X);
-                        writer.Write(door.Point.Y);
-                        writer.Write(door.OpenRight);
-                    }
-
-                    //write warps
-                    writer.Write((ushort)map.Warps.Count);
-                    foreach (Warp warp in map.Warps.Values)
-                    {
-                        writer.Write(warp.SourceX);
-                        writer.Write(warp.SourceY);
-                        writer.Write(warp.TargetMapId);
-                        writer.Write(warp.TargetX);
-                        writer.Write(warp.TargetY);
-                    }
-
-                    //write worldmaps for this map
-                    writer.Write((byte)map.WorldMaps.Count);
-                    foreach (KeyValuePair<Point, WorldMap> keyValuePair in map.WorldMaps)
-                    {
-                        writer.Write((byte)keyValuePair.Key.X);
-                        writer.Write((byte)keyValuePair.Key.Y);
-                        writer.Write(keyValuePair.Value.GetCheckSum());
-                    }
-                }
-
-                Server.DataBase.Cache.Replace(DataBase.MapKey, cacheStream.ToArray());
-            }
+            #region Load Merchants
+            foreach (Merchant merchant in Game.Merchants)
+                AddObjectToMap(merchant, merchant.Location);
+            #endregion
         }
 
         /// <summary>
@@ -347,9 +291,9 @@ namespace Chaos
         /// Resends all the current information for the given user.
         /// </summary>
         /// <param name="user">The user to refresh.</param>
-        internal void Refresh(Client client, bool bypass = false)
+        internal void Refresh(Client client, bool byPassTimer = false)
         {
-            if (!bypass && DateTime.UtcNow.Subtract(client.LastRefresh).TotalSeconds < 1)
+            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalSeconds < 1)
                 return;
             else
                 client.LastRefresh = DateTime.UtcNow;

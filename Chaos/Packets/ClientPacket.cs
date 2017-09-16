@@ -83,6 +83,6 @@ namespace Chaos
             Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
             Array.Resize(ref Data, Data.Length - 6);
         }
-        internal string ToString(ClientPackets.Handler[] handlers) => $@"Recv [{handlers[OpCode]?.Method.Name ?? "**Unknown**"}] {GetHexString()}";
+        public override string ToString() => $@"Recv [{Enum.GetName(typeof(ClientOpCodes), OpCode) ?? "**Unknown**"}] {GetHexString()}";
     }
 }

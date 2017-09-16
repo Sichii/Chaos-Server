@@ -29,6 +29,7 @@ namespace Chaos
         internal int Id { get; }
         internal DateTime LastClickObj { get; set; }
         internal DateTime LastRefresh { get; set; }
+        internal Dialog CurrentDialog = null;
 
         /// <summary>
         /// Creates a new user with reference to the server, and the user's socket.
@@ -96,34 +97,37 @@ namespace Chaos
         /// <param name="ar">Result of the async operation.</param>
         private void ClientEndReceive(IAsyncResult ar)
         {
-            //get the length of the packet
-            int length = ClientSocket.EndReceive(ar);
-            //if we receive a packet with no length, disconnect the client, something went wrong
-            if (length == 0)
-                Disconnect();
-            else
+            lock (this)
             {
-                //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
-                byte[] data = new byte[length];
-                Array.Copy(ClientBuffer, data, length);
-                //copy that array into the full client buffer, so we can deal with the information in a properly sized list
-                FullClientBuffer.AddRange(data);
-                while (FullClientBuffer.Count > 3)
+                //get the length of the packet
+                int length = ClientSocket.EndReceive(ar);
+                //if we receive a packet with no length, disconnect the client, something went wrong
+                if (length == 0)
+                    Disconnect();
+                else
                 {
-                    //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
-                    int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
-                    if (count <= FullClientBuffer.Count)
+                    //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
+                    byte[] data = new byte[length];
+                    Array.Copy(ClientBuffer, data, length);
+                    //copy that array into the full client buffer, so we can deal with the information in a properly sized list
+                    FullClientBuffer.AddRange(data);
+                    while (FullClientBuffer.Count > 3)
                     {
-                        //create a clientpacket out of the readable data
-                        ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
-                        //remove the data from the clientbuffer
-                        FullClientBuffer.RemoveRange(0, count);
-                        //send it off to be processed by the server
-                        lock (ProcessQueue)
-                            ProcessQueue.Enqueue(clientPacket);
+                        //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
+                        int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
+                        if (count <= FullClientBuffer.Count)
+                        {
+                            //create a clientpacket out of the readable data
+                            ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
+                            //remove the data from the fullclientbuffer
+                            FullClientBuffer.RemoveRange(0, count);
+                            //send it off to be processed by the server
+                            lock (ProcessQueue)
+                                ProcessQueue.Enqueue(clientPacket);
+                        }
+                        else
+                            break;
                     }
-                    else
-                        break;
                 }
             }
             if (Connected) //begin checking for received info again
@@ -149,11 +153,18 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Begins an asynchronous operation to send a packet to the client.
+        /// </summary>
+        /// <param name="packet">The packet to send.</param>
         private void Send(ServerPacket packet)
         {
             byte[] data = packet.ToArray();
             try { ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket); }
-            catch { }
+            catch
+            {
+                //do things to save the connection?
+            }
         }
 
         /// <summary>
@@ -195,7 +206,7 @@ namespace Chaos
                             if (packet.IsDialog)//if packet is a dialog, decrypt the header
                                 packet.DecryptDialog();
 
-                            Server.WriteLog(packet.ToString(PacketHandlers), this);
+                            Server.WriteLog(packet.ToString(), this);
 
                             var handle = PacketHandlers[packet.OpCode];//get the handler for this packet
                             if (handle != null)//if we have a handler for this packet
@@ -218,6 +229,10 @@ namespace Chaos
             Server.Redirects.Add(redirect);
             Enqueue(Server.Packets.Redirect(redirect));
         }
+
+        internal void SendLoginMessage(LoginMessageType messageType, string message = "") => Enqueue(Server.Packets.LoginMessage(messageType, message));
+        internal void SendAttributes(StatUpdateFlags updateType) => Enqueue(Server.Packets.Attributes(User.IsAdmin, updateType, User.Attributes));
+        internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(Server.Packets.ServerMessage(messageType, message));
 
         ~Client()
         {

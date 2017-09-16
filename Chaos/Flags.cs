@@ -49,6 +49,120 @@ namespace Chaos
     }
     #endregion
 
+    #region Packets
+    internal enum ClientOpCodes : byte
+    {
+        JoinServer = 0,
+        CreateChar1 = 2,
+        Login = 3,
+        CreateChar2 = 4,
+        RequestMapData = 5,
+        Walk = 6,
+        Pickup = 7,
+        Drop = 8,
+        ExitClient = 11,
+        Ignore = 13,
+        PublicChat = 14,
+        UseSpell = 15,
+        JoinClient = 16,
+        Turn = 17,
+        SpaceBar = 19,
+        RequestWorldList = 24,
+        Whisper = 25,
+        ToggleUserOption = 27,
+        UseItem = 28,
+        AnimateUser = 29,
+        DropGold = 36,
+        ChangePassword = 38,
+        DropItemOnCreature = 41,
+        DropGoldOnCreature = 42,
+        RequestProfile = 45,
+        RequestGroup = 46,
+        ToggleGroup = 47,
+        SwapSlot = 48,
+        RequestRefresh = 56,
+        RequestDialog = 57,
+        ReplyDialog = 58,
+        Board = 59,
+        UseSkill = 62,
+        ClickWorldMap = 63,
+        ClickObject = 67,
+        RemoveEquipment = 68,
+        KeepAlive = 69,
+        ChangeStat = 71,
+        Exchange = 74,
+        RequestLoginMessage = 75,
+        BeginChant = 77,
+        DisplayChant = 78,
+        Personal = 79,
+        RequestServerTable = 87,
+        RequestHomepage = 104,
+        SynchronizeTicks = 117,
+        ChangeSocialStatus = 121,
+        RequestMetaFile = 123
+    }
+
+    internal enum ServerOpCodes : byte
+    {
+        ConnectionInfo = 0,
+        LoginMessage = 2,
+        Redirect = 3,
+        Location = 4,
+        UserId = 5,
+        DisplayItemMonster = 7,
+        Attributes = 8,
+        ServerMessage = 10,
+        ClientWalk = 11,
+        CreatureWalk = 12,
+        PublicChat = 13,
+        RemoveObject = 14,
+        AddItem = 15,
+        RemoveItem = 16,
+        CreatureTurn = 17,
+        HealthBar = 19,
+        MapInfo = 21,
+        AddSpell = 23,
+        RemoveSpell = 24,
+        Sound = 25,
+        AnimateUser = 26,
+        MapChangeComplete = 31,
+        LightLevel = 32,
+        RefreshResponse = 34,
+        Animation = 41,
+        AddSkill = 44,
+        RemoveSkill = 45,
+        WorldMap = 46,
+        DisplayMenu = 47,
+        DisplayDialog = 48,
+        BulletinBoard = 49,
+        Door = 50,
+        DisplayUser = 51,
+        Profile = 52,
+        WorldList = 54,
+        AddEquipment = 55,
+        RemoveEquipment = 56,
+        ProfileSelf = 57,
+        EffectsBar = 58,
+        KeepAlive = 59,
+        MapData = 60,
+        Cooldown = 63,
+        Exchange = 66,
+        CancelCasting = 72,
+        RequestPersonal = 73,
+        ForceClientPacket = 75,
+        ConfirmExit = 76,
+        ServerTable = 86,
+        MapLoadComplete = 88,
+        LobbyNotification = 96,
+        GroupRequest = 99,
+        LobbyControls = 102,
+        MapChangePending = 103,
+        SynchronizeTicks = 104,
+        Metafile = 111,
+        AcceptConnection = 126
+    }
+    #endregion
+
     #region Messages
     internal enum ServerMessageType : byte
     {
@@ -182,6 +296,22 @@ namespace Chaos
         Orange = 8,
         Purple = 9
     }
+    internal enum BodySprite : byte
+    {
+        None = 0,
+        Male = 16,
+        Female = 32,
+        MaleGhost = 48,
+        FemaleGhost = 64,
+        MaleInvis = 80,
+        FemaleInvis = 96,
+        MaleJester = 112,
+        MaleHead = 128,
+        FemaleHead = 144,
+        BlankMale = 160,
+        BlankFemale = 176
+    }
+
     internal enum Direction : byte
     {
         North = 0,
@@ -250,16 +380,31 @@ namespace Chaos
     internal enum StatUpdateFlags : byte
     {
         None = 0,
+        /// <summary>
+        /// mail
+        /// </summary>
         UnreadMail = 1,
         Unknown = 2,
+        /// <summary>
+        /// Blind, Mail, Elements, Ressists, AC, DMG, HIT
+        /// </summary>
         Secondary = 4,
-        Experience = 8,
+        /// <summary>
+        /// Exp, Gold
+        /// </summary>
+        ExpGold = 8,
+        /// <summary>
+        /// Current HP, Current MP
+        /// </summary>
         Vitality = 16,
+        /// <summary>
+        /// Level, Max HP/MP, Current stats, Weight, Unspent
+        /// </summary>
         Primary = 32,
         GameMasterA = 64,
         GameMasterB = 128,
         Swimming = GameMasterA | GameMasterB,
-        Full = Primary | Vitality | Experience | Secondary,
+        Full = Primary | Vitality | ExpGold | Secondary,
     }
     #endregion
 
@@ -271,7 +416,8 @@ namespace Chaos
         Rogue = 2,
         Wizard = 3,
         Priest = 4,
-        Monk = 5
+        Monk = 5,
+        Admin = 6
     }
     internal enum AdvClass : byte
     {
@@ -356,6 +502,41 @@ namespace Chaos
         Inventory = 0,
         SpellBook = 1,
         SkillBook = 2
+    }
+
+    internal enum GameObjectType : byte
+    {
+        Merchant = 1,
+        Item = 2,
+        Misc = 4
+    }
+
+    internal enum MenuType : byte
+    {
+        Menu = 0,
+        TextEntry = 2,
+        Buy = 4,
+        Sell = 5,
+        BigSell = 6,
+        LearnSpell = 8,
+        LearnSkill = 9,
+    }
+
+    internal enum DialogType : byte
+    {
+        Normal = 0,
+        ItemMenu = 2,
+        TextEntry = 4,
+        Speak = 5,
+        UserMenu = 6,
+        Protected = 9,
+    }
+
+    internal enum DialogOption
+    {
+        Previous = -1,
+        Close = 0,
+        Next = 1
     }
     #endregion
 
