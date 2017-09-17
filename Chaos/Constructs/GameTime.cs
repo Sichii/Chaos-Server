@@ -5,11 +5,7 @@ namespace Chaos
 {
     internal sealed class GameTime
     {
-        private const long TICKS_YEAR = 13140000000000;
-        private const long TICKS_MONTH = 1080000000000;
-        private const long TICKS_DAY = 36000000000;
-        private const long TICKS_HOUR = 1500000000;
-        private const long TICKS_MINUTE = 25000000;
+
         private List<string> Months = new List<string>() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
         private long Remainder { get; }
         internal ushort Year { get; }
@@ -26,20 +22,20 @@ namespace Chaos
         private GameTime(long ticks)
         {
             Ticks = ticks;
-            Year = (ushort)(ticks / TICKS_YEAR);
-            ticks -= Year * TICKS_YEAR;
+            Year = (ushort)(ticks / CONSTANTS.TICKS_YEAR);
+            ticks -= Year * CONSTANTS.TICKS_YEAR;
 
-            Month = (byte)(ticks / TICKS_MONTH);
-            ticks -= Month * TICKS_MONTH;
+            Month = (byte)(ticks / CONSTANTS.TICKS_MONTH);
+            ticks -= Month * CONSTANTS.TICKS_MONTH;
 
-            Day = (byte)(ticks / TICKS_DAY);
-            ticks -= Day * TICKS_DAY;
+            Day = (byte)(ticks / CONSTANTS.TICKS_DAY);
+            ticks -= Day * CONSTANTS.TICKS_DAY;
 
-            Hour = (byte)(ticks / TICKS_HOUR);
-            ticks -= Hour * TICKS_HOUR;
+            Hour = (byte)(ticks / CONSTANTS.TICKS_HOUR);
+            ticks -= Hour * CONSTANTS.TICKS_HOUR;
 
-            Minute = (byte)(ticks / TICKS_MINUTE);
-            ticks -= Minute * TICKS_MINUTE;
+            Minute = (byte)(ticks / CONSTANTS.TICKS_MINUTE);
+            ticks -= Minute * CONSTANTS.TICKS_MINUTE;
 
             Remainder = ticks;
         }

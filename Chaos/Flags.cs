@@ -81,7 +81,7 @@ namespace Chaos
         ToggleGroup = 47,
         SwapSlot = 48,
         RequestRefresh = 56,
-        RequestDialog = 57,
+        RequestPursuit = 57,
         ReplyDialog = 58,
         Board = 59,
         UseSkill = 62,
@@ -517,19 +517,25 @@ namespace Chaos
         TextEntry = 2,
         Buy = 4,
         Sell = 5,
-        BigSell = 6,
+        Display = 6,
         LearnSpell = 8,
         LearnSkill = 9,
     }
-
+    internal enum DialogArgsType : byte
+    {
+        None = 0,
+        MenuResponse = 1,
+        TextResponse = 2
+    }
     internal enum DialogType : byte
     {
         Normal = 0,
         ItemMenu = 2,
         TextEntry = 4,
         Speak = 5,
-        UserMenu = 6,
+        CreatureMenu = 6,
         Protected = 9,
+        CloseDialog = 10
     }
 
     internal enum DialogOption
@@ -549,6 +555,19 @@ namespace Chaos
         AddGold = 3,
         Cancel = 4,
         Accept = 5
+    }
+    #endregion
+
+    #region Pursuits
+    internal enum PursuitIds : ushort
+    {
+        None = 0,
+        Revive = 1,
+        Teleport = 2,
+        Summon = 3,
+        SummonAll = 4,
+        KillUser = 5,
+        KillMonster = 6,
     }
     #endregion
 }

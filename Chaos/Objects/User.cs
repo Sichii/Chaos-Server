@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace Chaos
@@ -47,10 +48,12 @@ namespace Chaos
         [JsonProperty]
         internal List<string> Titles { get; set; }
         [JsonProperty]
-        internal bool IsAdmin = false;
+        internal bool IsAdmin { get; set; }
         [JsonProperty]
-        internal bool IsAlive = true;
+        internal bool IsAlive { get; set; }
+        internal DateTime LastClicked { get; set; }
         internal bool Grouped => Group != null;
+        internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
 
         internal User(string name, Point point, Map map, Direction direction)
             :base(name, 0, CreatureType.User, point, map, direction)
@@ -72,11 +75,14 @@ namespace Chaos
             IsMaster = false;
             Spouse = string.Empty;
             Titles = new List<string>();
+            IsAdmin = false;
+            IsAlive = true;
+            LastClicked = DateTime.MinValue;
         }
 
         [JsonConstructor]
         internal User(string name, Point point, Map map, Direction direction, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
-               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, bool isAdmin)
+               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, bool isAdmin, bool isAlive)
             : base(name, 0, CreatureType.User, point, map)
         {
             SkillBook = skillBook;
@@ -101,6 +107,8 @@ namespace Chaos
             Group = null;
             DisplayData.User = this;
             IsAdmin = isAdmin;
+            IsAlive = isAlive;
+            LastClicked = DateTime.MinValue;
         }
 
         internal void Resync(Client client)

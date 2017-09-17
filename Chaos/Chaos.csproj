@@ -88,8 +88,10 @@
     <Compile Include="Constructs\IgnoreList.cs" />
     <Compile Include="Constructs\Menu.cs" />
     <Compile Include="Constructs\MetaFile.cs" />
+    <Compile Include="Game\CONSTANTS.cs" />
     <Compile Include="Game\CreationEngine.cs" />
     <Compile Include="Game\Dialogs.cs" />
+    <Compile Include="Game\Extensions.cs" />
     <Compile Include="Game\Merchants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Objects\Gold.cs" />

@@ -1,58 +1,54 @@
-﻿using System.Collections.Generic;
-
-namespace Chaos
+﻿namespace Chaos
 {
-    using System.Linq;
     using System.Collections.Generic;
     internal sealed class Dialog
     {
-        internal MenuType DialogType { get; set; }
+        internal DialogType Type { get; set; }
         internal ushort PursuitId { get; set; }
         internal ushort Id { get; set; }
         internal bool PrevBtn { get; set; }
         internal bool NextBtn { get; set; }
         internal string Message { get; set; }
-        internal SortedDictionary<string, ushort> Options { get; set; }
+        internal List<KeyValuePair<string, ushort>> Options { get; set; }
         internal ushort NextDialogId { get; set; }
         internal Panel<PanelObject> Panel { get; set; }
+        internal ushort MaxCharacters { get; set; }
 
         /// <summary>
-        /// Creates a standard dialog with or without buttons
+        /// Default constructor for dialog
         /// </summary>
-        /// <param name="nextDialogId">The dialog that comes after this one if you press next.</param>
-        internal Dialog(MenuType dialogType, ushort pursuitId, ushort dialogId, bool prevBtn, bool nextBtn, string message, ushort nextDialogId = 0)
+        public Dialog(DialogType type, ushort pursuitId, ushort dialogId, bool prevBtn, bool nextBtn, string message, List<KeyValuePair<string,ushort>> options, ushort nextDialogId, Panel<PanelObject> panel, ushort maxCharacters)
         {
-            DialogType = dialogType;
+            Type = type;
             PursuitId = pursuitId;
             Id = dialogId;
             PrevBtn = prevBtn;
             NextBtn = nextBtn;
             Message = message;
+            Options = options ?? new List<KeyValuePair<string, ushort>>();
             NextDialogId = nextDialogId;
+            Panel = panel ?? new Panel<PanelObject>(0);
+            MaxCharacters = maxCharacters;
         }
 
         /// <summary>
-        /// Creates a dialog that has a menu on it that leads to other dialogs or effects
+        /// Returns the next dialog in the sequence of dialogs.
         /// </summary>
-        /// <param name="options">List of dialog options, and the dialog id they each lead to.</param>
-        internal Dialog(MenuType dialogType, ushort pursuitId, ushort dialogId, bool prevBtn, bool nextBtn, string message, SortedDictionary<string, ushort> options)
-            : this(dialogType, pursuitId, dialogId, prevBtn, nextBtn, message)
-        {
-            Options = options;
-        }
-
+        internal Dialog Next() => Game.Dialogs.NextDialog(NextDialogId);
         /// <summary>
-        /// Creates a dialog that has a buy/sell menu, or learn/forget skill/spell menu
+        /// Returns the dialog associated with the option that was chosen.
         /// </summary>
-        /// <param name="panel">The panel you want to display.</param>
-        internal Dialog(MenuType dialogType, ushort pursuitId, ushort dialogId, bool prevBtn, bool nextBtn, string message, Panel<PanelObject> panel)
-            : this(dialogType, pursuitId, dialogId, prevBtn, nextBtn, message)
-        {
-            Panel = panel;
-        }
-
-        internal Dialog Next() => Game.Dialogs.NextDialog(Id);
-        internal Dialog Next(byte opt) => Game.Dialogs.NextDialog(Options.Values.ElementAt(opt));
+        /// <param name="opt"></param>
+        internal Dialog Next(byte opt) => Game.Dialogs.NextDialog(Options[opt - 1].Value);
+        /// <summary>
+        /// Returns the dialog that has this dialog as one of it's options or nextDialogId
+        /// </summary>
         internal Dialog Previous() => Game.Dialogs.PreviousDialog(this);
+        /// <summary>
+        /// Returns an empty dialog with type DialogType.Close
+        /// </summary>
+        /// <returns></returns>
+        internal static Dialog Close() => Game.Dialogs.CloseDialog();
+
     }
 }

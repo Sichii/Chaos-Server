@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Chaos
+﻿namespace Chaos
 {
     internal struct Pursuit
     {
         internal string Text { get; }
-        internal ushort PursuitId { get; }
+        internal PursuitIds PursuitId { get; }
         internal ushort DialogId { get; }
 
-        internal Pursuit(string text, ushort pursuitId, ushort dialogId)
+        internal Pursuit(string text, PursuitIds pursuitId, ushort dialogId)
         {
             Text = text;
             PursuitId = pursuitId;

@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ChaosLauncher
@@ -27,7 +21,7 @@ namespace ChaosLauncher
             startInfo.Size = Marshal.SizeOf(startInfo);
 
             //create the process
-            Kernel32.CreateProcess(
+            SafeNativeMethods.CreateProcess(
 #if DEBUG
                 @"C:\Users\Sichi\Desktop\ChaosProject\ChaosDa\Darkages.exe"
 #else
@@ -42,7 +36,7 @@ namespace ChaosLauncher
             if (injectDawndCbox.Checked)
             {
                 //get a handle for access
-                IntPtr accessHnd = Kernel32.OpenProcess(ProcessAccess.All, true, proc.Id);
+                IntPtr accessHnd = SafeNativeMethods.OpenProcess(ProcessAccess.All, true, (uint)proc.Id);
                 //use access handle to inject dawnd.dll
                 InjectDLL(accessHnd,
 #if DEBUG
@@ -86,13 +80,13 @@ namespace ChaosLauncher
 
                 //resume process
                 memory.Position = 0x6F3CA4;
-                Kernel32.ResumeThread(procInfo.ThreadHandle);
+                SafeNativeMethods.ResumeThread(procInfo.ThreadHandle);
             }
 
             //let process render it's window before we change the title
             while (proc.MainWindowHandle == IntPtr.Zero) { }
             //set window title
-            User32.SetWindowText(proc.MainWindowHandle, "Chaos");
+            SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos");
         }
 
         public void InjectDLL(IntPtr processHandle, string dllName)
@@ -102,11 +96,11 @@ namespace ChaosLauncher
             //length of string containing the DLL file name +1 byte padding
             int dllNameLength = dllName.Length + 1;
             //allocate memory within the virtual address space of the target process
-            IntPtr processMemoryBase = Kernel32.VirtualAllocEx(processHandle, (IntPtr)null, (uint)dllNameLength, 0x1000, 0x40);
+            IntPtr processMemoryBase = SafeNativeMethods.VirtualAllocEx(processHandle, (IntPtr)null, (UIntPtr)dllNameLength, 0x1000, 0x40);
             //write DLL file name to allocated memory in target process
-            Kernel32.WriteProcessMemory(processHandle, processMemoryBase, dllName, (UIntPtr)dllNameLength, out outStuff);
+            SafeNativeMethods.WriteProcessMemory(processHandle, processMemoryBase, dllName, (UIntPtr)dllNameLength, out outStuff);
             //function pointer "Injector"
-            UIntPtr moduleAddress = Kernel32.GetProcAddress(Kernel32.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+            UIntPtr moduleAddress = SafeNativeMethods.GetProcAddress(SafeNativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
             if (moduleAddress == null)
             {
@@ -116,7 +110,7 @@ namespace ChaosLauncher
             }
 
             //create thread in target process, and store handle
-            IntPtr threadHandle = Kernel32.CreateRemoteThread(processHandle, (IntPtr)null, 0, moduleAddress, processMemoryBase, 0, out outStuff);
+            IntPtr threadHandle = SafeNativeMethods.CreateRemoteThread(processHandle, (IntPtr)null, UIntPtr.Zero, moduleAddress, processMemoryBase, 0, out outStuff);
             //make sure thread handle is valid
             if (threadHandle == null)
             {
@@ -125,7 +119,7 @@ namespace ChaosLauncher
                 return;
             }
             //time-out is 5 seconds...
-            WaitEventResult result = Kernel32.WaitForSingleObject(threadHandle, 5000);
+            WaitEventResult result = (WaitEventResult)SafeNativeMethods.WaitForSingleObject(threadHandle, 5000);
             //check whether thread timed out...
             if (result != WaitEventResult.Signaled)
             {
@@ -133,14 +127,14 @@ namespace ChaosLauncher
                 MessageBox.Show(this, "Thread timed out.");
                 //make sure thread handle is valid before closing... prevents crashes.
                 if (threadHandle != null)
-                    Kernel32.CloseHandle(threadHandle);
+                    SafeNativeMethods.CloseHandle(threadHandle);
                 return;
             }
             //clear up allocated space ( Allocmem )
-            Kernel32.VirtualFreeEx(processHandle, processMemoryBase, UIntPtr.Zero, 0x8000);
+            SafeNativeMethods.VirtualFreeEx(processHandle, processMemoryBase, UIntPtr.Zero, 0x8000);
             //make sure thread handle is valid before closing... prevents crashes.
             if (threadHandle != null)
-                Kernel32.CloseHandle(threadHandle);
+                SafeNativeMethods.CloseHandle(threadHandle);
             //return succeeded
             return;
         }

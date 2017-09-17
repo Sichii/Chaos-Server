@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ChaosLauncher
 {
     internal class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             if (!File.Exists("dawnd.dll"))

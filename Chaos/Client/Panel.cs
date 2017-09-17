@@ -33,11 +33,11 @@ namespace Chaos
                 Objects[i] = null;
 
             if (length == 90) //skillbook and spellbook
-                Invalid = new byte[] { 36, 72, 89 };
+                Invalid = new byte[] { 36, 72 };
             else if (length == 61) //inventory
-                Invalid = new byte[] { 60 };
+                Invalid = new byte[] { };
             else if (length == 20) //equipment
-                Invalid = new byte[] { 19 };
+                Invalid = new byte[] { };
         }
 
         [JsonConstructor]
@@ -47,6 +47,12 @@ namespace Chaos
             Objects = objects;
             Invalid = invalid;
         }
+
+        /// <summary>
+        /// Custom contains method
+        /// </summary>
+        /// <param name="obj">Object to check if the panel contains</param>
+        internal bool Contains(T obj) => Objects.Values.Contains(obj);
 
         /// <summary>
         /// Makes sure the slot is valid.
@@ -74,6 +80,41 @@ namespace Chaos
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Attempts to equip the item at the given slot, return the item that was already occupying the spot if there was one
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        internal bool TryEquip(T item, out T outItem)
+        {
+            outItem = null;
+            EquipmentSlot slot = (item as Item).EquipmentSlot;
+
+            if (slot == EquipmentSlot.None || !Valid((byte)slot))
+            {
+                outItem = null;
+                return false;
+            }
+
+            if (Objects[(byte)slot] != null && !TryUnequip(slot, out outItem))
+                return false;
+
+            if (Objects[(byte)slot] == null)
+                Objects[(byte)slot] = item;
+
+            return Objects[(byte)slot] == item;
+        }
+
+        /// <summary>
+        /// Attempts to unequip the item at EquipmentSlot and place it in the next inventory slot
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        internal bool TryUnequip(EquipmentSlot slot, out T item)
+        {
+            return TryGetRemove((byte)slot, out item);
         }
 
         /// <summary>

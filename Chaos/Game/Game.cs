@@ -7,16 +7,13 @@ namespace Chaos
 {
     internal static class Game
     {
-        internal const int ITEM_SPRITE_OFFSET = 32768;
-        internal const int MERCHANT_SPRITE_OFFSET = 16384;
-        internal const int PICKUP_RANGE = 4;
-        internal const int DROP_RANGE = 4;
         private static readonly object Sync = new object();
-        private static CreationEngine CreationEngine { get; set; }
+        internal static CreationEngine CreationEngine { get; set; }
         internal static Merchants Merchants { get; set; }
         internal static Dialogs Dialogs { get; set; }
         internal static Server Server { get; set; }
         internal static World World { get; set; }
+        internal static Extensions Extensions { get; set; }
 
         internal static void Set(Server server)
         {
@@ -28,6 +25,7 @@ namespace Chaos
             CreationEngine = new CreationEngine();
             Merchants = new Merchants();
             Dialogs = new Dialogs();
+            Extensions = new Extensions(Server, World);
             World.Populate();
         }
 
@@ -88,7 +86,7 @@ namespace Chaos
             gender = gender != Gender.Male && gender != Gender.Female ? Gender.Male : gender;
 
             //create a new user, and it's display data
-            User newUser = new User(client.CreateCharName, World.STARTING_LOCATION.Point, World.Maps[World.STARTING_LOCATION.MapId], Direction.South);
+            User newUser = new User(client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South);
             DisplayData data = new DisplayData(newUser, hairStyle, hairColor, (BodySprite)((byte)gender * 16));
             newUser.DisplayData = data;
 
@@ -207,7 +205,7 @@ namespace Chaos
             //if there's an item on the point
             if (World.TryGetGroundItem(groundPoint, out groundItem, client.User.Map))
             {
-                if (groundItem.Point.Distance(client.User.Point) > PICKUP_RANGE)
+                if (groundItem.Point.Distance(client.User.Point) > CONSTANTS.PICKUP_RANGE)
                     return;
 
                 if(groundItem is Gold)
@@ -241,7 +239,7 @@ namespace Chaos
             Map map = client.User.Map;
 
             //dont drop if too far, or on walls, warps, or doors
-            if (count == 0 || groundPoint.Distance(client.User.Point) > DROP_RANGE || map.IsWall(groundPoint) || map.Warps.ContainsKey(groundPoint) || map.Doors.ContainsKey(groundPoint))
+            if (count == 0 || groundPoint.Distance(client.User.Point) > CONSTANTS.DROP_RANGE || map.IsWall(groundPoint) || map.Warps.ContainsKey(groundPoint) || map.Doors.ContainsKey(groundPoint))
                 return;
 
             Item item;
@@ -473,7 +471,8 @@ namespace Chaos
 
         internal static void UseItem(Client client, byte slot)
         {
-            throw new NotImplementedException();
+            Item item = client.User.Inventory[slot];
+            item.Activate(client, Server, item);
         }
 
         internal static void AnimateUser(Client client, byte index)
@@ -485,7 +484,7 @@ namespace Chaos
         {
             Map map = client.User.Map;
             //dont drop on walls, warps, or doors
-            if (amount == 0 || groundPoint.Distance(client.User.Point) > DROP_RANGE || amount > client.User.Attributes.Gold || map.IsWall(groundPoint) || map.Warps.ContainsKey(groundPoint) || map.Doors.ContainsKey(groundPoint))
+            if (amount == 0 || groundPoint.Distance(client.User.Point) > CONSTANTS.DROP_RANGE || amount > client.User.Attributes.Gold || map.IsWall(groundPoint) || map.Warps.ContainsKey(groundPoint) || map.Doors.ContainsKey(groundPoint))
                 return;
 
             client.User.Attributes.Gold -= amount;
@@ -507,7 +506,7 @@ namespace Chaos
                 Item item;
                 VisibleObject obj;
 
-                if (World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && client.User.Inventory.TryGetRemove(inventorySlot, out item) && item != null && obj.Point.Distance(client.User.Point) <= DROP_RANGE)
+                if (World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && client.User.Inventory.TryGetRemove(inventorySlot, out item) && item != null && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
                 {
                     if (obj is Monster)
                         (obj as Monster).Items.Add(item);
@@ -533,7 +532,7 @@ namespace Chaos
             {
                 VisibleObject obj;
 
-                if (client.User.Attributes.Gold > amount && World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && obj.Point.Distance(client.User.Point) <= DROP_RANGE)
+                if (client.User.Attributes.Gold > amount && World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
                 {
                     if (obj is Monster)
                     {
@@ -692,36 +691,84 @@ namespace Chaos
             World.Refresh(client);
         }
 
-        internal static void RequestDialog(Client client, GameObjectType objType, uint objId, uint pursuitId, byte[] args)
+        internal static void RequestPursuit(Client client, GameObjectType objType, int objId, PursuitIds pursuitId, byte[] args)
         {
-            throw new NotImplementedException();
+            VisibleObject obj;
+            if(World.TryGetVisibleObject(objId, out obj, client.User.Map))
+            {
+                Merchant merchant = obj as Merchant;
+                Pursuit p = (obj as Merchant).Menu[pursuitId];
+
+                if (!client.User.WithinRange(merchant))
+                    return;
+
+                client.ActiveObject = obj;
+                client.CurrentDialog = Dialogs[p.DialogId];
+
+                //if dialog is null, or closeDialog & Activate is true
+                //here we use the pursuit's ID, because we want to close the dialog and activate at the same time
+                if (client.CurrentDialog == null || (client.CurrentDialog?.Type == DialogType.CloseDialog && Dialogs.ActivateEffect(p.PursuitId)(client, Server, client.CurrentDialog)))
+                {
+                    client.ActiveObject = null;
+                    client.CurrentDialog = null;
+                }
+
+                client.Enqueue(Server.Packets.DisplayDialog(merchant, client.CurrentDialog));
+            }
         }
 
-        internal static void ReplyDialog(Client client, GameObjectType objType, uint objId, ushort pursuitId, ushort dialogId, byte[] args)
+        internal static void ReplyDialog(Client client, GameObjectType objType, int objId, PursuitIds pursuitId, ushort dialogId, DialogArgsType argsType, byte option, string userInput)
         {
             Dialog dialog = client.CurrentDialog;
+            object effectArgs = new object();
 
-            if (dialog == null)
+            //if there's no active dialog or object, what are we replying to?
+            //if the active object is no longer valid, cease the dialog
+            if (client.CurrentDialog == null || client.ActiveObject == null ||
+                (client.ActiveObject is Merchant && !(client.ActiveObject as Merchant).WithinRange(client.User)) ||
+                (client.ActiveObject is Item && !client.User.Inventory.Contains(client.ActiveObject as Item)))
+            {
+                client.CurrentDialog = null;
+                client.ActiveObject = null;
+                client.Enqueue(Server.Packets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
                 return;
+            }
 
-            DialogOption opt = (DialogOption)(dialog.Id - dialogId);
+            DialogOption opt = Enum.IsDefined(typeof(DialogOption), (dialogId - dialog.Id)) ? (DialogOption)(dialogId - dialog.Id) : DialogOption.Close;
 
-            switch(opt)
+            switch (opt)
             {
                 case DialogOption.Previous:
                     client.CurrentDialog = client.CurrentDialog.Previous();
                     break;
                 case DialogOption.Close:
+                    client.ActiveObject = null;
                     client.CurrentDialog = null;
                     break;
                 case DialogOption.Next:
-                    if(dialog.Options.Count > 0)
-                        client.CurrentDialog = client.CurrentDialog.Next(args[0]);
+                    switch(argsType)
+                    {
+                        case DialogArgsType.None:
+                            client.CurrentDialog = client.CurrentDialog.Next();
+                            break;
+                        case DialogArgsType.MenuResponse:
+                            client.CurrentDialog = client.CurrentDialog.Next(option);
+                            break;
+                        case DialogArgsType.TextResponse:
+                            client.CurrentDialog = client.CurrentDialog.Next();
+                            effectArgs = userInput;
+                            break;
+                    }
+                    //we use "dialog" here because we're closing the dialog, and we want to activate the effect of the dialog we were at as it closes
+                    if (client.CurrentDialog == null || (client.CurrentDialog.Type == DialogType.CloseDialog && Dialogs.ActivateEffect((PursuitIds)dialog.PursuitId)(client, Server, effectArgs)))
+                    {
+                        client.ActiveObject = null;
+                        client.CurrentDialog = null;
+                    }
                     break;
             }
 
-            if (client.CurrentDialog != null)
-                client.Enqueue(Server.Packets.DisplayDialog(client.CurrentDialog));
+            client.Enqueue(Server.Packets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
         }
 
         internal static void Boards()
@@ -753,8 +800,23 @@ namespace Chaos
                     if (obj is Monster)
                         client.SendServerMessage(ServerMessageType.OrangeBar1, obj.Name);
                     //if it's a user, send us their profile
-                    if (obj is User)
+                    else if (obj is User)
+                    {
                         client.Enqueue(Server.Packets.Profile(obj as User));
+                    }
+                    else if (obj is Merchant)
+                    {
+                        Merchant merchant = obj as Merchant;
+
+                        if (merchant.ShouldDisplay)
+                        {
+                            client.ActiveObject = merchant;
+                            client.Enqueue(Server.Packets.DisplayMenu(merchant));
+                        }
+                        else
+                            merchant.LastClicked = DateTime.UtcNow;
+
+                    }
                 }
             }
         }

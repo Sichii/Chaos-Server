@@ -5,7 +5,7 @@
         internal uint Amount { get; set; }
 
         internal Gold(byte sprite, Point point, Map map, uint amount)
-          : base((ushort)(sprite + Game.ITEM_SPRITE_OFFSET), point, map)
+          : base((ushort)(sprite + CONSTANTS.ITEM_SPRITE_OFFSET), point, map)
         {
             Amount = amount;
         }

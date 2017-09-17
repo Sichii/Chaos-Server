@@ -51,7 +51,7 @@
             if (num == IntPtr.Zero)
                 throw new InvalidOperationException("Unable to allocate memory.");
             int bytesRead = 0;
-            Kernel32.ReadProcessMemory(ProcessHandle, (IntPtr)Position, num, count, out bytesRead);
+            SafeNativeMethods.ReadProcessMemory(ProcessHandle, (IntPtr)Position, num, (IntPtr)count, out bytesRead);
             Position += bytesRead;
             Marshal.Copy(num, buffer, offset, count);
             Marshal.FreeHGlobal(num);
@@ -87,7 +87,7 @@
                 throw new InvalidOperationException("Unable to allocate memory.");
             Marshal.Copy(buffer, offset, allocDestination, count);
             int bytes = 0;
-            Kernel32.WriteProcessMemory(ProcessHandle, (IntPtr)Position, allocDestination, count, out bytes);
+            SafeNativeMethods.WriteProcessMemory(ProcessHandle, (IntPtr)Position, allocDestination, (IntPtr)count, out bytes);
             Position += bytes;
             Marshal.FreeHGlobal(allocDestination);
         }
@@ -102,7 +102,7 @@
                 throw new ObjectDisposedException("ProcMemoryStream");
             if (ProcessHandle != IntPtr.Zero)
             {
-                Kernel32.CloseHandle(ProcessHandle);
+                SafeNativeMethods.CloseHandle(ProcessHandle);
                 ProcessHandle = IntPtr.Zero;
             }
             base.Close();
@@ -114,7 +114,7 @@
             {
                 if (ProcessHandle != IntPtr.Zero)
                 {
-                    Kernel32.CloseHandle(ProcessHandle);
+                    SafeNativeMethods.CloseHandle(ProcessHandle);
                     ProcessHandle = IntPtr.Zero;
                 }
                 base.Dispose(disposing);

@@ -14,7 +14,6 @@ namespace Chaos
         internal ConcurrentDictionary<string, Guild> Guilds { get; set; }
         internal ConcurrentDictionary<int, Group> Groups { get; set; }
         internal ConcurrentDictionary<int, Exchange> Exchanges { get; set; }
-        internal static Location STARTING_LOCATION => new Location(5031, 20, 20);
 
         internal World(Server server)
         {
@@ -302,7 +301,7 @@ namespace Chaos
             {
                 client.Enqueue(Server.Packets.MapInfo(client.User.Map));
                 client.Enqueue(Server.Packets.Location(client.User.Point));
-
+                client.SendAttributes(StatUpdateFlags.Full);
                 List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
 
                 //get all objects that would be visible to this object and sort them

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chaos
 {
@@ -21,8 +18,7 @@ namespace Chaos
             {
                 {
                     "Deliope", new Merchant("Deliope", 61, CreatureType.Merchant, new Point(15, 10), Game.World.Maps[5031], Direction.South,
-                    new List<ushort>() { 1 },
-                    new List<ushort>() { })
+                    new List<PursuitIds>() { PursuitIds.Revive })
                 }
             };
         }

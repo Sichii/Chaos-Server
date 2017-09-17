@@ -30,6 +30,7 @@ namespace Chaos
         internal DateTime LastClickObj { get; set; }
         internal DateTime LastRefresh { get; set; }
         internal Dialog CurrentDialog = null;
+        internal object ActiveObject = null;
 
         /// <summary>
         /// Creates a new user with reference to the server, and the user's socket.
@@ -149,7 +150,8 @@ namespace Chaos
             lock (SendQueue)
             {
                 for (int i = 0; i < packets.Length; i++)
-                    SendQueue.Enqueue(packets[i]);
+                    if (packets[i] != null)
+                        SendQueue.Enqueue(packets[i]);
             }
         }
 

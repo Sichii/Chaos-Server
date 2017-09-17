@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Chaos
 {
@@ -39,6 +40,26 @@ namespace Chaos
 
             Location location = (Location)obj;
             return location.MapId == MapId && location.X == X && location.Y == Y;
+        }
+
+        public static bool TryParse(string str, out Location loc)
+        {
+            ushort mapId = 0;
+            ushort x = 0;
+            ushort y = 0;
+            Match m = Regex.Match(str, @"([0-9]+) ([0-9]+) ([0-9]+)");
+            
+            if(m.Success && 
+                ushort.TryParse(m.Groups[1].Value, out mapId) && 
+                ushort.TryParse(m.Groups[2].Value, out x) &&
+                ushort.TryParse(m.Groups[3].Value, out y))
+            {
+                loc = new Location(mapId, x, y);
+                return true;
+            }
+
+            loc = new Location();
+            return false;
         }
     }
 }

@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chaos
 {
-    internal sealed class Menu
+    internal sealed class Menu : IEnumerable<Pursuit>
     {
+        public int Count => Pursuits.Values.Count;
+        public IEnumerator<Pursuit> GetEnumerator() => Pursuits.Values.ToList().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        internal Pursuit this[PursuitIds pid] => Pursuits[pid];
+        internal string Text { get; }
         internal MenuType Type { get; }
-        internal Dialog this[ushort pursuitID] => DialogList.FirstOrDefault(kvp => kvp.Key.PursuitId == pursuitID).Value;
-        private Dictionary<Pursuit, Dialog> DialogList = new Dictionary<Pursuit, Dialog>();
+        internal SortedDictionary<PursuitIds, Pursuit> Pursuits { get; }
 
-        internal Menu(List<Pursuit> pursuits, List<Dialog> dialogs, MenuType type)
+        internal Menu(List<Pursuit> pursuits, MenuType type, string text)
         {
-            DialogList = pursuits.Zip(dialogs, (k, v) => new { k, v }).ToDictionary(kvp => kvp.k, kvp => kvp.v);
+            Pursuits = new SortedDictionary<PursuitIds, Pursuit>(pursuits.ToDictionary(p => p.PursuitId, p => p));
             Type = type;
+            Text = text;
         }
     }
 }

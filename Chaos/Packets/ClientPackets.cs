@@ -42,7 +42,7 @@ namespace Chaos
                 handles[(byte)ClientOpCodes.ToggleGroup] = new Handler(cp.ToggleGroup);
                 handles[(byte)ClientOpCodes.SwapSlot] = new Handler(cp.SwapSlot);
                 handles[(byte)ClientOpCodes.RequestRefresh] = new Handler(cp.RequestRefresh);
-                handles[(byte)ClientOpCodes.RequestDialog] = new Handler(cp.RequestDialog);
+                handles[(byte)ClientOpCodes.RequestPursuit] = new Handler(cp.RequestPursuit);
                 handles[(byte)ClientOpCodes.ReplyDialog] = new Handler(cp.ReplyDialog);
                 handles[(byte)ClientOpCodes.Board] = new Handler(cp.Board);
                 handles[(byte)ClientOpCodes.UseSkill] = new Handler(cp.UseSkill);
@@ -316,11 +316,12 @@ namespace Chaos
 
             Game.RequestRefresh(client);
         }
-        private void RequestDialog(Client client, ClientPacket packet)
+        private void RequestPursuit(Client client, ClientPacket packet)
         {
             GameObjectType objType = (GameObjectType)packet.ReadByte(); //gameObjectType
-            uint objId = packet.ReadUInt32(); //id of object
-            uint pursuitId = packet.ReadUInt16(); //what they want to do
+            int objId = packet.ReadInt32(); //id of object
+            ushort pid = packet.ReadUInt16(); //what they want to do
+            PursuitIds pursuitId = Enum.IsDefined(typeof(PursuitIds), pid) ? (PursuitIds)pid : PursuitIds.None;
             /*
             usually this is the end, but sometimes theres more
             the only thing i know uses this is repairing specific items
@@ -328,18 +329,40 @@ namespace Chaos
             byte x = packet.ReadByte(); //always 1
             byte slot = packet.Readbyte(); //slot of item to replair
             */
-            byte[] args = packet.ReadBytes((packet.Data.Length - 1) - packet.Position);
+            byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position);
 
-            Game.RequestDialog(client, objType, objId, pursuitId, args);
+            Game.RequestPursuit(client, objType, objId, pursuitId, args);
         }
         private void ReplyDialog(Client client, ClientPacket packet)
         {
             GameObjectType objType = (GameObjectType)packet.ReadByte();
-            uint objId = packet.ReadUInt32(); //id of object
-            ushort pursuitId = packet.ReadUInt16(); //the pursuit theyre on
+            int objId = packet.ReadInt32(); //id of object
+            ushort pid = packet.ReadUInt16(); //what they want to do
+            PursuitIds pursuitId = Enum.IsDefined(typeof(PursuitIds), pid) ? (PursuitIds)pid : PursuitIds.None;
             ushort dialogId = packet.ReadUInt16(); //+1 current id if next, -1 if previous, same if close
+
+            int position = packet.Position;
             byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position); //other arguments
-            Game.ReplyDialog(client, objType, objId, pursuitId, dialogId, args);
+            packet.Position = position;
+
+            DialogArgsType argsType = DialogArgsType.None;
+            byte opt = 0;
+            string input = "";
+            if(args.Count() > 0)
+            {
+                argsType = (DialogArgsType)packet.ReadByte();
+                switch(argsType)
+                {
+                    case DialogArgsType.MenuResponse:
+                        opt = packet.ReadByte();
+                        break;
+                    case DialogArgsType.TextResponse:
+                        input = packet.ReadString8();
+                        break;
+                }
+            }
+
+            Game.ReplyDialog(client, objType, objId, pursuitId, dialogId, argsType, opt, input);
         }
 
         //this packet is literally retarded

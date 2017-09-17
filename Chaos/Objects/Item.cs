@@ -26,7 +26,7 @@ namespace Chaos
 
         internal Item(byte slot, ushort sprite, string name, int count, TimeSpan cooldown,
             EquipmentSlot equipmentSlot = EquipmentSlot.None, bool accountBound = false, byte color = 0, bool stackable = false, uint maximumDurability = 0, uint currentDurability = 0, byte weight = 1)
-            :base(slot, (ushort)(sprite + Game.ITEM_SPRITE_OFFSET), name, cooldown)
+            :base(slot, (ushort)(sprite + CONSTANTS.ITEM_SPRITE_OFFSET), name, cooldown)
         {
             EquipmentSlot = EquipmentSlot.None;
             Color = color;

@@ -368,26 +368,109 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket DisplayMenu(object obj, Menu menu)
+        internal ServerPacket DisplayMenu(Merchant merchant)
         {
             var packet = new ServerPacket(ServerOpCodes.DisplayMenu);
 
-            packet.WriteByte((byte)menu.Type);
+            packet.WriteByte((byte)merchant.Menu.Type);
+            packet.WriteByte((byte)GameObjectType.Merchant);
+            packet.WriteInt32(merchant.Id);
+            packet.WriteByte(1);
+            packet.WriteUInt16(merchant.Sprite);
+            packet.WriteByte(0);
+            packet.WriteByte(1);
+            packet.WriteUInt16(merchant.Sprite);
+            packet.WriteByte(0);
+            packet.WriteByte(0); //?
+            packet.WriteString8(merchant.Name);
+            packet.WriteString16(merchant.Menu.Text);
 
-            if (obj is Merchant)
-                packet.WriteByte((byte)GameObjectType.Merchant);
-            else if (obj is Item)
-                packet.WriteByte((byte)GameObjectType.Item);
-            else
-                packet.WriteByte((byte)GameObjectType.Misc);
-
+            switch(merchant.Menu.Type)
+            {
+                case MenuType.Menu:
+                    packet.WriteByte((byte)merchant.Menu.Count);
+                    foreach(Pursuit p in merchant.Menu)
+                    {
+                        packet.WriteString8(p.Text);
+                        packet.WriteUInt16((ushort)p.PursuitId);
+                    }
+                    break;
+                case MenuType.TextEntry:
+                    break;
+                case MenuType.Buy:
+                    break;
+                case MenuType.Sell:
+                    break;
+                case MenuType.Display:
+                    break;
+                case MenuType.LearnSpell:
+                    break;
+                case MenuType.LearnSkill:
+                    break;
+                default:
+                    return null;
+            }
             return packet;
         }
-        internal ServerPacket DisplayDialog(Dialog dialog)
+        internal ServerPacket DisplayDialog(object invoker, Dialog dialog)
         {
             var packet = new ServerPacket(ServerOpCodes.DisplayDialog);
+            Merchant m = null;
+            Item i = null;
 
-            //dialog stuff
+            packet.WriteByte((byte)(dialog?.Type ?? DialogType.CloseDialog));
+
+            if (dialog == null || dialog.Type == DialogType.CloseDialog)
+                return packet;
+
+            if (invoker is Merchant)
+            {
+                m = invoker as Merchant;
+                packet.WriteByte((byte)GameObjectType.Merchant);
+            }
+            else if (invoker is Item)
+            {
+                i = invoker as Item;
+                packet.WriteByte((byte)GameObjectType.Item);
+            }
+
+            packet.WriteInt32(m?.Id ?? 0);
+            packet.WriteByte(0);
+            packet.WriteUInt16(m?.Sprite ?? i.Sprite);
+            packet.WriteByte(0);
+            packet.WriteByte(0);
+            packet.WriteUInt16(m?.Sprite ?? i.Sprite);
+            packet.WriteByte(0);
+            packet.WriteUInt16(dialog.PursuitId);
+            packet.WriteUInt16(dialog.Id);
+            packet.WriteBoolean(dialog.PrevBtn);
+            packet.WriteBoolean(dialog.NextBtn);
+            packet.WriteByte(0);
+            packet.WriteString8(m?.Name ?? i.Name);
+            packet.WriteString16(dialog.Message);
+
+            switch (dialog.Type)
+            {
+                case DialogType.Normal:
+                    break;
+                case DialogType.ItemMenu:
+                    packet.WriteByte((byte)dialog.Options.Count);
+
+                    foreach (var opt in dialog.Options)
+                        packet.WriteString8(opt.Key);
+                    break;
+                case DialogType.TextEntry:
+                    packet.WriteUInt16(dialog.MaxCharacters);
+                    break;
+                case DialogType.Speak:
+                    break;
+                case DialogType.CreatureMenu:
+                    packet.WriteByte((byte)(dialog.Options.Count));
+
+                    foreach (var opt in dialog.Options)
+                        packet.WriteString8(opt.Key);
+                    break;
+            }
 
             return packet;
         }
