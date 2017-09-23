@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Threading;
 
 namespace Chaos
@@ -41,7 +42,7 @@ namespace Chaos
             
             Seed = client.Crypto.Seed;
             Key = client.Crypto.Key;
-            EndPoint = new IPEndPoint(Dns.GetHostEntry(Host.Name).AddressList[1], Client.Server.LocalPort);
+            EndPoint = new IPEndPoint(new IPAddress(Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(ip => ip.GetAddressBytes().Length == 4).GetAddressBytes()), Client.Server.LocalPort);
         }
     }
 }

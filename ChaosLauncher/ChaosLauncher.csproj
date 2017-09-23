@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Flags.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="SafeNativeMethods.cs" />
     <Compile Include="Launcher.cs">
       <SubType>Form</SubType>
@@ -83,7 +84,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)$(TargetName).exe" "C:\Users\Sichi\Desktop\ChaosProject\ChaosDa\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(TargetDir)$(TargetName).exe" "C:\Users\mewbb\Desktop\chaosmap\Dark Ages\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

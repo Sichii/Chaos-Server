@@ -23,7 +23,7 @@ namespace ChaosLauncher
             //create the process
             SafeNativeMethods.CreateProcess(
 #if DEBUG
-                @"C:\Users\Sichi\Desktop\ChaosProject\ChaosDa\Darkages.exe"
+                Paths.DarkAgesExe
 #else
                 @"Darkages.exe"
 #endif
@@ -40,7 +40,7 @@ namespace ChaosLauncher
                 //use access handle to inject dawnd.dll
                 InjectDLL(accessHnd,
 #if DEBUG
-                    @"C:\Users\Sichi\Desktop\ChaosProject\ChaosDa\dawnd.dll"
+                    $@"{Paths.DarkAgesDir}dawnd.dll"
 #else
                     "dawnd.dll"
 #endif
@@ -54,7 +54,7 @@ namespace ChaosLauncher
                 memory.WriteByte(0xEB);
 
                 //change direct ip
-                byte[] address = Dns.GetHostEntry("chaosserver.dynu.net").AddressList.FirstOrDefault(ip => ip.GetAddressBytes().Length == 4).GetAddressBytes();
+                byte[] address = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.GetAddressBytes().Length == 4).GetAddressBytes();
                 memory.Position = 0x4333C2;
                 memory.WriteByte(106);
                 memory.WriteByte(address[3]);

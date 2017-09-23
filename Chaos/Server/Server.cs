@@ -55,7 +55,7 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
-                writer.Write(Dns.GetHostEntry(Host.Name).AddressList[1].GetAddressBytes());
+                writer.Write(Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(address => address.GetAddressBytes().Length == 4).GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
                 writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos;Under Construction\0"));
@@ -74,7 +74,7 @@ namespace Chaos
             Game.Set(this);
 
             //display dns ip for others to connect to
-            WriteLog($"Server IP: {Dns.GetHostAddresses(Host.Name)[1]}");
+            WriteLog($"Server IP: {Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(ip => ip.GetAddressBytes().Length == 4).GetAddressBytes()}");
             WriteLog("Starting the serverloop...");
 
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -99,6 +99,9 @@ namespace Chaos
         {
             lock (SyncWrite)
             {
+                if (!Directory.Exists(Paths.LogFiles))
+                    Directory.CreateDirectory(Paths.LogFiles);
+
                 if (client == null)
                     message = $@"[{DateTime.Now.ToString("HH:mm")}] Server: {message}";
                 else

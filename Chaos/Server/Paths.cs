@@ -6,7 +6,7 @@ namespace Chaos
     {
         internal static string Dir =>
 #if DEBUG
-            @"C:\Users\Sichi\Desktop\ChaosProject\";
+            @"C:\Users\mewbb\Desktop\chaosmap\";
 #else
             AppDomain.CurrentDomain.BaseDirectory;
 #endif
