@@ -21,31 +21,30 @@ namespace Chaos
         internal byte FaceSprite { get; set; }
 
         //Head
-        internal ushort HeadSprite => User.Equipment[(byte)EquipmentSlot.OverHelm]?.Sprite ?? User.Equipment[(byte)EquipmentSlot.Helmet]?.Sprite ?? HairSprite;
-        internal byte HeadColor => User.Equipment[(byte)EquipmentSlot.OverHelm]?.Color ?? User.Equipment[(byte)EquipmentSlot.Helmet]?.Color ?? HairColor;
+        internal ushort HeadSprite => User.Equipment[EquipmentSlot.OverHelm]?.EquipmentPair.Item2 ?? User.Equipment[EquipmentSlot.Helmet]?.EquipmentPair.Item2 ?? HairSprite;
+        internal byte HeadColor => User.Equipment[EquipmentSlot.OverHelm]?.Color ?? User.Equipment[EquipmentSlot.Helmet]?.Color ?? HairColor;
 
         //Body
-        internal ushort ArmorSprite1 => User.Equipment[(byte)EquipmentSlot.Armor]?.Sprite ?? 0;
-        [JsonProperty]
-        internal ushort ArmorSprite2 = 0;
-        internal ushort OvercoatSprite => User.Equipment[(byte)EquipmentSlot.Overcoat]?.Sprite ?? 0;
-        internal byte OvercoatColor => User.Equipment[(byte)EquipmentSlot.Overcoat]?.Color ?? 0;
+        internal ushort ArmorSprite1 => User.Equipment[EquipmentSlot.Armor]?.EquipmentPair.Item2 ?? 0;
+        internal ushort ArmorSprite2 => ArmorSprite1;
+        internal ushort OvercoatSprite => User.Equipment[EquipmentSlot.Overcoat]?.EquipmentPair.Item2 ?? 0;
+        internal byte OvercoatColor => User.Equipment[EquipmentSlot.Overcoat]?.Color ?? 0;
 
         //Boots
-        internal byte BootsSprite => (byte)(User.Equipment[(byte)EquipmentSlot.Boots]?.Sprite ?? 0);
-        internal byte BootsColor => User.Equipment[(byte)EquipmentSlot.Boots]?.Color ?? 0;
+        internal byte BootsSprite => (byte)(User.Equipment[EquipmentSlot.Boots]?.EquipmentPair.Item2 ?? 0);
+        internal byte BootsColor => User.Equipment[EquipmentSlot.Boots]?.Color ?? 0;
 
         //Hands
-        internal byte ShieldSprite => (byte)(User.Equipment[(byte)EquipmentSlot.Shield]?.Sprite ?? 0);
-        internal ushort WeaponSprite => (byte)(User.Equipment[(byte)EquipmentSlot.Weapon]?.Sprite ?? 0);
+        internal byte ShieldSprite => (byte)(User.Equipment[EquipmentSlot.Shield]?.EquipmentPair.Item2 ?? 0);
+        internal ushort WeaponSprite => (byte)(User.Equipment[EquipmentSlot.Weapon]?.EquipmentPair.Item2 ?? 0);
 
         //Accessories
-        internal byte AccessoryColor1 => User.Equipment[(byte)EquipmentSlot.Accessory1]?.Color ?? 0;
-        internal byte AccessoryColor2 => User.Equipment[(byte)EquipmentSlot.Accessory2]?.Color ?? 0;
-        internal byte AccessoryColor3 => User.Equipment[(byte)EquipmentSlot.Accessory3]?.Color ?? 0;
-        internal ushort AccessorySprite1 => User.Equipment[(byte)EquipmentSlot.Accessory1]?.Sprite ?? 0;
-        internal ushort AccessorySprite2 => User.Equipment[(byte)EquipmentSlot.Accessory2]?.Sprite ?? 0;
-        internal ushort AccessorySprite3 => User.Equipment[(byte)EquipmentSlot.Accessory3]?.Sprite ?? 0;
+        internal byte AccessoryColor1 => User.Equipment[EquipmentSlot.Accessory1]?.Color ?? 0;
+        internal byte AccessoryColor2 => User.Equipment[EquipmentSlot.Accessory2]?.Color ?? 0;
+        internal byte AccessoryColor3 => User.Equipment[EquipmentSlot.Accessory3]?.Color ?? 0;
+        internal ushort AccessorySprite1 => User.Equipment[EquipmentSlot.Accessory1]?.EquipmentPair.Item2 ?? 0;
+        internal ushort AccessorySprite2 => User.Equipment[EquipmentSlot.Accessory2]?.EquipmentPair.Item2 ?? 0;
+        internal ushort AccessorySprite3 => User.Equipment[EquipmentSlot.Accessory3]?.EquipmentPair.Item2 ?? 0;
 
         //Other
         [JsonProperty]
@@ -90,7 +89,7 @@ namespace Chaos
             BodySprite = bodySprite;
             BodyColor = bodyColor;
             FaceSprite = faceSprite;
-            ArmorSprite2 = armorSprite2;
+            //ArmorSprite2 = armorSprite2;
             NameTagStyle = nameTagStyle;
             GroupName = groupName;
         }

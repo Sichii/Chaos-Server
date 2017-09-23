@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\EffectsBar.cs" />
     <Compile Include="Client\Legend.cs" />
     <Compile Include="Client\Panel.cs" />
     <Compile Include="Client\UserOptions.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Client\Attributes.cs" />
     <Compile Include="Client\DisplayData.cs" />
     <Compile Include="Constructs\GameTime.cs" />
+    <Compile Include="Structs\Effect.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\MetaFileNode.cs" />
     <Compile Include="Structs\Point.cs" />

@@ -1,4 +1,6 @@
-﻿namespace Chaos
+﻿using System;
+
+namespace Chaos
 {
     static class Paths
     {

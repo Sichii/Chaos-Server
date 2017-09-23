@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chaos
 {
-    internal delegate void OnUseDelegate(Client client, Server server, Item item);
+    internal delegate void OnUseDelegate(Client client, Server server, object args);
     internal delegate Item ItemCreationDelegate(int count);
     internal delegate Skill SkillCreationDelegate();
     internal delegate Spell SpellCreationDelegate();
@@ -17,36 +18,35 @@ namespace Chaos
 
         internal CreationEngine()
         {
-            Items = new Dictionary<string, ItemCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
-            Skills = new Dictionary<string, SkillCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
-            Spells = new Dictionary<string, SpellCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
-            Effects = new Dictionary<string, OnUseDelegate>(StringComparer.CurrentCultureIgnoreCase);
-
             #region Items
+            Items = new Dictionary<string, ItemCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
             Items.Add("Admin Trinket", new ItemCreationDelegate(AdminTrinket));
             Items.Add("Test Item", new ItemCreationDelegate(TestItem));
+            Items.Add("Test Equipment", new ItemCreationDelegate(TestEquipment));
             #endregion
 
-
             #region Skills
+            Skills = new Dictionary<string, SkillCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
             Skills.Add("Test Skill 1", new SkillCreationDelegate(TestSkill1));
             #endregion
 
-
             #region Spells
-            Spells.Add("Test Spell 1", new SpellCreationDelegate(TestSpell1));
+            Spells = new Dictionary<string, SpellCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Spells.Add("Mend", new SpellCreationDelegate(Mend));
             #endregion
 
-
             #region OnUseDelegates
+            Effects = new Dictionary<string, OnUseDelegate>(StringComparer.CurrentCultureIgnoreCase);
             Effects.Add("NormalObj", new OnUseDelegate(NormalObj));
             Effects.Add("Admin Trinket", new OnUseDelegate(AdminTrinket));
             Effects.Add("Test Item", new OnUseDelegate(NormalObj));
             Effects.Add("Test Equipment", new OnUseDelegate(Equipment));
             Effects.Add("Test Skill 1", new OnUseDelegate(TestSkill1));
-            Effects.Add("Test Spell 1", new OnUseDelegate(TestSpell1));
+            Effects.Add("Mend", new OnUseDelegate(Mend));
             #endregion
         }
+
+        #region Interface
         internal OnUseDelegate GetEffect(string itemName) => Effects.ContainsKey(itemName) ? Effects[itemName] : Effects["NormalObj"];
         internal Gold CreateGold(Client client, uint amount, Point groundPoint) => new Gold(GetGoldSprite(amount), groundPoint, client.User.Map, amount);
         internal Item CreateItem(string name) => Items[name](1);
@@ -87,37 +87,19 @@ namespace Chaos
         }
         internal Skill CreateSkill(string name) => Skills[name]();
         internal Spell CreateSpell(string name) => Spells[name]();
+        #endregion
 
         #region Items
-        private Item AdminTrinket(int count) => new Item(0, 13709, "Admin Trinket", count, TimeSpan.Zero, EquipmentSlot.None, true);
-        private Item TestItem(int count) => new Item(0, 1108, "Test Item", count, TimeSpan.Zero, EquipmentSlot.None, false, 0, true);
-        private Item TestEquipment(int count) => new Item(0, 1108, "Test Equipment", count, TimeSpan.Zero, EquipmentSlot.Armor, false, 0, true, 10000, 10000, 5);
-        #endregion
-        #region Skills
-        private Skill TestSkill1() => new Skill(0, "Test Skill 1", 78, TimeSpan.Zero);
-        #endregion
-        #region Spells
-        private Spell TestSpell1() => new Spell(0, "Test Spell 1", 1, 118, string.Empty, 2, TimeSpan.Zero);
-        #endregion
-
-
-        #region CommonDelegates
-        private bool Exchange(Client client, Server server, Item item)
+        private void NormalObj(Client client, Server server, object args) { }
+        private void Equipment(Client client, Server server, object args)
         {
-            //if client is in an active exchange
-            //place the item in the exchange
-
-            return false;
-        }
-        private void NormalObj(Client client, Server server, Item item) { }
-        private void Equipment(Client client, Server server, Item item)
-        {
+            Item item = (Item)args;
             Item outItem;
             if (client.User.Equipment.Contains(item))
             {
-                if (client.User.Equipment.TryUnequip(item.EquipmentSlot, out outItem))
+                if (client.User.Equipment.TryUnequip(item.EquipmentPair.Item1, out outItem))
                 {
-                    client.Enqueue(server.Packets.RemoveEquipment(item.EquipmentSlot));
+                    client.Enqueue(server.Packets.RemoveEquipment(item.EquipmentPair.Item1));
                     if (client.User.Inventory.AddToNextSlot(outItem))
                         client.Enqueue(server.Packets.AddItem(item));
                 }
@@ -130,23 +112,62 @@ namespace Chaos
                 if (outItem != null && client.User.Inventory.AddToNextSlot(outItem))
                     client.Enqueue(server.Packets.AddItem(outItem));
             }
+
+            foreach (User user in Game.World.ObjectsVisibleFrom(client.User).OfType<User>())
+                user.Client.Enqueue(server.Packets.DisplayUser(client.User));
+
+            client.Enqueue(server.Packets.DisplayUser(client.User));
+        }
+        private bool Exchange(Client client, Server server, Item item)
+        {
+            //if client is in an active exchange
+            //place the item in the exchange
+
+            return false;
+        }
+
+        private Item AdminTrinket(int count) => new Item(0, 13709, "Admin Trinket", count, TimeSpan.Zero, null, true);
+        private void AdminTrinket(Client client, Server server, object args)
+        {
+            client.ActiveObject = args;
+            client.CurrentDialog = Game.Dialogs[1];
+            client.Enqueue(server.Packets.DisplayDialog(args, client.CurrentDialog));
+        }
+
+        private Item TestItem(int count) => new Item(0, 1108, "Test Item", count, TimeSpan.Zero, null, false, 0, true);
+        private Item TestEquipment(int count) => new Item(0, 1108, "Test Equipment", count, TimeSpan.Zero, new Tuple<EquipmentSlot, ushort>(EquipmentSlot.Armor, 44), false, 0, false, 10000, 10000, 5);
+        #endregion
+
+        #region Skills
+        private Skill TestSkill1() => new Skill(0, "Test Skill 1", 78, TimeSpan.Zero);
+        private void TestSkill1(Client client, Server server, object args)
+        {
+            //do things
         }
         #endregion
 
-        #region OnUseDelegates
-        private void AdminTrinket(Client client, Server server, Item item)
+        #region Spells
+        private Spell Mend() => new Spell(0, "Mend", SpellType.Targeted, 118, string.Empty, 1, TimeSpan.Zero);
+        private void Mend(Client client, Server server, object args)
         {
-            client.ActiveObject = item;
-            client.CurrentDialog = Game.Dialogs[1];
-            client.Enqueue(server.Packets.DisplayDialog(item, client.CurrentDialog));
-        }
-        private void TestSkill1(Client client, Server server, Item item)
-        {
-            //do things
-        }
-        private void TestSpell1(Client client, Server server, Item item)
-        {
-            //do things
+            Creature target = (Creature)args;
+            Animation animation = new Animation(target.Id, client.User.Id, 4, 0, 100);
+            uint baseAmount = 10;
+
+            baseAmount += (uint)(client.User.Attributes.CurrentWis * 5);
+            target.CurrentHP = (target.CurrentHP + baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP + baseAmount);
+
+            foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
+            {
+                nearbyUser.Client.Enqueue(server.Packets.Animation(animation));
+                nearbyUser.Client.Enqueue(server.Packets.HealthBar(target));
+            }
+
+            User user = target as User;
+
+            user?.Client.Enqueue(server.Packets.Animation(animation));
+            user?.Client.Enqueue(server.Packets.HealthBar(target));
+            user?.Client.SendAttributes(StatUpdateFlags.Vitality);
         }
         #endregion
     }

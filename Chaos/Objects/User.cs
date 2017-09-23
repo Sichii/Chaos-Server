@@ -54,6 +54,9 @@ namespace Chaos
         internal DateTime LastClicked { get; set; }
         internal bool Grouped => Group != null;
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
+        internal override byte HealthPercent => (byte)(((CurrentHP * 100) / MaximumHP) > 100 ? 100 : ((CurrentHP * 100) / MaximumHP));
+        internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
+        internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
 
         internal User(string name, Point point, Map map, Direction direction)
             :base(name, 0, CreatureType.User, point, map, direction)

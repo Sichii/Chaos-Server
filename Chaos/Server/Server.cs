@@ -30,7 +30,7 @@ namespace Chaos
         internal GameTime ServerTime => GameTime.Now;
         internal LightLevel LightLevel => ServerTime.TimeOfDay;
         internal List<Redirect> Redirects { get; set; }
-        internal static List<string> Admins = new List<string>() { "Sichi", "Jinori", "Vorlof" };
+        internal static List<string> Admins = new List<string>() { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend" };
 
         internal Server(IPAddress ip, int port)
         {

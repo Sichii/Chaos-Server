@@ -2,13 +2,13 @@
 {
     internal struct Animation
     {
-        internal uint TargetId { get; }
-        internal uint SourceId { get; }
+        internal int TargetId { get; }
+        internal int SourceId { get; }
         internal ushort TargetAnimation { get; }
         internal ushort SourceAnimation { get; }
         internal ushort AnimationSpeed { get; }
 
-        internal Animation(uint targetId, uint sourceId, ushort targetAnimation, ushort sourceAnimation, ushort speed)
+        internal Animation(int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort speed)
         {
             TargetId = targetId;
             SourceId = sourceId;

@@ -194,7 +194,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.AddItem);
 
             packet.WriteByte(item.Slot);
-            packet.WriteUInt16(item.Sprite);
+            packet.WriteUInt16(item.SpritePair.Item2);
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
             packet.WriteInt32(item.Count);
@@ -223,13 +223,13 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket HealthBar(uint id, byte hpPct)
+        internal ServerPacket HealthBar(Creature obj)
         {
             var packet = new ServerPacket(ServerOpCodes.HealthBar);
 
-            packet.WriteUInt32(id);
+            packet.WriteInt32(obj.Id);
             packet.WriteByte(0); //i've seen this as 0 if you get hit by someone else, or 2 if you're hitting something else... but it doesnt change anything
-            packet.WriteByte(hpPct);
+            packet.WriteByte(obj.HealthPercent);
             //packet.WriteByte()  This byte indicates a sound to play when the hp bar hits.(1 for normal assail, etc) You can either (255) or leave off this byte entirely for no sound
 
             return packet;
@@ -254,7 +254,7 @@ namespace Chaos
 
             packet.WriteByte(spell.Slot);
             packet.WriteUInt16(spell.Sprite);
-            packet.WriteByte(spell.Type);
+            packet.WriteByte((byte)spell.Type);
             packet.WriteString8(spell.Name); //this is where youd have "Spell Name (Lev:100/100)" if you wanted it, spell leveling is completely server side and optional
             packet.WriteString8(spell.Prompt);
             packet.WriteByte(spell.CastLines);
@@ -313,8 +313,8 @@ namespace Chaos
         {
             var packet = new ServerPacket(ServerOpCodes.Animation);
 
-            packet.WriteUInt32(animation.TargetId);
-            packet.WriteUInt32(animation.SourceId);
+            packet.WriteInt32(animation.TargetId);
+            packet.WriteInt32(animation.SourceId);
             packet.WriteUInt16(animation.TargetAnimation);
             packet.WriteUInt16(animation.SourceAnimation);
             packet.WriteUInt16(animation.AnimationSpeed);
@@ -436,10 +436,10 @@ namespace Chaos
 
             packet.WriteInt32(m?.Id ?? 0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.Sprite);
+            packet.WriteUInt16(m?.Sprite ?? i.SpritePair.Item2);
             packet.WriteByte(0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.Sprite);
+            packet.WriteUInt16(m?.Sprite ?? i.SpritePair.Item2);
             packet.WriteByte(0);
             packet.WriteUInt16(dialog.PursuitId);
             packet.WriteUInt16(dialog.Id);
@@ -558,7 +558,7 @@ namespace Chaos
             packet.WriteInt32(user.Id);
             for(byte slot = 1; slot < user.Equipment.Length; slot++)
             {
-                packet.WriteUInt16(user.Equipment[slot]?.Sprite ?? 0);
+                packet.WriteUInt16(user.Equipment[slot]?.SpritePair.Item2 ?? 0);
                 packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
             }
             packet.WriteBoolean(user.UserOptions.Group);
@@ -606,11 +606,11 @@ namespace Chaos
         {
             var packet = new ServerPacket(ServerOpCodes.AddEquipment);
 
-            packet.WriteByte((byte)item.EquipmentSlot);
-            packet.WriteUInt16((ushort)(item.Sprite + 32768));
+            packet.WriteByte((byte)item.EquipmentPair.Item1);
+            packet.WriteUInt16(item.SpritePair.Item2);
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
-            packet.WriteByte(0);
+            packet.WriteByte(0); //type...?
             packet.WriteUInt32(item.MaxDurability);
             packet.WriteUInt32(item.CurrentDurability);
 

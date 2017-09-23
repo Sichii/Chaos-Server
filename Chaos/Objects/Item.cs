@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Runtime.Serialization;
 
 namespace Chaos
 {
@@ -22,13 +23,14 @@ namespace Chaos
         [JsonProperty]
         internal bool AccountBound { get; }
         [JsonProperty]
-        internal EquipmentSlot EquipmentSlot { get; }
+        internal Tuple<EquipmentSlot, ushort> EquipmentPair { get; }
+        internal Tuple<ushort, ushort> SpritePair => new Tuple<ushort, ushort>(base.Sprite, (ushort)(base.Sprite + CONSTANTS.ITEM_SPRITE_OFFSET));
 
         internal Item(byte slot, ushort sprite, string name, int count, TimeSpan cooldown,
-            EquipmentSlot equipmentSlot = EquipmentSlot.None, bool accountBound = false, byte color = 0, bool stackable = false, uint maximumDurability = 0, uint currentDurability = 0, byte weight = 1)
-            :base(slot, (ushort)(sprite + CONSTANTS.ITEM_SPRITE_OFFSET), name, cooldown)
+            Tuple<EquipmentSlot, ushort> equipmentPair = null, bool accountBound = false, byte color = 0, bool stackable = false, uint maximumDurability = 0, uint currentDurability = 0, byte weight = 1)
+            :base(slot, sprite, name, cooldown)
         {
-            EquipmentSlot = EquipmentSlot.None;
+            EquipmentPair = equipmentPair;
             Color = color;
             Count = count;
             Stackable = stackable;
@@ -39,10 +41,10 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal Item(byte slot, ushort sprite, string name, TimeSpan cooldown, EquipmentSlot equipmentSlot, bool accountBound, byte color, int count, bool stackable, uint maxDurability, uint currentDurability, byte weight)
+        internal Item(byte slot, ushort sprite, string name, TimeSpan cooldown, Tuple<EquipmentSlot, ushort> equipmentPair, bool accountBound, byte color, int count, bool stackable, uint maxDurability, uint currentDurability, byte weight)
             :base(slot, sprite, name, cooldown)
         {
-            EquipmentSlot = equipmentSlot;
+            EquipmentPair = equipmentPair;
             Color = color;
             Count = count;
             Stackable = stackable;
@@ -52,7 +54,7 @@ namespace Chaos
             AccountBound = accountBound;
         }
 
-        internal GroundItem GroundItem(Point point, Map map, int count) => new GroundItem(Sprite, point, map,
-            new Item(0, Sprite, Name, Cooldown, EquipmentSlot, AccountBound, Color, count, Stackable, MaxDurability, CurrentDurability, Weight));
+        internal GroundItem GroundItem(Point point, Map map, int count) => new GroundItem(SpritePair.Item2, point, map,
+            new Item(0, SpritePair.Item1, Name, Cooldown, EquipmentPair, AccountBound, Color, count, Stackable, MaxDurability, CurrentDurability, Weight));
     }
 }

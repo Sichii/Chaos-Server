@@ -10,6 +10,9 @@ namespace Chaos
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
         private List<PursuitIds> AvailablePursuits { get; }
         internal Menu Menu { get; }
+        internal override byte HealthPercent => 100;
+        internal override uint CurrentHP { get { return uint.MaxValue; } set { } }
+        internal override uint MaximumHP { get { return uint.MaxValue; } }
 
         private Dictionary<PursuitIds, Pursuit> AllPursuits = new Dictionary<PursuitIds, Pursuit>()
         {

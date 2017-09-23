@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Chaos
@@ -35,7 +36,11 @@ namespace Chaos
                         new KeyValuePair<string, ushort>("Kill User", 5),
                     })
                 },
-                { 2, TextEntryDialog(2, 2, @"To where? ""mapid x y"" or ""characterName""", 13, 0) },
+                { 2, TextEntryDialog(2, 2, 
+                    "To where? \"mapid x y\" or \"characterName\"\r" +
+                    "MAP LIST:\r" +
+                    $@"{string.Join("\r", Game.World.Maps.Select(map => $@"{map.Key.ToString()}: {map.Value.Name}"))} ", 12, 0)
+                },
                 { 3, TextEntryDialog(3, 3, "Who would you like to summon?", 12, 0) },
                 { 4, ItemMenuDialog(4, 4, "This will summon everyone, are you sure?",
                     new List<KeyValuePair<string, ushort>>()

@@ -109,6 +109,8 @@ namespace Chaos
                 newUser.Guild = World.Guilds["Chaos Team"];
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Item"));
+                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Equipment"));
+                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Mend"));
                 newUser.Attributes.Gold += 500000000;
             }
 
@@ -152,7 +154,7 @@ namespace Chaos
                     client.Enqueue(Server.Packets.ClientWalk(direction, client.User.Point));
 
                     //for all the things that will go off screen, remove them from the before list, our screen, and remove us from their screen(if theyre a user)
-                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter, new WorldObjectComparer()))
+                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter, new WorldObjectComparer()).ToList())
                     {
                         (obj as User)?.Client.Enqueue(Server.Packets.RemoveObject(client.User));
                         client.Enqueue(Server.Packets.RemoveObject(obj));
@@ -356,14 +358,18 @@ namespace Chaos
                 {
                     //do things
                 }
-                
             }
-
         }
 
         internal static void UseSpell(Client client, byte slot, int targetId, Point targetPoint)
         {
-            throw new NotImplementedException();
+            Spell spell = client.User.SpellBook[slot];
+            VisibleObject target;
+
+            if (targetId == client.User.Id)
+                spell.Activate(client, Server, client.User);
+            else if (World.TryGetVisibleObject(targetId, out target, client.User.Map) && target.Point.Distance(targetPoint) < 5)
+                spell.Activate(client, Server, target);
         }
 
         internal static void JoinClient(Client client, byte seed, byte[] key, string name, uint id)
@@ -478,6 +484,9 @@ namespace Chaos
         internal static void AnimateUser(Client client, byte index)
         {
             client.Enqueue(Server.Packets.AnimateUser(client.User.Id, index, 100));
+
+            foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
+                user.Client.Enqueue(Server.Packets.AnimateUser(client.User.Id, index, 100));
         }
 
         internal static void DropGold(Client client, uint amount, Point groundPoint)
@@ -753,6 +762,7 @@ namespace Chaos
                             break;
                         case DialogArgsType.MenuResponse:
                             client.CurrentDialog = client.CurrentDialog.Next(option);
+                            effectArgs = option;
                             break;
                         case DialogArgsType.TextResponse:
                             client.CurrentDialog = client.CurrentDialog.Next();
@@ -854,9 +864,14 @@ namespace Chaos
                 //if it succeeds, display the item in the user's inventory, and remove it from the equipment panel
                 client.User.Inventory.AddToNextSlot(item);
                 client.Enqueue(Server.Packets.RemoveEquipment(slot));
-
+                client.Enqueue(Server.Packets.AddItem(item));
                 //set hp/mp?
                 client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
+
+                foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
+                    user.Client.Enqueue(Server.Packets.DisplayUser(client.User));
+
+                client.Enqueue(Server.Packets.DisplayUser(client.User));
             }
         }
 
@@ -906,7 +921,10 @@ namespace Chaos
 
         internal static void DisplayChant(Client client, string chant)
         {
-            throw new NotImplementedException();
+            foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
+                user.Client.SendPublicMessage(PublicMessageType.Chant, client.User.Id, chant);
+
+            client.SendPublicMessage(PublicMessageType.Chant, client.User.Id, chant);
         }
 
         internal static void Personal(Client client, byte[] portraitData, string profileMsg)

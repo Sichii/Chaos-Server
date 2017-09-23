@@ -15,6 +15,7 @@ namespace Chaos
         private Dictionary<byte, T> Objects { get; set; }
         [JsonProperty]
         private byte[] Invalid { get; }
+        internal T this[EquipmentSlot slot] => this[(byte)slot];
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -70,7 +71,7 @@ namespace Chaos
             if (obj is Item)
             {
                 Item objItem = obj as Item;
-                Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.Sprite && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
+                Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.SpritePair.Item1 && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
                 if (objItem.Stackable && existingItem?.Stackable == true)
                 {
                     objItem.Count += existingItem.Count;
@@ -90,7 +91,7 @@ namespace Chaos
         internal bool TryEquip(T item, out T outItem)
         {
             outItem = null;
-            EquipmentSlot slot = (item as Item).EquipmentSlot;
+            EquipmentSlot slot = (item as Item).EquipmentPair.Item1;
 
             if (slot == EquipmentSlot.None || !Valid((byte)slot))
             {

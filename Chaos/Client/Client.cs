@@ -235,6 +235,7 @@ namespace Chaos
         internal void SendLoginMessage(LoginMessageType messageType, string message = "") => Enqueue(Server.Packets.LoginMessage(messageType, message));
         internal void SendAttributes(StatUpdateFlags updateType) => Enqueue(Server.Packets.Attributes(User.IsAdmin, updateType, User.Attributes));
         internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(Server.Packets.ServerMessage(messageType, message));
+        internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(Server.Packets.PublicChat(messageType, sourceId, message));
 
         ~Client()
         {

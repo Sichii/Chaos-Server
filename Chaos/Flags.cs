@@ -570,4 +570,19 @@ namespace Chaos
         KillMonster = 6,
     }
     #endregion
+
+    #region Skill/Spell
+
+    internal enum SpellType : byte
+    {
+        None = 0,
+        Prompt = 1,
+        Targeted = 2,
+        Prompt4 = 3,
+        Prompt3 = 4,
+        NoTarget = 5,
+        Prompt2 = 6,
+        Promp1 = 7,
+    }
+    #endregion
 }
