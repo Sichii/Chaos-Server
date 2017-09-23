@@ -254,6 +254,7 @@ namespace Chaos
                     RemoveObjectFromMap(user);
 
                 AddObjectToMap(user, warp.TargetLocation);
+
             }
         }
 

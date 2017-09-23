@@ -15,8 +15,9 @@
         {
             user.Attributes.CurrentHP = 0;
             user.IsAlive = false;
-
             //strip buffs
+            //disable casting
+            //death stuff
 
             World.Refresh(client, true);
         }

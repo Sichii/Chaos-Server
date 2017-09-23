@@ -17,7 +17,12 @@ namespace Chaos
         private Dictionary<PursuitIds, Pursuit> AllPursuits = new Dictionary<PursuitIds, Pursuit>()
         {
             { PursuitIds.None, new Pursuit("None", PursuitIds.None, 0) },
-            { PursuitIds.Revive, new Pursuit("Revive", PursuitIds.Revive, 0) }
+            { PursuitIds.Revive, new Pursuit("Revive", PursuitIds.Revive, 0) },
+            { PursuitIds.Teleport, new Pursuit("Teleport", PursuitIds.Teleport, 2) },
+            { PursuitIds.Summon, new Pursuit("Summon", PursuitIds.Summon, 3) },
+            { PursuitIds.SummonAll, new Pursuit("Summon All", PursuitIds.SummonAll, 4) },
+            { PursuitIds.KillUser, new Pursuit("Kill User", PursuitIds.KillUser, 5) },
+            { PursuitIds.Citizenship, new Pursuit("Citizenship", PursuitIds.Citizenship, 6) },
         };
 
         internal Merchant(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction, List<PursuitIds> availablePursuits, MenuType menuType = MenuType.Menu, string menuText = "What would you like to do?")

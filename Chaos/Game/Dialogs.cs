@@ -26,17 +26,17 @@ namespace Chaos
             //these will use dialog id to get the dialog
             DialogList = new Dictionary<ushort, Dialog>()
             {
-                { 0, CloseDialog() }, //close dialog, dont activate
+                { 0, CloseDialog() }, //close dialog, activate
                 { 1, ItemMenuDialog( 0, 1, "What would you like to do?",
                     new List<KeyValuePair<string, ushort>>()
                     {
-                        new KeyValuePair<string, ushort>("Teleport", 2), 
-                        new KeyValuePair<string, ushort>("Summon", 3), 
-                        new KeyValuePair<string, ushort>("Summon All", 4), 
+                        new KeyValuePair<string, ushort>("Teleport", 2),
+                        new KeyValuePair<string, ushort>("Summon", 3),
+                        new KeyValuePair<string, ushort>("Summon All", 4),
                         new KeyValuePair<string, ushort>("Kill User", 5),
                     })
                 },
-                { 2, TextEntryDialog(2, 2, 
+                { 2, TextEntryDialog(2, 2,
                     "To where? \"mapid x y\" or \"characterName\"\r" +
                     "MAP LIST:\r" +
                     $@"{string.Join("\r", Game.World.Maps.Select(map => $@"{map.Key.ToString()}: {map.Value.Name}"))} ", 12, 0)
@@ -50,7 +50,14 @@ namespace Chaos
                     })
                 },
                 { 5, TextEntryDialog(5, 5, "Who would you like to kill?", 12, 0) },
-                { ushort.MaxValue, null } //close dialog and activate
+                { 6, CreatureMenuDialog(7, 6, "Would you like to be a citizen?",
+                    new List<KeyValuePair<string, ushort>>()
+                    {
+                        new KeyValuePair<string, ushort>("Yes", 0),
+                        new KeyValuePair<string, ushort>("No", ushort.MaxValue),
+                    })
+                },
+                { ushort.MaxValue, null } //close dialog and not activate
             };
         }
 

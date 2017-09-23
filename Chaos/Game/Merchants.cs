@@ -19,6 +19,10 @@ namespace Chaos
                 {
                     "Deliope", new Merchant("Deliope", 61, CreatureType.Merchant, new Point(15, 10), Game.World.Maps[5031], Direction.South,
                     new List<PursuitIds>() { PursuitIds.Revive })
+                },
+                {
+                    "Celeste", new Merchant("Celeste", 57, CreatureType.Merchant, new Point(3, 16), Game.World.Maps[17500], Direction.South,
+                    new List<PursuitIds>() { PursuitIds.Revive, PursuitIds.Summon, PursuitIds.SummonAll, PursuitIds.Citizenship, PursuitIds.KillUser, PursuitIds.Teleport })
                 }
             };
         }

@@ -568,6 +568,7 @@ namespace Chaos
         SummonAll = 4,
         KillUser = 5,
         KillMonster = 6,
+        Citizenship = 7
     }
     #endregion
 
