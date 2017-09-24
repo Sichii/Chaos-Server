@@ -520,6 +520,7 @@ namespace Chaos
         Display = 6,
         LearnSpell = 8,
         LearnSkill = 9,
+        Dialog = 255
     }
     internal enum DialogArgsType : byte
     {
@@ -568,7 +569,8 @@ namespace Chaos
         SummonAll = 4,
         KillUser = 5,
         KillMonster = 6,
-        Citizenship = 7
+        LouresCitizenship = 7,
+        ReviveUser = 8,
     }
     #endregion
 

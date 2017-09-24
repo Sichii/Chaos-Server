@@ -368,7 +368,7 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket DisplayMenu(Merchant merchant)
+        internal ServerPacket DisplayMenu(Client client, Merchant merchant)
         {
             var packet = new ServerPacket(ServerOpCodes.DisplayMenu);
 
@@ -407,6 +407,9 @@ namespace Chaos
                     break;
                 case MenuType.LearnSkill:
                     break;
+                case MenuType.Dialog:
+                    client.Enqueue(Game.Server.Packets.DisplayDialog(merchant, Game.Dialogs[merchant.NextDialogId]));
+                    return null;
                 default:
                     return null;
             }

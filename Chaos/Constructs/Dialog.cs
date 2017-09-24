@@ -48,7 +48,7 @@
         /// Returns an empty dialog with type DialogType.Close
         /// </summary>
         /// <returns></returns>
-        internal static Dialog Close() => Game.Dialogs.CloseDialog();
+        internal static Dialog Close() => Game.Dialogs.CloseDialog(0);
 
     }
 }

@@ -111,6 +111,8 @@ namespace Chaos
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Item"));
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Equipment"));
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Mend"));
+                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Heal"));
+                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Srad Tut"));
                 newUser.Attributes.Gold += 500000000;
             }
 
@@ -118,7 +120,7 @@ namespace Chaos
             if (Server.DataBase.TryAddUser(newUser, client.CreateCharPw))
                 client.SendLoginMessage(LoginMessageType.Confirm);
             else
-                client.SendLoginMessage(LoginMessageType.Message, "Unable to create character. Possibly already exists???");
+                client.SendLoginMessage(LoginMessageType.Message, "Unable to create character. Name is already taken.");
         }
 
         internal static void RequestMapData(Client client)
@@ -451,15 +453,15 @@ namespace Chaos
                 client.SendServerMessage(ServerMessageType.Whisper, "That user is not online.");
             //otherwise, if the use is ignoring them, dont tell them. Make it seem like theyre succeeding, so they dont bother the person
             else if (targetUser.IgnoreList.Contains(client.User.Name))
-                client.SendServerMessage(ServerMessageType.Whisper, $@"{targetName} >> {message}");
+                client.SendServerMessage(ServerMessageType.Whisper, $@"{targetName} > {message}");
             //otherwise let them know if the target is on Do Not Disturb
             else if (targetUser.SocialStatus == SocialStatus.DoNotDisturb)
                 client.SendServerMessage(ServerMessageType.Whisper, $@"{targetName} doesn't want to be bothered right now.");
             //otherwise send the whisper
             else
             {
-                client.SendServerMessage(ServerMessageType.Whisper, $@"{targetName} >> {message}");
-                targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $@"{client.User.Name} << {message}");
+                client.SendServerMessage(ServerMessageType.Whisper, $@"{targetName} > {message}");
+                targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $@"{client.User.Name} ' {message}");
             }
         }
 
@@ -770,7 +772,7 @@ namespace Chaos
                             break;
                     }
                     //we use "dialog" here because we're closing the dialog, and we want to activate the effect of the dialog we were at as it closes
-                    if (client.CurrentDialog == null || (client.CurrentDialog.Type == DialogType.CloseDialog && Dialogs.ActivateEffect((PursuitIds)dialog.PursuitId)(client, Server, effectArgs)))
+                    if (client.CurrentDialog == null || (client.CurrentDialog.Type == DialogType.CloseDialog && Dialogs.ActivateEffect((PursuitIds)(dialog.PursuitId != 0 ? dialog.PursuitId : client.CurrentDialog.PursuitId))(client, Server, effectArgs)))
                     {
                         client.ActiveObject = null;
                         client.CurrentDialog = null;
@@ -821,7 +823,7 @@ namespace Chaos
                         if (merchant.ShouldDisplay)
                         {
                             client.ActiveObject = merchant;
-                            client.Enqueue(Server.Packets.DisplayMenu(merchant));
+                            client.Enqueue(Server.Packets.DisplayMenu(client, merchant));
                         }
                         else
                             merchant.LastClicked = DateTime.UtcNow;

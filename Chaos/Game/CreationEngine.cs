@@ -33,6 +33,8 @@ namespace Chaos
             #region Spells
             Spells = new Dictionary<string, SpellCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
             Spells.Add("Mend", new SpellCreationDelegate(Mend));
+            Spells.Add("Heal", new SpellCreationDelegate(Heal));
+            Spells.Add("Srad Tut", new SpellCreationDelegate(SradTut));
             #endregion
 
             #region OnUseDelegates
@@ -43,6 +45,8 @@ namespace Chaos
             Effects.Add("Test Equipment", new OnUseDelegate(Equipment));
             Effects.Add("Test Skill 1", new OnUseDelegate(TestSkill1));
             Effects.Add("Mend", new OnUseDelegate(Mend));
+            Effects.Add("Heal", new OnUseDelegate(Heal));
+            Effects.Add("Srad Tut", new OnUseDelegate(SradTut));
             #endregion
         }
 
@@ -156,6 +160,52 @@ namespace Chaos
 
             baseAmount += (uint)(client.User.Attributes.CurrentWis * 5);
             target.CurrentHP = (target.CurrentHP + baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP + baseAmount);
+
+            foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
+            {
+                nearbyUser.Client.Enqueue(server.Packets.Animation(animation));
+                nearbyUser.Client.Enqueue(server.Packets.HealthBar(target));
+            }
+
+            User user = target as User;
+
+            user?.Client.Enqueue(server.Packets.Animation(animation));
+            user?.Client.Enqueue(server.Packets.HealthBar(target));
+            user?.Client.SendAttributes(StatUpdateFlags.Vitality);
+        }
+
+        private Spell Heal() => new Spell(0, "Heal", SpellType.Targeted, 21, string.Empty, 1, new TimeSpan(0, 0, 2));
+        private void Heal(Client client, Server server, object args)
+        {
+            Creature target = (Creature)args;
+            Animation animation = new Animation(target.Id, client.User.Id, 157, 0, 100);
+            uint baseAmount = 100000;
+
+            baseAmount += (uint)(client.User.Attributes.CurrentWis * 500);
+            target.CurrentHP = (target.CurrentHP + baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP + baseAmount);
+
+            foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
+            {
+                nearbyUser.Client.Enqueue(server.Packets.Animation(animation));
+                nearbyUser.Client.Enqueue(server.Packets.HealthBar(target));
+            }
+
+            User user = target as User;
+
+            user?.Client.Enqueue(server.Packets.Animation(animation));
+            user?.Client.Enqueue(server.Packets.HealthBar(target));
+            user?.Client.SendAttributes(StatUpdateFlags.Vitality);
+        }
+        private Spell SradTut() => new Spell(0, "Srad Tut", SpellType.Targeted, 21, string.Empty, 1, new TimeSpan(0, 0, 2));
+        private void SradTut(Client client, Server server, object args)
+        {
+            Creature target = (Creature)args;
+            Animation animation = new Animation(target.Id, client.User.Id, 158, 0, 100);
+            uint baseAmount = 100000;
+
+            baseAmount += (uint)(client.User.Attributes.CurrentWis * 500);
+            target.CurrentHP = (target.CurrentHP - baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP - baseAmount);
+            
 
             foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
             {

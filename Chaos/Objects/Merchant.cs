@@ -8,6 +8,7 @@ namespace Chaos
     {
         internal DateTime LastClicked { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
+        internal ushort NextDialogId { get; }
         private List<PursuitIds> AvailablePursuits { get; }
         internal Menu Menu { get; }
         internal override byte HealthPercent => 100;
@@ -22,12 +23,14 @@ namespace Chaos
             { PursuitIds.Summon, new Pursuit("Summon", PursuitIds.Summon, 3) },
             { PursuitIds.SummonAll, new Pursuit("Summon All", PursuitIds.SummonAll, 4) },
             { PursuitIds.KillUser, new Pursuit("Kill User", PursuitIds.KillUser, 5) },
-            { PursuitIds.Citizenship, new Pursuit("Citizenship", PursuitIds.Citizenship, 6) },
+            { PursuitIds.LouresCitizenship, new Pursuit("Citizenship", PursuitIds.LouresCitizenship, 6) },
+            { PursuitIds.ReviveUser, new Pursuit("Revive User", PursuitIds.ReviveUser, 8) },
         };
 
-        internal Merchant(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction, List<PursuitIds> availablePursuits, MenuType menuType = MenuType.Menu, string menuText = "What would you like to do?")
+        internal Merchant(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction, ushort nextDialogId = 0, List<PursuitIds> availablePursuits = null, MenuType menuType = MenuType.Menu, string menuText = "What would you like to do?")
             : base(name, (ushort)(sprite + CONSTANTS.MERCHANT_SPRITE_OFFSET), type, point, map, direction)
         {
+            NextDialogId = nextDialogId;
             LastClicked = DateTime.MinValue;
             AvailablePursuits = availablePursuits;
             Menu = new Menu(AllPursuits.Where(kvp => AvailablePursuits.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList(), menuType, menuText);
