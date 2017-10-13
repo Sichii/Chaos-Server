@@ -1,4 +1,15 @@
-﻿using System;
+// ****************************************************************************
+// This file belongs to the Chaos-Server project.
+// 
+// This project is free and open-source, provided that any alterations or
+// modifications to any portions of this project adhere to the
+// Affero General Public License (Version 3).
+// 
+// A copy of the AGPLv3 can be found in the project directory.
+// You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
+// ****************************************************************************
+
+using System;
 
 namespace Chaos
 {
@@ -71,14 +82,13 @@ namespace Chaos
         }
         internal void DecryptDialog()
         {
-            byte num1 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45));
-            byte num2 = (byte)(num1 + 114);
-            byte num3 = (byte)(num1 + 40);
-            Data[2] ^= num2;
-            Data[3] ^= (byte)((num2 + 1) % 256);
+            byte num = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45));
+
+            Data[2] ^= (byte)(num + 114);
+            Data[3] ^= (byte)((num + 115) % 256);
             int num4 = Data[2] << 8 | Data[3];
             for (int index = 0; index < num4; ++index)
-                Data[4 + index] ^= (byte)((num3 + index) % 256);
+                Data[4 + index] ^= (byte)((num + index + 40) % 256);
 
             Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
             Array.Resize(ref Data, Data.Length - 6);

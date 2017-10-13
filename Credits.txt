@@ -1,0 +1,13 @@
+Primary Developers
+- Brandon Acton (Sichi) https://github.com/zahdjinn @ despereaux@live.com
+
+Contributors:
+- Kyle Speck (Kojasou) https://github.com/kojasou @ kojasou@hybrasyl.com
+	* Naming conventions
+	* Cryptography
+	* Packet structure
+	* Packet-Handler delegate method
+	
+- Justin Baugh (Kedian) https://github.com/baughj @ baughj@hybrasyl.com
+	* Various packet informations
+	* Redirect structure & methodology

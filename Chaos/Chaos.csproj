@@ -94,7 +94,6 @@
     <Compile Include="Game\Dialogs.cs" />
     <Compile Include="Game\Extensions.cs" />
     <Compile Include="Game\Merchants.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Objects\Gold.cs" />
     <Compile Include="Constructs\GroupBox.cs" />
     <Compile Include="Packets\ClientPacket.cs" />

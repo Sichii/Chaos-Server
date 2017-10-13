@@ -1,9 +1,25 @@
-﻿using System;
+// ****************************************************************************
+// This file belongs to the Chaos-Server project.
+// 
+// This project is free and open-source, provided that any alterations or
+// modifications to any portions of this project adhere to the
+// Affero General Public License (Version 3).
+// 
+// A copy of the AGPLv3 can be found in the project directory.
+// You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
+// ****************************************************************************
+
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 namespace Chaos
 {
+    // *************************************************************************************************
+    // A substantial amount of this file was taken and rewritten from a project called "ProxyBase"
+    // The code that this file is based on was written by Kyle Speck (kojasou) <kojasou@hybrasyl.com> <https://github.com/kojasou>
+    // The current owner of the original code is The Hy-Brasyl Project. <https://www.hybrasyl.com/>
+    // *************************************************************************************************
     internal sealed class Crypto
     {
         private static string key1 = GetMD5Hash("inhOrig").Substring(0, 8);
