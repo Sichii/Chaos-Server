@@ -42,9 +42,14 @@ namespace Chaos
         internal LightLevel LightLevel => ServerTime.TimeOfDay;
         internal List<Redirect> Redirects { get; set; }
         internal static List<string> Admins = new List<string>() { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend" };
+        internal static FileStream LogFile;
+        internal static StreamWriter LogWriter;
 
         internal Server(IPAddress ip, int port)
         {
+            LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
+            LogWriter = new StreamWriter(LogFile);
+
             WriteLog("Initializing server...");
 
             LocalIp = ip;
@@ -66,7 +71,7 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
-                writer.Write(Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(address => address.GetAddressBytes().Length == 4).GetAddressBytes());
+                writer.Write(Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(address => address.AddressFamily == AddressFamily.InterNetwork).GetAddressBytes());
                 writer.Write((byte)(LocalPort / 256));
                 writer.Write((byte)(LocalPort % 256));
                 writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos;Under Construction\0"));
@@ -85,7 +90,7 @@ namespace Chaos
             Game.Set(this);
 
             //display dns ip for others to connect to
-            WriteLog($"Server IP: {Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(ip => ip.GetAddressBytes().Length == 4).GetAddressBytes()}");
+            WriteLog($"Server IP: {Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)}");
             WriteLog("Starting the serverloop...");
 
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -119,11 +124,18 @@ namespace Chaos
                     message = $@"[{DateTime.Now.ToString("HH:mm")}] {(client.ClientSocket.RemoteEndPoint as IPEndPoint).Address}: {message}";
 
                 Console.WriteLine(message);
-                using (StreamWriter writer = File.AppendText($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log"))
-                    writer.Write($@"{message}{Environment.NewLine}");
+
+                if (!File.Exists($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log"))
+                {
+                    LogFile.Dispose();
+                    LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
+                }
+
+                LogWriter.Write($@"{message}{Environment.NewLine}");
             }
         }
 
-        internal bool TryGetUser(string name, out User user) => (user = WorldClients.FirstOrDefault(client => client.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
+        internal bool TryGetUser(string name, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
+        internal bool TryGetUser(int id, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Id == id)?.User) != null;
     }
 }

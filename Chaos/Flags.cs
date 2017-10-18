@@ -336,14 +336,12 @@ namespace Chaos
         Male = 1,
         Female = 2
     }
-    [Flags]
     internal enum CreatureType : byte
     {
         Normal = 0,
         WalkThrough = 1,
         Merchant = 2,
         User = 4,
-        Admin = WalkThrough | User
     }
     #endregion
 
@@ -556,15 +554,13 @@ namespace Chaos
         Close = 0,
         Next = 1
     }
-    #endregion
 
-    #region Exchange
     internal enum ExchangeType : byte
     {
-        BeginTrade = 0,
-        AddNonStackable = 1,
-        AddStackable = 2,
-        AddGold = 3,
+        StartExchange = 0,
+        RequestAmount = 1,
+        AddItem = 2,
+        SetGold = 3,
         Cancel = 4,
         Accept = 5
     }
@@ -596,7 +592,7 @@ namespace Chaos
         Prompt3 = 4,
         NoTarget = 5,
         Prompt2 = 6,
-        Promp1 = 7,
+        Prompt1 = 7,
     }
     #endregion
 }

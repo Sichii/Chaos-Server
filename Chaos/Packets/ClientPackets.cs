@@ -11,6 +11,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 
 namespace Chaos
 {
@@ -81,22 +82,23 @@ namespace Chaos
 
         private void JoinServer(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"[{Enum.GetName(typeof(ClientOpCodes), packet.OpCode)}] Recv> ", client);
             Game.JoinServer(client);
         }
 
         private void CreateChar1(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
-            string password = packet.ReadString8();
+            string pw = packet.ReadString8();
 
-            Game.CreateChar1(client, name, password);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Name: {name} | Password: {pw}", client);
+            Game.CreateChar1(client, name, pw);
         }
 
         private void Login(Client client, ClientPacket packet)
         {
             string name = packet.ReadString8();
             string pw = packet.ReadString8();
-            //useless crap
             packet.ReadByte();
             packet.ReadByte();
             packet.ReadUInt32();
@@ -105,20 +107,23 @@ namespace Chaos
             packet.ReadUInt16();
             packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Name: {name} | Password: {pw}", client);
             Game.Login(client, name, pw);
         }
 
         private void CreateChar2(Client client, ClientPacket packet)
         {
-            byte hairStyle = packet.ReadByte(); //1-17
-            Gender gender = (Gender)packet.ReadByte(); //1 or 2
-            byte hairColor = packet.ReadByte(); //1-13
+            byte hairStyle = packet.ReadByte();
+            Gender gender = (Gender)packet.ReadByte();
+            byte hairColor = packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Style: {hairStyle} | Gender: {gender} | Color: {hairColor}", client);
             Game.CreateChar2(client, hairStyle, gender, hairColor);
         }
 
         private void RequestMapData(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.RequestMapData(client);
         }
         private void Walk(Client client, ClientPacket packet)
@@ -126,27 +131,31 @@ namespace Chaos
             Direction direction = (Direction)packet.ReadByte();
             int stepCount = packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Direction: {direction} | StepCount: {stepCount}", client);
             Game.Walk(client, direction, stepCount);
         }
         private void Pickup(Client client, ClientPacket packet)
         {
-            byte inventorySlot = packet.ReadByte();
+            byte slot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
 
-            Game.Pickup(client, inventorySlot, groundPoint);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot} | Point: {groundPoint}", client);
+            Game.Pickup(client, slot, groundPoint);
         }
         private void Drop(Client client, ClientPacket packet)
         {
-            byte inventorySlot = packet.ReadByte();
+            byte slot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
             int count = packet.ReadInt32();
 
-            Game.Drop(client, inventorySlot, groundPoint, count);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot} | Point: {groundPoint} | Count: {count}", client);
+            Game.Drop(client, slot, groundPoint, count);
         }
         private void ExitClient(Client client, ClientPacket packet)
         {
             bool requestExit = packet.ReadBoolean();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Exit: {requestExit}", client);
             Game.ExitClient(client, requestExit);
         }
         private void Ignore(Client client, ClientPacket packet)
@@ -157,6 +166,7 @@ namespace Chaos
             if (type != IgnoreType.Request)
                 targetName = packet.ReadString8();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | Target: {targetName ?? "none"}", client);
             Game.Ignore(client, type, targetName);
         }
         private void PublicChat(Client client, ClientPacket packet)
@@ -164,6 +174,7 @@ namespace Chaos
             PublicMessageType type = (PublicMessageType)packet.ReadByte();
             string message = packet.ReadString8();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | Message: {message}", client);
             Game.PublicChat(client, type, message);
         }
         private void UseSpell(Client client, ClientPacket packet)
@@ -172,23 +183,23 @@ namespace Chaos
             int targetId = client.User.Id;
             Point targetPoint = client.User.Point;
 
-            //if this isnt the end of the packet
-            if (packet.Position != packet.Data.Length - 1)
+            if (packet.Position != packet.Data.Length)
             {
                 targetId = packet.ReadInt32();
                 targetPoint = packet.ReadPoint();
             }
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot} | TID: {targetId} | TPT: {targetPoint}", client);
             Game.UseSpell(client, slot, targetId, targetPoint);
         }
         private void JoinClient(Client client, ClientPacket packet)
         {
             byte seed = packet.ReadByte();
-            byte keyLength = packet.ReadByte();
-            byte[] key = packet.ReadBytes(keyLength);
+            byte[] key = packet.ReadData8();
             string name = packet.ReadString8();
             uint id = packet.ReadUInt32();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Seed: {seed} | Key: {Encoding.ASCII.GetString(key)} | Name: {name} | ID: {id}", client);
             Redirect redirect = client.Server.Redirects.FirstOrDefault(r => r.Id == id);
 
             if (redirect != null)
@@ -199,21 +210,23 @@ namespace Chaos
             }
             else
                 client.Disconnect();
-
         }
         private void Turn(Client client, ClientPacket packet)
         {
             Direction direction = (Direction)packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Direction: {direction}", client);
             Game.Turn(client, direction);
         }
 
         private void SpaceBar(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.SpaceBar(client);
         }
         private void RequestWorldList(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.RequestWorldList(client);
         }
         private void Whisper(Client client, ClientPacket packet)
@@ -221,33 +234,38 @@ namespace Chaos
             string targetName = packet.ReadString8();
             string message = packet.ReadString8();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Target: {targetName} | Message: {message}", client);
             Game.Whisper(client, targetName, message);
         }
         private void ToggleUserOption(Client client, ClientPacket packet)
         {
             UserOption option = (UserOption)packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Option: {option}", client);
             Game.ToggleUserOption(client, option);
         }
         private void UseItem(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot}", client);
             Game.UseItem(client, slot);
         }
         private void AnimateUser(Client client, ClientPacket packet)
         {
-            byte index = packet.ReadByte();
-            if (index <= 35)
-                index += 9;
+            byte animNum = packet.ReadByte();
+            if (animNum <= 35)
+                animNum += 9;
 
-            Game.AnimateUser(client, index);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Animation: {animNum}", client);
+            Game.AnimateUser(client, animNum);
         }
         private void DropGold(Client client, ClientPacket packet)
         {
             uint amount = packet.ReadUInt32();
             Point groundPoint = packet.ReadPoint();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Amount: {amount} | Point: {groundPoint}", client);
             Game.DropGold(client, amount, groundPoint);
         }
         private void ChangePassword(Client client, ClientPacket packet)
@@ -256,30 +274,29 @@ namespace Chaos
             string currentPw = packet.ReadString8();
             string newPw = packet.ReadString8();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Name: {name} | Current: {currentPw} | New: {newPw}", client);
             Game.ChangePassword(client, name, currentPw, newPw);
         }
         private void DropItemOnCreature(Client client, ClientPacket packet)
         {
-            byte inventorySlot = packet.ReadByte();
+            byte slot = packet.ReadByte();
             int targetId = packet.ReadInt32();
             byte count = packet.ReadByte();
 
-            Game.DropItemOnCreature(client, inventorySlot, targetId, count);
-
-            //if target is an merchant or monster, put it in their drop pile
-            //if it's a user start an exchange
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot} | Target: {targetId} | Count: {count}", client);
+            Game.DropItemOnCreature(client, slot, targetId, count);
         }
         private void DropGoldOnCreature(Client client, ClientPacket packet)
         {
             uint amount = packet.ReadUInt32();
             int targetId = packet.ReadInt32();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Amount: {amount} | Target: {targetId}", client);
             Game.DropGoldOnCreature(client, amount, targetId);
-            //if target is an merchant or monster, put it in their drop pile
-            //if it's a user start an exchange
         }
         private void RequestProfile(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.RequestProfile(client);
         }
         private void RequestGroup(Client client, ClientPacket packet)
@@ -305,12 +322,13 @@ namespace Chaos
             }
             string targetName = packet.ReadString8();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | Target: {targetName}", client);
             Game.RequestGroup(client, type, targetName, box);
         }
         private void ToggleGroup(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.ToggleGroup(client);
-            //toggle group allowance
         }
         private void SwapSlot(Client client, ClientPacket packet)
         {
@@ -318,42 +336,35 @@ namespace Chaos
             byte origSlot = packet.ReadByte();
             byte endSlot = packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Pane: {pane} | From: {origSlot} | To: {endSlot}", client);
             Game.SwapSlot(client, pane, origSlot, endSlot);
         }
         private void RequestRefresh(Client client, ClientPacket packet)
         {
-            //send them things
-            //client.Enqueue(client.ServerPackets.RefreshResponse());
-
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.RequestRefresh(client);
         }
         private void RequestPursuit(Client client, ClientPacket packet)
         {
-            GameObjectType objType = (GameObjectType)packet.ReadByte(); //gameObjectType
-            int objId = packet.ReadInt32(); //id of object
-            ushort pid = packet.ReadUInt16(); //what they want to do
+            GameObjectType objType = (GameObjectType)packet.ReadByte();
+            int objId = packet.ReadInt32();
+            ushort pid = packet.ReadUInt16();
             PursuitIds pursuitId = Enum.IsDefined(typeof(PursuitIds), pid) ? (PursuitIds)pid : PursuitIds.None;
-            /*
-            usually this is the end, but sometimes theres more
-            the only thing i know uses this is repairing specific items
-            format is:
-            byte x = packet.ReadByte(); //always 1
-            byte slot = packet.Readbyte(); //slot of item to replair
-            */
             byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position);
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ObjType: {objType} | ObjId: {objId} | Pursuit: {pursuitId} | Args: {args.Count() > 0}", client);
             Game.RequestPursuit(client, objType, objId, pursuitId, args);
         }
         private void ReplyDialog(Client client, ClientPacket packet)
         {
             GameObjectType objType = (GameObjectType)packet.ReadByte();
-            int objId = packet.ReadInt32(); //id of object
-            ushort pid = packet.ReadUInt16(); //what they want to do
+            int objId = packet.ReadInt32();
+            ushort pid = packet.ReadUInt16();
             PursuitIds pursuitId = Enum.IsDefined(typeof(PursuitIds), pid) ? (PursuitIds)pid : PursuitIds.None;
-            ushort dialogId = packet.ReadUInt16(); //+1 current id if next, -1 if previous, same if close
+            ushort dialogId = packet.ReadUInt16();
 
             int position = packet.Position;
-            byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position); //other arguments
+            byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position);
             packet.Position = position;
 
             DialogArgsType argsType = DialogArgsType.None;
@@ -373,6 +384,7 @@ namespace Chaos
                 }
             }
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ObjType: {objType} | ObjId: {objId} | Pursuit: {pursuitId} | DialogId: {dialogId} | Args: {(args.Count() > 0 ? argsType.ToString() : "False")}", client);
             Game.ReplyDialog(client, objType, objId, pursuitId, dialogId, argsType, opt, input);
         }
 
@@ -442,12 +454,14 @@ namespace Chaos
                     }
             }
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.Boards();
         }
         private void UseSkill(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot}", client);
             Game.UseSkill(client, slot);
         }
 
@@ -456,22 +470,22 @@ namespace Chaos
             uint mapId = packet.ReadUInt32();
             Point point = packet.ReadPoint();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] MapId: {mapId} | Point: {point}", client);
             Game.ClickWorldMap(client, (ushort)mapId, point);
-            //theyre clicking a worldMapNode here
         }
         private void ClickObject(Client client, ClientPacket packet)
         {
             byte type = packet.ReadByte();
-            switch (type) //click type
+            switch (type)
             {
                 case 1:
-                    //they clicked an object, this is it's id
                     int objectId = packet.ReadInt32();
+                    Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | ObjId: {objectId}", client);
                     Game.ClickObject(client, objectId);
                     break;
                 case 3:
-                    //they clicked a random spot, or something without an id, this is where
                     Point clickPoint = packet.ReadPoint();
+                    Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | Point: {clickPoint}", client);
                     Game.ClickObject(client, clickPoint);
                     break;
             }
@@ -479,88 +493,88 @@ namespace Chaos
         }
         private void RemoveEquipment(Client client, ClientPacket packet)
         {
-            //slot to take off
             EquipmentSlot slot = (EquipmentSlot)packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot}", client);
             Game.RemoveEquipment(client, slot);
         }
         private void KeepAlive(Client client, ClientPacket packet)
         {
-            //the server sends a beatA and beatB to the client
-            //we receive the same bytes in reverse order from the client
             byte b = packet.ReadByte();
             byte a = packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.KeepAlive(client, a, b);
-            //check these against what we sent
-            //check how long it took to receive them from when we sent them
-            //generate new values for the next heartbeat
         }
         private void ChangeStat(Client client, ClientPacket packet)
         {
             Stat stat = (Stat)packet.ReadByte();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Stat: {stat}", client);
             Game.ChangeStat(client, stat);
         }
         private void Exchange(Client client, ClientPacket packet)
         {
             ExchangeType type = (ExchangeType)packet.ReadByte();
+            int targetId = packet.ReadInt32();
+
             switch (type)
             {
-                case ExchangeType.BeginTrade:
+                case ExchangeType.StartExchange:
                     {
-                        uint targetId = packet.ReadUInt32();
+                        Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | TID: {targetId}", client);
                         Game.Exchange(client, type, targetId);
                         break;
                     }
-                case ExchangeType.AddNonStackable:
+                case ExchangeType.RequestAmount:
                     {
-                        uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
 
+                        Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | TID: {targetId} | Slot: {slot}", client);
                         Game.Exchange(client, type, targetId, 0, slot, 0);
                         break;
                     }
-                case ExchangeType.AddStackable:
+                case ExchangeType.AddItem:
                     {
-                        uint targetId = packet.ReadUInt32();
                         byte slot = packet.ReadByte();
                         byte count = packet.ReadByte();
+
+                        Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | TID: {targetId} | Slot: {slot} | Count: {count}", client);
                         Game.Exchange(client, type, targetId, 0, slot, count);
                         break;
                     }
-                case ExchangeType.AddGold: //add gold
+                case ExchangeType.SetGold:
                     {
-                        uint targetId = packet.ReadUInt32();
                         uint amount = packet.ReadUInt32();
+
+                        Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type} | TID: {targetId} | Amount: {amount}", client);
                         Game.Exchange(client, type, targetId, amount);
                         break;
                     }
                 case ExchangeType.Cancel:
-                    //trade was canceled by this client
                 case ExchangeType.Accept:
-                    //trade was accepted by this client
+                    Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Type: {type}", client);
                     Game.Exchange(client, type);
                     break;
             }
         }
         private void RequestLoginMessage(Client client, ClientPacket packet)
         {
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.RequestLoginMessage(packet.Position == packet.Data.Length, client);
         }
 
         private void BeginChant(Client client, ClientPacket packet)
         {
-            //this client is chanting
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.BeginChant(client);
         }
         private void DisplayChant(Client client, ClientPacket packet)
         {
             string chant = packet.ReadString8();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Chant: {chant}", client);
             Game.DisplayChant(client, chant);
-            //check if theyre chanting
-            //if theyre chanting send a caption
         }
         private void Personal(Client client, ClientPacket packet)
         {
@@ -569,33 +583,39 @@ namespace Chaos
             byte[] portraitData = packet.ReadBytes(portraitLength);
             string profileMsg = packet.ReadString16();
 
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.Personal(client, portraitData, profileMsg);
         }
         private void RequestServerTable(Client client, ClientPacket packet)
         {
-            bool requestTable = packet.ReadBoolean(); //1 = table request, else server number in the table
+            bool requestTable = packet.ReadBoolean();
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Table: {requestTable}", client);
             Game.RequestServerTable(client, requestTable);
         }
         private void RequestHomepage(Client client, ClientPacket packet)
         {
-            //i don't believe there's anything here
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
             Game.RequestHomepage(client);
         }
         private void SynchronizeTicks(Client client, ClientPacket packet)
         {
-            //use this to make sure we're in sync
-            TimeSpan serverTicks = new TimeSpan(packet.ReadUInt32()); //server ticks
-            TimeSpan clientTicks = new TimeSpan(packet.ReadUInt32()); //client ticks
+            TimeSpan serverTicks = new TimeSpan(packet.ReadUInt32());
+            TimeSpan clientTicks = new TimeSpan(packet.ReadUInt32());
+
             Game.SynchronizeTicks(client, serverTicks, clientTicks);
         }
         private void ChangeSocialStatus(Client client, ClientPacket packet)
         {
             SocialStatus status = (SocialStatus)packet.ReadByte();
+
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Status: {status}", client);
             Game.ChangeSoocialStatus(client, status);
         }
         private void RequestMetaFile(Client client, ClientPacket packet)
         {
             bool all = packet.ReadBoolean();
+
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] All: {all}", client);
             Game.RequestMetaFile(client, all);
         }
     }

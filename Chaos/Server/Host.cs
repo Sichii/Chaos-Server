@@ -13,6 +13,6 @@ namespace Chaos
 {
     static class Host
     {
-        internal static string Name => "localhost";
+        internal static string Name => "chaosserver.dynu.net";
     }
 }

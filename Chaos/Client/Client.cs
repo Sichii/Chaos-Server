@@ -120,7 +120,8 @@ namespace Chaos
                 {
                     //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
                     byte[] data = new byte[length];
-                    Array.Copy(ClientBuffer, data, length);
+                    Buffer.BlockCopy(ClientBuffer, 0, data, 0, length);
+                    //Array.Copy(ClientBuffer, data, length);
                     //copy that array into the full client buffer, so we can deal with the information in a properly sized list
                     FullClientBuffer.AddRange(data);
                     while (FullClientBuffer.Count > 3)
@@ -218,8 +219,6 @@ namespace Chaos
 
                             if (packet.IsDialog)//if packet is a dialog, decrypt the header
                                 packet.DecryptDialog();
-
-                            Server.WriteLog(packet.ToString(), this);
 
                             var handle = PacketHandlers[packet.OpCode];//get the handler for this packet
                             if (handle != null)//if we have a handler for this packet

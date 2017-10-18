@@ -62,6 +62,7 @@ namespace Chaos
         internal bool IsAdmin { get; set; }
         [JsonProperty]
         internal bool IsAlive { get; set; }
+        internal Exchange Exchange { get; set; }
         internal DateTime LastClicked { get; set; }
         internal bool Grouped => Group != null;
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;

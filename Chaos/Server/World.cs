@@ -357,6 +357,28 @@ namespace Chaos
         }
 
         /// <summary>
+        /// Attempts to retreive a user by searching through the maps for the given id.
+        /// </summary>
+        /// <param name="id">The id of the user to search for.</param>
+        /// <param name="user">Reference to the user to set.</param>
+        /// <param name="mapToTry">Map to try retreiving from.</param>
+        /// <returns></returns>
+        internal bool TryGetUser(int id, out User user, Map mapToTry)
+        {
+            user = null;
+
+            if (mapToTry != null)
+                lock (mapToTry.Sync)
+                    user = mapToTry.Objects[id] as User;
+            else
+                foreach (Map map in Maps.Values)
+                    if (TryGetUser(id, out user, map))
+                        return true;
+
+            return user != null;
+        }
+
+        /// <summary>
         /// Attempts to retreive an object by searching through the maps for a given Id.
         /// </summary>
         /// <param name="id">Id to search for.</param>

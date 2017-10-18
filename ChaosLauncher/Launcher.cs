@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -65,7 +66,7 @@ namespace ChaosLauncher
                 memory.WriteByte(0xEB);
 
                 //change direct ip
-                byte[] address = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.GetAddressBytes().Length == 4).GetAddressBytes();
+                byte[] address = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).GetAddressBytes();
                 memory.Position = 0x4333C2;
                 memory.WriteByte(106);
                 memory.WriteByte(address[3]);

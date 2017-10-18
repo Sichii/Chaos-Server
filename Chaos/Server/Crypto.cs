@@ -272,13 +272,7 @@ namespace Chaos
             return checkSum;
         }
         internal static string GetMD5Hash(string value) => BitConverter.ToString(HashAlgorithm.Create("MD5").ComputeHash(Encoding.ASCII.GetBytes(value))).Replace("-", string.Empty).ToLower();
-        /*{
-            HashAlgorithm hashAlgorithm = HashAlgorithm.Create("MD5");
-            byte[] bytes = Encoding.ASCII.GetBytes(value);
-            byte[] hashBytes = hashAlgorithm.ComputeHash(bytes);
 
-            return BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLower();
-        }*/
         internal static void EncryptFile(MemoryStream fileData, string path)
         {
             DESCryptoServiceProvider DES = new DESCryptoServiceProvider();

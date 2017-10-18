@@ -65,7 +65,28 @@ namespace Chaos
             AccountBound = accountBound;
         }
 
+        /// <summary>
+        /// Creates a groundItem from the item object, with the item stored inside of it.
+        /// </summary>
+        /// <param name="point">Map point of the ground item to create.</param>
+        /// <param name="map">Map object the ground item will be on.</param>
+        /// <param name="count">Number of the item you'd like placed on the ground.</param>
         internal GroundItem GroundItem(Point point, Map map, int count) => new GroundItem(SpritePair.Item2, point, map,
             new Item(0, SpritePair.Item1, Name, Cooldown, EquipmentPair, AccountBound, Color, count, Stackable, MaxDurability, CurrentDurability, Weight));
+
+        /// <summary>
+        /// Split a stackable item, update the count for the old item and return a new item object.
+        /// </summary>
+        /// <param name="count">Number you want to remove from the old stack and return.</param>
+        internal Item Split(int count)
+        {
+            if (Stackable && Count > count)
+            {
+                Count -= count;
+                return new Item(Slot, Sprite, Name, count, Cooldown, EquipmentPair, AccountBound, Color, Stackable, MaxDurability, CurrentDurability, Weight);
+            }
+
+            return null;
+        }
     }
 }

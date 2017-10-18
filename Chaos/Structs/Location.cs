@@ -44,14 +44,7 @@ namespace Chaos
         public override int GetHashCode() => (MapId << 16) + (X << 8) + Y;
         public override string ToString() => $"{MapId} {X},{Y}";
 
-        public override bool Equals(object obj)
-        {
-            if (!(obj is Location))
-                return false;
-
-            Location location = (Location)obj;
-            return location.MapId == MapId && location.X == X && location.Y == Y;
-        }
+        public override bool Equals(object obj) => (obj as Location?)?.GetHashCode() == GetHashCode();
 
         public static bool TryParse(string str, out Location loc)
         {

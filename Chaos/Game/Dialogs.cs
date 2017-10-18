@@ -31,7 +31,7 @@ namespace Chaos
                 { PursuitIds.Teleport, new PursuitDelegate(Teleport) },
                 { PursuitIds.Summon, new PursuitDelegate(Summon) },
                 { PursuitIds.SummonAll, new PursuitDelegate(SummonAll) },
-                { PursuitIds.KillUser, new PursuitDelegate(Kill) },
+                { PursuitIds.KillUser, new PursuitDelegate(KillUser) },
                 { PursuitIds.LouresCitizenship, new PursuitDelegate(LouresCitizenship) },
                 { PursuitIds.ReviveUser, new PursuitDelegate(ReviveUser) },
             };
@@ -182,7 +182,7 @@ namespace Chaos
         return true;
     }
 
-    internal bool Kill(Client client, Server server, object args)
+    internal bool KillUser(Client client, Server server, object args)
     {
         string input = (string)args;
         User user;
@@ -198,7 +198,6 @@ namespace Chaos
     internal bool LouresCitizenship(Client client, Server server, object args)
     {
         client.User.Nation = Nation.Loures;
-
         return true;
     }
     internal bool ReviveUser(Client client, Server server, object args)

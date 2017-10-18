@@ -34,7 +34,7 @@ namespace Chaos
         internal int Distance(Point pt) => Distance(pt.X, pt.Y);
         internal int Distance(ushort x, ushort y) => Math.Abs(x - X) + Math.Abs(y - Y);
         public override int GetHashCode() => (X << 16) + Y;
-        public override string ToString() => $@"{X},{Y}";
+        public override string ToString() => $@"({X}, {Y})";
 
 
         internal void Offset(Direction direction)
@@ -113,7 +113,7 @@ namespace Chaos
 
         public static Point Parse(string str)
         {
-            Match m = Regex.Match(str, @"\((\d+),(\d+)\)");
+            Match m = Regex.Match(str, @"\((\d+), (\d+)\)");
             return new Point(ushort.Parse(m.Groups[1].Value), ushort.Parse(m.Groups[2].Value));
         }
     }

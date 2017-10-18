@@ -720,25 +720,42 @@ namespace Chaos
 
             return packet;
         }
-        internal ServerPacket Exchange(ExchangeType type, List<object> args = null)
+        internal ServerPacket Exchange(ExchangeType type, params object[] args)
         {
-            switch(type)
+            var packet = new ServerPacket(ServerOpCodes.Exchange);
+
+            packet.WriteByte((byte)type);
+            switch (type)
             {
-                case ExchangeType.BeginTrade:
+                case ExchangeType.StartExchange:
+                    packet.WriteInt32((int)args[0]);
+                    packet.WriteString8((string)args[1]);
                     break;
-                case ExchangeType.AddNonStackable:
+                case ExchangeType.RequestAmount:
+                    packet.WriteByte((byte)args[0]);
                     break;
-                case ExchangeType.AddStackable:
+                case ExchangeType.AddItem:
+                    packet.WriteBoolean((bool)args[0]);
+                    packet.WriteByte((byte)args[1]);
+                    packet.WriteUInt16((ushort)args[2]);
+                    packet.WriteByte((byte)args[3]);
+                    packet.WriteString8((string)args[4]);
                     break;
-                case ExchangeType.AddGold:
+                case ExchangeType.SetGold:
+                    packet.WriteBoolean((bool)args[0]);
+                    packet.WriteUInt32((uint)args[1]);
                     break;
                 case ExchangeType.Cancel:
+                    packet.WriteBoolean((bool)args[0]);
+                    packet.WriteString8("Exchange cancelled.");
                     break;
                 case ExchangeType.Accept:
+                    packet.WriteBoolean((bool)args[0]);
+                    packet.WriteString8("You exchanged.");
                     break;
             }
 
-            return new ServerPacket(ServerOpCodes.Exchange);
+            return packet;
         }
         internal ServerPacket CancelCasting()
         {

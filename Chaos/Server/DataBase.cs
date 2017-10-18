@@ -47,7 +47,7 @@ namespace Chaos
             //keep the db clear for now (except the map file)
             foreach (var key in DataConnection.GetServer("localhost:6379").Keys())
                 if (key != MapKey)
-                    Cache.Remove(key);
+                    Cache.Remove(key);    
 
             if (!Cache.Exists(HashKey))
                 Cache.Add(HashKey, new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));

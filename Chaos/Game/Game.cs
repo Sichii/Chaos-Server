@@ -13,6 +13,8 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 
 namespace Chaos
 {
@@ -259,14 +261,14 @@ namespace Chaos
 
             Item item;
             
-            //retreived the item
-            if(client.User.Inventory.TryGet(slot, out item) && item != null)
+            //retreive the item
+            if(client.User.Inventory.TryGet(slot, out item))
             {
                 //if we're trying to drop more than we have, return
                 if (item.Count < count || item.AccountBound)
                     return;
                 else //subtract the amount we're dropping
-                    item.Count = item.Count - count;
+                    item.Count -= count;
 
                 //get the grounditem associated with the item
                 GroundItem groundItem = item.GroundItem(groundPoint, client.User.Map, count);
@@ -521,17 +523,23 @@ namespace Chaos
         }
 
         internal static readonly object ExchangeLock = new object();
-        internal static void DropItemOnCreature(Client client, byte inventorySlot, int targetId, byte count)
+        internal static void DropItemOnCreature(Client client, byte slot, int targetId, byte count)
         {
             lock (ExchangeLock)
             {
                 Item item;
                 VisibleObject obj;
 
-                if (World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && client.User.Inventory.TryGetRemove(inventorySlot, out item) && item != null && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
+                if (World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && client.User.Inventory.TryGet(slot, out item) && item != null && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
                 {
+                    if (item.AccountBound)
+                        return;
+
                     if (obj is Monster)
+                    {
+                        client.User.Inventory.TryRemove(slot);
                         (obj as Monster).Items.Add(item);
+                    }
                     else if (obj is User)
                     {
                         User user = obj as User;
@@ -540,9 +548,10 @@ namespace Chaos
 
                         Exchange ex = new Exchange(client.User, user);
                         if (World.Exchanges.TryAdd(ex.ExchangeId, ex))
-                            ex.Activate(item);
-
-                        ex.AddItem(client.User, item);
+                        {
+                            ex.Activate();
+                            ex.AddItem(client.User, slot);
+                        }
                     }
                 }
             }
@@ -569,9 +578,10 @@ namespace Chaos
 
                         Exchange ex = new Exchange(client.User, user);
                         if (World.Exchanges.TryAdd(ex.ExchangeId, ex))
+                        {
                             ex.Activate();
-
-                        ex.SetGold(client.User, amount);
+                            ex.SetGold(client.User, amount);
+                        }
                     }
                 }
             }
@@ -917,9 +927,37 @@ namespace Chaos
             client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
         }
 
-        internal static void Exchange(Client client, ExchangeType type, uint targetId = 0, uint amount = 0, byte slot = 0, byte count = 0)
+        internal static void Exchange(Client client, ExchangeType type, int targetId = 0, uint goldAmount = 0, byte itemSlot = 0, byte itemCount = 0)
         {
-            throw new NotImplementedException();
+            switch(type)
+            {
+                case ExchangeType.StartExchange:
+                    User targetUser;
+                    World.TryGetUser(targetId, out targetUser, client.User.Map);
+
+                    Exchange ex = new Exchange(client.User, targetUser);
+                    World.Exchanges[ex.ExchangeId] = ex;
+                    ex.Activate();
+                    break;
+                case ExchangeType.RequestAmount:
+                    if (client.User.Exchange.OtherUser(client.User).Id == targetId)
+                        client.User.Exchange.AddItem(client.User, itemSlot);
+                    break;
+                case ExchangeType.AddItem:
+                    if (client.User.Exchange.OtherUser(client.User).Id == targetId)
+                        client.User.Exchange.AddStackableItem(client.User, itemSlot, itemCount);
+                    break;
+                case ExchangeType.SetGold:
+                    if (client.User.Exchange.OtherUser(client.User).Id == targetId)
+                        client.User.Exchange.SetGold(client.User, goldAmount);
+                    break;
+                case ExchangeType.Cancel:
+                    client.User.Exchange.Cancel(client.User);
+                    break;
+                case ExchangeType.Accept:
+                    client.User.Exchange.Accept(client.User);
+                    break;
+            }
         }
 
         internal static void RequestLoginMessage(bool send, Client client)
@@ -942,6 +980,12 @@ namespace Chaos
 
         internal static void Personal(Client client, byte[] portraitData, string profileMsg)
         {
+            if (portraitData.Length > 0)
+                using (MemoryStream imageData = new MemoryStream(portraitData))
+                using (Image portrait = Image.FromStream(imageData))
+                    if (portrait.Width != 48 || portrait.Height != 56)
+                        portraitData = new byte[] { };
+
             client.User.Personal = new Personal(portraitData, profileMsg);
         }
 
