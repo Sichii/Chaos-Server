@@ -56,9 +56,10 @@ namespace MapTool
                 ushort worldMapCount = reader.ReadUInt16();
                 for (int wMap = 0; wMap < worldMapCount; ++wMap)
                 {
-                    WorldMap worldMap = new WorldMap(reader.ReadString(), new WorldMapNode[0]);
+                    string field = reader.ReadString();
 
                     byte nodeCount = reader.ReadByte();
+                    WorldMapNode[] nodes = new WorldMapNode[nodeCount];
                     for (int i = 0; i < nodeCount; i++)
                     {
                         ushort x = reader.ReadUInt16();
@@ -67,9 +68,10 @@ namespace MapTool
                         ushort mapId = reader.ReadUInt16();
                         byte dX = reader.ReadByte();
                         byte dY = reader.ReadByte();
-                        worldMap.Nodes.Add(new WorldMapNode(new Point(x, y), name, mapId, new Point(dX, dY)));
+                        nodes[i] = new WorldMapNode(new Point(x, y), name, mapId, new Point(dX, dY));
                     }
 
+                    WorldMap worldMap = new WorldMap(field, nodes);
                     uint crc32 = worldMap.GetCrc32();
                     WorldMaps[crc32] = worldMap;
                 }
@@ -139,7 +141,7 @@ namespace MapTool
                 foreach (WorldMap worldMap in WorldMaps.Values)
                 {
                     writer.Write(worldMap.Field);
-                    writer.Write((byte)worldMap.Nodes.Count);
+                    writer.Write((byte)worldMap.Nodes.Length);
                     foreach (WorldMapNode worldMapNode in worldMap.Nodes)
                     {
                         writer.Write(worldMapNode.Position.X);

@@ -44,29 +44,15 @@ namespace ChaosLauncher
             //grab the process we created
             Process proc = Process.GetProcessById(procInfo.ProcessId);
 
-
-            if (injectDawndCbox.Checked)
-            {
-                //get a handle for access
-                IntPtr accessHnd = SafeNativeMethods.OpenProcess(ProcessAccess.All, true, (uint)proc.Id);
-                //use access handle to inject dawnd.dll
-                InjectDLL(accessHnd,
-#if DEBUG
-                    $@"{Paths.DarkAgesDir}dawnd.dll"
-#else
-                    "dawnd.dll"
-#endif
-                    );
-            }
-
             using (ProcMemoryStream memory = new ProcMemoryStream(procInfo, ProcessAccess.VmOperation | ProcessAccess.VmRead | ProcessAccess.VmWrite))
             {
                 //force "socket" - call for direct ip
                 memory.Position = 0x4333A2;
                 memory.WriteByte(0xEB);
-
+                IPAddress serverIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                IPAddress clientIP = IPAddress.Parse(new WebClient().DownloadString(@"http://checkip.amazonaws.com/").Trim());
                 //change direct ip
-                byte[] address = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).GetAddressBytes();
+                byte[] address = serverIP.Equals(clientIP) ? IPAddress.Loopback.GetAddressBytes() : serverIP.GetAddressBytes();
                 memory.Position = 0x4333C2;
                 memory.WriteByte(106);
                 memory.WriteByte(address[3]);
@@ -94,6 +80,21 @@ namespace ChaosLauncher
                 memory.Position = 0x6F3CA4;
                 SafeNativeMethods.ResumeThread(procInfo.ThreadHandle);
             }
+
+                        if (injectDawndCbox.Checked)
+            {
+                //get a handle for access
+                IntPtr accessHnd = SafeNativeMethods.OpenProcess(ProcessAccess.All, true, (uint)proc.Id);
+                //use access handle to inject dawnd.dll
+                InjectDLL(accessHnd,
+#if DEBUG
+                    $@"{Paths.DarkAgesDir}dawnd.dll"
+#else
+                    "dawnd.dll"
+#endif
+                    );
+            }
+
 
             //let process render it's window before we change the title
             while (proc.MainWindowHandle == IntPtr.Zero) { }

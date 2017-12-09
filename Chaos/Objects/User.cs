@@ -62,9 +62,10 @@ namespace Chaos
         internal bool IsAdmin { get; set; }
         [JsonProperty]
         internal bool IsAlive { get; set; }
+        internal bool IsChanting { get; set; }
+        internal bool IsGrouped => Group != null;
         internal Exchange Exchange { get; set; }
         internal DateTime LastClicked { get; set; }
-        internal bool Grouped => Group != null;
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
         internal override byte HealthPercent => (byte)(((CurrentHP * 100) / MaximumHP) > 100 ? 100 : ((CurrentHP * 100) / MaximumHP));
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
@@ -92,6 +93,7 @@ namespace Chaos
             Titles = new List<string>();
             IsAdmin = false;
             IsAlive = true;
+            IsChanting = false;
             LastClicked = DateTime.MinValue;
         }
 
@@ -123,6 +125,7 @@ namespace Chaos
             DisplayData.User = this;
             IsAdmin = isAdmin;
             IsAlive = isAlive;
+            IsChanting = false;
             LastClicked = DateTime.MinValue;
         }
 

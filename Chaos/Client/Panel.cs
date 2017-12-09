@@ -29,7 +29,7 @@ namespace Chaos
         private readonly object Sync = new object();
         internal T this[EquipmentSlot slot] => this[(byte)slot];
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-        public IEnumerator<T> GetEnumerator() => Objects.Values.ToList().GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => Objects.Values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal T this[byte slot]
         {
@@ -68,9 +68,7 @@ namespace Chaos
         internal bool Contains(T obj)
         {
             lock (Sync)
-            {
                 return Objects.Values.Contains(obj);
-            }
         }
 
         /// <summary>
@@ -113,22 +111,27 @@ namespace Chaos
         {
             lock (Sync)
             {
-                outItem = null;
-                EquipmentSlot slot = (item as Item).EquipmentPair.Item1;
-
-                if (slot == EquipmentSlot.None || !Valid((byte)slot))
+                if (item is Item)
                 {
                     outItem = null;
-                    return false;
+                    EquipmentSlot slot = (item as Item).EquipmentPair.Item1;
+
+                    if (slot == EquipmentSlot.None || !Valid((byte)slot))
+                    {
+                        outItem = null;
+                        return false;
+                    }
+
+                    if (Objects[(byte)slot] != null && !TryUnequip(slot, out outItem))
+                        return false;
+
+                    if (Objects[(byte)slot] == null)
+                        Objects[(byte)slot] = item;
+
+                    return Objects[(byte)slot] == item;
                 }
-
-                if (Objects[(byte)slot] != null && !TryUnequip(slot, out outItem))
-                    return false;
-
-                if (Objects[(byte)slot] == null)
-                    Objects[(byte)slot] = item;
-
-                return Objects[(byte)slot] == item;
+                outItem = null;
+                return false;
             }
         }
 
@@ -140,9 +143,7 @@ namespace Chaos
         internal bool TryUnequip(EquipmentSlot slot, out T item)
         {
             lock (Sync)
-            {
                 return TryGetRemove((byte)slot, out item);
-            }
         }
 
         /// <summary>

@@ -19,10 +19,10 @@ namespace ChaosLauncher
 {
     internal static class Paths
     {
-        internal static string BaseDir => @"C:\Users\mewbb\Desktop\chaosmap\";
+        internal static string BaseDir => @"C:\Users\Sichi\Desktop\ChaosProject\";
         internal static string HostName => "chaosserver.dynu.net";
 
-        internal static string DarkAgesDir => $@"{BaseDir}Dark Ages\";
+        internal static string DarkAgesDir => $@"{BaseDir}ChaosDa\";
         internal static string DarkAgesExe => $@"{DarkAgesDir}Darkages.exe";
     }
 }

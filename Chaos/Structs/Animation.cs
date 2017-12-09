@@ -9,8 +9,11 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
+using Newtonsoft.Json;
+
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptOut)]
     internal struct Animation
     {
         internal int TargetId { get; }
@@ -26,6 +29,18 @@ namespace Chaos
             TargetAnimation = targetAnimation;
             SourceAnimation = sourceAnimation;
             AnimationSpeed = speed;
+        }
+
+        internal Animation(ushort targetAnimation, ushort sourceAnimation, ushort speed)
+            : this(0, 0, targetAnimation, sourceAnimation, speed)
+        {
+
+        }
+
+        internal Animation(Animation animation, int targetId, int sourceId)
+            : this(targetId, sourceId, animation.TargetAnimation, animation.SourceAnimation, animation.AnimationSpeed)
+        {
+
         }
     }
 }

@@ -17,17 +17,17 @@ namespace Chaos
 {
     internal sealed class Menu : IEnumerable<Pursuit>
     {
-        public int Count => Pursuits.Values.Count;
-        public IEnumerator<Pursuit> GetEnumerator() => Pursuits.Values.ToList().GetEnumerator();
+        public int Count => Pursuits.Count;
+        public IEnumerator<Pursuit> GetEnumerator() => Pursuits.Select(p => p.Value).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal Pursuit this[PursuitIds pid] => Pursuits[pid];
+        internal Pursuit this[PursuitIds pid] => Pursuits.FirstOrDefault(p => p.Key == pid).Value;
         internal string Text { get; }
         internal MenuType Type { get; }
-        internal SortedDictionary<PursuitIds, Pursuit> Pursuits { get; }
+        internal List<KeyValuePair<PursuitIds, Pursuit>> Pursuits { get; }
 
-        internal Menu(List<Pursuit> pursuits, MenuType type, string text)
+        internal Menu(IEnumerable<Pursuit> pursuits, MenuType type, string text)
         {
-            Pursuits = new SortedDictionary<PursuitIds, Pursuit>(pursuits.ToDictionary(p => p.PursuitId, p => p));
+            Pursuits = new List<KeyValuePair<PursuitIds, Pursuit>>(pursuits.ToDictionary(p => p.PursuitId, p => p));
             Type = type;
             Text = text;
         }

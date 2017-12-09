@@ -8,6 +8,7 @@
 // A copy of the AGPLv3 can be found in the project directory.
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
+using System.Linq;
 
 namespace Chaos
 {
@@ -36,7 +37,7 @@ namespace Chaos
             PrevBtn = prevBtn;
             NextBtn = nextBtn;
             Message = message;
-            Options = options ?? new List<KeyValuePair<string, ushort>>();
+            Options = options?.ToList() ?? new List<KeyValuePair<string, ushort>>();
             NextDialogId = nextDialogId;
             Panel = panel ?? new Panel<PanelObject>(0);
             MaxCharacters = maxCharacters;
@@ -50,7 +51,7 @@ namespace Chaos
         /// Returns the dialog associated with the option that was chosen.
         /// </summary>
         /// <param name="opt"></param>
-        internal Dialog Next(byte opt) => Game.Dialogs.NextDialog(Options[opt - 1].Value);
+        internal Dialog Next(byte opt) => Game.Dialogs.NextDialog(Options.ToList()[opt - 1].Value);
         /// <summary>
         /// Returns the dialog that has this dialog as one of it's options or nextDialogId
         /// </summary>

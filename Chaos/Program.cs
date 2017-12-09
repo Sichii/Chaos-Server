@@ -10,7 +10,9 @@
 // ****************************************************************************
 
 using System;
+using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace Chaos
@@ -26,7 +28,8 @@ namespace Chaos
             Console.WindowHeight = 30;
 
             //create the server, start it in a new thread
-            Server = new Server(IPAddress.Any, 2610);
+            IPAddress localIP = Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            Server = new Server(localIP, 2610);
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
 

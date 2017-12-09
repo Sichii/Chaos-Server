@@ -42,6 +42,7 @@ namespace Chaos
         internal DateTime LastRefresh { get; set; }
         internal Dialog CurrentDialog = null;
         internal object ActiveObject = null;
+        internal bool IsLoopback = false;
 
         /// <summary>
         /// Creates a new user with reference to the server, and the user's socket.
@@ -63,6 +64,7 @@ namespace Chaos
 
             LastClickObj = DateTime.MinValue;
             LastRefresh = DateTime.MinValue;
+            IsLoopback = IPAddress.IsLoopback((socket.RemoteEndPoint as IPEndPoint).Address);
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace Chaos
             Connected = true;
             ClientThread.Start();
             if (ServerType != ServerType.World)
-                Enqueue(Server.Packets.AcceptConnection());
+                Enqueue(ServerPackets.AcceptConnection());
 
             Server.WriteLog($@"Connection accepted", this);
             //when we receive data, copy the readable data to the client buffer and call endreceive
@@ -109,7 +111,7 @@ namespace Chaos
         /// <param name="ar">Result of the async operation.</param>
         private void ClientEndReceive(IAsyncResult ar)
         {
-            lock (this)
+            lock (Sync)
             {
                 //get the length of the packet
                 int length = ClientSocket.EndReceive(ar);
@@ -239,13 +241,13 @@ namespace Chaos
         internal void Redirect(Redirect redirect)
         {
             Server.Redirects.Add(redirect);
-            Enqueue(Server.Packets.Redirect(redirect));
+            Enqueue(ServerPackets.Redirect(redirect));
         }
 
-        internal void SendLoginMessage(LoginMessageType messageType, string message = "") => Enqueue(Server.Packets.LoginMessage(messageType, message));
-        internal void SendAttributes(StatUpdateFlags updateType) => Enqueue(Server.Packets.Attributes(User.IsAdmin, updateType, User.Attributes));
-        internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(Server.Packets.ServerMessage(messageType, message));
-        internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(Server.Packets.PublicChat(messageType, sourceId, message));
+        internal void SendLoginMessage(LoginMessageType messageType, string message = "") => Enqueue(ServerPackets.LoginMessage(messageType, message));
+        internal void SendAttributes(StatUpdateType updateType) => Enqueue(ServerPackets.Attributes(User.IsAdmin, updateType, User.Attributes));
+        internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(ServerPackets.ServerMessage(messageType, message));
+        internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(ServerPackets.PublicChat(messageType, sourceId, message));
 
         ~Client()
         {

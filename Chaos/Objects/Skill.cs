@@ -18,22 +18,25 @@ namespace Chaos
     internal sealed class Skill : PanelObject
     {
         [JsonProperty]
-        internal bool IsBasic { get; }
+        internal SkillType Type { get; }
         [JsonProperty]
-        internal byte Animation { get; }
+        internal bool IsBasic { get; }
 
-        internal Skill(byte slot, string name, ushort sprite, TimeSpan cooldown)
-            :base(slot, sprite, name, cooldown)
+
+        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN;
+
+        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, Animation effectAnimation = new Animation(), byte bodyAnimation = 0)
+            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
+            Type = type;
         }
 
         [JsonConstructor]
-        internal Skill(byte slot, ushort sprite, string name, TimeSpan cooldown, bool isBasic, byte animation)
-            :base(slot, sprite, name, cooldown)
+        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, bool isBasic, Animation effectAnimation, byte bodyAnimation)
+            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
+            Type = type;
             IsBasic = isBasic;
-            Animation = animation;
         }
-        
     }
 }

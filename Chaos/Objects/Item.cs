@@ -35,11 +35,13 @@ namespace Chaos
         internal bool AccountBound { get; }
         [JsonProperty]
         internal Tuple<EquipmentSlot, ushort> EquipmentPair { get; }
-        internal Tuple<ushort, ushort> SpritePair => new Tuple<ushort, ushort>(base.Sprite, (ushort)(base.Sprite + CONSTANTS.ITEM_SPRITE_OFFSET));
-
+        internal Tuple<ushort, ushort> SpritePair => new Tuple<ushort, ushort>(Sprite, (ushort)(Sprite + CONSTANTS.ITEM_SPRITE_OFFSET));
+        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_ITEM_COOLDOWN;
         internal Item(byte slot, ushort sprite, string name, int count, TimeSpan cooldown,
-            Tuple<EquipmentSlot, ushort> equipmentPair = null, bool accountBound = false, byte color = 0, bool stackable = false, uint maximumDurability = 0, uint currentDurability = 0, byte weight = 1)
-            :base(slot, sprite, name, cooldown)
+            Tuple<EquipmentSlot, ushort> equipmentPair = null, bool accountBound = false, 
+            byte color = 0, bool stackable = false, uint maximumDurability = 0, uint currentDurability = 0, 
+            byte weight = 1, Animation effectAnimation = new Animation(), byte bodyAnimation = 0)
+            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             EquipmentPair = equipmentPair;
             Color = color;
@@ -52,8 +54,10 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal Item(byte slot, ushort sprite, string name, TimeSpan cooldown, Tuple<EquipmentSlot, ushort> equipmentPair, bool accountBound, byte color, int count, bool stackable, uint maxDurability, uint currentDurability, byte weight)
-            :base(slot, sprite, name, cooldown)
+        internal Item(byte slot, ushort sprite, string name, TimeSpan cooldown, Tuple<EquipmentSlot, ushort> equipmentPair,
+            bool accountBound, byte color, int count, bool stackable, uint maxDurability, uint currentDurability, byte weight,
+            Animation effectAnimation, byte bodyAnimation)
+            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             EquipmentPair = equipmentPair;
             Color = color;
@@ -72,7 +76,7 @@ namespace Chaos
         /// <param name="map">Map object the ground item will be on.</param>
         /// <param name="count">Number of the item you'd like placed on the ground.</param>
         internal GroundItem GroundItem(Point point, Map map, int count) => new GroundItem(SpritePair.Item2, point, map,
-            new Item(0, SpritePair.Item1, Name, Cooldown, EquipmentPair, AccountBound, Color, count, Stackable, MaxDurability, CurrentDurability, Weight));
+            new Item(0, SpritePair.Item1, Name, Cooldown, EquipmentPair, AccountBound, Color, count, Stackable, MaxDurability, CurrentDurability, Weight, EffectAnimation, BodyAnimation));
 
         /// <summary>
         /// Split a stackable item, update the count for the old item and return a new item object.
@@ -83,7 +87,7 @@ namespace Chaos
             if (Stackable && Count > count)
             {
                 Count -= count;
-                return new Item(Slot, Sprite, Name, count, Cooldown, EquipmentPair, AccountBound, Color, Stackable, MaxDurability, CurrentDurability, Weight);
+                return new Item(Slot, Sprite, Name, count, Cooldown, EquipmentPair, AccountBound, Color, Stackable, MaxDurability, CurrentDurability, Weight, EffectAnimation, BodyAnimation);
             }
 
             return null;

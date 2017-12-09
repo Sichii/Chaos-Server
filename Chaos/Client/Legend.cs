@@ -20,22 +20,23 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Legend : IEnumerable<LegendMark>
     {
-        public IEnumerator<LegendMark> GetEnumerator() => Marks.Values.ToList().GetEnumerator();
+        internal readonly object Sync = new object();
+        public IEnumerator<LegendMark> GetEnumerator() => Marks.Select(kvp => kvp.Value).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal byte Length => (byte)Marks.Count;
         [JsonProperty]
-        private Dictionary<string, LegendMark> Marks { get; }
+        private List<KeyValuePair<string, LegendMark>> Marks { get; }
 
         /// <summary>
         /// Represents the object containing the user's legend marks.
         /// </summary>
         internal Legend()
         {
-            Marks = new Dictionary<string, LegendMark>();
+            Marks = new List<KeyValuePair<string, LegendMark>>();
         }
 
         [JsonConstructor]
-        internal Legend(Dictionary<string, LegendMark> marks)
+        internal Legend(List<KeyValuePair<string, LegendMark>> marks)
         {
             Marks = marks;
         }
@@ -44,7 +45,14 @@ namespace Chaos
         /// Retreives the legend mark at key location.
         /// </summary>
         /// <param name="key">Key of the legend mark you want returned.</param>
-        internal LegendMark this[string key] => Marks.ContainsKey(key) ? Marks[key] : null;
+        internal LegendMark this[string key]
+        {
+            get
+            {
+                lock (Sync)
+                    return Marks.FirstOrDefault(kvp => kvp.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase)).Value;
+            }
+        }
 
         /// <summary>
         /// Adds or replaces an old legend mark at the mark's key location.
@@ -52,22 +60,28 @@ namespace Chaos
         /// <param name="mark">Mark to add or replace.</param>
         internal void Add(LegendMark mark)
         {
-            LegendMark mToAdd = this[mark.Key];
-
-            if (mToAdd != null)
+            lock (Sync)
             {
-                mToAdd.Added = DateTime.UtcNow;
-                mToAdd.Count++;
+                LegendMark mToAdd = this[mark.Key];
+
+                if (mToAdd != null)
+                {
+                    mToAdd.Added = DateTime.UtcNow;
+                    mToAdd.Count++;
+                }
+                else
+                    Marks.Add(new KeyValuePair<string, LegendMark>(mark.Key, mark));
             }
-            else
-                Marks.Add(mark.Key, mark);
         }
         /// <summary>
         /// Attempts to remove the legend mark at key location.
         /// </summary>
         /// <param name="key">Key of the mark to remove.</param>
-        internal bool TryRemove(string key) => Marks.Remove(key);
-
+        internal bool TryRemove(string key)
+        {
+            lock (Sync)
+                return Marks.RemoveAll(m => m.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase)) != 0;
+        }
     }
 
     

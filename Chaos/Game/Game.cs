@@ -44,7 +44,7 @@ namespace Chaos
 
         internal static void JoinServer(Client client)
         {
-            client.Enqueue(Server.Packets.ConnectionInfo(Server.TableCheckSum, client.Crypto.Seed, client.Crypto.Key));
+            client.Enqueue(ServerPackets.ConnectionInfo(Server.TableCheckSum, client.Crypto.Seed, client.Crypto.Key));
         }
 
         internal static void CreateChar1(Client client, string name, string password)
@@ -84,7 +84,6 @@ namespace Chaos
                 client.SendServerMessage(ServerMessageType.ActiveMessage, "Logging in to Chaos");
                 client.Redirect(new Redirect(client, ServerType.World, name));
             }
-
         }
 
         internal static void CreateChar2(Client client, byte hairStyle, Gender gender, byte hairColor)
@@ -126,6 +125,7 @@ namespace Chaos
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Mend"));
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Heal"));
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Srad Tut"));
+                newUser.SkillBook.AddToNextSlot(CreationEngine.CreateSkill("Test Skill 1"));
                 newUser.Attributes.Gold += 500000000;
             }
 
@@ -138,7 +138,7 @@ namespace Chaos
 
         internal static void RequestMapData(Client client)
         {
-            client.Enqueue(Server.Packets.MapData(client.User.Map));
+            client.Enqueue(ServerPackets.MapData(client.User.Map));
         }
 
         internal static void Walk(Client client, Direction direction, int stepCount)
@@ -148,6 +148,7 @@ namespace Chaos
                 //if the stepcount matches with what we have
                 if (stepCount == client.StepCount)
                 {
+                    client.User.Direction = direction;
                     //plus the stepcount
                     client.StepCount++;
                     Point startPoint = client.User.Point;
@@ -160,25 +161,25 @@ namespace Chaos
                         return;
                     }
 
-                    List<VisibleObject> visibleBefore = World.ObjectsVisibleFrom(client.User);
+                    List<VisibleObject> visibleBefore = World.ObjectsVisibleFrom(client.User).ToList();
                     client.User.Point.Offset(direction);
-                    List<VisibleObject> visibleAfter = World.ObjectsVisibleFrom(client.User);
-                    List<VisibleObject> itemMonster = new List<VisibleObject>();
+                    List<VisibleObject> visibleAfter = World.ObjectsVisibleFrom(client.User).ToList();
+                    List<VisibleObject> itemMonster = new List<VisibleObject>().ToList();
 
                     //send ourselves the walk
-                    client.Enqueue(Server.Packets.ClientWalk(direction, client.User.Point));
+                    client.Enqueue(ServerPackets.ClientWalk(direction, client.User.Point));
 
                     //for all the things that will go off screen, remove them from the before list, our screen, and remove us from their screen(if theyre a user)
                     foreach (VisibleObject obj in visibleBefore.Except(visibleAfter, new WorldObjectComparer()).ToList())
                     {
-                        (obj as User)?.Client.Enqueue(Server.Packets.RemoveObject(client.User));
-                        client.Enqueue(Server.Packets.RemoveObject(obj));
+                        (obj as User)?.Client.Enqueue(ServerPackets.RemoveObject(client.User));
+                        client.Enqueue(ServerPackets.RemoveObject(obj));
                         visibleBefore.Remove(obj);
                     }
 
                     //send the remaining users in the before list our walk
                     foreach (User user in visibleBefore.OfType<User>())
-                        user.Client.Enqueue(Server.Packets.CreatureWalk(client.User.Id, startPoint, direction));
+                        user.Client.Enqueue(ServerPackets.CreatureWalk(client.User.Id, startPoint, direction));
 
                     //for all the things that just came onto screen, display to eachother if it's a user, otherwise add it to itemMonster
                     foreach (VisibleObject obj in visibleAfter.Except(visibleBefore, new WorldObjectComparer()))
@@ -187,8 +188,8 @@ namespace Chaos
 
                         if (user != null)
                         {
-                            user.Client.Enqueue(Server.Packets.DisplayUser(client.User));
-                            client.Enqueue(Server.Packets.DisplayUser(user));
+                            user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
+                            client.Enqueue(ServerPackets.DisplayUser(user));
                         }
                         else
                             itemMonster.Add(obj);
@@ -196,19 +197,19 @@ namespace Chaos
 
                     //if itemmonster isnt empty, send everything in it to us
                     if (itemMonster.Count > 0)
-                        client.Enqueue(Server.Packets.DisplayItemMonster(itemMonster.ToArray()));
+                        client.Enqueue(ServerPackets.DisplayItemMonster(itemMonster.ToArray()));
 
                     //check collisions with warps
                     MapObject mapObj;
-                    if (World.TryGetMapObject(client.User.Point, out mapObj, client.User.Map) && mapObj is Warp)
+                    if (World.TryGetObject(client.User.Point, out mapObj, client.User.Map) && mapObj is Warp)
                         World.WarpUser(client.User, mapObj as Warp);
 
                     //check collisions with worldmaps
                     WorldMap worldMap;
-                    if (World.TryGetWorldMap(client.User.Point, out worldMap, client.User.Map))
+                    if (World.TryGetObject(client.User.Point, out worldMap, client.User.Map))
                     {
                         World.RemoveObjectFromMap(client.User, true);
-                        client.Enqueue(Server.Packets.WorldMap(worldMap));
+                        client.Enqueue(ServerPackets.WorldMap(worldMap));
                     }
                 }
             }
@@ -220,17 +221,18 @@ namespace Chaos
             GroundItem groundItem;
 
             //if there's an item on the point
-            if (World.TryGetGroundItem(groundPoint, out groundItem, client.User.Map))
+            if (World.TryGetObject(groundPoint, out groundItem, client.User.Map))
             {
                 if (groundItem.Point.Distance(client.User.Point) > CONSTANTS.PICKUP_RANGE)
                     return;
 
+                //if its gold
                 if(groundItem is Gold)
                 {
                     Gold gold = groundItem as Gold;
                     client.User.Attributes.Gold += gold.Amount;
 
-                    client.SendAttributes(StatUpdateFlags.ExpGold);
+                    client.SendAttributes(StatUpdateType.ExpGold);
                     World.RemoveObjectFromMap(groundItem);
 
                     return;
@@ -246,7 +248,7 @@ namespace Chaos
                         return;
 
                     World.RemoveObjectFromMap(groundItem);
-                    client.Enqueue(Server.Packets.AddItem(item));
+                    client.Enqueue(ServerPackets.AddItem(item));
                 }
             }
         }
@@ -274,15 +276,15 @@ namespace Chaos
                 GroundItem groundItem = item.GroundItem(groundPoint, client.User.Map, count);
 
                 if (item.Count > 0) //if we're suppose to still be carrying some of this item, update the count
-                    client.Enqueue(Server.Packets.AddItem(item));
+                    client.Enqueue(ServerPackets.AddItem(item));
                 else //otherwise remove the item
                 {
                     if (client.User.Inventory.TryRemove(slot))
                     {
-                        client.Enqueue(Server.Packets.RemoveItem(slot));
+                        client.Enqueue(ServerPackets.RemoveItem(slot));
                         //subtract weight, and send a stat update
                         client.User.Attributes.CurrentWeight -= item.Weight;
-                        client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
+                        client.SendAttributes(StatUpdateType.Primary);
                     }
                     else
                         return;
@@ -297,7 +299,7 @@ namespace Chaos
         {
             //client requests to exit first, you have to confirm
             if (requestExit)
-                client.Enqueue(Server.Packets.ConfirmExit());
+                client.Enqueue(ServerPackets.ConfirmExit());
             else
                 client.Redirect(new Redirect(client, ServerType.Login));
         }
@@ -308,7 +310,7 @@ namespace Chaos
             {
                 //if theyre requesting the user list, send it 1 per line
                 case IgnoreType.Request:
-                    client.SendServerMessage(ServerMessageType.ScrollWindow, string.Join(Environment.NewLine, client.User.IgnoreList.ToArray()));
+                    client.SendServerMessage(ServerMessageType.ScrollWindow, client.User.IgnoreList.ToString());
                     break;
                 //add a user if it's not blank, and isnt already in the list
                 case IgnoreType.AddUser:
@@ -346,9 +348,9 @@ namespace Chaos
 
             //normal messages display to everyone in 12 spaces, shouts 25
             if (type == PublicMessageType.Normal)
-                objects = World.ObjectsVisibleFrom(client.User);
+                objects = World.ObjectsVisibleFrom(client.User).ToList();
             else
-                objects = World.ObjectsVisibleFrom(client.User, 25);
+                objects = World.ObjectsVisibleFrom(client.User, 25).ToList();
             objects.Add(client.User);
 
             //for each object within range
@@ -361,7 +363,7 @@ namespace Chaos
 
                     //if we're not being ignored, send them the message
                     if (!user.IgnoreList.Contains(client.User.Name))
-                        user.Client.Enqueue(Server.Packets.PublicChat(type, client.User.Id, message));
+                        user.Client.SendPublicMessage(type, client.User.Id, message);
                 }
                 //if it's a monster
                 else if (obj is Monster)
@@ -381,10 +383,16 @@ namespace Chaos
             Spell spell = client.User.SpellBook[slot];
             VisibleObject target;
 
-            if (targetId == client.User.Id)
-                spell.Activate(client, Server, client.User);
-            else if (World.TryGetVisibleObject(targetId, out target, client.User.Map) && target.Point.Distance(targetPoint) < 5)
-                spell.Activate(client, Server, target);
+            if (spell != null && spell.CanUse && client.User.IsChanting)
+            {
+                if (targetId == client.User.Id)
+                    spell.Activate(client, Server, spell, client.User);
+                else if (World.TryGetObject(targetId, out target, client.User.Map) && target.Point.Distance(targetPoint) < 5)
+                    spell.Activate(client, Server, spell, target);
+
+                spell.LastUse = DateTime.UtcNow;
+                client.User.IsChanting = false;
+            }
         }
 
         internal static void JoinClient(Client client, byte seed, byte[] key, string name, uint id)
@@ -402,27 +410,27 @@ namespace Chaos
 
                 //put all the necessary packets to log in in the list, and send them off
                 foreach (Spell spell in client.User.SpellBook.Where(spell => spell != null))
-                    packets.Add(Server.Packets.AddSpell(spell));
+                    packets.Add(ServerPackets.AddSpell(spell));
                 foreach (Skill skill in client.User.SkillBook.Where(skill => skill != null))
-                    packets.Add(Server.Packets.AddSkill(skill));
+                    packets.Add(ServerPackets.AddSkill(skill));
                 foreach (Item item in client.User.Equipment.Where(equip => equip != null))
-                    packets.Add(Server.Packets.AddEquipment(item));
-                packets.Add(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Full, client.User.Attributes));
+                    packets.Add(ServerPackets.AddEquipment(item));
+                packets.Add(ServerPackets.Attributes(client.User.IsAdmin, StatUpdateType.Full, client.User.Attributes));
                 foreach (Item item in client.User.Inventory.Where(item => item != null))
-                    packets.Add(Server.Packets.AddItem(item));
-                packets.Add(Server.Packets.LightLevel(Server.LightLevel));
-                packets.Add(Server.Packets.UserId(client.User.Id, client.User.BaseClass));
+                    packets.Add(ServerPackets.AddItem(item));
+                packets.Add(ServerPackets.LightLevel(Server.LightLevel));
+                packets.Add(ServerPackets.UserId(client.User.Id, client.User.BaseClass));
 
                 client.Enqueue(packets.ToArray());
 
                 //add the user to the map that it's supposed to be on
                 World.AddObjectToMap(client.User, client.User.Location);
                 //request their profile picture and text so we can update it if they changed it
-                client.Enqueue(Server.Packets.RequestPersonal());
+                client.Enqueue(ServerPackets.RequestPersonal());
             }
             //otherwise if theyre in the lobby, send them the notification
             else if(client.ServerType == ServerType.Lobby)
-                client.Enqueue(Server.Packets.LobbyNotification(false, Server.LoginMessageCheckSum));
+                client.Enqueue(ServerPackets.LobbyNotification(false, Server.LoginMessageCheckSum));
         }
 
         internal static void Turn(Client client, Direction direction)
@@ -430,7 +438,7 @@ namespace Chaos
             //set the user's direction, and display the turn to everyone in range to see
             client.User.Direction = direction;
             foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
-                user.Client.Enqueue(Server.Packets.CreatureTurn(client.User.Id, direction));
+                user.Client.Enqueue(ServerPackets.CreatureTurn(client.User.Id, direction));
         }
 
         internal static void SpaceBar(Client client)
@@ -438,15 +446,15 @@ namespace Chaos
             List<ServerPacket> packets = new List<ServerPacket>();
 
             //cancel casting
-            packets.Add(Server.Packets.CancelCasting());
+            client.User.IsChanting = false;
+            packets.Add(ServerPackets.CancelCasting());
 
             //use all basic skills (otherwise known as assails)
             foreach (Skill skill in client.User.SkillBook)
-                if (skill.IsBasic)
+                if (skill?.IsBasic == true && skill.CanUse)
                 {
-                    packets.Add(Server.Packets.AnimateUser(client.User.Id, skill.Animation, 100, false));
-
-                    //damage checking, calculations, etc
+                    skill.Activate(client, Server, skill);
+                    skill.LastUse = DateTime.UtcNow;
                 }
 
             client.Enqueue(packets.ToArray());
@@ -454,7 +462,7 @@ namespace Chaos
 
         internal static void RequestWorldList(Client client)
         {
-            client.Enqueue(Server.Packets.WorldList(Server.WorldClients.Select(cli => cli.User), client.User.Attributes.Level));
+            client.Enqueue(ServerPackets.WorldList(Server.WorldClients.Select(cli => cli.User), client.User.Attributes.Level));
         }
 
         internal static void Whisper(Client client, string targetName, string message)
@@ -474,7 +482,7 @@ namespace Chaos
             else
             {
                 client.SendServerMessage(ServerMessageType.Whisper, $@"{targetName} > {message}");
-                targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $@"{client.User.Name} ' {message}");
+                targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $@"{client.User.Name} < {message}");
             }
         }
 
@@ -493,15 +501,20 @@ namespace Chaos
         internal static void UseItem(Client client, byte slot)
         {
             Item item = client.User.Inventory[slot];
-            item.Activate(client, Server, item);
+
+            if (item != null && item.CanUse)
+            {
+                item.Activate(client, Server, item);
+                item.LastUse = DateTime.UtcNow;
+            }
         }
 
-        internal static void AnimateUser(Client client, byte index)
+        internal static void AnimateCreature(Client client, byte index)
         {
-            client.Enqueue(Server.Packets.AnimateUser(client.User.Id, index, 100));
+            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, index, 100));
 
             foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
-                user.Client.Enqueue(Server.Packets.AnimateUser(client.User.Id, index, 100));
+                user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, index, 100));
         }
 
         internal static void DropGold(Client client, uint amount, Point groundPoint)
@@ -513,7 +526,7 @@ namespace Chaos
 
             client.User.Attributes.Gold -= amount;
             World.AddObjectToMap(CreationEngine.CreateGold(client, amount, groundPoint), new Location(map.Id, groundPoint));
-            client.SendAttributes(StatUpdateFlags.ExpGold);
+            client.SendAttributes(StatUpdateType.ExpGold);
         }
 
         internal static void ChangePassword(Client client, string name, string currentPw, string newPw)
@@ -530,7 +543,7 @@ namespace Chaos
                 Item item;
                 VisibleObject obj;
 
-                if (World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && client.User.Inventory.TryGet(slot, out item) && item != null && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
+                if (World.TryGetObject(targetId, out obj, client.User.Map) && obj is Creature && client.User.Inventory.TryGet(slot, out item) && item != null && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
                 {
                     if (item.AccountBound)
                         return;
@@ -563,7 +576,7 @@ namespace Chaos
             {
                 VisibleObject obj;
 
-                if (client.User.Attributes.Gold > amount && World.TryGetVisibleObject(targetId, out obj, client.User.Map) && obj is Creature && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
+                if (client.User.Attributes.Gold > amount && World.TryGetObject(targetId, out obj, client.User.Map) && obj is Creature && obj.Point.Distance(client.User.Point) <= CONSTANTS.DROP_RANGE)
                 {
                     if (obj is Monster)
                     {
@@ -589,7 +602,7 @@ namespace Chaos
 
         internal static void RequestProfile(Client client)
         {
-            client.Enqueue(Server.Packets.ProfileSelf(client.User));
+            client.Enqueue(ServerPackets.ProfileSelf(client.User));
         }
 
         internal static readonly object GroupLock = new object();
@@ -610,15 +623,15 @@ namespace Chaos
                             client.SendServerMessage(ServerMessageType.ActiveMessage, $@"Grouping is disabled.");
                         else if (!targetUser.UserOptions.Group)                                                                                                                 //else if the targets grouping is turned off, let them know
                             client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not accepting group invites.");
-                        else if (client.User.Grouped)                                                                                                                           //else if this we are already in a group
+                        else if (client.User.IsGrouped)                                                                                                                           //else if this we are already in a group
                         {
                             if (client.User == targetUser)                                                                                                                          //and we're trying to group ourself
                             {
                                 if (targetUser.Group.TryRemove(client.User))                                                                                                            //leave the group
                                     client.SendServerMessage(ServerMessageType.ActiveMessage, "You have left the group.");
                             }
-                            else if (!targetUser.Grouped)                                                                                                                           //else if the target isnt grouped
-                                targetUser.Client.Enqueue(Server.Packets.GroupRequest(GroupRequestType.Request, client.User.Name));
+                            else if (!targetUser.IsGrouped)                                                                                                                           //else if the target isnt grouped
+                                targetUser.Client.Enqueue(ServerPackets.GroupRequest(GroupRequestType.Request, client.User.Name));
                             else if (targetUser.Group != client.User.Group)                                                                                                         //else if the target's group isnt the same as our group
                                 client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group.");
                             else if (client.User.Group.Leader == client.User)                                                                                                       //else if we're the leader of the group
@@ -633,10 +646,10 @@ namespace Chaos
                         {
                             if (client.User == targetUser)                                                                                                                          //and we are trying to group ourself
                                 client.SendServerMessage(ServerMessageType.ActiveMessage, "You can't form a group alone.");
-                            else if (targetUser.Grouped)                                                                                                                            //else if target is grouped
+                            else if (targetUser.IsGrouped)                                                                                                                            //else if target is grouped
                                 client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group.");
                             else                                                                                                                                                    //else send them a group request
-                                targetUser.Client.Enqueue(Server.Packets.GroupRequest(GroupRequestType.Request, client.User.Name));
+                                targetUser.Client.Enqueue(ServerPackets.GroupRequest(GroupRequestType.Request, client.User.Name));
                         }
                         break;
                     case GroupRequestType.Join:
@@ -644,13 +657,13 @@ namespace Chaos
                             client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not near.");
                         else if (targetUser.IgnoreList.Contains(client.User.Name))
                             return;
-                        else if (client.User.Grouped)
+                        else if (client.User.IsGrouped)
                             client.SendServerMessage(ServerMessageType.ActiveMessage, "You are already in a group.");
                         else
                         {
                             if (client.User == targetUser)
                                 client.SendServerMessage(ServerMessageType.ActiveMessage, "You can't form a group alone.");
-                            else if (targetUser.Grouped)
+                            else if (targetUser.IsGrouped)
                                 client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is already in a group.");
                             else
                             {
@@ -677,12 +690,12 @@ namespace Chaos
             client.User.UserOptions.Toggle(UserOption.Group);
 
             //remove yourself from the group, if you're in one
-            if (client.User.Grouped)
+            if (client.User.IsGrouped)
                 if (client.User.Group.TryRemove(client.User))
                     client.User.Group = null;
 
             //send the profile so the group button will change, also send the useroption that was changed
-            client.Enqueue(Server.Packets.ProfileSelf(client.User));
+            client.Enqueue(ServerPackets.ProfileSelf(client.User));
             client.SendServerMessage(ServerMessageType.UserOptions, client.User.UserOptions.ToString(UserOption.Group));
         }
 
@@ -708,14 +721,14 @@ namespace Chaos
             }
 
             //if it succeeds, update the user's panels
-            client.Enqueue(Server.Packets.RemoveItem(origSlot));
-            client.Enqueue(Server.Packets.RemoveItem(endSlot));
+            client.Enqueue(ServerPackets.RemoveItem(origSlot));
+            client.Enqueue(ServerPackets.RemoveItem(endSlot));
 
             //check for null, incase we were simply moving an item to an already empty slot
             if (client.User.Inventory[origSlot] != null)
-                client.Enqueue(Server.Packets.AddItem(client.User.Inventory[origSlot]));
+                client.Enqueue(ServerPackets.AddItem(client.User.Inventory[origSlot]));
             if (client.User.Inventory[endSlot] != null)
-                client.Enqueue(Server.Packets.AddItem(client.User.Inventory[endSlot]));
+                client.Enqueue(ServerPackets.AddItem(client.User.Inventory[endSlot]));
         }
 
         internal static void RequestRefresh(Client client)
@@ -726,7 +739,7 @@ namespace Chaos
         internal static void RequestPursuit(Client client, GameObjectType objType, int objId, PursuitIds pursuitId, byte[] args)
         {
             VisibleObject obj;
-            if(World.TryGetVisibleObject(objId, out obj, client.User.Map))
+            if(World.TryGetObject(objId, out obj, client.User.Map))
             {
                 Merchant merchant = obj as Merchant;
                 Pursuit p = (obj as Merchant).Menu[pursuitId];
@@ -745,7 +758,7 @@ namespace Chaos
                     client.CurrentDialog = null;
                 }
 
-                client.Enqueue(Server.Packets.DisplayDialog(merchant, client.CurrentDialog));
+                client.Enqueue(ServerPackets.DisplayDialog(merchant, client.CurrentDialog));
             }
         }
 
@@ -762,7 +775,7 @@ namespace Chaos
             {
                 client.CurrentDialog = null;
                 client.ActiveObject = null;
-                client.Enqueue(Server.Packets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
+                client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
                 return;
             }
 
@@ -801,7 +814,7 @@ namespace Chaos
                     break;
             }
 
-            client.Enqueue(Server.Packets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
+            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
         }
 
         internal static void Boards()
@@ -811,7 +824,13 @@ namespace Chaos
 
         internal static void UseSkill(Client client, byte slot)
         {
-            throw new NotImplementedException();
+            Skill skill = client.User.SkillBook[slot];
+
+            if (skill != null && skill.CanUse)
+            {
+                skill.Activate(client, Server, skill);
+                skill.LastUse = DateTime.UtcNow;
+            }
         }
 
         internal static void ClickWorldMap(Client client, ushort mapId, Point point)
@@ -823,11 +842,11 @@ namespace Chaos
         {
             //if we're clicking ourself, send profileSelf
             if (objectId == client.User.Id)
-                client.Enqueue(Server.Packets.ProfileSelf(client.User));
+                client.Enqueue(ServerPackets.ProfileSelf(client.User));
             else
             {   //otherwise, get the object we're clicking
                 VisibleObject obj;
-                if (World.TryGetVisibleObject(objectId, out obj, client.User.Map))
+                if (World.TryGetObject(objectId, out obj, client.User.Map))
                 {
                     //if it's a monster, display it's name
                     if (obj is Monster)
@@ -835,7 +854,7 @@ namespace Chaos
                     //if it's a user, send us their profile
                     else if (obj is User)
                     {
-                        client.Enqueue(Server.Packets.Profile(obj as User));
+                        client.Enqueue(ServerPackets.Profile(obj as User));
                     }
                     else if (obj is Merchant)
                     {
@@ -844,7 +863,7 @@ namespace Chaos
                         if (merchant.ShouldDisplay)
                         {
                             client.ActiveObject = merchant;
-                            client.Enqueue(Server.Packets.DisplayMenu(client, merchant));
+                            client.Enqueue(ServerPackets.DisplayMenu(client, merchant));
                         }
                         else
                             merchant.LastClicked = DateTime.UtcNow;
@@ -865,13 +884,13 @@ namespace Chaos
             MapObject obj;
 
             //get the bottom map object at the point we're clicking
-            if (World.TryGetMapObject(clickPoint, out obj, client.User.Map))
+            if (World.TryGetObject(clickPoint, out obj, client.User.Map))
             {
                 //if it's a door, toggle it
                 if (obj is Door)
                 {
                     (obj as Door).Toggle();
-                    client.Enqueue(Server.Packets.Door(obj as Door));
+                    client.Enqueue(ServerPackets.Door(obj as Door));
                 }
                 //do things
             }
@@ -886,21 +905,21 @@ namespace Chaos
             {
                 //if it succeeds, display the item in the user's inventory, and remove it from the equipment panel
                 client.User.Inventory.AddToNextSlot(item);
-                client.Enqueue(Server.Packets.RemoveEquipment(slot));
-                client.Enqueue(Server.Packets.AddItem(item));
+                client.Enqueue(ServerPackets.RemoveEquipment(slot));
+                client.Enqueue(ServerPackets.AddItem(item));
                 //set hp/mp?
-                client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
+                client.SendAttributes(StatUpdateType.Primary);
 
                 foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
-                    user.Client.Enqueue(Server.Packets.DisplayUser(client.User));
+                    user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
 
-                client.Enqueue(Server.Packets.DisplayUser(client.User));
+                client.Enqueue(ServerPackets.DisplayUser(client.User));
             }
         }
 
         internal static void KeepAlive(Client client, byte a, byte b)
         {
-            client.Enqueue(Server.Packets.KeepAlive(a, b));
+            client.Enqueue(ServerPackets.KeepAlive(a, b));
         }
 
         internal static void ChangeStat(Client client, Stat stat)
@@ -924,7 +943,7 @@ namespace Chaos
                     break;
             }
 
-            client.Enqueue(Server.Packets.Attributes(client.User.IsAdmin, StatUpdateFlags.Primary, client.User.Attributes));
+            client.SendAttributes(StatUpdateType.Primary);
         }
 
         internal static void Exchange(Client client, ExchangeType type, int targetId = 0, uint goldAmount = 0, byte itemSlot = 0, byte itemCount = 0)
@@ -933,7 +952,7 @@ namespace Chaos
             {
                 case ExchangeType.StartExchange:
                     User targetUser;
-                    World.TryGetUser(targetId, out targetUser, client.User.Map);
+                    World.TryGetObject(targetId, out targetUser, client.User.Map);
 
                     Exchange ex = new Exchange(client.User, targetUser);
                     World.Exchanges[ex.ExchangeId] = ex;
@@ -962,12 +981,12 @@ namespace Chaos
 
         internal static void RequestLoginMessage(bool send, Client client)
         {
-            client.Enqueue(Server.Packets.LobbyNotification(send, 0, Server.LoginMessage));
+            client.Enqueue(ServerPackets.LobbyNotification(send, 0, Server.LoginMessage));
         }
 
         internal static void BeginChant(Client client)
         {
-            throw new NotImplementedException();
+            client.User.IsChanting = true;
         }
 
         internal static void DisplayChant(Client client, string chant)
@@ -992,19 +1011,19 @@ namespace Chaos
         internal static void RequestServerTable(Client client, bool request)
         {
             if (request)
-                client.Enqueue(Server.Packets.ServerTable(Server.Table));
+                client.Enqueue(ServerPackets.ServerTable(Server.Table));
             else
                 client.Redirect(new Redirect(client, ServerType.Lobby));
         }
 
         internal static void RequestHomepage(Client client)
         {
-            client.Enqueue(Server.Packets.LobbyControls(3, @"http://www.darkages.com"));
+            client.Enqueue(ServerPackets.LobbyControls(3, @"http://www.darkages.com"));
         }
 
         internal static void SynchronizeTicks(Client client, TimeSpan serverTicks, TimeSpan clientTicks)
         {
-            client.Enqueue(Server.Packets.SynchronizeTicks());
+            client.Enqueue(ServerPackets.SynchronizeTicks());
         }
 
         internal static void ChangeSoocialStatus(Client client, SocialStatus status)
@@ -1014,7 +1033,7 @@ namespace Chaos
 
         internal static void RequestMetaFile(Client client, bool all)
         {
-            client.Enqueue(Server.Packets.Metafile(all));
+            client.Enqueue(ServerPackets.Metafile(all));
         }
     }
 }

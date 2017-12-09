@@ -386,7 +386,7 @@ namespace Chaos
         Noes = 7
     }
     [Flags]
-    internal enum StatUpdateFlags : byte
+    internal enum StatUpdateType : byte
     {
         None = 0,
         /// <summary>
@@ -594,5 +594,14 @@ namespace Chaos
         Prompt2 = 6,
         Prompt1 = 7,
     }
+
+    internal enum SkillType : byte
+    {
+        Self = 0,
+        Front = 1,
+        Surround = 2,
+        Effect = 3
+    }
+
     #endregion
 }

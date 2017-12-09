@@ -16,8 +16,6 @@ namespace Chaos
 {
     internal sealed class GameTime
     {
-
-        private List<string> Months = new List<string>() { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
         private long Remainder { get; }
         internal ushort Year { get; }
         internal byte Month { get; }

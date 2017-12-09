@@ -23,9 +23,11 @@ namespace Chaos
         internal string Prompt { get; set; }
         [JsonProperty]
         internal byte CastLines { get; set; }
+        internal override bool CanUse => (LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown) && 
+            DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SPELL_COOLDOWN;
 
-        internal Spell(byte slot, string name, SpellType type, ushort sprite, string prompt, byte castLines, TimeSpan cooldown)
-            :base(slot, sprite, name, cooldown)
+        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan cooldown, Animation effectAnimation = new Animation(), byte bodyAnimation = 0)
+            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             Type = type;
             Prompt = prompt;
@@ -33,8 +35,8 @@ namespace Chaos
         }
 
         [JsonConstructor]
-        internal Spell(byte slot, ushort sprite, string name, TimeSpan cooldown, SpellType type, string prompt, byte castlines)
-            :base(slot, sprite, name, cooldown)
+        internal Spell(byte slot, ushort sprite, string name, SpellType type, TimeSpan cooldown, string prompt, byte castlines, Animation effectAnimation, byte bodyAnimation)
+            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             Type = type;
             Prompt = prompt;

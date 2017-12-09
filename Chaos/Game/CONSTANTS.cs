@@ -25,6 +25,9 @@ namespace Chaos
         internal const int MERCHANT_SPRITE_OFFSET = 16384;
         internal const int PICKUP_RANGE = 4;
         internal const int DROP_RANGE = 4;
-        internal static Location STARTING_LOCATION = new Location(5031, 20, 20);
+        internal const int GLOBAL_SKILL_COOLDOWN = 750;
+        internal const int GLOBAL_ITEM_COOLDOWN = 500;
+        internal const int GLOBAL_SPELL_COOLDOWN = 250;
+        internal static Location STARTING_LOCATION = new Location(8984, 10, 10);
     }
 }

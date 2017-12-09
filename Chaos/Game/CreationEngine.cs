@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Chaos
 {
-    internal delegate void OnUseDelegate(Client client, Server server, object args);
+    internal delegate void OnUseDelegate(Client client, Server server, params object[] args);
     internal delegate Item ItemCreationDelegate(int count);
     internal delegate Skill SkillCreationDelegate();
     internal delegate Spell SpellCreationDelegate();
@@ -26,7 +26,6 @@ namespace Chaos
         private Dictionary<string, SkillCreationDelegate> Skills { get; }
         private Dictionary<string, SpellCreationDelegate> Spells { get; }
         private Dictionary<string, OnUseDelegate> Effects { get; }
-
         internal CreationEngine()
         {
             #region Items
@@ -64,7 +63,7 @@ namespace Chaos
         #region Interface
         internal OnUseDelegate GetEffect(string itemName) => Effects.ContainsKey(itemName) ? Effects[itemName] : Effects["NormalObj"];
         internal Gold CreateGold(Client client, uint amount, Point groundPoint) => new Gold(GetGoldSprite(amount), groundPoint, client.User.Map, amount);
-        internal Item CreateItem(string name) => Items[name](1);
+        internal Item CreateItem(string name) => Items.ContainsKey(name) ? Items[name](1) : null;
         internal Item CreateStackableItem(string name, int count)
         {
             Item item = CreateItem(name);
@@ -100,38 +99,38 @@ namespace Chaos
             else
                 return 139;
         }
-        internal Skill CreateSkill(string name) => Skills[name]();
-        internal Spell CreateSpell(string name) => Spells[name]();
+        internal Skill CreateSkill(string name) => Skills.ContainsKey(name) ? Skills[name]() : null;
+        internal Spell CreateSpell(string name) => Spells.ContainsKey(name) ? Spells[name]() : null;
         #endregion
 
         #region Items
-        private void NormalObj(Client client, Server server, object args) { }
-        private void Equipment(Client client, Server server, object args)
+        private void NormalObj(Client client, Server server, params object[] args) { }
+        private void Equipment(Client client, Server server, params object[] args)
         {
-            Item item = (Item)args;
+            Item item = (Item)args[0];
             Item outItem;
             if (client.User.Equipment.Contains(item))
             {
                 if (client.User.Equipment.TryUnequip(item.EquipmentPair.Item1, out outItem))
                 {
-                    client.Enqueue(server.Packets.RemoveEquipment(item.EquipmentPair.Item1));
+                    client.Enqueue(ServerPackets.RemoveEquipment(item.EquipmentPair.Item1));
                     if (client.User.Inventory.AddToNextSlot(outItem))
-                        client.Enqueue(server.Packets.AddItem(item));
+                        client.Enqueue(ServerPackets.AddItem(item));
                 }
             }
             else if (client.User.Equipment.TryEquip(item, out outItem))
             {
-                client.Enqueue(server.Packets.RemoveItem(item.Slot));
-                client.Enqueue(server.Packets.AddEquipment(item));
+                client.Enqueue(ServerPackets.RemoveItem(item.Slot));
+                client.Enqueue(ServerPackets.AddEquipment(item));
 
                 if (outItem != null && client.User.Inventory.AddToNextSlot(outItem))
-                    client.Enqueue(server.Packets.AddItem(outItem));
+                    client.Enqueue(ServerPackets.AddItem(outItem));
             }
 
             foreach (User user in Game.World.ObjectsVisibleFrom(client.User).OfType<User>())
-                user.Client.Enqueue(server.Packets.DisplayUser(client.User));
+                user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
 
-            client.Enqueue(server.Packets.DisplayUser(client.User));
+            client.Enqueue(ServerPackets.DisplayUser(client.User));
         }
         private bool Exchange(Client client, Server server, Item item)
         {
@@ -142,93 +141,68 @@ namespace Chaos
         }
 
         private Item AdminTrinket(int count) => new Item(0, 13709, "Admin Trinket", count, TimeSpan.Zero, null, true);
-        private void AdminTrinket(Client client, Server server, object args)
+        private void AdminTrinket(Client client, Server server, params object[] args)
         {
-            client.ActiveObject = args;
+            client.ActiveObject = args[0];
             client.CurrentDialog = Game.Dialogs[1];
-            client.Enqueue(server.Packets.DisplayDialog(args, client.CurrentDialog));
+            client.Enqueue(ServerPackets.DisplayDialog(args[0], client.CurrentDialog));
         }
 
         private Item TestItem(int count) => new Item(0, 1108, "Test Item", count, TimeSpan.Zero, null, false, 0, true);
-        private Item TestEquipment(int count) => new Item(0, 1108, "Test Equipment", count, TimeSpan.Zero, new Tuple<EquipmentSlot, ushort>(EquipmentSlot.Armor, 44), false, 0, false, 10000, 10000, 5);
+        private Item TestEquipment(int count) => new Item(0, 1108, "Test Equipment", count, TimeSpan.Zero, new Tuple<EquipmentSlot, ushort>(EquipmentSlot.Armor, 44), false, 0, false, 10000, 10000, 5, new Animation());
         #endregion
 
         #region Skills
-        private Skill TestSkill1() => new Skill(0, "Test Skill 1", 78, TimeSpan.Zero);
-        private void TestSkill1(Client client, Server server, object args)
+        private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", SkillType.Front, TimeSpan.Zero, true, new Animation(), 1);
+        private void TestSkill1(Client client, Server server, params object[] args)
         {
-            //do things
+            Skill skill = args[0] as Skill;
+            Creature target;
+
+            Game.World.TryGetObject(client.User.Point.Offsetter(client.User.Direction), out target, client.User.Map);
+
+            int amount = -50000;
+            amount -= (client.User.Attributes.CurrentStr * 250);
+
+            Game.Extensions.ApplySkill(client, amount, skill);
         }
         #endregion
 
         #region Spells
-        private Spell Mend() => new Spell(0, "Mend", SpellType.Targeted, 118, string.Empty, 1, TimeSpan.Zero);
-        private void Mend(Client client, Server server, object args)
+        private Spell Mend() => new Spell(0, 118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), 6);
+        private void Mend(Client client, Server server, params object[] args)
         {
-            Creature target = (Creature)args;
-            Animation animation = new Animation(target.Id, client.User.Id, 4, 0, 100);
-            uint baseAmount = 10;
+            Spell spell = args[0] as Spell;
+            Creature target = args[1] as Creature;
+            int amount = 10;
+            amount += client.User.Attributes.CurrentWis * 5;
 
-            baseAmount += (uint)(client.User.Attributes.CurrentWis * 5);
-            target.CurrentHP = (target.CurrentHP + baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP + baseAmount);
-
-            foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
-            {
-                nearbyUser.Client.Enqueue(server.Packets.Animation(animation));
-                nearbyUser.Client.Enqueue(server.Packets.HealthBar(target));
-            }
-
-            User user = target as User;
-
-            user?.Client.Enqueue(server.Packets.Animation(animation));
-            user?.Client.Enqueue(server.Packets.HealthBar(target));
-            user?.Client.SendAttributes(StatUpdateFlags.Vitality);
+            Game.Extensions.ApplySpell(client, amount, spell, target);
         }
 
-        private Spell Heal() => new Spell(0, "Heal", SpellType.Targeted, 21, string.Empty, 1, new TimeSpan(0, 0, 2));
-        private void Heal(Client client, Server server, object args)
+        private Spell Heal() => new Spell(0, 21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), 6);
+        private void Heal(Client client, Server server, params object[] args)
         {
-            Creature target = (Creature)args;
-            Animation animation = new Animation(target.Id, client.User.Id, 157, 0, 100);
-            uint baseAmount = 100000;
+            Spell spell = args[0] as Spell;
+            Creature target = args[1] as Creature;
 
-            baseAmount += (uint)(client.User.Attributes.CurrentWis * 500);
-            target.CurrentHP = (target.CurrentHP + baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP + baseAmount);
+            Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
+            int amount = 100000;
+            amount += client.User.Attributes.CurrentWis * 500;
 
-            foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
-            {
-                nearbyUser.Client.Enqueue(server.Packets.Animation(animation));
-                nearbyUser.Client.Enqueue(server.Packets.HealthBar(target));
-            }
-
-            User user = target as User;
-
-            user?.Client.Enqueue(server.Packets.Animation(animation));
-            user?.Client.Enqueue(server.Packets.HealthBar(target));
-            user?.Client.SendAttributes(StatUpdateFlags.Vitality);
+            Game.Extensions.ApplySpell(client, amount, spell, target);
         }
-        private Spell SradTut() => new Spell(0, "Srad Tut", SpellType.Targeted, 21, string.Empty, 1, new TimeSpan(0, 0, 2));
-        private void SradTut(Client client, Server server, object args)
+        private Spell SradTut() => new Spell(0, 21, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(158, 0, 100), 6);
+        private void SradTut(Client client, Server server, params object[] args)
         {
-            Creature target = (Creature)args;
-            Animation animation = new Animation(target.Id, client.User.Id, 158, 0, 100);
-            uint baseAmount = 100000;
+            Spell spell = args[0] as Spell;
+            Creature target = args[1] as Creature;
 
-            baseAmount += (uint)(client.User.Attributes.CurrentWis * 500);
-            target.CurrentHP = (target.CurrentHP - baseAmount) > target.MaximumHP ? target.MaximumHP : (target.CurrentHP - baseAmount);
-            
+            Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
+            int amount = -100000;
+            amount -= client.User.Attributes.CurrentWis * 500;
 
-            foreach (User nearbyUser in Game.World.ObjectsVisibleFrom(target).OfType<User>())
-            {
-                nearbyUser.Client.Enqueue(server.Packets.Animation(animation));
-                nearbyUser.Client.Enqueue(server.Packets.HealthBar(target));
-            }
-
-            User user = target as User;
-
-            user?.Client.Enqueue(server.Packets.Animation(animation));
-            user?.Client.Enqueue(server.Packets.HealthBar(target));
-            user?.Client.SendAttributes(StatUpdateFlags.Vitality);
+            Game.Extensions.ApplySpell(client, amount, spell, target);
         }
         #endregion
     }

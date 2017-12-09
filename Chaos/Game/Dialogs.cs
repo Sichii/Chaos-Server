@@ -173,8 +173,7 @@ namespace Chaos
 
     internal bool SummonAll(Client client, Server server, object args)
     {
-        List<User> allUsers = server.WorldClients.Select(c => c.User).ToList();
-        allUsers.Remove(client.User);
+        IEnumerable<User> allUsers = server.WorldClients.Where(c => c.User != client.User).Select(c => c.User);
 
         foreach (User user in allUsers)
             Game.World.WarpUser(user, new Warp(user.Location, client.User.Location));

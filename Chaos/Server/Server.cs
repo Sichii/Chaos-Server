@@ -22,28 +22,29 @@ namespace Chaos
 {
     internal sealed class Server
     {
-        internal static readonly object SyncObj = new object();
-        internal static readonly object SyncWrite = new object();
-        internal static int NextClientId = 10000;
+        internal static readonly object Sync = new object();
+        internal static int NextClientId = 1000000;
         internal static int NextId = 1;
-        internal IPAddress LocalIp;
-        internal IPEndPoint LocalEndPoint;
-        internal int LocalPort;
+        internal static string[] Admins = new string[] { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend" };
+
+        internal static readonly object SyncWrite = new object();
+        internal static FileStream LogFile;
+        internal static StreamWriter LogWriter;
+
+        internal IPEndPoint ClientEndPoint;
+        internal IPEndPoint ServerEndPoint;
+        internal IPEndPoint LoopbackEndPoint;
         internal Socket ServerSocket { get; set; }
-        internal ServerPackets Packets { get; }
         internal byte[] Table { get; }
         internal uint TableCheckSum { get; }
         internal byte[] LoginMessage { get; }
         internal uint LoginMessageCheckSum { get; }
         internal ConcurrentDictionary<Socket, Client> Clients { get; }
-        internal List<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World).ToList();
+        internal IEnumerable<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World);
         internal DataBase DataBase { get; }
         internal GameTime ServerTime => GameTime.Now;
         internal LightLevel LightLevel => ServerTime.TimeOfDay;
         internal List<Redirect> Redirects { get; set; }
-        internal static List<string> Admins = new List<string>() { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend" };
-        internal static FileStream LogFile;
-        internal static StreamWriter LogWriter;
 
         internal Server(IPAddress ip, int port)
         {
@@ -52,11 +53,10 @@ namespace Chaos
 
             WriteLog("Initializing server...");
 
-            LocalIp = ip;
-            LocalPort = port;
-            LocalEndPoint = new IPEndPoint(LocalIp, LocalPort);
+            ClientEndPoint = new IPEndPoint(ip, port);
+            ServerEndPoint = new IPEndPoint(IPAddress.Any, port);
+            LoopbackEndPoint = new IPEndPoint(IPAddress.Loopback, port);
             Clients = new ConcurrentDictionary<Socket, Client>();
-            Packets = new ServerPackets();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
 
@@ -71,9 +71,9 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
-                writer.Write(Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(address => address.AddressFamily == AddressFamily.InterNetwork).GetAddressBytes());
-                writer.Write((byte)(LocalPort / 256));
-                writer.Write((byte)(LocalPort % 256));
+                writer.Write(ClientEndPoint.Address.GetAddressBytes());
+                writer.Write((byte)(ClientEndPoint.Port / 256));
+                writer.Write((byte)(ClientEndPoint.Port % 256));
                 writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos;Under Construction\0"));
                 writer.Write(notif);
                 writer.Flush();
@@ -81,7 +81,6 @@ namespace Chaos
                 TableCheckSum = Crypto.Generate32(tableStream.ToArray());
                 using (MemoryStream table = ZLIB.Compress(tableStream.ToArray()))
                     Table = table.ToArray();
-
             }
         }
 
@@ -90,11 +89,11 @@ namespace Chaos
             Game.Set(this);
 
             //display dns ip for others to connect to
-            WriteLog($"Server IP: {Dns.GetHostEntry(Host.Name).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)}");
+            WriteLog($"Server IP: {ClientEndPoint.Address}");
             WriteLog("Starting the serverloop...");
 
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ServerSocket.Bind(LocalEndPoint);
+            ServerSocket.Bind(ServerEndPoint);
             ServerSocket.Listen(10);
             ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
         }
@@ -103,6 +102,7 @@ namespace Chaos
         {
             //create the user, and add them to the userlist
             Client newClient = new Client(this, ServerSocket.EndAccept(ar));
+
             WriteLog($@"Incoming connection", newClient);
 
             if (Clients.TryAdd(newClient.ClientSocket, newClient))

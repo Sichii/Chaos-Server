@@ -17,12 +17,12 @@ namespace Chaos
     internal sealed class WorldMap
     {
         internal string Field { get; set; }
-        internal List<WorldMapNode> Nodes { get; }
+        internal WorldMapNode[] Nodes { get; }
 
         internal WorldMap(string field, params WorldMapNode[] nodes)
         {
             Field = field;
-            Nodes = new List<WorldMapNode>(nodes);
+            Nodes = nodes;
         }
 
         internal uint GetCheckSum()
@@ -30,7 +30,7 @@ namespace Chaos
             MemoryStream memoryStream = new MemoryStream();
             using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
             {
-                binaryWriter.Write((byte)Nodes.Count);
+                binaryWriter.Write((byte)Nodes.Length);
                 foreach (WorldMapNode worldMapNode in Nodes)
                 {
                     binaryWriter.Write(worldMapNode.Position.X);

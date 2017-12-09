@@ -52,9 +52,9 @@ namespace Chaos
                 ushort worldMapCount = reader.ReadUInt16();
                 for (int wMap = 0; wMap < worldMapCount; ++wMap)
                 {
-                    WorldMap worldMap = new WorldMap(reader.ReadString(), new WorldMapNode[0]);
-
+                    string field = reader.ReadString();
                     byte nodeCount = reader.ReadByte();
+                    WorldMapNode[] nodes = new WorldMapNode[nodeCount];
                     for (int i = 0; i < nodeCount; i++)
                     {
                         ushort x = reader.ReadUInt16();
@@ -63,8 +63,10 @@ namespace Chaos
                         ushort mapId = reader.ReadUInt16();
                         byte dX = reader.ReadByte();
                         byte dY = reader.ReadByte();
-                        worldMap.Nodes.Add(new WorldMapNode(new Point(x, y), name, mapId, new Point(dX, dY)));
+                        nodes[i] = new WorldMapNode(new Point(x, y), name, mapId, new Point(dX, dY));
                     }
+
+                    WorldMap worldMap = new WorldMap(field, nodes);
 
                     uint checkSum = worldMap.GetCheckSum();
                     WorldMaps[checkSum] = worldMap;
@@ -164,25 +166,25 @@ namespace Chaos
                 {
                     User user = vObject as User;
                     
-                    user.Client.Enqueue(Server.Packets.MapChangePending());     //send pending map change
-                    user.Client.Enqueue(Server.Packets.MapInfo(user.Map));      //send map info
-                    user.Client.Enqueue(Server.Packets.Location(user.Point));   //send location
+                    user.Client.Enqueue(ServerPackets.MapChangePending());     //send pending map change
+                    user.Client.Enqueue(ServerPackets.MapInfo(user.Map));      //send map info
+                    user.Client.Enqueue(ServerPackets.Location(user.Point));   //send location
 
                     foreach (User u2s in usersToSend)
                     {   
-                        user.Client.Enqueue(Server.Packets.DisplayUser(u2s));   //send it all the users
-                        u2s.Client.Enqueue(Server.Packets.DisplayUser(user));   //send all the users this user as well
+                        user.Client.Enqueue(ServerPackets.DisplayUser(u2s));   //send it all the users
+                        u2s.Client.Enqueue(ServerPackets.DisplayUser(user));   //send all the users this user as well
                     }
 
-                    user.Client.Enqueue(Server.Packets.DisplayItemMonster(itemMonsterToSend.ToArray()));    //send it all the items, monsters, and merchants
-                    user.Client.Enqueue(Server.Packets.Door(DoorsVisibleFrom(user).ToArray()));     //send the user all nearby doors
-                    user.Client.Enqueue(Server.Packets.MapChangeComplete());    //send it mapchangecomplete
-                    user.Client.Enqueue(Server.Packets.MapLoadComplete());      //send it maploadcomplete
-                    user.Client.Enqueue(Server.Packets.DisplayUser(user));      //send it itself
+                    user.Client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));    //send it all the items, monsters, and merchants
+                    user.Client.Enqueue(ServerPackets.Door(DoorsVisibleFrom(user).ToArray()));     //send the user all nearby doors
+                    user.Client.Enqueue(ServerPackets.MapChangeComplete());    //send it mapchangecomplete
+                    user.Client.Enqueue(ServerPackets.MapLoadComplete());      //send it maploadcomplete
+                    user.Client.Enqueue(ServerPackets.DisplayUser(user));      //send it itself
                 }
                 else //if this object isnt a user
                     foreach (User u2s in usersToSend)
-                        u2s.Client.Enqueue(Server.Packets.DisplayItemMonster(vObject)); //send all the visible users this object
+                        u2s.Client.Enqueue(ServerPackets.DisplayItemMonster(vObject)); //send all the visible users this object
             }
         }
 
@@ -191,9 +193,9 @@ namespace Chaos
         /// </summary>
         /// <param name="vObjects">Any non-user visibleobject</param>
         /// <param name="location">The map and point you want to add it to.</param>
-        internal void AddObjectsToMap(List<VisibleObject> vObjects, Location location)
+        internal void AddObjectsToMap(IEnumerable<VisibleObject> vObjects, Location location)
         {
-            if (vObjects.Count == 0) return;
+            if (vObjects.Count() == 0) return;
 
             lock(Maps[location.MapId].Sync)
             {
@@ -206,8 +208,8 @@ namespace Chaos
                 }
 
                 //send all the visible users these objects
-                foreach (User user in ObjectsVisibleFrom(vObjects[0]).OfType<User>())
-                    user.Client.Enqueue(Server.Packets.DisplayItemMonster(vObjects.ToArray()));
+                foreach (User user in ObjectsVisibleFrom(vObjects.First()).OfType<User>())
+                    user.Client.Enqueue(ServerPackets.DisplayItemMonster(vObjects.ToArray()));
             }
         }
 
@@ -226,7 +228,7 @@ namespace Chaos
                 if (vObject.Map.Objects.TryRemove(vObject.Id, out w))
                 {
                     foreach (User user in ObjectsVisibleFrom(vObject).OfType<User>())
-                        user.Client.Enqueue(Server.Packets.RemoveObject(vObject));
+                        user.Client.Enqueue(ServerPackets.RemoveObject(vObject));
 
                     if (!worldMap)
                         vObject.Map = null;
@@ -244,6 +246,7 @@ namespace Chaos
         {
             if(warp.Location == user.Location && Maps.ContainsKey(warp.TargetMapId))
             {
+                /* 10000+ computations are expensive, can i make this cheaper?
                 if(Maps[warp.TargetMapId].IsWall(warp.TargetX, warp.TargetY))
                 {
                     int dist = int.MaxValue;
@@ -259,13 +262,12 @@ namespace Chaos
                     }
 
                     warp = new Warp(warp.Location, new Location(warp.TargetMapId, nearestPoint));
-                }
+                }*/
 
                 if (!worldMap)
                     RemoveObjectFromMap(user);
 
                 AddObjectToMap(user, warp.TargetLocation);
-
             }
         }
 
@@ -274,15 +276,10 @@ namespace Chaos
         /// </summary>
         /// <param name="vObject">Object to base from.</param>
         /// <returns></returns>
-        internal List<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, byte distance = 0)
+        internal IEnumerable<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, byte distance = 13)
         {
             lock (vObject.Map.Sync)
-            {
-                if (distance == 0)
-                    return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.WithinRange(vObject.Point) && vObject != obj).ToList();
-                else
-                    return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && vObject != obj).ToList();
-            }
+                return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && vObject != obj);
         }
 
         /// <summary>
@@ -290,12 +287,10 @@ namespace Chaos
         /// </summary>
         /// <param name="user">The user to base from.</param>
         /// <returns></returns>
-        internal List<Door> DoorsVisibleFrom(User user)
+        internal IEnumerable<Door> DoorsVisibleFrom(User user)
         {
             lock (user.Map.Sync)
-            {
-                return user.Map.Doors.Values.Where(door => user.WithinRange(door.Point)).ToList();
-            }
+                return user.Map.Doors.Values.Where(door => user.WithinRange(door.Point));
         }
 
         /// <summary>
@@ -311,9 +306,9 @@ namespace Chaos
 
             lock(client.User.Map.Sync)
             {
-                client.Enqueue(Server.Packets.MapInfo(client.User.Map));
-                client.Enqueue(Server.Packets.Location(client.User.Point));
-                client.SendAttributes(StatUpdateFlags.Full);
+                client.Enqueue(ServerPackets.MapInfo(client.User.Map));
+                client.Enqueue(ServerPackets.Location(client.User.Point));
+                client.SendAttributes(StatUpdateType.Full);
                 List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
 
                 //get all objects that would be visible to this object and sort them
@@ -321,16 +316,16 @@ namespace Chaos
                     if (obj is User)
                     {
                         User user = obj as User;
-                        client.Enqueue(Server.Packets.DisplayUser(user));
-                        user.Client.Enqueue(Server.Packets.DisplayUser(client.User));
+                        client.Enqueue(ServerPackets.DisplayUser(user));
+                        user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
                     }
                     else
                         itemMonsterToSend.Add(obj);
 
-                client.Enqueue(Server.Packets.DisplayItemMonster(itemMonsterToSend.ToArray()));
-                client.Enqueue(Server.Packets.MapLoadComplete());
-                client.Enqueue(Server.Packets.DisplayUser(client.User));
-                client.Enqueue(Server.Packets.RefreshResponse());
+                client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));
+                client.Enqueue(ServerPackets.MapLoadComplete());
+                client.Enqueue(ServerPackets.DisplayUser(client.User));
+                client.Enqueue(ServerPackets.RefreshResponse());
             }
         }
 
@@ -340,7 +335,6 @@ namespace Chaos
         /// <param name="name">The name of the user to search for.</param>
         /// <param name="user">Reference to the user to set.</param>
         /// <param name="mapToTry">Map to try retreiving from.</param>
-        /// <returns></returns>
         internal bool TryGetUser(string name, out User user, Map mapToTry)
         {
             user = null;
@@ -357,35 +351,12 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive a user by searching through the maps for the given id.
+        /// Attempts to retreive an object by searching through the maps for the given id.
         /// </summary>
-        /// <param name="id">The id of the user to search for.</param>
-        /// <param name="user">Reference to the user to set.</param>
-        /// <param name="mapToTry">Map to try retreiving from.</param>
-        /// <returns></returns>
-        internal bool TryGetUser(int id, out User user, Map mapToTry)
-        {
-            user = null;
-
-            if (mapToTry != null)
-                lock (mapToTry.Sync)
-                    user = mapToTry.Objects[id] as User;
-            else
-                foreach (Map map in Maps.Values)
-                    if (TryGetUser(id, out user, map))
-                        return true;
-
-            return user != null;
-        }
-
-        /// <summary>
-        /// Attempts to retreive an object by searching through the maps for a given Id.
-        /// </summary>
-        /// <param name="id">Id to search for.</param>
+        /// <param name="id">The id of the object to search for.</param>
         /// <param name="obj">Reference to the object to set.</param>
         /// <param name="mapToTry">Map to try retreiving from.</param>
-        /// <returns></returns>
-        internal bool TryGetVisibleObject(int id, out VisibleObject obj, Map mapToTry = null)
+        internal bool TryGetObject<T>(int id, out T obj, Map mapToTry = null) where T : class
         {
             WorldObject wObj;
             obj = null;
@@ -394,95 +365,46 @@ namespace Chaos
             {
                 lock (mapToTry.Sync)
                     if (mapToTry.Objects.TryGetValue(id, out wObj))
-                        obj = wObj as VisibleObject;
+                        obj = wObj as T;
             }
             else
                 foreach (Map map in Maps.Values)
-                    if (TryGetVisibleObject(id, out obj, map))
+                    if (TryGetObject(id, out obj, map))
                         return true;
 
             return obj != null;
         }
 
         /// <summary>
-        /// Attempts to retreive an object by searching through the maps at a given point.
+        /// Attempts to retreive an object by searching through the maps for the given id.
         /// </summary>
-        /// <param name="point">Point to check.</param>
+        /// <param name="p">The point of the object to search for.</param>
         /// <param name="obj">Reference to the object to set.</param>
         /// <param name="mapToTry">Map to try retreiving from.</param>
-        /// <returns></returns>
-        internal bool TryGetMapObject(Point point, out MapObject obj, Map mapToTry = null)
+        internal bool TryGetObject<T>(Point p, out T obj, Map mapToTry = null) where T : class
         {
-            Door door;
-            Warp warp;
             obj = null;
 
             if (mapToTry != null)
-            {
                 lock (mapToTry.Sync)
                 {
-                    if (mapToTry.Doors.TryGetValue(point, out door))
-                        obj = door;
-                    else if (mapToTry.Warps.TryGetValue(point, out warp))
-                        obj = warp;
+                    Type tType = typeof(T);
+
+                    if (typeof(VisibleObject).IsAssignableFrom(tType))
+                        obj = mapToTry.Objects.Values.OfType<T>().LastOrDefault(tObj => (tObj as VisibleObject)?.Point == p);
+                    else if (typeof(Door).IsAssignableFrom(tType))
+                        obj = mapToTry.Doors.ContainsKey(p) ? mapToTry.Doors[p] as T : null;
+                    else if (typeof(Warp).IsAssignableFrom(tType))
+                        obj = mapToTry.Warps.ContainsKey(p) ? mapToTry.Warps[p] as T : null;
+                    else if (typeof(WorldMap).IsAssignableFrom(tType))
+                        obj = mapToTry.WorldMaps.ContainsKey(p) ? mapToTry.WorldMaps[p] as T : null;
                 }
-                    //else if
-                        //signposts
-                        //boards
-            }
             else
                 foreach (Map map in Maps.Values)
-                    if (TryGetMapObject(point, out obj, map))
+                    if (TryGetObject(p, out obj, map))
                         return true;
 
             return obj != null;
-        }
-
-        /// <summary>
-        /// Attempts to retreive the worldmap at the specified point.
-        /// </summary>
-        /// <param name="point">Point of the worldmap to retreive.</param>
-        /// <param name="worldMap">Reference to the worldMap to set.</param>
-        /// <param name="mapToTry">Map to try retreiving from.</param>
-        /// <returns></returns>
-        internal bool TryGetWorldMap(Point point, out WorldMap worldMap, Map mapToTry = null)
-        {
-            worldMap = null;
-
-            if (mapToTry != null)
-            {
-                lock (mapToTry.Sync)
-                    if (mapToTry.WorldMaps.TryGetValue(point, out worldMap))
-                        return true;
-            }
-            else
-                foreach (Map map in Maps.Values)
-                    if (TryGetWorldMap(point, out worldMap, map))
-                        return true;
-
-            return worldMap != null;
-        }
-
-        /// <summary>
-        /// Attempts to retreive the item at the specified point.
-        /// </summary>
-        /// <param name="point">Point of the item to retreive.</param>
-        /// <param name="groundItem">Reference to the groundItem to set.</param>
-        /// <param name="mapToTry">Map to try retreiving from.</param>
-        /// <returns></returns>
-        internal bool TryGetGroundItem(Point point, out GroundItem groundItem, Map mapToTry = null)
-        {
-            groundItem = null;
-
-            if (mapToTry != null)
-                lock (mapToTry.Sync)
-                    groundItem = mapToTry.Objects.Values.OfType<GroundItem>().LastOrDefault(i => i.Point == point);
-            else
-                foreach (Map map in Maps.Values)
-                    if (TryGetGroundItem(point, out groundItem, map))
-                        return true;
-
-            return groundItem != null;
         }
 
         /// <summary>
@@ -491,9 +413,10 @@ namespace Chaos
         /// <param name="user">The user to clean up</param>
         internal void ScrubUser(User user)
         {
+            user.Group?.TryRemove(user.Id);
+            user.Exchange?.Cancel(user);
             user.Save();
             RemoveObjectFromMap(user);
-            user.Group?.TryRemove(user.Id);
 
             //remove from other things
         }

@@ -23,7 +23,7 @@ namespace Chaos
         public IEnumerator<User> GetEnumerator() => Users.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal int GroupId { get; }
-        internal User Leader => Users[0];
+        internal User Leader => Users?[0];
         private List<User> Users { get; set; }
         internal byte Size => (byte)Users.Count;
         internal GroupBox Box { get; set; }
@@ -99,12 +99,12 @@ namespace Chaos
 
                         if (Users.Count == 1)
                         {
-                            Users[0].Client.Enqueue(Users[0].Client.Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, "Group has been disbanded."));
+                            Users[0].Client.SendServerMessage(ServerMessageType.ActiveMessage, "Group has been disbanded.");
                             TryRemove(Users[0]);
                         }
                         else if (Users.Count > 1)
                             foreach (User u in Users)
-                                u.Client.Enqueue(u.Client.Server.Packets.ServerMessage(ServerMessageType.ActiveMessage, $@"{user.Name} {(leader ? "has been kicked from the group" : "has left the group")}"));
+                                u.Client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{user.Name} {(leader ? "has been kicked from the group" : "has left the group")}");
                         return true;
                     }
 

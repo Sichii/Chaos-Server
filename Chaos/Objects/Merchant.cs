@@ -44,7 +44,7 @@ namespace Chaos
             NextDialogId = nextDialogId;
             LastClicked = DateTime.MinValue;
             AvailablePursuits = availablePursuits;
-            Menu = new Menu(AllPursuits.Where(kvp => AvailablePursuits.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList(), menuType, menuText);
+            Menu = new Menu(AllPursuits.Where(kvp => AvailablePursuits.Contains(kvp.Key)).Select(kvp => kvp.Value), menuType, menuText);
         }
     }
 }

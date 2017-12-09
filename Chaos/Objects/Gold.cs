@@ -15,7 +15,7 @@ namespace Chaos
     {
         internal uint Amount { get; set; }
 
-        internal Gold(byte sprite, Point point, Map map, uint amount)
+        internal Gold(ushort sprite, Point point, Map map, uint amount)
           : base((ushort)(sprite + CONSTANTS.ITEM_SPRITE_OFFSET), point, map)
         {
             Amount = amount;

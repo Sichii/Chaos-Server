@@ -53,8 +53,8 @@ namespace Chaos
                 User2.Exchange = this;
 
                 //active exchange window on each client
-                User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.StartExchange, User2.Id, User2.Name));
-                User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.StartExchange, User1.Id, User1.Name));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.StartExchange, User2.Id, User2.Name));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.StartExchange, User1.Id, User1.Name));
 
                 IsActive = true;
             }
@@ -73,7 +73,7 @@ namespace Chaos
                 {
                     //remove item from their inventory
                     user.Inventory.TryRemove(slot);
-                    user.Client.Enqueue(Server.Packets.RemoveItem(slot));
+                    user.Client.Enqueue(ServerPackets.RemoveItem(slot));
 
                     bool source = user == User2;
                     //add item to exchange
@@ -89,11 +89,11 @@ namespace Chaos
                     }
 
                     //update exchange window
-                    User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.AddItem, source, index, item.SpritePair.Item2, item.Color, item.Name));
-                    User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.AddItem, !source, index, item.SpritePair.Item2, item.Color, item.Name));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, source, index, item.SpritePair.Item2, item.Color, item.Name));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !source, index, item.SpritePair.Item2, item.Color, item.Name));
                 }
                 else //if it's stackable, send a prompty asking for how many
-                    user.Client.Enqueue(Server.Packets.Exchange(ExchangeType.RequestAmount, item.Slot));
+                    user.Client.Enqueue(ServerPackets.Exchange(ExchangeType.RequestAmount, item.Slot));
             }
         }
 
@@ -113,13 +113,13 @@ namespace Chaos
                 if (item.Count == count)
                 {
                     user.Inventory.TryGetRemove(slot, out splitItem);
-                    user.Client.Enqueue(Server.Packets.RemoveItem(slot));
+                    user.Client.Enqueue(ServerPackets.RemoveItem(slot));
                 }
                 else
                 {
                     //otherwise split the item stack and update the user's inventory
                     splitItem = item.Split(count);
-                    user.Client.Enqueue(Server.Packets.AddItem(item));
+                    user.Client.Enqueue(ServerPackets.AddItem(item));
                 }
 
                 //depending on which user is activating this, do different things
@@ -161,8 +161,8 @@ namespace Chaos
 
                 //update exchange window
                 bool source = user == User2;
-                User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.AddItem, source, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
-                User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.AddItem, !source, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, source, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !source, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
             }
         }
 
@@ -188,20 +188,20 @@ namespace Chaos
                     //set the gold in the exchange
                     User1Gold = amount;
                     //update the user's gold
-                    User1.Client.SendAttributes(StatUpdateFlags.ExpGold);
+                    User1.Client.SendAttributes(StatUpdateType.ExpGold);
                 }
                 else
                 {
                     //do same thing for other user
                     User2.Attributes.Gold -= amount;
                     User2Gold = amount;
-                    User2.Client.SendAttributes(StatUpdateFlags.ExpGold);
+                    User2.Client.SendAttributes(StatUpdateType.ExpGold);
                 }
 
                 //update exchange window
                 bool source = user == User2;
-                User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.SetGold, source, source ? User1Gold : User2Gold));
-                User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.SetGold, !source, !source ? User1Gold : User2Gold));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.SetGold, source, User2Gold));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.SetGold, !source, User1Gold));
             }
         }
 
@@ -214,25 +214,25 @@ namespace Chaos
 
                 //give the items and gold back to their owners
                 User1.Attributes.Gold += User1Gold;
-                User1.Client.SendAttributes(StatUpdateFlags.ExpGold);
+                User1.Client.SendAttributes(StatUpdateType.ExpGold);
                 foreach (Item item in User1Items)
                 {
                     User1.Inventory.TryAdd(item);
-                    User1.Client.Enqueue(Server.Packets.AddItem(item));
+                    User1.Client.Enqueue(ServerPackets.AddItem(item));
                 }
 
                 User2.Attributes.Gold += User2Gold;
-                User2.Client.SendAttributes(StatUpdateFlags.ExpGold);
+                User2.Client.SendAttributes(StatUpdateType.ExpGold);
                 foreach (Item item in User2Items)
                 {
                     User2.Inventory.TryAdd(item);
-                    User2.Client.Enqueue(Server.Packets.AddItem(item));
+                    User2.Client.Enqueue(ServerPackets.AddItem(item));
                 }
 
                 //send cancel packet to close the exchange
                 bool source = user == User2;
-                User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.Cancel, source));
-                User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.Cancel, !source));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Cancel, source));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Cancel, !source));
 
                 //destroy the exchange object from the server
                 Destroy();
@@ -255,32 +255,32 @@ namespace Chaos
                 bool source = user == User2;
                 //only send the opposite user a false-sourced accept packet (accept button on other side)
                 if (source)
-                    User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.Accept, false));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, false));
                 else
-                    User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.Accept, false));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, false));
 
                 //if both players accepted, give eachother the items and gold in eachother's lists
                 if (User1Accept && User2Accept)
                 {
                     User2.Attributes.Gold += User1Gold;
-                    User2.Client.SendAttributes(StatUpdateFlags.ExpGold);
+                    User2.Client.SendAttributes(StatUpdateType.ExpGold);
                     foreach (Item item in User1Items)
                     {
                         User2.Inventory.AddToNextSlot(item);
-                        User2.Client.Enqueue(Server.Packets.AddItem(item));
+                        User2.Client.Enqueue(ServerPackets.AddItem(item));
                     }
 
                     User1.Attributes.Gold += User2Gold;
-                    User1.Client.SendAttributes(StatUpdateFlags.ExpGold);
+                    User1.Client.SendAttributes(StatUpdateType.ExpGold);
                     foreach (Item item in User2Items)
                     {
                         User1.Inventory.AddToNextSlot(item);
-                        User1.Client.Enqueue(Server.Packets.AddItem(item));
+                        User1.Client.Enqueue(ServerPackets.AddItem(item));
                     }
 
                     //update exchange window (to close it)
-                    User1.Client.Enqueue(Server.Packets.Exchange(ExchangeType.Accept, true));
-                    User2.Client.Enqueue(Server.Packets.Exchange(ExchangeType.Accept, true));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, true));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, true));
 
                     //destroy the exchange object from the server
                     Destroy();
@@ -290,13 +290,16 @@ namespace Chaos
 
         private void Destroy()
         {
-            //remove the exchange from existence
-            User1.Exchange = null;
-            User2.Exchange = null;
-            Exchange exOut;
-            Game.World.Exchanges.TryRemove(ExchangeId, out exOut);
-            exOut = null;
-            IsActive = false;
+            lock (Sync)
+            {
+                //remove the exchange from existence
+                User1.Exchange = null;
+                User2.Exchange = null;
+                Exchange exOut;
+                Game.World.Exchanges.TryRemove(ExchangeId, out exOut);
+                exOut = null;
+                IsActive = false;
+            }
         }
     }
 }

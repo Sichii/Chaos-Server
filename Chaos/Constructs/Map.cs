@@ -28,7 +28,7 @@ namespace Chaos
         internal byte SizeX { get; }
         internal byte SizeY { get; }
         internal byte[] Data { get; private set; }
-        internal ushort CheckSum => Crypto.Generate16(Data);
+        internal ushort CheckSum { get; private set; }
         internal Dictionary<Point, Tile> Tiles { get; }
         internal MapFlags Flags { get; set; }
         internal string Name { get; set; }
@@ -69,11 +69,17 @@ namespace Chaos
                     for (ushort x = 0; x < SizeX; x++)
                         Tiles[new Point(x, y)] = new Tile((short)(data[index++] | data[index++] << 8), (short)(data[index++] | data[index++] << 8), (short)(data[index++] | data[index++] << 8));
             }
+
+            CheckSum = Crypto.Generate16(Data);
         }
 
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
         internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || Tiles[new Point(x, y)].IsWall;
         internal bool IsWall(Point p) => IsWall(p.X, p.Y);
-        internal bool IsWalkable(Point p) => !IsWall(p) && (Doors.Keys.Contains(p) ? Doors[p].Opened : true) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
+        internal bool IsWalkable(Point p)
+        {
+            lock (Sync)
+                return !IsWall(p) && (Doors.Keys.Contains(p) ? Doors[p].Opened : true) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
+        }
     }
 }

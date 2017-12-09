@@ -31,7 +31,7 @@ namespace Chaos
             Map = map;
         }
 
-        internal bool WithinRange(Point p) => Point.Distance(p) < 12;
-        internal bool WithinRange(VisibleObject v) => Point.Distance(v.Point) < 12;
+        internal bool WithinRange(Point p) => Point.Distance(p) < 13;
+        internal bool WithinRange(VisibleObject v) => Point.Distance(v.Point) < 13;
     }
 }

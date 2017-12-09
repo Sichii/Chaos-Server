@@ -36,12 +36,11 @@ namespace Chaos
             Bank = new Bank();
             Ranks = new List<string>()
             {
-                "Event Host", "Game Master", "Developer", "Lead Developer"
+                "Guinea Pig", "Event Host", "Game Master", "Developer", "Lead Developer"
             };
             Members = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-            Members.Add(Server.Admins[0], Ranks[3]);
-            Members.Add(Server.Admins[1], Ranks[2]);
-            Members.Add(Server.Admins[2], Ranks[2]);
+            Members.Add("sichi", Ranks[4]);
+            Members.Add("whug", Ranks[0]);
         }
 
         /// <summary>
@@ -75,7 +74,11 @@ namespace Chaos
         /// Returns the title of user(name)
         /// </summary>
         /// <param name="name">Name of the user you want the title of.</param>
-        internal string TitleOf(string name) => Members.ContainsKey(name) ? Members[name] : null;
+        internal string TitleOf(string name)
+        {
+            lock (Sync)
+                return Members.ContainsKey(name) ? Members[name] : null;
+        }
 
         /// <summary>
         /// Attempts to add a member to the guild.
@@ -83,13 +86,16 @@ namespace Chaos
         /// <param name="user">User you wish added to the guild.</param>
         internal bool TryAddMember(User user)
         {
-            if (user.Guild != null)
-                return false;
+            lock (Sync)
+            {
+                if (user.Guild != null || Members.ContainsKey(user.Name))
+                    return false;
 
-            Members.Add(user.Name, Ranks[0]);
-            user.Guild = this;
+                Members.Add(user.Name, Ranks[0]);
+                user.Guild = this;
 
-            return Members.ContainsKey(user.Name);
+                return Members.ContainsKey(user.Name) && user.Guild == this;
+            }
         }
         /// <summary>
         /// Attempts to remove a member from the guild.
@@ -97,11 +103,14 @@ namespace Chaos
         /// <param name="user">User you wish removed from the guild.</param>
         internal bool TryRemoveMember(User user)
         {
-            if (user.Guild == null)
-                return false;
+            lock (Sync)
+            {
+                if (user.Guild == null || !Members.ContainsKey(user.Name))
+                    return false;
 
-            user.Guild = null;
-            return Members.Remove(user.Name);
+                user.Guild = null;
+                return Members.Remove(user.Name);
+            }
         }
         /// <summary>
         /// Attempts to change the name of a rank.
@@ -110,12 +119,15 @@ namespace Chaos
         /// <param name="newRank">New name of the rank.</param>
         internal bool TryChangeRankName(string oldRank, string newRank)
         {
-            if (!string.IsNullOrEmpty(oldRank) && !string.IsNullOrEmpty(newRank) && Ranks.Contains(oldRank))
+            lock (Sync)
             {
-                Ranks[Ranks.IndexOf(oldRank)] = newRank;
-                return true;
+                if (!string.IsNullOrEmpty(oldRank) && !string.IsNullOrEmpty(newRank) && Ranks.Contains(oldRank))
+                {
+                    Ranks[Ranks.IndexOf(oldRank)] = newRank;
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
     }
 }

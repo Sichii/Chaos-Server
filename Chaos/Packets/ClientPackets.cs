@@ -258,7 +258,7 @@ namespace Chaos
                 animNum += 9;
 
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Animation: {animNum}", client);
-            Game.AnimateUser(client, animNum);
+            Game.AnimateCreature(client, animNum);
         }
         private void DropGold(Client client, ClientPacket packet)
         {

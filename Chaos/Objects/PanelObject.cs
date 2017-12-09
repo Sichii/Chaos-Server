@@ -26,17 +26,22 @@ namespace Chaos
         internal TimeSpan Cooldown { get; }
         [JsonProperty]
         internal DateTime LastUse { get; set; }
+        [JsonProperty]
+        internal Animation EffectAnimation { get; set; }
+        [JsonProperty]
+        internal byte BodyAnimation { get; set; }
         internal OnUseDelegate Activate { get; }
-        internal bool CanUse => LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown;
+        internal abstract bool CanUse { get; }
 
-
-        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown)
+        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown, Animation effectAnimation , byte bodyAnimation = 0)
         {
             Slot = slot;
             Sprite = sprite;
             Name = name;
             Cooldown = cooldown;
             LastUse = DateTime.MinValue;
+            EffectAnimation = effectAnimation;
+            BodyAnimation = bodyAnimation;
             Activate = Game.CreationEngine.GetEffect(Name);
         }
     }

@@ -134,9 +134,9 @@ namespace Chaos
         /// <returns></returns>
         public override string ToString()
         {
-            List<string> options = new List<string>();
+            string[] options = new string[9];
             for (int i = 1; i <= 8; i++)
-                options.Add(ToString((UserOption)i));
+                options[i-1] = ToString((UserOption)i);
 
             return $"0{string.Join("\t", options)}";
         }

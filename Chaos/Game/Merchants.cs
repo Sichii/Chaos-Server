@@ -17,7 +17,7 @@ namespace Chaos
 {
     internal sealed class Merchants : IEnumerable<Merchant>
     {
-        public IEnumerator<Merchant> GetEnumerator() => MerchantList.Values.ToList().GetEnumerator();
+        public IEnumerator<Merchant> GetEnumerator() => MerchantList.Values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         //access merchant by name
         internal Merchant this[string name] => MerchantList[name];
