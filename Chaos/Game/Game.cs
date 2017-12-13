@@ -127,6 +127,8 @@ namespace Chaos
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Srad Tut"));
                 newUser.SkillBook.AddToNextSlot(CreationEngine.CreateSkill("Test Skill 1"));
                 newUser.Attributes.Gold += 500000000;
+                LegendMark isGm = new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.LightPink);
+                newUser.Legend.Add(isGm);
             }
 
             //try to save the new user to the database
@@ -509,12 +511,12 @@ namespace Chaos
             }
         }
 
-        internal static void AnimateCreature(Client client, byte index)
+        internal static void AnimateCreature(Client client, BodyAnimation animNum)
         {
-            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, index, 100));
+            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, animNum, 100));
 
             foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
-                user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, index, 100));
+                user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, animNum, 100));
         }
 
         internal static void DropGold(Client client, uint amount, Point groundPoint)

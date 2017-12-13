@@ -44,7 +44,7 @@ namespace Chaos
                 handles[(byte)ClientOpCodes.Whisper] = new Handler(cp.Whisper);
                 handles[(byte)ClientOpCodes.ToggleUserOption] = new Handler(cp.ToggleUserOption);
                 handles[(byte)ClientOpCodes.UseItem] = new Handler(cp.UseItem);
-                handles[(byte)ClientOpCodes.AnimateUser] = new Handler(cp.AnimateUser);
+                handles[(byte)ClientOpCodes.Emote] = new Handler(cp.Emote);
                 handles[(byte)ClientOpCodes.DropGold] = new Handler(cp.DropGold);
                 handles[(byte)ClientOpCodes.ChangePassword] = new Handler(cp.ChangePassword);
                 handles[(byte)ClientOpCodes.DropItemOnCreature] = new Handler(cp.DropItemOnCreature);
@@ -251,14 +251,15 @@ namespace Chaos
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot}", client);
             Game.UseItem(client, slot);
         }
-        private void AnimateUser(Client client, ClientPacket packet)
+        private void Emote(Client client, ClientPacket packet)
         {
             byte animNum = packet.ReadByte();
-            if (animNum <= 35)
-                animNum += 9;
+            BodyAnimation anim = (BodyAnimation)(animNum + 9);
 
-            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Animation: {animNum}", client);
-            Game.AnimateCreature(client, animNum);
+            if (animNum > 35) return;
+
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Emote: {anim}", client);
+            Game.AnimateCreature(client, anim);
         }
         private void DropGold(Client client, ClientPacket packet)
         {

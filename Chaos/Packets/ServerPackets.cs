@@ -288,12 +288,12 @@ namespace Chaos
 
             return packet;
         }
-        internal static ServerPacket AnimateCreature(int id, byte animation, ushort speed, byte sound = 0xFF)
+        internal static ServerPacket AnimateCreature(int id, BodyAnimation animation, ushort speed, byte sound = 0xFF)
         {
             var packet = new ServerPacket(ServerOpCodes.AnimateUser);
 
             packet.WriteInt32(id);
-            packet.WriteByte(animation);
+            packet.WriteByte((byte)animation);
             packet.WriteUInt16(speed);
             packet.WriteByte(sound);
 
@@ -820,6 +820,16 @@ namespace Chaos
 
             return packet;
         }
+
+        internal static ServerPacket ChangeCounter()
+        {
+            var packet = new ServerPacket(ServerOpCodes.ChangeCounter);
+
+            packet.WriteInt32(1634886123);
+
+            return packet;
+        }
+
         internal static ServerPacket GroupRequest(GroupRequestType type, string sender)
         {
             var packet = new ServerPacket(ServerOpCodes.GroupRequest);

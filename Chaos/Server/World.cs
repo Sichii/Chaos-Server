@@ -299,7 +299,7 @@ namespace Chaos
         /// <param name="user">The user to refresh.</param>
         internal void Refresh(Client client, bool byPassTimer = false)
         {
-            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalSeconds < 1)
+            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS)
                 return;
             else
                 client.LastRefresh = DateTime.UtcNow;

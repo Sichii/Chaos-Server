@@ -66,7 +66,9 @@ namespace Chaos
             {
                 Item item;
                 byte index;
-                if (!IsActive || !user.Inventory.TryGet(slot, out item) || item.AccountBound)
+                bool user1Src = user == User1;
+
+                if (!IsActive || !user.Inventory.TryGet(slot, out item) || item.AccountBound || (user1Src ? User1Accept : User2Accept))
                     return;
 
                 if (!item.Stackable)
@@ -75,9 +77,8 @@ namespace Chaos
                     user.Inventory.TryRemove(slot);
                     user.Client.Enqueue(ServerPackets.RemoveItem(slot));
 
-                    bool source = user == User2;
                     //add item to exchange
-                    if (!source)
+                    if (user1Src)
                     {
                         User1Items.Add(item);
                         index = (byte)(User1Items.IndexOf(item) + 1);
@@ -89,8 +90,9 @@ namespace Chaos
                     }
 
                     //update exchange window
-                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, source, index, item.SpritePair.Item2, item.Color, item.Name));
-                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !source, index, item.SpritePair.Item2, item.Color, item.Name));
+
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, index, item.SpritePair.Item2, item.Color, item.Name));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, index, item.SpritePair.Item2, item.Color, item.Name));
                 }
                 else //if it's stackable, send a prompty asking for how many
                     user.Client.Enqueue(ServerPackets.Exchange(ExchangeType.RequestAmount, item.Slot));
@@ -104,9 +106,10 @@ namespace Chaos
                 Item item;
                 Item splitItem;
                 int index;
+                bool user1Src = user == User1;
 
                 //if slot is null, or not stackable, or invalid count, then return
-                if (!IsActive || !user.Inventory.TryGet(slot, out item) || !item.Stackable || count > item.Count || item.AccountBound)
+                if (!IsActive || !user.Inventory.TryGet(slot, out item) || !item.Stackable || count > item.Count || item.AccountBound || (user1Src ? User1Accept : User2Accept))
                     return;
 
                 //remove the item if we're exchanging all that we have
@@ -123,7 +126,7 @@ namespace Chaos
                 }
 
                 //depending on which user is activating this, do different things
-                if (user == User1)
+                if (user1Src)
                 {
                     //if there's a stackable item with this name already, grab it
                     Item oldItem = User1Items.FirstOrDefault(itm => itm.Name.Equals(splitItem.Name));
@@ -160,9 +163,8 @@ namespace Chaos
                 }
 
                 //update exchange window
-                bool source = user == User2;
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, source, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !source, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
             }
         }
 
@@ -170,7 +172,9 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (!IsActive)
+                bool user1Src = user == User1;
+
+                if (!IsActive || (user1Src ? User1Accept : User2Accept))
                     return;
 
                 //if the user already had gold entered, give it back (because this is a set, not an addition)
@@ -181,7 +185,7 @@ namespace Chaos
                     return;
 
                 //do things depending on which user is requesting
-                if (User1 == user)
+                if (user1Src)
                 {
                     //subtract the gold we want to add from the user
                     User1.Attributes.Gold -= amount;
@@ -199,9 +203,8 @@ namespace Chaos
                 }
 
                 //update exchange window
-                bool source = user == User2;
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.SetGold, source, User2Gold));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.SetGold, !source, User1Gold));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.SetGold, !user1Src, user1Src ? User1Gold : User2Gold));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.SetGold, user1Src, user1Src ? User1Gold : User2Gold));
             }
         }
 
@@ -230,9 +233,9 @@ namespace Chaos
                 }
 
                 //send cancel packet to close the exchange
-                bool source = user == User2;
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Cancel, source));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Cancel, !source));
+                bool user1Src = user == User1;
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Cancel, !user1Src));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Cancel, user1Src));
 
                 //destroy the exchange object from the server
                 Destroy();
@@ -246,18 +249,19 @@ namespace Chaos
                 if (!IsActive)
                     return;
 
+                bool user1Src = user == User1;
+
                 //keep track of which user has hit accept
-                if (user == User1)
+                if (user1Src)
                     User1Accept = true;
                 else
                     User2Accept = true;
 
-                bool source = user == User2;
-                //only send the opposite user a false-sourced accept packet (accept button on other side)
-                if (source)
-                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, false));
+                //only send the opposite user a true accept packet (accept button on other side)
+                if (user1Src)
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, true));
                 else
-                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, false));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, true));
 
                 //if both players accepted, give eachother the items and gold in eachother's lists
                 if (User1Accept && User2Accept)
@@ -279,8 +283,8 @@ namespace Chaos
                     }
 
                     //update exchange window (to close it)
-                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, true));
-                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, true));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, false));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.Accept, false));
 
                     //destroy the exchange object from the server
                     Destroy();

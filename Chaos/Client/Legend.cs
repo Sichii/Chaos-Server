@@ -113,13 +113,14 @@ namespace Chaos
         /// <param name="now">Time the mark was added.</param>
         /// <param name="icon">Icon displayed on the mark.</param>
         /// <param name="color">Text color of the mark.</param>
-        internal LegendMark(string key, string mark, DateTime now, MarkIcon icon, MarkColor color)
+        internal LegendMark(DateTime now, string mark, string key, MarkIcon icon, MarkColor color)
         {
+            Added = now;
             Key = key;
+            Mark = mark;
             Count = 1;
             Icon = icon;
             Color = color;
-            Added = now;
         }
 
         [JsonConstructor]

@@ -36,11 +36,11 @@ namespace Chaos
         [JsonProperty]
         internal Tuple<EquipmentSlot, ushort> EquipmentPair { get; }
         internal Tuple<ushort, ushort> SpritePair => new Tuple<ushort, ushort>(Sprite, (ushort)(Sprite + CONSTANTS.ITEM_SPRITE_OFFSET));
-        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_ITEM_COOLDOWN;
+        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_ITEM_COOLDOWN_MS;
         internal Item(byte slot, ushort sprite, string name, int count, TimeSpan cooldown,
             Tuple<EquipmentSlot, ushort> equipmentPair = null, bool accountBound = false, 
             byte color = 0, bool stackable = false, uint maximumDurability = 0, uint currentDurability = 0, 
-            byte weight = 1, Animation effectAnimation = new Animation(), byte bodyAnimation = 0)
+            byte weight = 1, Animation effectAnimation = new Animation(), BodyAnimation bodyAnimation = 0)
             :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             EquipmentPair = equipmentPair;
@@ -56,7 +56,7 @@ namespace Chaos
         [JsonConstructor]
         internal Item(byte slot, ushort sprite, string name, TimeSpan cooldown, Tuple<EquipmentSlot, ushort> equipmentPair,
             bool accountBound, byte color, int count, bool stackable, uint maxDurability, uint currentDurability, byte weight,
-            Animation effectAnimation, byte bodyAnimation)
+            Animation effectAnimation, BodyAnimation bodyAnimation)
             :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             EquipmentPair = equipmentPair;

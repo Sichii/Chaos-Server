@@ -32,35 +32,6 @@ namespace Chaos
         Abandoned = 128,
         Timeout = 258,
     }
-    [Flags]
-    internal enum MapFlags : uint
-    {
-        Hostile = 1,
-        NonHostile = 2,
-        NoSpells = 4,
-        NoSkills = 8,
-        NoChat = 16,
-        Snowing = 32,
-        PvP = 64
-        //and whatever else we decide
-    }
-
-    internal enum GroupRequestType : byte
-    {
-        Request = 1,
-        Invite = 2,
-        Join = 3,
-        Groupbox = 4,
-        RemoveGroupBox = 6
-    }
-    internal enum Status : ulong
-    {
-        None = 0,
-        //add more statuses here, double each time
-    }
-    #endregion
-
-    #region Packets
     internal enum ClientOpCodes : byte
     {
         JoinServer = 0,
@@ -82,7 +53,7 @@ namespace Chaos
         Whisper = 25,
         ToggleUserOption = 27,
         UseItem = 28,
-        AnimateUser = 29,
+        Emote = 29,
         DropGold = 36,
         ChangePassword = 38,
         DropItemOnCreature = 41,
@@ -112,7 +83,6 @@ namespace Chaos
         ChangeSocialStatus = 121,
         RequestMetaFile = 123
     }
-
     internal enum ServerOpCodes : byte
     {
         ConnectionInfo = 0,
@@ -165,12 +135,50 @@ namespace Chaos
         ServerTable = 86,
         MapLoadComplete = 88,
         LobbyNotification = 96,
+        ChangeCounter = 98,
         GroupRequest = 99,
         LobbyControls = 102,
         MapChangePending = 103,
         SynchronizeTicks = 104,
         Metafile = 111,
         AcceptConnection = 126
+    }
+    #endregion
+
+    #region Custom Enums
+    internal enum Quest : ulong
+    {
+        None = 0,
+        //add more quest flags here, double each time
+    }
+    internal enum Status : ulong
+    {
+        None = 0,
+        //add more statuses here, double each time
+    }
+    [Flags]
+    internal enum MapFlags : uint
+    {
+        Hostile = 1,
+        NonHostile = 2,
+        NoSpells = 4,
+        NoSkills = 8,
+        NoChat = 16,
+        Snowing = 32,
+        PvP = 64
+        //and whatever else we decide
+    }
+    internal enum PursuitIds : ushort
+    {
+        None = 0,
+        Revive = 1,
+        Teleport = 2,
+        Summon = 3,
+        SummonAll = 4,
+        KillUser = 5,
+        KillMonster = 6,
+        LouresCitizenship = 7,
+        ReviveUser = 8,
     }
     #endregion
 
@@ -227,13 +235,6 @@ namespace Chaos
         Orange = 115,
         Brown = 116,
     }
-
-    internal enum IgnoreType : byte
-    {
-        Request = 1,
-        AddUser = 2,
-        RemoveUser = 3
-    }
     #endregion
 
     #region Legend
@@ -249,11 +250,6 @@ namespace Chaos
         Victory = 7
     }
     [Flags]
-    internal enum Quest : ulong
-    {
-        None = 0,
-        //add more quest flags here, double each time
-    }
     internal enum MarkColor : byte
     {
         White = 32,
@@ -335,13 +331,6 @@ namespace Chaos
     {
         Male = 1,
         Female = 2
-    }
-    internal enum CreatureType : byte
-    {
-        Normal = 0,
-        WalkThrough = 1,
-        Merchant = 2,
-        User = 4,
     }
     #endregion
 
@@ -488,15 +477,6 @@ namespace Chaos
     #endregion
 
     #region GuI
-    internal enum LightLevel : byte
-    {
-        Darkest = 0,
-        Darker = 1,
-        Dark = 2,
-        Light = 3,
-        Lighter = 4,
-        Lightest = 5
-    }
     internal enum EffectsBarColor : byte
     {
         None = 0,
@@ -566,21 +546,6 @@ namespace Chaos
     }
     #endregion
 
-    #region Pursuits
-    internal enum PursuitIds : ushort
-    {
-        None = 0,
-        Revive = 1,
-        Teleport = 2,
-        Summon = 3,
-        SummonAll = 4,
-        KillUser = 5,
-        KillMonster = 6,
-        LouresCitizenship = 7,
-        ReviveUser = 8,
-    }
-    #endregion
-
     #region Skill/Spell
 
     internal enum SpellType : byte
@@ -594,7 +559,6 @@ namespace Chaos
         Prompt2 = 6,
         Prompt1 = 7,
     }
-
     internal enum SkillType : byte
     {
         Self = 0,
@@ -602,6 +566,93 @@ namespace Chaos
         Surround = 2,
         Effect = 3
     }
+    internal enum BodyAnimation : byte
+    {
+        Assail = 1,
+        HandsUp = 6,
+        Smile = 9,
+        Cry = 10,
+        Frown = 11,
+        Wink = 12,
+        Surprise = 13,
+        Tongue = 14,
+        Pleasant = 15,
+        Snore = 16,
+        Mouth = 17,
+        BlowKiss = 21,
+        Wave = 22,
+        RockOn = 23,
+        Peace = 24,
+        Stop = 25,
+        Ouch = 26,
+        Impatient = 27,
+        Shock = 28,
+        Pleasure = 29,
+        Love = 30,
+        SweatDrop = 31,
+        Whistle = 32,
+        Irritation = 33,
+        Silly = 34,
+        Cute = 35,
+        Yelling = 36,
+        Mischievous = 37,
+        Evil = 38,
+        Horror = 39,
+        PuppyDog = 40,
+        StoneFaced = 41,
+        Tears = 42,
+        FiredUp = 43,
+        Confused = 44,
+        PriestCast = 128,
+        TwoHandAtk = 129,
+        Jump = 130,
+        Kick = 131,
+        Punch = 132,
+        RoundHouseKick = 133,
+        Stab = 134,
+        DoubleStab = 135,
+        WizardCast = 136,
+        PlayNotes = 137,
+        HandsUp2 = 138,
+        Swipe = 139,
+        HeavySwipe = 140,
+        JumpAttack = 141,
+        BowShot = 142,
+        HeavyBowShot = 143,
+        LongBowShot = 144,
+        Summon = 145,
+    }
 
     #endregion
+
+    internal enum IgnoreType : byte
+    {
+        Request = 1,
+        AddUser = 2,
+        RemoveUser = 3
+    }
+    internal enum CreatureType : byte
+    {
+        Normal = 0,
+        WalkThrough = 1,
+        Merchant = 2,
+        User = 4,
+    }
+    internal enum GroupRequestType : byte
+    {
+        Request = 1,
+        Invite = 2,
+        Join = 3,
+        Groupbox = 4,
+        RemoveGroupBox = 6
+    }
+    internal enum LightLevel : byte
+    {
+        Darkest = 0,
+        Darker = 1,
+        Dark = 2,
+        Light = 3,
+        Lighter = 4,
+        Lightest = 5
+    }
 }

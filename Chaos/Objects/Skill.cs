@@ -23,16 +23,16 @@ namespace Chaos
         internal bool IsBasic { get; }
 
 
-        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN;
+        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN_MS;
 
-        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, Animation effectAnimation = new Animation(), byte bodyAnimation = 0)
+        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, Animation effectAnimation = new Animation(), BodyAnimation bodyAnimation = 0)
             :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             Type = type;
         }
 
         [JsonConstructor]
-        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, bool isBasic, Animation effectAnimation, byte bodyAnimation)
+        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, bool isBasic, Animation effectAnimation, BodyAnimation bodyAnimation)
             :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
         {
             Type = type;

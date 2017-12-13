@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using System;
+using System.Security.Cryptography;
 
 namespace Chaos
 {
@@ -44,20 +45,13 @@ namespace Chaos
         internal ServerPacket(byte[] buffer) : base(buffer) { }
         internal void Encrypt(Crypto crypto)
         {
-            EncryptionType type = EncryptionType;
+            EncryptionType method = EncryptionType;
             int pos = Data.Length;
-
-            Array.Resize(ref Data, Data.Length + (type == EncryptionType.MD5 ? 5 : 4));
-
-            Data[pos++] = 0;
-            if (type == EncryptionType.MD5)
-                Data[pos++] = OpCode;
-
             ushort a = (ushort)(Utility.Random(0, 65277) + 256);
             byte b = (byte)(Utility.Random(0, 155) + 100);
-            byte[] key = type == EncryptionType.Normal ? crypto.Key : type == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
+            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
 
-            for (int i = 0; i < Data.Length - 3; i++)
+            for (int i = 0; i < Data.Length; ++i)
             {
                 int saltI = i / crypto.Key.Length % 256;
                 Data[i] ^= (byte)(crypto.Salts[saltI] ^ (uint)key[i % key.Length]);
@@ -65,6 +59,7 @@ namespace Chaos
                     Data[i] ^= crypto.Salts[Counter];
             }
 
+            Array.Resize(ref Data, Data.Length + 3);
             Data[pos++] = (byte)(a % 256 ^ 116);
             Data[pos++] = (byte)(b ^ 36U);
             Data[pos++] = (byte)((a >> 8) % 256 ^ 100);

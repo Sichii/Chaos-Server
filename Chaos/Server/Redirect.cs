@@ -9,6 +9,7 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -36,14 +37,22 @@ namespace Chaos
             /*
             if (type == ServerType.World)
             {
-                Seed = (byte)Utility.Random(0, 9);
-                Seed = client.Crypto.Seed;
-                
+                //Seed = (byte)Utility.Random(0, 9);
+                //Seed = client.Crypto.Seed;
+
                 List<byte> key = new List<byte>();
                 for (int i = 0; i < 9; i++)
-                    key.Add((byte)Utility.Random(44, 68));
+                {
+                    int x = Utility.Random(0, 10);
+                    if (x > 5)
+                        key.Add((byte)Utility.Random(65, 90));
+                    else
+                        key.Add((byte)Utility.Random(97, 122));
+                }
 
                 Key = key.ToArray();
+
+                Key = client.Crypto.Key;
             }
             else
             {
@@ -54,7 +63,7 @@ namespace Chaos
             
             Seed = client.Crypto.Seed;
             Key = client.Crypto.Key;
-            EndPoint = client.IsLoopback ? client.Server.LoopbackEndPoint : client.Server.ClientEndPoint;
+            EndPoint = new IPEndPoint((client.IsLoopback ? client.Server.LoopbackEndPoint : client.Server.ClientEndPoint).Address, 2610);
         }
     }
 }

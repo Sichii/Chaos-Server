@@ -54,11 +54,12 @@ namespace Chaos
         internal void Decrypt(Crypto crypto)
         {
             EncryptionType method = EncryptionType;
+
             int length = Data.Length - 7;
             ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 29808);
             byte b = (byte)(Data[length + 5] ^ 35);
             byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
-            length -= method == EncryptionType.Normal ? 1 : method == EncryptionType.MD5 ? 2 : 0;
+            length -= (method == EncryptionType.Normal ? 1 : method == EncryptionType.MD5 ? 2 : 0);
 
             for (int i = 0; i < length; ++i)
             {

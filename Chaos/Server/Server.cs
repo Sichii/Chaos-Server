@@ -17,6 +17,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Chaos
 {
@@ -48,8 +49,12 @@ namespace Chaos
 
         internal Server(IPAddress ip, int port)
         {
+            if (!Directory.Exists(Paths.LogFiles))
+                Directory.CreateDirectory(Paths.LogFiles);
+
             LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
             LogWriter = new StreamWriter(LogFile);
+            LogWriter.AutoFlush = true;
 
             WriteLog("Initializing server...");
 
@@ -115,13 +120,10 @@ namespace Chaos
         {
             lock (SyncWrite)
             {
-                if (!Directory.Exists(Paths.LogFiles))
-                    Directory.CreateDirectory(Paths.LogFiles);
-
                 if (client == null)
                     message = $@"[{DateTime.Now.ToString("HH:mm")}] Server: {message}";
                 else
-                    message = $@"[{DateTime.Now.ToString("HH:mm")}] {(client.ClientSocket.RemoteEndPoint as IPEndPoint).Address}: {message}";
+                    message = $@"[{DateTime.Now.ToString("HH:mm")}] {client.IpAddress}: {message}";
 
                 Console.WriteLine(message);
 
@@ -129,6 +131,7 @@ namespace Chaos
                 {
                     LogFile.Dispose();
                     LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
+                    LogWriter = new StreamWriter(LogFile);
                 }
 
                 LogWriter.Write($@"{message}{Environment.NewLine}");

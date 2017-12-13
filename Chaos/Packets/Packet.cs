@@ -19,7 +19,7 @@ namespace Chaos
         protected internal DateTime Creation { internal get; set; }
         protected internal byte Identifier { internal get; set; }
         protected internal byte OpCode { internal get; set; }
-        internal bool ShouldEncrypt => EncryptionType != EncryptionType.None;
+        internal bool IsEncrypted => EncryptionType != EncryptionType.None;
         internal abstract EncryptionType EncryptionType { get; }
         internal byte Counter;
         protected internal byte[] Data;
@@ -38,7 +38,7 @@ namespace Chaos
             Counter = buffer[4];
             Creation = DateTime.UtcNow;
 
-            int resultLength = buffer.Length - (ShouldEncrypt ? 5 : 4);
+            int resultLength = buffer.Length - (IsEncrypted ? 5 : 4);
             Data = new byte[resultLength];
             Buffer.BlockCopy(buffer, buffer.Length - resultLength, Data, 0, resultLength);
         }
@@ -222,7 +222,7 @@ namespace Chaos
         }
         internal byte[] ToArray()
         {
-            int resultLength = Data.Length + (ShouldEncrypt ? 5 : 4) - 3;
+            int resultLength = Data.Length + (IsEncrypted ? 5 : 4) - 3;
             byte[] resultData = new byte[resultLength + 3];
             resultData[0] = Identifier;
             resultData[1] = (byte)(resultLength / 256);

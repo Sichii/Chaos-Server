@@ -11,9 +11,11 @@
 
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class GameTime
     {
         private long Remainder { get; }
@@ -22,32 +24,39 @@ namespace Chaos
         internal byte Day { get; }
         internal byte Hour { get; }
         internal byte Minute { get; }
+        [JsonProperty]
         internal long Ticks { get; }
 
         /// <summary>
         /// Object representing the serverside construct of GameTime, mimicing DateTime
         /// </summary>
         /// <param name="ticks">Base measure of time.</param>
+        [JsonConstructor]
         private GameTime(long ticks)
         {
             Ticks = ticks;
-            Year = (ushort)(ticks / CONSTANTS.TICKS_YEAR);
-            ticks -= Year * CONSTANTS.TICKS_YEAR;
+            Year = (ushort)(ticks / CONSTANTS.YEAR_TICKS);
+            ticks -= Year * CONSTANTS.YEAR_TICKS;
 
-            Month = (byte)(ticks / CONSTANTS.TICKS_MONTH);
-            ticks -= Month * CONSTANTS.TICKS_MONTH;
+            Month = (byte)(ticks / CONSTANTS.MONTH_TICKS);
+            ticks -= Month * CONSTANTS.MONTH_TICKS;
 
-            Day = (byte)(ticks / CONSTANTS.TICKS_DAY);
-            ticks -= Day * CONSTANTS.TICKS_DAY;
+            Day = (byte)(ticks / CONSTANTS.DAY_TICKS);
+            ticks -= Day * CONSTANTS.DAY_TICKS;
 
-            Hour = (byte)(ticks / CONSTANTS.TICKS_HOUR);
-            ticks -= Hour * CONSTANTS.TICKS_HOUR;
+            Hour = (byte)(ticks / CONSTANTS.HOUR_TICKS);
+            ticks -= Hour * CONSTANTS.HOUR_TICKS;
 
-            Minute = (byte)(ticks / CONSTANTS.TICKS_MINUTE);
-            ticks -= Minute * CONSTANTS.TICKS_MINUTE;
+            Minute = (byte)(ticks / CONSTANTS.MINUTE_TICKS);
+            ticks -= Minute * CONSTANTS.MINUTE_TICKS;
 
             Remainder = ticks;
         }
+
+        private string GetDaySuffix =>
+            Day % 10 == 1 && Day != 11 ? "st" :
+            Day % 10 == 2 && Day != 12 ? "nd" :
+            Day % 10 == 3 && Day != 13 ? "rd" : "th";
 
         /// <summary>
         /// Starting date of the server.
@@ -70,7 +79,7 @@ namespace Chaos
         /// Custom <see cref="ToString()"/> method, that will print like DateTime does.
         /// </summary>
         /// <param name="format">Optional string format guide.</param>
-        internal string ToString(string format = "") => !string.IsNullOrEmpty(format) ? new DateTime(Ticks*24).ToString(format) : new DateTime(Ticks*24).ToString("d MMM y");
+        internal string ToString(string format = "") => $@"Year {(!string.IsNullOrEmpty(format) ? new DateTime(Ticks*24).ToString(format) : new DateTime(Ticks*24).ToString($@"y, MMM d"))}{GetDaySuffix}";
         internal LightLevel TimeOfDay
         {
             get

@@ -64,7 +64,7 @@ namespace Chaos
 
             LastClickObj = DateTime.MinValue;
             LastRefresh = DateTime.MinValue;
-            IsLoopback = IPAddress.IsLoopback((socket.RemoteEndPoint as IPEndPoint).Address);
+            IsLoopback = IpAddress.Equals(IPAddress.Loopback);
         }
 
         /// <summary>
@@ -75,7 +75,10 @@ namespace Chaos
             Connected = true;
             ClientThread.Start();
             if (ServerType != ServerType.World)
+            {
                 Enqueue(ServerPackets.AcceptConnection());
+                Enqueue(ServerPackets.ChangeCounter());
+            }
 
             Server.WriteLog($@"Connection accepted", this);
             //when we receive data, copy the readable data to the client buffer and call endreceive
@@ -200,11 +203,14 @@ namespace Chaos
                             if (packet == null) continue;
                             Server.WriteLog(packet.ToString(), this);
 
-                            if (packet.ShouldEncrypt)//if it should be encrypted, do it
+                            if (packet.IsEncrypted)//if it should be encrypted, do it
                             {
                                 packet.Counter = ServerCount++;
                                 packet.Encrypt(Crypto);
                             }
+
+                            if (packet.OpCode == 98)//if we send packet 98, we change the servercounter (should find a way to safely implement this)
+                                ServerCount = packet.Counter;
 
                             Send(packet);
                         }
@@ -216,7 +222,7 @@ namespace Chaos
                             ClientPacket packet = ProcessQueue.Dequeue();//get the next packet in the queue, convert to clientpacket
                             if (packet == null) continue;
 
-                            if (packet.ShouldEncrypt)//if it is encrypted, decrypt it
+                            if (packet.IsEncrypted)//if it is encrypted, decrypt it
                                 packet.Decrypt(Crypto);
 
                             if (packet.IsDialog)//if packet is a dialog, decrypt the header

@@ -29,11 +29,11 @@ namespace Chaos
         [JsonProperty]
         internal Animation EffectAnimation { get; set; }
         [JsonProperty]
-        internal byte BodyAnimation { get; set; }
+        internal BodyAnimation BodyAnimation { get; set; }
         internal OnUseDelegate Activate { get; }
         internal abstract bool CanUse { get; }
 
-        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown, Animation effectAnimation , byte bodyAnimation = 0)
+        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown, Animation effectAnimation , BodyAnimation bodyAnimation = 0)
         {
             Slot = slot;
             Sprite = sprite;

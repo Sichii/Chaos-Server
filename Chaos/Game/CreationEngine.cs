@@ -153,7 +153,7 @@ namespace Chaos
         #endregion
 
         #region Skills
-        private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", SkillType.Front, TimeSpan.Zero, true, new Animation(), 1);
+        private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", SkillType.Front, TimeSpan.Zero, true, new Animation(), BodyAnimation.Assail);
         private void TestSkill1(Client client, Server server, params object[] args)
         {
             Skill skill = args[0] as Skill;
@@ -169,7 +169,7 @@ namespace Chaos
         #endregion
 
         #region Spells
-        private Spell Mend() => new Spell(0, 118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), 6);
+        private Spell Mend() => new Spell(0, 118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), BodyAnimation.HandsUp);
         private void Mend(Client client, Server server, params object[] args)
         {
             Spell spell = args[0] as Spell;
@@ -180,7 +180,7 @@ namespace Chaos
             Game.Extensions.ApplySpell(client, amount, spell, target);
         }
 
-        private Spell Heal() => new Spell(0, 21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), 6);
+        private Spell Heal() => new Spell(0, 21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), BodyAnimation.HandsUp);
         private void Heal(Client client, Server server, params object[] args)
         {
             Spell spell = args[0] as Spell;
@@ -192,7 +192,7 @@ namespace Chaos
 
             Game.Extensions.ApplySpell(client, amount, spell, target);
         }
-        private Spell SradTut() => new Spell(0, 21, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(158, 0, 100), 6);
+        private Spell SradTut() => new Spell(0, 21, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(158, 0, 100), BodyAnimation.HandsUp);
         private void SradTut(Client client, Server server, params object[] args)
         {
             Spell spell = args[0] as Spell;
