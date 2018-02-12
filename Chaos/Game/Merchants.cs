@@ -28,15 +28,15 @@ namespace Chaos
             MerchantList = new Dictionary<string, Merchant>()
             {
                 {
-                    "Deliope", new Merchant("Deliope", 61, CreatureType.Merchant, new Point(15, 10), Game.World.Maps[5031], Direction.South, 0,
+                    "Deliope", new Merchant("Deliope", 61, new Point(15, 10), Game.World.Maps[5031], Direction.South, 0,
                     new List<PursuitIds>() { PursuitIds.Revive })
                 },
                 {
-                    "Celeste", new Merchant("Celeste", 57, CreatureType.Merchant, new Point(3, 16), Game.World.Maps[17500], Direction.South, 0,
+                    "Celeste", new Merchant("Celeste", 57, new Point(3, 16), Game.World.Maps[17500], Direction.South, 0,
                     new List<PursuitIds>() { PursuitIds.Revive, PursuitIds.Summon, PursuitIds.SummonAll, PursuitIds.LouresCitizenship, PursuitIds.KillUser, PursuitIds.Teleport }, MenuType.Menu, "I like giant cock.")
                 },
                 {
-                    "Frank The Great", new Merchant("Frank The Great", 34, CreatureType.Merchant, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7,
+                    "Frank The Great", new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7,
                     new List<PursuitIds>() { }, MenuType.Dialog)
                 }
             };

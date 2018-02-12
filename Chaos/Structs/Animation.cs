@@ -42,5 +42,7 @@ namespace Chaos
         {
 
         }
+
+        internal static Animation None => default(Animation);
     }
 }

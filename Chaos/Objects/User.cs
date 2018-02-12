@@ -62,18 +62,21 @@ namespace Chaos
         internal bool IsAdmin { get; set; }
         [JsonProperty]
         internal bool IsAlive { get; set; }
+        [JsonProperty]
+        internal Gender Gender { get; set; }
         internal bool IsChanting { get; set; }
         internal bool IsGrouped => Group != null;
         internal Exchange Exchange { get; set; }
         internal DateTime LastClicked { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
-        internal override byte HealthPercent => (byte)(((CurrentHP * 100) / MaximumHP) > 100 ? 100 : ((CurrentHP * 100) / MaximumHP));
+        internal override byte HealthPercent => (byte)Utility.Clamp<uint>((CurrentHP * 100) / MaximumHP, 0, MaximumHP);
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
 
-        internal User(string name, Point point, Map map, Direction direction)
+        internal User(Gender gender, string name, Point point, Map map, Direction direction)
             :base(name, 0, CreatureType.User, point, map, direction)
         {
+            Gender = gender;
             SkillBook = new Panel<Skill>(90);
             SpellBook = new Panel<Spell>(90);
             Inventory = new Panel<Item>(61);
@@ -99,7 +102,7 @@ namespace Chaos
 
         [JsonConstructor]
         internal User(string name, Point point, Map map, Direction direction, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
-               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, bool isAdmin, bool isAlive)
+               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, Gender gender, bool isAdmin, bool isAlive)
             : base(name, 0, CreatureType.User, point, map)
         {
             SkillBook = skillBook;
@@ -120,6 +123,7 @@ namespace Chaos
             IsMaster = isMaster;
             Spouse = spouse;
             Titles = titles;
+            Gender = gender;
             Client = null;
             Group = null;
             DisplayData.User = this;

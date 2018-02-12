@@ -29,7 +29,7 @@ namespace Chaos
         private uint User2Gold;
         private bool User1Accept { get; set; }
         private bool User2Accept { get; set; }
-        private bool IsActive = false;
+        internal bool IsActive = false;
         internal User OtherUser(User user) => User1 == user ? User2 : User1;
 
         internal Exchange(User sender, User receiver)
@@ -91,8 +91,8 @@ namespace Chaos
 
                     //update exchange window
 
-                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, index, item.SpritePair.Item2, item.Color, item.Name));
-                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, index, item.SpritePair.Item2, item.Color, item.Name));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, index, item.Sprite.OffsetSprite, item.Color, item.Name));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, index, item.Sprite.OffsetSprite, item.Color, item.Name));
                 }
                 else //if it's stackable, send a prompty asking for how many
                     user.Client.Enqueue(ServerPackets.Exchange(ExchangeType.RequestAmount, item.Slot));
@@ -163,8 +163,8 @@ namespace Chaos
                 }
 
                 //update exchange window
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, (byte)index, splitItem.SpritePair.Item2, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, (byte)index, splitItem.Sprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, (byte)index, splitItem.Sprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
             }
         }
 
@@ -294,16 +294,13 @@ namespace Chaos
 
         private void Destroy()
         {
-            lock (Sync)
-            {
-                //remove the exchange from existence
-                User1.Exchange = null;
-                User2.Exchange = null;
-                Exchange exOut;
-                Game.World.Exchanges.TryRemove(ExchangeId, out exOut);
-                exOut = null;
-                IsActive = false;
-            }
+            //remove the exchange from existence
+            User1.Exchange = null;
+            User2.Exchange = null;
+            Exchange exOut;
+            Game.World.Exchanges.TryRemove(ExchangeId, out exOut);
+            exOut = null;
+            IsActive = false;
         }
     }
 }

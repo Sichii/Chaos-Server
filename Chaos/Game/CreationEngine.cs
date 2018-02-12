@@ -28,34 +28,41 @@ namespace Chaos
         private Dictionary<string, OnUseDelegate> Effects { get; }
         internal CreationEngine()
         {
-            #region Items
             Items = new Dictionary<string, ItemCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Spells = new Dictionary<string, SpellCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Skills = new Dictionary<string, SkillCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
+            Effects = new Dictionary<string, OnUseDelegate>(StringComparer.CurrentCultureIgnoreCase);
+
+
+            #region Items
+            Effects.Add("NormalObj", new OnUseDelegate(NormalObj));
+
             Items.Add("Admin Trinket", new ItemCreationDelegate(AdminTrinket));
+            Effects.Add("Admin Trinket", new OnUseDelegate(AdminTrinket));
+
             Items.Add("Test Item", new ItemCreationDelegate(TestItem));
-            Items.Add("Test Equipment", new ItemCreationDelegate(TestEquipment));
+            Effects.Add("Test Item", new OnUseDelegate(NormalObj));
+
+            Items.Add("Test Male Equipment", new ItemCreationDelegate(TestMaleEquipment));
+            Effects.Add("Test Male Equipment", new OnUseDelegate(Equip));
+
+            Items.Add("Test Female Equipment", new ItemCreationDelegate(TestFemaleEquipment));
+            Effects.Add("Test Female Equipment", new OnUseDelegate(Equip));
             #endregion
 
             #region Skills
-            Skills = new Dictionary<string, SkillCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
             Skills.Add("Test Skill 1", new SkillCreationDelegate(TestSkill1));
+            Effects.Add("Test Skill 1", new OnUseDelegate(TestSkill1));
             #endregion
 
             #region Spells
-            Spells = new Dictionary<string, SpellCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
             Spells.Add("Mend", new SpellCreationDelegate(Mend));
-            Spells.Add("Heal", new SpellCreationDelegate(Heal));
-            Spells.Add("Srad Tut", new SpellCreationDelegate(SradTut));
-            #endregion
-
-            #region OnUseDelegates
-            Effects = new Dictionary<string, OnUseDelegate>(StringComparer.CurrentCultureIgnoreCase);
-            Effects.Add("NormalObj", new OnUseDelegate(NormalObj));
-            Effects.Add("Admin Trinket", new OnUseDelegate(AdminTrinket));
-            Effects.Add("Test Item", new OnUseDelegate(NormalObj));
-            Effects.Add("Test Equipment", new OnUseDelegate(Equipment));
-            Effects.Add("Test Skill 1", new OnUseDelegate(TestSkill1));
             Effects.Add("Mend", new OnUseDelegate(Mend));
+
+            Spells.Add("Heal", new SpellCreationDelegate(Heal));
             Effects.Add("Heal", new OnUseDelegate(Heal));
+
+            Spells.Add("Srad Tut", new SpellCreationDelegate(SradTut));
             Effects.Add("Srad Tut", new OnUseDelegate(SradTut));
             #endregion
         }
@@ -103,44 +110,48 @@ namespace Chaos
         internal Spell CreateSpell(string name) => Spells.ContainsKey(name) ? Spells[name]() : null;
         #endregion
 
-        #region Items
         private void NormalObj(Client client, Server server, params object[] args) { }
-        private void Equipment(Client client, Server server, params object[] args)
+        private void Equip(Client client, Server server, params object[] args)
         {
             Item item = (Item)args[0];
+
+            if (AttemptExchange(client, server, item))
+                return;
+
+            if (item.Gender.HasFlag(client.User.Gender))
+                client.SendServerMessage(ServerMessageType.ActiveMessage, "This item does not fit you.");
+
             Item outItem;
-            if (client.User.Equipment.Contains(item))
+            if(client.User.Equipment.TryEquip(item, out outItem))
             {
-                if (client.User.Equipment.TryUnequip(item.EquipmentPair.Item1, out outItem))
-                {
-                    client.Enqueue(ServerPackets.RemoveEquipment(item.EquipmentPair.Item1));
-                    if (client.User.Inventory.AddToNextSlot(outItem))
-                        client.Enqueue(ServerPackets.AddItem(item));
-                }
-            }
-            else if (client.User.Equipment.TryEquip(item, out outItem))
-            {
+                if(outItem != null)
+                    client.Enqueue(ServerPackets.RemoveEquipment(outItem.EquipmentSlot));
+
                 client.Enqueue(ServerPackets.RemoveItem(item.Slot));
                 client.Enqueue(ServerPackets.AddEquipment(item));
 
                 if (outItem != null && client.User.Inventory.AddToNextSlot(outItem))
                     client.Enqueue(ServerPackets.AddItem(outItem));
+
+                foreach (User user in Game.World.ObjectsVisibleFrom(client.User).OfType<User>())
+                    user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
+
+                client.Enqueue(ServerPackets.DisplayUser(client.User));
             }
-
-            foreach (User user in Game.World.ObjectsVisibleFrom(client.User).OfType<User>())
-                user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
-
-            client.Enqueue(ServerPackets.DisplayUser(client.User));
         }
-        private bool Exchange(Client client, Server server, Item item)
+        private bool AttemptExchange(Client client, Server server, Item item)
         {
-            //if client is in an active exchange
-            //place the item in the exchange
+            if (client.User.Exchange?.IsActive == true)
+            {
+                client.User.Exchange.AddItem(client.User, item.Slot);
+                return true;
+            }
 
             return false;
         }
 
-        private Item AdminTrinket(int count) => new Item(0, 13709, "Admin Trinket", count, TimeSpan.Zero, null, true);
+        #region Items
+        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, Animation.None, BodyAnimation.None, true);
         private void AdminTrinket(Client client, Server server, params object[] args)
         {
             client.ActiveObject = args[0];
@@ -148,12 +159,13 @@ namespace Chaos
             client.Enqueue(ServerPackets.DisplayDialog(args[0], client.CurrentDialog));
         }
 
-        private Item TestItem(int count) => new Item(0, 1108, "Test Item", count, TimeSpan.Zero, null, false, 0, true);
-        private Item TestEquipment(int count) => new Item(0, 1108, "Test Equipment", count, TimeSpan.Zero, new Tuple<EquipmentSlot, ushort>(EquipmentSlot.Armor, 44), false, 0, false, 10000, 10000, 5, new Animation());
+        private Item TestItem(int count) => new Item(new ItemSprite(1108, 0), 0, "Test Item", true, count, 1, false);
+        private Item TestMaleEquipment(int count) => new Item(new ItemSprite(1108, 208), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
+        private Item TestFemaleEquipment(int count) => new Item(new ItemSprite(1109, 208), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
         #endregion
 
         #region Skills
-        private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", SkillType.Front, TimeSpan.Zero, true, new Animation(), BodyAnimation.Assail);
+        private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", SkillType.Front, TimeSpan.Zero, true, Animation.None, BodyAnimation.Assail);
         private void TestSkill1(Client client, Server server, params object[] args)
         {
             Skill skill = args[0] as Skill;

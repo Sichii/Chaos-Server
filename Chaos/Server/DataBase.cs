@@ -24,11 +24,13 @@ namespace Chaos
     {
         private Server Server { get; }
         private string HashKey => Crypto.GetMD5Hash("UserHash");
-        internal const string MapKey = "edl396yhvnw85b6kd8vnsj296hj285bq";
+        private const string MapKey = "edl396yhvnw85b6kd8vnsj296hj285bq";
         private ConcurrentDictionary<string, string> UserHash => Cache.Get<ConcurrentDictionary<string, string>>(HashKey);
-        internal NewtonsoftSerializer Serializer { get; }
-        internal StackExchangeRedisCacheClient Cache { get; }
-        internal ConnectionMultiplexer DataConnection { get; }
+        private NewtonsoftSerializer Serializer { get; }
+        private StackExchangeRedisCacheClient Cache { get; }
+        private ConnectionMultiplexer DataConnection { get; }
+
+        internal byte[] MapData => Cache.Get<byte[]>(MapKey);
 
         internal DataBase(Server server)
         {
@@ -40,12 +42,11 @@ namespace Chaos
             jSettings.TypeNameHandling = TypeNameHandling.All;
             jSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             Serializer = new NewtonsoftSerializer(jSettings);
-            ConfigurationOptions config = new ConfigurationOptions();
-            DataConnection = ConnectionMultiplexer.Connect("localhost:6379");
+            DataConnection = ConnectionMultiplexer.Connect(Paths.RedisConfig);
             Cache = new StackExchangeRedisCacheClient(DataConnection, Serializer);
 
             //keep the db clear for now (except the map file)
-            foreach (var key in DataConnection.GetServer("localhost:6379").Keys())
+            foreach (var key in DataConnection.GetServer(Paths.RedisConfig).Keys())
                 if (key != MapKey)
                     Cache.Remove(key);    
 

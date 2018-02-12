@@ -49,9 +49,12 @@ namespace ChaosLauncher
                 //force "socket" - call for direct ip
                 memory.Position = 0x4333A2;
                 memory.WriteByte(0xEB);
+
+                //grab the server ip from the server dns, and your own ip from a string on an ip checker
                 IPAddress serverIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
                 IPAddress clientIP = IPAddress.Parse(new WebClient().DownloadString(@"http://checkip.amazonaws.com/").Trim());
-                //change direct ip
+
+                //edit the direct ip to the server ip
                 byte[] address = serverIP.Equals(clientIP) ? IPAddress.Loopback.GetAddressBytes() : serverIP.GetAddressBytes();
                 memory.Position = 0x4333C2;
                 memory.WriteByte(106);
@@ -76,29 +79,28 @@ namespace ChaosLauncher
                 memory.Position = 0x57A7D9;
                 memory.WriteByte(0xEB);
 
-                //resume process
-                memory.Position = 0x6F3CA4;
-                SafeNativeMethods.ResumeThread(procInfo.ThreadHandle);
-            }
-
-                        if (injectDawndCbox.Checked)
-            {
-                //get a handle for access
-                IntPtr accessHnd = SafeNativeMethods.OpenProcess(ProcessAccess.All, true, (uint)proc.Id);
-                //use access handle to inject dawnd.dll
-                InjectDLL(accessHnd,
+                //if the option to inject dawnd.dll is checked
+                if (injectDawndCbox.Checked)
+                {
+                    //get a handle for access
+                    IntPtr accessHnd = SafeNativeMethods.OpenProcess(ProcessAccess.All, true, (uint)proc.Id);
+                    //use access handle to inject dawnd.dll
+                    InjectDLL(accessHnd,
 #if DEBUG
                     $@"{Paths.DarkAgesDir}dawnd.dll"
 #else
                     "dawnd.dll"
 #endif
                     );
-            }
+                }
 
+                //resume process
+                memory.Position = 0x6F3CA4;
+                SafeNativeMethods.ResumeThread(procInfo.ThreadHandle);
+            }
 
             //let process render it's window before we change the title
             while (proc.MainWindowHandle == IntPtr.Zero) { }
-            //set window title
             SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos");
         }
 

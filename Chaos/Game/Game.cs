@@ -98,10 +98,9 @@ namespace Chaos
             gender = gender != Gender.Male && gender != Gender.Female ? Gender.Male : gender;
 
             //create a new user, and it's display data
-            User newUser = new User(client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South);
+            User newUser = new User(gender, client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South);
             DisplayData data = new DisplayData(newUser, hairStyle, hairColor, (BodySprite)((byte)gender * 16));
             newUser.DisplayData = data;
-
             //if the user is an admin character, apply godmode
             if (Server.Admins.Contains(newUser.Name, StringComparer.CurrentCultureIgnoreCase))
             {
@@ -243,10 +242,12 @@ namespace Chaos
 
                 if (client.User.Attributes.CurrentWeight + item.Weight > client.User.Attributes.MaximumWeight)
                     client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You need {item.Weight} available weight to carry this item.");
+                else if(client.User.Inventory.IsFull)
+                    client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You have no space for that.");
                 else
                 {
                     item.Slot = slot;
-                    if (!client.User.Inventory.TryAdd(item))
+                    if (!client.User.Inventory.TryAdd(item) && !client.User.Inventory.AddToNextSlot(item))
                         return;
 
                     World.RemoveObjectFromMap(groundItem);
@@ -385,7 +386,7 @@ namespace Chaos
             Spell spell = client.User.SpellBook[slot];
             VisibleObject target;
 
-            if (spell != null && spell.CanUse && client.User.IsChanting)
+            if (spell != null && spell.CanUse && !(spell.CastLines > 0 && !client.User.IsChanting))
             {
                 if (targetId == client.User.Id)
                     spell.Activate(client, Server, spell, client.User);
@@ -900,6 +901,12 @@ namespace Chaos
 
         internal static void RemoveEquipment(Client client, EquipmentSlot slot)
         {
+            if (client.User.Inventory.IsFull)
+            {
+                client.SendServerMessage(ServerMessageType.ActiveMessage, "You have no space for that.");
+                return;
+            }
+
             Item item;
 
             //attempt to remove equipment at the given slot

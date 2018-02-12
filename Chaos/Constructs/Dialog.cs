@@ -12,6 +12,7 @@ using System.Linq;
 
 namespace Chaos
 {
+    using System;
     using System.Collections.Generic;
     internal sealed class Dialog
     {
@@ -60,7 +61,7 @@ namespace Chaos
         /// Returns an empty dialog with type DialogType.Close
         /// </summary>
         /// <returns></returns>
-        internal static Dialog Close() => Game.Dialogs.CloseDialog(0);
+        internal static Dialog Close(bool applyEffect = false) => Game.Dialogs.CloseDialog((ushort)(applyEffect ? 0 : ushort.MaxValue));
 
     }
 }

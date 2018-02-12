@@ -71,6 +71,15 @@ namespace Chaos
                 return Objects.Values.Contains(obj);
         }
 
+        internal bool IsFull
+        {
+            get
+            {
+                lock (Sync)
+                    return !Objects.Any(kvp => Valid(kvp.Key) && kvp.Value == null);
+            }
+        }
+
         /// <summary>
         /// Makes sure the slot is valid.
         /// </summary>
@@ -89,7 +98,7 @@ namespace Chaos
                 if (obj is Item)
                 {
                     Item objItem = obj as Item;
-                    Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.SpritePair.Item1 && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
+                    Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.Sprite.InventorySprite && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
                     if (objItem.Stackable && existingItem?.Stackable == true)
                     {
                         objItem.Count += existingItem.Count;
@@ -103,7 +112,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to equip the item at the given slot, return the item that was already occupying the spot if there was one
+        /// Attempts to equip the given item, and return the item that was already occupying the spot if there was one
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -114,7 +123,7 @@ namespace Chaos
                 if (item is Item)
                 {
                     outItem = null;
-                    EquipmentSlot slot = (item as Item).EquipmentPair.Item1;
+                    EquipmentSlot slot = (item as Item).EquipmentSlot;
 
                     if (slot == EquipmentSlot.None || !Valid((byte)slot))
                     {
@@ -122,11 +131,11 @@ namespace Chaos
                         return false;
                     }
 
-                    if (Objects[(byte)slot] != null && !TryUnequip(slot, out outItem))
-                        return false;
-
-                    if (Objects[(byte)slot] == null)
-                        Objects[(byte)slot] = item;
+                    if (!(Objects[(byte)slot] != null && !TryUnequip(slot, out outItem)))
+                    {
+                        item.Slot = (byte)slot;
+                        TryAdd(item);
+                    }
 
                     return Objects[(byte)slot] == item;
                 }
@@ -143,7 +152,9 @@ namespace Chaos
         internal bool TryUnequip(EquipmentSlot slot, out T item)
         {
             lock (Sync)
+            {
                 return TryGetRemove((byte)slot, out item);
+            }
         }
 
         /// <summary>

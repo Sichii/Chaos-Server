@@ -115,7 +115,6 @@
     <Compile Include="Objects\Warp.cs" />
     <Compile Include="Objects\WorldObject.cs" />
     <Compile Include="Packets\Packet.cs" />
-    <Compile Include="Server\Host.cs" />
     <Compile Include="Server\Paths.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -136,6 +135,7 @@
     <Compile Include="Client\DisplayData.cs" />
     <Compile Include="Constructs\GameTime.cs" />
     <Compile Include="Structs\Effect.cs" />
+    <Compile Include="Structs\ItemSprite.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="Structs\MetaFileNode.cs" />
     <Compile Include="Structs\Point.cs" />

@@ -205,7 +205,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.AddItem);
 
             packet.WriteByte(item.Slot);
-            packet.WriteUInt16(item.SpritePair.Item2);
+            packet.WriteUInt16(item.Sprite.OffsetSprite);
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
             packet.WriteInt32(item.Count);
@@ -449,10 +449,10 @@ namespace Chaos
 
             packet.WriteInt32(m?.Id ?? 0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.SpritePair.Item2);
+            packet.WriteUInt16(m?.Sprite ?? i.Sprite.OffsetSprite);
             packet.WriteByte(0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.SpritePair.Item2);
+            packet.WriteUInt16(m?.Sprite ?? i.Sprite.OffsetSprite);
             packet.WriteByte(0);
             packet.WriteUInt16(dialog.PursuitId);
             packet.WriteUInt16(dialog.Id);
@@ -584,7 +584,7 @@ namespace Chaos
             packet.WriteInt32(user.Id);
             foreach(var slot in profileEquipment)
             {
-                packet.WriteUInt16(user.Equipment[slot]?.SpritePair.Item2 ?? 0);
+                packet.WriteUInt16(user.Equipment[slot]?.Sprite.OffsetSprite ?? 0);
                 packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
             }
             packet.WriteBoolean(user.UserOptions.Group);
@@ -632,8 +632,8 @@ namespace Chaos
         {
             var packet = new ServerPacket(ServerOpCodes.AddEquipment);
 
-            packet.WriteByte((byte)item.EquipmentPair.Item1);
-            packet.WriteUInt16(item.SpritePair.Item2);
+            packet.WriteByte((byte)item.EquipmentSlot);
+            packet.WriteUInt16(item.Sprite.OffsetSprite);
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
             packet.WriteByte(0); //type...?
@@ -829,7 +829,6 @@ namespace Chaos
 
             return packet;
         }
-
         internal static ServerPacket GroupRequest(GroupRequestType type, string sender)
         {
             var packet = new ServerPacket(ServerOpCodes.GroupRequest);
@@ -842,10 +841,7 @@ namespace Chaos
         internal static ServerPacket LobbyControls(byte type, string message)
         {
             var packet = new ServerPacket(ServerOpCodes.LobbyControls);
-            //1 = Exit and load directory
-            //2 = load directory
-            //3 = website
-            //there's more to the 1 and 2 bytes, will figure out later
+
             packet.WriteByte(type);
             packet.WriteString8(message);
 

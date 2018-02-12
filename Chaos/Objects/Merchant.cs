@@ -38,8 +38,9 @@ namespace Chaos
             { PursuitIds.ReviveUser, new Pursuit("Revive User", PursuitIds.ReviveUser, 8) },
         };
 
-        internal Merchant(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction, ushort nextDialogId = 0, List<PursuitIds> availablePursuits = null, MenuType menuType = MenuType.Menu, string menuText = "What would you like to do?")
-            : base(name, (ushort)(sprite + CONSTANTS.MERCHANT_SPRITE_OFFSET), type, point, map, direction)
+        internal Merchant(string name, ushort sprite, Point point, Map map, Direction direction, ushort nextDialogId = 0, 
+            List<PursuitIds> availablePursuits = null, MenuType menuType = MenuType.Menu, string menuText = "What would you like to do?")
+            : base(name, (ushort)(sprite + CONSTANTS.MERCHANT_SPRITE_OFFSET), CreatureType.Merchant, point, map, direction)
         {
             NextDialogId = nextDialogId;
             LastClicked = DateTime.MinValue;

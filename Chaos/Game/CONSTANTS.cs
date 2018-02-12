@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chaos
 {
@@ -32,19 +33,5 @@ namespace Chaos
         internal const int GLOBAL_SPELL_COOLDOWN_MS = 250;
         internal const int REFRESH_DELAY_MS = 1000;
         internal static Location STARTING_LOCATION = new Location(8984, 10, 10);
-
-        /*
-        internal static Dictionary<EquipmentSlot, Dictionary<ushort, ushort>> ITEM_SPRITE_TO_EQUIPMENT_INDEX = new Dictionary<EquipmentSlot, Dictionary<ushort, ushort>>()
-        {
-            {
-                EquipmentSlot.Weapon, new Dictionary<ushort, ushort>()
-                {
-                    { 86, 1 }, { 87, 2 }, { 88, 3 }, { 89, 4 }, { 90, 5 }, { 91, 6 }, { 132, 7 }, { 133, 8 }, { 134, 9 }, { 169, 10 }, { 170, 11 }, { 171, 12 }, { 172, 13 },
-                    { 173, 14 }, { 174, 15 }, { 175, 16 }, { 176, 17 }, { 177, 18 }, { 178, 19 }, { 179, 20 }, { 180, 21 }, { 181, 22 }, { 182, 23 }, { 183, 24 }, { 184, 25 },
-                    { 185, 26 }, { 186, 27 }, { 221, 28 }, { 00000, 29 }, { 254, 30 }, { 255, 31 }, { 256, 32 }, { 257, 33 }, { 00000, 34 }, { 00000, 35 }, { 00000, 36 }
-                }
-            }
-        };
-        */
     }
 }

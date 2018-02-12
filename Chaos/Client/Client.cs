@@ -199,11 +199,11 @@ namespace Chaos
                     {
                         while (SendQueue.Count > 0)//while there are packets to send
                         {
-                            ServerPacket packet = SendQueue.Dequeue();//get the next packet in the queue, convert to serverpacket
+                            ServerPacket packet = SendQueue.Dequeue();//get the next packet in the queue
                             if (packet == null) continue;
                             Server.WriteLog(packet.ToString(), this);
 
-                            if (packet.IsEncrypted)//if it should be encrypted, do it
+                            if (packet.IsEncrypted)//if it should be encrypted, encrypt it
                             {
                                 packet.Counter = ServerCount++;
                                 packet.Encrypt(Crypto);
@@ -237,6 +237,7 @@ namespace Chaos
                 }
                 Thread.Sleep(10);
             }
+            //if we reach this (outside the while loop), then connected = false
             Disconnect();
         }
 
@@ -250,6 +251,7 @@ namespace Chaos
             Enqueue(ServerPackets.Redirect(redirect));
         }
 
+        //shorthand methods for sending a client certain packets
         internal void SendLoginMessage(LoginMessageType messageType, string message = "") => Enqueue(ServerPackets.LoginMessage(messageType, message));
         internal void SendAttributes(StatUpdateType updateType) => Enqueue(ServerPackets.Attributes(User.IsAdmin, updateType, User.Attributes));
         internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(ServerPackets.ServerMessage(messageType, message));

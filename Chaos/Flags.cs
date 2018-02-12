@@ -327,10 +327,12 @@ namespace Chaos
         West = 3,
         Invalid = 255
     }
+    [Flags]
     internal enum Gender : byte
     {
         Male = 1,
-        Female = 2
+        Female = 2,
+        Unisex = Male | Female
     }
     #endregion
 
@@ -568,6 +570,7 @@ namespace Chaos
     }
     internal enum BodyAnimation : byte
     {
+        None = 0,
         Assail = 1,
         HandsUp = 6,
         Smile = 9,

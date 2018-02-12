@@ -44,7 +44,7 @@ namespace Chaos
             Guilds.TryAdd(team.Name, team);
 
             #region Load Maps
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.Cache.Get<byte[]>(DataBase.MapKey))))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.MapData)))
             {
                 reader.ReadInt32();
 
