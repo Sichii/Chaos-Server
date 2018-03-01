@@ -558,7 +558,7 @@ namespace MapTool
                 WorldMapTree.Nodes.Clear();
 
                 //for each map
-                foreach (Map map in MapsCache.Maps.Values)
+                foreach (Chaos.Map map in MapsCache.Maps.Values)
                 {
                     //each map gets a node
                     MapTreeNode Map = new MapTreeNode(map, $@"{map.Name} - {map.Id} ({map.SizeX},{map.SizeY})");
@@ -571,16 +571,16 @@ namespace MapTool
                     Map.Nodes.Add(WorldMaps);
 
                     //each warp gets a subnode
-                    foreach (Warp warp in map.Exits.Values)
+                    foreach (Chaos.Warp warp in map.Warps.Values)
                         Warps.Nodes.Add(new WarpTreeNode(warp, $@"{warp.Point} => {warp.TargetMapId} : {warp.TargetPoint} - ({MapsCache.Maps[warp.TargetMapId].Name})"));
 
                     //each door gets a subnode
-                    foreach (Door door in map.Doors.Values)
+                    foreach (Chaos.Door door in map.Doors.Values)
                         Doors.Nodes.Add(new DoorTreeNode(door, $@"{door.Point} - Opens: {(door.OpenRight ? "Right" : "Left")}"));
 
                     //each worldmap gets a subnode
                     foreach (var kvp in map.WorldMaps)
-                        WorldMaps.Nodes.Add(new WorldMapTreeNode(kvp.Value, $@"{kvp.Key.ToString()} => {kvp.Value.GetCrc32()}"));
+                        WorldMaps.Nodes.Add(new WorldMapTreeNode(kvp.Value, $@"{kvp.Key.ToString()} => {kvp.Value.GetCheckSum()}"));
 
                     //add this map to the map tree
                     MapTree.Nodes.Add(Map);
@@ -593,7 +593,7 @@ namespace MapTool
                     WorldMapTreeNode WorldMap = new WorldMapTreeNode(kvp.Value, kvp.Key.ToString());
 
                     //each worldmapnode gets a subnode
-                    foreach (WorldMapNode wmn in kvp.Value.Nodes)
+                    foreach (Chaos.WorldMapNode wmn in kvp.Value.Nodes)
                         WorldMap.Nodes.Add(new WorldMapNodeTreeNode(wmn, $@"{wmn.Position} => {wmn.MapId} : {wmn.Point} - ({MapsCache.Maps[wmn.MapId].Name})"));
 
                     //add this worldmap to the worldmap tree
@@ -623,7 +623,7 @@ namespace MapTool
                 {
                     if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
-                        MapsCache.Maps[mapId] = new Map(mapId, sizeX, sizeY, (MapFlags)flags, mapName, music);
+                        MapsCache.Maps[mapId] = new Chaos.Map(mapId, sizeX, sizeY, (Chaos.MapFlags)flags, mapName, music);
                         MapsCache.Save();
                         LoadTree();
                     }
@@ -663,7 +663,7 @@ namespace MapTool
                             MapsCache.Maps[mapId].SizeX = sizeX;
                             MapsCache.Maps[mapId].SizeY = sizeY;
                             MapsCache.Maps[mapId].Music = music;
-                            MapsCache.Maps[mapId].Flags = (MapFlags)flags;
+                            MapsCache.Maps[mapId].Flags = (Chaos.MapFlags)flags;
                             MapsCache.Save();
                             LoadTree();
                         }
@@ -706,27 +706,27 @@ namespace MapTool
 
         private void hostileCbox_CheckedChanged(object sender, EventArgs e)
         {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)MapFlags.Hostile).ToString();
+            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Hostile).ToString();
         }
 
         private void snowCbox_CheckedChanged(object sender, EventArgs e)
         {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)MapFlags.Snowing).ToString();
+            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Snowing).ToString();
         }
 
         private void pvpCbox_CheckedChanged(object sender, EventArgs e)
         {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)MapFlags.PvP).ToString();
+            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.PvP).ToString();
         }
 
         private void noSpellsCbox_CheckedChanged(object sender, EventArgs e)
         {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)MapFlags.NoSpells).ToString();
+            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSpells).ToString();
         }
 
         private void noSkillsCbox_CheckedChanged(object sender, EventArgs e)
         {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)MapFlags.NoSkills).ToString();
+            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSkills).ToString();
         }
 
         ~MainForm()

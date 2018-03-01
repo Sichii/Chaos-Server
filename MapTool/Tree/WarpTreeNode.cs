@@ -15,9 +15,9 @@ namespace MapTool
 {
     internal class WarpTreeNode : TreeNode
     {
-        internal Warp Warp { get; }
+        internal Chaos.Warp Warp { get; }
 
-        internal WarpTreeNode(Warp warp, string name)
+        internal WarpTreeNode(Chaos.Warp warp, string name)
             : base(name)
         {
             Warp = warp;

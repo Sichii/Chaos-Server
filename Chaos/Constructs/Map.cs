@@ -18,25 +18,25 @@ using System.Linq;
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptIn)]
-    internal sealed class Map
+    public sealed class Map
     {
         internal readonly object Sync = new object();
         internal ConcurrentDictionary<int, WorldObject> Objects { get; set; }
-        internal ConcurrentDictionary<Point, Door> Doors { get; set; }
+        public ConcurrentDictionary<Point, Door> Doors { get; set; }
         [JsonProperty]
-        internal ushort Id { get; }
-        internal byte SizeX { get; }
-        internal byte SizeY { get; }
+        public ushort Id { get; }
+        public byte SizeX { get; set; }
+        public byte SizeY { get; set; }
         internal byte[] Data { get; private set; }
         internal ushort CheckSum { get; private set; }
         internal Dictionary<Point, Tile> Tiles { get; }
-        internal MapFlags Flags { get; set; }
-        internal string Name { get; set; }
-        internal sbyte Music { get; set; }
-        internal Dictionary<Point, Warp> Warps { get; set; }
-        internal Dictionary<Point, WorldMap> WorldMaps { get; set; }
+        public MapFlags Flags { get; set; }
+        public string Name { get; set; }
+        public sbyte Music { get; set; }
+        public Dictionary<Point, Warp> Warps { get; set; }
+        public Dictionary<Point, WorldMap> WorldMaps { get; set; }
 
-        internal Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
+        public Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
         {
             Id = id;
             SizeX = sizeX;

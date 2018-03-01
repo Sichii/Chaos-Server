@@ -35,7 +35,7 @@ namespace ChaosLauncher
             //create the process
             SafeNativeMethods.CreateProcess(
 #if DEBUG
-                Paths.DarkAgesExe
+                Chaos.Paths.DarkAgesExe
 #else
                 @"Darkages.exe"
 #endif
@@ -51,7 +51,12 @@ namespace ChaosLauncher
                 memory.WriteByte(0xEB);
 
                 //grab the server ip from the server dns, and your own ip from a string on an ip checker
-                IPAddress serverIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                IPAddress serverIP =
+#if DEBUG
+                    IPAddress.Loopback;
+#else
+                    Dns.GetHostEntry(Chaos.Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+#endif
                 IPAddress clientIP = IPAddress.Parse(new WebClient().DownloadString(@"http://checkip.amazonaws.com/").Trim());
 
                 //edit the direct ip to the server ip
@@ -87,7 +92,7 @@ namespace ChaosLauncher
                     //use access handle to inject dawnd.dll
                     InjectDLL(accessHnd,
 #if DEBUG
-                    $@"{Paths.DarkAgesDir}dawnd.dll"
+                    $@"{Chaos.Paths.DarkAgesDir}dawnd.dll"
 #else
                     "dawnd.dll"
 #endif

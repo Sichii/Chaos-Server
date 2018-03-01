@@ -14,12 +14,12 @@ using System.Text;
 
 namespace Chaos
 {
-    internal struct WorldMapNode
+    public struct WorldMapNode
     {
-        internal Point Position { get; }
-        internal string Name { get; }
-        internal ushort MapId { get; }
-        internal Point Point { get; }
+        public Point Position { get; }
+        public string Name { get; }
+        public ushort MapId { get; }
+        public Point Point { get; }
         internal Location Location => new Location(MapId, Point);
 
         public WorldMapNode(Point position, string name, ushort mapId, Point point)
@@ -30,7 +30,7 @@ namespace Chaos
             Point = point;
         }
 
-        internal ushort CheckSum
+        public ushort CheckSum
         {
             get
             {

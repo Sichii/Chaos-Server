@@ -15,13 +15,13 @@ namespace MapTool
 {
     internal class WorldMapTreeNode : TreeNode
     {
-        internal WorldMap WorldMap { get; }
+        internal Chaos.WorldMap WorldMap { get; }
 
-        internal WorldMapTreeNode(WorldMap worldMap, string name)
+        internal WorldMapTreeNode(Chaos.WorldMap worldMap, string name)
             : base(name)
         {
             WorldMap = worldMap;
-            Name = worldMap.GetCrc32().ToString();
+            Name = worldMap.GetCheckSum().ToString();
         }
     }
 }

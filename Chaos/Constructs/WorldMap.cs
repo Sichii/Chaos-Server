@@ -14,18 +14,18 @@ using System.IO;
 
 namespace Chaos
 {
-    internal sealed class WorldMap
+    public sealed class WorldMap
     {
-        internal string Field { get; set; }
-        internal WorldMapNode[] Nodes { get; }
+        public string Field { get; set; }
+        public WorldMapNode[] Nodes { get; }
 
-        internal WorldMap(string field, params WorldMapNode[] nodes)
+        public WorldMap(string field, params WorldMapNode[] nodes)
         {
             Field = field;
             Nodes = nodes;
         }
 
-        internal uint GetCheckSum()
+        public uint GetCheckSum()
         {
             MemoryStream memoryStream = new MemoryStream();
             using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))

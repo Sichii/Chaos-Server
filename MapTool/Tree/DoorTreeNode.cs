@@ -15,9 +15,9 @@ namespace MapTool
 {
     internal class DoorTreeNode : TreeNode
     {
-        internal Door Door { get; }
+        internal Chaos.Door Door { get; }
 
-        internal DoorTreeNode(Door door, string name)
+        internal DoorTreeNode(Chaos.Door door, string name)
             : base(name)
         {
             Door = door;
