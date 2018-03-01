@@ -1,0 +1,1 @@
+bash -c "sudo apt-get install --only-upgrade redis-server"

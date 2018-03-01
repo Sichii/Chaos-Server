@@ -157,7 +157,7 @@ namespace Chaos
         //add more statuses here, double each time
     }
     [Flags]
-    internal enum MapFlags : uint
+    public enum MapFlags : uint
     {
         Hostile = 1,
         NonHostile = 2,
@@ -190,7 +190,7 @@ namespace Chaos
         OrangeBar2 = 2,
         ActiveMessage = 3,  //orange bar + shiftF
         OrangeBar3 = 4,
-        PrangeBar4 = 5,
+        AdminMessage = 5,   //in USDA, admins use this orange-bar channel
         OrangeBar5 = 6,
         UserOptions = 7,    //user options get sent through this byte
         ScrollWindow = 8,   //window with a scroll bar (like sense)

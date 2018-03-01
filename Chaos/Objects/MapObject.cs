@@ -11,13 +11,13 @@
 
 namespace Chaos
 {
-    internal abstract class MapObject
+    public abstract class MapObject
     {
-        internal Point Point => new Point(X, Y);
+        public Point Point => new Point(X, Y);
         internal Location Location => new Location(MapId, Point);
-        protected ushort X;
-        protected ushort Y;
-        protected ushort MapId;
+        public ushort X;
+        public ushort Y;
+        public ushort MapId;
 
         protected internal MapObject(ushort mapId, ushort x, ushort y)
         {

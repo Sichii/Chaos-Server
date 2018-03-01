@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace Chaos
 {
-    internal struct Location
+    public struct Location
     {
         [JsonProperty]
         internal ushort MapId;

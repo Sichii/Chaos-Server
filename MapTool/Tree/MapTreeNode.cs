@@ -15,9 +15,9 @@ namespace MapTool
 {
     internal class MapTreeNode : TreeNode
     {
-        internal Map Map { get; }
+        internal Chaos.Map Map { get; }
 
-        internal MapTreeNode(Map map, string name)
+        internal MapTreeNode(Chaos.Map map, string name)
             : base(name)
         {
             Map = map;

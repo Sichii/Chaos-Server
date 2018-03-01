@@ -34,7 +34,7 @@ namespace MapTool
                 int id1 = node1.Warp.TargetMapId, id2 = node2.Warp.TargetMapId;
                 if (id1 == id2)
                 {
-                    Point p1 = node1.Warp.Point, p2 = node2.Warp.Point;
+                    Chaos.Point p1 = node1.Warp.Point, p2 = node2.Warp.Point;
                     if (p1.X == p2.X)
                         return p1.Y.CompareTo(p2.Y);
                     else
@@ -49,7 +49,7 @@ namespace MapTool
                 DoorTreeNode node2 = x as DoorTreeNode;
 
                 //sort by x position, then y position
-                Point p1 = node1.Door.Point, p2 = node2.Door.Point;
+                Chaos.Point p1 = node1.Door.Point, p2 = node2.Door.Point;
                 if (p1.X == p2.X)
                     return p1.Y.CompareTo(p2.Y);
                 else
@@ -69,7 +69,7 @@ namespace MapTool
                 WorldMapTreeNode node2 = y as WorldMapTreeNode;
 
                 //sort by crc
-                return node1.WorldMap.GetCrc32().CompareTo(node2.WorldMap.GetCrc32());
+                return node1.WorldMap.GetCheckSum().CompareTo(node2.WorldMap.GetCheckSum());
             }
             return 0;
         }

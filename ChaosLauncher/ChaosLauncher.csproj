@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Flags.cs" />
-    <Compile Include="Paths.cs" />
     <Compile Include="SafeNativeMethods.cs" />
     <Compile Include="Launcher.cs">
       <SubType>Form</SubType>
@@ -88,6 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="chaos.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Chaos\Chaos.csproj">
+      <Project>{032c0163-368f-4d73-9542-c265be0f94db}</Project>
+      <Name>Chaos</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

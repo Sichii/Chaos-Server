@@ -15,15 +15,15 @@ using System.Text.RegularExpressions;
 
 namespace Chaos
 {
-    internal struct Point
+    public struct Point
     {
         [JsonProperty]
-        internal ushort X;
+        public ushort X;
         [JsonProperty]
-        internal ushort Y;
+        public ushort Y;
 
         [JsonConstructor]
-        internal Point(ushort x, ushort y)
+        public Point(ushort x, ushort y)
         {
             X = x;
             Y = y;

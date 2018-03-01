@@ -28,7 +28,12 @@ namespace Chaos
             Console.WindowHeight = 30;
 
             //create the server, start it in a new thread
-            IPAddress localIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            IPAddress localIP =
+#if DEBUG
+                IPAddress.Loopback;
+#else
+                Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+#endif
             Server = new Server(localIP, 2610);
             ServerThread = new Thread(Server.Start);
             ServerThread.Start();
