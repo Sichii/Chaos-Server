@@ -108,21 +108,21 @@ namespace Chaos
                 case UserOption.Request:
                     return ToString();
                 case UserOption.Whisper:
-                    return string.Format(format, "Listen to whisper", (Whisper ? "ON" : "OFF"));
+                    return string.Format(format, "1Listen to whisper", (Whisper ? "ON" : "OFF"));
                 case UserOption.Group:
-                    return string.Format(format, "Join a group", Group ? "ON" : "OFF");
+                    return string.Format(format, "2Join a group", Group ? "ON" : "OFF");
                 case UserOption.Shout:
-                    return string.Format(format, "Listen to shout", Shout ? "ON" : "OFF");
+                    return string.Format(format, "3Listen to shout", Shout ? "ON" : "OFF");
                 case UserOption.Wisdom:
-                    return string.Format(format, "Believe in wisdom", Wisdom ? "ON" : "OFF");
+                    return string.Format(format, "4Believe in wisdom", Wisdom ? "ON" : "OFF");
                 case UserOption.Magic:
-                    return string.Format(format, "Believe in magic", Magic ? "ON" : "OFF");
+                    return string.Format(format, "5Believe in magic", Magic ? "ON" : "OFF");
                 case UserOption.Exchange:
-                    return string.Format(format, "Exchange", Exchange ? "ON" : "OFF");
+                    return string.Format(format, "6Exchange", Exchange ? "ON" : "OFF");
                 case UserOption.FastMove:
-                    return string.Format(format, "Fast Move", FastMove ? "ON" : "OFF");
+                    return string.Format(format, "7Fast Move", FastMove ? "ON" : "OFF");
                 case UserOption.GuildChat:
-                    return string.Format(format, "Guild Chat", GuildChat ? "ON" : "OFF");
+                    return string.Format(format, "8Guild Chat", GuildChat ? "ON" : "OFF");
             }
 
             return string.Empty;
@@ -136,7 +136,7 @@ namespace Chaos
         {
             string[] options = new string[9];
             for (int i = 1; i <= 8; i++)
-                options[i-1] = ToString((UserOption)i);
+                options[i-1] = ToString((UserOption)i).Remove(0, 1);
 
             return $"0{string.Join("\t", options)}";
         }

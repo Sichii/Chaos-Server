@@ -100,6 +100,7 @@ namespace Chaos
                         if (Users.Count == 1)
                         {
                             Users[0].Client.SendServerMessage(ServerMessageType.ActiveMessage, "Group has been disbanded.");
+                            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, "Group has been disbanded.");
                             TryRemove(Users[0]);
                         }
                         else if (Users.Count > 1)
@@ -171,11 +172,11 @@ namespace Chaos
 
                 foreach (User user in Users)
                     if (user == Leader)
-                        groupString += $@"\n*  {user.Name}";
+                        groupString += '\n' + $"* {user.Name}";
                     else
-                        groupString += $@"\n   {user.Name}";
+                        groupString += '\n' + $"  {user.Name}";
 
-                groupString += $@"\nTotal {Size}";
+                groupString += '\n' + $"Total {Size}";
 
                 return groupString;
             }

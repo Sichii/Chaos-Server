@@ -21,7 +21,6 @@ namespace Chaos
     internal delegate Spell SpellCreationDelegate();
     internal class CreationEngine
     {
-
         private Dictionary<string, ItemCreationDelegate> Items { get; }
         private Dictionary<string, SkillCreationDelegate> Skills { get; }
         private Dictionary<string, SpellCreationDelegate> Spells { get; }
@@ -110,6 +109,7 @@ namespace Chaos
         internal Spell CreateSpell(string name) => Spells.ContainsKey(name) ? Spells[name]() : null;
         #endregion
 
+        #region Defaults
         private void NormalObj(Client client, Server server, params object[] args) { }
         private void Equip(Client client, Server server, params object[] args)
         {
@@ -118,16 +118,22 @@ namespace Chaos
             if (AttemptExchange(client, server, item))
                 return;
 
-            if (item.Gender.HasFlag(client.User.Gender))
+            if (!item.Gender.HasFlag(client.User.Gender))
+            {
                 client.SendServerMessage(ServerMessageType.ActiveMessage, "This item does not fit you.");
+                return;
+            }
 
             Item outItem;
+            byte oldSlot = item.Slot;
             if(client.User.Equipment.TryEquip(item, out outItem))
             {
+                client.User.Inventory.TryRemove(oldSlot);
+
                 if(outItem != null)
                     client.Enqueue(ServerPackets.RemoveEquipment(outItem.EquipmentSlot));
 
-                client.Enqueue(ServerPackets.RemoveItem(item.Slot));
+                client.Enqueue(ServerPackets.RemoveItem(oldSlot));
                 client.Enqueue(ServerPackets.AddEquipment(item));
 
                 if (outItem != null && client.User.Inventory.AddToNextSlot(outItem))
@@ -149,6 +155,7 @@ namespace Chaos
 
             return false;
         }
+        #endregion
 
         #region Items
         private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, Animation.None, BodyAnimation.None, true);

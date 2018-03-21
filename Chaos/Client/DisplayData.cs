@@ -36,7 +36,7 @@ namespace Chaos
         internal byte HeadColor => User.Equipment[EquipmentSlot.OverHelm]?.Color ?? User.Equipment[EquipmentSlot.Helmet]?.Color ?? HairColor;
 
         //Body
-        internal ushort ArmorSprite1 => User.Equipment[EquipmentSlot.Armor]?.Sprite.DisplaySprite ?? 0;
+        internal ushort ArmorSprite1 => User.Equipment[EquipmentSlot.Armor]?.ItemSprite.DisplaySprite ?? 0;
         internal ushort ArmorSprite2 => ArmorSprite1;
         internal ushort OvercoatSprite => User.Equipment[EquipmentSlot.Overcoat]?.DisplaySprite ?? 0;
         internal byte OvercoatColor => User.Equipment[EquipmentSlot.Overcoat]?.Color ?? 0;
