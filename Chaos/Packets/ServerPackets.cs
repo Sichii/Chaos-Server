@@ -205,7 +205,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.AddItem);
 
             packet.WriteByte(item.Slot);
-            packet.WriteUInt16(item.Sprite.OffsetSprite);
+            packet.WriteUInt16(item.ItemSprite.OffsetSprite);
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
             packet.WriteInt32(item.Count);
@@ -449,10 +449,10 @@ namespace Chaos
 
             packet.WriteInt32(m?.Id ?? 0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.Sprite.OffsetSprite);
+            packet.WriteUInt16(m?.Sprite ?? i.ItemSprite.OffsetSprite);
             packet.WriteByte(0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.Sprite.OffsetSprite);
+            packet.WriteUInt16(m?.Sprite ?? i.ItemSprite.OffsetSprite);
             packet.WriteByte(0);
             packet.WriteUInt16(dialog.PursuitId);
             packet.WriteUInt16(dialog.Id);
@@ -584,14 +584,14 @@ namespace Chaos
             packet.WriteInt32(user.Id);
             foreach(var slot in profileEquipment)
             {
-                packet.WriteUInt16(user.Equipment[slot]?.Sprite.OffsetSprite ?? 0);
+                packet.WriteUInt16(user.Equipment[slot]?.ItemSprite.OffsetSprite ?? 0);
                 packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
             }
-            packet.WriteBoolean(user.UserOptions.Group);
+            packet.WriteBoolean(user.IsGrouped);
             packet.WriteString8(user.Name);
             packet.WriteByte((byte)user.Nation);
             packet.WriteString8(user.Titles.FirstOrDefault() ?? "");
-            packet.WriteBoolean(user.IsGrouped);
+            packet.WriteBoolean(user.UserOptions.Group);
             packet.WriteString8(user.Guild?.TitleOf(user.Name) ?? "");
             packet.WriteString8(user.AdvClass == AdvClass.None ? user.BaseClass.ToString() : user.AdvClass.ToString());
             packet.WriteString8(user.Guild?.Name ?? "");
@@ -633,7 +633,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.AddEquipment);
 
             packet.WriteByte((byte)item.EquipmentSlot);
-            packet.WriteUInt16(item.Sprite.OffsetSprite);
+            packet.WriteUInt16(item.ItemSprite.OffsetSprite);
             packet.WriteByte(item.Color);
             packet.WriteString8(item.Name);
             packet.WriteByte(0); //type...?
@@ -659,7 +659,7 @@ namespace Chaos
             packet.WriteString8(user.Guild?.TitleOf(user.Name) ?? "");
             packet.WriteString8(user.Titles.Count > 0 ? user.Titles[0] : ""); 
             packet.WriteString8(user.Group?.ToString() ?? (user.Spouse != null ? $@"Spouse: {user.Spouse}" : "Adventuring alone"));
-            packet.WriteBoolean(!user.UserOptions.Group);
+            packet.WriteBoolean(user.UserOptions.Group);
             packet.WriteBoolean(user.Group?.Box != null);
             if(user.Group?.Box != null)
             {

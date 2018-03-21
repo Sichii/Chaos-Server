@@ -246,23 +246,29 @@ namespace Chaos
         {
             if(warp.Location == user.Location && Maps.ContainsKey(warp.TargetMapId))
             {
-                /* 10000+ computations are expensive, can i make this cheaper?
-                if(Maps[warp.TargetMapId].IsWall(warp.TargetX, warp.TargetY))
+                if (!user.IsAdmin && Maps[warp.TargetMapId].IsWall(warp.TargetPoint))
                 {
-                    int dist = int.MaxValue;
                     Point nearestPoint = new Point(ushort.MaxValue, ushort.MaxValue);
+                    int distance = int.MaxValue;
+                    ushort x = (ushort)Utility.Clamp(warp.TargetPoint.X - 25, 0, Maps[warp.TargetMapId].SizeX);
+                    int width = Math.Min(x + 50, Maps[warp.TargetMapId].SizeX);
+                    ushort y = (ushort)Utility.Clamp(warp.TargetPoint.Y - 25, 0, Maps[warp.TargetMapId].SizeY);
+                    int height = Math.Min(y + 50, Maps[warp.TargetMapId].SizeY);
 
-                    foreach(Point point in Maps[warp.TargetMapId].Tiles.Keys)
-                    {
-                        if (!Maps[warp.TargetMapId].IsWall(point.X, point.Y) && warp.TargetPoint.Distance(point) < dist)
+                    //search up to 2500 tiles for a non wall
+                    for (; x < width; x++)
+                        for (; y < height; y++)
                         {
-                            dist = warp.TargetPoint.Distance(point);
-                            nearestPoint = point;
+                            Point newPoint = new Point(x, y);
+                            if (!Maps[warp.TargetMapId].IsWall(newPoint))
+                            {
+                                distance = warp.TargetPoint.Distance(newPoint);
+                                nearestPoint = newPoint;
+                            }
                         }
-                    }
 
                     warp = new Warp(warp.Location, new Location(warp.TargetMapId, nearestPoint));
-                }*/
+                }
 
                 if (!worldMap)
                     RemoveObjectFromMap(user);

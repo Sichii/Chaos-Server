@@ -120,7 +120,8 @@ namespace Chaos
                 newUser.Guild = World.Guilds["Chaos Team"];
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Item"));
-                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Equipment"));
+                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Male Equipment"));
+                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Female Equipment"));
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Mend"));
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Heal"));
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Srad Tut"));

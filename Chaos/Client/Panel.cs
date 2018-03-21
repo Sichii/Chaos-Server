@@ -98,7 +98,7 @@ namespace Chaos
                 if (obj is Item)
                 {
                     Item objItem = obj as Item;
-                    Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.Sprite.InventorySprite && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
+                    Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.ItemSprite.InventorySprite && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
                     if (objItem.Stackable && existingItem?.Stackable == true)
                     {
                         objItem.Count += existingItem.Count;

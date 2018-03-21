@@ -91,8 +91,8 @@ namespace Chaos
 
                     //update exchange window
 
-                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, index, item.Sprite.OffsetSprite, item.Color, item.Name));
-                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, index, item.Sprite.OffsetSprite, item.Color, item.Name));
+                    User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, index, item.ItemSprite.OffsetSprite, item.Color, item.Name));
+                    User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, index, item.ItemSprite.OffsetSprite, item.Color, item.Name));
                 }
                 else //if it's stackable, send a prompty asking for how many
                     user.Client.Enqueue(ServerPackets.Exchange(ExchangeType.RequestAmount, item.Slot));
@@ -163,8 +163,8 @@ namespace Chaos
                 }
 
                 //update exchange window
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, (byte)index, splitItem.Sprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, (byte)index, splitItem.Sprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, !user1Src, (byte)index, splitItem.ItemSprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.AddItem, user1Src, (byte)index, splitItem.ItemSprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
             }
         }
 

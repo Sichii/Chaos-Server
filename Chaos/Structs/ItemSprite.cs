@@ -3,12 +3,14 @@ using System;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal struct ItemSprite
     {
+        [JsonProperty]
         internal ushort InventorySprite;
-        internal ushort OffsetSprite;
+        [JsonProperty]
         internal ushort DisplaySprite;
+        internal ushort OffsetSprite;
 
         [JsonConstructor]
         internal ItemSprite(ushort inventorySprite, ushort displaySprite)

@@ -11,11 +11,11 @@
 
 using System;
 using System.Linq;
-using StackExchange.Redis;
 using Newtonsoft.Json;
 using StackExchange.Redis.Extensions.Newtonsoft;
 using StackExchange.Redis.Extensions.Core;
 using System.Collections.Concurrent;
+using StackExchange.Redis;
 
 namespace Chaos
 {
