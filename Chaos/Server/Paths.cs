@@ -10,21 +10,22 @@
 // ****************************************************************************
 
 using System;
+using System.Configuration;
 
 namespace Chaos
 {
     public static class Paths
     {
         //primary directory, change to your own~
-        public static string BaseDir => @"C:\Users\Sichi\Desktop\ChaosProject\";
+        public static string BaseDir = ConfigurationManager.AppSettings[@"BaseDir"];
         //dark ages directory
-        public static string DarkAgesDir => $@"{BaseDir}ChaosDa\";
+        public static string DarkAgesDir = ConfigurationManager.AppSettings[@"DarkAgesDir"];
         //dark ages executable
         public static string DarkAgesExe => $@"{DarkAgesDir}Darkages.exe";
         //dynamic host name, change to your own~
-        public static string HostName => @"ChaosServer.dynu.net";
+        public static string HostName = ConfigurationManager.AppSettings[@"HostName"];
         //redis config string (host, port)
-        public static string RedisConfig => @"localhost:6379";
+        public static string RedisConfig = ConfigurationManager.AppSettings[@"RedisConfig"];
 
 
         public static string LogFiles => $@"{BaseDir}logs\";
