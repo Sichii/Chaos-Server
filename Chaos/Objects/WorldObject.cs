@@ -33,11 +33,9 @@ namespace Chaos
         }
 
         public int CompareTo(WorldObject obj) => ReferenceEquals(this, obj) ? 0 : Id.CompareTo(obj.Id);
-    }
-
-    internal sealed class WorldObjectComparer : IEqualityComparer<WorldObject>
-    {
-        public bool Equals(WorldObject obj1, WorldObject obj2) => ReferenceEquals(obj1, obj2) ? true : GetHashCode(obj1) == GetHashCode(obj2);
-        public int GetHashCode(WorldObject obj) => obj.Id.GetHashCode();
+        public static bool operator ==(WorldObject obj1, WorldObject obj2) => obj1.Equals(obj2);
+        public static bool operator !=(WorldObject obj1, WorldObject obj2) => !obj1.Equals(obj2);
+        public override bool Equals(object obj) => obj?.GetHashCode() == GetHashCode();
+        public override int GetHashCode() => (Id << 16) + Name.GetHashCode();
     }
 }

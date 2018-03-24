@@ -134,6 +134,13 @@
   </PropertyGroup>
   <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
   <Import Project="..\packages\Fody.2.4.6\build\Fody.targets" Condition="Exists('..\packages\Fody.2.4.6\build\Fody.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>if"$(ConfigurationName)"=="Release" (
+cd "$(SolutionDir)"
+set /p wDir=&lt; PATH.txt
+xcopy /C /y "%25cd%25\MapTool\bin\Release\MapTool.exe" "%25wDir%25\"
+)</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

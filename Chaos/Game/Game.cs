@@ -172,7 +172,7 @@ namespace Chaos
                     client.Enqueue(ServerPackets.ClientWalk(direction, client.User.Point));
 
                     //for all the things that will go off screen, remove them from the before list, our screen, and remove us from their screen(if theyre a user)
-                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter, new WorldObjectComparer()).ToList())
+                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter))
                     {
                         (obj as User)?.Client.Enqueue(ServerPackets.RemoveObject(client.User));
                         client.Enqueue(ServerPackets.RemoveObject(obj));
@@ -184,7 +184,7 @@ namespace Chaos
                         user.Client.Enqueue(ServerPackets.CreatureWalk(client.User.Id, startPoint, direction));
 
                     //for all the things that just came onto screen, display to eachother if it's a user, otherwise add it to itemMonster
-                    foreach (VisibleObject obj in visibleAfter.Except(visibleBefore, new WorldObjectComparer()))
+                    foreach (VisibleObject obj in visibleAfter.Except(visibleBefore))
                     {
                         User user = obj as User;
 

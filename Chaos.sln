@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos", "Chaos\Chaos.csproj", "{032C0163-368F-4D73-9542-C265BE0F94DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChaosTool", "MapTool\ChaosTool.csproj", "{3B36B5CA-AC84-4180-9576-A7F47F3B816C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChaosLauncher", "ChaosLauncher\ChaosLauncher.csproj", "{F7D58CD7-3DF4-42E8-AAF7-E19721FA6B2B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3AEF97B3-FA2D-4EE8-9971-CE1CE655ECD2}"
+	ProjectSection(SolutionItems) = preProject
+		PATH.txt = PATH.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}
 	EndGlobalSection
 EndGlobal
