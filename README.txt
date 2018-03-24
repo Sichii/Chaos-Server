@@ -16,11 +16,13 @@
 5. Now that we have redis, linux, and our working dir, copy the bat files out of this repo into the working dir
 	a. Run UpdateRedis.bat occasionally to make sure our copy of redis is up to date
 	b. Redis.bat to start redis when testing server things.
-6. Change Project "Chaos" post-build event to your working directory
-7. Change Project "ChaosLauncher" post-build event to your fresh Dark Ages directory
-8. In the Chaos project, go to Server > Paths, and change the BaseDir to your working directory
-	a. Change DarkAgesDir to your fresh Dark Ages folder path
-9. If you can, create your own dynamicDNS and replace the HostName in paths
-	a. If you can't, running the server and launcher in debug mode will automatically make everything loopback
-10. With redis started, use ChaosTool to add new maps if you want
-11. If you want to change the starting map, you will find it under Game > CONSTANTS > STARTING_LOCATION
+6. Edit "post.bat" and update directories on line 2 & 3 to your working directory and dark ages directory
+7. Copy Chaos.exe.config to working directory
+8. Edit Chaos.exe.config
+	a. Change BaseDir value to your working directory
+	b. Change DarkAgesDir value to your fresh Dark Ages folder path
+	c. Change HostName value to your public hostname
+		If you can't create your own dynamicDNS, running the server and launcher in debug mode will automatically make everything loopback
+	d. Change RedisConfig value to your Redis server, leave default if hosting local.
+9. With redis started, use MapTool to add new maps if you want
+10. If you want to change the starting map, you will find it under Game > CONSTANTS > STARTING_LOCATION
