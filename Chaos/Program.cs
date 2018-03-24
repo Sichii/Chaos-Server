@@ -10,6 +10,8 @@
 // ****************************************************************************
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -27,12 +29,18 @@ namespace Chaos
             Console.WindowWidth = 150;
             Console.WindowHeight = 30;
 
+            Paths.BaseDir = Properties.Resources.PATH[0];
+            Paths.HostName = Properties.Resources.PATH[1];
+
+            if (!Paths.BaseDir.EndsWith(@"\"))
+                Paths.BaseDir += @"\";
+
             //create the server, start it in a new thread
             IPAddress localIP =
 #if DEBUG
-                IPAddress.Loopback;
+            IPAddress.Loopback;
 #else
-                Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 #endif
             Server = new Server(localIP, 2610);
             ServerThread = new Thread(Server.Start);

@@ -61,6 +61,15 @@ namespace Chaos.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string[] PATH {
+            get {
+                return ResourceManager.GetString("PATH", resourceCulture).Split('\n');
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] sotp {

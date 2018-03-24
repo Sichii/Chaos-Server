@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="chaos.ico" />
+    <None Include="Resources\PATH.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -173,10 +174,17 @@
     <Error Condition="!Exists('..\packages\Fody.2.4.6\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.4.6\build\Fody.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)$(TargetFileName)" "C:\Users\Sichi\Desktop\ChaosProject\"</PostBuildEvent>
+    <PostBuildEvent>if"$(ConfigurationName)"=="Release" (
+cd "$(SolutionDir)"
+set /p wDir=&lt; PATH.txt
+xcopy /C /y "%25cd%25\Chaos\bin\Release\Chaos.exe" "%25wDir%25\"
+)</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
   <Import Project="..\packages\Fody.2.4.6\build\Fody.targets" Condition="Exists('..\packages\Fody.2.4.6\build\Fody.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /y "$(SolutionDir)PATH.txt" "$(ProjectDir)Resources/PATH.txt"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
