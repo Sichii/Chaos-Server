@@ -250,9 +250,9 @@ namespace Chaos
                 {
                     Point nearestPoint = new Point(ushort.MaxValue, ushort.MaxValue);
                     int distance = int.MaxValue;
-                    ushort x = (ushort)Utility.Clamp(warp.TargetPoint.X - 25, 0, Maps[warp.TargetMapId].SizeX);
+                    ushort x = Utility.Clamp<ushort>(warp.TargetPoint.X - 25, 0, Maps[warp.TargetMapId].SizeX);
                     int width = Math.Min(x + 50, Maps[warp.TargetMapId].SizeX);
-                    ushort y = (ushort)Utility.Clamp(warp.TargetPoint.Y - 25, 0, Maps[warp.TargetMapId].SizeY);
+                    ushort y = Utility.Clamp<ushort>(warp.TargetPoint.Y - 25, 0, Maps[warp.TargetMapId].SizeY);
                     int height = Math.Min(y + 50, Maps[warp.TargetMapId].SizeY);
 
                     //search up to 2500 tiles for a non wall

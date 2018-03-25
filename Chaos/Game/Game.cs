@@ -287,8 +287,6 @@ namespace Chaos
                     if (client.User.Inventory.TryRemove(slot))
                     {
                         client.Enqueue(ServerPackets.RemoveItem(slot));
-                        //subtract weight, and send a stat update
-                        client.User.Attributes.CurrentWeight -= item.Weight;
                         client.SendAttributes(StatUpdateType.Primary);
                     }
                     else
@@ -894,8 +892,9 @@ namespace Chaos
                 //if it's a door, toggle it
                 if (obj is Door)
                 {
-                    (obj as Door).Toggle();
-                    client.Enqueue(ServerPackets.Door(obj as Door));
+                    Door door = obj as Door;
+                    door.Toggle();
+                    client.Enqueue(ServerPackets.Door(door));
                 }
                 //do things
             }
@@ -1044,7 +1043,7 @@ namespace Chaos
 
         internal static void RequestMetaFile(Client client, bool all)
         {
-            client.Enqueue(ServerPackets.Metafile(all));
+            client.Enqueue(ServerPackets.Metafile(all, Server.MetaFiles.ToArray()));
         }
     }
 }

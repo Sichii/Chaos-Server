@@ -9,15 +9,16 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Chaos
 {
     internal struct Effect
     {
+        internal sbyte StrMod;
+        internal sbyte IntMod;
+        internal sbyte WisMod;
+        internal sbyte ConMod;
+        internal sbyte DexMod;
+        internal int HPMod;
+        internal int MPMod;
     }
 }

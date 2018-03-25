@@ -10,12 +10,15 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Attributes
     {
+        internal User User;
+
         //baseValues
         [JsonProperty]
         internal byte BaseStr;
@@ -33,13 +36,13 @@ namespace Chaos
         internal uint BaseMP;
 
         //addedValues
-        internal byte AddedStr;
-        internal byte AddedInt;
-        internal byte AddedWis;
-        internal byte AddedCon;
-        internal byte AddedDex;
-        internal byte AddedHP;
-        internal byte AddedMP;
+        internal sbyte StrMod;
+        internal sbyte IntMod;
+        internal sbyte WisMod;
+        internal sbyte ConMod;
+        internal sbyte DexMod;
+        internal int HPMod;
+        internal int MPMod;
 
         //Primary
         [JsonProperty]
@@ -47,19 +50,19 @@ namespace Chaos
         [JsonProperty]
         internal byte Ability;
 
-        internal uint MaximumHP => BaseHP + AddedHP;
-        internal uint MaximumMP => BaseMP + AddedMP;
-        internal byte CurrentStr => (byte)(BaseStr + AddedStr);
-        internal byte CurrentInt => (byte)(BaseInt + AddedInt);
-        internal byte CurrentWis => (byte)(BaseWis + AddedWis);
-        internal byte CurrentCon => (byte)(BaseCon + AddedCon);
-        internal byte CurrentDex => (byte)(BaseDex + AddedDex);
+        internal uint MaximumHP => Utility.Clamp<uint>((int)(BaseHP + HPMod), 0, int.MaxValue);
+        internal uint MaximumMP => Utility.Clamp<uint>((int)(BaseMP + MPMod), 0, int.MaxValue);
+        internal byte CurrentStr => Utility.Clamp<byte>(BaseStr + StrMod, 0, byte.MaxValue);
+        internal byte CurrentInt => Utility.Clamp<byte>(BaseInt + IntMod, 0, byte.MaxValue);
+        internal byte CurrentWis => Utility.Clamp<byte>(BaseWis + WisMod, 0, byte.MaxValue);
+        internal byte CurrentCon => Utility.Clamp<byte>(BaseCon + ConMod, 0, byte.MaxValue);
+        internal byte CurrentDex => Utility.Clamp<byte>(BaseDex + DexMod, 0, byte.MaxValue);
         internal bool HasUnspentPoints => UnspentPoints != 0;
 
         [JsonProperty]
         internal byte UnspentPoints;
         internal short MaximumWeight => (short)(40 + (BaseStr / 2));
-        internal short CurrentWeight;
+        internal short CurrentWeight => (short)User.Inventory.Sum(item => item?.Weight ?? 0);
 
         //Vitality
         [JsonProperty]
@@ -102,15 +105,14 @@ namespace Chaos
             BaseMP = 100;
             Level = 1;
             Ability = 0;
-            AddedHP = 0;
-            AddedMP = 0;
-            AddedStr = 0;
-            AddedInt = 0;
-            AddedWis = 0;
-            AddedCon = 0;
-            AddedDex = 0;
+            HPMod = 0;
+            MPMod = 0;
+            StrMod = 0;
+            IntMod = 0;
+            WisMod = 0;
+            ConMod = 0;
+            DexMod = 0;
             UnspentPoints = 0;
-            CurrentWeight = 0;
             CurrentHP = 100;
             CurrentMP = 100;
             Experience = 0;

@@ -21,7 +21,7 @@ namespace Chaos
         internal DateTime LastUpdate { get; set; }
         internal List<Item> Items { get; set; }
         internal uint Gold;
-        internal override byte HealthPercent => (byte)Utility.Clamp<uint>((CurrentHP * 100) / MaximumHP, 0, MaximumHP);
+        internal override byte HealthPercent => Utility.Clamp<byte>((int)((CurrentHP * 100) / MaximumHP), 0, (int)MaximumHP);
         internal override uint MaximumHP { get; }
         internal override uint CurrentHP { get; set; }
 

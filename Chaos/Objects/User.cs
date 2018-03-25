@@ -69,7 +69,7 @@ namespace Chaos
         internal Exchange Exchange { get; set; }
         internal DateTime LastClicked { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
-        internal override byte HealthPercent => (byte)Utility.Clamp<uint>((CurrentHP * 100) / MaximumHP, 0, MaximumHP);
+        internal override byte HealthPercent => Utility.Clamp<byte>((int)((CurrentHP * 100) / MaximumHP), 0, (int)MaximumHP);
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
 
@@ -84,6 +84,7 @@ namespace Chaos
             IgnoreList = new IgnoreList();
             UserOptions = new UserOptions();
             Attributes = new Attributes();
+            Attributes.User = this;
             Legend = new Legend();
             Group = null;
             Spouse = null;
@@ -113,6 +114,7 @@ namespace Chaos
             UserOptions = userOptions;
             DisplayData = displayData;
             Attributes = attributes;
+            Attributes.User = this;
             Legend = legend;
             Personal = personal;
             Guild = guild;
