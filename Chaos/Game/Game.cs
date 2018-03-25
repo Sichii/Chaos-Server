@@ -117,6 +117,7 @@ namespace Chaos
                 newUser.Titles.Add("Game Master");
                 newUser.IsMaster = true;
                 newUser.BaseClass = BaseClass.Admin;
+                newUser.Nation = Nation.Noes;
                 newUser.Guild = World.Guilds["Chaos Team"];
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Item"));
@@ -127,7 +128,7 @@ namespace Chaos
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Srad Tut"));
                 newUser.SkillBook.AddToNextSlot(CreationEngine.CreateSkill("Test Skill 1"));
                 newUser.Attributes.Gold += 500000000;
-                LegendMark isGm = new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.LightPink);
+                LegendMark isGm = new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow);
                 newUser.Legend.Add(isGm);
             }
 

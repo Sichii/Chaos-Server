@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace ChaosLauncher
 {
-    internal class Program
+    public class Program
     {
         [STAThread]
         static void Main(string[] args)
@@ -28,6 +28,8 @@ namespace ChaosLauncher
                     dawnd.CopyTo(data);
                     File.WriteAllBytes("dawnd.dll", data.ToArray());
                 }
+
+            Chaos.Program.SetPaths();
 
             Application.Run(new Launcher());
         }

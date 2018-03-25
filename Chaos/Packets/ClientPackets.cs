@@ -297,8 +297,11 @@ namespace Chaos
         }
         private void RequestProfile(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
-            Game.RequestProfile(client);
+            if (client.ServerType == ServerType.World)
+            {
+                Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
+                Game.RequestProfile(client);
+            }
         }
         private void RequestGroup(Client client, ClientPacket packet)
         {

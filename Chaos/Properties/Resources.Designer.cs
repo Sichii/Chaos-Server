@@ -22,7 +22,7 @@ namespace Chaos.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -63,7 +63,7 @@ namespace Chaos.Properties {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string[] PATH {
+        public static string[] PATH {
             get {
                 return ResourceManager.GetString("PATH", resourceCulture).Split('\n');
             }
@@ -72,7 +72,7 @@ namespace Chaos.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] sotp {
+        public static byte[] sotp {
             get {
                 object obj = ResourceManager.GetObject("sotp", resourceCulture);
                 return ((byte[])(obj));

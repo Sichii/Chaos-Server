@@ -33,9 +33,5 @@ namespace Chaos
         }
 
         public int CompareTo(WorldObject obj) => ReferenceEquals(this, obj) ? 0 : Id.CompareTo(obj.Id);
-        public static bool operator ==(WorldObject obj1, WorldObject obj2) => obj1.Equals(obj2);
-        public static bool operator !=(WorldObject obj1, WorldObject obj2) => !obj1.Equals(obj2);
-        public override bool Equals(object obj) => obj?.GetHashCode() == GetHashCode();
-        public override int GetHashCode() => (Id << 16) + Name.GetHashCode();
     }
 }

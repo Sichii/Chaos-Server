@@ -22,7 +22,6 @@ namespace Chaos
         [JsonProperty]
         internal bool IsBasic { get; }
 
-
         internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN_MS;
 
         internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, Animation effectAnimation = new Animation(), BodyAnimation bodyAnimation = 0)
