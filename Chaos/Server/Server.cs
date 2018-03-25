@@ -49,6 +49,8 @@ namespace Chaos
 
         internal Server(IPAddress ip, int port)
         {
+            string s = Paths.BaseDir;
+
             if (!Directory.Exists(Paths.LogFiles))
                 Directory.CreateDirectory(Paths.LogFiles);
 

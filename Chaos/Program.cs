@@ -29,8 +29,10 @@ namespace Chaos
             Console.WindowWidth = 150;
             Console.WindowHeight = 30;
 
-            Paths.BaseDir = Properties.Resources.PATH[0];
-            Paths.HostName = Properties.Resources.PATH[1];
+            Paths.BaseDir = Path.GetFullPath(Properties.Resources.PATH[0]);
+            Paths.HostName = Path.GetFullPath(Properties.Resources.PATH[1]);
+
+            string s = Paths.BaseDir;
 
             if (!Paths.BaseDir.EndsWith(@"\"))
                 Paths.BaseDir += @"\";

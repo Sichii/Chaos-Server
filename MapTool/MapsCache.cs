@@ -16,7 +16,7 @@ using StackExchange.Redis.Extensions.Newtonsoft;
 using System.Collections.Generic;
 using System.IO;
 
-namespace MapTool
+namespace ChaosTool
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     internal class MapsCache

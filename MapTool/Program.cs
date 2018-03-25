@@ -12,7 +12,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace MapTool
+namespace ChaosTool
 {
     static class Program
     {

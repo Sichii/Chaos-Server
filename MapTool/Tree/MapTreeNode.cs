@@ -11,7 +11,7 @@
 
 using System.Windows.Forms;
 
-namespace MapTool
+namespace ChaosTool
 {
     internal class MapTreeNode : TreeNode
     {

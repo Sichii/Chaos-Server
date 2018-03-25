@@ -11,7 +11,7 @@
 
 using System.Collections;
 
-namespace MapTool
+namespace ChaosTool
 {
     internal class TreeNodeSorter : IComparer
     {

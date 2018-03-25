@@ -7,8 +7,8 @@
     <ProjectGuid>{3B36B5CA-AC84-4180-9576-A7F47F3B816C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MapTool</RootNamespace>
-    <AssemblyName>MapTool</AssemblyName>
+    <RootNamespace>ChaosTool</RootNamespace>
+    <AssemblyName>ChaosTool</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -129,16 +129,17 @@
     <Error Condition="!Exists('..\packages\Fody.2.4.6\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.4.6\build\Fody.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>call "$(SolutionDir)post.bat"</PostBuildEvent>
+    <PostBuildEvent>if"$(ConfigurationName)"=="Release" (
+cd "$(SolutionDir)"
+set /p wDir=&lt; PATH.txt
+xcopy /C /y "%25cd%25\MapTool\bin\Release\ChaosTool.exe" "%25wDir%25\"
+) else ( exit )</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
   <Import Project="..\packages\Fody.2.4.6\build\Fody.targets" Condition="Exists('..\packages\Fody.2.4.6\build\Fody.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>if"$(ConfigurationName)"=="Release" (
-cd "$(SolutionDir)"
-set /p wDir=&lt; PATH.txt
-xcopy /C /y "%25cd%25\MapTool\bin\Release\MapTool.exe" "%25wDir%25\"
-)</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
