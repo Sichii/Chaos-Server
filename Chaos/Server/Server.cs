@@ -26,7 +26,7 @@ namespace Chaos
         internal static readonly object Sync = new object();
         internal static int NextClientId = 1000000;
         internal static int NextId = 1;
-        internal static string[] Admins = new string[] { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend" };
+        internal static string[] Admins = new string[] { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend", "Doms" };
 
         internal static readonly object SyncWrite = new object();
         internal static FileStream LogFile;
