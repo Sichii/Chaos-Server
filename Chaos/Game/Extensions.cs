@@ -78,7 +78,7 @@ namespace Chaos
             {
                 Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
 
-                target.CurrentHP = (uint)Utility.Clamp(target.CurrentHP + amount, 0, target.MaximumHP);
+                target.CurrentHP = Utility.Clamp<uint>((int)(target.CurrentHP + amount), 0, (int)target.MaximumHP);
 
                 User user = target as User;
                 user?.Client.Enqueue(ServerPackets.Animation(animation));
@@ -108,7 +108,7 @@ namespace Chaos
 
             foreach (Creature c in targets)
             {
-                c.CurrentHP = (uint)Utility.Clamp(c.CurrentHP + amount, 0, c.MaximumHP);
+                c.CurrentHP = Utility.Clamp<uint>((int)(c.CurrentHP + amount), 0, (int)c.MaximumHP);
                 Animation animation = new Animation(skill.EffectAnimation, c.Id, client.User.Id);
 
                 User user = c as User;

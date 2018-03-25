@@ -46,11 +46,10 @@ namespace Chaos
         internal GameTime ServerTime => GameTime.Now;
         internal LightLevel LightLevel => ServerTime.TimeOfDay;
         internal List<Redirect> Redirects { get; set; }
+        internal List<MetaFile> MetaFiles { get; set; }
 
         internal Server(IPAddress ip, int port)
         {
-            string s = Paths.BaseDir;
-
             if (!Directory.Exists(Paths.LogFiles))
                 Directory.CreateDirectory(Paths.LogFiles);
 
@@ -66,6 +65,7 @@ namespace Chaos
             Clients = new ConcurrentDictionary<Socket, Client>();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
+            MetaFiles = new List<MetaFile>();
 
             byte[] notif = Encoding.GetEncoding(949).GetBytes($@"{{={(char)MessageColor.Orange}Under Construction");
             LoginMessageCheckSum = Crypto.Generate32(notif);
@@ -89,6 +89,9 @@ namespace Chaos
                 using (MemoryStream table = ZLIB.Compress(tableStream.ToArray()))
                     Table = table.ToArray();
             }
+
+            foreach (string name in Directory.GetFiles(Paths.MetaFiles))
+                MetaFiles.Add(MetaFile.Load(new FileInfo(name).Name));
         }
 
         internal void Start()

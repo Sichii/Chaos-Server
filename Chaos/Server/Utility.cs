@@ -31,6 +31,7 @@ namespace Chaos
             return byteArray;
         }
 
-        internal static T Clamp<T>(T value, T min, T max) where T : IComparable<T> => (value.CompareTo(min) < 0) ? min : value.CompareTo(max) > 0 ? max : value;
+        internal static T Clamp<T>(int value, int min, int max) where T : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable => 
+            (T)Convert.ChangeType(((value.CompareTo(min) < 0) ? min : (value.CompareTo(max) > 0) ? max : value), typeof(T));
     }
 }
