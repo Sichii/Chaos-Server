@@ -19,7 +19,7 @@ using System.Threading;
 
 namespace Chaos
 {
-    internal class Program
+    public class Program
     {
         private static Server Server;
         private static Thread ServerThread;
@@ -29,13 +29,7 @@ namespace Chaos
             Console.WindowWidth = 150;
             Console.WindowHeight = 30;
 
-            Paths.BaseDir = Path.GetFullPath(Properties.Resources.PATH[0]);
-            Paths.HostName = Path.GetFullPath(Properties.Resources.PATH[1]);
-
-            string s = Paths.BaseDir;
-
-            if (!Paths.BaseDir.EndsWith(@"\"))
-                Paths.BaseDir += @"\";
+            SetPaths();
 
             //create the server, start it in a new thread
             IPAddress localIP =
@@ -56,6 +50,15 @@ namespace Chaos
             //this thread will block for command line input for use as an admin panel
             while (Server.ServerSocket != null)
                 Console.ReadLine(); //we can do server commands here when the time comes
+        }
+
+        public static void SetPaths()
+        {
+            Paths.BaseDir = Properties.Resources.PATH[0].Trim('\n', '\r');
+            Paths.HostName = Properties.Resources.PATH[1].Trim('\n', '\r', ' ');
+
+            if (!Paths.BaseDir.EndsWith(@"\"))
+                Paths.BaseDir += @"\";
         }
     }
 }
