@@ -367,17 +367,15 @@ namespace Chaos
             PursuitIds pursuitId = Enum.IsDefined(typeof(PursuitIds), pid) ? (PursuitIds)pid : PursuitIds.None;
             ushort dialogId = packet.ReadUInt16();
 
-            int position = packet.Position;
-            byte[] args = packet.ReadBytes(packet.Data.Length - packet.Position);
-            packet.Position = position;
-
             DialogArgsType argsType = DialogArgsType.None;
             byte opt = 0;
             string input = "";
-            if(args.Count() > 0)
+
+            if(packet.Position != packet.Data.Length)
             {
                 argsType = (DialogArgsType)packet.ReadByte();
-                switch(argsType)
+
+                switch (argsType)
                 {
                     case DialogArgsType.MenuResponse:
                         opt = packet.ReadByte();
@@ -388,7 +386,7 @@ namespace Chaos
                 }
             }
 
-            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ObjType: {objType} | ObjId: {objId} | Pursuit: {pursuitId} | DialogId: {dialogId} | Args: {(args.Count() > 0 ? argsType.ToString() : "False")}", client);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ObjType: {objType} | ObjId: {objId} | Pursuit: {pursuitId} | DialogId: {dialogId} | Args: { Enum.GetName(typeof(DialogArgsType), argsType) }", client);
             Game.ReplyDialog(client, objType, objId, pursuitId, dialogId, argsType, opt, input);
         }
 
@@ -459,7 +457,7 @@ namespace Chaos
             }
 
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
-            Game.Boards();
+            Game.Boards(client);
         }
         private void UseSkill(Client client, ClientPacket packet)
         {

@@ -30,15 +30,29 @@ namespace Chaos
                 // Use Below examples when creating merchants for your server
                 {
                     "Deliope", new Merchant("Deliope", 61, new Point(15, 10), Game.World.Maps[5031], Direction.South, 0,
-                    new List<PursuitIds>() { PursuitIds.Revive })
+                        new MerchantMenu("Are you dead, scrub?", MenuType.Menu,
+                            new PursuitMenu(
+                                new List<PursuitMenuItem>()
+                                {
+                                    new PursuitMenuItem(PursuitIds.ReviveSelf, "Revive")
+                                })))
                 },
                 {
                     "Celeste", new Merchant("Celeste", 57, new Point(3, 16), Game.World.Maps[17500], Direction.South, 0,
-                    new List<PursuitIds>() { PursuitIds.Revive, PursuitIds.Summon, PursuitIds.SummonAll, PursuitIds.LouresCitizenship, PursuitIds.KillUser, PursuitIds.Teleport }, MenuType.Menu, "I like giant cock.")
+                        new MerchantMenu("I like giant cock.", MenuType.Dialog,
+                            new DialogMenu(
+                                new List<DialogMenuItem>()
+                                {
+                                    new DialogMenuItem(0, "Revive Self", PursuitIds.ReviveSelf),
+                                    new DialogMenuItem(3, "Summon User"),
+                                    new DialogMenuItem(4, "Summon All"),
+                                    new DialogMenuItem(6, "Loures Citizenship"),
+                                    new DialogMenuItem(5, "Kill User"),
+                                    new DialogMenuItem(2, "Teleport")
+                                })))
                 },
                 {
-                    "Frank The Great", new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7,
-                    new List<PursuitIds>() { }, MenuType.Dialog)
+                    "Frank The Great", new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7)
                 }
             };
         }

@@ -77,6 +77,8 @@
   <ItemGroup>
     <Compile Include="Client\EffectsBar.cs" />
     <Compile Include="Client\Legend.cs" />
+    <Compile Include="Constructs\DialogMenu.cs" />
+    <Compile Include="Constructs\PostList.cs" />
     <Compile Include="Client\Panel.cs" />
     <Compile Include="Client\UserOptions.cs" />
     <Compile Include="Constructs\Bank.cs" />
@@ -84,13 +86,16 @@
     <Compile Include="Constructs\Group.cs" />
     <Compile Include="Constructs\Guild.cs" />
     <Compile Include="Constructs\IgnoreList.cs" />
-    <Compile Include="Constructs\Menu.cs" />
+    <Compile Include="Constructs\MerchantMenu.cs" />
     <Compile Include="Constructs\MetaFile.cs" />
+    <Compile Include="Constructs\PursuitMenu.cs" />
+    <Compile Include="Constructs\WorldBoard.cs" />
     <Compile Include="Game\CONSTANTS.cs" />
     <Compile Include="Game\CreationEngine.cs" />
     <Compile Include="Game\Dialogs.cs" />
     <Compile Include="Game\Extensions.cs" />
     <Compile Include="Game\Merchants.cs" />
+    <Compile Include="Game\Pursuits.cs" />
     <Compile Include="Objects\Gold.cs" />
     <Compile Include="Constructs\GroupBox.cs" />
     <Compile Include="Packets\ClientPacket.cs" />
@@ -131,14 +136,16 @@
     <Compile Include="Client\Attributes.cs" />
     <Compile Include="Client\DisplayData.cs" />
     <Compile Include="Constructs\GameTime.cs" />
+    <Compile Include="Structs\DialogMenuItem.cs" />
     <Compile Include="Structs\Effect.cs" />
     <Compile Include="Structs\ItemSprite.cs" />
     <Compile Include="Structs\Location.cs" />
+    <Compile Include="Structs\Post.cs" />
     <Compile Include="Structs\MetaFileNode.cs" />
     <Compile Include="Structs\Point.cs" />
     <Compile Include="Objects\Skill.cs" />
     <Compile Include="Objects\Spell.cs" />
-    <Compile Include="Structs\Pursuit.cs" />
+    <Compile Include="Structs\PursuitMenuItem.cs" />
     <Compile Include="Structs\Tile.cs" />
     <Compile Include="Constructs\WorldMap.cs" />
     <Compile Include="Structs\WorldMapNode.cs" />

@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal abstract class Creature : VisibleObject
     {
         [JsonProperty]
@@ -23,12 +24,13 @@ namespace Chaos
         internal abstract uint MaximumHP { get; }
         internal abstract uint CurrentHP { get; set; }
 
-
+        [JsonConstructor]
         internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South)
             : base(name, sprite, point, map)
         {
             Direction = direction;
             Type = type;
         }
+
     }
 }

@@ -15,11 +15,10 @@ using System.Text.RegularExpressions;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptOut)]
     public struct Point
     {
-        [JsonProperty]
         public ushort X;
-        [JsonProperty]
         public ushort Y;
 
         [JsonConstructor]

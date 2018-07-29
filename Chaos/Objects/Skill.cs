@@ -14,7 +14,7 @@ using System;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Skill : PanelObject
     {
         [JsonProperty]

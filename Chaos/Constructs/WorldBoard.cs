@@ -1,4 +1,4 @@
-// ****************************************************************************
+﻿// ****************************************************************************
 // This file belongs to the Chaos-Server project.
 // 
 // This project is free and open-source, provided that any alterations or
@@ -9,19 +9,16 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
-    internal struct Effect
+    internal sealed class WorldBoard
     {
-        internal sbyte StrMod;
-        internal sbyte IntMod;
-        internal sbyte WisMod;
-        internal sbyte ConMod;
-        internal sbyte DexMod;
-        internal int HPMod;
-        internal int MPMod;
+        //class to contain all the boards accessible by any individual character via the master board list
     }
 }

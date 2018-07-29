@@ -106,6 +106,7 @@
     <ProjectReference Include="..\Chaos\Chaos.csproj">
       <Project>{032c0163-368f-4d73-9542-c265be0f94db}</Project>
       <Name>Chaos</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

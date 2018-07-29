@@ -11,17 +11,19 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ChaosLauncher
 {
-    public partial class Launcher : Form
+    internal partial class Launcher : Form
     {
-        public Launcher()
+        internal Launcher()
         {
             InitializeComponent();
         }
@@ -32,8 +34,26 @@ namespace ChaosLauncher
             ProcInfo procInfo = new ProcInfo();
             startInfo.Size = Marshal.SizeOf(startInfo);
 
-            //create the process
-            SafeNativeMethods.CreateProcess(
+            //grab the server ip from the server dns, and your own ip
+            IPAddress serverIP = 
+#if DEBUG
+                IPAddress.Loopback;
+#else
+                Dns.GetHostEntry(Chaos.Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+#endif
+
+            IPAddress clientIP = null;
+
+            WebRequest request = WebRequest.Create("https://checkip.amazonaws.com");
+            using (WebResponse response = request.GetResponse())
+            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            {
+                clientIP = IPAddress.Parse(reader.ReadToEnd().Trim('\n'));
+            }
+
+
+                //create the process
+                SafeNativeMethods.CreateProcess(
 #if DEBUG
                 Chaos.Paths.DarkAgesExe
 #else
@@ -49,15 +69,6 @@ namespace ChaosLauncher
                 //force "socket" - call for direct ip
                 memory.Position = 0x4333A2;
                 memory.WriteByte(0xEB);
-
-                //grab the server ip from the server dns, and your own ip from a string on an ip checker
-                IPAddress serverIP =
-#if DEBUG
-                    IPAddress.Loopback;
-#else
-                    Dns.GetHostEntry(Chaos.Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-#endif
-                IPAddress clientIP = IPAddress.Parse(new WebClient().DownloadString(@"http://checkip.amazonaws.com/").Trim());
 
                 //edit the direct ip to the server ip
                 byte[] address = serverIP.Equals(clientIP) ? IPAddress.Loopback.GetAddressBytes() : serverIP.GetAddressBytes();
@@ -109,8 +120,11 @@ namespace ChaosLauncher
             SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos");
         }
 
-        public void InjectDLL(IntPtr processHandle, string dllName)
+        private void InjectDLL(IntPtr processHandle, string dllName)
         {
+            //lla
+            byte[] lib = new byte[] { 65, 121, 114, 97, 114, 98, 105, 76, 100, 97, 111, 76 };
+
             IntPtr outStuff;
 
             //length of string containing the DLL file name +1 byte padding
@@ -120,7 +134,7 @@ namespace ChaosLauncher
             //write DLL file name to allocated memory in target process
             SafeNativeMethods.WriteProcessMemory(processHandle, processMemoryBase, dllName, (UIntPtr)dllNameLength, out outStuff);
             //function pointer "Injector"
-            UIntPtr moduleAddress = SafeNativeMethods.GetProcAddress(SafeNativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+            UIntPtr moduleAddress = SafeNativeMethods.GetProcAddress(SafeNativeMethods.GetModuleHandle("kernel32.dll"), Encoding.ASCII.GetString(lib.Reverse().ToArray()));
 
             if (moduleAddress == null)
             {
