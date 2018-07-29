@@ -9,25 +9,22 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptIn)]
-    internal struct ItemSprite
+    internal sealed class PursuitMenu : IEnumerable<PursuitMenuItem>
     {
-        [JsonProperty]
-        internal ushort InventorySprite;
-        [JsonProperty]
-        internal ushort DisplaySprite;
-        internal ushort OffsetSprite;
+        public int Count => Pursuits.Count;
+        public IEnumerator<PursuitMenuItem> GetEnumerator() => Pursuits.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        internal PursuitMenuItem this[int index] => Pursuits[index];
+        internal List<PursuitMenuItem> Pursuits { get; }
 
-        [JsonConstructor]
-        internal ItemSprite(ushort inventorySprite, ushort displaySprite)
+        internal PursuitMenu(List<PursuitMenuItem> pursuits)
         {
-            InventorySprite = inventorySprite;
-            OffsetSprite = (ushort)(inventorySprite + CONSTANTS.ITEM_SPRITE_OFFSET);
-            DisplaySprite = displaySprite;
+            Pursuits = pursuits;
         }
     }
 }

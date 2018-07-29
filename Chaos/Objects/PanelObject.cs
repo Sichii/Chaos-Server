@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal abstract class PanelObject
     {
         [JsonProperty]

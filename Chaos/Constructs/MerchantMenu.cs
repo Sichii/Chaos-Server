@@ -15,19 +15,27 @@ using System.Linq;
 
 namespace Chaos
 {
-    internal sealed class Menu : IEnumerable<Pursuit>
+    internal sealed class MerchantMenu
     {
         public int Count => Pursuits.Count;
-        public IEnumerator<Pursuit> GetEnumerator() => Pursuits.Select(p => p.Value).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal Pursuit this[PursuitIds pid] => Pursuits.FirstOrDefault(p => p.Key == pid).Value;
+        internal string this[PursuitIds pid] => Pursuits.FirstOrDefault(p => p.PursuitId == pid).Text;
         internal string Text { get; }
         internal MenuType Type { get; }
-        internal List<KeyValuePair<PursuitIds, Pursuit>> Pursuits { get; }
+        internal PursuitMenu Pursuits { get; }
+        internal DialogMenu Dialogs { get; }
 
-        internal Menu(IEnumerable<Pursuit> pursuits, MenuType type, string text)
+        internal MerchantMenu(string text, MenuType type, PursuitMenu pursuits, DialogMenu dialogs = null)
         {
-            Pursuits = new List<KeyValuePair<PursuitIds, Pursuit>>(pursuits.ToDictionary(p => p.PursuitId, p => p));
+            Pursuits = pursuits;
+            Dialogs = dialogs;
+            Type = type;
+            Text = text;
+        }
+
+        internal MerchantMenu(string text, MenuType type, DialogMenu dialogs, PursuitMenu pursuits = null)
+        {
+            Pursuits = pursuits;
+            Dialogs = dialogs;
             Type = type;
             Text = text;
         }

@@ -20,7 +20,7 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Legend : IEnumerable<LegendMark>
     {
-        internal readonly object Sync = new object();
+        private readonly object Sync = new object();
         public IEnumerator<LegendMark> GetEnumerator() => Marks.Select(kvp => kvp.Value).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal byte Length => (byte)Marks.Count;

@@ -317,7 +317,7 @@ namespace Chaos
                 client.SendAttributes(StatUpdateType.Full);
                 List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
 
-                //get all objects that would be visible to this object and sort them
+                //get all objects that would be visible to this object and send this user to them / send them to this user
                 foreach (VisibleObject obj in ObjectsVisibleFrom(client.User))
                     if (obj is User)
                     {

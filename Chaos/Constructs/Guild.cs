@@ -19,7 +19,7 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Guild : IEnumerable
     {
-        private static readonly object Sync = new object();
+        private readonly object Sync = new object();
         public IEnumerator GetEnumerator() => Members.GetEnumerator();
         [JsonProperty]
         internal string Name { get; set; }

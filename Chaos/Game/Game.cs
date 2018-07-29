@@ -340,6 +340,53 @@ namespace Chaos
                 case PublicMessageType.Chant:
                     break;
                 case PublicMessageType.Normal:
+                    Match m;
+                    int num = 0;
+
+                    if ((m = Regex.Match(message, @"^/([a-zA-Z]+)(?: ([a-zA-Z0-9]+))?")).Success)
+                    {
+                        int.TryParse(m.Groups[2].Value, out num);
+                        switch (m.Groups[1].Value.ToLower())
+                        {
+                            case "commands":
+                                client.SendServerMessage(ServerMessageType.ActiveMessage, "COMMANDS:");
+                                client.SendServerMessage(ServerMessageType.ActiveMessage, "hair <num>                                      changes hairstyle");
+                                client.SendServerMessage(ServerMessageType.ActiveMessage, "haircolor <num>                                changes hair color");
+                                client.SendServerMessage(ServerMessageType.ActiveMessage, "skincolor <num>                                changes skin color");
+                                client.SendServerMessage(ServerMessageType.ActiveMessage, "face <num>                                     changes face shape");
+                                client.SendServerMessage(ServerMessageType.ActiveMessage, "gender <text>                                      changes gender");
+                                return;
+                            case "hair":
+                                if (DisplayData.HairSprites.Contains((ushort)num))
+                                    client.User.DisplayData.HairSprite = (ushort)num;
+                                break;
+                            case "haircolor":
+                                client.User.DisplayData.HairColor = (byte)num;
+                                break;
+                            case "skincolor":
+                                if (num >= 0 && num <= 9)
+                                    client.User.DisplayData.BodyColor = (BodyColor)num;
+                                break;
+                            case "face":
+                                client.User.DisplayData.FaceSprite = (byte)num;
+                                break;
+                            case "gender":
+                                char[] str = m.Groups[2].Value.ToCharArray();
+                                str[0] = char.ToUpper(str[0]);
+
+                                Gender newGender;
+                                if (Enum.TryParse(new string(str), out newGender))
+                                {
+                                    client.User.Gender = newGender;
+                                    client.User.DisplayData.BodySprite = newGender == Gender.Male ? BodySprite.Male : BodySprite.Female;
+                                }
+                                break;
+                        }
+
+                        World.Refresh(client, true);
+                        return;
+                    }
+
                     message = $@"{client.User.Name}: {message}";
                     break;
                 case PublicMessageType.Shout:
@@ -384,7 +431,7 @@ namespace Chaos
         internal static void UseSpell(Client client, byte slot, int targetId, Point targetPoint)
         {
             Spell spell = client.User.SpellBook[slot];
-            VisibleObject target;
+            Creature target;
 
             if (spell != null && spell.CanUse && !(spell.CastLines > 0 && !client.User.IsChanting))
             {
@@ -620,7 +667,7 @@ namespace Chaos
                     case GroupRequestType.Invite:
                         if (!World.TryGetUser(targetName, out targetUser, client.User.Map))                                                                                     //if target user doesnt exist
                             client.SendServerMessage(ServerMessageType.ActiveMessage, $@"{targetName} is not near.");
-                        else if (targetUser.IgnoreList.Contains(client.User.Name))                                                     //if theyre on the ignore list, return
+                        else if (targetUser.IgnoreList.Contains(client.User.Name))                                                                                              //if theyre on the ignore list, return
                             return;
                         else if (!client.User.UserOptions.Group)                                                                                                                //else if your grouping is turned off, let them know
                             client.SendServerMessage(ServerMessageType.ActiveMessage, $@"Grouping is disabled.");
@@ -742,33 +789,15 @@ namespace Chaos
         internal static void RequestPursuit(Client client, GameObjectType objType, int objId, PursuitIds pursuitId, byte[] args)
         {
             VisibleObject obj;
-            if(World.TryGetObject(objId, out obj, client.User.Map))
-            {
-                Merchant merchant = obj as Merchant;
-                Pursuit p = (obj as Merchant).Menu[pursuitId];
-
-                if (!client.User.WithinRange(merchant))
-                    return;
-
-                client.ActiveObject = obj;
-                client.CurrentDialog = Dialogs[p.DialogId];
-
-                //if dialog is null, or closeDialog & Activate is true
-                //here we use the pursuit's ID, because we want to close the dialog and activate at the same time
-                if (client.CurrentDialog == null || (client.CurrentDialog?.Type == DialogType.CloseDialog && Dialogs.ActivateEffect(p.PursuitId)(client, Server, client.CurrentDialog)))
-                {
-                    client.ActiveObject = null;
-                    client.CurrentDialog = null;
-                }
-
-                client.Enqueue(ServerPackets.DisplayDialog(merchant, client.CurrentDialog));
-            }
+            if(World.TryGetObject(objId, out obj, client.User.Map) && client.User.WithinRange(obj))
+                Dialogs.ActivatePursuit(pursuitId)(client, Server);
         }
 
         internal static void ReplyDialog(Client client, GameObjectType objType, int objId, PursuitIds pursuitId, ushort dialogId, DialogArgsType argsType, byte option, string userInput)
         {
             Dialog dialog = client.CurrentDialog;
-            object effectArgs = new object();
+            PursuitIds dialogPursuit = dialog.PursuitId;
+            option--;
 
             //if there's no active dialog or object, what are we replying to?
             //if the active object is no longer valid, cease the dialog
@@ -778,7 +807,6 @@ namespace Chaos
             {
                 client.CurrentDialog = null;
                 client.ActiveObject = null;
-                client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
                 return;
             }
 
@@ -792,7 +820,8 @@ namespace Chaos
                 case DialogOption.Close:
                     client.ActiveObject = null;
                     client.CurrentDialog = null;
-                    break;
+                    //Dialogs.ActivatePursuit(dialog.PursuitId)(client, Server, true);
+                    return;
                 case DialogOption.Next:
                     switch(argsType)
                     {
@@ -800,29 +829,31 @@ namespace Chaos
                             client.CurrentDialog = client.CurrentDialog.Next();
                             break;
                         case DialogArgsType.MenuResponse:
-                            client.CurrentDialog = client.CurrentDialog.Next(option);
-                            effectArgs = option;
+                            DialogMenuItem menuItem = client.CurrentDialog.Menu[option];
+                            if (menuItem.PursuitId != PursuitIds.None)
+                            {
+                                dialogPursuit = menuItem.PursuitId;
+                                client.CurrentDialog = client.CurrentDialog.Next();
+                            }
+                            else
+                                client.CurrentDialog = client.CurrentDialog.Next(option);
                             break;
                         case DialogArgsType.TextResponse:
                             client.CurrentDialog = client.CurrentDialog.Next();
-                            effectArgs = userInput;
                             break;
                     }
-                    //we use "dialog" here because we're closing the dialog, and we want to activate the effect of the dialog we were at as it closes
-                    if (client.CurrentDialog == null || (client.CurrentDialog.Type == DialogType.CloseDialog && Dialogs.ActivateEffect((PursuitIds)(dialog.PursuitId != 0 ? dialog.PursuitId : client.CurrentDialog.PursuitId))(client, Server, effectArgs)))
-                    {
-                        client.ActiveObject = null;
-                        client.CurrentDialog = null;
-                    }
+
+                    Dialogs.ActivatePursuit(dialogPursuit)(client, Server, false, option, userInput);
                     break;
             }
 
-            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, client.CurrentDialog));
+            client.SendDialog(client.ActiveObject, client.CurrentDialog);
         }
 
-        internal static void Boards()
+        internal static void Boards(Client client)
         {
-            throw new NotImplementedException();
+            //work in progress
+            client.Enqueue(ServerPackets.BulletinBoard());
         }
 
         internal static void UseSkill(Client client, byte slot)
@@ -857,17 +888,20 @@ namespace Chaos
                     //if it's a user, send us their profile
                     else if (obj is User)
                     {
-                        client.Enqueue(ServerPackets.Profile(obj as User));
+                        User user = obj as User;
+
+                        if (user.ShouldDisplay)
+                            client.Enqueue(ServerPackets.Profile(obj as User));
+                        else
+                            user.LastClicked = DateTime.UtcNow;
                     }
+                    //if its a merchant, send us the merchant menu
                     else if (obj is Merchant)
                     {
                         Merchant merchant = obj as Merchant;
 
                         if (merchant.ShouldDisplay)
-                        {
-                            client.ActiveObject = merchant;
-                            client.Enqueue(ServerPackets.DisplayMenu(client, merchant));
-                        }
+                            client.SendMenu(merchant);
                         else
                             merchant.LastClicked = DateTime.UtcNow;
 

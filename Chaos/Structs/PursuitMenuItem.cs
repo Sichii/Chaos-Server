@@ -1,4 +1,4 @@
-// ****************************************************************************
+﻿// ****************************************************************************
 // This file belongs to the Chaos-Server project.
 // 
 // This project is free and open-source, provided that any alterations or
@@ -11,17 +11,15 @@
 
 namespace Chaos
 {
-    internal struct Pursuit
+    internal struct PursuitMenuItem
     {
-        internal string Text { get; }
         internal PursuitIds PursuitId { get; }
-        internal ushort DialogId { get; }
+        internal string Text { get; }
 
-        internal Pursuit(string text, PursuitIds pursuitId, ushort dialogId)
+        internal PursuitMenuItem(PursuitIds pursuitId, string text)
         {
-            Text = text;
             PursuitId = pursuitId;
-            DialogId = dialogId;
+            Text = text;
         }
     }
 }

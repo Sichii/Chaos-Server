@@ -13,22 +13,28 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal struct Animation
     {
+        [JsonProperty]
         internal int TargetId { get; }
+        [JsonProperty]
         internal int SourceId { get; }
+        [JsonProperty]
         internal ushort TargetAnimation { get; }
+        [JsonProperty]
         internal ushort SourceAnimation { get; }
+        [JsonProperty]
         internal ushort AnimationSpeed { get; }
 
-        internal Animation(int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort speed)
+        [JsonConstructor]
+        internal Animation(int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort animationSpeed)
         {
             TargetId = targetId;
             SourceId = sourceId;
             TargetAnimation = targetAnimation;
             SourceAnimation = sourceAnimation;
-            AnimationSpeed = speed;
+            AnimationSpeed = animationSpeed;
         }
 
         internal Animation(ushort targetAnimation, ushort sourceAnimation, ushort speed)

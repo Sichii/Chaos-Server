@@ -1,4 +1,4 @@
-// ****************************************************************************
+﻿// ****************************************************************************
 // This file belongs to the Chaos-Server project.
 // 
 // This project is free and open-source, provided that any alterations or
@@ -10,18 +10,27 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal struct Effect
+    internal struct Post
     {
-        internal sbyte StrMod;
-        internal sbyte IntMod;
-        internal sbyte WisMod;
-        internal sbyte ConMod;
-        internal sbyte DexMod;
-        internal int HPMod;
-        internal int MPMod;
+        internal ushort PostId;
+        internal string Subject;
+        internal string Body;
+
+        internal Post(ushort postId, string subject, string body)
+        {
+            PostId = postId;
+            Subject = subject;
+            Body = body;
+        }
     }
 }

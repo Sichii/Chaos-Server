@@ -23,9 +23,9 @@ namespace Chaos
         [JsonProperty]
         private byte length;
         [JsonProperty]
-        private Dictionary<byte, T> Objects { get; set; }
+        private Dictionary<byte, T> Objects;
         [JsonProperty]
-        private byte[] Invalid { get; }
+        private byte[] Invalid;
         private readonly object Sync = new object();
         internal T this[EquipmentSlot slot] => this[(byte)slot];
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));

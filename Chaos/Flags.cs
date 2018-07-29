@@ -171,14 +171,13 @@ namespace Chaos
     internal enum PursuitIds : ushort
     {
         None = 0,
-        Revive = 1,
-        Teleport = 2,
-        Summon = 3,
-        SummonAll = 4,
-        KillUser = 5,
-        KillMonster = 6,
+        ReviveSelf = 1,
+        ReviveUser = 2,
+        Teleport = 3,
+        SummonUser = 4,
+        SummonAll = 5,
+        KillUser = 6,
         LouresCitizenship = 7,
-        ReviveUser = 8,
     }
     #endregion
 
@@ -495,13 +494,6 @@ namespace Chaos
         SkillBook = 2
     }
 
-    internal enum GameObjectType : byte
-    {
-        Merchant = 1,
-        Item = 2,
-        Misc = 4
-    }
-
     internal enum MenuType : byte
     {
         Menu = 0,
@@ -536,15 +528,26 @@ namespace Chaos
         Close = 0,
         Next = 1
     }
-
-    internal enum ExchangeType : byte
+    internal enum BoardType : byte
     {
-        StartExchange = 0,
-        RequestAmount = 1,
-        AddItem = 2,
-        SetGold = 3,
-        Cancel = 4,
-        Accept = 5
+        BoardList = 1,
+        PublicBoard = 2,
+        PublicPost = 3,
+        PrivateBoard = 4,
+        PrivatePost = 5,
+        Message1 = 6,
+        Message2 = 7
+    }
+
+    internal enum BoardRequestType : byte
+    {
+        BoardList = 1,
+        ViewBoard = 2,
+        ViewPost = 3,
+        //???? = 4,
+        Delete = 5,
+        SendMail = 6,
+        Highlight = 7
     }
     #endregion
 
@@ -628,6 +631,24 @@ namespace Chaos
 
     #endregion
 
+    #region Game
+    internal enum ExchangeType : byte
+    {
+        StartExchange = 0,
+        RequestAmount = 1,
+        AddItem = 2,
+        SetGold = 3,
+        Cancel = 4,
+        Accept = 5
+    }
+
+    internal enum GameObjectType : byte
+    {
+        Merchant = 1,
+        Item = 2,
+        Misc = 4
+    }
+
     internal enum IgnoreType : byte
     {
         Request = 1,
@@ -658,4 +679,5 @@ namespace Chaos
         Lighter = 4,
         Lightest = 5
     }
+    #endregion
 }

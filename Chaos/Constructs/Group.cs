@@ -19,7 +19,7 @@ namespace Chaos
 {
     internal sealed class Group : IEnumerable<User>
     {
-        internal readonly object Sync = new object();
+        private readonly object Sync = new object();
         public IEnumerator<User> GetEnumerator() => Users.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal int GroupId { get; }

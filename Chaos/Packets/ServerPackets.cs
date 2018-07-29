@@ -378,7 +378,7 @@ namespace Chaos
 
             return packet;
         }
-        internal static ServerPacket DisplayMenu(Client client, Merchant merchant)
+        internal static ServerPacket DisplayMenu(Client client, Merchant merchant, Dialog dialog = null)
         {
             var packet = new ServerPacket(ServerOpCodes.DisplayMenu);
 
@@ -399,10 +399,10 @@ namespace Chaos
             {
                 case MenuType.Menu:
                     packet.WriteByte((byte)merchant.Menu.Count);
-                    foreach (Pursuit p in merchant.Menu)
+                    foreach (PursuitMenuItem pursuit in merchant.Menu.Pursuits)
                     {
-                        packet.WriteString8(p.Text);
-                        packet.WriteUInt16((ushort)p.PursuitId);
+                        packet.WriteString8(pursuit.Text);
+                        packet.WriteUInt16((ushort)pursuit.PursuitId);
                     }
                     break;
                 case MenuType.TextEntry:
@@ -418,48 +418,41 @@ namespace Chaos
                 case MenuType.LearnSkill:
                     break;
                 case MenuType.Dialog:
-                    client.Enqueue(DisplayDialog(merchant, Game.Dialogs[merchant.NextDialogId]));
-                    return null;
-                default:
-                    return null;
+                    client.SendDialog(merchant, dialog);
+                    packet = null;
+                    break;
             }
             return packet;
         }
         internal static ServerPacket DisplayDialog(object invoker, Dialog dialog)
         {
             var packet = new ServerPacket(ServerOpCodes.DisplayDialog);
-            Merchant m = null;
-            Item i = null;
+            Merchant merchant = null;
+            Item item = null;
 
             packet.WriteByte((byte)(dialog?.Type ?? DialogType.CloseDialog));
 
             if (dialog == null || dialog.Type == DialogType.CloseDialog)
                 return packet;
 
-            if (invoker is Merchant)
-            {
-                m = invoker as Merchant;
+            if ((merchant = invoker as Merchant) != null)
                 packet.WriteByte((byte)GameObjectType.Merchant);
-            }
-            else if (invoker is Item)
-            {
-                i = invoker as Item;
+            else if ((item = invoker as Item) != null)
                 packet.WriteByte((byte)GameObjectType.Item);
-            }
 
-            packet.WriteInt32(m?.Id ?? 0);
+            packet.WriteInt32(merchant?.Id ?? 0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.ItemSprite.OffsetSprite);
+            packet.WriteUInt16(merchant?.Sprite ?? item.ItemSprite.OffsetSprite);
             packet.WriteByte(0);
             packet.WriteByte(0);
-            packet.WriteUInt16(m?.Sprite ?? i.ItemSprite.OffsetSprite);
+            packet.WriteUInt16(merchant?.Sprite ?? item.ItemSprite.OffsetSprite);
             packet.WriteByte(0);
-            packet.WriteUInt16(dialog.PursuitId);
+            packet.WriteUInt16((ushort)dialog.PursuitId);
             packet.WriteUInt16(dialog.Id);
             packet.WriteBoolean(dialog.PrevBtn);
             packet.WriteBoolean(dialog.NextBtn);
             packet.WriteByte(0);
-            packet.WriteString8(m?.Name ?? i.Name);
+            packet.WriteString8(merchant?.Name ?? item.Name);
             packet.WriteString16(dialog.Message);
 
             switch (dialog.Type)
@@ -467,10 +460,10 @@ namespace Chaos
                 case DialogType.Normal:
                     break;
                 case DialogType.ItemMenu:
-                    packet.WriteByte((byte)dialog.Options.Count);
+                    packet.WriteByte((byte)dialog.Menu.Count);
 
-                    foreach (var opt in dialog.Options)
-                        packet.WriteString8(opt.Key);
+                    foreach (DialogMenuItem opt in dialog.Menu)
+                        packet.WriteString8(opt.Text);
                     break;
                 case DialogType.TextEntry:
                     packet.WriteUInt16(dialog.MaxCharacters);
@@ -478,10 +471,10 @@ namespace Chaos
                 case DialogType.Speak:
                     break;
                 case DialogType.CreatureMenu:
-                    packet.WriteByte((byte)(dialog.Options.Count));
+                    packet.WriteByte((byte)(dialog.Menu.Count));
 
-                    foreach (var opt in dialog.Options)
-                        packet.WriteString8(opt.Key);
+                    foreach (DialogMenuItem opt in dialog.Menu)
+                        packet.WriteString8(opt.Text);
                     break;
             }
 
@@ -491,7 +484,14 @@ namespace Chaos
         {
             var packet = new ServerPacket(ServerOpCodes.BulletinBoard);
 
-            packet.Write(new byte[5]);
+            //boardtype(byte)
+            //boardcount(ushort)
+            //00?
+            //00?
+            //string8
+
+            packet.WriteByte(1);
+            packet.WriteByte(0);
 
             return packet;
         }

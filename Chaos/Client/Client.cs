@@ -256,6 +256,37 @@ namespace Chaos
         internal void SendAttributes(StatUpdateType updateType) => Enqueue(ServerPackets.Attributes(User.IsAdmin, updateType, User.Attributes));
         internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(ServerPackets.ServerMessage(messageType, message));
         internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(ServerPackets.PublicChat(messageType, sourceId, message));
+        internal void SendMenu(Merchant merchant)
+        {
+            ActiveObject = merchant;
+
+            if (merchant.Menu.Type == MenuType.Dialog)
+            {
+                if (merchant.NextDialogId == 0)
+                    CurrentDialog = Game.Dialogs.ItemOrMerchantMenuDialog(PursuitIds.None, 0, merchant.Menu.Text, merchant.Menu.Dialogs);
+                else
+                    CurrentDialog = Game.Dialogs[merchant.NextDialogId];
+
+                Enqueue(ServerPackets.DisplayMenu(this, merchant, CurrentDialog));
+            }
+            else
+                Enqueue(ServerPackets.DisplayMenu(this, merchant));
+        }
+        internal void SendDialog(object invoker, Dialog dialog)
+        {
+            if (dialog.Type != DialogType.CloseDialog)
+            {
+                ActiveObject = invoker;
+                CurrentDialog = dialog;
+            }
+            else
+            {
+                ActiveObject = null;
+                CurrentDialog = null;
+            }
+
+            Enqueue(ServerPackets.DisplayDialog(invoker, dialog));
+        }
 
         ~Client()
         {

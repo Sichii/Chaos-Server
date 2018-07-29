@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Chaos
 {
-    internal delegate void OnUseDelegate(Client client, Server server, params object[] args);
+    internal delegate void OnUseDelegate(Client client, Server server, PanelObject obj = null, Creature target = null);
     internal delegate Item ItemCreationDelegate(int count);
     internal delegate Skill SkillCreationDelegate();
     internal delegate Spell SpellCreationDelegate();
@@ -110,13 +110,19 @@ namespace Chaos
         #endregion
 
         #region Defaults
-        private void NormalObj(Client client, Server server, params object[] args) { }
-        private void Equip(Client client, Server server, params object[] args)
+        private void NormalObj(Client client, Server server, PanelObject obj = null, Creature target = null) { }
+        private void Equip(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
-            Item item = (Item)args[0];
-
-            if (AttemptExchange(client, server, item))
+            if (obj == null)
                 return;
+
+            Item item = obj as Item;
+
+            if (client.User.Exchange?.IsActive == true)
+            {
+                client.User.Exchange.AddItem(client.User, item.Slot);
+                return;
+            }
 
             if (!item.Gender.HasFlag(client.User.Gender))
             {
@@ -145,25 +151,17 @@ namespace Chaos
                 client.Enqueue(ServerPackets.DisplayUser(client.User));
             }
         }
-        private bool AttemptExchange(Client client, Server server, Item item)
-        {
-            if (client.User.Exchange?.IsActive == true)
-            {
-                client.User.Exchange.AddItem(client.User, item.Slot);
-                return true;
-            }
-
-            return false;
-        }
         #endregion
 
         #region Items
-        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, Animation.None, BodyAnimation.None, true);
-        private void AdminTrinket(Client client, Server server, params object[] args)
+        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, BodyAnimation.None, true);
+        private void AdminTrinket(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
-            client.ActiveObject = args[0];
-            client.CurrentDialog = Game.Dialogs[1];
-            client.Enqueue(ServerPackets.DisplayDialog(args[0], client.CurrentDialog));
+            if (obj == null)
+                return;
+
+            Item item = obj as Item;
+            client.SendDialog(item, Game.Dialogs[item.NextDialogId]);
         }
 
         private Item TestItem(int count) => new Item(new ItemSprite(1108, 0), 0, "Test Item", true, count, 1, false);
@@ -173,10 +171,12 @@ namespace Chaos
 
         #region Skills
         private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", SkillType.Front, TimeSpan.Zero, true, Animation.None, BodyAnimation.Assail);
-        private void TestSkill1(Client client, Server server, params object[] args)
+        private void TestSkill1(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
-            Skill skill = args[0] as Skill;
-            Creature target;
+            if (obj == null)
+                return;
+
+            Skill skill = obj as Skill;
 
             Game.World.TryGetObject(client.User.Point.Offsetter(client.User.Direction), out target, client.User.Map);
 
@@ -189,10 +189,13 @@ namespace Chaos
 
         #region Spells
         private Spell Mend() => new Spell(0, 118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), BodyAnimation.HandsUp);
-        private void Mend(Client client, Server server, params object[] args)
+        private void Mend(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
-            Spell spell = args[0] as Spell;
-            Creature target = args[1] as Creature;
+            if (obj == null || target == null)
+                return;
+
+            Spell spell = obj as Spell;
+
             int amount = 10;
             amount += client.User.Attributes.CurrentWis * 5;
 
@@ -200,10 +203,12 @@ namespace Chaos
         }
 
         private Spell Heal() => new Spell(0, 21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), BodyAnimation.HandsUp);
-        private void Heal(Client client, Server server, params object[] args)
+        private void Heal(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
-            Spell spell = args[0] as Spell;
-            Creature target = args[1] as Creature;
+            if (obj == null || target == null)
+                return;
+
+            Spell spell = obj as Spell;
 
             Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
             int amount = 100000;
@@ -212,10 +217,12 @@ namespace Chaos
             Game.Extensions.ApplySpell(client, amount, spell, target);
         }
         private Spell SradTut() => new Spell(0, 21, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(158, 0, 100), BodyAnimation.HandsUp);
-        private void SradTut(Client client, Server server, params object[] args)
+        private void SradTut(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
-            Spell spell = args[0] as Spell;
-            Creature target = args[1] as Creature;
+            if (obj == null || target == null)
+                return;
+
+            Spell spell = obj as Spell;
 
             Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
             int amount = -100000;

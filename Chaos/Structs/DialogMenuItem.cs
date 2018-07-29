@@ -1,4 +1,4 @@
-// ****************************************************************************
+﻿// ****************************************************************************
 // This file belongs to the Chaos-Server project.
 // 
 // This project is free and open-source, provided that any alterations or
@@ -9,19 +9,19 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using Newtonsoft.Json;
-
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
-    internal struct Effect
+    internal struct DialogMenuItem
     {
-        internal sbyte StrMod;
-        internal sbyte IntMod;
-        internal sbyte WisMod;
-        internal sbyte ConMod;
-        internal sbyte DexMod;
-        internal int HPMod;
-        internal int MPMod;
+        internal ushort DialogId { get; }
+        internal string Text { get; }
+        internal PursuitIds PursuitId { get; }
+
+        internal DialogMenuItem(ushort dialogId, string text, PursuitIds pursuitId = PursuitIds.None)
+        {
+            DialogId = dialogId;
+            Text = text;
+            PursuitId = pursuitId;
+        }
     }
 }

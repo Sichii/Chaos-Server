@@ -19,7 +19,7 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class IgnoreList
     {
-        internal readonly object Sync = new object();
+        private readonly object Sync = new object();
         [JsonProperty]
         private List<string> Names { get; set; }
 
