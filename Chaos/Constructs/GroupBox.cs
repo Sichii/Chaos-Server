@@ -18,6 +18,13 @@ namespace Chaos
         internal byte MaxLevel { get; set; }
         internal byte[] MaxAmounts { get; set; }
 
+        /// <summary>
+        /// Object representing a Group Box.
+        /// </summary>
+        /// <param name="leader"></param>
+        /// <param name="text"></param>
+        /// <param name="maxLevel"></param>
+        /// <param name="maxAmounts"></param>
         internal GroupBox(User leader, string text, byte maxLevel, byte[] maxAmounts)
         {
             GroupLeader = leader;

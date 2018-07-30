@@ -23,6 +23,10 @@ namespace Chaos
         internal DialogMenuItem this[int index] => Options[index];
         internal List<DialogMenuItem> Options { get; }
 
+        /// <summary>
+        /// Object representing a dialog with a menu.
+        /// </summary>
+        /// <param name="options">A list of menu options, each containing a nextDialogId, text, and a possible pursuitId</param>
         internal DialogMenu(List<DialogMenuItem> options)
         {
             Options = options;

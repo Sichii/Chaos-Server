@@ -112,6 +112,7 @@ namespace Chaos
                 return false;
             }
         }
+
         /// <summary>
         /// Attempts to remove a User from the Group by using the user's id
         /// </summary>
@@ -134,7 +135,6 @@ namespace Chaos
         /// </summary>
         /// <param name="name">The name to search for.</param>
         /// <param name="user">The user reference to set.</param>
-        /// <returns></returns>
         internal bool TryGet(string name, out User user)
         {
             lock (Sync)
@@ -149,7 +149,6 @@ namespace Chaos
         /// </summary>
         /// <param name="id">The id to search for.</param>
         /// <param name="user">The user reference to set.</param>
-        /// <returns></returns>
         internal bool TryGet(int id, out User user)
         {
             lock (Sync)

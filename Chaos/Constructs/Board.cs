@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal sealed class PostList : IEnumerable<Post>
+    internal sealed class Board : IEnumerable<Post>
     {
         private readonly object Sync = new object();
         [JsonIgnore]
@@ -31,18 +31,30 @@ namespace Chaos
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal Post this[byte postNum] => postNum < Counter ? Messages[postNum] : default(Post);
 
+        /// <summary>
+        /// Object representing a board, or list of posts.
+        /// </summary>
+        /// <param name="messages">A list of posts contained in the board.</param>
         [JsonConstructor]
-        internal PostList(List<Post> messages = default(List<Post>))
+        internal Board(List<Post> messages = default(List<Post>))
         {
             Messages = messages ?? new List<Post>();
         }
 
+        /// <summary>
+        /// Adds a post to the board.
+        /// </summary>
+        /// <param name="post">The post to add.</param>
         internal void AddPost(Post post)
         {
             lock (Sync)
                 Messages[post.PostId] = post;
         }
 
+        /// <summary>
+        /// Removes a post from the board.
+        /// </summary>
+        /// <param name="PostNum">The index of the post to be removed.</param>
         internal bool RemovePost(int PostNum)
         {
             lock (Sync)
@@ -57,6 +69,9 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Reverses the posts, so that the newest one is on the top, for use in the packet.
+        /// </summary>
         internal IEnumerable<Post> Reverse()
         {
             lock (Sync)

@@ -19,12 +19,21 @@ namespace Chaos
         public string Field { get; set; }
         public WorldMapNode[] Nodes { get; }
 
+        /// <summary>
+        /// Object representing the field, or world map.
+        /// </summary>
+        /// <param name="field">The name of the field, or world map.</param>
+        /// <param name="nodes">A lost of nodes, each containing a destination mapID & point pair, and a point on the map for it to be displayed.</param>
         public WorldMap(string field, params WorldMapNode[] nodes)
         {
             Field = field;
             Nodes = nodes;
         }
 
+        /// <summary>
+        /// Gets the checksum of the worldmap, based on it's nodes.
+        /// </summary>
+        /// <returns></returns>
         public uint GetCheckSum()
         {
             MemoryStream memoryStream = new MemoryStream();

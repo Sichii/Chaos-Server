@@ -70,6 +70,7 @@ namespace Chaos
             Members = new Dictionary<string, string>(members, StringComparer.CurrentCultureIgnoreCase);
             Ranks = ranks;
         }
+
         /// <summary>
         /// Returns the title of user(name)
         /// </summary>
@@ -97,6 +98,7 @@ namespace Chaos
                 return Members.ContainsKey(user.Name) && user.Guild == this;
             }
         }
+
         /// <summary>
         /// Attempts to remove a member from the guild.
         /// </summary>
@@ -112,6 +114,7 @@ namespace Chaos
                 return Members.Remove(user.Name);
             }
         }
+
         /// <summary>
         /// Attempts to change the name of a rank.
         /// </summary>

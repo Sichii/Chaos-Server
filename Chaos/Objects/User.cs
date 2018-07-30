@@ -19,7 +19,7 @@ namespace Chaos
     internal sealed class User : Creature
     {
         [JsonProperty]
-        internal PostList MailBox { get; set; }
+        internal Board MailBox { get; set; }
         [JsonProperty]
         internal Panel<Skill> SkillBook { get; set; }
         [JsonProperty]
@@ -101,11 +101,11 @@ namespace Chaos
             IsAlive = true;
             IsChanting = false;
             LastClicked = DateTime.MinValue;
-            MailBox = new PostList();
+            MailBox = new Board();
         }
 
         [JsonConstructor]
-        internal User(string name, Point point, Map map, Direction direction, PostList mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
+        internal User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
                Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, Gender gender, bool isAdmin, bool isAlive)
             : base(name, 0, CreatureType.User, point, map)
         {

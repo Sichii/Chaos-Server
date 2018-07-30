@@ -36,6 +36,9 @@ namespace Chaos
         public Dictionary<Point, Warp> Warps { get; set; }
         public Dictionary<Point, WorldMap> WorldMaps { get; set; }
 
+        /// <summary>
+        /// Object representing a map.
+        /// </summary>
         public Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
         {
             Id = id;
@@ -56,6 +59,10 @@ namespace Chaos
             Id = id;
         }
 
+        /// <summary>
+        /// Loads the tile data from file for the map.
+        /// </summary>
+        /// <param name="path"></param>
         internal void LoadData(string path)
         {
             if (File.Exists(path))
@@ -73,9 +80,24 @@ namespace Chaos
             CheckSum = Crypto.Generate16(Data);
         }
 
+        /// <summary>
+        /// Checks if the map has a certain flag.
+        /// </summary>
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
+
+        /// <summary>
+        /// Checks if a set of co-ordinates is inside the map, and a wall.
+        /// </summary>
         internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || Tiles[new Point(x, y)].IsWall;
+
+        /// <summary>
+        /// Checks if a given point is inside the map, and a wall.
+        /// </summary>
         internal bool IsWall(Point p) => IsWall(p.X, p.Y);
+
+        /// <summary>
+        /// Checks if a given point is a wall, or has a monster, door, or other object already on it.
+        /// </summary>
         internal bool IsWalkable(Point p)
         {
             lock (Sync)
