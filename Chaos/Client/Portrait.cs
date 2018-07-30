@@ -23,8 +23,6 @@ namespace Chaos
         /// <summary>
         /// Object representing the Portrait and Profile Message.
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="msg"></param>
         [JsonConstructor]
         internal Personal(byte[] portrait, string message)
         {

@@ -62,24 +62,32 @@ namespace Chaos
         /// Starting date of the server.
         /// </summary>
         private static DateTime Origin => new DateTime(2017, 6, 20);
+
         /// <summary>
         /// Gets the current ingame time.
         /// </summary>
         internal static GameTime Now => FromDateTime(DateTime.UtcNow);
+
         /// <summary>
         /// Converts a DateTime object to GameTime.
         /// </summary>
         /// <param name="dTime">DateTimeobject to be converted.</param>
         internal static GameTime FromDateTime(DateTime dTime) => new GameTime(dTime.Subtract(Origin).Ticks);
+
         /// <summary>
         /// Converts a GameTime object to DateTime.
         /// </summary>
         internal DateTime ToDateTime() => new DateTime(Ticks + Origin.Ticks);
+
         /// <summary>
         /// Custom <see cref="ToString()"/> method, that will print like DateTime does.
         /// </summary>
         /// <param name="format">Optional string format guide.</param>
         internal string ToString(string format = "") => $@"Year {(!string.IsNullOrEmpty(format) ? new DateTime(Ticks*24).ToString(format) : new DateTime(Ticks*24).ToString($@"y, MMM d"))}{GetDaySuffix}";
+
+        /// <summary>
+        /// Readonly property that gets the appropriate level of light for the time of day.
+        /// </summary>
         internal LightLevel TimeOfDay
         {
             get

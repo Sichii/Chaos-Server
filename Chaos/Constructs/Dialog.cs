@@ -46,20 +46,23 @@ namespace Chaos
         /// Returns the next dialog in the sequence of dialogs.
         /// </summary>
         internal Dialog Next() => Game.Dialogs[NextDialogId];
+
         /// <summary>
         /// Returns the dialog associated with the option that was chosen.
         /// </summary>
         /// <param name="opt"></param>
         internal Dialog Next(byte opt) => Game.Dialogs[Menu[opt].DialogId];
+
         /// <summary>
         /// Returns the dialog that has this dialog as one of it's options or nextDialogId
         /// </summary>
         internal Dialog Previous() => Game.Dialogs[PreviousDialogId];
+
         /// <summary>
         /// Returns an empty dialog with type DialogType.Close
         /// </summary>
         /// <returns></returns>
-        internal Dialog Close(bool applyEffect = false) => new Dialog(DialogType.CloseDialog, applyEffect ? PursuitId : PursuitIds.None, 0, false, false, string.Empty, null, 0, null, 0);
+        internal Dialog Close(bool applyEffect = false) => Game.Dialogs.CloseDialog(applyEffect ? PursuitId : PursuitIds.None);
 
     }
 }

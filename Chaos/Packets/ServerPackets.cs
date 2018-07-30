@@ -18,7 +18,6 @@ namespace Chaos
 {
     internal static class ServerPackets
     {
-
         internal static ServerPacket ConnectionInfo(uint tableCheckSum, byte seed, byte[] key)
         {
             var packet = new ServerPacket(ServerOpCodes.ConnectionInfo);

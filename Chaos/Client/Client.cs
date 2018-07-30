@@ -242,7 +242,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Changes updates the location of the client in the path to logging in.
+        /// Redirects the path to another server, or in this case... the same server.
         /// </summary>
         /// <param name="redirect">Redirect information.</param>
         internal void Redirect(Redirect redirect)
@@ -251,11 +251,31 @@ namespace Chaos
             Enqueue(ServerPackets.Redirect(redirect));
         }
 
-        //shorthand methods for sending a client certain packets
+        /// <summary>
+        /// Sends a message to the client when theyre at the login screen.
+        /// </summary>
         internal void SendLoginMessage(LoginMessageType messageType, string message = "") => Enqueue(ServerPackets.LoginMessage(messageType, message));
+
+        /// <summary>
+        /// Refreshes the clients view of their current hp, mp and other attributes.
+        /// </summary>
         internal void SendAttributes(StatUpdateType updateType) => Enqueue(ServerPackets.Attributes(User.IsAdmin, updateType, User.Attributes));
+
+        /// <summary>
+        /// Sends a message to the client when they're already logged in.
+        /// </summary>
         internal void SendServerMessage(ServerMessageType messageType, string message) => Enqueue(ServerPackets.ServerMessage(messageType, message));
+
+        /// <summary>
+        /// Sends a public message and it's origins to the client.
+        /// </summary>
+        /// <param name="sourceId">ID of the source of the message.</param>
         internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(ServerPackets.PublicChat(messageType, sourceId, message));
+
+        /// <summary>
+        /// Sends a persuit menu to the client. Sets necessary client variables.
+        /// </summary>
+        /// <param name="merchant">Merchant with a merchantmenu.</param>
         internal void SendMenu(Merchant merchant)
         {
             ActiveObject = merchant;
@@ -272,6 +292,12 @@ namespace Chaos
             else
                 Enqueue(ServerPackets.DisplayMenu(this, merchant));
         }
+
+        /// <summary>
+        /// Sends a dialog to the client. Sets necessary client variables.
+        /// </summary>
+        /// <param name="invoker">Item or Merchant that's the source of the dialog.</param>
+        /// <param name="dialog">The dialog to be sent.</param>
         internal void SendDialog(object invoker, Dialog dialog)
         {
             if (dialog.Type != DialogType.CloseDialog)

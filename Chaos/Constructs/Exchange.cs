@@ -32,6 +32,11 @@ namespace Chaos
         internal bool IsActive = false;
         internal User OtherUser(User user) => User1 == user ? User2 : User1;
 
+        /// <summary>
+        /// Object representing an exchange window.
+        /// </summary>
+        /// <param name="sender">The user who requested the trade.</param>
+        /// <param name="receiver">The user to receive the trade.</param>
         internal Exchange(User sender, User receiver)
         {
             ExchangeId = Interlocked.Increment(ref Server.NextId);
@@ -44,6 +49,9 @@ namespace Chaos
             Server = sender.Client.Server;
         }
 
+        /// <summary>
+        /// Activates the exchange window, setting relevant variables and sending the packet to create the window on each client.
+        /// </summary>
         internal void Activate()
         {
             lock (Sync)
@@ -60,6 +68,11 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Adds an item from the user's inventory to the trade window. Sends a prompt for stackable items. Updates both user's screens with the info.
+        /// </summary>
+        /// <param name="user">The user who is adding the item.</param>
+        /// <param name="slot">The slot that item is in.</param>
         internal void AddItem(User user, byte slot)
         {
             lock (Sync)
@@ -99,6 +112,12 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Adds a stackable item to the trade. Updates both user's screens with the info. This method is requested after the user replys to the prompty from AddItem.
+        /// </summary>
+        /// <param name="user">The user who is adding the item.</param>
+        /// <param name="slot">The slot that item is in.</param>
+        /// <param name="count">The number of that item to add.</param>
         internal void AddStackableItem(User user, byte slot, byte count)
         {
             lock (Sync)
@@ -168,6 +187,11 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Sets the gold to be traded. Does necessary checks and modifications.
+        /// </summary>
+        /// <param name="user">User whos gold should be set.</param>
+        /// <param name="amount">The total amount of gold they want to trade.</param>
         internal void SetGold(User user, uint amount)
         {
             lock (Sync)
@@ -178,11 +202,11 @@ namespace Chaos
                     return;
 
                 //if the user already had gold entered, give it back (because this is a set, not an addition)
-                user.Attributes.Gold += user == User1 ? User1Gold : User2Gold;
+                user.Attributes.Gold += user1Src ? User1Gold : User2Gold;
 
-                //if the amount they want to set is greater than what they have, return
+                //if the amount they want to set is greater than what they have, set it to the max value
                 if (amount > user.Attributes.Gold)
-                    return;
+                    amount = user.Attributes.Gold;
 
                 //do things depending on which user is requesting
                 if (user1Src)
@@ -208,6 +232,10 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Cancels the trade, returning any gold and items that were added to the trade.
+        /// </summary>
+        /// <param name="user"></param>
         internal void Cancel(User user)
         {
             lock(Sync)
@@ -242,6 +270,10 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Accepts the trade. If both users have accepted, the added items and gold are of each user are added to the other user's inventory.
+        /// </summary>
+        /// <param name="user">The user who accepted the trade.</param>
         internal void Accept(User user)
         {
             lock(Sync)
@@ -292,6 +324,9 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Destroys the exchange. Should only be called from cancel, to avoid losing items and gold to the abyss.
+        /// </summary>
         private void Destroy()
         {
             //remove the exchange from existence

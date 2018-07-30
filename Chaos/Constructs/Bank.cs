@@ -13,5 +13,12 @@ namespace Chaos
 {
     internal sealed class Bank
     {
+        /// <summary>
+        /// Object representing the user's bank.
+        /// </summary>
+        internal Bank()
+        {
+
+        }
     }
 }

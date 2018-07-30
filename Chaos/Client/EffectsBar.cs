@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Object representing the spellbar.
+    /// </summary>
     internal class EffectsBar
     {
     }

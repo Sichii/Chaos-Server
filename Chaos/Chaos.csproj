@@ -78,7 +78,7 @@
     <Compile Include="Client\EffectsBar.cs" />
     <Compile Include="Client\Legend.cs" />
     <Compile Include="Constructs\DialogMenu.cs" />
-    <Compile Include="Constructs\PostList.cs" />
+    <Compile Include="Constructs\Board.cs" />
     <Compile Include="Client\Panel.cs" />
     <Compile Include="Client\UserOptions.cs" />
     <Compile Include="Constructs\Bank.cs" />

@@ -22,6 +22,10 @@ namespace Chaos
         internal PursuitMenuItem this[int index] => Pursuits[index];
         internal List<PursuitMenuItem> Pursuits { get; }
 
+        /// <summary>
+        /// Object representing a menu of pursuits.
+        /// </summary>
+        /// <param name="pursuits">A lost of objects that each contain a pursuitId paired with it's display text for the menu.</param>
         internal PursuitMenu(List<PursuitMenuItem> pursuits)
         {
             Pursuits = pursuits;
