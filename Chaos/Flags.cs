@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using System;
+using System.Collections.Generic;
 
 namespace Chaos
 {
@@ -178,6 +179,11 @@ namespace Chaos
         SummonAll = 5,
         KillUser = 6,
         LouresCitizenship = 7,
+        BecomeWarrior = 8,
+        BecomeWizard = 9,
+        BecomePriest = 10,
+        BecomeMonk = 11,
+        BecomeRogue = 12
     }
     #endregion
 
@@ -324,8 +330,22 @@ namespace Chaos
         East = 1,
         South = 2,
         West = 3,
-        Invalid = 255
+        Invalid = 255,
     }
+
+    internal static class DirectionExtensions
+    {
+        internal static Direction Reverse(Direction direction)
+        {
+            byte dir = (byte)(direction + 2);
+
+            if (dir > 3)
+                dir -= 4;
+
+            return (Direction)dir;
+        }
+    }
+
     [Flags]
     internal enum Gender : byte
     {
@@ -569,7 +589,8 @@ namespace Chaos
         Self = 0,
         Front = 1,
         Surround = 2,
-        Effect = 3
+        Effect = 3,
+        Cleave = 4,
     }
     internal enum BodyAnimation : byte
     {

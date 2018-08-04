@@ -31,6 +31,11 @@ namespace Chaos
             { PursuitIds.SummonAll, new PursuitDelegate(SummonAll) },
             { PursuitIds.KillUser, new PursuitDelegate(KillUser) },
             { PursuitIds.LouresCitizenship, new PursuitDelegate(LouresCitizenship) },
+            { PursuitIds.BecomeWarrior, new PursuitDelegate(BecomeWarrior) },
+            { PursuitIds.BecomeWizard, new PursuitDelegate(BecomeWizard) },
+            { PursuitIds.BecomePriest, new PursuitDelegate(BecomePriest) },
+            { PursuitIds.BecomeMonk, new PursuitDelegate(BecomeMonk) },
+            { PursuitIds.BecomeRogue, new PursuitDelegate(BecomeRogue) },
         };
 
         internal static PursuitDelegate Activate(PursuitIds pid) => PursuitList[pid];
@@ -103,6 +108,67 @@ namespace Chaos
         private static void LouresCitizenship(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.Nation = Nation.Loures;
+        }
+
+        private static void BecomeWarrior(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            client.User.BaseClass = BaseClass.Warrior;
+            ClearSpellsSkills(client);
+
+            client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Cleave"));
+            //add more skills
+
+
+            foreach (Skill skill in client.User.SkillBook.Where(s => s != null))
+                client.Enqueue(ServerPackets.AddSkill(skill));
+
+            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
+        }
+
+        private static void BecomeWizard(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            client.User.BaseClass = BaseClass.Wizard;
+            ClearSpellsSkills(client);
+
+            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
+        }
+
+        private static void BecomePriest(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            client.User.BaseClass = BaseClass.Priest;
+            ClearSpellsSkills(client);
+
+            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
+        }
+
+        private static void BecomeMonk(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            client.User.BaseClass = BaseClass.Monk;
+            ClearSpellsSkills(client);
+
+            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
+        }
+
+        private static void BecomeRogue(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            client.User.BaseClass = BaseClass.Rogue;
+            ClearSpellsSkills(client);
+
+            client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
+        }
+        #endregion
+
+
+        #region Modular Methods
+        private static void ClearSpellsSkills(Client client)
+        {
+            foreach (Skill skill in client.User.SkillBook.Where(s => s != null).ToList())
+                if (client.User.SkillBook.TryRemove(skill.Slot))
+                    client.Enqueue(ServerPackets.RemoveSkill(skill.Slot));
+
+            foreach (Spell spell in client.User.SpellBook.Where(s => s != null).ToList())
+                if (client.User.SpellBook.TryRemove(spell.Slot))
+                    client.Enqueue(ServerPackets.RemoveSpell(spell.Slot));
         }
         #endregion
     }

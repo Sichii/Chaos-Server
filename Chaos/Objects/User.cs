@@ -76,7 +76,7 @@ namespace Chaos
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
 
         internal User(Gender gender, string name, Point point, Map map, Direction direction)
-            :base(name, 0, CreatureType.User, point, map, direction)
+            : base(name, 0, CreatureType.User, point, map, direction)
         {
             Gender = gender;
             SkillBook = new Panel<Skill>(90);
@@ -144,6 +144,42 @@ namespace Chaos
             Client = client;
             Client.User = this;
             Map = Game.World.Maps[Map.Id];
+        }
+
+        internal List<Point> DiagonalPoints(int degree = 1, Direction direction = Direction.Invalid)
+        {
+            List<Point> diagonals = new List<Point>();
+
+            for (int i = 1; i <= degree; i++)
+            {
+                switch (direction)
+                {
+                    case Direction.Invalid:
+                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
+                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y - i)));
+                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y + i)));
+                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
+                        break;
+                    case Direction.North:
+                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
+                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y - i)));
+                        break;
+                    case Direction.East:
+                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y - i)));
+                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y + i)));
+                        break;
+                    case Direction.South:
+                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y + i)));
+                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
+                        break;
+                    case Direction.West:
+                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
+                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
+                        break;
+            }
+            }
+
+            return diagonals;
         }
 
         internal void Save() => Client.Server.DataBase.TrySaveUser(this);
