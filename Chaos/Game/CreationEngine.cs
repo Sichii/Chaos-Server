@@ -34,35 +34,21 @@ namespace Chaos
 
 
             #region Items
-            Effects.Add("NormalObj", new OnUseDelegate(NormalObj));
-
-            Items.Add("Admin Trinket", new ItemCreationDelegate(AdminTrinket));
-            Effects.Add("Admin Trinket", new OnUseDelegate(AdminTrinket));
-
-            Items.Add("Test Item", new ItemCreationDelegate(TestItem));
-            Effects.Add("Test Item", new OnUseDelegate(NormalObj));
-
-            Items.Add("Test Male Equipment", new ItemCreationDelegate(TestMaleEquipment));
-            Effects.Add("Test Male Equipment", new OnUseDelegate(Equip));
-
-            Items.Add("Test Female Equipment", new ItemCreationDelegate(TestFemaleEquipment));
-            Effects.Add("Test Female Equipment", new OnUseDelegate(Equip));
+            AddItem("Admin Trinket", AdminTrinket, ItemDialog);
+            AddItem("Test Item", TestItem, NormalObj);
+            AddItem("Test Male Equipment", TestMaleEquipment, Equip);
+            AddItem("Test Female Equipment", TestFemaleEquipment, Equip);
             #endregion
 
             #region Skills
-            Skills.Add("Test Skill 1", new SkillCreationDelegate(TestSkill1));
-            Effects.Add("Test Skill 1", new OnUseDelegate(TestSkill1));
+            AddSkill("Test Skill 1", TestSkill1, TestSkill1);
+            AddSkill("Cleave", Cleave, Cleave);
             #endregion
 
             #region Spells
-            Spells.Add("Mend", new SpellCreationDelegate(Mend));
-            Effects.Add("Mend", new OnUseDelegate(Mend));
-
-            Spells.Add("Heal", new SpellCreationDelegate(Heal));
-            Effects.Add("Heal", new OnUseDelegate(Heal));
-
-            Spells.Add("Srad Tut", new SpellCreationDelegate(SradTut));
-            Effects.Add("Srad Tut", new OnUseDelegate(SradTut));
+            AddSpell("Mend", Mend, Mend);
+            AddSpell("Heal", Heal, Heal);
+            AddSpell("Srad Tut", SradTut, SradTut);
             #endregion
         }
 
@@ -107,6 +93,21 @@ namespace Chaos
         }
         internal Skill CreateSkill(string name) => Skills.ContainsKey(name) ? Skills[name]() : null;
         internal Spell CreateSpell(string name) => Spells.ContainsKey(name) ? Spells[name]() : null;
+        private void AddItem(string name, ItemCreationDelegate itemCreationDelegate, OnUseDelegate onUseDelegate)
+        {
+            Items.Add(name, itemCreationDelegate);
+            Effects.Add(name, onUseDelegate);
+        }
+        private void AddSkill(string name, SkillCreationDelegate skillCreationDelegate, OnUseDelegate onUseDelegate)
+        {
+            Skills.Add(name, skillCreationDelegate);
+            Effects.Add(name, onUseDelegate);
+        }
+        private void AddSpell(string name, SpellCreationDelegate spellCreationDelegate, OnUseDelegate onUseDelegate)
+        {
+            Spells.Add(name, spellCreationDelegate);
+            Effects.Add(name, onUseDelegate);
+        }
         #endregion
 
         #region Defaults
@@ -151,11 +152,7 @@ namespace Chaos
                 client.Enqueue(ServerPackets.DisplayUser(client.User));
             }
         }
-        #endregion
-
-        #region Items
-        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, BodyAnimation.None, true);
-        private void AdminTrinket(Client client, Server server, PanelObject obj = null, Creature target = null)
+        private void ItemDialog(Client client, Server server, PanelObject obj = null, Creature target = null)
         {
             if (obj == null)
                 return;
@@ -163,10 +160,13 @@ namespace Chaos
             Item item = obj as Item;
             client.SendDialog(item, Game.Dialogs[item.NextDialogId]);
         }
+        #endregion
 
+        #region Items
+        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, BodyAnimation.None, true);
         private Item TestItem(int count) => new Item(new ItemSprite(1108, 0), 0, "Test Item", true, count, 1, false);
-        private Item TestMaleEquipment(int count) => new Item(new ItemSprite(1108, 208), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
-        private Item TestFemaleEquipment(int count) => new Item(new ItemSprite(1109, 208), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
+        private Item TestMaleEquipment(int count) => new Item(new ItemSprite(14108, 979), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
+        private Item TestFemaleEquipment(int count) => new Item(new ItemSprite(14109, 979), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
         #endregion
 
         #region Skills
@@ -178,10 +178,22 @@ namespace Chaos
 
             Skill skill = obj as Skill;
 
-            Game.World.TryGetObject(client.User.Point.Offsetter(client.User.Direction), out target, client.User.Map);
+            int amount = -50000;
+            amount -= client.User.Attributes.CurrentStr * 250;
+
+            Game.Extensions.ApplySkill(client, amount, skill);
+        }
+
+        private Skill Cleave() => new Skill(0, 16, "Cleave", SkillType.Cleave, TimeSpan.Zero, true, new Animation(166, 0, 100), BodyAnimation.Swipe);
+        private void Cleave(Client client, Server server, PanelObject obj = null, Creature target = null)
+        {
+            if (obj == null)
+                return;
+
+            Skill skill = obj as Skill;
 
             int amount = -50000;
-            amount -= (client.User.Attributes.CurrentStr * 250);
+            amount -= client.User.Attributes.CurrentStr * 250;
 
             Game.Extensions.ApplySkill(client, amount, skill);
         }
@@ -210,7 +222,6 @@ namespace Chaos
 
             Spell spell = obj as Spell;
 
-            Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
             int amount = 100000;
             amount += client.User.Attributes.CurrentWis * 500;
 
@@ -224,7 +235,6 @@ namespace Chaos
 
             Spell spell = obj as Spell;
 
-            Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
             int amount = -100000;
             amount -= client.User.Attributes.CurrentWis * 500;
 

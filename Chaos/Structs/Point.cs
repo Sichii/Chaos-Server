@@ -76,7 +76,6 @@ namespace Chaos
         {
             Direction direction = Direction.Invalid;
             int degree = 0;
-
             if (Y < point.Y && point.Y - Y > degree)
             {
                 degree = point.Y - Y;

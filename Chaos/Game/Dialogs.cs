@@ -101,7 +101,7 @@ namespace Chaos
         /// </summary>
         /// <param name="pursuitId">The pursuit to activate as you end the sequence.</param>
         /// <returns></returns>
-        internal Dialog CloseDialog(PursuitIds pursuitId) =>
+        internal Dialog CloseDialog(PursuitIds pursuitId = PursuitIds.None) =>
             new Dialog(DialogType.CloseDialog, pursuitId, 0, false, false, string.Empty, null, 0, null, 0);
 
         /// <summary>

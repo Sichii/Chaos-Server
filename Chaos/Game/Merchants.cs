@@ -17,44 +17,50 @@ namespace Chaos
 {
     internal sealed class Merchants : IEnumerable<Merchant>
     {
-        public IEnumerator<Merchant> GetEnumerator() => MerchantList.Values.GetEnumerator();
+        public IEnumerator<Merchant> GetEnumerator() => MerchantDic.Values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         //access merchant by name
-        internal Merchant this[string name] => MerchantList[name];
-        private Dictionary<string, Merchant> MerchantList { get; }
+        internal Merchant this[string name] => MerchantDic[name];
+        private Dictionary<string, Merchant> MerchantDic { get; }
 
         internal Merchants()
         {
-            MerchantList = new Dictionary<string, Merchant>()
+            List<Merchant> MerchantList = new List<Merchant>()
             {
-                // Use Below examples when creating merchants for your server
-                {
-                    "Deliope", new Merchant("Deliope", 61, new Point(15, 10), Game.World.Maps[5031], Direction.South, 0,
-                        new MerchantMenu("Are you dead, scrub?", MenuType.Menu,
-                            new PursuitMenu(
-                                new List<PursuitMenuItem>()
-                                {
-                                    new PursuitMenuItem(PursuitIds.ReviveSelf, "Revive")
-                                })))
-                },
-                {
-                    "Celeste", new Merchant("Celeste", 57, new Point(3, 16), Game.World.Maps[17500], Direction.South, 0,
-                        new MerchantMenu("I like giant cock.", MenuType.Dialog,
-                            new DialogMenu(
-                                new List<DialogMenuItem>()
-                                {
-                                    new DialogMenuItem(0, "Revive Self", PursuitIds.ReviveSelf),
-                                    new DialogMenuItem(3, "Summon User"),
-                                    new DialogMenuItem(4, "Summon All"),
-                                    new DialogMenuItem(6, "Loures Citizenship"),
-                                    new DialogMenuItem(5, "Kill User"),
-                                    new DialogMenuItem(2, "Teleport")
-                                })))
-                },
-                {
-                    "Frank The Great", new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7)
-                }
+                new Merchant("Deliope", 61, new Point(15, 10), Game.World.Maps[5031], Direction.South, 0,
+                    new MerchantMenu("Are you dead, scrub?", MenuType.Menu,
+                        new PursuitMenu(
+                            new List<PursuitMenuItem>()
+                            {
+                                new PursuitMenuItem(PursuitIds.ReviveSelf, "Revive")
+                            }))),
+                new Merchant("Celeste", 57, new Point(3, 16), Game.World.Maps[17500], Direction.South, 0,
+                    new MerchantMenu("I like giant cock.", MenuType.Dialog,
+                        new DialogMenu(
+                            new List<DialogMenuItem>()
+                            {
+                                new DialogMenuItem(0, "Revive Self", PursuitIds.ReviveSelf),
+                                new DialogMenuItem(3, "Summon User"),
+                                new DialogMenuItem(4, "Summon All"),
+                                new DialogMenuItem(6, "Loures Citizenship"),
+                                new DialogMenuItem(5, "Kill User"),
+                                new DialogMenuItem(2, "Teleport")
+                            }))),
+                new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7),
+                new Merchant("Am I Pretty?", 627, new Point(10, 8), Game.World.Maps[8984], Direction.South, 0,
+                    new MerchantMenu("Do it. Tell me I'm beautiful.", MenuType.Menu,
+                        new PursuitMenu(
+                            new List<PursuitMenuItem>()
+                            {
+                                new PursuitMenuItem(PursuitIds.BecomeWarrior, "Become a warrior"),
+                                new PursuitMenuItem(PursuitIds.BecomeWizard, "Become a wizard"),
+                                new PursuitMenuItem(PursuitIds.BecomePriest, "Become a priest"),
+                                new PursuitMenuItem(PursuitIds.BecomeMonk, "Become a monk"),
+                                new PursuitMenuItem(PursuitIds.BecomeRogue, "Become a rogue")
+                            }))),
             };
+
+            MerchantDic = MerchantList.ToDictionary(m => m.Name, m => m);
         }
     }
 }

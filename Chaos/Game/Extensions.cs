@@ -67,6 +67,8 @@ namespace Chaos
                     return (Creature c) => { return c.Point == client.User.Point.Offsetter(client.User.Direction); };
                 case SkillType.Surround:
                     return (Creature c) => { return c.Point.Distance(client.User.Point) == 1; };
+                case SkillType.Cleave:
+                    return (Creature c) => { return (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)) || client.User.DiagonalPoints(1, client.User.Direction).Contains(c.Point); };
                 default:
                     return (Creature c) => { return false; };
             }
@@ -74,56 +76,77 @@ namespace Chaos
 
         internal void ApplySpell(Client client, int amount, Spell spell, params Creature[] targets)
         {
-            foreach (var target in targets)
+            //send the spell cooldown to the spell user
+            client.Enqueue(ServerPackets.Cooldown(false, spell.Slot, (uint)spell.Cooldown.TotalSeconds));
+            //send the spell user and all nearby users the bodyanimation
+            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, spell.BodyAnimation, 25));
+            foreach (User u in World.ObjectsVisibleFrom(client.User).OfType<User>())
+                u.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, spell.BodyAnimation, 25));
+
+            //for each target of the spell
+            foreach (Creature target in targets)
             {
+                //apply the damage and grab the animation
+                ApplyDamage(target, amount);
                 Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
 
-                target.CurrentHP = Utility.Clamp<uint>((int)(target.CurrentHP + amount), 0, (int)target.MaximumHP);
-
+                //if the target is a user, send them their own updated information
                 User user = target as User;
                 user?.Client.Enqueue(ServerPackets.Animation(animation));
                 user?.Client.Enqueue(ServerPackets.HealthBar(target));
-                user?.Client.Enqueue(ServerPackets.AnimateCreature(animation.SourceId, spell.BodyAnimation, 25));
                 user?.Client.SendAttributes(StatUpdateType.Vitality);
 
-                foreach (User u in World.ObjectsVisibleFrom(target).OfType<User>().Except(targets.OfType<User>()))
+                //send all nearby users this updated information as well
+                foreach (User u in World.ObjectsVisibleFrom(target).OfType<User>())
                 {
                     u.Client.Enqueue(ServerPackets.Animation(animation));
-                    u.Client.Enqueue(ServerPackets.AnimateCreature(animation.SourceId, spell.BodyAnimation, 25));
                     u.Client.Enqueue(ServerPackets.HealthBar(target));
                 }
             }
-            client.Enqueue(ServerPackets.Cooldown(false, spell.Slot, (uint)spell.Cooldown.TotalSeconds));
         }
 
         internal void ApplySkill(Client client, int amount, Skill skill)
         {
+            //grab all nearby creatures
             List<Creature> nearbyCreatures = World.ObjectsVisibleFrom(client.User).OfType<Creature>().ToList();
 
+            //send the skill cooldown to the skill user
+            client.Enqueue(ServerPackets.Cooldown(true, skill.Slot, (uint)skill.Cooldown.TotalSeconds));
+            //send the skill user and all nearby users the bodyanimation
             client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, skill.BodyAnimation, 25));
-            foreach (var user in nearbyCreatures.OfType<User>())
-                user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, skill.BodyAnimation, 25));
+            foreach (User u in nearbyCreatures.OfType<User>())
+                u.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, skill.BodyAnimation, 25));
 
+            //grab targets of skill based on function from skill type
             List<Creature> targets = nearbyCreatures.Where(SkillTargets(client, skill.Type)).ToList();
 
-            foreach (Creature c in targets)
+            //for each target of the skill
+            foreach (Creature target in targets)
             {
-                c.CurrentHP = Utility.Clamp<uint>((int)(c.CurrentHP + amount), 0, (int)c.MaximumHP);
-                Animation animation = new Animation(skill.EffectAnimation, c.Id, client.User.Id);
+                //apply the damage and grab the animation
+                ApplyDamage(target, amount);
+                Animation animation = new Animation(skill.EffectAnimation, target.Id, client.User.Id);
 
-                User user = c as User;
-                user?.Client.Enqueue(ServerPackets.Animation(new Animation(animation, c.Id, client.User.Id)));
-                user?.Client.Enqueue(ServerPackets.HealthBar(c));
+                //if the target is a user, send them their own updated information
+                User user = target as User;
+                user?.Client.Enqueue(ServerPackets.Animation(animation));
+                user?.Client.Enqueue(ServerPackets.HealthBar(target));
                 user?.Client.SendAttributes(StatUpdateType.Vitality);
 
-                foreach (var u in World.ObjectsVisibleFrom(c).OfType<User>())
+                //send all nearby users this updated information as well
+                foreach (User u in World.ObjectsVisibleFrom(target).OfType<User>())
                 {
-                    u.Client.Enqueue(ServerPackets.Animation(new Animation(animation, c.Id, client.User.Id)));
-                    u.Client.Enqueue(ServerPackets.HealthBar(c));
+                    u.Client.Enqueue(ServerPackets.Animation(animation));
+                    u.Client.Enqueue(ServerPackets.HealthBar(target));
                 }
             }
+        }
 
-            client.Enqueue(ServerPackets.Cooldown(true, skill.Slot, (uint)skill.Cooldown.TotalSeconds));
+        internal void ApplyDamage(Creature obj, int amount)
+        {
+            //ac, damage, other shit
+
+            obj.CurrentHP = Utility.Clamp<uint>((int)(obj.CurrentHP + amount), 0, (int)obj.MaximumHP);
         }
     }
 }
