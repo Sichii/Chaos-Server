@@ -116,6 +116,7 @@ namespace Chaos
             ClearSpellsSkills(client);
 
             client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Cleave"));
+            client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Reposition"));
             //add more skills
 
 

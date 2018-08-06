@@ -18,23 +18,25 @@ namespace Chaos
     internal sealed class Skill : PanelObject
     {
         [JsonProperty]
-        internal SkillType Type { get; }
-        [JsonProperty]
         internal bool IsBasic { get; }
 
         internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN_MS;
 
-        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, Animation effectAnimation = new Animation(), BodyAnimation bodyAnimation = 0)
-            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
+        /// <summary>
+        /// Object representing a skill in your skill pane.
+        /// </summary>
+        internal Skill(ushort sprite, string name, TimeSpan cooldown, bool isBasic = false, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = 0, int baseDamage = 0)
+            :this(0, sprite, name, cooldown, isBasic, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
-            Type = type;
         }
 
+        /// <summary>
+        /// Master constructor for skills, do not use.
+        /// </summary>
         [JsonConstructor]
-        internal Skill(byte slot, ushort sprite, string name, SkillType type, TimeSpan cooldown, bool isBasic, Animation effectAnimation, BodyAnimation bodyAnimation)
-            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
+        internal Skill(byte slot, ushort sprite, string name, TimeSpan cooldown, bool isBasic, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage)
+            :base(slot, sprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
-            Type = type;
             IsBasic = isBasic;
         }
     }

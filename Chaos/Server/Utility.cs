@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
@@ -33,5 +34,28 @@ namespace Chaos
 
         internal static T Clamp<T>(int value, int min, int max) where T : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable => 
             (T)Convert.ChangeType(((value.CompareTo(min) < 0) ? min : (value.CompareTo(max) > 0) ? max : value), typeof(T));
+
+        internal static string FirstUpper(string str)
+        {
+            char[] strArr = str.ToCharArray();
+            strArr[0] = char.ToUpper(strArr[0]);
+
+            return new string(strArr);
+        }
+
+        internal static IEnumerable<Point> GeneratePath(Point a, Point b, bool start = false, bool end = false)
+        {
+            if (start)
+                yield return a;
+
+            while(a != b)
+            {
+                a.Offset(b.Relation(a));
+                yield return a;
+            }
+
+            if (end)
+                yield return b;
+        }
     }
 }

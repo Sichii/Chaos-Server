@@ -182,15 +182,18 @@ namespace Chaos
             byte slot = packet.ReadByte();
             int targetId = client.User.Id;
             Point targetPoint = client.User.Point;
+            string prompt = "";
 
-            if (packet.Position != packet.Data.Length)
+            if(client.User.SpellBook[slot]?.SpellType == SpellType.Prompt)
+                prompt = packet.ReadString();
+            else if (packet.Position != packet.Data.Length)
             {
                 targetId = packet.ReadInt32();
                 targetPoint = packet.ReadPoint();
             }
 
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Slot: {slot} | TID: {targetId} | TPT: {targetPoint}", client);
-            Game.UseSpell(client, slot, targetId, targetPoint);
+            Game.UseSpell(client, slot, targetId, targetPoint, prompt);
         }
         private void JoinClient(Client client, ClientPacket packet)
         {
