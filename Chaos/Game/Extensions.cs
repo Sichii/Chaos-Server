@@ -56,97 +56,145 @@ namespace Chaos
             Game.World.Refresh(client, true);
         }
 
-        internal Func<Creature, bool> SkillTargets(Client client, SkillType type)
+        internal List<Creature> GetTargetsFromType(Client client, Point targetPoint, TargetsType type = TargetsType.None)
         {
+            Creature creature = null;
+            List<Creature> creatures = new List<Creature>();
+
             switch (type)
             {
-                case SkillType.Self:
-                case SkillType.Effect:
-                    return (Creature c) => { return false; };
-                case SkillType.Front:
-                    return (Creature c) => { return c.Point == client.User.Point.Offsetter(client.User.Direction); };
-                case SkillType.Surround:
-                    return (Creature c) => { return c.Point.Distance(client.User.Point) == 1; };
-                case SkillType.Cleave:
-                    return (Creature c) => { return (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)) || client.User.DiagonalPoints(1, client.User.Direction).Contains(c.Point); };
-                default:
-                    return (Creature c) => { return false; };
+                //generally skill types
+                case TargetsType.None:
+                    break;
+                case TargetsType.Self:
+                    creatures.Add(client.User);
+                    break;
+                case TargetsType.Front:
+                    creature = Game.World.ObjectsVisibleFrom(client.User).OfType<Creature>().FirstOrDefault(c => c.Point == client.User.Point.NewOffset(client.User.Direction));
+                    if (creature != null)
+                        creatures.Add(creature);
+                    break;
+                case TargetsType.Surround:
+                    creatures.AddRange(Game.World.ObjectsVisibleFrom(client.User, false, 1).OfType<Creature>());
+                    break;
+                case TargetsType.Cleave:
+                    creatures.AddRange(Game.World.ObjectsVisibleFrom(client.User, false, 2).OfType<Creature>().Where(c =>
+                        (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)) || 
+                        client.User.DiagonalPoints(1, client.User.Direction).Contains(c.Point)));
+                    break;
+                case TargetsType.StraightProjectile:
+                    int distance = 13;
+                    List<Point> line = client.User.LinePoints(13, client.User.Direction);
+
+                    foreach (Creature c in Game.World.ObjectsVisibleFrom(client.User))
+                    {
+                        if (line.Contains(c.Point))
+                        {
+                            int dist = c.Point.Distance(client.User.Point);
+
+                            if (dist < distance)
+                            {
+                                distance = dist;
+                                creature = c;
+                            }
+                        }
+                    }
+
+                    if (creature != null)
+                        creatures.Add(creature);
+                    break;
+
+
+
+
+                //generally spell types
+                case TargetsType.Cluster1:
+                    creatures.AddRange(Game.World.ObjectsVisibleFrom(targetPoint, client.User.Map, true, 1).OfType<Creature>());
+                    break;
+                case TargetsType.Cluster2:
+                    creatures.AddRange(Game.World.ObjectsVisibleFrom(targetPoint, client.User.Map, true, 2).OfType<Creature>());
+                    break;
+                case TargetsType.Cluster3:
+                    creatures.AddRange(Game.World.ObjectsVisibleFrom(targetPoint, client.User.Map, true, 3).OfType<Creature>());
+                    break;
+                case TargetsType.Screen:
+                    creatures.AddRange(Game.World.ObjectsVisibleFrom(targetPoint, client.User.Map, true).OfType<Creature>());
+                    break;
             }
+
+            return creatures;
         }
 
-        internal void ApplySpell(Client client, int amount, Spell spell, params Creature[] targets)
+        internal void ApplyEffect(Client client, PanelObject obj, List<Creature> targets, List<Animation> sfx, bool displayHealth = false, bool refreshClient = false, bool refreshTargets = false)
         {
-            //send the spell cooldown to the spell user
-            client.Enqueue(ServerPackets.Cooldown(false, spell.Slot, (uint)spell.Cooldown.TotalSeconds));
-            //send the spell user and all nearby users the bodyanimation
-            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, spell.BodyAnimation, 25));
-            foreach (User u in World.ObjectsVisibleFrom(client.User).OfType<User>())
-                u.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, spell.BodyAnimation, 25));
-
-            //for each target of the spell
-            foreach (Creature target in targets)
-            {
-                //apply the damage and grab the animation
-                ApplyDamage(target, amount);
-                Animation animation = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
-
-                //if the target is a user, send them their own updated information
-                User user = target as User;
-                user?.Client.Enqueue(ServerPackets.Animation(animation));
-                user?.Client.Enqueue(ServerPackets.HealthBar(target));
-                user?.Client.SendAttributes(StatUpdateType.Vitality);
-
-                //send all nearby users this updated information as well
-                foreach (User u in World.ObjectsVisibleFrom(target).OfType<User>())
-                {
-                    u.Client.Enqueue(ServerPackets.Animation(animation));
-                    u.Client.Enqueue(ServerPackets.HealthBar(target));
-                }
-            }
-        }
-
-        internal void ApplySkill(Client client, int amount, Skill skill)
-        {
-            //grab all nearby creatures
-            List<Creature> nearbyCreatures = World.ObjectsVisibleFrom(client.User).OfType<Creature>().ToList();
-
+            //grab all nearby Users
+            List<User> nearbyUsers = World.ObjectsVisibleFrom(client.User, true).OfType<User>().ToList();
+            bool isSkill = false;
             //send the skill cooldown to the skill user
-            client.Enqueue(ServerPackets.Cooldown(true, skill.Slot, (uint)skill.Cooldown.TotalSeconds));
-            //send the skill user and all nearby users the bodyanimation
-            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, skill.BodyAnimation, 25));
-            foreach (User u in nearbyCreatures.OfType<User>())
-                u.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, skill.BodyAnimation, 25));
+            if (obj is Skill)
+                isSkill = true;
 
-            //grab targets of skill based on function from skill type
-            List<Creature> targets = nearbyCreatures.Where(SkillTargets(client, skill.Type)).ToList();
+            client.Enqueue(ServerPackets.Cooldown(isSkill, obj.Slot, (uint)obj.Cooldown.TotalSeconds));
 
-            //for each target of the skill
-            foreach (Creature target in targets)
+            if (targets == null)
+                targets = new List<Creature>();
+
+            //refresh the client if needed
+            if (refreshClient)
+                Game.World.Refresh(client);
+
+            //refresh targets if needed
+            if (refreshTargets)
+                foreach (User u in targets.OfType<User>())
+                    Game.World.Refresh(u.Client);
+
+            //send all nearby clients the bodyanimation
+            if (obj.BodyAnimation != BodyAnimation.None)
+                foreach (User u in nearbyUsers)
+                    u.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, obj.BodyAnimation, 25));
+
+            //for each target
+            foreach(Creature c in targets)
             {
-                //apply the damage and grab the animation
-                ApplyDamage(target, amount);
-                Animation animation = new Animation(skill.EffectAnimation, target.Id, client.User.Id);
+                //get all users they can see including self
+                List<User> usersNearC = Game.World.ObjectsVisibleFrom(c, true).OfType<User>().ToList();
 
-                //if the target is a user, send them their own updated information
-                User user = target as User;
-                user?.Client.Enqueue(ServerPackets.Animation(animation));
-                user?.Client.Enqueue(ServerPackets.HealthBar(target));
-                user?.Client.SendAttributes(StatUpdateType.Vitality);
-
-                //send all nearby users this updated information as well
-                foreach (User u in World.ObjectsVisibleFrom(target).OfType<User>())
+                //if animation should be displayed
+                if (obj.EffectAnimation != Animation.None)
                 {
-                    u.Client.Enqueue(ServerPackets.Animation(animation));
-                    u.Client.Enqueue(ServerPackets.HealthBar(target));
+                    //create new animation for this target
+                    Animation newAnimation = new Animation(obj.EffectAnimation, c.Id, client.User.Id);
+
+                    //send this animation to all visible users
+                    foreach (User u in usersNearC)
+                        u.Client.Enqueue(ServerPackets.Animation(newAnimation));
+                }
+
+                //if health should be displayed
+                if (displayHealth)
+                {
+                    //update the targets vitality if theyre a user
+                    (c as User)?.Client.SendAttributes(StatUpdateType.Vitality);
+
+                    //send all visible users the target's healthbar
+                    foreach (User u in usersNearC)
+                        u.Client.Enqueue(ServerPackets.HealthBar(c));
                 }
             }
+
+            //if there are any additional special effects with the spell, display them to all users who should be able to see them
+            if (sfx != null)
+                foreach (Animation ani in sfx)
+                    foreach (User u in Game.World.ObjectsVisibleFrom(ani.TargetPoint, client.User.Map, true).OfType<User>())
+                        u.Client.Enqueue(ServerPackets.Animation(ani));
+            return;
         }
 
         internal void ApplyDamage(Creature obj, int amount)
         {
             //ac, damage, other shit
 
-            obj.CurrentHP = Utility.Clamp<uint>((int)(obj.CurrentHP + amount), 0, (int)obj.MaximumHP);
+            obj.CurrentHP = Utility.Clamp<uint>((int)(obj.CurrentHP - amount), 0, (int)obj.MaximumHP);
         }
     }
 }

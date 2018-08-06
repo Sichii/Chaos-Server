@@ -17,6 +17,8 @@ namespace Chaos
     internal struct Animation
     {
         [JsonProperty]
+        internal Point TargetPoint { get; }
+        [JsonProperty]
         internal int TargetId { get; }
         [JsonProperty]
         internal int SourceId { get; }
@@ -27,9 +29,16 @@ namespace Chaos
         [JsonProperty]
         internal ushort AnimationSpeed { get; }
 
+        public static bool operator ==(Animation ani1, Animation ani2) => ani1.Equals(ani2);
+        public static bool operator !=(Animation ani1, Animation ani2) => !ani1.Equals(ani2);
+
+        /// <summary>
+        /// Master constructor, do not use.
+        /// </summary>
         [JsonConstructor]
-        internal Animation(int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort animationSpeed)
+        internal Animation(Point targetPoint, int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort animationSpeed)
         {
+            TargetPoint = targetPoint;
             TargetId = targetId;
             SourceId = sourceId;
             TargetAnimation = targetAnimation;
@@ -37,18 +46,48 @@ namespace Chaos
             AnimationSpeed = animationSpeed;
         }
 
+        /// <summary>
+        /// Constructor for animations targeting a specific object.
+        /// </summary>
         internal Animation(ushort targetAnimation, ushort sourceAnimation, ushort speed)
-            : this(0, 0, targetAnimation, sourceAnimation, speed)
+            : this(Point.None, 0, 0, targetAnimation, sourceAnimation, speed)
         {
 
         }
 
+        /// <summary>
+        /// Constructor for a full animation targeting a specific object, taking a partial animation.
+        /// </summary>
         internal Animation(Animation animation, int targetId, int sourceId)
-            : this(targetId, sourceId, animation.TargetAnimation, animation.SourceAnimation, animation.AnimationSpeed)
+            : this(animation.TargetPoint, targetId, sourceId, animation.TargetAnimation, animation.SourceAnimation, animation.AnimationSpeed)
         {
 
         }
+
+        /// <summary>
+        /// Constructor for an animation targeting a point.
+        /// </summary>
+        internal Animation(Point targetPoint, ushort targetAnimation, ushort speed)
+            : this(targetPoint, 0, 0, targetAnimation, 0, speed)
+        {
+
+        }
+
 
         internal static Animation None => default(Animation);
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Animation))
+                return false;
+
+            Animation ani = (Animation)obj;
+            return ani.SourceAnimation == SourceAnimation &&
+                ani.TargetAnimation == TargetAnimation &&
+                ani.SourceId == SourceId &&
+                ani.TargetId == TargetId &&
+                ani.TargetPoint == TargetPoint &&
+                ani.AnimationSpeed == AnimationSpeed;
+        }
     }
 }

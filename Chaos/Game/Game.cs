@@ -119,14 +119,8 @@ namespace Chaos
                 newUser.BaseClass = BaseClass.Admin;
                 newUser.Nation = Nation.Noes;
                 newUser.Guild = World.Guilds["Chaos Team"];
-                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
-                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Item"));
-                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Male Equipment"));
-                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Test Female Equipment"));
-                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Mend"));
-                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Heal"));
-                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Srad Tut"));
-                newUser.SkillBook.AddToNextSlot(CreationEngine.CreateSkill("Test Skill 1"));
+
+                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Admin Create"));
                 newUser.Attributes.Gold += 500000000;
                 LegendMark isGm = new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow);
                 newUser.Legend.Add(isGm);
@@ -157,7 +151,7 @@ namespace Chaos
                     Point startPoint = client.User.Point;
 
                     //check if we can actually walk to the spot
-                    if (!client.User.IsAdmin && !client.User.Map.IsWalkable(client.User.Point.Offsetter(direction)))
+                    if (!client.User.IsAdmin && !client.User.Map.IsWalkable(client.User.Point.NewOffset(direction)))
                     {
                         //if no, set their location back to what it was and return
                         World.Refresh(client, true);
@@ -173,7 +167,7 @@ namespace Chaos
                     client.Enqueue(ServerPackets.ClientWalk(direction, client.User.Point));
 
                     //for all the things that will go off screen, remove them from the before list, our screen, and remove us from their screen(if theyre a user)
-                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter))
+                    foreach (VisibleObject obj in visibleBefore.Except(visibleAfter).ToList())
                     {
                         (obj as User)?.Client.Enqueue(ServerPackets.RemoveObject(client.User));
                         client.Enqueue(ServerPackets.RemoveObject(obj));
@@ -371,11 +365,10 @@ namespace Chaos
                                 client.User.DisplayData.FaceSprite = (byte)num;
                                 break;
                             case "gender":
-                                char[] str = m.Groups[2].Value.ToCharArray();
-                                str[0] = char.ToUpper(str[0]);
+                                string str = Utility.FirstUpper(m.Groups[2].Value);
 
                                 Gender newGender;
-                                if (Enum.TryParse(new string(str), out newGender))
+                                if (Enum.TryParse(str, out newGender))
                                 {
                                     client.User.Gender = newGender;
                                     client.User.DisplayData.BodySprite = newGender == Gender.Male ? BodySprite.Male : BodySprite.Female;
@@ -396,12 +389,11 @@ namespace Chaos
             
             List<VisibleObject> objects = new List<VisibleObject>();
 
-            //normal messages display to everyone in 12 spaces, shouts 25
+            //normal messages display to everyone in 13 spaces, shouts 25
             if (type == PublicMessageType.Normal)
-                objects = World.ObjectsVisibleFrom(client.User).ToList();
+                objects = World.ObjectsVisibleFrom(client.User, true).ToList();
             else
-                objects = World.ObjectsVisibleFrom(client.User, 25).ToList();
-            objects.Add(client.User);
+                objects = World.ObjectsVisibleFrom(client.User, true, 25).ToList();
 
             //for each object within range
             foreach (var obj in objects)
@@ -428,7 +420,7 @@ namespace Chaos
             }
         }
 
-        internal static void UseSpell(Client client, byte slot, int targetId, Point targetPoint)
+        internal static void UseSpell(Client client, byte slot, int targetId, Point targetPoint, string prompt)
         {
             Spell spell = client.User.SpellBook[slot];
             Creature target;
@@ -436,9 +428,9 @@ namespace Chaos
             if (spell != null && spell.CanUse && !(spell.CastLines > 0 && !client.User.IsChanting))
             {
                 if (targetId == client.User.Id)
-                    spell.Activate(client, Server, spell, client.User);
+                    spell.Activate(client, Server, spell, client.User, prompt);
                 else if (World.TryGetObject(targetId, out target, client.User.Map) && target.Point.Distance(targetPoint) < 5)
-                    spell.Activate(client, Server, spell, target);
+                    spell.Activate(client, Server, spell, target, prompt);
 
                 spell.LastUse = DateTime.UtcNow;
                 client.User.IsChanting = false;
@@ -561,9 +553,7 @@ namespace Chaos
 
         internal static void AnimateCreature(Client client, BodyAnimation animNum)
         {
-            client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, animNum, 100));
-
-            foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
+            foreach (User user in World.ObjectsVisibleFrom(client.User, true).OfType<User>())
                 user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, animNum, 100));
         }
 
@@ -954,10 +944,8 @@ namespace Chaos
                 //set hp/mp?
                 client.SendAttributes(StatUpdateType.Primary);
 
-                foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
+                foreach (User user in World.ObjectsVisibleFrom(client.User, true).OfType<User>())
                     user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
-
-                client.Enqueue(ServerPackets.DisplayUser(client.User));
             }
         }
 
@@ -1035,10 +1023,8 @@ namespace Chaos
 
         internal static void DisplayChant(Client client, string chant)
         {
-            foreach (User user in World.ObjectsVisibleFrom(client.User).OfType<User>())
+            foreach (User user in World.ObjectsVisibleFrom(client.User, true).OfType<User>())
                 user.Client.SendPublicMessage(PublicMessageType.Chant, client.User.Id, chant);
-
-            client.SendPublicMessage(PublicMessageType.Chant, client.User.Id, chant);
         }
 
         internal static void Personal(Client client, byte[] portraitData, string profileMsg)

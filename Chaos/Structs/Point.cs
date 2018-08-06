@@ -28,6 +28,7 @@ namespace Chaos
             Y = y;
         }
 
+        public static Point None => new Point(ushort.MaxValue, ushort.MaxValue);
         public static bool operator ==(Point pt1, Point pt2) => pt1.Equals(pt2);
         public static bool operator !=(Point pt1, Point pt2) => !pt1.Equals(pt2);
         internal int Distance(Point pt) => Distance(pt.X, pt.Y);
@@ -55,7 +56,7 @@ namespace Chaos
             }
         }
 
-        internal Point Offsetter(Direction direction)
+        internal Point NewOffset(Direction direction)
         {
             switch (direction)
             {
@@ -68,7 +69,7 @@ namespace Chaos
                 case Direction.West:
                     return new Point((ushort)(X - 1), Y);
                 default:
-                    return new Point(0, 0);
+                    return Point.None;
             }
         }
 

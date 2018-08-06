@@ -264,7 +264,7 @@ namespace Chaos
 
             packet.WriteByte(spell.Slot);
             packet.WriteUInt16(spell.Sprite);
-            packet.WriteByte((byte)spell.Type);
+            packet.WriteByte((byte)spell.SpellType);
             packet.WriteString8(spell.Name);
             packet.WriteString8(spell.Prompt);
             packet.WriteByte(spell.CastLines);
@@ -322,22 +322,21 @@ namespace Chaos
         {
             var packet = new ServerPacket(ServerOpCodes.Animation);
 
-            packet.WriteInt32(animation.TargetId);
-            packet.WriteInt32(animation.SourceId);
-            packet.WriteUInt16(animation.TargetAnimation);
-            packet.WriteUInt16(animation.SourceAnimation);
-            packet.WriteUInt16(animation.AnimationSpeed);
-
-            return packet;
-        }
-        internal static ServerPacket Animation(Animation animation, Point point)
-        {
-            var packet = new ServerPacket(ServerOpCodes.Animation);
-
-            packet.WriteUInt32(0U);
-            packet.WriteUInt16(animation.TargetAnimation);
-            packet.WriteUInt16(animation.AnimationSpeed);
-            packet.WritePoint16(point);
+            if (animation.TargetPoint == Point.None)
+            {
+                packet.WriteInt32(animation.TargetId);
+                packet.WriteInt32(animation.SourceId);
+                packet.WriteUInt16(animation.TargetAnimation);
+                packet.WriteUInt16(animation.SourceAnimation);
+                packet.WriteUInt16(animation.AnimationSpeed);
+            }
+            else
+            {
+                packet.WriteUInt32(0U);
+                packet.WriteUInt16(animation.TargetAnimation);
+                packet.WriteUInt16(animation.AnimationSpeed);
+                packet.WritePoint16(animation.TargetPoint);
+            }
 
             return packet;
         }

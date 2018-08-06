@@ -18,6 +18,10 @@ namespace Chaos
     internal abstract class PanelObject
     {
         [JsonProperty]
+        internal TargetsType TargetType { get; }
+        [JsonProperty]
+        internal int BaseDamage { get; }
+        [JsonProperty]
         internal byte Slot { get; set; }
         [JsonProperty]
         internal ushort Sprite { get; }
@@ -34,7 +38,8 @@ namespace Chaos
         internal OnUseDelegate Activate { get; }
         internal abstract bool CanUse { get; }
 
-        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown, Animation effectAnimation , BodyAnimation bodyAnimation = 0)
+        [JsonConstructor]
+        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown, Animation effectAnimation , TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = 0, int baseDamage = 0)
         {
             Slot = slot;
             Sprite = sprite;
@@ -42,7 +47,9 @@ namespace Chaos
             Cooldown = cooldown;
             LastUse = DateTime.MinValue;
             EffectAnimation = effectAnimation;
+            TargetType = targetType;
             BodyAnimation = bodyAnimation;
+            BaseDamage = baseDamage;
             Activate = Game.CreationEngine.GetEffect(Name);
         }
     }

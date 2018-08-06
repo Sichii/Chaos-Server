@@ -282,10 +282,16 @@ namespace Chaos
         /// </summary>
         /// <param name="vObject">Object to base from.</param>
         /// <returns></returns>
-        internal IEnumerable<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, byte distance = 13)
+        internal IEnumerable<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, bool include = false, byte distance = 13)
         {
             lock (vObject.Map.Sync)
-                return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && vObject != obj);
+                return vObject.Map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && (include ? true : vObject != obj));
+        }
+
+        internal IEnumerable<VisibleObject> ObjectsVisibleFrom(Point point, Map map, bool include = false, byte distance = 13)
+        {
+            lock (map.Sync)
+                return map.Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(point) <= distance && (include ? true : obj.Point != point));
         }
 
         /// <summary>
@@ -305,6 +311,9 @@ namespace Chaos
         /// <param name="user">The user to refresh.</param>
         internal void Refresh(Client client, bool byPassTimer = false)
         {
+            if (client == null)
+                return;
+
             if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS)
                 return;
             else

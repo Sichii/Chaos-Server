@@ -49,19 +49,19 @@ namespace Chaos
         /// Constructor for basic unusable item.
         /// </summary>
         internal Item(ItemSprite itemSprite, byte color, string name, bool stackable, int count, byte weight, bool accountBound)
-            : this(0, itemSprite, color, name, TimeSpan.Zero, EquipmentSlot.None, stackable, count, 0, 0, weight, Gender.Unisex, 0, Animation.None, BodyAnimation.None, accountBound) { }
+            : this(0, itemSprite, color, name, TimeSpan.Zero, EquipmentSlot.None, stackable, count, 0, 0, weight, Gender.Unisex, 0, Animation.None, TargetsType.None, BodyAnimation.None, 0, accountBound) { }
 
         /// <summary>
         /// Constructor for equipment.
         /// </summary>
         internal Item(ItemSprite itemSprite, byte color, string name, EquipmentSlot equipmentSlot, uint maxDurability, uint currentDurability, byte weight, Gender gender, bool accountBound)
-            : this(0, itemSprite, color, name, TimeSpan.Zero, equipmentSlot, false, 1, maxDurability, currentDurability, weight, gender, 0, Animation.None, BodyAnimation.None, accountBound) { }
+            : this(0, itemSprite, color, name, TimeSpan.Zero, equipmentSlot, false, 1, maxDurability, currentDurability, weight, gender, 0, Animation.None, TargetsType.None, BodyAnimation.None, 0, accountBound) { }
 
         /// <summary>
         /// Constructor for usable item.
         /// </summary>
-        internal Item(ItemSprite itemSprite, byte color, string name, TimeSpan cooldown, byte weight, ushort nextDialogId, Animation effectAnimation, BodyAnimation bodyAnimation, bool accountBound)
-            : this(0, itemSprite, color, name, cooldown, EquipmentSlot.None, false, 1, 0, 0, weight, Gender.Unisex, nextDialogId, effectAnimation, bodyAnimation, accountBound) { }
+        internal Item(ItemSprite itemSprite, byte color, string name, TimeSpan cooldown, byte weight, ushort nextDialogId, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage, bool accountBound)
+            : this(0, itemSprite, color, name, cooldown, EquipmentSlot.None, false, 1, 0, 0, weight, Gender.Unisex, nextDialogId, effectAnimation, targetType, bodyAnimation, baseDamage, accountBound) { }
 
         /// <summary>
         /// Master constructor.
@@ -69,8 +69,8 @@ namespace Chaos
         [JsonConstructor]
         internal Item(byte slot, ItemSprite itemSprite, byte color, string name, TimeSpan cooldown, EquipmentSlot equipmentSlot,
             bool stackable, int count, uint maxDurability, uint currentDurability, byte weight, Gender gender, ushort nextDialogId,
-            Animation effectAnimation, BodyAnimation bodyAnimation, bool accountBound)
-            :base(slot, itemSprite.InventorySprite, name, cooldown, effectAnimation, bodyAnimation)
+            Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage, bool accountBound)
+            :base(slot, itemSprite.InventorySprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
             ItemSprite = itemSprite;
             EquipmentSlot = equipmentSlot;
@@ -92,7 +92,7 @@ namespace Chaos
         /// <param name="map">Map object the ground item will be on.</param>
         /// <param name="count">Number of the item you'd like placed on the ground.</param>
         internal GroundItem GroundItem(Point point, Map map, int count) => new GroundItem(ItemSprite.OffsetSprite, point, map,
-            new Item(0, ItemSprite, Color, Name, Cooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, BodyAnimation, AccountBound));
+            new Item(0, ItemSprite, Color, Name, Cooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, TargetType, BodyAnimation, BaseDamage, AccountBound));
 
         /// <summary>
         /// Split a stackable item, update the count for the old item and return a new item object.
@@ -103,7 +103,7 @@ namespace Chaos
             if (Stackable && Count > count)
             {
                 Count -= count;
-                return new Item(0, ItemSprite, Color, Name, Cooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, BodyAnimation, AccountBound);
+                return new Item(0, ItemSprite, Color, Name, Cooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, TargetType, BodyAnimation, BaseDamage, AccountBound);
             }
 
             return null;

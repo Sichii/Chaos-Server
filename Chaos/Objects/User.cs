@@ -182,6 +182,20 @@ namespace Chaos
             return diagonals;
         }
 
+        internal List<Point> LinePoints(int degree = 1, Direction direction = Direction.Invalid)
+        {
+            Point tempPoint = Point;
+            List<Point> linePoints = new List<Point>();
+
+            for(int i = 0; i < degree; i++)
+            {
+                tempPoint.Offset(direction);
+                linePoints.Add(tempPoint);
+            }
+
+            return linePoints;
+        }
+
         internal void Save() => Client.Server.DataBase.TrySaveUser(this);
     }
 }

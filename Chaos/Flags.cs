@@ -578,19 +578,27 @@ namespace Chaos
         None = 0,
         Prompt = 1,
         Targeted = 2,
-        Prompt4 = 3,
-        Prompt3 = 4,
+        Prompt4Nums = 3,
+        Prompt3Nums = 4,
         NoTarget = 5,
-        Prompt2 = 6,
-        Prompt1 = 7,
+        Prompt2Nums = 6,
+        Prompt1Num = 7,
     }
-    internal enum SkillType : byte
+    internal enum TargetsType : byte
     {
-        Self = 0,
-        Front = 1,
-        Surround = 2,
-        Effect = 3,
+        //skills(usually)
+        None = 0,
+        Self = 1,
+        Front = 2,
+        Surround = 3,
         Cleave = 4,
+        StraightProjectile = 5,
+
+        //spells(usually)
+        Cluster1 = 252,
+        Cluster2 = 253,
+        Cluster3 = 254,
+        Screen = 255
     }
     internal enum BodyAnimation : byte
     {

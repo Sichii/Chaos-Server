@@ -69,23 +69,10 @@ namespace Chaos
         internal string ReadString()
         {
             int length = Data.Length;
-            if (Position + length > Data.Length)
-            {
-                Position--;
-                throw new EndOfStreamException();
-            }
-            for (int i = 0; i < Data.Length; i++)
-                if (Data[i] == 0)
-                {
-                    length = i;
-                    break;
-                }
 
             byte[] readData = new byte[length - Position];
             Buffer.BlockCopy(Data, Position, readData, 0, readData.Length);
-            Position = length + 1;
-            if (Position > Data.Length)
-                Position = Data.Length;
+            Position = Data.Length;
 
             return Encoding.GetEncoding(949).GetString(readData);
         }

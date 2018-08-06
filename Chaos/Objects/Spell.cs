@@ -18,7 +18,7 @@ namespace Chaos
     internal sealed class Spell : PanelObject
     {
         [JsonProperty]
-        internal SpellType Type { get; set; }
+        internal SpellType SpellType { get; set; }
         [JsonProperty]
         internal string Prompt { get; set; }
         [JsonProperty]
@@ -26,19 +26,25 @@ namespace Chaos
         internal override bool CanUse => (LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown) && 
             DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SPELL_COOLDOWN_MS;
 
-        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan cooldown, Animation effectAnimation = new Animation(), BodyAnimation bodyAnimation = 0)
-            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
+        /// <summary>
+        /// Object representing a spell ability in your spell pane.
+        /// </summary>
+        internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan cooldown, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0)
+            :base(0, sprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
-            Type = type;
+            SpellType = type;
             Prompt = prompt;
             CastLines = castLines;
         }
 
+        /// <summary>
+        /// Master constructor for spell, do not use.
+        /// </summary>
         [JsonConstructor]
-        internal Spell(byte slot, ushort sprite, string name, SpellType type, TimeSpan cooldown, string prompt, byte castlines, Animation effectAnimation, BodyAnimation bodyAnimation)
-            :base(slot, sprite, name, cooldown, effectAnimation, bodyAnimation)
+        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castlines, TimeSpan cooldown, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage)
+            :base(slot, sprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
-            Type = type;
+            SpellType = type;
             Prompt = prompt;
             CastLines = castlines;
         }
