@@ -35,24 +35,24 @@ namespace Chaos
 
 
             #region Items
-            AddItem("Admin Trinket", AdminTrinket, ItemDialog);
-            AddItem("Test Item", TestItem, NormalObj);
-            AddItem("Test Male Equipment", TestMaleEquipment, Equip);
-            AddItem("Test Female Equipment", TestFemaleEquipment, Equip);
-            AddItem("Test Weapon", TestWeapon, Equip);
+            AddItem("Admin Trinket", AdminTrinket, DialogItem);
+            AddItem("Test Item", TestItem, NormalItem);
+            AddItem("Test Male Equipment", TestMaleEquipment, EquipItem);
+            AddItem("Test Female Equipment", TestFemaleEquipment, EquipItem);
+            AddItem("Test Weapon", TestWeapon, EquipItem);
             #endregion
 
             #region Skills
-            AddSkill("Test Skill 1", TestSkill1, TestSkill1);
-            AddSkill("Cleave", Cleave, Cleave);
+            AddSkill("Test Skill 1", TestSkill1, NormalSkill);
+            AddSkill("Cleave", Cleave, NormalSkill);
             AddSkill("Reposition", Reposition, Reposition);
             AddSkill("Shoulder Charge", ShoulderCharge, ShoulderCharge);
             #endregion
 
             #region Spells
-            AddSpell("Mend", Mend, Mend);
-            AddSpell("Heal", Heal, Heal);
-            AddSpell("Srad Tut", SradTut, SradTut);
+            AddSpell("Mend", Mend, NormalSpell);
+            AddSpell("Heal", Heal, NormalSpell);
+            AddSpell("Srad Tut", SradTut, NormalSpell);
             AddSpell("Admin Create", AdminCreate, AdminCreate);
             #endregion
         }
@@ -108,8 +108,8 @@ namespace Chaos
         #endregion
 
         #region Defaults
-        private void NormalObj(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null) { }
-        private void Equip(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        private void NormalItem(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null) { }
+        private void EquipItem(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Item item = obj as Item;
 
@@ -144,10 +144,36 @@ namespace Chaos
                     user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
             }
         }
-        private void ItemDialog(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        private void DialogItem(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Item item = obj as Item;
             client.SendDialog(item, Game.Dialogs[item.NextDialogId]);
+        }
+        private void NormalSkill(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Skill skill = obj as Skill;
+            List<Creature> targets = Game.Extensions.GetTargetsFromType(client, Point.None, skill.TargetType);
+            int amount = skill.BaseDamage + client.User.Attributes.CurrentStr * 250;
+
+            foreach (Creature c in targets)
+                Game.Extensions.ApplyDamage(c, amount);
+
+            Game.Extensions.ApplyEffect(client, skill, targets, null, true, false, false);
+        }
+        private void NormalSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            List<Creature> targets = new List<Creature>() { target };
+            int amount = spell.BaseDamage < 0 ?
+                spell.BaseDamage - client.User.Attributes.CurrentInt * 500 :
+                spell.BaseDamage + client.User.Attributes.CurrentInt * 500;
+
+            targets.AddRange(Game.Extensions.GetTargetsFromType(client, target.Point, spell.TargetType));
+
+            foreach (Creature c in targets)
+                Game.Extensions.ApplyDamage(c, amount);
+
+            Game.Extensions.ApplyEffect(client, spell, targets, null, true);
         }
         #endregion
 
@@ -160,83 +186,72 @@ namespace Chaos
         #endregion
 
         #region Skills
-        private Skill TestSkill1() => new Skill(0, 78, "Test Skill 1", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
-        private void TestSkill1(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Skill skill = obj as Skill;
-            List<Creature> targets = Game.Extensions.GetTargetsFromType(client, Point.None, skill.TargetType);
-            int amount = skill.BaseDamage + client.User.Attributes.CurrentStr * 250;
-
-            foreach (Creature c in targets)
-                Game.Extensions.ApplyDamage(c, amount);
-
-            Game.Extensions.ApplyEffect(client, skill, targets, null, true, false, false);
-        }
-
-        private Skill Cleave() => new Skill(0, 16, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
-        private void Cleave(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Skill skill = obj as Skill;
-            List<Creature> targets = Game.Extensions.GetTargetsFromType(client, Point.None, skill.TargetType);
-            int amount = skill.BaseDamage + client.User.Attributes.CurrentStr * 250;
-
-            foreach (Creature c in targets)
-                Game.Extensions.ApplyDamage(c, amount);
-
-            Game.Extensions.ApplyEffect(client, skill, targets, null, true, false, false);
-        }
-
-        private Skill Reposition() => new Skill(0, 29, "Reposition", new TimeSpan(0, 0, 10), false, Animation.None, TargetsType.Front, BodyAnimation.None, 0);
+        private Skill TestSkill1() => new Skill(78, "Test Skill 1", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
+        private Skill Cleave() => new Skill(16, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
+        private Skill Reposition() => new Skill(29, "Reposition", new TimeSpan(0, 0, 10), false, Animation.None, TargetsType.Front, BodyAnimation.None, 0);
         private void Reposition(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Skill skill = obj as Skill;
-            List<Creature> targets = Game.Extensions.GetTargetsFromType(client, Point.None, skill.TargetType);
-
-            Point newPoint = target.Point.NewOffset(DirectionExtensions.Reverse(target.Direction));
-
-            if(client.User.Map.IsWalkable(newPoint) || client.User.Point == newPoint)
-            {
-                client.User.Point = newPoint;
-                client.User.Direction = target.Direction;
-            }
-
-            Game.Extensions.ApplyEffect(client, skill, targets, null, false, true);
-        }
-
-        private Skill ShoulderCharge() => new Skill(0, 49, "Shoulder Charge", new TimeSpan(0, 0, 5), false, new Animation(107, 0, 100), TargetsType.Front, BodyAnimation.None, 0);
-        private void ShoulderCharge(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Skill skill = obj as Skill;
-
-            Point newPoint = client.User.Point;
-            for (int i = 0; i < 3; i++)
-            {
-                newPoint.Offset(client.User.Direction);
-                if (client.User.Map.IsWalkable(newPoint))
-                    client.User.Point = newPoint;
-                else
-                    break;
-            }
-            List<Point> points = new List<Point>();
             List<Creature> targets = Game.Extensions.GetTargetsFromType(client, Point.None, skill.TargetType);
 
             if (targets.Count > 0)
             {
                 target = targets[0];
 
+                Point newPoint = target.Point.NewOffset(DirectionExtensions.Reverse(target.Direction));
+
+                if (client.User.Map.IsWalkable(newPoint) || client.User.Point == newPoint)
+                {
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.Map.Id, newPoint)));
+                    client.User.Direction = target.Direction;
+                }
+            }
+
+            Game.Extensions.ApplyEffect(client, skill, targets, null);
+        }
+
+        private Skill ShoulderCharge() => new Skill(49, "Shoulder Charge", new TimeSpan(0, 0, 5), false, new Animation(107, 0, 100), TargetsType.Front, BodyAnimation.None, 0);
+        private void ShoulderCharge(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Skill skill = obj as Skill;
+            Point furthestPoint = client.User.Point;
+            Point newPoint = client.User.Point;
+
+            for (int i = 0; i < 3; i++)
+            {
+                newPoint.Offset(client.User.Direction);
+                if (client.User.Map.IsWalkable(newPoint))
+                    furthestPoint = newPoint;
+                else
+                    break;
+            }
+
+            Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.Map.Id, furthestPoint)));
+
+            List<Point> points = new List<Point>();
+            List<Creature> targets = Game.Extensions.GetTargetsFromType(client, Point.None, skill.TargetType);
+
+            if (targets.Count > 0)
+            {
+                target = targets[0];
+                furthestPoint = target.Point;
+                newPoint = target.Point;
+
+
                 points.Add(target.Point);
-                Point newTargetPoint = target.Point;
                 for (int i = 0; i < 2; i++)
                 {
-                    newTargetPoint.Offset(client.User.Direction);
-                    if (target.Map.IsWalkable(newTargetPoint))
+                    newPoint.Offset(client.User.Direction);
+                    if (client.User.Map.IsWalkable(newPoint))
                     {
-                        target.Point = newTargetPoint;
-                        points.Add(newTargetPoint);
+                        furthestPoint = newPoint;
+                        points.Add(newPoint);
                     }
                     else
                         break;
                 }
+
+                Game.Extensions.WarpObj(target, new Warp(target.Location, new Location(client.User.Map.Id, furthestPoint)));
             }
 
             List<Animation> sfx = new List<Animation>();
@@ -244,45 +259,15 @@ namespace Chaos
             foreach(Point point in points)
                 sfx.Add(new Animation(point, 0, 0, 2, 0, 100));
 
-            Game.Extensions.ApplyEffect(client, skill, targets, sfx, false, true, true);
+            Game.Extensions.ApplyEffect(client, skill, targets, sfx);
         }
         #endregion
 
         #region Spells
-        private Spell Mend() => new Spell(0, 118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -10000);
-        private void Mend(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Spell spell = obj as Spell;
-            List<Creature> targets = new List<Creature>() { target };
-            int amount = spell.BaseDamage - client.User.Attributes.CurrentWis * 250;
-
-            Game.Extensions.ApplyDamage(target, amount);
-            Game.Extensions.ApplyEffect(client, spell, targets, null, true);
-        }
-
-        private Spell Heal() => new Spell(0, 21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -100000);
-        private void Heal(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Spell spell = obj as Spell;
-            List<Creature> targets = new List<Creature>() { target };
-            int amount = spell.BaseDamage - client.User.Attributes.CurrentWis * 500;
-
-            Game.Extensions.ApplyDamage(target, amount);
-            Game.Extensions.ApplyEffect(client, spell, targets, null, true);
-        }
-
-        private Spell SradTut() => new Spell(0, 21, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(158, 0, 100), TargetsType.None, BodyAnimation.HandsUp, 100000);
-        private void SradTut(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Spell spell = obj as Spell;
-            List<Creature> targets = new List<Creature>() { target };
-            int amount = spell.BaseDamage + client.User.Attributes.CurrentInt * 500;
-
-            Game.Extensions.ApplyDamage(target, amount);
-            Game.Extensions.ApplyEffect(client, spell, targets, null, true);
-        }
-
-        private Spell AdminCreate() => new Spell(0, 139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, BodyAnimation.HandsUp2, 0);
+        private Spell Mend() => new Spell(118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -10000);
+        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -100000);
+        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(217, 0, 100), TargetsType.None, BodyAnimation.HandsUp, 100000);
+        private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, BodyAnimation.HandsUp2, 0);
         private void AdminCreate(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Spell spell = obj as Spell;

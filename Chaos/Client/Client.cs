@@ -20,13 +20,14 @@ namespace Chaos
     internal sealed class Client
     {
         internal readonly object Sync = new object();
-        private bool Connected = false;
-        private byte[] ClientBuffer = new byte[4096];
-        private List<byte> FullClientBuffer = new List<byte>();
-        private Queue<ServerPacket> SendQueue = new Queue<ServerPacket>();
-        private Queue<ClientPacket> ProcessQueue = new Queue<ClientPacket>();
+        private byte[] ClientBuffer;
+        private List<byte> FullClientBuffer;
+        private Queue<ServerPacket> SendQueue;
+        private Queue<ClientPacket> ProcessQueue;
+        private bool Connected;
         private byte ServerCount;
         internal byte StepCount;
+
         private ClientPackets.Handler[] PacketHandlers { get; }
         private Thread ClientThread { get; }
         internal IPAddress IpAddress { get; }
@@ -51,6 +52,13 @@ namespace Chaos
         /// <param name="socket">The user's socket.</param>
         internal Client(Server server, Socket socket)
         {
+            Connected = false;
+            ClientBuffer = new byte[4096];
+            FullClientBuffer = new List<byte>();
+            SendQueue = new Queue<ServerPacket>();
+            ProcessQueue = new Queue<ClientPacket>();
+
+
             Server = server;
             ServerType = ServerType.Lobby;
             ClientSocket = socket;
@@ -73,7 +81,10 @@ namespace Chaos
         internal void Connect()
         {
             Connected = true;
-            ClientThread.Start();
+
+            //when we receive data, copy the readable data to the client buffer and call endreceive
+            ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
+
             if (ServerType != ServerType.World)
             {
                 Enqueue(ServerPackets.AcceptConnection());
@@ -81,8 +92,7 @@ namespace Chaos
             }
 
             Server.WriteLog($@"Connection accepted", this);
-            //when we receive data, copy the readable data to the client buffer and call endreceive
-            ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), null);
+            ClientThread.Start();
         }
 
         /// <summary>
@@ -114,42 +124,39 @@ namespace Chaos
         /// <param name="ar">Result of the async operation.</param>
         private void ClientEndReceive(IAsyncResult ar)
         {
-            lock (Sync)
+            //get the length of the packet
+            int length = ClientSocket.EndReceive(ar);
+            //if we receive a packet with no length, disconnect the client, something went wrong
+            if (length == 0)
+                Disconnect();
+            else
             {
-                //get the length of the packet
-                int length = ClientSocket.EndReceive(ar);
-                //if we receive a packet with no length, disconnect the client, something went wrong
-                if (length == 0)
-                    Disconnect();
-                else
+                //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
+                byte[] data = new byte[length];
+                Buffer.BlockCopy(ClientBuffer, 0, data, 0, length);
+                //Array.Copy(ClientBuffer, data, length);
+                //copy that array into the full client buffer, so we can deal with the information in a properly sized list
+                FullClientBuffer.AddRange(data);
+                while (FullClientBuffer.Count > 3)
                 {
-                    //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
-                    byte[] data = new byte[length];
-                    Buffer.BlockCopy(ClientBuffer, 0, data, 0, length);
-                    //Array.Copy(ClientBuffer, data, length);
-                    //copy that array into the full client buffer, so we can deal with the information in a properly sized list
-                    FullClientBuffer.AddRange(data);
-                    while (FullClientBuffer.Count > 3)
+                    //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
+                    int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
+                    if (count <= FullClientBuffer.Count)
                     {
-                        //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
-                        int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
-                        if (count <= FullClientBuffer.Count)
-                        {
-                            //create a clientpacket out of the readable data
-                            ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
-                            //remove the data from the fullclientbuffer
-                            FullClientBuffer.RemoveRange(0, count);
-                            //send it off to be processed by the server
-                            lock (ProcessQueue)
-                                ProcessQueue.Enqueue(clientPacket);
-                        }
-                        else
-                            break;
+                        //create a clientpacket out of the readable data
+                        ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
+                        //remove the data from the fullclientbuffer
+                        FullClientBuffer.RemoveRange(0, count);
+                        //send it off to be processed by the server
+                        lock (ProcessQueue)
+                            ProcessQueue.Enqueue(clientPacket);
                     }
+                    else
+                        break;
                 }
             }
             if (Connected) //begin checking for received info again
-                ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), null);
+                ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
         }
 
         /// <summary>

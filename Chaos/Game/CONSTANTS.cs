@@ -33,5 +33,7 @@ namespace Chaos
         internal const int GLOBAL_SPELL_COOLDOWN_MS = 250;
         internal const int REFRESH_DELAY_MS = 1000;
         internal static Location STARTING_LOCATION = new Location(8984, 10, 10);
+        internal static Location DEATH_LOCATION = new Location(5031, 15, 15);
+        //stat to damage / health / etc modifiers will be added here later.
     }
 }

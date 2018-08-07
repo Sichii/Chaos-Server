@@ -63,8 +63,6 @@ namespace Chaos
         [JsonProperty]
         internal bool IsAdmin { get; set; }
         [JsonProperty]
-        internal bool IsAlive { get; set; }
-        [JsonProperty]
         internal Gender Gender { get; set; }
         internal bool IsChanting { get; set; }
         internal bool IsGrouped => Group != null;
@@ -74,6 +72,7 @@ namespace Chaos
         internal override byte HealthPercent => Utility.Clamp<byte>((int)((CurrentHP * 100) / MaximumHP), 0, (int)MaximumHP);
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
+        internal bool DeathDisplayed { get; set; }
 
         internal User(Gender gender, string name, Point point, Map map, Direction direction)
             : base(name, 0, CreatureType.User, point, map, direction)
@@ -98,15 +97,15 @@ namespace Chaos
             Spouse = string.Empty;
             Titles = new List<string>();
             IsAdmin = false;
-            IsAlive = true;
             IsChanting = false;
             LastClicked = DateTime.MinValue;
             MailBox = new Board();
+            DeathDisplayed = false;
         }
 
         [JsonConstructor]
         internal User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
-               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, Gender gender, bool isAdmin, bool isAlive)
+               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, Gender gender, bool isAdmin)
             : base(name, 0, CreatureType.User, point, map)
         {
             MailBox = mailBox;
@@ -134,9 +133,9 @@ namespace Chaos
             Group = null;
             DisplayData.User = this;
             IsAdmin = isAdmin;
-            IsAlive = isAlive;
             IsChanting = false;
             LastClicked = DateTime.MinValue;
+            DeathDisplayed = !IsAlive;
         }
 
         internal void Resync(Client client)

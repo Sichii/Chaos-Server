@@ -18,30 +18,34 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Chaos
 {
     internal sealed class Server
     {
-        internal static readonly object Sync = new object();
+        internal static object Sync = new object();
         internal static int NextClientId = 1000000;
         internal static int NextId = 1;
+        internal static bool Running;
         internal static string[] Admins = new string[] { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend", "Doms", "Pill" };
 
         internal static readonly object SyncWrite = new object();
         internal static FileStream LogFile;
         internal static StreamWriter LogWriter;
+        internal static DateTime Today;
 
         internal IPEndPoint ClientEndPoint;
         internal IPEndPoint ServerEndPoint;
         internal IPEndPoint LoopbackEndPoint;
         internal Socket ServerSocket { get; set; }
+
         internal byte[] Table { get; }
         internal uint TableCheckSum { get; }
         internal byte[] LoginMessage { get; }
         internal uint LoginMessageCheckSum { get; }
         internal ConcurrentDictionary<Socket, Client> Clients { get; }
-        internal IEnumerable<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World);
+        internal IEnumerable<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World && client.User != null);
         internal DataBase DataBase { get; }
         internal GameTime ServerTime => GameTime.Now;
         internal LightLevel LightLevel => ServerTime.TimeOfDay;
@@ -56,6 +60,7 @@ namespace Chaos
             LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
             LogWriter = new StreamWriter(LogFile);
             LogWriter.AutoFlush = true;
+            Today = DateTime.MinValue;
 
             WriteLog("Initializing server...");
 
@@ -94,8 +99,15 @@ namespace Chaos
                 MetaFiles.Add(MetaFile.Load(new FileInfo(name).Name));
         }
 
+        ~Server()
+        {
+            Running = false;
+            LogFile.Dispose();
+        }
+
         internal void Start()
         {
+            Running = true;
             Game.Set(this);
 
             //display dns ip for others to connect to
@@ -110,6 +122,8 @@ namespace Chaos
 
         internal void EndAccept(IAsyncResult ar)
         {
+            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
+
             //create the user, and add them to the userlist
             Client newClient = new Client(this, ServerSocket.EndAccept(ar));
 
@@ -117,8 +131,6 @@ namespace Chaos
 
             if (Clients.TryAdd(newClient.ClientSocket, newClient))
                 newClient.Connect();
-
-            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
         }
 
         internal static void WriteLog(string message, Client client = null)
@@ -126,17 +138,21 @@ namespace Chaos
             lock (SyncWrite)
             {
                 if (client == null)
-                    message = $@"[{DateTime.Now.ToString("HH:mm")}] Server: {message}";
+                    message = $@"[{DateTime.UtcNow.ToString("HH:mm")}] Server: {message}";
                 else
-                    message = $@"[{DateTime.Now.ToString("HH:mm")}] {client.IpAddress}: {message}";
+                    message = $@"[{DateTime.UtcNow.ToString("HH:mm")}] {client.IpAddress}: {message}";
 
                 Console.WriteLine(message);
 
-                if (!File.Exists($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log"))
+                if (DateTime.UtcNow.Day != Today.Day)
                 {
-                    LogFile.Dispose();
-                    LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
-                    LogWriter = new StreamWriter(LogFile);
+                    if (!File.Exists($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log"))
+                    {
+                        LogFile.Dispose();
+                        LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
+                        LogWriter = new StreamWriter(LogFile);
+                    }
+                    Today = DateTime.UtcNow;
                 }
 
                 LogWriter.Write($@"{message}{Environment.NewLine}");

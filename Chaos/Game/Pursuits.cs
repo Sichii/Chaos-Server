@@ -45,13 +45,7 @@ namespace Chaos
 
         private static void ReviveSelf(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            if(!client.User.IsAlive)
-            {
-                client.User.Attributes.CurrentHP = client.User.Attributes.MaximumHP;
-                client.User.Attributes.CurrentMP = client.User.Attributes.MaximumMP;
-                client.User.IsAlive = true;
-                Game.World.Refresh(client, true);
-            }
+            Game.Extensions.ReviveUser(client.User);
         }
 
         private static void ReviveUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
@@ -59,7 +53,7 @@ namespace Chaos
             User user;
 
             if (server.TryGetUser(userInput, out user))
-                Game.Extensions.ReviveUser(user.Client, user);
+                Game.Extensions.ReviveUser(user);
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
@@ -70,9 +64,9 @@ namespace Chaos
             User user;
 
             if (Location.TryParse(userInput, out warpLoc))
-                Game.World.WarpUser(client.User, new Warp(client.User.Location, warpLoc));
+                Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, warpLoc));
             else if (server.TryGetUser(userInput, out user))
-                Game.World.WarpUser(client.User, new Warp(client.User.Location, user.Location));
+                Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, user.Location));
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid format. ""mapId xCord yCord"" or ""characterName""");
         }
@@ -82,7 +76,7 @@ namespace Chaos
             User user;
 
             if (server.TryGetUser(userInput, out user))
-                Game.World.WarpUser(user, new Warp(user.Location, client.User.Location));
+                Game.Extensions.WarpObj(user, new Warp(user.Location, client.User.Location));
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
@@ -92,7 +86,7 @@ namespace Chaos
             IEnumerable<User> allUsers = server.WorldClients.Where(c => c.User != client.User).Select(c => c.User);
 
             foreach (User user in allUsers)
-                Game.World.WarpUser(user, new Warp(user.Location, client.User.Location));
+                Game.Extensions.WarpObj(user, new Warp(user.Location, client.User.Location));
         }
 
         private static void KillUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
@@ -100,7 +94,7 @@ namespace Chaos
             User user;
 
             if (server.TryGetUser(userInput, out user))
-                Game.Extensions.KillUser(user.Client, user);
+                Game.Extensions.ApplyDamage(user, int.MaxValue, true);
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
@@ -117,6 +111,7 @@ namespace Chaos
 
             client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Cleave"));
             client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Reposition"));
+            client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Shoulder Charge"));
             //add more skills
 
 
@@ -168,7 +163,7 @@ namespace Chaos
                     client.Enqueue(ServerPackets.RemoveSkill(skill.Slot));
 
             foreach (Spell spell in client.User.SpellBook.Where(s => s != null).ToList())
-                if (client.User.SpellBook.TryRemove(spell.Slot))
+                if (spell.Name != "Admin Create" && client.User.SpellBook.TryRemove(spell.Slot))
                     client.Enqueue(ServerPackets.RemoveSpell(spell.Slot));
         }
         #endregion
