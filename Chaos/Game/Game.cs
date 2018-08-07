@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 
 namespace Chaos
 {
@@ -27,6 +28,7 @@ namespace Chaos
         internal static Server Server { get; set; }
         internal static World World { get; set; }
         internal static Extensions Extensions { get; set; }
+        internal static Thread StateThread;
 
         internal static void Set(Server server)
         {
@@ -40,8 +42,32 @@ namespace Chaos
             Dialogs = new Dialogs();
             Extensions = new Extensions(Server, World);
             World.Populate();
+            StateThread = new Thread(new ThreadStart(CheckStates));
+            StateThread.Start();
         }
 
+        internal static void CheckStates()
+        {
+            while(Server.Running)
+            {
+                lock (Server.Sync)
+                {
+                    foreach (User user in Server.WorldClients.Select(c => c.User))
+                        if (!user.IsAlive && !user.DeathDisplayed)
+                            Extensions.KillUser(user);
+
+                    foreach (Map map in World.Maps.Values)
+                        lock (map.Sync)
+                            foreach (Monster monster in map.Objects.OfType<Monster>())
+                                if (!monster.IsAlive)
+                                    Extensions.KillMonster(monster);
+                }
+
+                Thread.Sleep(250);
+            }
+        }
+
+        #region Packet Processing
         internal static void JoinServer(Client client)
         {
             client.Enqueue(ServerPackets.ConnectionInfo(Server.TableCheckSum, client.Crypto.Seed, client.Crypto.Key));
@@ -50,7 +76,7 @@ namespace Chaos
         internal static void CreateChar1(Client client, string name, string password)
         {
             //checks if the name is 4-12 characters straight, if not... checks if there's a string 7-12 units long that has a space surrounced by at least 3 chars on each side.
-            if (!Regex.Match(name, @"[a-zA-Z]{4,12}").Success && (!Regex.Match(name, @"[a-z A-Z]{7, 12}").Success || !Regex.Match(name, @"[a-zA-Z]{3} [a-zA-Z]{3}").Success))
+            if (!Regex.Match(name, @"(:?^[a-zA-Z]{4,}$|[a-zA-Z]{3,} ?[a-zA-Z]{3,})").Success || name.Length > 12)
                 client.SendLoginMessage(LoginMessageType.Message, "Name must be 4-12 characters long, or a space surrounded by at least 3 characters on each side, up to 12 total.");
             //checks if the password is 4-8 units long
             else if (!Regex.Match(password, @".{4,8}").Success)
@@ -154,7 +180,7 @@ namespace Chaos
                     if (!client.User.IsAdmin && !client.User.Map.IsWalkable(client.User.Point.NewOffset(direction)))
                     {
                         //if no, set their location back to what it was and return
-                        World.Refresh(client, true);
+                        Extensions.Refresh(client, true);
                         return;
                     }
 
@@ -199,7 +225,7 @@ namespace Chaos
                     //check collisions with warps
                     MapObject mapObj;
                     if (World.TryGetObject(client.User.Point, out mapObj, client.User.Map) && mapObj is Warp)
-                        World.WarpUser(client.User, mapObj as Warp);
+                        Extensions.WarpObj(client.User, mapObj as Warp);
 
                     //check collisions with worldmaps
                     WorldMap worldMap;
@@ -376,7 +402,7 @@ namespace Chaos
                                 break;
                         }
 
-                        World.Refresh(client, true);
+                        Extensions.Refresh(client, true);
                         return;
                     }
 
@@ -425,16 +451,21 @@ namespace Chaos
             Spell spell = client.User.SpellBook[slot];
             Creature target;
 
-            if (spell != null && spell.CanUse && !(spell.CastLines > 0 && !client.User.IsChanting))
+            if (spell != null && spell.CanUse && client.User.IsAlive && !(spell.CastLines > 0 && !client.User.IsChanting))
             {
                 if (targetId == client.User.Id)
                     spell.Activate(client, Server, spell, client.User, prompt);
-                else if (World.TryGetObject(targetId, out target, client.User.Map) && target.Point.Distance(targetPoint) < 5)
+                else if (World.TryGetObject(targetId, out target, client.User.Map) && target.Point.Distance(targetPoint) < 5 && target.IsAlive)
                     spell.Activate(client, Server, spell, target, prompt);
+                else
+                {
+                    client.User.IsChanting = false;
+                    return;
+                }
 
                 spell.LastUse = DateTime.UtcNow;
-                client.User.IsChanting = false;
             }
+            client.User.IsChanting = false;
         }
 
         internal static void JoinClient(Client client, byte seed, byte[] key, string name, uint id)
@@ -747,33 +778,53 @@ namespace Chaos
                 case Pane.Inventory:
                     if (!client.User.Inventory.TrySwap(origSlot, endSlot))
                         return;
+
+                    //if it succeeds, update the user's panels
+                    client.Enqueue(ServerPackets.RemoveItem(origSlot));
+                    client.Enqueue(ServerPackets.RemoveItem(endSlot));
+
+                    //check for null, incase we were simply moving an obj to an already empty slot
+                    if (client.User.Inventory[origSlot] != null)
+                        client.Enqueue(ServerPackets.AddItem(client.User.Inventory[origSlot]));
+                    if (client.User.Inventory[endSlot] != null)
+                        client.Enqueue(ServerPackets.AddItem(client.User.Inventory[endSlot]));
                     break;
                 case Pane.SkillBook:
                     if (!client.User.SkillBook.TrySwap(origSlot, endSlot))
                         return;
+
+                    //if it succeeds, update the user's panels
+                    client.Enqueue(ServerPackets.RemoveSkill(origSlot));
+                    client.Enqueue(ServerPackets.RemoveSkill(endSlot));
+
+                    //check for null, incase we were simply moving an obj to an already empty slot
+                    if (client.User.SkillBook[origSlot] != null)
+                        client.Enqueue(ServerPackets.AddSkill(client.User.SkillBook[origSlot]));
+                    if (client.User.SkillBook[endSlot] != null)
+                        client.Enqueue(ServerPackets.AddSkill(client.User.SkillBook[endSlot]));
                     break;
                 case Pane.SpellBook:
                     if (!client.User.SpellBook.TrySwap(origSlot, endSlot))
                         return;
+
+                    //if it succeeds, update the user's panels
+                    client.Enqueue(ServerPackets.RemoveSpell(origSlot));
+                    client.Enqueue(ServerPackets.RemoveSpell(endSlot));
+
+                    //check for null, incase we were simply moving an obj to an already empty slot
+                    if (client.User.SpellBook[origSlot] != null)
+                        client.Enqueue(ServerPackets.AddSpell(client.User.SpellBook[origSlot]));
+                    if (client.User.SpellBook[endSlot] != null)
+                        client.Enqueue(ServerPackets.AddSpell(client.User.SpellBook[endSlot]));
                     break;
                 default:
                     return;
             }
-
-            //if it succeeds, update the user's panels
-            client.Enqueue(ServerPackets.RemoveItem(origSlot));
-            client.Enqueue(ServerPackets.RemoveItem(endSlot));
-
-            //check for null, incase we were simply moving an item to an already empty slot
-            if (client.User.Inventory[origSlot] != null)
-                client.Enqueue(ServerPackets.AddItem(client.User.Inventory[origSlot]));
-            if (client.User.Inventory[endSlot] != null)
-                client.Enqueue(ServerPackets.AddItem(client.User.Inventory[endSlot]));
         }
 
         internal static void RequestRefresh(Client client)
         {
-            World.Refresh(client);
+            Extensions.Refresh(client);
         }
 
         internal static void RequestPursuit(Client client, GameObjectType objType, int objId, PursuitIds pursuitId, byte[] args)
@@ -850,7 +901,7 @@ namespace Chaos
         {
             Skill skill = client.User.SkillBook[slot];
 
-            if (skill != null && skill.CanUse)
+            if (skill != null && skill.CanUse && client.User.IsAlive)
             {
                 skill.Activate(client, Server, skill);
                 skill.LastUse = DateTime.UtcNow;
@@ -1065,5 +1116,6 @@ namespace Chaos
         {
             client.Enqueue(ServerPackets.Metafile(all, Server.MetaFiles.ToArray()));
         }
+        #endregion
     }
 }

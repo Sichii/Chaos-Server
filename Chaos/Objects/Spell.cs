@@ -30,11 +30,8 @@ namespace Chaos
         /// Object representing a spell ability in your spell pane.
         /// </summary>
         internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan cooldown, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0)
-            :base(0, sprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+            :this(0, sprite, name, type, prompt, castLines, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
-            SpellType = type;
-            Prompt = prompt;
-            CastLines = castLines;
         }
 
         /// <summary>

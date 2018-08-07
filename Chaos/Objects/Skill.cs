@@ -19,7 +19,6 @@ namespace Chaos
     {
         [JsonProperty]
         internal bool IsBasic { get; }
-
         internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN_MS;
 
         /// <summary>

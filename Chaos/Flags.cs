@@ -594,6 +594,9 @@ namespace Chaos
         Cleave = 4,
         StraightProjectile = 5,
 
+
+
+
         //spells(usually)
         Cluster1 = 252,
         Cluster2 = 253,
@@ -689,6 +692,7 @@ namespace Chaos
         Normal = 0,
         WalkThrough = 1,
         Merchant = 2,
+        WhiteSquare = 3,
         User = 4,
     }
     internal enum GroupRequestType : byte

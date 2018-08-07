@@ -20,9 +20,12 @@ namespace Chaos
         internal Direction Direction { get; set; }
         [JsonProperty]
         internal CreatureType Type { get; }
+        [JsonProperty]
+        internal bool IsAlive => CurrentHP > 0;
         internal abstract byte HealthPercent { get; }
         internal abstract uint MaximumHP { get; }
         internal abstract uint CurrentHP { get; set; }
+
 
         [JsonConstructor]
         internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South)

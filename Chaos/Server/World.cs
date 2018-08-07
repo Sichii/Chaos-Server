@@ -237,47 +237,6 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Moves a user from one map to another
-        /// </summary>
-        /// <param name="user">The user to warp from and to a position/map.</param>
-        /// <param name="warp">The warp the user is using to warp.</param>
-        /// <param name="user">Whether or not they are using a worldMap to warp.</param>
-        internal void WarpUser(User user, Warp warp, bool worldMap = false)
-        {
-            if(warp.Location == user.Location && Maps.ContainsKey(warp.TargetMapId))
-            {
-                if (!user.IsAdmin && Maps[warp.TargetMapId].IsWall(warp.TargetPoint))
-                {
-                    Point nearestPoint = new Point(ushort.MaxValue, ushort.MaxValue);
-                    int distance = int.MaxValue;
-                    ushort x = Utility.Clamp<ushort>(warp.TargetPoint.X - 25, 0, Maps[warp.TargetMapId].SizeX);
-                    int width = Math.Min(x + 50, Maps[warp.TargetMapId].SizeX);
-                    ushort y = Utility.Clamp<ushort>(warp.TargetPoint.Y - 25, 0, Maps[warp.TargetMapId].SizeY);
-                    int height = Math.Min(y + 50, Maps[warp.TargetMapId].SizeY);
-
-                    //search up to 2500 tiles for a non wall
-                    for (; x < width; x++)
-                        for (; y < height; y++)
-                        {
-                            Point newPoint = new Point(x, y);
-                            if (!Maps[warp.TargetMapId].IsWall(newPoint))
-                            {
-                                distance = warp.TargetPoint.Distance(newPoint);
-                                nearestPoint = newPoint;
-                            }
-                        }
-
-                    warp = new Warp(warp.Location, new Location(warp.TargetMapId, nearestPoint));
-                }
-
-                if (!worldMap)
-                    RemoveObjectFromMap(user);
-
-                AddObjectToMap(user, warp.TargetLocation);
-            }
-        }
-
-        /// <summary>
         /// Gets all objects the given object can see
         /// </summary>
         /// <param name="vObject">Object to base from.</param>
@@ -303,45 +262,6 @@ namespace Chaos
         {
             lock (user.Map.Sync)
                 return user.Map.Doors.Values.Where(door => user.WithinRange(door.Point));
-        }
-
-        /// <summary>
-        /// Resends all the current information for the given user.
-        /// </summary>
-        /// <param name="user">The user to refresh.</param>
-        internal void Refresh(Client client, bool byPassTimer = false)
-        {
-            if (client == null)
-                return;
-
-            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS)
-                return;
-            else
-                client.LastRefresh = DateTime.UtcNow;
-
-            lock(client.User.Map.Sync)
-            {
-                client.Enqueue(ServerPackets.MapInfo(client.User.Map));
-                client.Enqueue(ServerPackets.Location(client.User.Point));
-                client.SendAttributes(StatUpdateType.Full);
-                List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
-
-                //get all objects that would be visible to this object and send this user to them / send them to this user
-                foreach (VisibleObject obj in ObjectsVisibleFrom(client.User))
-                    if (obj is User)
-                    {
-                        User user = obj as User;
-                        client.Enqueue(ServerPackets.DisplayUser(user));
-                        user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
-                    }
-                    else
-                        itemMonsterToSend.Add(obj);
-
-                client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));
-                client.Enqueue(ServerPackets.MapLoadComplete());
-                client.Enqueue(ServerPackets.DisplayUser(client.User));
-                client.Enqueue(ServerPackets.RefreshResponse());
-            }
         }
 
         /// <summary>
