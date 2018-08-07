@@ -246,3 +246,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 PATH.txt
+Chaos/Resources/PATH.txt

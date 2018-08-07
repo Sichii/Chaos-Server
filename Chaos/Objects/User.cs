@@ -73,6 +73,8 @@ namespace Chaos
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
         internal bool DeathDisplayed { get; set; }
+        internal int BlinkCount { get; set; }
+        internal Location BlinkSpot { get; set; }
 
         internal User(Gender gender, string name, Point point, Map map, Direction direction)
             : base(name, 0, CreatureType.User, point, map, direction)
