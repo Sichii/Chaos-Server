@@ -53,6 +53,8 @@ namespace Chaos
             AddSpell("Mend", Mend, NormalSpell);
             AddSpell("Heal", Heal, NormalSpell);
             AddSpell("Srad Tut", SradTut, NormalSpell);
+            AddSpell("Blink", Blink, Blink);
+            AddSpell("Return Home", ReturnHome, ReturnHome);
             AddSpell("Admin Create", AdminCreate, AdminCreate);
             #endregion
         }
@@ -267,6 +269,60 @@ namespace Chaos
         private Spell Mend() => new Spell(118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -10000);
         private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -100000);
         private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(217, 0, 100), TargetsType.None, BodyAnimation.HandsUp, 100000);
+        private Spell Blink() => new Spell(164, "Blink", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 0), new Animation(91, 0, 100), TargetsType.None, BodyAnimation.WizardCast, 0);
+
+        private void Blink(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            List<Creature> targets = new List<Creature>() { target };
+
+            int blinkCount = client.User.BlinkCount;
+
+            switch (client.User.BlinkCount)
+            {
+                case 0:
+                    client.User.BlinkCount++;
+                    client.User.BlinkSpot = client.User.Location;
+                    break;
+                case 1:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.BlinkSpot.MapId, client.User.BlinkSpot.Point)));
+                    client.User.BlinkCount = 0;
+                    break;
+            }
+            Game.Extensions.ApplyEffect(client, spell, targets, null);
+        }
+        private Spell ReturnHome() => new Spell(56, "Return Home", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 1), new Animation(91, 0, 100), TargetsType.None, BodyAnimation.WizardCast, 0);
+        private void ReturnHome(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            List<Creature> targets = new List<Creature>() { target };
+
+            switch (client.User.Nation)
+            {
+                case Nation.None:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.NO_NATION_LOCATION.MapId, CONSTANTS.STARTING_LOCATION.Point)));
+                    break;
+                case Nation.Suomi:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.SUOMI_LOCATION.MapId, CONSTANTS.SUOMI_LOCATION.Point)));
+                    break;
+                case Nation.Loures:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.LOURES_LOCATION.MapId, CONSTANTS.LOURES_LOCATION.Point)));
+                    break;
+                case Nation.Mileth:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.MILETH_LOCATION.MapId, CONSTANTS.MILETH_LOCATION.Point)));
+                    break;
+                case Nation.Tagor:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.TAGOR_LOCATION.MapId, CONSTANTS.TAGOR_LOCATION.Point)));
+                    break;
+                case Nation.Rucesion:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.RUCESION_LOCATION.MapId, CONSTANTS.RUCESION_LOCATION.Point)));
+                    break;
+                case Nation.Noes:
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(CONSTANTS.NOES_LOCATION.MapId, CONSTANTS.NOES_LOCATION.Point)));
+                    break;
+            }
+            Game.Extensions.ApplyEffect(client, spell, targets, null);
+        }
         private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, BodyAnimation.HandsUp2, 0);
         private void AdminCreate(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {

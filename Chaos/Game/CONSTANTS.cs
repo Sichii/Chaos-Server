@@ -34,6 +34,14 @@ namespace Chaos
         internal const int REFRESH_DELAY_MS = 1000;
         internal static Location STARTING_LOCATION = new Location(8984, 10, 10);
         internal static Location DEATH_LOCATION = new Location(5031, 15, 15);
+        //nation locations
+        internal static Location NO_NATION_LOCATION = new Location(8984, 10, 10);
+        internal static Location SUOMI_LOCATION = new Location(8984, 10, 10);
+        internal static Location LOURES_LOCATION = new Location(8984, 10, 10);
+        internal static Location MILETH_LOCATION = new Location(8984, 10, 10);
+        internal static Location TAGOR_LOCATION = new Location(8984, 10, 10);
+        internal static Location RUCESION_LOCATION = new Location(8984, 10, 10);
+        internal static Location NOES_LOCATION = new Location(8984, 10, 10);
         //stat to damage / health / etc modifiers will be added here later.
     }
 }
