@@ -22,13 +22,15 @@ namespace Chaos
         [JsonProperty]
         internal int BaseDamage { get; }
         [JsonProperty]
+        internal TimeSpan BaseCooldown { get; }
+        [JsonProperty]
         internal byte Slot { get; set; }
         [JsonProperty]
         internal ushort Sprite { get; }
         [JsonProperty]
         internal string Name { get; }
         [JsonProperty]
-        internal TimeSpan Cooldown { get; }
+        internal float CooldownReduction { get; set; }
         [JsonProperty]
         internal DateTime LastUse { get; set; }
         [JsonProperty]
@@ -36,15 +38,16 @@ namespace Chaos
         [JsonProperty]
         internal BodyAnimation BodyAnimation { get; set; }
         internal OnUseDelegate Activate { get; }
-        internal abstract bool CanUse { get; }
+        internal TimeSpan Cooldown => new TimeSpan(0, 0, 0, 0, (int)(BaseCooldown.TotalMilliseconds * Utility.Clamp<double>(1 - CooldownReduction, 0, 1)));
+        internal virtual bool CanUse => LastUse == DateTime.MinValue || BaseCooldown.TotalMilliseconds == 0 || DateTime.UtcNow.Subtract(LastUse) >= Cooldown;
 
         [JsonConstructor]
-        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan cooldown, Animation effectAnimation , TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = 0, int baseDamage = 0)
+        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan baseCooldown, Animation effectAnimation , TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = 0, int baseDamage = 0)
         {
             Slot = slot;
             Sprite = sprite;
             Name = name;
-            Cooldown = cooldown;
+            BaseCooldown = baseCooldown;
             LastUse = DateTime.MinValue;
             EffectAnimation = effectAnimation;
             TargetType = targetType;

@@ -37,7 +37,7 @@ namespace Chaos
             //disable casting
             //death stuff
 
-            user.DeathDisplayed = true;
+            user.AddFlag(UserState.DeathDisplayed);
             Game.Extensions.WarpObj(user, new Warp(user.Location, CONSTANTS.DEATH_LOCATION));
         }
 
@@ -59,7 +59,7 @@ namespace Chaos
         {
             user.Attributes.CurrentHP = user.Attributes.MaximumHP;
             user.Attributes.CurrentMP = user.Attributes.MaximumMP;
-            user.DeathDisplayed = false;
+            user.RemoveFlag(UserState.DeathDisplayed);
             Refresh(user.Client, true);
         }
 
@@ -230,7 +230,7 @@ namespace Chaos
                 //ac, damage, other shit
                 //damage additions based on stats will be moved here later probably
 
-                obj.CurrentHP = Utility.Clamp<uint>((int)(obj.CurrentHP - amount), 0, (int)obj.MaximumHP);
+                obj.CurrentHP = Utility.Clamp<uint>(obj.CurrentHP - amount, 0, (int)obj.MaximumHP);
             }
         }
 
