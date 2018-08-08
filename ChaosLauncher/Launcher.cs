@@ -39,7 +39,7 @@ namespace ChaosLauncher
 #if DEBUG
                 IPAddress.Loopback;
 #else
-                Dns.GetHostEntry(Chaos.Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 #endif
 
             IPAddress clientIP = null;
@@ -55,7 +55,7 @@ namespace ChaosLauncher
                 //create the process
                 SafeNativeMethods.CreateProcess(
 #if DEBUG
-                Chaos.Paths.DarkAgesExe
+                Paths.DarkAgesExe
 #else
                 @"Darkages.exe"
 #endif
@@ -95,21 +95,6 @@ namespace ChaosLauncher
                 memory.Position = 0x57A7D9;
                 memory.WriteByte(0xEB);
 
-                //if the option to inject dawnd.dll is checked
-                if (injectDawndCbox.Checked)
-                {
-                    //get a handle for access
-                    IntPtr accessHnd = SafeNativeMethods.OpenProcess(ProcessAccess.All, true, (uint)proc.Id);
-                    //use access handle to inject dawnd.dll
-                    InjectDLL(accessHnd,
-#if DEBUG
-                    $@"{Chaos.Paths.DarkAgesDir}dawnd.dll"
-#else
-                    "dawnd.dll"
-#endif
-                    );
-                }
-
                 //resume process
                 memory.Position = 0x6F3CA4;
                 SafeNativeMethods.ResumeThread(procInfo.ThreadHandle);
@@ -118,59 +103,6 @@ namespace ChaosLauncher
             //let process render it's window before we change the title
             while (proc.MainWindowHandle == IntPtr.Zero) { }
             SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos");
-        }
-
-        private void InjectDLL(IntPtr processHandle, string dllName)
-        {
-            //lla
-            byte[] lib = new byte[] { 65, 121, 114, 97, 114, 98, 105, 76, 100, 97, 111, 76 };
-
-            IntPtr outStuff;
-
-            //length of string containing the DLL file name +1 byte padding
-            int dllNameLength = dllName.Length + 1;
-            //allocate memory within the virtual address space of the target process
-            IntPtr processMemoryBase = SafeNativeMethods.VirtualAllocEx(processHandle, (IntPtr)null, (UIntPtr)dllNameLength, 0x1000, 0x40);
-            //write DLL file name to allocated memory in target process
-            SafeNativeMethods.WriteProcessMemory(processHandle, processMemoryBase, dllName, (UIntPtr)dllNameLength, out outStuff);
-            //function pointer "Injector"
-            UIntPtr moduleAddress = SafeNativeMethods.GetProcAddress(SafeNativeMethods.GetModuleHandle("kernel32.dll"), Encoding.ASCII.GetString(lib.Reverse().ToArray()));
-
-            if (moduleAddress == null)
-            {
-                //invalid address
-                MessageBox.Show(this, "Invalid module address.");
-                return;
-            }
-
-            //create thread in target process, and store handle
-            IntPtr threadHandle = SafeNativeMethods.CreateRemoteThread(processHandle, (IntPtr)null, UIntPtr.Zero, moduleAddress, processMemoryBase, 0, out outStuff);
-            //make sure thread handle is valid
-            if (threadHandle == null)
-            {
-                //invalid thread handle
-                MessageBox.Show(this, "Invalid thread handle.");
-                return;
-            }
-            //time-out is 5 seconds...
-            WaitEventResult result = (WaitEventResult)SafeNativeMethods.WaitForSingleObject(threadHandle, 5000);
-            //check whether thread timed out...
-            if (result != WaitEventResult.Signaled)
-            {
-                //thread timed out...
-                MessageBox.Show(this, "Thread timed out.");
-                //make sure thread handle is valid before closing... prevents crashes.
-                if (threadHandle != null)
-                    SafeNativeMethods.CloseHandle(threadHandle);
-                return;
-            }
-            //clear up allocated space ( Allocmem )
-            SafeNativeMethods.VirtualFreeEx(processHandle, processMemoryBase, UIntPtr.Zero, 0x8000);
-            //make sure thread handle is valid before closing... prevents crashes.
-            if (threadHandle != null)
-                SafeNativeMethods.CloseHandle(threadHandle);
-            //return succeeded
-            return;
         }
     }
 }

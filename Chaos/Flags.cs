@@ -165,7 +165,7 @@ namespace Chaos
         None = 0,
         IsChanting = 1,
         DeathDisplayed = 2,
-        UsedBlink = 4
+        UsedBlink = 4,
         //add more user states here, double each time
     }
     [Flags]

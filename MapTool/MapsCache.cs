@@ -178,11 +178,11 @@ namespace ChaosTool
                     writer.Write((ushort)map.Warps.Count);
                     foreach (Chaos.Warp warp in map.Warps.Values)
                     {
-                        writer.Write(warp.SourceX);
-                        writer.Write(warp.SourceY);
+                        writer.Write((byte)warp.SourceX);
+                        writer.Write((byte)warp.SourceY);
                         writer.Write(warp.TargetMapId);
-                        writer.Write(warp.TargetX);
-                        writer.Write(warp.TargetY);
+                        writer.Write((byte)warp.TargetX);
+                        writer.Write((byte)warp.TargetY);
                     }
 
                     //write worldmaps for this map

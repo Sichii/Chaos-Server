@@ -40,22 +40,8 @@ namespace ChaosLauncher
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Launcher));
-            this.injectDawndCbox = new System.Windows.Forms.CheckBox();
             this.launchBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // injectDawndCbox
-            // 
-            this.injectDawndCbox.AutoSize = true;
-            this.injectDawndCbox.BackColor = System.Drawing.Color.White;
-            this.injectDawndCbox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.injectDawndCbox.ForeColor = System.Drawing.Color.Black;
-            this.injectDawndCbox.Location = new System.Drawing.Point(98, 60);
-            this.injectDawndCbox.Name = "injectDawndCbox";
-            this.injectDawndCbox.Size = new System.Drawing.Size(86, 17);
-            this.injectDawndCbox.TabIndex = 0;
-            this.injectDawndCbox.Text = "Inject Dawnd";
-            this.injectDawndCbox.UseVisualStyleBackColor = false;
             // 
             // launchBtn
             // 
@@ -82,18 +68,15 @@ namespace ChaosLauncher
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(287, 188);
             this.Controls.Add(this.launchBtn);
-            this.Controls.Add(this.injectDawndCbox);
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Launcher";
             this.Text = "Launcher";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.Button launchBtn;
-        internal System.Windows.Forms.CheckBox injectDawndCbox;
     }
 }

@@ -46,6 +46,19 @@ namespace ChaosTool
         private CheckBox pvpCbox;
         private Button changeBtn;
         private Button deleteMapBtn;
+        private Button changeWarpBtn;
+        private Button addWarpBtn;
+        private Button deleteWarpBtn;
+        private NumericUpDown targetIDNum;
+        private Label TargetIDLbl;
+        private NumericUpDown targetYNum;
+        private Label targetYLbl;
+        private NumericUpDown targetXNum;
+        private Label targetXLbl;
+        private NumericUpDown sourceYNum;
+        private Label sourceYLbl;
+        private NumericUpDown sourceXNum;
+        private Label sourceXLbl;
         internal TreeView WorldMapTree;
         internal MapsCache MapsCache { get; }
 
@@ -98,6 +111,19 @@ namespace ChaosTool
             this.sizeXNum = new System.Windows.Forms.NumericUpDown();
             this.mapIdNum = new System.Windows.Forms.NumericUpDown();
             this.addWarpGbox = new System.Windows.Forms.GroupBox();
+            this.changeWarpBtn = new System.Windows.Forms.Button();
+            this.addWarpBtn = new System.Windows.Forms.Button();
+            this.deleteWarpBtn = new System.Windows.Forms.Button();
+            this.targetIDNum = new System.Windows.Forms.NumericUpDown();
+            this.TargetIDLbl = new System.Windows.Forms.Label();
+            this.targetYNum = new System.Windows.Forms.NumericUpDown();
+            this.targetYLbl = new System.Windows.Forms.Label();
+            this.targetXNum = new System.Windows.Forms.NumericUpDown();
+            this.targetXLbl = new System.Windows.Forms.Label();
+            this.sourceYNum = new System.Windows.Forms.NumericUpDown();
+            this.sourceYLbl = new System.Windows.Forms.Label();
+            this.sourceXNum = new System.Windows.Forms.NumericUpDown();
+            this.sourceXLbl = new System.Windows.Forms.Label();
             this.addWorldMapGbox = new System.Windows.Forms.GroupBox();
             this.addDoorGbox = new System.Windows.Forms.GroupBox();
             this.mainTabControl.SuspendLayout();
@@ -108,6 +134,12 @@ namespace ChaosTool
             ((System.ComponentModel.ISupportInitialize)(this.sizeYNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sizeXNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mapIdNum)).BeginInit();
+            this.addWarpGbox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.targetIDNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sourceYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sourceXNum)).BeginInit();
             this.SuspendLayout();
             // 
             // MapTree
@@ -120,6 +152,7 @@ namespace ChaosTool
             this.MapTree.Name = "MapTree";
             this.MapTree.Size = new System.Drawing.Size(418, 482);
             this.MapTree.TabIndex = 0;
+            this.MapTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseDoubleClick);
             // 
             // mainTabControl
             // 
@@ -182,7 +215,7 @@ namespace ChaosTool
             // mapIdLbl
             // 
             this.mapIdLbl.AutoSize = true;
-            this.mapIdLbl.Location = new System.Drawing.Point(20, 25);
+            this.mapIdLbl.Location = new System.Drawing.Point(29, 29);
             this.mapIdLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mapIdLbl.Name = "mapIdLbl";
             this.mapIdLbl.Size = new System.Drawing.Size(27, 16);
@@ -192,7 +225,7 @@ namespace ChaosTool
             // mapSizeXLbl
             // 
             this.mapSizeXLbl.AutoSize = true;
-            this.mapSizeXLbl.Location = new System.Drawing.Point(20, 57);
+            this.mapSizeXLbl.Location = new System.Drawing.Point(8, 57);
             this.mapSizeXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mapSizeXLbl.Name = "mapSizeXLbl";
             this.mapSizeXLbl.Size = new System.Drawing.Size(48, 16);
@@ -202,7 +235,7 @@ namespace ChaosTool
             // mapSizeYLbl
             // 
             this.mapSizeYLbl.AutoSize = true;
-            this.mapSizeYLbl.Location = new System.Drawing.Point(20, 91);
+            this.mapSizeYLbl.Location = new System.Drawing.Point(8, 89);
             this.mapSizeYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mapSizeYLbl.Name = "mapSizeYLbl";
             this.mapSizeYLbl.Size = new System.Drawing.Size(49, 16);
@@ -212,7 +245,7 @@ namespace ChaosTool
             // mapFlagsLbl
             // 
             this.mapFlagsLbl.AutoSize = true;
-            this.mapFlagsLbl.Location = new System.Drawing.Point(153, 53);
+            this.mapFlagsLbl.Location = new System.Drawing.Point(153, 57);
             this.mapFlagsLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mapFlagsLbl.Name = "mapFlagsLbl";
             this.mapFlagsLbl.Size = new System.Drawing.Size(48, 16);
@@ -232,7 +265,7 @@ namespace ChaosTool
             // mapMusicLbl
             // 
             this.mapMusicLbl.AutoSize = true;
-            this.mapMusicLbl.Location = new System.Drawing.Point(153, 87);
+            this.mapMusicLbl.Location = new System.Drawing.Point(152, 91);
             this.mapMusicLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.mapMusicLbl.Name = "mapMusicLbl";
             this.mapMusicLbl.Size = new System.Drawing.Size(49, 16);
@@ -276,11 +309,11 @@ namespace ChaosTool
             this.deleteMapBtn.AutoSize = true;
             this.deleteMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.deleteMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.deleteMapBtn.Location = new System.Drawing.Point(389, 95);
+            this.deleteMapBtn.Location = new System.Drawing.Point(528, 27);
             this.deleteMapBtn.Name = "deleteMapBtn";
-            this.deleteMapBtn.Size = new System.Drawing.Size(81, 28);
+            this.deleteMapBtn.Size = new System.Drawing.Size(117, 28);
             this.deleteMapBtn.TabIndex = 29;
-            this.deleteMapBtn.Text = "Delete(ID)";
+            this.deleteMapBtn.Text = "Delete Selected";
             this.deleteMapBtn.UseVisualStyleBackColor = true;
             this.deleteMapBtn.Click += new System.EventHandler(this.deleteMapBtn_Click);
             // 
@@ -289,11 +322,11 @@ namespace ChaosTool
             this.changeBtn.AutoSize = true;
             this.changeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.changeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.changeBtn.Location = new System.Drawing.Point(476, 95);
+            this.changeBtn.Location = new System.Drawing.Point(521, 61);
             this.changeBtn.Name = "changeBtn";
-            this.changeBtn.Size = new System.Drawing.Size(88, 28);
+            this.changeBtn.Size = new System.Drawing.Size(124, 28);
             this.changeBtn.TabIndex = 28;
-            this.changeBtn.Text = "Change(ID)";
+            this.changeBtn.Text = "Change Selected";
             this.changeBtn.UseVisualStyleBackColor = true;
             this.changeBtn.Click += new System.EventHandler(this.changeBtn_Click);
             // 
@@ -333,7 +366,7 @@ namespace ChaosTool
             // flagsSumLbl
             // 
             this.flagsSumLbl.AutoSize = true;
-            this.flagsSumLbl.Location = new System.Drawing.Point(198, 53);
+            this.flagsSumLbl.Location = new System.Drawing.Point(198, 57);
             this.flagsSumLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.flagsSumLbl.Name = "flagsSumLbl";
             this.flagsSumLbl.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -390,7 +423,7 @@ namespace ChaosTool
             // 
             this.musicNum.BackColor = System.Drawing.Color.White;
             this.musicNum.ForeColor = System.Drawing.Color.Black;
-            this.musicNum.Location = new System.Drawing.Point(198, 85);
+            this.musicNum.Location = new System.Drawing.Point(201, 89);
             this.musicNum.Maximum = new decimal(new int[] {
             127,
             0,
@@ -415,7 +448,7 @@ namespace ChaosTool
             // 
             this.sizeYNum.BackColor = System.Drawing.Color.White;
             this.sizeYNum.ForeColor = System.Drawing.Color.Black;
-            this.sizeYNum.Location = new System.Drawing.Point(65, 88);
+            this.sizeYNum.Location = new System.Drawing.Point(64, 87);
             this.sizeYNum.Maximum = new decimal(new int[] {
             255,
             0,
@@ -440,7 +473,7 @@ namespace ChaosTool
             // 
             this.sizeXNum.BackColor = System.Drawing.Color.White;
             this.sizeXNum.ForeColor = System.Drawing.Color.Black;
-            this.sizeXNum.Location = new System.Drawing.Point(65, 54);
+            this.sizeXNum.Location = new System.Drawing.Point(63, 55);
             this.sizeXNum.Maximum = new decimal(new int[] {
             255,
             0,
@@ -465,7 +498,7 @@ namespace ChaosTool
             // 
             this.mapIdNum.BackColor = System.Drawing.Color.White;
             this.mapIdNum.ForeColor = System.Drawing.Color.Black;
-            this.mapIdNum.Location = new System.Drawing.Point(51, 22);
+            this.mapIdNum.Location = new System.Drawing.Point(63, 27);
             this.mapIdNum.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -488,6 +521,19 @@ namespace ChaosTool
             // 
             // addWarpGbox
             // 
+            this.addWarpGbox.Controls.Add(this.changeWarpBtn);
+            this.addWarpGbox.Controls.Add(this.addWarpBtn);
+            this.addWarpGbox.Controls.Add(this.deleteWarpBtn);
+            this.addWarpGbox.Controls.Add(this.targetIDNum);
+            this.addWarpGbox.Controls.Add(this.TargetIDLbl);
+            this.addWarpGbox.Controls.Add(this.targetYNum);
+            this.addWarpGbox.Controls.Add(this.targetYLbl);
+            this.addWarpGbox.Controls.Add(this.targetXNum);
+            this.addWarpGbox.Controls.Add(this.targetXLbl);
+            this.addWarpGbox.Controls.Add(this.sourceYNum);
+            this.addWarpGbox.Controls.Add(this.sourceYLbl);
+            this.addWarpGbox.Controls.Add(this.sourceXNum);
+            this.addWarpGbox.Controls.Add(this.sourceXLbl);
             this.addWarpGbox.Dock = System.Windows.Forms.DockStyle.Top;
             this.addWarpGbox.Location = new System.Drawing.Point(434, 130);
             this.addWarpGbox.Name = "addWarpGbox";
@@ -495,6 +541,200 @@ namespace ChaosTool
             this.addWarpGbox.TabIndex = 15;
             this.addWarpGbox.TabStop = false;
             this.addWarpGbox.Text = "Add Warp";
+            // 
+            // changeWarpBtn
+            // 
+            this.changeWarpBtn.AutoSize = true;
+            this.changeWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.changeWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.changeWarpBtn.Location = new System.Drawing.Point(516, 62);
+            this.changeWarpBtn.Name = "changeWarpBtn";
+            this.changeWarpBtn.Size = new System.Drawing.Size(124, 28);
+            this.changeWarpBtn.TabIndex = 30;
+            this.changeWarpBtn.Text = "Change Selected";
+            this.changeWarpBtn.UseVisualStyleBackColor = true;
+            this.changeWarpBtn.Click += new System.EventHandler(this.changeWarpBtn_Click);
+            // 
+            // addWarpBtn
+            // 
+            this.addWarpBtn.AutoSize = true;
+            this.addWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.addWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.addWarpBtn.Location = new System.Drawing.Point(458, 96);
+            this.addWarpBtn.Name = "addWarpBtn";
+            this.addWarpBtn.Size = new System.Drawing.Size(182, 28);
+            this.addWarpBtn.TabIndex = 30;
+            this.addWarpBtn.Text = "Add Warp to Selected Map";
+            this.addWarpBtn.UseVisualStyleBackColor = true;
+            this.addWarpBtn.Click += new System.EventHandler(this.addWarpBtn_Click);
+            // 
+            // deleteWarpBtn
+            // 
+            this.deleteWarpBtn.AutoSize = true;
+            this.deleteWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.deleteWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.deleteWarpBtn.Location = new System.Drawing.Point(523, 28);
+            this.deleteWarpBtn.Name = "deleteWarpBtn";
+            this.deleteWarpBtn.Size = new System.Drawing.Size(117, 28);
+            this.deleteWarpBtn.TabIndex = 30;
+            this.deleteWarpBtn.Text = "Delete Selected";
+            this.deleteWarpBtn.UseVisualStyleBackColor = true;
+            this.deleteWarpBtn.Click += new System.EventHandler(this.deleteWarpBtn_Click);
+            // 
+            // targetIDNum
+            // 
+            this.targetIDNum.BackColor = System.Drawing.Color.White;
+            this.targetIDNum.ForeColor = System.Drawing.Color.Black;
+            this.targetIDNum.Location = new System.Drawing.Point(218, 86);
+            this.targetIDNum.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.targetIDNum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.targetIDNum.Name = "targetIDNum";
+            this.targetIDNum.Size = new System.Drawing.Size(60, 22);
+            this.targetIDNum.TabIndex = 38;
+            this.targetIDNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.targetIDNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // TargetIDLbl
+            // 
+            this.TargetIDLbl.AutoSize = true;
+            this.TargetIDLbl.Location = new System.Drawing.Point(147, 88);
+            this.TargetIDLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.TargetIDLbl.Name = "TargetIDLbl";
+            this.TargetIDLbl.Size = new System.Drawing.Size(64, 16);
+            this.TargetIDLbl.TabIndex = 37;
+            this.TargetIDLbl.Text = "TargetID:";
+            // 
+            // targetYNum
+            // 
+            this.targetYNum.BackColor = System.Drawing.Color.White;
+            this.targetYNum.ForeColor = System.Drawing.Color.Black;
+            this.targetYNum.Location = new System.Drawing.Point(218, 58);
+            this.targetYNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.targetYNum.Name = "targetYNum";
+            this.targetYNum.Size = new System.Drawing.Size(44, 22);
+            this.targetYNum.TabIndex = 36;
+            this.targetYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.targetYNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // targetYLbl
+            // 
+            this.targetYLbl.AutoSize = true;
+            this.targetYLbl.Location = new System.Drawing.Point(151, 60);
+            this.targetYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.targetYLbl.Name = "targetYLbl";
+            this.targetYLbl.Size = new System.Drawing.Size(60, 16);
+            this.targetYLbl.TabIndex = 35;
+            this.targetYLbl.Text = "TargetY:";
+            // 
+            // targetXNum
+            // 
+            this.targetXNum.BackColor = System.Drawing.Color.White;
+            this.targetXNum.ForeColor = System.Drawing.Color.Black;
+            this.targetXNum.Location = new System.Drawing.Point(217, 28);
+            this.targetXNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.targetXNum.Name = "targetXNum";
+            this.targetXNum.Size = new System.Drawing.Size(44, 22);
+            this.targetXNum.TabIndex = 34;
+            this.targetXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.targetXNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // targetXLbl
+            // 
+            this.targetXLbl.AutoSize = true;
+            this.targetXLbl.Location = new System.Drawing.Point(151, 30);
+            this.targetXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.targetXLbl.Name = "targetXLbl";
+            this.targetXLbl.Size = new System.Drawing.Size(59, 16);
+            this.targetXLbl.TabIndex = 33;
+            this.targetXLbl.Text = "TargetX:";
+            // 
+            // sourceYNum
+            // 
+            this.sourceYNum.BackColor = System.Drawing.Color.White;
+            this.sourceYNum.ForeColor = System.Drawing.Color.Black;
+            this.sourceYNum.Location = new System.Drawing.Point(89, 58);
+            this.sourceYNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.sourceYNum.Name = "sourceYNum";
+            this.sourceYNum.Size = new System.Drawing.Size(44, 22);
+            this.sourceYNum.TabIndex = 32;
+            this.sourceYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.sourceYNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // sourceYLbl
+            // 
+            this.sourceYLbl.AutoSize = true;
+            this.sourceYLbl.Location = new System.Drawing.Point(20, 60);
+            this.sourceYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.sourceYLbl.Name = "sourceYLbl";
+            this.sourceYLbl.Size = new System.Drawing.Size(63, 16);
+            this.sourceYLbl.TabIndex = 31;
+            this.sourceYLbl.Text = "SourceY:";
+            // 
+            // sourceXNum
+            // 
+            this.sourceXNum.BackColor = System.Drawing.Color.White;
+            this.sourceXNum.ForeColor = System.Drawing.Color.Black;
+            this.sourceXNum.Location = new System.Drawing.Point(89, 28);
+            this.sourceXNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.sourceXNum.Name = "sourceXNum";
+            this.sourceXNum.Size = new System.Drawing.Size(44, 22);
+            this.sourceXNum.TabIndex = 30;
+            this.sourceXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.sourceXNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // sourceXLbl
+            // 
+            this.sourceXLbl.AutoSize = true;
+            this.sourceXLbl.Location = new System.Drawing.Point(20, 30);
+            this.sourceXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.sourceXLbl.Name = "sourceXLbl";
+            this.sourceXLbl.Size = new System.Drawing.Size(62, 16);
+            this.sourceXLbl.TabIndex = 9;
+            this.sourceXLbl.Text = "SourceX:";
             // 
             // addWorldMapGbox
             // 
@@ -543,6 +783,13 @@ namespace ChaosTool
             ((System.ComponentModel.ISupportInitialize)(this.sizeYNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.sizeXNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mapIdNum)).EndInit();
+            this.addWarpGbox.ResumeLayout(false);
+            this.addWarpGbox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.targetIDNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.targetXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sourceYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sourceXNum)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -643,14 +890,14 @@ namespace ChaosTool
             {
                 string message = "";
                 string mapName = mapNameTbox.Text;
-                ushort mapId = decimal.ToUInt16(mapIdNum.Value);
+                ushort mapId = (MapTree.SelectedNode as MapTreeNode)?.Map.Id ?? 0;
                 byte sizeX = decimal.ToByte(sizeXNum.Value);
                 byte sizeY = decimal.ToByte(sizeYNum.Value);
                 sbyte music = decimal.ToSByte(musicNum.Value);
                 uint flags = 0;
 
                 if (!MapsCache.Maps.ContainsKey(mapId))
-                    MessageBox.Show("Map doesn't exist. (Check ID)", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 else
                 {
                     message = $@"Change map info related to Map ID: {mapId}? Doors and warps will stay.";
@@ -683,10 +930,10 @@ namespace ChaosTool
             try
             {
                 string message = "";
-                ushort mapId = decimal.ToUInt16(mapIdNum.Value);
+                ushort mapId = (MapTree.SelectedNode as MapTreeNode)?.Map.Id ?? 0;
 
                 if (!MapsCache.Maps.ContainsKey(mapId))
-                    MessageBox.Show("Map doesn't exist. (Check ID)", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 else
                 {
                     message = $@"Delete Map ID: {mapId}? This will destroy doors, warps, and the info.";
@@ -701,6 +948,74 @@ namespace ChaosTool
             catch
             {
                 MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void addWarpBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Chaos.Map map = (MapTree.SelectedNode as MapTreeNode)?.Map;
+                Chaos.Warp warp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, map.Id, (ushort)targetIDNum.Value);
+
+                if (map == null)
+                    MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else if (map.Warps.ContainsKey(warp.Point))
+                    MessageBox.Show("Map already contains warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else
+                    map.Warps.Add(warp.Point, warp);
+
+                MapsCache.Save();
+                LoadTree();
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void changeWarpBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Chaos.Warp oldWarp = (MapTree.SelectedNode as WarpTreeNode)?.Warp;
+                Chaos.Warp newWarp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, oldWarp.MapId, (ushort)targetIDNum.Value);
+                Chaos.Map map = MapsCache.Maps[oldWarp.MapId];
+
+                if (map == null)
+                    MessageBox.Show("Map doesn't exist, please select a valid warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else if (!map.Warps.ContainsKey(oldWarp.Point))
+                    MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else
+                {
+                    map.Warps.Remove(oldWarp.Point);
+                    map.Warps.Add(newWarp.Point, newWarp);
+
+                    MapsCache.Save();
+                    LoadTree();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void deleteWarpBtn_Click(object sender, EventArgs e)
+        {
+            Chaos.Warp warp = (MapTree.SelectedNode as WarpTreeNode)?.Warp;
+            Chaos.Map map = MapsCache.Maps[warp.MapId];
+
+            if (map == null)
+                MessageBox.Show("Map doesn't exist, please select a valid warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else if (!map.Warps.ContainsKey(warp.Point))
+                MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+            {
+                map.Warps.Remove(warp.Point);
+
+                MapsCache.Save();
+                LoadTree();
             }
         }
 
@@ -732,6 +1047,35 @@ namespace ChaosTool
         ~MainForm()
         {
             MapsCache.Save();
+        }
+
+        private void MapTree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if(e.Node is MapTreeNode)
+            {
+                Chaos.Map map = (e.Node as MapTreeNode).Map;
+
+                mapIdNum.Value = map.Id;
+                sizeXNum.Value = map.SizeX;
+                sizeYNum.Value = map.SizeY;
+                mapNameTbox.Text = map.Name;
+                flagsSumLbl.Text = map.Flags.ToString();
+                musicNum.Value = map.Music;
+            }
+            else if(e.Node is WarpTreeNode)
+            {
+                Chaos.Warp warp = (e.Node as WarpTreeNode).Warp;
+
+                sourceXNum.Value = warp.SourceX;
+                sourceYNum.Value = warp.SourceY;
+                targetXNum.Value = warp.TargetX;
+                targetYNum.Value = warp.TargetY;
+                targetIDNum.Value = warp.TargetMapId;
+            }
+            else
+            {
+                //others later
+            }
         }
     }
 }

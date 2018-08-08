@@ -37,6 +37,8 @@ namespace Chaos
         [JsonProperty]
         internal Attributes Attributes { get; set; }
         [JsonProperty]
+        internal EffectsBar EffectsBar { get; set; }
+        [JsonProperty]
         internal Legend Legend { get; set; }
         [JsonProperty]
         internal Personal Personal { get; set; }
@@ -66,11 +68,13 @@ namespace Chaos
         internal Gender Gender { get; set; }
         internal bool IsGrouped => Group != null;
         internal Exchange Exchange { get; set; }
-        internal DateTime LastClicked { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
         internal override byte HealthPercent => Utility.Clamp<byte>((CurrentHP * 100) / MaximumHP, 0, (int)MaximumHP);
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
+
+        internal Dictionary<(int, Point, ushort), DateTime> AnimationHistory { get; set; }
+        internal DateTime LastClicked { get; set; }
 
         //user flags, use user.hasflag, addflag, removeflag
         [JsonProperty]
@@ -123,6 +127,8 @@ namespace Chaos
                 DisplayData.User = this;
             IsAdmin = isAdmin;
             LastClicked = DateTime.MinValue;
+
+            AnimationHistory = new Dictionary<(int, Point, ushort), DateTime>();
 
             State = state;
             Status = status;

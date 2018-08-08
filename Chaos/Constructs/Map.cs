@@ -23,18 +23,21 @@ namespace Chaos
         internal readonly object Sync = new object();
         internal ConcurrentDictionary<int, WorldObject> Objects { get; set; }
         public ConcurrentDictionary<Point, Door> Doors { get; set; }
+        internal Dictionary<Point, Tile> Tiles { get; }
+        public Dictionary<Point, Warp> Warps { get; set; }
+        internal ConcurrentDictionary<Point, Effect> WorldEffects { get; set; }
+        public Dictionary<Point, WorldMap> WorldMaps { get; set; }
         [JsonProperty]
         public ushort Id { get; }
         public byte SizeX { get; set; }
         public byte SizeY { get; set; }
         internal byte[] Data { get; private set; }
         internal ushort CheckSum { get; private set; }
-        internal Dictionary<Point, Tile> Tiles { get; }
+
         public MapFlags Flags { get; set; }
         public string Name { get; set; }
         public sbyte Music { get; set; }
-        public Dictionary<Point, Warp> Warps { get; set; }
-        public Dictionary<Point, WorldMap> WorldMaps { get; set; }
+
 
         /// <summary>
         /// Object representing a map.
@@ -51,6 +54,7 @@ namespace Chaos
             WorldMaps = new Dictionary<Point, WorldMap>();
             Objects = new ConcurrentDictionary<int, WorldObject>();
             Doors = new ConcurrentDictionary<Point, Door>();
+            WorldEffects = new ConcurrentDictionary<Point, Effect>();
         }
 
         [JsonConstructor]

@@ -28,7 +28,8 @@ namespace Chaos
         internal static Server Server { get; set; }
         internal static World World { get; set; }
         internal static Extensions Extensions { get; set; }
-        internal static Thread StateThread;
+        private static Thread StateThread;
+        private static Thread EffectsThread;
 
         internal static void Set(Server server)
         {
@@ -44,6 +45,8 @@ namespace Chaos
             World.Populate();
             StateThread = new Thread(new ThreadStart(CheckStates));
             StateThread.Start();
+            EffectsThread = new Thread(new ThreadStart(PersistentEffects));
+            EffectsThread.Start();
         }
 
         internal static void CheckStates()
@@ -62,6 +65,24 @@ namespace Chaos
                                 if (!monster.IsAlive)
                                     Extensions.KillMonster(monster);
                 }
+
+                Thread.Sleep(250);
+            }
+        }
+
+        internal static void PersistentEffects()
+        {
+            while (Server.Running)
+            {
+                foreach (User user in Server.WorldClients.Select(c => c.User))
+                    foreach (Effect effect in World.EffectsVisibleFrom(user))
+                    {
+                        (int, Point, ushort) index = (0, effect.Animation.TargetPoint, effect.Animation.TargetAnimation);
+                        if (!user.AnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(user.AnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay)
+                            user.Client.SendAnimation(effect.Animation);
+                    }
+
+                //add user persistent effect here later
 
                 Thread.Sleep(250);
             }
@@ -223,9 +244,9 @@ namespace Chaos
                         client.Enqueue(ServerPackets.DisplayItemMonster(itemMonster.ToArray()));
 
                     //check collisions with warps
-                    MapObject mapObj;
-                    if (World.TryGetObject(client.User.Point, out mapObj, client.User.Map) && mapObj is Warp)
-                        Extensions.WarpObj(client.User, mapObj as Warp);
+                    Warp warp;
+                    if (World.TryGetObject(client.User.Point, out warp, client.User.Map))
+                        Extensions.WarpObj(client.User, warp);
 
                     //check collisions with worldmaps
                     WorldMap worldMap;

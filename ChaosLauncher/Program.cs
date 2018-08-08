@@ -10,8 +10,6 @@
 // ****************************************************************************
 
 using System;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace ChaosLauncher
@@ -21,17 +19,18 @@ namespace ChaosLauncher
         [STAThread]
         static void Main(string[] args)
         {
-            if (!File.Exists("dawnd.dll"))
-                using (MemoryStream data = new MemoryStream())
-                using (Stream dawnd = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChaosLauncher.dawnd.dll"))
-                {
-                    dawnd.CopyTo(data);
-                    File.WriteAllBytes("dawnd.dll", data.ToArray());
-                }
-
-            Chaos.Program.SetPaths();
+            SetPaths();
 
             Application.Run(new Launcher());
+        }
+
+        public static void SetPaths()
+        {
+            Paths.BaseDir = Properties.Resources.PATH[0].Trim('\n', '\r');
+            Paths.HostName = Properties.Resources.PATH[1].Trim('\n', '\r', ' ');
+
+            if (!Paths.BaseDir.EndsWith(@"\"))
+                Paths.BaseDir += @"\";
         }
     }
 }

@@ -279,6 +279,11 @@ namespace Chaos
         /// <param name="sourceId">ID of the source of the message.</param>
         internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(ServerPackets.PublicChat(messageType, sourceId, message));
 
+        internal void SendAnimation(Animation animation)
+        {
+            User.AnimationHistory[(animation.TargetId, animation.TargetPoint, animation.TargetAnimation)] = DateTime.UtcNow;
+            Enqueue(ServerPackets.Animation(animation));
+        }
         /// <summary>
         /// Sends a persuit menu to the client. Sets necessary client variables.
         /// </summary>

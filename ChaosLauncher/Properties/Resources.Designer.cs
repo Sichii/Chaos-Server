@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Chaos.Properties {
+namespace ChaosLauncher.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Chaos.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Chaos.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ChaosLauncher.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -67,16 +67,6 @@ namespace Chaos.Properties {
         internal static string[] PATH {
             get {
                 return ResourceManager.GetString("PATH", resourceCulture).Split('\n');
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] sotp {
-            get {
-                object obj = ResourceManager.GetObject("sotp", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

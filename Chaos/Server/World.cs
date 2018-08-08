@@ -106,6 +106,7 @@ namespace Chaos
                         byte targetY = reader.ReadByte();
                         Warp warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
                         newMap.Warps[new Point(sourceX, sourceY)] = warp;
+                        newMap.WorldEffects.TryAdd(warp.Point, new Effect(new Animation(warp.Point, 96, 250), 4500));
                     }
 
                     //load worldmaps for this map
@@ -181,6 +182,8 @@ namespace Chaos
                     user.Client.Enqueue(ServerPackets.MapChangeComplete());    //send it mapchangecomplete
                     user.Client.Enqueue(ServerPackets.MapLoadComplete());      //send it maploadcomplete
                     user.Client.Enqueue(ServerPackets.DisplayUser(user));      //send it itself
+
+                    user.AnimationHistory.Clear();
                 }
                 else //if this object isnt a user
                     foreach (User u2s in usersToSend)
@@ -262,6 +265,12 @@ namespace Chaos
         {
             lock (user.Map.Sync)
                 return user.Map.Doors.Values.Where(door => user.WithinRange(door.Point));
+        }
+
+        internal IEnumerable<Effect> EffectsVisibleFrom(User user)
+        {
+            lock (user.Map.Sync)
+                return user.Map.WorldEffects.Values.Where(e => e.Animation.TargetPoint.Distance(user.Point) < 13);
         }
 
         /// <summary>
