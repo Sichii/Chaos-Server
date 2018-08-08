@@ -18,12 +18,12 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class GameTime
     {
-        private long Remainder { get; }
-        internal ushort Year { get; }
-        internal byte Month { get; }
-        internal byte Day { get; }
-        internal byte Hour { get; }
-        internal byte Minute { get; }
+        private DateTime DateTime { get; }
+        internal int Year => DateTime.Year;
+        internal int Month => DateTime.Month;
+        internal int Day => DateTime.Day;
+        internal int Hour => DateTime.Hour;
+        internal int Minute => DateTime.Minute;
         [JsonProperty]
         internal long Ticks { get; }
 
@@ -34,23 +34,8 @@ namespace Chaos
         [JsonConstructor]
         private GameTime(long ticks)
         {
+            DateTime = new DateTime(ticks);
             Ticks = ticks;
-            Year = (ushort)(ticks / CONSTANTS.YEAR_TICKS);
-            ticks -= Year * CONSTANTS.YEAR_TICKS;
-
-            Month = (byte)(ticks / CONSTANTS.MONTH_TICKS);
-            ticks -= Month * CONSTANTS.MONTH_TICKS;
-
-            Day = (byte)(ticks / CONSTANTS.DAY_TICKS);
-            ticks -= Day * CONSTANTS.DAY_TICKS;
-
-            Hour = (byte)(ticks / CONSTANTS.HOUR_TICKS);
-            ticks -= Hour * CONSTANTS.HOUR_TICKS;
-
-            Minute = (byte)(ticks / CONSTANTS.MINUTE_TICKS);
-            ticks -= Minute * CONSTANTS.MINUTE_TICKS;
-
-            Remainder = ticks;
         }
 
         private string GetDaySuffix =>
@@ -72,18 +57,18 @@ namespace Chaos
         /// Converts a DateTime object to GameTime.
         /// </summary>
         /// <param name="dTime">DateTimeobject to be converted.</param>
-        internal static GameTime FromDateTime(DateTime dTime) => new GameTime(dTime.Subtract(Origin).Ticks);
+        internal static GameTime FromDateTime(DateTime dTime) => new GameTime(dTime.Subtract(Origin).Ticks*24);
 
         /// <summary>
         /// Converts a GameTime object to DateTime.
         /// </summary>
-        internal DateTime ToDateTime() => new DateTime(Ticks + Origin.Ticks);
+        internal DateTime ToDateTime() => new DateTime((Ticks / 24) + Origin.Ticks);
 
         /// <summary>
         /// Custom <see cref="ToString()"/> method, that will print like DateTime does.
         /// </summary>
         /// <param name="format">Optional string format guide.</param>
-        internal string ToString(string format = "") => $@"Year {(!string.IsNullOrEmpty(format) ? new DateTime(Ticks*24).ToString(format) : new DateTime(Ticks*24).ToString($@"y, MMM d"))}{GetDaySuffix}";
+        internal string ToString(string format = "") => $@"Year {(!string.IsNullOrEmpty(format) ? DateTime.ToString(format) : DateTime.ToString($@"y, MMM d"))}{GetDaySuffix}";
 
         /// <summary>
         /// Readonly property that gets the appropriate level of light for the time of day.

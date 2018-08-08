@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal abstract class VisibleObject : WorldObject
     {
         [JsonProperty]
@@ -23,6 +24,7 @@ namespace Chaos
         internal Map Map { get; set; }
         internal Location Location => new Location(Map.Id, Point);
 
+        [JsonConstructor]
         internal VisibleObject(string name, ushort sprite, Point point, Map map)
           : base(name)
         {
