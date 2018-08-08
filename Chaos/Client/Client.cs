@@ -286,7 +286,6 @@ namespace Chaos
         internal void SendMenu(Merchant merchant)
         {
             ActiveObject = merchant;
-
             if (merchant.Menu.Type == MenuType.Dialog)
             {
                 if (merchant.NextDialogId == 0)
