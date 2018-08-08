@@ -193,7 +193,7 @@ namespace Chaos
 
                         //send this animation to all visible users
                         foreach (User u in usersNearC)
-                            u.Client.Enqueue(ServerPackets.Animation(newAnimation));
+                            u.Client.SendAnimation(newAnimation);
                     }
 
                     //if health should be displayed
@@ -212,7 +212,7 @@ namespace Chaos
                 if (sfx != null)
                     foreach (Animation ani in sfx)
                         foreach (User u in Game.World.ObjectsVisibleFrom(ani.TargetPoint, client.User.Map, true).OfType<User>())
-                            u.Client.Enqueue(ServerPackets.Animation(ani));
+                            u.Client.SendAnimation(ani);
             }
             return;
         }
@@ -242,9 +242,10 @@ namespace Chaos
         /// <param name="worldMap">Whether or not they are using a worldMap to warp.</param>
         internal void WarpObj(VisibleObject obj, Warp warp, bool worldMap = false)
         {
+            User user = obj as User;
             if (warp.Location == obj.Location && World.Maps.ContainsKey(warp.TargetMapId))
             {
-                if ((obj as User)?.IsAdmin != true && World.Maps[warp.TargetMapId].IsWall(warp.TargetPoint))
+                if (user?.IsAdmin != true && World.Maps[warp.TargetMapId].IsWall(warp.TargetPoint))
                 {
                     Point nearestPoint = new Point(ushort.MaxValue, ushort.MaxValue);
                     int distance = int.MaxValue;
@@ -311,6 +312,8 @@ namespace Chaos
                 client.Enqueue(ServerPackets.MapLoadComplete());
                 client.Enqueue(ServerPackets.DisplayUser(client.User));
                 client.Enqueue(ServerPackets.RefreshResponse());
+
+                client.User.AnimationHistory.Clear();
             }
         }
     }

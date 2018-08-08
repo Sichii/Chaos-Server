@@ -82,12 +82,8 @@ namespace Chaos
                 return false;
 
             Animation ani = (Animation)obj;
-            return ani.SourceAnimation == SourceAnimation &&
-                ani.TargetAnimation == TargetAnimation &&
-                ani.SourceId == SourceId &&
-                ani.TargetId == TargetId &&
-                ani.TargetPoint == TargetPoint &&
-                ani.AnimationSpeed == AnimationSpeed;
+            return GetHashCode() == ani.GetHashCode();
         }
+        public override int GetHashCode() => ((ushort)(TargetId + TargetAnimation) << 16) + ((ushort)(SourceId + SourceAnimation)) + (AnimationSpeed << 16) + (TargetPoint.GetHashCode());
     }
 }

@@ -32,14 +32,6 @@ namespace ChaosLauncher
         All = 0x1F0FFF
     }
     [Flags]
-    internal enum WaitEventResult : uint
-    {
-        Signaled = 0x0U,
-        Abandoned = 0x80U,
-        Timeout = 0x102U,
-        Failed = 0xFFFFFFFFU
-    }
-    [Flags]
     internal enum ProcessCreationFlags
     {
         DebugProcess = 1,

@@ -13,14 +13,10 @@ namespace Chaos
 {
     public static class Paths
     {
-        //primary directory, change to your own~
+        //primary directory, populated by setpaths
         public static string BaseDir = "";
-        //dark ages directory
-        public static string DarkAgesDir => $@"{BaseDir}ChaosDa\";
-        //dark ages executable
-        public static string DarkAgesExe => $@"{DarkAgesDir}Darkages.exe";
 
-        //dynamic host name, change to your own~
+        //dynamic host name, populated by setpaths
         public static string HostName = "";
         //redis config string (host, port)
         public static string RedisConfig => @"localhost:6379";

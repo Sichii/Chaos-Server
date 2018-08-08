@@ -109,7 +109,7 @@ namespace Chaos
                 return false;
 
             Point point = (Point)obj;
-            return point.X == X && point.Y == Y;
+            return GetHashCode() == point.GetHashCode();
         }
 
         public static Point Parse(string str)
