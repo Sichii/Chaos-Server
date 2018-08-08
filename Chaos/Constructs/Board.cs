@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Board : IEnumerable<Post>
     {
         private readonly object Sync = new object();
@@ -36,7 +36,7 @@ namespace Chaos
         /// </summary>
         /// <param name="messages">A list of posts contained in the board.</param>
         [JsonConstructor]
-        internal Board(List<Post> messages = default(List<Post>))
+        internal Board(List<Post> messages = null)
         {
             Messages = messages ?? new List<Post>();
         }

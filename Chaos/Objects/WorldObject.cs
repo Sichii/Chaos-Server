@@ -11,20 +11,19 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal abstract class WorldObject : IComparable<WorldObject>
     {
-        [JsonProperty]
         protected internal int Id { get; }
         [JsonProperty]
         protected internal string Name { get; set; }
-        [JsonProperty]
         protected internal DateTime Creation { get; }
 
+        [JsonConstructor]
         protected internal WorldObject(string name)
         {
             Id = Interlocked.Increment(ref Server.NextId);

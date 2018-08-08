@@ -86,17 +86,19 @@ namespace Chaos
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
 
         /// <summary>
-        /// Checks if a set of co-ordinates is inside the map, and a wall.
+        /// Checks if a point is within the bounds of the map.
         /// </summary>
-        internal bool IsWall(ushort x, ushort y) => x < 0 || y < 0 || x >= SizeX || y >= SizeY || Tiles[new Point(x, y)].IsWall;
+        /// <param name="p"></param>
+        /// <returns></returns>
+        internal bool WithinMap(Point p) => p.X < 0 || p.Y < 0 || p.X >= SizeX || p.Y >= SizeY;
 
         /// <summary>
-        /// Checks if a given point is inside the map, and a wall.
+        /// Checks if a point is within the bounds of the map, or a wall.
         /// </summary>
-        internal bool IsWall(Point p) => IsWall(p.X, p.Y);
+        internal bool IsWall(Point p) => WithinMap(p) && Tiles[p].IsWall;
 
         /// <summary>
-        /// Checks if a given point is a wall, or has a monster, door, or other object already on it.
+        /// Checks if a given point is within the map, is a wall, or has a monster, door, or other object already on it.
         /// </summary>
         internal bool IsWalkable(Point p)
         {

@@ -177,7 +177,7 @@ namespace Chaos
                     Point startPoint = client.User.Point;
 
                     //check if we can actually walk to the spot
-                    if (!client.User.IsAdmin && !client.User.Map.IsWalkable(client.User.Point.NewOffset(direction)))
+                    if ((!client.User.IsAdmin && !client.User.Map.IsWalkable(client.User.Point.NewOffset(direction))) || client.User.Map.IsWall(client.User.Point.NewOffset(direction)))
                     {
                         //if no, set their location back to what it was and return
                         Extensions.Refresh(client, true);
