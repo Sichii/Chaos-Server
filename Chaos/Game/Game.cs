@@ -147,9 +147,9 @@ namespace Chaos
                 newUser.Guild = World.Guilds["Chaos Team"];
 
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Admin Create"));
+                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
                 newUser.Attributes.Gold += 500000000;
-                LegendMark isGm = new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow);
-                newUser.Legend.Add(isGm);
+                newUser.Legend.Add(new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow));
             }
 
             //try to save the new user to the database

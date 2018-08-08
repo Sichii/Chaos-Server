@@ -1,2 +1,2 @@
-C:\Users\mikeb\Documents\GitHub\Chaos-Server\ChaosProject\
+C:\Users\Sichi\Desktop\ChaosProject
 chaosserver.dynu.net
