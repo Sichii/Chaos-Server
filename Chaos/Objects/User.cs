@@ -119,7 +119,8 @@ namespace Chaos
             Gender = gender;
             Client = null;
             Group = null;
-            DisplayData.User = this;
+            if (DisplayData != null)
+                DisplayData.User = this;
             IsAdmin = isAdmin;
             LastClicked = DateTime.MinValue;
 

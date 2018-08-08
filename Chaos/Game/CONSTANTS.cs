@@ -32,7 +32,7 @@ namespace Chaos
         internal const int GLOBAL_ITEM_COOLDOWN_MS = 500;
         internal const int GLOBAL_SPELL_COOLDOWN_MS = 250;
         internal const int REFRESH_DELAY_MS = 1000;
-        internal static Location STARTING_LOCATION = new Location(8984, 10, 10);
+        internal static Location STARTING_LOCATION = new Location(18000, 5, 6);
         internal static Location DEATH_LOCATION = new Location(5031, 15, 15);
         //nation locations
         internal static Location NO_NATION_LOCATION = new Location(8984, 10, 10);

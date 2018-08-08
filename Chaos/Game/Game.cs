@@ -942,7 +942,12 @@ namespace Chaos
                         Merchant merchant = obj as Merchant;
 
                         if (merchant.ShouldDisplay)
-                            client.SendMenu(merchant);
+                        {
+                            if (merchant.Menu != null)
+                                client.SendMenu(merchant);
+                            else
+                                client.SendDialog(merchant, Dialogs[merchant.NextDialogId]);
+                        }
                         else
                             merchant.LastClicked = DateTime.UtcNow;
 

@@ -58,7 +58,19 @@ namespace Chaos
                             new DialogMenuItem(ushort.MaxValue, "No")
                         })),
                 NormalDialog(PursuitIds.None, 7, false, false, "Need a room, do you? Please, help yourself upstairs.", 0),
-                TextEntryDialog(PursuitIds.ReviveUser, 8, "Who would you like to revive?", 12, 0)
+                TextEntryDialog(PursuitIds.ReviveUser, 8, "Who would you like to revive?", 12, 0),
+
+                //Tutorial
+                NormalDialog(PursuitIds.None, 9, false, true, "I thought you'd never wake up. Greetings and welcome to my home. ", 10),
+                ItemOrMerchantMenuDialog(PursuitIds.None, 10, "I'm sure you have plenty of questions for me...",
+                    new DialogMenu(
+                        new List<DialogMenuItem>()
+                        {
+                            new DialogMenuItem(11, "Where am I?"),
+                            new DialogMenuItem(12, "Who are you?")
+                        })),
+                NormalDialog(PursuitIds.None, 11, false, false, "You're in my humble home!", 9),
+                NormalDialog(PursuitIds.None, 12, false, false, "Name is Maribel.", 9),
             };
 
             foreach(Dialog d in DialogList)
