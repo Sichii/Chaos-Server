@@ -11,15 +11,12 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
     internal sealed class Item : PanelObject
     {
-        private TimeSpan DefaultCooldown => new TimeSpan(0, 0, 0, 0, 250);
         [JsonProperty]
         internal byte Color { get; }
         [JsonProperty]
@@ -42,8 +39,7 @@ namespace Chaos
         internal Gender Gender { get; }
         [JsonProperty]
         internal ushort NextDialogId { get; }
-        internal ushort DisplaySprite => ItemSprite.DisplaySprite;
-        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_ITEM_COOLDOWN_MS;
+        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_ITEM_COOLDOWN_MS && base.CanUse;
 
         /// <summary>
         /// Constructor for basic unusable item.
@@ -60,17 +56,17 @@ namespace Chaos
         /// <summary>
         /// Constructor for usable item.
         /// </summary>
-        internal Item(ItemSprite itemSprite, byte color, string name, TimeSpan cooldown, byte weight, ushort nextDialogId, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage, bool accountBound)
-            : this(0, itemSprite, color, name, cooldown, EquipmentSlot.None, false, 1, 0, 0, weight, Gender.Unisex, nextDialogId, effectAnimation, targetType, bodyAnimation, baseDamage, accountBound) { }
+        internal Item(ItemSprite itemSprite, byte color, string name, TimeSpan baseCooldown, byte weight, ushort nextDialogId, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage, bool accountBound)
+            : this(0, itemSprite, color, name, baseCooldown, EquipmentSlot.None, false, 1, 0, 0, weight, Gender.Unisex, nextDialogId, effectAnimation, targetType, bodyAnimation, baseDamage, accountBound) { }
 
         /// <summary>
         /// Master constructor.
         /// </summary>
         [JsonConstructor]
-        internal Item(byte slot, ItemSprite itemSprite, byte color, string name, TimeSpan cooldown, EquipmentSlot equipmentSlot,
+        internal Item(byte slot, ItemSprite itemSprite, byte color, string name, TimeSpan baseCooldown, EquipmentSlot equipmentSlot,
             bool stackable, int count, uint maxDurability, uint currentDurability, byte weight, Gender gender, ushort nextDialogId,
             Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage, bool accountBound)
-            :base(slot, itemSprite.InventorySprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+            :base(slot, itemSprite.InventorySprite, name, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
             ItemSprite = itemSprite;
             EquipmentSlot = equipmentSlot;
@@ -92,7 +88,7 @@ namespace Chaos
         /// <param name="map">Map object the ground item will be on.</param>
         /// <param name="count">Number of the item you'd like placed on the ground.</param>
         internal GroundItem GroundItem(Point point, Map map, int count) => new GroundItem(ItemSprite.OffsetSprite, point, map,
-            new Item(0, ItemSprite, Color, Name, Cooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, TargetType, BodyAnimation, BaseDamage, AccountBound));
+            new Item(0, ItemSprite, Color, Name, BaseCooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, TargetType, BodyAnimation, BaseDamage, AccountBound));
 
         /// <summary>
         /// Split a stackable item, update the count for the old item and return a new item object.
@@ -103,7 +99,7 @@ namespace Chaos
             if (Stackable && Count > count)
             {
                 Count -= count;
-                return new Item(0, ItemSprite, Color, Name, Cooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, TargetType, BodyAnimation, BaseDamage, AccountBound);
+                return new Item(0, ItemSprite, Color, Name, BaseCooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, EffectAnimation, TargetType, BodyAnimation, BaseDamage, AccountBound);
             }
 
             return null;

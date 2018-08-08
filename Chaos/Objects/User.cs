@@ -64,51 +64,37 @@ namespace Chaos
         internal bool IsAdmin { get; set; }
         [JsonProperty]
         internal Gender Gender { get; set; }
-        internal bool IsChanting { get; set; }
         internal bool IsGrouped => Group != null;
         internal Exchange Exchange { get; set; }
         internal DateTime LastClicked { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
-        internal override byte HealthPercent => Utility.Clamp<byte>((int)((CurrentHP * 100) / MaximumHP), 0, (int)MaximumHP);
+        internal override byte HealthPercent => Utility.Clamp<byte>((CurrentHP * 100) / MaximumHP, 0, (int)MaximumHP);
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
         internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
-        internal bool DeathDisplayed { get; set; }
-        internal int BlinkCount { get; set; }
+
+        //user flags, use user.hasflag, addflag, removeflag
+        [JsonProperty]
+        private UserState State { get; set; }
+        [JsonProperty]
+        private Status Status { get; set; }
+        [JsonProperty]
+        private Quest Quest { get; set; }
+
         internal Location BlinkSpot { get; set; }
 
-        internal User(Gender gender, string name, Point point, Map map, Direction direction)
-            : base(name, 0, CreatureType.User, point, map, direction)
+        internal User(string name, Point point, Map map, Direction direction, Gender gender)
+            : this(name, point, map, direction, new Board(), new Panel<Skill>(90), new Panel<Spell>(90), new Panel<Item>(61), new Panel<Item>(20), new IgnoreList(),
+                  new UserOptions(), null, new Attributes(), new Legend(), null, null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
+                  false, null, new List<string>(), Gender.Unisex, UserState.None, Status.None, Quest.None, false)
         {
-            Gender = gender;
-            SkillBook = new Panel<Skill>(90);
-            SpellBook = new Panel<Spell>(90);
-            Inventory = new Panel<Item>(61);
-            Equipment = new Panel<Item>(20);
-            IgnoreList = new IgnoreList();
-            UserOptions = new UserOptions();
-            Attributes = new Attributes();
-            Attributes.User = this;
-            Legend = new Legend();
-            Group = null;
-            Spouse = null;
-            BaseClass = BaseClass.Peasant;
-            AdvClass = AdvClass.None;
-            Nation = Nation.None;
-            SocialStatus = SocialStatus.Awake;
-            IsMaster = false;
-            Spouse = string.Empty;
-            Titles = new List<string>();
-            IsAdmin = false;
-            IsChanting = false;
-            LastClicked = DateTime.MinValue;
-            MailBox = new Board();
-            DeathDisplayed = false;
         }
 
         [JsonConstructor]
-        internal User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,
-               Legend legend, Personal personal, Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, Gender gender, bool isAdmin)
-            : base(name, 0, CreatureType.User, point, map)
+        internal User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, 
+            Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,  Legend legend, Personal personal, 
+            Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, 
+            Gender gender, UserState state, Status status, Quest quest, bool isAdmin)
+            : base(name, 0, CreatureType.User, point, map, direction)
         {
             MailBox = mailBox;
             SkillBook = skillBook;
@@ -135,9 +121,11 @@ namespace Chaos
             Group = null;
             DisplayData.User = this;
             IsAdmin = isAdmin;
-            IsChanting = false;
             LastClicked = DateTime.MinValue;
-            DeathDisplayed = !IsAlive;
+
+            State = state;
+            Status = status;
+            Quest = quest;
         }
 
         internal void Resync(Client client)
@@ -177,7 +165,7 @@ namespace Chaos
                         diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
                         diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
                         break;
-            }
+                }
             }
 
             return diagonals;
@@ -188,7 +176,7 @@ namespace Chaos
             Point tempPoint = Point;
             List<Point> linePoints = new List<Point>();
 
-            for(int i = 0; i < degree; i++)
+            for (int i = 0; i < degree; i++)
             {
                 tempPoint.Offset(direction);
                 linePoints.Add(tempPoint);
@@ -198,5 +186,65 @@ namespace Chaos
         }
 
         internal void Save() => Client.Server.DataBase.TrySaveUser(this);
+
+        internal bool HasFlag<T>(T flag) where T : struct, IConvertible
+        {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException("T must be an enum/flag.");
+
+            Type t = typeof(T);
+            Type quest;
+            Type userState;
+            Type status;
+
+            if ((quest = typeof(Quest)) == t)
+                return Quest.HasFlag((Quest)flag.ToType(quest, null));
+            else if ((userState = typeof(UserState)) == t)
+                return State.HasFlag((UserState)flag.ToType(userState, null));
+            else if ((status = typeof(Status)) == t)
+                return Status.HasFlag((Status)flag.ToType(status, null));
+            else
+                throw new ArgumentException("Invalid argument.");
+        }
+
+        internal void AddFlag<T>(T flag) where T : struct, IConvertible
+        {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException("T must be an enum/flag.");
+
+            Type t = typeof(T);
+            Type quest;
+            Type userState;
+            Type status;
+
+            if ((quest = typeof(Quest)) == t)
+                Quest |= (Quest)flag.ToType(quest, null);
+            else if ((userState = typeof(UserState)) == t)
+                State |= (UserState)flag.ToType(userState, null);
+            else if ((status = typeof(Status)) == t)
+                Status |= (Status)flag.ToType(status, null);
+            else
+                throw new ArgumentException("Invalid argument.");
+        }
+
+        internal void RemoveFlag<T>(T flag) where T : struct, IConvertible
+        {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException("T must be an enum/flag.");
+
+            Type t = typeof(T);
+            Type quest;
+            Type userState;
+            Type status;
+
+            if ((quest = typeof(Quest)) == t)
+                Quest &= ~(Quest)flag.ToType(quest, null);
+            else if ((userState = typeof(UserState)) == t)
+                State &= ~(UserState)flag.ToType(userState, null);
+            else if ((status = typeof(Status)) == t)
+                Status &= ~(Status)flag.ToType(status, null);
+            else
+                throw new ArgumentException("Invalid argument.");
+        }
     }
 }

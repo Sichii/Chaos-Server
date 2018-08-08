@@ -23,14 +23,13 @@ namespace Chaos
         internal string Prompt { get; set; }
         [JsonProperty]
         internal byte CastLines { get; set; }
-        internal override bool CanUse => (LastUse == DateTime.MinValue || Cooldown.Ticks == 0 || DateTime.UtcNow.Subtract(LastUse) > Cooldown) && 
-            DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SPELL_COOLDOWN_MS;
+        internal override bool CanUse => DateTime.UtcNow.Subtract(LastUse).TotalMilliseconds >= CONSTANTS.GLOBAL_SPELL_COOLDOWN_MS && base.CanUse;
 
         /// <summary>
         /// Object representing a spell ability in your spell pane.
         /// </summary>
-        internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan cooldown, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0)
-            :this(0, sprite, name, type, prompt, castLines, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+        internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan baseCooldown, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0)
+            :this(0, sprite, name, type, prompt, castLines, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
         }
 
@@ -38,8 +37,8 @@ namespace Chaos
         /// Master constructor for spell, do not use.
         /// </summary>
         [JsonConstructor]
-        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castlines, TimeSpan cooldown, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage)
-            :base(slot, sprite, name, cooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castlines, TimeSpan baseCooldown, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage)
+            :base(slot, sprite, name, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
             SpellType = type;
             Prompt = prompt;

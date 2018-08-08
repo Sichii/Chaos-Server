@@ -50,8 +50,8 @@ namespace Chaos
         [JsonProperty]
         internal byte Ability;
 
-        internal uint MaximumHP => Utility.Clamp<uint>((int)(BaseHP + HPMod), 0, int.MaxValue);
-        internal uint MaximumMP => Utility.Clamp<uint>((int)(BaseMP + MPMod), 0, int.MaxValue);
+        internal uint MaximumHP => Utility.Clamp<uint>(BaseHP + HPMod, 0, int.MaxValue);
+        internal uint MaximumMP => Utility.Clamp<uint>(BaseMP + MPMod, 0, int.MaxValue);
         internal byte CurrentStr => Utility.Clamp<byte>(BaseStr + StrMod, 0, byte.MaxValue);
         internal byte CurrentInt => Utility.Clamp<byte>(BaseInt + IntMod, 0, byte.MaxValue);
         internal byte CurrentWis => Utility.Clamp<byte>(BaseWis + WisMod, 0, byte.MaxValue);

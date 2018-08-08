@@ -53,7 +53,7 @@ namespace Chaos
                 lock (Server.Sync)
                 {
                     foreach (User user in Server.WorldClients.Select(c => c.User))
-                        if (!user.IsAlive && !user.DeathDisplayed)
+                        if (!user.IsAlive && !user.HasFlag(UserState.DeathDisplayed))
                             Extensions.KillUser(user);
 
                     foreach (Map map in World.Maps.Values)
@@ -124,7 +124,7 @@ namespace Chaos
             gender = gender != Gender.Male && gender != Gender.Female ? Gender.Male : gender;
 
             //create a new user, and it's display data
-            User newUser = new User(gender, client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South);
+            User newUser = new User(client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South, gender);
             DisplayData data = new DisplayData(newUser, hairStyle, hairColor, (BodySprite)((byte)gender * 16));
             newUser.DisplayData = data;
             //if the user is an admin character, apply godmode
@@ -451,7 +451,7 @@ namespace Chaos
             Spell spell = client.User.SpellBook[slot];
             Creature target;
 
-            if (spell != null && spell.CanUse && client.User.IsAlive && !(spell.CastLines > 0 && !client.User.IsChanting))
+            if (spell != null && spell.CanUse && client.User.IsAlive && !(spell.CastLines > 0 && !client.User.HasFlag(UserState.IsChanting)))
             {
                 if (targetId == client.User.Id)
                     spell.Activate(client, Server, spell, client.User, prompt);
@@ -459,13 +459,13 @@ namespace Chaos
                     spell.Activate(client, Server, spell, target, prompt);
                 else
                 {
-                    client.User.IsChanting = false;
+                    client.User.RemoveFlag(UserState.IsChanting);
                     return;
                 }
 
                 spell.LastUse = DateTime.UtcNow;
             }
-            client.User.IsChanting = false;
+            client.User.RemoveFlag(UserState.IsChanting);
         }
 
         internal static void JoinClient(Client client, byte seed, byte[] key, string name, uint id)
@@ -519,7 +519,7 @@ namespace Chaos
             List<ServerPacket> packets = new List<ServerPacket>();
 
             //cancel casting
-            client.User.IsChanting = false;
+            client.User.RemoveFlag(UserState.IsChanting);
             packets.Add(ServerPackets.CancelCasting());
 
             //use all basic skills (otherwise known as assails)
@@ -1069,7 +1069,7 @@ namespace Chaos
 
         internal static void BeginChant(Client client)
         {
-            client.User.IsChanting = true;
+            client.User.AddFlag(UserState.IsChanting);
         }
 
         internal static void DisplayChant(Client client, string chant)

@@ -146,19 +146,30 @@ namespace Chaos
     }
     #endregion
 
-    #region Custom Enums
+    #region Custom Flags
+    [Flags]
     internal enum Quest : ulong
     {
         None = 0,
         //add more quest flags here, double each time
     }
+    [Flags]
     internal enum Status : ulong
     {
         None = 0,
         //add more statuses here, double each time
     }
     [Flags]
-    public enum MapFlags : uint
+    internal enum UserState : ulong
+    {
+        None = 0,
+        IsChanting = 1,
+        DeathDisplayed = 2,
+        UsedBlink = 4
+        //add more user states here, double each time
+    }
+    [Flags]
+    public enum MapFlags : ulong
     {
         Hostile = 1,
         NonHostile = 2,

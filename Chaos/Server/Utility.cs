@@ -32,8 +32,8 @@ namespace Chaos
             return byteArray;
         }
 
-        internal static T Clamp<T>(int value, int min, int max) where T : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable => 
-            (T)Convert.ChangeType(((value.CompareTo(min) < 0) ? min : (value.CompareTo(max) > 0) ? max : value), typeof(T));
+        internal static T Clamp<T>(double value, int min, int max) where T : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable =>
+            (T)Convert.ChangeType(((value < min) ? min : (value > max) ? max : value), typeof(T));
 
         internal static string FirstUpper(string str)
         {
