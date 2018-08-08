@@ -20,8 +20,8 @@ namespace Chaos
         internal ushort NextDialogId { get; }
         internal MerchantMenu Menu { get; }
         internal override byte HealthPercent => 100;
-        internal override uint CurrentHP { get { return uint.MaxValue; } set { } }
-        internal override uint MaximumHP { get { return uint.MaxValue; } }
+        internal override uint CurrentHP { get { return int.MaxValue; } set { } }
+        internal override uint MaximumHP { get { return int.MaxValue; } }
 
         internal Merchant(string name, ushort sprite, Point point, Map map, Direction direction, ushort nextDialogId = 0, MerchantMenu menu = null)
             : base(name, (ushort)(sprite + CONSTANTS.MERCHANT_SPRITE_OFFSET), CreatureType.Merchant, point, map, direction)
