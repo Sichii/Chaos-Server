@@ -57,10 +57,13 @@ namespace Chaos
         /// <param name="user"></param>
         internal void ReviveUser(User user)
         {
-            user.Attributes.CurrentHP = user.Attributes.MaximumHP;
-            user.Attributes.CurrentMP = user.Attributes.MaximumMP;
-            user.RemoveFlag(UserState.DeathDisplayed);
-            Refresh(user.Client, true);
+            if (!user.IsAlive)
+            {
+                user.Attributes.CurrentHP = user.Attributes.MaximumHP;
+                user.Attributes.CurrentMP = user.Attributes.MaximumMP;
+                user.RemoveFlag(UserState.DeathDisplayed);
+                Refresh(user.Client, true);
+            }
         }
 
         /// <summary>
@@ -223,14 +226,22 @@ namespace Chaos
         /// <param name="obj">The creature to apply the damage to.</param>
         /// <param name="amount">The flat amount of damage to apply.</param>
         /// <param name="ignoreDefense">Whether to ignore defenses or not.</param>
-        internal void ApplyDamage(Creature obj, int amount, bool ignoreDefense = false)
+        internal void ApplyDamage(Creature obj, int amount, bool ignoreDefense = false, bool mana = false)
         {
+            User user = null;
+
+            if (mana && (user = obj as User) == null)
+                return;
+
             lock (obj)
             {
                 //ac, damage, other shit
                 //damage additions based on stats will be moved here later probably
 
-                obj.CurrentHP = Utility.Clamp<uint>(obj.CurrentHP - amount, 0, (int)obj.MaximumHP);
+                if (mana)
+                    user.CurrentMP = Utility.Clamp<uint>(user.CurrentMP - amount, 0, (int)user.MaximumMP);
+                else
+                    obj.CurrentHP = Utility.Clamp<uint>(obj.CurrentHP - amount, 0, (int)obj.MaximumHP);
             }
         }
 

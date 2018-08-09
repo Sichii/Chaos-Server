@@ -10,6 +10,8 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Chaos
 {
@@ -17,22 +19,27 @@ namespace Chaos
     internal abstract class Creature : VisibleObject
     {
         [JsonProperty]
+        internal EffectsBar EffectsBar { get; set; }
+        [JsonProperty]
         internal Direction Direction { get; set; }
         [JsonProperty]
         internal CreatureType Type { get; }
-        [JsonProperty]
         internal bool IsAlive => CurrentHP > 0;
         internal abstract byte HealthPercent { get; }
         internal abstract uint MaximumHP { get; }
         internal abstract uint CurrentHP { get; set; }
+        internal Dictionary<(int, Point, ushort), DateTime> AnimationHistory { get; set; }
 
 
         [JsonConstructor]
-        internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South)
+        internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South, EffectsBar effectsBar = null)
             : base(name, sprite, point, map)
         {
+            EffectsBar = effectsBar ?? new EffectsBar();
             Direction = direction;
             Type = type;
+
+            AnimationHistory = new Dictionary<(int, Point, ushort), DateTime>();
         }
 
     }

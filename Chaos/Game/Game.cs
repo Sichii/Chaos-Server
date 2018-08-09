@@ -61,9 +61,11 @@ namespace Chaos
 
                     foreach (Map map in World.Maps.Values)
                         lock (map.Sync)
+                        {
                             foreach (Monster monster in map.Objects.OfType<Monster>())
                                 if (!monster.IsAlive)
                                     Extensions.KillMonster(monster);
+                        }
                 }
 
                 Thread.Sleep(250);
@@ -74,17 +76,19 @@ namespace Chaos
         {
             while (Server.Running)
             {
-                foreach (User user in Server.WorldClients.Select(c => c.User))
-                    foreach (Effect effect in World.EffectsVisibleFrom(user))
+                DateTime now = DateTime.UtcNow;
+
+                //for each map
+                foreach (Map map in World.Maps.Values)
+                {
+                    //lock the map
+                    lock (map.Sync)
                     {
-                        (int, Point, ushort) index = (0, effect.Animation.TargetPoint, effect.Animation.TargetAnimation);
-                        if (!user.AnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(user.AnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay)
-                            user.Client.SendAnimation(effect.Animation);
+                        //giving myself brain cancer
                     }
+                }
 
-                //add user persistent effect here later
-
-                Thread.Sleep(250);
+                Thread.Sleep(50);
             }
         }
 

@@ -25,7 +25,7 @@ namespace Chaos
         public ConcurrentDictionary<Point, Door> Doors { get; set; }
         internal Dictionary<Point, Tile> Tiles { get; }
         public Dictionary<Point, Warp> Warps { get; set; }
-        internal ConcurrentDictionary<Point, Effect> WorldEffects { get; set; }
+        internal ConcurrentDictionary<(Creature, object), Effect> WorldEffects { get; set; }
         public Dictionary<Point, WorldMap> WorldMaps { get; set; }
         [JsonProperty]
         public ushort Id { get; }
@@ -54,7 +54,7 @@ namespace Chaos
             WorldMaps = new Dictionary<Point, WorldMap>();
             Objects = new ConcurrentDictionary<int, WorldObject>();
             Doors = new ConcurrentDictionary<Point, Door>();
-            WorldEffects = new ConcurrentDictionary<Point, Effect>();
+            WorldEffects = new ConcurrentDictionary<(Creature, object), Effect>();
         }
 
         [JsonConstructor]
