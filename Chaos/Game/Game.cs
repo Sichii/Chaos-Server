@@ -84,7 +84,54 @@ namespace Chaos
                     //lock the map
                     lock (map.Sync)
                     {
-                        //giving myself brain cancer
+                        foreach (Creature creature in map.Objects.Values.OfType<Creature>()) //for each creature C on the map
+                        {
+                            User user1 = creature as User;
+                            foreach (Effect effect in creature.EffectsBar.ToList()) //for each effect on that creature's bar
+                            {
+                                int index = effect.Animation.GetHashCode(); //get it's animation's index
+                                if (effect.RemainingDurationMS() == 0) //if the effect is expired
+                                {
+                                    creature.EffectsBar.TryRemove(effect); //remove the effect from the creature
+                                    user1?.Client.SendEffect(effect, false); //if it's a user, update the bar
+                                }
+                                else if (!creature.AnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(creature.AnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay) //if the effect is not expired, and need to be updated
+                                {
+                                    creature.AnimationHistory[effect.Animation.GetHashCode()] = DateTime.UtcNow; //update the animation history
+                                    foreach (User user in World.ObjectsVisibleFrom(creature, true).OfType<User>()) //for each user within sight, including itself if it is a user
+                                    {
+                                        if (user ==user1) //if this user is the creature
+                                            user.Client.SendEffect(effect); //update the bar
+
+                                        user.Client.SendAnimation(effect.Animation); //send this animation to all visible users
+                                    }
+
+                                    if (effect.CurrentHPMod != 0 || effect.CurrentMPMod != 0)
+                                    {
+                                        Extensions.ApplyDamage(creature, effect.CurrentHPMod, true); //apply damage to the creature
+                                        Extensions.ApplyDamage(creature, effect.CurrentMPMod, true, true);
+                                        user1?.Client.SendAttributes(StatUpdateType.Vitality);
+                                    }
+                                }
+                            }
+
+                            if(user1 != null)
+                            {
+                                foreach(Effect effect in World.EffectsVisibleFrom(user1).ToList())
+                                {
+                                    int index = effect.Animation.GetHashCode();
+                                    if(!user1.WorldAnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(user1.WorldAnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay)
+                                    {
+                                        if (effect.Duration != TimeSpan.Zero && effect.RemainingDurationMS() == 0)
+                                            map.WorldEffects.Remove(effect);
+
+                                        user1.WorldAnimationHistory[index] = DateTime.UtcNow;
+                                        user1.Client.SendAnimation(effect.Animation);
+                                    }
+                                }
+                            }
+
+                        }
                     }
                 }
 

@@ -147,10 +147,11 @@ namespace Chaos
         /// <param name="obj">The object effect causing the change.</param>
         /// <param name="targets">The targets of the effect.</param>
         /// <param name="sfx">Special effects, generally point based animations.</param>
+        /// <param name="updateType">Stat upate to send to the targets. No need to use vitality.</param>
         /// <param name="displayHealth">Whether or not to display health for the targets.</param>
         /// <param name="refreshClient">Whether or not to refresh the source of change.</param>
         /// <param name="refreshTargets">Whether or not to refresh the targets.</param>
-        internal void ApplyEffect(Client client, PanelObject obj, List<Creature> targets, List<Animation> sfx, bool displayHealth = false, bool refreshClient = false, bool refreshTargets = false)
+        internal void ApplyEffect(Client client, PanelObject obj, List<Creature> targets, List<Animation> sfx, StatUpdateType updateType, bool displayHealth = false, bool refreshClient = false, bool refreshTargets = false)
         {
             lock (obj)
             {
@@ -185,6 +186,10 @@ namespace Chaos
                 //for each target
                 foreach (Creature c in targets)
                 {
+                    User user;
+                    if (updateType != StatUpdateType.None && (user = c as User) != null)
+                        user.Client.SendAttributes(updateType);
+
                     //get all users they can see including self
                     List<User> usersNearC = Game.World.ObjectsVisibleFrom(c, true).OfType<User>().ToList();
 
@@ -193,18 +198,17 @@ namespace Chaos
                     {
                         //create new animation for this target
                         Animation newAnimation = new Animation(obj.EffectAnimation, c.Id, client.User.Id);
-
+                        c.AnimationHistory[newAnimation.GetHashCode()] = DateTime.UtcNow;
                         //send this animation to all visible users
                         foreach (User u in usersNearC)
+                        {
                             u.Client.SendAnimation(newAnimation);
+                        }
                     }
 
                     //if health should be displayed
                     if (displayHealth)
                     {
-                        //update the targets vitality if theyre a user
-                        (c as User)?.Client.SendAttributes(StatUpdateType.Vitality);
-
                         //send all visible users the target's healthbar
                         foreach (User u in usersNearC)
                             u.Client.Enqueue(ServerPackets.HealthBar(c));
@@ -226,11 +230,12 @@ namespace Chaos
         /// <param name="obj">The creature to apply the damage to.</param>
         /// <param name="amount">The flat amount of damage to apply.</param>
         /// <param name="ignoreDefense">Whether to ignore defenses or not.</param>
+        /// <param name="mana">Whather the damage dealt is to mana or not.</param>
         internal void ApplyDamage(Creature obj, int amount, bool ignoreDefense = false, bool mana = false)
         {
             User user = null;
 
-            if (mana && (user = obj as User) == null)
+            if ((user = obj as User) == null && mana)
                 return;
 
             lock (obj)
@@ -242,6 +247,9 @@ namespace Chaos
                     user.CurrentMP = Utility.Clamp<uint>(user.CurrentMP - amount, 0, (int)user.MaximumMP);
                 else
                     obj.CurrentHP = Utility.Clamp<uint>(obj.CurrentHP - amount, 0, (int)obj.MaximumHP);
+
+                if (user != null)
+                    user.Client.SendAttributes(StatUpdateType.Vitality);
             }
         }
 

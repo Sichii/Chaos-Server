@@ -106,7 +106,7 @@ namespace Chaos
                         byte targetY = reader.ReadByte();
                         Warp warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
                         newMap.Warps[new Point(sourceX, sourceY)] = warp;
-                        newMap.WorldEffects.TryAdd((null, warp), new Effect(new Animation(warp.Point, 96, 250), 4500, TimeSpan.Zero));
+                        newMap.WorldEffects.Add(new Effect(new Animation(warp.Point, 96, 250), 4500, TimeSpan.Zero));
                     }
 
                     //load worldmaps for this map
@@ -267,15 +267,11 @@ namespace Chaos
                 return user.Map.Doors.Values.Where(door => user.WithinRange(door.Point));
         }
 
-        internal IEnumerable<Effect> EffectsVisibleFrom(Creature creature)
+        internal IEnumerable<Effect> EffectsVisibleFrom(User user)
         {
-            lock (creature.Map.Sync)
+            lock (user.Map.Sync)
             {
-                foreach (Creature c in Game.World.ObjectsVisibleFrom(creature, true).OfType<Creature>())
-                    foreach (Effect eff in c.EffectsBar)
-                        yield return eff;
-
-                foreach (Effect eff in creature.Map.WorldEffects.Values.Where(e => e.Animation.TargetPoint.Distance(creature.Point) < 13))
+                foreach (Effect eff in user.Map.WorldEffects.Where(e => e.Animation.TargetPoint.Distance(user.Point) < 13))
                     yield return eff;
             }
         }

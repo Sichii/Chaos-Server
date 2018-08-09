@@ -11,20 +11,16 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Threading;
 
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal struct Effect
+    internal struct Effect : IEquatable<Effect>
     {
-        [JsonIgnore]
-        private static int ID_counter;
-        [JsonIgnore]
-        internal int ID;
         [JsonIgnore]
         internal DateTime StartTime;
 
+        internal byte Tier;
         internal ushort Icon;
         internal sbyte StrMod;
         internal sbyte IntMod;
@@ -43,15 +39,14 @@ namespace Chaos
         public static bool operator !=(Effect eff1, Effect eff2) => !eff1.Equals(eff2);
 
         internal Effect(Animation animation, uint animationDelay, TimeSpan duration)
-            :this(ushort.MaxValue, 0, 0, 0, 0, 0, 0, 0, 0, 0, animation, animationDelay, duration)
+            :this(ushort.MaxValue, 0, 0, 0, 0, 0, 0, 0, 0, 0, animation, animationDelay, duration, 0)
         {
         }
 
         [JsonConstructor]
-        internal Effect(ushort icon, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, int currentMPMod, Animation animation, uint animationDelay, TimeSpan duration)
+        internal Effect(ushort icon, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, int currentMPMod, Animation animation, uint animationDelay, TimeSpan duration, byte tier)
         {
             StartTime = DateTime.UtcNow;
-            ID = Interlocked.Increment(ref ID_counter);
 
             Icon = icon;
             StrMod = strMod;
@@ -66,6 +61,7 @@ namespace Chaos
             Animation = animation;
             AnimationDelay = animationDelay;
             Duration = duration;
+            Tier = tier;
         }
 
         internal int RemainingDurationMS()
@@ -107,6 +103,8 @@ namespace Chaos
 
             return GetHashCode() == eff.GetHashCode();
         }
-        public override int GetHashCode() => ID;
+        public override int GetHashCode() => (Animation.GetHashCode() + (ushort)(AnimationDelay << 16) + (ushort)(Duration.TotalMilliseconds));
+
+        public bool Equals(Effect other) => GetHashCode() == other.GetHashCode();
     }
 }

@@ -35,7 +35,7 @@ namespace Chaos
         public static bool operator !=(Point pt1, Point pt2) => !pt1.Equals(pt2);
         internal int Distance(Point pt) => Distance(pt.X, pt.Y);
         internal int Distance(ushort x, ushort y) => Math.Abs(x - X) + Math.Abs(y - Y);
-        public override int GetHashCode() => (X << 16) + Y;
+        public override int GetHashCode() => (X << 8) + Y;
         public override string ToString() => $@"({X}, {Y})";
 
 

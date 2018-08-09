@@ -28,7 +28,8 @@ namespace Chaos
         internal abstract byte HealthPercent { get; }
         internal abstract uint MaximumHP { get; }
         internal abstract uint CurrentHP { get; set; }
-        internal Dictionary<(int, Point, ushort), DateTime> AnimationHistory { get; set; }
+        internal Dictionary<int, DateTime> AnimationHistory { get; set; }
+        internal Dictionary<int, DateTime> WorldAnimationHistory { get; set; }
 
 
         [JsonConstructor]
@@ -39,7 +40,8 @@ namespace Chaos
             Direction = direction;
             Type = type;
 
-            AnimationHistory = new Dictionary<(int, Point, ushort), DateTime>();
+            AnimationHistory = new Dictionary<int, DateTime>();
+            WorldAnimationHistory = new Dictionary<int, DateTime>();
         }
 
     }

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
 
 namespace Chaos
 {
@@ -25,7 +26,7 @@ namespace Chaos
         public ConcurrentDictionary<Point, Door> Doors { get; set; }
         internal Dictionary<Point, Tile> Tiles { get; }
         public Dictionary<Point, Warp> Warps { get; set; }
-        internal ConcurrentDictionary<(Creature, object), Effect> WorldEffects { get; set; }
+        internal List<Effect> WorldEffects { get; set; }
         public Dictionary<Point, WorldMap> WorldMaps { get; set; }
         [JsonProperty]
         public ushort Id { get; }
@@ -37,7 +38,6 @@ namespace Chaos
         public MapFlags Flags { get; set; }
         public string Name { get; set; }
         public sbyte Music { get; set; }
-
 
         /// <summary>
         /// Object representing a map.
@@ -54,7 +54,7 @@ namespace Chaos
             WorldMaps = new Dictionary<Point, WorldMap>();
             Objects = new ConcurrentDictionary<int, WorldObject>();
             Doors = new ConcurrentDictionary<Point, Door>();
-            WorldEffects = new ConcurrentDictionary<(Creature, object), Effect>();
+            WorldEffects = new List<Effect>();
         }
 
         [JsonConstructor]
