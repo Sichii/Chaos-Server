@@ -514,9 +514,10 @@ namespace Chaos
         None = 0,
         Blue = 1,
         Green = 2,
-        Orange = 3,
-        Red = 4,
-        White = 5
+        Yellow = 3,
+        Orange = 4,
+        Red = 5,
+        White = 6
     }
     internal enum Pane : byte
     {

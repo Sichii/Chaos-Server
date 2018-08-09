@@ -11,11 +11,9 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chaos
 {
@@ -23,26 +21,31 @@ namespace Chaos
     /// Object representing the spellbar.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    internal class EffectsBar
+    internal class EffectsBar : IEnumerable<Effect>
     {
         internal readonly object Sync = new object();
-        private Dictionary<Effect, DateTime> Effects { get; set; }
+        [JsonProperty]
+        private List<Effect> Effects { get; set; }
+        public int Count => Effects.Count;
+        public IEnumerator<Effect> GetEnumerator() => Effects.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
 
         [JsonConstructor]
         internal EffectsBar()
         {
-            Effects = new Dictionary<Effect, DateTime>();
+            Effects = new List<Effect>();
         }
 
         internal bool TryAdd(Effect effect)
         {
             lock(Sync)
             {
-                if (Effects.ContainsKey(effect))
+                if (Effects.Contains(effect))
                     return false;
                 else
                 {
-                    Effects.Add(effect, DateTime.UtcNow);
+                    Effects.Add(effect);
                     return true;
                 }
             }
@@ -56,10 +59,14 @@ namespace Chaos
             }
         }
 
-        internal bool TryGet(int id, out Effect effect)
-        {
-            effect = Effects.Keys.FirstOrDefault(e => e.ID == id);
-            return effect == default(Effect);
-        }
+        internal int StrModSum => Effects.Sum(e => e.StrMod);
+        internal int IntModSum => Effects.Sum(e => e.IntMod);
+        internal int WisModSum => Effects.Sum(e => e.WisMod);
+        internal int ConModSum => Effects.Sum(e => e.ConMod);
+        internal int DexModSum => Effects.Sum(e => e.DexMod);
+        internal int MaxHPModSum => Effects.Sum(e => e.MaxHPMod);
+        internal int MaxMPModSum => Effects.Sum(e => e.MaxMPMod);
+        internal int CurrentHPModSum =>Effects.Sum(e => e.CurrentHPMod);
+        internal int CurrentMPModSum => Effects.Sum(e => e.CurrentMPMod);
     }
 }

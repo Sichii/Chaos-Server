@@ -36,13 +36,13 @@ namespace Chaos
         internal uint BaseMP;
 
         //addedValues
-        internal sbyte StrMod;
-        internal sbyte IntMod;
-        internal sbyte WisMod;
-        internal sbyte ConMod;
-        internal sbyte DexMod;
-        internal int HPMod;
-        internal int MPMod;
+        internal int StrMod => User.EffectsBar.StrModSum;
+        internal int IntMod => User.EffectsBar.IntModSum;
+        internal int WisMod => User.EffectsBar.WisModSum;
+        internal int ConMod => User.EffectsBar.ConModSum;
+        internal int DexMod => User.EffectsBar.DexModSum;
+        internal int MaxHPMod => User.EffectsBar.MaxHPModSum;
+        internal int MaxMPMod => User.EffectsBar.MaxMPModSum;
 
         //Primary
         [JsonProperty]
@@ -50,8 +50,8 @@ namespace Chaos
         [JsonProperty]
         internal byte Ability;
 
-        internal uint MaximumHP => Utility.Clamp<uint>(BaseHP + HPMod, 0, int.MaxValue);
-        internal uint MaximumMP => Utility.Clamp<uint>(BaseMP + MPMod, 0, int.MaxValue);
+        internal uint MaximumHP => Utility.Clamp<uint>(BaseHP + MaxHPMod, 0, int.MaxValue);
+        internal uint MaximumMP => Utility.Clamp<uint>(BaseMP + MaxMPMod, 0, int.MaxValue);
         internal byte CurrentStr => Utility.Clamp<byte>(BaseStr + StrMod, 0, byte.MaxValue);
         internal byte CurrentInt => Utility.Clamp<byte>(BaseInt + IntMod, 0, byte.MaxValue);
         internal byte CurrentWis => Utility.Clamp<byte>(BaseWis + WisMod, 0, byte.MaxValue);
@@ -105,13 +105,6 @@ namespace Chaos
             BaseMP = 100;
             Level = 1;
             Ability = 0;
-            HPMod = 0;
-            MPMod = 0;
-            StrMod = 0;
-            IntMod = 0;
-            WisMod = 0;
-            ConMod = 0;
-            DexMod = 0;
             UnspentPoints = 0;
             CurrentHP = 100;
             CurrentMP = 100;

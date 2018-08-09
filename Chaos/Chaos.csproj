@@ -175,7 +175,7 @@
   <PropertyGroup>
     <PostBuildEvent>cd "$(SolutionDir)"
 set /p wDir=&lt; PATH.txt
-if"$(ConfigurationName)"=="Release" (
+if $(ConfigurationName) =="Release" (
 xcopy /C /y "%25cd%25\Chaos\bin\Release\Chaos.exe" "%25wDir%25\"
 ) else ( exit )</PostBuildEvent>
   </PropertyGroup>

@@ -37,8 +37,6 @@ namespace Chaos
         [JsonProperty]
         internal Attributes Attributes { get; set; }
         [JsonProperty]
-        internal EffectsBar EffectsBar { get; set; }
-        [JsonProperty]
         internal Legend Legend { get; set; }
         [JsonProperty]
         internal Personal Personal { get; set; }
@@ -71,9 +69,11 @@ namespace Chaos
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
         internal override byte HealthPercent => Utility.Clamp<byte>((CurrentHP * 100) / MaximumHP, 0, (int)MaximumHP);
         internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
-        internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = value; } }
+        internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = Attributes.CurrentHP == 0 ? 0 : value; } }
+        internal byte ManaPercent => Utility.Clamp<byte>((CurrentMP * 100) / MaximumMP, 0, (int)MaximumMP);
+        internal uint MaximumMP { get { return Attributes.MaximumMP; } }
+        internal uint CurrentMP { get { return Attributes.CurrentMP; } set { Attributes.CurrentMP = value; } }
 
-        internal Dictionary<(int, Point, ushort), DateTime> AnimationHistory { get; set; }
         internal DateTime LastClicked { get; set; }
 
         //user flags, use user.hasflag, addflag, removeflag
@@ -88,17 +88,17 @@ namespace Chaos
 
         internal User(string name, Point point, Map map, Direction direction, Gender gender)
             : this(name, point, map, direction, new Board(), new Panel<Skill>(90), new Panel<Spell>(90), new Panel<Item>(61), new Panel<Item>(20), new IgnoreList(),
-                  new UserOptions(), null, new Attributes(), new Legend(), null, null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
+                  new UserOptions(), null, new Attributes(), new EffectsBar(), new Legend(), null, null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
                   false, null, new List<string>(), Gender.Unisex, UserState.None, Status.None, Quest.None, false)
         {
         }
 
         [JsonConstructor]
         internal User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, 
-            Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes,  Legend legend, Personal personal, 
+            Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes, EffectsBar effectsBar, Legend legend, Personal personal, 
             Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, 
             Gender gender, UserState state, Status status, Quest quest, bool isAdmin)
-            : base(name, 0, CreatureType.User, point, map, direction)
+            : base(name, 0, CreatureType.User, point, map, direction, effectsBar)
         {
             MailBox = mailBox;
             SkillBook = skillBook;
@@ -128,7 +128,6 @@ namespace Chaos
             IsAdmin = isAdmin;
             LastClicked = DateTime.MinValue;
 
-            AnimationHistory = new Dictionary<(int, Point, ushort), DateTime>();
 
             State = state;
             Status = status;

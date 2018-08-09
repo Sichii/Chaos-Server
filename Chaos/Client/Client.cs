@@ -124,39 +124,46 @@ namespace Chaos
         /// <param name="ar">Result of the async operation.</param>
         private void ClientEndReceive(IAsyncResult ar)
         {
-            //get the length of the packet
-            int length = ClientSocket.EndReceive(ar);
-            //if we receive a packet with no length, disconnect the client, something went wrong
-            if (length == 0)
-                Disconnect();
-            else
+            try
             {
-                //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
-                byte[] data = new byte[length];
-                Buffer.BlockCopy(ClientBuffer, 0, data, 0, length);
-                //Array.Copy(ClientBuffer, data, length);
-                //copy that array into the full client buffer, so we can deal with the information in a properly sized list
-                FullClientBuffer.AddRange(data);
-                while (FullClientBuffer.Count > 3)
+                //get the length of the packet
+                int length = ClientSocket.EndReceive(ar);
+                //if we receive a packet with no length, disconnect the client, something went wrong
+                if (length == 0)
+                    Disconnect();
+                else
                 {
-                    //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
-                    int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
-                    if (count <= FullClientBuffer.Count)
+                    //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
+                    byte[] data = new byte[length];
+                    Buffer.BlockCopy(ClientBuffer, 0, data, 0, length);
+                    //Array.Copy(ClientBuffer, data, length);
+                    //copy that array into the full client buffer, so we can deal with the information in a properly sized list
+                    FullClientBuffer.AddRange(data);
+                    while (FullClientBuffer.Count > 3)
                     {
-                        //create a clientpacket out of the readable data
-                        ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
-                        //remove the data from the fullclientbuffer
-                        FullClientBuffer.RemoveRange(0, count);
-                        //send it off to be processed by the server
-                        lock (ProcessQueue)
-                            ProcessQueue.Enqueue(clientPacket);
+                        //check to see if it's a valid packet, this gives us the number of bytes that arent trailing random shit
+                        int count = (FullClientBuffer[1] << 8) + FullClientBuffer[2] + 3;
+                        if (count <= FullClientBuffer.Count)
+                        {
+                            //create a clientpacket out of the readable data
+                            ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
+                            //remove the data from the fullclientbuffer
+                            FullClientBuffer.RemoveRange(0, count);
+                            //send it off to be processed by the server
+                            lock (ProcessQueue)
+                                ProcessQueue.Enqueue(clientPacket);
+                        }
+                        else
+                            break;
                     }
-                    else
-                        break;
                 }
+                if (Connected) //begin checking for received info again
+                    ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
             }
-            if (Connected) //begin checking for received info again
-                ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
+            catch
+            {
+
+            }
         }
 
         /// <summary>
@@ -279,10 +286,23 @@ namespace Chaos
         /// <param name="sourceId">ID of the source of the message.</param>
         internal void SendPublicMessage(PublicMessageType messageType, int sourceId, string message) => Enqueue(ServerPackets.PublicChat(messageType, sourceId, message));
 
+        /// <summary>
+        /// Sends an animation to the client and adds it to the animation history.
+        /// </summary>
+        /// <param name="animation">The animation to send.</param>
         internal void SendAnimation(Animation animation)
         {
-            User.AnimationHistory[(animation.TargetId, animation.TargetPoint, animation.TargetAnimation)] = DateTime.UtcNow;
             Enqueue(ServerPackets.Animation(animation));
+        }
+        internal void SendEffect(Effect eff, bool remove = false)
+        {
+            if (remove)
+            {
+                User.EffectsBar.TryRemove(eff);
+                Enqueue(ServerPackets.EffectsBar(eff.Icon, EffectsBarColor.None));
+            }
+            else
+                Enqueue(ServerPackets.EffectsBar(eff.Icon, eff.Color()));
         }
         /// <summary>
         /// Sends a persuit menu to the client. Sets necessary client variables.

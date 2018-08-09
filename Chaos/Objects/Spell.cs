@@ -41,7 +41,7 @@ namespace Chaos
             :base(slot, sprite, name, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
         {
             SpellType = type;
-            Prompt = prompt;
+            Prompt = prompt ?? "";
             CastLines = castlines;
         }
     }
