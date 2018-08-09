@@ -41,7 +41,7 @@ namespace Chaos
         {
             lock(Sync)
             {
-                if (Effects.Contains(effect))
+                if (Effects.Contains(effect) || Effects.Any(e => effect.Icon == e.Icon))
                     return false;
                 else
                 {

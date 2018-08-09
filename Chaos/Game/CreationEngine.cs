@@ -166,7 +166,7 @@ namespace Chaos
             foreach (Creature c in targets)
                 Game.Extensions.ApplyDamage(c, amount);
 
-            Game.Extensions.ApplyEffect(client, skill, targets, null, true, false, false);
+            Game.Extensions.ApplyEffect(client, skill, targets, null, StatUpdateType.None, true, false, false);
             return true;
         }
         private bool NormalSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
@@ -182,7 +182,7 @@ namespace Chaos
             foreach (Creature c in targets)
                 Game.Extensions.ApplyDamage(c, amount);
 
-            Game.Extensions.ApplyEffect(client, spell, targets, null, true);
+            Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None, true);
             return true;
         }
         #endregion
@@ -216,7 +216,7 @@ namespace Chaos
                     client.User.Direction = target.Direction;
                 }
 
-                Game.Extensions.ApplyEffect(client, skill, targets, null);
+                Game.Extensions.ApplyEffect(client, skill, targets, null, StatUpdateType.None);
                 return true;
             }
             return false;
@@ -271,7 +271,7 @@ namespace Chaos
             foreach(Point point in points)
                 sfx.Add(new Animation(point, 0, 0, 2, 0, 100));
 
-            Game.Extensions.ApplyEffect(client, skill, targets, sfx);
+            Game.Extensions.ApplyEffect(client, skill, targets, sfx, StatUpdateType.None);
             return true;
         }
         #endregion
@@ -286,16 +286,20 @@ namespace Chaos
         {
             Spell spell = obj as Spell;
             List<Creature> targets = new List<Creature>() { target };
+            Animation ani = new Animation(client.User.BlinkSpot.Point, 96, 100);
+            Effect eff = new Effect(ani, 1800, new TimeSpan(0, 0, 10));
 
-            if(!client.User.HasFlag(UserState.UsedBlink) || DateTime.UtcNow.Subtract(spell.LastUse).TotalSeconds > 10 || client.User.BlinkSpot.MapId != client.User.Map.Id)
+            if (!client.User.HasFlag(UserState.UsedBlink) || DateTime.UtcNow.Subtract(spell.LastUse).TotalSeconds > 10 || client.User.BlinkSpot.MapId != client.User.Map.Id)
             {
+                spell.CooldownReduction += 1f;
                 client.User.AddFlag(UserState.UsedBlink);
                 client.User.BlinkSpot = client.User.Location;
 
-                Animation ani = new Animation(client.User.BlinkSpot.Point, 96, 250);
-                Effect eff = new Effect(ani, 4500, new TimeSpan(0, 0, 10));
+                ani = new Animation(client.User.BlinkSpot.Point, 96, 100);
+                eff = new Effect(ani, 1800, new TimeSpan(0, 0, 10));
 
-                client.User.Map.WorldEffects.TryAdd((client.User, spell), eff);
+                lock (client.User.Map.Sync)
+                    client.User.Map.WorldEffects.Add(eff);
                 return false;
             }
             else
@@ -304,11 +308,12 @@ namespace Chaos
                 client.User.RemoveFlag(UserState.UsedBlink);
 
                 //remove effect
-                Effect garbage;
-                client.User.Map.WorldEffects.TryRemove((client.User, spell), out garbage);
+                lock (client.User.Map.Sync)
+                    client.User.Map.WorldEffects.Remove(eff);
             }
 
-            Game.Extensions.ApplyEffect(client, spell, targets, null);
+            spell.CooldownReduction -= 1f;
+            Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
         private Spell ReturnHome() => new Spell(56, "Return Home", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 1), new Animation(91, 0, 100), TargetsType.None, BodyAnimation.WizardCast);
@@ -341,7 +346,7 @@ namespace Chaos
                     Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.NOES_LOCATION));
                     break;
             }
-            Game.Extensions.ApplyEffect(client, spell, targets, null);
+            Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
         private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, BodyAnimation.HandsUp);
@@ -398,7 +403,7 @@ namespace Chaos
                         break;
                 }
 
-                Game.Extensions.ApplyEffect(client, spell, targets, null);
+                Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
                 return true;
             }
             else
@@ -419,11 +424,11 @@ namespace Chaos
             Attributes attribs = user.Attributes;
             Animation ani = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
             Effect eff = new Effect(spell.Sprite, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue,
-                (int)(1333337 - user.MaximumHP), (int)(1333337 - user.MaximumMP), 0, 0, ani, 2000, new TimeSpan(0, 0, 5, 0));
+                (int)(1333337 - user.MaximumHP), (int)(1333337 - user.MaximumMP), 0, 0, ani, 2000, new TimeSpan(0, 0, 5, 0), 255);
 
             if (user.EffectsBar.TryAdd(eff))
             {
-                Game.Extensions.ApplyEffect(client, spell, targets, null);
+                Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.Primary);
                 return true;
             }
 
@@ -434,13 +439,12 @@ namespace Chaos
         {
             Spell spell = obj as Spell;
             List<Creature> targets = new List<Creature>() { target };
-
             Animation ani = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
-            Effect eff = new Effect(spell.Sprite, 0, 0, 0, 0, 0, 0, 0, spell.BaseDamage, 0, ani, 1000, new TimeSpan(0, 0, 20));
+            Effect eff = new Effect(spell.Sprite, 0, 0, 0, 0, 0, 0, 0, spell.BaseDamage, 0, ani, 1000, new TimeSpan(0, 0, 20), 1);
 
             if (target.EffectsBar.TryAdd(eff))
             {
-                Game.Extensions.ApplyEffect(client, spell, targets, null);
+                Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
                 return true;
             }
             return false;

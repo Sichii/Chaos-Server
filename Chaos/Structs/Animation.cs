@@ -10,11 +10,12 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using System;
 
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptIn)]
-    internal struct Animation
+    internal struct Animation : IEquatable<Animation>
     {
         [JsonProperty]
         internal Point TargetPoint { get; }
@@ -73,9 +74,9 @@ namespace Chaos
 
         }
 
-
         internal static Animation None => default(Animation);
 
+        public override int GetHashCode() => (SourceId << 16) + (TargetAnimation << 8) + TargetPoint.GetHashCode();
         public override bool Equals(object obj)
         {
             if (!(obj is Animation))
@@ -84,6 +85,8 @@ namespace Chaos
             Animation ani = (Animation)obj;
             return GetHashCode() == ani.GetHashCode();
         }
-        public override int GetHashCode() => ((ushort)(TargetId + TargetAnimation) << 16) + ((ushort)(SourceId + SourceAnimation)) + (AnimationSpeed << 16) + (TargetPoint.GetHashCode());
+
+
+        public bool Equals(Animation other) => GetHashCode() == other.GetHashCode();
     }
 }
