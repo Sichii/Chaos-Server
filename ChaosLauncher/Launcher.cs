@@ -14,18 +14,88 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ChaosLauncher
 {
     internal partial class Launcher : Form
     {
+        private IPAddress ServerIP;
+        private IPAddress ClientIP;
+        private bool IsLoopback;
+        private IPAddress IpToUse;
+
+        Ping ping = new Ping();
+        PingOptions options = new PingOptions(128, true);
+        byte[] buffer = new byte[32];
+        AutoResetEvent token = new AutoResetEvent(false);
+
         internal Launcher()
         {
             InitializeComponent();
+
+#if DEBUG
+            ServerIP = IPAddress.Loopback;
+            IsLoopback = true;
+#else
+            ServerIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+
+            WebRequest request = WebRequest.Create("https://checkip.amazonaws.com");
+            using (WebResponse response = request.GetResponse())
+            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            {
+                ClientIP = IPAddress.Parse(reader.ReadToEnd().Trim('\n'));
+            }
+
+            IsLoopback = ServerIP.Equals(ClientIP);
+#endif
+
+            IpToUse = IsLoopback ? IPAddress.Loopback : ServerIP;
+
+            ping.PingCompleted += new PingCompletedEventHandler(ServerStatus);
+            ping.SendAsync(IpToUse, 5000, buffer, options, token);
+        }
+
+        private async void ServerStatus(object o, PingCompletedEventArgs a)
+        {
+            if (a.Reply.Status == IPStatus.Success)
+            {
+                if (!InvokeRequired)
+                {
+                    serverStatusImg.Image = Properties.Resources.serverUp;
+                    launchBtn.Enabled = true;
+                }
+                else
+                    Invoke((Action)(() =>
+                    {
+                        serverStatusImg.Image = Properties.Resources.serverUp;
+                        launchBtn.Enabled = true;
+                    }));
+            }
+            else
+            {
+                if (!InvokeRequired)
+                {
+                    serverStatusImg.Image = Properties.Resources.serverDown;
+                    launchBtn.Enabled = false;
+
+                }
+                else
+                    Invoke((Action)(() =>
+                    {
+                        serverStatusImg.Image = Properties.Resources.serverDown;
+                        launchBtn.Enabled = false;
+                    }));
+            }
+
+            await Task.Delay(5000);
+            ping.SendAsync(IpToUse, 5000, buffer, options, token);
         }
 
         private void launchBtn_Click(object sender, EventArgs e)
@@ -33,23 +103,6 @@ namespace ChaosLauncher
             StartInfo startInfo = new StartInfo();
             ProcInfo procInfo = new ProcInfo();
             startInfo.Size = Marshal.SizeOf(startInfo);
-
-            //grab the server ip from the server dns, and your own ip
-            IPAddress serverIP = 
-#if DEBUG
-                IPAddress.Loopback;
-#else
-                Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-#endif
-
-            IPAddress clientIP = null;
-
-            WebRequest request = WebRequest.Create("https://checkip.amazonaws.com");
-            using (WebResponse response = request.GetResponse())
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-            {
-                clientIP = IPAddress.Parse(reader.ReadToEnd().Trim('\n'));
-            }
 
 
                 //create the process
@@ -71,7 +124,7 @@ namespace ChaosLauncher
                 memory.WriteByte(0xEB);
 
                 //edit the direct ip to the server ip
-                byte[] address = serverIP.Equals(clientIP) ? IPAddress.Loopback.GetAddressBytes() : serverIP.GetAddressBytes();
+                byte[] address = IpToUse.GetAddressBytes();
                 memory.Position = 0x4333C2;
                 memory.WriteByte(106);
                 memory.WriteByte(address[3]);
@@ -81,6 +134,11 @@ namespace ChaosLauncher
                 memory.WriteByte(address[1]);
                 memory.WriteByte(106);
                 memory.WriteByte(address[0]);
+
+                //change port
+                memory.Position = 0x4333E4;
+                memory.WriteByte(2554 % 256);
+                memory.WriteByte(2554 / 256);
 
                 //skip intro
                 memory.Position = 0x42E61F;
@@ -103,6 +161,11 @@ namespace ChaosLauncher
             //let process render it's window before we change the title
             while (proc.MainWindowHandle == IntPtr.Zero) { }
             SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos");
+        }
+
+        private void infoImg_Click(object sender, EventArgs e)
+        {
+            MessageDialog.Show(this, this);
         }
     }
 }

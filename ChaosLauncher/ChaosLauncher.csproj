@@ -59,6 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Flags.cs" />
+    <Compile Include="MessageDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageDialog.designer.cs">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -86,6 +92,9 @@
     <EmbeddedResource Include="Launcher.resx">
       <DependentUpon>Launcher.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MessageDialog.resx">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -93,13 +102,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="chaos.ico" />
+    <None Include="Resources\info.png" />
+    <None Include="Resources\launcherImg.png" />
+    <None Include="Resources\serverDown.png" />
+    <None Include="Resources\serverUp.png" />
     <None Include="Resources\PATH.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>cd "$(SolutionDir)"
 set /p wDir=&lt; PATH.txt
-if $(ConfigurationName)=="Release" (
+if"$(ConfigurationName)"=="Release" (
 xcopy /C /y "%25cd%25\ChaosLauncher\bin\Release\ChaosLauncher.exe" "%25wDir%25\ChaosDa\"
 ) else ( exit )</PostBuildEvent>
   </PropertyGroup>
