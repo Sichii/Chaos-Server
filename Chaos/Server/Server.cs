@@ -122,15 +122,19 @@ namespace Chaos
 
         internal void EndAccept(IAsyncResult ar)
         {
+            Socket clientSocket = ServerSocket.EndAccept(ar);
             ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
 
-            //create the user, and add them to the userlist
-            Client newClient = new Client(this, ServerSocket.EndAccept(ar));
+            if (clientSocket.Connected)
+            {
+                //create the user, and add them to the userlist
+                Client newClient = new Client(this, clientSocket);
 
-            WriteLog($@"Incoming connection", newClient);
+                WriteLog($@"Incoming connection", newClient);
 
-            if (Clients.TryAdd(newClient.ClientSocket, newClient))
-                newClient.Connect();
+                if (Clients.TryAdd(newClient.ClientSocket, newClient))
+                    newClient.Connect();
+            }
         }
 
         internal static void WriteLog(string message, Client client = null)

@@ -26,8 +26,10 @@ namespace ChaosLauncher
 
         public static void SetPaths()
         {
-            Paths.BaseDir = Properties.Resources.PATH[0].Trim('\n', '\r');
-            Paths.HostName = Properties.Resources.PATH[1].Trim('\n', '\r', ' ');
+            string[] paths = Properties.Resources.PATH.Split('\n');
+
+            Paths.BaseDir = paths[0].Trim('\n', '\r');
+            Paths.HostName = paths[1].Trim('\n', '\r', ' ');
 
             if (!Paths.BaseDir.EndsWith(@"\"))
                 Paths.BaseDir += @"\";

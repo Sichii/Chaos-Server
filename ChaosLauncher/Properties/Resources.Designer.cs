@@ -61,12 +61,52 @@ namespace ChaosLauncher.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap info {
+            get {
+                object obj = ResourceManager.GetObject("info", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap launcherImg {
+            get {
+                object obj = ResourceManager.GetObject("launcherImg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to C:\Users\Sichi\Desktop\ChaosProject
         ///chaosserver.dynu.net.
         /// </summary>
-        internal static string[] PATH {
+        internal static string PATH {
             get {
-                return ResourceManager.GetString("PATH", resourceCulture).Split('\n');
+                return ResourceManager.GetString("PATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap serverDown {
+            get {
+                object obj = ResourceManager.GetObject("serverDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap serverUp {
+            get {
+                object obj = ResourceManager.GetObject("serverUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

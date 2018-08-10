@@ -63,7 +63,7 @@ namespace Chaos
             
             Seed = client.Crypto.Seed;
             Key = client.Crypto.Key;
-            EndPoint = new IPEndPoint((client.IsLoopback ? client.Server.LoopbackEndPoint : client.Server.ClientEndPoint).Address, 2610);
+            EndPoint = new IPEndPoint((client.IsLoopback ? client.Server.LoopbackEndPoint : client.Server.ClientEndPoint).Address, client.Server.ClientEndPoint.Port);
         }
     }
 }
