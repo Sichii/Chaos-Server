@@ -149,13 +149,13 @@ namespace Chaos
         {
             //checks if the name is 4-12 characters straight, if not... checks if there's a string 7-12 units long that has a space surrounced by at least 3 chars on each side.
             if (!Regex.Match(name, @"(:?^[a-zA-Z]{4,}$|[a-zA-Z]{3,} ?[a-zA-Z]{3,})").Success || name.Length > 12)
-                client.SendLoginMessage(LoginMessageType.Message, "Name must be 4-12 characters long, or a space surrounded by at least 3 characters on each side, up to 12 total.");
+                client.SendLoginMessage(LoginMessageType.ClearNameMessage, "Name must be 4-12 characters long, or a space surrounded by at least 3 characters on each side, up to 12 total.");
             //checks if the password is 4-8 units long
             else if (!Regex.Match(password, @".{4,8}").Success)
-                client.SendLoginMessage(LoginMessageType.Message, "Password must be 4-8 units long.");
+                client.SendLoginMessage(LoginMessageType.ClearPswdMessage, "Password must be 4-8 units long.");
             //check if a user already exists with the given valid name
             else if(Server.DataBase.UserExists(name))
-                client.SendLoginMessage(LoginMessageType.Message, "That name is taken.");
+                client.SendLoginMessage(LoginMessageType.ClearNameMessage, "That name is taken.");
             else
             {   //otherwise set the client's new character fields so CreateChar1 can use the information and send a confirmation to the client
                 client.CreateCharName = name;
@@ -169,11 +169,11 @@ namespace Chaos
             User user;
             //checks the userhash to see if the given name and password exist
             if (!Server.DataBase.CheckHash(name, Crypto.GetMD5Hash(password)))
-                client.SendLoginMessage(LoginMessageType.Message, "Incorrect user name or password.");
+                client.SendLoginMessage(LoginMessageType.ClearNameMessage, "Incorrect user name or password.");
             //checks to see if the user is currently logged on
             else if (Server.TryGetUser(name, out user))
             {
-                client.SendLoginMessage(LoginMessageType.Message, "That character is already logged in.");
+                client.SendLoginMessage(LoginMessageType.ClearPswdMessage, "That character is already logged in.");
                 user.Client.Disconnect();
             }
             else
@@ -228,7 +228,7 @@ namespace Chaos
             if (Server.DataBase.TryAddUser(newUser, client.CreateCharPw))
                 client.SendLoginMessage(LoginMessageType.Confirm);
             else
-                client.SendLoginMessage(LoginMessageType.Message, "Unable to create character. Name is already taken.");
+                client.SendLoginMessage(LoginMessageType.ClearNameMessage, "Unable to create character. Name is already taken.");
         }
 
         internal static void RequestMapData(Client client)
@@ -675,7 +675,7 @@ namespace Chaos
         internal static void ChangePassword(Client client, string name, string currentPw, string newPw)
         {
             if (Server.DataBase.ChangePassword(name, currentPw, newPw))
-                client.SendLoginMessage(LoginMessageType.Message, "Password successfully changed.");
+                client.SendLoginMessage(LoginMessageType.ClearNameMessage, "Password successfully changed.");
         }
 
         internal static readonly object ExchangeLock = new object();

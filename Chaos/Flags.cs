@@ -221,7 +221,10 @@ namespace Chaos
     internal enum LoginMessageType : byte
     {
         Confirm = 0,
-        Message = 3
+        ClearNameMessage = 3,
+        ClearPswdMessage = 5,
+        CharacterDoesntExist = 14,
+        WrongPassword = 15
     }
 
     internal enum PublicMessageType : byte
