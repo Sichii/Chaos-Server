@@ -11,11 +11,13 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -30,6 +32,7 @@ namespace ChaosLauncher
         private IPAddress ClientIP;
         private bool IsLoopback;
         private IPAddress IpToUse;
+        private PrivateFontCollection pfc = new PrivateFontCollection();
 
         Ping ping = new Ping();
         PingOptions options = new PingOptions(128, true);
@@ -40,10 +43,24 @@ namespace ChaosLauncher
         {
             InitializeComponent();
 
+            using (MemoryStream fontStream = new MemoryStream(Properties.Resources.SWTORTrajan))
+            {
+                byte[] pfcData = fontStream.ToArray();
+                unsafe
+                {
+                    fixed (byte* pfcDataPtr = pfcData)
+                        pfc.AddMemoryFont((IntPtr)pfcDataPtr, pfcData.Length);
+                }
+            }
+
+            launchBtn.Font = new System.Drawing.Font(pfc.Families[0], launchBtn.Font.Size, launchBtn.Font.Style);
+            serverStatusLbl.Font = new System.Drawing.Font(pfc.Families[0], serverStatusLbl.Font.Size, serverStatusLbl.Font.Style);
+            
 #if DEBUG
             ServerIP = IPAddress.Loopback;
             IsLoopback = true;
 #else
+
             ServerIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 
             WebRequest request = WebRequest.Create("https://checkip.amazonaws.com");

@@ -114,7 +114,17 @@ namespace Chaos
         #endregion
 
         #region Defaults
-        private bool NormalItem(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null) { return true; }
+        private bool NormalItem(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Item item = obj as Item;
+
+            if (client.User.Exchange?.IsActive == true)
+            {
+                client.User.Exchange.AddItem(client.User, item.Slot);
+                return true;
+            }
+            return false;
+        }
         private bool EquipItem(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Item item = obj as Item;
@@ -168,7 +178,7 @@ namespace Chaos
             foreach (Creature c in targets)
                 Game.Extensions.ApplyDamage(c, amount);
 
-            Game.Extensions.ApplyEffect(client, skill, targets, null, StatUpdateType.None, true, false, false);
+            Game.Extensions.ApplyActivation(client, skill, targets, null, StatUpdateType.None, true, false, false);
             return true;
         }
         private bool NormalSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
@@ -184,7 +194,7 @@ namespace Chaos
             foreach (Creature c in targets)
                 Game.Extensions.ApplyDamage(c, amount);
 
-            Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None, true);
+            Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None, true);
             return true;
         }
         #endregion
@@ -238,7 +248,7 @@ namespace Chaos
                     client.User.Direction = target.Direction;
                 }
 
-                Game.Extensions.ApplyEffect(client, skill, targets, null, StatUpdateType.None);
+                Game.Extensions.ApplyActivation(client, skill, targets, null, StatUpdateType.None);
                 return true;
             }
             return false;
@@ -293,7 +303,7 @@ namespace Chaos
             foreach(Point point in points)
                 sfx.Add(new Animation(point, 0, 0, 2, 0, 100));
 
-            Game.Extensions.ApplyEffect(client, skill, targets, sfx, StatUpdateType.None);
+            Game.Extensions.ApplyActivation(client, skill, targets, sfx, StatUpdateType.None);
             return true;
         }
         #endregion
@@ -335,7 +345,7 @@ namespace Chaos
             }
 
             spell.CooldownReduction -= 1f;
-            Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
+            Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
         private Spell ReturnHome() => new Spell(56, "Return Home", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 1), new Animation(91, 0, 100), TargetsType.None, BodyAnimation.WizardCast);
@@ -368,7 +378,7 @@ namespace Chaos
                     Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.NOES_LOCATION));
                     break;
             }
-            Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
+            Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
         private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, BodyAnimation.HandsUp);
@@ -425,7 +435,7 @@ namespace Chaos
                         break;
                 }
 
-                Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
+                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
                 return true;
             }
             else
@@ -450,7 +460,8 @@ namespace Chaos
 
             if (user.EffectsBar.TryAdd(eff))
             {
-                Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.Primary);
+                (target as User)?.Client.SendEffect(eff);
+                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
                 return true;
             }
 
@@ -466,7 +477,8 @@ namespace Chaos
 
             if (target.EffectsBar.TryAdd(eff))
             {
-                Game.Extensions.ApplyEffect(client, spell, targets, null, StatUpdateType.None);
+                (target as User)?.Client.SendEffect(eff);
+                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
                 return true;
             }
             return false;

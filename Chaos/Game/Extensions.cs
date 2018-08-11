@@ -151,7 +151,7 @@ namespace Chaos
         /// <param name="displayHealth">Whether or not to display health for the targets.</param>
         /// <param name="refreshClient">Whether or not to refresh the source of change.</param>
         /// <param name="refreshTargets">Whether or not to refresh the targets.</param>
-        internal void ApplyEffect(Client client, PanelObject obj, List<Creature> targets, List<Animation> sfx, StatUpdateType updateType, bool displayHealth = false, bool refreshClient = false, bool refreshTargets = false)
+        internal void ApplyActivation(Client client, PanelObject obj, List<Creature> targets, List<Animation> sfx, StatUpdateType updateType, bool displayHealth = false, bool refreshClient = false, bool refreshTargets = false)
         {
             lock (obj)
             {

@@ -109,5 +109,15 @@ namespace ChaosLauncher.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SWTORTrajan {
+            get {
+                object obj = ResourceManager.GetObject("SWTORTrajan", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
