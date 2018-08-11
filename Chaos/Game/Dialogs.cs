@@ -67,10 +67,14 @@ namespace Chaos
                         new List<DialogMenuItem>()
                         {
                             new DialogMenuItem(11, "Where am I?"),
-                            new DialogMenuItem(12, "Who are you?")
+                            new DialogMenuItem(12, "Who are you?"),
+                            new DialogMenuItem(13, "I'm bored. Got any jobs?"),
+                            new DialogMenuItem(14, "There is a slight breeze.."),
                         })),
-                NormalDialog(PursuitIds.None, 11, false, false, "You're in my humble home!", 9),
-                NormalDialog(PursuitIds.None, 12, false, false, "Name is Maribel.", 9),
+                NormalDialog(PursuitIds.None, 11, true, true, "You're in my humble home! On the continent of Temauir...? Jeez, how hard did you hit your head climbing off the bunks. ", 10),
+                NormalDialog(PursuitIds.None, 12, true, true, "Maribel is the name! You're in my home in which my husband runs a potion shop out of. He's the best alchemist this side of Tyruan.", 10),
+                NormalDialog(PursuitIds.None, 13, true, true, "Go seek my husband Markus. He will definately have a job for you around here.", 10),
+                NormalDialog(PursuitIds.GiveTatteredRobe, 14, true, true, "*she looks down and her cheeks go red* I almost forgot! Here's your clothes..", 10),
             };
 
             foreach(Dialog d in DialogList)

@@ -36,12 +36,29 @@ namespace Chaos
             { PursuitIds.BecomePriest, new PursuitDelegate(BecomePriest) },
             { PursuitIds.BecomeMonk, new PursuitDelegate(BecomeMonk) },
             { PursuitIds.BecomeRogue, new PursuitDelegate(BecomeRogue) },
+            { PursuitIds.GiveTatteredRobe, new PursuitDelegate(GiveTatteredRobe) },
         };
 
         internal static PursuitDelegate Activate(PursuitIds pid) => PursuitList[pid];
 
         #region PursuitEffects
         private static void None(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null) { }
+
+        private static void GiveTatteredRobe(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            if (!client.User.HasFlag(Quest.MaribelRobes) && client.User.Gender == Gender.Male)
+            {
+                Game.CreationEngine.GiveItem(client, server, "Male Tattered Robes", 1);
+                client.User.AddFlag(Quest.MaribelRobes);
+            }
+            else if (!client.User.HasFlag(Quest.MaribelRobes) && client.User.Gender == Gender.Female)
+            {
+                Game.CreationEngine.GiveItem(client, server, "Female Tattered Robes", 1);
+                client.User.AddFlag(Quest.MaribelRobes);
+            }
+            else
+                client.SendServerMessage(ServerMessageType.AdminMessage, @"I've already given you robes.");
+        }
 
         private static void ReviveSelf(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {

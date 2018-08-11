@@ -151,6 +151,7 @@ namespace Chaos
     internal enum Quest : ulong
     {
         None = 0,
+        MaribelRobes = 1,
         //add more quest flags here, double each time
     }
     [Flags]
@@ -194,7 +195,8 @@ namespace Chaos
         BecomeWizard = 9,
         BecomePriest = 10,
         BecomeMonk = 11,
-        BecomeRogue = 12
+        BecomeRogue = 12,
+        GiveTatteredRobe = 13,
     }
     #endregion
 
