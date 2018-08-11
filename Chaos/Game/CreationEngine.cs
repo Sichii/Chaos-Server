@@ -40,6 +40,8 @@ namespace Chaos
             AddItem("Test Male Equipment", TestMaleEquipment, EquipItem);
             AddItem("Test Female Equipment", TestFemaleEquipment, EquipItem);
             AddItem("Test Weapon", TestWeapon, EquipItem);
+            AddItem("Male Tattered Robes", MaleTatteredRobes, EquipItem);
+            AddItem("Female Tattered Robes", FemaleTatteredRobes, EquipItem);
             #endregion
 
             #region Skills
@@ -193,6 +195,26 @@ namespace Chaos
         private Item TestMaleEquipment(int count) => new Item(new ItemSprite(11990, 1023), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
         private Item TestFemaleEquipment(int count) => new Item(new ItemSprite(11991, 1023), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
         private Item TestWeapon(int count) => new Item(new ItemSprite(3254, 186), 0, "Test Weapon", EquipmentSlot.Weapon, 10000, 10000, 5, Gender.Unisex, false);
+        private Item MaleTatteredRobes(int count) => new Item(new ItemSprite(1108, 44), 0, "Male Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Male, false);
+        private Item FemaleTatteredRobes(int count) => new Item(new ItemSprite(1109, 45), 0, "Female Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Female, false);
+
+        internal bool GiveItem(Client client, Server server, string itemName, int amount)
+        {
+            List<Item> newItems;
+            if ((newItems = CreateItems(itemName, amount).ToList()) != null && newItems.Count > 0)
+            {
+                foreach (Item i in newItems)
+                    if (client.User.Inventory.AddToNextSlot(i))
+                        client.Enqueue(ServerPackets.AddItem(i));
+                return true;
+            }
+            else
+            {
+                client.SendServerMessage(ServerMessageType.AdminMessage, "Couldn't give " + itemName + ".");
+                return false;
+            }
+        }
+
         #endregion
 
         #region Skills
