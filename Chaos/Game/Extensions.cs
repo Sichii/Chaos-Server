@@ -38,7 +38,7 @@ namespace Chaos
             //death stuff
 
             user.AddFlag(UserState.DeathDisplayed);
-            Game.Extensions.WarpObj(user, new Warp(user.Location, CONSTANTS.DEATH_LOCATION));
+            WarpObj(user, new Warp(user.Location, CONSTANTS.DEATH_LOCATION));
         }
 
         internal void KillMonster(Monster monster)
@@ -47,7 +47,7 @@ namespace Chaos
             //other things?
 
             //remove from screen
-            World.RemoveObjectFromMap(monster);
+            monster.Map.RemoveObject(monster);
         }
 
         /// <summary>
@@ -86,14 +86,14 @@ namespace Chaos
                     creatures.Add(client.User);
                     break;
                 case TargetsType.Front:
-                    if(World.TryGetObject(client.User.Point.NewOffset(client.User.Direction), out creature, client.User.Map))
+                    if(client.User.Map.TryGetObject(client.User.Point.NewOffset(client.User.Direction), out creature))
                         creatures.Add(creature);
                     break;
                 case TargetsType.Surround:
-                    creatures.AddRange(World.ObjectsVisibleFrom(client.User, false, 1).OfType<Creature>());
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User, false, 1).OfType<Creature>());
                     break;
                 case TargetsType.Cleave:
-                    creatures.AddRange(World.ObjectsVisibleFrom(client.User, false, 2).OfType<Creature>().Where(c =>
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User, false, 2).OfType<Creature>().Where(c =>
                         (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)) || 
                         client.User.DiagonalPoints(1, client.User.Direction).Contains(c.Point)));
                     break;
@@ -101,7 +101,7 @@ namespace Chaos
                     int distance = 13;
                     List<Point> line = client.User.LinePoints(13, client.User.Direction);
 
-                    foreach (Creature c in World.ObjectsVisibleFrom(client.User))
+                    foreach (Creature c in client.User.Map.ObjectsVisibleFrom(client.User))
                     {
                         if (line.Contains(c.Point))
                         {
@@ -124,16 +124,16 @@ namespace Chaos
 
                 //generally spell types
                 case TargetsType.Cluster1:
-                    creatures.AddRange(World.ObjectsVisibleFrom(targetPoint, client.User.Map, true, 1).OfType<Creature>());
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(targetPoint, false, 1).OfType<Creature>());
                     break;
                 case TargetsType.Cluster2:
-                    creatures.AddRange(World.ObjectsVisibleFrom(targetPoint, client.User.Map, true, 2).OfType<Creature>());
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(targetPoint, false, 2).OfType<Creature>());
                     break;
                 case TargetsType.Cluster3:
-                    creatures.AddRange(World.ObjectsVisibleFrom(targetPoint, client.User.Map, true, 3).OfType<Creature>());
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(targetPoint, false, 3).OfType<Creature>());
                     break;
                 case TargetsType.Screen:
-                    creatures.AddRange(World.ObjectsVisibleFrom(targetPoint, client.User.Map, true).OfType<Creature>());
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(targetPoint, false).OfType<Creature>());
                     break;
             }
 
@@ -156,7 +156,7 @@ namespace Chaos
             lock (obj)
             {
                 //grab all nearby Users
-                List<User> nearbyUsers = World.ObjectsVisibleFrom(client.User, true).OfType<User>().ToList();
+                List<User> nearbyUsers = client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>().ToList();
                 bool isSkill = false;
                 //send the skill cooldown to the skill user
                 if (obj is Skill)
@@ -164,19 +164,18 @@ namespace Chaos
 
                 client.Enqueue(ServerPackets.Cooldown(isSkill, obj.Slot, (uint)obj.Cooldown.TotalSeconds));
 
-                if (targets == null)
-                    targets = new List<Creature>();
-                else
-                    targets = targets.Where(c => c.IsAlive).ToList();
-
                 //refresh the client if needed
                 if (refreshClient)
                     Refresh(client);
 
                 //refresh targets if needed
-                if (refreshTargets)
-                    foreach (User u in targets.OfType<User>())
+                foreach (User u in targets.OfType<User>())
+                {
+                    if (updateType != StatUpdateType.None)
+                        u.Client.SendAttributes(updateType);
+                    if (refreshTargets)
                         Refresh(u.Client);
+                }
 
                 //send all nearby clients the bodyanimation
                 if (obj.BodyAnimation != BodyAnimation.None)
@@ -186,18 +185,14 @@ namespace Chaos
                 //for each target
                 foreach (Creature c in targets)
                 {
-                    User user;
-                    if (updateType != StatUpdateType.None && (user = c as User) != null)
-                        user.Client.SendAttributes(updateType);
-
                     //get all users they can see including self
-                    List<User> usersNearC = Game.World.ObjectsVisibleFrom(c, true).OfType<User>().ToList();
+                    List<User> usersNearC = client.User.Map.ObjectsVisibleFrom(c, true).OfType<User>().ToList();
 
                     //if animation should be displayed
-                    if (obj.EffectAnimation != Animation.None)
+                    if (obj.Animation != Animation.None)
                     {
                         //create new animation for this target
-                        Animation newAnimation = new Animation(obj.EffectAnimation, c.Id, client.User.Id);
+                        Animation newAnimation = obj.Animation.GetTargetedAnimation(c.Id, client.User.Id);
                         c.AnimationHistory[newAnimation.GetHashCode()] = DateTime.UtcNow;
                         //send this animation to all visible users
                         foreach (User u in usersNearC)
@@ -218,7 +213,7 @@ namespace Chaos
                 //if there are any additional special effects with the spell, display them to all users who should be able to see them
                 if (sfx != null)
                     foreach (Animation ani in sfx)
-                        foreach (User u in Game.World.ObjectsVisibleFrom(ani.TargetPoint, client.User.Map, true).OfType<User>())
+                        foreach (User u in client.User.Map.ObjectsVisibleFrom(ani.TargetPoint, true).OfType<User>())
                             u.Client.SendAnimation(ani);
             }
             return;
@@ -261,24 +256,29 @@ namespace Chaos
         /// <param name="worldMap">Whether or not they are using a worldMap to warp.</param>
         internal void WarpObj(VisibleObject obj, Warp warp, bool worldMap = false)
         {
+            if (!World.Maps.ContainsKey(warp.TargetMapId))
+                return;
+
             User user = obj as User;
-            if (warp.Location == obj.Location && World.Maps.ContainsKey(warp.TargetMapId))
+            Map targetMap = World.Maps[warp.TargetMapId];
+
+            if (warp.Location == obj.Location)
             {
-                if (user?.IsAdmin != true && World.Maps[warp.TargetMapId].IsWall(warp.TargetPoint))
+                if (user?.IsAdmin != true && targetMap.IsWall(warp.TargetPoint))
                 {
                     Point nearestPoint = new Point(ushort.MaxValue, ushort.MaxValue);
                     int distance = int.MaxValue;
-                    ushort x = Utility.Clamp<ushort>(warp.TargetPoint.X - 25, 0, World.Maps[warp.TargetMapId].SizeX);
-                    int width = Math.Min(x + 50, World.Maps[warp.TargetMapId].SizeX);
+                    ushort x = Utility.Clamp<ushort>(warp.TargetPoint.X - 25, 0, targetMap.SizeX);
+                    int width = Math.Min(x + 50, targetMap.SizeX);
                     ushort y = Utility.Clamp<ushort>(warp.TargetPoint.Y - 25, 0, World.Maps[warp.TargetMapId].SizeY);
-                    int height = Math.Min(y + 50, World.Maps[warp.TargetMapId].SizeY);
+                    int height = Math.Min(y + 50, targetMap.SizeY);
 
                     //search up to 2500 tiles for a non wall
                     for (; x < width; x++)
                         for (; y < height; y++)
                         {
                             Point newPoint = new Point(x, y);
-                            if (!World.Maps[warp.TargetMapId].IsWall(newPoint))
+                            if (!targetMap.IsWall(newPoint))
                             {
                                 distance = warp.TargetPoint.Distance(newPoint);
                                 nearestPoint = newPoint;
@@ -289,9 +289,9 @@ namespace Chaos
                 }
 
                 if (!worldMap)
-                    World.RemoveObjectFromMap(obj);
+                    obj.Map.RemoveObject(obj);
 
-                World.AddObjectToMap(obj, warp.TargetLocation);
+                World.Maps[warp.TargetMapId].AddObject(obj, warp.TargetPoint);
             }
         }
 
@@ -317,7 +317,7 @@ namespace Chaos
                 List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
 
                 //get all objects that would be visible to this object and send this user to them / send them to this user
-                foreach (VisibleObject obj in World.ObjectsVisibleFrom(client.User))
+                foreach (VisibleObject obj in client.User.Map.ObjectsVisibleFrom(client.User))
                     if (obj is User)
                     {
                         User user = obj as User;

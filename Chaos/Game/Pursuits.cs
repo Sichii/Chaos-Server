@@ -46,6 +46,7 @@ namespace Chaos
 
         private static void GiveTatteredRobe(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
+            /*
             if (!client.User.HasFlag(Quest.MaribelRobes) && client.User.Gender == Gender.Male)
             {
                 Game.CreationEngine.GiveItem(client, server, "Male Tattered Robes", 1);
@@ -58,6 +59,22 @@ namespace Chaos
             }
             else
                 client.SendServerMessage(ServerMessageType.AdminMessage, @"I've already given you robes.");
+                */
+
+            if(!client.User.HasFlag(Quest.MaribelRobes))
+            {
+                Item item = Game.CreationEngine.CreateItem($@"{(client.User.Gender == Gender.Female ? "Female" : "Male")} Tattered Robes");
+
+                if (client.User.Inventory.AddToNextSlot(item))
+                {
+                    client.User.AddFlag(Quest.MaribelRobes);
+                    client.Enqueue(ServerPackets.AddItem(item));
+                }
+            }
+            else
+            {
+
+            }
         }
 
         private static void ReviveSelf(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)

@@ -38,7 +38,7 @@ namespace Chaos
             Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 #endif
             Server = new Server(localIP, 2554);
-            ServerThread = new Thread(Server.Start);
+            ServerThread = new Thread(Server.ServerLoop);
             ServerThread.Start();
 
             while (Server.ServerSocket == null)

@@ -10,14 +10,12 @@
 // ****************************************************************************
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Chaos
@@ -44,7 +42,7 @@ namespace Chaos
         internal uint TableCheckSum { get; }
         internal byte[] LoginMessage { get; }
         internal uint LoginMessageCheckSum { get; }
-        internal ConcurrentDictionary<Socket, Client> Clients { get; }
+        private Dictionary<Socket, Client> Clients { get; }
         internal IEnumerable<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World && client.User != null);
         internal DataBase DataBase { get; }
         internal GameTime ServerTime => GameTime.Now;
@@ -67,7 +65,7 @@ namespace Chaos
             ClientEndPoint = new IPEndPoint(ip, port);
             ServerEndPoint = new IPEndPoint(IPAddress.Any, port);
             LoopbackEndPoint = new IPEndPoint(IPAddress.Loopback, port);
-            Clients = new ConcurrentDictionary<Socket, Client>();
+            Clients = new Dictionary<Socket, Client>();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
             MetaFiles = new List<MetaFile>();
@@ -105,7 +103,7 @@ namespace Chaos
             LogFile.Dispose();
         }
 
-        internal void Start()
+        internal void ServerLoop()
         {
             Running = true;
             Game.Set(this);
@@ -118,6 +116,71 @@ namespace Chaos
             ServerSocket.Bind(ServerEndPoint);
             ServerSocket.Listen(10);
             ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
+
+            while (Running)
+            {
+                lock (Sync)
+                {
+                    foreach (Client client in Clients.Values)
+                    {
+                        if (!client.Connected)
+                        {
+                            client.Disconnect();
+                            continue;
+                        }
+
+                        lock (client.SendQueue)
+                        {
+                            while (client.SendQueue.Count > 0)
+                            {
+                                ServerPacket serverPacket = client.SendQueue.Dequeue();
+                                if (serverPacket == null) return;
+                                WriteLog(serverPacket.ToString(), client);
+
+                                if (serverPacket.IsEncrypted)
+                                {
+                                    serverPacket.Counter = client.Signature++;
+                                    serverPacket.Encrypt(client.Crypto);
+                                }
+
+                                if (serverPacket.OpCode == 98)
+                                    client.Signature = serverPacket.Counter;
+
+                                client.Send(serverPacket);
+                            }
+                        }
+                    }
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
+        internal bool TryAddClient(Client client)
+        {
+            lock (Sync)
+            {
+                if (!Clients.ContainsKey(client.ClientSocket))
+                {
+                    Clients.Add(client.ClientSocket, client);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal bool TryRemoveClient(Client client)
+        {
+            lock (Sync)
+            {
+                if (Clients.ContainsKey(client.ClientSocket))
+                {
+                    Clients.Remove(client.ClientSocket);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal void EndAccept(IAsyncResult ar)
@@ -132,8 +195,7 @@ namespace Chaos
 
                 WriteLog($@"Incoming connection", newClient);
 
-                if (Clients.TryAdd(newClient.ClientSocket, newClient))
-                    newClient.Connect();
+                newClient.Connect();
             }
         }
 

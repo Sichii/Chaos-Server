@@ -22,14 +22,12 @@ namespace Chaos
         internal readonly object Sync = new object();
         private byte[] ClientBuffer;
         private List<byte> FullClientBuffer;
-        private Queue<ServerPacket> SendQueue;
-        private Queue<ClientPacket> ProcessQueue;
-        private bool Connected;
-        private byte ServerCount;
+        internal Queue<ServerPacket> SendQueue;
+        internal bool Connected;
+        internal byte Signature;
         internal byte StepCount;
 
         private ClientPackets.Handler[] PacketHandlers { get; }
-        private Thread ClientThread { get; }
         internal IPAddress IpAddress { get; }
         internal ServerType ServerType { get; set; }
         internal Server Server { get; }
@@ -56,7 +54,6 @@ namespace Chaos
             ClientBuffer = new byte[4096];
             FullClientBuffer = new List<byte>();
             SendQueue = new Queue<ServerPacket>();
-            ProcessQueue = new Queue<ClientPacket>();
 
 
             Server = server;
@@ -64,11 +61,10 @@ namespace Chaos
             ClientSocket = socket;
             Crypto = new Crypto();
             PacketHandlers = ClientPackets.Handlers;
-            ServerCount = 0;
+            Signature = 0;
             StepCount = 1;
             Id = Interlocked.Increment(ref Server.NextClientId);
             IpAddress = (socket.RemoteEndPoint as IPEndPoint).Address;
-            ClientThread = new Thread(ClientLoop);
 
             LastClickObj = DateTime.MinValue;
             LastRefresh = DateTime.MinValue;
@@ -80,19 +76,25 @@ namespace Chaos
         /// </summary>
         internal void Connect()
         {
-            Connected = true;
-
-            //when we receive data, copy the readable data to the client buffer and call endreceive
-            ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
-
-            if (ServerType != ServerType.World)
+            if (Server.TryAddClient(this))
             {
-                Enqueue(ServerPackets.AcceptConnection());
-                Enqueue(ServerPackets.ChangeCounter());
-            }
+                Connected = true;
 
-            Server.WriteLog($@"Connection accepted", this);
-            ClientThread.Start();
+                //when we receive data, copy the readable data to the client buffer and call endreceive
+                ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
+
+                if (ServerType != ServerType.World)
+                {
+                    Enqueue(ServerPackets.AcceptConnection());
+                    Enqueue(ServerPackets.ChangeCounter());
+                }
+
+                Server.WriteLog($@"Connection accepted", this);
+            }
+            else
+            {
+                Server.WriteLog($@"Connection failure", this);
+            }
         }
 
         /// <summary>
@@ -107,11 +109,10 @@ namespace Chaos
                 if (wait)
                     return;
 
-                Client dis = this;
-                if (Server.Clients.TryRemove(ClientSocket, out dis))
+                if (Server.TryRemoveClient(this))
                 {
                     if (User != null)
-                        try { Game.World.ScrubUser(User); }
+                        try { Game.World.RemoveClient(this); }
                         catch { }
                     ClientSocket.Disconnect(false);
                 }
@@ -150,8 +151,24 @@ namespace Chaos
                             //remove the data from the fullclientbuffer
                             FullClientBuffer.RemoveRange(0, count);
                             //send it off to be processed by the server
-                            lock (ProcessQueue)
-                                ProcessQueue.Enqueue(clientPacket);
+
+                            if (clientPacket != null)
+                            {
+                                if (clientPacket.IsEncrypted)
+                                    clientPacket.Decrypt(Crypto);
+
+                                if (clientPacket.IsDialog)
+                                    clientPacket.DecryptDialog();
+
+                                try
+                                {
+                                    PacketHandlers[clientPacket.OpCode](this, clientPacket);
+                                }
+                                catch (Exception e)
+                                {
+                                    Server.WriteLog(e.ToString(), this);
+                                }
+                            }
                         }
                         else
                             break;
@@ -190,7 +207,7 @@ namespace Chaos
         /// Begins an asynchronous operation to send a packet to the client.
         /// </summary>
         /// <param name="packet">The packet to send.</param>
-        private void Send(ServerPacket packet)
+        internal void Send(ServerPacket packet)
         {
             byte[] data = packet.ToArray();
             try { ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket); }
@@ -198,61 +215,6 @@ namespace Chaos
             {
                 //do things to save the connection?
             }
-        }
-
-        /// <summary>
-        /// Thread/Loop where packets from the client are processed, and the server sends packets back to the client.
-        /// </summary>
-        private void ClientLoop()
-        {
-            while (Connected)
-            {
-                lock (Sync)
-                {
-                    lock (SendQueue)//lock to send server packets
-                    {
-                        while (SendQueue.Count > 0)//while there are packets to send
-                        {
-                            ServerPacket packet = SendQueue.Dequeue();//get the next packet in the queue
-                            if (packet == null) continue;
-                            Server.WriteLog(packet.ToString(), this);
-
-                            if (packet.IsEncrypted)//if it should be encrypted, encrypt it
-                            {
-                                packet.Counter = ServerCount++;
-                                packet.Encrypt(Crypto);
-                            }
-
-                            if (packet.OpCode == 98)//if we send packet 98, we change the servercounter (should find a way to safely implement this)
-                                ServerCount = packet.Counter;
-
-                            Send(packet);
-                        }
-                    }
-                    lock (ProcessQueue)//lock to receive client packets
-                    {
-                        while (ProcessQueue.Count > 0)//while there are packets to process
-                        {
-                            ClientPacket packet = ProcessQueue.Dequeue();//get the next packet in the queue, convert to clientpacket
-                            if (packet == null) continue;
-
-                            if (packet.IsEncrypted)//if it is encrypted, decrypt it
-                                packet.Decrypt(Crypto);
-
-                            if (packet.IsDialog)//if packet is a dialog, decrypt the header
-                                packet.DecryptDialog();
-
-                            var handle = PacketHandlers[packet.OpCode];//get the handler for this packet
-                            if (handle != null)//if we have a handler for this packet
-                                try { handle(this, packet); } //no srsly, please handle it
-                                catch (Exception e) { Server.WriteLog(e.ToString(), this); } //log the exception if it occurs
-                        }
-                    }
-                }
-                Thread.Sleep(10);
-            }
-            //if we reach this (outside the while loop), then connected = false
-            Disconnect();
         }
 
         /// <summary>
@@ -299,10 +261,10 @@ namespace Chaos
             if (remove)
             {
                 User.EffectsBar.TryRemove(eff);
-                Enqueue(ServerPackets.EffectsBar(eff.Icon, EffectsBarColor.None));
+                Enqueue(ServerPackets.EffectsBar(eff.Sprite, EffectsBarColor.None));
             }
             else
-                Enqueue(ServerPackets.EffectsBar(eff.Icon, eff.Color()));
+                Enqueue(ServerPackets.EffectsBar(eff.Sprite, eff.Color()));
         }
         /// <summary>
         /// Sends a persuit menu to the client. Sets necessary client variables.

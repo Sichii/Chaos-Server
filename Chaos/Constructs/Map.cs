@@ -22,11 +22,11 @@ namespace Chaos
     public sealed class Map
     {
         internal readonly object Sync = new object();
-        internal ConcurrentDictionary<int, WorldObject> Objects { get; set; }
+        private Dictionary<int, WorldObject> Objects { get; set; }
+        private List<Effect> Effects { get; set; }
         public ConcurrentDictionary<Point, Door> Doors { get; set; }
         internal Dictionary<Point, Tile> Tiles { get; }
         public Dictionary<Point, Warp> Warps { get; set; }
-        internal List<Effect> WorldEffects { get; set; }
         public Dictionary<Point, WorldMap> WorldMaps { get; set; }
         [JsonProperty]
         public ushort Id { get; }
@@ -52,9 +52,9 @@ namespace Chaos
             Tiles = new Dictionary<Point, Tile>();
             Warps = new Dictionary<Point, Warp>();
             WorldMaps = new Dictionary<Point, WorldMap>();
-            Objects = new ConcurrentDictionary<int, WorldObject>();
+            Objects = new Dictionary<int, WorldObject>();
             Doors = new ConcurrentDictionary<Point, Door>();
-            WorldEffects = new List<Effect>();
+            Effects = new List<Effect>();
         }
 
         [JsonConstructor]
@@ -85,6 +85,252 @@ namespace Chaos
         }
 
         /// <summary>
+        /// Adds a single object to a map. Sends and sets all relevant data.
+        /// </summary>
+        /// <param name="vObject">Any visible object.</param>
+        /// <param name="point">The point you want to add it to.</param>
+        internal void AddObject(VisibleObject vObject, Point point)
+        {
+            if (vObject == null) return;
+
+            lock (Sync)
+            {
+                //change location of the object and add it to the map
+                vObject.Map = this;
+                vObject.Point = point;
+                Objects.Add(vObject.Id, vObject);
+
+                List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
+                List<User> usersToSend = new List<User>();
+
+                //get all objects that would be visible to this object and sort them
+                foreach (VisibleObject obj in vObject.Map.ObjectsVisibleFrom(vObject))
+                    if (obj is User)
+                        usersToSend.Add(obj as User);
+                    else
+                        itemMonsterToSend.Add(obj);
+
+                //if this object is a user
+                if (vObject is User)
+                {
+                    User user = vObject as User;
+
+                    user.Client.Enqueue(ServerPackets.MapChangePending());     //send pending map change
+                    user.Client.Enqueue(ServerPackets.MapInfo(user.Map));      //send map info
+                    user.Client.Enqueue(ServerPackets.Location(user.Point));   //send location
+
+                    foreach (User u2s in usersToSend)
+                    {
+                        user.Client.Enqueue(ServerPackets.DisplayUser(u2s));   //send it all the users
+                        u2s.Client.Enqueue(ServerPackets.DisplayUser(user));   //send all the users this user as well
+                    }
+
+                    user.Client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));    //send it all the items, monsters, and merchants
+                    user.Client.Enqueue(ServerPackets.Door(user.Map.DoorsVisibleFrom(user).ToArray()));     //send the user all nearby doors
+                    user.Client.Enqueue(ServerPackets.MapChangeComplete());    //send it mapchangecomplete
+                    user.Client.Enqueue(ServerPackets.MapLoadComplete());      //send it maploadcomplete
+                    user.Client.Enqueue(ServerPackets.DisplayUser(user));      //send it itself
+
+                    user.AnimationHistory.Clear();
+                }
+                else //if this object isnt a user
+                    foreach (User u2s in usersToSend)
+                        u2s.Client.Enqueue(ServerPackets.DisplayItemMonster(vObject)); //send all the visible users this object
+            }
+        }
+
+        /// <summary>
+        /// Adds many objects to the map. NON-USERS ONLY!
+        /// </summary>
+        /// <param name="vObjects">Any non-user visibleobject</param>
+        /// <param name="point">The point you want to add it to.</param>
+        internal void AddObjects(IEnumerable<VisibleObject> vObjects, Point point)
+        {
+            if (vObjects.Count() == 0) return;
+
+            lock (Sync)
+            {
+                //change location of each object and add each item to the map
+                foreach (VisibleObject vObj in vObjects)
+                {
+                    vObj.Map = this;
+                    vObj.Point = point;
+                    Objects.Add(vObj.Id, vObj);
+                }
+
+                //send all the visible users these objects
+                foreach (User user in ObjectsVisibleFrom(vObjects.First()).OfType<User>())
+                    user.Client.Enqueue(ServerPackets.DisplayItemMonster(vObjects.ToArray()));
+            }
+        }
+
+        /// <summary>
+        /// Removes a single object from the map.
+        /// </summary>
+        /// <param name="vObject">Any visible object you want removed.</param>
+        /// <param name="worldMap">Whether or not they are stepping into a worldMap.</param>
+        internal void RemoveObject(VisibleObject vObject, bool worldMap = false)
+        {
+            if (vObject == null) return;
+
+            lock (Sync)
+            {
+                Objects.Remove(vObject.Id);
+                foreach (User user in ObjectsVisibleFrom(vObject).OfType<User>())
+                    user.Client.Enqueue(ServerPackets.RemoveObject(vObject));
+
+                if (!worldMap)
+                    vObject.Map = null;
+            }
+        }
+
+        /// <summary>
+        /// Adds an effect to the map.
+        /// </summary>
+        /// <param name="effect">The effect to add.</param>
+        internal void AddEffect(Effect effect)
+        {
+            lock (Sync)
+                Effects.Add(effect);
+        }
+
+        /// <summary>
+        /// Removes a single effect from the map.
+        /// </summary>
+        /// <param name="effect">The effect to remove.</param>
+        internal void RemoveEffect(Effect effect)
+        {
+            lock (Sync)
+                Effects.Remove(effect);
+        }
+
+        /// <summary>
+        /// Gets all objects the given object can see
+        /// </summary>
+        /// <param name="vObject">Object to base from.</param>
+        /// <param name="include">Whether or not to include the base object.</param>
+        internal IEnumerable<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, bool include = false, byte distance = 13)
+        {
+            lock (Sync)
+                return Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && (include ? true : vObject != obj));
+        }
+
+        internal IEnumerable<VisibleObject> ObjectsVisibleFrom(Point point, bool include = false, byte distance = 13)
+        {
+            lock (Sync)
+                return Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(point) <= distance && (include ? true : obj.Point != point));
+        }
+
+        /// <summary>
+        /// Gets all doors visible from the user.
+        /// </summary>
+        /// <param name="user">The user to base from.</param>
+        internal IEnumerable<Door> DoorsVisibleFrom(User user)
+        {
+            lock (Sync)
+                return Doors.Values.Where(door => user.WithinRange(door.Point));
+        }
+
+        /// <summary>
+        /// Gets al leffects visible from the user.
+        /// </summary>
+        /// <param name="user">The user to base from.</param>
+        internal IEnumerable<Effect> EffectsVisibleFrom(User user)
+        {
+            lock (user.Map.Sync)
+            {
+                foreach (Effect eff in Effects.Where(e => e.Animation.TargetPoint.Distance(user.Point) < 13))
+                    yield return eff;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to retreive a user by searching through the maps for the given name.
+        /// </summary>
+        /// <param name="name">The name of the user to search for.</param>
+        /// <param name="user">Reference to the user to set.</param>
+        internal bool TryGetUser(string name, out User user)
+        {
+            user = null;
+
+            lock (Sync)
+                user = Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) as User;
+
+            return user != null;
+        }
+
+        /// <summary>
+        /// Attempts to retreive an object by searching through the maps for the given id.
+        /// </summary>
+        /// <param name="id">The id of the object to search for.</param>
+        /// <param name="obj">Reference to the object to set.</param>
+        internal bool TryGetObject<T>(int id, out T obj) where T : class
+        {
+            WorldObject wObj;
+            obj = null;
+
+            lock (Sync)
+                if (Objects.TryGetValue(id, out wObj))
+                    obj = wObj as T;
+
+            return obj != null;
+        }
+
+        /// <summary>
+        /// Attempts to retreive an object by searching through the maps for the given id.
+        /// </summary>
+        /// <param name="p">The point of the object to search for.</param>
+        /// <param name="obj">Reference to the object to set.</param>
+        internal bool TryGetObject<T>(Point p, out T obj) where T : class
+        {
+            obj = null;
+
+            lock (Sync)
+            {
+                Type tType = typeof(T);
+
+                if (typeof(VisibleObject).IsAssignableFrom(tType))
+                    obj = Objects.Values.FirstOrDefault(tObj => (tObj as VisibleObject)?.Point == p) as T;
+                else if (typeof(Door).IsAssignableFrom(tType))
+                    obj = Doors.ContainsKey(p) ? Doors[p] as T : null;
+                else if (typeof(Warp).IsAssignableFrom(tType))
+                    obj = Warps.ContainsKey(p) ? Warps[p] as T : null;
+                else if (typeof(WorldMap).IsAssignableFrom(tType))
+                    obj = WorldMaps.ContainsKey(p) ? WorldMaps[p] as T : null;
+                else if (typeof(Effect).IsAssignableFrom(tType))
+                    obj = Effects.FirstOrDefault(e => e.Animation.TargetPoint == p) as T;
+            }
+
+            return obj != null;
+        }
+
+        /// <summary>
+        /// Attempts to retreive all objects of a given type on a given map.
+        /// </summary>
+        /// <typeparam name="T">The type of object to return.</typeparam>
+        /// <param name="map">The map to return from.</param>
+        internal IEnumerable<T> GetAllObjects<T>()
+        {
+            lock (Sync)
+            {
+                Type tType = typeof(T);
+
+                if (typeof(VisibleObject).IsAssignableFrom(tType))
+                    return Objects.Values.OfType<T>();
+                else if (typeof(Door).IsAssignableFrom(tType))
+                    return Doors.Values.OfType<T>();
+                else if (typeof(Warp).IsAssignableFrom(tType))
+                    return Warps.Values.OfType<T>();
+                else if (typeof(WorldMap).IsAssignableFrom(tType))
+                    return WorldMaps.Values.OfType<T>();
+                else if (typeof(Effect).IsAssignableFrom(tType))
+                    return Effects.OfType<T>();
+            }
+
+            return new List<T>();
+        }
+
+        /// <summary>
         /// Checks if the map has a certain flag.
         /// </summary>
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
@@ -94,12 +340,12 @@ namespace Chaos
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        internal bool WithinMap(Point p) => p.X < 0 || p.Y < 0 || p.X >= SizeX || p.Y >= SizeY;
+        internal bool WithinMap(Point p) => p.X >= 0 && p.Y >= 0 && p.X < SizeX && p.Y < SizeY;
 
         /// <summary>
         /// Checks if a point is within the bounds of the map, or a wall.
         /// </summary>
-        internal bool IsWall(Point p) => WithinMap(p) && Tiles[p].IsWall;
+        internal bool IsWall(Point p) => !WithinMap(p) || Tiles[p].IsWall;
 
         /// <summary>
         /// Checks if a given point is within the map, is a wall, or has a monster, door, or other object already on it.

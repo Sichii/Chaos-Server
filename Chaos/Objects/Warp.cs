@@ -18,6 +18,7 @@ namespace Chaos
         public ushort TargetX { get; }
         public ushort TargetY { get; }
         public ushort TargetMapId { get; }
+        public bool DisplayAnimation { get; }
         public Point TargetPoint => new Point(TargetX, TargetY);
         public Location TargetLocation => new Location(TargetMapId, TargetX, TargetY);
 

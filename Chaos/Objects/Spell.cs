@@ -28,8 +28,9 @@ namespace Chaos
         /// <summary>
         /// Object representing a spell ability in your spell pane.
         /// </summary>
-        internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan baseCooldown, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0)
-            :this(0, sprite, name, type, prompt, castLines, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+        internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan baseCooldown, Animation effectAnimation = new Animation(), 
+            TargetsType targetType = TargetsType.None, bool usersOnly = false, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0, Effect effect = default(Effect))
+            :this(0, sprite, name, type, prompt, castLines, baseCooldown, effectAnimation, targetType, usersOnly, bodyAnimation, baseDamage, effect)
         {
         }
 
@@ -37,8 +38,9 @@ namespace Chaos
         /// Master constructor for spell, do not use.
         /// </summary>
         [JsonConstructor]
-        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castlines, TimeSpan baseCooldown, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage)
-            :base(slot, sprite, name, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+        internal Spell(byte slot, ushort sprite, string name, SpellType type, string prompt, byte castlines, TimeSpan baseCooldown, Animation effectAnimation, 
+            TargetsType targetType, bool usersOnly, BodyAnimation bodyAnimation, int baseDamage, Effect effect)
+            :base(slot, sprite, name, baseCooldown, effectAnimation, targetType, usersOnly, bodyAnimation, baseDamage, effect)
         {
             SpellType = type;
             Prompt = prompt ?? "";

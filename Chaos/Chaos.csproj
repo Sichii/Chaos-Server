@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -173,9 +174,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>cd "$(SolutionDir)"
+    <PostBuildEvent>if"$(ConfigurationName)"=="Release"(
+cd "$(SolutionDir)"
 set /p wDir=&lt; PATH.txt
-if"$(ConfigurationName)"=="Release" (
 xcopy /C /y "%25cd%25\Chaos\bin\Release\Chaos.exe" "%25wDir%25\"
 ) else ( exit )</PostBuildEvent>
   </PropertyGroup>
