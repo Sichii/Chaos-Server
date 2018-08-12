@@ -60,6 +60,7 @@ namespace Chaos
             LastUse = DateTime.MinValue;
             Animation = effectAnimation;
             TargetType = targetType;
+            UsersOnly = usersOnly;
             BodyAnimation = bodyAnimation;
             BaseDamage = baseDamage;
             Activate = Game.CreationEngine.GetEffect(Name);

@@ -47,14 +47,13 @@ namespace Chaos
         /// Creates a new user with reference to the server, and the user's socket.
         /// </summary>
         /// <param name="server">The game server.</param>
-        /// <param name="socket">The user's socket.</param>
+        /// <param name="socket">The client's socket.</param>
         internal Client(Server server, Socket socket)
         {
             Connected = false;
             ClientBuffer = new byte[4096];
             FullClientBuffer = new List<byte>();
             SendQueue = new Queue<ServerPacket>();
-
 
             Server = server;
             ServerType = ServerType.Lobby;
@@ -72,7 +71,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Connects to the socket and begins receiving data.
+        /// Adds the client to the client list, then begins receiving data.
         /// </summary>
         internal void Connect()
         {
@@ -120,7 +119,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Asynchronous operation to receive information from the client
+        /// Asynchronously receives data from the client, and processes the information.
         /// </summary>
         /// <param name="ar">Result of the async operation.</param>
         private void ClientEndReceive(IAsyncResult ar)
@@ -137,7 +136,6 @@ namespace Chaos
                     //otherwise copy the client buffer into a new byte array sized to fit the length of the packet
                     byte[] data = new byte[length];
                     Buffer.BlockCopy(ClientBuffer, 0, data, 0, length);
-                    //Array.Copy(ClientBuffer, data, length);
                     //copy that array into the full client buffer, so we can deal with the information in a properly sized list
                     FullClientBuffer.AddRange(data);
                     while (FullClientBuffer.Count > 3)
@@ -184,13 +182,13 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Asynchronous operation to end a pending send.
+        /// Asynchronously finalizes the sending of a packet.
         /// </summary>
         /// <param name="ar">Result of the async operation.</param>
         private void EndSend(IAsyncResult ar) => ((Socket)ar.AsyncState).EndSend(ar);
 
         /// <summary>
-        /// Sends packets to the process/send thread.
+        /// Queues a packet up to be sent to the client.
         /// </summary>
         /// <param name="packets">Packet(s) to be sent.</param>
         internal void Enqueue(params ServerPacket[] packets)
@@ -218,7 +216,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Redirects the path to another server, or in this case... the same server.
+        /// Redirects the client to another server, or in this case... the same server.
         /// </summary>
         /// <param name="redirect">Redirect information.</param>
         internal void Redirect(Redirect redirect)
@@ -256,6 +254,12 @@ namespace Chaos
         {
             Enqueue(ServerPackets.Animation(animation));
         }
+
+        /// <summary>
+        /// Sends an effect to the client's spellbar.
+        /// </summary>
+        /// <param name="eff">The effect to send.</param>
+        /// <param name="remove">Whether or not to remove the effect from the spell bar.</param>
         internal void SendEffect(Effect eff, bool remove = false)
         {
             if (remove)

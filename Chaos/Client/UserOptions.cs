@@ -10,10 +10,10 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class UserOptions
     {
         [JsonProperty]
@@ -34,7 +34,7 @@ namespace Chaos
         internal bool GuildChat { get; private set; }
 
         /// <summary>
-        /// Object representing the user's options page.
+        /// Object containing user settings from the options page.
         /// </summary>
         internal UserOptions()
         {
@@ -48,6 +48,9 @@ namespace Chaos
             GuildChat = true;
         }
 
+        /// <summary>
+        /// Master constructor for the object containing user settings from the options page.
+        /// </summary>
         [JsonConstructor]
         internal UserOptions(bool whisper, bool group, bool shout, bool wisdom, bool magic, bool exchange, bool fastmove, bool guildchat)
         {
@@ -102,7 +105,7 @@ namespace Chaos
         /// <param name="opt">UserOption to convert.</param>
         public string ToString(UserOption opt)
         {
-            string format = "{0,-17}:{1,3}";
+            string format = "{0,-18}:{1,-3}";
             switch(opt)
             {
                 case UserOption.Request:

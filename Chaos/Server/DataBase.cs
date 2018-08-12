@@ -14,7 +14,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using StackExchange.Redis.Extensions.Newtonsoft;
 using StackExchange.Redis.Extensions.Core;
-using System.Collections.Concurrent;
 using StackExchange.Redis;
 using System.Collections.Generic;
 
@@ -51,8 +50,10 @@ namespace Chaos
                 if (key != MapKey)
                     Cache.Remove(key);    
 
+
+
             if (!Cache.Exists(HashKey))
-                Cache.Add(HashKey, new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
+                Cache.Add(HashKey, new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
         }
 
         /// <summary>
@@ -61,13 +62,12 @@ namespace Chaos
         /// <param name="key">Name of the user to remove</param>
         internal void RemoveUser(string key)
         {
-            string hash;
-            ConcurrentDictionary<string, string> userHash = new ConcurrentDictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            Dictionary<string, string> userHash = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (var kvp in UserHash)
-                userHash.TryAdd(kvp.Key, kvp.Value);
+                userHash.Add(kvp.Key, kvp.Value);
 
-            if(userHash.TryRemove(key, out hash))
+            if(userHash.Remove(key))
                 Cache.Replace(HashKey, userHash);
 
             Cache.Remove(key);

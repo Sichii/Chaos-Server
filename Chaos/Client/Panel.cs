@@ -17,27 +17,32 @@ using System.Linq;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Panel<T> : IEnumerable<T> where T : PanelObject
     {
+        private readonly object Sync = new object();
+
         [JsonProperty]
         private byte length;
         [JsonProperty]
         private Dictionary<byte, T> Objects;
         [JsonProperty]
         private byte[] Invalid;
-        private readonly object Sync = new object();
         internal T this[EquipmentSlot slot] => this[(byte)slot];
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         public IEnumerator<T> GetEnumerator() => Objects.Values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        internal byte Length => (byte)(length - 1);
         internal T this[byte slot]
         {
             get { return Valid(slot) ? Objects[slot] : null; }
             private set { if (value.Slot == slot && Valid(slot)) Objects[slot] = value; }
         }
-        internal byte Length => (byte)(length - 1);
 
+        /// <summary>
+        /// Object representing a single panel in game. Skill/Spell/Inventory/Equipment
+        /// </summary>
+        /// <param name="length">The number of objects that can fit in the panel.</param>
         internal Panel(byte length)
         {
             this.length = length;
@@ -53,6 +58,9 @@ namespace Chaos
                 Invalid = new byte[] { };
         }
 
+        /// <summary>
+        /// Master constructor for an object representing an in-game panel.
+        /// </summary>
         [JsonConstructor]
         internal Panel(byte length, Dictionary<byte, T> objects, byte[] invalid)
         {
@@ -62,7 +70,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Custom contains method
+        /// Synchronously checks if the panel contains an object.
         /// </summary>
         /// <param name="obj">Object to check if the panel contains</param>
         internal bool Contains(T obj)
@@ -71,6 +79,9 @@ namespace Chaos
                 return Objects.Values.Contains(obj);
         }
 
+        /// <summary>
+        /// Synchronously checks of the panel is full.
+        /// </summary>
         internal bool IsFull
         {
             get
@@ -81,16 +92,15 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Makes sure the slot is valid.
+        /// A list of valid slots within the given panel.
         /// </summary>
         /// <param name="slot">Slot to check.</param>
         private bool Valid(byte slot) => slot > 0 && !Invalid.Contains(slot) && slot < Length;
 
         /// <summary>
-        /// Checks the collection for a stackable item that matches the given object. Increments the count, and rereferences to the given object.
+        /// Synchronously attempts to add a stackable item.
         /// </summary>
-        /// <param name="obj">Object to check.</param>
-        /// <returns></returns>
+        /// <param name="obj">Object to try adding.</param>
         internal bool TryAddStack(T obj)
         {
             lock (Sync)
@@ -112,9 +122,10 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to equip the given item, and return the item that was already occupying the spot if there was one
+        /// Synchronously attempts to equip the given item. Sends an item out if an item was replaced in the slot.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="item">The item to try equiping.</param>
+        /// <param name="outItem">The object you were previously wearing in that slot.</param>
         /// <returns></returns>
         internal bool TryEquip(T item, out T outItem)
         {
@@ -145,20 +156,19 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to unequip the item at EquipmentSlot and place it in the next inventory slot
+        /// Synchronously attempts to unequip an item and return it.
         /// </summary>
-        /// <param name="slot"></param>
+        /// <param name="slot">The equipment slot to remove from.</param>
+        /// <param name="item">The item returns by unequipping it.</param>
         /// <returns></returns>
         internal bool TryUnequip(EquipmentSlot slot, out T item)
         {
             lock (Sync)
-            {
                 return TryGetRemove((byte)slot, out item);
-            }
         }
 
         /// <summary>
-        /// Attempts to add an object to the object's slot.
+        /// Synchronously attempts to add an object.
         /// </summary>
         /// <param name="obj">Object to add.</param>
         internal bool TryAdd(T obj)
@@ -176,10 +186,9 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to add an object to the next existing slot, adding to existing stackables first.
+        /// Synchronously attempts to add an object to the next available slot. Handles stackable items.
         /// </summary>
         /// <param name="obj">Object to add</param>
-        /// <returns></returns>
         internal bool AddToNextSlot(T obj)
         {
             lock (Sync)
@@ -202,7 +211,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Sets the value of the slot to null. Returns false if invalid slot.
+        /// Synchronously attempts tp remove an object. Sets the value to null.
         /// </summary>
         /// <param name="slot">Slot to remove.</param>
         internal bool TryRemove(byte slot)
@@ -217,7 +226,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts <see cref="TryRemove(byte)"/> while returning the value.
+        /// Synchronously attempts to remove an object and return it.
         /// </summary>
         /// <param name="slot">Slot to remove.</param>
         /// <param name="obj">Return object if successful.</param>
@@ -233,11 +242,10 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive the objects at slot location to obj reference.
+        /// Synchronously attempts to get a reference to an existing object.
         /// </summary>
         /// <param name="slot">Slot to retreive from.</param>
         /// <param name="obj">Obj reference to set.</param>
-        /// <returns></returns>
         internal bool TryGet(byte slot, out T obj)
         {
             lock (Sync)
@@ -248,8 +256,8 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts <see cref="TryGetRemove(byte, out T)"/> on each slot, then <see cref="TryAdd(T)"/> to swap places.
-        /// If either fails, items will be put back.
+        /// Synchronously attempts to swap two items slots.
+        /// If it fails, items will be put back.
         /// </summary>
         /// <param name="slot1">First slot to swap.</param>
         /// <param name="slot2">Second slot to swap.</param>

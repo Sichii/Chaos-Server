@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class DisplayData
     {
         internal static List<ushort> HairSprites = new List<ushort>()
@@ -28,7 +28,6 @@ namespace Chaos
             476, 482, 483
         };
 
-        [JsonProperty]
         internal User User { get; set; }
 
         //Base
@@ -70,16 +69,13 @@ namespace Chaos
         internal ushort AccessorySprite3 => User.Equipment[EquipmentSlot.Accessory3]?.ItemSprite.DisplaySprite ?? 0;
 
         //Other
-        [JsonProperty]
-        internal LanternSize LanternSize { get; set; }
+        internal LanternSize LanternSize => LanternSize.None;
         [JsonProperty]
         internal NameTagStyle NameTagStyle { get; set; }
         [JsonProperty]
         internal string GroupName { get; set; }
-        [JsonProperty]
-        internal RestPosition RestPosition { get; set; }
-        [JsonProperty]
-        internal bool IsHidden { get; set; }
+        internal RestPosition RestPosition => RestPosition.None;
+        internal bool IsHidden => false;
 
         /// <summary>
         /// Object containing the methods and information that is used to display the <c>User</c>.
@@ -96,23 +92,21 @@ namespace Chaos
             BodySprite = bodySprite;
             BodyColor = BodyColor.White;
             FaceSprite = 1;
-            LanternSize = LanternSize.None;
             NameTagStyle = NameTagStyle.NeutralHover;
             GroupName = string.Empty;
-            RestPosition = RestPosition.None;
-            IsHidden = false;
         }
 
+        /// <summary>
+        /// Master constructor for object containing all data used to display the user.
+        /// </summary>
         [JsonConstructor]
-        internal DisplayData(User user, ushort hairSprite, byte hairColor, BodySprite bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
+        internal DisplayData(ushort hairSprite, byte hairColor, BodySprite bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)
         {
-            User = user;
             HairSprite = hairSprite;
             HairColor = hairColor;
             BodySprite = bodySprite;
             BodyColor = bodyColor;
             FaceSprite = faceSprite;
-            //ArmorSprite2 = armorSprite2;
             NameTagStyle = nameTagStyle;
             GroupName = groupName;
         }

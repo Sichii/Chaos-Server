@@ -36,7 +36,7 @@ namespace Chaos
         internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South, EffectsBar effectsBar = null)
             : base(name, sprite, point, map)
         {
-            EffectsBar = effectsBar ?? new EffectsBar();
+            EffectsBar = effectsBar ?? new EffectsBar(null);
             Direction = direction;
             Type = type;
 

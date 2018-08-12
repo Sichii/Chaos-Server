@@ -134,7 +134,7 @@ namespace Chaos
                             while (client.SendQueue.Count > 0)
                             {
                                 ServerPacket serverPacket = client.SendQueue.Dequeue();
-                                if (serverPacket == null) return;
+                                if (serverPacket == null) continue;
                                 WriteLog(serverPacket.ToString(), client);
 
                                 if (serverPacket.IsEncrypted)

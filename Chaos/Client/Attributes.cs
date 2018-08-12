@@ -58,7 +58,6 @@ namespace Chaos
         internal byte CurrentCon => Utility.Clamp<byte>(BaseCon + ConMod, 0, byte.MaxValue);
         internal byte CurrentDex => Utility.Clamp<byte>(BaseDex + DexMod, 0, byte.MaxValue);
         internal bool HasUnspentPoints => UnspentPoints != 0;
-
         [JsonProperty]
         internal byte UnspentPoints;
         internal short MaximumWeight => (short)(40 + (BaseStr / 2));
@@ -85,14 +84,14 @@ namespace Chaos
         internal uint Gold;
 
         //Secondary
-        internal byte Blind;
-        internal MailFlag MailFlags;
-        internal Element OffenseElement;
-        internal Element DefenseElement;
-        internal byte MagicResistance;
-        internal sbyte ArmorClass;
-        internal byte Dmg;
-        internal byte Hit;
+        internal byte Blind => 0;
+        internal MailFlag MailFlags => MailFlag.None;
+        internal Element OffenseElement => Element.None;
+        internal Element DefenseElement => Element.None;
+        internal byte MagicResistance => 0;
+        internal sbyte ArmorClass => 50;
+        internal byte Dmg => 0;
+        internal byte Hit => 0;
 
         internal Attributes()
         {
@@ -114,16 +113,11 @@ namespace Chaos
             ToNextAbility = 0;
             GamePoints = 0;
             Gold = 0;
-            Blind = 0;
-            MailFlags = MailFlag.None;
-            OffenseElement = Element.None;
-            DefenseElement = Element.None;
-            MagicResistance = 0;
-            ArmorClass = 0;
-            Dmg = 0;
-            Hit = 0;
         }
 
+        /// <summary>
+        /// Master constructor for object containing all of the user's stats.
+        /// </summary>
         [JsonConstructor]
         internal Attributes(byte baseStr, byte baseInt, byte baseWis, byte baseCon, byte baseDex, uint baseHp, uint baseMp, byte level, byte ability, byte unspentPoints, uint currentHP, uint currentMP, uint experience, uint toNextLevel, uint abilityExp, uint toNextAbility, uint gamePoints, uint gold)
         {
