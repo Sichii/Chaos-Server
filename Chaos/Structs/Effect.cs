@@ -14,14 +14,17 @@ using System;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal struct Effect : IEquatable<Effect>
     {
-        [JsonIgnore]
+        [NonSerialized]
         internal DateTime StartTime;
+        [NonSerialized]
+        internal ushort Sprite; //will be set by the spell itself
+        [NonSerialized]
+        internal EffectsBarColor CurrentColor;
 
-        internal byte Tier;
-        internal ushort Icon;
+        internal bool UseParentAnimation;
         internal sbyte StrMod;
         internal sbyte IntMod;
         internal sbyte WisMod;
@@ -38,17 +41,28 @@ namespace Chaos
         public static bool operator ==(Effect eff1, Effect eff2) => eff1.Equals(eff2);
         public static bool operator !=(Effect eff1, Effect eff2) => !eff1.Equals(eff2);
 
-        internal Effect(Animation animation, uint animationDelay, TimeSpan duration)
-            :this(ushort.MaxValue, 0, 0, 0, 0, 0, 0, 0, 0, 0, animation, animationDelay, duration, 0)
+        /// <summary>
+        /// An effect with only an animation.
+        /// </summary>
+        /// <param name="animation">The animation to display.</param>
+        /// <param name="animationDelay">The delay between animations in milliseconds.</param>
+        /// <param name="duration">The total duration of the effect in milliseconds.</param>
+        internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
+            :this(0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
         {
         }
 
+        /// <summary>
+        /// Master Constructor for Effect.
+        /// </summary>
         [JsonConstructor]
-        internal Effect(ushort icon, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, int currentMPMod, Animation animation, uint animationDelay, TimeSpan duration, byte tier)
+        internal Effect(sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
+            int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
         {
             StartTime = DateTime.UtcNow;
+            UseParentAnimation = useParentAnimation;
 
-            Icon = icon;
+            Sprite = 0;
             StrMod = strMod;
             IntMod = intMod;
             WisMod = wisMod;
@@ -58,12 +72,31 @@ namespace Chaos
             MaxMPMod = maxMPMod;
             CurrentHPMod = currentHPMod;
             CurrentMPMod = currentMPMod;
-            Animation = animation;
             AnimationDelay = animationDelay;
             Duration = duration;
-            Tier = tier;
+            Animation = animation;
+
+            CurrentColor = EffectsBarColor.None;
+            CurrentColor = Color();
         }
 
+        /// <summary>
+        /// Returns a re-target effect based on a target and source id.
+        /// </summary>
+        internal Effect GetTargetedEffect(int targetID, int sourceID)
+        {
+            return new Effect(StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay, 
+                Duration, UseParentAnimation, Animation.GetTargetedAnimation(targetID, sourceID));
+        }
+
+        /// <summary>
+        /// Static contructur for no effect.
+        /// </summary>
+        internal static Effect None => default(Effect);
+
+        /// <summary>
+        /// Returns the remaining duration of the effect in milliseconds.
+        /// </summary>
         internal int RemainingDurationMS()
         {
             TimeSpan elapsed = DateTime.UtcNow.Subtract(StartTime);
@@ -74,6 +107,10 @@ namespace Chaos
                 return (int)Duration.Subtract(elapsed).TotalMilliseconds;
         }
 
+        /// <summary>
+        /// Returns what color the bar should be based on the remaining time.
+        /// </summary>
+        /// <returns></returns>
         internal EffectsBarColor Color()
         {
             int ms = RemainingDurationMS();

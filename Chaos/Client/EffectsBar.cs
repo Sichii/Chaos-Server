@@ -41,7 +41,7 @@ namespace Chaos
         {
             lock(Sync)
             {
-                if (Effects.Contains(effect) || Effects.Any(e => effect.Icon == e.Icon))
+                if (Effects.Contains(effect) || Effects.Any(e => effect.Sprite == e.Sprite))
                     return false;
                 else
                 {
@@ -54,9 +54,7 @@ namespace Chaos
         internal bool TryRemove(Effect effect)
         {
             lock(Sync)
-            {
                 return Effects.Remove(effect);
-            }
         }
 
         internal int StrModSum => Effects.Sum(e => e.StrMod);

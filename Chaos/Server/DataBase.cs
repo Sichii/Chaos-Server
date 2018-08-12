@@ -16,6 +16,7 @@ using StackExchange.Redis.Extensions.Newtonsoft;
 using StackExchange.Redis.Extensions.Core;
 using System.Collections.Concurrent;
 using StackExchange.Redis;
+using System.Collections.Generic;
 
 namespace Chaos
 {
@@ -25,7 +26,7 @@ namespace Chaos
         private Server Server { get; }
         private string HashKey => Crypto.GetMD5Hash("UserHash");
         private const string MapKey = "edl396yhvnw85b6kd8vnsj296hj285bq";
-        private ConcurrentDictionary<string, string> UserHash => Cache.Get<ConcurrentDictionary<string, string>>(HashKey);
+        private Dictionary<string, string> UserHash => Cache.Get<Dictionary<string, string>>(HashKey);
         private NewtonsoftSerializer Serializer { get; }
         private StackExchangeRedisCacheClient Cache { get; }
         private ConnectionMultiplexer DataConnection { get; }
@@ -105,9 +106,14 @@ namespace Chaos
         internal bool TryAddUser(User user, string password)
         {
             string hash = Crypto.GetMD5Hash(password);
-            ConcurrentDictionary<string, string> userHash = UserHash;
+            Dictionary<string, string> userHash = UserHash;
 
-            return userHash.TryAdd(user.Name, hash) && Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(HashKey, userHash);
+            if (userHash.ContainsKey(user.Name))
+                return false;
+
+            userHash.Add(user.Name, hash);
+
+            return  Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(HashKey, userHash);
         }
 
         /// <summary>
@@ -120,7 +126,7 @@ namespace Chaos
         {
             if (CheckHash(name, currentPw))
             {
-                ConcurrentDictionary<string, string> userHash = UserHash;
+                Dictionary<string, string> userHash = UserHash;
                 userHash[name] = Crypto.GetMD5Hash(newPw);
                 if (Cache.Replace(HashKey, userHash))
                     return true;

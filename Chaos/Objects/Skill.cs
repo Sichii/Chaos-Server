@@ -25,7 +25,7 @@ namespace Chaos
         /// Object representing a skill in your skill pane.
         /// </summary>
         internal Skill(ushort sprite, string name, TimeSpan baseCooldown, bool isBasic = false, Animation effectAnimation = new Animation(), TargetsType targetType = TargetsType.None, BodyAnimation bodyAnimation = 0, int baseDamage = 0)
-            :this(0, sprite, name, baseCooldown, isBasic, effectAnimation, targetType, bodyAnimation, baseDamage)
+            :this(0, sprite, name, baseCooldown, isBasic, effectAnimation, targetType, false, bodyAnimation, baseDamage)
         {
         }
 
@@ -33,8 +33,8 @@ namespace Chaos
         /// Master constructor for skills, do not use.
         /// </summary>
         [JsonConstructor]
-        internal Skill(byte slot, ushort sprite, string name, TimeSpan baseCooldown, bool isBasic, Animation effectAnimation, TargetsType targetType, BodyAnimation bodyAnimation, int baseDamage)
-            :base(slot, sprite, name, baseCooldown, effectAnimation, targetType, bodyAnimation, baseDamage)
+        internal Skill(byte slot, ushort sprite, string name, TimeSpan baseCooldown, bool isBasic, Animation effectAnimation, TargetsType targetType, bool usersOnly, BodyAnimation bodyAnimation, int baseDamage)
+            :base(slot, sprite, name, baseCooldown, effectAnimation, targetType, usersOnly, bodyAnimation, baseDamage)
         {
             IsBasic = isBasic;
         }

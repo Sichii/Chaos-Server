@@ -58,8 +58,8 @@ namespace Chaos
             AddSpell("Blink", Blink, Blink);
             AddSpell("Return Home", ReturnHome, ReturnHome);
             AddSpell("Admin Create", AdminCreate, AdminCreate);
-            AddSpell("Admin Buff", AdminBuff, AdminBuff);
-            AddSpell("Test HOT", TestHOT, TestHOT);
+            AddSpell("Admin Buff", AdminBuff, PersistentSpell);
+            AddSpell("Test HOT", TestHOT, PersistentSpell);
             #endregion
         }
 
@@ -156,7 +156,7 @@ namespace Chaos
                 if (outItem != null && client.User.Inventory.AddToNextSlot(outItem))
                     client.Enqueue(ServerPackets.AddItem(outItem));
 
-                foreach (User user in Game.World.ObjectsVisibleFrom(client.User, true).OfType<User>())
+                foreach (User user in client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>())
                     user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
 
                 return true;
@@ -197,39 +197,62 @@ namespace Chaos
             Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None, true);
             return true;
         }
+        private bool PersistentSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            User user = target as User;
+            List<Creature> targets = new List<Creature>();
+
+            if (!spell.UsersOnly || target is User)
+                targets.Add(target);
+
+            foreach (Creature creature in Game.Extensions.GetTargetsFromType(client, target.Point, spell.TargetType))
+                if (!spell.UsersOnly || creature is User)
+                    targets.Add(creature);
+
+            foreach (User u in targets.OfType<User>().ToList())
+            {
+                Effect targetedEffect = spell.Effect.GetTargetedEffect(u.Id, client.User.Id);
+                if (u.EffectsBar.TryAdd(targetedEffect))
+                    u.Client.SendEffect(targetedEffect);
+                else
+                    targets.Remove(u);
+            }
+
+            if (targets.Count > 0)
+            {
+                foreach (Creature c in targets)
+                    Game.Extensions.ApplyDamage(c, spell.BaseDamage);
+
+                Game.Extensions.ApplyActivation(client, spell, targets.OfType<Creature>().ToList(), null, StatUpdateType.Primary);
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region Items
-        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, TargetsType.None, BodyAnimation.None, 0, true);
+        #region Default Items
+        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, TargetsType.None, true, BodyAnimation.None, 0, Effect.None, true);
         private Item TestItem(int count) => new Item(new ItemSprite(1108, 0), 0, "Test Item", true, count, 1, false);
         private Item TestMaleEquipment(int count) => new Item(new ItemSprite(11990, 1023), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
         private Item TestFemaleEquipment(int count) => new Item(new ItemSprite(11991, 1023), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
         private Item TestWeapon(int count) => new Item(new ItemSprite(3254, 186), 0, "Test Weapon", EquipmentSlot.Weapon, 10000, 10000, 5, Gender.Unisex, false);
         private Item MaleTatteredRobes(int count) => new Item(new ItemSprite(1108, 208), 0, "Male Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Male, false);
         private Item FemaleTatteredRobes(int count) => new Item(new ItemSprite(1109, 208), 0, "Female Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Female, false);
-
-        internal bool GiveItem(Client client, Server server, string itemName, int amount)
-        {
-            List<Item> newItems;
-            if ((newItems = CreateItems(itemName, amount).ToList()) != null && newItems.Count > 0)
-            {
-                foreach (Item i in newItems)
-                    if (client.User.Inventory.AddToNextSlot(i))
-                        client.Enqueue(ServerPackets.AddItem(i));
-                return true;
-            }
-            else
-            {
-                client.SendServerMessage(ServerMessageType.AdminMessage, "Couldn't give " + itemName + ".");
-                return false;
-            }
-        }
+        #endregion
+        #region Scripted Items
+        #endregion
 
         #endregion
 
         #region Skills
+        #region Default Skills
         private Skill TestSkill1() => new Skill(78, "Test Skill 1", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
         private Skill Cleave() => new Skill(16, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
+        #endregion
+
+        #region Scripted Skills
         private Skill Reposition() => new Skill(29, "Reposition", new TimeSpan(0, 0, 10), false, Animation.None, TargetsType.Front, BodyAnimation.None, 0);
         private bool Reposition(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
@@ -307,19 +330,28 @@ namespace Chaos
             return true;
         }
         #endregion
+        #endregion
 
         #region Spells
-        private Spell Mend() => new Spell(118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -10000);
-        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -100000);
-        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(217, 0, 100), TargetsType.None, BodyAnimation.HandsUp, 100000);
-        private Spell Blink() => new Spell(164, "Blink", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 30), new Animation(91, 0, 100), TargetsType.None, BodyAnimation.WizardCast);
+        #region Default Spells
+        private Spell Mend() => new Spell(118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -10000);
+        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -100000);
+        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(217, 0, 100), TargetsType.None, false, BodyAnimation.HandsUp, 100000);
+        private Spell AdminBuff() => new Spell(1, "Admin Buff", SpellType.Targeted, null, 1, new TimeSpan(0, 0, 10), new Animation(189, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, 0,
+            new Effect(sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, 1333337, 1333337, 0, 0, 2000, new TimeSpan(0, 5, 0), true, Animation.None));
+        private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, null, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
+            new Effect(0, 0, 0, 0, 0, 0, 0, -25000, 0, 1000, new TimeSpan(0, 0, 20), true));
+        #endregion
 
+
+        #region Scripted Spells
+        private Spell Blink() => new Spell(164, "Blink", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 30), new Animation(91, 0, 100), TargetsType.None, true, BodyAnimation.WizardCast);
         private bool Blink(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Spell spell = obj as Spell;
             List<Creature> targets = new List<Creature>() { target };
             Animation ani = new Animation(client.User.BlinkSpot.Point, 96, 100);
-            Effect eff = new Effect(ani, 1800, new TimeSpan(0, 0, 10));
+            Effect eff = new Effect(1800, new TimeSpan(0, 0, 10), false, ani);
 
             if (!client.User.HasFlag(UserState.UsedBlink) || DateTime.UtcNow.Subtract(spell.LastUse).TotalSeconds > 10 || client.User.BlinkSpot.MapId != client.User.Map.Id)
             {
@@ -328,10 +360,10 @@ namespace Chaos
                 client.User.BlinkSpot = client.User.Location;
 
                 ani = new Animation(client.User.BlinkSpot.Point, 96, 100);
-                eff = new Effect(ani, 1800, new TimeSpan(0, 0, 10));
+                eff = new Effect(1800, new TimeSpan(0, 0, 10), false, ani);
 
                 lock (client.User.Map.Sync)
-                    client.User.Map.WorldEffects.Add(eff);
+                    client.User.Map.AddEffect(eff);
                 return false;
             }
             else
@@ -341,14 +373,14 @@ namespace Chaos
 
                 //remove effect
                 lock (client.User.Map.Sync)
-                    client.User.Map.WorldEffects.Remove(eff);
+                    client.User.Map.RemoveEffect(eff);
             }
 
             spell.CooldownReduction -= 1f;
             Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
-        private Spell ReturnHome() => new Spell(56, "Return Home", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 1), new Animation(91, 0, 100), TargetsType.None, BodyAnimation.WizardCast);
+        private Spell ReturnHome() => new Spell(56, "Return Home", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 1), new Animation(91, 0, 100), TargetsType.None, true, BodyAnimation.WizardCast);
         private bool ReturnHome(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Spell spell = obj as Spell;
@@ -381,7 +413,7 @@ namespace Chaos
             Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
-        private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, BodyAnimation.HandsUp);
+        private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, true, BodyAnimation.HandsUp);
         private bool AdminCreate(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Spell spell = obj as Spell;
@@ -443,46 +475,7 @@ namespace Chaos
 
             return false;
         }
-        private Spell AdminBuff() => new Spell(1, "Admin Buff", SpellType.Targeted, null, 1, new TimeSpan(0, 0, 10), new Animation(189, 0, 100), TargetsType.None, BodyAnimation.HandsUp);
-        private bool AdminBuff(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Spell spell = obj as Spell;
-            List<Creature> targets = new List<Creature>() { target };
-            User user = target as User;
-
-            if (user == null)
-                return false;
-
-            Attributes attribs = user.Attributes;
-            Animation ani = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
-            Effect eff = new Effect(spell.Sprite, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue,
-                (int)(1333337 - user.MaximumHP), (int)(1333337 - user.MaximumMP), 0, 0, ani, 2000, new TimeSpan(0, 0, 5, 0), 255);
-
-            if (user.EffectsBar.TryAdd(eff))
-            {
-                (target as User)?.Client.SendEffect(eff);
-                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
-                return true;
-            }
-
-            return false;
-        }
-        private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, null, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, BodyAnimation.HandsUp, -25000);
-        private bool TestHOT(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
-        {
-            Spell spell = obj as Spell;
-            List<Creature> targets = new List<Creature>() { target };
-            Animation ani = new Animation(spell.EffectAnimation, target.Id, client.User.Id);
-            Effect eff = new Effect(spell.Sprite, 0, 0, 0, 0, 0, 0, 0, spell.BaseDamage, 0, ani, 1000, new TimeSpan(0, 0, 20), 1);
-
-            if (target.EffectsBar.TryAdd(eff))
-            {
-                (target as User)?.Client.SendEffect(eff);
-                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
-                return true;
-            }
-            return false;
-        }
+        #endregion
         #endregion
     }
 }

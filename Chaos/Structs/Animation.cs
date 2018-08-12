@@ -34,7 +34,7 @@ namespace Chaos
         public static bool operator !=(Animation ani1, Animation ani2) => !ani1.Equals(ani2);
 
         /// <summary>
-        /// Master constructor, do not use.
+        /// Master constructor for Animation.
         /// </summary>
         [JsonConstructor]
         internal Animation(Point targetPoint, int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort animationSpeed)
@@ -57,15 +57,6 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Constructor for a full animation targeting a specific object, taking a partial animation.
-        /// </summary>
-        internal Animation(Animation animation, int targetId, int sourceId)
-            : this(animation.TargetPoint, targetId, sourceId, animation.TargetAnimation, animation.SourceAnimation, animation.AnimationSpeed)
-        {
-
-        }
-
-        /// <summary>
         /// Constructor for an animation targeting a point.
         /// </summary>
         internal Animation(Point targetPoint, ushort targetAnimation, ushort speed)
@@ -74,6 +65,21 @@ namespace Chaos
 
         }
 
+        /// <summary>
+        /// Returns a re-targeted animation based on IDs.
+        /// </summary>
+        internal Animation GetTargetedAnimation(int targetId, int sourceId) =>
+            new Animation(TargetPoint, targetId, sourceId, TargetAnimation, SourceAnimation, AnimationSpeed);
+
+        /// <summary>
+        /// Returns a re-target animation based on a point.
+        /// </summary>
+        internal Animation GetTargetedAnimation(Point targetPoint) => 
+            new Animation(targetPoint, 0, 0, TargetAnimation, SourceAnimation, AnimationSpeed);
+
+        /// <summary>
+        /// Static constructor for no animation.
+        /// </summary>
         internal static Animation None => default(Animation);
 
         public override int GetHashCode() => (SourceId << 16) + (TargetAnimation << 8) + TargetPoint.GetHashCode();
