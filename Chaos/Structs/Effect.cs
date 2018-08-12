@@ -14,7 +14,7 @@ using System;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonObject(MemberSerialization.OptOut)]
     internal struct Effect : IEquatable<Effect>
     {
         [NonSerialized]

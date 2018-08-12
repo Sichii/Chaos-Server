@@ -243,7 +243,6 @@ namespace Chaos
         #endregion
         #region Scripted Items
         #endregion
-
         #endregion
 
         #region Skills
@@ -342,7 +341,6 @@ namespace Chaos
         private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, null, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
             new Effect(0, 0, 0, 0, 0, 0, 0, -25000, 0, 1000, new TimeSpan(0, 0, 20), true));
         #endregion
-
 
         #region Scripted Spells
         private Spell Blink() => new Spell(164, "Blink", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 30), new Animation(91, 0, 100), TargetsType.None, true, BodyAnimation.WizardCast);

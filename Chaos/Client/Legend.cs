@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Legend : IEnumerable<LegendMark>
     {
         private readonly object Sync = new object();
@@ -35,6 +35,9 @@ namespace Chaos
             Marks = new List<KeyValuePair<string, LegendMark>>();
         }
 
+        /// <summary>
+        /// Master constructor for the object representing the user's legend, containing legend marks.
+        /// </summary>
         [JsonConstructor]
         internal Legend(List<KeyValuePair<string, LegendMark>> marks)
         {
@@ -42,7 +45,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Retreives the legend mark at key location.
+        /// Synchronously retreives the legend mark at key location.
         /// </summary>
         /// <param name="key">Key of the legend mark you want returned.</param>
         internal LegendMark this[string key]
@@ -55,7 +58,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds or replaces an old legend mark at the mark's key location.
+        /// Synchronously adds or replaces an old legend mark at the mark's key location.
         /// </summary>
         /// <param name="mark">Mark to add or replace.</param>
         internal void Add(LegendMark mark)
@@ -74,7 +77,7 @@ namespace Chaos
             }
         }
         /// <summary>
-        /// Attempts to remove the legend mark at key location.
+        /// Synchronously attempts to remove the legend mark at key location.
         /// </summary>
         /// <param name="key">Key of the mark to remove.</param>
         internal bool TryRemove(string key)
@@ -84,7 +87,7 @@ namespace Chaos
         }
     }
 
-    
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class LegendMark
     {
         [JsonProperty]
@@ -106,7 +109,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Represents individual mark entries in the Legend object.
+        /// Represents an individual mark in the Legend object.
         /// </summary>
         /// <param name="key">Key of the mark.</param>
         /// <param name="mark">Text of the mark.</param>
@@ -123,6 +126,9 @@ namespace Chaos
             Color = color;
         }
 
+        /// <summary>
+        /// Master constructor for an object representing a single legend mark.
+        /// </summary>
         [JsonConstructor]
         internal LegendMark(GameTime added, string mark, string key, MarkIcon icon, MarkColor color, int count)
         {

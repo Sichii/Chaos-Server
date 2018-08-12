@@ -88,7 +88,7 @@ namespace Chaos
 
         internal User(string name, Point point, Map map, Direction direction, Gender gender)
             : this(name, point, map, direction, new Board(), new Panel<Skill>(90), new Panel<Spell>(90), new Panel<Item>(61), new Panel<Item>(20), new IgnoreList(),
-                  new UserOptions(), null, new Attributes(), new EffectsBar(), new Legend(), null, null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
+                  new UserOptions(), null, new Attributes(), new EffectsBar(null), new Legend(), null, null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
                   false, null, new List<string>(), gender, UserState.None, Status.None, Quest.None, false)
         {
         }
@@ -123,11 +123,12 @@ namespace Chaos
             Gender = gender;
             Client = null;
             Group = null;
+
             if (DisplayData != null)
                 DisplayData.User = this;
+
             IsAdmin = isAdmin;
             LastClicked = DateTime.MinValue;
-
 
             State = state;
             Status = status;

@@ -195,6 +195,7 @@ namespace Chaos
             //create a new user, and it's display data
             User newUser = new User(client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South, gender);
             DisplayData data = new DisplayData(newUser, hairStyle, hairColor, (BodySprite)((byte)gender * 16));
+            data.User = newUser;
             newUser.DisplayData = data;
             //if the user is an admin character, apply godmode
             if (Server.Admins.Contains(newUser.Name, StringComparer.CurrentCultureIgnoreCase))

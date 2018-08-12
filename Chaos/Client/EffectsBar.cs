@@ -10,16 +10,12 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Chaos
 {
-    /// <summary>
-    /// Object representing the spellbar.
-    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     internal class EffectsBar : IEnumerable<Effect>
     {
@@ -30,13 +26,19 @@ namespace Chaos
         public IEnumerator<Effect> GetEnumerator() => Effects.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-
+        /// <summary>
+        /// Master constructor for the object representing the user's spellbar.
+        /// </summary>
         [JsonConstructor]
-        internal EffectsBar()
+        internal EffectsBar(List<Effect> effects)
         {
-            Effects = new List<Effect>();
+            Effects = effects ?? new List<Effect>();
         }
 
+        /// <summary>
+        /// Attempts to synchronously add an effect to the spell bar.
+        /// </summary>
+        /// <param name="effect">The effect to add.</param>
         internal bool TryAdd(Effect effect)
         {
             lock(Sync)
@@ -51,6 +53,10 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Attempts to synchronously remove an effect to the spell bar.
+        /// </summary>
+        /// <param name="effect">The effect to remove.</param>
         internal bool TryRemove(Effect effect)
         {
             lock(Sync)
