@@ -14,11 +14,14 @@ using System.Text.RegularExpressions;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     public struct Location
     {
+        [JsonProperty]
         internal ushort MapId;
+        [JsonProperty]
         internal ushort X;
+        [JsonProperty]
         internal ushort Y;
         internal Point Point => new Point(X, Y);
 

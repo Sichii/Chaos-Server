@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class IgnoreList
     {
         private readonly object Sync = new object();

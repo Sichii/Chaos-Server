@@ -9,13 +9,17 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
+using Newtonsoft.Json;
+
 namespace Chaos
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Bank
     {
         /// <summary>
         /// Object representing the user's bank.
         /// </summary>
+        [JsonConstructor]
         internal Bank()
         {
 
