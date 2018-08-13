@@ -48,6 +48,7 @@ namespace Chaos
                             }))),
                 new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7),
                 new Merchant("Maribel", 447, new Point(2, 5), Game.World.Maps[18000], Direction.East, 9),
+                new Merchant("Markus", 364, new Point(2, 4), Game.World.Maps[18002], Direction.East, 15),
                 new Merchant("Am I Pretty?", 627, new Point(10, 8), Game.World.Maps[8984], Direction.South, 0,
                     new MerchantMenu("Do it. Tell me I'm beautiful.", MenuType.Menu,
                         new PursuitMenu(

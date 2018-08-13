@@ -74,6 +74,7 @@ namespace Chaos
                 NormalDialog(PursuitIds.None, 12, true, true, "Maribel is the name! You're in my home in which my husband runs a potion shop out of. He's the best alchemist this side of Tyruan.", 10),
                 NormalDialog(PursuitIds.None, 13, true, true, "Go seek my husband Markus. He will definately have a job for you around here.", 10),
                 NormalDialog(PursuitIds.GiveTatteredRobe, 14, true, true, "*she looks down and her cheeks go red* I almost forgot! Here's your clothes..", 10),
+                NormalDialog(PursuitIds.None, 15, false, false, "Do something useful with yourself and go clean the basement of vermin.", 0),
             };
 
             foreach(Dialog d in DialogList)
