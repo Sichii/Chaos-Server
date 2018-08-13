@@ -112,18 +112,23 @@ namespace Chaos
                                 }
                             }
 
-                            if(user1 != null)
+                            foreach (Effect effect in map.EffectsVisibleFrom(creature).ToList())
                             {
-                                foreach(Effect effect in map.EffectsVisibleFrom(user1).ToList())
+                                int index = effect.Animation.GetHashCode();
+                                if (effect.Duration != TimeSpan.Zero && effect.RemainingDurationMS() == 0)
+                                    map.RemoveEffect(effect);
+                                else if (!creature.WorldAnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(creature.WorldAnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay)
                                 {
-                                    int index = effect.Animation.GetHashCode();
-                                    if(!user1.WorldAnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(user1.WorldAnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay)
+                                    if (user1 != null)
                                     {
-                                        if (effect.Duration != TimeSpan.Zero && effect.RemainingDurationMS() == 0)
-                                            map.RemoveEffect(effect);
-
                                         user1.WorldAnimationHistory[index] = DateTime.UtcNow;
-                                        user1.Client.SendAnimation(effect.Animation);
+                                        user1?.Client.SendAnimation(effect.Animation);
+                                    }
+
+                                    if (effect.Animation.TargetPoint == creature.Point)
+                                    {
+                                        Extensions.ApplyDamage(creature, effect.CurrentHPMod);
+                                        Extensions.ApplyDamage(creature, effect.CurrentMPMod);
                                     }
                                 }
                             }

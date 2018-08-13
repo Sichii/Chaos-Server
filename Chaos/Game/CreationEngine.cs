@@ -60,6 +60,7 @@ namespace Chaos
             AddSpell("Admin Create", AdminCreate, AdminCreate);
             AddSpell("Admin Buff", AdminBuff, PersistentSpell);
             AddSpell("Test HOT", TestHOT, PersistentSpell);
+            AddSpell("Fireball", Fireball, PersistenWorldSpell);
             #endregion
         }
 
@@ -229,6 +230,31 @@ namespace Chaos
             }
             return false;
         }
+        private bool PersistenWorldSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            User user = target as User;
+            List<Creature> targets = new List<Creature>();
+
+            if (!spell.UsersOnly || target is User)
+                targets.Add(target);
+
+            foreach (Point point in Game.Extensions.GetPointsFromType(client, target.Point, spell.TargetType))
+            {
+                Effect targetedEffect = spell.Effect.GetTargetedEffect(point);
+                client.User.Map.AddEffect(targetedEffect);
+            }
+
+            if (targets.Count > 0)
+            {
+                foreach (Creature c in targets)
+                    Game.Extensions.ApplyDamage(c, spell.BaseDamage);
+
+                Game.Extensions.ApplyActivation(client, spell, targets.OfType<Creature>().ToList(), null, StatUpdateType.Primary, true);
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region Items
@@ -334,12 +360,14 @@ namespace Chaos
         #region Spells
         #region Default Spells
         private Spell Mend() => new Spell(118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -10000);
-        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -100000);
-        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(217, 0, 100), TargetsType.None, false, BodyAnimation.HandsUp, 100000);
-        private Spell AdminBuff() => new Spell(1, "Admin Buff", SpellType.Targeted, null, 1, new TimeSpan(0, 0, 10), new Animation(189, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, 0,
+        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(2), new Animation(157, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -100000);
+        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(2), new Animation(217, 0, 100), TargetsType.None, false, BodyAnimation.HandsUp, 100000);
+        private Spell AdminBuff() => new Spell(1, "Admin Buff", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(20), new Animation(189, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, 0,
             new Effect(sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, 1333337, 1333337, 0, 0, 2000, new TimeSpan(0, 5, 0), true, Animation.None));
-        private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, null, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
+        private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, string.Empty, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
             new Effect(0, 0, 0, 0, 0, 0, 0, -25000, 0, 1000, new TimeSpan(0, 0, 20), true));
+        private Spell Fireball() => new Spell(39, "Fireball", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(5), new Animation(138, 102, 150), TargetsType.Cluster2, false, BodyAnimation.WizardCast, 100000,
+            new Effect(0, 0, 0, 0, 0, 0, 0, 50000, 0, 500, TimeSpan.FromSeconds(5), false, new Animation(211, 0, 100)));
         #endregion
 
         #region Scripted Spells

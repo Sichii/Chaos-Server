@@ -140,6 +140,72 @@ namespace Chaos
             return creatures.Where(c => c.IsAlive).ToList();
         }
 
+        internal List<Point> GetPointsFromType(Client client, Point targetPoint, TargetsType type = TargetsType.None)
+        {
+            List<Point> points = new List<Point>();
+
+            switch (type)
+            {
+                //generally self cast types
+                case TargetsType.None:
+                    break;
+                case TargetsType.Self:
+                    points.Add(client.User.Point);
+                    break;
+                case TargetsType.Front:
+                    points.Add(client.User.Point.NewOffset(client.User.Direction));
+                    break;
+                case TargetsType.Surround:
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(client.User.Point) == 1));
+                    break;
+                case TargetsType.Cleave:
+                    points.AddRange(client.User.DiagonalPoints(1, client.User.Direction));
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(client.User.Point) == 1 && p.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)));
+                    break;
+                case TargetsType.StraightProjectile:
+                    int distance = 13;
+                    List<Point> line = client.User.LinePoints(13, client.User.Direction);
+                    Creature creature = null;
+
+                    foreach (Creature c in client.User.Map.ObjectsVisibleFrom(client.User))
+                    {
+                        if (line.Contains(c.Point))
+                        {
+                            int dist = c.Point.Distance(client.User.Point);
+
+                            if (dist < distance)
+                            {
+                                distance = dist;
+                                creature = c;
+                            }
+                        }
+                    }
+
+                    if (creature != null)
+                        points.Add(creature.Point);
+                    break;
+
+
+
+
+                //generally spell types
+                case TargetsType.Cluster1:
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(targetPoint) <= 1));
+                    break;
+                case TargetsType.Cluster2:
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(targetPoint) <= 2));
+                    break;
+                case TargetsType.Cluster3:
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(targetPoint) <= 3));
+                    break;
+                case TargetsType.Screen:
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(targetPoint) <= 13));
+                    break;
+            }
+
+            return points;
+        }
+
         /// <summary>
         /// Updates the targets and nearby uses of each target to reflect the current state of each changed object.
         /// </summary>

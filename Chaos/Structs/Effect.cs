@@ -14,28 +14,39 @@ using System;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal struct Effect : IEquatable<Effect>
     {
-        [NonSerialized]
         internal DateTime StartTime;
-        [NonSerialized]
-        internal ushort Sprite; //will be set by the spell itself
-        [NonSerialized]
         internal EffectsBarColor CurrentColor;
 
+        [JsonProperty]
+        internal ushort Sprite; //will be set by the spell itself
+        [JsonProperty]
         internal bool UseParentAnimation;
+        [JsonProperty]
         internal sbyte StrMod;
+        [JsonProperty]
         internal sbyte IntMod;
+        [JsonProperty]
         internal sbyte WisMod;
+        [JsonProperty]
         internal sbyte ConMod;
+        [JsonProperty]
         internal sbyte DexMod;
+        [JsonProperty]
         internal int MaxHPMod;
+        [JsonProperty]
         internal int MaxMPMod;
+        [JsonProperty]
         internal int CurrentHPMod;
+        [JsonProperty]
         internal int CurrentMPMod;
+        [JsonProperty]
         internal Animation Animation;
+        [JsonProperty]
         internal uint AnimationDelay;
+        [JsonProperty]
         internal TimeSpan Duration;
 
         public static bool operator ==(Effect eff1, Effect eff2) => eff1.Equals(eff2);
@@ -48,21 +59,31 @@ namespace Chaos
         /// <param name="animationDelay">The delay between animations in milliseconds.</param>
         /// <param name="duration">The total duration of the effect in milliseconds.</param>
         internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
-            :this(0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
+            :this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
         {
+        }
+
+        /// <summary>
+        /// Full contructor for an effect.
+        /// </summary>
+        internal Effect(sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod,
+            int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
+            : this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
+        {
+
         }
 
         /// <summary>
         /// Master Constructor for Effect.
         /// </summary>
         [JsonConstructor]
-        internal Effect(sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
+        internal Effect(ushort sprite, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
             int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
         {
             StartTime = DateTime.UtcNow;
             UseParentAnimation = useParentAnimation;
 
-            Sprite = 0;
+            Sprite = sprite;
             StrMod = strMod;
             IntMod = intMod;
             WisMod = wisMod;
@@ -85,8 +106,17 @@ namespace Chaos
         /// </summary>
         internal Effect GetTargetedEffect(int targetID, int sourceID)
         {
-            return new Effect(StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay, 
-                Duration, UseParentAnimation, Animation.GetTargetedAnimation(targetID, sourceID));
+            return new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay, 
+                Duration, UseParentAnimation, Animation.GetTargetedEffectAnimation(targetID, sourceID));
+        }
+
+        /// <summary>
+        /// Returns a re-target effect based on a target point.
+        /// </summary>
+        internal Effect GetTargetedEffect(Point point)
+        {
+            return new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay,
+                Duration, UseParentAnimation, Animation.GetTargetedEffectAnimation(point));
         }
 
         /// <summary>

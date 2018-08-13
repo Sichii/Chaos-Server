@@ -42,9 +42,7 @@ namespace Chaos
         internal Personal Personal { get; set; }
         [JsonProperty]
         internal Guild Guild { get; set; }
-        [JsonIgnore]
         internal Group Group { get; set; }
-        [JsonIgnore]
         internal Client Client { get; set; }
         [JsonProperty]
         internal SocialStatus SocialStatus { get; set; }
@@ -112,7 +110,7 @@ namespace Chaos
             Attributes.User = this;
             Legend = legend;
             Personal = personal;
-            Guild = guild;
+            Guild = guild == null ? null : Game.World.Guilds[guild.Name];
             SocialStatus = socialStatus;
             Nation = nation;
             BaseClass = baseClass;
