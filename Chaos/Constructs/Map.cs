@@ -235,11 +235,11 @@ namespace Chaos
         /// Gets al leffects visible from the user.
         /// </summary>
         /// <param name="user">The user to base from.</param>
-        internal IEnumerable<Effect> EffectsVisibleFrom(User user)
+        internal IEnumerable<Effect> EffectsVisibleFrom(Creature creature)
         {
-            lock (user.Map.Sync)
+            lock (creature.Map.Sync)
             {
-                foreach (Effect eff in Effects.Where(e => e.Animation.TargetPoint.Distance(user.Point) < 13))
+                foreach (Effect eff in Effects.Where(e => e.Animation.TargetPoint.Distance(creature.Point) < 13))
                     yield return eff;
             }
         }
