@@ -66,13 +66,25 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Returns a re-targeted animation based on IDs.
+        /// Returns a re-targeted animation based on IDs. Removes sourceAnimation.
+        /// </summary>
+        internal Animation GetTargetedEffectAnimation(int targetId, int sourceId) =>
+            new Animation(TargetPoint, targetId, sourceId, TargetAnimation, 0, AnimationSpeed);
+
+        /// <summary>
+        /// Returns a re-target animation based on a point. Removes sourceAnimation.
+        /// </summary>
+        internal Animation GetTargetedEffectAnimation(Point targetPoint) =>
+            new Animation(targetPoint, 0, 0, TargetAnimation, 0, AnimationSpeed);
+
+        /// <summary>
+        /// Returns a re-targeted animation based on IDs. (Does not remove sourceAnimation)
         /// </summary>
         internal Animation GetTargetedAnimation(int targetId, int sourceId) =>
             new Animation(TargetPoint, targetId, sourceId, TargetAnimation, SourceAnimation, AnimationSpeed);
 
         /// <summary>
-        /// Returns a re-target animation based on a point.
+        /// Returns a re-target animation based on a point. (Does not remove sourceAnimation)
         /// </summary>
         internal Animation GetTargetedAnimation(Point targetPoint) => 
             new Animation(targetPoint, 0, 0, TargetAnimation, SourceAnimation, AnimationSpeed);

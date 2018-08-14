@@ -45,7 +45,7 @@ namespace Chaos
             #endregion
 
             #region Skills
-            AddSkill("Test Skill 1", TestSkill1, NormalSkill);
+            AddSkill("Attack", Attack, NormalSkill);
             AddSkill("Cleave", Cleave, NormalSkill);
             AddSkill("Reposition", Reposition, Reposition);
             AddSkill("Shoulder Charge", ShoulderCharge, ShoulderCharge);
@@ -60,6 +60,7 @@ namespace Chaos
             AddSpell("Admin Create", AdminCreate, AdminCreate);
             AddSpell("Admin Buff", AdminBuff, PersistentSpell);
             AddSpell("Test HOT", TestHOT, PersistentSpell);
+            AddSpell("Fireball", Fireball, PersistenWorldSpell);
             #endregion
         }
 
@@ -224,7 +225,32 @@ namespace Chaos
                 foreach (Creature c in targets)
                     Game.Extensions.ApplyDamage(c, spell.BaseDamage);
 
-                Game.Extensions.ApplyActivation(client, spell, targets.OfType<Creature>().ToList(), null, StatUpdateType.Primary);
+                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
+                return true;
+            }
+            return false;
+        }
+        private bool PersistenWorldSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            User user = target as User;
+            List<Creature> targets = new List<Creature>();
+
+            if (!spell.UsersOnly || target is User)
+                targets.Add(target);
+
+            foreach (Point point in Game.Extensions.GetPointsFromType(client, target.Point, spell.TargetType))
+            {
+                Effect targetedEffect = spell.Effect.GetTargetedEffect(point);
+                client.User.Map.AddEffect(targetedEffect);
+            }
+
+            if (targets.Count > 0)
+            {
+                foreach (Creature c in targets)
+                    Game.Extensions.ApplyDamage(c, spell.BaseDamage);
+
+                Game.Extensions.ApplyActivation(client, spell, targets.OfType<Creature>().ToList(), null, StatUpdateType.Primary, true);
                 return true;
             }
             return false;
@@ -247,8 +273,10 @@ namespace Chaos
 
         #region Skills
         #region Default Skills
-        private Skill TestSkill1() => new Skill(78, "Test Skill 1", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
-        private Skill Cleave() => new Skill(16, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
+        private Skill Attack() => new Skill(78, "Attack", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
+        private Skill Cleave() => new Skill(0, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
+        private Skill Stab() => new Skill(5, "Stab", TimeSpan.Zero, true, new Animation(207, 0, 100), TargetsType.Front, BodyAnimation.Stab, 50000);
+        private Skill CycloneSlice() => new Skill(16, "Cyclone Slice", TimeSpan.FromSeconds(3), false, new Animation(165, 0, 100), TargetsType.Surround, BodyAnimation.HeavySwipe, 50000);
         #endregion
 
         #region Scripted Skills
@@ -266,8 +294,8 @@ namespace Chaos
 
                 if (client.User.Map.IsWalkable(newPoint) || client.User.Point == newPoint)
                 {
-                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.Map.Id, newPoint)));
                     client.User.Direction = target.Direction;
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.Map.Id, newPoint)));
                 }
 
                 Game.Extensions.ApplyActivation(client, skill, targets, null, StatUpdateType.None);
@@ -334,12 +362,14 @@ namespace Chaos
         #region Spells
         #region Default Spells
         private Spell Mend() => new Spell(118, "Mend", SpellType.Targeted, string.Empty, 1, TimeSpan.Zero, new Animation(4, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -10000);
-        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(157, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -100000);
-        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, new TimeSpan(0, 0, 2), new Animation(217, 0, 100), TargetsType.None, false, BodyAnimation.HandsUp, 100000);
-        private Spell AdminBuff() => new Spell(1, "Admin Buff", SpellType.Targeted, null, 1, new TimeSpan(0, 0, 10), new Animation(189, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, 0,
+        private Spell Heal() => new Spell(21, "Heal", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(2), new Animation(157, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -100000);
+        private Spell SradTut() => new Spell(39, "Srad Tut", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(2), new Animation(217, 0, 100), TargetsType.None, false, BodyAnimation.HandsUp, 100000);
+        private Spell AdminBuff() => new Spell(1, "Admin Buff", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(20), new Animation(189, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, 0,
             new Effect(sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, sbyte.MaxValue, 1333337, 1333337, 0, 0, 2000, new TimeSpan(0, 5, 0), true, Animation.None));
-        private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, null, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
+        private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, string.Empty, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
             new Effect(0, 0, 0, 0, 0, 0, 0, -25000, 0, 1000, new TimeSpan(0, 0, 20), true));
+        private Spell Fireball() => new Spell(39, "Fireball", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(5), new Animation(138, 102, 150), TargetsType.Cluster2, false, BodyAnimation.WizardCast, 100000,
+            new Effect(0, 0, 0, 0, 0, 0, 0, 50000, 0, 1000, TimeSpan.FromSeconds(5), false, new Animation(13, 0, 250)));
         #endregion
 
         #region Scripted Spells

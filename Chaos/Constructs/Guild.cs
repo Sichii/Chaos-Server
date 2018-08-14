@@ -16,18 +16,16 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    //will need to figure out how to properly serialize this only a single time
+    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Guild : IEnumerable
     {
         private readonly object Sync = new object();
         public IEnumerator GetEnumerator() => Members.GetEnumerator();
         [JsonProperty]
         internal string Name { get; set; }
-        [JsonProperty]
         private Bank Bank { get; set; }
-        [JsonProperty]
         private Dictionary<string, string> Members; //name, rank
-        [JsonProperty]
         private List<string> Ranks { get; set; }
 
         internal Guild()
@@ -62,13 +60,27 @@ namespace Chaos
                 TryAddMember(member);
         }
 
-        [JsonConstructor]
+        /// <summary>
+        /// Database constructor for guild. (Guilds are populated at server start)
+        /// </summary>
         internal Guild(string name, Bank bank, Dictionary<string, string> members, List<string> ranks)
         {
             Name = name;
             Bank = bank;
             Members = new Dictionary<string, string>(members, StringComparer.CurrentCultureIgnoreCase);
             Ranks = ranks;
+        }
+
+        /// <summary>
+        /// Json constructor for guilds. Will use this name to fetch the guild reference from a pre-populated list.
+        /// </summary>
+        [JsonConstructor]
+        internal Guild(string name)
+        {
+            Name = name;
+            Bank = new Bank();
+            Members = new Dictionary<string, string>();
+            Ranks = new List<string>();
         }
 
         /// <summary>

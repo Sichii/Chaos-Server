@@ -1,2 +1,2 @@
-C:\Users\Sichi\Desktop\ChaosProject
-chaosserver.dynu.net
+C:\Users\mewbb\Desktop\ChaosProject
+localhost

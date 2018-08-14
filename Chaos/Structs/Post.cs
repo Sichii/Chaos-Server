@@ -13,11 +13,14 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptOut)]
+    [JsonObject(MemberSerialization.OptIn)]
     internal struct Post
     {
+        [JsonProperty]
         internal ushort PostId;
+        [JsonProperty]
         internal string Subject;
+        [JsonProperty]
         internal string Body;
 
         internal Post(ushort postId, string subject, string body)
