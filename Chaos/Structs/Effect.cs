@@ -68,7 +68,7 @@ namespace Chaos
         /// </summary>
         internal Effect(sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod,
             int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
-            : this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
+            : this(0, strMod, intMod, wisMod, conMod, dexMod, maxHPMod, maxMPMod, currentHPMod, currentMPMod, animationDelay, duration, useParentAnimation, animation)
         {
 
         }

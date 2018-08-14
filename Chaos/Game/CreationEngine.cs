@@ -45,7 +45,7 @@ namespace Chaos
             #endregion
 
             #region Skills
-            AddSkill("Test Skill 1", TestSkill1, NormalSkill);
+            AddSkill("Attack", Attack, NormalSkill);
             AddSkill("Cleave", Cleave, NormalSkill);
             AddSkill("Reposition", Reposition, Reposition);
             AddSkill("Shoulder Charge", ShoulderCharge, ShoulderCharge);
@@ -225,7 +225,7 @@ namespace Chaos
                 foreach (Creature c in targets)
                     Game.Extensions.ApplyDamage(c, spell.BaseDamage);
 
-                Game.Extensions.ApplyActivation(client, spell, targets.OfType<Creature>().ToList(), null, StatUpdateType.Primary);
+                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
                 return true;
             }
             return false;
@@ -273,8 +273,10 @@ namespace Chaos
 
         #region Skills
         #region Default Skills
-        private Skill TestSkill1() => new Skill(78, "Test Skill 1", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
-        private Skill Cleave() => new Skill(16, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
+        private Skill Attack() => new Skill(78, "Attack", TimeSpan.Zero, true, Animation.None, TargetsType.Front, BodyAnimation.Assail, 50000);
+        private Skill Cleave() => new Skill(0, "Cleave", TimeSpan.Zero, true, new Animation(119, 0, 100), TargetsType.Cleave, BodyAnimation.Swipe, 50000);
+        private Skill Stab() => new Skill(5, "Stab", TimeSpan.Zero, true, new Animation(207, 0, 100), TargetsType.Front, BodyAnimation.Stab, 50000);
+        private Skill CycloneSlice() => new Skill(16, "Cyclone Slice", TimeSpan.FromSeconds(3), false, new Animation(165, 0, 100), TargetsType.Surround, BodyAnimation.HeavySwipe, 50000);
         #endregion
 
         #region Scripted Skills
@@ -292,8 +294,8 @@ namespace Chaos
 
                 if (client.User.Map.IsWalkable(newPoint) || client.User.Point == newPoint)
                 {
-                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.Map.Id, newPoint)));
                     client.User.Direction = target.Direction;
+                    Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, new Location(client.User.Map.Id, newPoint)));
                 }
 
                 Game.Extensions.ApplyActivation(client, skill, targets, null, StatUpdateType.None);
@@ -367,7 +369,7 @@ namespace Chaos
         private Spell TestHOT() => new Spell(127, "Test HOT", SpellType.Targeted, string.Empty, 0, TimeSpan.Zero, new Animation(187, 0, 100), TargetsType.None, true, BodyAnimation.HandsUp, -25000,
             new Effect(0, 0, 0, 0, 0, 0, 0, -25000, 0, 1000, new TimeSpan(0, 0, 20), true));
         private Spell Fireball() => new Spell(39, "Fireball", SpellType.Targeted, string.Empty, 1, TimeSpan.FromSeconds(5), new Animation(138, 102, 150), TargetsType.Cluster2, false, BodyAnimation.WizardCast, 100000,
-            new Effect(0, 0, 0, 0, 0, 0, 0, 50000, 0, 500, TimeSpan.FromSeconds(5), false, new Animation(211, 0, 100)));
+            new Effect(0, 0, 0, 0, 0, 0, 0, 50000, 0, 1000, TimeSpan.FromSeconds(5), false, new Animation(13, 0, 250)));
         #endregion
 
         #region Scripted Spells

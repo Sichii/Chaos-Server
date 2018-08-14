@@ -97,7 +97,7 @@ namespace Chaos
                                     creature.AnimationHistory[effect.Animation.GetHashCode()] = DateTime.UtcNow; //update the animation history
                                     foreach (User user in creature.Map.ObjectsVisibleFrom(creature, true).OfType<User>()) //for each user within sight, including itself if it is a user
                                     {
-                                        if (user ==user1) //if this user is the creature
+                                        if (user == user1) //if this user is the creature
                                             user.Client.SendEffect(effect); //update the bar
 
                                         user.Client.SendAnimation(effect.Animation); //send this animation to all visible users
@@ -205,6 +205,10 @@ namespace Chaos
             //if the user is an admin character, apply godmode
             if (Server.Admins.Contains(newUser.Name, StringComparer.CurrentCultureIgnoreCase))
             {
+                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Admin Create"));
+                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
+                newUser.Legend.Add(new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow));
+
                 newUser.IsAdmin = true;
                 newUser.Attributes.BaseHP = 1333337;
                 newUser.Attributes.BaseMP = 1333337;
@@ -221,10 +225,7 @@ namespace Chaos
                 newUser.Nation = Nation.Noes;
                 newUser.Guild = World.Guilds["Chaos Team"];
 
-                newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Admin Create"));
-                newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
                 newUser.Attributes.Gold += 500000000;
-                newUser.Legend.Add(new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow));
             }
 
             //try to save the new user to the database
