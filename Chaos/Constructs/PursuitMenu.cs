@@ -23,9 +23,9 @@ namespace Chaos
         internal List<PursuitMenuItem> Pursuits { get; }
 
         /// <summary>
-        /// Object representing a menu of pursuits.
+        /// Base constructor for an enumerable object of PursuitMenuItem. Represents the pursuit menu of a merchant menu.
         /// </summary>
-        /// <param name="pursuits">A lost of objects that each contain a pursuitId paired with it's display text for the menu.</param>
+        /// <param name="pursuits">A list of objects that each contain a pursuitId paired with it's display text for the menu.</param>
         internal PursuitMenu(List<PursuitMenuItem> pursuits)
         {
             Pursuits = pursuits;

@@ -22,6 +22,9 @@ namespace Chaos
         public Point Point { get; }
         internal Location Location => new Location(MapId, Point);
 
+        /// <summary>
+        /// Master constructor for a structure representing an in-game clickable node on a world map. Position on the world map, and the warp information are stored here.
+        /// </summary>
         public WorldMapNode(Point position, string name, ushort mapId, Point point)
         {
             Position = position;
@@ -30,6 +33,9 @@ namespace Chaos
             Point = point;
         }
 
+        /// <summary>
+        /// Returns a checksum, or hashcode to represent the structure.
+        /// </summary>
         public ushort CheckSum
         {
             get

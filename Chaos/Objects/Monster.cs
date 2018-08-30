@@ -14,6 +14,9 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an in-game enemy, or monster.
+    /// </summary>
     internal sealed class Monster : Creature
     {
         internal bool IsActive { get; set; }
@@ -25,6 +28,9 @@ namespace Chaos
         internal override uint MaximumHP { get; }
         internal override uint CurrentHP { get; set; }
 
+        /// <summary>
+        /// Master constructor an object representing an in-game monster.
+        /// </summary>
         internal Monster(string name, ushort sprite, CreatureType type, Point point, Map map, TimeSpan updateInterval, Direction direction = Direction.South)
             : base(name, sprite, type, point, map, direction)
         {

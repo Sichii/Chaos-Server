@@ -13,13 +13,19 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object that can be placed on the ground, generally an item.
+    /// </summary>
     [JsonObject(MemberSerialization.OptOut)]
-    internal class GroundItem : VisibleObject
+    internal class GroundObject : VisibleObject
     {
         internal Item Item { get; set; }
 
+        /// <summary>
+        /// Json & Master constructor for an object that can be placed on the ground.
+        /// </summary>
         [JsonConstructor]
-        internal GroundItem(ushort sprite, Point point, Map map, Item item = null)
+        internal GroundObject(ushort sprite, Point point, Map map, Item item = null)
           : base(string.Empty, sprite, point, map)
         {
             Item = item;

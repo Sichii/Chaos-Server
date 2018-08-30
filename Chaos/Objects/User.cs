@@ -12,9 +12,13 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an in-game user, or player.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class User : Creature
     {
@@ -39,11 +43,7 @@ namespace Chaos
         [JsonProperty]
         internal Legend Legend { get; set; }
         [JsonProperty]
-        internal Personal Personal { get; set; }
-        [JsonProperty]
         internal Guild Guild { get; set; }
-        internal Group Group { get; set; }
-        internal Client Client { get; set; }
         [JsonProperty]
         internal SocialStatus SocialStatus { get; set; }
         [JsonProperty]
@@ -62,6 +62,9 @@ namespace Chaos
         internal bool IsAdmin { get; set; }
         [JsonProperty]
         internal Gender Gender { get; set; }
+        internal Group Group { get; set; }
+        internal Client Client { get; set; }
+        internal Personal Personal { get; set; }
         internal bool IsGrouped => Group != null;
         internal Exchange Exchange { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
@@ -84,16 +87,22 @@ namespace Chaos
 
         internal Location BlinkSpot { get; set; }
 
+        /// <summary>
+        /// Base constructor for an object representing a new in-game user, or player.
+        /// </summary>
         internal User(string name, Point point, Map map, Direction direction, Gender gender)
             : this(name, point, map, direction, new Board(), new Panel<Skill>(90), new Panel<Spell>(90), new Panel<Item>(61), new Panel<Item>(20), new IgnoreList(),
-                  new UserOptions(), null, new Attributes(), new EffectsBar(null), new Legend(), null, null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
+                  new UserOptions(), null, new Attributes(), new EffectsBar(null), new Legend(), null, SocialStatus.Awake, Nation.None, BaseClass.Peasant, AdvClass.None,
                   false, null, new List<string>(), gender, UserState.None, Status.None, Quest.None, false)
         {
         }
 
+        /// <summary>
+        /// Json & Master constructor for an object representing an existing in-game user, or player.
+        /// </summary>
         [JsonConstructor]
-        internal User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, 
-            Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes, EffectsBar effectsBar, Legend legend, Personal personal, 
+        private User(string name, Point point, Map map, Direction direction, Board mailBox, Panel<Skill> skillBook, Panel<Spell> spellBook, Panel<Item> inventory, 
+            Panel<Item> equipment, IgnoreList ignoreList, UserOptions userOptions, DisplayData displayData, Attributes attributes, EffectsBar effectsBar, Legend legend, 
             Guild guild, SocialStatus socialStatus, Nation nation, BaseClass baseClass, AdvClass advClass, bool isMaster, string spouse, List<string> titles, 
             Gender gender, UserState state, Status status, Quest quest, bool isAdmin)
             : base(name, 0, CreatureType.User, point, map, direction, effectsBar)
@@ -109,7 +118,6 @@ namespace Chaos
             Attributes = attributes;
             Attributes.User = this;
             Legend = legend;
-            Personal = personal;
             Guild = guild == null ? null : Game.World.Guilds[guild.Name];
             SocialStatus = socialStatus;
             Nation = nation;
@@ -121,6 +129,7 @@ namespace Chaos
             Gender = gender;
             Client = null;
             Group = null;
+            Personal = null;
 
             if (DisplayData != null)
                 DisplayData.User = this;
@@ -131,8 +140,61 @@ namespace Chaos
             State = state;
             Status = status;
             Quest = quest;
+
+
+            //re serialize all panels based on minimal information
+            foreach(Item i in Inventory.ToList())
+            {
+                if (i == null) continue;
+                Item newItem = Game.CreationEngine.CreateItem(i.Name);
+                newItem.Count = i.Count;
+                newItem.LastUse = i.LastUse;
+                newItem.CurrentDurability = i.CurrentDurability;
+                newItem.Slot = i.Slot;
+
+                Inventory.TryRemove(i.Slot);
+                inventory.TryAdd(newItem);
+            }
+
+            foreach (Item i in Equipment.ToList())
+            {
+                if (i == null) continue;
+                Item newItem = Game.CreationEngine.CreateItem(i.Name);
+                newItem.Count = i.Count;
+                newItem.LastUse = i.LastUse;
+                newItem.CurrentDurability = i.CurrentDurability;
+                newItem.Slot = i.Slot;
+
+                Inventory.TryRemove(i.Slot);
+                inventory.TryAdd(newItem);
+            }
+
+            foreach (Spell s in SpellBook.ToList())
+            {
+                if (s == null) continue;
+                Spell newSpell = Game.CreationEngine.CreateSpell(s.Name);
+                newSpell.LastUse = s.LastUse;
+                newSpell.Slot = s.Slot;
+
+                SpellBook.TryRemove(s.Slot);
+                SpellBook.TryAdd(newSpell);
+            }
+
+            foreach (Skill s in SkillBook.ToList())
+            {
+                if (s == null) continue;
+                Skill newSkill = Game.CreationEngine.CreateSkill(s.Name);
+                newSkill.LastUse = s.LastUse;
+                newSkill.Slot = s.Slot;
+
+                SkillBook.TryRemove(s.Slot);
+                SkillBook.TryAdd(newSkill);
+            }
         }
 
+        /// <summary>
+        /// Re-synchronizes the user to a client.
+        /// </summary>
         internal void Resync(Client client)
         {
             Client = client;
@@ -140,6 +202,9 @@ namespace Chaos
             Map = Game.World.Maps[Map.Id];
         }
 
+        /// <summary>
+        /// Retreives a list of diagonal points in relevance to the user, with an optional distance and direction. Invalid direction returns all directions of diagonal points.
+        /// </summary>
         internal List<Point> DiagonalPoints(int degree = 1, Direction direction = Direction.Invalid)
         {
             List<Point> diagonals = new List<Point>();
@@ -176,10 +241,16 @@ namespace Chaos
             return diagonals;
         }
 
+        /// <summary>
+        /// Retreives a list of points in a line from the user, with an option for distance and direction. Invalid directions return an empty list.
+        /// </summary>
         internal List<Point> LinePoints(int degree = 1, Direction direction = Direction.Invalid)
         {
             Point tempPoint = Point;
             List<Point> linePoints = new List<Point>();
+
+            if (direction == Direction.Invalid)
+                return linePoints;
 
             for (int i = 0; i < degree; i++)
             {
@@ -190,8 +261,14 @@ namespace Chaos
             return linePoints;
         }
 
+        /// <summary>
+        /// Saves the user to the database.
+        /// </summary>
         internal void Save() => Client.Server.DataBase.TrySaveUser(this);
 
+        /// <summary>
+        /// Checks if the user has the given flag. Accepts Quest, UserState, and Status flags.
+        /// </summary>
         internal bool HasFlag<T>(T flag) where T : struct, IConvertible
         {
             if (!typeof(T).IsEnum)
@@ -212,6 +289,11 @@ namespace Chaos
                 throw new ArgumentException("Invalid argument.");
         }
 
+        /// <summary>
+        /// Adds a flag to the user. Accepts Quest, UserState, and Status flags.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="flag"></param>
         internal void AddFlag<T>(T flag) where T : struct, IConvertible
         {
             if (!typeof(T).IsEnum)
@@ -232,6 +314,11 @@ namespace Chaos
                 throw new ArgumentException("Invalid argument.");
         }
 
+        /// <summary>
+        /// Removes a flag from the user. Accepts Quest, UserState, and Status flags.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="flag"></param>
         internal void RemoveFlag<T>(T flag) where T : struct, IConvertible
         {
             if (!typeof(T).IsEnum)

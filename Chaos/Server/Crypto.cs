@@ -20,7 +20,10 @@ namespace Chaos
     // The code that this file is based on was written by Kyle Speck (kojasou) <kojasou@hybrasyl.com> <https://github.com/kojasou>
     // The current owner of the original code is The Hy-Brasyl Project. <https://www.hybrasyl.com/>
     // *************************************************************************************************
-    internal sealed class Crypto
+    /// <summary>
+    /// Object containing methods and objects used for server encryption.
+    /// </summary>
+    public sealed class Crypto
     {
         private static string key1 = GetMD5Hash("inhOrig").Substring(0, 8);
         private static string key2 = GetMD5Hash(key1).Substring(0, 8);
@@ -271,9 +274,9 @@ namespace Chaos
                 checkSum = checkSum >> 8 ^ Table32[(int)(checkSum & byte.MaxValue ^ data[i])];
             return checkSum;
         }
-        internal static string GetMD5Hash(string value) => BitConverter.ToString(HashAlgorithm.Create("MD5").ComputeHash(Encoding.ASCII.GetBytes(value))).Replace("-", string.Empty).ToLower();
+        public static string GetMD5Hash(string value) => BitConverter.ToString(HashAlgorithm.Create("MD5").ComputeHash(Encoding.ASCII.GetBytes(value))).Replace("-", string.Empty).ToLower();
 
-        internal static void EncryptFile(MemoryStream fileData, string path)
+        public static void EncryptFile(MemoryStream fileData, string path)
         {
             DESCryptoServiceProvider DES = new DESCryptoServiceProvider();
             DES.Key = Encoding.ASCII.GetBytes(key1);
@@ -288,7 +291,7 @@ namespace Chaos
                 crypt.Write(data, 0, data.Length);
             }
         }
-        internal static MemoryStream DecryptFile(string path)
+        public static MemoryStream DecryptFile(string path)
         {
             DESCryptoServiceProvider DES = new DESCryptoServiceProvider();
             DES.Key = Encoding.ASCII.GetBytes(key1);

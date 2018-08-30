@@ -26,7 +26,7 @@ namespace Chaos
         internal ushort MaxCharacters { get; }
 
         /// <summary>
-        /// Default constructor for dialog
+        /// Base constructor for an in-game dialog
         /// </summary>
         public Dialog(DialogType type, PursuitIds pursuitId, ushort dialogId, bool prevBtn, bool nextBtn, string message, DialogMenu menu, ushort nextDialogId, Panel<PanelObject> panel, ushort maxCharacters)
         {

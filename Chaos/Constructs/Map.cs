@@ -40,7 +40,7 @@ namespace Chaos
         public sbyte Music { get; set; }
 
         /// <summary>
-        /// Object representing a map.
+        /// Master constructor for an object representing an in-game map.
         /// </summary>
         public Map(ushort id, byte sizeX, byte sizeY, MapFlags flags, string name, sbyte music)
         {
@@ -57,6 +57,10 @@ namespace Chaos
             Effects = new List<Effect>();
         }
 
+        /// <summary>
+        /// Json constructor for an object representing an in-game map. Only the Id is serialized. The map is then fetched from a pre-populated list from the world.
+        /// </summary>
+        /// <param name="id"></param>
         [JsonConstructor]
         internal Map(ushort id)
         {
@@ -85,7 +89,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds a single object to a map. Sends and sets all relevant data.
+        /// Synchronously adds a single object to a map. Sends and sets all relevant data.
         /// </summary>
         /// <param name="vObject">Any visible object.</param>
         /// <param name="point">The point you want to add it to.</param>
@@ -140,7 +144,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds many objects to the map. NON-USERS ONLY!
+        /// Synchronously adds many objects to the map. NON-USERS ONLY!
         /// </summary>
         /// <param name="vObjects">Any non-user visibleobject</param>
         /// <param name="point">The point you want to add it to.</param>
@@ -165,7 +169,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Removes a single object from the map.
+        /// Synchronously removes a single object from the map.
         /// </summary>
         /// <param name="vObject">Any visible object you want removed.</param>
         /// <param name="worldMap">Whether or not they are stepping into a worldMap.</param>
@@ -185,7 +189,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds an effect to the map.
+        /// Synchronously adds an effect to the map.
         /// </summary>
         /// <param name="effect">The effect to add.</param>
         internal void AddEffect(Effect effect)
@@ -195,7 +199,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Removes a single effect from the map.
+        /// Synchronously removes a single effect from the map.
         /// </summary>
         /// <param name="effect">The effect to remove.</param>
         internal void RemoveEffect(Effect effect)
@@ -205,16 +209,24 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Gets all objects the given object can see
+        /// Synchronously retrieves all objects the given object can see.
         /// </summary>
         /// <param name="vObject">Object to base from.</param>
         /// <param name="include">Whether or not to include the base object.</param>
+        /// <param name="distance">Optional distance from the object to retrieve from.</param>
         internal IEnumerable<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, bool include = false, byte distance = 13)
         {
             lock (Sync)
                 return Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && (include ? true : vObject != obj));
         }
 
+        /// <summary>
+        /// Synchronously retrieves all objects visible from a given point.
+        /// </summary>
+        /// <param name="point">The point of origin.</param>
+        /// <param name="include">Whether or not to include the origin point.</param>
+        /// <param name="distance">Optional distance from the point to retreive from.</param>
+        /// <returns></returns>
         internal IEnumerable<VisibleObject> ObjectsVisibleFrom(Point point, bool include = false, byte distance = 13)
         {
             lock (Sync)
@@ -222,7 +234,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Gets all doors visible from the user.
+        /// Synchronously retrieves all doors visible from the user.
         /// </summary>
         /// <param name="user">The user to base from.</param>
         internal IEnumerable<Door> DoorsVisibleFrom(User user)
@@ -232,9 +244,9 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Gets al leffects visible from the user.
+        /// Synchronously retrieves all effects visible from the creature.
         /// </summary>
-        /// <param name="user">The user to base from.</param>
+        /// <param name="creature">The creature to base the search from.</param>
         internal IEnumerable<Effect> EffectsVisibleFrom(Creature creature)
         {
             lock (creature.Map.Sync)
@@ -245,7 +257,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive a user by searching through the maps for the given name.
+        /// Attempts to synchronously retreive a user by searching through the objects for the given name.
         /// </summary>
         /// <param name="name">The name of the user to search for.</param>
         /// <param name="user">Reference to the user to set.</param>
@@ -260,7 +272,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive an object by searching through the maps for the given id.
+        /// Attempts to synchronously retreive an object by searching through the objects for the given id.
         /// </summary>
         /// <param name="id">The id of the object to search for.</param>
         /// <param name="obj">Reference to the object to set.</param>
@@ -277,7 +289,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive an object by searching through the maps for the given id.
+        /// Attempts to synchronously retreive an object by searching through the maps for the given point.
         /// </summary>
         /// <param name="p">The point of the object to search for.</param>
         /// <param name="obj">Reference to the object to set.</param>
@@ -305,7 +317,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive all objects of a given type on a given map.
+        /// Attempts to synchronously retreive all objects of a given type on a given map.
         /// </summary>
         /// <typeparam name="T">The type of object to return.</typeparam>
         /// <param name="map">The map to return from.</param>
@@ -338,17 +350,15 @@ namespace Chaos
         /// <summary>
         /// Checks if a point is within the bounds of the map.
         /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
         internal bool WithinMap(Point p) => p.X >= 0 && p.Y >= 0 && p.X < SizeX && p.Y < SizeY;
 
         /// <summary>
-        /// Checks if a point is within the bounds of the map, or a wall.
+        /// Checks if a point is within the bounds of the map, or is a wall.
         /// </summary>
         internal bool IsWall(Point p) => !WithinMap(p) || Tiles[p].IsWall;
 
         /// <summary>
-        /// Checks if a given point is within the map, is a wall, or has a monster, door, or other object already on it.
+        /// Checks if a given point is within the bounds of the map, is a wall, or has a monster, door, or other object already on it.
         /// </summary>
         internal bool IsWalkable(Point p)
         {

@@ -15,6 +15,9 @@ using System.Text;
 
 namespace Chaos
 {
+    /// <summary>
+    /// A container for methods that read ClientPackets, based on an opcode/delegate system.
+    /// </summary>
     internal sealed class ClientPackets
     {
         internal delegate void Handler(Client client, ClientPacket packet);

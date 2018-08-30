@@ -15,6 +15,9 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object that can move, has hp, mp, and can be damaged.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     internal abstract class Creature : VisibleObject
     {
@@ -31,9 +34,11 @@ namespace Chaos
         internal Dictionary<int, DateTime> AnimationHistory { get; set; }
         internal Dictionary<int, DateTime> WorldAnimationHistory { get; set; }
 
-
+        /// <summary>
+        /// Json & Master constructor for a creature.
+        /// </summary>
         [JsonConstructor]
-        internal Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South, EffectsBar effectsBar = null)
+        protected Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South, EffectsBar effectsBar = null)
             : base(name, sprite, point, map)
         {
             EffectsBar = effectsBar ?? new EffectsBar(null);

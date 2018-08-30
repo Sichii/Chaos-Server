@@ -20,6 +20,10 @@ namespace Chaos
     internal delegate Item ItemCreationDelegate(int count);
     internal delegate Skill SkillCreationDelegate();
     internal delegate Spell SpellCreationDelegate();
+
+    /// <summary>
+    /// Object containing methods, objects, and properties for the easy creation and activation of PanelObjects.
+    /// </summary>
     internal class CreationEngine
     {
         private Dictionary<string, ItemCreationDelegate> Items { get; }
@@ -60,7 +64,7 @@ namespace Chaos
             AddSpell("Admin Create", AdminCreate, AdminCreate);
             AddSpell("Admin Buff", AdminBuff, PersistentSpell);
             AddSpell("Test HOT", TestHOT, PersistentSpell);
-            AddSpell("Fireball", Fireball, PersistenWorldSpell);
+            AddSpell("Fireball", Fireball, WorldSpell1);
             #endregion
         }
 
@@ -136,10 +140,10 @@ namespace Chaos
                 return true;
             }
 
-            if (!item.Gender.HasFlag(client.User.Gender))
+            if (!client.User.Gender.HasFlag(item.Gender))
             {
                 client.SendServerMessage(ServerMessageType.ActiveMessage, "This item does not fit you.");
-                return true;
+                return false;
             }
 
             Item outItem;
@@ -196,7 +200,7 @@ namespace Chaos
                 Game.Extensions.ApplyDamage(c, amount);
 
             Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.None, true);
-            return true;
+            return targets.Count > 0;
         }
         private bool PersistentSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
@@ -220,17 +224,45 @@ namespace Chaos
                     targets.Remove(u);
             }
 
-            if (targets.Count > 0)
-            {
-                foreach (Creature c in targets)
-                    Game.Extensions.ApplyDamage(c, spell.BaseDamage);
+            foreach (Creature c in targets)
+                Game.Extensions.ApplyDamage(c, spell.BaseDamage);
 
-                Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
-                return true;
-            }
-            return false;
+            Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
+            return targets.Count > 0;
         }
-        private bool PersistenWorldSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        /// <summary>
+        /// Applies a spell of any area-size to an enemy. Applies an effect to the world in the same area-size.
+        /// </summary>
+        private bool WorldSpell1(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
+        {
+            Spell spell = obj as Spell;
+            User user = target as User;
+            List<Creature> targets = new List<Creature>();
+
+            if (!spell.UsersOnly || target is User)
+                targets.Add(target);
+
+            foreach (Creature c in Game.Extensions.GetTargetsFromType(client, target.Point))
+                if (!spell.UsersOnly || c is User)
+                    targets.Add(c);
+
+            foreach (Point point in Game.Extensions.GetPointsFromType(client, target.Point, spell.TargetType))
+            {
+                Effect targetedEffect = spell.Effect.GetTargetedEffect(point);
+                client.User.Map.AddEffect(targetedEffect);
+            }
+
+            foreach (Creature c in targets)
+                Game.Extensions.ApplyDamage(c, spell.BaseDamage);
+
+            Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary, true);
+
+            return targets.Count > 0;
+        }
+        /// <summary>
+        /// Applies a spell to any enemy, single target. Applies an effect to the world in any area-size.
+        /// </summary>
+        private bool WorldSpell2(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             Spell spell = obj as Spell;
             User user = target as User;
@@ -245,15 +277,12 @@ namespace Chaos
                 client.User.Map.AddEffect(targetedEffect);
             }
 
-            if (targets.Count > 0)
-            {
-                foreach (Creature c in targets)
-                    Game.Extensions.ApplyDamage(c, spell.BaseDamage);
+            foreach (Creature c in targets)
+                Game.Extensions.ApplyDamage(c, spell.BaseDamage);
 
-                Game.Extensions.ApplyActivation(client, spell, targets.OfType<Creature>().ToList(), null, StatUpdateType.Primary, true);
-                return true;
-            }
-            return false;
+            Game.Extensions.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary, true);
+
+            return targets.Count > 0;
         }
         #endregion
 

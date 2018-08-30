@@ -27,13 +27,14 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Death effects for a user, strips all buffs, disables casting, maybe drops items, etc?
+        /// Applies death to a user, stripping them of all buffs and teleporting them to the death location.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="user"></param>
+        /// <param name="user">The user to apply death to.</param>
         internal void KillUser(User user)
         {
-            //strip buffs
+            user.EffectsBar.Clear();
+
+
             //disable casting
             //death stuff
 
@@ -41,6 +42,10 @@ namespace Chaos
             WarpObj(user, new Warp(user.Location, CONSTANTS.DEATH_LOCATION));
         }
 
+        /// <summary>
+        /// Applies death to a monster, removing them from the world, distributing exp, and rolling for loot.
+        /// </summary>
+        /// <param name="monster">The monster to apply death to.</param>
         internal void KillMonster(Monster monster)
         {
             //distribute exp
@@ -51,10 +56,9 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Revives a user, restoring their hp, mp and alive state.
+        /// Revives a user, restoring their hp, and mp.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="user"></param>
+        /// <param name="user">The user to revive.</param>
         internal void ReviveUser(User user)
         {
             if (!user.IsAlive)
@@ -67,7 +71,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Gets targets based on the target type of the effect.
+        /// Retreives targets based on the target type of the effect.
         /// </summary>
         /// <param name="client">The client source of the effect.</param>
         /// <param name="targetPoint">The target point of the effect.</param>
@@ -140,6 +144,12 @@ namespace Chaos
             return creatures.Where(c => c.IsAlive).ToList();
         }
 
+        /// <summary>
+        /// Retreives points based on the target type of the effect.
+        /// </summary>
+        /// <param name="client">The client source of the effect.</param>
+        /// <param name="targetPoint">The target point of the effect.</param>
+        /// <param name="type">The target type to base the return on.</param>
         internal List<Point> GetPointsFromType(Client client, Point targetPoint, TargetsType type = TargetsType.None)
         {
             List<Point> points = new List<Point>();
@@ -207,7 +217,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Updates the targets and nearby uses of each target to reflect the current state of each changed object.
+        /// Updates the targets and nearby users of each target to reflect the current state of each changed object.
         /// </summary>
         /// <param name="client">The client source of the changes.</param>
         /// <param name="obj">The object effect causing the change.</param>
@@ -219,16 +229,16 @@ namespace Chaos
         /// <param name="refreshTargets">Whether or not to refresh the targets.</param>
         internal void ApplyActivation(Client client, PanelObject obj, List<Creature> targets, List<Animation> sfx, StatUpdateType updateType, bool displayHealth = false, bool refreshClient = false, bool refreshTargets = false)
         {
+            if (targets.Count == 0)
+                return;
+
             lock (obj)
             {
+                obj.LastUse = DateTime.UtcNow;
                 //grab all nearby Users
                 List<User> nearbyUsers = client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>().ToList();
-                bool isSkill = false;
                 //send the skill cooldown to the skill user
-                if (obj is Skill)
-                    isSkill = true;
-
-                client.Enqueue(ServerPackets.Cooldown(isSkill, obj.Slot, (uint)obj.Cooldown.TotalSeconds));
+                client.Enqueue(ServerPackets.Cooldown(obj));
 
                 //refresh the client if needed
                 if (refreshClient)
@@ -237,10 +247,11 @@ namespace Chaos
                 //refresh targets if needed
                 foreach (User u in targets.OfType<User>())
                 {
-                    if (updateType != StatUpdateType.None)
-                        u.Client.SendAttributes(updateType);
                     if (refreshTargets)
                         Refresh(u.Client);
+                    else if (updateType != StatUpdateType.None)
+                        u.Client.SendAttributes(updateType);
+
                 }
 
                 //send all nearby clients the bodyanimation
@@ -286,7 +297,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Applies an amount of damage to a creature obj. Calculates defenses, stats, and other things. Changes the creature's alive state if necessary.
+        /// Applies an amount of damage to a creature. Calculates defenses, stats, and other things. Changes the creature's alive state if necessary.
         /// </summary>
         /// <param name="obj">The creature to apply the damage to.</param>
         /// <param name="amount">The flat amount of damage to apply.</param>
@@ -315,7 +326,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Moves a user from one map to another
+        /// Moves a user from one location to another.
         /// </summary>
         /// <param name="obj">The user to warp from and to a position/map.</param>
         /// <param name="warp">The warp the user is using to warp.</param>

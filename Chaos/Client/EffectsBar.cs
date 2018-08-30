@@ -27,7 +27,7 @@ namespace Chaos
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
-        /// Master constructor for the object representing the user's spellbar.
+        /// Json & Master constructor for an enumerable object of Effect. Represents a user's spell bar.
         /// </summary>
         [JsonConstructor]
         internal EffectsBar(List<Effect> effects)
@@ -54,13 +54,22 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to synchronously remove an effect to the spell bar.
+        /// Attempts to synchronously remove an effect from the spell bar.
         /// </summary>
         /// <param name="effect">The effect to remove.</param>
         internal bool TryRemove(Effect effect)
         {
             lock(Sync)
                 return Effects.Remove(effect);
+        }
+
+        /// <summary>
+        /// Synchronously clears the effects bar of all effects.
+        /// </summary>
+        internal void Clear()
+        {
+            lock (Sync)
+                Effects.Clear();
         }
 
         internal int StrModSum => Effects.Sum(e => e.StrMod);

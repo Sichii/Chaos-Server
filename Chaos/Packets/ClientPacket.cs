@@ -13,6 +13,9 @@ using System;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents a packet sent by the client to the server. Contains methods used to analyze and decrypt them.
+    /// </summary>
     internal sealed class ClientPacket : Packet
     {
         internal bool IsDialog => OpCode == 57 || OpCode == 58;
@@ -71,16 +74,7 @@ namespace Chaos
 
             Array.Resize(ref Data, length);
         }
-        internal void GenerateDialogHeader()
-        {
-            ushort CheckSum = Crypto.Generate16(Data, 6, Data.Length - 6);
-            Data[0] = (byte)Utility.Random(0, 255);
-            Data[1] = (byte)Utility.Random(0, 255);
-            Data[2] = (byte)((Data.Length - 4) / 256);
-            Data[3] = (byte)((Data.Length - 4) % 256);
-            Data[4] = (byte)(CheckSum / 256);
-            Data[5] = (byte)(CheckSum % 256);
-        }
+
         internal void DecryptDialog()
         {
             byte num = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45));

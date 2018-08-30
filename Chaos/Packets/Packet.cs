@@ -14,6 +14,9 @@ using System.IO;
 using System.Text;
 namespace Chaos
 {
+    /// <summary>
+    /// Represents a packet sent over a network interface. Contains methods used to read, write, and analyze them.
+    /// </summary>
     internal abstract class Packet
     {
         protected internal DateTime Creation { internal get; set; }

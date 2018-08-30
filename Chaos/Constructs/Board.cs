@@ -28,7 +28,7 @@ namespace Chaos
         internal Post this[byte postNum] => postNum < Counter ? Messages[postNum] : default(Post);
 
         /// <summary>
-        /// Object representing a board, or list of posts.
+        /// Json & Master constructor for an enumerable object of Post. Represents a board, or list of posts.
         /// </summary>
         /// <param name="messages">A list of posts contained in the board.</param>
         [JsonConstructor]
@@ -38,7 +38,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds a post to the board.
+        /// Synchronously adds a post to the board.
         /// </summary>
         /// <param name="post">The post to add.</param>
         internal void AddPost(Post post)
@@ -48,7 +48,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Removes a post from the board.
+        /// Synchronously removes a post from the board.
         /// </summary>
         /// <param name="PostNum">The index of the post to be removed.</param>
         internal bool RemovePost(int PostNum)
@@ -66,7 +66,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Reverses the posts, so that the newest one is on the top, for use in the packet.
+        /// Synchronously reverses the posts, so that the newest one is on the top, for use in the packet.
         /// </summary>
         internal IEnumerable<Post> Reverse()
         {

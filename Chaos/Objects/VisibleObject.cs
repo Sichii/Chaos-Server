@@ -13,6 +13,9 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object that is visible.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     internal abstract class VisibleObject : WorldObject
     {
@@ -24,8 +27,11 @@ namespace Chaos
         internal Map Map { get; set; }
         internal Location Location => new Location(Map.Id, Point);
 
+        /// <summary>
+        /// Json & Master constructor for an object that is visible.
+        /// </summary>
         [JsonConstructor]
-        internal VisibleObject(string name, ushort sprite, Point point, Map map)
+        protected VisibleObject(string name, ushort sprite, Point point, Map map)
           : base(name)
         {
             Sprite = sprite;
@@ -33,7 +39,14 @@ namespace Chaos
             Map = map;
         }
 
+        /// <summary>
+        /// Checks if a point is within 13 spaces of the object.
+        /// </summary>
         internal bool WithinRange(Point p) => Point.Distance(p) < 13;
+
+        /// <summary>
+        /// Checks if another VisibleObject is within 13 spaces of the object.
+        /// </summary>
         internal bool WithinRange(VisibleObject v) => Point.Distance(v.Point) < 13;
     }
 }

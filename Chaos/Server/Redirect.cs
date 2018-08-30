@@ -14,6 +14,9 @@ using System.Threading;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents a transfer of connection, and change of encryption for a client.
+    /// </summary>
     internal class Redirect
     {
         internal int Id { get; }

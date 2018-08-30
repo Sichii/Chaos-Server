@@ -11,6 +11,9 @@
 
 namespace Chaos
 {
+    /// <summary>
+    /// Contains physical paths for the chaos-server project folder, and the server's local hostname.
+    /// </summary>
     public static class Paths
     {
         //primary directory, populated by setpaths

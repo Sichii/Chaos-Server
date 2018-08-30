@@ -14,6 +14,9 @@ using zlib;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Contains static methods for compression and decompression of buffers and files.
+    /// </summary>
     internal static class ZLIB
     {
         internal static MemoryStream Compress(byte[] buffer)

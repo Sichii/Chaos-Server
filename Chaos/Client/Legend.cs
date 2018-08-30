@@ -28,7 +28,7 @@ namespace Chaos
         private List<KeyValuePair<string, LegendMark>> Marks { get; }
 
         /// <summary>
-        /// Represents the object containing the user's legend marks.
+        /// Default constructor for an enumerable object of LegendMark. Represent's a new user's legend.
         /// </summary>
         internal Legend()
         {
@@ -36,7 +36,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master constructor for the object representing the user's legend, containing legend marks.
+        /// Json & Master constructor for an enumerable object of LegendMark. Represents an existing user's legend.
         /// </summary>
         [JsonConstructor]
         internal Legend(List<KeyValuePair<string, LegendMark>> marks)
@@ -77,7 +77,7 @@ namespace Chaos
             }
         }
         /// <summary>
-        /// Synchronously attempts to remove the legend mark at key location.
+        /// Attempts to synchronously remove the legend mark at key location.
         /// </summary>
         /// <param name="key">Key of the mark to remove.</param>
         internal bool TryRemove(string key)
@@ -109,7 +109,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Represents an individual mark in the Legend object.
+        /// Base Constructor for an object representing a new legend mark.
         /// </summary>
         /// <param name="key">Key of the mark.</param>
         /// <param name="mark">Text of the mark.</param>
@@ -127,7 +127,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master constructor for an object representing a single legend mark.
+        /// Json and Master constructor for an object representing an existing legend mark.
         /// </summary>
         [JsonConstructor]
         internal LegendMark(GameTime added, string mark, string key, MarkIcon icon, MarkColor color, int count)

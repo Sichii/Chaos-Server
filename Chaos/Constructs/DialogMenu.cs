@@ -23,7 +23,7 @@ namespace Chaos
         internal List<DialogMenuItem> Options { get; }
 
         /// <summary>
-        /// Object representing a dialog with a menu.
+        /// Base constructor for an enumerable object of DialogMenuItem. Represents the menu of a dialog.
         /// </summary>
         /// <param name="options">A list of menu options, each containing a nextDialogId, text, and a possible pursuitId</param>
         internal DialogMenu(List<DialogMenuItem> options)

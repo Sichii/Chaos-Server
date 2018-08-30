@@ -16,6 +16,9 @@ using System.Text;
 
 namespace Chaos
 {
+    /// <summary>
+    /// A static container for methods that write and return ServerPackets. 
+    /// </summary>
     internal static class ServerPackets
     {
         internal static ServerPacket ConnectionInfo(uint tableCheckSum, byte seed, byte[] key)
@@ -720,13 +723,17 @@ namespace Chaos
 
             return staggeredData.ToArray();
         }
-        internal static ServerPacket Cooldown(bool isSkill, byte slot, uint seconds)
+        internal static ServerPacket Cooldown(PanelObject obj)
         {
             var packet = new ServerPacket(ServerOpCodes.Cooldown);
 
-            packet.WriteBoolean(isSkill);
-            packet.WriteByte(slot);
-            packet.WriteUInt32(seconds);
+            uint cd = Utility.Clamp<uint>(obj.Cooldown.Subtract(obj.Elapsed).TotalSeconds, 0, (int)obj.Cooldown.TotalSeconds);
+            if (obj == null || cd == 0 || obj is Item)
+                return null;
+
+            packet.WriteBoolean(obj is Skill);
+            packet.WriteByte(obj.Slot);
+            packet.WriteUInt32(cd);
 
             return packet;
         }

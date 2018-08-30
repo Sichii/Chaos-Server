@@ -19,13 +19,17 @@ using System.Collections.Generic;
 
 namespace Chaos
 {
+    /// <summary>
+    /// The interface between the redis database and the server.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     internal class DataBase
     {
         private Server Server { get; }
-        private string HashKey => Crypto.GetMD5Hash("UserHash");
-        private const string MapKey = "edl396yhvnw85b6kd8vnsj296hj285bq";
-        private Dictionary<string, string> UserHash => Cache.Get<Dictionary<string, string>>(HashKey);
+        private string UserHashKey => Crypto.GetMD5Hash("UserHash") + Crypto.GetMD5Hash("ServerObjSuffix");
+        private string MapKey => Crypto.GetMD5Hash("Maps") + Crypto.GetMD5Hash("ServerObjSuffix");
+        private string GuildKey => Crypto.GetMD5Hash("Guilds") + Crypto.GetMD5Hash("ServerObjSuffix");
+        private Dictionary<string, string> UserHash => Cache.Get<Dictionary<string, string>>(UserHashKey);
         private NewtonsoftSerializer Serializer { get; }
         private StackExchangeRedisCacheClient Cache { get; }
         private ConnectionMultiplexer DataConnection { get; }
@@ -52,8 +56,8 @@ namespace Chaos
 
 
 
-            if (!Cache.Exists(HashKey))
-                Cache.Add(HashKey, new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
+            if (!Cache.Exists(UserHashKey))
+                Cache.Add(UserHashKey, new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
         }
 
         /// <summary>
@@ -68,7 +72,7 @@ namespace Chaos
                 userHash.Add(kvp.Key, kvp.Value);
 
             if(userHash.Remove(key))
-                Cache.Replace(HashKey, userHash);
+                Cache.Replace(UserHashKey, userHash);
 
             Cache.Remove(key);
         }
@@ -113,7 +117,7 @@ namespace Chaos
 
             userHash.Add(user.Name, hash);
 
-            return  Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(HashKey, userHash);
+            return  Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(UserHashKey, userHash);
         }
 
         /// <summary>
@@ -128,7 +132,7 @@ namespace Chaos
             {
                 Dictionary<string, string> userHash = UserHash;
                 userHash[name] = Crypto.GetMD5Hash(newPw);
-                if (Cache.Replace(HashKey, userHash))
+                if (Cache.Replace(UserHashKey, userHash))
                     return true;
             }
             return false;

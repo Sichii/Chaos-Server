@@ -23,30 +23,30 @@ namespace Chaos
         internal DialogMenu Dialogs { get; }
 
         /// <summary>
-        /// Object representing a merchant's menu.
+        /// Base constructor for an object representing a merchant's menu that contains a pursuit menu.
         /// </summary>
         /// <param name="text">The message in the menu window.</param>
         /// <param name="type">The type of menu.</param>
         /// <param name="pursuits">A menu of pursuits, which have instant effects, or other merchant menus.</param>
         /// <param name="dialogs">A menu of dialogs, that can have instant effects or sequential dialogs.</param>
-        internal MerchantMenu(string text, MenuType type, PursuitMenu pursuits, DialogMenu dialogs = null)
+        internal MerchantMenu(string text, MenuType type, PursuitMenu pursuits)
         {
             Pursuits = pursuits;
-            Dialogs = dialogs;
+            Dialogs = null;
             Type = type;
             Text = text;
         }
 
         /// <summary>
-        /// Object representing a merchant's menu.
+        /// Base constructor for an object representing a merchant's menu that contains a dialog menu.
         /// </summary>
         /// <param name="text">The message in the menu window.</param>
         /// <param name="type">The type of menu.</param>
         /// <param name="dialogs">A menu of dialogs, that can have instant effects or sequential dialogs.</param>
         /// <param name="pursuits">A menu of pursuits, which have instant effects, or other merchant menus.</param>
-        internal MerchantMenu(string text, MenuType type, DialogMenu dialogs, PursuitMenu pursuits = null)
+        internal MerchantMenu(string text, MenuType type, DialogMenu dialogs)
         {
-            Pursuits = pursuits;
+            Pursuits = null;
             Dialogs = dialogs;
             Type = type;
             Text = text;

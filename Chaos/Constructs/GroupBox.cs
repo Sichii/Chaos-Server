@@ -19,7 +19,7 @@ namespace Chaos
         internal byte[] MaxAmounts { get; set; }
 
         /// <summary>
-        /// Object representing a Group Box.
+        /// Base constructor for an object representing an in-game GroupBox.
         /// </summary>
         /// <param name="leader"></param>
         /// <param name="text"></param>

@@ -27,25 +27,12 @@ namespace Chaos
         private List<User> Users { get; set; }
         internal byte Size => (byte)Users.Count;
         internal GroupBox Box { get; set; }
-        internal User this[string name]
-        {
-            get
-            {
-                User user;
-                TryGet(name, out user);
-                return user;
-            }
-        }
-        internal User this[int id]
-        {
-            get
-            {
-                User user;
-                TryGet(id, out user);
-                return user;
-            }
-        }
 
+        /// <summary>
+        /// Base constructor for an enumerable object of User. Represents a group of users within the game.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="accepter"></param>
         internal Group(User sender, User accepter)
         {
             Users = new List<User>() { sender, accepter };
@@ -55,7 +42,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Creates a GroupBox for this Group.
+        /// Synchronously creates a GroupBox for this Group.
         /// </summary>
         /// <param name="groupName">Name of the group.</param>
         /// <param name="maxLevel">Max allowed level to join.</param>
@@ -69,7 +56,7 @@ namespace Chaos
             }
         }
         /// <summary>
-        /// Attempts to add a User to the Group.
+        /// Attempts to synchronously add a User to the Group.
         /// </summary>
         /// <param name="user">User to be added.</param>
         internal bool TryAdd(User user)
@@ -85,7 +72,7 @@ namespace Chaos
             }
         }
         /// <summary>
-        /// Attempts to remove a User from the Group.
+        /// Attempts to synchronously remove a User from the Group.
         /// </summary>
         /// <param name="user">User to be removed.</param>
         internal bool TryRemove(User user, bool leader = false)
@@ -114,24 +101,20 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to remove a User from the Group by using the user's id
+        /// Attempts to synchronously remove a User from the Group by using the user's id
         /// </summary>
         /// <param name="id">Id of the user to be removed.</param>
         internal bool TryRemove(int id)
         {
             lock (Sync)
             {
-                User user = this[id];
-
-                if (user == null)
-                    return false;
-
-                return TryRemove(user);
+                User user;
+                return TryGet(id, out user) && TryRemove(user);
             }
         }
 
         /// <summary>
-        /// Attempts to retreive the user with the given name, if they exist.
+        /// Attempts to synchronously retreive the user with the given name.
         /// </summary>
         /// <param name="name">The name to search for.</param>
         /// <param name="user">The user reference to set.</param>
@@ -145,7 +128,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to retreive the user with the given id, if they exist.
+        /// Attempts to synchronously retreive the user with the given id.
         /// </summary>
         /// <param name="id">The id to search for.</param>
         /// <param name="user">The user reference to set.</param>

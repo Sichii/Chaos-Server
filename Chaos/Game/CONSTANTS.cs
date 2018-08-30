@@ -12,6 +12,9 @@
 
 namespace Chaos
 {
+    /// <summary>
+    /// Contains all game constant variables.
+    /// </summary>
     internal static class CONSTANTS
     {
         //gametime

@@ -13,18 +13,14 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Personal
     {
-        [JsonProperty]
         internal byte[] Portrait { get; set; }
-        [JsonProperty]
         internal string Message { get; set; }
 
         /// <summary>
         /// Master constructor for the object representing the Portrait and Profile Message.
         /// </summary>
-        [JsonConstructor]
         internal Personal(byte[] portrait, string message)
         {
             Portrait = portrait;

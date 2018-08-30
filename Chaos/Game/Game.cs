@@ -19,6 +19,9 @@ using System.Threading;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Object representing the game. API. Is the medium between the networking interface and clients. Contains container objects that contain game objects, as well as the world.
+    /// </summary>
     internal static class Game
     {
         private static readonly object Sync = new object();
@@ -31,6 +34,9 @@ namespace Chaos
         private static Thread StateThread;
         private static Thread EffectsThread;
 
+        /// <summary>
+        /// Pseudo-constructor for the server. Prepares the world for population.
+        /// </summary>
         internal static void Set(Server server)
         {
             Server.WriteLog("Initializing game...");
@@ -49,6 +55,9 @@ namespace Chaos
             EffectsThread.Start();
         }
 
+        /// <summary>
+        /// Game thread. Checks user and monster states, and applies them as needed.
+        /// </summary>
         internal static void CheckStates()
         {
             while(Server.Running)
@@ -69,6 +78,9 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Game thread. Applies persistent effect on creatures and maps.
+        /// </summary>
         internal static void PersistentEffects()
         {
             while (Server.Running)
@@ -317,7 +329,7 @@ namespace Chaos
         internal static void Pickup(Client client, byte slot, Point groundPoint)
         {
             //see if there's actually an item at the spot
-            GroundItem groundItem;
+            GroundObject groundItem;
 
             //if there's an item on the point
             if (client.User.Map.TryGetObject(groundPoint, out groundItem))
@@ -374,7 +386,7 @@ namespace Chaos
                     item.Count -= count;
 
                 //get the grounditem associated with the item
-                GroundItem groundItem = item.GroundItem(groundPoint, client.User.Map, count);
+                GroundObject groundItem = item.GroundItem(groundPoint, client.User.Map, count);
 
                 if (item.Count > 0) //if we're suppose to still be carrying some of this item, update the count
                     client.Enqueue(ServerPackets.AddItem(item));
@@ -533,13 +545,6 @@ namespace Chaos
                     spell.Activate(client, Server, spell, client.User, prompt);
                 else if (client.User.Map.TryGetObject(targetId, out target) && target.Point.Distance(targetPoint) < 5 && target.IsAlive)
                     spell.Activate(client, Server, spell, target, prompt);
-                else
-                {
-                    client.User.RemoveFlag(UserState.IsChanting);
-                    return;
-                }
-
-                spell.LastUse = DateTime.UtcNow;
             }
             client.User.RemoveFlag(UserState.IsChanting);
         }
@@ -559,9 +564,17 @@ namespace Chaos
 
                 //put all the necessary packets to log in in the list, and send them off
                 foreach (Spell spell in client.User.SpellBook.Where(spell => spell != null))
+                {
                     packets.Add(ServerPackets.AddSpell(spell));
+                    if (!spell.CanUse)
+                        packets.Add(ServerPackets.Cooldown(spell));
+                }
                 foreach (Skill skill in client.User.SkillBook.Where(skill => skill != null))
+                {
                     packets.Add(ServerPackets.AddSkill(skill));
+                    if (!skill.CanUse)
+                        packets.Add(ServerPackets.Cooldown(skill));
+                }
                 foreach (Item item in client.User.Equipment.Where(equip => equip != null))
                     packets.Add(ServerPackets.AddEquipment(item));
                 packets.Add(ServerPackets.Attributes(client.User.IsAdmin, StatUpdateType.Full, client.User.Attributes));
@@ -652,10 +665,7 @@ namespace Chaos
             Item item = client.User.Inventory[slot];
 
             if (item != null && item.CanUse)
-            {
                 item.Activate(client, Server, item);
-                item.LastUse = DateTime.UtcNow;
-            }
         }
 
         internal static void AnimateCreature(Client client, BodyAnimation animNum)
@@ -985,10 +995,7 @@ namespace Chaos
             Skill skill = client.User.SkillBook[slot];
 
             if (skill != null && skill.CanUse && client.User.IsAlive)
-            {
                 skill.Activate(client, Server, skill);
-                skill.LastUse = DateTime.UtcNow;
-            }
         }
 
         internal static void ClickWorldMap(Client client, ushort mapId, Point point)

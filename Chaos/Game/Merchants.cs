@@ -15,6 +15,9 @@ using System.Linq;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Enumerable object containing all in-game merchants.
+    /// </summary>
     internal sealed class Merchants : IEnumerable<Merchant>
     {
         public IEnumerator<Merchant> GetEnumerator() => MerchantDic.Values.GetEnumerator();

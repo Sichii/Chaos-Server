@@ -13,6 +13,9 @@ using System;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents a packet sent by the server, to the client. Contains methods used to analyze and encrypt them.
+    /// </summary>
     internal sealed class ServerPacket : Packet
     {
         internal override EncryptionType EncryptionType
@@ -63,6 +66,18 @@ namespace Chaos
             Data[pos++] = (byte)(b ^ 36U);
             Data[pos++] = (byte)((a >> 8) % 256 ^ 100);
         }
+
+        internal void GenerateDialogHeader()
+        {
+            ushort CheckSum = Crypto.Generate16(Data, 6, Data.Length - 6);
+            Data[0] = (byte)Utility.Random(0, 255);
+            Data[1] = (byte)Utility.Random(0, 255);
+            Data[2] = (byte)((Data.Length - 4) / 256);
+            Data[3] = (byte)((Data.Length - 4) % 256);
+            Data[4] = (byte)(CheckSum / 256);
+            Data[5] = (byte)(CheckSum % 256);
+        }
+
         public override string ToString() => $@"Send [{Enum.GetName(typeof(ServerOpCodes), OpCode) ?? "**Unknown**"}] {GetHexString()}";
     }
 }

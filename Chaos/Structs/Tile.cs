@@ -19,6 +19,9 @@ namespace Chaos
         internal short RightForeground { get; }
         public bool IsWall => (LeftForeground > 0 && (sotp[LeftForeground - 1] & 15) == 15) || (RightForeground > 0 && (sotp[RightForeground - 1] & 15) == 15);
 
+        /// <summary>
+        /// Master constructor for a structure representing a single tile on a map, containing it's visual data.
+        /// </summary>
         internal Tile(short background, short leftForeground, short rightForeground)
         {
             Background = background;

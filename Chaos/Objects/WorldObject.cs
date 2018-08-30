@@ -15,6 +15,9 @@ using System.Threading;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object that exists within the world.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     internal abstract class WorldObject : IComparable<WorldObject>
     {
@@ -23,6 +26,9 @@ namespace Chaos
         protected internal string Name { get; set; }
         protected internal DateTime Creation { get; }
 
+        /// <summary>
+        /// Json & Master constructor for an object that exists within the world.
+        /// </summary>
         [JsonConstructor]
         protected internal WorldObject(string name)
         {

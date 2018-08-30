@@ -27,7 +27,7 @@ namespace Chaos
         internal long Ticks { get; }
 
         /// <summary>
-        /// Object representing the serverside construct of GameTime, mimicing DateTime
+        /// Json & Master constructor for an object representing the serverside construct of time. Mimics DateTime, except at 24x speed, and starting from an origin(server launch date).
         /// </summary>
         /// <param name="ticks">Base measure of time.</param>
         [JsonConstructor]
@@ -37,6 +37,9 @@ namespace Chaos
             Ticks = ticks;
         }
 
+        /// <summary>
+        /// Gets the proper suffix for a day, based on the number.
+        /// </summary>
         private string GetDaySuffix =>
             Day % 10 == 1 && Day != 11 ? "st" :
             Day % 10 == 2 && Day != 12 ? "nd" :
@@ -64,13 +67,13 @@ namespace Chaos
         internal DateTime ToDateTime() => new DateTime((Ticks / 24) + Origin.Ticks);
 
         /// <summary>
-        /// Custom <see cref="ToString()"/> method, that will print like DateTime does.
+        /// Custom method that will print the current time like DateTime does.
         /// </summary>
         /// <param name="format">Optional string format guide.</param>
         internal string ToString(string format = "") => $@"Year {(!string.IsNullOrEmpty(format) ? DateTime.ToString(format) : DateTime.ToString($@"y, MMM d"))}{GetDaySuffix}";
 
         /// <summary>
-        /// Readonly property that gets the appropriate level of light for the time of day.
+        /// Gets the appropriate level of light for the time of day.
         /// </summary>
         internal LightLevel TimeOfDay
         {

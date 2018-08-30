@@ -93,6 +93,9 @@ namespace Chaos
         internal byte Dmg => 0;
         internal byte Hit => 0;
 
+        /// <summary>
+        /// Default constructor for an object containing a new user's stats and flags.
+        /// </summary>
         internal Attributes()
         {
             BaseStr = 3;
@@ -116,7 +119,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master constructor for object containing all of the user's stats.
+        /// Json & Master constructor for an object containing an existing character's stats and flags.
         /// </summary>
         [JsonConstructor]
         internal Attributes(byte baseStr, byte baseInt, byte baseWis, byte baseCon, byte baseDex, uint baseHp, uint baseMp, byte level, byte ability, byte unspentPoints, uint currentHP, uint currentMP, uint experience, uint toNextLevel, uint abilityExp, uint toNextAbility, uint gamePoints, uint gold)

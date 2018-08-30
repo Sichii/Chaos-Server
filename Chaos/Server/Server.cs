@@ -20,6 +20,9 @@ using System.Threading;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents the game server, the network interface of the game.
+    /// </summary>
     internal sealed class Server
     {
         internal static object Sync = new object();
