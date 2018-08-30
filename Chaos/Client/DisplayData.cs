@@ -78,9 +78,9 @@ namespace Chaos
         internal bool IsHidden => false;
 
         /// <summary>
-        /// Object containing the methods and information that is used to display the <c>User</c>.
+        /// Base constructor for an object containing all data used to display a new user.
         /// </summary>
-        /// <param name="user"><c>User</c> to be displayed.</param>
+        /// <param name="user">User to be displayed.</param>
         /// <param name="hairSprite">Base sprite for the hair of the user.</param>
         /// <param name="hairColor">Base color value for the hair of the user.</param>
         /// <param name="bodySprite">Base body value for the user.</param>
@@ -97,7 +97,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master constructor for object containing all data used to display the user.
+        /// Json & Master constructor for an object containing all data used to display an existing user.
         /// </summary>
         [JsonConstructor]
         internal DisplayData(ushort hairSprite, byte hairColor, BodySprite bodySprite, BodyColor bodyColor, byte faceSprite, ushort armorSprite2, NameTagStyle nameTagStyle, string groupName)

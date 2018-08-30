@@ -53,18 +53,15 @@ namespace Chaos
         public static bool operator !=(Effect eff1, Effect eff2) => !eff1.Equals(eff2);
 
         /// <summary>
-        /// An effect with only an animation.
+        /// Constructor for an effect with only an animation.
         /// </summary>
-        /// <param name="animation">The animation to display.</param>
-        /// <param name="animationDelay">The delay between animations in milliseconds.</param>
-        /// <param name="duration">The total duration of the effect in milliseconds.</param>
         internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
             :this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
         {
         }
 
         /// <summary>
-        /// Full contructor for an effect.
+        /// Master constructor for a structure representing an in-game persistent effect.
         /// </summary>
         internal Effect(sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod,
             int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
@@ -74,10 +71,10 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master Constructor for Effect.
+        /// Json constructor for a structure representing an in-game persistent effect.
         /// </summary>
         [JsonConstructor]
-        internal Effect(ushort sprite, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
+        private Effect(ushort sprite, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
             int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
         {
             StartTime = DateTime.UtcNow;

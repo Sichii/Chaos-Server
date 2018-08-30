@@ -17,6 +17,9 @@ namespace Chaos
         internal string Text { get; }
         internal PursuitIds PursuitId { get; }
 
+        /// <summary>
+        /// Master constructor for a structure representing an item for a dialog menu.
+        /// </summary>
         internal DialogMenuItem(ushort dialogId, string text, PursuitIds pursuitId = PursuitIds.None)
         {
             DialogId = dialogId;

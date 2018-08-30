@@ -32,7 +32,7 @@ namespace Chaos
         internal User OtherUser(User user) => User1 == user ? User2 : User1;
 
         /// <summary>
-        /// Object representing an exchange window.
+        /// Base constructor for an object representing an in-game exchange, or trade.
         /// </summary>
         /// <param name="sender">The user who requested the trade.</param>
         /// <param name="receiver">The user to receive the trade.</param>
@@ -49,7 +49,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Activates the exchange window, setting relevant variables and sending the packet to create the window on each client.
+        /// Synchronously activates the exchange window, setting relevant variables and sending the packet to create the window on each client.
         /// </summary>
         internal void Activate()
         {
@@ -68,7 +68,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds an item from the user's inventory to the trade window. Sends a prompt for stackable items. Updates both user's screens with the info.
+        /// Synchronously adds an item from the user's inventory to the trade window. Sends a prompt for stackable items. Updates both user's screens with the info.
         /// </summary>
         /// <param name="user">The user who is adding the item.</param>
         /// <param name="slot">The slot that item is in.</param>
@@ -112,7 +112,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Adds a stackable item to the trade. Updates both user's screens with the info. This method is requested after the user replys to the prompty from AddItem.
+        /// Synchronously adds a stackable item to the trade. Updates both user's screens with the info. This method is requested after the user replys to the prompt from AddItem for stackable items.
         /// </summary>
         /// <param name="user">The user who is adding the item.</param>
         /// <param name="slot">The slot that item is in.</param>
@@ -187,7 +187,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Sets the gold to be traded. Does necessary checks and modifications.
+        /// Synchronously sets the gold to be traded. Does necessary checks and modifications.
         /// </summary>
         /// <param name="user">User whos gold should be set.</param>
         /// <param name="amount">The total amount of gold they want to trade.</param>
@@ -232,7 +232,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Cancels the trade, returning any gold and items that were added to the trade.
+        /// Synchronously cancels the trade, returning any gold and items that were added to the trade to their owners.
         /// </summary>
         /// <param name="user"></param>
         internal void Cancel(User user)
@@ -270,7 +270,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Accepts the trade. If both users have accepted, the added items and gold are of each user are added to the other user's inventory.
+        /// Synchronously accepts the trade. If both users have accepted, the added items and gold are of each user are added to the other user's inventory.
         /// </summary>
         /// <param name="user">The user who accepted the trade.</param>
         internal void Accept(User user)

@@ -23,6 +23,9 @@ namespace Chaos
         [JsonProperty]
         public ushort Y;
 
+        /// <summary>
+        /// Json & Master constructor for a structure representing a point within a map.
+        /// </summary>
         [JsonConstructor]
         public Point(ushort x, ushort y)
         {
@@ -30,15 +33,30 @@ namespace Chaos
             Y = y;
         }
 
+        /// <summary>
+        /// Returns the equivalent of no point.
+        /// </summary>
         public static Point None => new Point(ushort.MaxValue, ushort.MaxValue);
+
         public static bool operator ==(Point pt1, Point pt2) => pt1.Equals(pt2);
         public static bool operator !=(Point pt1, Point pt2) => !pt1.Equals(pt2);
+
+        /// <summary>
+        /// Gets this point's distance from another point.
+        /// </summary>
         internal int Distance(Point pt) => Distance(pt.X, pt.Y);
+
+        /// <summary>
+        /// Gets this point's distance from another point.
+        /// </summary>
         internal int Distance(ushort x, ushort y) => Math.Abs(x - X) + Math.Abs(y - Y);
+
         public override int GetHashCode() => (X << 8) + Y;
         public override string ToString() => $@"({X}, {Y})";
 
-
+        /// <summary>
+        /// Moves this point in a given direction, offsetting the x or y co-ordinate accordingly.
+        /// </summary>
         internal void Offset(Direction direction)
         {
             switch (direction)
@@ -58,6 +76,9 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Returns a new point that has been offset in a given direction.
+        /// </summary>
         internal Point NewOffset(Direction direction)
         {
             switch (direction)
@@ -75,6 +96,10 @@ namespace Chaos
             }
         }
 
+        /// <summary>
+        /// Returns the directional relation between this point and another point.
+        /// The direction this point is from the given point.
+        /// </summary>
         internal Direction Relation(Point point)
         {
             Direction direction = Direction.Invalid;
@@ -112,6 +137,9 @@ namespace Chaos
             return GetHashCode() == point.GetHashCode();
         }
 
+        /// <summary>
+        /// Attempts to parse a point from a given string.
+        /// </summary>
         public static Point Parse(string str)
         {
             Match m = Regex.Match(str, @"\((\d+), (\d+)\)");

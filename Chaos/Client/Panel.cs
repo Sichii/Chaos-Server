@@ -40,7 +40,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Object representing a single panel in game. Skill/Spell/Inventory/Equipment
+        /// Base constructor for an object representing an in-game panel. Skill/Spell/Inventory/Equipment
         /// </summary>
         /// <param name="length">The number of objects that can fit in the panel.</param>
         internal Panel(byte length)
@@ -59,7 +59,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master constructor for an object representing an in-game panel.
+        /// Json & Master constructor for an object representing an in-game panel.
         /// </summary>
         [JsonConstructor]
         internal Panel(byte length, Dictionary<byte, T> objects, byte[] invalid)
@@ -98,7 +98,7 @@ namespace Chaos
         private bool Valid(byte slot) => slot > 0 && !Invalid.Contains(slot) && slot < Length;
 
         /// <summary>
-        /// Synchronously attempts to add a stackable item.
+        /// Attempts to synchronously add a stackable item.
         /// </summary>
         /// <param name="obj">Object to try adding.</param>
         internal bool TryAddStack(T obj)
@@ -122,7 +122,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to equip the given item. Sends an item out if an item was replaced in the slot.
+        /// Attempts to synchronously equip the given item. Sends an item out if an item was replaced in the slot.
         /// </summary>
         /// <param name="item">The item to try equiping.</param>
         /// <param name="outItem">The object you were previously wearing in that slot.</param>
@@ -156,7 +156,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to unequip an item and return it.
+        /// Attempts to synchronously unequip an item and return it.
         /// </summary>
         /// <param name="slot">The equipment slot to remove from.</param>
         /// <param name="item">The item returns by unequipping it.</param>
@@ -168,7 +168,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to add an object.
+        /// Attempts to synchronously add an object.
         /// </summary>
         /// <param name="obj">Object to add.</param>
         internal bool TryAdd(T obj)
@@ -186,7 +186,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to add an object to the next available slot. Handles stackable items.
+        /// Attempts to synchronously add an object to the next available slot. Handles stackable items.
         /// </summary>
         /// <param name="obj">Object to add</param>
         internal bool AddToNextSlot(T obj)
@@ -211,7 +211,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts tp remove an object. Sets the value to null.
+        /// Attempts to synchronously remove an object from the panel. Sets the value to null.
         /// </summary>
         /// <param name="slot">Slot to remove.</param>
         internal bool TryRemove(byte slot)
@@ -226,7 +226,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to remove an object and return it.
+        /// Attempts to synchronously remove an object and return it.
         /// </summary>
         /// <param name="slot">Slot to remove.</param>
         /// <param name="obj">Return object if successful.</param>
@@ -242,7 +242,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to get a reference to an existing object.
+        /// Attempts to synchronously return a reference to an existing object.
         /// </summary>
         /// <param name="slot">Slot to retreive from.</param>
         /// <param name="obj">Obj reference to set.</param>
@@ -256,7 +256,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously attempts to swap two items slots.
+        /// Attempts to synchronously swap two items slots.
         /// If it fails, items will be put back.
         /// </summary>
         /// <param name="slot1">First slot to swap.</param>

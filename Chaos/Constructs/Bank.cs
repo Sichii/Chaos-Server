@@ -17,7 +17,7 @@ namespace Chaos
     internal sealed class Bank
     {
         /// <summary>
-        /// Object representing the user's bank.
+        /// Default constructor for an object representing the user's bank.
         /// </summary>
         [JsonConstructor]
         internal Bank()

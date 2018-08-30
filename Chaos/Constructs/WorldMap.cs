@@ -19,7 +19,7 @@ namespace Chaos
         public WorldMapNode[] Nodes { get; }
 
         /// <summary>
-        /// Object representing the field, or world map.
+        /// Base constructor for an object representing the field, or world map.
         /// </summary>
         /// <param name="field">The name of the field, or world map.</param>
         /// <param name="nodes">A lost of nodes, each containing a destination mapID & point pair, and a point on the map for it to be displayed.</param>

@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Chaos
 {
@@ -28,6 +29,10 @@ namespace Chaos
         private Dictionary<string, string> Members; //name, rank
         private List<string> Ranks { get; set; }
 
+        /// <summary>
+        /// Default constructor for an enumerable object. Represents the serverside concept of a Guild or Clan.
+        /// The default constructor is currently the GM guild.
+        /// </summary>
         internal Guild()
         {
             Name = "Chaos Team";
@@ -42,7 +47,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Object representing the serverside concept of a Guild.
+        /// Base constructor for an enumerable object. Represents the serverside concept of a Guild, or Clan.
         /// </summary>
         /// <param name="name">Name of the guild.</param>
         /// <param name="founders">Founding members of the guild.</param>
@@ -61,12 +66,11 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Database constructor for guild. (Guilds are populated at server start)
+        /// Master constructor for an enumerable object. Represents the serverside concept of a Guild, or Clan. Populated at server load from the database.
         /// </summary>
-        internal Guild(string name, Bank bank, Dictionary<string, string> members, List<string> ranks)
+        internal Guild(string name, Dictionary<string, string> members, List<string> ranks)
         {
             Name = name;
-            Bank = bank;
             Members = new Dictionary<string, string>(members, StringComparer.CurrentCultureIgnoreCase);
             Ranks = ranks;
         }
@@ -78,13 +82,10 @@ namespace Chaos
         internal Guild(string name)
         {
             Name = name;
-            Bank = new Bank();
-            Members = new Dictionary<string, string>();
-            Ranks = new List<string>();
         }
 
         /// <summary>
-        /// Returns the title of user(name)
+        /// Synchronously returns the title of user.
         /// </summary>
         /// <param name="name">Name of the user you want the title of.</param>
         internal string TitleOf(string name)
@@ -94,7 +95,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to add a member to the guild.
+        /// Attempts to synchronously add a member to the guild.
         /// </summary>
         /// <param name="user">User you wish added to the guild.</param>
         internal bool TryAddMember(User user)
@@ -112,7 +113,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to remove a member from the guild.
+        /// Attempts to synchronously remove a member from the guild.
         /// </summary>
         /// <param name="user">User you wish removed from the guild.</param>
         internal bool TryRemoveMember(User user)
@@ -128,7 +129,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to change the name of a rank.
+        /// Attempts to synchronously change the name of a rank.
         /// </summary>
         /// <param name="oldRank">Name of the old rank.</param>
         /// <param name="newRank">New name of the rank.</param>
@@ -142,6 +143,32 @@ namespace Chaos
                     return true;
                 }
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Synchronously writes guild information to a buffer, to be saved in the database.
+        /// </summary>
+        /// <param name="writer"></param>
+        internal void Save(BinaryWriter writer)
+        {
+            lock(Sync)
+            {
+                writer.Write(Name);
+                writer.Write(Ranks.Count);
+
+                foreach (string str in Ranks)
+                    writer.Write(str);
+
+                writer.Write(Members.Count);
+
+                foreach (var kvp in Members)
+                {
+                    writer.Write(kvp.Key);
+                    writer.Write(kvp.Value);
+                }
+
+                //write bank?
             }
         }
     }

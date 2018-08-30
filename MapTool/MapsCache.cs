@@ -24,7 +24,7 @@ namespace ChaosTool
         internal MainForm MainForm { get; }
         internal Dictionary<uint, Chaos.WorldMap> WorldMaps { get; set; }
         internal Dictionary<ushort, Chaos.Map> Maps { get; set; }
-        private string HashKey => "edl396yhvnw85b6kd8vnsj296hj285bq";
+        private string MapKey => Chaos.Crypto.GetMD5Hash("Maps") + Chaos.Crypto.GetMD5Hash("ServerObjSuffix");
         internal NewtonsoftSerializer Serializer { get; }
         internal StackExchangeRedisCacheClient Cache { get; }
         internal ConnectionMultiplexer DataConnection { get; }
@@ -43,12 +43,12 @@ namespace ChaosTool
             WorldMaps = new Dictionary<uint, Chaos.WorldMap>();
             MainForm = mainForm;
 
-            if (!Cache.Exists(HashKey))
-                Cache.Add(HashKey, new byte[100]);
+            if (!Cache.Exists(MapKey))
+                Cache.Add(MapKey, new byte[100]);
         }
         internal void Load()
         {
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Cache.Get<byte[]>(HashKey))))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(Cache.Get<byte[]>(MapKey))))
             {
                 reader.ReadInt32();
 
@@ -131,7 +131,7 @@ namespace ChaosTool
 
         internal void Save()
         {
-            MemoryStream cacheStream = new MemoryStream();
+            using (MemoryStream cacheStream = new MemoryStream())
             using (BinaryWriter writer = new BinaryWriter(cacheStream))
             {
                 writer.Write(1);
@@ -194,7 +194,7 @@ namespace ChaosTool
                         writer.Write(keyValuePair.Value.GetCheckSum());
                     }
                 }
-                Cache.Replace(HashKey, cacheStream.ToArray());
+                Cache.Replace(MapKey, cacheStream.ToArray());
             }
         }
     }

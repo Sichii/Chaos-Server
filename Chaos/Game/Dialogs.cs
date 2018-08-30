@@ -14,6 +14,9 @@ using System.Linq;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Object containing all in-game dialogs.
+    /// </summary>
     internal sealed class Dialogs
     {
         internal Dialog this[ushort dialogId] => DialogDic[dialogId];

@@ -23,11 +23,18 @@ namespace Chaos
         [JsonProperty]
         private List<string> Names { get; set; }
 
+        /// <summary>
+        /// Default constructor for an object representing a new user's ignore list.
+        /// </summary>
         internal IgnoreList()
         {
             Names = new List<string>();
         }
 
+        /// <summary>
+        /// Json and Master constructor for an object representing an existing user's ignore list.
+        /// </summary>
+        /// <param name="names"></param>
         [JsonConstructor]
         internal IgnoreList(List<string> names)
         {
@@ -35,7 +42,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Custom case in-sensitive contains method
+        /// Synchronously and case in-sensitively checks if a name already exists in the list.
         /// </summary>
         /// <param name="name">Name of the person you want to check if it contains.</param>
         internal bool Contains(string name)
@@ -45,7 +52,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to add then specified name to the ignore list.
+        /// Attempts to synchronously add the specified name to the ignore list.
         /// </summary>
         /// <param name="name">The name to add.</param>
         internal bool TryAdd(string name)
@@ -61,7 +68,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to remove the specified name from the ignore list.
+        /// Attempts to synchronously remove the specified name from the ignore list.
         /// </summary>
         /// <param name="name">The name to remove.</param>
         internal bool TryRemove(string name)
@@ -77,7 +84,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Custom ToString() method, provides a game-ready string representation of the ignore list
+        /// Synchronously provides a game-ready string representation of the ignore list
         /// </summary>
         public override string ToString()
         {

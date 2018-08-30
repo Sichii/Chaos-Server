@@ -22,8 +22,13 @@ namespace Chaos
         internal ushort DisplaySprite;
         internal ushort OffsetSprite;
 
+        /// <summary>
+        /// Json & Master constructor for a structure representing an in-game item's sprite pair, which is the sprite shown in the panel, and the sprite shown when equipped.
+        /// </summary>
+        /// <param name="inventorySprite">The sprite number for when it is shown in the panel.</param>
+        /// <param name="displaySprite">The sprite number for when it is equipped.</param>
         [JsonConstructor]
-        internal ItemSprite(ushort inventorySprite, ushort displaySprite)
+        internal ItemSprite(ushort inventorySprite, ushort displaySprite = 0)
         {
             InventorySprite = inventorySprite;
             OffsetSprite = (ushort)(inventorySprite + CONSTANTS.ITEM_SPRITE_OFFSET);

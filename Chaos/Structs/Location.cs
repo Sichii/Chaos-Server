@@ -25,6 +25,9 @@ namespace Chaos
         internal ushort Y;
         internal Point Point => new Point(X, Y);
 
+        /// <summary>
+        /// Json & Master constructor for a structure representing a point in the world, which is a point paired with a map ID.
+        /// </summary>
         [JsonConstructor]
         internal Location(ushort mapId, ushort x, ushort y)
         {
@@ -33,9 +36,12 @@ namespace Chaos
             Y = y;
         }
 
-        internal Location(ushort id, Point point)
+        /// <summary>
+        /// Optional constructor for a location, taking a map id and point.
+        /// </summary>
+        internal Location(ushort mapId, Point point)
         {
-            MapId = id;
+            MapId = mapId;
             X = point.X;
             Y = point.Y;
         }
@@ -47,6 +53,9 @@ namespace Chaos
 
         public override bool Equals(object obj) => (obj as Location?)?.GetHashCode() == GetHashCode();
 
+        /// <summary>
+        /// Attempts to parse a location from a string.
+        /// </summary>
         public static bool TryParse(string str, out Location loc)
         {
             ushort mapId = 0;

@@ -11,10 +11,16 @@
 
 namespace Chaos
 {
-    internal sealed class Gold : GroundItem
+    /// <summary>
+    /// Represents a gold pile in-game. Gold is handled slightly differently than other ground items.
+    /// </summary>
+    internal sealed class Gold : GroundObject
     {
         internal uint Amount { get; set; }
 
+        /// <summary>
+        /// Master constructor for an object representing an in-game pile of gold.
+        /// </summary>
         internal Gold(ushort sprite, Point point, Map map, uint amount)
           : base((ushort)(sprite + CONSTANTS.ITEM_SPRITE_OFFSET), point, map)
         {

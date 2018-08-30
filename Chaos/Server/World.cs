@@ -16,6 +16,9 @@ using System.IO;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents the game world. Contains server-constructs of game-world objects.
+    /// </summary>
     internal class World
     {
         internal Server Server { get; }
@@ -35,12 +38,12 @@ namespace Chaos
             Exchanges = new ConcurrentDictionary<int, Exchange>();
         }
 
+        /// <summary>
+        /// Populates the world with maps, worldmaps, warps, and more.
+        /// </summary>
         internal void Load()
         {
             Server.WriteLog("Creating world objects...");
-
-            Guild team = new Guild();
-            Guilds.TryAdd(team.Name, team);
 
             #region Load Maps
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.MapData)))
@@ -124,9 +127,50 @@ namespace Chaos
                     newMap.LoadData($@"{Paths.MapFiles}lod{newMap.Id}.map");
                 }
             }
+
+
+            Guild team = new Guild();
+            Guilds.TryAdd(team.Name, team);
+
+            using (BinaryReader reader = new BinaryReader(new MemoryStream()))
+            {
+                int count = reader.ReadInt32();
+
+                for(int i = 0; i < count; i++)
+                {
+                    string name;
+                    List<string> ranks = new List<string>();
+                    Dictionary<string, string> members = new Dictionary<string, string>();
+
+                    name = reader.ReadString();
+                    for (int x = 0; x < reader.ReadInt32(); x++)
+                        ranks.Add(reader.ReadString());
+                    for (int x = 0; x < reader.ReadInt32(); x++)
+                        members.Add(reader.ReadString(), reader.ReadString());
+                }
+            }
             #endregion
         }
 
+        /// <summary>
+        /// Saves all guilds to the database.
+        /// </summary>
+        internal void Save()
+        {
+            Server.WriteLog("Saving world...");
+
+            using (MemoryStream buffer = new MemoryStream())
+            using (BinaryWriter writer = new BinaryWriter(buffer))
+            {
+                writer.Write(Guilds.Count);
+                foreach (Guild guild in Guilds.Values)
+                    guild.Save(writer);
+            }
+        }
+
+        /// <summary>
+        /// Populates the world with merchants.
+        /// </summary>
         internal void Populate()
         {
             #region Load Merchants

@@ -19,15 +19,15 @@ namespace Chaos
 {
     internal sealed class Client
     {
-        internal readonly object Sync = new object();
+        private readonly object Sync = new object();
         private byte[] ClientBuffer;
         private List<byte> FullClientBuffer;
+        private ClientPackets.Handler[] PacketHandlers { get; }
+
         internal Queue<ServerPacket> SendQueue;
         internal bool Connected;
         internal byte Signature;
         internal byte StepCount;
-
-        private ClientPackets.Handler[] PacketHandlers { get; }
         internal IPAddress IpAddress { get; }
         internal ServerType ServerType { get; set; }
         internal Server Server { get; }
@@ -39,12 +39,12 @@ namespace Chaos
         internal int Id { get; }
         internal DateTime LastClickObj { get; set; }
         internal DateTime LastRefresh { get; set; }
-        internal Dialog CurrentDialog = null;
-        internal object ActiveObject = null;
+        internal Dialog CurrentDialog { get; set; }
+        internal object ActiveObject { get; set; }
         internal bool IsLoopback = false;
 
         /// <summary>
-        /// Creates a new user with reference to the server, and the user's socket.
+        /// Base constructor for a new client with reference to the server, and the user's socket.
         /// </summary>
         /// <param name="server">The game server.</param>
         /// <param name="socket">The client's socket.</param>
@@ -97,7 +97,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Disconnects the user from the server.
+        /// Disconnects the client from the server.
         /// </summary>
         /// <param name="wait">False if you want to immediately kill the client. True if you want the client to time out.</param>
         internal void Disconnect(bool wait = false)

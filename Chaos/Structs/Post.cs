@@ -23,6 +23,9 @@ namespace Chaos
         [JsonProperty]
         internal string Body;
 
+        /// <summary>
+        /// Master constructor for a structure representing a single post on a board.
+        /// </summary>
         internal Post(ushort postId, string subject, string body)
         {
             PostId = postId;

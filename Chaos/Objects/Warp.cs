@@ -11,6 +11,9 @@
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object or tile on a map that moves a user.
+    /// </summary>
     public sealed class Warp : MapObject
     {
         public ushort SourceX => X;
@@ -22,20 +25,23 @@ namespace Chaos
         public Point TargetPoint => new Point(TargetX, TargetY);
         public Location TargetLocation => new Location(TargetMapId, TargetX, TargetY);
 
+        /// <summary>
+        /// Optional constructor for a warp.
+        /// </summary>
+        internal Warp(Location sourceLocation, Location targetLocation)
+            :this(sourceLocation.X, sourceLocation.Y, targetLocation.X, targetLocation.Y, sourceLocation.MapId, targetLocation.MapId)
+        {
+        }
+
+        /// <summary>
+        /// Master constructor for an object or tile on a map that moves a user.
+        /// </summary>
         public Warp(ushort sourceX, ushort sourceY, ushort targetX, ushort targetY, ushort sourceMapId, ushort targetMapId)
             :base(sourceMapId, sourceX, sourceY)
         {
             TargetMapId = targetMapId;
             TargetX = targetX;
             TargetY = targetY;
-        }
-
-        internal Warp(Location sourceLocation, Location targetLocation)
-            :base(sourceLocation.MapId, sourceLocation.X, sourceLocation.Y)
-        {
-            TargetMapId = targetLocation.MapId;
-            TargetX = targetLocation.X;
-            TargetY = targetLocation.Y;
         }
     }
 }

@@ -11,6 +11,9 @@
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object on the map.
+    /// </summary>
     public abstract class MapObject
     {
         public Point Point => new Point(X, Y);
@@ -19,25 +22,30 @@ namespace Chaos
         public ushort Y;
         public ushort MapId;
 
+        /// <summary>
+        /// Optional constructor that takes a location.
+        /// </summary>
+        protected internal MapObject(Location location)
+            :this(location.MapId, location.Point)
+        {
+        }
+
+        /// <summary>
+        /// Optional constructor that takes a point.
+        /// </summary>
+        protected internal MapObject(ushort mapId, Point point)
+            :this(mapId, point.X, point.Y)
+        {
+        }
+
+        /// <summary>
+        /// Master constructor for an object representing something that exists on the map.
+        /// </summary>
         protected internal MapObject(ushort mapId, ushort x, ushort y)
         {
             MapId = mapId;
             X = x;
             Y = y;
-        }
-
-        protected internal MapObject(Location location)
-        {
-            MapId = location.MapId;
-            X = location.X;
-            Y = location.Y;
-        }
-
-        protected internal MapObject(ushort mapId, Point point)
-        {
-            MapId = mapId;
-            X = point.X;
-            Y = point.Y;
         }
     }
 }

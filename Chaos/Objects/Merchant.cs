@@ -13,6 +13,9 @@ using System;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an in-game merchant.
+    /// </summary>
     internal class Merchant : Creature
     {
         internal DateTime LastClicked { get; set; }
@@ -23,6 +26,9 @@ namespace Chaos
         internal override uint CurrentHP { get { return int.MaxValue; } set { } }
         internal override uint MaximumHP { get { return int.MaxValue; } }
 
+        /// <summary>
+        /// Master constructor for an object representing an in-game merchant.
+        /// </summary>
         internal Merchant(string name, ushort sprite, Point point, Map map, Direction direction, ushort nextDialogId = 0, MerchantMenu menu = null)
             : base(name, (ushort)(sprite + CONSTANTS.MERCHANT_SPRITE_OFFSET), CreatureType.Merchant, point, map, direction)
         {

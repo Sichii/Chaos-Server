@@ -16,6 +16,9 @@ namespace Chaos
         internal PursuitIds PursuitId { get; }
         internal string Text { get; }
 
+        /// <summary>
+        /// Master constructor for a structure representing an item for a pursuit menu.
+        /// </summary>
         internal PursuitMenuItem(PursuitIds pursuitId, string text)
         {
             PursuitId = pursuitId;

@@ -15,6 +15,9 @@ using System.Linq;
 namespace Chaos
 {
     internal delegate void PursuitDelegate(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null);
+    /// <summary>
+    /// Object containing all in-game persuits for dialogs, and the methods for their effects.
+    /// </summary>
     internal static class Pursuits
     {
         //these will use pursuit id to get the effect

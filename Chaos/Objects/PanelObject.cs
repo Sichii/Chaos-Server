@@ -14,42 +14,39 @@ using Newtonsoft.Json;
 
 namespace Chaos
 {
+    /// <summary>
+    /// Represents an object that exists within the in-game panels.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     internal abstract class PanelObject
     {
-        [JsonProperty]
         internal TargetsType TargetType { get; }
-        [JsonProperty]
         internal bool UsersOnly { get; }
-        [JsonProperty]
         internal int BaseDamage { get; }
-        [JsonProperty]
         internal TimeSpan BaseCooldown { get; }
         [JsonProperty]
         internal byte Slot { get; set; }
-        [JsonProperty]
         internal ushort Sprite { get; }
         [JsonProperty]
         internal string Name { get; }
-        [JsonProperty]
         internal float CooldownReduction { get; set; }
-        [JsonProperty]
         internal DateTime LastUse { get; set; }
-        [JsonProperty]
         internal Animation Animation { get; }
-        [JsonProperty]
         internal BodyAnimation BodyAnimation { get; }
-        [JsonProperty]
         internal Effect Effect { get; }
         internal OnUseDelegate Activate { get; }
+        [JsonProperty]
+        internal TimeSpan Elapsed => DateTime.UtcNow.Subtract(LastUse);
         internal TimeSpan Cooldown => new TimeSpan(0, 0, 0, 0, (int)(BaseCooldown.TotalMilliseconds * Utility.Clamp<double>(1 - CooldownReduction, 0, 1)));
+
+        /// <summary>
+        /// Whether or not the object is usable, based on the cooldown after applying cooldown reduction.
+        /// </summary>
         internal virtual bool CanUse => LastUse == DateTime.MinValue || BaseCooldown.TotalMilliseconds == 0 || DateTime.UtcNow.Subtract(LastUse) >= Cooldown;
 
         /// <summary>
-        /// Master constructor for PanelObject.
-        /// An object representing an Item, Skill, or Spell that you would find on the game panels.
+        /// Master constructor for an object that exists within the in-game panels.
         /// </summary>
-        [JsonConstructor]
         internal PanelObject(byte slot, ushort sprite, string name, TimeSpan baseCooldown, Animation effectAnimation , TargetsType targetType = TargetsType.None, bool usersOnly = false, 
             BodyAnimation bodyAnimation = 0, int baseDamage = 0, Effect effect = default(Effect))
         {
@@ -69,6 +66,17 @@ namespace Chaos
             if (effect.UseParentAnimation)
                 effect.Animation = Animation;
             Effect = effect;
+        }
+
+        /// <summary>
+        /// Json constructor for a PanelObject. Minimal information is serialized, as we retreive the object from the creation engine, and apply persistent information to it.
+        /// </summary>
+        [JsonConstructor]
+        protected internal PanelObject(byte slot, string name, TimeSpan elapsed)
+        {
+            Slot = slot;
+            Name = name;
+            LastUse = DateTime.UtcNow.Subtract(elapsed);
         }
     }
 }

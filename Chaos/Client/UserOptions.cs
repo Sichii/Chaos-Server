@@ -34,7 +34,7 @@ namespace Chaos
         internal bool GuildChat { get; private set; }
 
         /// <summary>
-        /// Object containing user settings from the options page.
+        /// Default constructor for an object containing user settings from the options page.
         /// </summary>
         internal UserOptions()
         {
@@ -49,7 +49,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Master constructor for the object containing user settings from the options page.
+        /// Json & Master constructor for an object containing user settings from the options page.
         /// </summary>
         [JsonConstructor]
         internal UserOptions(bool whisper, bool group, bool shout, bool wisdom, bool magic, bool exchange, bool fastmove, bool guildchat)

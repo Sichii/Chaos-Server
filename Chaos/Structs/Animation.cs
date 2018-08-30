@@ -34,7 +34,7 @@ namespace Chaos
         public static bool operator !=(Animation ani1, Animation ani2) => !ani1.Equals(ani2);
 
         /// <summary>
-        /// Master constructor for Animation.
+        /// Json & Master constructor for a structure representing a point on a map.
         /// </summary>
         [JsonConstructor]
         internal Animation(Point targetPoint, int targetId, int sourceId, ushort targetAnimation, ushort sourceAnimation, ushort animationSpeed)
@@ -48,7 +48,7 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Constructor for animations targeting a specific object.
+        /// Constructor for an animations targeting an object.
         /// </summary>
         internal Animation(ushort targetAnimation, ushort sourceAnimation, ushort speed)
             : this(Point.None, 0, 0, targetAnimation, sourceAnimation, speed)
