@@ -17,14 +17,22 @@ using System.Linq;
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptIn)]
-    internal class EffectsBar : IEnumerable<Effect>
+    internal sealed class EffectsBar : IEnumerable<Effect>
     {
-        internal readonly object Sync = new object();
+        private readonly object Sync = new object();
         [JsonProperty]
-        private List<Effect> Effects { get; set; }
-        public int Count => Effects.Count;
-        public IEnumerator<Effect> GetEnumerator() => Effects.GetEnumerator();
+        private List<Effect> Effects;
+
+        public IEnumerator<Effect> GetEnumerator()
+        {
+            IEnumerator<Effect> safeEnum = Effects.GetEnumerator();
+
+            lock (Sync)
+                while (safeEnum.MoveNext())
+                    yield return safeEnum.Current;
+        }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        internal int Count => Effects.Count;
 
         /// <summary>
         /// Json & Master constructor for an enumerable object of Effect. Represents a user's spell bar.

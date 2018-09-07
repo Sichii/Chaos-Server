@@ -20,13 +20,22 @@ namespace Chaos
     internal sealed class Group : IEnumerable<User>
     {
         private readonly object Sync = new object();
-        public IEnumerator<User> GetEnumerator() => Users.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal int GroupId { get; }
-        internal User Leader => Users?[0];
-        private List<User> Users { get; set; }
-        internal byte Size => (byte)Users.Count;
+        private List<User> Users;
+
         internal GroupBox Box { get; set; }
+
+        public IEnumerator<User> GetEnumerator()
+        {
+            IEnumerator<User> safeEnum = Users.GetEnumerator();
+
+            lock (Sync)
+                while (safeEnum.MoveNext())
+                    yield return safeEnum.Current;
+        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        internal User Leader => Users?[0];
+        internal byte Size => (byte)Users.Count;
+
 
         /// <summary>
         /// Base constructor for an enumerable object of User. Represents a group of users within the game.
@@ -36,7 +45,6 @@ namespace Chaos
         internal Group(User sender, User accepter)
         {
             Users = new List<User>() { sender, accepter };
-            GroupId = Interlocked.Increment(ref Server.NextId);
             sender.Group = this;
             accepter.Group = this;
         }

@@ -21,18 +21,25 @@ namespace Chaos
     internal sealed class Panel<T> : IEnumerable<T> where T : PanelObject
     {
         private readonly object Sync = new object();
-
-        [JsonProperty]
-        private byte length;
         [JsonProperty]
         private Dictionary<byte, T> Objects;
         [JsonProperty]
-        private byte[] Invalid;
+        private readonly byte[] Invalid;
+        [JsonProperty]
+        private readonly byte length;
+
+        internal byte Length => (byte)(length - 1);
         internal T this[EquipmentSlot slot] => this[(byte)slot];
         internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-        public IEnumerator<T> GetEnumerator() => Objects.Values.GetEnumerator();
+        public IEnumerator<T> GetEnumerator()
+        {
+            IEnumerator<T> safeEnum = Objects.Values.GetEnumerator();
+
+            lock (Sync)
+                while (safeEnum.MoveNext())
+                    yield return safeEnum.Current;
+        }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal byte Length => (byte)(length - 1);
         internal T this[byte slot]
         {
             get { return Valid(slot) ? Objects[slot] : null; }

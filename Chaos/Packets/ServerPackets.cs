@@ -80,7 +80,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.DisplayItemMonster);
 
             packet.WriteUInt16((ushort)objects.Length);
-            foreach (var obj in objects)
+            foreach (VisibleObject obj in objects)
             {
                 packet.WritePoint16(obj.Point);
                 packet.WriteInt32(obj.Id);
@@ -368,7 +368,7 @@ namespace Chaos
             packet.WriteString8(worldMap.Field);
             packet.WriteByte((byte)worldMap.Nodes.Length);
             packet.WriteByte(1); //image num
-            foreach (var node in worldMap.Nodes)
+            foreach (WorldMapNode node in worldMap.Nodes)
             {
                 packet.WritePoint16(node.Position);
                 packet.WriteString8(node.Name);
@@ -501,7 +501,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.Door);
 
             packet.WriteByte((byte)doors.Length);
-            foreach (var door in doors)
+            foreach (Door door in doors)
             {
                 packet.WritePoint8(door.Point);
                 packet.WriteBoolean(door.Opened);
@@ -583,7 +583,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.Profile);
 
             packet.WriteInt32(user.Id);
-            foreach(var slot in profileEquipment)
+            foreach(EquipmentSlot slot in profileEquipment)
             {
                 packet.WriteUInt16(user.Equipment[slot]?.ItemSprite.OffsetSprite ?? 0);
                 packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
@@ -596,8 +596,8 @@ namespace Chaos
             packet.WriteString8(user.Guild?.TitleOf(user.Name) ?? "");
             packet.WriteString8(user.AdvClass == AdvClass.None ? user.BaseClass.ToString() : user.AdvClass.ToString());
             packet.WriteString8(user.Guild?.Name ?? "");
-            packet.WriteByte(user.Legend.Length);
-            foreach(var mark in user.Legend)
+            packet.WriteByte(user.Legend.Count);
+            foreach(LegendMark mark in user.Legend)
             {
                 packet.WriteByte((byte)mark.Icon);
                 packet.WriteByte((byte)mark.Color);
@@ -616,7 +616,7 @@ namespace Chaos
 
             packet.WriteUInt16((ushort)users.Count());
             packet.WriteUInt16((ushort)users.Count());
-            foreach(var user in users)
+            foreach(User user in users)
             {
                 byte range = (byte)((UserLevel / 5) + 3);
                 packet.WriteByte((byte)user.BaseClass);
@@ -673,8 +673,8 @@ namespace Chaos
             packet.WriteBoolean(user.IsMaster);
             packet.WriteString8(user.AdvClass != AdvClass.None ? user.AdvClass.ToString() : user.IsMaster ? "Master" : user.BaseClass.ToString()); //class string
             packet.WriteString8(user.Guild?.Name ?? "");
-            packet.WriteByte(user.Legend.Length);
-            foreach(var mark in user.Legend)
+            packet.WriteByte(user.Legend.Count);
+            foreach(LegendMark mark in user.Legend)
             {
                 packet.WriteByte((byte)mark.Icon);
                 packet.WriteByte((byte)mark.Color);
@@ -873,7 +873,7 @@ namespace Chaos
                 var packet = new ServerPacket(ServerOpCodes.Metafile);
                 packet.WriteBoolean(true);
                 packet.WriteUInt16((ushort)metafiles.Length);
-                foreach (var metafile in metafiles)
+                foreach (MetaFile metafile in metafiles)
                 {
                     packet.WriteString8(metafile.Name);
                     packet.WriteUInt32(Crypto.Generate32(metafile.Data));
@@ -882,7 +882,7 @@ namespace Chaos
             }
             else
             {
-                foreach (var metafile in metafiles)
+                foreach (MetaFile metafile in metafiles)
                 {
                     var packet = new ServerPacket(ServerOpCodes.Metafile);
                     packet.WriteBoolean(false);

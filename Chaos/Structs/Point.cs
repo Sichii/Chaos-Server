@@ -92,7 +92,7 @@ namespace Chaos
                 case Direction.West:
                     return new Point((ushort)(X - 1), Y);
                 default:
-                    return Point.None;
+                    return None;
             }
         }
 
@@ -130,20 +130,26 @@ namespace Chaos
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Point))
+            try
+            {
+                Point point = (Point)obj;
+                return GetHashCode() == point.GetHashCode();
+            }
+            catch
+            {
                 return false;
-
-            Point point = (Point)obj;
-            return GetHashCode() == point.GetHashCode();
+            }
         }
 
         /// <summary>
         /// Attempts to parse a point from a given string.
         /// </summary>
-        public static Point Parse(string str)
+        public static bool TryParse(string str, out Point point)
         {
+            point = None;
             Match m = Regex.Match(str, @"\((\d+), (\d+)\)");
-            return new Point(ushort.Parse(m.Groups[1].Value), ushort.Parse(m.Groups[2].Value));
+
+            return m.Success && ushort.TryParse(m.Groups[1].Value, out point.X) && ushort.TryParse(m.Groups[2].Value, out point.Y);
         }
     }
 }

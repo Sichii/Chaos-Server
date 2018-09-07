@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Chaos
 {
@@ -22,12 +23,21 @@ namespace Chaos
     internal sealed class Guild : IEnumerable
     {
         private readonly object Sync = new object();
-        public IEnumerator GetEnumerator() => Members.GetEnumerator();
+        private Bank Bank;
+        private Dictionary<string, string> Members; //name, rank
+        private List<string> Ranks;
+
         [JsonProperty]
         internal string Name { get; set; }
-        private Bank Bank { get; set; }
-        private Dictionary<string, string> Members; //name, rank
-        private List<string> Ranks { get; set; }
+
+        public IEnumerator GetEnumerator()
+        {
+            IEnumerator safeEnum = Members.GetEnumerator();
+
+            lock (Sync)
+                while (safeEnum.MoveNext())
+                    yield return safeEnum.Current;
+        }
 
         /// <summary>
         /// Default constructor for an enumerable object. Represents the serverside concept of a Guild or Clan.
@@ -35,15 +45,24 @@ namespace Chaos
         /// </summary>
         internal Guild()
         {
-            Name = "Chaos Team";
+            Name = CONSTANTS.DEVELOPER_GUILD_NAME;
             Bank = new Bank();
             Ranks = new List<string>()
             {
                 "Guinea Pig", "Event Host", "Game Master", "Developer", "Lead Developer"
             };
             Members = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-            Members.Add("sichi", Ranks[4]);
-            Members.Add("whug", Ranks[0]);
+
+            Members.Add("Sichi", Ranks[4]);
+            Members.Add("Jinori", Ranks[3]);
+            Members.Add("Whug", Ranks[3]);
+            Members.Add("Doms", Ranks[3]);
+            Members.Add("Vorlof", Ranks[2]);
+            Members.Add("JohnGato", Ranks[2]);
+            Members.Add("Pill", Ranks[1]);
+            Members.Add("Ishikawa", Ranks[0]);
+            Members.Add("Legend", Ranks[0]);
+            Members.Add("Styax", Ranks[0]);
         }
 
         /// <summary>
@@ -125,6 +144,26 @@ namespace Chaos
 
                 user.Guild = null;
                 return Members.Remove(user.Name);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to synchronously change a member's rank.
+        /// </summary>
+        /// <param name="memberName">Name of the member who's rank is to be changed.</param>
+        /// <param name="newRank">The rank to change the given member to.</param>
+        /// <returns></returns>
+        internal bool TryChangeRank(string memberName, string newRank)
+        {
+            lock(Sync)
+            {
+                if (Members.ContainsKey(memberName) && Ranks.Contains(newRank))
+                {
+                    Members[memberName] = Ranks[Ranks.IndexOf(newRank)]; //to make sure we get the capitolization that's in the rank list, rather than what was provided
+                    return true;
+                }
+
+                return false;
             }
         }
 

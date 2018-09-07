@@ -17,14 +17,16 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class GameTime
     {
-        private DateTime DateTime { get; }
+        private readonly DateTime DateTime;
+        [JsonProperty]
+        private readonly long Ticks;
+
         internal int Year => DateTime.Year;
         internal int Month => DateTime.Month;
         internal int Day => DateTime.Day;
         internal int Hour => DateTime.Hour;
         internal int Minute => DateTime.Minute;
-        [JsonProperty]
-        internal long Ticks { get; }
+
 
         /// <summary>
         /// Json & Master constructor for an object representing the serverside construct of time. Mimics DateTime, except at 24x speed, and starting from an origin(server launch date).

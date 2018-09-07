@@ -18,13 +18,12 @@ namespace Chaos
     /// <summary>
     /// Enumerable object containing all in-game merchants.
     /// </summary>
-    internal sealed class Merchants : IEnumerable<Merchant>
+    internal sealed class Merchants
     {
-        public IEnumerator<Merchant> GetEnumerator() => MerchantDic.Values.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        private Dictionary<string, Merchant> MerchantDic { get; }
         //access merchant by name
         internal Merchant this[string name] => MerchantDic[name];
-        private Dictionary<string, Merchant> MerchantDic { get; }
+        internal List<Merchant> GetMerchants => MerchantDic.Values.ToList();
 
         internal Merchants()
         {

@@ -21,7 +21,7 @@ namespace Chaos
     internal static class Pursuits
     {
         //these will use pursuit id to get the effect
-        private static Dictionary<PursuitIds, PursuitDelegate> PursuitList = new Dictionary<PursuitIds, PursuitDelegate>()
+        private static Dictionary<PursuitIds, PursuitDelegate> s_PursuitList = new Dictionary<PursuitIds, PursuitDelegate>()
         {
             { PursuitIds.None, new PursuitDelegate(None) },
             { PursuitIds.ReviveSelf, new PursuitDelegate(ReviveSelf) },
@@ -39,7 +39,7 @@ namespace Chaos
             { PursuitIds.GiveTatteredRobe, new PursuitDelegate(GiveTatteredRobe) },
         };
 
-        internal static PursuitDelegate Activate(PursuitIds pid) => PursuitList[pid];
+        internal static PursuitDelegate Activate(PursuitIds pid) => s_PursuitList[pid];
 
         #region PursuitEffects
         private static void None(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null) { }

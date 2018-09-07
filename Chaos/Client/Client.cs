@@ -20,14 +20,15 @@ namespace Chaos
     internal sealed class Client
     {
         private readonly object Sync = new object();
+        private readonly ClientPackets.Handler[] PacketHandlers;
         private byte[] ClientBuffer;
         private List<byte> FullClientBuffer;
-        private ClientPackets.Handler[] PacketHandlers { get; }
 
-        internal Queue<ServerPacket> SendQueue;
-        internal bool Connected;
-        internal byte Signature;
-        internal byte StepCount;
+        internal bool IsLoopback { get; set; }
+        internal Queue<ServerPacket> SendQueue { get; set; }
+        internal bool Connected { get; set; }
+        internal byte Signature { get; set; }
+        internal byte StepCount { get; set; }
         internal IPAddress IpAddress { get; }
         internal ServerType ServerType { get; set; }
         internal Server Server { get; }
@@ -41,7 +42,7 @@ namespace Chaos
         internal DateTime LastRefresh { get; set; }
         internal Dialog CurrentDialog { get; set; }
         internal object ActiveObject { get; set; }
-        internal bool IsLoopback = false;
+
 
         /// <summary>
         /// Base constructor for a new client with reference to the server, and the user's socket.

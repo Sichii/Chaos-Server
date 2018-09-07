@@ -31,8 +31,8 @@ namespace Chaos
         internal ItemSprite(ushort inventorySprite, ushort displaySprite = 0)
         {
             InventorySprite = inventorySprite;
-            OffsetSprite = (ushort)(inventorySprite + CONSTANTS.ITEM_SPRITE_OFFSET);
             DisplaySprite = displaySprite;
+            OffsetSprite = (ushort)(inventorySprite + CONSTANTS.ITEM_SPRITE_OFFSET);
         }
     }
 }

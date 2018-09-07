@@ -21,11 +21,22 @@ namespace Chaos
     internal sealed class Legend : IEnumerable<LegendMark>
     {
         private readonly object Sync = new object();
-        public IEnumerator<LegendMark> GetEnumerator() => Marks.Select(kvp => kvp.Value).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal byte Length => (byte)Marks.Count;
         [JsonProperty]
-        private List<KeyValuePair<string, LegendMark>> Marks { get; }
+        private List<KeyValuePair<string, LegendMark>> Marks;
+
+        public IEnumerator<LegendMark> GetEnumerator()
+        {
+            lock (Sync)
+            {
+                IEnumerator<LegendMark> safeEnum = Marks.Select(kvp => kvp.Value).GetEnumerator();
+
+                while (safeEnum.MoveNext())
+                    yield return safeEnum.Current;
+            }
+        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        internal byte Count => (byte)Marks.Count;
+
 
         /// <summary>
         /// Default constructor for an enumerable object of LegendMark. Represent's a new user's legend.
