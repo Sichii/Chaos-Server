@@ -128,15 +128,13 @@ namespace Chaos
                 }
             }
 
+            Guilds.TryAdd(CONSTANTS.DEVELOPER_GUILD_NAME, new Guild());
 
-            Guild team = new Guild();
-            Guilds.TryAdd(team.Name, team);
-
-            using (BinaryReader reader = new BinaryReader(new MemoryStream()))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.GuildData)))
             {
                 int count = reader.ReadInt32();
 
-                for(int i = 0; i < count; i++)
+                for (int i = 0; i < count; i++)
                 {
                     string name;
                     List<string> ranks = new List<string>();
@@ -147,7 +145,12 @@ namespace Chaos
                         ranks.Add(reader.ReadString());
                     for (int x = 0; x < reader.ReadInt32(); x++)
                         members.Add(reader.ReadString(), reader.ReadString());
+
+                    Guilds.TryAdd(name, new Guild(name, members, ranks));
                 }
+
+                if (!Guilds.ContainsKey(CONSTANTS.DEVELOPER_GUILD_NAME))
+                    Guilds.TryAdd(CONSTANTS.DEVELOPER_GUILD_NAME, new Guild());
             }
             #endregion
         }
@@ -162,9 +165,12 @@ namespace Chaos
             using (MemoryStream buffer = new MemoryStream())
             using (BinaryWriter writer = new BinaryWriter(buffer))
             {
-                writer.Write(Guilds.Count);
+                writer.Write(Guilds.Count - 1);
                 foreach (Guild guild in Guilds.Values)
-                    guild.Save(writer);
+                    if (guild.Name != CONSTANTS.DEVELOPER_GUILD_NAME)
+                        guild.Save(writer);
+
+                Server.DataBase.TrySaveGuilds(buffer.ToArray());
             }
         }
 
@@ -174,7 +180,7 @@ namespace Chaos
         internal void Populate()
         {
             #region Load Merchants
-            foreach (Merchant merchant in Game.Merchants)
+            foreach (Merchant merchant in Game.Merchants.GetMerchants)
                 merchant.Map.AddObject(merchant, merchant.Point);
             #endregion
         }

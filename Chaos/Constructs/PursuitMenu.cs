@@ -16,11 +16,12 @@ namespace Chaos
 {
     internal sealed class PursuitMenu : IEnumerable<PursuitMenuItem>
     {
-        public int Count => Pursuits.Count;
+        private readonly List<PursuitMenuItem> Pursuits;
+
         public IEnumerator<PursuitMenuItem> GetEnumerator() => Pursuits.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal PursuitMenuItem this[int index] => Pursuits[index];
-        internal List<PursuitMenuItem> Pursuits { get; }
+        internal int Count => Pursuits.Count;
 
         /// <summary>
         /// Base constructor for an enumerable object of PursuitMenuItem. Represents the pursuit menu of a merchant menu.

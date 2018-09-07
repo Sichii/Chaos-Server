@@ -21,11 +21,18 @@ namespace Chaos
         private readonly object Sync = new object();
         [JsonIgnore]
         private List<Post> Messages;
-        private int Counter => Messages.Count;
 
-        public IEnumerator<Post> GetEnumerator() => Messages.GetEnumerator();
+        public IEnumerator<Post> GetEnumerator()
+        {
+            IEnumerator<Post> safeEnum = Messages.GetEnumerator();
+
+            lock (Sync)
+                while (safeEnum.MoveNext())
+                    yield return safeEnum.Current;
+        }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal Post this[byte postNum] => postNum < Counter ? Messages[postNum] : default(Post);
+        internal Post this[byte postNum] => postNum < Count ? Messages[postNum] : default(Post);
+        internal int Count => Messages.Count;
 
         /// <summary>
         /// Json & Master constructor for an enumerable object of Post. Represents a board, or list of posts.
@@ -55,7 +62,7 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (PostNum < Counter)
+                if (PostNum < Count)
                 {
                     Messages.RemoveAt(PostNum);
                     return true;
@@ -71,7 +78,7 @@ namespace Chaos
         internal IEnumerable<Post> Reverse()
         {
             lock (Sync)
-                for (int i = Counter - 1; i != 0; i--)
+                for (int i = Count - 1; i != 0; i--)
                     yield return Messages[i];
         }
     }

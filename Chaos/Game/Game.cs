@@ -235,7 +235,7 @@ namespace Chaos
                 newUser.IsMaster = true;
                 newUser.BaseClass = BaseClass.Admin;
                 newUser.Nation = Nation.Noes;
-                newUser.Guild = World.Guilds["Chaos Team"];
+                newUser.Guild = World.Guilds[CONSTANTS.DEVELOPER_GUILD_NAME];
 
                 newUser.Attributes.Gold += 500000000;
             }
@@ -605,6 +605,9 @@ namespace Chaos
 
         internal static void SpaceBar(Client client)
         {
+            if (!client.User.IsAlive)
+                return;
+
             List<ServerPacket> packets = new List<ServerPacket>();
 
             //cancel casting
@@ -1126,27 +1129,27 @@ namespace Chaos
 
         internal static void Exchange(Client client, ExchangeType type, int targetId = 0, uint goldAmount = 0, byte itemSlot = 0, byte itemCount = 0)
         {
-            switch(type)
+            switch (type)
             {
                 case ExchangeType.StartExchange:
                     User targetUser;
-                    client.User.Map.TryGetObject(targetId, out targetUser);
 
-                    Exchange ex = new Exchange(client.User, targetUser);
-                    World.Exchanges[ex.ExchangeId] = ex;
-                    ex.Activate();
+                    if (client.User.Map.TryGetObject(targetId, out targetUser))
+                        if (client.User.Exchange == null && targetUser.Exchange == null)
+                        {
+                            Exchange ex = new Exchange(client.User, targetUser);
+                            World.Exchanges[ex.ExchangeId] = ex;
+                            ex.Activate();
+                        }
                     break;
                 case ExchangeType.RequestAmount:
-                    if (client.User.Exchange.OtherUser(client.User).Id == targetId)
-                        client.User.Exchange.AddItem(client.User, itemSlot);
+                    client.User.Exchange.AddItem(client.User, itemSlot);
                     break;
                 case ExchangeType.AddItem:
-                    if (client.User.Exchange.OtherUser(client.User).Id == targetId)
-                        client.User.Exchange.AddStackableItem(client.User, itemSlot, itemCount);
+                    client.User.Exchange.AddStackableItem(client.User, itemSlot, itemCount);
                     break;
                 case ExchangeType.SetGold:
-                    if (client.User.Exchange.OtherUser(client.User).Id == targetId)
-                        client.User.Exchange.SetGold(client.User, goldAmount);
+                    client.User.Exchange.SetGold(client.User, goldAmount);
                     break;
                 case ExchangeType.Cancel:
                     client.User.Exchange.Cancel(client.User);

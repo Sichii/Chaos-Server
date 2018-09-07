@@ -35,6 +35,7 @@ namespace Chaos
         private ConnectionMultiplexer DataConnection { get; }
 
         internal byte[] MapData => Cache.Get<byte[]>(MapKey);
+        internal byte[] GuildData => Cache.Get<byte[]>(GuildKey);
 
         internal DataBase(Server server)
         {
@@ -54,10 +55,28 @@ namespace Chaos
                 if (key != MapKey)
                     Cache.Remove(key);    
 
-
-
             if (!Cache.Exists(UserHashKey))
                 Cache.Add(UserHashKey, new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
+            if (!Cache.Exists(GuildKey))
+                Cache.Add(GuildKey, new byte[4] { 0, 0, 0, 0 });
+        }
+
+        /// <summary>
+        /// Attempts to add a new user to the database. Returns false if it fails for any reason.
+        /// </summary>
+        /// <param name="user">Name of the user you'd like to add.</param>
+        /// <param name="password">User's password unhashed.</param>
+        internal bool TryAddUser(User user, string password)
+        {
+            string hash = Crypto.GetMD5Hash(password);
+            Dictionary<string, string> userHash = UserHash;
+
+            if (userHash.ContainsKey(user.Name))
+                return false;
+
+            userHash.Add(user.Name, hash);
+
+            return Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(UserHashKey, userHash);
         }
 
         /// <summary>
@@ -103,24 +122,6 @@ namespace Chaos
         internal bool CheckHash(string name, string hash) => UserHash.Any(kvp => kvp.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase) && kvp.Value.Equals(hash));
 
         /// <summary>
-        /// Attempts to add a new user to the database. Returns false if it fails for any reason.
-        /// </summary>
-        /// <param name="user">Name of the user you'd like to add.</param>
-        /// <param name="password">User's password unhashed.</param>
-        internal bool TryAddUser(User user, string password)
-        {
-            string hash = Crypto.GetMD5Hash(password);
-            Dictionary<string, string> userHash = UserHash;
-
-            if (userHash.ContainsKey(user.Name))
-                return false;
-
-            userHash.Add(user.Name, hash);
-
-            return  Cache.Add(user.Name.ToUpper(), user) && Cache.Replace(UserHashKey, userHash);
-        }
-
-        /// <summary>
         /// Changes the password hash of the given username
         /// </summary>
         /// <param name="name">Name of user to change password for.</param>
@@ -137,6 +138,12 @@ namespace Chaos
             }
             return false;
         }
+
+        /// <summary>
+        /// Saves the guild data to the database.
+        /// </summary>
+        /// <param name="guildData">The guild data, written to a byte array from a stream.</param>
+        internal bool TrySaveGuilds(byte[] guildData) => Cache.Replace(GuildKey, guildData);
 
         ~DataBase()
         {

@@ -419,8 +419,7 @@ namespace Chaos
                 ani = new Animation(client.User.BlinkSpot.Point, 96, 100);
                 eff = new Effect(1800, new TimeSpan(0, 0, 10), false, ani);
 
-                lock (client.User.Map.Sync)
-                    client.User.Map.AddEffect(eff);
+                client.User.Map.AddEffect(eff);
                 return false;
             }
             else
@@ -429,8 +428,7 @@ namespace Chaos
                 client.User.RemoveFlag(UserState.UsedBlink);
 
                 //remove effect
-                lock (client.User.Map.Sync)
-                    client.User.Map.RemoveEffect(eff);
+                client.User.Map.RemoveEffect(eff);
             }
 
             spell.CooldownReduction -= 1f;

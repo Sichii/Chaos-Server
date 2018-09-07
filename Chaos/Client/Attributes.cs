@@ -17,23 +17,23 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Attributes
     {
-        internal User User;
+        internal User User { get; set; }
 
         //baseValues
         [JsonProperty]
-        internal byte BaseStr;
+        internal byte BaseStr { get; set; }
         [JsonProperty]
-        internal byte BaseInt;
+        internal byte BaseInt { get; set; }
         [JsonProperty]
-        internal byte BaseWis;
+        internal byte BaseWis { get; set; }
         [JsonProperty]
-        internal byte BaseCon;
+        internal byte BaseCon { get; set; }
         [JsonProperty]
-        internal byte BaseDex;
+        internal byte BaseDex { get; set; }
         [JsonProperty]
-        internal uint BaseHP;
+        internal uint BaseHP { get; set; }
         [JsonProperty]
-        internal uint BaseMP;
+        internal uint BaseMP { get; set; }
 
         //addedValues
         internal int StrMod => User.EffectsBar.StrModSum;
@@ -46,9 +46,9 @@ namespace Chaos
 
         //Primary
         [JsonProperty]
-        internal byte Level;
+        internal byte Level { get; set; }
         [JsonProperty]
-        internal byte Ability;
+        internal byte Ability { get; set; }
 
         internal uint MaximumHP => Utility.Clamp<uint>(BaseHP + MaxHPMod, 0, int.MaxValue);
         internal uint MaximumMP => Utility.Clamp<uint>(BaseMP + MaxMPMod, 0, int.MaxValue);
@@ -59,29 +59,29 @@ namespace Chaos
         internal byte CurrentDex => Utility.Clamp<byte>(BaseDex + DexMod, 0, byte.MaxValue);
         internal bool HasUnspentPoints => UnspentPoints != 0;
         [JsonProperty]
-        internal byte UnspentPoints;
+        internal byte UnspentPoints { get; set; }
         internal short MaximumWeight => (short)(40 + (BaseStr / 2));
         internal short CurrentWeight => (short)User.Inventory.Sum(item => item?.Weight ?? 0);
 
         //Vitality
         [JsonProperty]
-        internal uint CurrentHP;
+        internal uint CurrentHP { get; set; }
         [JsonProperty]
-        internal uint CurrentMP;
+        internal uint CurrentMP { get; set; }
 
         //Experience
         [JsonProperty]
-        internal uint Experience;
+        internal uint Experience { get; set; }
         [JsonProperty]
-        internal uint ToNextLevel;
+        internal uint ToNextLevel { get; set; }
         [JsonProperty]
-        internal uint AbilityExp;
+        internal uint AbilityExp { get; set; }
         [JsonProperty]
-        internal uint ToNextAbility;
+        internal uint ToNextAbility { get; set; }
         [JsonProperty]
-        internal uint GamePoints;
+        internal uint GamePoints { get; set; }
         [JsonProperty]
-        internal uint Gold;
+        internal uint Gold { get; set; }
 
         //Secondary
         internal byte Blind => 0;

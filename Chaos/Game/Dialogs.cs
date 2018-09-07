@@ -19,9 +19,9 @@ namespace Chaos
     /// </summary>
     internal sealed class Dialogs
     {
-        internal Dialog this[ushort dialogId] => DialogDic[dialogId];
-        private Dictionary<ushort, Dialog> DialogDic { get; }
+        private readonly Dictionary<ushort, Dialog> DialogDic;
 
+        internal Dialog this[ushort dialogId] => DialogDic[dialogId];
         internal Dialogs()
         {
             //these will use dialog id to get the dialog

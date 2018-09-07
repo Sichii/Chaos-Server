@@ -15,12 +15,13 @@ namespace Chaos
 {
     internal sealed class MerchantMenu
     {
-        public int Count => Pursuits.Count;
-        internal string this[PursuitIds pid] => Pursuits.FirstOrDefault(p => p.PursuitId == pid).Text;
         internal string Text { get; }
         internal MenuType Type { get; }
         internal PursuitMenu Pursuits { get; }
         internal DialogMenu Dialogs { get; }
+
+        internal int Count => Pursuits.Count;
+        internal string this[PursuitIds pid] => Pursuits.FirstOrDefault(p => p.PursuitId == pid).Text;
 
         /// <summary>
         /// Base constructor for an object representing a merchant's menu that contains a pursuit menu.

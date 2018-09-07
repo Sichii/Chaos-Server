@@ -21,7 +21,7 @@ namespace Chaos
     {
         private readonly object Sync = new object();
         [JsonProperty]
-        private List<string> Names { get; set; }
+        private List<string> Names;
 
         /// <summary>
         /// Default constructor for an object representing a new user's ignore list.

@@ -22,19 +22,20 @@ namespace Chaos
     public sealed class Map
     {
         internal readonly object Sync = new object();
-        private Dictionary<int, WorldObject> Objects { get; set; }
-        private List<Effect> Effects { get; set; }
-        public ConcurrentDictionary<Point, Door> Doors { get; set; }
+        private Dictionary<int, WorldObject> Objects;
+        private List<Effect> Effects;
+
         internal Dictionary<Point, Tile> Tiles { get; }
+        internal byte[] Data { get; private set; }
+        internal ushort CheckSum { get; private set; }
+
+        public ConcurrentDictionary<Point, Door> Doors { get; set; }
         public Dictionary<Point, Warp> Warps { get; set; }
         public Dictionary<Point, WorldMap> WorldMaps { get; set; }
         [JsonProperty]
         public ushort Id { get; }
         public byte SizeX { get; set; }
         public byte SizeY { get; set; }
-        internal byte[] Data { get; private set; }
-        internal ushort CheckSum { get; private set; }
-
         public MapFlags Flags { get; set; }
         public string Name { get; set; }
         public sbyte Music { get; set; }

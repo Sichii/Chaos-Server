@@ -18,18 +18,18 @@ namespace Chaos
     internal sealed class Exchange
     {
         private readonly object Sync = new object();
-        internal Server Server { get; }
-        internal int ExchangeId { get; }
-        internal User User1 { get; }
-        internal User User2 { get; }
-        internal List<Item> User1Items { get; set; }
-        internal List<Item> User2Items { get; set; }
+        private readonly User User1;
+        private readonly User User2;
         private uint User1Gold;
         private uint User2Gold;
-        private bool User1Accept { get; set; }
-        private bool User2Accept { get; set; }
-        internal bool IsActive = false;
-        internal User OtherUser(User user) => User1 == user ? User2 : User1;
+        private bool User1Accept;
+        private bool User2Accept;
+        private List<Item> User1Items;
+        private List<Item> User2Items;
+
+        internal int ExchangeId { get; }
+        internal bool IsActive { get; set; }
+
 
         /// <summary>
         /// Base constructor for an object representing an in-game exchange, or trade.
@@ -45,7 +45,6 @@ namespace Chaos
             User2Items = new List<Item>();
             User1Gold = 0;
             User2Gold = 0;
-            Server = sender.Client.Server;
         }
 
         /// <summary>

@@ -40,11 +40,15 @@ namespace Chaos
         /// Optional constructor for a location, taking a map id and point.
         /// </summary>
         internal Location(ushort mapId, Point point)
+            :this(mapId, point.X, point.Y)
         {
-            MapId = mapId;
-            X = point.X;
-            Y = point.Y;
+
         }
+
+        /// <summary>
+        /// Returns the equivalent of no location.
+        /// </summary>
+        internal static Location None => new Location(ushort.MaxValue, Point.None);
 
         public static bool operator ==(Location loc1, Location loc2) => loc1.Equals(loc2);
         public static bool operator !=(Location loc1, Location loc2) => !loc1.Equals(loc2);
@@ -56,24 +60,12 @@ namespace Chaos
         /// <summary>
         /// Attempts to parse a location from a string.
         /// </summary>
-        public static bool TryParse(string str, out Location loc)
+        public static bool TryParse(string str, out Location location)
         {
-            ushort mapId = 0;
-            ushort x = 0;
-            ushort y = 0;
-            Match m = Regex.Match(str, @"([0-9]+) ([0-9]+) ([0-9]+)");
-            
-            if(m.Success && 
-                ushort.TryParse(m.Groups[1].Value, out mapId) && 
-                ushort.TryParse(m.Groups[2].Value, out x) &&
-                ushort.TryParse(m.Groups[3].Value, out y))
-            {
-                loc = new Location(mapId, x, y);
-                return true;
-            }
+            location = None;
+            Match m = Regex.Match(str, @"(\d+) (\d+) (\d+)");
 
-            loc = new Location();
-            return false;
+            return m.Success && ushort.TryParse(m.Groups[1].Value, out location.MapId) && ushort.TryParse(m.Groups[2].Value, out location.X) && ushort.TryParse(m.Groups[3].Value, out location.Y);
         }
     }
 }
