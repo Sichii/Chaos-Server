@@ -17,17 +17,24 @@ namespace Chaos
     public static class Paths
     {
         //primary directory, populated by setpaths
-        public static string BaseDir = "";
+        private static string BaseDir;
 
         //dynamic host name, populated by setpaths
-        public static string HostName = "";
+        internal static string HostName = "";
         //redis config string (host, port)
-        public static string RedisConfig => @"localhost:6379";
+        internal const string RedisConfig = @"localhost:6379";
 
-        public static string LogFiles => $@"{BaseDir}logs\";
-        public static string MetaFiles => $@"{BaseDir}metafiles\";
-        public static string MapFiles => $@"{BaseDir}maps\";
+        internal static string LogFiles => $@"{BaseDir}logs\";
+        internal static string MetaFiles => $@"{BaseDir}metafiles\";
+        internal static string MapFiles => $@"{BaseDir}maps\";
 
+        public static void Set()
+        {
+            BaseDir = Properties.Resources.PATH[0].Trim('\n', '\r');
+            HostName = Properties.Resources.PATH[1].Trim('\n', '\r', ' ');
 
+            if (!BaseDir.EndsWith(@"\"))
+                BaseDir += @"\";
+        }
     }
 }

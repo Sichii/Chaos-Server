@@ -1,3 +1,4 @@
+using System.Resources;
 // ****************************************************************************
 // This file belongs to the Chaos-Server project.
 // 
@@ -18,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Chaos Server")]
 [assembly: AssemblyDescription("A private server for Dark Ages")]
 [assembly: AssemblyConfiguration("7777777")]
-[assembly: AssemblyCompany("7")]
+[assembly: AssemblyCompany("Chaotic Minds")]
 [assembly: AssemblyProduct("Chaos Server")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("Sichi")]
@@ -44,3 +45,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: NeutralResourcesLanguage("en")]
+

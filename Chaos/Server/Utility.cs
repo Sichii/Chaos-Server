@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 
@@ -32,17 +33,35 @@ namespace Chaos
         internal static int Random(int minValue = int.MinValue, int maxValue = int.MaxValue, bool positiveOnly = true) => positiveOnly ? Math.Abs(random.Next(minValue, maxValue)) : random.Next(minValue, maxValue);
 
         /// <summary>
+        /// Gets the current elapsed tick count as an Int64
+        /// </summary>
+        internal static long CurrentTicks => Stopwatch.GetTimestamp();
+
+        /// <summary>
+        /// Calculate DeltaTime as miliseconds and returns it.
+        /// </summary>
+        /// <param name="oldTicks">A previous metric of currently elapsed time in ticks.</param>
+        internal static int DeltaTime(long oldTicks) => (int)(Stopwatch.GetTimestamp() - oldTicks)/10000;
+
+        /// <summary>
+        /// Calculate a DeltaTime and adjust it based on a capped delay as miliseconds and return it.
+        /// </summary>
+        /// <param name="oldTicks">A previous metric of currently elapsed time in ticks.</param>
+        /// <param name="maxDelay">The longest period of time in miliseconds to wait.</param>
+        internal static int ClampedDeltaTime(long oldTicks, int maxDelay) => Math.Max(0, 100 - DeltaTime(oldTicks));
+        /// <summary>
         /// Converts an image to a byte array and returns it.
         /// </summary>
         /// <param name="img">The image to convert.</param>
         internal static byte[] ImageToByteArray(Image img)
         {
             byte[] byteArray = new byte[0];
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
                 byteArray = stream.ToArray();
             }
+
             return byteArray;
         }
 
@@ -76,7 +95,7 @@ namespace Chaos
         /// <param name="includeStart">Whether or not to include the starting point in the result enumerable.</param>
         /// <param name="includeEnd">Whether or not to include the ending point in the result enumerable.</param>
         /// <returns></returns>
-        internal static IEnumerable<Point> GeneratePath(Point start, Point end, bool includeStart = false, bool includeEnd = false)
+        internal static IEnumerable<Point> GetPath(Point start, Point end, bool includeStart = false, bool includeEnd = false)
         {
             if (includeStart)
                 yield return start;
@@ -89,6 +108,78 @@ namespace Chaos
 
             if (includeEnd)
                 yield return end;
+        }
+
+        /// <summary>
+        /// Retreives a list of diagonal points in relevance to the user, with an optional distance and direction. Direction.All is optional. Direction.Invalid direction returns empty list.
+        /// </summary>
+        internal static List<Point> GetDiagonalPoints(Point start, int degree = 1, Direction direction = Direction.All)
+        {
+            var diagonals = new List<Point>();
+
+            if (direction == Direction.Invalid)
+                return diagonals;
+
+            for (int i = 1; i <= degree; i++)
+            {
+                switch (direction)
+                {
+                    case Direction.North:
+                        diagonals.Add((start.X - i, start.Y - i));
+                        diagonals.Add((start.X + i, start.Y - i));
+                        break;
+                    case Direction.East:
+                        diagonals.Add((start.X + i, start.Y - i));
+                        diagonals.Add((start.X + i, start.Y + i));
+                        break;
+                    case Direction.South:
+                        diagonals.Add((start.X + i, start.Y + i));
+                        diagonals.Add((start.X - i, start.Y + i));
+                        break;
+                    case Direction.West:
+                        diagonals.Add((start.X - i, start.Y - i));
+                        diagonals.Add((start.X - i, start.Y + i));
+                        break;
+                    case Direction.All:
+                        diagonals.Add((start.X - i, start.Y - i));
+                        diagonals.Add((start.X + i, start.Y - i));
+                        diagonals.Add((start.X + i, start.Y + i));
+                        diagonals.Add((start.X - i, start.Y + i));
+                        break;
+                }
+            }
+
+            return diagonals;
+        }
+
+        /// <summary>
+        /// Retreives a list of points in a line from the user, with an option for distance and direction. Direction.All is optional. Direction.Invalid direction returns empty list.
+        /// </summary>
+        internal static List<Point> GetLinePoints(Point start, int degree = 1, Direction direction = Direction.All)
+        {
+            var linePoints = new List<Point>();
+
+            if (direction == Direction.Invalid)
+                return linePoints;
+
+            for (int i = 1; i <= degree; i++)
+            {
+                switch (direction)
+                {
+                    case Direction.All:
+                        linePoints.Add((start.X + i, start.Y));
+                        linePoints.Add((start.X - i, start.Y));
+                        linePoints.Add((start.X, start.Y + i));
+                        linePoints.Add((start.X, start.Y - i));
+                        break;
+                    default:
+                        start.Offset(direction);
+                        linePoints.Add(start);
+                        break;
+                }
+            }
+
+            return linePoints;
         }
     }
 }

@@ -345,20 +345,8 @@ namespace Chaos
         East = 1,
         South = 2,
         West = 3,
+        All = 4,
         Invalid = 255,
-    }
-
-    internal static class DirectionExtensions
-    {
-        internal static Direction Reverse(Direction direction)
-        {
-            byte dir = (byte)(direction + 2);
-
-            if (dir > 3)
-                dir -= 4;
-
-            return (Direction)dir;
-        }
     }
 
     [Flags]

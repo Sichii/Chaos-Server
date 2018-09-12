@@ -21,10 +21,9 @@ namespace Chaos
     {
         internal static MemoryStream Compress(byte[] buffer)
         {
-            MemoryStream compressed = new MemoryStream();
-
-            using (MemoryStream uncompressed = new MemoryStream(buffer))
-            using (ZOutputStream compressor = new ZOutputStream(compressed, -1))
+            var compressed = new MemoryStream();
+            using (var uncompressed = new MemoryStream(buffer))
+            using (var compressor = new ZOutputStream(compressed, -1))
             {
                 uncompressed.Seek(0L, SeekOrigin.Begin);
                 byte[] buffer1 = new byte[2000];
@@ -41,8 +40,8 @@ namespace Chaos
 
         internal static MemoryStream Decompress(byte[] buffer)
         {
-            MemoryStream uncompressed = new MemoryStream();
-            using (ZOutputStream decompressor = new ZOutputStream(uncompressed))
+            var uncompressed = new MemoryStream();
+            using (var decompressor = new ZOutputStream(uncompressed))
             {
                 int offset = 0;
 
@@ -63,19 +62,19 @@ namespace Chaos
 
         internal static void Compress(string inFile, string outFile)
         {
-            FileStream uncompressed = new FileStream(outFile, FileMode.Create);
+            var uncompressed = new FileStream(outFile, FileMode.Create);
 
-            using (ZOutputStream compressor = new ZOutputStream(uncompressed, -1))
-            using (FileStream compressed = new FileStream(inFile, FileMode.Open))
+            using (var compressor = new ZOutputStream(uncompressed, -1))
+            using (var compressed = new FileStream(inFile, FileMode.Open))
                 CopyWriteStream(uncompressed, compressor);
         }
 
         internal static void Decompress(string inFile, string outFile)
         {
-            FileStream compressed = new FileStream(outFile, FileMode.Create);
+            var compressed = new FileStream(outFile, FileMode.Create);
 
-            using (ZOutputStream decompressor = new ZOutputStream(compressed))
-            using (FileStream uncompressed = new FileStream(inFile, FileMode.Open))
+            using (var decompressor = new ZOutputStream(compressed))
+            using (var uncompressed = new FileStream(inFile, FileMode.Open))
                 CopyWriteStream(uncompressed, decompressor);
         }
 

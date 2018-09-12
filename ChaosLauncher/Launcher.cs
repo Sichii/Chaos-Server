@@ -21,6 +21,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+#pragma warning disable IDE0007 // Use implicit type
+#pragma warning disable IDE0003 // Remove qualification
 
 namespace ChaosLauncher
 {
@@ -41,7 +43,7 @@ namespace ChaosLauncher
         {
             InitializeComponent();
 
-            using (MemoryStream fontStream = new MemoryStream(Properties.Resources.SWTORTrajan))
+            using (var fontStream = new MemoryStream(Properties.Resources.SWTORTrajan))
             {
                 byte[] pfcData = fontStream.ToArray();
                 unsafe
@@ -61,9 +63,9 @@ namespace ChaosLauncher
 
             ServerIP = Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 
-            WebRequest request = WebRequest.Create("https://checkip.amazonaws.com");
+            var request = WebRequest.Create("https://checkip.amazonaws.com");
             using (WebResponse response = request.GetResponse())
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            using (var reader = new StreamReader(response.GetResponseStream()))
             {
                 ClientIP = IPAddress.Parse(reader.ReadToEnd().Trim('\n'));
             }
@@ -113,10 +115,10 @@ namespace ChaosLauncher
             ping.SendAsync(IpToUse, 5000, buffer, options, token);
         }
 
-        private void launchBtn_Click(object sender, EventArgs e)
+        private void LaunchBtn_Click(object sender, EventArgs e)
         {
-            StartInfo startInfo = new StartInfo();
-            ProcInfo procInfo = new ProcInfo();
+            var startInfo = new StartInfo();
+            var procInfo = new ProcInfo();
             startInfo.Size = Marshal.SizeOf(startInfo);
 
 
@@ -130,9 +132,9 @@ namespace ChaosLauncher
                 , null, IntPtr.Zero, IntPtr.Zero, false, ProcessCreationFlags.Suspended, IntPtr.Zero, null, ref startInfo, out procInfo);
 
             //grab the process we created
-            Process proc = Process.GetProcessById(procInfo.ProcessId);
+            var proc = Process.GetProcessById(procInfo.ProcessId);
 
-            using (ProcMemoryStream memory = new ProcMemoryStream(procInfo, ProcessAccess.VmOperation | ProcessAccess.VmRead | ProcessAccess.VmWrite))
+            using (var memory = new ProcMemoryStream(procInfo, ProcessAccess.VmOperation | ProcessAccess.VmRead | ProcessAccess.VmWrite))
             {
                 //force "socket" - call for direct ip
                 memory.Position = 0x4333A2;
@@ -170,17 +172,17 @@ namespace ChaosLauncher
 
                 //resume process
                 memory.Position = 0x6F3CA4;
-                SafeNativeMethods.ResumeThread(procInfo.ThreadHandle);
+                if (SafeNativeMethods.ResumeThread(procInfo.ThreadHandle) == -1)
+                    return;
             }
 
             //let process render it's window before we change the title
             while (proc.MainWindowHandle == IntPtr.Zero) { }
-            SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos");
+
+            if (!SafeNativeMethods.SetWindowText(proc.MainWindowHandle, "Chaos"))
+                return;
         }
 
-        private void infoImg_Click(object sender, EventArgs e)
-        {
-            MessageDialog.Show(this, this);
-        }
+        private void InfoImg_Click(object sender, EventArgs e) => MessageDialog.Show(this, this);
     }
 }

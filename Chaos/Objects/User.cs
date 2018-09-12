@@ -69,11 +69,11 @@ namespace Chaos
         internal Exchange Exchange { get; set; }
         internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
         internal override byte HealthPercent => Utility.Clamp<byte>((CurrentHP * 100) / MaximumHP, 0, (int)MaximumHP);
-        internal override uint MaximumHP { get { return Attributes.MaximumHP; } }
-        internal override uint CurrentHP { get { return Attributes.CurrentHP; } set { Attributes.CurrentHP = Attributes.CurrentHP == 0 ? 0 : value; } }
+        internal override uint MaximumHP => Attributes.MaximumHP;
+        internal override uint CurrentHP { get => Attributes.CurrentHP; set => Attributes.CurrentHP = Attributes.CurrentHP == 0 ? 0 : value; }
         internal byte ManaPercent => Utility.Clamp<byte>((CurrentMP * 100) / MaximumMP, 0, (int)MaximumMP);
-        internal uint MaximumMP { get { return Attributes.MaximumMP; } }
-        internal uint CurrentMP { get { return Attributes.CurrentMP; } set { Attributes.CurrentMP = value; } }
+        internal uint MaximumMP => Attributes.MaximumMP;
+        internal uint CurrentMP { get => Attributes.CurrentMP; set => Attributes.CurrentMP = value; }
 
         internal DateTime LastClicked { get; set; }
 
@@ -200,65 +200,6 @@ namespace Chaos
             Client = client;
             Client.User = this;
             Map = Game.World.Maps[Map.Id];
-        }
-
-        /// <summary>
-        /// Retreives a list of diagonal points in relevance to the user, with an optional distance and direction. Invalid direction returns all directions of diagonal points.
-        /// </summary>
-        internal List<Point> DiagonalPoints(int degree = 1, Direction direction = Direction.Invalid)
-        {
-            List<Point> diagonals = new List<Point>();
-
-            for (int i = 1; i <= degree; i++)
-            {
-                switch (direction)
-                {
-                    case Direction.Invalid:
-                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
-                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y - i)));
-                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y + i)));
-                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
-                        break;
-                    case Direction.North:
-                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
-                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y - i)));
-                        break;
-                    case Direction.East:
-                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y - i)));
-                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y + i)));
-                        break;
-                    case Direction.South:
-                        diagonals.Add(new Point((ushort)(Point.X + i), (ushort)(Point.Y + i)));
-                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
-                        break;
-                    case Direction.West:
-                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y - i)));
-                        diagonals.Add(new Point((ushort)(Point.X - i), (ushort)(Point.Y + i)));
-                        break;
-                }
-            }
-
-            return diagonals;
-        }
-
-        /// <summary>
-        /// Retreives a list of points in a line from the user, with an option for distance and direction. Invalid directions return an empty list.
-        /// </summary>
-        internal List<Point> LinePoints(int degree = 1, Direction direction = Direction.Invalid)
-        {
-            Point tempPoint = Point;
-            List<Point> linePoints = new List<Point>();
-
-            if (direction == Direction.Invalid)
-                return linePoints;
-
-            for (int i = 0; i < degree; i++)
-            {
-                tempPoint.Offset(direction);
-                linePoints.Add(tempPoint);
-            }
-
-            return linePoints;
         }
 
         /// <summary>

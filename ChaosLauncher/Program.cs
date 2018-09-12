@@ -19,20 +19,9 @@ namespace ChaosLauncher
         [STAThread]
         static void Main(string[] args)
         {
-            SetPaths();
+            Paths.Set();
 
             Application.Run(new Launcher());
-        }
-
-        public static void SetPaths()
-        {
-            string[] paths = Properties.Resources.PATH.Split('\n');
-
-            Paths.BaseDir = paths[0].Trim('\n', '\r');
-            Paths.HostName = paths[1].Trim('\n', '\r', ' ');
-
-            if (!Paths.BaseDir.EndsWith(@"\"))
-                Paths.BaseDir += @"\";
         }
     }
 }

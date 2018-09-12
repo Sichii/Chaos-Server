@@ -19,6 +19,7 @@ namespace Chaos
     /// <summary>
     /// A static container for methods that write and return ServerPackets. 
     /// </summary>
+    #pragma warning disable IDE0022
     internal static class ServerPackets
     {
         internal static ServerPacket ConnectionInfo(uint tableCheckSum, byte seed, byte[] key)
@@ -87,7 +88,7 @@ namespace Chaos
                 packet.WriteUInt16(obj.Sprite);
                 if (obj.Sprite < 32768) //monster and merchant sprites
                 {
-                    Creature newObj = obj as Creature;
+                    var newObj = obj as Creature;
                     packet.Write(new byte[4]); //dunno
                     packet.WriteByte((byte)newObj.Direction);
                     packet.WriteByte(0); //dunno
@@ -366,7 +367,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.WorldMap);
 
             packet.WriteString8(worldMap.Field);
-            packet.WriteByte((byte)worldMap.Nodes.Length);
+            packet.WriteByte((byte)worldMap.Nodes.Count);
             packet.WriteByte(1); //image num
             foreach (WorldMapNode node in worldMap.Nodes)
             {
@@ -504,7 +505,7 @@ namespace Chaos
             foreach (Door door in doors)
             {
                 packet.WritePoint8(door.Point);
-                packet.WriteBoolean(door.Opened);
+                packet.WriteBoolean(door.Closed);
                 packet.WriteBoolean(door.OpenRight);
             }
 
@@ -704,7 +705,7 @@ namespace Chaos
         }
         internal static ServerPacket[] MapData(Map map)
         {
-            List<ServerPacket> staggeredData = new List<ServerPacket>();
+            var staggeredData = new List<ServerPacket>();
             int key = 0;
             
             for(ushort y = 0; y < map.SizeY; ++y)
@@ -866,7 +867,7 @@ namespace Chaos
         }
         internal static ServerPacket[] Metafile(bool sendPath, params MetaFile[] metafiles)
         {
-            List<ServerPacket> packets = new List<ServerPacket>();
+            var packets = new List<ServerPacket>();
 
             if (sendPath)
             {

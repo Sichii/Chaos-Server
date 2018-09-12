@@ -31,7 +31,7 @@ namespace Chaos
                     yield return safeEnum.Current;
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal Post this[byte postNum] => postNum < Count ? Messages[postNum] : default(Post);
+        internal Post this[byte postNum] => postNum < Count ? Messages[postNum] : default;
         internal int Count => Messages.Count;
 
         /// <summary>

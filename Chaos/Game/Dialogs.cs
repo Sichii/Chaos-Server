@@ -25,7 +25,7 @@ namespace Chaos
         internal Dialogs()
         {
             //these will use dialog id to get the dialog
-            List<Dialog> DialogList = new List<Dialog>()
+            var DialogList = new List<Dialog>()
             {
                 CloseDialog(PursuitIds.None),
                 ItemOrMerchantMenuDialog(PursuitIds.None, 1, "What would you like to do?",

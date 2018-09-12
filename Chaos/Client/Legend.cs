@@ -115,8 +115,8 @@ namespace Chaos
         internal int Count { get; set; }
         internal DateTime Added
         {
-            get { return added.ToDateTime(); }
-            set { added = GameTime.FromDateTime(value); }
+            get => added.ToDateTime();
+            set => added = GameTime.FromDateTime(value);
         }
 
         /// <summary>

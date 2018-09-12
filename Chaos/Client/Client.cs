@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace Chaos
 {
@@ -37,7 +36,6 @@ namespace Chaos
         internal User User { get; set; }
         internal string CreateCharName { get; set; }
         internal string CreateCharPw { get; set; }
-        internal int Id { get; }
         internal DateTime LastClickObj { get; set; }
         internal DateTime LastRefresh { get; set; }
         internal Dialog CurrentDialog { get; set; }
@@ -63,7 +61,6 @@ namespace Chaos
             PacketHandlers = ClientPackets.Handlers;
             Signature = 0;
             StepCount = 1;
-            Id = Interlocked.Increment(ref Server.NextClientId);
             IpAddress = (socket.RemoteEndPoint as IPEndPoint).Address;
 
             LastClickObj = DateTime.MinValue;
@@ -113,7 +110,7 @@ namespace Chaos
                 {
                     if (User != null)
                         try { Game.World.RemoveClient(this); }
-                        catch { }
+                        catch (Exception e) { Server.WriteLog(e.ToString(), this); }
                     ClientSocket.Disconnect(false);
                 }
             }
@@ -146,7 +143,7 @@ namespace Chaos
                         if (count <= FullClientBuffer.Count)
                         {
                             //create a clientpacket out of the readable data
-                            ClientPacket clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
+                            var clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
                             //remove the data from the fullclientbuffer
                             FullClientBuffer.RemoveRange(0, count);
                             //send it off to be processed by the server
@@ -251,10 +248,7 @@ namespace Chaos
         /// Sends an animation to the client and adds it to the animation history.
         /// </summary>
         /// <param name="animation">The animation to send.</param>
-        internal void SendAnimation(Animation animation)
-        {
-            Enqueue(ServerPackets.Animation(animation));
-        }
+        internal void SendAnimation(Animation animation) => Enqueue(ServerPackets.Animation(animation));
 
         /// <summary>
         /// Sends an effect to the client's spellbar.
@@ -311,6 +305,11 @@ namespace Chaos
 
             Enqueue(ServerPackets.DisplayDialog(invoker, dialog));
         }
+
+        /// <summary>
+        /// Refreshes the client, resending all on-screen information.
+        /// </summary>
+        internal void Refresh(bool byPassTimer = false) => User.Map.Refresh(this, byPassTimer);
 
         ~Client()
         {

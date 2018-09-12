@@ -9,6 +9,8 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 namespace Chaos
@@ -16,7 +18,7 @@ namespace Chaos
     public sealed class WorldMap
     {
         public string Field { get; set; }
-        public WorldMapNode[] Nodes { get; }
+        public List<WorldMapNode> Nodes { get; }
 
         /// <summary>
         /// Base constructor for an object representing the field, or world map.
@@ -26,7 +28,7 @@ namespace Chaos
         public WorldMap(string field, params WorldMapNode[] nodes)
         {
             Field = field;
-            Nodes = nodes;
+            Nodes = nodes.ToList();
         }
 
         /// <summary>
@@ -35,10 +37,10 @@ namespace Chaos
         /// <returns></returns>
         public uint GetCheckSum()
         {
-            MemoryStream memoryStream = new MemoryStream();
-            using (BinaryWriter binaryWriter = new BinaryWriter(memoryStream))
+            var memoryStream = new MemoryStream();
+            using (var binaryWriter = new BinaryWriter(memoryStream))
             {
-                binaryWriter.Write((byte)Nodes.Length);
+                binaryWriter.Write((byte)Nodes.Count);
                 foreach (WorldMapNode worldMapNode in Nodes)
                 {
                     binaryWriter.Write(worldMapNode.Position.X);

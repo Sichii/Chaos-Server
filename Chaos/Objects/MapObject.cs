@@ -16,8 +16,8 @@ namespace Chaos
     /// </summary>
     public abstract class MapObject
     {
-        public Point Point => new Point(X, Y);
-        internal Location Location => new Location(MapId, Point);
+        public Point Point => (X, Y);
+        internal Location Location => (MapId, Point);
         public ushort X;
         public ushort Y;
         public ushort MapId;

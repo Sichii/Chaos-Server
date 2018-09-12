@@ -29,7 +29,7 @@ namespace Chaos
         /// Base constructor for an object that exists within the spell panel.
         /// </summary>
         internal Spell(ushort sprite, string name, SpellType type, string prompt, byte castLines, TimeSpan baseCooldown, Animation effectAnimation = new Animation(), 
-            TargetsType targetType = TargetsType.None, bool usersOnly = false, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0, Effect effect = default(Effect))
+            TargetsType targetType = TargetsType.None, bool usersOnly = false, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0, Effect effect = default)
             :this(0, sprite, name, type, prompt, castLines, baseCooldown, effectAnimation, targetType, usersOnly, bodyAnimation, baseDamage, effect)
         {
         }

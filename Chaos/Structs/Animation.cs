@@ -92,16 +92,15 @@ namespace Chaos
         /// <summary>
         /// Static constructor for no animation.
         /// </summary>
-        internal static Animation None => default(Animation);
+        internal static Animation None => default;
 
         public override int GetHashCode() => (SourceId << 16) + (TargetAnimation << 8) + TargetPoint.GetHashCode();
         public override bool Equals(object obj)
         {
-            if (!(obj is Animation))
-                return false;
+            if (obj is Animation ani)
+                return GetHashCode() == ani.GetHashCode();
 
-            Animation ani = (Animation)obj;
-            return GetHashCode() == ani.GetHashCode();
+            return false;
         }
 
 

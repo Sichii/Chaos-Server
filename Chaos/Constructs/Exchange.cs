@@ -75,11 +75,10 @@ namespace Chaos
         {
             lock (Sync)
             {
-                Item item;
                 byte index;
                 bool user1Src = user == User1;
 
-                if (!IsActive || !user.Inventory.TryGet(slot, out item) || item.AccountBound || (user1Src ? User1Accept : User2Accept))
+                if (!IsActive || !user.Inventory.TryGet(slot, out Item item) || item.AccountBound || (user1Src ? User1Accept : User2Accept))
                     return;
 
                 if (!item.Stackable)
@@ -120,13 +119,12 @@ namespace Chaos
         {
             lock (Sync)
             {
-                Item item;
                 Item splitItem;
                 int index;
                 bool user1Src = user == User1;
 
                 //if slot is null, or not stackable, or invalid count, then return
-                if (!IsActive || !user.Inventory.TryGet(slot, out item) || !item.Stackable || count > item.Count || item.AccountBound || (user1Src ? User1Accept : User2Accept))
+                if (!IsActive || !user.Inventory.TryGet(slot, out Item item) || !item.Stackable || count > item.Count || item.AccountBound || (user1Src ? User1Accept : User2Accept))
                     return;
 
                 //remove the item if we're exchanging all that we have
@@ -330,8 +328,7 @@ namespace Chaos
             //remove the exchange from existence
             User1.Exchange = null;
             User2.Exchange = null;
-            Exchange exOut;
-            Game.World.Exchanges.TryRemove(ExchangeId, out exOut);
+            Game.World.Exchanges.TryRemove(ExchangeId, out Exchange exOut);
             exOut = null;
             IsActive = false;
         }

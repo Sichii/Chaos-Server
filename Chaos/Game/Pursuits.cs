@@ -18,6 +18,7 @@ namespace Chaos
     /// <summary>
     /// Object containing all in-game persuits for dialogs, and the methods for their effects.
     /// </summary>
+    #pragma warning disable IDE0022
     internal static class Pursuits
     {
         //these will use pursuit id to get the effect
@@ -79,38 +80,31 @@ namespace Chaos
 
         private static void ReviveSelf(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            Game.Extensions.ReviveUser(client.User);
+            Game.Activatables.ReviveUser(client.User);
         }
 
         private static void ReviveUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            User user;
-
-            if (server.TryGetUser(userInput, out user))
-                Game.Extensions.ReviveUser(user);
+            if (server.TryGetUser(userInput, out User user))
+                Game.Activatables.ReviveUser(user);
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
 
         private static void Teleport(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            Location warpLoc = new Location();
-            User user;
-
-            if (Location.TryParse(userInput, out warpLoc))
-                Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, warpLoc));
-            else if (server.TryGetUser(userInput, out user))
-                Game.Extensions.WarpObj(client.User, new Warp(client.User.Location, user.Location));
+            if (Location.TryParse(userInput, out Location warpLoc))
+                Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, warpLoc));
+            else if (server.TryGetUser(userInput, out User user))
+                Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, user.Location));
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid format. ""mapId xCord yCord"" or ""characterName""");
         }
 
         private static void SummonUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            User user;
-
-            if (server.TryGetUser(userInput, out user))
-                Game.Extensions.WarpObj(user, new Warp(user.Location, client.User.Location));
+            if (server.TryGetUser(userInput, out User user))
+                Game.Activatables.WarpObj(user, new Warp(user.Location, client.User.Location));
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
@@ -120,15 +114,13 @@ namespace Chaos
             IEnumerable<User> allUsers = server.WorldClients.Where(c => c.User != client.User).Select(c => c.User);
 
             foreach (User user in allUsers)
-                Game.Extensions.WarpObj(user, new Warp(user.Location, client.User.Location));
+                Game.Activatables.WarpObj(user, new Warp(user.Location, client.User.Location));
         }
 
         private static void KillUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            User user;
-
-            if (server.TryGetUser(userInput, out user))
-                Game.Extensions.ApplyDamage(user, int.MaxValue, true);
+            if (server.TryGetUser(userInput, out User user))
+                Game.Activatables.ApplyDamage(user, int.MaxValue, true);
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }

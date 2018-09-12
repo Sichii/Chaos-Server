@@ -13,7 +13,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Chaos
 {
@@ -116,8 +115,7 @@ namespace Chaos
         {
             lock (Sync)
             {
-                User user;
-                return TryGet(id, out user) && TryRemove(user);
+                return TryGet(id, out User user) && TryRemove(user);
             }
         }
 

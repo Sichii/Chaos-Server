@@ -56,8 +56,8 @@ namespace Chaos
         /// <summary>
         /// Constructor for usable item. These items are usable and generally have some kind of effect. NOT EQUIPMENT.
         /// </summary>
-        internal Item(ItemSprite itemSprite, byte color, string name, TimeSpan baseCooldown, byte weight, ushort nextDialogId, Animation effectAnimation = default(Animation), 
-            TargetsType targetType = TargetsType.None, bool usersOnly = false, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0, Effect effect = default(Effect), bool accountBound = false)
+        internal Item(ItemSprite itemSprite, byte color, string name, TimeSpan baseCooldown, byte weight, ushort nextDialogId, Animation effectAnimation = default, 
+            TargetsType targetType = TargetsType.None, bool usersOnly = false, BodyAnimation bodyAnimation = BodyAnimation.None, int baseDamage = 0, Effect effect = default, bool accountBound = false)
             : this(0, itemSprite, color, name, baseCooldown, EquipmentSlot.None, false, 1, 0, 0, weight, Gender.Unisex, nextDialogId, effectAnimation, targetType, usersOnly, bodyAnimation, 
                   baseDamage, effect, accountBound) { }
 

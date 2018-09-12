@@ -42,8 +42,12 @@ namespace Chaos
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal T this[byte slot]
         {
-            get { return Valid(slot) ? Objects[slot] : null; }
-            private set { if (value.Slot == slot && Valid(slot)) Objects[slot] = value; }
+            get => Valid(slot) ? Objects[slot] : null;
+            private set
+            {
+                if (value.Slot == slot && Valid(slot))
+                    Objects[slot] = value;
+            }
         }
 
         /// <summary>
@@ -107,20 +111,19 @@ namespace Chaos
         /// <summary>
         /// Attempts to synchronously add a stackable item.
         /// </summary>
-        /// <param name="obj">Object to try adding.</param>
-        internal bool TryAddStack(T obj)
+        /// <param name="item">Object to try adding.</param>
+        internal bool TryAddStack(T item)
         {
             lock (Sync)
             {
-                if (obj is Item)
+                if (item is Item tItem)
                 {
-                    Item objItem = obj as Item;
-                    Item existingItem = Objects.Values.FirstOrDefault(item => item != null && item.Sprite == objItem.ItemSprite.InventorySprite && item.Name.Equals(objItem.Name) && (item as Item)?.Stackable == true) as Item;
-                    if (objItem.Stackable && existingItem?.Stackable == true)
+                    Item existingItem = Objects.Values.OfType<Item>().FirstOrDefault(obj => obj.Sprite == tItem.ItemSprite.InventorySprite && obj.Name.Equals(tItem.Name) && obj.Stackable == true);
+                    if (tItem.Stackable && existingItem?.Stackable == true)
                     {
-                        objItem.Count += existingItem.Count;
-                        objItem.Slot = existingItem.Slot;
-                        Objects[existingItem.Slot] = obj;
+                        tItem.Count += existingItem.Count;
+                        tItem.Slot = existingItem.Slot;
+                        Objects[existingItem.Slot] = item;
                         return true;
                     }
                 }
@@ -138,10 +141,10 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (item is Item)
+                if (item is Item tItem)
                 {
                     outItem = null;
-                    EquipmentSlot slot = (item as Item).EquipmentSlot;
+                    EquipmentSlot slot = tItem.EquipmentSlot;
 
                     if (slot == EquipmentSlot.None || !Valid((byte)slot))
                     {
@@ -272,11 +275,9 @@ namespace Chaos
         {
             lock (Sync)
             {
-                T one;
-                T two;
-                if (TryGetRemove(slot1, out one))
+                if (TryGetRemove(slot1, out T one))
                 {
-                    TryGetRemove(slot2, out two);
+                    TryGetRemove(slot2, out T two);
                     if (one != null)
                         one.Slot = slot2;
                     if (two != null)

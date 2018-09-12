@@ -14,7 +14,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Chaos
 {
@@ -51,18 +50,19 @@ namespace Chaos
             {
                 "Guinea Pig", "Event Host", "Game Master", "Developer", "Lead Developer"
             };
-            Members = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-
-            Members.Add("Sichi", Ranks[4]);
-            Members.Add("Jinori", Ranks[3]);
-            Members.Add("Whug", Ranks[3]);
-            Members.Add("Doms", Ranks[3]);
-            Members.Add("Vorlof", Ranks[2]);
-            Members.Add("JohnGato", Ranks[2]);
-            Members.Add("Pill", Ranks[1]);
-            Members.Add("Ishikawa", Ranks[0]);
-            Members.Add("Legend", Ranks[0]);
-            Members.Add("Styax", Ranks[0]);
+            Members = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
+            {
+                { "Sichi", Ranks[4] },
+                { "Jinori", Ranks[3] },
+                { "Whug", Ranks[3] },
+                { "Doms", Ranks[3] },
+                { "Vorlof", Ranks[2] },
+                { "JohnGato", Ranks[2] },
+                { "Pill", Ranks[1] },
+                { "Ishikawa", Ranks[0] },
+                { "Legend", Ranks[0] },
+                { "Styax", Ranks[0] },
+            };
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Chaos
 
                 writer.Write(Members.Count);
 
-                foreach (var kvp in Members)
+                foreach (KeyValuePair<string, string> kvp in Members)
                 {
                     writer.Write(kvp.Key);
                     writer.Write(kvp.Value);

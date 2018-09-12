@@ -13,16 +13,16 @@ namespace Chaos
 {
     internal struct Tile
     {
-        internal byte[] sotp => Properties.Resources.sotp;
-        internal short Background { get; }
-        internal short LeftForeground { get; }
-        internal short RightForeground { get; }
-        public bool IsWall => (LeftForeground > 0 && (sotp[LeftForeground - 1] & 15) == 15) || (RightForeground > 0 && (sotp[RightForeground - 1] & 15) == 15);
+        internal static byte[] SOTP => Properties.Resources.sotp;
+        internal ushort Background { get; }
+        internal ushort LeftForeground { get; }
+        internal ushort RightForeground { get; }
+        public bool IsWall => (LeftForeground > 0 && (SOTP[LeftForeground - 1] & 15) == 15) || (RightForeground > 0 && (SOTP[RightForeground - 1] & 15) == 15);
 
         /// <summary>
         /// Master constructor for a structure representing a single tile on a map, containing it's visual data.
         /// </summary>
-        internal Tile(short background, short leftForeground, short rightForeground)
+        internal Tile(ushort background, ushort leftForeground, ushort rightForeground)
         {
             Background = background;
             LeftForeground = leftForeground;

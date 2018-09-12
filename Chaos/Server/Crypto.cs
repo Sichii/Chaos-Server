@@ -256,10 +256,7 @@ namespace Chaos
 
             return Encoding.ASCII.GetBytes(saltTable);
         }
-        internal static ushort Generate16(byte[] data)
-        {
-            return Generate16(data, 0, data.Length);
-        }
+        internal static ushort Generate16(byte[] data) => Generate16(data, 0, data.Length);
         internal static ushort Generate16(byte[] data, int index, int length)
         {
             uint checkSum = 0;
@@ -278,14 +275,16 @@ namespace Chaos
 
         public static void EncryptFile(MemoryStream fileData, string path)
         {
-            DESCryptoServiceProvider DES = new DESCryptoServiceProvider();
-            DES.Key = Encoding.ASCII.GetBytes(key1);
-            DES.IV = Encoding.ASCII.GetBytes(key2);
+            var DES = new DESCryptoServiceProvider()
+            {
+                Key = Encoding.ASCII.GetBytes(key1),
+                IV = Encoding.ASCII.GetBytes(key2)
+            };
+
 
             FileStream file = File.Create(path);
             ICryptoTransform encryptor = DES.CreateEncryptor();
-
-            using (CryptoStream crypt = new CryptoStream(file, encryptor, CryptoStreamMode.Write))
+            using (var crypt = new CryptoStream(file, encryptor, CryptoStreamMode.Write))
             {
                 byte[] data = fileData.ToArray();
                 crypt.Write(data, 0, data.Length);
@@ -293,15 +292,17 @@ namespace Chaos
         }
         public static MemoryStream DecryptFile(string path)
         {
-            DESCryptoServiceProvider DES = new DESCryptoServiceProvider();
-            DES.Key = Encoding.ASCII.GetBytes(key1);
-            DES.IV = Encoding.ASCII.GetBytes(key2);
+            var DES = new DESCryptoServiceProvider()
+            {
+                Key = Encoding.ASCII.GetBytes(key1),
+                IV = Encoding.ASCII.GetBytes(key2)
+            };
 
             FileStream file = File.OpenRead(path);
             ICryptoTransform decryptor = DES.CreateDecryptor();
-            CryptoStream crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read);
+            var crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read);
 
-            using (StreamReader reader = new StreamReader(crypt))
+            using (var reader = new StreamReader(crypt))
                 return new MemoryStream(Encoding.Unicode.GetBytes(reader.ReadToEnd()));
         }
     }

@@ -20,7 +20,7 @@ namespace Chaos
         public string Name { get; }
         public ushort MapId { get; }
         public Point Point { get; }
-        internal Location Location => new Location(MapId, Point);
+        internal Location Location => (MapId, Point);
 
         /// <summary>
         /// Master constructor for a structure representing an in-game clickable node on a world map. Position on the world map, and the warp information are stored here.
@@ -40,8 +40,8 @@ namespace Chaos
         {
             get
             {
-                MemoryStream data = new MemoryStream();
-                using (BinaryWriter writer = new BinaryWriter(data))
+                var data = new MemoryStream();
+                using (var writer = new BinaryWriter(data))
                 {
                     writer.Write(Encoding.Unicode.GetBytes(Name));
                     writer.Write(MapId);

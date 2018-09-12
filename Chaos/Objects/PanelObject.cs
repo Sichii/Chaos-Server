@@ -48,7 +48,7 @@ namespace Chaos
         /// Master constructor for an object that exists within the in-game panels.
         /// </summary>
         internal PanelObject(byte slot, ushort sprite, string name, TimeSpan baseCooldown, Animation effectAnimation , TargetsType targetType = TargetsType.None, bool usersOnly = false, 
-            BodyAnimation bodyAnimation = 0, int baseDamage = 0, Effect effect = default(Effect))
+            BodyAnimation bodyAnimation = 0, int baseDamage = 0, Effect effect = default)
         {
             Slot = slot;
             Sprite = sprite;

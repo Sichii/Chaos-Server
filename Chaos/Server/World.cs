@@ -13,6 +13,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Chaos
 {
@@ -46,7 +47,7 @@ namespace Chaos
             Server.WriteLog("Creating world objects...");
 
             #region Load Maps
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.MapData)))
+            using (var reader = new BinaryReader(new MemoryStream(Server.DataBase.MapData)))
             {
                 reader.ReadInt32();
 
@@ -56,7 +57,7 @@ namespace Chaos
                 {
                     string field = reader.ReadString();
                     byte nodeCount = reader.ReadByte();
-                    WorldMapNode[] nodes = new WorldMapNode[nodeCount];
+                    var nodes = new WorldMapNode[nodeCount];
                     for (int i = 0; i < nodeCount; i++)
                     {
                         ushort x = reader.ReadUInt16();
@@ -65,10 +66,10 @@ namespace Chaos
                         ushort mapId = reader.ReadUInt16();
                         byte dX = reader.ReadByte();
                         byte dY = reader.ReadByte();
-                        nodes[i] = new WorldMapNode(new Point(x, y), name, mapId, new Point(dX, dY));
+                        nodes[i] = new WorldMapNode((x, y), name, mapId, (dX, dY));
                     }
 
-                    WorldMap worldMap = new WorldMap(field, nodes);
+                    var worldMap = new WorldMap(field, nodes);
 
                     uint checkSum = worldMap.GetCheckSum();
                     WorldMaps[checkSum] = worldMap;
@@ -83,22 +84,19 @@ namespace Chaos
                     byte sizeX = reader.ReadByte();
                     byte sizeY = reader.ReadByte();
                     string name = reader.ReadString();
-                    MapFlags flags = (MapFlags)reader.ReadUInt32();
+                    var flags = (MapFlags)reader.ReadUInt32();
                     sbyte music = reader.ReadSByte();
-                    Map newMap = new Map(mapId, sizeX, sizeY, flags, name, music);
+                    var newMap = new Map(mapId, sizeX, sizeY, flags, name, music);
+                    newMap.LoadData($@"{Paths.MapFiles}lod{newMap.Id}.map");
 
-                    //load doors
-                    byte doorCount = reader.ReadByte();
-                    for (byte b = 0; b < doorCount; b++)
-                    {
-                        ushort x = reader.ReadUInt16();
-                        ushort y = reader.ReadUInt16();
-                        bool opensRight = reader.ReadBoolean();
-                        newMap.Doors[new Point(x, y)] = new Door(mapId, x, y, false, opensRight);
-                    }
+                    //unused index byte for future use
+                    reader.ReadByte();
 
                     //load warps
                     ushort warpCount = reader.ReadUInt16();
+                    var eff = new Effect(4500, TimeSpan.Zero, false, new Animation(96, 0, 250));
+                    var doorPoints = newMap.GetAllObjects<Door>().Select(d => d.Point).ToList();
+
                     for (int i = 0; i < warpCount; i++)
                     {
                         byte sourceX = reader.ReadByte();
@@ -106,9 +104,12 @@ namespace Chaos
                         ushort targetMapId = reader.ReadUInt16();
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
-                        Warp warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
-                        newMap.Warps[new Point(sourceX, sourceY)] = warp;
-                        newMap.AddEffect(new Effect(4500, TimeSpan.Zero, false, new Animation(warp.Point, 96, 250)));
+                        bool shouldDisplay = !doorPoints.Contains((sourceX, sourceY));
+                        var warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId, shouldDisplay);
+                        newMap.Warps[(sourceX, sourceY)] = warp;
+
+                        if (shouldDisplay)
+                            newMap.AddEffect(eff.GetTargetedEffect((sourceX, sourceY)));
                     }
 
                     //load worldmaps for this map
@@ -119,26 +120,25 @@ namespace Chaos
                         byte y = reader.ReadByte();
                         uint CheckSum = reader.ReadUInt32();
                         if (WorldMaps.ContainsKey(CheckSum))
-                            newMap.WorldMaps[new Point(x, y)] = WorldMaps[CheckSum];
+                            newMap.WorldMaps[(x, y)] = WorldMaps[CheckSum];
                     }
 
                     //add the map to the map list
                     Maps.Add(mapId, newMap);
-                    newMap.LoadData($@"{Paths.MapFiles}lod{newMap.Id}.map");
                 }
             }
 
             Guilds.TryAdd(CONSTANTS.DEVELOPER_GUILD_NAME, new Guild());
 
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Server.DataBase.GuildData)))
+            using (var reader = new BinaryReader(new MemoryStream(Server.DataBase.GuildData)))
             {
                 int count = reader.ReadInt32();
 
                 for (int i = 0; i < count; i++)
                 {
                     string name;
-                    List<string> ranks = new List<string>();
-                    Dictionary<string, string> members = new Dictionary<string, string>();
+                    var ranks = new List<string>();
+                    var members = new Dictionary<string, string>();
 
                     name = reader.ReadString();
                     for (int x = 0; x < reader.ReadInt32(); x++)
@@ -162,8 +162,8 @@ namespace Chaos
         {
             Server.WriteLog("Saving world...");
 
-            using (MemoryStream buffer = new MemoryStream())
-            using (BinaryWriter writer = new BinaryWriter(buffer))
+            var buffer = new MemoryStream();
+            using (var writer = new BinaryWriter(buffer))
             {
                 writer.Write(Guilds.Count - 1);
                 foreach (Guild guild in Guilds.Values)

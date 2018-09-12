@@ -32,8 +32,10 @@ namespace ChaosTool
         internal MapsCache(MainForm mainForm)
         {
             //create the serializing cache db
-            JsonSerializerSettings jSettings = new JsonSerializerSettings();
-            jSettings.TypeNameHandling = TypeNameHandling.All;
+            var jSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
             Serializer = new NewtonsoftSerializer(jSettings);
             DataConnection = ConnectionMultiplexer.Connect("localhost:6379");
             Cache = new StackExchangeRedisCacheClient(DataConnection, Serializer);
@@ -48,7 +50,7 @@ namespace ChaosTool
         }
         internal void Load()
         {
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Cache.Get<byte[]>(MapKey))))
+            using (var reader = new BinaryReader(new MemoryStream(Cache.Get<byte[]>(MapKey))))
             {
                 reader.ReadInt32();
 
@@ -59,7 +61,7 @@ namespace ChaosTool
                     string field = reader.ReadString();
 
                     byte nodeCount = reader.ReadByte();
-                    Chaos.WorldMapNode[] nodes = new Chaos.WorldMapNode[nodeCount];
+                    var nodes = new Chaos.WorldMapNode[nodeCount];
                     for (int i = 0; i < nodeCount; i++)
                     {
                         ushort x = reader.ReadUInt16();
@@ -68,10 +70,10 @@ namespace ChaosTool
                         ushort mapId = reader.ReadUInt16();
                         byte dX = reader.ReadByte();
                         byte dY = reader.ReadByte();
-                        nodes[i] = new Chaos.WorldMapNode(new Chaos.Point(x, y), name, mapId, new Chaos.Point(dX, dY));
+                        nodes[i] = new Chaos.WorldMapNode((x, y), name, mapId, (dX, dY));
                     }
 
-                    Chaos.WorldMap worldMap = new Chaos.WorldMap(field, nodes);
+                    var worldMap = new Chaos.WorldMap(field, nodes);
                     uint crc32 = worldMap.GetCheckSum();
                     WorldMaps[crc32] = worldMap;
                 }
@@ -84,19 +86,12 @@ namespace ChaosTool
                     byte sizeX = reader.ReadByte();
                     byte sizeY = reader.ReadByte();
                     string name = reader.ReadString();
-                    Chaos.MapFlags flags = (Chaos.MapFlags)reader.ReadUInt32();
+                    var flags = (Chaos.MapFlags)reader.ReadUInt32();
                     sbyte music = reader.ReadSByte();
-                    Chaos.Map newMap = new Chaos.Map(mapId, sizeX, sizeY, flags, name, music);
+                    var newMap = new Chaos.Map(mapId, sizeX, sizeY, flags, name, music);
 
-                    //load doors
-                    byte doorCount = reader.ReadByte();
-                    for (byte b = 0; b < doorCount; b++)
-                    {
-                        ushort x = reader.ReadUInt16();
-                        ushort y = reader.ReadUInt16();
-                        bool opensRight = reader.ReadBoolean();
-                        newMap.Doors[new Chaos.Point(x, y)] = new Chaos.Door(mapId, x, y, false, opensRight);
-                    }
+                    //unused index byte for future use
+                    reader.ReadByte();
 
                     //load warps
                     short warpCount = reader.ReadInt16();
@@ -107,8 +102,8 @@ namespace ChaosTool
                         ushort targetMapId = reader.ReadUInt16();
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
-                        Chaos.Warp warp = new Chaos.Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
-                        newMap.Warps[new Chaos.Point(sourceX, sourceY)] = warp;
+                        var warp = new Chaos.Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
+                        newMap.Warps[(sourceX, sourceY)] = warp;
                     }
 
                     //load worldmaps for this map
@@ -119,7 +114,7 @@ namespace ChaosTool
                         byte y = reader.ReadByte();
                         uint CRC = reader.ReadUInt32();
                         if (WorldMaps.ContainsKey(CRC))
-                            newMap.WorldMaps[new Chaos.Point(x, y)] = WorldMaps[CRC];
+                            newMap.WorldMaps[(x, y)] = WorldMaps[CRC];
                     }
 
                     //add the map to the map list
@@ -131,8 +126,8 @@ namespace ChaosTool
 
         internal void Save()
         {
-            using (MemoryStream cacheStream = new MemoryStream())
-            using (BinaryWriter writer = new BinaryWriter(cacheStream))
+            var cacheStream = new MemoryStream();
+            using (var writer = new BinaryWriter(cacheStream))
             {
                 writer.Write(1);
 
@@ -141,7 +136,7 @@ namespace ChaosTool
                 foreach (Chaos.WorldMap worldMap in WorldMaps.Values)
                 {
                     writer.Write(worldMap.Field);
-                    writer.Write((byte)worldMap.Nodes.Length);
+                    writer.Write((byte)worldMap.Nodes.Count);
                     foreach (Chaos.WorldMapNode worldMapNode in worldMap.Nodes)
                     {
                         writer.Write(worldMapNode.Position.X);
@@ -165,14 +160,8 @@ namespace ChaosTool
                     writer.Write((uint)map.Flags);
                     writer.Write(map.Music);
 
-                    //write doors
-                    writer.Write((byte)map.Doors.Count);
-                    foreach (Chaos.Door door in map.Doors.Values)
-                    {
-                        writer.Write(door.Point.X);
-                        writer.Write(door.Point.Y);
-                        writer.Write(door.OpenRight);
-                    }
+                    //unused index for future use
+                    writer.Write((byte)0);
 
                     //write warps
                     writer.Write((ushort)map.Warps.Count);

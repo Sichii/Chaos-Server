@@ -16,7 +16,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Chaos
 {
@@ -59,8 +59,10 @@ namespace Chaos
                 Directory.CreateDirectory(Paths.LogFiles);
 
             LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
-            LogWriter = new StreamWriter(LogFile);
-            LogWriter.AutoFlush = true;
+            LogWriter = new StreamWriter(LogFile)
+            {
+                AutoFlush = true
+            };
             Today = DateTime.MinValue;
 
             WriteLog("Initializing server...");
@@ -79,8 +81,8 @@ namespace Chaos
             using (MemoryStream compressor = ZLIB.Compress(notif))
                 LoginMessage = compressor.ToArray();
 
-            MemoryStream tableStream = new MemoryStream();
-            using (BinaryWriter writer = new BinaryWriter(tableStream))
+            var tableStream = new MemoryStream();
+            using (var writer = new BinaryWriter(tableStream))
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
@@ -106,7 +108,7 @@ namespace Chaos
             LogFile.Dispose();
         }
 
-        internal void ServerLoop()
+        internal async void ProcessSendQueueAsync()
         {
             Running = true;
             Game.Set(this);
@@ -122,6 +124,8 @@ namespace Chaos
 
             while (Running)
             {
+                long oldTime = Utility.CurrentTicks;
+
                 lock (Sync)
                 {
                     foreach (Client client in Clients.Values)
@@ -155,7 +159,7 @@ namespace Chaos
                     }
                 }
 
-                Thread.Sleep(100);
+                await Task.Delay(Utility.ClampedDeltaTime(oldTime, 100));
             }
         }
 
@@ -194,7 +198,7 @@ namespace Chaos
             if (clientSocket.Connected)
             {
                 //create the user, and add them to the userlist
-                Client newClient = new Client(this, clientSocket);
+                var newClient = new Client(this, clientSocket);
 
                 WriteLog($@"Incoming connection", newClient);
 

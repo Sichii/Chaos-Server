@@ -10,10 +10,14 @@
 // ****************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+#pragma warning disable IDE0007 // Use implicit type
+#pragma warning disable IDE0003 // Remove qualification
 
 namespace ChaosTool
 {
+
     internal class MainForm : Form
     {
         internal System.ComponentModel.IContainer components = null;
@@ -42,7 +46,6 @@ namespace ChaosTool
         private Label flagsSumLbl;
         private GroupBox addWarpGbox;
         private GroupBox addWorldMapGbox;
-        private GroupBox addDoorGbox;
         private CheckBox pvpCbox;
         private Button changeBtn;
         private Button deleteMapBtn;
@@ -125,7 +128,6 @@ namespace ChaosTool
             this.sourceXNum = new System.Windows.Forms.NumericUpDown();
             this.sourceXLbl = new System.Windows.Forms.Label();
             this.addWorldMapGbox = new System.Windows.Forms.GroupBox();
-            this.addDoorGbox = new System.Windows.Forms.GroupBox();
             this.mainTabControl.SuspendLayout();
             this.mapsTab.SuspendLayout();
             this.worldMapsTab.SuspendLayout();
@@ -145,14 +147,18 @@ namespace ChaosTool
             // MapTree
             // 
             this.MapTree.BackColor = System.Drawing.Color.White;
+            this.MapTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MapTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MapTree.ForeColor = System.Drawing.Color.Black;
+            this.MapTree.FullRowSelect = true;
+            this.MapTree.HideSelection = false;
+            this.MapTree.HotTracking = true;
             this.MapTree.Location = new System.Drawing.Point(4, 4);
             this.MapTree.Margin = new System.Windows.Forms.Padding(4);
             this.MapTree.Name = "MapTree";
             this.MapTree.Size = new System.Drawing.Size(418, 482);
             this.MapTree.TabIndex = 0;
-            this.MapTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseDoubleClick);
+            this.MapTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseClick);
             // 
             // mainTabControl
             // 
@@ -315,7 +321,7 @@ namespace ChaosTool
             this.deleteMapBtn.TabIndex = 29;
             this.deleteMapBtn.Text = "Delete Selected";
             this.deleteMapBtn.UseVisualStyleBackColor = true;
-            this.deleteMapBtn.Click += new System.EventHandler(this.deleteMapBtn_Click);
+            this.deleteMapBtn.Click += new System.EventHandler(this.DeleteMapBtn_Click);
             // 
             // changeBtn
             // 
@@ -328,7 +334,7 @@ namespace ChaosTool
             this.changeBtn.TabIndex = 28;
             this.changeBtn.Text = "Change Selected";
             this.changeBtn.UseVisualStyleBackColor = true;
-            this.changeBtn.Click += new System.EventHandler(this.changeBtn_Click);
+            this.changeBtn.Click += new System.EventHandler(this.ChangeBtn_Click);
             // 
             // pvpCbox
             // 
@@ -339,7 +345,7 @@ namespace ChaosTool
             this.pvpCbox.TabIndex = 27;
             this.pvpCbox.Text = "PvP";
             this.pvpCbox.UseVisualStyleBackColor = true;
-            this.pvpCbox.CheckedChanged += new System.EventHandler(this.pvpCbox_CheckedChanged);
+            this.pvpCbox.CheckedChanged += new System.EventHandler(this.PvPCbox_CheckedChanged);
             // 
             // addMapBtn
             // 
@@ -352,7 +358,7 @@ namespace ChaosTool
             this.addMapBtn.TabIndex = 26;
             this.addMapBtn.Text = "Add Map";
             this.addMapBtn.UseVisualStyleBackColor = true;
-            this.addMapBtn.Click += new System.EventHandler(this.addMapBtn_Click);
+            this.addMapBtn.Click += new System.EventHandler(this.AddMapBtn_Click);
             // 
             // mapNameTbox
             // 
@@ -384,7 +390,7 @@ namespace ChaosTool
             this.noSpellsCbox.TabIndex = 23;
             this.noSpellsCbox.Text = "NoSpells";
             this.noSpellsCbox.UseVisualStyleBackColor = true;
-            this.noSpellsCbox.CheckedChanged += new System.EventHandler(this.noSpellsCbox_CheckedChanged);
+            this.noSpellsCbox.CheckedChanged += new System.EventHandler(this.NoSpellsCbox_CheckedChanged);
             // 
             // noSkillsCbox
             // 
@@ -395,7 +401,7 @@ namespace ChaosTool
             this.noSkillsCbox.TabIndex = 22;
             this.noSkillsCbox.Text = "NoSkills";
             this.noSkillsCbox.UseVisualStyleBackColor = true;
-            this.noSkillsCbox.CheckedChanged += new System.EventHandler(this.noSkillsCbox_CheckedChanged);
+            this.noSkillsCbox.CheckedChanged += new System.EventHandler(this.NoSkillsCbox_CheckedChanged);
             // 
             // snowCbox
             // 
@@ -406,7 +412,7 @@ namespace ChaosTool
             this.snowCbox.TabIndex = 21;
             this.snowCbox.Text = "Snow";
             this.snowCbox.UseVisualStyleBackColor = true;
-            this.snowCbox.CheckedChanged += new System.EventHandler(this.snowCbox_CheckedChanged);
+            this.snowCbox.CheckedChanged += new System.EventHandler(this.SnowCbox_CheckedChanged);
             // 
             // hostileCbox
             // 
@@ -417,7 +423,7 @@ namespace ChaosTool
             this.hostileCbox.TabIndex = 20;
             this.hostileCbox.Text = "Hostile";
             this.hostileCbox.UseVisualStyleBackColor = true;
-            this.hostileCbox.CheckedChanged += new System.EventHandler(this.hostileCbox_CheckedChanged);
+            this.hostileCbox.CheckedChanged += new System.EventHandler(this.HostileCbox_CheckedChanged);
             // 
             // musicNum
             // 
@@ -553,7 +559,7 @@ namespace ChaosTool
             this.changeWarpBtn.TabIndex = 30;
             this.changeWarpBtn.Text = "Change Selected";
             this.changeWarpBtn.UseVisualStyleBackColor = true;
-            this.changeWarpBtn.Click += new System.EventHandler(this.changeWarpBtn_Click);
+            this.changeWarpBtn.Click += new System.EventHandler(this.ChangeWarpBtn_Click);
             // 
             // addWarpBtn
             // 
@@ -566,7 +572,7 @@ namespace ChaosTool
             this.addWarpBtn.TabIndex = 30;
             this.addWarpBtn.Text = "Add Warp to Selected Map";
             this.addWarpBtn.UseVisualStyleBackColor = true;
-            this.addWarpBtn.Click += new System.EventHandler(this.addWarpBtn_Click);
+            this.addWarpBtn.Click += new System.EventHandler(this.AddWarpBtn_Click);
             // 
             // deleteWarpBtn
             // 
@@ -579,7 +585,7 @@ namespace ChaosTool
             this.deleteWarpBtn.TabIndex = 30;
             this.deleteWarpBtn.Text = "Delete Selected";
             this.deleteWarpBtn.UseVisualStyleBackColor = true;
-            this.deleteWarpBtn.Click += new System.EventHandler(this.deleteWarpBtn_Click);
+            this.deleteWarpBtn.Click += new System.EventHandler(this.DeleteWarpBtn_Click);
             // 
             // targetIDNum
             // 
@@ -739,22 +745,12 @@ namespace ChaosTool
             // addWorldMapGbox
             // 
             this.addWorldMapGbox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.addWorldMapGbox.Location = new System.Drawing.Point(434, 390);
+            this.addWorldMapGbox.Location = new System.Drawing.Point(434, 260);
             this.addWorldMapGbox.Name = "addWorldMapGbox";
             this.addWorldMapGbox.Size = new System.Drawing.Size(652, 129);
             this.addWorldMapGbox.TabIndex = 16;
             this.addWorldMapGbox.TabStop = false;
             this.addWorldMapGbox.Text = "Add WorldMap";
-            // 
-            // addDoorGbox
-            // 
-            this.addDoorGbox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.addDoorGbox.Location = new System.Drawing.Point(434, 260);
-            this.addDoorGbox.Name = "addDoorGbox";
-            this.addDoorGbox.Size = new System.Drawing.Size(652, 130);
-            this.addDoorGbox.TabIndex = 16;
-            this.addDoorGbox.TabStop = false;
-            this.addDoorGbox.Text = "Add Door";
             // 
             // MainForm
             // 
@@ -763,7 +759,6 @@ namespace ChaosTool
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1086, 519);
             this.Controls.Add(this.addWorldMapGbox);
-            this.Controls.Add(this.addDoorGbox);
             this.Controls.Add(this.addWarpGbox);
             this.Controls.Add(this.addMapGbox);
             this.Controls.Add(this.addWorldMapNodeLbl);
@@ -808,25 +803,37 @@ namespace ChaosTool
                 foreach (Chaos.Map map in MapsCache.Maps.Values)
                 {
                     //each map gets a node
-                    MapTreeNode Map = new MapTreeNode(map, $@"{map.Name} - {map.Id} ({map.SizeX},{map.SizeY})");
+                    var Map = new MapTreeNode(map, $@"{map.Name} - {map.Id} ({map.SizeX},{map.SizeY})");
 
-                    TreeNode Warps = new TreeNode("Warps");
-                    TreeNode Doors = new TreeNode("Doors");
-                    TreeNode WorldMaps = new TreeNode("WorldMaps");
+                    var Warps = new TreeNode("Warps")
+                    {
+                        Name = "Warps"
+                    };
+                    var Doors = new TreeNode("Doors")
+                    {
+                        Name = "Doors"
+                    };
+                    var WorldMaps = new TreeNode("WorldMaps")
+                    {
+                        Name = "WorldMaps"
+                    };
                     Map.Nodes.Add(Warps);
                     Map.Nodes.Add(Doors);
                     Map.Nodes.Add(WorldMaps);
 
                     //each warp gets a subnode
                     foreach (Chaos.Warp warp in map.Warps.Values)
-                        Warps.Nodes.Add(new WarpTreeNode(warp, $@"{warp.Point} => {warp.TargetMapId} : {warp.TargetPoint} - ({MapsCache.Maps[warp.TargetMapId].Name})"));
-
-                    //each door gets a subnode
-                    foreach (Chaos.Door door in map.Doors.Values)
-                        Doors.Nodes.Add(new DoorTreeNode(door, $@"{door.Point} - Opens: {(door.OpenRight ? "Right" : "Left")}"));
+                        try
+                        {
+                            Warps.Nodes.Add(new WarpTreeNode(warp, $@"{warp.Point} => {warp.TargetMapId} : {warp.TargetPoint} - ({MapsCache.Maps[warp.TargetMapId].Name})"));
+                        }
+                        catch
+                        {
+                            MessageBox.Show($@"A warp's target map doesn't exist. TargetMapID={warp.TargetMapId}", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
 
                     //each worldmap gets a subnode
-                    foreach (var kvp in map.WorldMaps)
+                    foreach (KeyValuePair<Chaos.Point, Chaos.WorldMap> kvp in map.WorldMaps)
                         WorldMaps.Nodes.Add(new WorldMapTreeNode(kvp.Value, $@"{kvp.Key.ToString()} => {kvp.Value.GetCheckSum()}"));
 
                     //add this map to the map tree
@@ -834,10 +841,10 @@ namespace ChaosTool
                 }
 
                 //for each worldmap
-                foreach (var kvp in MapsCache.WorldMaps)
+                foreach (KeyValuePair<uint, Chaos.WorldMap> kvp in MapsCache.WorldMaps)
                 {
                     //each worldmap gets a node
-                    WorldMapTreeNode WorldMap = new WorldMapTreeNode(kvp.Value, kvp.Key.ToString());
+                    var WorldMap = new WorldMapTreeNode(kvp.Value, kvp.Key.ToString());
 
                     //each worldmapnode gets a subnode
                     foreach (Chaos.WorldMapNode wmn in kvp.Value.Nodes)
@@ -849,7 +856,7 @@ namespace ChaosTool
             }
         }
 
-        private void addMapBtn_Click(object sender, EventArgs e)
+        private void AddMapBtn_Click(object sender, EventArgs e)
         {
             try
             {
@@ -859,14 +866,13 @@ namespace ChaosTool
                 byte sizeX = decimal.ToByte(sizeXNum.Value);
                 byte sizeY = decimal.ToByte(sizeYNum.Value);
                 sbyte music = decimal.ToSByte(musicNum.Value);
-                uint flags = 0;
 
                 if (MapsCache.Maps.ContainsKey(mapId))
                     message = $@"Map ID:{mapIdNum.Value} is already in use. Overwrite? Will delete doors and warps.";
                 else
                     message = $@"Add this as a new map? Make sure info is correct.";
 
-                if (uint.TryParse(flagsSumLbl.Text, out flags))
+                if (uint.TryParse(flagsSumLbl.Text, out uint flags))
                 {
                     if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
@@ -884,39 +890,72 @@ namespace ChaosTool
             }
         }
 
-        private void changeBtn_Click(object sender, EventArgs e)
+        private void ChangeBtn_Click(object sender, EventArgs e)
         {
             try
             {
-                string message = "";
-                string mapName = mapNameTbox.Text;
-                ushort mapId = (MapTree.SelectedNode as MapTreeNode)?.Map.Id ?? 0;
-                byte sizeX = decimal.ToByte(sizeXNum.Value);
-                byte sizeY = decimal.ToByte(sizeYNum.Value);
-                sbyte music = decimal.ToSByte(musicNum.Value);
-                uint flags = 0;
-
-                if (!MapsCache.Maps.ContainsKey(mapId))
-                    MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else
+                if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
-                    message = $@"Change map info related to Map ID: {mapId}? Doors and warps will stay.";
+                    string message = "";
+                    string mapName = mapNameTbox.Text;
+                    ushort mapId = tMapTreeNode.Map.Id;
+                    byte sizeX = decimal.ToByte(sizeXNum.Value);
+                    byte sizeY = decimal.ToByte(sizeYNum.Value);
+                    sbyte music = decimal.ToSByte(musicNum.Value);
+                    uint flags = 0;
 
-                    if (uint.TryParse(flagsSumLbl.Text, out flags))
+                    if (!MapsCache.Maps.ContainsKey(mapId))
+                        MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
                     {
+                        message = $@"Change map info related to Map ID: {mapId}? Doors and warps will stay.";
+
+                        if (uint.TryParse(flagsSumLbl.Text, out flags))
+                        {
+                            if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                            {
+                                MapsCache.Maps[mapId].Name = mapName;
+                                MapsCache.Maps[mapId].SizeX = sizeX;
+                                MapsCache.Maps[mapId].SizeY = sizeY;
+                                MapsCache.Maps[mapId].Music = music;
+                                MapsCache.Maps[mapId].Flags = (Chaos.MapFlags)flags;
+                                MapsCache.Save();
+                                LoadTree();
+                                MapTree.SelectedNode = MapTree.Nodes[mapName];
+                            }
+                        }
+                        else
+                            MessageBox.Show("Flag error.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteMapBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {;
+                if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
+                {
+                    string message = "";
+                    ushort mapId = tMapTreeNode.Map.Id;
+
+                    if (!MapsCache.Maps.ContainsKey(mapId))
+                        MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        message = $@"Delete Map ID: {mapId}? This will destroy doors, warps, and the info.";
                         if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                         {
-                            MapsCache.Maps[mapId].Name = mapName;
-                            MapsCache.Maps[mapId].SizeX = sizeX;
-                            MapsCache.Maps[mapId].SizeY = sizeY;
-                            MapsCache.Maps[mapId].Music = music;
-                            MapsCache.Maps[mapId].Flags = (Chaos.MapFlags)flags;
+                            MapsCache.Maps.Remove(mapId);
                             MapsCache.Save();
                             LoadTree();
                         }
                     }
-                    else
-                        MessageBox.Show("Flag error.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch
@@ -925,23 +964,55 @@ namespace ChaosTool
             }
         }
 
-        private void deleteMapBtn_Click(object sender, EventArgs e)
+        private void AddWarpBtn_Click(object sender, EventArgs e)
         {
             try
             {
-                string message = "";
-                ushort mapId = (MapTree.SelectedNode as MapTreeNode)?.Map.Id ?? 0;
-
-                if (!MapsCache.Maps.ContainsKey(mapId))
-                    MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else
+                if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
-                    message = $@"Delete Map ID: {mapId}? This will destroy doors, warps, and the info.";
-                    if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                    Chaos.Map map = tMapTreeNode.Map;
+                    var warp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, map.Id, (ushort)targetIDNum.Value);
+
+                    if (map.Warps.ContainsKey(warp.Point))
+                        MessageBox.Show("Map already contains warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                        map.Warps.Add(warp.Point, warp);
+
+                    MapsCache.Save();
+                    LoadTree();
+                    MapTree.Nodes[map.Name].Expand();
+                    MapTree.Nodes[map.Name].Nodes["Warps"].Expand();
+                    MapTree.SelectedNode = MapTree.Nodes[map.Name];
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ChangeWarpBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
+                {
+                    Chaos.Warp oldWarp = tWarpTreeNode.Warp;
+                    Chaos.Map map = MapsCache.Maps[oldWarp.MapId];
+                    var newWarp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, oldWarp.MapId, (ushort)targetIDNum.Value);
+
+                    if (!map.Warps.ContainsKey(oldWarp.Point))
+                        MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
                     {
-                        MapsCache.Maps.Remove(mapId);
+                        map.Warps.Remove(oldWarp.Point);
+                        map.Warps.Add(newWarp.Point, newWarp);
+
                         MapsCache.Save();
                         LoadTree();
+                        MapTree.Nodes[map.Name].Expand();
+                        MapTree.Nodes[map.Name].Nodes["Warps"].Expand();
+                        MapTree.SelectedNode = MapTree.Nodes[map.Name].Nodes["Warps"].Nodes[newWarp.Point.ToString()];
                     }
                 }
             }
@@ -951,109 +1022,48 @@ namespace ChaosTool
             }
         }
 
-        private void addWarpBtn_Click(object sender, EventArgs e)
+        private void DeleteWarpBtn_Click(object sender, EventArgs e)
         {
-            try
+            if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
             {
-                Chaos.Map map = (MapTree.SelectedNode as MapTreeNode)?.Map;
-                Chaos.Warp warp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, map.Id, (ushort)targetIDNum.Value);
+                Chaos.Warp warp = tWarpTreeNode.Warp;
+                Chaos.Map map = MapsCache.Maps[warp.MapId];
 
-                if (map == null)
-                    MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else if (map.Warps.ContainsKey(warp.Point))
-                    MessageBox.Show("Map already contains warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else
-                    map.Warps.Add(warp.Point, warp);
-
-                MapsCache.Save();
-                LoadTree();
-            }
-            catch
-            {
-                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void changeWarpBtn_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Chaos.Warp oldWarp = (MapTree.SelectedNode as WarpTreeNode)?.Warp;
-                Chaos.Warp newWarp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, oldWarp.MapId, (ushort)targetIDNum.Value);
-                Chaos.Map map = MapsCache.Maps[oldWarp.MapId];
-
-                if (map == null)
-                    MessageBox.Show("Map doesn't exist, please select a valid warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                else if (!map.Warps.ContainsKey(oldWarp.Point))
+                if (!map.Warps.ContainsKey(warp.Point))
                     MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 else
                 {
-                    map.Warps.Remove(oldWarp.Point);
-                    map.Warps.Add(newWarp.Point, newWarp);
+                    map.Warps.Remove(warp.Point);
 
                     MapsCache.Save();
                     LoadTree();
+                    MapTree.Nodes[map.Name].Expand();
+                    MapTree.Nodes[map.Name].Nodes["Warps"].Expand();
+                    MapTree.SelectedNode = MapTree.Nodes[map.Name];
                 }
             }
-            catch
-            {
-                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
-        private void deleteWarpBtn_Click(object sender, EventArgs e)
-        {
-            Chaos.Warp warp = (MapTree.SelectedNode as WarpTreeNode)?.Warp;
-            Chaos.Map map = MapsCache.Maps[warp.MapId];
+        private void HostileCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Hostile).ToString();
 
-            if (map == null)
-                MessageBox.Show("Map doesn't exist, please select a valid warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else if (!map.Warps.ContainsKey(warp.Point))
-                MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
-            {
-                map.Warps.Remove(warp.Point);
+        private void SnowCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Snowing).ToString();
 
-                MapsCache.Save();
-                LoadTree();
-            }
-        }
+        private void PvPCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.PvP).ToString();
 
-        private void hostileCbox_CheckedChanged(object sender, EventArgs e)
-        {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Hostile).ToString();
-        }
+        private void NoSpellsCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSpells).ToString();
 
-        private void snowCbox_CheckedChanged(object sender, EventArgs e)
-        {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Snowing).ToString();
-        }
-
-        private void pvpCbox_CheckedChanged(object sender, EventArgs e)
-        {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.PvP).ToString();
-        }
-
-        private void noSpellsCbox_CheckedChanged(object sender, EventArgs e)
-        {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSpells).ToString();
-        }
-
-        private void noSkillsCbox_CheckedChanged(object sender, EventArgs e)
-        {
-            flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSkills).ToString();
-        }
+        private void NoSkillsCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSkills).ToString();
 
         ~MainForm()
         {
             MapsCache.Save();
         }
 
-        private void MapTree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void MapTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if(e.Node is MapTreeNode)
+            if (e.Node is MapTreeNode tMapTreeNode)
             {
-                Chaos.Map map = (e.Node as MapTreeNode).Map;
+                Chaos.Map map = tMapTreeNode.Map;
 
                 mapIdNum.Value = map.Id;
                 sizeXNum.Value = map.SizeX;
@@ -1062,9 +1072,9 @@ namespace ChaosTool
                 flagsSumLbl.Text = map.Flags.ToString();
                 musicNum.Value = map.Music;
             }
-            else if(e.Node is WarpTreeNode)
+            else if (e.Node is WarpTreeNode tWarpTreeNode)
             {
-                Chaos.Warp warp = (e.Node as WarpTreeNode).Warp;
+                Chaos.Warp warp = tWarpTreeNode.Warp;
 
                 sourceXNum.Value = warp.SourceX;
                 sourceYNum.Value = warp.SourceY;
