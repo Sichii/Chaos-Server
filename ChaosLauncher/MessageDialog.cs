@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+#pragma warning disable IDE0007 // Use implicit type
+#pragma warning disable IDE0003 // Remove qualification
+
 
 namespace ChaosLauncher
 {
@@ -11,7 +14,7 @@ namespace ChaosLauncher
             if (owner.InvokeRequired)
                 return (DialogResult)owner.Invoke((Action)(() => Show(owner, location)));
             else
-                using (MessageDialog message = new MessageDialog())
+                using (var message = new MessageDialog())
                     return message.ShowDialog(location ?? owner);
         }
 
@@ -20,9 +23,6 @@ namespace ChaosLauncher
             InitializeComponent();
         }
 
-        private void gitLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start((sender as LinkLabel).Text);
-        }
+        private void GitLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) => Process.Start((sender as LinkLabel).Text);
     }
 }

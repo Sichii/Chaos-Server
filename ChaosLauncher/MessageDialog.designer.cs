@@ -52,13 +52,13 @@
             this.gitLink.Location = new System.Drawing.Point(0, 0);
             this.gitLink.Margin = new System.Windows.Forms.Padding(0);
             this.gitLink.Name = "gitLink";
-            this.gitLink.Padding = new System.Windows.Forms.Padding(10, 10, 10, 5);
-            this.gitLink.Size = new System.Drawing.Size(228, 28);
+            this.gitLink.Padding = new System.Windows.Forms.Padding(12, 10, 10, 5);
+            this.gitLink.Size = new System.Drawing.Size(230, 28);
             this.gitLink.TabIndex = 8;
             this.gitLink.TabStop = true;
             this.gitLink.Text = "https://github.com/zahdjinn/Chaos-Server";
             this.gitLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.gitLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.gitLink_LinkClicked);
+            this.gitLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.GitLink_LinkClicked);
             // 
             // MessageDialog
             // 

@@ -14,20 +14,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Chaos
 {
     public class Program
     {
         private static Server Server;
-        private static Thread ServerThread;
         private static void Main(string[] args)
         {
             Console.Title = "Chaos Server";
             Console.WindowWidth = 150;
             Console.WindowHeight = 30;
 
-            SetPaths();
+            Paths.Set();
 
             //create the server, start it in a new thread
             IPAddress localIP =
@@ -37,8 +37,7 @@ namespace Chaos
             Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 #endif
             Server = new Server(localIP, 2554);
-            ServerThread = new Thread(Server.ServerLoop);
-            ServerThread.Start();
+            Task.Factory.StartNew(Server.ProcessSendQueueAsync, TaskCreationOptions.LongRunning);
 
             while (Server.ServerSocket == null)
                 Thread.Sleep(10);
@@ -48,15 +47,6 @@ namespace Chaos
             //this thread will block for command line input for use as an admin panel
             while (Server.ServerSocket != null)
                 Console.ReadLine(); //we can do server commands here when the time comes
-        }
-
-        public static void SetPaths()
-        {
-            Paths.BaseDir = Properties.Resources.PATH[0].Trim('\n', '\r');
-            Paths.HostName = Properties.Resources.PATH[1].Trim('\n', '\r', ' ');
-
-            if (!Paths.BaseDir.EndsWith(@"\"))
-                Paths.BaseDir += @"\";
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Chaos
         internal ushort Sprite { get; }
         [JsonProperty]
         internal Map Map { get; set; }
-        internal Location Location => new Location(Map.Id, Point);
+        internal Location Location => (Map.Id, Point);
 
         /// <summary>
         /// Json & Master constructor for an object that is visible.

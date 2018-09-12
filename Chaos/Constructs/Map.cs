@@ -9,7 +9,6 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -21,7 +20,7 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     public sealed class Map
     {
-        internal readonly object Sync = new object();
+        private readonly object Sync = new object();
         private Dictionary<int, WorldObject> Objects;
         private List<Effect> Effects;
 
@@ -29,9 +28,9 @@ namespace Chaos
         internal byte[] Data { get; private set; }
         internal ushort CheckSum { get; private set; }
 
-        public ConcurrentDictionary<Point, Door> Doors { get; set; }
-        public Dictionary<Point, Warp> Warps { get; set; }
-        public Dictionary<Point, WorldMap> WorldMaps { get; set; }
+        public Dictionary<Point, Door> Doors { get; }
+        public Dictionary<Point, Warp> Warps { get; }
+        public Dictionary<Point, WorldMap> WorldMaps { get; }
         [JsonProperty]
         public ushort Id { get; }
         public byte SizeX { get; set; }
@@ -40,6 +39,12 @@ namespace Chaos
         public string Name { get; set; }
         public sbyte Music { get; set; }
 
+        /// <summary>
+        /// Checks if the map has a certain flag.
+        /// </summary>
+        internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
+
+        #region Constructor / Data
         /// <summary>
         /// Master constructor for an object representing an in-game map.
         /// </summary>
@@ -54,7 +59,7 @@ namespace Chaos
             Warps = new Dictionary<Point, Warp>();
             WorldMaps = new Dictionary<Point, WorldMap>();
             Objects = new Dictionary<int, WorldObject>();
-            Doors = new ConcurrentDictionary<Point, Door>();
+            Doors = new Dictionary<Point, Door>();
             Effects = new List<Effect>();
         }
 
@@ -83,12 +88,21 @@ namespace Chaos
                 int index = 0;
                 for (ushort y = 0; y < SizeY; y++)
                     for (ushort x = 0; x < SizeX; x++)
-                        Tiles[new Point(x, y)] = new Tile((short)(data[index++] | data[index++] << 8), (short)(data[index++] | data[index++] << 8), (short)(data[index++] | data[index++] << 8));
+                    {
+                        Tiles[(x, y)] = new Tile((ushort)(data[index++] | data[index++] << 8), (ushort)(data[index++] | data[index++] << 8), (ushort)(data[index++] | data[index++] << 8));
+
+                        if (CONSTANTS.DOOR_SPRITES.Contains(Tiles[(x, y)].LeftForeground))
+                            Doors[(x, y)] = new Door((Id, x, y), true, true);
+                        else if (CONSTANTS.DOOR_SPRITES.Contains(Tiles[(x, y)].RightForeground))
+                            Doors[(x, y)] = new Door((Id, x, y), true, false);
+                    }
             }
 
             CheckSum = Crypto.Generate16(Data);
         }
+        #endregion
 
+        #region WorldObjects
         /// <summary>
         /// Synchronously adds a single object to a map. Sends and sets all relevant data.
         /// </summary>
@@ -105,38 +119,36 @@ namespace Chaos
                 vObject.Point = point;
                 Objects.Add(vObject.Id, vObject);
 
-                List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
-                List<User> usersToSend = new List<User>();
+                var itemMonsterToSend = new List<VisibleObject>();
+                var usersToSend = new List<User>();
 
                 //get all objects that would be visible to this object and sort them
                 foreach (VisibleObject obj in vObject.Map.ObjectsVisibleFrom(vObject))
-                    if (obj is User)
-                        usersToSend.Add(obj as User);
+                    if (obj is User aUser)
+                        usersToSend.Add(aUser);
                     else
                         itemMonsterToSend.Add(obj);
 
                 //if this object is a user
-                if (vObject is User)
+                if (vObject is User tUser)
                 {
-                    User user = vObject as User;
-
-                    user.Client.Enqueue(ServerPackets.MapChangePending());     //send pending map change
-                    user.Client.Enqueue(ServerPackets.MapInfo(user.Map));      //send map info
-                    user.Client.Enqueue(ServerPackets.Location(user.Point));   //send location
+                    tUser.Client.Enqueue(ServerPackets.MapChangePending());     //send pending map change
+                    tUser.Client.Enqueue(ServerPackets.MapInfo(tUser.Map));      //send map info
+                    tUser.Client.Enqueue(ServerPackets.Location(tUser.Point));   //send location
 
                     foreach (User u2s in usersToSend)
                     {
-                        user.Client.Enqueue(ServerPackets.DisplayUser(u2s));   //send it all the users
-                        u2s.Client.Enqueue(ServerPackets.DisplayUser(user));   //send all the users this user as well
+                        tUser.Client.Enqueue(ServerPackets.DisplayUser(u2s));   //send it all the users
+                        u2s.Client.Enqueue(ServerPackets.DisplayUser(tUser));   //send all the users this user as well
                     }
 
-                    user.Client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));    //send it all the items, monsters, and merchants
-                    user.Client.Enqueue(ServerPackets.Door(user.Map.DoorsVisibleFrom(user).ToArray()));     //send the user all nearby doors
-                    user.Client.Enqueue(ServerPackets.MapChangeComplete());    //send it mapchangecomplete
-                    user.Client.Enqueue(ServerPackets.MapLoadComplete());      //send it maploadcomplete
-                    user.Client.Enqueue(ServerPackets.DisplayUser(user));      //send it itself
+                    tUser.Client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));    //send it all the items, monsters, and merchants
+                    tUser.Client.Enqueue(ServerPackets.Door(tUser.Map.DoorsVisibleFrom(tUser).ToArray()));     //send the user all nearby doors
+                    tUser.Client.Enqueue(ServerPackets.MapChangeComplete());    //send it mapchangecomplete
+                    tUser.Client.Enqueue(ServerPackets.MapLoadComplete());      //send it maploadcomplete
+                    tUser.Client.Enqueue(ServerPackets.DisplayUser(tUser));      //send it itself
 
-                    user.AnimationHistory.Clear();
+                    tUser.AnimationHistory.Clear();
                 }
                 else //if this object isnt a user
                     foreach (User u2s in usersToSend)
@@ -190,26 +202,6 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously adds an effect to the map.
-        /// </summary>
-        /// <param name="effect">The effect to add.</param>
-        internal void AddEffect(Effect effect)
-        {
-            lock (Sync)
-                Effects.Add(effect);
-        }
-
-        /// <summary>
-        /// Synchronously removes a single effect from the map.
-        /// </summary>
-        /// <param name="effect">The effect to remove.</param>
-        internal void RemoveEffect(Effect effect)
-        {
-            lock (Sync)
-                Effects.Remove(effect);
-        }
-
-        /// <summary>
         /// Synchronously retrieves all objects the given object can see.
         /// </summary>
         /// <param name="vObject">Object to base from.</param>
@@ -235,13 +227,56 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Synchronously retrieves all doors visible from the user.
+        /// Attempts to synchronously retreive a user by searching through the objects for the given name.
         /// </summary>
-        /// <param name="user">The user to base from.</param>
-        internal IEnumerable<Door> DoorsVisibleFrom(User user)
+        /// <param name="name">The name of the user to search for.</param>
+        /// <param name="user">Reference to the user to set.</param>
+        internal bool TryGet(string name, out User user)
+        {
+            user = null;
+
+            lock (Sync)
+                user = Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) as User;
+
+            return user != null;
+        }
+
+        /// <summary>
+        /// Attempts to synchronously retreive an object by searching through the objects for the given id.
+        /// </summary>
+        /// <param name="id">The id of the object to search for.</param>
+        /// <param name="obj">Reference to the object to set.</param>
+        internal bool TryGet<T>(int id, out T obj) where T : class
+        {
+            obj = null;
+
+            lock (Sync)
+                if (Objects.TryGetValue(id, out WorldObject wObj))
+                    obj = wObj as T;
+
+            return obj != null;
+        }
+        #endregion
+
+        #region Effects
+        /// <summary>
+        /// Synchronously adds an effect to the map.
+        /// </summary>
+        /// <param name="effect">The effect to add.</param>
+        internal void AddEffect(Effect effect)
         {
             lock (Sync)
-                return Doors.Values.Where(door => user.WithinRange(door.Point));
+                Effects.Add(effect);
+        }
+
+        /// <summary>
+        /// Synchronously removes a single effect from the map.
+        /// </summary>
+        /// <param name="effect">The effect to remove.</param>
+        internal void RemoveEffect(Effect effect)
+        {
+            lock (Sync)
+                Effects.Remove(effect);
         }
 
         /// <summary>
@@ -257,44 +292,117 @@ namespace Chaos
             }
         }
 
-        /// <summary>
-        /// Attempts to synchronously retreive a user by searching through the objects for the given name.
-        /// </summary>
-        /// <param name="name">The name of the user to search for.</param>
-        /// <param name="user">Reference to the user to set.</param>
-        internal bool TryGetUser(string name, out User user)
+        internal void ApplyPersistantEffects()
         {
-            user = null;
-
+            //lock the map
             lock (Sync)
-                user = Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) as User;
+            {
+                foreach (Creature creature in GetAllObjects<Creature>()) //for each creature C on the map
+                {
+                    var user1 = creature as User;
+                    foreach (Effect effect in creature.EffectsBar.ToList()) //for each effect on that creature's bar
+                    {
+                        int index = effect.Animation.GetHashCode(); //get it's animation's index
+                        if (effect.RemainingDurationMS() == 0) //if the effect is expired
+                        {
+                            creature.EffectsBar.TryRemove(effect); //remove the effect from the creature
+                            user1?.Client.SendEffect(effect, false); //if it's a user, update the bar
+                        }
+                        else if (!creature.AnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(creature.AnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay) //if the effect is not expired, and need to be updated
+                        {
+                            creature.AnimationHistory[effect.Animation.GetHashCode()] = DateTime.UtcNow; //update the animation history
+                            foreach (User user in creature.Map.ObjectsVisibleFrom(creature, true).OfType<User>()) //for each user within sight, including itself if it is a user
+                            {
+                                if (user == user1) //if this user is the creature
+                                    user.Client.SendEffect(effect); //update the bar
 
-            return user != null;
+                                user.Client.SendAnimation(effect.Animation); //send this animation to all visible users
+                            }
+
+                            if (effect.CurrentHPMod != 0 || effect.CurrentMPMod != 0)
+                            {
+                                Game.Activatables.ApplyDamage(creature, effect.CurrentHPMod, true); //apply damage to the creature
+                                Game.Activatables.ApplyDamage(creature, effect.CurrentMPMod, true, true);
+                                user1?.Client.SendAttributes(StatUpdateType.Vitality);
+                            }
+                        }
+                    }
+
+                    foreach (Effect effect in EffectsVisibleFrom(creature).ToList())
+                    {
+                        int index = effect.Animation.GetHashCode();
+                        if (effect.Duration != TimeSpan.Zero && effect.RemainingDurationMS() == 0)
+                            RemoveEffect(effect);
+                        else if (!creature.WorldAnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(creature.WorldAnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay)
+                        {
+                            if (user1 != null)
+                            {
+                                user1.WorldAnimationHistory[index] = DateTime.UtcNow;
+                                user1?.Client.SendAnimation(effect.Animation);
+                            }
+
+                            if (effect.Animation.TargetPoint == creature.Point)
+                            {
+                                Game.Activatables.ApplyDamage(creature, effect.CurrentHPMod);
+                                Game.Activatables.ApplyDamage(creature, effect.CurrentMPMod);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        #endregion
+
+        #region MapObjects
+        /// <summary>
+        /// Synchronously retrieves all doors visible from the user.
+        /// </summary>
+        /// <param name="user">The user to base from.</param>
+        internal IEnumerable<Door> DoorsVisibleFrom(User user)
+        {
+            lock (Sync)
+                return Doors.Values.Where(door => user.WithinRange(door.Point));
         }
 
-        /// <summary>
-        /// Attempts to synchronously retreive an object by searching through the objects for the given id.
-        /// </summary>
-        /// <param name="id">The id of the object to search for.</param>
-        /// <param name="obj">Reference to the object to set.</param>
-        internal bool TryGetObject<T>(int id, out T obj) where T : class
+        internal void ToggleDoor(Door door)
         {
-            WorldObject wObj;
-            obj = null;
-
             lock (Sync)
-                if (Objects.TryGetValue(id, out wObj))
-                    obj = wObj as T;
+            {
+                var doors = new List<Door>() { door };
 
-            return obj != null;
+                //for each surrounding point from the door
+                foreach (Point p in Utility.GetLinePoints(door.Point))
+                    //if it's also a door
+                    if (TryGet(p, out Door tDoor))
+                    {
+                        //add it
+                        doors.Add(tDoor);
+
+                        //if this 2nd door has another door 1 space in the same direction, we can break.
+                        if (TryGet(p.NewOffset(p.Relation(p)), out Door eDoor))
+                        {
+                            //add that door as well
+                            doors.Add(eDoor);
+                            break;
+                        }
+                    }
+
+                foreach (Door d in doors)
+                    if (d.Toggle())
+                        foreach (User user in ObjectsVisibleFrom(d.Point).OfType<User>())
+                            user.Client.Enqueue(ServerPackets.Door(d));
+            }
         }
+        #endregion
 
+        #region All Objects
         /// <summary>
         /// Attempts to synchronously retreive an object by searching through the maps for the given point.
         /// </summary>
         /// <param name="p">The point of the object to search for.</param>
         /// <param name="obj">Reference to the object to set.</param>
-        internal bool TryGetObject<T>(Point p, out T obj) where T : class
+        internal bool TryGet<T>(Point p, out T obj) where T : class
         {
             obj = null;
 
@@ -342,12 +450,9 @@ namespace Chaos
 
             return new List<T>();
         }
+        #endregion
 
-        /// <summary>
-        /// Checks if the map has a certain flag.
-        /// </summary>
-        internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
-
+        #region Walking
         /// <summary>
         /// Checks if a point is within the bounds of the map.
         /// </summary>
@@ -364,7 +469,126 @@ namespace Chaos
         internal bool IsWalkable(Point p)
         {
             lock (Sync)
-                return !IsWall(p) && (Doors.Keys.Contains(p) ? Doors[p].Opened : true) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
+                return !IsWall(p) && (Doors.Keys.Contains(p) ? Doors[p].Closed : true) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
         }
+
+        /// <summary>
+        /// Synchronously moves a character in a given direction, handling on-screen information and walking packets.
+        /// </summary>
+        /// <param name="client">The client who's user is walking.</param>
+        /// <param name="direction">The direction to walk.</param>
+        internal void Walk(Client client, Direction direction)
+        {
+            lock (Sync)
+            {
+                //plus the stepcount
+                client.StepCount++;
+                client.User.Direction = direction;
+
+                Point startPoint = client.User.Point;
+
+                //check if we can actually walk to the spot
+                if ((!client.User.IsAdmin && !IsWalkable(client.User.Point.NewOffset(direction))) || !WithinMap(client.User.Point.NewOffset(direction)))
+                {
+                    //if no, set their location back to what it was and return
+                    Refresh(client, true);
+                    return;
+                }
+
+                var visibleBefore = ObjectsVisibleFrom(client.User).ToList();
+                var doorsBefore = DoorsVisibleFrom(client.User).ToList();
+                client.User.Point.Offset(direction);
+                var visibleAfter = ObjectsVisibleFrom(client.User).ToList();
+                var itemMonster = new List<VisibleObject>().ToList();
+                var doorsAfter = DoorsVisibleFrom(client.User).ToList();
+                var doors = doorsAfter.Except(doorsBefore).ToList();
+
+                //send ourselves the walk
+                client.Enqueue(ServerPackets.ClientWalk(direction, client.User.Point));
+
+                //for all the things that will go off screen, remove them from the before list, our screen, and remove us from their screen(if theyre a user)
+                foreach (VisibleObject obj in visibleBefore.Except(visibleAfter).ToList())
+                {
+                    (obj as User)?.Client.Enqueue(ServerPackets.RemoveObject(client.User));
+                    client.Enqueue(ServerPackets.RemoveObject(obj));
+                    visibleBefore.Remove(obj);
+                }
+
+                //send the remaining users in the before list our walk
+                foreach (User user in visibleBefore.OfType<User>())
+                    user.Client.Enqueue(ServerPackets.CreatureWalk(client.User.Id, startPoint, direction));
+
+                //for all the things that just came onto screen, display to eachother if it's a user, otherwise add it to itemMonster
+                foreach (VisibleObject obj in visibleAfter.Except(visibleBefore))
+                {
+                    if (obj is User user)
+                    {
+                        user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
+                        client.Enqueue(ServerPackets.DisplayUser(user));
+                    }
+                    else
+                        itemMonster.Add(obj);
+                }
+
+                //if itemmonster isnt empty, send everything in it to us
+                if (itemMonster.Count > 0)
+                    client.Enqueue(ServerPackets.DisplayItemMonster(itemMonster.ToArray()));
+
+                //if doors isnt empty, send everything in it to us
+                if (doors.Count > 0)
+                    client.Enqueue(ServerPackets.Door(doors.ToArray()));
+
+                //check collisions with warps
+                if (TryGet(client.User.Point, out Warp warp))
+                    Game.Activatables.WarpObj(client.User, warp);
+
+                //check collisions with worldmaps
+                if (TryGet(client.User.Point, out WorldMap worldMap))
+                {
+                    RemoveObject(client.User, true);
+                    client.Enqueue(ServerPackets.WorldMap(worldMap));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resends all the current information for the given user.
+        /// </summary>
+        /// <param name="user">The client to refresh.</param>
+        internal void Refresh(Client client, bool byPassTimer = false)
+        {
+            if (client == null)
+                return;
+
+            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS)
+                return;
+            else
+                client.LastRefresh = DateTime.UtcNow;
+
+            lock (Sync)
+            {
+                client.Enqueue(ServerPackets.MapInfo(this));
+                client.Enqueue(ServerPackets.Location(client.User.Point));
+                client.SendAttributes(StatUpdateType.Full);
+                var itemMonsterToSend = new List<VisibleObject>();
+
+                //get all objects that would be visible to this object and send this user to them / send them to this user
+                foreach (VisibleObject obj in ObjectsVisibleFrom(client.User))
+                    if (obj is User user)
+                    {
+                        client.Enqueue(ServerPackets.DisplayUser(user));
+                        user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
+                    }
+                    else
+                        itemMonsterToSend.Add(obj);
+
+                client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));
+                client.Enqueue(ServerPackets.Door(DoorsVisibleFrom(client.User).ToArray()));
+                client.Enqueue(ServerPackets.MapLoadComplete());
+                client.Enqueue(ServerPackets.DisplayUser(client.User));
+                client.Enqueue(ServerPackets.RefreshResponse());
+            }
+        }
+        #endregion
     }
 }

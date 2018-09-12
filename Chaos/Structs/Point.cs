@@ -27,16 +27,18 @@ namespace Chaos
         /// Json & Master constructor for a structure representing a point within a map.
         /// </summary>
         [JsonConstructor]
-        public Point(ushort x, ushort y)
+        private Point(ushort x, ushort y)
         {
             X = x;
             Y = y;
         }
 
+        public static implicit operator Point(ValueTuple<int, int> vTuple) => new Point((ushort)vTuple.Item1, (ushort)vTuple.Item2);
+
         /// <summary>
         /// Returns the equivalent of no point.
         /// </summary>
-        public static Point None => new Point(ushort.MaxValue, ushort.MaxValue);
+        public static Point None => (ushort.MaxValue, ushort.MaxValue);
 
         public static bool operator ==(Point pt1, Point pt2) => pt1.Equals(pt2);
         public static bool operator !=(Point pt1, Point pt2) => !pt1.Equals(pt2);
@@ -84,13 +86,13 @@ namespace Chaos
             switch (direction)
             {
                 case Direction.North:
-                    return new Point(X, (ushort)(Y - 1));
+                    return (X, Y - 1);
                 case Direction.East:
-                    return new Point((ushort)(X + 1), Y);
+                    return (X + 1, Y);
                 case Direction.South:
-                    return new Point((X), (ushort)(Y + 1));
+                    return (X, Y + 1);
                 case Direction.West:
-                    return new Point((ushort)(X - 1), Y);
+                    return (X - 1, Y);
                 default:
                     return None;
             }
@@ -132,7 +134,7 @@ namespace Chaos
         {
             try
             {
-                Point point = (Point)obj;
+                var point = (Point)obj;
                 return GetHashCode() == point.GetHashCode();
             }
             catch

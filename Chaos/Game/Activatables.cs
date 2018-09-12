@@ -15,12 +15,13 @@ using System.Linq;
 
 namespace Chaos
 {
-    internal class Extensions
+    #pragma warning disable IDE0022
+    internal class Activatables
     {
         private Server Server { get; set; }
         private World World { get; set; }
 
-        internal Extensions(Server server, World world)
+        internal Activatables(Server server, World world)
         {
             Server = server;
             World = world;
@@ -66,7 +67,7 @@ namespace Chaos
                 user.Attributes.CurrentHP = user.Attributes.MaximumHP;
                 user.Attributes.CurrentMP = user.Attributes.MaximumMP;
                 user.RemoveFlag(UserState.DeathDisplayed);
-                Refresh(user.Client, true);
+                user.Client.Refresh(true);
             }
         }
 
@@ -78,8 +79,7 @@ namespace Chaos
         /// <param name="type">The target type to base the return on.</param>
         internal List<Creature> GetTargetsFromType(Client client, Point targetPoint, TargetsType type = TargetsType.None)
         {
-            Creature creature = null;
-            List<Creature> creatures = new List<Creature>();
+            var creatures = new List<Creature>();
 
             switch (type)
             {
@@ -90,7 +90,7 @@ namespace Chaos
                     creatures.Add(client.User);
                     break;
                 case TargetsType.Front:
-                    if(client.User.Map.TryGetObject(client.User.Point.NewOffset(client.User.Direction), out creature))
+                    if(client.User.Map.TryGet(client.User.Point.NewOffset(client.User.Direction), out Creature creature))
                         creatures.Add(creature);
                     break;
                 case TargetsType.Surround:
@@ -98,12 +98,13 @@ namespace Chaos
                     break;
                 case TargetsType.Cleave:
                     creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User, false, 2).OfType<Creature>().Where(c =>
-                        (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)) || 
-                        client.User.DiagonalPoints(1, client.User.Direction).Contains(c.Point)));
+                        (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != client.User.Direction.Reverse()) || 
+                        Utility.GetDiagonalPoints(client.User.Point, 1, client.User.Direction).Contains(c.Point)));
                     break;
                 case TargetsType.StraightProjectile:
                     int distance = 13;
-                    List<Point> line = client.User.LinePoints(13, client.User.Direction);
+                    List<Point> line = Utility.GetLinePoints(client.User.Point, 13, client.User.Direction);
+                    creature = null;
 
                     foreach (Creature c in client.User.Map.ObjectsVisibleFrom(client.User))
                     {
@@ -152,7 +153,7 @@ namespace Chaos
         /// <param name="type">The target type to base the return on.</param>
         internal List<Point> GetPointsFromType(Client client, Point targetPoint, TargetsType type = TargetsType.None)
         {
-            List<Point> points = new List<Point>();
+            var points = new List<Point>();
 
             switch (type)
             {
@@ -169,12 +170,12 @@ namespace Chaos
                     points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(client.User.Point) == 1));
                     break;
                 case TargetsType.Cleave:
-                    points.AddRange(client.User.DiagonalPoints(1, client.User.Direction));
-                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(client.User.Point) == 1 && p.Relation(client.User.Point) != DirectionExtensions.Reverse(client.User.Direction)));
+                    points.AddRange(Utility.GetDiagonalPoints(client.User.Point, 1, client.User.Direction));
+                    points.AddRange(client.User.Map.Tiles.Keys.Where(p => p.Distance(client.User.Point) == 1 && p.Relation(client.User.Point) != client.User.Direction.Reverse()));
                     break;
                 case TargetsType.StraightProjectile:
                     int distance = 13;
-                    List<Point> line = client.User.LinePoints(13, client.User.Direction);
+                    List<Point> line = Utility.GetLinePoints(client.User.Point, 13, client.User.Direction);
                     Creature creature = null;
 
                     foreach (Creature c in client.User.Map.ObjectsVisibleFrom(client.User))
@@ -236,19 +237,19 @@ namespace Chaos
             {
                 obj.LastUse = DateTime.UtcNow;
                 //grab all nearby Users
-                List<User> nearbyUsers = client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>().ToList();
+                var nearbyUsers = client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>().ToList();
                 //send the skill cooldown to the skill user
                 client.Enqueue(ServerPackets.Cooldown(obj));
 
                 //refresh the client if needed
                 if (refreshClient)
-                    Refresh(client);
+                    client.Refresh(true);
 
                 //refresh targets if needed
                 foreach (User u in targets.OfType<User>())
                 {
                     if (refreshTargets)
-                        Refresh(u.Client);
+                        u.Client.Refresh(true);
                     else if (updateType != StatUpdateType.None)
                         u.Client.SendAttributes(updateType);
 
@@ -263,7 +264,7 @@ namespace Chaos
                 foreach (Creature c in targets)
                 {
                     //get all users they can see including self
-                    List<User> usersNearC = client.User.Map.ObjectsVisibleFrom(c, true).OfType<User>().ToList();
+                    var usersNearC = client.User.Map.ObjectsVisibleFrom(c, true).OfType<User>().ToList();
 
                     //if animation should be displayed
                     if (obj.Animation != Animation.None)
@@ -314,7 +315,6 @@ namespace Chaos
             {
                 //ac, damage, other shit
                 //damage additions based on stats will be moved here later probably
-
                 if (mana)
                     user.CurrentMP = Utility.Clamp<uint>(user.CurrentMP - amount, 0, (int)user.MaximumMP);
                 else
@@ -336,14 +336,13 @@ namespace Chaos
             if (!World.Maps.ContainsKey(warp.TargetMapId))
                 return;
 
-            User user = obj as User;
             Map targetMap = World.Maps[warp.TargetMapId];
 
             if (warp.Location == obj.Location)
             {
-                if (user?.IsAdmin != true && targetMap.IsWall(warp.TargetPoint))
+                if ((obj as User)?.IsAdmin != true && targetMap.IsWall(warp.TargetPoint))
                 {
-                    Point nearestPoint = new Point(ushort.MaxValue, ushort.MaxValue);
+                    Point nearestPoint = Point.None;
                     int distance = int.MaxValue;
                     ushort x = Utility.Clamp<ushort>(warp.TargetPoint.X - 25, 0, targetMap.SizeX);
                     int width = Math.Min(x + 50, targetMap.SizeX);
@@ -354,7 +353,7 @@ namespace Chaos
                     for (; x < width; x++)
                         for (; y < height; y++)
                         {
-                            Point newPoint = new Point(x, y);
+                            Point newPoint = (x, y);
                             if (!targetMap.IsWall(newPoint))
                             {
                                 distance = warp.TargetPoint.Distance(newPoint);
@@ -362,54 +361,13 @@ namespace Chaos
                             }
                         }
 
-                    warp = new Warp(warp.Location, new Location(warp.TargetMapId, nearestPoint));
+                    warp = new Warp(warp.Location, (warp.TargetMapId, nearestPoint));
                 }
 
                 if (!worldMap)
                     obj.Map.RemoveObject(obj);
 
                 World.Maps[warp.TargetMapId].AddObject(obj, warp.TargetPoint);
-            }
-        }
-
-        /// <summary>
-        /// Resends all the current information for the given user.
-        /// </summary>
-        /// <param name="user">The user to refresh.</param>
-        internal void Refresh(Client client, bool byPassTimer = false)
-        {
-            if (client == null)
-                return;
-
-            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS)
-                return;
-            else
-                client.LastRefresh = DateTime.UtcNow;
-
-            lock (client.User.Map.Sync)
-            {
-                client.Enqueue(ServerPackets.MapInfo(client.User.Map));
-                client.Enqueue(ServerPackets.Location(client.User.Point));
-                client.SendAttributes(StatUpdateType.Full);
-                List<VisibleObject> itemMonsterToSend = new List<VisibleObject>();
-
-                //get all objects that would be visible to this object and send this user to them / send them to this user
-                foreach (VisibleObject obj in client.User.Map.ObjectsVisibleFrom(client.User))
-                    if (obj is User)
-                    {
-                        User user = obj as User;
-                        client.Enqueue(ServerPackets.DisplayUser(user));
-                        user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
-                    }
-                    else
-                        itemMonsterToSend.Add(obj);
-
-                client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));
-                client.Enqueue(ServerPackets.MapLoadComplete());
-                client.Enqueue(ServerPackets.DisplayUser(client.User));
-                client.Enqueue(ServerPackets.RefreshResponse());
-
-                client.User.AnimationHistory.Clear();
             }
         }
     }

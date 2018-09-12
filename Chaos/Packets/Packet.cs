@@ -139,7 +139,7 @@ namespace Chaos
             if (Position + 4 > Data.Length)
                 throw new EndOfStreamException();
 
-            return new Point(ReadUInt16(), ReadUInt16());
+            return (ReadUInt16(), ReadUInt16());
         }
         internal void Write(byte[] buffer)
         {

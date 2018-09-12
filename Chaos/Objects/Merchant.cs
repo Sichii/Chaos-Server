@@ -23,8 +23,8 @@ namespace Chaos
         internal ushort NextDialogId { get; }
         internal MerchantMenu Menu { get; }
         internal override byte HealthPercent => 100;
-        internal override uint CurrentHP { get { return int.MaxValue; } set { } }
-        internal override uint MaximumHP { get { return int.MaxValue; } }
+        internal override uint CurrentHP { get => int.MaxValue; set { } }
+        internal override uint MaximumHP => int.MaxValue;
 
         /// <summary>
         /// Master constructor for an object representing an in-game merchant.

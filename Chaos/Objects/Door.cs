@@ -19,7 +19,7 @@ namespace Chaos
     public sealed class Door : MapObject
     {
         internal bool RecentlyClicked => DateTime.UtcNow.Subtract(LastClick).TotalSeconds < 1.5;
-        internal bool Opened { get; set; }
+        internal bool Closed { get; set; }
         public bool OpenRight { get; }
         internal DateTime LastClick { get; set; }
 
@@ -45,14 +45,23 @@ namespace Chaos
         public Door(ushort mapId, ushort x, ushort y, bool opened, bool openRight)
             :base(mapId, x, y)
         {
-            Opened = opened;
-            OpenRight = OpenRight;
+            Closed = opened;
+            OpenRight = openRight;
             LastClick = DateTime.MinValue;
         }
 
         /// <summary>
         /// Toggles whether the door is opened or not.
         /// </summary>
-        internal void Toggle() => Opened = !Opened;
+        internal bool Toggle()
+        {
+            if (!RecentlyClicked)
+            {
+                Closed = !Closed;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

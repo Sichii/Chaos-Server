@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Chaos
@@ -23,32 +24,26 @@ namespace Chaos
         internal ushort X;
         [JsonProperty]
         internal ushort Y;
-        internal Point Point => new Point(X, Y);
+        internal Point Point => (X, Y);
 
         /// <summary>
         /// Json & Master constructor for a structure representing a point in the world, which is a point paired with a map ID.
         /// </summary>
         [JsonConstructor]
-        internal Location(ushort mapId, ushort x, ushort y)
+        private Location(ushort mapId, ushort x, ushort y)
         {
             MapId = mapId;
             X = x;
             Y = y;
         }
 
-        /// <summary>
-        /// Optional constructor for a location, taking a map id and point.
-        /// </summary>
-        internal Location(ushort mapId, Point point)
-            :this(mapId, point.X, point.Y)
-        {
-
-        }
+        public static implicit operator Location(ValueTuple<int, int, int> tuple) => new Location((ushort)tuple.Item1, (ushort)tuple.Item2, (ushort)tuple.Item3);
+        public static implicit operator Location(ValueTuple<int, Point> tuple) => new Location((ushort)tuple.Item1, tuple.Item2.X, tuple.Item2.Y);
 
         /// <summary>
         /// Returns the equivalent of no location.
         /// </summary>
-        internal static Location None => new Location(ushort.MaxValue, Point.None);
+        internal static Location None => (ushort.MaxValue, Point.None);
 
         public static bool operator ==(Location loc1, Location loc2) => loc1.Equals(loc2);
         public static bool operator !=(Location loc1, Location loc2) => !loc1.Equals(loc2);

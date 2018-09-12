@@ -21,9 +21,9 @@ namespace Chaos
         public ushort TargetX { get; }
         public ushort TargetY { get; }
         public ushort TargetMapId { get; }
-        public bool DisplayAnimation { get; }
-        public Point TargetPoint => new Point(TargetX, TargetY);
-        public Location TargetLocation => new Location(TargetMapId, TargetX, TargetY);
+        internal bool DisplayAnimation { get; }
+        public Point TargetPoint => (TargetX, TargetY);
+        public Location TargetLocation => (TargetMapId, TargetPoint);
 
         /// <summary>
         /// Optional constructor for a warp.
@@ -36,12 +36,13 @@ namespace Chaos
         /// <summary>
         /// Master constructor for an object or tile on a map that moves a user.
         /// </summary>
-        public Warp(ushort sourceX, ushort sourceY, ushort targetX, ushort targetY, ushort sourceMapId, ushort targetMapId)
+        public Warp(ushort sourceX, ushort sourceY, ushort targetX, ushort targetY, ushort sourceMapId, ushort targetMapId, bool displayAnimation = false)
             :base(sourceMapId, sourceX, sourceY)
         {
             TargetMapId = targetMapId;
             TargetX = targetX;
             TargetY = targetY;
+            DisplayAnimation = displayAnimation;
         }
     }
 }

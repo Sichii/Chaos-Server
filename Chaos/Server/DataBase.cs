@@ -43,15 +43,17 @@ namespace Chaos
 
             Server = server;
             //create the serializing cache db
-            JsonSerializerSettings jSettings = new JsonSerializerSettings();
-            jSettings.TypeNameHandling = TypeNameHandling.All;
-            jSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            var jSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
             Serializer = new NewtonsoftSerializer(jSettings);
             DataConnection = ConnectionMultiplexer.Connect(Paths.RedisConfig);
             Cache = new StackExchangeRedisCacheClient(DataConnection, Serializer);
 
             //keep the db clear for now (except the map file)
-            foreach (var key in DataConnection.GetServer(Paths.RedisConfig).Keys())
+            foreach (RedisKey key in DataConnection.GetServer(Paths.RedisConfig).Keys())
                 if (key != MapKey)
                     Cache.Remove(key);    
 
@@ -85,9 +87,9 @@ namespace Chaos
         /// <param name="key">Name of the user to remove</param>
         internal void RemoveUser(string key)
         {
-            Dictionary<string, string> userHash = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            var userHash = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
-            foreach (var kvp in UserHash)
+            foreach (KeyValuePair<string, string> kvp in UserHash)
                 userHash.Add(kvp.Key, kvp.Value);
 
             if(userHash.Remove(key))

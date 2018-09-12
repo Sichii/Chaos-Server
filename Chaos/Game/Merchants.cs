@@ -9,7 +9,6 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,16 +26,16 @@ namespace Chaos
 
         internal Merchants()
         {
-            List<Merchant> MerchantList = new List<Merchant>()
+            var MerchantList = new List<Merchant>()
             {
-                new Merchant("Deliope", 61, new Point(15, 10), Game.World.Maps[5031], Direction.South, 0,
+                new Merchant("Deliope", 61, (15, 10), Game.World.Maps[5031], Direction.South, 0,
                     new MerchantMenu("Are you dead, scrub?", MenuType.Menu,
                         new PursuitMenu(
                             new List<PursuitMenuItem>()
                             {
                                 new PursuitMenuItem(PursuitIds.ReviveSelf, "Revive")
                             }))),
-                new Merchant("Celeste", 57, new Point(3, 16), Game.World.Maps[17500], Direction.South, 0,
+                new Merchant("Celeste", 57, (3, 16), Game.World.Maps[17500], Direction.South, 0,
                     new MerchantMenu("I like giant cock.", MenuType.Dialog,
                         new DialogMenu(
                             new List<DialogMenuItem>()
@@ -48,10 +47,10 @@ namespace Chaos
                                 new DialogMenuItem(5, "Kill User"),
                                 new DialogMenuItem(2, "Teleport")
                             }))),
-                new Merchant("Frank The Great", 34, new Point(5, 2), Game.World.Maps[17501], Direction.East, 7),
-                new Merchant("Maribel", 447, new Point(2, 5), Game.World.Maps[18000], Direction.East, 9),
+                new Merchant("Frank The Great", 34, (5, 2), Game.World.Maps[17501], Direction.East, 7),
+                new Merchant("Maribel", 447, (2, 5), Game.World.Maps[18000], Direction.East, 9),
                 //new Merchant("Markus", 364, new Point(2, 4), Game.World.Maps[18002], Direction.East, 15),
-                new Merchant("Am I Pretty?", 627, new Point(10, 8), Game.World.Maps[8984], Direction.South, 0,
+                new Merchant("Am I Pretty?", 627, (10, 8), Game.World.Maps[8984], Direction.South, 0,
                     new MerchantMenu("Do it. Tell me I'm beautiful.", MenuType.Menu,
                         new PursuitMenu(
                             new List<PursuitMenuItem>()

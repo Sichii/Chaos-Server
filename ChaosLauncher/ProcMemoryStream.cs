@@ -27,20 +27,9 @@ namespace ChaosLauncher
         public override bool CanSeek => true;
         public override bool CanWrite => (AccessType & (ProcessAccess.VmOperation | ProcessAccess.VmWrite)) > ProcessAccess.None;
 
-        public override long Length
-        {
-            get { throw new NotSupportedException("Length unsupported."); }
-        }
-
-        public override void Flush()
-        {
-            throw new NotSupportedException("Flush unsupported.");
-        }
-
-        public override void SetLength(long value)
-        {
-            throw new NotSupportedException("Length unsupported.");
-        }
+        public override long Length => throw new NotSupportedException("Length unsupported.");
+        public override void Flush() => throw new NotSupportedException("Flush unsupported.");
+        public override void SetLength(long value) => throw new NotSupportedException("Length unsupported.");
 
         internal ProcMemoryStream(ProcInfo procInfo, ProcessAccess access)
         {
@@ -61,8 +50,8 @@ namespace ChaosLauncher
             IntPtr num = Marshal.AllocHGlobal(count);
             if (num == IntPtr.Zero)
                 throw new InvalidOperationException("Unable to allocate memory.");
-            int bytesRead = 0;
-            SafeNativeMethods.ReadProcessMemory(ProcessHandle, (IntPtr)Position, num, (IntPtr)count, out bytesRead);
+
+            SafeNativeMethods.ReadProcessMemory(ProcessHandle, (IntPtr)Position, num, (IntPtr)count, out int bytesRead);
             Position += bytesRead;
             Marshal.Copy(num, buffer, offset, count);
             Marshal.FreeHGlobal(num);
@@ -97,8 +86,8 @@ namespace ChaosLauncher
             if (allocDestination == IntPtr.Zero)
                 throw new InvalidOperationException("Unable to allocate memory.");
             Marshal.Copy(buffer, offset, allocDestination, count);
-            int bytes = 0;
-            SafeNativeMethods.WriteProcessMemory(ProcessHandle, (IntPtr)Position, allocDestination, (IntPtr)count, out bytes);
+
+            SafeNativeMethods.WriteProcessMemory(ProcessHandle, (IntPtr)Position, allocDestination, (IntPtr)count, out int bytes);
             Position += bytes;
             Marshal.FreeHGlobal(allocDestination);
         }

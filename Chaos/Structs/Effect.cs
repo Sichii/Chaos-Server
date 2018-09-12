@@ -55,7 +55,7 @@ namespace Chaos
         /// <summary>
         /// Constructor for an effect with only an animation.
         /// </summary>
-        internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
+        internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default)
             :this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
         {
         }
@@ -64,7 +64,7 @@ namespace Chaos
         /// Master constructor for a structure representing an in-game persistent effect.
         /// </summary>
         internal Effect(sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod,
-            int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
+            int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default)
             : this(0, strMod, intMod, wisMod, conMod, dexMod, maxHPMod, maxMPMod, currentHPMod, currentMPMod, animationDelay, duration, useParentAnimation, animation)
         {
 
@@ -75,7 +75,7 @@ namespace Chaos
         /// </summary>
         [JsonConstructor]
         private Effect(ushort sprite, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
-            int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default(Animation))
+            int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default)
         {
             StartTime = DateTime.UtcNow;
             UseParentAnimation = useParentAnimation;
@@ -101,25 +101,21 @@ namespace Chaos
         /// <summary>
         /// Returns a re-target effect based on a target and source id.
         /// </summary>
-        internal Effect GetTargetedEffect(int targetID, int sourceID)
-        {
-            return new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay, 
+        internal Effect GetTargetedEffect(int targetID, int sourceID) =>
+            new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay, 
                 Duration, UseParentAnimation, Animation.GetTargetedEffectAnimation(targetID, sourceID));
-        }
 
         /// <summary>
         /// Returns a re-target effect based on a target point.
         /// </summary>
-        internal Effect GetTargetedEffect(Point point)
-        {
-            return new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay,
+        internal Effect GetTargetedEffect(Point point) =>
+            new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay,
                 Duration, UseParentAnimation, Animation.GetTargetedEffectAnimation(point));
-        }
 
         /// <summary>
         /// Static contructur for no effect.
         /// </summary>
-        internal static Effect None => default(Effect);
+        internal static Effect None => default;
 
         /// <summary>
         /// Returns the remaining duration of the effect in milliseconds.
@@ -160,12 +156,10 @@ namespace Chaos
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Effect))
-                return false;
+            if (obj is Effect tEffect)
+                return GetHashCode() == tEffect.GetHashCode();
 
-            Effect eff = (Effect)obj;
-
-            return GetHashCode() == eff.GetHashCode();
+            return false;
         }
         public override int GetHashCode() => (Animation.GetHashCode() + (ushort)(AnimationDelay << 16) + (ushort)(Duration.TotalMilliseconds));
 

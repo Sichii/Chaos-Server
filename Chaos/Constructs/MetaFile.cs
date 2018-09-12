@@ -42,8 +42,8 @@ namespace Chaos
             MetaFile metaFile;
 
             FileStream file = File.Open(Paths.MetaFiles + name, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using (MemoryStream data = new MemoryStream())
-            using (BinaryReader reader = new BinaryReader(file, Encoding.GetEncoding(949)))
+            using (var data = new MemoryStream())
+            using (var reader = new BinaryReader(file, Encoding.GetEncoding(949)))
             {
                 file.CopyTo(data);
                 metaFile = new MetaFile(name, data.ToArray());
@@ -52,7 +52,7 @@ namespace Chaos
                 int countX = reader.ReadByte() << 8 | reader.ReadByte();
                 for (int x = 0; x < countX; ++x)
                 {
-                    MetafileNode metaFileNode = new MetafileNode(reader.ReadString());
+                    var metaFileNode = new MetafileNode(reader.ReadString());
                     int countY = reader.ReadByte() << 8 | reader.ReadByte();
                     for (int y = 0; y < countY; ++y)
                     {
