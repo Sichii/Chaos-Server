@@ -71,7 +71,7 @@ namespace Chaos
 
                     var worldMap = new WorldMap(field, nodes);
 
-                    uint checkSum = worldMap.GetCheckSum();
+                    uint checkSum = worldMap.CheckSum;
                     WorldMaps[checkSum] = worldMap;
                 }
 
@@ -94,7 +94,7 @@ namespace Chaos
 
                     //load warps
                     ushort warpCount = reader.ReadUInt16();
-                    var eff = new Effect(4500, TimeSpan.Zero, false, new Animation(96, 0, 250));
+                    var warpEff = new Effect(4500, TimeSpan.Zero, false, new Animation(96, 0, 250));
                     var doorPoints = newMap.GetAllObjects<Door>().Select(d => d.Point).ToList();
 
                     for (int i = 0; i < warpCount; i++)
@@ -105,12 +105,14 @@ namespace Chaos
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
                         bool shouldDisplay = !doorPoints.Contains((sourceX, sourceY));
-                        var warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId, shouldDisplay);
+                        var warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
                         newMap.Warps[(sourceX, sourceY)] = warp;
 
                         if (shouldDisplay)
-                            newMap.AddEffect(eff.GetTargetedEffect((sourceX, sourceY)));
+                            newMap.AddEffect(warpEff.GetTargetedEffect((sourceX, sourceY)));
                     }
+
+                    var wmapEff = new Effect(1250, TimeSpan.Zero, false, new Animation(214, 0, 250));
 
                     //load worldmaps for this map
                     byte wMapCount = reader.ReadByte();
@@ -120,7 +122,10 @@ namespace Chaos
                         byte y = reader.ReadByte();
                         uint CheckSum = reader.ReadUInt32();
                         if (WorldMaps.ContainsKey(CheckSum))
+                        {
                             newMap.WorldMaps[(x, y)] = WorldMaps[CheckSum];
+                            newMap.AddEffect(wmapEff.GetTargetedEffect((x, y)));
+                        }
                     }
 
                     //add the map to the map list

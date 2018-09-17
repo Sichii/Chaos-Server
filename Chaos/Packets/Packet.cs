@@ -20,25 +20,25 @@ namespace Chaos
     internal abstract class Packet
     {
         protected internal DateTime Creation { internal get; set; }
-        protected internal byte Identifier { internal get; set; }
+        protected internal byte Signature { internal get; set; }
         protected internal byte OpCode { internal get; set; }
-        internal bool IsEncrypted => EncryptionType != EncryptionType.None;
+        internal abstract bool IsEncrypted { get; }
         internal abstract EncryptionType EncryptionType { get; }
-        internal byte Counter;
+        internal byte Sequence;
         protected internal byte[] Data;
         internal int Position;
 
         internal Packet(byte opcode)
         {
-            Identifier = 170;
+            Signature = 170;
             OpCode = opcode;
             Data = new byte[0];
         }
         internal Packet(byte[] buffer)
         {
-            Identifier = buffer[0];
+            Signature = buffer[0];
             OpCode = buffer[3];
-            Counter = buffer[4];
+            Sequence = buffer[4];
             Creation = DateTime.UtcNow;
 
             int resultLength = buffer.Length - (IsEncrypted ? 5 : 4);
@@ -211,14 +211,15 @@ namespace Chaos
             WriteData(value);
         }
         internal byte[] ToArray()
-        {
+        {    
             int resultLength = Data.Length + (IsEncrypted ? 5 : 4) - 3;
             byte[] resultData = new byte[resultLength + 3];
-            resultData[0] = Identifier;
+
+            resultData[0] = Signature;
             resultData[1] = (byte)(resultLength / 256);
             resultData[2] = (byte)(resultLength % 256);
             resultData[3] = OpCode;
-            resultData[4] = Counter;
+            resultData[4] = Sequence;
             Buffer.BlockCopy(Data, 0, resultData, resultData.Length - Data.Length, Data.Length);
             return resultData;
         }

@@ -149,7 +149,7 @@ namespace Chaos
         public static bool TryParse(string str, out Point point)
         {
             point = None;
-            Match m = Regex.Match(str, @"\((\d+), (\d+)\)");
+            Match m = Regex.Match(str, @"\(?(\d+)(?:,| |, )(\d+)\)?");
 
             return m.Success && ushort.TryParse(m.Groups[1].Value, out point.X) && ushort.TryParse(m.Groups[2].Value, out point.Y);
         }

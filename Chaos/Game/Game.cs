@@ -95,7 +95,7 @@ namespace Chaos
         }
 
         #region Packet Processing
-        internal static void JoinServer(Client client)
+        internal static void RequestConnectionInfo(Client client)
         {
             client.Enqueue(ServerPackets.ConnectionInfo(Server.TableCheckSum, client.Crypto.Seed, client.Crypto.Key));
         }
@@ -326,11 +326,10 @@ namespace Chaos
                         {
                             case "commands":
                                 client.SendServerMessage(ServerMessageType.ActiveMessage, "COMMANDS:");
-                                client.SendServerMessage(ServerMessageType.ActiveMessage, "hair <num>                                      changes hairstyle");
-                                client.SendServerMessage(ServerMessageType.ActiveMessage, "haircolor <num>                                changes hair color");
-                                client.SendServerMessage(ServerMessageType.ActiveMessage, "skincolor <num>                                changes skin color");
-                                client.SendServerMessage(ServerMessageType.ActiveMessage, "face <num>                                     changes face shape");
-                                client.SendServerMessage(ServerMessageType.ActiveMessage, "gender <text>                                      changes gender");
+
+                                foreach (string cmd in CONSTANTS.COMMAND_LIST)
+                                    client.SendServerMessage(ServerMessageType.ActiveMessage, cmd);
+
                                 return;
                             case "hair":
                                 if (CONSTANTS.HAIR_SPRITES.Contains((ushort)num))
@@ -456,8 +455,8 @@ namespace Chaos
                 client.Enqueue(ServerPackets.RequestPersonal());
             }
             //otherwise if theyre in the lobby, send them the notification
-            else if(client.ServerType == ServerType.Lobby)
-                client.Enqueue(ServerPackets.LobbyNotification(false, Server.LoginMessageCheckSum));
+            else if(client.ServerType == ServerType.Login)
+                client.Enqueue(ServerPackets.LoginNotification(false, Server.LoginMessageCheckSum));
         }
 
         internal static void Turn(Client client, Direction direction)
@@ -856,9 +855,10 @@ namespace Chaos
                 skill.Activate(client, Server, skill);
         }
 
-        internal static void ClickWorldMap(Client client, ushort mapId, Point point)
+        internal static void ClickWorldMap(Client client, ushort nodeCheckSum, ushort mapId, Point point)
         {
-            World.Maps[mapId].AddObject(client.User, point);
+            if (client.User.Map.WorldMaps[client.User.Point].Nodes.FirstOrDefault(n => n.CheckSum == nodeCheckSum).Point == point)
+                World.Maps[mapId].AddObject(client.User, point);
         }
 
         internal static void ClickObject(Client client, int objectId)
@@ -996,9 +996,9 @@ namespace Chaos
             }
         }
 
-        internal static void RequestLoginMessage(bool send, Client client)
+        internal static void RequestLoginNotification(bool request, Client client)
         {
-            client.Enqueue(ServerPackets.LobbyNotification(send, 0, Server.LoginMessage));
+            client.Enqueue(ServerPackets.LoginNotification(request, Server.LoginMessageCheckSum, Server.LoginMessage));
         }
 
         internal static void BeginChant(Client client)
@@ -1028,7 +1028,7 @@ namespace Chaos
             if (request)
                 client.Enqueue(ServerPackets.ServerTable(Server.Table));
             else
-                client.Redirect(new Redirect(client, ServerType.Lobby));
+                client.Redirect(new Redirect(client, ServerType.Login));
         }
 
         internal static void RequestHomepage(Client client)

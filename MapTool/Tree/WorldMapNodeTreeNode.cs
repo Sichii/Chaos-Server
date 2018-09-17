@@ -9,6 +9,7 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ChaosTool
@@ -17,10 +18,10 @@ namespace ChaosTool
     {
         internal Chaos.WorldMapNode WorldMapNode { get; }
 
-        internal WorldMapNodeTreeNode(Chaos.WorldMapNode worldMapNode, string name)
+        internal WorldMapNodeTreeNode(Chaos.WorldMapNode wmn, string name)
             : base(name)
         {
-            WorldMapNode = worldMapNode;
+            WorldMapNode = wmn;
             Name = WorldMapNode.CheckSum.ToString();
         }
     }

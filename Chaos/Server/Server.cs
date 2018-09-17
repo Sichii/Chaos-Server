@@ -36,10 +36,10 @@ namespace Chaos
         internal static StreamWriter LogWriter;
         internal static DateTime Today;
 
-        internal IPEndPoint ClientEndPoint;
         internal IPEndPoint ServerEndPoint;
-        internal IPEndPoint LoopbackEndPoint;
-        internal Socket ServerSocket { get; set; }
+        internal Socket LobbySocket { get; set; }
+        internal Socket LoginSocket { get; set; }
+        internal Socket WorldSocket { get; set; }
 
         internal byte[] Table { get; }
         internal uint TableCheckSum { get; }
@@ -53,7 +53,7 @@ namespace Chaos
         internal List<Redirect> Redirects { get; set; }
         internal List<MetaFile> MetaFiles { get; set; }
 
-        internal Server(IPAddress ip, int port)
+        internal Server(IPAddress ip)
         {
             if (!Directory.Exists(Paths.LogFiles))
                 Directory.CreateDirectory(Paths.LogFiles);
@@ -67,9 +67,7 @@ namespace Chaos
 
             WriteLog("Initializing server...");
 
-            ClientEndPoint = new IPEndPoint(ip, port);
-            ServerEndPoint = new IPEndPoint(IPAddress.Any, port);
-            LoopbackEndPoint = new IPEndPoint(IPAddress.Loopback, port);
+            ServerEndPoint = new IPEndPoint(ip, CONSTANTS.LOBBY_PORT);
             Clients = new Dictionary<Socket, Client>();
             DataBase = new DataBase(this);
             Redirects = new List<Redirect>();
@@ -86,9 +84,9 @@ namespace Chaos
             {
                 writer.Write((byte)1);
                 writer.Write((byte)0);
-                writer.Write(ClientEndPoint.Address.GetAddressBytes());
-                writer.Write((byte)(ClientEndPoint.Port / 256));
-                writer.Write((byte)(ClientEndPoint.Port % 256));
+                writer.Write(ServerEndPoint.Address.GetAddressBytes());
+                writer.Write((byte)(ServerEndPoint.Port / 256));
+                writer.Write((byte)(ServerEndPoint.Port % 256));
                 writer.Write(Encoding.GetEncoding(949).GetBytes("Chaos;Under Construction\0"));
                 writer.Write(notif);
                 writer.Flush();
@@ -108,19 +106,30 @@ namespace Chaos
             LogFile.Dispose();
         }
 
-        internal async void ProcessSendQueueAsync()
+        internal async void FlushSendQueueAsync()
         {
             Running = true;
             Game.Set(this);
 
             //display dns ip for others to connect to
-            WriteLog($"Server IP: {ClientEndPoint.Address}");
+            WriteLog($"Server IP: {ServerEndPoint.Address}");
             WriteLog("Starting the serverloop...");
 
-            ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ServerSocket.Bind(ServerEndPoint);
-            ServerSocket.Listen(10);
-            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
+            LobbySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            LobbySocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOBBY_PORT));
+            LobbySocket.Listen(25);
+            LobbySocket.BeginAccept(new AsyncCallback(EndAccept), LobbySocket);
+
+            LoginSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            LoginSocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOGIN_PORT));
+            LoginSocket.Listen(25);
+            LoginSocket.BeginAccept(new AsyncCallback(EndAccept), LoginSocket);
+
+            WorldSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            WorldSocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.WORLD_PORT));
+            WorldSocket.Listen(25);
+            WorldSocket.BeginAccept(new AsyncCallback(EndAccept), WorldSocket);
+
 
             while (Running)
             {
@@ -146,12 +155,9 @@ namespace Chaos
 
                                 if (serverPacket.IsEncrypted)
                                 {
-                                    serverPacket.Counter = client.Signature++;
+                                    serverPacket.Sequence = client.Sequence++;
                                     serverPacket.Encrypt(client.Crypto);
                                 }
-
-                                if (serverPacket.OpCode == 98)
-                                    client.Signature = serverPacket.Counter;
 
                                 client.Send(serverPacket);
                             }
@@ -192,16 +198,36 @@ namespace Chaos
 
         internal void EndAccept(IAsyncResult ar)
         {
-            Socket clientSocket = ServerSocket.EndAccept(ar);
-            ServerSocket.BeginAccept(new AsyncCallback(EndAccept), ServerSocket);
+            ServerType serverType = ServerType.Lobby;
+            var sourceSocket = ar.AsyncState as Socket;
+            Socket clientSocket = sourceSocket.EndAccept(ar);
+            sourceSocket.BeginAccept(new AsyncCallback(EndAccept), sourceSocket);
+
+            if(clientSocket.LocalEndPoint is IPEndPoint ipEndPoint)
+            {
+                switch(ipEndPoint.Port)
+                {
+                    case CONSTANTS.LOBBY_PORT:
+                        serverType = ServerType.Lobby;
+                        break;
+                    case CONSTANTS.LOGIN_PORT:
+                        serverType = ServerType.Login;
+                        break;
+                    case CONSTANTS.WORLD_PORT:
+                        serverType = ServerType.World;
+                        break;
+                }
+            }
 
             if (clientSocket.Connected)
             {
                 //create the user, and add them to the userlist
-                var newClient = new Client(this, clientSocket);
+                var newClient = new Client(this, clientSocket)
+                {
+                    ServerType = serverType
+                };
 
                 WriteLog($@"Incoming connection", newClient);
-
                 newClient.Connect();
             }
         }
@@ -234,5 +260,20 @@ namespace Chaos
 
         internal bool TryGetUser(string name, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
         internal bool TryGetUser(int id, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Id == id)?.User) != null;
+
+        internal static int GetPort(ServerType serverType)
+        {
+            switch(serverType)
+            {
+                case ServerType.Lobby:
+                    return CONSTANTS.LOBBY_PORT;
+                case ServerType.Login:
+                    return CONSTANTS.LOGIN_PORT;
+                case ServerType.World:
+                    return CONSTANTS.WORLD_PORT;
+            }
+
+            return 0;
+        }
     }
 }

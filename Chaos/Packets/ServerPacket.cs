@@ -18,6 +18,8 @@ namespace Chaos
     /// </summary>
     internal sealed class ServerPacket : Packet
     {
+        internal override bool IsEncrypted => OpCode != 0 && OpCode != 3 && OpCode != 64 && OpCode != 126;
+
         internal override EncryptionType EncryptionType
         {
             get
@@ -44,38 +46,26 @@ namespace Chaos
             }
         }
         internal ServerPacket(ServerOpCodes opcode) : base((byte)opcode) { }
-        internal ServerPacket(byte[] buffer) : base(buffer) { }
         internal void Encrypt(Crypto crypto)
         {
             EncryptionType method = EncryptionType;
             int pos = Data.Length;
-            ushort a = (ushort)(Utility.Random(0, 65277) + 256);
-            byte b = (byte)(Utility.Random(0, 155) + 100);
-            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
+            ushort a = (ushort)Utility.Random(257, ushort.MaxValue);
+            byte b = (byte)Utility.Random(101, 255);
+            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[1024];
 
             for (int i = 0; i < Data.Length; ++i)
             {
-                int saltI = i / crypto.Key.Length % 256;
-                Data[i] ^= (byte)(crypto.Salts[saltI] ^ (uint)key[i % key.Length]);
-                if (saltI != Counter)
-                    Data[i] ^= crypto.Salts[Counter];
+                byte saltI = (byte)(i / crypto.Key.Length);
+                Data[i] ^= (byte)(crypto.Salts[saltI] ^ key[i % key.Length]);
+                if (saltI != Sequence)
+                    Data[i] ^= crypto.Salts[Sequence];
             }
 
-            Array.Resize(ref Data, Data.Length + 3);
+            Array.Resize(ref Data, pos + 3);
             Data[pos++] = (byte)(a % 256 ^ 116);
             Data[pos++] = (byte)(b ^ 36U);
             Data[pos++] = (byte)((a >> 8) % 256 ^ 100);
-        }
-
-        internal void GenerateDialogHeader()
-        {
-            ushort CheckSum = Crypto.Generate16(Data, 6, Data.Length - 6);
-            Data[0] = (byte)Utility.Random(0, 255);
-            Data[1] = (byte)Utility.Random(0, 255);
-            Data[2] = (byte)((Data.Length - 4) / 256);
-            Data[3] = (byte)((Data.Length - 4) % 256);
-            Data[4] = (byte)(CheckSum / 256);
-            Data[5] = (byte)(CheckSum % 256);
         }
 
         public override string ToString() => $@"Send [{Enum.GetName(typeof(ServerOpCodes), OpCode) ?? "**Unknown**"}] {GetHexString()}";

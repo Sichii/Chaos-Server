@@ -105,7 +105,7 @@ namespace Chaos
         /// <param name="opt">UserOption to convert.</param>
         public string ToString(UserOption opt)
         {
-            string format = "{0,-18}:{1,-3}";
+            string format = "{0,-18}:{1,3}";
             switch(opt)
             {
                 case UserOption.Request:

@@ -20,7 +20,7 @@ namespace Chaos
         public string Name { get; }
         public ushort MapId { get; }
         public Point Point { get; }
-        internal Location Location => (MapId, Point);
+        public Location Location => (MapId, Point);
 
         /// <summary>
         /// Master constructor for a structure representing an in-game clickable node on a world map. Position on the world map, and the warp information are stored here.

@@ -22,6 +22,8 @@ namespace ChaosTool
         [STAThread]
         static void Main()
         {
+            Paths.Set();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

@@ -36,16 +36,16 @@ namespace Chaos
 #else
             Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 #endif
-            Server = new Server(localIP, 2554);
-            Task.Factory.StartNew(Server.ProcessSendQueueAsync, TaskCreationOptions.LongRunning);
+            Server = new Server(localIP);
+            Task.Factory.StartNew(Server.FlushSendQueueAsync, TaskCreationOptions.LongRunning);
 
-            while (Server.ServerSocket == null)
+            while (Server.LobbySocket == null)
                 Thread.Sleep(10);
 
             Server.WriteLog("Server is ready");
 
             //this thread will block for command line input for use as an admin panel
-            while (Server.ServerSocket != null)
+            while (Server.LobbySocket != null)
                 Console.ReadLine(); //we can do server commands here when the time comes
         }
     }

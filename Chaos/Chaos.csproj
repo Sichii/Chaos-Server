@@ -186,7 +186,8 @@ xcopy /C /y "%25cd%25\Chaos\bin\Release\Chaos.exe" "%25wDir%25\"
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>xcopy /y "$(SolutionDir)PATH.txt" "$(ProjectDir)Resources/PATH.txt"
-xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)ChaosLauncher\Resources"</PreBuildEvent>
+xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)ChaosLauncher\Resources"
+xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)MapTool\Resources"</PreBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

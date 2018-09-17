@@ -47,8 +47,7 @@ namespace Chaos
             var packet = new ServerPacket(ServerOpCodes.Redirect);
 
             packet.Write(redirect.EndPoint.Address.GetAddressBytes().Reverse().ToArray());
-            packet.WriteByte((byte)(redirect.EndPoint.Port / 256));
-            packet.WriteByte((byte)(redirect.EndPoint.Port % 256));
+            packet.WriteUInt16((ushort)redirect.EndPoint.Port);
             packet.WriteByte((byte)(redirect.Key.Length + Encoding.GetEncoding(949).GetBytes(redirect.Name).Length + 7));
             packet.WriteByte(redirect.Seed);
             packet.WriteData8(redirect.Key);
@@ -567,24 +566,13 @@ namespace Chaos
             return packet;
         }
 
-        //FOR THE BELOW PACKET
-        private static EquipmentSlot[] profileEquipment = new EquipmentSlot[18]
-        {
-            EquipmentSlot.Weapon, EquipmentSlot.Armor, EquipmentSlot.Shield,
-            EquipmentSlot.Helmet, EquipmentSlot.Earrings, EquipmentSlot.Necklace,
-            EquipmentSlot.LeftRing, EquipmentSlot.RightRing, EquipmentSlot.LeftGaunt,
-            EquipmentSlot.RightGaunt, EquipmentSlot.Belt, EquipmentSlot.Greaves,
-            EquipmentSlot.Accessory1, EquipmentSlot.Boots, EquipmentSlot.Overcoat,
-            EquipmentSlot.OverHelm, EquipmentSlot.Accessory2, EquipmentSlot.Accessory3
-        };
-
         //YES, THIS ONE
         internal static ServerPacket Profile(User user)
         {
             var packet = new ServerPacket(ServerOpCodes.Profile);
 
             packet.WriteInt32(user.Id);
-            foreach(EquipmentSlot slot in profileEquipment)
+            foreach(EquipmentSlot slot in CONSTANTS.PROFILE_EQUIPMENTSLOT_ORDER)
             {
                 packet.WriteUInt16(user.Equipment[slot]?.ItemSprite.OffsetSprite ?? 0);
                 packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
@@ -814,24 +802,15 @@ namespace Chaos
         {
             return new ServerPacket(ServerOpCodes.MapLoadComplete);
         }
-        internal static ServerPacket LobbyNotification(bool sendNotif, uint loginMsgCheckSum = 0, byte[] notif = null)
+        internal static ServerPacket LoginNotification(bool request, uint loginMsgCheckSum = 0, byte[] notif = null)
         {
-            var packet = new ServerPacket(ServerOpCodes.LobbyNotification);
+            var packet = new ServerPacket(ServerOpCodes.LoginNotification);
 
-            packet.WriteBoolean(sendNotif);
-            if (sendNotif)
+            packet.WriteBoolean(request);
+            if (request)
                 packet.WriteData16(notif);
             else
                 packet.WriteUInt32(loginMsgCheckSum);
-
-            return packet;
-        }
-
-        internal static ServerPacket ChangeCounter()
-        {
-            var packet = new ServerPacket(ServerOpCodes.ChangeCounter);
-
-            packet.WriteInt32(1634886123);
 
             return packet;
         }

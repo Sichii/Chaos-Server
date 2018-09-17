@@ -34,7 +34,7 @@ namespace Chaos
     }
     internal enum ClientOpCodes : byte
     {
-        JoinServer = 0,
+        RequestConnectionInfo = 0,
         CreateChar1 = 2,
         Login = 3,
         CreateChar2 = 4,
@@ -73,11 +73,12 @@ namespace Chaos
         KeepAlive = 69,
         ChangeStat = 71,
         Exchange = 74,
-        RequestLoginMessage = 75,
+        RequestLoginNotification = 75,
         BeginChant = 77,
         DisplayChant = 78,
         Personal = 79,
         RequestServerTable = 87,
+        ChangeSequence = 98,
         RequestHomepage = 104,
         SynchronizeTicks = 117,
         ChangeSocialStatus = 121,
@@ -134,8 +135,7 @@ namespace Chaos
         ConfirmExit = 76,
         ServerTable = 86,
         MapLoadComplete = 88,
-        LobbyNotification = 96,
-        ChangeCounter = 98,
+        LoginNotification = 96,
         GroupRequest = 99,
         LobbyControls = 102,
         MapChangePending = 103,

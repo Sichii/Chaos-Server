@@ -57,7 +57,7 @@ namespace ChaosTool
                 var node2 = y as WorldMapTreeNode;
 
                 //sort by crc
-                return node1.WorldMap.GetCheckSum().CompareTo(node2.WorldMap.GetCheckSum());
+                return node1.WorldMap.CheckSum.CompareTo(node2.WorldMap.CheckSum);
             }
             return 0;
         }

@@ -237,13 +237,13 @@ namespace Chaos
         {
             Seed = seed;
             Key = key;
-            KeySalts = string.IsNullOrEmpty(keySaltSeed) ? new byte[0] : GenerateKeySalts(keySaltSeed);
+            KeySalts = string.IsNullOrEmpty(keySaltSeed) ? new byte[1024] : GenerateKeySalts(keySaltSeed);
         }
 
         internal byte[] GenerateKey(ushort a, byte b)
         {
             byte[] key = new byte[9];
-            for (int i = 0; i < 9; ++i)
+            for (int i = 0; i < 9; i++)
                 key[i] = KeySalts[(i * (9 * i + b * b) + a) % KeySalts.Length];
 
             return key;
@@ -268,7 +268,7 @@ namespace Chaos
         {
             uint checkSum = uint.MaxValue;
             for (int i = 0; i < data.Length; ++i)
-                checkSum = checkSum >> 8 ^ Table32[(int)(checkSum & byte.MaxValue ^ data[i])];
+                checkSum = (checkSum >> 8) ^ Table32[(int)(checkSum & byte.MaxValue ^ data[i])];
             return checkSum;
         }
         public static string GetMD5Hash(string value) => BitConverter.ToString(HashAlgorithm.Create("MD5").ComputeHash(Encoding.ASCII.GetBytes(value))).Replace("-", string.Empty).ToLower();
