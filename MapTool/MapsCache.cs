@@ -74,7 +74,7 @@ namespace ChaosTool
                     }
 
                     var worldMap = new Chaos.WorldMap(field, nodes);
-                    uint crc32 = worldMap.GetCheckSum();
+                    uint crc32 = worldMap.CheckSum;
                     WorldMaps[crc32] = worldMap;
                 }
 
@@ -180,7 +180,7 @@ namespace ChaosTool
                     {
                         writer.Write((byte)keyValuePair.Key.X);
                         writer.Write((byte)keyValuePair.Key.Y);
-                        writer.Write(keyValuePair.Value.GetCheckSum());
+                        writer.Write(keyValuePair.Value.CheckSum);
                     }
                 }
                 Cache.Replace(MapKey, cacheStream.ToArray());

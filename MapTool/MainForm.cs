@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 #pragma warning disable IDE0007 // Use implicit type
 #pragma warning disable IDE0003 // Remove qualification
@@ -22,46 +23,65 @@ namespace ChaosTool
     {
         internal System.ComponentModel.IContainer components = null;
         internal TreeView MapTree;
-        private TabControl mainTabControl;
-        private TabPage mapsTab;
-        private TabPage worldMapsTab;
-        private Label addWorldMapNodeLbl;
-        private Label mapIdLbl;
-        private Label mapSizeXLbl;
-        private Label mapSizeYLbl;
-        private Label mapFlagsLbl;
-        private Label mapNameLbl;
-        private Label mapMusicLbl;
-        private GroupBox addMapGbox;
-        private CheckBox noSpellsCbox;
-        private CheckBox noSkillsCbox;
-        private CheckBox snowCbox;
-        private CheckBox hostileCbox;
-        private NumericUpDown musicNum;
-        private NumericUpDown sizeYNum;
-        private NumericUpDown sizeXNum;
-        private NumericUpDown mapIdNum;
-        private Button addMapBtn;
-        private TextBox mapNameTbox;
-        private Label flagsSumLbl;
-        private GroupBox addWarpGbox;
-        private GroupBox addWorldMapGbox;
-        private CheckBox pvpCbox;
-        private Button changeBtn;
-        private Button deleteMapBtn;
-        private Button changeWarpBtn;
-        private Button addWarpBtn;
-        private Button deleteWarpBtn;
-        private NumericUpDown targetIDNum;
-        private Label TargetIDLbl;
-        private NumericUpDown targetYNum;
-        private Label targetYLbl;
-        private NumericUpDown targetXNum;
-        private Label targetXLbl;
-        private NumericUpDown sourceYNum;
-        private Label sourceYLbl;
-        private NumericUpDown sourceXNum;
-        private Label sourceXLbl;
+        private TabControl MainTabControl;
+        private TabPage MapsTab;
+        private TabPage WorldMapsTab;
+        private Label MapIdLbl;
+        private Label MapSizeXLbl;
+        private Label MapSizeYLbl;
+        private Label MapFlagsLbl;
+        private Label MapNameLbl;
+        private Label MapMusicLbl;
+        private GroupBox MapGbox;
+        private NumericUpDown MusicNum;
+        private NumericUpDown MapSizeYNum;
+        private NumericUpDown MapSizeXNum;
+        private NumericUpDown MapIdNum;
+        private Button AddMapBtn;
+        private TextBox MapNameTbox;
+        private Label FlagSumLbl;
+        private GroupBox WarpGbox;
+        private GroupBox WorldMapGbox;
+        private Button ChangeBtn;
+        private Button DeleteMapBtn;
+        private Button ChangeWarpBtn;
+        private Button AddWarpBtn;
+        private Button DeleteWarpBtn;
+        private NumericUpDown WarpTargetMapIDNum;
+        private Label WarpTargetMapIDLbl;
+        private NumericUpDown WarpTargetYNum;
+        private Label WarpTargetYLbl;
+        private NumericUpDown WarpTargetXNum;
+        private Label WarpTargetXLbl;
+        private NumericUpDown WarpSourceYNum;
+        private Label WarpSourceYLbl;
+        private NumericUpDown WarpSourceXNum;
+        private Label WarpSourceXLbl;
+        private Button ChangeWMapBtn;
+        private Button DeleteWMapBtn;
+        private Button AddWMapBtn;
+        private Label WMapSourceXLbl;
+        private NumericUpDown WMapSourceXNum;
+        private Label WMapSourceYLbl;
+        private NumericUpDown WMapSourceYNum;
+        private Label WMapFieldNameLbl;
+        private GroupBox WorldMapNodeGbox;
+        private Label NodeTargetXLbl;
+        private NumericUpDown NodeTargetXNum;
+        private Label NodeTargetYLbl;
+        private NumericUpDown NodeTargetYNum;
+        private Button ChangeNodeBtn;
+        private Button DeleteNodeBtn;
+        private Button AddNodeBtn;
+        private Label NodePositionXLbl;
+        internal NumericUpDown NodePositionXNum;
+        private Label NodePositionYLbl;
+        internal NumericUpDown NodePositionYNum;
+        private NumericUpDown NodeTargetMapIDNum;
+        private Label NodeTargetMapIDLbl;
+        private Label WorldMapFieldNoteLbl;
+        private ComboBox WMapFieldNameCombox;
+        private Button NodePositionSelectorBtn;
         internal TreeView WorldMapTree;
         internal MapsCache MapsCache { get; }
 
@@ -72,7 +92,12 @@ namespace ChaosTool
             MapTree.TreeViewNodeSorter = new TreeNodeSorter();
             WorldMapTree.TreeViewNodeSorter = new TreeNodeSorter();
             MapsCache.Load();
-            LoadTree();
+            LoadTrees();
+        }
+
+        ~MainForm()
+        {
+            MapsCache.Save();
         }
 
         protected override void Dispose(bool disposing)
@@ -87,61 +112,89 @@ namespace ChaosTool
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MapTree = new System.Windows.Forms.TreeView();
-            this.mainTabControl = new System.Windows.Forms.TabControl();
-            this.mapsTab = new System.Windows.Forms.TabPage();
-            this.worldMapsTab = new System.Windows.Forms.TabPage();
+            this.MainTabControl = new System.Windows.Forms.TabControl();
+            this.MapsTab = new System.Windows.Forms.TabPage();
+            this.WorldMapsTab = new System.Windows.Forms.TabPage();
             this.WorldMapTree = new System.Windows.Forms.TreeView();
-            this.addWorldMapNodeLbl = new System.Windows.Forms.Label();
-            this.mapIdLbl = new System.Windows.Forms.Label();
-            this.mapSizeXLbl = new System.Windows.Forms.Label();
-            this.mapSizeYLbl = new System.Windows.Forms.Label();
-            this.mapFlagsLbl = new System.Windows.Forms.Label();
-            this.mapNameLbl = new System.Windows.Forms.Label();
-            this.mapMusicLbl = new System.Windows.Forms.Label();
-            this.addMapGbox = new System.Windows.Forms.GroupBox();
-            this.deleteMapBtn = new System.Windows.Forms.Button();
-            this.changeBtn = new System.Windows.Forms.Button();
-            this.pvpCbox = new System.Windows.Forms.CheckBox();
-            this.addMapBtn = new System.Windows.Forms.Button();
-            this.mapNameTbox = new System.Windows.Forms.TextBox();
-            this.flagsSumLbl = new System.Windows.Forms.Label();
-            this.noSpellsCbox = new System.Windows.Forms.CheckBox();
-            this.noSkillsCbox = new System.Windows.Forms.CheckBox();
-            this.snowCbox = new System.Windows.Forms.CheckBox();
-            this.hostileCbox = new System.Windows.Forms.CheckBox();
-            this.musicNum = new System.Windows.Forms.NumericUpDown();
-            this.sizeYNum = new System.Windows.Forms.NumericUpDown();
-            this.sizeXNum = new System.Windows.Forms.NumericUpDown();
-            this.mapIdNum = new System.Windows.Forms.NumericUpDown();
-            this.addWarpGbox = new System.Windows.Forms.GroupBox();
-            this.changeWarpBtn = new System.Windows.Forms.Button();
-            this.addWarpBtn = new System.Windows.Forms.Button();
-            this.deleteWarpBtn = new System.Windows.Forms.Button();
-            this.targetIDNum = new System.Windows.Forms.NumericUpDown();
-            this.TargetIDLbl = new System.Windows.Forms.Label();
-            this.targetYNum = new System.Windows.Forms.NumericUpDown();
-            this.targetYLbl = new System.Windows.Forms.Label();
-            this.targetXNum = new System.Windows.Forms.NumericUpDown();
-            this.targetXLbl = new System.Windows.Forms.Label();
-            this.sourceYNum = new System.Windows.Forms.NumericUpDown();
-            this.sourceYLbl = new System.Windows.Forms.Label();
-            this.sourceXNum = new System.Windows.Forms.NumericUpDown();
-            this.sourceXLbl = new System.Windows.Forms.Label();
-            this.addWorldMapGbox = new System.Windows.Forms.GroupBox();
-            this.mainTabControl.SuspendLayout();
-            this.mapsTab.SuspendLayout();
-            this.worldMapsTab.SuspendLayout();
-            this.addMapGbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.musicNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mapIdNum)).BeginInit();
-            this.addWarpGbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.targetIDNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.targetYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.targetXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourceYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourceXNum)).BeginInit();
+            this.MapIdLbl = new System.Windows.Forms.Label();
+            this.MapSizeXLbl = new System.Windows.Forms.Label();
+            this.MapSizeYLbl = new System.Windows.Forms.Label();
+            this.MapFlagsLbl = new System.Windows.Forms.Label();
+            this.MapNameLbl = new System.Windows.Forms.Label();
+            this.MapMusicLbl = new System.Windows.Forms.Label();
+            this.MapGbox = new System.Windows.Forms.GroupBox();
+            this.DeleteMapBtn = new System.Windows.Forms.Button();
+            this.ChangeBtn = new System.Windows.Forms.Button();
+            this.AddMapBtn = new System.Windows.Forms.Button();
+            this.MapNameTbox = new System.Windows.Forms.TextBox();
+            this.FlagSumLbl = new System.Windows.Forms.Label();
+            this.MusicNum = new System.Windows.Forms.NumericUpDown();
+            this.MapSizeYNum = new System.Windows.Forms.NumericUpDown();
+            this.MapSizeXNum = new System.Windows.Forms.NumericUpDown();
+            this.MapIdNum = new System.Windows.Forms.NumericUpDown();
+            this.WarpGbox = new System.Windows.Forms.GroupBox();
+            this.ChangeWarpBtn = new System.Windows.Forms.Button();
+            this.AddWarpBtn = new System.Windows.Forms.Button();
+            this.DeleteWarpBtn = new System.Windows.Forms.Button();
+            this.WarpTargetMapIDNum = new System.Windows.Forms.NumericUpDown();
+            this.WarpTargetMapIDLbl = new System.Windows.Forms.Label();
+            this.WarpTargetYNum = new System.Windows.Forms.NumericUpDown();
+            this.WarpTargetYLbl = new System.Windows.Forms.Label();
+            this.WarpTargetXNum = new System.Windows.Forms.NumericUpDown();
+            this.WarpTargetXLbl = new System.Windows.Forms.Label();
+            this.WarpSourceYNum = new System.Windows.Forms.NumericUpDown();
+            this.WarpSourceYLbl = new System.Windows.Forms.Label();
+            this.WarpSourceXNum = new System.Windows.Forms.NumericUpDown();
+            this.WarpSourceXLbl = new System.Windows.Forms.Label();
+            this.WorldMapGbox = new System.Windows.Forms.GroupBox();
+            this.WMapFieldNameCombox = new System.Windows.Forms.ComboBox();
+            this.WorldMapFieldNoteLbl = new System.Windows.Forms.Label();
+            this.WMapFieldNameLbl = new System.Windows.Forms.Label();
+            this.ChangeWMapBtn = new System.Windows.Forms.Button();
+            this.DeleteWMapBtn = new System.Windows.Forms.Button();
+            this.AddWMapBtn = new System.Windows.Forms.Button();
+            this.WMapSourceXLbl = new System.Windows.Forms.Label();
+            this.WMapSourceXNum = new System.Windows.Forms.NumericUpDown();
+            this.WMapSourceYLbl = new System.Windows.Forms.Label();
+            this.WMapSourceYNum = new System.Windows.Forms.NumericUpDown();
+            this.WorldMapNodeGbox = new System.Windows.Forms.GroupBox();
+            this.NodePositionSelectorBtn = new System.Windows.Forms.Button();
+            this.NodeTargetMapIDNum = new System.Windows.Forms.NumericUpDown();
+            this.NodeTargetXLbl = new System.Windows.Forms.Label();
+            this.NodeTargetMapIDLbl = new System.Windows.Forms.Label();
+            this.NodeTargetXNum = new System.Windows.Forms.NumericUpDown();
+            this.NodeTargetYLbl = new System.Windows.Forms.Label();
+            this.NodeTargetYNum = new System.Windows.Forms.NumericUpDown();
+            this.ChangeNodeBtn = new System.Windows.Forms.Button();
+            this.DeleteNodeBtn = new System.Windows.Forms.Button();
+            this.AddNodeBtn = new System.Windows.Forms.Button();
+            this.NodePositionXLbl = new System.Windows.Forms.Label();
+            this.NodePositionXNum = new System.Windows.Forms.NumericUpDown();
+            this.NodePositionYLbl = new System.Windows.Forms.Label();
+            this.NodePositionYNum = new System.Windows.Forms.NumericUpDown();
+            this.MainTabControl.SuspendLayout();
+            this.MapsTab.SuspendLayout();
+            this.WorldMapsTab.SuspendLayout();
+            this.MapGbox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MusicNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapSizeYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapSizeXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapIdNum)).BeginInit();
+            this.WarpGbox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetMapIDNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceXNum)).BeginInit();
+            this.WorldMapGbox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceYNum)).BeginInit();
+            this.WorldMapNodeGbox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetMapIDNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodePositionXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodePositionYNum)).BeginInit();
             this.SuspendLayout();
             // 
             // MapTree
@@ -156,45 +209,45 @@ namespace ChaosTool
             this.MapTree.Location = new System.Drawing.Point(4, 4);
             this.MapTree.Margin = new System.Windows.Forms.Padding(4);
             this.MapTree.Name = "MapTree";
-            this.MapTree.Size = new System.Drawing.Size(418, 482);
+            this.MapTree.Size = new System.Drawing.Size(418, 486);
             this.MapTree.TabIndex = 0;
             this.MapTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseClick);
             // 
-            // mainTabControl
+            // MainTabControl
             // 
-            this.mainTabControl.Controls.Add(this.mapsTab);
-            this.mainTabControl.Controls.Add(this.worldMapsTab);
-            this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Left;
-            this.mainTabControl.Location = new System.Drawing.Point(0, 0);
-            this.mainTabControl.Margin = new System.Windows.Forms.Padding(4);
-            this.mainTabControl.Name = "mainTabControl";
-            this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(434, 519);
-            this.mainTabControl.TabIndex = 1;
+            this.MainTabControl.Controls.Add(this.MapsTab);
+            this.MainTabControl.Controls.Add(this.WorldMapsTab);
+            this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Left;
+            this.MainTabControl.Location = new System.Drawing.Point(0, 0);
+            this.MainTabControl.Margin = new System.Windows.Forms.Padding(4);
+            this.MainTabControl.Name = "MainTabControl";
+            this.MainTabControl.SelectedIndex = 0;
+            this.MainTabControl.Size = new System.Drawing.Size(434, 523);
+            this.MainTabControl.TabIndex = 1;
             // 
-            // mapsTab
+            // MapsTab
             // 
-            this.mapsTab.Controls.Add(this.MapTree);
-            this.mapsTab.Location = new System.Drawing.Point(4, 25);
-            this.mapsTab.Margin = new System.Windows.Forms.Padding(4);
-            this.mapsTab.Name = "mapsTab";
-            this.mapsTab.Padding = new System.Windows.Forms.Padding(4);
-            this.mapsTab.Size = new System.Drawing.Size(426, 490);
-            this.mapsTab.TabIndex = 0;
-            this.mapsTab.Text = "Maps";
-            this.mapsTab.UseVisualStyleBackColor = true;
+            this.MapsTab.Controls.Add(this.MapTree);
+            this.MapsTab.Location = new System.Drawing.Point(4, 25);
+            this.MapsTab.Margin = new System.Windows.Forms.Padding(4);
+            this.MapsTab.Name = "MapsTab";
+            this.MapsTab.Padding = new System.Windows.Forms.Padding(4);
+            this.MapsTab.Size = new System.Drawing.Size(426, 494);
+            this.MapsTab.TabIndex = 0;
+            this.MapsTab.Text = "Maps";
+            this.MapsTab.UseVisualStyleBackColor = true;
             // 
-            // worldMapsTab
+            // WorldMapsTab
             // 
-            this.worldMapsTab.Controls.Add(this.WorldMapTree);
-            this.worldMapsTab.Location = new System.Drawing.Point(4, 25);
-            this.worldMapsTab.Margin = new System.Windows.Forms.Padding(4);
-            this.worldMapsTab.Name = "worldMapsTab";
-            this.worldMapsTab.Padding = new System.Windows.Forms.Padding(4);
-            this.worldMapsTab.Size = new System.Drawing.Size(426, 490);
-            this.worldMapsTab.TabIndex = 1;
-            this.worldMapsTab.Text = "WorldMaps";
-            this.worldMapsTab.UseVisualStyleBackColor = true;
+            this.WorldMapsTab.Controls.Add(this.WorldMapTree);
+            this.WorldMapsTab.Location = new System.Drawing.Point(4, 25);
+            this.WorldMapsTab.Margin = new System.Windows.Forms.Padding(4);
+            this.WorldMapsTab.Name = "WorldMapsTab";
+            this.WorldMapsTab.Padding = new System.Windows.Forms.Padding(4);
+            this.WorldMapsTab.Size = new System.Drawing.Size(426, 494);
+            this.WorldMapsTab.TabIndex = 1;
+            this.WorldMapsTab.Text = "WorldMaps";
+            this.WorldMapsTab.UseVisualStyleBackColor = true;
             // 
             // WorldMapTree
             // 
@@ -204,596 +257,920 @@ namespace ChaosTool
             this.WorldMapTree.Location = new System.Drawing.Point(4, 4);
             this.WorldMapTree.Margin = new System.Windows.Forms.Padding(4);
             this.WorldMapTree.Name = "WorldMapTree";
-            this.WorldMapTree.Size = new System.Drawing.Size(418, 482);
+            this.WorldMapTree.Size = new System.Drawing.Size(418, 486);
             this.WorldMapTree.TabIndex = 1;
+            this.WorldMapTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.WorldMapTree_NodeMouseClick);
             // 
-            // addWorldMapNodeLbl
+            // MapIdLbl
             // 
-            this.addWorldMapNodeLbl.AutoSize = true;
-            this.addWorldMapNodeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.addWorldMapNodeLbl.Location = new System.Drawing.Point(436, 559);
-            this.addWorldMapNodeLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.addWorldMapNodeLbl.Name = "addWorldMapNodeLbl";
-            this.addWorldMapNodeLbl.Size = new System.Drawing.Size(168, 20);
-            this.addWorldMapNodeLbl.TabIndex = 5;
-            this.addWorldMapNodeLbl.Text = "Add WorldMapNode";
+            this.MapIdLbl.AutoSize = true;
+            this.MapIdLbl.Location = new System.Drawing.Point(42, 24);
+            this.MapIdLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapIdLbl.Name = "MapIdLbl";
+            this.MapIdLbl.Size = new System.Drawing.Size(27, 16);
+            this.MapIdLbl.TabIndex = 8;
+            this.MapIdLbl.Text = "ID: ";
             // 
-            // mapIdLbl
+            // MapSizeXLbl
             // 
-            this.mapIdLbl.AutoSize = true;
-            this.mapIdLbl.Location = new System.Drawing.Point(29, 29);
-            this.mapIdLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.mapIdLbl.Name = "mapIdLbl";
-            this.mapIdLbl.Size = new System.Drawing.Size(27, 16);
-            this.mapIdLbl.TabIndex = 8;
-            this.mapIdLbl.Text = "ID: ";
+            this.MapSizeXLbl.AutoSize = true;
+            this.MapSizeXLbl.Location = new System.Drawing.Point(21, 58);
+            this.MapSizeXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapSizeXLbl.Name = "MapSizeXLbl";
+            this.MapSizeXLbl.Size = new System.Drawing.Size(48, 16);
+            this.MapSizeXLbl.TabIndex = 9;
+            this.MapSizeXLbl.Text = "SizeX: ";
             // 
-            // mapSizeXLbl
+            // MapSizeYLbl
             // 
-            this.mapSizeXLbl.AutoSize = true;
-            this.mapSizeXLbl.Location = new System.Drawing.Point(8, 57);
-            this.mapSizeXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.mapSizeXLbl.Name = "mapSizeXLbl";
-            this.mapSizeXLbl.Size = new System.Drawing.Size(48, 16);
-            this.mapSizeXLbl.TabIndex = 9;
-            this.mapSizeXLbl.Text = "SizeX: ";
+            this.MapSizeYLbl.AutoSize = true;
+            this.MapSizeYLbl.Location = new System.Drawing.Point(21, 92);
+            this.MapSizeYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapSizeYLbl.Name = "MapSizeYLbl";
+            this.MapSizeYLbl.Size = new System.Drawing.Size(49, 16);
+            this.MapSizeYLbl.TabIndex = 10;
+            this.MapSizeYLbl.Text = "SizeY: ";
             // 
-            // mapSizeYLbl
+            // MapFlagsLbl
             // 
-            this.mapSizeYLbl.AutoSize = true;
-            this.mapSizeYLbl.Location = new System.Drawing.Point(8, 89);
-            this.mapSizeYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.mapSizeYLbl.Name = "mapSizeYLbl";
-            this.mapSizeYLbl.Size = new System.Drawing.Size(49, 16);
-            this.mapSizeYLbl.TabIndex = 10;
-            this.mapSizeYLbl.Text = "SizeY: ";
+            this.MapFlagsLbl.AutoSize = true;
+            this.MapFlagsLbl.Location = new System.Drawing.Point(163, 58);
+            this.MapFlagsLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapFlagsLbl.Name = "MapFlagsLbl";
+            this.MapFlagsLbl.Size = new System.Drawing.Size(48, 16);
+            this.MapFlagsLbl.TabIndex = 11;
+            this.MapFlagsLbl.Text = "Flags: ";
             // 
-            // mapFlagsLbl
+            // MapNameLbl
             // 
-            this.mapFlagsLbl.AutoSize = true;
-            this.mapFlagsLbl.Location = new System.Drawing.Point(153, 57);
-            this.mapFlagsLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.mapFlagsLbl.Name = "mapFlagsLbl";
-            this.mapFlagsLbl.Size = new System.Drawing.Size(48, 16);
-            this.mapFlagsLbl.TabIndex = 11;
-            this.mapFlagsLbl.Text = "Flags: ";
+            this.MapNameLbl.AutoSize = true;
+            this.MapNameLbl.Location = new System.Drawing.Point(160, 24);
+            this.MapNameLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapNameLbl.Name = "MapNameLbl";
+            this.MapNameLbl.Size = new System.Drawing.Size(51, 16);
+            this.MapNameLbl.TabIndex = 12;
+            this.MapNameLbl.Text = "Name: ";
             // 
-            // mapNameLbl
+            // MapMusicLbl
             // 
-            this.mapNameLbl.AutoSize = true;
-            this.mapNameLbl.Location = new System.Drawing.Point(153, 25);
-            this.mapNameLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.mapNameLbl.Name = "mapNameLbl";
-            this.mapNameLbl.Size = new System.Drawing.Size(51, 16);
-            this.mapNameLbl.TabIndex = 12;
-            this.mapNameLbl.Text = "Name: ";
+            this.MapMusicLbl.AutoSize = true;
+            this.MapMusicLbl.Location = new System.Drawing.Point(163, 92);
+            this.MapMusicLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapMusicLbl.Name = "MapMusicLbl";
+            this.MapMusicLbl.Size = new System.Drawing.Size(49, 16);
+            this.MapMusicLbl.TabIndex = 13;
+            this.MapMusicLbl.Text = "Music: ";
             // 
-            // mapMusicLbl
+            // MapGbox
             // 
-            this.mapMusicLbl.AutoSize = true;
-            this.mapMusicLbl.Location = new System.Drawing.Point(152, 91);
-            this.mapMusicLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.mapMusicLbl.Name = "mapMusicLbl";
-            this.mapMusicLbl.Size = new System.Drawing.Size(49, 16);
-            this.mapMusicLbl.TabIndex = 13;
-            this.mapMusicLbl.Text = "Music: ";
+            this.MapGbox.Controls.Add(this.DeleteMapBtn);
+            this.MapGbox.Controls.Add(this.ChangeBtn);
+            this.MapGbox.Controls.Add(this.AddMapBtn);
+            this.MapGbox.Controls.Add(this.MapNameTbox);
+            this.MapGbox.Controls.Add(this.FlagSumLbl);
+            this.MapGbox.Controls.Add(this.MusicNum);
+            this.MapGbox.Controls.Add(this.MapSizeYNum);
+            this.MapGbox.Controls.Add(this.MapSizeXNum);
+            this.MapGbox.Controls.Add(this.MapIdNum);
+            this.MapGbox.Controls.Add(this.MapIdLbl);
+            this.MapGbox.Controls.Add(this.MapMusicLbl);
+            this.MapGbox.Controls.Add(this.MapNameLbl);
+            this.MapGbox.Controls.Add(this.MapSizeXLbl);
+            this.MapGbox.Controls.Add(this.MapFlagsLbl);
+            this.MapGbox.Controls.Add(this.MapSizeYLbl);
+            this.MapGbox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.MapGbox.Location = new System.Drawing.Point(434, 0);
+            this.MapGbox.Margin = new System.Windows.Forms.Padding(4);
+            this.MapGbox.Name = "MapGbox";
+            this.MapGbox.Padding = new System.Windows.Forms.Padding(4);
+            this.MapGbox.Size = new System.Drawing.Size(652, 130);
+            this.MapGbox.TabIndex = 14;
+            this.MapGbox.TabStop = false;
+            this.MapGbox.Text = "Maps";
             // 
-            // addMapGbox
+            // DeleteMapBtn
             // 
-            this.addMapGbox.Controls.Add(this.deleteMapBtn);
-            this.addMapGbox.Controls.Add(this.changeBtn);
-            this.addMapGbox.Controls.Add(this.pvpCbox);
-            this.addMapGbox.Controls.Add(this.addMapBtn);
-            this.addMapGbox.Controls.Add(this.mapNameTbox);
-            this.addMapGbox.Controls.Add(this.flagsSumLbl);
-            this.addMapGbox.Controls.Add(this.noSpellsCbox);
-            this.addMapGbox.Controls.Add(this.noSkillsCbox);
-            this.addMapGbox.Controls.Add(this.snowCbox);
-            this.addMapGbox.Controls.Add(this.hostileCbox);
-            this.addMapGbox.Controls.Add(this.musicNum);
-            this.addMapGbox.Controls.Add(this.sizeYNum);
-            this.addMapGbox.Controls.Add(this.sizeXNum);
-            this.addMapGbox.Controls.Add(this.mapIdNum);
-            this.addMapGbox.Controls.Add(this.mapIdLbl);
-            this.addMapGbox.Controls.Add(this.mapMusicLbl);
-            this.addMapGbox.Controls.Add(this.mapNameLbl);
-            this.addMapGbox.Controls.Add(this.mapSizeXLbl);
-            this.addMapGbox.Controls.Add(this.mapFlagsLbl);
-            this.addMapGbox.Controls.Add(this.mapSizeYLbl);
-            this.addMapGbox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.addMapGbox.Location = new System.Drawing.Point(434, 0);
-            this.addMapGbox.Margin = new System.Windows.Forms.Padding(4);
-            this.addMapGbox.Name = "addMapGbox";
-            this.addMapGbox.Padding = new System.Windows.Forms.Padding(4);
-            this.addMapGbox.Size = new System.Drawing.Size(652, 130);
-            this.addMapGbox.TabIndex = 14;
-            this.addMapGbox.TabStop = false;
-            this.addMapGbox.Text = "Add Map";
+            this.DeleteMapBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.DeleteMapBtn.AutoSize = true;
+            this.DeleteMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.DeleteMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeleteMapBtn.Location = new System.Drawing.Point(523, 18);
+            this.DeleteMapBtn.Name = "DeleteMapBtn";
+            this.DeleteMapBtn.Size = new System.Drawing.Size(117, 28);
+            this.DeleteMapBtn.TabIndex = 29;
+            this.DeleteMapBtn.Text = "Delete Selected";
+            this.DeleteMapBtn.UseVisualStyleBackColor = true;
+            this.DeleteMapBtn.Click += new System.EventHandler(this.DeleteMapBtn_Click);
             // 
-            // deleteMapBtn
+            // ChangeBtn
             // 
-            this.deleteMapBtn.AutoSize = true;
-            this.deleteMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.deleteMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.deleteMapBtn.Location = new System.Drawing.Point(528, 27);
-            this.deleteMapBtn.Name = "deleteMapBtn";
-            this.deleteMapBtn.Size = new System.Drawing.Size(117, 28);
-            this.deleteMapBtn.TabIndex = 29;
-            this.deleteMapBtn.Text = "Delete Selected";
-            this.deleteMapBtn.UseVisualStyleBackColor = true;
-            this.deleteMapBtn.Click += new System.EventHandler(this.DeleteMapBtn_Click);
+            this.ChangeBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.ChangeBtn.AutoSize = true;
+            this.ChangeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ChangeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChangeBtn.Location = new System.Drawing.Point(516, 52);
+            this.ChangeBtn.Name = "ChangeBtn";
+            this.ChangeBtn.Size = new System.Drawing.Size(124, 28);
+            this.ChangeBtn.TabIndex = 28;
+            this.ChangeBtn.Text = "Change Selected";
+            this.ChangeBtn.UseVisualStyleBackColor = true;
+            this.ChangeBtn.Click += new System.EventHandler(this.ChangeBtn_Click);
             // 
-            // changeBtn
+            // AddMapBtn
             // 
-            this.changeBtn.AutoSize = true;
-            this.changeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.changeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.changeBtn.Location = new System.Drawing.Point(521, 61);
-            this.changeBtn.Name = "changeBtn";
-            this.changeBtn.Size = new System.Drawing.Size(124, 28);
-            this.changeBtn.TabIndex = 28;
-            this.changeBtn.Text = "Change Selected";
-            this.changeBtn.UseVisualStyleBackColor = true;
-            this.changeBtn.Click += new System.EventHandler(this.ChangeBtn_Click);
+            this.AddMapBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.AddMapBtn.AutoSize = true;
+            this.AddMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AddMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AddMapBtn.Location = new System.Drawing.Point(565, 86);
+            this.AddMapBtn.Name = "AddMapBtn";
+            this.AddMapBtn.Size = new System.Drawing.Size(75, 28);
+            this.AddMapBtn.TabIndex = 26;
+            this.AddMapBtn.Text = "Add Map";
+            this.AddMapBtn.UseVisualStyleBackColor = true;
+            this.AddMapBtn.Click += new System.EventHandler(this.AddMapBtn_Click);
             // 
-            // pvpCbox
+            // MapNameTbox
             // 
-            this.pvpCbox.AutoSize = true;
-            this.pvpCbox.Location = new System.Drawing.Point(335, 64);
-            this.pvpCbox.Name = "pvpCbox";
-            this.pvpCbox.Size = new System.Drawing.Size(52, 20);
-            this.pvpCbox.TabIndex = 27;
-            this.pvpCbox.Text = "PvP";
-            this.pvpCbox.UseVisualStyleBackColor = true;
-            this.pvpCbox.CheckedChanged += new System.EventHandler(this.PvPCbox_CheckedChanged);
+            this.MapNameTbox.BackColor = System.Drawing.Color.White;
+            this.MapNameTbox.ForeColor = System.Drawing.Color.Black;
+            this.MapNameTbox.Location = new System.Drawing.Point(218, 21);
+            this.MapNameTbox.Name = "MapNameTbox";
+            this.MapNameTbox.Size = new System.Drawing.Size(120, 22);
+            this.MapNameTbox.TabIndex = 25;
             // 
-            // addMapBtn
+            // FlagSumLbl
             // 
-            this.addMapBtn.AutoSize = true;
-            this.addMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.addMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.addMapBtn.Location = new System.Drawing.Point(570, 95);
-            this.addMapBtn.Name = "addMapBtn";
-            this.addMapBtn.Size = new System.Drawing.Size(75, 28);
-            this.addMapBtn.TabIndex = 26;
-            this.addMapBtn.Text = "Add Map";
-            this.addMapBtn.UseVisualStyleBackColor = true;
-            this.addMapBtn.Click += new System.EventHandler(this.AddMapBtn_Click);
+            this.FlagSumLbl.AutoSize = true;
+            this.FlagSumLbl.Location = new System.Drawing.Point(219, 58);
+            this.FlagSumLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.FlagSumLbl.Name = "FlagSumLbl";
+            this.FlagSumLbl.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.FlagSumLbl.Size = new System.Drawing.Size(15, 16);
+            this.FlagSumLbl.TabIndex = 24;
+            this.FlagSumLbl.Text = "0";
+            this.FlagSumLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // mapNameTbox
+            // MusicNum
             // 
-            this.mapNameTbox.BackColor = System.Drawing.Color.White;
-            this.mapNameTbox.ForeColor = System.Drawing.Color.Black;
-            this.mapNameTbox.Location = new System.Drawing.Point(201, 22);
-            this.mapNameTbox.Name = "mapNameTbox";
-            this.mapNameTbox.Size = new System.Drawing.Size(120, 22);
-            this.mapNameTbox.TabIndex = 25;
-            // 
-            // flagsSumLbl
-            // 
-            this.flagsSumLbl.AutoSize = true;
-            this.flagsSumLbl.Location = new System.Drawing.Point(198, 57);
-            this.flagsSumLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.flagsSumLbl.Name = "flagsSumLbl";
-            this.flagsSumLbl.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.flagsSumLbl.Size = new System.Drawing.Size(15, 16);
-            this.flagsSumLbl.TabIndex = 24;
-            this.flagsSumLbl.Text = "0";
-            this.flagsSumLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // noSpellsCbox
-            // 
-            this.noSpellsCbox.AutoSize = true;
-            this.noSpellsCbox.Location = new System.Drawing.Point(420, 12);
-            this.noSpellsCbox.Name = "noSpellsCbox";
-            this.noSpellsCbox.Size = new System.Drawing.Size(83, 20);
-            this.noSpellsCbox.TabIndex = 23;
-            this.noSpellsCbox.Text = "NoSpells";
-            this.noSpellsCbox.UseVisualStyleBackColor = true;
-            this.noSpellsCbox.CheckedChanged += new System.EventHandler(this.NoSpellsCbox_CheckedChanged);
-            // 
-            // noSkillsCbox
-            // 
-            this.noSkillsCbox.AutoSize = true;
-            this.noSkillsCbox.Location = new System.Drawing.Point(420, 38);
-            this.noSkillsCbox.Name = "noSkillsCbox";
-            this.noSkillsCbox.Size = new System.Drawing.Size(77, 20);
-            this.noSkillsCbox.TabIndex = 22;
-            this.noSkillsCbox.Text = "NoSkills";
-            this.noSkillsCbox.UseVisualStyleBackColor = true;
-            this.noSkillsCbox.CheckedChanged += new System.EventHandler(this.NoSkillsCbox_CheckedChanged);
-            // 
-            // snowCbox
-            // 
-            this.snowCbox.AutoSize = true;
-            this.snowCbox.Location = new System.Drawing.Point(335, 38);
-            this.snowCbox.Name = "snowCbox";
-            this.snowCbox.Size = new System.Drawing.Size(60, 20);
-            this.snowCbox.TabIndex = 21;
-            this.snowCbox.Text = "Snow";
-            this.snowCbox.UseVisualStyleBackColor = true;
-            this.snowCbox.CheckedChanged += new System.EventHandler(this.SnowCbox_CheckedChanged);
-            // 
-            // hostileCbox
-            // 
-            this.hostileCbox.AutoSize = true;
-            this.hostileCbox.Location = new System.Drawing.Point(335, 12);
-            this.hostileCbox.Name = "hostileCbox";
-            this.hostileCbox.Size = new System.Drawing.Size(69, 20);
-            this.hostileCbox.TabIndex = 20;
-            this.hostileCbox.Text = "Hostile";
-            this.hostileCbox.UseVisualStyleBackColor = true;
-            this.hostileCbox.CheckedChanged += new System.EventHandler(this.HostileCbox_CheckedChanged);
-            // 
-            // musicNum
-            // 
-            this.musicNum.BackColor = System.Drawing.Color.White;
-            this.musicNum.ForeColor = System.Drawing.Color.Black;
-            this.musicNum.Location = new System.Drawing.Point(201, 89);
-            this.musicNum.Maximum = new decimal(new int[] {
+            this.MusicNum.BackColor = System.Drawing.Color.White;
+            this.MusicNum.ForeColor = System.Drawing.Color.Black;
+            this.MusicNum.Location = new System.Drawing.Point(219, 90);
+            this.MusicNum.Maximum = new decimal(new int[] {
             127,
             0,
             0,
             0});
-            this.musicNum.Minimum = new decimal(new int[] {
+            this.MusicNum.Minimum = new decimal(new int[] {
             128,
             0,
             0,
             -2147483648});
-            this.musicNum.Name = "musicNum";
-            this.musicNum.Size = new System.Drawing.Size(44, 22);
-            this.musicNum.TabIndex = 19;
-            this.musicNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.musicNum.Value = new decimal(new int[] {
+            this.MusicNum.Name = "MusicNum";
+            this.MusicNum.Size = new System.Drawing.Size(44, 22);
+            this.MusicNum.TabIndex = 19;
+            this.MusicNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.MusicNum.Value = new decimal(new int[] {
             127,
             0,
             0,
             0});
             // 
-            // sizeYNum
+            // MapSizeYNum
             // 
-            this.sizeYNum.BackColor = System.Drawing.Color.White;
-            this.sizeYNum.ForeColor = System.Drawing.Color.Black;
-            this.sizeYNum.Location = new System.Drawing.Point(64, 87);
-            this.sizeYNum.Maximum = new decimal(new int[] {
+            this.MapSizeYNum.BackColor = System.Drawing.Color.White;
+            this.MapSizeYNum.ForeColor = System.Drawing.Color.Black;
+            this.MapSizeYNum.Location = new System.Drawing.Point(77, 90);
+            this.MapSizeYNum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.sizeYNum.Minimum = new decimal(new int[] {
+            this.MapSizeYNum.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.sizeYNum.Name = "sizeYNum";
-            this.sizeYNum.Size = new System.Drawing.Size(44, 22);
-            this.sizeYNum.TabIndex = 18;
-            this.sizeYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.sizeYNum.Value = new decimal(new int[] {
+            this.MapSizeYNum.Name = "MapSizeYNum";
+            this.MapSizeYNum.Size = new System.Drawing.Size(44, 22);
+            this.MapSizeYNum.TabIndex = 18;
+            this.MapSizeYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.MapSizeYNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // sizeXNum
+            // MapSizeXNum
             // 
-            this.sizeXNum.BackColor = System.Drawing.Color.White;
-            this.sizeXNum.ForeColor = System.Drawing.Color.Black;
-            this.sizeXNum.Location = new System.Drawing.Point(63, 55);
-            this.sizeXNum.Maximum = new decimal(new int[] {
+            this.MapSizeXNum.BackColor = System.Drawing.Color.White;
+            this.MapSizeXNum.ForeColor = System.Drawing.Color.Black;
+            this.MapSizeXNum.Location = new System.Drawing.Point(76, 56);
+            this.MapSizeXNum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.sizeXNum.Minimum = new decimal(new int[] {
+            this.MapSizeXNum.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.sizeXNum.Name = "sizeXNum";
-            this.sizeXNum.Size = new System.Drawing.Size(44, 22);
-            this.sizeXNum.TabIndex = 17;
-            this.sizeXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.sizeXNum.Value = new decimal(new int[] {
+            this.MapSizeXNum.Name = "MapSizeXNum";
+            this.MapSizeXNum.Size = new System.Drawing.Size(44, 22);
+            this.MapSizeXNum.TabIndex = 17;
+            this.MapSizeXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.MapSizeXNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // mapIdNum
+            // MapIdNum
             // 
-            this.mapIdNum.BackColor = System.Drawing.Color.White;
-            this.mapIdNum.ForeColor = System.Drawing.Color.Black;
-            this.mapIdNum.Location = new System.Drawing.Point(63, 27);
-            this.mapIdNum.Maximum = new decimal(new int[] {
+            this.MapIdNum.BackColor = System.Drawing.Color.White;
+            this.MapIdNum.ForeColor = System.Drawing.Color.Black;
+            this.MapIdNum.Location = new System.Drawing.Point(76, 22);
+            this.MapIdNum.Maximum = new decimal(new int[] {
             20000,
             0,
             0,
             0});
-            this.mapIdNum.Minimum = new decimal(new int[] {
+            this.MapIdNum.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.mapIdNum.Name = "mapIdNum";
-            this.mapIdNum.Size = new System.Drawing.Size(58, 22);
-            this.mapIdNum.TabIndex = 14;
-            this.mapIdNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.mapIdNum.Value = new decimal(new int[] {
+            this.MapIdNum.Name = "MapIdNum";
+            this.MapIdNum.Size = new System.Drawing.Size(58, 22);
+            this.MapIdNum.TabIndex = 14;
+            this.MapIdNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.MapIdNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // addWarpGbox
+            // WarpGbox
             // 
-            this.addWarpGbox.Controls.Add(this.changeWarpBtn);
-            this.addWarpGbox.Controls.Add(this.addWarpBtn);
-            this.addWarpGbox.Controls.Add(this.deleteWarpBtn);
-            this.addWarpGbox.Controls.Add(this.targetIDNum);
-            this.addWarpGbox.Controls.Add(this.TargetIDLbl);
-            this.addWarpGbox.Controls.Add(this.targetYNum);
-            this.addWarpGbox.Controls.Add(this.targetYLbl);
-            this.addWarpGbox.Controls.Add(this.targetXNum);
-            this.addWarpGbox.Controls.Add(this.targetXLbl);
-            this.addWarpGbox.Controls.Add(this.sourceYNum);
-            this.addWarpGbox.Controls.Add(this.sourceYLbl);
-            this.addWarpGbox.Controls.Add(this.sourceXNum);
-            this.addWarpGbox.Controls.Add(this.sourceXLbl);
-            this.addWarpGbox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.addWarpGbox.Location = new System.Drawing.Point(434, 130);
-            this.addWarpGbox.Name = "addWarpGbox";
-            this.addWarpGbox.Size = new System.Drawing.Size(652, 130);
-            this.addWarpGbox.TabIndex = 15;
-            this.addWarpGbox.TabStop = false;
-            this.addWarpGbox.Text = "Add Warp";
+            this.WarpGbox.Controls.Add(this.ChangeWarpBtn);
+            this.WarpGbox.Controls.Add(this.AddWarpBtn);
+            this.WarpGbox.Controls.Add(this.DeleteWarpBtn);
+            this.WarpGbox.Controls.Add(this.WarpTargetMapIDNum);
+            this.WarpGbox.Controls.Add(this.WarpTargetMapIDLbl);
+            this.WarpGbox.Controls.Add(this.WarpTargetYNum);
+            this.WarpGbox.Controls.Add(this.WarpTargetYLbl);
+            this.WarpGbox.Controls.Add(this.WarpTargetXNum);
+            this.WarpGbox.Controls.Add(this.WarpTargetXLbl);
+            this.WarpGbox.Controls.Add(this.WarpSourceYNum);
+            this.WarpGbox.Controls.Add(this.WarpSourceYLbl);
+            this.WarpGbox.Controls.Add(this.WarpSourceXNum);
+            this.WarpGbox.Controls.Add(this.WarpSourceXLbl);
+            this.WarpGbox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.WarpGbox.Location = new System.Drawing.Point(434, 130);
+            this.WarpGbox.Name = "WarpGbox";
+            this.WarpGbox.Size = new System.Drawing.Size(652, 130);
+            this.WarpGbox.TabIndex = 15;
+            this.WarpGbox.TabStop = false;
+            this.WarpGbox.Text = "Warps";
             // 
-            // changeWarpBtn
+            // ChangeWarpBtn
             // 
-            this.changeWarpBtn.AutoSize = true;
-            this.changeWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.changeWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.changeWarpBtn.Location = new System.Drawing.Point(516, 62);
-            this.changeWarpBtn.Name = "changeWarpBtn";
-            this.changeWarpBtn.Size = new System.Drawing.Size(124, 28);
-            this.changeWarpBtn.TabIndex = 30;
-            this.changeWarpBtn.Text = "Change Selected";
-            this.changeWarpBtn.UseVisualStyleBackColor = true;
-            this.changeWarpBtn.Click += new System.EventHandler(this.ChangeWarpBtn_Click);
+            this.ChangeWarpBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.ChangeWarpBtn.AutoSize = true;
+            this.ChangeWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ChangeWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChangeWarpBtn.Location = new System.Drawing.Point(516, 55);
+            this.ChangeWarpBtn.Name = "ChangeWarpBtn";
+            this.ChangeWarpBtn.Size = new System.Drawing.Size(124, 28);
+            this.ChangeWarpBtn.TabIndex = 30;
+            this.ChangeWarpBtn.Text = "Change Selected";
+            this.ChangeWarpBtn.UseVisualStyleBackColor = true;
+            this.ChangeWarpBtn.Click += new System.EventHandler(this.ChangeWarpBtn_Click);
             // 
-            // addWarpBtn
+            // AddWarpBtn
             // 
-            this.addWarpBtn.AutoSize = true;
-            this.addWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.addWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.addWarpBtn.Location = new System.Drawing.Point(458, 96);
-            this.addWarpBtn.Name = "addWarpBtn";
-            this.addWarpBtn.Size = new System.Drawing.Size(182, 28);
-            this.addWarpBtn.TabIndex = 30;
-            this.addWarpBtn.Text = "Add Warp to Selected Map";
-            this.addWarpBtn.UseVisualStyleBackColor = true;
-            this.addWarpBtn.Click += new System.EventHandler(this.AddWarpBtn_Click);
+            this.AddWarpBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.AddWarpBtn.AutoSize = true;
+            this.AddWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AddWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AddWarpBtn.Location = new System.Drawing.Point(458, 89);
+            this.AddWarpBtn.Name = "AddWarpBtn";
+            this.AddWarpBtn.Size = new System.Drawing.Size(182, 28);
+            this.AddWarpBtn.TabIndex = 30;
+            this.AddWarpBtn.Text = "Add Warp to Selected Map";
+            this.AddWarpBtn.UseVisualStyleBackColor = true;
+            this.AddWarpBtn.Click += new System.EventHandler(this.AddWarpBtn_Click);
             // 
-            // deleteWarpBtn
+            // DeleteWarpBtn
             // 
-            this.deleteWarpBtn.AutoSize = true;
-            this.deleteWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.deleteWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.deleteWarpBtn.Location = new System.Drawing.Point(523, 28);
-            this.deleteWarpBtn.Name = "deleteWarpBtn";
-            this.deleteWarpBtn.Size = new System.Drawing.Size(117, 28);
-            this.deleteWarpBtn.TabIndex = 30;
-            this.deleteWarpBtn.Text = "Delete Selected";
-            this.deleteWarpBtn.UseVisualStyleBackColor = true;
-            this.deleteWarpBtn.Click += new System.EventHandler(this.DeleteWarpBtn_Click);
+            this.DeleteWarpBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.DeleteWarpBtn.AutoSize = true;
+            this.DeleteWarpBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.DeleteWarpBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeleteWarpBtn.Location = new System.Drawing.Point(523, 21);
+            this.DeleteWarpBtn.Name = "DeleteWarpBtn";
+            this.DeleteWarpBtn.Size = new System.Drawing.Size(117, 28);
+            this.DeleteWarpBtn.TabIndex = 30;
+            this.DeleteWarpBtn.Text = "Delete Selected";
+            this.DeleteWarpBtn.UseVisualStyleBackColor = true;
+            this.DeleteWarpBtn.Click += new System.EventHandler(this.DeleteWarpBtn_Click);
             // 
-            // targetIDNum
+            // WarpTargetMapIDNum
             // 
-            this.targetIDNum.BackColor = System.Drawing.Color.White;
-            this.targetIDNum.ForeColor = System.Drawing.Color.Black;
-            this.targetIDNum.Location = new System.Drawing.Point(218, 86);
-            this.targetIDNum.Maximum = new decimal(new int[] {
+            this.WarpTargetMapIDNum.BackColor = System.Drawing.Color.White;
+            this.WarpTargetMapIDNum.ForeColor = System.Drawing.Color.Black;
+            this.WarpTargetMapIDNum.Location = new System.Drawing.Point(219, 93);
+            this.WarpTargetMapIDNum.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
-            this.targetIDNum.Minimum = new decimal(new int[] {
+            this.WarpTargetMapIDNum.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.targetIDNum.Name = "targetIDNum";
-            this.targetIDNum.Size = new System.Drawing.Size(60, 22);
-            this.targetIDNum.TabIndex = 38;
-            this.targetIDNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.targetIDNum.Value = new decimal(new int[] {
+            this.WarpTargetMapIDNum.Name = "WarpTargetMapIDNum";
+            this.WarpTargetMapIDNum.Size = new System.Drawing.Size(60, 22);
+            this.WarpTargetMapIDNum.TabIndex = 38;
+            this.WarpTargetMapIDNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WarpTargetMapIDNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // TargetIDLbl
+            // WarpTargetMapIDLbl
             // 
-            this.TargetIDLbl.AutoSize = true;
-            this.TargetIDLbl.Location = new System.Drawing.Point(147, 88);
-            this.TargetIDLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.TargetIDLbl.Name = "TargetIDLbl";
-            this.TargetIDLbl.Size = new System.Drawing.Size(64, 16);
-            this.TargetIDLbl.TabIndex = 37;
-            this.TargetIDLbl.Text = "TargetID:";
+            this.WarpTargetMapIDLbl.AutoSize = true;
+            this.WarpTargetMapIDLbl.Location = new System.Drawing.Point(148, 95);
+            this.WarpTargetMapIDLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WarpTargetMapIDLbl.Name = "WarpTargetMapIDLbl";
+            this.WarpTargetMapIDLbl.Size = new System.Drawing.Size(64, 16);
+            this.WarpTargetMapIDLbl.TabIndex = 37;
+            this.WarpTargetMapIDLbl.Text = "TargetID:";
             // 
-            // targetYNum
+            // WarpTargetYNum
             // 
-            this.targetYNum.BackColor = System.Drawing.Color.White;
-            this.targetYNum.ForeColor = System.Drawing.Color.Black;
-            this.targetYNum.Location = new System.Drawing.Point(218, 58);
-            this.targetYNum.Maximum = new decimal(new int[] {
+            this.WarpTargetYNum.BackColor = System.Drawing.Color.White;
+            this.WarpTargetYNum.ForeColor = System.Drawing.Color.Black;
+            this.WarpTargetYNum.Location = new System.Drawing.Point(218, 59);
+            this.WarpTargetYNum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.targetYNum.Name = "targetYNum";
-            this.targetYNum.Size = new System.Drawing.Size(44, 22);
-            this.targetYNum.TabIndex = 36;
-            this.targetYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.targetYNum.Value = new decimal(new int[] {
+            this.WarpTargetYNum.Name = "WarpTargetYNum";
+            this.WarpTargetYNum.Size = new System.Drawing.Size(44, 22);
+            this.WarpTargetYNum.TabIndex = 36;
+            this.WarpTargetYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WarpTargetYNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // targetYLbl
+            // WarpTargetYLbl
             // 
-            this.targetYLbl.AutoSize = true;
-            this.targetYLbl.Location = new System.Drawing.Point(151, 60);
-            this.targetYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.targetYLbl.Name = "targetYLbl";
-            this.targetYLbl.Size = new System.Drawing.Size(60, 16);
-            this.targetYLbl.TabIndex = 35;
-            this.targetYLbl.Text = "TargetY:";
+            this.WarpTargetYLbl.AutoSize = true;
+            this.WarpTargetYLbl.Location = new System.Drawing.Point(151, 61);
+            this.WarpTargetYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WarpTargetYLbl.Name = "WarpTargetYLbl";
+            this.WarpTargetYLbl.Size = new System.Drawing.Size(60, 16);
+            this.WarpTargetYLbl.TabIndex = 35;
+            this.WarpTargetYLbl.Text = "TargetY:";
             // 
-            // targetXNum
+            // WarpTargetXNum
             // 
-            this.targetXNum.BackColor = System.Drawing.Color.White;
-            this.targetXNum.ForeColor = System.Drawing.Color.Black;
-            this.targetXNum.Location = new System.Drawing.Point(217, 28);
-            this.targetXNum.Maximum = new decimal(new int[] {
+            this.WarpTargetXNum.BackColor = System.Drawing.Color.White;
+            this.WarpTargetXNum.ForeColor = System.Drawing.Color.Black;
+            this.WarpTargetXNum.Location = new System.Drawing.Point(218, 25);
+            this.WarpTargetXNum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.targetXNum.Name = "targetXNum";
-            this.targetXNum.Size = new System.Drawing.Size(44, 22);
-            this.targetXNum.TabIndex = 34;
-            this.targetXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.targetXNum.Value = new decimal(new int[] {
+            this.WarpTargetXNum.Name = "WarpTargetXNum";
+            this.WarpTargetXNum.Size = new System.Drawing.Size(44, 22);
+            this.WarpTargetXNum.TabIndex = 34;
+            this.WarpTargetXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WarpTargetXNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // targetXLbl
+            // WarpTargetXLbl
             // 
-            this.targetXLbl.AutoSize = true;
-            this.targetXLbl.Location = new System.Drawing.Point(151, 30);
-            this.targetXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.targetXLbl.Name = "targetXLbl";
-            this.targetXLbl.Size = new System.Drawing.Size(59, 16);
-            this.targetXLbl.TabIndex = 33;
-            this.targetXLbl.Text = "TargetX:";
+            this.WarpTargetXLbl.AutoSize = true;
+            this.WarpTargetXLbl.Location = new System.Drawing.Point(152, 27);
+            this.WarpTargetXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WarpTargetXLbl.Name = "WarpTargetXLbl";
+            this.WarpTargetXLbl.Size = new System.Drawing.Size(59, 16);
+            this.WarpTargetXLbl.TabIndex = 33;
+            this.WarpTargetXLbl.Text = "TargetX:";
             // 
-            // sourceYNum
+            // WarpSourceYNum
             // 
-            this.sourceYNum.BackColor = System.Drawing.Color.White;
-            this.sourceYNum.ForeColor = System.Drawing.Color.Black;
-            this.sourceYNum.Location = new System.Drawing.Point(89, 58);
-            this.sourceYNum.Maximum = new decimal(new int[] {
+            this.WarpSourceYNum.BackColor = System.Drawing.Color.White;
+            this.WarpSourceYNum.ForeColor = System.Drawing.Color.Black;
+            this.WarpSourceYNum.Location = new System.Drawing.Point(77, 59);
+            this.WarpSourceYNum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.sourceYNum.Name = "sourceYNum";
-            this.sourceYNum.Size = new System.Drawing.Size(44, 22);
-            this.sourceYNum.TabIndex = 32;
-            this.sourceYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.sourceYNum.Value = new decimal(new int[] {
+            this.WarpSourceYNum.Name = "WarpSourceYNum";
+            this.WarpSourceYNum.Size = new System.Drawing.Size(44, 22);
+            this.WarpSourceYNum.TabIndex = 32;
+            this.WarpSourceYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WarpSourceYNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // sourceYLbl
+            // WarpSourceYLbl
             // 
-            this.sourceYLbl.AutoSize = true;
-            this.sourceYLbl.Location = new System.Drawing.Point(20, 60);
-            this.sourceYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.sourceYLbl.Name = "sourceYLbl";
-            this.sourceYLbl.Size = new System.Drawing.Size(63, 16);
-            this.sourceYLbl.TabIndex = 31;
-            this.sourceYLbl.Text = "SourceY:";
+            this.WarpSourceYLbl.AutoSize = true;
+            this.WarpSourceYLbl.Location = new System.Drawing.Point(8, 61);
+            this.WarpSourceYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WarpSourceYLbl.Name = "WarpSourceYLbl";
+            this.WarpSourceYLbl.Size = new System.Drawing.Size(63, 16);
+            this.WarpSourceYLbl.TabIndex = 31;
+            this.WarpSourceYLbl.Text = "SourceY:";
             // 
-            // sourceXNum
+            // WarpSourceXNum
             // 
-            this.sourceXNum.BackColor = System.Drawing.Color.White;
-            this.sourceXNum.ForeColor = System.Drawing.Color.Black;
-            this.sourceXNum.Location = new System.Drawing.Point(89, 28);
-            this.sourceXNum.Maximum = new decimal(new int[] {
+            this.WarpSourceXNum.BackColor = System.Drawing.Color.White;
+            this.WarpSourceXNum.ForeColor = System.Drawing.Color.Black;
+            this.WarpSourceXNum.Location = new System.Drawing.Point(77, 25);
+            this.WarpSourceXNum.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.sourceXNum.Name = "sourceXNum";
-            this.sourceXNum.Size = new System.Drawing.Size(44, 22);
-            this.sourceXNum.TabIndex = 30;
-            this.sourceXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.sourceXNum.Value = new decimal(new int[] {
+            this.WarpSourceXNum.Name = "WarpSourceXNum";
+            this.WarpSourceXNum.Size = new System.Drawing.Size(44, 22);
+            this.WarpSourceXNum.TabIndex = 30;
+            this.WarpSourceXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WarpSourceXNum.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // sourceXLbl
+            // WarpSourceXLbl
             // 
-            this.sourceXLbl.AutoSize = true;
-            this.sourceXLbl.Location = new System.Drawing.Point(20, 30);
-            this.sourceXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.sourceXLbl.Name = "sourceXLbl";
-            this.sourceXLbl.Size = new System.Drawing.Size(62, 16);
-            this.sourceXLbl.TabIndex = 9;
-            this.sourceXLbl.Text = "SourceX:";
+            this.WarpSourceXLbl.AutoSize = true;
+            this.WarpSourceXLbl.Location = new System.Drawing.Point(8, 27);
+            this.WarpSourceXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WarpSourceXLbl.Name = "WarpSourceXLbl";
+            this.WarpSourceXLbl.Size = new System.Drawing.Size(62, 16);
+            this.WarpSourceXLbl.TabIndex = 9;
+            this.WarpSourceXLbl.Text = "SourceX:";
             // 
-            // addWorldMapGbox
+            // WorldMapGbox
             // 
-            this.addWorldMapGbox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.addWorldMapGbox.Location = new System.Drawing.Point(434, 260);
-            this.addWorldMapGbox.Name = "addWorldMapGbox";
-            this.addWorldMapGbox.Size = new System.Drawing.Size(652, 129);
-            this.addWorldMapGbox.TabIndex = 16;
-            this.addWorldMapGbox.TabStop = false;
-            this.addWorldMapGbox.Text = "Add WorldMap";
+            this.WorldMapGbox.Controls.Add(this.WMapFieldNameCombox);
+            this.WorldMapGbox.Controls.Add(this.WorldMapFieldNoteLbl);
+            this.WorldMapGbox.Controls.Add(this.WMapFieldNameLbl);
+            this.WorldMapGbox.Controls.Add(this.ChangeWMapBtn);
+            this.WorldMapGbox.Controls.Add(this.DeleteWMapBtn);
+            this.WorldMapGbox.Controls.Add(this.AddWMapBtn);
+            this.WorldMapGbox.Controls.Add(this.WMapSourceXLbl);
+            this.WorldMapGbox.Controls.Add(this.WMapSourceXNum);
+            this.WorldMapGbox.Controls.Add(this.WMapSourceYLbl);
+            this.WorldMapGbox.Controls.Add(this.WMapSourceYNum);
+            this.WorldMapGbox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.WorldMapGbox.Location = new System.Drawing.Point(434, 260);
+            this.WorldMapGbox.Name = "WorldMapGbox";
+            this.WorldMapGbox.Size = new System.Drawing.Size(652, 129);
+            this.WorldMapGbox.TabIndex = 16;
+            this.WorldMapGbox.TabStop = false;
+            this.WorldMapGbox.Text = "WorldMaps";
+            // 
+            // WMapFieldNameCombox
+            // 
+            this.WMapFieldNameCombox.FormattingEnabled = true;
+            this.WMapFieldNameCombox.Location = new System.Drawing.Point(218, 24);
+            this.WMapFieldNameCombox.Name = "WMapFieldNameCombox";
+            this.WMapFieldNameCombox.Size = new System.Drawing.Size(120, 24);
+            this.WMapFieldNameCombox.TabIndex = 51;
+            // 
+            // WorldMapFieldNoteLbl
+            // 
+            this.WorldMapFieldNoteLbl.AutoSize = true;
+            this.WorldMapFieldNoteLbl.Location = new System.Drawing.Point(133, 51);
+            this.WorldMapFieldNoteLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WorldMapFieldNoteLbl.Name = "WorldMapFieldNoteLbl";
+            this.WorldMapFieldNoteLbl.Size = new System.Drawing.Size(121, 48);
+            this.WorldMapFieldNoteLbl.TabIndex = 50;
+            this.WorldMapFieldNoteLbl.Text = "field001 = Temuair\r\nfield002 = Medenia\r\nfield003 = Mythosia";
+            this.WorldMapFieldNoteLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // WMapFieldNameLbl
+            // 
+            this.WMapFieldNameLbl.AutoSize = true;
+            this.WMapFieldNameLbl.Location = new System.Drawing.Point(133, 27);
+            this.WMapFieldNameLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WMapFieldNameLbl.Name = "WMapFieldNameLbl";
+            this.WMapFieldNameLbl.Size = new System.Drawing.Size(78, 16);
+            this.WMapFieldNameLbl.TabIndex = 46;
+            this.WMapFieldNameLbl.Text = "FieldName:";
+            // 
+            // ChangeWMapBtn
+            // 
+            this.ChangeWMapBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.ChangeWMapBtn.AutoSize = true;
+            this.ChangeWMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ChangeWMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChangeWMapBtn.Location = new System.Drawing.Point(516, 55);
+            this.ChangeWMapBtn.Name = "ChangeWMapBtn";
+            this.ChangeWMapBtn.Size = new System.Drawing.Size(124, 28);
+            this.ChangeWMapBtn.TabIndex = 40;
+            this.ChangeWMapBtn.Text = "Change Selected";
+            this.ChangeWMapBtn.UseVisualStyleBackColor = true;
+            this.ChangeWMapBtn.Click += new System.EventHandler(this.ChangeWMapBtn_Click);
+            // 
+            // DeleteWMapBtn
+            // 
+            this.DeleteWMapBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.DeleteWMapBtn.AutoSize = true;
+            this.DeleteWMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.DeleteWMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeleteWMapBtn.Location = new System.Drawing.Point(523, 21);
+            this.DeleteWMapBtn.Name = "DeleteWMapBtn";
+            this.DeleteWMapBtn.Size = new System.Drawing.Size(117, 28);
+            this.DeleteWMapBtn.TabIndex = 42;
+            this.DeleteWMapBtn.Text = "Delete Selected";
+            this.DeleteWMapBtn.UseVisualStyleBackColor = true;
+            this.DeleteWMapBtn.Click += new System.EventHandler(this.DeleteWMapBtn_Click);
+            // 
+            // AddWMapBtn
+            // 
+            this.AddWMapBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.AddWMapBtn.AutoSize = true;
+            this.AddWMapBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AddWMapBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AddWMapBtn.Location = new System.Drawing.Point(373, 89);
+            this.AddWMapBtn.Name = "AddWMapBtn";
+            this.AddWMapBtn.Size = new System.Drawing.Size(267, 28);
+            this.AddWMapBtn.TabIndex = 41;
+            this.AddWMapBtn.Text = "Add WMap / Add WMap to Selected Map";
+            this.AddWMapBtn.UseVisualStyleBackColor = true;
+            this.AddWMapBtn.Click += new System.EventHandler(this.AddWMapBtn_Click);
+            // 
+            // WMapSourceXLbl
+            // 
+            this.WMapSourceXLbl.AutoSize = true;
+            this.WMapSourceXLbl.Location = new System.Drawing.Point(8, 27);
+            this.WMapSourceXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WMapSourceXLbl.Name = "WMapSourceXLbl";
+            this.WMapSourceXLbl.Size = new System.Drawing.Size(62, 16);
+            this.WMapSourceXLbl.TabIndex = 39;
+            this.WMapSourceXLbl.Text = "SourceX:";
+            // 
+            // WMapSourceXNum
+            // 
+            this.WMapSourceXNum.BackColor = System.Drawing.Color.White;
+            this.WMapSourceXNum.ForeColor = System.Drawing.Color.Black;
+            this.WMapSourceXNum.Location = new System.Drawing.Point(77, 25);
+            this.WMapSourceXNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.WMapSourceXNum.Name = "WMapSourceXNum";
+            this.WMapSourceXNum.Size = new System.Drawing.Size(44, 22);
+            this.WMapSourceXNum.TabIndex = 43;
+            this.WMapSourceXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WMapSourceXNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // WMapSourceYLbl
+            // 
+            this.WMapSourceYLbl.AutoSize = true;
+            this.WMapSourceYLbl.Location = new System.Drawing.Point(8, 61);
+            this.WMapSourceYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WMapSourceYLbl.Name = "WMapSourceYLbl";
+            this.WMapSourceYLbl.Size = new System.Drawing.Size(63, 16);
+            this.WMapSourceYLbl.TabIndex = 44;
+            this.WMapSourceYLbl.Text = "SourceY:";
+            // 
+            // WMapSourceYNum
+            // 
+            this.WMapSourceYNum.BackColor = System.Drawing.Color.White;
+            this.WMapSourceYNum.ForeColor = System.Drawing.Color.Black;
+            this.WMapSourceYNum.Location = new System.Drawing.Point(77, 59);
+            this.WMapSourceYNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.WMapSourceYNum.Name = "WMapSourceYNum";
+            this.WMapSourceYNum.Size = new System.Drawing.Size(44, 22);
+            this.WMapSourceYNum.TabIndex = 45;
+            this.WMapSourceYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.WMapSourceYNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // WorldMapNodeGbox
+            // 
+            this.WorldMapNodeGbox.Controls.Add(this.NodePositionSelectorBtn);
+            this.WorldMapNodeGbox.Controls.Add(this.NodeTargetMapIDNum);
+            this.WorldMapNodeGbox.Controls.Add(this.NodeTargetXLbl);
+            this.WorldMapNodeGbox.Controls.Add(this.NodeTargetMapIDLbl);
+            this.WorldMapNodeGbox.Controls.Add(this.NodeTargetXNum);
+            this.WorldMapNodeGbox.Controls.Add(this.NodeTargetYLbl);
+            this.WorldMapNodeGbox.Controls.Add(this.NodeTargetYNum);
+            this.WorldMapNodeGbox.Controls.Add(this.ChangeNodeBtn);
+            this.WorldMapNodeGbox.Controls.Add(this.DeleteNodeBtn);
+            this.WorldMapNodeGbox.Controls.Add(this.AddNodeBtn);
+            this.WorldMapNodeGbox.Controls.Add(this.NodePositionXLbl);
+            this.WorldMapNodeGbox.Controls.Add(this.NodePositionXNum);
+            this.WorldMapNodeGbox.Controls.Add(this.NodePositionYLbl);
+            this.WorldMapNodeGbox.Controls.Add(this.NodePositionYNum);
+            this.WorldMapNodeGbox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.WorldMapNodeGbox.Location = new System.Drawing.Point(434, 389);
+            this.WorldMapNodeGbox.Name = "WorldMapNodeGbox";
+            this.WorldMapNodeGbox.Size = new System.Drawing.Size(652, 129);
+            this.WorldMapNodeGbox.TabIndex = 47;
+            this.WorldMapNodeGbox.TabStop = false;
+            this.WorldMapNodeGbox.Text = "WorldMapNodes";
+            // 
+            // NodePositionSelectorBtn
+            // 
+            this.NodePositionSelectorBtn.AutoSize = true;
+            this.NodePositionSelectorBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.NodePositionSelectorBtn.Location = new System.Drawing.Point(11, 89);
+            this.NodePositionSelectorBtn.Name = "NodePositionSelectorBtn";
+            this.NodePositionSelectorBtn.Size = new System.Drawing.Size(123, 28);
+            this.NodePositionSelectorBtn.TabIndex = 50;
+            this.NodePositionSelectorBtn.Text = "Position Selector";
+            this.NodePositionSelectorBtn.UseVisualStyleBackColor = true;
+            this.NodePositionSelectorBtn.Click += new System.EventHandler(this.NodePositionSelectorBtn_Click);
+            // 
+            // NodeTargetMapIDNum
+            // 
+            this.NodeTargetMapIDNum.BackColor = System.Drawing.Color.White;
+            this.NodeTargetMapIDNum.ForeColor = System.Drawing.Color.Black;
+            this.NodeTargetMapIDNum.Location = new System.Drawing.Point(210, 93);
+            this.NodeTargetMapIDNum.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.NodeTargetMapIDNum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.NodeTargetMapIDNum.Name = "NodeTargetMapIDNum";
+            this.NodeTargetMapIDNum.Size = new System.Drawing.Size(60, 22);
+            this.NodeTargetMapIDNum.TabIndex = 40;
+            this.NodeTargetMapIDNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NodeTargetMapIDNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // NodeTargetXLbl
+            // 
+            this.NodeTargetXLbl.AutoSize = true;
+            this.NodeTargetXLbl.Location = new System.Drawing.Point(144, 27);
+            this.NodeTargetXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.NodeTargetXLbl.Name = "NodeTargetXLbl";
+            this.NodeTargetXLbl.Size = new System.Drawing.Size(59, 16);
+            this.NodeTargetXLbl.TabIndex = 46;
+            this.NodeTargetXLbl.Text = "TargetX:";
+            // 
+            // NodeTargetMapIDLbl
+            // 
+            this.NodeTargetMapIDLbl.AutoSize = true;
+            this.NodeTargetMapIDLbl.Location = new System.Drawing.Point(139, 95);
+            this.NodeTargetMapIDLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.NodeTargetMapIDLbl.Name = "NodeTargetMapIDLbl";
+            this.NodeTargetMapIDLbl.Size = new System.Drawing.Size(64, 16);
+            this.NodeTargetMapIDLbl.TabIndex = 39;
+            this.NodeTargetMapIDLbl.Text = "TargetID:";
+            // 
+            // NodeTargetXNum
+            // 
+            this.NodeTargetXNum.BackColor = System.Drawing.Color.White;
+            this.NodeTargetXNum.ForeColor = System.Drawing.Color.Black;
+            this.NodeTargetXNum.Location = new System.Drawing.Point(210, 25);
+            this.NodeTargetXNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.NodeTargetXNum.Name = "NodeTargetXNum";
+            this.NodeTargetXNum.Size = new System.Drawing.Size(44, 22);
+            this.NodeTargetXNum.TabIndex = 47;
+            this.NodeTargetXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NodeTargetXNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // NodeTargetYLbl
+            // 
+            this.NodeTargetYLbl.AutoSize = true;
+            this.NodeTargetYLbl.Location = new System.Drawing.Point(143, 61);
+            this.NodeTargetYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.NodeTargetYLbl.Name = "NodeTargetYLbl";
+            this.NodeTargetYLbl.Size = new System.Drawing.Size(60, 16);
+            this.NodeTargetYLbl.TabIndex = 48;
+            this.NodeTargetYLbl.Text = "TargetY:";
+            // 
+            // NodeTargetYNum
+            // 
+            this.NodeTargetYNum.BackColor = System.Drawing.Color.White;
+            this.NodeTargetYNum.ForeColor = System.Drawing.Color.Black;
+            this.NodeTargetYNum.Location = new System.Drawing.Point(210, 59);
+            this.NodeTargetYNum.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.NodeTargetYNum.Name = "NodeTargetYNum";
+            this.NodeTargetYNum.Size = new System.Drawing.Size(44, 22);
+            this.NodeTargetYNum.TabIndex = 49;
+            this.NodeTargetYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NodeTargetYNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // ChangeNodeBtn
+            // 
+            this.ChangeNodeBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.ChangeNodeBtn.AutoSize = true;
+            this.ChangeNodeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ChangeNodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChangeNodeBtn.Location = new System.Drawing.Point(516, 55);
+            this.ChangeNodeBtn.Name = "ChangeNodeBtn";
+            this.ChangeNodeBtn.Size = new System.Drawing.Size(124, 28);
+            this.ChangeNodeBtn.TabIndex = 40;
+            this.ChangeNodeBtn.Text = "Change Selected";
+            this.ChangeNodeBtn.UseVisualStyleBackColor = true;
+            this.ChangeNodeBtn.Click += new System.EventHandler(this.ChangeNodeBtn_Click);
+            // 
+            // DeleteNodeBtn
+            // 
+            this.DeleteNodeBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.DeleteNodeBtn.AutoSize = true;
+            this.DeleteNodeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.DeleteNodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeleteNodeBtn.Location = new System.Drawing.Point(523, 21);
+            this.DeleteNodeBtn.Name = "DeleteNodeBtn";
+            this.DeleteNodeBtn.Size = new System.Drawing.Size(117, 28);
+            this.DeleteNodeBtn.TabIndex = 42;
+            this.DeleteNodeBtn.Text = "Delete Selected";
+            this.DeleteNodeBtn.UseVisualStyleBackColor = true;
+            this.DeleteNodeBtn.Click += new System.EventHandler(this.DeleteNodeBtn_Click);
+            // 
+            // AddNodeBtn
+            // 
+            this.AddNodeBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.AddNodeBtn.AutoSize = true;
+            this.AddNodeBtn.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AddNodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AddNodeBtn.Location = new System.Drawing.Point(444, 89);
+            this.AddNodeBtn.Name = "AddNodeBtn";
+            this.AddNodeBtn.Size = new System.Drawing.Size(196, 28);
+            this.AddNodeBtn.TabIndex = 41;
+            this.AddNodeBtn.Text = "Add Node to Selected WMap";
+            this.AddNodeBtn.UseVisualStyleBackColor = true;
+            this.AddNodeBtn.Click += new System.EventHandler(this.AddNodeBtn_Click);
+            // 
+            // NodePositionXLbl
+            // 
+            this.NodePositionXLbl.AutoSize = true;
+            this.NodePositionXLbl.Location = new System.Drawing.Point(8, 27);
+            this.NodePositionXLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.NodePositionXLbl.Name = "NodePositionXLbl";
+            this.NodePositionXLbl.Size = new System.Drawing.Size(67, 16);
+            this.NodePositionXLbl.TabIndex = 39;
+            this.NodePositionXLbl.Text = "PositionX:";
+            // 
+            // NodePositionXNum
+            // 
+            this.NodePositionXNum.BackColor = System.Drawing.Color.White;
+            this.NodePositionXNum.ForeColor = System.Drawing.Color.Black;
+            this.NodePositionXNum.Location = new System.Drawing.Point(82, 25);
+            this.NodePositionXNum.Maximum = new decimal(new int[] {
+            640,
+            0,
+            0,
+            0});
+            this.NodePositionXNum.Name = "NodePositionXNum";
+            this.NodePositionXNum.Size = new System.Drawing.Size(44, 22);
+            this.NodePositionXNum.TabIndex = 43;
+            this.NodePositionXNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NodePositionXNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // NodePositionYLbl
+            // 
+            this.NodePositionYLbl.AutoSize = true;
+            this.NodePositionYLbl.Location = new System.Drawing.Point(8, 61);
+            this.NodePositionYLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.NodePositionYLbl.Name = "NodePositionYLbl";
+            this.NodePositionYLbl.Size = new System.Drawing.Size(68, 16);
+            this.NodePositionYLbl.TabIndex = 44;
+            this.NodePositionYLbl.Text = "PositionY:";
+            // 
+            // NodePositionYNum
+            // 
+            this.NodePositionYNum.BackColor = System.Drawing.Color.White;
+            this.NodePositionYNum.ForeColor = System.Drawing.Color.Black;
+            this.NodePositionYNum.Location = new System.Drawing.Point(82, 59);
+            this.NodePositionYNum.Maximum = new decimal(new int[] {
+            480,
+            0,
+            0,
+            0});
+            this.NodePositionYNum.Name = "NodePositionYNum";
+            this.NodePositionYNum.Size = new System.Drawing.Size(44, 22);
+            this.NodePositionYNum.TabIndex = 45;
+            this.NodePositionYNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NodePositionYNum.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1086, 519);
-            this.Controls.Add(this.addWorldMapGbox);
-            this.Controls.Add(this.addWarpGbox);
-            this.Controls.Add(this.addMapGbox);
-            this.Controls.Add(this.addWorldMapNodeLbl);
-            this.Controls.Add(this.mainTabControl);
+            this.ClientSize = new System.Drawing.Size(1086, 523);
+            this.Controls.Add(this.WorldMapNodeGbox);
+            this.Controls.Add(this.WorldMapGbox);
+            this.Controls.Add(this.WarpGbox);
+            this.Controls.Add(this.MapGbox);
+            this.Controls.Add(this.MainTabControl);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.MinimizeBox = false;
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ChaosTool";
-            this.mainTabControl.ResumeLayout(false);
-            this.mapsTab.ResumeLayout(false);
-            this.worldMapsTab.ResumeLayout(false);
-            this.addMapGbox.ResumeLayout(false);
-            this.addMapGbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.musicNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mapIdNum)).EndInit();
-            this.addWarpGbox.ResumeLayout(false);
-            this.addWarpGbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.targetIDNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.targetYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.targetXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourceYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sourceXNum)).EndInit();
+            this.MainTabControl.ResumeLayout(false);
+            this.MapsTab.ResumeLayout(false);
+            this.WorldMapsTab.ResumeLayout(false);
+            this.MapGbox.ResumeLayout(false);
+            this.MapGbox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MusicNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapSizeYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapSizeXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapIdNum)).EndInit();
+            this.WarpGbox.ResumeLayout(false);
+            this.WarpGbox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetMapIDNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceXNum)).EndInit();
+            this.WorldMapGbox.ResumeLayout(false);
+            this.WorldMapGbox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceYNum)).EndInit();
+            this.WorldMapNodeGbox.ResumeLayout(false);
+            this.WorldMapNodeGbox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetMapIDNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodePositionXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NodePositionYNum)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
-        internal void LoadTree()
+        #region Trees
+        internal void LoadTrees()
         {
             if (InvokeRequired)
-                Invoke((Action)(LoadTree));
+                Invoke((Action)(LoadTrees));
             else
             {
                 MapTree.Nodes.Clear();
@@ -802,7 +1179,7 @@ namespace ChaosTool
                 //for each map
                 foreach (Chaos.Map map in MapsCache.Maps.Values)
                 {
-                    //each map gets a node
+                    //each map gets a Node
                     var Map = new MapTreeNode(map, $@"{map.Name} - {map.Id} ({map.SizeX},{map.SizeY})");
 
                     var Warps = new TreeNode("Warps")
@@ -821,64 +1198,127 @@ namespace ChaosTool
                     Map.Nodes.Add(Doors);
                     Map.Nodes.Add(WorldMaps);
 
-                    //each warp gets a subnode
-                    foreach (Chaos.Warp warp in map.Warps.Values)
+                    //each Warp gets a subNode
+                    foreach (Chaos.Warp Warp in map.Warps.Values)
                         try
                         {
-                            Warps.Nodes.Add(new WarpTreeNode(warp, $@"{warp.Point} => {warp.TargetMapId} : {warp.TargetPoint} - ({MapsCache.Maps[warp.TargetMapId].Name})"));
+                            Warps.Nodes.Add(new WarpTreeNode(Warp, $@"{Warp.Point} => {Warp.TargetMapId} : {Warp.TargetPoint} - ({MapsCache.Maps[Warp.TargetMapId].Name})"));
                         }
                         catch
                         {
-                            MessageBox.Show($@"A warp's target map doesn't exist. TargetMapID={warp.TargetMapId}", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($@"A Warp's target map doesn't exist. TargetMapID={Warp.TargetMapId}", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
-                    //each worldmap gets a subnode
+                    //each worldmap gets a subNode
                     foreach (KeyValuePair<Chaos.Point, Chaos.WorldMap> kvp in map.WorldMaps)
-                        WorldMaps.Nodes.Add(new WorldMapTreeNode(kvp.Value, $@"{kvp.Key.ToString()} => {kvp.Value.GetCheckSum()}"));
+                        WorldMaps.Nodes.Add(new WorldMapTreeNode(kvp, $@"{kvp.Key} => {kvp.Value.CheckSum}"));
 
                     //add this map to the map tree
                     MapTree.Nodes.Add(Map);
                 }
 
+                WMapFieldNameCombox.Items.Clear();
+                WMapFieldNameCombox.Items.AddRange(new string[] { "field001", "field002", "field003" });
+
                 //for each worldmap
                 foreach (KeyValuePair<uint, Chaos.WorldMap> kvp in MapsCache.WorldMaps)
                 {
-                    //each worldmap gets a node
-                    var WorldMap = new WorldMapTreeNode(kvp.Value, kvp.Key.ToString());
+                    //each worldmap gets a Node
+                    var WorldMap = new WorldMapTreeNode(kvp.Value, $@"{kvp.Key} => {kvp.Value.Field}");
 
-                    //each worldmapnode gets a subnode
+                    //each worldmapNode gets a subNode
                     foreach (Chaos.WorldMapNode wmn in kvp.Value.Nodes)
-                        WorldMap.Nodes.Add(new WorldMapNodeTreeNode(wmn, $@"{wmn.Position} => {wmn.MapId} : {wmn.Point} - ({MapsCache.Maps[wmn.MapId].Name})"));
+                        WorldMap.Nodes.Add(new WorldMapNodeTreeNode(wmn, $@"{wmn.Position}  {wmn.Location} - ({MapsCache.Maps[wmn.MapId].Name})"));
 
                     //add this worldmap to the worldmap tree
                     WorldMapTree.Nodes.Add(WorldMap);
+
+                    WMapFieldNameCombox.Items.Add(kvp.Key.ToString());
                 }
             }
         }
 
+        private void MapTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node is MapTreeNode tMapTreeNode)
+            {
+                Chaos.Map map = tMapTreeNode.Map;
+
+                MapIdNum.Value = map.Id;
+                MapSizeXNum.Value = map.SizeX;
+                MapSizeYNum.Value = map.SizeY;
+                MapNameTbox.Text = map.Name;
+                FlagSumLbl.Text = map.Flags.ToString();
+                MusicNum.Value = map.Music;
+            }
+            else if (e.Node is WarpTreeNode tWarpTreeNode)
+            {
+                Chaos.Warp warp = tWarpTreeNode.Warp;
+
+                WarpSourceXNum.Value = warp.SourceX;
+                WarpSourceYNum.Value = warp.SourceY;
+                WarpTargetXNum.Value = warp.TargetX;
+                WarpTargetYNum.Value = warp.TargetY;
+                WarpTargetMapIDNum.Value = warp.TargetMapId;
+            }
+            else if (e.Node is WorldMapTreeNode tWorldMapTreeNode)
+            {
+                Chaos.Point point = tWorldMapTreeNode.Point;
+                Chaos.WorldMap worldMap = tWorldMapTreeNode.WorldMap;
+
+                WMapSourceXNum.Value = point.X;
+                WMapSourceYNum.Value = point.Y;
+                WMapFieldNameCombox.Text = worldMap.Field;
+            }
+        }
+
+        private void WorldMapTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node is WorldMapTreeNode tWorldMapTreeNode)
+            {
+                Chaos.WorldMap worldMap = tWorldMapTreeNode.WorldMap;
+
+                WMapSourceXNum.Value = 0;
+                WMapSourceYNum.Value = 0;
+                WMapFieldNameCombox.Text = worldMap.Field;
+            }
+            else if (e.Node is WorldMapNodeTreeNode tWorldMapNodeTreeNode)
+            {
+                Chaos.WorldMapNode worldMapNode = tWorldMapNodeTreeNode.WorldMapNode;
+
+                NodePositionXNum.Value = worldMapNode.Position.X;
+                NodePositionYNum.Value = worldMapNode.Position.Y;
+                NodeTargetXNum.Value = worldMapNode.Point.X;
+                NodeTargetYNum.Value = worldMapNode.Point.Y;
+                NodeTargetMapIDNum.Value = worldMapNode.MapId;
+            }
+        }
+        #endregion
+
+        #region Maps
         private void AddMapBtn_Click(object sender, EventArgs e)
         {
             try
             {
                 string message = "";
-                string mapName = mapNameTbox.Text;
-                ushort mapId = decimal.ToUInt16(mapIdNum.Value);
-                byte sizeX = decimal.ToByte(sizeXNum.Value);
-                byte sizeY = decimal.ToByte(sizeYNum.Value);
-                sbyte music = decimal.ToSByte(musicNum.Value);
+                string mapName = MapNameTbox.Text;
+                ushort mapId = decimal.ToUInt16(MapIdNum.Value);
+                byte sizeX = decimal.ToByte(MapSizeXNum.Value);
+                byte sizeY = decimal.ToByte(MapSizeYNum.Value);
+                sbyte music = decimal.ToSByte(MusicNum.Value);
 
                 if (MapsCache.Maps.ContainsKey(mapId))
-                    message = $@"Map ID:{mapIdNum.Value} is already in use. Overwrite? Will delete doors and warps.";
+                    message = $@"Map ID:{MapIdNum.Value} is already in use. Overwrite? Will Delete doors and Warps.";
                 else
                     message = $@"Add this as a new map? Make sure info is correct.";
 
-                if (uint.TryParse(flagsSumLbl.Text, out uint flags))
+                if (uint.TryParse(FlagSumLbl.Text, out uint flags))
                 {
                     if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
                         MapsCache.Maps[mapId] = new Chaos.Map(mapId, sizeX, sizeY, (Chaos.MapFlags)flags, mapName, music);
                         MapsCache.Save();
-                        LoadTree();
+                        LoadTrees();
                     }
                 }
                 else
@@ -897,20 +1337,20 @@ namespace ChaosTool
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
                     string message = "";
-                    string mapName = mapNameTbox.Text;
+                    string mapName = MapNameTbox.Text;
                     ushort mapId = tMapTreeNode.Map.Id;
-                    byte sizeX = decimal.ToByte(sizeXNum.Value);
-                    byte sizeY = decimal.ToByte(sizeYNum.Value);
-                    sbyte music = decimal.ToSByte(musicNum.Value);
+                    byte sizeX = decimal.ToByte(MapSizeXNum.Value);
+                    byte sizeY = decimal.ToByte(MapSizeYNum.Value);
+                    sbyte music = decimal.ToSByte(MusicNum.Value);
                     uint flags = 0;
 
                     if (!MapsCache.Maps.ContainsKey(mapId))
                         MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
                     {
-                        message = $@"Change map info related to Map ID: {mapId}? Doors and warps will stay.";
+                        message = $@"Change map info related to Map ID: {mapId}? Doors and Warps will stay.";
 
-                        if (uint.TryParse(flagsSumLbl.Text, out flags))
+                        if (uint.TryParse(FlagSumLbl.Text, out flags))
                         {
                             if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                             {
@@ -920,7 +1360,7 @@ namespace ChaosTool
                                 MapsCache.Maps[mapId].Music = music;
                                 MapsCache.Maps[mapId].Flags = (Chaos.MapFlags)flags;
                                 MapsCache.Save();
-                                LoadTree();
+                                LoadTrees();
                                 MapTree.SelectedNode = MapTree.Nodes[mapName];
                             }
                         }
@@ -948,12 +1388,12 @@ namespace ChaosTool
                         MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
                     {
-                        message = $@"Delete Map ID: {mapId}? This will destroy doors, warps, and the info.";
+                        message = $@"Delete Map ID: {mapId}? This will destroy doors, Warps, and the info.";
                         if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                         {
                             MapsCache.Maps.Remove(mapId);
                             MapsCache.Save();
-                            LoadTree();
+                            LoadTrees();
                         }
                     }
                 }
@@ -963,7 +1403,9 @@ namespace ChaosTool
                 MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        #endregion
 
+        #region Warps
         private void AddWarpBtn_Click(object sender, EventArgs e)
         {
             try
@@ -971,15 +1413,16 @@ namespace ChaosTool
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
                     Chaos.Map map = tMapTreeNode.Map;
-                    var warp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, map.Id, (ushort)targetIDNum.Value);
+                    var newWarp = new Chaos.Warp((ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value, map.Id, (ushort)WarpTargetMapIDNum.Value);
 
-                    if (map.Warps.ContainsKey(warp.Point))
-                        MessageBox.Show("Map already contains warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (map.Warps.ContainsKey(newWarp.Point))
+                        MessageBox.Show("Map already contains Warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
-                        map.Warps.Add(warp.Point, warp);
+                        map.Warps.Add(newWarp.Point, newWarp);
 
                     MapsCache.Save();
-                    LoadTree();
+                    LoadTrees();
+
                     MapTree.Nodes[map.Name].Expand();
                     MapTree.Nodes[map.Name].Nodes["Warps"].Expand();
                     MapTree.SelectedNode = MapTree.Nodes[map.Name];
@@ -999,17 +1442,17 @@ namespace ChaosTool
                 {
                     Chaos.Warp oldWarp = tWarpTreeNode.Warp;
                     Chaos.Map map = MapsCache.Maps[oldWarp.MapId];
-                    var newWarp = new Chaos.Warp((ushort)sourceXNum.Value, (ushort)sourceYNum.Value, (ushort)targetXNum.Value, (ushort)targetYNum.Value, oldWarp.MapId, (ushort)targetIDNum.Value);
+                    var newWarp = new Chaos.Warp((ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value, oldWarp.MapId, (ushort)WarpTargetMapIDNum.Value);
 
                     if (!map.Warps.ContainsKey(oldWarp.Point))
-                        MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Map does not contain that Warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     else
                     {
                         map.Warps.Remove(oldWarp.Point);
                         map.Warps.Add(newWarp.Point, newWarp);
 
                         MapsCache.Save();
-                        LoadTree();
+                        LoadTrees();
                         MapTree.Nodes[map.Name].Expand();
                         MapTree.Nodes[map.Name].Nodes["Warps"].Expand();
                         MapTree.SelectedNode = MapTree.Nodes[map.Name].Nodes["Warps"].Nodes[newWarp.Point.ToString()];
@@ -1026,66 +1469,291 @@ namespace ChaosTool
         {
             if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
             {
-                Chaos.Warp warp = tWarpTreeNode.Warp;
-                Chaos.Map map = MapsCache.Maps[warp.MapId];
+                Chaos.Warp Warp = tWarpTreeNode.Warp;
+                Chaos.Map map = MapsCache.Maps[Warp.MapId];
 
-                if (!map.Warps.ContainsKey(warp.Point))
-                    MessageBox.Show("Map does not contain that warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!map.Warps.ContainsKey(Warp.Point))
+                    MessageBox.Show("Map does not contain that Warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 else
                 {
-                    map.Warps.Remove(warp.Point);
+                    map.Warps.Remove(Warp.Point);
 
                     MapsCache.Save();
-                    LoadTree();
+                    LoadTrees();
                     MapTree.Nodes[map.Name].Expand();
                     MapTree.Nodes[map.Name].Nodes["Warps"].Expand();
                     MapTree.SelectedNode = MapTree.Nodes[map.Name];
                 }
             }
         }
+        #endregion
 
-        private void HostileCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Hostile).ToString();
-
-        private void SnowCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.Snowing).ToString();
-
-        private void PvPCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.PvP).ToString();
-
-        private void NoSpellsCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSpells).ToString();
-
-        private void NoSkillsCbox_CheckedChanged(object sender, EventArgs e) => flagsSumLbl.Text = (uint.Parse(flagsSumLbl.Text) + (uint)Chaos.MapFlags.NoSkills).ToString();
-
-        ~MainForm()
+        #region WorldMaps
+        private void AddWMapBtn_Click(object sender, EventArgs e)
         {
-            MapsCache.Save();
+            try
+            {
+                if (MapTree.SelectedNode is MapTreeNode tMapTreeNode && MainTabControl.SelectedTab == MapsTab)
+                {
+                    Chaos.Map map = tMapTreeNode.Map;
+                    Chaos.WorldMap newWmap = MapsCache.WorldMaps.FirstOrDefault(kvp => WMapFieldNameCombox.Text == kvp.Key.ToString()).Value;
+                    Chaos.Point sourcePoint = ((int)WMapSourceXNum.Value, (int)WMapSourceYNum.Value);
+
+                    if (newWmap == null)
+                        MessageBox.Show("WorldMap does not exist.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else if (map.WorldMaps.ContainsKey(sourcePoint))
+                        MessageBox.Show("Map already contains WorldMap on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        map.WorldMaps.Add(sourcePoint, newWmap);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        MapTree.Nodes[map.Name].Expand();
+                        MapTree.Nodes[map.Name].Nodes["WorldMaps"].Expand();
+                        MapTree.SelectedNode = MapTree.Nodes[map.Name].Nodes[newWmap.CheckSum.ToString()];
+                    }
+                }
+                else if (MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    Chaos.WorldMap newWmap = new Chaos.WorldMap(WMapFieldNameCombox.Text);
+
+                    if (newWmap == null)
+                        MessageBox.Show("Check data.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else if (MapsCache.WorldMaps.ContainsKey(newWmap.CheckSum))
+                        MessageBox.Show("That worldmap already exists.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        MapsCache.WorldMaps.Add(newWmap.CheckSum, newWmap);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        WorldMapTree.SelectedNode = WorldMapTree.Nodes[newWmap.CheckSum.ToString()];
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void MapTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void ChangeWMapBtn_Click(object sender, EventArgs e)
         {
-            if (e.Node is MapTreeNode tMapTreeNode)
+            try
             {
-                Chaos.Map map = tMapTreeNode.Map;
+                if (MapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == MapsTab)
+                {
+                    Chaos.Map map = (tWorldMapTreeNode.Parent.Parent as MapTreeNode).Map;
+                    Chaos.WorldMap newWmap = MapsCache.WorldMaps.FirstOrDefault(kvp => WMapFieldNameCombox.Text == kvp.Key.ToString() || WMapFieldNameCombox.Text == kvp.Value.Field).Value;
+                    Chaos.Point newPoint = ((int)WMapSourceXNum.Value, (int)WMapSourceYNum.Value);
 
-                mapIdNum.Value = map.Id;
-                sizeXNum.Value = map.SizeX;
-                sizeYNum.Value = map.SizeY;
-                mapNameTbox.Text = map.Name;
-                flagsSumLbl.Text = map.Flags.ToString();
-                musicNum.Value = map.Music;
-            }
-            else if (e.Node is WarpTreeNode tWarpTreeNode)
-            {
-                Chaos.Warp warp = tWarpTreeNode.Warp;
 
-                sourceXNum.Value = warp.SourceX;
-                sourceYNum.Value = warp.SourceY;
-                targetXNum.Value = warp.TargetX;
-                targetYNum.Value = warp.TargetY;
-                targetIDNum.Value = warp.TargetMapId;
+                    if(newWmap == null)
+                        MessageBox.Show("WorldMap does not exist.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else if (map.WorldMaps.ContainsKey(newPoint))
+                        MessageBox.Show("Map already contains WorldMap on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        map.WorldMaps.Remove(tWorldMapTreeNode.Point);
+                        map.WorldMaps.Add(newPoint, newWmap);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        MapTree.Nodes[map.Name].Expand();
+                        MapTree.Nodes[map.Name].Nodes["WorldMaps"].Expand();
+                        MapTree.SelectedNode = MapTree.Nodes[map.Name].Nodes[newWmap.CheckSum.ToString()];
+                    }
+                }
+                else if (WorldMapTree.SelectedNode is WorldMapTreeNode uWorldMapTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    Chaos.WorldMap oldMap = uWorldMapTreeNode.WorldMap;
+                    Chaos.WorldMap newWmap = new Chaos.WorldMap(WMapFieldNameCombox.Text, oldMap.Nodes.ToArray());
+
+                    if (newWmap == null || oldMap == null)
+                        MessageBox.Show("Error, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else if (MapsCache.WorldMaps.ContainsKey(newWmap.CheckSum) && oldMap.CheckSum != newWmap.CheckSum)
+                        MessageBox.Show("That worldmap already exists.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        MapsCache.WorldMaps.Remove(oldMap.CheckSum);
+                        MapsCache.WorldMaps.Add(newWmap.CheckSum, newWmap);
+
+                        //correct instanced map data
+                        foreach (Chaos.Map map in MapsCache.Maps.Values.ToList())
+                            foreach (KeyValuePair<Chaos.Point, Chaos.WorldMap> kvp in map.WorldMaps.ToList())
+                                if (kvp.Value.CheckSum == oldMap.CheckSum)
+                                    MapsCache.Maps[map.Id].WorldMaps[kvp.Key] = newWmap;
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        WorldMapTree.SelectedNode = WorldMapTree.Nodes[newWmap.CheckSum.ToString()];
+                    }
+                }
             }
-            else
+            catch
             {
-                //others later
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void DeleteWMapBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == MapsTab)
+                {
+                    Chaos.Map map = (tWorldMapTreeNode.Parent as MapTreeNode).Map;
+
+                    if (!map.WorldMaps.ContainsKey(tWorldMapTreeNode.Point))
+                        MessageBox.Show("No WorldMap exists on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        map.WorldMaps.Remove(tWorldMapTreeNode.Point);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        MapTree.Nodes[map.Name].Expand();
+                        MapTree.Nodes[map.Name].Nodes["WorldMaps"].Expand();
+                    }
+                }
+                else if (WorldMapTree.SelectedNode is WorldMapTreeNode nWorldMapTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    if (!MapsCache.WorldMaps.ContainsKey(nWorldMapTreeNode.WorldMap.CheckSum))
+                        MessageBox.Show("That worldmap doesn't exist.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        MapsCache.WorldMaps.Remove(nWorldMapTreeNode.WorldMap.CheckSum);
+
+                        MapsCache.Save();
+                        LoadTrees();
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
+
+        #region WorldMapNodes
+        private void AddNodeBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (WorldMapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    Chaos.WorldMap wMap = tWorldMapTreeNode.WorldMap;
+                    Chaos.WorldMapNode newNode = new Chaos.WorldMapNode(((int)NodePositionXNum.Value, (int)NodePositionYNum.Value), MapsCache.Maps[(ushort)NodeTargetMapIDNum.Value].Name, (ushort)NodeTargetMapIDNum.Value, ((int)NodeTargetXNum.Value, (int)NodeTargetYNum.Value));
+
+                    if (wMap.Nodes.Contains(newNode))
+                        MessageBox.Show("WorldMap already contains that Node.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        wMap.Nodes.Add(newNode);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        string wMapNum = wMap.CheckSum.ToString();
+                        WorldMapTree.Nodes[wMapNum].Expand();
+                        WorldMapTree.SelectedNode = WorldMapTree.Nodes[wMapNum].Nodes[newNode.CheckSum.ToString()];
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ChangeNodeBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (WorldMapTree.SelectedNode is WorldMapNodeTreeNode tWorldMapNodeTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    Chaos.WorldMapNode node = tWorldMapNodeTreeNode.WorldMapNode;
+                    Chaos.WorldMap wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
+                    Chaos.WorldMapNode newNode = new Chaos.WorldMapNode(((int)NodePositionXNum.Value, (int)NodePositionYNum.Value), MapsCache.Maps[(ushort)NodeTargetMapIDNum.Value].Name, (ushort)NodeTargetMapIDNum.Value, ((int)NodeTargetXNum.Value, (int)NodeTargetYNum.Value));
+
+                    if (!wMap.Nodes.Contains(node))
+                        MessageBox.Show("WorldMap does not contain that Node.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        wMap.Nodes.Remove(node);
+                        wMap.Nodes.Add(newNode);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        string wMapNum = wMap.CheckSum.ToString();
+                        WorldMapTree.Nodes[wMapNum].Expand();
+                        WorldMapTree.SelectedNode = WorldMapTree.Nodes[wMapNum].Nodes[newNode.CheckSum.ToString()];
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteNodeBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (WorldMapTree.SelectedNode is WorldMapNodeTreeNode tWorldMapNodeTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    Chaos.WorldMapNode node = tWorldMapNodeTreeNode.WorldMapNode;
+                    Chaos.WorldMap wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
+
+                    if (!wMap.Nodes.Contains(node))
+                        MessageBox.Show("WorldMap does not contain that Node.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                    {
+                        wMap.Nodes.Remove(node);
+
+                        MapsCache.Save();
+                        LoadTrees();
+
+                        string wMapNum = wMap.CheckSum.ToString();
+                        WorldMapTree.Nodes[wMapNum].Expand();
+                        WorldMapTree.SelectedNode = WorldMapTree.Nodes[wMapNum];
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Exception, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void NodePositionSelectorBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MainTabControl.SelectedTab == WorldMapsTab)
+                {
+                    Chaos.WorldMap wMap = null;
+
+                    if (WorldMapTree.SelectedNode is WorldMapNodeTreeNode tWorldMapNodeTreeNode)
+                        wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
+                    else if (WorldMapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode)
+                        wMap = tWorldMapTreeNode.WorldMap;
+
+                    PositionSelector newSelector = new PositionSelector(this, wMap.Field);
+                    newSelector.Show();
+                }
+            }
+            catch { }
+        }
+        #endregion
     }
 }

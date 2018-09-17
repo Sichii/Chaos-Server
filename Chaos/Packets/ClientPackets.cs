@@ -28,7 +28,7 @@ namespace Chaos
                 var cp = new ClientPackets();
 
                 var handles = new Handler[byte.MaxValue];
-                handles[(byte)ClientOpCodes.JoinServer] = new Handler(cp.JoinServer);
+                handles[(byte)ClientOpCodes.RequestConnectionInfo] = new Handler(cp.RequestConnectionInfo);
                 handles[(byte)ClientOpCodes.CreateChar1] = new Handler(cp.CreateChar1);
                 handles[(byte)ClientOpCodes.Login] = new Handler(cp.Login);
                 handles[(byte)ClientOpCodes.CreateChar2] = new Handler(cp.CreateChar2);
@@ -67,11 +67,12 @@ namespace Chaos
                 handles[(byte)ClientOpCodes.KeepAlive] = new Handler(cp.KeepAlive);
                 handles[(byte)ClientOpCodes.ChangeStat] = new Handler(cp.ChangeStat);
                 handles[(byte)ClientOpCodes.Exchange] = new Handler(cp.Exchange);
-                handles[(byte)ClientOpCodes.RequestLoginMessage] = new Handler(cp.RequestLoginMessage);
+                handles[(byte)ClientOpCodes.RequestLoginNotification] = new Handler(cp.RequestLoginNotification);
                 handles[(byte)ClientOpCodes.BeginChant] = new Handler(cp.BeginChant);
                 handles[(byte)ClientOpCodes.DisplayChant] = new Handler(cp.DisplayChant);
                 handles[(byte)ClientOpCodes.Personal] = new Handler(cp.Personal);
                 handles[(byte)ClientOpCodes.RequestServerTable] = new Handler(cp.RequestServerTable);
+                handles[(byte)ClientOpCodes.ChangeSequence] = new Handler(cp.ChangeSequence);
                 handles[(byte)ClientOpCodes.RequestHomepage] = new Handler(cp.RequestHomepage);
                 handles[(byte)ClientOpCodes.SynchronizeTicks] = new Handler(cp.SynchronizeTicks);
                 handles[(byte)ClientOpCodes.ChangeSocialStatus] = new Handler(cp.ChangeSocialStatus);
@@ -83,10 +84,10 @@ namespace Chaos
 
         internal ClientPackets() { }
 
-        private void JoinServer(Client client, ClientPacket packet)
+        private void RequestConnectionInfo(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"[{Enum.GetName(typeof(ClientOpCodes), packet.OpCode)}] Recv> ", client);
-            Game.JoinServer(client);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode)}]", client);
+            Game.RequestConnectionInfo(client);
         }
 
         private void CreateChar1(Client client, ClientPacket packet)
@@ -156,7 +157,10 @@ namespace Chaos
         }
         private void ExitClient(Client client, ClientPacket packet)
         {
-            bool requestExit = packet.ReadBoolean();
+            bool requestExit = false;
+
+            if (packet.Position != packet.Data.Length)
+                requestExit = packet.ReadBoolean();
 
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Exit: {requestExit}", client);
             Game.ExitClient(client, requestExit);
@@ -303,11 +307,8 @@ namespace Chaos
         }
         private void RequestProfile(Client client, ClientPacket packet)
         {
-            if (client.ServerType == ServerType.World)
-            {
-                Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
-                Game.RequestProfile(client);
-            }
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
+            Game.RequestProfile(client);
         }
         private void RequestGroup(Client client, ClientPacket packet)
         {
@@ -475,11 +476,12 @@ namespace Chaos
 
         private void ClickWorldMap(Client client, ClientPacket packet)
         {
-            uint mapId = packet.ReadUInt32();
+            ushort nodeCheckSum = packet.ReadUInt16();
+            ushort mapId = packet.ReadUInt16();
             Point point = packet.ReadPoint();
 
-            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] MapId: {mapId} | Point: {point}", client);
-            Game.ClickWorldMap(client, (ushort)mapId, point);
+            Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] CheckSum: {nodeCheckSum} MapId: {mapId} | Point: {point}", client);
+            Game.ClickWorldMap(client, nodeCheckSum, mapId, point);
         }
         private void ClickObject(Client client, ClientPacket packet)
         {
@@ -566,10 +568,10 @@ namespace Chaos
                     break;
             }
         }
-        private void RequestLoginMessage(Client client, ClientPacket packet)
+        private void RequestLoginNotification(Client client, ClientPacket packet)
         {
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);
-            Game.RequestLoginMessage(packet.Position == packet.Data.Length, client);
+            Game.RequestLoginNotification(true, client);
         }
 
         private void BeginChant(Client client, ClientPacket packet)
@@ -600,6 +602,7 @@ namespace Chaos
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] Table: {requestTable}", client);
             Game.RequestServerTable(client, requestTable);
         }
+        private void ChangeSequence(Client client, ClientPacket packet) => client.Sequence = packet.Sequence;
         private void RequestHomepage(Client client, ClientPacket packet)
         {
             Server.WriteLog($@"Recv [{Enum.GetName(typeof(ClientOpCodes), packet.OpCode).ToUpper()}] ", client);

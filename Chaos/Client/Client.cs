@@ -26,12 +26,12 @@ namespace Chaos
         internal bool IsLoopback { get; set; }
         internal Queue<ServerPacket> SendQueue { get; set; }
         internal bool Connected { get; set; }
-        internal byte Signature { get; set; }
+        internal byte Sequence { get; set; }
         internal byte StepCount { get; set; }
         internal IPAddress IpAddress { get; }
         internal ServerType ServerType { get; set; }
         internal Server Server { get; }
-        internal Socket ClientSocket { get; }
+        internal Socket ClientSocket { get; private set; }
         internal Crypto Crypto { get; set; }
         internal User User { get; set; }
         internal string CreateCharName { get; set; }
@@ -55,13 +55,14 @@ namespace Chaos
             SendQueue = new Queue<ServerPacket>();
 
             Server = server;
-            ServerType = ServerType.Lobby;
             ClientSocket = socket;
             Crypto = new Crypto();
             PacketHandlers = ClientPackets.Handlers;
-            Signature = 0;
+            Sequence = 0;
             StepCount = 1;
-            IpAddress = (socket.RemoteEndPoint as IPEndPoint).Address;
+
+            if (socket.RemoteEndPoint is IPEndPoint ipEndPoint)
+                IpAddress = ipEndPoint.Address;
 
             LastClickObj = DateTime.MinValue;
             LastRefresh = DateTime.MinValue;
@@ -81,10 +82,7 @@ namespace Chaos
                 ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
 
                 if (ServerType != ServerType.World)
-                {
                     Enqueue(ServerPackets.AcceptConnection());
-                    Enqueue(ServerPackets.ChangeCounter());
-                }
 
                 Server.WriteLog($@"Connection accepted", this);
             }

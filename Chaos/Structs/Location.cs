@@ -48,7 +48,7 @@ namespace Chaos
         public static bool operator ==(Location loc1, Location loc2) => loc1.Equals(loc2);
         public static bool operator !=(Location loc1, Location loc2) => !loc1.Equals(loc2);
         public override int GetHashCode() => (MapId << 16) + (X << 8) + Y;
-        public override string ToString() => $"{MapId} {X},{Y}";
+        public override string ToString() => $"{MapId} {Point}";
 
         public override bool Equals(object obj) => (obj as Location?)?.GetHashCode() == GetHashCode();
 
@@ -58,7 +58,7 @@ namespace Chaos
         public static bool TryParse(string str, out Location location)
         {
             location = None;
-            Match m = Regex.Match(str, @"(\d+) (\d+) (\d+)");
+            Match m = Regex.Match(str, @"(\d+) \(?(\d+)(?:,| |, )(\d+)\)?");
 
             return m.Success && ushort.TryParse(m.Groups[1].Value, out location.MapId) && ushort.TryParse(m.Groups[2].Value, out location.X) && ushort.TryParse(m.Groups[3].Value, out location.Y);
         }

@@ -18,6 +18,7 @@ namespace Chaos
     /// </summary>
     internal sealed class ClientPacket : Packet
     {
+        internal override bool IsEncrypted => OpCode != 0 && OpCode != 16 && OpCode != 72;
         internal bool IsDialog => OpCode == 57 || OpCode == 58;
 
         internal override EncryptionType EncryptionType
@@ -66,10 +67,10 @@ namespace Chaos
 
             for (int i = 0; i < length; ++i)
             {
-                int x = (i / crypto.Key.Length) % 256;
-                Data[i] ^= (byte)(crypto.Salts[x] ^ key[i % key.Length]);
-                if (x != Counter)
-                    Data[i] ^= crypto.Salts[Counter];
+                byte saltI = (byte)(i / crypto.Key.Length);
+                Data[i] ^= (byte)(crypto.Salts[saltI] ^ key[i % key.Length]);
+                if (saltI != Sequence)
+                    Data[i] ^= crypto.Salts[Sequence];
             }
 
             Array.Resize(ref Data, length);
@@ -77,13 +78,15 @@ namespace Chaos
 
         internal void DecryptDialog()
         {
-            byte num = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45));
+            byte num1 = (byte)(Data[1] ^ (byte)(Data[0] - 45));
+            byte num2 = (byte)(num1 + 114);
+            byte num3 = (byte)(num1 + 40);
 
-            Data[2] ^= (byte)(num + 114);
-            Data[3] ^= (byte)((num + 115) % 256);
+            Data[2] ^= num2;
+            Data[3] ^= (byte)(num2 + 1);
             int num4 = Data[2] << 8 | Data[3];
-            for (int index = 0; index < num4; ++index)
-                Data[4 + index] ^= (byte)((num + index + 40) % 256);
+            for (int index = 0; index < num4; index++)
+                Data[4 + index] ^= (byte)(num3 + index);
 
             Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
             Array.Resize(ref Data, Data.Length - 6);

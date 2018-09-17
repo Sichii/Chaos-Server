@@ -35,21 +35,24 @@ namespace Chaos
         /// Gets the checksum of the worldmap, based on it's nodes.
         /// </summary>
         /// <returns></returns>
-        public uint GetCheckSum()
+        public uint CheckSum
         {
-            var memoryStream = new MemoryStream();
-            using (var binaryWriter = new BinaryWriter(memoryStream))
+            get
             {
-                binaryWriter.Write((byte)Nodes.Count);
-                foreach (WorldMapNode worldMapNode in Nodes)
+                var memoryStream = new MemoryStream();
+                using (var binaryWriter = new BinaryWriter(memoryStream))
                 {
-                    binaryWriter.Write(worldMapNode.Position.X);
-                    binaryWriter.Write(worldMapNode.Position.Y);
-                    binaryWriter.Write(worldMapNode.Name);
-                    binaryWriter.Write(worldMapNode.MapId);
+                    binaryWriter.Write((byte)Nodes.Count);
+                    foreach (WorldMapNode worldMapNode in Nodes)
+                    {
+                        binaryWriter.Write(worldMapNode.Position.X);
+                        binaryWriter.Write(worldMapNode.Position.Y);
+                        binaryWriter.Write(worldMapNode.Name);
+                        binaryWriter.Write(worldMapNode.MapId);
+                    }
+                    binaryWriter.Flush();
+                    return Crypto.Generate32(memoryStream.ToArray());
                 }
-                binaryWriter.Flush();
-                return Crypto.Generate32(memoryStream.ToArray());
             }
         }
     }

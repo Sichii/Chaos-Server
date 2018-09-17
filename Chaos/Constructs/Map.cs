@@ -461,7 +461,7 @@ namespace Chaos
         /// <summary>
         /// Checks if a point is within the bounds of the map, or is a wall.
         /// </summary>
-        internal bool IsWall(Point p) => !WithinMap(p) || Tiles[p].IsWall;
+        internal bool IsWall(Point p) => !WithinMap(p) || (Doors.Keys.Contains(p) ? Doors[p].Closed : Tiles[p].IsWall);
 
         /// <summary>
         /// Checks if a given point is within the bounds of the map, is a wall, or has a monster, door, or other object already on it.
@@ -469,7 +469,7 @@ namespace Chaos
         internal bool IsWalkable(Point p)
         {
             lock (Sync)
-                return !IsWall(p) && (Doors.Keys.Contains(p) ? Doors[p].Closed : true) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
+                return !IsWall(p) && !Objects.Values.OfType<Creature>().Any(creature => creature.Type != CreatureType.WalkThrough && creature.Point == p);
         }
 
         /// <summary>
@@ -484,6 +484,9 @@ namespace Chaos
                 //plus the stepcount
                 client.StepCount++;
                 client.User.Direction = direction;
+
+                if (!Objects.ContainsKey(client.User.Id))
+                    return;
 
                 Point startPoint = client.User.Point;
 
