@@ -13,36 +13,21 @@ namespace Capricorn.Drawing
 {
     public class HPFImage
     {
-        private int width;
-        private int height;
-        private byte[] rawData;
-        private byte[] headerData;
+        public byte[] HeaderData { get; private set; }
 
-        public byte[] HeaderData => headerData;
+        public byte[] RawData { get; private set; }
 
-        public byte[] RawData => rawData;
+        public int Height { get; private set; }
 
-        public int Height => height;
-
-        public int Width => width;
+        public int Width { get; private set; }
 
         public static HPFImage FromFile(string file) => HPFImage.LoadHPF(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
 
         public static HPFImage FromRawData(byte[] data) => HPFImage.LoadHPF(new MemoryStream(data));
 
-        public static HPFImage FromArchive(string file, DATArchive archive)
-        {
-            if (!archive.Contains(file))
-                return null;
-            return HPFImage.FromRawData(archive.ExtractFile(file));
-        }
+        public static HPFImage FromArchive(string file, DATArchive archive) => !archive.Contains(file) ? null : HPFImage.FromRawData(archive.ExtractFile(file));
 
-        public static HPFImage FromArchive(string file, bool ignoreCase, DATArchive archive)
-        {
-            if (!archive.Contains(file, ignoreCase))
-                return null;
-            return HPFImage.FromRawData(archive.ExtractFile(file, ignoreCase));
-        }
+        public static HPFImage FromArchive(string file, bool ignoreCase, DATArchive archive) => !archive.Contains(file, ignoreCase) ? null : HPFImage.FromRawData(archive.ExtractFile(file, ignoreCase));
 
         private static HPFImage LoadHPF(Stream stream)
         {
@@ -56,16 +41,16 @@ namespace Capricorn.Drawing
             byte[] buffer = HPFCompression.Decompress(binaryReader1.ReadBytes((int)binaryReader1.BaseStream.Length));
             binaryReader1.Close();
             var binaryReader2 = new BinaryReader(new MemoryStream(buffer));
-            hpfImage.headerData = binaryReader2.ReadBytes(8);
-            hpfImage.rawData = binaryReader2.ReadBytes(buffer.Length - 8);
+            hpfImage.HeaderData = binaryReader2.ReadBytes(8);
+            hpfImage.RawData = binaryReader2.ReadBytes(buffer.Length - 8);
             binaryReader2.Close();
-            hpfImage.width = 28;
-            if (hpfImage.rawData.Length % hpfImage.width != 0)
+            hpfImage.Width = 28;
+            if (hpfImage.RawData.Length % hpfImage.Width != 0)
                 throw new ArgumentException("HPF file does not use the standard 28 pixel width.");
-            hpfImage.height = hpfImage.rawData.Length / hpfImage.width;
+            hpfImage.Height = hpfImage.RawData.Length / hpfImage.Width;
             return hpfImage;
         }
 
-        public override string ToString() => "{Width = " + width.ToString() + ", Height = " + height.ToString() + "}";
+        public override string ToString() => "{Width = " + Width.ToString() + ", Height = " + Height.ToString() + "}";
     }
 }

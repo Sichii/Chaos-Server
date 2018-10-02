@@ -16,7 +16,7 @@ namespace Chaos
     internal struct MetafileNode
     {
         internal string Name { get; }
-        internal List<string> Properties { get; set; }
+        internal List<string> Properties { get; }
 
         /// <summary>
         /// Base constructor for a structure representing a metafile, which contains game meta-data.

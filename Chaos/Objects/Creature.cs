@@ -22,11 +22,15 @@ namespace Chaos
     internal abstract class Creature : VisibleObject
     {
         [JsonProperty]
+        protected Status Status { get; set; }
+        [JsonProperty]
         internal EffectsBar EffectsBar { get; set; }
         [JsonProperty]
         internal Direction Direction { get; set; }
         [JsonProperty]
         internal CreatureType Type { get; }
+
+        //Use for targeting only. !HasFlag(Status.Dead) otherwise
         internal bool IsAlive => CurrentHP > 0;
         internal abstract byte HealthPercent { get; }
         internal abstract uint MaximumHP { get; }
@@ -38,8 +42,8 @@ namespace Chaos
         /// Json & Master constructor for a creature.
         /// </summary>
         [JsonConstructor]
-        protected Creature(string name, ushort sprite, CreatureType type, Point point, Map map, Direction direction = Direction.South, EffectsBar effectsBar = null)
-            : base(name, sprite, point, map)
+        protected Creature(string name, Location location, ushort sprite, CreatureType type, Direction direction = Direction.South, EffectsBar effectsBar = null)
+            : base(name, location, sprite)
         {
             EffectsBar = effectsBar ?? new EffectsBar(null);
             Direction = direction;
@@ -49,5 +53,19 @@ namespace Chaos
             WorldAnimationHistory = new Dictionary<int, DateTime>();
         }
 
+        /// <summary>
+        /// Checks if the creature has the given status flag.
+        /// </summary> 
+        internal bool HasFlag(Status flag) => Status.HasFlag(flag);
+
+        /// <summary>
+        /// Adds a status flag to the creature.
+        /// </summary>
+        internal void AddFlag(Status flag) => Status |= flag;
+
+        /// <summary>
+        /// Removes a status flag from the creature.
+        /// </summary>
+        internal void RemoveFlag(Status flag) => Status &= ~flag;
     }
 }

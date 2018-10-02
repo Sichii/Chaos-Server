@@ -11,6 +11,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 
@@ -19,19 +21,21 @@ namespace Chaos
     internal sealed class Client
     {
         private readonly object Sync = new object();
-        private readonly ClientPackets.Handler[] PacketHandlers;
-        private byte[] ClientBuffer;
-        private List<byte> FullClientBuffer;
+        private readonly ImmutableArray<Handler> PacketHandlers;
+        private readonly byte[] ClientBuffer;
+        private readonly List<byte> FullClientBuffer;
+        private bool Connected;
+
+        internal ConcurrentQueue<ServerPacket> SendQueue { get; }
+        internal Server Server { get; }
+        internal IPAddress IpAddress { get; }
+
+        internal Socket ClientSocket { get; private set; }
 
         internal bool IsLoopback { get; set; }
-        internal Queue<ServerPacket> SendQueue { get; set; }
-        internal bool Connected { get; set; }
         internal byte Sequence { get; set; }
         internal byte StepCount { get; set; }
-        internal IPAddress IpAddress { get; }
         internal ServerType ServerType { get; set; }
-        internal Server Server { get; }
-        internal Socket ClientSocket { get; private set; }
         internal Crypto Crypto { get; set; }
         internal User User { get; set; }
         internal string CreateCharName { get; set; }
@@ -52,7 +56,7 @@ namespace Chaos
             Connected = false;
             ClientBuffer = new byte[4096];
             FullClientBuffer = new List<byte>();
-            SendQueue = new Queue<ServerPacket>();
+            SendQueue = new ConcurrentQueue<ServerPacket>();
 
             Server = server;
             ClientSocket = socket;
@@ -115,6 +119,33 @@ namespace Chaos
         }
 
         /// <summary>
+        /// Sends all packets in the send queue.
+        /// </summary>
+        internal void FlushSendQueue()
+        {
+            if (!Connected)
+            {
+                Disconnect();
+                return;
+            }
+
+            while (!SendQueue.IsEmpty)
+            {
+                if (SendQueue.TryDequeue(out ServerPacket tServerPacket))
+                {
+                    Server.WriteLog(tServerPacket.LogString, this);
+
+                    if (tServerPacket.ShouldEncrypt)
+                    {
+                        tServerPacket.Sequence = Sequence++;
+                        tServerPacket.Encrypt(Crypto);
+                    }
+                    Send(tServerPacket);
+                }
+            }
+        }
+
+        /// <summary>
         /// Asynchronously receives data from the client, and processes the information.
         /// </summary>
         /// <param name="ar">Result of the async operation.</param>
@@ -148,32 +179,40 @@ namespace Chaos
 
                             if (clientPacket != null)
                             {
-                                if (clientPacket.IsEncrypted)
-                                    clientPacket.Decrypt(Crypto);
-
-                                if (clientPacket.IsDialog)
-                                    clientPacket.DecryptDialog();
-
-                                try
+                                if ((ServerType == ServerType.World) ? CONSTANTS.WORLD_OPCODES.Contains(clientPacket.OpCode)
+                                    : (ServerType == ServerType.Login) ? CONSTANTS.LOGIN_OPCODES.Contains(clientPacket.OpCode)
+                                    : (ServerType == ServerType.Lobby) ? CONSTANTS.LOBBY_OPCODES.Contains(clientPacket.OpCode)
+                                    : false)
                                 {
-                                    PacketHandlers[clientPacket.OpCode](this, clientPacket);
+                                    if (clientPacket.ShouldEncrypt)
+                                        clientPacket.Decrypt(Crypto);
+
+                                    if (clientPacket.IsDialog)
+                                        clientPacket.DecryptDialog();
+
+                                    try
+                                    {
+                                        PacketHandlers[clientPacket.OpCode](this, clientPacket);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Server.WriteLog($@"{Environment.NewLine}HANDLER EXCEPTION: {e.ToString()}{Environment.NewLine}", this);
+                                    }
                                 }
-                                catch (Exception e)
-                                {
-                                    Server.WriteLog(e.ToString(), this);
-                                }
+                                else
+                                    Server.WriteLog($@"{Environment.NewLine}INVALID PACKET[{clientPacket.OpCode}]: {ServerType} => {clientPacket}");
                             }
                         }
                         else
                             break;
                     }
+                    if (Connected) //begin checking for received info again
+                        ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
                 }
-                if (Connected) //begin checking for received info again
-                    ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
             }
-            catch
+            catch(Exception e)
             {
-
+                Server.WriteLog($@"{Environment.NewLine}ENDRECEIVE EXCEPTION: {e.ToString()}{Environment.NewLine}");
             }
         }
 
@@ -189,12 +228,9 @@ namespace Chaos
         /// <param name="packets">Packet(s) to be sent.</param>
         internal void Enqueue(params ServerPacket[] packets)
         {
-            lock (SendQueue)
-            {
-                for (int i = 0; i < packets.Length; i++)
-                    if (packets[i] != null)
-                        SendQueue.Enqueue(packets[i]);
-            }
+            for (int i = 0; i < packets.Length; i++)
+                if (packets[i] != null)
+                    SendQueue.Enqueue(packets[i]);
         }
 
         /// <summary>
@@ -253,15 +289,10 @@ namespace Chaos
         /// </summary>
         /// <param name="eff">The effect to send.</param>
         /// <param name="remove">Whether or not to remove the effect from the spell bar.</param>
-        internal void SendEffect(Effect eff, bool remove = false)
+        internal void SendEffect(Effect eff)
         {
-            if (remove)
-            {
-                User.EffectsBar.TryRemove(eff);
-                Enqueue(ServerPackets.EffectsBar(eff.Sprite, EffectsBarColor.None));
-            }
-            else
-                Enqueue(ServerPackets.EffectsBar(eff.Sprite, eff.Color()));
+            if(eff.ShouldSendColor())
+                Enqueue(ServerPackets.EffectsBar(eff.Sprite, eff.Color));
         }
         /// <summary>
         /// Sends a persuit menu to the client. Sets necessary client variables.
@@ -272,10 +303,7 @@ namespace Chaos
             ActiveObject = merchant;
             if (merchant.Menu.Type == MenuType.Dialog)
             {
-                if (merchant.NextDialogId == 0)
-                    CurrentDialog = Game.Dialogs.ItemOrMerchantMenuDialog(PursuitIds.None, 0, merchant.Menu.Text, merchant.Menu.Dialogs);
-                else
-                    CurrentDialog = Game.Dialogs[merchant.NextDialogId];
+                CurrentDialog = (merchant.NextDialogId == 0) ? Game.Dialogs.ItemOrMerchantMenuDialog(PursuitIds.None, 0, merchant.Menu.Text, merchant.Menu.Dialogs) : Game.Dialogs[merchant.NextDialogId];
 
                 Enqueue(ServerPackets.DisplayMenu(this, merchant, CurrentDialog));
             }

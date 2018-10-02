@@ -24,15 +24,15 @@ namespace Capricorn.IO.Compression
             byte[] numArray5 = new byte[513];
             for (uint index = 0U; index < 256U; ++index)
             {
-                numArray3[(int)index] = (uint)(2 * (int)index + 1);
-                numArray4[(int)index] = (uint)(2 * (int)index + 2);
-                numArray5[(int)(uint)((int)index * 2 + 1)] = (byte)index;
-                numArray5[(int)(uint)((int)index * 2 + 2)] = (byte)index;
+                numArray3[(int)index] = (uint)((2 * (int)index) + 1);
+                numArray4[(int)index] = (uint)((2 * (int)index) + 2);
+                numArray5[(int)(uint)(((int)index * 2) + 1)] = (byte)index;
+                numArray5[(int)(uint)(((int)index * 2) + 2)] = (byte)index;
             }
             while ((int)num2 != 256)
             {
                 uint num5;
-                for (num5 = 0U; num5 <= byte.MaxValue; num5 = (numArray1[(int)(uint)(4 + (int)num3 - 1)] & 1 << (int)num1) == 0 ? numArray3[(int)num5] : numArray4[(int)num5])
+                for (num5 = 0U; num5 <= byte.MaxValue; num5 = (numArray1[(int)(uint)(4 + (int)num3 - 1)] & (1 << (int)num1)) == 0 ? numArray3[(int)num5] : numArray4[(int)num5])
                 {
                     if ((int)num1 == 7)
                     {
@@ -86,15 +86,15 @@ namespace Capricorn.IO.Compression
             byte[] numArray4 = new byte[513];
             for (uint index = 0U; index < 256U; ++index)
             {
-                numArray2[(int)index] = (uint)(2 * (int)index + 1);
-                numArray3[(int)index] = (uint)(2 * (int)index + 2);
-                numArray4[(int)(uint)((int)index * 2 + 1)] = (byte)index;
-                numArray4[(int)(uint)((int)index * 2 + 2)] = (byte)index;
+                numArray2[(int)index] = (uint)((2 * (int)index) + 1);
+                numArray3[(int)index] = (uint)((2 * (int)index) + 2);
+                numArray4[(int)(uint)(((int)index * 2) + 1)] = (byte)index;
+                numArray4[(int)(uint)(((int)index * 2) + 2)] = (byte)index;
             }
             while ((int)num2 != 256)
             {
                 uint num5;
-                for (num5 = 0U; num5 <= byte.MaxValue; num5 = (hpfBytes[(int)(uint)(4 + (int)num3 - 1)] & 1 << (int)num1) == 0 ? numArray2[(int)num5] : numArray3[(int)num5])
+                for (num5 = 0U; num5 <= byte.MaxValue; num5 = (hpfBytes[(int)(uint)(4 + (int)num3 - 1)] & (1 << (int)num1)) == 0 ? numArray2[(int)num5] : numArray3[(int)num5])
                 {
                     if ((int)num1 == 7)
                     {

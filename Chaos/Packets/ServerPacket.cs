@@ -18,7 +18,8 @@ namespace Chaos
     /// </summary>
     internal sealed class ServerPacket : Packet
     {
-        internal override bool IsEncrypted => OpCode != 0 && OpCode != 3 && OpCode != 64 && OpCode != 126;
+        internal string LogString { get; set; }
+        internal override bool ShouldEncrypt => OpCode != 0 && OpCode != 3 && OpCode != 64 && OpCode != 126;
 
         internal override EncryptionType EncryptionType
         {
@@ -50,9 +51,11 @@ namespace Chaos
         {
             EncryptionType method = EncryptionType;
             int pos = Data.Length;
-            ushort a = (ushort)Utility.Random(257, ushort.MaxValue);
-            byte b = (byte)Utility.Random(101, 255);
-            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[1024];
+            ushort a = (ushort)Utilities.Random(257, ushort.MaxValue);
+            byte b = (byte)Utilities.Random(101, 255);
+            byte[] key = (method == EncryptionType.Normal) ? crypto.Key 
+                : (method == EncryptionType.MD5) ? crypto.GenerateKey(a, b) 
+                : new byte[1024];
 
             for (int i = 0; i < Data.Length; ++i)
             {
@@ -63,11 +66,10 @@ namespace Chaos
             }
 
             Array.Resize(ref Data, pos + 3);
-            Data[pos++] = (byte)(a % 256 ^ 116);
+            Data[pos++] = (byte)((a % 256) ^ 116);
             Data[pos++] = (byte)(b ^ 36U);
-            Data[pos++] = (byte)((a >> 8) % 256 ^ 100);
+            Data[pos++] = (byte)(((a >> 8) % 256) ^ 100);
         }
-
-        public override string ToString() => $@"Send [{Enum.GetName(typeof(ServerOpCodes), OpCode) ?? "**Unknown**"}] {GetHexString()}";
+        public override string ToString() => $@"Send [{((ServerOpCodes)OpCode).ToString() ?? "**Unknown**"}] {GetHexString()}";
     }
 }

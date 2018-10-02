@@ -18,30 +18,27 @@ namespace Chaos
     /// Represents an object that exists within the in-game panels.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    internal abstract class PanelObject
+    internal abstract class PanelObject : IEquatable<PanelObject>
     {
         internal TargetsType TargetType { get; }
         internal bool UsersOnly { get; }
         internal int BaseDamage { get; }
         internal TimeSpan BaseCooldown { get; }
-        [JsonProperty]
-        internal byte Slot { get; set; }
         internal ushort Sprite { get; }
         [JsonProperty]
         internal string Name { get; }
-        internal float CooldownReduction { get; set; }
-        internal DateTime LastUse { get; set; }
         internal Animation Animation { get; }
         internal BodyAnimation BodyAnimation { get; }
         internal Effect Effect { get; }
         internal OnUseDelegate Activate { get; }
         [JsonProperty]
-        internal TimeSpan Elapsed => DateTime.UtcNow.Subtract(LastUse);
-        internal TimeSpan Cooldown => new TimeSpan(0, 0, 0, 0, (int)(BaseCooldown.TotalMilliseconds * Utility.Clamp<double>(1 - CooldownReduction, 0, 1)));
+        internal byte Slot { get; set; }
+        internal int CooldownReduction { get; set; }
+        internal DateTime LastUse { get; set; }
 
-        /// <summary>
-        /// Whether or not the object is usable, based on the cooldown after applying cooldown reduction.
-        /// </summary>
+        [JsonProperty]
+        internal TimeSpan Elapsed => DateTime.UtcNow.Subtract(LastUse);
+        internal TimeSpan Cooldown => new TimeSpan(0, 0, 0, 0, (int)(BaseCooldown.TotalMilliseconds * (Utilities.Clamp<int>(100 - CooldownReduction, 0, 100)/100)));
         internal virtual bool CanUse => LastUse == DateTime.MinValue || BaseCooldown.TotalMilliseconds == 0 || DateTime.UtcNow.Subtract(LastUse) >= Cooldown;
 
         /// <summary>
@@ -78,5 +75,10 @@ namespace Chaos
             Name = name;
             LastUse = DateTime.UtcNow.Subtract(elapsed);
         }
+
+        public override int GetHashCode() => (Name?.GetHashCode() ?? 0 << 16) + Sprite;
+        public override bool Equals(object other) => (other is PanelObject tPanelObject) ? Equals(tPanelObject) : false;
+        public bool Equals(PanelObject other) => (other != null) && (GetHashCode() == other.GetHashCode());
+        public override string ToString() => $@"SLOT: {Slot} | NAME: {Name}({Sprite})";
     }
 }

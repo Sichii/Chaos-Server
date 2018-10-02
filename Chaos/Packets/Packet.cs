@@ -19,29 +19,30 @@ namespace Chaos
     /// </summary>
     internal abstract class Packet
     {
-        protected internal DateTime Creation { internal get; set; }
-        protected internal byte Signature { internal get; set; }
-        protected internal byte OpCode { internal get; set; }
-        internal abstract bool IsEncrypted { get; }
+        protected DateTime Creation { get; }
+        protected byte Signature { get; }
+        internal byte OpCode { get; }
+        internal abstract bool ShouldEncrypt { get; }
         internal abstract EncryptionType EncryptionType { get; }
-        internal byte Sequence;
-        protected internal byte[] Data;
+        internal byte Sequence { get; set; }
+        protected byte[] Data;
         internal int Position;
+        internal int Length => Data.Length;
 
-        internal Packet(byte opcode)
+        protected Packet(byte opcode)
         {
             Signature = 170;
             OpCode = opcode;
             Data = new byte[0];
         }
-        internal Packet(byte[] buffer)
+        protected Packet(byte[] buffer)
         {
             Signature = buffer[0];
             OpCode = buffer[3];
             Sequence = buffer[4];
             Creation = DateTime.UtcNow;
 
-            int resultLength = buffer.Length - (IsEncrypted ? 5 : 4);
+            int resultLength = buffer.Length - (ShouldEncrypt ? 5 : 4);
             Data = new byte[resultLength];
             Buffer.BlockCopy(buffer, buffer.Length - resultLength, Data, 0, resultLength);
         }
@@ -64,10 +65,10 @@ namespace Chaos
         }
         internal sbyte ReadSByte() => (sbyte)ReadByte();
         internal bool ReadBoolean() => ReadByte() != 0;
-        internal short ReadInt16() => (short)(ReadByte() << 8 | ReadByte());
-        internal ushort ReadUInt16() => (ushort)(ReadByte() << 8 | ReadByte());
-        internal int ReadInt32() => ReadByte() << 24 | ReadByte() << 16 | ReadByte() << 8 | ReadByte();
-        internal uint ReadUInt32() => (uint)(ReadByte() << 24 | ReadByte() << 16 | ReadByte() << 8 | ReadByte());
+        internal short ReadInt16() => (short)((ReadByte() << 8) | ReadByte());
+        internal ushort ReadUInt16() => (ushort)((ReadByte() << 8) | ReadByte());
+        internal int ReadInt32() => (ReadByte() << 24) | (ReadByte() << 16) | (ReadByte() << 8) | ReadByte();
+        internal uint ReadUInt32() => (uint)((ReadByte() << 24) | (ReadByte() << 16) | (ReadByte() << 8) | ReadByte());
 
         internal string ReadString()
         {
@@ -212,7 +213,7 @@ namespace Chaos
         }
         internal byte[] ToArray()
         {    
-            int resultLength = Data.Length + (IsEncrypted ? 5 : 4) - 3;
+            int resultLength = Data.Length + (ShouldEncrypt ? 5 : 4) - 3;
             byte[] resultData = new byte[resultLength + 3];
 
             resultData[0] = Signature;
@@ -240,12 +241,9 @@ namespace Chaos
             for (int i = 0; i < buffer.Length; i++)
             {
                 byte charCode = buffer[i];
-                if ((charCode == 10 || charCode == 13) && !replaceNewline)
-                    resultString[i] = (char)charCode;
-                else if (charCode < 32 || charCode > 126)
-                    resultString[i] = '.';
-                else
-                    resultString[i] = (char)charCode;
+                resultString[i] = ((charCode == 10 || charCode == 13) && !replaceNewline) ? (char)charCode 
+                    : (charCode < 32 || (charCode > 126)) ? '.' 
+                    : (char)charCode;
             }
             return new string(resultString);
         }

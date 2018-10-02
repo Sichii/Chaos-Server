@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading;
 
 namespace Chaos
@@ -30,7 +31,7 @@ namespace Chaos
 
         internal Redirect(Client client, ServerType type, string name = null)
         {
-            Id = Interlocked.Increment(ref Server.NextId);
+            Id = Interlocked.Increment(ref Server.NextID);
             Client = client;
             Type = type;
             Name = name ?? "Login";
@@ -64,5 +65,7 @@ namespace Chaos
             Key = client.Crypto.Key;
             EndPoint = new IPEndPoint(client.IsLoopback ? IPAddress.Loopback : client.Server.ServerEndPoint.Address, Server.GetPort(type));
         }
+
+        public override string ToString() => $@"ID: {Id} | SERVER_TYPE: {Type} | END_POINT: {EndPoint} | NAME: {Name} | SEED: {Seed} | KEY: {Encoding.ASCII.GetString(Key)}";
     }
 }

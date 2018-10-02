@@ -3,7 +3,7 @@
 // 
 // This project is free and open-source, provided that any alterations or
 // modifications to any portions of this project adhere to the
-// Affero General Public License (Version 3).
+// Affero General internal License (Version 3).
 // 
 // A copy of the AGPLv3 can be found in the project directory.
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
@@ -27,9 +27,9 @@ namespace Chaos
         private List<Item> User1Items;
         private List<Item> User2Items;
 
-        internal int ExchangeId { get; }
-        internal bool IsActive { get; set; }
-
+        internal User OtherUser(User user) => user == User1 ? User2 : User1;
+        internal int ID { get; }
+        internal bool IsActive { get; private set; }
 
         /// <summary>
         /// Base constructor for an object representing an in-game exchange, or trade.
@@ -38,7 +38,7 @@ namespace Chaos
         /// <param name="receiver">The user to receive the trade.</param>
         internal Exchange(User sender, User receiver)
         {
-            ExchangeId = Interlocked.Increment(ref Server.NextId);
+            ID = Interlocked.Increment(ref Server.NextID);
             User1 = sender;
             User2 = receiver;
             User1Items = new List<Item>();
@@ -55,12 +55,12 @@ namespace Chaos
             lock (Sync)
             {
                 //set each player's exchange to this
-                User1.Exchange = this;
-                User2.Exchange = this;
+                User1.ExchangeID = ID;
+                User2.ExchangeID = ID;
 
                 //active exchange window on each client
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.StartExchange, User2.Id, User2.Name));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.StartExchange, User1.Id, User1.Name));
+                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeType.StartExchange, User2.ID, User2.Name));
+                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeType.StartExchange, User1.ID, User1.Name));
 
                 IsActive = true;
             }
@@ -77,12 +77,27 @@ namespace Chaos
             {
                 byte index;
                 bool user1Src = user == User1;
+                User otherUser = OtherUser(user);
 
-                if (!IsActive || !user.Inventory.TryGet(slot, out Item item) || item.AccountBound || (user1Src ? User1Accept : User2Accept))
+                if (!IsActive || !user.Inventory.TryGet(slot, out Item item) || (user1Src ? User1Accept : User2Accept))
                     return;
+
+                if (item.AccountBound)
+                {
+                    user.Client.SendServerMessage(0, $"{item.Name} is account bound.");
+                    return;
+                }
+                if (otherUser.Inventory.AvailableSlots == 0 && (!item.Stackable || !User1Items.Contains(item)))
+                {
+                    user.Client.SendServerMessage(0, $"{otherUser.Name} cannot hold any more items.");
+                    otherUser.Client.SendServerMessage(0, "You cannot hold any more items.");
+                    return;
+                }
 
                 if (!item.Stackable)
                 {
+
+
                     //remove item from their inventory
                     user.Inventory.TryRemove(slot);
                     user.Client.Enqueue(ServerPackets.RemoveItem(slot));
@@ -326,9 +341,9 @@ namespace Chaos
         private void Destroy()
         {
             //remove the exchange from existence
-            User1.Exchange = null;
-            User2.Exchange = null;
-            Game.World.Exchanges.TryRemove(ExchangeId, out Exchange exOut);
+            User1.ExchangeID = 0;
+            User2.ExchangeID = 0;
+            Game.World.Exchanges.TryRemove(ID, out Exchange exOut);
             exOut = null;
             IsActive = false;
         }

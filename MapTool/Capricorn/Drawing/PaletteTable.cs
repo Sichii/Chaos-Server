@@ -42,7 +42,7 @@ namespace Capricorn.Drawing
             int int32 = Convert.ToInt32(image.Substring(2, 3));
             if (image.StartsWith("w"))
             {
-                foreach (PaletteTableEntry paletteTableEntry in this.overrides)
+                foreach (PaletteTableEntry paletteTableEntry in overrides)
                 {
                     if (int32 >= paletteTableEntry.Min && int32 <= paletteTableEntry.Max)
                         index = paletteTableEntry.Palette;
@@ -50,15 +50,15 @@ namespace Capricorn.Drawing
             }
             else if (image.StartsWith("m"))
             {
-                foreach (PaletteTableEntry entry in this.entries)
+                foreach (PaletteTableEntry entry in entries)
                 {
                     if (int32 >= entry.Min && int32 <= entry.Max)
                         index = entry.Palette;
                 }
             }
-            if (index < 0 || index > this.palettes.Count)
+            if (index < 0 || index > palettes.Count)
                 index = 0;
-            return this.palettes[index];
+            return palettes[index];
         }
 
         private int LoadTableInternal(Stream stream)

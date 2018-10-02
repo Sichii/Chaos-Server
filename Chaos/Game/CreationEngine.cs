@@ -17,7 +17,7 @@ using System.Text.RegularExpressions;
 namespace Chaos
 {
     internal delegate bool OnUseDelegate(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null);
-    internal delegate Item ItemCreationDelegate(int count);
+    internal delegate Item ItemCreationDelegate(uint count);
     internal delegate Skill SkillCreationDelegate();
     internal delegate Spell SpellCreationDelegate();
 
@@ -26,10 +26,11 @@ namespace Chaos
     /// </summary>
     internal class CreationEngine
     {
-        private Dictionary<string, ItemCreationDelegate> Items { get; }
-        private Dictionary<string, SkillCreationDelegate> Skills { get; }
-        private Dictionary<string, SpellCreationDelegate> Spells { get; }
-        private Dictionary<string, OnUseDelegate> Effects { get; }
+        private readonly Dictionary<string, ItemCreationDelegate> Items;
+        private readonly Dictionary<string, SkillCreationDelegate> Skills;
+        private readonly Dictionary<string, SpellCreationDelegate> Spells;
+        private readonly Dictionary<string, OnUseDelegate> Effects;
+
         internal CreationEngine()
         {
             Items = new Dictionary<string, ItemCreationDelegate>(StringComparer.CurrentCultureIgnoreCase);
@@ -70,35 +71,29 @@ namespace Chaos
 
         #region Interface
         internal OnUseDelegate GetEffect(string itemName) => Effects.ContainsKey(itemName) ? Effects[itemName] : Effects["NormalObj"];
-        internal Gold CreateGold(Client client, uint amount, Point groundPoint) => new Gold(GetGoldSprite(amount), groundPoint, client.User.Map, amount);
+        internal GroundObject CreateGold(Client client, uint amount, Point groundPoint) => new GroundObject((client.User.Location.MapID, groundPoint), GetGoldSprite(amount), amount);
         internal Item CreateItem(string name) => Items.ContainsKey(name) ? Items[name](1) : null;
-        internal IEnumerable<Item> CreateItems(string name, int count)
+        internal IEnumerable<Item> CreateItems(string name, uint count)
         {
-            Item item;
+            if (Items.TryGetValue(name, out ItemCreationDelegate builder))
+            {
+                Item item = builder(count);
 
-            if (!Items.ContainsKey(name))
+                if (item.Stackable)
+                    yield return item;
+                else
+                    for (int i = 0; i < count; i++)
+                        yield return builder(1);
+            }
+            else
                 yield break;
-            else if ((item = Items[name](count)).Stackable)
-                yield return item;
-            else
-                for (int i = 0; i < count; i++)
-                    yield return Items[name](1);
         }
-        private byte GetGoldSprite(uint amount)
-        {
-            if (amount >= 5000)
-                return 140;
-            else if (amount >= 1000)
-                return 141;
-            else if (amount >= 500)
-                return 142;
-            else if (amount >= 100)
-                return 137;
-            else if (amount > 1)
-                return 138;
-            else
-                return 139;
-        }
+        private byte GetGoldSprite(uint amount) => (byte)(amount >= 5000 ? 140
+                : amount >= 1000 ? 141
+                : amount >= 500 ? 142
+                : amount >= 100 ? 137
+                : amount > 1 ? 138
+                : 139);
         internal Skill CreateSkill(string name) => Skills.ContainsKey(name) ? Skills[name]() : null;
         internal Spell CreateSpell(string name) => Spells.ContainsKey(name) ? Spells[name]() : null;
         private void AddItem(string name, ItemCreationDelegate itemCreationDelegate, OnUseDelegate onUseDelegate)
@@ -176,13 +171,13 @@ namespace Chaos
         private bool NormalSkill(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             var skill = obj as Skill;
-            List<Creature> targets = Game.Activatables.GetTargetsFromType(client, Point.None, skill.TargetType);
-            int amount = skill.BaseDamage + client.User.Attributes.CurrentStr * 250;
+            List<Creature> targets = Targeting.TargetsFromType(client, Point.None, skill.TargetType);
+            int amount = skill.BaseDamage + (client.User.Attributes.CurrentStr * 250);
 
             foreach (Creature c in targets)
-                Game.Activatables.ApplyDamage(c, amount);
+                Game.Assert.Damage(c, amount);
 
-            Game.Activatables.ApplyActivation(client, skill, targets, null, StatUpdateType.None, true, false, false);
+            Game.Assert.Activate(client, skill, targets, null, StatUpdateType.None, true, false, false);
             return true;
         }
         private bool NormalSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
@@ -190,15 +185,15 @@ namespace Chaos
             var spell = obj as Spell;
             var targets = new List<Creature>() { target };
             int amount = spell.BaseDamage < 0 ?
-                spell.BaseDamage - client.User.Attributes.CurrentInt * 500 :
-                spell.BaseDamage + client.User.Attributes.CurrentInt * 500;
+                spell.BaseDamage - (client.User.Attributes.CurrentInt * 500) :
+                spell.BaseDamage + (client.User.Attributes.CurrentInt * 500);
 
-            targets.AddRange(Game.Activatables.GetTargetsFromType(client, target.Point, spell.TargetType));
+            targets.AddRange(Targeting.TargetsFromType(client, target.Point, spell.TargetType));
 
             foreach (Creature c in targets)
-                Game.Activatables.ApplyDamage(c, amount);
+                Game.Assert.Damage(c, amount);
 
-            Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.None, true);
+            Game.Assert.Activate(client, spell, targets, null, StatUpdateType.None, true);
             return targets.Count > 0;
         }
         private bool PersistentSpell(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
@@ -209,13 +204,13 @@ namespace Chaos
             if (!spell.UsersOnly || target is User)
                 targets.Add(target);
 
-            foreach (Creature creature in Game.Activatables.GetTargetsFromType(client, target.Point, spell.TargetType))
+            foreach (Creature creature in Targeting.TargetsFromType(client, target.Point, spell.TargetType))
                 if (!spell.UsersOnly || creature is User)
                     targets.Add(creature);
 
             foreach (User u in targets.OfType<User>().ToList())
             {
-                Effect targetedEffect = spell.Effect.GetTargetedEffect(u.Id, client.User.Id);
+                Effect targetedEffect = spell.Effect.GetTargetedEffect(u.ID, client.User.ID);
                 if (u.EffectsBar.TryAdd(targetedEffect))
                     u.Client.SendEffect(targetedEffect);
                 else
@@ -223,9 +218,9 @@ namespace Chaos
             }
 
             foreach (Creature c in targets)
-                Game.Activatables.ApplyDamage(c, spell.BaseDamage);
+                Game.Assert.Damage(c, spell.BaseDamage);
 
-            Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary);
+            Game.Assert.Activate(client, spell, targets, null, StatUpdateType.Primary);
             return targets.Count > 0;
         }
         /// <summary>
@@ -239,20 +234,20 @@ namespace Chaos
             if (!spell.UsersOnly || target is User)
                 targets.Add(target);
 
-            foreach (Creature c in Game.Activatables.GetTargetsFromType(client, target.Point))
+            foreach (Creature c in Targeting.TargetsFromType(client, target.Point))
                 if (!spell.UsersOnly || c is User)
                     targets.Add(c);
 
-            foreach (Point point in Game.Activatables.GetPointsFromType(client, target.Point, spell.TargetType))
+            foreach (Point point in Targeting.PointsFromType(client, target.Point, spell.TargetType))
             {
                 Effect targetedEffect = spell.Effect.GetTargetedEffect(point);
                 client.User.Map.AddEffect(targetedEffect);
             }
 
             foreach (Creature c in targets)
-                Game.Activatables.ApplyDamage(c, spell.BaseDamage);
+                Game.Assert.Damage(c, spell.BaseDamage);
 
-            Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary, true);
+            Game.Assert.Activate(client, spell, targets, null, StatUpdateType.Primary, true);
 
             return targets.Count > 0;
         }
@@ -267,16 +262,16 @@ namespace Chaos
             if (!spell.UsersOnly || target is User)
                 targets.Add(target);
 
-            foreach (Point point in Game.Activatables.GetPointsFromType(client, target.Point, spell.TargetType))
+            foreach (Point point in Targeting.PointsFromType(client, target.Point, spell.TargetType))
             {
                 Effect targetedEffect = spell.Effect.GetTargetedEffect(point);
                 client.User.Map.AddEffect(targetedEffect);
             }
 
             foreach (Creature c in targets)
-                Game.Activatables.ApplyDamage(c, spell.BaseDamage);
+                Game.Assert.Damage(c, spell.BaseDamage);
 
-            Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.Primary, true);
+            Game.Assert.Activate(client, spell, targets, null, StatUpdateType.Primary, true);
 
             return targets.Count > 0;
         }
@@ -284,13 +279,13 @@ namespace Chaos
 
         #region Items
         #region Default Items
-        private Item AdminTrinket(int count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, TargetsType.None, true, BodyAnimation.None, 0, Effect.None, true);
-        private Item TestItem(int count) => new Item(new ItemSprite(1108, 0), 0, "Test Item", true, count, 1, false);
-        private Item TestMaleEquipment(int count) => new Item(new ItemSprite(11990, 1023), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
-        private Item TestFemaleEquipment(int count) => new Item(new ItemSprite(11991, 1023), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
-        private Item TestWeapon(int count) => new Item(new ItemSprite(3254, 186), 0, "Test Weapon", EquipmentSlot.Weapon, 10000, 10000, 5, Gender.Unisex, false);
-        private Item MaleTatteredRobes(int count) => new Item(new ItemSprite(1108, 208), 0, "Male Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Male, false);
-        private Item FemaleTatteredRobes(int count) => new Item(new ItemSprite(1109, 208), 0, "Female Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Female, false);
+        private Item AdminTrinket(uint count) => new Item(new ItemSprite(13709, 0), 0, "Admin Trinket", TimeSpan.Zero, 1, 1, Animation.None, TargetsType.None, true, BodyAnimation.None, 0, Effect.None, true);
+        private Item TestItem(uint count) => new Item(new ItemSprite(1108, 0), 0, "Test Item", true, count, 1, false);
+        private Item TestMaleEquipment(uint count) => new Item(new ItemSprite(11990, 1023), 0, "Test Male Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Male, false);
+        private Item TestFemaleEquipment(uint count) => new Item(new ItemSprite(11991, 1023), 0, "Test Female Equipment", EquipmentSlot.Armor, 10000, 10000, 5, Gender.Female, false);
+        private Item TestWeapon(uint count) => new Item(new ItemSprite(3254, 186), 0, "Test Weapon", EquipmentSlot.Weapon, 10000, 10000, 5, Gender.Unisex, false);
+        private Item MaleTatteredRobes(uint count) => new Item(new ItemSprite(1108, 208), 0, "Male Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Male, false);
+        private Item FemaleTatteredRobes(uint count) => new Item(new ItemSprite(1109, 208), 0, "Female Tattered Robes", EquipmentSlot.Armor, 10000, 10000, 2, Gender.Female, false);
         #endregion
         #region Scripted Items
         #endregion
@@ -309,21 +304,21 @@ namespace Chaos
         private bool Reposition(Client client, Server server, PanelObject obj = null, Creature target = null, string prompt = null)
         {
             var skill = obj as Skill;
-            List<Creature> targets = Game.Activatables.GetTargetsFromType(client, Point.None, skill.TargetType);
+            List<Creature> targets = Targeting.TargetsFromType(client, Point.None, skill.TargetType);
 
             if (targets.Count > 0)
             {
                 target = targets[0];
 
-                Point newPoint = target.Point.NewOffset(target.Direction.Reverse());
+                Point newPoint = target.Point.Offset(target.Direction.Reverse());
 
                 if (client.User.Map.IsWalkable(newPoint) || client.User.Point == newPoint)
                 {
                     client.User.Direction = target.Direction;
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, (client.User.Map.Id, newPoint)));
+                    Game.Assert.Warp(client.User, new Warp(client.User.Location, (client.User.Map.Id, newPoint)));
                 }
 
-                Game.Activatables.ApplyActivation(client, skill, targets, null, StatUpdateType.None);
+                Game.Assert.Activate(client, skill, targets, null, StatUpdateType.None);
                 return true;
             }
             return false;
@@ -338,17 +333,17 @@ namespace Chaos
 
             for (int i = 0; i < 3; i++)
             {
-                newPoint.Offset(client.User.Direction);
+                newPoint = newPoint.Offset(client.User.Direction);
                 if (client.User.Map.IsWalkable(newPoint))
                     furthestPoint = newPoint;
                 else
                     break;
             }
 
-            Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, (client.User.Map.Id, furthestPoint)));
+            Game.Assert.Warp(client.User, new Warp(client.User.Location, (client.User.Map.Id, furthestPoint)));
 
             var points = new List<Point>();
-            List<Creature> targets = Game.Activatables.GetTargetsFromType(client, Point.None, skill.TargetType);
+            List<Creature> targets = Targeting.TargetsFromType(client, Point.None, skill.TargetType);
 
             if (targets.Count > 0)
             {
@@ -360,7 +355,7 @@ namespace Chaos
                 points.Add(target.Point);
                 for (int i = 0; i < 2; i++)
                 {
-                    newPoint.Offset(client.User.Direction);
+                    newPoint = newPoint.Offset(client.User.Direction);
                     if (client.User.Map.IsWalkable(newPoint))
                     {
                         furthestPoint = newPoint;
@@ -370,7 +365,7 @@ namespace Chaos
                         break;
                 }
 
-                Game.Activatables.WarpObj(target, new Warp(target.Location, (client.User.Map.Id, furthestPoint)));
+                Game.Assert.Warp(target, new Warp(target.Location, (client.User.Map.Id, furthestPoint)));
             }
 
             var sfx = new List<Animation>();
@@ -378,7 +373,7 @@ namespace Chaos
             foreach(Point point in points)
                 sfx.Add(new Animation(point, 0, 0, 2, 0, 100));
 
-            Game.Activatables.ApplyActivation(client, skill, targets, sfx, StatUpdateType.None);
+            Game.Assert.Activate(client, skill, targets, sfx, StatUpdateType.None);
             return true;
         }
         #endregion
@@ -407,9 +402,9 @@ namespace Chaos
             var ani = new Animation(96, 0, 100);
             var eff = new Effect(1800, new TimeSpan(0, 0, 10), false, ani);
 
-            if (!client.User.HasFlag(UserState.UsedBlink) || DateTime.UtcNow.Subtract(spell.LastUse).TotalSeconds > 10 || client.User.BlinkSpot.MapId != client.User.Map.Id)
+            if (!client.User.HasFlag(UserState.UsedBlink) || DateTime.UtcNow.Subtract(spell.LastUse).TotalSeconds > 10 || client.User.BlinkSpot.MapID != client.User.Map.Id)
             {
-                spell.CooldownReduction += 1f;
+                spell.CooldownReduction += 100;
                 client.User.AddFlag(UserState.UsedBlink);
                 client.User.BlinkSpot = client.User.Location;
 
@@ -418,15 +413,15 @@ namespace Chaos
             }
             else
             {
-                Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, client.User.BlinkSpot));
+                Game.Assert.Warp(client.User, new Warp(client.User.Location, client.User.BlinkSpot));
                 client.User.RemoveFlag(UserState.UsedBlink);
 
                 //remove effect
                 client.User.Map.RemoveEffect(eff.GetTargetedEffect(client.User.BlinkSpot.Point));
             }
 
-            spell.CooldownReduction -= 1f;
-            Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
+            spell.CooldownReduction -= 100;
+            Game.Assert.Activate(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
         private Spell ReturnHome() => new Spell(56, "Return Home", SpellType.NoTarget, string.Empty, 1, new TimeSpan(0, 0, 1), new Animation(91, 0, 100), TargetsType.None, true, BodyAnimation.WizardCast);
@@ -435,31 +430,8 @@ namespace Chaos
             var spell = obj as Spell;
             var targets = new List<Creature>() { target };
 
-            switch (client.User.Nation)
-            {
-                case Nation.None:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.NO_NATION_LOCATION));
-                    break;
-                case Nation.Suomi:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.SUOMI_LOCATION));
-                    break;
-                case Nation.Loures:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.LOURES_LOCATION));
-                    break;
-                case Nation.Mileth:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.MILETH_LOCATION));
-                    break;
-                case Nation.Tagor:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.TAGOR_LOCATION));
-                    break;
-                case Nation.Rucesion:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.RUCESION_LOCATION));
-                    break;
-                case Nation.Noes:
-                    Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, CONSTANTS.NOES_LOCATION));
-                    break;
-            }
-            Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
+            Game.Assert.Warp(target, Warp.Home(target as User));
+            Game.Assert.Activate(client, spell, targets, null, StatUpdateType.None);
             return true;
         }
         private Spell AdminCreate() => new Spell(139, "Admin Create", SpellType.Prompt, "<Type> <Name>:<Amount>", 0, TimeSpan.Zero, new Animation(78, 0, 50), TargetsType.None, true, BodyAnimation.HandsUp);
@@ -474,14 +446,15 @@ namespace Chaos
                 string type = m.Groups[1].Value.ToLower();
                 string key = m.Groups[2].Value;
 
-                if (!int.TryParse(m.Groups[3].Value, out int amount))
+                if (!uint.TryParse(m.Groups[3].Value, out uint amount))
                     amount = 1;
 
                 switch (type)
                 {
                     case "item":
-                        List<Item> newItems;
-                        if ((newItems = CreateItems(key, amount).ToList()) != null && newItems.Count > 0)
+                        var newItems = CreateItems(key, amount).ToList();
+
+                        if(newItems.Count > 0)
                         {
                             foreach (Item i in newItems)
                                 if (client.User.Inventory.AddToNextSlot(i))
@@ -515,7 +488,7 @@ namespace Chaos
                         break;
                 }
 
-                Game.Activatables.ApplyActivation(client, spell, targets, null, StatUpdateType.None);
+                Game.Assert.Activate(client, spell, targets, null, StatUpdateType.None);
                 return true;
             }
             else

@@ -13,10 +13,10 @@ namespace Chaos
 {
     internal sealed class GroupBox
     {
-        internal User GroupLeader { get; set; }
-        internal string Text { get; set; }
-        internal byte MaxLevel { get; set; }
-        internal byte[] MaxAmounts { get; set; }
+        internal User GroupLeader { get; }
+        internal string Text { get; }
+        internal byte MaxLevel { get; }
+        internal byte[] MaxAmounts { get; }
 
         /// <summary>
         /// Base constructor for an object representing an in-game GroupBox.

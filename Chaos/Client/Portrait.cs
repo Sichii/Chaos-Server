@@ -14,8 +14,8 @@ namespace Chaos
 {
     internal sealed class Personal
     {
-        internal byte[] Portrait { get; set; }
-        internal string Message { get; set; }
+        internal byte[] Portrait { get; }
+        internal string Message { get; }
 
         /// <summary>
         /// Master constructor for the object representing the Portrait and Profile Message.

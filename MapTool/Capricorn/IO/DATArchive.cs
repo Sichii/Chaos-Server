@@ -11,36 +11,28 @@ namespace Capricorn.IO
 {
     public class DATArchive
     {
-        private int expectedFiles;
-        private DATFileEntry[] files;
-        private string filename;
-
         public DATFileEntry this[int index]
         {
-            get => files[index];
-            set => files[index] = value;
+            get => Files[index];
+            set => Files[index] = value;
         }
 
-        public string FileName
-        {
-            get => filename;
-            set => filename = value;
-        }
+        public string FileName { get; set; }
 
-        public DATFileEntry[] Files => files;
+        public DATFileEntry[] Files { get; private set; }
 
-        public int ExpectedFiles => expectedFiles;
+        public int ExpectedFiles { get; private set; }
 
         public static DATArchive FromFile(string file)
         {
             var binaryReader = new BinaryReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
             var datArchive = new DATArchive
             {
-                filename = file,
-                expectedFiles = binaryReader.ReadInt32()
+                FileName = file,
+                ExpectedFiles = binaryReader.ReadInt32()
             };
-            datArchive.files = new DATFileEntry[datArchive.expectedFiles - 1];
-            for (int index = 0; index < datArchive.expectedFiles - 1; ++index)
+            datArchive.Files = new DATFileEntry[datArchive.ExpectedFiles - 1];
+            for (int index = 0; index < datArchive.ExpectedFiles - 1; ++index)
             {
                 long startAddress = binaryReader.ReadUInt32();
                 string name = Encoding.ASCII.GetString(binaryReader.ReadBytes(13));
@@ -49,7 +41,7 @@ namespace Capricorn.IO
                 int startIndex = name.IndexOf(char.MinValue);
                 if (startIndex != -1)
                     name = name.Remove(startIndex, 13 - startIndex);
-                datArchive.files[index] = new DATFileEntry(name, startAddress, endAddress);
+                datArchive.Files[index] = new DATFileEntry(name, startAddress, endAddress);
             }
             binaryReader.Close();
             return datArchive;
@@ -57,7 +49,7 @@ namespace Capricorn.IO
 
         public bool Contains(string name)
         {
-            foreach (DATFileEntry datFileEntry in files)
+            foreach (DATFileEntry datFileEntry in Files)
             {
                 if (datFileEntry.Name == name)
                     return true;
@@ -67,7 +59,7 @@ namespace Capricorn.IO
 
         public bool Contains(string name, bool ignoreCase)
         {
-            foreach (DATFileEntry datFileEntry in files)
+            foreach (DATFileEntry datFileEntry in Files)
             {
                 if (ignoreCase)
                 {
@@ -82,9 +74,9 @@ namespace Capricorn.IO
 
         public int IndexOf(string name)
         {
-            for (int index = 0; index < files.Length; ++index)
+            for (int index = 0; index < Files.Length; ++index)
             {
-                if (files[index].Name == name)
+                if (Files[index].Name == name)
                     return index;
             }
             return -1;
@@ -92,14 +84,14 @@ namespace Capricorn.IO
 
         public int IndexOf(string name, bool ignoreCase)
         {
-            for (int index = 0; index < files.Length; ++index)
+            for (int index = 0; index < Files.Length; ++index)
             {
                 if (ignoreCase)
                 {
-                    if (files[index].Name.ToUpper() == name.ToUpper())
+                    if (Files[index].Name.ToUpper() == name.ToUpper())
                         return index;
                 }
-                else if (files[index].Name == name)
+                else if (Files[index].Name == name)
                     return index;
             }
             return -1;
@@ -109,10 +101,10 @@ namespace Capricorn.IO
         {
             if (!Contains(name))
                 return null;
-            var binaryReader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var binaryReader = new BinaryReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read));
             int index = IndexOf(name);
-            binaryReader.BaseStream.Seek(files[index].StartAddress, SeekOrigin.Begin);
-            byte[] numArray = binaryReader.ReadBytes((int)files[index].FileSize);
+            binaryReader.BaseStream.Seek(Files[index].StartAddress, SeekOrigin.Begin);
+            byte[] numArray = binaryReader.ReadBytes((int)Files[index].FileSize);
             binaryReader.Close();
             return numArray;
         }
@@ -121,10 +113,10 @@ namespace Capricorn.IO
         {
             if (!Contains(name, ignoreCase))
                 return null;
-            var binaryReader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var binaryReader = new BinaryReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read));
             int index = IndexOf(name, ignoreCase);
-            binaryReader.BaseStream.Seek(files[index].StartAddress, SeekOrigin.Begin);
-            byte[] numArray = binaryReader.ReadBytes((int)files[index].FileSize);
+            binaryReader.BaseStream.Seek(Files[index].StartAddress, SeekOrigin.Begin);
+            byte[] numArray = binaryReader.ReadBytes((int)Files[index].FileSize);
             binaryReader.Close();
             return numArray;
         }
@@ -133,13 +125,13 @@ namespace Capricorn.IO
         {
             if (!Contains(entry.Name))
                 return null;
-            var binaryReader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var binaryReader = new BinaryReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read));
             binaryReader.BaseStream.Seek(entry.StartAddress, SeekOrigin.Begin);
             byte[] numArray = binaryReader.ReadBytes((int)entry.FileSize);
             binaryReader.Close();
             return numArray;
         }
 
-        public override string ToString() => "{Name = " + filename + ", Files = " + expectedFiles.ToString() + "}";
+        public override string ToString() => "{Name = " + FileName + ", Files = " + ExpectedFiles.ToString() + "}";
     }
 }

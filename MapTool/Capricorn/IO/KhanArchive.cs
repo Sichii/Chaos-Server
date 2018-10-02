@@ -21,11 +21,11 @@ namespace Capricorn.IO
         public KhanArchive(string path, bool male)
         {
             string str = male ? "m" : "w";
-            this.AD = DATArchive.FromFile(path + "\\khan" + str + "ad.dat");
-            this.EH = DATArchive.FromFile(path + "\\khan" + str + "eh.dat");
-            this.IM = DATArchive.FromFile(path + "\\khan" + str + "im.dat");
-            this.NS = DATArchive.FromFile(path + "\\khan" + str + "ns.dat");
-            this.TZ = DATArchive.FromFile(path + "\\khan" + str + "tz.dat");
+            AD = DATArchive.FromFile(path + "\\khan" + str + "ad.dat");
+            EH = DATArchive.FromFile(path + "\\khan" + str + "eh.dat");
+            IM = DATArchive.FromFile(path + "\\khan" + str + "im.dat");
+            NS = DATArchive.FromFile(path + "\\khan" + str + "ns.dat");
+            TZ = DATArchive.FromFile(path + "\\khan" + str + "tz.dat");
         }
     }
 }

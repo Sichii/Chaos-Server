@@ -18,7 +18,7 @@ namespace ChaosLauncher
 
     internal sealed class ProcMemoryStream : Stream, IDisposable
     {
-        private ProcessAccess AccessType;
+        private readonly ProcessAccess AccessType;
         private bool Disposed;
         private IntPtr ProcessHandle;
         public override long Position { get; set; }

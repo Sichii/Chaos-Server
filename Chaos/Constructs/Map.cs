@@ -17,13 +17,13 @@ using System;
 
 namespace Chaos
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public sealed class Map
     {
         private readonly object Sync = new object();
-        private Dictionary<int, WorldObject> Objects;
-        private List<Effect> Effects;
+        private readonly Dictionary<int, WorldObject> Objects;
+        private readonly List<Effect> Effects;
 
+        public Point[,] Points { get; }
         internal Dictionary<Point, Tile> Tiles { get; }
         internal byte[] Data { get; private set; }
         internal ushort CheckSum { get; private set; }
@@ -31,7 +31,6 @@ namespace Chaos
         public Dictionary<Point, Door> Doors { get; }
         public Dictionary<Point, Warp> Warps { get; }
         public Dictionary<Point, WorldMap> WorldMaps { get; }
-        [JsonProperty]
         public ushort Id { get; }
         public byte SizeX { get; set; }
         public byte SizeY { get; set; }
@@ -39,10 +38,12 @@ namespace Chaos
         public string Name { get; set; }
         public sbyte Music { get; set; }
 
+        public Point this[int x, int y] => Points[x, y];
         /// <summary>
         /// Checks if the map has a certain flag.
         /// </summary>
         internal bool HasFlag(MapFlags flag) => Flags.HasFlag(flag);
+        public override string ToString() => $@"ID: {Id} | NAME: {Name} | SIZE_X: {SizeX} | SIZE_Y: {SizeY}";
 
         #region Constructor / Data
         /// <summary>
@@ -55,6 +56,7 @@ namespace Chaos
             SizeY = sizeY;
             Flags = flags;
             Name = name;
+            Points = new Point[sizeX, sizeY];
             Tiles = new Dictionary<Point, Tile>();
             Warps = new Dictionary<Point, Warp>();
             WorldMaps = new Dictionary<Point, WorldMap>();
@@ -89,12 +91,13 @@ namespace Chaos
                 for (ushort y = 0; y < SizeY; y++)
                     for (ushort x = 0; x < SizeX; x++)
                     {
-                        Tiles[(x, y)] = new Tile((ushort)(data[index++] | data[index++] << 8), (ushort)(data[index++] | data[index++] << 8), (ushort)(data[index++] | data[index++] << 8));
+                        Points[x, y] = (x, y);
+                        Tiles[Points[x, y]] = new Tile((ushort)(data[index++] | (data[index++] << 8)), (ushort)(data[index++] | (data[index++] << 8)), (ushort)(data[index++] | (data[index++] << 8)));
 
-                        if (CONSTANTS.DOOR_SPRITES.Contains(Tiles[(x, y)].LeftForeground))
-                            Doors[(x, y)] = new Door((Id, x, y), true, true);
-                        else if (CONSTANTS.DOOR_SPRITES.Contains(Tiles[(x, y)].RightForeground))
-                            Doors[(x, y)] = new Door((Id, x, y), true, false);
+                        if (CONSTANTS.DOOR_SPRITES.Contains(Tiles[Points[x, y]].LeftForeground))
+                            Doors[Points[x, y]] = new Door((Id, Points[x, y]), true, true);
+                        else if (CONSTANTS.DOOR_SPRITES.Contains(Tiles[Points[x, y]].RightForeground))
+                            Doors[Points[x, y]] = new Door((Id, Points[x, y]), true, false);
                     }
             }
 
@@ -115,9 +118,8 @@ namespace Chaos
             lock (Sync)
             {
                 //change location of the object and add it to the map
-                vObject.Map = this;
-                vObject.Point = point;
-                Objects.Add(vObject.Id, vObject);
+                vObject.Location = (Id, point);
+                Objects.Add(vObject.ID, vObject);
 
                 var itemMonsterToSend = new List<VisibleObject>();
                 var usersToSend = new List<User>();
@@ -161,7 +163,7 @@ namespace Chaos
         /// </summary>
         /// <param name="vObjects">Any non-user visibleobject</param>
         /// <param name="point">The point you want to add it to.</param>
-        internal void AddObjects(IEnumerable<VisibleObject> vObjects, Point point)
+        internal void AddObjects(List<VisibleObject> vObjects, Point point)
         {
             if (vObjects.Count() == 0) return;
 
@@ -170,9 +172,8 @@ namespace Chaos
                 //change location of each object and add each item to the map
                 foreach (VisibleObject vObj in vObjects)
                 {
-                    vObj.Map = this;
-                    vObj.Point = point;
-                    Objects.Add(vObj.Id, vObj);
+                    vObj.Location = (Id, point);
+                    Objects.Add(vObj.ID, vObj);
                 }
 
                 //send all the visible users these objects
@@ -185,19 +186,19 @@ namespace Chaos
         /// Synchronously removes a single object from the map.
         /// </summary>
         /// <param name="vObject">Any visible object you want removed.</param>
-        /// <param name="worldMap">Whether or not they are stepping into a worldMap.</param>
-        internal void RemoveObject(VisibleObject vObject, bool worldMap = false)
+        /// <param name="skipRemove">Whether or not they are stepping into a worldMap.</param>
+        internal void RemoveObject(VisibleObject vObject, bool skipRemove = false)
         {
             if (vObject == null) return;
 
             lock (Sync)
             {
-                Objects.Remove(vObject.Id);
+                Objects.Remove(vObject.ID);
                 foreach (User user in ObjectsVisibleFrom(vObject).OfType<User>())
                     user.Client.Enqueue(ServerPackets.RemoveObject(vObject));
 
-                if (!worldMap)
-                    vObject.Map = null;
+                if (!skipRemove)
+                    vObject.Location = Location.None;
             }
         }
 
@@ -210,7 +211,8 @@ namespace Chaos
         internal IEnumerable<VisibleObject> ObjectsVisibleFrom(VisibleObject vObject, bool include = false, byte distance = 13)
         {
             lock (Sync)
-                return Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && (include ? true : vObject != obj));
+                foreach (VisibleObject visibleObject in Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(vObject.Point) <= distance && (include ? true : vObject != obj)))
+                    yield return visibleObject;
         }
 
         /// <summary>
@@ -223,7 +225,8 @@ namespace Chaos
         internal IEnumerable<VisibleObject> ObjectsVisibleFrom(Point point, bool include = false, byte distance = 13)
         {
             lock (Sync)
-                return Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(point) <= distance && (include ? true : obj.Point != point));
+                foreach (VisibleObject visibleObject in Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(point) <= distance && (include ? true : obj.Point != point)))
+                    yield return visibleObject;
         }
 
         /// <summary>
@@ -285,11 +288,9 @@ namespace Chaos
         /// <param name="creature">The creature to base the search from.</param>
         internal IEnumerable<Effect> EffectsVisibleFrom(Creature creature)
         {
-            lock (creature.Map.Sync)
-            {
+            lock (Sync)
                 foreach (Effect eff in Effects.Where(e => e.Animation.TargetPoint.Distance(creature.Point) < 13))
                     yield return eff;
-            }
         }
 
         internal void ApplyPersistantEffects()
@@ -306,7 +307,7 @@ namespace Chaos
                         if (effect.RemainingDurationMS() == 0) //if the effect is expired
                         {
                             creature.EffectsBar.TryRemove(effect); //remove the effect from the creature
-                            user1?.Client.SendEffect(effect, false); //if it's a user, update the bar
+                            user1?.Client.SendEffect(effect); //if it's a user, update the bar
                         }
                         else if (!creature.AnimationHistory.ContainsKey(index) || DateTime.UtcNow.Subtract(creature.AnimationHistory[index]).TotalMilliseconds > effect.AnimationDelay) //if the effect is not expired, and need to be updated
                         {
@@ -321,8 +322,8 @@ namespace Chaos
 
                             if (effect.CurrentHPMod != 0 || effect.CurrentMPMod != 0)
                             {
-                                Game.Activatables.ApplyDamage(creature, effect.CurrentHPMod, true); //apply damage to the creature
-                                Game.Activatables.ApplyDamage(creature, effect.CurrentMPMod, true, true);
+                                Game.Assert.Damage(creature, effect.CurrentHPMod, true); //apply damage to the creature
+                                Game.Assert.Damage(creature, effect.CurrentMPMod, true, true);
                                 user1?.Client.SendAttributes(StatUpdateType.Vitality);
                             }
                         }
@@ -343,8 +344,8 @@ namespace Chaos
 
                             if (effect.Animation.TargetPoint == creature.Point)
                             {
-                                Game.Activatables.ApplyDamage(creature, effect.CurrentHPMod);
-                                Game.Activatables.ApplyDamage(creature, effect.CurrentMPMod);
+                                Game.Assert.Damage(creature, effect.CurrentHPMod);
+                                Game.Assert.Damage(creature, effect.CurrentMPMod);
                             }
                         }
                     }
@@ -362,7 +363,8 @@ namespace Chaos
         internal IEnumerable<Door> DoorsVisibleFrom(User user)
         {
             lock (Sync)
-                return Doors.Values.Where(door => user.WithinRange(door.Point));
+                foreach (Door door in Doors.Values.Where(door => user.WithinRange(door.Point)))
+                    yield return door;
         }
 
         internal void ToggleDoor(Door door)
@@ -372,7 +374,7 @@ namespace Chaos
                 var doors = new List<Door>() { door };
 
                 //for each surrounding point from the door
-                foreach (Point p in Utility.GetLinePoints(door.Point))
+                foreach (Point p in Targeting.GetCardinalPoints(door.Point))
                     //if it's also a door
                     if (TryGet(p, out Door tDoor))
                     {
@@ -380,7 +382,7 @@ namespace Chaos
                         doors.Add(tDoor);
 
                         //if this 2nd door has another door 1 space in the same direction, we can break.
-                        if (TryGet(p.NewOffset(p.Relation(p)), out Door eDoor))
+                        if (TryGet(p.Offset(p.Relation(p)), out Door eDoor))
                         {
                             //add that door as well
                             doors.Add(eDoor);
@@ -404,22 +406,16 @@ namespace Chaos
         /// <param name="obj">Reference to the object to set.</param>
         internal bool TryGet<T>(Point p, out T obj) where T : class
         {
-            obj = null;
-
             lock (Sync)
             {
                 Type tType = typeof(T);
 
-                if (typeof(VisibleObject).IsAssignableFrom(tType))
-                    obj = Objects.Values.FirstOrDefault(tObj => (tObj as VisibleObject)?.Point == p) as T;
-                else if (typeof(Door).IsAssignableFrom(tType))
-                    obj = Doors.ContainsKey(p) ? Doors[p] as T : null;
-                else if (typeof(Warp).IsAssignableFrom(tType))
-                    obj = Warps.ContainsKey(p) ? Warps[p] as T : null;
-                else if (typeof(WorldMap).IsAssignableFrom(tType))
-                    obj = WorldMaps.ContainsKey(p) ? WorldMaps[p] as T : null;
-                else if (typeof(Effect).IsAssignableFrom(tType))
-                    obj = Effects.FirstOrDefault(e => e.Animation.TargetPoint == p) as T;
+                obj = VisibleObject.TypeRef.IsAssignableFrom(tType) ? Objects.Values.OfType<VisibleObject>().FirstOrDefault(tObj => tObj.Point == p) as T
+                    : Door.TypeRef.IsAssignableFrom(tType) ? (Doors.TryGetValue(p, out Door outDoor) ? outDoor as T : null)
+                    : Warp.TypeRef.IsAssignableFrom(tType) ? (Warps.TryGetValue(p, out Warp outWarp) ? outWarp as T : null)
+                    : WorldMap.TypeRef.IsAssignableFrom(tType) ? (WorldMaps.TryGetValue(p, out WorldMap outWorldMap) ? outWorldMap as T : null)
+                    : Effect.TypeRef.IsAssignableFrom(tType) ? Effects.FirstOrDefault(e => e.Animation.TargetPoint == p) as T 
+                    : null;
             }
 
             return obj != null;
@@ -427,6 +423,7 @@ namespace Chaos
 
         /// <summary>
         /// Attempts to synchronously retreive all objects of a given type on a given map.
+        /// Only use on guaranteed safe code, or where performance is critical.
         /// </summary>
         /// <typeparam name="T">The type of object to return.</typeparam>
         /// <param name="map">The map to return from.</param>
@@ -435,20 +432,79 @@ namespace Chaos
             lock (Sync)
             {
                 Type tType = typeof(T);
+                IEnumerable<T> enumerable;
 
-                if (typeof(VisibleObject).IsAssignableFrom(tType))
-                    return Objects.Values.OfType<T>();
-                else if (typeof(Door).IsAssignableFrom(tType))
-                    return Doors.Values.OfType<T>();
-                else if (typeof(Warp).IsAssignableFrom(tType))
-                    return Warps.Values.OfType<T>();
-                else if (typeof(WorldMap).IsAssignableFrom(tType))
-                    return WorldMaps.Values.OfType<T>();
-                else if (typeof(Effect).IsAssignableFrom(tType))
-                    return Effects.OfType<T>();
+                if (VisibleObject.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Objects.Values.OfType<T>();
+                else if (Door.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Doors.Values.OfType<T>();
+                else if (Warp.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Warps.Values.OfType<T>();
+                else if (WorldMap.TypeRef.IsAssignableFrom(tType))
+                    enumerable = WorldMaps.Values.OfType<T>();
+                else if (Effect.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Effects.OfType<T>();
+                else
+                    yield break;
+
+                foreach (T tObj in enumerable)
+                    yield return tObj;
             }
+        }
 
-            return new List<T>();
+        internal IEnumerable<T> ObjectsVisibleFrom<T>(Point point, bool include = false, int distance = 13)
+        {
+            lock (Sync)
+            {
+                Type tType = typeof(T);
+                IEnumerable<T> enumerable;
+
+                if (VisibleObject.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Objects.Values.OfType<VisibleObject>().Where(obj => obj.Point.Distance(point) < distance).OfType<T>();
+                else if (Door.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Doors.Values.OfType<T>();
+                else if (Warp.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Warps.Values.OfType<T>();
+                else if (WorldMap.TypeRef.IsAssignableFrom(tType))
+                    enumerable = WorldMaps.Values.OfType<T>();
+                else if (Effect.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Effects.OfType<T>();
+                else
+                    yield break;
+
+                foreach (T tObj in enumerable)
+                    yield return tObj;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to synchronously retreive all objects of a given type on a given map. Bases off an instanced list.
+        /// </summary>
+        /// <typeparam name="T">The type of object to return.</typeparam>
+        /// <param name="map">The map to return from.</param>
+        internal IEnumerable<T> GetLockedInstance<T>()
+        {
+            lock (Sync)
+            {
+                Type tType = typeof(T);
+                IEnumerable<T> enumerable;
+
+                if (VisibleObject.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Objects.Values.ToList().OfType<T>();
+                else if (Door.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Doors.Values.ToList().OfType<T>();
+                else if (Warp.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Warps.Values.ToList().OfType<T>();
+                else if (WorldMap.TypeRef.IsAssignableFrom(tType))
+                    enumerable = WorldMaps.Values.ToList().OfType<T>();
+                else if (Effect.TypeRef.IsAssignableFrom(tType))
+                    enumerable = Effects.ToList().OfType<T>();
+                else
+                    yield break;
+
+                foreach (T tObj in enumerable)
+                    yield return tObj;
+            }
         }
         #endregion
 
@@ -485,13 +541,13 @@ namespace Chaos
                 client.StepCount++;
                 client.User.Direction = direction;
 
-                if (!Objects.ContainsKey(client.User.Id))
+                if (!Objects.ContainsKey(client.User.ID))
                     return;
 
                 Point startPoint = client.User.Point;
 
                 //check if we can actually walk to the spot
-                if ((!client.User.IsAdmin && !IsWalkable(client.User.Point.NewOffset(direction))) || !WithinMap(client.User.Point.NewOffset(direction)))
+                if ((!client.User.IsAdmin && !IsWalkable(client.User.Point.Offset(direction))) || !WithinMap(client.User.Point.Offset(direction)))
                 {
                     //if no, set their location back to what it was and return
                     Refresh(client, true);
@@ -500,7 +556,7 @@ namespace Chaos
 
                 var visibleBefore = ObjectsVisibleFrom(client.User).ToList();
                 var doorsBefore = DoorsVisibleFrom(client.User).ToList();
-                client.User.Point.Offset(direction);
+                client.User.Location = (Id, startPoint.Offset(direction));
                 var visibleAfter = ObjectsVisibleFrom(client.User).ToList();
                 var itemMonster = new List<VisibleObject>().ToList();
                 var doorsAfter = DoorsVisibleFrom(client.User).ToList();
@@ -519,7 +575,7 @@ namespace Chaos
 
                 //send the remaining users in the before list our walk
                 foreach (User user in visibleBefore.OfType<User>())
-                    user.Client.Enqueue(ServerPackets.CreatureWalk(client.User.Id, startPoint, direction));
+                    user.Client.Enqueue(ServerPackets.CreatureWalk(client.User.ID, startPoint, direction));
 
                 //for all the things that just came onto screen, display to eachother if it's a user, otherwise add it to itemMonster
                 foreach (VisibleObject obj in visibleAfter.Except(visibleBefore))
@@ -543,7 +599,7 @@ namespace Chaos
 
                 //check collisions with warps
                 if (TryGet(client.User.Point, out Warp warp))
-                    Game.Activatables.WarpObj(client.User, warp);
+                    Game.Assert.Warp(client.User, warp);
 
                 //check collisions with worldmaps
                 if (TryGet(client.User.Point, out WorldMap worldMap))
@@ -560,36 +616,43 @@ namespace Chaos
         /// <param name="user">The client to refresh.</param>
         internal void Refresh(Client client, bool byPassTimer = false)
         {
-            if (client == null)
-                return;
-
-            if (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS)
+            if (client == null || (!byPassTimer && DateTime.UtcNow.Subtract(client.LastRefresh).TotalMilliseconds < CONSTANTS.REFRESH_DELAY_MS))
                 return;
             else
                 client.LastRefresh = DateTime.UtcNow;
 
             lock (Sync)
             {
-                client.Enqueue(ServerPackets.MapInfo(this));
-                client.Enqueue(ServerPackets.Location(client.User.Point));
-                client.SendAttributes(StatUpdateType.Full);
-                var itemMonsterToSend = new List<VisibleObject>();
+                if (Warps.TryGetValue(client.User.Point, out Warp outWarp))
+                    Game.Assert.Warp(client.User, outWarp);
+                else if (WorldMaps.TryGetValue(client.User.Point, out WorldMap outWorldMap))
+                {
+                    RemoveObject(client.User, true);
+                    client.Enqueue(ServerPackets.WorldMap(outWorldMap));
+                }
+                else
+                {
+                    client.Enqueue(ServerPackets.MapInfo(this));
+                    client.Enqueue(ServerPackets.Location(client.User.Point));
+                    client.SendAttributes(StatUpdateType.Full);
+                    var itemMonsterToSend = new List<VisibleObject>();
 
-                //get all objects that would be visible to this object and send this user to them / send them to this user
-                foreach (VisibleObject obj in ObjectsVisibleFrom(client.User))
-                    if (obj is User user)
-                    {
-                        client.Enqueue(ServerPackets.DisplayUser(user));
-                        user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
-                    }
-                    else
-                        itemMonsterToSend.Add(obj);
+                    //get all objects that would be visible to this object and send this user to them / send them to this user
+                    foreach (VisibleObject obj in ObjectsVisibleFrom(client.User))
+                        if (obj is User user)
+                        {
+                            client.Enqueue(ServerPackets.DisplayUser(user));
+                            user.Client.Enqueue(ServerPackets.DisplayUser(client.User));
+                        }
+                        else
+                            itemMonsterToSend.Add(obj);
 
-                client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));
-                client.Enqueue(ServerPackets.Door(DoorsVisibleFrom(client.User).ToArray()));
-                client.Enqueue(ServerPackets.MapLoadComplete());
-                client.Enqueue(ServerPackets.DisplayUser(client.User));
-                client.Enqueue(ServerPackets.RefreshResponse());
+                    client.Enqueue(ServerPackets.DisplayItemMonster(itemMonsterToSend.ToArray()));
+                    client.Enqueue(ServerPackets.Door(DoorsVisibleFrom(client.User).ToArray()));
+                    client.Enqueue(ServerPackets.MapLoadComplete());
+                    client.Enqueue(ServerPackets.DisplayUser(client.User));
+                    client.Enqueue(ServerPackets.RefreshResponse());
+                }
             }
         }
         #endregion

@@ -19,22 +19,21 @@ namespace Chaos
     internal sealed class Group : IEnumerable<User>
     {
         private readonly object Sync = new object();
-        private List<User> Users;
+        private readonly List<User> Users;
 
-        internal GroupBox Box { get; set; }
-
-        public IEnumerator<User> GetEnumerator()
-        {
-            IEnumerator<User> safeEnum = Users.GetEnumerator();
-
-            lock (Sync)
-                while (safeEnum.MoveNext())
-                    yield return safeEnum.Current;
-        }
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal User Leader => Users?[0];
         internal byte Size => (byte)Users.Count;
 
+        internal GroupBox Box { get; private set; }
+
+        public IEnumerator<User> GetEnumerator()
+        {
+            lock (Sync)
+                using (IEnumerator<User> safeEnum = Users.GetEnumerator())
+                    while (safeEnum.MoveNext())
+                        yield return safeEnum.Current;
+        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         /// Base constructor for an enumerable object of User. Represents a group of users within the game.
@@ -142,7 +141,7 @@ namespace Chaos
         {
             lock (Sync)
             {
-                user = Users.FirstOrDefault(u => u.Id == id);
+                user = Users.FirstOrDefault(u => u.ID == id);
                 return user != null;
             }
         }

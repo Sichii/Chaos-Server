@@ -102,8 +102,8 @@ namespace ChaosTool
                         ushort targetMapId = reader.ReadUInt16();
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
-                        var warp = new Chaos.Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
-                        newMap.Warps[(sourceX, sourceY)] = warp;
+                        var warp = new Chaos.Warp(mapId, sourceX, sourceY, targetMapId, targetX, targetY);
+                        newMap.Warps[newMap[sourceX, sourceY]] = warp;
                     }
 
                     //load worldmaps for this map
@@ -114,7 +114,7 @@ namespace ChaosTool
                         byte y = reader.ReadByte();
                         uint CRC = reader.ReadUInt32();
                         if (WorldMaps.ContainsKey(CRC))
-                            newMap.WorldMaps[(x, y)] = WorldMaps[CRC];
+                            newMap.WorldMaps[newMap[x, y]] = WorldMaps[CRC];
                     }
 
                     //add the map to the map list
@@ -167,11 +167,11 @@ namespace ChaosTool
                     writer.Write((ushort)map.Warps.Count);
                     foreach (Chaos.Warp warp in map.Warps.Values)
                     {
-                        writer.Write((byte)warp.SourceX);
-                        writer.Write((byte)warp.SourceY);
-                        writer.Write(warp.TargetMapId);
-                        writer.Write((byte)warp.TargetX);
-                        writer.Write((byte)warp.TargetY);
+                        writer.Write((byte)warp.Point.X);
+                        writer.Write((byte)warp.Point.Y);
+                        writer.Write(warp.TargetLocation.MapID);
+                        writer.Write((byte)warp.TargetPoint.X);
+                        writer.Write((byte)warp.TargetPoint.Y);
                     }
 
                     //write worldmaps for this map

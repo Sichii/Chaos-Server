@@ -16,9 +16,6 @@ namespace Capricorn.Drawing
         public const int TileWidth = 56;
         public const int TileHeight = 27;
         public const int TileSize = 1512;
-        private string name;
-        private string filename;
-        private int tileCount;
 
         public byte[] this[int index]
         {
@@ -26,30 +23,26 @@ namespace Capricorn.Drawing
             set => tiles[index] = value;
         }
 
-        public string FileName => filename;
+        public string FileName { get; private set; }
 
-        public string Name
-        {
-            get => name;
-            set => name = value;
-        }
+        public string Name { get; set; }
 
         public byte[][] Tiles => tiles.ToArray();
 
-        public int TileCount => tileCount;
+        public int TileCount { get; private set; }
 
         public static Tileset FromFile(string file)
         {
             var tileset = Tileset.LoadTiles(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
-            tileset.name = Path.GetFileNameWithoutExtension(file).ToUpper();
-            tileset.filename = file;
+            tileset.Name = Path.GetFileNameWithoutExtension(file).ToUpper();
+            tileset.FileName = file;
             return tileset;
         }
 
         public static Tileset FromRawData(byte[] data)
         {
             var tileset = Tileset.LoadTiles(new MemoryStream(data));
-            tileset.name = "Unknown Tileset";
+            tileset.Name = "Unknown Tileset";
             return tileset;
         }
 
@@ -58,8 +51,8 @@ namespace Capricorn.Drawing
             if (!archive.Contains(file))
                 return null;
             var tileset = Tileset.LoadTiles(new MemoryStream(archive.ExtractFile(file)));
-            tileset.name = Path.GetFileNameWithoutExtension(file).ToUpper();
-            tileset.filename = file;
+            tileset.Name = Path.GetFileNameWithoutExtension(file).ToUpper();
+            tileset.FileName = file;
             return tileset;
         }
 
@@ -68,8 +61,8 @@ namespace Capricorn.Drawing
             if (!archive.Contains(file, ignoreCase))
                 return null;
             var tileset = Tileset.LoadTiles(new MemoryStream(archive.ExtractFile(file, ignoreCase)));
-            tileset.name = Path.GetFileNameWithoutExtension(file).ToUpper();
-            tileset.filename = file;
+            tileset.Name = Path.GetFileNameWithoutExtension(file).ToUpper();
+            tileset.FileName = file;
             return tileset;
         }
 
@@ -79,9 +72,9 @@ namespace Capricorn.Drawing
             var binaryReader = new BinaryReader(stream);
             var tileset = new Tileset
             {
-                tileCount = (int)(binaryReader.BaseStream.Length / 1512L)
+                TileCount = (int)(binaryReader.BaseStream.Length / 1512L)
             };
-            for (int index = 0; index < tileset.tileCount; ++index)
+            for (int index = 0; index < tileset.TileCount; ++index)
             {
                 byte[] numArray = binaryReader.ReadBytes(1512);
                 tileset.tiles.Add(numArray);
@@ -90,6 +83,6 @@ namespace Capricorn.Drawing
             return tileset;
         }
 
-        public override string ToString() => "{Name = " + name + ", Tiles = " + tiles.Count.ToString() + "}";
+        public override string ToString() => "{Name = " + Name + ", Tiles = " + tiles.Count.ToString() + "}";
     }
 }

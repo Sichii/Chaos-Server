@@ -48,7 +48,7 @@ namespace Chaos
                 while (offset < buffer.Length)
                 {
                     int num = buffer.Length - offset;
-                    int count = num > 2000 ? 2000 : num;
+                    int count = (num > 2000) ? 2000 : num;
                     decompressor.Write(buffer, offset, count);
                     offset += count;
                 }

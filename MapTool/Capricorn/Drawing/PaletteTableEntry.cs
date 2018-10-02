@@ -8,35 +8,19 @@ namespace Capricorn.Drawing
 {
     public class PaletteTableEntry
     {
-        private int min;
-        private int max;
-        private int palette;
+        public int Palette { get; set; }
 
-        public int Palette
-        {
-            get => palette;
-            set => palette = value;
-        }
+        public int Max { get; set; }
 
-        public int Max
-        {
-            get => max;
-            set => max = value;
-        }
-
-        public int Min
-        {
-            get => min;
-            set => min = value;
-        }
+        public int Min { get; set; }
 
         public PaletteTableEntry(int min, int max, int palette)
         {
-            this.min = min;
-            this.max = max;
-            this.palette = palette;
+            Min = min;
+            Max = max;
+            Palette = palette;
         }
 
-        public override string ToString() => "{Min = " + min.ToString() + ", Max = " + max.ToString() + ", Palette = " + palette.ToString() + "}";
+        public override string ToString() => "{Min = " + Min.ToString() + ", Max = " + Max.ToString() + ", Palette = " + Palette.ToString() + "}";
     }
 }

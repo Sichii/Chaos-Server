@@ -17,6 +17,7 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Chaos
 {
@@ -25,48 +26,52 @@ namespace Chaos
     /// </summary>
     internal sealed class Server
     {
-        internal static object Sync = new object();
-        internal static int NextClientId = 1000000;
-        internal static int NextId = 1;
-        internal static bool Running;
-        internal static string[] Admins = new string[] { "Sichi", "Jinori", "Vorlof", "JohnGato", "Whug", "Ishikawa", "Legend", "Doms", "Pill", "Styax"};
+        private static readonly object SyncWrite = new object();
+        private readonly object Sync = new object();
+        private readonly Dictionary<Socket, Client> Clients;
 
-        internal static readonly object SyncWrite = new object();
-        internal static FileStream LogFile;
-        internal static StreamWriter LogWriter;
-        internal static DateTime Today;
+        internal static int NextID = 1;
+        internal static bool Running { get; private set; }
+        internal static StreamWriter LogWriter { get; private set; }
+        internal static DateTime Today { get; private set; }
 
-        internal IPEndPoint ServerEndPoint;
-        internal Socket LobbySocket { get; set; }
-        internal Socket LoginSocket { get; set; }
-        internal Socket WorldSocket { get; set; }
-
+        internal IPEndPoint ServerEndPoint { get; }
+        internal Socket LobbySocket { get; }
+        internal Socket LoginSocket { get; }
+        internal Socket WorldSocket { get; }
         internal byte[] Table { get; }
         internal uint TableCheckSum { get; }
         internal byte[] LoginMessage { get; }
         internal uint LoginMessageCheckSum { get; }
-        private Dictionary<Socket, Client> Clients { get; }
-        internal IEnumerable<Client> WorldClients => Clients.Values.Where(client => client.ServerType == ServerType.World && client.User != null);
         internal DataBase DataBase { get; }
-        internal GameTime ServerTime => GameTime.Now;
-        internal LightLevel LightLevel => ServerTime.TimeOfDay;
-        internal List<Redirect> Redirects { get; set; }
-        internal List<MetaFile> MetaFiles { get; set; }
+        internal List<Redirect> Redirects { get; }
+        internal List<MetaFile> MetaFiles { get; }
+
+        internal static GameTime ServerTime => GameTime.Now;
+        internal static LightLevel LightLevel => ServerTime.TimeOfDay;
+        internal List<Client> WorldClients
+        {
+            get
+            {
+                lock (Sync)
+                    return Clients.Values.Where(client => client.ServerType == ServerType.World && client.User != null).ToList();
+            }
+        }
 
         internal Server(IPAddress ip)
         {
             if (!Directory.Exists(Paths.LogFiles))
                 Directory.CreateDirectory(Paths.LogFiles);
 
-            LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
-            LogWriter = new StreamWriter(LogFile)
+            //inialize logger
+            LogWriter = new StreamWriter(new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate))
             {
                 AutoFlush = true
             };
             Today = DateTime.MinValue;
-
             WriteLog("Initializing server...");
 
+            //initialize server
             ServerEndPoint = new IPEndPoint(ip, CONSTANTS.LOBBY_PORT);
             Clients = new Dictionary<Socket, Client>();
             DataBase = new DataBase(this);
@@ -98,23 +103,11 @@ namespace Chaos
 
             foreach (string name in Directory.GetFiles(Paths.MetaFiles))
                 MetaFiles.Add(MetaFile.Load(new FileInfo(name).Name));
-        }
 
-        ~Server()
-        {
-            Running = false;
-            LogFile.Dispose();
-        }
-
-        internal async void FlushSendQueueAsync()
-        {
             Running = true;
-            Game.Set(this);
+            Game.Intialize(this);
 
-            //display dns ip for others to connect to
-            WriteLog($"Server IP: {ServerEndPoint.Address}");
-            WriteLog("Starting the serverloop...");
-
+            //start the server
             LobbySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             LobbySocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOBBY_PORT));
             LobbySocket.Listen(25);
@@ -130,42 +123,30 @@ namespace Chaos
             WorldSocket.Listen(25);
             WorldSocket.BeginAccept(new AsyncCallback(EndAccept), WorldSocket);
 
+            Task.Run(FlushSendQueueAsync);
+            WriteLog($"Server is ready on {ServerEndPoint.Address}");
+        }
+
+        ~Server()
+        {
+            Running = false;
+            LogWriter.Dispose();
+            LobbySocket.Dispose();
+            LoginSocket.Dispose();
+            WorldSocket.Dispose();
+        }
+
+        internal async void FlushSendQueueAsync()
+        {
+            var rate = new RateController(100);
 
             while (Running)
             {
-                long oldTime = Utility.CurrentTicks;
-
                 lock (Sync)
-                {
-                    foreach (Client client in Clients.Values)
-                    {
-                        if (!client.Connected)
-                        {
-                            client.Disconnect();
-                            continue;
-                        }
+                    foreach (KeyValuePair<Socket, Client> kvp in Clients.ToList())
+                        kvp.Value.FlushSendQueue();
 
-                        lock (client.SendQueue)
-                        {
-                            while (client.SendQueue.Count > 0)
-                            {
-                                ServerPacket serverPacket = client.SendQueue.Dequeue();
-                                if (serverPacket == null) continue;
-                                WriteLog(serverPacket.ToString(), client);
-
-                                if (serverPacket.IsEncrypted)
-                                {
-                                    serverPacket.Sequence = client.Sequence++;
-                                    serverPacket.Encrypt(client.Crypto);
-                                }
-
-                                client.Send(serverPacket);
-                            }
-                        }
-                    }
-                }
-
-                await Task.Delay(Utility.ClampedDeltaTime(oldTime, 100));
+                await rate.ThrottleAsync();
             }
         }
 
@@ -199,9 +180,9 @@ namespace Chaos
         internal void EndAccept(IAsyncResult ar)
         {
             ServerType serverType = ServerType.Lobby;
-            var sourceSocket = ar.AsyncState as Socket;
-            Socket clientSocket = sourceSocket.EndAccept(ar);
-            sourceSocket.BeginAccept(new AsyncCallback(EndAccept), sourceSocket);
+            var serverSocket = (Socket)ar.AsyncState;
+            Socket clientSocket = serverSocket.EndAccept(ar);
+            serverSocket.BeginAccept(new AsyncCallback(EndAccept), serverSocket);
 
             if(clientSocket.LocalEndPoint is IPEndPoint ipEndPoint)
             {
@@ -236,10 +217,7 @@ namespace Chaos
         {
             lock (SyncWrite)
             {
-                if (client == null)
-                    message = $@"[{DateTime.UtcNow.ToString("HH:mm")}] Server: {message}";
-                else
-                    message = $@"[{DateTime.UtcNow.ToString("HH:mm")}] {client.IpAddress}: {message}";
+                message = (client == null) ? $@"[{DateTime.UtcNow.ToString("HH:mm")}] Server: {message}" : $@"[{DateTime.UtcNow.ToString("HH:mm")}] {client.IpAddress}: {message}";
 
                 Console.WriteLine(message);
 
@@ -247,9 +225,8 @@ namespace Chaos
                 {
                     if (!File.Exists($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log"))
                     {
-                        LogFile.Dispose();
-                        LogFile = new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate);
-                        LogWriter = new StreamWriter(LogFile);
+                        LogWriter.Dispose();
+                        LogWriter = new StreamWriter(new FileStream($@"{Paths.LogFiles}{DateTime.UtcNow.ToString("MMM dd yyyy")}.log", FileMode.OpenOrCreate));
                     }
                     Today = DateTime.UtcNow;
                 }
@@ -259,7 +236,7 @@ namespace Chaos
         }
 
         internal bool TryGetUser(string name, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
-        internal bool TryGetUser(int id, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Id == id)?.User) != null;
+        internal bool TryGetUser(int id, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.ID == id)?.User) != null;
 
         internal static int GetPort(ServerType serverType)
         {

@@ -3,7 +3,7 @@
 // 
 // This project is free and open-source, provided that any alterations or
 // modifications to any portions of this project adhere to the
-// Affero General Public License (Version 3).
+// Affero General internal License (Version 3).
 // 
 // A copy of the AGPLv3 can be found in the project directory.
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
@@ -26,72 +26,29 @@ namespace Chaos
     internal static class Game
     {
         private static readonly object Sync = new object();
+
         internal static CreationEngine CreationEngine { get; set; }
         internal static Merchants Merchants { get; set; }
         internal static Dialogs Dialogs { get; set; }
         internal static Server Server { get; set; }
         internal static World World { get; set; }
-        internal static Activatables Activatables { get; set; }
+        internal static Assertables Assert { get; set; }
 
         /// <summary>
         /// Pseudo-constructor for the server. Prepares the world for population.
         /// </summary>
-        internal static void Set(Server server)
+        internal static void Intialize(Server server)
         {
             Server.WriteLog("Initializing game...");
 
             Server = server;
-            World = new World(Server);
-            World.Load();
-            CreationEngine = new CreationEngine();
+            World = new World(Server, out Task Init);
             Merchants = new Merchants();
+            CreationEngine = new CreationEngine();
+
+            Init.Wait();
+            Assert = new Assertables(Server, World);
             Dialogs = new Dialogs();
-            Activatables = new Activatables(Server, World);
-            World.Populate();
-
-            Task.Factory.StartNew(AssertEffectsAsync, TaskCreationOptions.LongRunning);
-            Task.Factory.StartNew(AssertStatesAsync, TaskCreationOptions.LongRunning);
-        }
-
-        /// <summary>
-        /// Game thread. Checks user and monster states, and applies them as needed.
-        /// </summary>
-        private static async void AssertStatesAsync()
-        {
-            while (Server.Running)
-            {
-                long oldTime = Utility.CurrentTicks;
-
-                lock (Server.Sync)
-                {
-                    foreach (User user in Server.WorldClients.Select(c => c.User))
-                        if (!user.IsAlive && !user.HasFlag(UserState.DeathDisplayed))
-                            Activatables.KillUser(user);
-
-                    foreach (Map map in World.Maps.Values)
-                        foreach (Monster monster in map.GetAllObjects<Monster>())
-                            if (!monster.IsAlive)
-                                Activatables.KillMonster(monster);
-                }
-
-                await Task.Delay(Utility.ClampedDeltaTime(oldTime, 100));
-            }
-        }
-
-        /// <summary>
-        /// Game thread. Applies persistent effect on creatures and maps.
-        /// </summary>
-        private static async void AssertEffectsAsync()
-        {
-            while (Server.Running)
-            {
-                long oldTime = Utility.CurrentTicks;
-                //for each map
-                foreach (Map map in World.Maps.Values)
-                    map.ApplyPersistantEffects();
-
-                await Task.Delay(Utility.ClampedDeltaTime(oldTime, 100));
-            }
         }
 
         #region Packet Processing
@@ -145,23 +102,28 @@ namespace Chaos
                 return;
 
             //check the data given
-            hairStyle = (byte)(hairStyle < 1 ? 1 : hairStyle > 17 ? 17 : hairStyle);
-            hairColor = (byte)(hairColor > 13 ? 13 : hairColor < 0 ? 0 : hairColor);
-            gender = gender != Gender.Male && gender != Gender.Female ? Gender.Male : gender;
+            hairStyle = (byte)(hairStyle < 1 ? 1 
+                : hairStyle > 17 ? 17 
+                : hairStyle);
+            hairColor = (byte)(hairColor > 13 ? 13 
+                : hairColor < 0 ? 0 
+                : hairColor);
+            gender = (gender != Gender.Male && gender != Gender.Female) ? Gender.Male 
+                : gender;
 
             //create a new user, and it's display data
-            var newUser = new User(client.CreateCharName, CONSTANTS.STARTING_LOCATION.Point, World.Maps[CONSTANTS.STARTING_LOCATION.MapId], Direction.South, gender);
+            var newUser = new User(client.CreateCharName, CONSTANTS.STARTING_LOCATION, Direction.South, gender);
             var data = new DisplayData(newUser, hairStyle, hairColor, (BodySprite)((byte)gender * 16))
             {
                 User = newUser
             };
             newUser.DisplayData = data;
             //if the user is an admin character, apply godmode
-            if (Server.Admins.Contains(newUser.Name, StringComparer.CurrentCultureIgnoreCase))
+            if (CONSTANTS.Admins.Contains(newUser.Name, StringComparer.CurrentCultureIgnoreCase))
             {
                 newUser.SpellBook.AddToNextSlot(CreationEngine.CreateSpell("Admin Create"));
                 newUser.Inventory.AddToNextSlot(CreationEngine.CreateItem("Admin Trinket"));
-                newUser.Legend.Add(new LegendMark(DateTime.UtcNow, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow));
+                newUser.Legend.Add(new LegendMark(GameTime.Now, "I'm a fuckin bawss", "gm", MarkIcon.Yay, MarkColor.Yellow));
 
                 newUser.IsAdmin = true;
                 newUser.Attributes.BaseHP = 1333337;
@@ -177,7 +139,7 @@ namespace Chaos
                 newUser.IsMaster = true;
                 newUser.BaseClass = BaseClass.Admin;
                 newUser.Nation = Nation.Noes;
-                newUser.Guild = World.Guilds[CONSTANTS.DEVELOPER_GUILD_NAME];
+                newUser.GuildName = CONSTANTS.DEVELOPER_GUILD_NAME;
 
                 newUser.Attributes.Gold += 500000000;
             }
@@ -209,34 +171,35 @@ namespace Chaos
                     return;
 
                 //if its gold
-                if(groundItem is Gold tGold)
+                if (groundItem.Item == null)
                 {
-                    client.User.Attributes.Gold += tGold.Amount;
+                    client.User.Attributes.Gold += groundItem.Amount;
 
                     client.SendAttributes(StatUpdateType.ExpGold);
                     groundItem.Map.RemoveObject(groundItem);
-
-                    return;
                 }
-                Item item = groundItem.Item;
-
-                if (client.User.Attributes.CurrentWeight + item.Weight > client.User.Attributes.MaximumWeight)
-                    client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You need {item.Weight} available weight to carry this item.");
-                else if(client.User.Inventory.IsFull)
-                    client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You have no space for that.");
-                else
+                else //otherwise its an item
                 {
-                    item.Slot = slot;
-                    if (!client.User.Inventory.TryAdd(item) && !client.User.Inventory.AddToNextSlot(item))
-                        return;
+                    Item item = groundItem.Item;
 
-                    groundItem.Map.RemoveObject(groundItem);
-                    client.Enqueue(ServerPackets.AddItem(item));
+                    if (client.User.Attributes.CurrentWeight + item.Weight > client.User.Attributes.MaximumWeight)
+                        client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You need {item.Weight} available weight to carry this item.");
+                    else if (client.User.Inventory.AvailableSlots == 0)
+                        client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You have no space for that.");
+                    else
+                    {
+                        item.Slot = slot;
+                        if (!client.User.Inventory.TryAdd(item) && !client.User.Inventory.AddToNextSlot(item))
+                            return;
+
+                        groundItem.Map.RemoveObject(groundItem);
+                        client.Enqueue(ServerPackets.AddItem(item));
+                    }
                 }
             }
         }
 
-        internal static void Drop(Client client, byte slot, Point groundPoint, int count)
+        internal static void Drop(Client client, byte slot, Point groundPoint, uint count)
         {
             Map map = client.User.Map;
 
@@ -254,7 +217,7 @@ namespace Chaos
                     item.Count -= count;
 
                 //get the grounditem associated with the item
-                GroundObject groundItem = item.GroundItem(groundPoint, client.User.Map, count);
+                GroundObject groundItem = item.ToGroundItem((client.User.Location.MapID, groundPoint), count);
 
                 if (item.Count > 0) //if we're suppose to still be carrying some of this item, update the count
                     client.Enqueue(ServerPackets.AddItem(item));
@@ -346,13 +309,14 @@ namespace Chaos
                                 client.User.DisplayData.FaceSprite = (byte)num;
                                 break;
                             case "gender":
-                                string str = Utility.FirstUpper(m.Groups[2].Value);
+                                string str = Utilities.FirstUpper(m.Groups[2].Value);
 
                                 Gender newGender;
                                 if (Enum.TryParse(str, out newGender))
                                 {
                                     client.User.Gender = newGender;
-                                    client.User.DisplayData.BodySprite = newGender == Gender.Male ? BodySprite.Male : BodySprite.Female;
+                                    client.User.DisplayData.BodySprite = (newGender == Gender.Male) ? BodySprite.Male 
+                                        : BodySprite.Female;
                                 }
                                 break;
                         }
@@ -367,14 +331,10 @@ namespace Chaos
                     message = $@"{client.User.Name}: {{={(char)MessageColor.Yellow}{message}";
                     break;
             }
-            
-            var vObjects = new List<VisibleObject>();
 
             //normal messages display to everyone in 13 spaces, shouts 25
-            if (type == PublicMessageType.Normal)
-                vObjects = client.User.Map.ObjectsVisibleFrom(client.User, true).ToList();
-            else
-                vObjects = client.User.Map.ObjectsVisibleFrom(client.User, true, 25).ToList();
+            var vObjects = ((type == PublicMessageType.Normal) ? client.User.Map.ObjectsVisibleFrom(client.User, true)
+                : client.User.Map.ObjectsVisibleFrom(client.User, true, 25)).ToList();
 
             //for each object within range
             foreach (VisibleObject obj in vObjects)
@@ -384,7 +344,7 @@ namespace Chaos
                 {
                     //if we're not being ignored, send them the message
                     if (!tUser.IgnoreList.Contains(client.User.Name))
-                        tUser.Client.SendPublicMessage(type, client.User.Id, message);
+                        tUser.Client.SendPublicMessage(type, client.User.ID, message);
                 }
                 //if it's a monster
                 else if (obj is Monster tMonster)
@@ -403,9 +363,9 @@ namespace Chaos
         {
             Spell spell = client.User.SpellBook[slot];
 
-            if (spell != null && spell.CanUse && client.User.IsAlive && !(spell.CastLines > 0 && !client.User.HasFlag(UserState.IsChanting)))
+            if (spell != null && spell.CanUse && !client.User.HasFlag(Status.Dead) && !(spell.CastLines > 0 && !client.User.HasFlag(UserState.IsChanting)))
             {
-                if (targetId == client.User.Id)
+                if (targetId == client.User.ID)
                     spell.Activate(client, Server, spell, client.User, prompt);
                 else if (client.User.Map.TryGet(targetId, out Creature target) && target.Point.Distance(targetPoint) < 5 && target.IsAlive)
                     spell.Activate(client, Server, spell, target, prompt);
@@ -427,25 +387,25 @@ namespace Chaos
                 var packets = new List<ServerPacket>();
 
                 //put all the necessary packets to log in in the list, and send them off
-                foreach (Spell spell in client.User.SpellBook.Where(spell => spell != null))
+                foreach (Spell spell in client.User.SpellBook)
                 {
                     packets.Add(ServerPackets.AddSpell(spell));
                     if (!spell.CanUse)
                         packets.Add(ServerPackets.Cooldown(spell));
                 }
-                foreach (Skill skill in client.User.SkillBook.Where(skill => skill != null))
+                foreach (Skill skill in client.User.SkillBook)
                 {
                     packets.Add(ServerPackets.AddSkill(skill));
                     if (!skill.CanUse)
                         packets.Add(ServerPackets.Cooldown(skill));
                 }
-                foreach (Item item in client.User.Equipment.Where(equip => equip != null))
+                foreach (Item item in client.User.Equipment)
                     packets.Add(ServerPackets.AddEquipment(item));
                 packets.Add(ServerPackets.Attributes(client.User.IsAdmin, StatUpdateType.Full, client.User.Attributes));
-                foreach (Item item in client.User.Inventory.Where(item => item != null))
+                foreach (Item item in client.User.Inventory)
                     packets.Add(ServerPackets.AddItem(item));
                 packets.Add(ServerPackets.LightLevel(Server.LightLevel));
-                packets.Add(ServerPackets.UserId(client.User.Id, client.User.BaseClass));
+                packets.Add(ServerPackets.UserId(client.User.ID, client.User.BaseClass));
 
                 client.Enqueue(packets.ToArray());
 
@@ -464,12 +424,12 @@ namespace Chaos
             //set the user's direction, and display the turn to everyone in range to see
             client.User.Direction = direction;
             foreach (User user in client.User.Map.ObjectsVisibleFrom(client.User).OfType<User>())
-                user.Client.Enqueue(ServerPackets.CreatureTurn(client.User.Id, direction));
+                user.Client.Enqueue(ServerPackets.CreatureTurn(client.User.ID, direction));
         }
 
         internal static void SpaceBar(Client client)
         {
-            if (!client.User.IsAlive)
+            if (client.User.HasFlag(Status.Dead))
                 return;
 
             var packets = new List<ServerPacket>();
@@ -480,7 +440,7 @@ namespace Chaos
 
             //use all basic skills (otherwise known as assails)
             foreach (Skill skill in client.User.SkillBook)
-                if (skill?.IsBasic == true && skill.CanUse)
+                if (skill.IsBasic && skill.CanUse)
                 {
                     skill.Activate(client, Server, skill);
                     skill.LastUse = DateTime.UtcNow;
@@ -491,7 +451,7 @@ namespace Chaos
 
         internal static void RequestWorldList(Client client)
         {
-            client.Enqueue(ServerPackets.WorldList(Server.WorldClients.Select(cli => cli.User), client.User.Attributes.Level));
+            client.Enqueue(ServerPackets.WorldList(Server.WorldClients.Select(cli => cli.User).ToList(), client.User.Attributes.Level));
         }
 
         internal static void Whisper(Client client, string targetName, string message)
@@ -536,7 +496,7 @@ namespace Chaos
         internal static void AnimateCreature(Client client, BodyAnimation animNum)
         {
             foreach (User user in client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>())
-                user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.Id, animNum, 100));
+                user.Client.Enqueue(ServerPackets.AnimateCreature(client.User.ID, animNum, 100));
         }
 
         internal static void DropGold(Client client, uint amount, Point groundPoint)
@@ -578,7 +538,7 @@ namespace Chaos
                             return;
 
                         var ex = new Exchange(client.User, tUser);
-                        if (World.Exchanges.TryAdd(ex.ExchangeId, ex))
+                        if (World.Exchanges.TryAdd(ex.ID, ex))
                         {
                             ex.Activate();
                             ex.AddItem(client.User, slot);
@@ -605,7 +565,7 @@ namespace Chaos
                             return;
 
                         var ex = new Exchange(client.User, tUser);
-                        if (World.Exchanges.TryAdd(ex.ExchangeId, ex))
+                        if (World.Exchanges.TryAdd(ex.ID, ex))
                         {
                             ex.Activate();
                             ex.SetGold(client.User, amount);
@@ -721,12 +681,12 @@ namespace Chaos
             client.SendServerMessage(ServerMessageType.UserOptions, client.User.UserOptions.ToString(UserOption.Group));
         }
 
-        internal static void SwapSlot(Client client, Pane pane, byte origSlot, byte endSlot)
+        internal static void SwapSlot(Client client, PanelType panelType, byte origSlot, byte endSlot)
         {
             //attempt to swap the objects at origSlot and endSlot in the given pane
-            switch (pane)
+            switch (panelType)
             {
-                case Pane.Inventory:
+                case PanelType.Inventory:
                     if (!client.User.Inventory.TrySwap(origSlot, endSlot))
                         return;
 
@@ -740,7 +700,7 @@ namespace Chaos
                     if (client.User.Inventory[endSlot] != null)
                         client.Enqueue(ServerPackets.AddItem(client.User.Inventory[endSlot]));
                     break;
-                case Pane.SkillBook:
+                case PanelType.SkillBook:
                     if (!client.User.SkillBook.TrySwap(origSlot, endSlot))
                         return;
 
@@ -754,7 +714,7 @@ namespace Chaos
                     if (client.User.SkillBook[endSlot] != null)
                         client.Enqueue(ServerPackets.AddSkill(client.User.SkillBook[endSlot]));
                     break;
-                case Pane.SpellBook:
+                case PanelType.SpellBook:
                     if (!client.User.SpellBook.TrySwap(origSlot, endSlot))
                         return;
 
@@ -801,7 +761,8 @@ namespace Chaos
                 return;
             }
 
-            DialogOption opt = Enum.IsDefined(typeof(DialogOption), (dialogId - dialog.Id)) ? (DialogOption)(dialogId - dialog.Id) : DialogOption.Close;
+            DialogOption opt = Enum.IsDefined(CONSTANTS.DIALOGOPTION_TYPE, dialogId - dialog.Id) ? (DialogOption)(dialogId - dialog.Id) 
+                : DialogOption.Close;
 
             switch (opt)
             {
@@ -851,20 +812,20 @@ namespace Chaos
         {
             Skill skill = client.User.SkillBook[slot];
 
-            if (skill != null && skill.CanUse && client.User.IsAlive)
+            if (skill != null && skill.CanUse && !client.User.HasFlag(Status.Dead))
                 skill.Activate(client, Server, skill);
         }
 
-        internal static void ClickWorldMap(Client client, ushort nodeCheckSum, ushort mapId, Point point)
+        internal static void ClickWorldMap(Client client, ushort nodeCheckSum, Location location)
         {
-            if (client.User.Map.WorldMaps[client.User.Point].Nodes.FirstOrDefault(n => n.CheckSum == nodeCheckSum).Point == point)
-                World.Maps[mapId].AddObject(client.User, point);
+            if (client.User.Map.WorldMaps[client.User.Point].Nodes.FirstOrDefault(n => n.CheckSum == nodeCheckSum).Location == location)
+                Assert.Warp(client.User, Warp.Unsourced(location));
         }
 
         internal static void ClickObject(Client client, int objectId)
         {
             //if we're clicking ourself, send profileSelf
-            if (objectId == client.User.Id)
+            if (objectId == client.User.ID)
                 client.Enqueue(ServerPackets.ProfileSelf(client.User));
             else
             {   //otherwise, get the object we're clicking
@@ -913,7 +874,7 @@ namespace Chaos
 
         internal static void RemoveEquipment(Client client, EquipmentSlot slot)
         {
-            if (client.User.Inventory.IsFull)
+            if (client.User.Inventory.AvailableSlots == 0)
             {
                 client.SendServerMessage(ServerMessageType.ActiveMessage, "You have no space for that.");
                 return;
@@ -974,7 +935,7 @@ namespace Chaos
                         if (client.User.Exchange == null && targetUser.Exchange == null)
                         {
                             var ex = new Exchange(client.User, targetUser);
-                            World.Exchanges[ex.ExchangeId] = ex;
+                            World.Exchanges[ex.ID] = ex;
                             ex.Activate();
                         }
                     break;
@@ -1003,13 +964,16 @@ namespace Chaos
 
         internal static void BeginChant(Client client)
         {
-            client.User.AddFlag(UserState.IsChanting);
+            if (!client.User.HasFlag(Status.Dead))
+                client.User.AddFlag(UserState.IsChanting);
+            else
+                client.Enqueue(ServerPackets.CancelCasting());
         }
 
         internal static void DisplayChant(Client client, string chant)
         {
             foreach (User user in client.User.Map.ObjectsVisibleFrom(client.User, true).OfType<User>())
-                user.Client.SendPublicMessage(PublicMessageType.Chant, client.User.Id, chant);
+                user.Client.SendPublicMessage(PublicMessageType.Chant, client.User.ID, chant);
         }
 
         internal static void Personal(Client client, byte[] portraitData, string profileMsg)
@@ -1041,7 +1005,7 @@ namespace Chaos
             client.Enqueue(ServerPackets.SynchronizeTicks());
         }
 
-        internal static void ChangeSoocialStatus(Client client, SocialStatus status)
+        internal static void ChangeSocialStatus(Client client, SocialStatus status)
         {
             client.User.SocialStatus = status;
         }

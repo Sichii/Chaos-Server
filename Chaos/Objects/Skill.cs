@@ -21,6 +21,7 @@ namespace Chaos
     internal sealed class Skill : PanelObject
     {
         internal bool IsBasic { get; }
+
         internal override bool CanUse => Elapsed.TotalMilliseconds >= CONSTANTS.GLOBAL_SKILL_COOLDOWN_MS && base.CanUse;
 
         /// <summary>

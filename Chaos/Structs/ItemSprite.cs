@@ -17,10 +17,10 @@ namespace Chaos
     internal struct ItemSprite
     {
         [JsonProperty]
-        internal ushort InventorySprite;
+        internal ushort InventorySprite { get; }
         [JsonProperty]
-        internal ushort DisplaySprite;
-        internal ushort OffsetSprite;
+        internal ushort DisplaySprite { get; }
+        internal ushort OffsetSprite { get; }
 
         /// <summary>
         /// Json & Master constructor for a structure representing an in-game item's sprite pair, which is the sprite shown in the panel, and the sprite shown when equipped.

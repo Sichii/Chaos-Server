@@ -8,35 +8,19 @@ namespace Capricorn.Drawing
 {
     public class MapTile
     {
-        private ushort floor;
-        private ushort leftWall;
-        private ushort rightWall;
+        public ushort RightWall { get; set; }
 
-        public ushort RightWall
-        {
-            get => rightWall;
-            set => rightWall = value;
-        }
+        public ushort LeftWall { get; set; }
 
-        public ushort LeftWall
-        {
-            get => leftWall;
-            set => leftWall = value;
-        }
-
-        public ushort FloorTile
-        {
-            get => floor;
-            set => floor = value;
-        }
+        public ushort FloorTile { get; set; }
 
         public MapTile(ushort floor, ushort leftWall, ushort rightWall)
         {
-            this.floor = floor;
-            this.leftWall = leftWall;
-            this.rightWall = rightWall;
+            FloorTile = floor;
+            LeftWall = leftWall;
+            RightWall = rightWall;
         }
 
-        public override string ToString() => "{Floor = " + floor.ToString() + ", Left Wall = " + leftWall.ToString() + ", Right Wall = " + rightWall.ToString() + "}";
+        public override string ToString() => "{Floor = " + FloorTile.ToString() + ", Left Wall = " + LeftWall.ToString() + ", Right Wall = " + RightWall.ToString() + "}";
     }
 }

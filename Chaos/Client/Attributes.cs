@@ -50,13 +50,13 @@ namespace Chaos
         [JsonProperty]
         internal byte Ability { get; set; }
 
-        internal uint MaximumHP => Utility.Clamp<uint>(BaseHP + MaxHPMod, 0, int.MaxValue);
-        internal uint MaximumMP => Utility.Clamp<uint>(BaseMP + MaxMPMod, 0, int.MaxValue);
-        internal byte CurrentStr => Utility.Clamp<byte>(BaseStr + StrMod, 0, byte.MaxValue);
-        internal byte CurrentInt => Utility.Clamp<byte>(BaseInt + IntMod, 0, byte.MaxValue);
-        internal byte CurrentWis => Utility.Clamp<byte>(BaseWis + WisMod, 0, byte.MaxValue);
-        internal byte CurrentCon => Utility.Clamp<byte>(BaseCon + ConMod, 0, byte.MaxValue);
-        internal byte CurrentDex => Utility.Clamp<byte>(BaseDex + DexMod, 0, byte.MaxValue);
+        internal uint MaximumHP => Utilities.Clamp<uint>(BaseHP + MaxHPMod, 0, int.MaxValue);
+        internal uint MaximumMP => Utilities.Clamp<uint>(BaseMP + MaxMPMod, 0, int.MaxValue);
+        internal byte CurrentStr => Utilities.Clamp<byte>(BaseStr + StrMod, 0, byte.MaxValue);
+        internal byte CurrentInt => Utilities.Clamp<byte>(BaseInt + IntMod, 0, byte.MaxValue);
+        internal byte CurrentWis => Utilities.Clamp<byte>(BaseWis + WisMod, 0, byte.MaxValue);
+        internal byte CurrentCon => Utilities.Clamp<byte>(BaseCon + ConMod, 0, byte.MaxValue);
+        internal byte CurrentDex => Utilities.Clamp<byte>(BaseDex + DexMod, 0, byte.MaxValue);
         internal bool HasUnspentPoints => UnspentPoints != 0;
         [JsonProperty]
         internal byte UnspentPoints { get; set; }

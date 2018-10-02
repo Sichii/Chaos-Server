@@ -14,22 +14,24 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Chaos
 {
     /// <summary>
     /// Represents the game world. Contains server-constructs of game-world objects.
     /// </summary>
-    internal class World
+    internal sealed class World
     {
-        internal Server Server { get; }
-        internal Dictionary<ushort, Map> Maps { get; set; }
-        internal Dictionary<uint, WorldMap> WorldMaps { get; set; }
-        internal ConcurrentDictionary<string, Guild> Guilds { get; set; }
-        internal ConcurrentDictionary<int, Group> Groups { get; set; }
-        internal ConcurrentDictionary<int, Exchange> Exchanges { get; set; }
+        private readonly Server Server;
 
-        internal World(Server server)
+        internal Dictionary<ushort, Map> Maps { get; }
+        internal Dictionary<uint, WorldMap> WorldMaps { get; }
+        internal ConcurrentDictionary<string, Guild> Guilds { get; }
+        internal ConcurrentDictionary<int, Group> Groups { get; }
+        internal ConcurrentDictionary<int, Exchange> Exchanges { get; }
+
+        internal World(Server server, out Task Initializer)
         {
             Server = server;
             Maps = new Dictionary<ushort, Map>();
@@ -37,14 +39,16 @@ namespace Chaos
             Guilds = new ConcurrentDictionary<string, Guild>(StringComparer.CurrentCultureIgnoreCase);
             Groups = new ConcurrentDictionary<int, Group>();
             Exchanges = new ConcurrentDictionary<int, Exchange>();
+
+            Initializer = Task.Run(Initialize);
         }
 
         /// <summary>
         /// Populates the world with maps, worldmaps, warps, and more.
         /// </summary>
-        internal void Load()
+        internal void Initialize()
         {
-            Server.WriteLog("Creating world objects...");
+            Server.WriteLog("Initializing world...");
 
             #region Load Maps
             using (var reader = new BinaryReader(new MemoryStream(Server.DataBase.MapData)))
@@ -104,12 +108,12 @@ namespace Chaos
                         ushort targetMapId = reader.ReadUInt16();
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
-                        bool shouldDisplay = !doorPoints.Contains((sourceX, sourceY));
-                        var warp = new Warp(sourceX, sourceY, targetX, targetY, mapId, targetMapId);
-                        newMap.Warps[(sourceX, sourceY)] = warp;
+                        bool shouldDisplay = !doorPoints.Contains(newMap[sourceX, sourceY]);
+                        var warp = new Warp(mapId, sourceX, sourceY, targetMapId, targetX, targetY);
+                        newMap.Warps[newMap[sourceX, sourceY]] = warp;
 
                         if (shouldDisplay)
-                            newMap.AddEffect(warpEff.GetTargetedEffect((sourceX, sourceY)));
+                            newMap.AddEffect(warpEff.GetTargetedEffect(newMap[sourceX, sourceY]));
                     }
 
                     var wmapEff = new Effect(1250, TimeSpan.Zero, false, new Animation(214, 0, 250));
@@ -123,8 +127,8 @@ namespace Chaos
                         uint CheckSum = reader.ReadUInt32();
                         if (WorldMaps.ContainsKey(CheckSum))
                         {
-                            newMap.WorldMaps[(x, y)] = WorldMaps[CheckSum];
-                            newMap.AddEffect(wmapEff.GetTargetedEffect((x, y)));
+                            newMap.WorldMaps[newMap[x, y]] = WorldMaps[CheckSum];
+                            newMap.AddEffect(wmapEff.GetTargetedEffect(newMap[x, y]));
                         }
                     }
 
@@ -158,6 +162,11 @@ namespace Chaos
                     Guilds.TryAdd(CONSTANTS.DEVELOPER_GUILD_NAME, new Guild());
             }
             #endregion
+
+            #region Populate Maps
+            foreach (Merchant merchant in Game.Merchants.GetMerchants)
+                merchant.Map.AddObject(merchant, merchant.Point);
+            #endregion
         }
 
         /// <summary>
@@ -180,17 +189,6 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Populates the world with merchants.
-        /// </summary>
-        internal void Populate()
-        {
-            #region Load Merchants
-            foreach (Merchant merchant in Game.Merchants.GetMerchants)
-                merchant.Map.AddObject(merchant, merchant.Point);
-            #endregion
-        }
-
-        /// <summary>
         /// Cleans up active world info of the user.
         /// </summary>
         /// <param name="user">The user to clean up</param>
@@ -198,10 +196,10 @@ namespace Chaos
         {
             User user = client.User;
 
-            user.Group?.TryRemove(user.Id);
+            user.Group?.TryRemove(user.ID);
             user.Exchange?.Cancel(user);
             user.Save();
-            user.Map.RemoveObject(user);
+            user.Map.RemoveObject(user, true);
 
             //remove from other things
         }

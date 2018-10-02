@@ -19,7 +19,7 @@ namespace Chaos
     /// </summary>
     internal sealed class Merchants
     {
-        private Dictionary<string, Merchant> MerchantDic { get; }
+        private readonly Dictionary<string, Merchant> MerchantDic;
         //access merchant by name
         internal Merchant this[string name] => MerchantDic[name];
         internal List<Merchant> GetMerchants => MerchantDic.Values.ToList();
@@ -28,14 +28,14 @@ namespace Chaos
         {
             var MerchantList = new List<Merchant>()
             {
-                new Merchant("Deliope", 61, (15, 10), Game.World.Maps[5031], Direction.South, 0,
+                new Merchant("Deliope", (5031, 15, 10), 61, Direction.South, 0,
                     new MerchantMenu("Are you dead, scrub?", MenuType.Menu,
                         new PursuitMenu(
                             new List<PursuitMenuItem>()
                             {
                                 new PursuitMenuItem(PursuitIds.ReviveSelf, "Revive")
                             }))),
-                new Merchant("Celeste", 57, (3, 16), Game.World.Maps[17500], Direction.South, 0,
+                new Merchant("Celeste", (17500, 3, 16), 57, Direction.South, 0,
                     new MerchantMenu("I like giant cock.", MenuType.Dialog,
                         new DialogMenu(
                             new List<DialogMenuItem>()
@@ -47,10 +47,10 @@ namespace Chaos
                                 new DialogMenuItem(5, "Kill User"),
                                 new DialogMenuItem(2, "Teleport")
                             }))),
-                new Merchant("Frank The Great", 34, (5, 2), Game.World.Maps[17501], Direction.East, 7),
-                new Merchant("Maribel", 447, (2, 5), Game.World.Maps[18000], Direction.East, 9),
+                new Merchant("Frank The Great", (17501, 5, 2), 34, Direction.East, 7),
+                new Merchant("Maribel", (18000, 2, 5), 447, Direction.East, 9),
                 //new Merchant("Markus", 364, new Point(2, 4), Game.World.Maps[18002], Direction.East, 15),
-                new Merchant("Am I Pretty?", 627, (10, 8), Game.World.Maps[8984], Direction.South, 0,
+                new Merchant("Am I Pretty?", (8984, 10, 8), 627, Direction.South, 0,
                     new MerchantMenu("Do it. Tell me I'm beautiful.", MenuType.Menu,
                         new PursuitMenu(
                             new List<PursuitMenuItem>()

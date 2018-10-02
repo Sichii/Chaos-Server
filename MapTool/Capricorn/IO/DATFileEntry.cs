@@ -8,29 +8,21 @@ namespace Capricorn.IO
 {
     public class DATFileEntry
     {
-        private string name;
-        private long startAddress;
-        private long endAddress;
+        public long FileSize => EndAddress - StartAddress;
 
-        public long FileSize => endAddress - startAddress;
+        public long EndAddress { get; }
 
-        public long EndAddress => endAddress;
+        public long StartAddress { get; }
 
-        public long StartAddress => startAddress;
-
-        public string Name
-        {
-            get => name;
-            set => name = value;
-        }
+        public string Name { get; set; }
 
         public DATFileEntry(string name, long startAddress, long endAddress)
         {
-            this.name = name;
-            this.startAddress = startAddress;
-            this.endAddress = endAddress;
+            Name = name;
+            StartAddress = startAddress;
+            EndAddress = endAddress;
         }
 
-        public override string ToString() => "{Name = " + name + ", Size = " + FileSize.ToString("###,###,###,###,###0") + "}";
+        public override string ToString() => "{Name = " + Name + ", Size = " + FileSize.ToString("###,###,###,###,###0") + "}";
     }
 }

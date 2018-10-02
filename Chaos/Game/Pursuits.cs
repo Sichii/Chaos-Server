@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Chaos
@@ -22,7 +23,7 @@ namespace Chaos
     internal static class Pursuits
     {
         //these will use pursuit id to get the effect
-        private static Dictionary<PursuitIds, PursuitDelegate> s_PursuitList = new Dictionary<PursuitIds, PursuitDelegate>()
+        private static readonly ImmutableDictionary<PursuitIds, PursuitDelegate> PursuitList = ImmutableDictionary.CreateRange(new Dictionary<PursuitIds, PursuitDelegate>()
         {
             { PursuitIds.None, new PursuitDelegate(None) },
             { PursuitIds.ReviveSelf, new PursuitDelegate(ReviveSelf) },
@@ -38,9 +39,9 @@ namespace Chaos
             { PursuitIds.BecomeMonk, new PursuitDelegate(BecomeMonk) },
             { PursuitIds.BecomeRogue, new PursuitDelegate(BecomeRogue) },
             { PursuitIds.GiveTatteredRobe, new PursuitDelegate(GiveTatteredRobe) },
-        };
+        });
 
-        internal static PursuitDelegate Activate(PursuitIds pid) => s_PursuitList[pid];
+        internal static PursuitDelegate Activate(PursuitIds pid) => PursuitList[pid];
 
         #region PursuitEffects
         private static void None(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null) { }
@@ -64,7 +65,7 @@ namespace Chaos
 
             if(!client.User.HasFlag(Quest.MaribelRobes))
             {
-                Item item = Game.CreationEngine.CreateItem($@"{(client.User.Gender == Gender.Female ? "Female" : "Male")} Tattered Robes");
+                Item item = Game.CreationEngine.CreateItem($@"{((client.User.Gender == Gender.Female) ? "Female" : "Male")} Tattered Robes");
 
                 if (client.User.Inventory.AddToNextSlot(item))
                 {
@@ -74,19 +75,18 @@ namespace Chaos
             }
             else
             {
-
             }
         }
 
         private static void ReviveSelf(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            Game.Activatables.ReviveUser(client.User);
+            Game.Assert.ReviveUser(client.User);
         }
 
         private static void ReviveUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             if (server.TryGetUser(userInput, out User user))
-                Game.Activatables.ReviveUser(user);
+                Game.Assert.ReviveUser(user);
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
@@ -94,9 +94,9 @@ namespace Chaos
         private static void Teleport(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             if (Location.TryParse(userInput, out Location warpLoc))
-                Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, warpLoc));
+                Game.Assert.Warp(client.User, new Warp(client.User.Location, warpLoc));
             else if (server.TryGetUser(userInput, out User user))
-                Game.Activatables.WarpObj(client.User, new Warp(client.User.Location, user.Location));
+                Game.Assert.Warp(client.User, new Warp(client.User.Location, user.Location));
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid format. ""mapId xCord yCord"" or ""characterName""");
         }
@@ -104,23 +104,21 @@ namespace Chaos
         private static void SummonUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             if (server.TryGetUser(userInput, out User user))
-                Game.Activatables.WarpObj(user, new Warp(user.Location, client.User.Location));
+                Game.Assert.Warp(user, new Warp(user.Location, client.User.Location));
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
 
         private static void SummonAll(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
-            IEnumerable<User> allUsers = server.WorldClients.Where(c => c.User != client.User).Select(c => c.User);
-
-            foreach (User user in allUsers)
-                Game.Activatables.WarpObj(user, new Warp(user.Location, client.User.Location));
+            foreach (User user in server.WorldClients.Where(c => c.User != client.User).Select(c => c.User))
+                Game.Assert.Warp(user, new Warp(user.Location, client.User.Location));
         }
 
         private static void KillUser(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             if (server.TryGetUser(userInput, out User user))
-                Game.Activatables.ApplyDamage(user, int.MaxValue, true);
+                Game.Assert.Damage(user, int.MaxValue, true);
             else
                 client.SendServerMessage(ServerMessageType.Whisper, @"Invalid name.");
         }
@@ -133,15 +131,13 @@ namespace Chaos
         private static void BecomeWarrior(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.BaseClass = BaseClass.Warrior;
-            ClearSpellsSkills(client);
+            client.User.ClearSkillsSpells();
 
             client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Cleave"));
             client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Reposition"));
             client.User.SkillBook.AddToNextSlot(Game.CreationEngine.CreateSkill("Shoulder Charge"));
-            //add more skills
 
-
-            foreach (Skill skill in client.User.SkillBook.Where(s => s != null))
+            foreach (Skill skill in client.User.SkillBook)
                 client.Enqueue(ServerPackets.AddSkill(skill));
 
             client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
@@ -150,7 +146,7 @@ namespace Chaos
         private static void BecomeWizard(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.BaseClass = BaseClass.Wizard;
-            ClearSpellsSkills(client);
+            client.User.ClearSkillsSpells();
 
             client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
         }
@@ -158,7 +154,7 @@ namespace Chaos
         private static void BecomePriest(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.BaseClass = BaseClass.Priest;
-            ClearSpellsSkills(client);
+            client.User.ClearSkillsSpells();
 
             client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
         }
@@ -166,7 +162,7 @@ namespace Chaos
         private static void BecomeMonk(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.BaseClass = BaseClass.Monk;
-            ClearSpellsSkills(client);
+            client.User.ClearSkillsSpells();
 
             client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
         }
@@ -174,24 +170,11 @@ namespace Chaos
         private static void BecomeRogue(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.BaseClass = BaseClass.Rogue;
-            ClearSpellsSkills(client);
+            client.User.ClearSkillsSpells();
 
             client.Enqueue(ServerPackets.DisplayDialog(client.ActiveObject, Game.Dialogs.CloseDialog()));
         }
         #endregion
 
-
-        #region Modular Methods
-        private static void ClearSpellsSkills(Client client)
-        {
-            foreach (Skill skill in client.User.SkillBook.Where(s => s != null).ToList())
-                if (client.User.SkillBook.TryRemove(skill.Slot))
-                    client.Enqueue(ServerPackets.RemoveSkill(skill.Slot));
-
-            foreach (Spell spell in client.User.SpellBook.Where(s => s != null).ToList())
-                if (spell.Name != "Admin Create" && client.User.SpellBook.TryRemove(spell.Slot))
-                    client.Enqueue(ServerPackets.RemoveSpell(spell.Slot));
-        }
-        #endregion
     }
 }

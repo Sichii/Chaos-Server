@@ -11,57 +11,35 @@ namespace Capricorn.Drawing
 {
     public class MAPFile
     {
-        private int width;
-        private int height;
-        private MapTile[] tiles;
-        private int id;
-        private string name;
-
         public MapTile this[int x, int y]
         {
-            get => tiles[y * width + x];
-            set => tiles[y * width + x] = value;
+            get => Tiles[(y * Width) + x];
+            set => Tiles[(y * Width) + x] = value;
         }
 
-        public string Name
-        {
-            get => name;
-            set => name = value;
-        }
+        public string Name { get; set; }
 
-        public int ID
-        {
-            get => id;
-            set => id = value;
-        }
+        public int ID { get; set; }
 
-        public MapTile[] Tiles => tiles;
+        public MapTile[] Tiles { get; private set; }
 
-        public int Height
-        {
-            get => height;
-            set => height = value;
-        }
+        public int Height { get; set; }
 
-        public int Width
-        {
-            get => width;
-            set => width = value;
-        }
+        public int Width { get; set; }
 
         public static MAPFile FromFile(string file)
         {
             var mapFile = MAPFile.LoadMap(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
-            mapFile.id = Convert.ToInt32(Path.GetFileNameWithoutExtension(file).Remove(0, 3));
+            mapFile.ID = Convert.ToInt32(Path.GetFileNameWithoutExtension(file).Remove(0, 3));
             return mapFile;
         }
 
         public static MAPFile FromFile(string file, int width, int height)
         {
             var mapFile = MAPFile.LoadMap(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
-            mapFile.width = width;
-            mapFile.height = height;
-            mapFile.id = Convert.ToInt32(Path.GetFileNameWithoutExtension(file).Remove(0, 3));
+            mapFile.Width = width;
+            mapFile.Height = height;
+            mapFile.ID = Convert.ToInt32(Path.GetFileNameWithoutExtension(file).Remove(0, 3));
             return mapFile;
         }
 
@@ -70,8 +48,8 @@ namespace Capricorn.Drawing
         public static MAPFile FromRawData(byte[] data, int width, int height)
         {
             var mapFile = MAPFile.LoadMap(new MemoryStream(data));
-            mapFile.width = width;
-            mapFile.height = height;
+            mapFile.Width = width;
+            mapFile.Height = height;
             return mapFile;
         }
 
@@ -82,19 +60,19 @@ namespace Capricorn.Drawing
             int length = (int)(binaryReader.BaseStream.Length / 6L);
             var mapFile = new MAPFile
             {
-                tiles = new MapTile[length]
+                Tiles = new MapTile[length]
             };
             for (int index = 0; index < length; ++index)
             {
                 ushort floor = binaryReader.ReadUInt16();
                 ushort leftWall = binaryReader.ReadUInt16();
                 ushort rightWall = binaryReader.ReadUInt16();
-                mapFile.tiles[index] = new MapTile(floor, leftWall, rightWall);
+                mapFile.Tiles[index] = new MapTile(floor, leftWall, rightWall);
             }
             binaryReader.Close();
             return mapFile;
         }
 
-        public override string ToString() => "{Name = " + name + ", ID = " + id.ToString() + ", Width = " + width.ToString() + ", Height = " + height.ToString() + "}";
+        public override string ToString() => "{Name = " + Name + ", ID = " + ID.ToString() + ", Width = " + Width.ToString() + ", Height = " + Height.ToString() + "}";
     }
 }

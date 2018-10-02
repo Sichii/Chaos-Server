@@ -22,12 +22,12 @@ namespace Chaos
     internal sealed class Guild : IEnumerable
     {
         private readonly object Sync = new object();
-        private Bank Bank;
-        private Dictionary<string, string> Members; //name, rank
-        private List<string> Ranks;
+        private readonly Bank Bank;
+        private readonly Dictionary<string, string> Members; //name, rank
+        private readonly List<string> Ranks;
 
         [JsonProperty]
-        internal string Name { get; set; }
+        internal string Name { get; private set; }
 
         public IEnumerator GetEnumerator()
         {
@@ -125,7 +125,7 @@ namespace Chaos
                     return false;
 
                 Members.Add(user.Name, Ranks[0]);
-                user.Guild = this;
+                user.GuildName = Name;
 
                 return Members.ContainsKey(user.Name) && user.Guild == this;
             }
@@ -142,7 +142,7 @@ namespace Chaos
                 if (user.Guild == null || !Members.ContainsKey(user.Name))
                     return false;
 
-                user.Guild = null;
+                user.GuildName = null;
                 return Members.Remove(user.Name);
             }
         }
