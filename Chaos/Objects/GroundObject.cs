@@ -19,16 +19,17 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptOut)]
     internal class GroundObject : VisibleObject
     {
-        internal Item Item { get; set; }
-
+        internal Item Item { get; }
+        internal uint Amount { get; set; }
         /// <summary>
         /// Json & Master constructor for an object that can be placed on the ground.
         /// </summary>
         [JsonConstructor]
-        internal GroundObject(ushort sprite, Point point, Map map, Item item = null)
-          : base(string.Empty, sprite, point, map)
+        internal GroundObject(Location location, ushort sprite, uint amount, Item item = null)
+          : base(item?.Name ?? "Gold", location, sprite)
         {
             Item = item;
+            Amount = amount;
         }
     }
 }

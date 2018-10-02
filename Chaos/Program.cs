@@ -37,15 +37,9 @@ namespace Chaos
             Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 #endif
             Server = new Server(localIP);
-            Task.Factory.StartNew(Server.FlushSendQueueAsync, TaskCreationOptions.LongRunning);
-
-            while (Server.LobbySocket == null)
-                Thread.Sleep(10);
-
-            Server.WriteLog("Server is ready");
 
             //this thread will block for command line input for use as an admin panel
-            while (Server.LobbySocket != null)
+            while (Server.Running)
                 Console.ReadLine(); //we can do server commands here when the time comes
         }
     }

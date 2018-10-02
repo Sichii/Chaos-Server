@@ -21,18 +21,19 @@ namespace Chaos
     {
         internal bool IsActive { get; set; }
         internal TimeSpan UpdateInterval { get; }
-        internal DateTime LastUpdate { get; set; }
-        internal List<Item> Items { get; set; }
-        internal uint Gold;
-        internal override byte HealthPercent => Utility.Clamp<byte>((CurrentHP * 100) / MaximumHP, 0, (int)MaximumHP);
+        internal List<Item> Items { get; }
         internal override uint MaximumHP { get; }
         internal override uint CurrentHP { get; set; }
+        internal DateTime LastUpdate { get; set; }
+        internal uint Gold { get; set; }
+
+        internal override byte HealthPercent => Utilities.Clamp<byte>(CurrentHP * 100 / MaximumHP, 0, (int)MaximumHP);
 
         /// <summary>
         /// Master constructor an object representing an in-game monster.
         /// </summary>
-        internal Monster(string name, ushort sprite, CreatureType type, Point point, Map map, TimeSpan updateInterval, Direction direction = Direction.South)
-            : base(name, sprite, type, point, map, direction)
+        internal Monster(string name, Location location, ushort sprite, CreatureType type, TimeSpan updateInterval, Direction direction = Direction.South)
+            : base(name, location, sprite, type, direction)
         {
             UpdateInterval = updateInterval;
             LastUpdate = DateTime.MinValue;

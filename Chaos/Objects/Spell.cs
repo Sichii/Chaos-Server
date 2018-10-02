@@ -20,9 +20,10 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Spell : PanelObject
     {
-        internal SpellType SpellType { get; set; }
-        internal string Prompt { get; set; }
-        internal byte CastLines { get; set; }
+        internal SpellType SpellType { get; }
+        internal string Prompt { get; }
+        internal byte CastLines { get; }
+
         internal override bool CanUse => Elapsed.TotalMilliseconds >= CONSTANTS.GLOBAL_SPELL_COOLDOWN_MS && base.CanUse;
 
         /// <summary>

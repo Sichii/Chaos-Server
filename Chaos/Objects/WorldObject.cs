@@ -19,12 +19,13 @@ namespace Chaos
     /// Represents an object that exists within the world.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    internal abstract class WorldObject : IComparable<WorldObject>
+    public abstract class WorldObject : IComparable<WorldObject>
     {
-        protected internal int Id { get; }
+        protected internal int ID { get; }
+        protected internal DateTime Creation { get; }
         [JsonProperty]
         protected internal string Name { get; set; }
-        protected internal DateTime Creation { get; }
+
 
         /// <summary>
         /// Json & Master constructor for an object that exists within the world.
@@ -32,11 +33,11 @@ namespace Chaos
         [JsonConstructor]
         protected internal WorldObject(string name)
         {
-            Id = Interlocked.Increment(ref Server.NextId);
+            ID = Interlocked.Increment(ref Server.NextID);
             Name = name;
             Creation = DateTime.UtcNow;
         }
 
-        public int CompareTo(WorldObject obj) => ReferenceEquals(this, obj) ? 0 : Id.CompareTo(obj.Id);
+        public int CompareTo(WorldObject obj) => ReferenceEquals(this, obj) ? 0 : ID.CompareTo(obj.ID);
     }
 }

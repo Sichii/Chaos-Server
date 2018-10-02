@@ -19,10 +19,10 @@ namespace Chaos
         //primary directory, populated by setpaths
         private static string BaseDir;
 
-        //dynamic host name, populated by setpaths
-        internal static string HostName = "";
         //redis config string (host, port)
         internal const string RedisConfig = @"localhost:6379";
+        //dynamic host name, populated by setpaths
+        internal static string HostName = "";
 
         internal static string LogFiles => $@"{BaseDir}logs\";
         internal static string MetaFiles => $@"{BaseDir}metafiles\";

@@ -16,12 +16,12 @@ using System.Text.RegularExpressions;
 namespace Chaos
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public struct Point
+    public struct Point : IEquatable<Point>
     {
         [JsonProperty]
-        public ushort X;
+        public ushort X { get; }
         [JsonProperty]
-        public ushort Y;
+        public ushort Y { get; }
 
         /// <summary>
         /// Json & Master constructor for a structure representing a point within a map.
@@ -33,15 +33,14 @@ namespace Chaos
             Y = y;
         }
 
-        public static implicit operator Point(ValueTuple<int, int> vTuple) => new Point((ushort)vTuple.Item1, (ushort)vTuple.Item2);
-
         /// <summary>
         /// Returns the equivalent of no point.
         /// </summary>
         public static Point None => (ushort.MaxValue, ushort.MaxValue);
 
-        public static bool operator ==(Point pt1, Point pt2) => pt1.Equals(pt2);
-        public static bool operator !=(Point pt1, Point pt2) => !pt1.Equals(pt2);
+        public static implicit operator Point(ValueTuple<int, int> vTuple) => new Point((ushort)vTuple.Item1, (ushort)vTuple.Item2);
+        public static bool operator ==(Point left, Point right) => left.Equals(right);
+        public static bool operator !=(Point left, Point right) => !(left == right);
 
         /// <summary>
         /// Gets this point's distance from another point.
@@ -53,46 +52,21 @@ namespace Chaos
         /// </summary>
         internal int Distance(ushort x, ushort y) => Math.Abs(x - X) + Math.Abs(y - Y);
 
-        public override int GetHashCode() => (X << 8) + Y;
-        public override string ToString() => $@"({X}, {Y})";
-
-        /// <summary>
-        /// Moves this point in a given direction, offsetting the x or y co-ordinate accordingly.
-        /// </summary>
-        internal void Offset(Direction direction)
-        {
-            switch (direction)
-            {
-                case Direction.North:
-                    Y--;
-                    break;
-                case Direction.East:
-                    X++;
-                    break;
-                case Direction.South:
-                    Y++;
-                    break;
-                case Direction.West:
-                    X--;
-                    break;
-            }
-        }
-
         /// <summary>
         /// Returns a new point that has been offset in a given direction.
         /// </summary>
-        internal Point NewOffset(Direction direction)
+        internal Point Offset(Direction direction, int degree = 1)
         {
             switch (direction)
             {
                 case Direction.North:
-                    return (X, Y - 1);
+                    return (X, Y - degree);
                 case Direction.East:
-                    return (X + 1, Y);
+                    return (X + degree, Y);
                 case Direction.South:
-                    return (X, Y + 1);
+                    return (X, Y + degree);
                 case Direction.West:
-                    return (X - 1, Y);
+                    return (X - degree, Y);
                 default:
                     return None;
             }
@@ -130,28 +104,24 @@ namespace Chaos
             return direction;
         }
 
-        public override bool Equals(object obj)
-        {
-            try
-            {
-                var point = (Point)obj;
-                return GetHashCode() == point.GetHashCode();
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         /// <summary>
         /// Attempts to parse a point from a given string.
         /// </summary>
         public static bool TryParse(string str, out Point point)
         {
-            point = None;
             Match m = Regex.Match(str, @"\(?(\d+)(?:,| |, )(\d+)\)?");
 
-            return m.Success && ushort.TryParse(m.Groups[1].Value, out point.X) && ushort.TryParse(m.Groups[2].Value, out point.Y);
+            point = (m.Success && ushort.TryParse(m.Groups[1].Value, out ushort x) && ushort.TryParse(m.Groups[2].Value, out ushort y)) ? (x, y) 
+                : None;
+
+            return point != None;
         }
+
+        public override int GetHashCode() => (X << 8) + Y;
+        public override bool Equals(object obj) => obj is Point tPoint ? Equals(tPoint) : false;
+        public bool Equals(Point other) => GetHashCode() == other.GetHashCode();
+
+
+        public override string ToString() => $@"({X}, {Y})";
     }
 }

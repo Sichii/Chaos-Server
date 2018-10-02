@@ -17,12 +17,9 @@ namespace Capricorn.Drawing
 
         public static Bitmap RenderImage(HPFImage hpf, Palette256 palette) => DAGraphics.SimpleRender(hpf.Width, hpf.Height, hpf.RawData, palette, ImageType.HPF);
 
-        public static Bitmap RenderImage(EPFFrame epf, Palette256 palette)
-        {
-            if (epf.Width != 0 || epf.Height != 0)
-                return SimpleRender(epf.Width, epf.Height, epf.RawData, palette, ImageType.EPF);
-            return new Bitmap(1, 1);
-        }
+        public static Bitmap RenderImage(EPFFrame epf, Palette256 palette) => epf.Width != 0 || epf.Height != 0
+                ? SimpleRender(epf.Width, epf.Height, epf.RawData, palette, ImageType.EPF)
+                : new Bitmap(1, 1);
 
         public static Bitmap RenderImage(MPFFrame mpf, Palette256 palette) => DAGraphics.SimpleRender(mpf.Width, mpf.Height, mpf.RawData, palette, ImageType.MPF);
 
@@ -35,26 +32,26 @@ namespace Capricorn.Drawing
                 ImageLockMode.WriteOnly, bitmap.PixelFormat);
             for (int index1 = 0; index1 < bitmapdata.Height; ++index1)
             {
-                byte* numPtr = (byte*) ((int) (void*) bitmapdata.Scan0 + index1 * bitmapdata.Stride);
+                byte* numPtr = (byte*) ((int) (void*) bitmapdata.Scan0 + (index1 * bitmapdata.Stride));
                 for (int index2 = 0; index2 < bitmapdata.Width; ++index2)
                 {
                     int index3 = type != ImageType.EPF
-                        ? data[index1 * width + index2]
-                        : data[index2 * height + index1];
+                        ? data[(index1 * width) + index2]
+                        : data[(index2 * height) + index1];
                     if (index3 > 0)
                     {
                         if (bitmapdata.PixelFormat == PixelFormat.Format32bppArgb)
                         {
                             numPtr[index2 * 4] = palette[index3].B;
-                            numPtr[index2*4 + 1] = palette[index3].G;
-                            numPtr[index2*4 + 2] = palette[index3].R;
-                            numPtr[index2*4 + 3] = palette[index3].A;
+                            numPtr[(index2*4) + 1] = palette[index3].G;
+                            numPtr[(index2*4) + 2] = palette[index3].R;
+                            numPtr[(index2*4) + 3] = palette[index3].A;
                         }
                         else if (bitmapdata.PixelFormat == PixelFormat.Format24bppRgb)
                         {
                             numPtr[index2 * 3] = palette[index3].B;
-                            numPtr[index2*3 + 1] = palette[index3].G;
-                            numPtr[index2*3 + 2] = palette[index3].R;
+                            numPtr[(index2*3) + 1] = palette[index3].G;
+                            numPtr[(index2*3) + 2] = palette[index3].R;
                         }
                         else if (bitmapdata.PixelFormat == PixelFormat.Format16bppRgb555)
                         {
@@ -63,7 +60,7 @@ namespace Capricorn.Drawing
                                     (((palette[index3].R & 248) << 7) + ((palette[index3].G & 248) << 2) +
                                      (palette[index3].B >> 3));
                             numPtr[index2 * 2] = (byte)(num % 256U);
-                            numPtr[index2*2 + 1] = (byte)(num / 256U);
+                            numPtr[(index2*2) + 1] = (byte)(num / 256U);
                         }
                         else if (bitmapdata.PixelFormat == PixelFormat.Format16bppRgb565)
                         {
@@ -72,7 +69,7 @@ namespace Capricorn.Drawing
                                     (((palette[index3].R & 248) << 8) + ((palette[index3].G & 252) << 3) +
                                      (palette[index3].B >> 3));
                             numPtr[index2 * 2] = (byte)(num % 256U);
-                            numPtr[index2*2 + 1] = (byte)(num / 256U);
+                            numPtr[(index2*2) + 1] = (byte)(num / 256U);
                         }
                     }
                 }
@@ -91,9 +88,9 @@ namespace Capricorn.Drawing
         {
             int num1 = 256;
             int num2 = 96;
-            var bitmap1 = new Bitmap(56*map.Width, 27*(map.Height + 1) + num1 + num2);
+            var bitmap1 = new Bitmap(56*map.Width, (27*(map.Height + 1)) + num1 + num2);
             var graphics = Graphics.FromImage(bitmap1);
-            int num3 = bitmap1.Width / 2 - 1 - 28 + 1;
+            int num3 = (bitmap1.Width / 2) - 1 - 28 + 1;
             int num4 = num1;
             var dictionary1 = new Dictionary<int, Bitmap>();
             for (int index1 = 0; index1 < map.Height; ++index1)
@@ -108,12 +105,12 @@ namespace Capricorn.Drawing
                         Bitmap bitmap2 = DAGraphics.RenderTile(tiles[key], tileTable[key + 2]);
                         dictionary1.Add(key, bitmap2);
                     }
-                    graphics.DrawImageUnscaled(dictionary1[key], num3 + index2*56/2, num4 + index2*28/2);
+                    graphics.DrawImageUnscaled(dictionary1[key], num3 + (index2*56/2), num4 + (index2*28/2));
                 }
                 num3 -= 28;
                 num4 += 14;
             }
-            int num5 = bitmap1.Width/ 2 - 1 - 28 + 1;
+            int num5 = (bitmap1.Width/ 2) - 1 - 28 + 1;
             int num6 = num1;
             var dictionary2 = new Dictionary<int, Bitmap>();
             for (int index1 = 0; index1 < map.Height; ++index1)
@@ -130,8 +127,8 @@ namespace Capricorn.Drawing
                         dictionary2.Add(key1, bitmap2);
                     }
                     if (key1%10000 > 1)
-                        graphics.DrawImageUnscaled(dictionary2[key1], num5 + index2*56/2,
-                            num6 + (index2 + 1)*28/2 - dictionary2[key1].Height + 14);
+                        graphics.DrawImageUnscaled(dictionary2[key1], num5 + (index2*56/2),
+                            num6 + ((index2 + 1)*28/2) - dictionary2[key1].Height + 14);
                     int key2 = map[index2, index1].RightWall;
                     if (!dictionary2.ContainsKey(key2))
                     {
@@ -142,8 +139,8 @@ namespace Capricorn.Drawing
                         dictionary2.Add(key2, bitmap2);
                     }
                     if (key2%10000 > 1)
-                        graphics.DrawImageUnscaled(dictionary2[key2], num5 + (index2 + 1)*56/2,
-                            num6 + (index2 + 1)*28/2 - dictionary2[key2].Height + 14);
+                        graphics.DrawImageUnscaled(dictionary2[key2], num5 + ((index2 + 1)*56/2),
+                            num6 + ((index2 + 1)*28/2) - dictionary2[key2].Height + 14);
                 }
                 num5 -= 28;
                 num6 += 14;

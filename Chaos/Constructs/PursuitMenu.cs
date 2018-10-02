@@ -18,10 +18,11 @@ namespace Chaos
     {
         private readonly List<PursuitMenuItem> Pursuits;
 
-        public IEnumerator<PursuitMenuItem> GetEnumerator() => Pursuits.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal PursuitMenuItem this[int index] => Pursuits[index];
         internal int Count => Pursuits.Count;
+
+        public IEnumerator<PursuitMenuItem> GetEnumerator() => Pursuits.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         /// Base constructor for an enumerable object of PursuitMenuItem. Represents the pursuit menu of a merchant menu.

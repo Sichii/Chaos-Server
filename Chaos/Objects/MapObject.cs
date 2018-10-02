@@ -1,7 +1,7 @@
 // ****************************************************************************
 // This file belongs to the Chaos-Server project.
 // 
-// This project is free and open-source, provided that any alterations or
+// This project is free and open-source, provIDed that any alterations or
 // modifications to any portions of this project adhere to the
 // Affero General Public License (Version 3).
 // 
@@ -9,43 +9,36 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
+using Newtonsoft.Json;
+using System;
+
 namespace Chaos
 {
     /// <summary>
     /// Represents an object on the map.
     /// </summary>
-    public abstract class MapObject
+    [JsonObject(MemberSerialization.OptIn)]
+    public abstract class MapObject : WorldObject
     {
-        public Point Point => (X, Y);
-        internal Location Location => (MapId, Point);
-        public ushort X;
-        public ushort Y;
-        public ushort MapId;
+        internal readonly Type TypeRef = typeof(MapObject);
 
-        /// <summary>
-        /// Optional constructor that takes a location.
-        /// </summary>
-        protected internal MapObject(Location location)
-            :this(location.MapId, location.Point)
-        {
-        }
+        [JsonProperty]
+        public Location Location { get; set; }
 
-        /// <summary>
-        /// Optional constructor that takes a point.
-        /// </summary>
-        protected internal MapObject(ushort mapId, Point point)
-            :this(mapId, point.X, point.Y)
-        {
-        }
+        internal Map Map => Game.World.Maps.TryGetValue(Location.MapID, out Map map) ? map : null;
+        public Point Point => Location.Point;
+
+
 
         /// <summary>
         /// Master constructor for an object representing something that exists on the map.
         /// </summary>
-        protected internal MapObject(ushort mapId, ushort x, ushort y)
+        protected internal MapObject(string name, Location location)
+            :base(name)
         {
-            MapId = mapId;
-            X = x;
-            Y = y;
+            Location = location;
         }
+
+        public override string ToString() => Location.ToString();
     }
 }

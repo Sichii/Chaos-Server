@@ -16,7 +16,7 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class DisplayData
     {
-        internal User User { get; set; }
+        internal User User { private get; set; }
 
         //Base
         [JsonProperty]

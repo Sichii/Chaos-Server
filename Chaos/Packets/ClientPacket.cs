@@ -18,7 +18,7 @@ namespace Chaos
     /// </summary>
     internal sealed class ClientPacket : Packet
     {
-        internal override bool IsEncrypted => OpCode != 0 && OpCode != 16 && OpCode != 72;
+        internal override bool ShouldEncrypt => OpCode != 0 && OpCode != 16 && OpCode != 72;
         internal bool IsDialog => OpCode == 57 || OpCode == 58;
 
         internal override EncryptionType EncryptionType
@@ -60,10 +60,14 @@ namespace Chaos
             EncryptionType method = EncryptionType;
 
             int length = Data.Length - 7;
-            ushort a = (ushort)((Data[length + 6] << 8 | Data[length + 4]) ^ 29808);
+            ushort a = (ushort)(((Data[length + 6] << 8) | Data[length + 4]) ^ 29808);
             byte b = (byte)(Data[length + 5] ^ 35);
-            byte[] key = method == EncryptionType.Normal ? crypto.Key : method == EncryptionType.MD5 ? crypto.GenerateKey(a, b) : new byte[0];
-            length -= (method == EncryptionType.Normal ? 1 : method == EncryptionType.MD5 ? 2 : 0);
+            byte[] key = (method == EncryptionType.Normal) ? crypto.Key 
+                : (method == EncryptionType.MD5) ? crypto.GenerateKey(a, b) 
+                : new byte[0];
+            length -= (method == EncryptionType.Normal) ? 1 
+                : (method == EncryptionType.MD5) ? 2 
+                : 0;
 
             for (int i = 0; i < length; ++i)
             {
@@ -84,13 +88,13 @@ namespace Chaos
 
             Data[2] ^= num2;
             Data[3] ^= (byte)(num2 + 1);
-            int num4 = Data[2] << 8 | Data[3];
+            int num4 = (Data[2] << 8) | Data[3];
             for (int index = 0; index < num4; index++)
                 Data[4 + index] ^= (byte)(num3 + index);
 
             Buffer.BlockCopy(Data, 6, Data, 0, Data.Length - 6);
             Array.Resize(ref Data, Data.Length - 6);
         }
-        public override string ToString() => $@"Recv [{Enum.GetName(typeof(ClientOpCodes), OpCode) ?? "**Unknown**"}] {GetHexString()}";
+        public override string ToString() => $@"Recv [{((ClientOpCodes)OpCode).ToString() ?? "**Unknown**"}] {GetHexString()}";
     }
 }

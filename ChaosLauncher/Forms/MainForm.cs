@@ -46,12 +46,12 @@ namespace ChaosLauncher
             using (var fontStream = new MemoryStream(Properties.Resources.SWTORTrajan))
             {
                 byte[] pfcData = fontStream.ToArray();
-                unsafe
-                {
-                    fixed (byte* pfcDataPtr = pfcData)
-                        pfc.AddMemoryFont((IntPtr)pfcDataPtr, pfcData.Length);
-                }
+                var pinnedArr = GCHandle.Alloc(pfcData, GCHandleType.Pinned);
+                pfc.AddMemoryFont(pinnedArr.AddrOfPinnedObject(), pfcData.Length);
+                pinnedArr.Free();
             }
+
+            
 
             launchBtn.Font = new System.Drawing.Font(pfc.Families[0], launchBtn.Font.Size, launchBtn.Font.Style);
             serverStatusLbl.Font = new System.Drawing.Font(pfc.Families[0], serverStatusLbl.Font.Size, serverStatusLbl.Font.Style);

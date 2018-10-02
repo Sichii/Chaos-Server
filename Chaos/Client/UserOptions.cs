@@ -111,7 +111,7 @@ namespace Chaos
                 case UserOption.Request:
                     return ToString();
                 case UserOption.Whisper:
-                    return string.Format(format, "1Listen to whisper", (Whisper ? "ON" : "OFF"));
+                    return string.Format(format, "1Listen to whisper", Whisper ? "ON" : "OFF");
                 case UserOption.Group:
                     return string.Format(format, "2Join a group", Group ? "ON" : "OFF");
                 case UserOption.Shout:

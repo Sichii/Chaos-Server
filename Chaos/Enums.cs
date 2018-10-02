@@ -157,6 +157,7 @@ namespace Chaos
     internal enum Status : ulong
     {
         None = 0,
+        Dead = 1,
         //add more statuses here, double each time
     }
     [Flags]
@@ -164,8 +165,7 @@ namespace Chaos
     {
         None = 0,
         IsChanting = 1,
-        DeathDisplayed = 2,
-        UsedBlink = 4,
+        UsedBlink = 2,
         //add more user states here, double each time
     }
     [Flags]
@@ -511,11 +511,12 @@ namespace Chaos
         Red = 5,
         White = 6
     }
-    internal enum Pane : byte
+    internal enum PanelType : byte
     {
         Inventory = 0,
         SpellBook = 1,
-        SkillBook = 2
+        SkillBook = 2,
+        Equipment = 3
     }
 
     internal enum MenuType : byte
@@ -568,7 +569,7 @@ namespace Chaos
         BoardList = 1,
         ViewBoard = 2,
         ViewPost = 3,
-        //???? = 4,
+        NewPost = 4,
         Delete = 5,
         SendMail = 6,
         Highlight = 7

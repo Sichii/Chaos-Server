@@ -23,16 +23,17 @@ namespace Chaos
     /// The interface between the redis database and the server.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    internal class DataBase
+    internal sealed class DataBase
     {
-        private Server Server { get; }
+        private readonly Server Server;
+        private readonly NewtonsoftSerializer Serializer;
+        private readonly StackExchangeRedisCacheClient Cache;
+        private readonly ConnectionMultiplexer DataConnection;
+
+        private Dictionary<string, string> UserHash => Cache.Get<Dictionary<string, string>>(UserHashKey);
         private string UserHashKey => Crypto.GetMD5Hash("UserHash") + Crypto.GetMD5Hash("ServerObjSuffix");
         private string MapKey => Crypto.GetMD5Hash("Maps") + Crypto.GetMD5Hash("ServerObjSuffix");
         private string GuildKey => Crypto.GetMD5Hash("Guilds") + Crypto.GetMD5Hash("ServerObjSuffix");
-        private Dictionary<string, string> UserHash => Cache.Get<Dictionary<string, string>>(UserHashKey);
-        private NewtonsoftSerializer Serializer { get; }
-        private StackExchangeRedisCacheClient Cache { get; }
-        private ConnectionMultiplexer DataConnection { get; }
 
         internal byte[] MapData => Cache.Get<byte[]>(MapKey);
         internal byte[] GuildData => Cache.Get<byte[]>(GuildKey);

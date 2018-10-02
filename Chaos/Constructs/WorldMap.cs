@@ -12,13 +12,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System;
 
 namespace Chaos
 {
     public sealed class WorldMap
     {
-        public string Field { get; set; }
+        internal static readonly Type TypeRef = typeof(WorldMap);
+
         public List<WorldMapNode> Nodes { get; }
+        public string Field { get; private set; }
+
 
         /// <summary>
         /// Base constructor for an object representing the field, or world map.

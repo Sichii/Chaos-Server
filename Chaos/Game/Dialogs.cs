@@ -22,6 +22,7 @@ namespace Chaos
         private readonly Dictionary<ushort, Dialog> DialogDic;
 
         internal Dialog this[ushort dialogId] => DialogDic[dialogId];
+
         internal Dialogs()
         {
             //these will use dialog id to get the dialog

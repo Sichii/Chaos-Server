@@ -19,7 +19,6 @@ namespace Chaos
         internal MenuType Type { get; }
         internal PursuitMenu Pursuits { get; }
         internal DialogMenu Dialogs { get; }
-
         internal int Count => Pursuits.Count;
         internal string this[PursuitIds pid] => Pursuits.FirstOrDefault(p => p.PursuitId == pid).Text;
 

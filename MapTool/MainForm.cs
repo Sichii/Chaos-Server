@@ -176,25 +176,25 @@ namespace ChaosTool
             this.MapsTab.SuspendLayout();
             this.WorldMapsTab.SuspendLayout();
             this.MapGbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MusicNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapSizeYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapSizeXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapIdNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.MusicNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.MapSizeYNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.MapSizeXNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.MapIdNum).BeginInit();
             this.WarpGbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetMapIDNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceXNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpTargetMapIDNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpTargetYNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpTargetXNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpSourceYNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpSourceXNum).BeginInit();
             this.WorldMapGbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WMapSourceXNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.WMapSourceYNum).BeginInit();
             this.WorldMapNodeGbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetMapIDNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetYNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodePositionXNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodePositionYNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodeTargetMapIDNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodeTargetXNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodeTargetYNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodePositionXNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodePositionYNum).BeginInit();
             this.SuspendLayout();
             // 
             // MapTree
@@ -1126,10 +1126,10 @@ namespace ChaosTool
             this.Controls.Add(this.WarpGbox);
             this.Controls.Add(this.MapGbox);
             this.Controls.Add(this.MainTabControl);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (byte)0);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimizeBox = false;
             this.Name = "MainForm";
@@ -1140,28 +1140,28 @@ namespace ChaosTool
             this.WorldMapsTab.ResumeLayout(false);
             this.MapGbox.ResumeLayout(false);
             this.MapGbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MusicNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapSizeYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapSizeXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapIdNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.MusicNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.MapSizeYNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.MapSizeXNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.MapIdNum).EndInit();
             this.WarpGbox.ResumeLayout(false);
             this.WarpGbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetMapIDNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpTargetXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WarpSourceXNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpTargetMapIDNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpTargetYNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpTargetXNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpSourceYNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WarpSourceXNum).EndInit();
             this.WorldMapGbox.ResumeLayout(false);
             this.WorldMapGbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WMapSourceYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WMapSourceXNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.WMapSourceYNum).EndInit();
             this.WorldMapNodeGbox.ResumeLayout(false);
             this.WorldMapNodeGbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetMapIDNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodeTargetYNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodePositionXNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NodePositionYNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodeTargetMapIDNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodeTargetXNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodeTargetYNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodePositionXNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.NodePositionYNum).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1170,7 +1170,7 @@ namespace ChaosTool
         internal void LoadTrees()
         {
             if (InvokeRequired)
-                Invoke((Action)(LoadTrees));
+                Invoke((Action)LoadTrees);
             else
             {
                 MapTree.Nodes.Clear();
@@ -1202,11 +1202,11 @@ namespace ChaosTool
                     foreach (Chaos.Warp Warp in map.Warps.Values)
                         try
                         {
-                            Warps.Nodes.Add(new WarpTreeNode(Warp, $@"{Warp.Point} => {Warp.TargetMapId} : {Warp.TargetPoint} - ({MapsCache.Maps[Warp.TargetMapId].Name})"));
+                            Warps.Nodes.Add(new WarpTreeNode(Warp, $@"{MapsCache.Maps[Warp.TargetLocation.MapID].Name} - {Warp}"));
                         }
                         catch
                         {
-                            MessageBox.Show($@"A Warp's target map doesn't exist. TargetMapID={Warp.TargetMapId}", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($@"A Warp's target map doesn't exist. TargetMapID={Warp.TargetLocation.MapID}", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
                     //each worldmap gets a subNode
@@ -1228,7 +1228,7 @@ namespace ChaosTool
 
                     //each worldmapNode gets a subNode
                     foreach (Chaos.WorldMapNode wmn in kvp.Value.Nodes)
-                        WorldMap.Nodes.Add(new WorldMapNodeTreeNode(wmn, $@"{wmn.Position}  {wmn.Location} - ({MapsCache.Maps[wmn.MapId].Name})"));
+                        WorldMap.Nodes.Add(new WorldMapNodeTreeNode(wmn, $@"{wmn.Position} - {wmn.Location} - ({MapsCache.Maps[wmn.MapId].Name})"));
 
                     //add this worldmap to the worldmap tree
                     WorldMapTree.Nodes.Add(WorldMap);
@@ -1255,11 +1255,11 @@ namespace ChaosTool
             {
                 Chaos.Warp warp = tWarpTreeNode.Warp;
 
-                WarpSourceXNum.Value = warp.SourceX;
-                WarpSourceYNum.Value = warp.SourceY;
-                WarpTargetXNum.Value = warp.TargetX;
-                WarpTargetYNum.Value = warp.TargetY;
-                WarpTargetMapIDNum.Value = warp.TargetMapId;
+                WarpSourceXNum.Value = warp.Point.X;
+                WarpSourceYNum.Value = warp.Point.Y;
+                WarpTargetXNum.Value = warp.TargetPoint.X;
+                WarpTargetYNum.Value = warp.TargetPoint.Y;
+                WarpTargetMapIDNum.Value = warp.TargetLocation.MapID;
             }
             else if (e.Node is WorldMapTreeNode tWorldMapTreeNode)
             {
@@ -1307,10 +1307,8 @@ namespace ChaosTool
                 byte sizeY = decimal.ToByte(MapSizeYNum.Value);
                 sbyte music = decimal.ToSByte(MusicNum.Value);
 
-                if (MapsCache.Maps.ContainsKey(mapId))
-                    message = $@"Map ID:{MapIdNum.Value} is already in use. Overwrite? Will Delete doors and Warps.";
-                else
-                    message = $@"Add this as a new map? Make sure info is correct.";
+                message = MapsCache.Maps.ContainsKey(mapId) ? $@"Map ID:{MapIdNum.Value} is already in use. Overwrite? Will Delete doors and Warps."
+                    : $@"Add this as a new map? Make sure info is correct.";
 
                 if (uint.TryParse(FlagSumLbl.Text, out uint flags))
                 {
@@ -1413,7 +1411,7 @@ namespace ChaosTool
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
                     Chaos.Map map = tMapTreeNode.Map;
-                    var newWarp = new Chaos.Warp((ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value, map.Id, (ushort)WarpTargetMapIDNum.Value);
+                    var newWarp = new Chaos.Warp(map.Id, (ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetMapIDNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value);
 
                     if (map.Warps.ContainsKey(newWarp.Point))
                         MessageBox.Show("Map already contains Warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1441,8 +1439,8 @@ namespace ChaosTool
                 if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
                 {
                     Chaos.Warp oldWarp = tWarpTreeNode.Warp;
-                    Chaos.Map map = MapsCache.Maps[oldWarp.MapId];
-                    var newWarp = new Chaos.Warp((ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value, oldWarp.MapId, (ushort)WarpTargetMapIDNum.Value);
+                    Chaos.Map map = MapsCache.Maps[oldWarp.Location.MapID];
+                    var newWarp = new Chaos.Warp(oldWarp.Location.MapID, (ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetMapIDNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value);
 
                     if (!map.Warps.ContainsKey(oldWarp.Point))
                         MessageBox.Show("Map does not contain that Warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1470,7 +1468,7 @@ namespace ChaosTool
             if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
             {
                 Chaos.Warp Warp = tWarpTreeNode.Warp;
-                Chaos.Map map = MapsCache.Maps[Warp.MapId];
+                Chaos.Map map = MapsCache.Maps[Warp.Location.MapID];
 
                 if (!map.Warps.ContainsKey(Warp.Point))
                     MessageBox.Show("Map does not contain that Warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);

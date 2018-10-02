@@ -17,8 +17,10 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal struct Effect : IEquatable<Effect>
     {
-        internal DateTime StartTime;
-        internal EffectsBarColor CurrentColor;
+        internal static readonly Type TypeRef = typeof(Effect);
+
+        private readonly DateTime StartTime;
+        internal EffectsBarColor Color { get; private set; }
 
         [JsonProperty]
         internal ushort Sprite; //will be set by the spell itself
@@ -56,7 +58,7 @@ namespace Chaos
         /// Constructor for an effect with only an animation.
         /// </summary>
         internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default)
-            :this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
+            : this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
         {
         }
 
@@ -74,7 +76,7 @@ namespace Chaos
         /// Json constructor for a structure representing an in-game persistent effect.
         /// </summary>
         [JsonConstructor]
-        private Effect(ushort sprite, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod, 
+        private Effect(ushort sprite, sbyte strMod, sbyte intMod, sbyte wisMod, sbyte conMod, sbyte dexMod, int maxHPMod, int maxMPMod, int currentHPMod,
             int currentMPMod, uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default)
         {
             StartTime = DateTime.UtcNow;
@@ -94,15 +96,14 @@ namespace Chaos
             Duration = duration;
             Animation = animation;
 
-            CurrentColor = EffectsBarColor.None;
-            CurrentColor = Color();
+            Color = EffectsBarColor.None;
         }
 
         /// <summary>
         /// Returns a re-target effect based on a target and source id.
         /// </summary>
         internal Effect GetTargetedEffect(int targetID, int sourceID) =>
-            new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay, 
+            new Effect(Sprite, StrMod, IntMod, WisMod, ConMod, DexMod, MaxHPMod, MaxMPMod, CurrentHPMod, CurrentMPMod, AnimationDelay,
                 Duration, UseParentAnimation, Animation.GetTargetedEffectAnimation(targetID, sourceID));
 
         /// <summary>
@@ -120,49 +121,40 @@ namespace Chaos
         /// <summary>
         /// Returns the remaining duration of the effect in milliseconds.
         /// </summary>
-        internal int RemainingDurationMS()
-        {
-            TimeSpan elapsed = DateTime.UtcNow.Subtract(StartTime);
-
-            if (elapsed > Duration)
-                return 0;
-            else
-                return (int)Duration.Subtract(elapsed).TotalMilliseconds;
-        }
+        internal int RemainingDurationMS() => Math.Max(0, (int)Duration.Subtract(DateTime.UtcNow.Subtract(StartTime)).TotalMilliseconds);
 
         /// <summary>
         /// Returns what color the bar should be based on the remaining time.
         /// </summary>
         /// <returns></returns>
-        internal EffectsBarColor Color()
+        private EffectsBarColor GetColor()
         {
             int ms = RemainingDurationMS();
 
-            if (ms >= 60000) //1min
-                return EffectsBarColor.White;
-            else if (ms >= 45000)
-                return EffectsBarColor.Red;
-            else if (ms >= 30000)
-                return EffectsBarColor.Orange;
-            else if (ms >= 15000)
-                return EffectsBarColor.Yellow;
-            else if (ms >= 5000)
-                return EffectsBarColor.Green;
-            else if (ms > 0)
-                return EffectsBarColor.Blue;
-            else
-                return EffectsBarColor.None;
+            return ms >= 60000 ? EffectsBarColor.White
+                : ms >= 45000 ? EffectsBarColor.Red
+                : ms >= 30000 ? EffectsBarColor.Orange
+                : ms >= 15000 ? EffectsBarColor.Yellow
+                : ms >= 5000 ? EffectsBarColor.Green
+                : ms > 0 ? EffectsBarColor.Blue
+                : EffectsBarColor.None;
         }
 
-        public override bool Equals(object obj)
+        internal bool ShouldSendColor()
         {
-            if (obj is Effect tEffect)
-                return GetHashCode() == tEffect.GetHashCode();
+            EffectsBarColor currentColor = GetColor();
+
+            if(Color != currentColor)
+            {
+                Color = currentColor;
+                return true;
+            }
 
             return false;
         }
-        public override int GetHashCode() => (Animation.GetHashCode() + (ushort)(AnimationDelay << 16) + (ushort)(Duration.TotalMilliseconds));
 
+        public override int GetHashCode() => Animation.GetHashCode() + (ushort)(AnimationDelay << 16) + (ushort)Duration.TotalMilliseconds;
+        public override bool Equals(object obj) => (obj is Effect tEffect) ? Equals(tEffect) : false;
         public bool Equals(Effect other) => GetHashCode() == other.GetHashCode();
     }
 }

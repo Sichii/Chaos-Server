@@ -8,41 +8,27 @@ namespace Capricorn.Drawing
 {
     public class EPFFrame
     {
-        private int left;
-        private int top;
-        private int width;
-        private int height;
-        private byte[] rawData;
+        public bool IsValid => RawData != null && RawData.Length >= 1 && Width >= 1 && Height >= 1 && Width * Height == RawData.Length;
 
-        public bool IsValid => rawData != null && rawData.Length >= 1 && (width >= 1 && height >= 1) && width * height == rawData.Length;
+        public byte[] RawData { get; }
 
-        public byte[] RawData => rawData;
+        public int Height { get; }
 
-        public int Height => height;
+        public int Width { get; }
 
-        public int Width => width;
+        public int Top { get; set; }
 
-        public int Top
-        {
-            get => top;
-            set => top = value;
-        }
-
-        public int Left
-        {
-            get => left;
-            set => left = value;
-        }
+        public int Left { get; set; }
 
         public EPFFrame(int left, int top, int width, int height, byte[] rawData)
         {
-            this.left = left;
-            this.top = top;
-            this.width = width;
-            this.height = height;
-            this.rawData = rawData;
+            Left = left;
+            Top = top;
+            Width = width;
+            Height = height;
+            RawData = rawData;
         }
 
-        public override string ToString() => "{X = " + left.ToString() + ", Y = " + top.ToString() + ", Width = " + width.ToString() + ", Height = " + height.ToString() + "}";
+        public override string ToString() => "{X = " + Left.ToString() + ", Y = " + Top.ToString() + ", Width = " + Width.ToString() + ", Height = " + Height.ToString() + "}";
     }
 }

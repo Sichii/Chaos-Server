@@ -10,9 +10,11 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Chaos
 {
@@ -21,17 +23,8 @@ namespace Chaos
     {
         private readonly object Sync = new object();
         [JsonProperty]
-        private List<Effect> Effects;
-
-        public IEnumerator<Effect> GetEnumerator()
-        {
-            IEnumerator<Effect> safeEnum = Effects.GetEnumerator();
-
-            lock (Sync)
-                while (safeEnum.MoveNext())
-                    yield return safeEnum.Current;
-        }
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        private readonly List<Effect> Effects;
+    
         internal int Count => Effects.Count;
 
         /// <summary>
@@ -42,6 +35,15 @@ namespace Chaos
         {
             Effects = effects ?? new List<Effect>();
         }
+
+        public IEnumerator<Effect> GetEnumerator()
+        {
+            lock (Sync)
+                using (IEnumerator<Effect> safeEnum = Effects.GetEnumerator())
+                    while (safeEnum.MoveNext())
+                        yield return safeEnum.Current;
+        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         /// Attempts to synchronously add an effect to the spell bar.
@@ -77,7 +79,7 @@ namespace Chaos
         internal void Clear()
         {
             lock (Sync)
-                Effects.Clear();
+                Effects.ForEach(eff => eff.Duration = TimeSpan.Zero);
         }
 
         internal int StrModSum => Effects.Sum(e => e.StrMod);

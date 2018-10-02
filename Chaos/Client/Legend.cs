@@ -22,35 +22,32 @@ namespace Chaos
     {
         private readonly object Sync = new object();
         [JsonProperty]
-        private List<KeyValuePair<string, LegendMark>> Marks;
+        private readonly List<LegendMark> Marks;
+
+        internal byte Count => (byte)Marks.Count;
 
         public IEnumerator<LegendMark> GetEnumerator()
         {
             lock (Sync)
-            {
-                IEnumerator<LegendMark> safeEnum = Marks.Select(kvp => kvp.Value).GetEnumerator();
-
-                while (safeEnum.MoveNext())
-                    yield return safeEnum.Current;
-            }
+                using (IEnumerator<LegendMark> safeEnum = Marks.GetEnumerator())
+                    while (safeEnum.MoveNext())
+                        yield return safeEnum.Current;
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal byte Count => (byte)Marks.Count;
-
 
         /// <summary>
         /// Default constructor for an enumerable object of LegendMark. Represent's a new user's legend.
         /// </summary>
         internal Legend()
         {
-            Marks = new List<KeyValuePair<string, LegendMark>>();
+            Marks = new List<LegendMark>();
         }
 
         /// <summary>
         /// Json & Master constructor for an enumerable object of LegendMark. Represents an existing user's legend.
         /// </summary>
         [JsonConstructor]
-        internal Legend(List<KeyValuePair<string, LegendMark>> marks)
+        internal Legend(List<LegendMark> marks)
         {
             Marks = marks;
         }
@@ -64,7 +61,7 @@ namespace Chaos
             get
             {
                 lock (Sync)
-                    return Marks.FirstOrDefault(kvp => kvp.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase)).Value;
+                    return Marks.FirstOrDefault(mark => mark.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase));
             }
         }
 
@@ -76,15 +73,15 @@ namespace Chaos
         {
             lock (Sync)
             {
-                LegendMark mToAdd = this[mark.Key];
+                LegendMark existingMark = this[mark.Key];
 
-                if (mToAdd != null)
+                if (existingMark != null)
                 {
-                    mToAdd.Added = DateTime.UtcNow;
-                    mToAdd.Count++;
+                    existingMark.Added = GameTime.Now;
+                    existingMark.Count++;
                 }
                 else
-                    Marks.Add(new KeyValuePair<string, LegendMark>(mark.Key, mark));
+                    Marks.Add(mark);
             }
         }
         /// <summary>
@@ -102,22 +99,19 @@ namespace Chaos
     internal sealed class LegendMark
     {
         [JsonProperty]
-        private GameTime added;
+        private readonly string Mark;
+
         [JsonProperty]
-        internal string Mark { get; set; }
+        internal string Key { get; }
         [JsonProperty]
-        internal string Key { get; set; }
+        internal MarkIcon Icon { get; }
         [JsonProperty]
-        internal MarkIcon Icon { get; set; }
-        [JsonProperty]
-        internal MarkColor Color { get; set; }
+        internal MarkColor Color { get; }
+
         [JsonProperty]
         internal int Count { get; set; }
-        internal DateTime Added
-        {
-            get => added.ToDateTime();
-            set => added = GameTime.FromDateTime(value);
-        }
+        [JsonProperty]
+        internal GameTime Added { get; set; }
 
         /// <summary>
         /// Base Constructor for an object representing a new legend mark.
@@ -127,7 +121,7 @@ namespace Chaos
         /// <param name="now">Time the mark was added.</param>
         /// <param name="icon">Icon displayed on the mark.</param>
         /// <param name="color">Text color of the mark.</param>
-        internal LegendMark(DateTime now, string mark, string key, MarkIcon icon, MarkColor color)
+        internal LegendMark(GameTime now, string mark, string key, MarkIcon icon, MarkColor color)
         {
             Added = now;
             Key = key;
@@ -143,7 +137,7 @@ namespace Chaos
         [JsonConstructor]
         internal LegendMark(GameTime added, string mark, string key, MarkIcon icon, MarkColor color, int count)
         {
-            this.added = added;
+            Added = added;
             Mark = mark;
             Key = key;
             Icon = icon;
@@ -154,6 +148,6 @@ namespace Chaos
         /// <summary>
         /// Returns string representation of a LegendMark ready for ingame use.
         /// </summary>
-        public override string ToString() => Count > 1 ? $@"{Mark} ({Count}) - {added.ToString()}" : $@"{Mark} - {added.ToString()}";
+        public override string ToString() => (Count > 1) ? $@"{Mark} ({Count}) - {Added.ToString()}" : $@"{Mark} - {Added.ToString()}";
     }
 }

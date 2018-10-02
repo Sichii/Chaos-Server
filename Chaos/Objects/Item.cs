@@ -20,19 +20,20 @@ namespace Chaos
     [JsonObject(MemberSerialization.OptIn)]
     internal sealed class Item : PanelObject
     {
-        internal byte Color { get; }
         internal bool Stackable { get; }
         internal uint MaxDurability { get; }
         internal byte Weight { get; }
-        [JsonProperty]
-        internal int Count;
-        [JsonProperty]
-        internal uint CurrentDurability;
         internal bool AccountBound { get; }
-        internal EquipmentSlot EquipmentSlot { get; }
         internal ItemSprite ItemSprite { get; }
         internal Gender Gender { get; }
+        internal EquipmentSlot EquipmentSlot { get; }
         internal ushort NextDialogId { get; }
+        [JsonProperty]
+        internal uint Count { get; set; }
+        [JsonProperty]
+        internal uint CurrentDurability { get; set; }
+        [JsonProperty]
+        internal byte Color { get; set; }
 
         /// <summary>
         /// Whether or not the item is usable, based on the global cooldown, and the item's cooldown.
@@ -42,7 +43,7 @@ namespace Chaos
         /// <summary>
         /// Constructor for basic unusable item. These items have only a default activation that will add them to a trade if used during an exchange.
         /// </summary>
-        internal Item(ItemSprite itemSprite, byte color, string name, bool stackable = false, int count = 1, byte weight = 1, bool accountBound = false)
+        internal Item(ItemSprite itemSprite, byte color, string name, bool stackable = false, uint count = 1, byte weight = 1, bool accountBound = false)
             : this(0, itemSprite, color, name, TimeSpan.Zero, EquipmentSlot.None, stackable, count, 0, 0, weight, Gender.Unisex, 0, Animation.None, TargetsType.None, false, BodyAnimation.None, 
                   0, Effect.None, accountBound) { }
 
@@ -64,7 +65,7 @@ namespace Chaos
         /// <summary>
         /// Master constructor for an object that exists within the inventory or equipment panel.
         /// </summary>
-        private Item(byte slot, ItemSprite itemSprite, byte color, string name, TimeSpan baseCooldown, EquipmentSlot equipmentSlot, bool stackable, int count, uint maxDurability, uint currentDurability, 
+        private Item(byte slot, ItemSprite itemSprite, byte color, string name, TimeSpan baseCooldown, EquipmentSlot equipmentSlot, bool stackable, uint count, uint maxDurability, uint currentDurability, 
             byte weight, Gender gender, ushort nextDialogId, Animation effectAnimation, TargetsType targetType, bool usersOnly, BodyAnimation bodyAnimation, int baseDamage, Effect effect, 
             bool accountBound)
             :base(slot, itemSprite.InventorySprite, name, baseCooldown, effectAnimation, targetType, usersOnly, bodyAnimation, baseDamage, effect)
@@ -86,9 +87,10 @@ namespace Chaos
         /// Json constructor for an item. Minimal information is serialized, as we retreive the item from the creation engine, and apply persistent information to it.
         /// </summary>
         [JsonConstructor]
-        private Item(byte slot, string name, TimeSpan elapsed, int count, uint currentDurability)
+        private Item(byte slot, string name, TimeSpan elapsed, byte color, uint count, uint currentDurability)
             :base(slot, name, elapsed)
         {
+            Color = color;
             Count = count;
             CurrentDurability = currentDurability;
         }
@@ -99,15 +101,16 @@ namespace Chaos
         /// <param name="point">Map point of the ground item to create.</param>
         /// <param name="map">Map object the ground item will be on.</param>
         /// <param name="count">Number of the item you'd like placed on the ground.</param>
-        internal GroundObject GroundItem(Point point, Map map, int count) => new GroundObject(ItemSprite.OffsetSprite, point, map,
+        internal GroundObject ToGroundItem(Location location, uint count) => new GroundObject(location, ItemSprite.OffsetSprite, count,
             new Item(0, ItemSprite, Color, Name, BaseCooldown, EquipmentSlot, Stackable, count, MaxDurability, CurrentDurability, Weight, Gender, NextDialogId, Animation, TargetType, 
                 UsersOnly, BodyAnimation, BaseDamage, Effect, AccountBound));
+
 
         /// <summary>
         /// Split a stackable item, update the count for the old item and return a new item object.
         /// </summary>
         /// <param name="count">Number you want to remove from the old stack and return.</param>
-        internal Item Split(int count)
+        internal Item Split(uint count)
         {
             if (Stackable && Count > count)
             {

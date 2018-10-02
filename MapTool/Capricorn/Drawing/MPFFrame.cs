@@ -8,49 +8,33 @@ namespace Capricorn.Drawing
 {
     public class MPFFrame
     {
-        private int left;
-        private int top;
-        private int width;
-        private int height;
-        private byte[] rawData;
-        private int xOffset;
-        private int yOffset;
+        public bool IsValid => RawData != null && RawData.Length >= 1 && Width >= 1 && Height >= 1 && Width * Height == RawData.Length;
 
-        public bool IsValid => rawData != null && rawData.Length >= 1 && (width >= 1 && height >= 1) && width * height == rawData.Length;
+        public int OffsetY { get; }
 
-        public int OffsetY => yOffset;
+        public int OffsetX { get; }
 
-        public int OffsetX => xOffset;
+        public byte[] RawData { get; }
 
-        public byte[] RawData => rawData;
+        public int Height { get; }
 
-        public int Height => height;
+        public int Width { get; }
 
-        public int Width => width;
+        public int Top { get; set; }
 
-        public int Top
-        {
-            get => top;
-            set => top = value;
-        }
-
-        public int Left
-        {
-            get => left;
-            set => left = value;
-        }
+        public int Left { get; set; }
 
         public MPFFrame(int left, int top, int width, int height, int xOffset, int yOffset, byte[] rawData)
         {
-            this.left = left;
-            this.top = top;
-            this.width = width;
-            this.height = height;
-            this.xOffset = xOffset;
-            this.yOffset = yOffset;
-            this.rawData = rawData;
+            Left = left;
+            Top = top;
+            Width = width;
+            Height = height;
+            OffsetX = xOffset;
+            this.OffsetY = yOffset;
+            RawData = rawData;
         }
 
-        public override string ToString() => "{X = " + left.ToString() + ", Y = " + top.ToString() + ", Width = " + width.ToString() + ", Height = " + height.ToString() + ", Offset = (" + xOffset.ToString() + ", " + yOffset.ToString() + ")}";
+        public override string ToString() => "{X = " + Left.ToString() + ", Y = " + Top.ToString() + ", Width = " + Width.ToString() + ", Height = " + Height.ToString() + ", Offset = (" + OffsetX.ToString() + ", " + OffsetY.ToString() + ")}";
     }
 }

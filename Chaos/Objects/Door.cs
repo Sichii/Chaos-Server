@@ -18,34 +18,20 @@ namespace Chaos
     /// </summary>
     public sealed class Door : MapObject
     {
+        internal new static readonly Type TypeRef = typeof(Door);
+
         internal bool RecentlyClicked => DateTime.UtcNow.Subtract(LastClick).TotalSeconds < 1.5;
         internal bool Closed { get; set; }
         public bool OpenRight { get; }
         internal DateTime LastClick { get; set; }
 
         /// <summary>
-        /// Optional constructor that takes a location.
-        /// </summary>
-        public Door(Location location, bool opened, bool openRight)
-            :this(location.MapId, location.Point, opened, openRight)
-        {
-        }
-
-        /// <summary>
-        /// Optional constructor that takes a point.
-        /// </summary>
-        public Door(ushort mapId, Point point, bool opened, bool openRight)
-            :this(mapId, point.X, point.Y, opened, openRight)
-        {
-        }
-
-        /// <summary>
         /// Master constructor for an object representing an in-game door.
         /// </summary>
-        public Door(ushort mapId, ushort x, ushort y, bool opened, bool openRight)
-            :base(mapId, x, y)
+        public Door(Location location, bool closed, bool openRight)
+            :base(string.Empty, location)
         {
-            Closed = opened;
+            Closed = closed;
             OpenRight = openRight;
             LastClick = DateTime.MinValue;
         }

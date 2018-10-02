@@ -10,6 +10,7 @@
 // ****************************************************************************
 
 using System;
+using System.Collections.Immutable;
 using Newtonsoft.Json;
 
 namespace Chaos
@@ -27,7 +28,6 @@ namespace Chaos
         internal int Hour => DateTime.Hour;
         internal int Minute => DateTime.Minute;
 
-
         /// <summary>
         /// Json & Master constructor for an object representing the serverside construct of time. Mimics DateTime, except at 24x speed, and starting from an origin(server launch date).
         /// </summary>
@@ -42,10 +42,10 @@ namespace Chaos
         /// <summary>
         /// Gets the proper suffix for a day, based on the number.
         /// </summary>
-        private string GetDaySuffix =>
-            Day % 10 == 1 && Day != 11 ? "st" :
-            Day % 10 == 2 && Day != 12 ? "nd" :
-            Day % 10 == 3 && Day != 13 ? "rd" : "th";
+        private string GetDaySuffix => (Day % 10 == 1 && Day != 11) ? "st" 
+            : (Day % 10 == 2 && Day != 12) ? "nd"
+            : (Day % 10 == 3 && Day != 13) ? "rd" 
+            : "th";
 
         /// <summary>
         /// Starting date of the server.
@@ -77,23 +77,11 @@ namespace Chaos
         /// <summary>
         /// Gets the appropriate level of light for the time of day.
         /// </summary>
-        internal LightLevel TimeOfDay
-        {
-            get
-            {
-                if (Hour >= 10 && Hour <= 14)
-                    return LightLevel.Lightest;
-                else if (Hour >= 8 && Hour <= 16)
-                    return LightLevel.Lighter;
-                else if (Hour >= 6 && Hour <= 18)
-                    return LightLevel.Light;
-                else if (Hour >= 4 && Hour <= 20)
-                    return LightLevel.Dark;
-                else if (Hour >= 2 && Hour <= 22)
-                    return LightLevel.Darker;
-                else
-                    return LightLevel.Darkest;
-            }
-        }
+        internal LightLevel TimeOfDay => (Hour >= 10 && Hour <= 14) ? LightLevel.Lightest
+            : (Hour >= 8 && Hour <= 16) ? LightLevel.Lighter
+            : (Hour >= 6 && Hour <= 18) ? LightLevel.Light
+            : (Hour >= 4 && Hour <= 20) ? LightLevel.Dark 
+            : (Hour >= 2 && Hour <= 22) ? LightLevel.Darker 
+            : LightLevel.Darkest;
     }
 }

@@ -17,11 +17,11 @@ namespace Chaos
     internal struct Post
     {
         [JsonProperty]
-        internal ushort PostId;
+        internal ushort PostId { get; }
         [JsonProperty]
-        internal string Subject;
+        internal string Subject { get; }
         [JsonProperty]
-        internal string Body;
+        internal string Body { get; }
 
         /// <summary>
         /// Master constructor for a structure representing a single post on a board.

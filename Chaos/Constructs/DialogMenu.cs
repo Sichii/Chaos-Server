@@ -16,12 +16,13 @@ namespace Chaos
 {
     internal sealed class DialogMenu : IEnumerable<DialogMenuItem>
     {
-        private List<DialogMenuItem> Options;
+        private readonly List<DialogMenuItem> Options;
+
+        internal int Count => Options.Count;
+        internal DialogMenuItem this[int index] => Options[index];
 
         public IEnumerator<DialogMenuItem> GetEnumerator() => Options.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal DialogMenuItem this[int index] => Options[index];
-        internal int Count => Options.Count;
 
         /// <summary>
         /// Base constructor for an enumerable object of DialogMenuItem. Represents the menu of a dialog.

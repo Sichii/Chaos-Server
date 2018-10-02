@@ -13,33 +13,21 @@ namespace Capricorn.Drawing
 {
     public class Palette256
     {
-        private Color[] colors = new Color[256];
-
         public Color this[int index]
         {
-            get => colors[index];
-            set => colors[index] = value;
+            get => Colors[index];
+            set => Colors[index] = value;
         }
 
-        public Color[] Colors => colors;
+        public Color[] Colors { get; } = new Color[256];
 
         public static Palette256 FromFile(string file) => Palette256.LoadPalette(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
 
         public static Palette256 FromRawData(byte[] data) => Palette256.LoadPalette(new MemoryStream(data));
 
-        public static Palette256 FromArchive(string file, DATArchive archive)
-        {
-            if (!archive.Contains(file))
-                return null;
-            return Palette256.FromRawData(archive.ExtractFile(file));
-        }
+        public static Palette256 FromArchive(string file, DATArchive archive) => !archive.Contains(file) ? null : Palette256.FromRawData(archive.ExtractFile(file));
 
-        public static Palette256 FromArchive(string file, bool ignoreCase, DATArchive archive)
-        {
-            if (!archive.Contains(file, ignoreCase))
-                return null;
-            return Palette256.FromRawData(archive.ExtractFile(file, ignoreCase));
-        }
+        public static Palette256 FromArchive(string file, bool ignoreCase, DATArchive archive) => !archive.Contains(file, ignoreCase) ? null : Palette256.FromRawData(archive.ExtractFile(file, ignoreCase));
 
         private static Palette256 LoadPalette(Stream stream)
         {
@@ -47,7 +35,7 @@ namespace Capricorn.Drawing
             var binaryReader = new BinaryReader(stream);
             var palette256 = new Palette256();
             for (int index = 0; index < 256; ++index)
-                palette256.colors[index] = Color.FromArgb(binaryReader.ReadByte(), binaryReader.ReadByte(), binaryReader.ReadByte());
+                palette256.Colors[index] = Color.FromArgb(binaryReader.ReadByte(), binaryReader.ReadByte(), binaryReader.ReadByte());
             return palette256;
         }
 

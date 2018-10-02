@@ -20,19 +20,19 @@ namespace Chaos
     {
         private readonly object Sync = new object();
         [JsonIgnore]
-        private List<Post> Messages;
+        private readonly List<Post> Messages;
+
+        internal int Count => Messages.Count;
+        internal Post this[byte postNum] => (postNum < Count) ? Messages[postNum] : default;
 
         public IEnumerator<Post> GetEnumerator()
         {
-            IEnumerator<Post> safeEnum = Messages.GetEnumerator();
-
             lock (Sync)
-                while (safeEnum.MoveNext())
-                    yield return safeEnum.Current;
+                using (IEnumerator<Post> safeEnum = Messages.GetEnumerator())
+                    while (safeEnum.MoveNext())
+                        yield return safeEnum.Current;
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal Post this[byte postNum] => postNum < Count ? Messages[postNum] : default;
-        internal int Count => Messages.Count;
 
         /// <summary>
         /// Json & Master constructor for an enumerable object of Post. Represents a board, or list of posts.

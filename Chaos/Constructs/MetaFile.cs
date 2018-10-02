@@ -49,14 +49,14 @@ namespace Chaos
                 metaFile = new MetaFile(name, data.ToArray());
                 file.Position = 0;
 
-                int countX = reader.ReadByte() << 8 | reader.ReadByte();
+                int countX = (reader.ReadByte() << 8) | reader.ReadByte();
                 for (int x = 0; x < countX; ++x)
                 {
                     var metaFileNode = new MetafileNode(reader.ReadString());
-                    int countY = reader.ReadByte() << 8 | reader.ReadByte();
+                    int countY = (reader.ReadByte() << 8) | reader.ReadByte();
                     for (int y = 0; y < countY; ++y)
                     {
-                        int count = reader.ReadByte() << 8 | reader.ReadByte();
+                        int count = (reader.ReadByte() << 8) | reader.ReadByte();
                         byte[] bytes = reader.ReadBytes(count);
                         metaFileNode.Properties.Add(Encoding.GetEncoding(949).GetString(bytes));
                     }

@@ -11,16 +11,8 @@ namespace Capricorn.Drawing
 {
     public class MPFImage
     {
-        private int expectedFrames;
-        private int width;
-        private int height;
-        private MPFFrame[] frames;
-        private uint expectedDataSize;
         public byte walkStart;
         public byte walkLength;
-        private uint ffUnknown;
-        private bool isNewFormat;
-        private bool isFFFormat;
         public byte attack1Start;
         public byte attack1Length;
         public byte idleStart;
@@ -34,45 +26,35 @@ namespace Capricorn.Drawing
 
         public MPFFrame this[int index]
         {
-            get => frames[index];
-            set => frames[index] = value;
+            get => Frames[index];
+            set => Frames[index] = value;
         }
 
-        public bool IsFFFormat => isFFFormat;
+        public bool IsFFFormat { get; private set; }
 
-        public bool IsNewFormat => isNewFormat;
+        public bool IsNewFormat { get; private set; }
 
-        public uint FFUnknown => ffUnknown;
+        public uint FFUnknown { get; private set; }
 
-        public uint ExpectedDataSize => expectedDataSize;
+        public uint ExpectedDataSize { get; private set; }
 
-        public MPFFrame[] Frames => frames;
+        public MPFFrame[] Frames { get; private set; }
 
-        public int Height => height;
+        public int Height { get; private set; }
 
-        public int Width => width;
+        public int Width { get; private set; }
 
-        public int ExpectedFrames => expectedFrames;
+        public int ExpectedFrames { get; private set; }
 
-        public override string ToString() => string.Format("{{Frames = {0}, Width = {1}, Height = {2}, WalkStart = {3}, WalkLength = {4}, Attack1Start = {5}, Attack1Length = {6}, IdleStart = {7}, IdleLength = {8}}}", expectedFrames, width, height, walkStart, walkLength, attack1Start, attack1Length, idleStart, idleLength);
+        public override string ToString() => string.Format("{{Frames = {0}, Width = {1}, Height = {2}, WalkStart = {3}, WalkLength = {4}, Attack1Start = {5}, Attack1Length = {6}, IdleStart = {7}, IdleLength = {8}}}", ExpectedFrames, Width, Height, walkStart, walkLength, attack1Start, attack1Length, idleStart, idleLength);
 
         public static MPFImage FromFile(string file) => MPFImage.LoadMPF(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
 
         public static MPFImage FromRawData(byte[] data) => MPFImage.LoadMPF(new MemoryStream(data));
 
-        public static MPFImage FromArchive(string file, DATArchive archive)
-        {
-            if (!archive.Contains(file))
-                return null;
-            return MPFImage.FromRawData(archive.ExtractFile(file));
-        }
+        public static MPFImage FromArchive(string file, DATArchive archive) => !archive.Contains(file) ? null : MPFImage.FromRawData(archive.ExtractFile(file));
 
-        public static MPFImage FromArchive(string file, bool ignoreCase, DATArchive archive)
-        {
-            if (!archive.Contains(file, ignoreCase))
-                return null;
-            return MPFImage.FromRawData(archive.ExtractFile(file, ignoreCase));
-        }
+        public static MPFImage FromArchive(string file, bool ignoreCase, DATArchive archive) => !archive.Contains(file, ignoreCase) ? null : MPFImage.FromRawData(archive.ExtractFile(file, ignoreCase));
 
         private static MPFImage LoadMPF(Stream stream)
         {
@@ -81,20 +63,20 @@ namespace Capricorn.Drawing
             var mpfImage = new MPFImage();
             if ((int)binaryReader.ReadUInt32() == -1)
             {
-                mpfImage.isFFFormat = true;
-                mpfImage.ffUnknown = binaryReader.ReadUInt32();
+                mpfImage.IsFFFormat = true;
+                mpfImage.FFUnknown = binaryReader.ReadUInt32();
             }
             else
                 binaryReader.BaseStream.Seek(-4L, SeekOrigin.Current);
-            mpfImage.expectedFrames = binaryReader.ReadByte();
-            mpfImage.frames = new MPFFrame[mpfImage.expectedFrames];
-            mpfImage.width = binaryReader.ReadUInt16();
-            mpfImage.height = binaryReader.ReadUInt16();
-            mpfImage.expectedDataSize = binaryReader.ReadUInt32();
+            mpfImage.ExpectedFrames = binaryReader.ReadByte();
+            mpfImage.Frames = new MPFFrame[mpfImage.ExpectedFrames];
+            mpfImage.Width = binaryReader.ReadUInt16();
+            mpfImage.Height = binaryReader.ReadUInt16();
+            mpfImage.ExpectedDataSize = binaryReader.ReadUInt32();
             mpfImage.walkStart = binaryReader.ReadByte();
             mpfImage.walkLength = binaryReader.ReadByte();
-            mpfImage.isNewFormat = binaryReader.ReadUInt16() == ushort.MaxValue;
-            if (mpfImage.isNewFormat)
+            mpfImage.IsNewFormat = binaryReader.ReadUInt16() == ushort.MaxValue;
+            if (mpfImage.IsNewFormat)
             {
                 mpfImage.idleStart = binaryReader.ReadByte();
                 mpfImage.idleLength = binaryReader.ReadByte();
@@ -115,8 +97,8 @@ namespace Capricorn.Drawing
                 mpfImage.idleLength = binaryReader.ReadByte();
                 mpfImage.idleSpeed = binaryReader.ReadUInt16();
             }
-            long num1 = binaryReader.BaseStream.Length - mpfImage.expectedDataSize;
-            for (int index = 0; index < mpfImage.expectedFrames; ++index)
+            long num1 = binaryReader.BaseStream.Length - mpfImage.ExpectedDataSize;
+            for (int index = 0; index < mpfImage.ExpectedFrames; ++index)
             {
                 int left = binaryReader.ReadUInt16();
                 int top = binaryReader.ReadUInt16();
@@ -126,13 +108,13 @@ namespace Capricorn.Drawing
                 int height = num3 - top;
                 int num4 = binaryReader.ReadUInt16();
                 int num5 = binaryReader.ReadUInt16();
-                int xOffset = (num4 % 256 << 8) + num4 / 256;
-                int yOffset = (num5 % 256 << 8) + num5 / 256;
+                int xOffset = ((num4 % 256) << 8) + (num4 / 256);
+                int yOffset = ((num5 % 256) << 8) + (num5 / 256);
                 long num6 = binaryReader.ReadUInt32();
                 if (left == ushort.MaxValue && num2 == ushort.MaxValue)
                 {
                     mpfImage.palette = string.Format("mns{0:D3}.pal", num6);
-                    --mpfImage.expectedFrames;
+                    --mpfImage.ExpectedFrames;
                 }
                 else
                     mpfImage.palette = "mns000.pal";
@@ -144,7 +126,7 @@ namespace Capricorn.Drawing
                     rawData = binaryReader.ReadBytes(height * width);
                     binaryReader.BaseStream.Seek(position, SeekOrigin.Begin);
                 }
-                mpfImage.frames[index] = new MPFFrame(left, top, width, height, xOffset, yOffset, rawData);
+                mpfImage.Frames[index] = new MPFFrame(left, top, width, height, xOffset, yOffset, rawData);
             }
             binaryReader.Close();
             return mpfImage;

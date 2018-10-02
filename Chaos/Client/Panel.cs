@@ -10,10 +10,12 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Chaos
 {
@@ -22,63 +24,96 @@ namespace Chaos
     {
         private readonly object Sync = new object();
         [JsonProperty]
-        private Dictionary<byte, T> Objects;
-        [JsonProperty]
-        private readonly byte[] Invalid;
-        [JsonProperty]
-        private readonly byte length;
 
-        internal byte Length => (byte)(length - 1);
+        private readonly PanelType Type;
+        [JsonProperty]
+        private readonly T[] Objects;
+        private readonly byte[] Invalid;
+        private readonly byte Length;
+
         internal T this[EquipmentSlot slot] => this[(byte)slot];
-        internal T this[string name] => Objects.Values.FirstOrDefault(obj => obj.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+        internal T this[byte slot] => TryGet(slot, out T outObj) ? outObj : null;
+
+        /// <summary>
+        /// Synchronously checks of the panel is full.
+        /// </summary>
+        internal int AvailableSlots => this.Count();
+
         public IEnumerator<T> GetEnumerator()
         {
-            IEnumerator<T> safeEnum = Objects.Values.GetEnumerator();
-
             lock (Sync)
-                while (safeEnum.MoveNext())
-                    yield return safeEnum.Current;
+                using (IEnumerator<T> safeEnum = Objects.GetEnumerable().GetEnumerator())
+                    while (safeEnum.MoveNext())
+                        if (safeEnum.Current != null && Valid(safeEnum.Current.Slot))
+                            yield return safeEnum.Current;
         }
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal T this[byte slot]
-        {
-            get => Valid(slot) ? Objects[slot] : null;
-            private set
-            {
-                if (value.Slot == slot && Valid(slot))
-                    Objects[slot] = value;
-            }
-        }
 
         /// <summary>
         /// Base constructor for an object representing an in-game panel. Skill/Spell/Inventory/Equipment
         /// </summary>
         /// <param name="length">The number of objects that can fit in the panel.</param>
-        internal Panel(byte length)
+        internal Panel(PanelType type)
         {
-            this.length = length;
-            Objects = new Dictionary<byte, T>();
-            for (byte i = 0; i < length; i++)
-                Objects[i] = null;
+            Type = type;
 
-            if (length == 90) //skillbook and spellbook
-                Invalid = new byte[] { 36, 72 };
-            else if (length == 61) //inventory
-                Invalid = new byte[] { };
-            else if (length == 20) //equipment
-                Invalid = new byte[] { };
+            switch(type)
+            {
+                case PanelType.SkillBook:
+                case PanelType.SpellBook:
+                    Length = 90;
+                    Invalid = new byte[] { 36, 72, 90 };
+                    break;
+                case PanelType.Inventory:
+                    Length = 60;
+                    Invalid = new byte[] { 60 };
+                    break;
+                case PanelType.Equipment:
+                    Length = 18;
+                    Invalid = new byte[] { };
+                    break;
+            }
+
+
+            Objects = new T[Length + 1];
+
+            for (int i = 0; i <= Length; i++) //create slots +1 (so we can index without 0-based)
+                Objects[i] = null;
         }
 
         /// <summary>
         /// Json & Master constructor for an object representing an in-game panel.
         /// </summary>
         [JsonConstructor]
-        internal Panel(byte length, Dictionary<byte, T> objects, byte[] invalid)
+        private Panel(PanelType type, T[] objects)
         {
-            this.length = length;
+            Type = type;
+
+            switch (type)
+            {
+                case PanelType.SkillBook:
+                case PanelType.SpellBook:
+                    Length = 90;
+                    Invalid = new byte[] { 36, 72, 90 };
+                    break;
+                case PanelType.Inventory:
+                    Length = 60;
+                    Invalid = new byte[] { 60 };
+                    break;
+                case PanelType.Equipment:
+                    Length = 18;
+                    Invalid = new byte[] { };
+                    break;
+            }
+
             Objects = objects;
-            Invalid = invalid;
         }
+
+        /// <summary>
+        /// Checks whether the given slot is valid.
+        /// </summary>
+        /// <param name="slot"></param>
+        private bool Valid(byte slot) => slot > 0 && !Invalid.Contains(slot) && slot <= Length;
 
         /// <summary>
         /// Synchronously checks if the panel contains an object.
@@ -87,26 +122,8 @@ namespace Chaos
         internal bool Contains(T obj)
         {
             lock (Sync)
-                return Objects.Values.Contains(obj);
+                return Objects[obj.Slot].Equals(obj);
         }
-
-        /// <summary>
-        /// Synchronously checks of the panel is full.
-        /// </summary>
-        internal bool IsFull
-        {
-            get
-            {
-                lock (Sync)
-                    return !Objects.Any(kvp => Valid(kvp.Key) && kvp.Value == null);
-            }
-        }
-
-        /// <summary>
-        /// A list of valid slots within the given panel.
-        /// </summary>
-        /// <param name="slot">Slot to check.</param>
-        private bool Valid(byte slot) => slot > 0 && !Invalid.Contains(slot) && slot < Length;
 
         /// <summary>
         /// Attempts to synchronously add a stackable item.
@@ -116,13 +133,15 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (item is Item tItem)
+                if (Type == PanelType.Inventory && item is Item tItem && tItem.Stackable)
                 {
-                    Item existingItem = Objects.Values.OfType<Item>().FirstOrDefault(obj => obj.Sprite == tItem.ItemSprite.InventorySprite && obj.Name.Equals(tItem.Name) && obj.Stackable == true);
-                    if (tItem.Stackable && existingItem?.Stackable == true)
+                    //get an existing item
+                    //if it exists, increase the count
+                    if (Objects.FirstOrDefault(obj => tItem.Equals(obj)) is Item existingItem)
                     {
-                        tItem.Count += existingItem.Count;
                         tItem.Slot = existingItem.Slot;
+                        tItem.Count += existingItem.Count;
+                        tItem.LastUse = existingItem.LastUse;
                         Objects[existingItem.Slot] = item;
                         return true;
                     }
@@ -136,45 +155,27 @@ namespace Chaos
         /// </summary>
         /// <param name="item">The item to try equiping.</param>
         /// <param name="outItem">The object you were previously wearing in that slot.</param>
-        /// <returns></returns>
         internal bool TryEquip(T item, out T outItem)
         {
             lock (Sync)
             {
-                if (item is Item tItem)
-                {
-                    outItem = null;
-                    EquipmentSlot slot = tItem.EquipmentSlot;
-
-                    if (slot == EquipmentSlot.None || !Valid((byte)slot))
-                    {
-                        outItem = null;
-                        return false;
-                    }
-
-                    if (!(Objects[(byte)slot] != null && !TryUnequip(slot, out outItem)))
-                    {
-                        item.Slot = (byte)slot;
-                        TryAdd(item);
-                    }
-
-                    return Objects[(byte)slot] == item;
-                }
                 outItem = null;
+
+                if (Type == PanelType.Equipment && item is Item tItem)
+                {
+                    //get the items desired slot
+                    byte slot = (byte)tItem.EquipmentSlot;
+
+                    //the only failure path is if the slot is occupied and fails to get/remove, otherwise success
+                    if (!(Objects[slot] != null && !TryGetRemove((byte)tItem.EquipmentSlot, out outItem)))
+                    {
+                        tItem.Slot = slot;
+                        return TryAdd(item);
+                    }
+                }
+
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Attempts to synchronously unequip an item and return it.
-        /// </summary>
-        /// <param name="slot">The equipment slot to remove from.</param>
-        /// <param name="item">The item returns by unequipping it.</param>
-        /// <returns></returns>
-        internal bool TryUnequip(EquipmentSlot slot, out T item)
-        {
-            lock (Sync)
-                return TryGetRemove((byte)slot, out item);
         }
 
         /// <summary>
@@ -185,12 +186,12 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (TryAddStack(obj))
-                    return Objects[obj.Slot] == obj;
+                //if adding as a stack fails
+                if (!TryAddStack(obj)) //try adding normally
+                    if(Valid(obj.Slot) && Objects[obj.Slot] == null)
+                        Objects[obj.Slot] = obj;
 
-                if (Objects[obj.Slot] == null)
-                    this[obj.Slot] = obj;
-
+                //return true if successfully placed
                 return Objects[obj.Slot] == obj;
             }
         }
@@ -203,20 +204,23 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (TryAddStack(obj))
-                    return Objects[obj.Slot] == obj;
+                byte slot = obj.Slot;
+                //get the first valid & empty slot
+                for (byte i = 1; i <= Length; i++)
+                    if (Objects[i] == null && Valid(i))
+                    {
+                        obj.Slot = i;
+                        break;
+                    }
 
-                foreach (byte key in Objects.Keys)
-                {
-                    if (!Valid(key))
-                        continue;
+                //try to add it as a stackable, then normally
+                if (TryAdd(obj))
+                    return true;
+                else
+                    obj.Slot = slot;
 
-                    obj.Slot = key;
-                    if (TryAdd(obj))
-                        return true;
-                }
-
-                return Objects[obj.Slot] == obj;
+                return false;
+                
             }
         }
 
@@ -236,22 +240,6 @@ namespace Chaos
         }
 
         /// <summary>
-        /// Attempts to synchronously remove an object and return it.
-        /// </summary>
-        /// <param name="slot">Slot to remove.</param>
-        /// <param name="obj">Return object if successful.</param>
-        internal bool TryGetRemove(byte slot, out T obj)
-        {
-            lock (Sync)
-            {
-                if (TryGet(slot, out obj) && TryRemove(slot))
-                    return true;
-
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Attempts to synchronously return a reference to an existing object.
         /// </summary>
         /// <param name="slot">Slot to retreive from.</param>
@@ -260,9 +248,26 @@ namespace Chaos
         {
             lock (Sync)
             {
+                if (!Valid(slot))
+                {
+                    obj = null;
+                    return false;
+                }
+
                 obj = Objects[slot];
-                return Valid(slot) && obj != null;
+                return Valid(slot);
             }
+        }
+
+        /// <summary>
+        /// Attempts to synchronously remove an object and return it.
+        /// </summary>
+        /// <param name="slot">Slot to remove.</param>
+        /// <param name="obj">Return object if successful.</param>
+        internal bool TryGetRemove(byte slot, out T obj)
+        {
+            lock (Sync)
+                return TryGet(slot, out obj) && TryRemove(slot);
         }
 
         /// <summary>
@@ -273,27 +278,24 @@ namespace Chaos
         /// <param name="slot2">Second slot to swap.</param>
         internal bool TrySwap(byte slot1, byte slot2)
         {
+            //if either slot is invalid, false
+            if (!Valid(slot1) || !Valid(slot2))
+                return false;
+
             lock (Sync)
             {
-                if (TryGetRemove(slot1, out T one))
-                {
-                    TryGetRemove(slot2, out T two);
-                    if (one != null)
-                        one.Slot = slot2;
-                    if (two != null)
-                        two.Slot = slot1;
+                T obj1 = Objects[slot1];
+                T obj2 = Objects[slot2];
 
-                    if (one != null)
-                        Objects[slot2] = one;
-                    if (two != null)
-                        Objects[slot1] = two;
+                if (obj1 != null)
+                    obj1.Slot = slot2;
+                if (obj2 != null)
+                    obj2.Slot = slot1;
 
-                    return true;
-                } //puts the first object back if it succeeded on the first operation, but failed on the second
-                else if (one != null)
-                    TryAdd(one);
+                Objects[slot1] = obj2;
+                Objects[slot2] = obj1;
 
-                return false;
+                return true;
             }
         }
     }
