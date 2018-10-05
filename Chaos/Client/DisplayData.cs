@@ -57,13 +57,11 @@ namespace Chaos
         internal ushort AccessorySprite3 => User.Equipment[EquipmentSlot.Accessory3]?.ItemSprite.DisplaySprite ?? 0;
 
         //Other
-        internal LanternSize LanternSize => LanternSize.None;
-        [JsonProperty]
+        internal LanternSize LanternSize { get; set; }
         internal NameTagStyle NameTagStyle { get; set; }
-        [JsonProperty]
-        internal string GroupName { get; set; }
-        internal RestPosition RestPosition => RestPosition.None;
-        internal bool IsHidden => false;
+        internal string GroupBoxText => User.Group?.Box.Text ?? string.Empty;
+        internal RestPosition RestPosition { get; set; }
+        internal bool IsHidden { get; set; }
 
         /// <summary>
         /// Base constructor for an object containing all data used to display a new user.
@@ -81,7 +79,6 @@ namespace Chaos
             BodyColor = BodyColor.White;
             FaceSprite = 1;
             NameTagStyle = NameTagStyle.NeutralHover;
-            GroupName = string.Empty;
         }
 
         /// <summary>
@@ -96,7 +93,6 @@ namespace Chaos
             BodyColor = bodyColor;
             FaceSprite = faceSprite;
             NameTagStyle = nameTagStyle;
-            GroupName = groupName;
         }
     }
 }

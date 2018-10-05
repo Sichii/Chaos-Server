@@ -128,20 +128,20 @@ namespace Chaos
                     creatures.Add(client.User);
                     break;
                 case TargetsType.Front:
-                    if (client.User.Map.TryGet(client.User.Point.Offset(client.User.Direction), out Creature creature))
+                    if (client.User.Map.TryGetObject(obj => obj.Point == client.User.Point.Offset(client.User.Direction), out Creature creature))
                         creatures.Add(creature);
                     break;
                 case TargetsType.Surround:
-                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User, false, 1).OfType<Creature>());
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User.Point, false, 1).OfType<Creature>());
                     break;
                 case TargetsType.Cleave:
-                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User, false, 2).OfType<Creature>().Where((Func<Creature, bool>)(c =>
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User.Point, false, 2).OfType<Creature>().Where((Func<Creature, bool>)(c =>
                         (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != client.User.Direction.Reverse()) ||
                         GetInterCardinalPoints(client.User.Point, 1, client.User.Direction).Contains(c.Point))));
                     break;
                 case TargetsType.StraightProjectile:
                     List<Point> line = GetCardinalPoints(client.User.Point, 13, client.User.Direction);
-                    creature = client.User.Map.ObjectsVisibleFrom(client.User).OfType<Creature>().Where(c => line.Contains(c.Point)).Aggregate((c1, c2) => c1.Point.Distance(client.User.Point) < c2.Point.Distance(client.User.Point) ? c1 : c2);
+                    creature = client.User.Map.ObjectsVisibleFrom(client.User.Point).OfType<Creature>().Where(c => line.Contains(c.Point)).Aggregate((c1, c2) => c1.Point.Distance(client.User.Point) < c2.Point.Distance(client.User.Point) ? c1 : c2);
 
                     if (creature != null)
                         creatures.Add(creature);
@@ -201,7 +201,7 @@ namespace Chaos
                     List<Point> line = GetCardinalPoints(client.User.Point, 13, client.User.Direction);
                     Creature creature = null;
 
-                    foreach (Creature c in client.User.Map.ObjectsVisibleFrom(client.User))
+                    foreach (Creature c in client.User.Map.ObjectsVisibleFrom(client.User.Point))
                     {
                         if (line.Contains(c.Point))
                         {
