@@ -80,14 +80,14 @@ namespace Chaos
         {
             Direction direction = Direction.Invalid;
             int degree = 0;
-            if (Y < point.Y && point.Y - Y > degree)
+            if (Y < point.Y)
             {
                 degree = point.Y - Y;
                 direction = Direction.North;
             }
             if (X > point.X && X - point.X > degree)
             {
-                degree = point.X - X;
+                degree = X - point.X;
                 direction = Direction.East;
             }
             if (Y > point.Y && Y - point.Y > degree)

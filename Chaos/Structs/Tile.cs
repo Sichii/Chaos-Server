@@ -13,10 +13,11 @@ namespace Chaos
 {
     internal struct Tile
     {
-        internal static byte[] SOTP => Properties.Resources.sotp;
         internal ushort Background { get; }
         internal ushort LeftForeground { get; }
         internal ushort RightForeground { get; }
+
+        internal static byte[] SOTP => Properties.Resources.sotp;
         public bool IsWall => (LeftForeground > 0 && (SOTP[LeftForeground - 1] & 15) == 15) || (RightForeground > 0 && (SOTP[RightForeground - 1] & 15) == 15);
 
         /// <summary>

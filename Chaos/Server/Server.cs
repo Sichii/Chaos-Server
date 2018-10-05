@@ -29,6 +29,7 @@ namespace Chaos
         private static readonly object SyncWrite = new object();
         private readonly object Sync = new object();
         private readonly Dictionary<Socket, Client> Clients;
+        private readonly Task OutboundController;
 
         internal static int NextID = 1;
         internal static bool Running { get; private set; }
@@ -57,6 +58,8 @@ namespace Chaos
                     return Clients.Values.Where(client => client.ServerType == ServerType.World && client.User != null).ToList();
             }
         }
+
+        internal bool doWalking = false;
 
         internal Server(IPAddress ip)
         {
@@ -123,7 +126,7 @@ namespace Chaos
             WorldSocket.Listen(25);
             WorldSocket.BeginAccept(new AsyncCallback(EndAccept), WorldSocket);
 
-            Task.Run(FlushSendQueueAsync);
+            OutboundController = FlushSendQueueAsync(); //Task.Run(FlushSendQueueAsync);
             WriteLog($"Server is ready on {ServerEndPoint.Address}");
         }
 
@@ -136,7 +139,7 @@ namespace Chaos
             WorldSocket.Dispose();
         }
 
-        internal async void FlushSendQueueAsync()
+        internal async Task FlushSendQueueAsync()
         {
             var rate = new RateController(100);
 

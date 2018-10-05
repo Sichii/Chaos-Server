@@ -19,7 +19,7 @@ namespace Chaos
     /// <summary>
     /// Represents a transfer of connection, and change of encryption for a client.
     /// </summary>
-    internal class Redirect
+    internal sealed class Redirect
     {
         internal int Id { get; }
         internal IPEndPoint EndPoint { get; }
