@@ -73,6 +73,11 @@ namespace Chaos
             IsLoopback = IpAddress.Equals(IPAddress.Loopback);
         }
 
+        ~Client()
+        {
+            Disconnect();
+        }
+
         /// <summary>
         /// Adds the client to the client list, then begins receiving data.
         /// </summary>
@@ -88,11 +93,11 @@ namespace Chaos
                 if (ServerType != ServerType.World)
                     Enqueue(ServerPackets.AcceptConnection());
 
-                Server.WriteLog($@"Connection accepted", this);
+                Server.WriteLog("Connection accepted", this);
             }
             else
             {
-                Server.WriteLog($@"Connection failure", this);
+                Server.WriteLog("Connection failure", this);
             }
         }
 
@@ -115,6 +120,8 @@ namespace Chaos
                         catch (Exception e) { Server.WriteLog(e.ToString(), this); }
                     ClientSocket.Disconnect(false);
                 }
+
+                Server.WriteLog("Connection terminated.", this);
             }
         }
 
@@ -200,19 +207,22 @@ namespace Chaos
                                     }
                                 }
                                 else
-                                    Server.WriteLog($@"{Environment.NewLine}INVALID PACKET[{clientPacket.OpCode}]: {ServerType} => {clientPacket}");
+                                    Server.WriteLog($@"{Environment.NewLine}INVALID PACKET[{clientPacket.OpCode}]: {ServerType} => {clientPacket}{Environment.NewLine}");
                             }
                         }
                         else
                             break;
                     }
-                    if (Connected) //begin checking for received info again
-                        ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
                 }
             }
             catch(Exception e)
             {
                 Server.WriteLog($@"{Environment.NewLine}ENDRECEIVE EXCEPTION: {e.ToString()}{Environment.NewLine}");
+            }
+            finally
+            {
+                if (Connected) //begin checking for received info again
+                    ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
             }
         }
 
@@ -223,7 +233,7 @@ namespace Chaos
         private void EndSend(IAsyncResult ar) => ((Socket)ar.AsyncState).EndSend(ar);
 
         /// <summary>
-        /// Queues a packet up to be sent to the client.
+        /// Queues multiple packets to be sent to the client.
         /// </summary>
         /// <param name="packets">Packet(s) to be sent.</param>
         internal void Enqueue(params ServerPacket[] packets)
@@ -237,7 +247,7 @@ namespace Chaos
         /// Begins an asynchronous operation to send a packet to the client.
         /// </summary>
         /// <param name="packet">The packet to send.</param>
-        internal void Send(ServerPacket packet)
+        private void Send(ServerPacket packet)
         {
             byte[] data = packet.ToArray();
             try { ClientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(EndSend), ClientSocket); }
@@ -336,10 +346,5 @@ namespace Chaos
         /// Refreshes the client, resending all on-screen information.
         /// </summary>
         internal void Refresh(bool byPassTimer = false) => User.Map.Refresh(this, byPassTimer);
-
-        ~Client()
-        {
-            Disconnect();
-        }
     }
 }

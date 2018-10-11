@@ -59,28 +59,20 @@ namespace Chaos
                 }
         }
 
-        internal Pathnode GetOptimalNode()
+        private Pathnode GetOptimalNode()
         {
-            //get the first node in the list
+            //the best node of the bunch, start with the first.
             LinkedListNode<Pathnode> optimalNode = Opened.First;
-            LinkedListNode<Pathnode> nextNode;
 
             //search all open nodes for the lowest aggregate
-            for (int i = 0; i < Opened.Count; i++)
-            {
-                nextNode = optimalNode.Next;
+            for (LinkedListNode<Pathnode> currentNode = Opened.First; currentNode != null; currentNode = currentNode.Next)
+                if (currentNode.Value.Aggregate < optimalNode.Value.Aggregate)
+                    optimalNode = currentNode;
 
-                if (nextNode.Value.Aggregate < optimalNode.Value.Aggregate)
-                    optimalNode = nextNode;
-
-                nextNode = nextNode.Next;
-            }
-
-            //return the pathnode with the lowest aggregate
             return optimalNode.Value;
         }
 
-        internal void OpenNode(Pathnode node, Point sourcePoint, Point targetPoint)
+        private void OpenNode(Pathnode node, Point sourcePoint, Point targetPoint)
         {
             //sets a node to open, add it to the opened list, and sets the aggregate
             node.Open = true;
@@ -88,7 +80,7 @@ namespace Chaos
             Opened.AddFirst(node);
         }
 
-        internal void CloseNode(Pathnode node)
+        private void CloseNode(Pathnode node)
         {
             //closes a node, removes it from the opened list
             node.Open = false;
@@ -125,19 +117,16 @@ namespace Chaos
             //while the next optimal node is not the target node
             while ((current = GetOptimalNode()) != target)
             {
-                //if there is no optimal node
+                //if there is no optimal node (we are likely walled in or something)
                 if (current == default)
                 {
                     current = Pathnodes[sourcePoint.X, sourcePoint.Y];
-                    int optimalDirection = (int)targetPoint.Relation(current.Point);
+                    Direction optimalDirection2 = targetPoint.Relation(current.Point);
 
-                    //push a point in the direction of the target, or any available walkable point
-                    for (int i = 0; i < 4; i++)
+                    //for each direction, starting with the best direction, push the first walkable point.
+                    foreach(Direction direction in optimalDirection2.StartEnumerable())
                     {
-                        if (optimalDirection > 3)
-                            optimalDirection -= 3;
-
-                        Pathnode neighbor = current.Neighbors[optimalDirection];
+                        Pathnode neighbor = current.Neighbors[(int)direction];
 
                         if(!neighbor.IsWall && !neighbor.HasCreature)
                         {
@@ -150,23 +139,18 @@ namespace Chaos
                     return path;
                 }
 
-                //places neighboring nodes onto the opened list in order of worst node first, best node last. Best node will be at the top of the list.
-                //best nodes will get closed first, so finding the node to remove will take less time.
-                int worstDirection = (int)targetPoint.Relation(current.Point) + 1;
-                for (int i = 0; i < 4; i++)
-                {
-                    if (worstDirection > 3)
-                        worstDirection -= 3;
+                Direction optimalDirection = targetPoint.Relation(current.Point);
 
-                    Pathnode neighbor = current.Neighbors[worstDirection];
+                //for each direction, the best direction being last, check nodes viability and place them in the opened list. Best node will be placed at the beginning of the list to cut down iterations.
+                foreach(Direction direction in optimalDirection.StartEnumerable().Reverse())
+                {
+                    Pathnode neighbor = current.Neighbors[(int)optimalDirection];
 
                     if (neighbor != default && !neighbor.IsWall && !neighbor.HasCreature && !neighbor.Open && !neighbor.Closed)
                     {
                         OpenNode(neighbor, sourcePoint, targetPoint);
                         neighbor.Parent = current;
                     }
-
-                    worstDirection++;
                 }
 
                 //closes the current node, all of it's neighbors have been searched

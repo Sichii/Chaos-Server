@@ -44,7 +44,7 @@ namespace Chaos
         /// <summary>
         /// Master constructor for an object that exists within the in-game panels.
         /// </summary>
-        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan baseCooldown, Animation effectAnimation , TargetsType targetType = TargetsType.None, bool usersOnly = false, 
+        internal PanelObject(byte slot, ushort sprite, string name, TimeSpan baseCooldown, Animation effectAnimation, TargetsType targetType = TargetsType.None, bool usersOnly = false,
             BodyAnimation bodyAnimation = 0, int baseDamage = 0, Effect effect = default)
         {
             Slot = slot;
@@ -59,9 +59,12 @@ namespace Chaos
             BaseDamage = baseDamage;
             Activate = Game.CreationEngine.GetEffect(Name);
 
+            effect = effect ?? Effect.None;
+
             effect.Sprite = sprite;
             if (effect.UseParentAnimation)
                 effect.Animation = Animation;
+
             Effect = effect;
         }
 
@@ -78,7 +81,7 @@ namespace Chaos
 
         public override int GetHashCode() => (Name?.GetHashCode() ?? 0 << 16) + Sprite;
         public override bool Equals(object other) => (other is PanelObject tPanelObject) ? Equals(tPanelObject) : false;
-        public bool Equals(PanelObject other) => (other != null) && (GetHashCode() == other.GetHashCode());
+        public bool Equals(PanelObject other) => !(other is null) && (GetHashCode() == other.GetHashCode());
         public override string ToString() => $@"SLOT: {Slot} | NAME: {Name}({Sprite})";
     }
 }

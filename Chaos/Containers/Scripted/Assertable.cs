@@ -23,7 +23,6 @@ namespace Chaos
         private readonly World World;
         private readonly Task StatusController;
         private readonly Task EffectController;
-        private readonly Task MonsterController;
 
         internal Assertables(Server server, World world)
         {

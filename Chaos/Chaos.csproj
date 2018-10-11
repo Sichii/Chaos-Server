@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Chaos</RootNamespace>
     <AssemblyName>Chaos</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
@@ -84,7 +84,7 @@
     <Compile Include="Containers\IEnumerable\DialogMenu.cs" />
     <Compile Include="TODO\Monsters.cs" />
     <Compile Include="TODO\Board.cs" />
-    <Compile Include="Objects\Immutable\LegendMark.cs" />
+    <Compile Include="Objects\AlmostImmutable\LegendMark.cs" />
     <Compile Include="Containers\IEnumerable\Panel.cs" />
     <Compile Include="Client\UserOptions.cs" />
     <Compile Include="TODO\Bank.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="Server\Enums.cs" />
     <Compile Include="Server\DataBase.cs" />
     <Compile Include="Objects\WorldObjects\Creature.cs" />
-    <Compile Include="Objects\Immutable\Dialog.cs" />
+    <Compile Include="Objects\AlmostImmutable\Dialog.cs" />
     <Compile Include="Objects\WorldObjects\GroundObject.cs" />
     <Compile Include="Objects\PanelObjects\Item.cs" />
     <Compile Include="Containers\WorldContainers\Map.cs" />
@@ -146,7 +146,7 @@
     <Compile Include="Client\DisplayData.cs" />
     <Compile Include="Server\GameTime.cs" />
     <Compile Include="Objects\Immutable\DialogMenuItem.cs" />
-    <Compile Include="Objects\Immutable\Effect.cs" />
+    <Compile Include="Objects\AlmostImmutable\Effect.cs" />
     <Compile Include="Structs\ItemSprite.cs" />
     <Compile Include="Structs\Location.cs" />
     <Compile Include="TODO\Post.cs" />

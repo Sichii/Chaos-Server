@@ -24,9 +24,6 @@ namespace Chaos
         /// </summary>
         internal static IEnumerable<Point> GetInterCardinalPoints(Point start, int degree = 1, Direction direction = Direction.All)
         {
-            if (direction == Direction.Invalid)
-                yield break;
-
             for (int i = 1; i <= degree; i++)
             {
                 switch (direction)
@@ -53,6 +50,8 @@ namespace Chaos
                         yield return (start.X + i, start.Y + i);
                         yield return (start.X - i, start.Y + i);
                         break;
+                    default:
+                        yield break;
                 }
             }
         }
@@ -93,8 +92,7 @@ namespace Chaos
         /// <param name="end">Ending point for the creation of the path.</param>
         /// <param name="includeStart">Whether or not to include the starting point in the result enumerable.</param>
         /// <param name="includeEnd">Whether or not to include the ending point in the result enumerable.</param>
-        /// <returns></returns>
-        internal static IEnumerable<Point> GetPath(Point start, Point end, bool includeStart = false, bool includeEnd = false)
+        internal static IEnumerable<Point> GetDirectPath(Point start, Point end, bool includeStart = false, bool includeEnd = false)
         {
             if (includeStart)
                 yield return start;
@@ -135,9 +133,9 @@ namespace Chaos
                     creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User.Point, false, 1).OfType<Creature>());
                     break;
                 case TargetsType.Cleave:
-                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User.Point, false, 2).OfType<Creature>().Where((Func<Creature, bool>)(c =>
+                    creatures.AddRange(client.User.Map.ObjectsVisibleFrom(client.User.Point, false, 2).OfType<Creature>().Where(c =>
                         (c.Point.Distance(client.User.Point) == 1 && c.Point.Relation(client.User.Point) != client.User.Direction.Reverse()) ||
-                        GetInterCardinalPoints(client.User.Point, 1, client.User.Direction).Contains(c.Point))));
+                        GetInterCardinalPoints(client.User.Point, 1, client.User.Direction).Contains(c.Point)));
                     break;
                 case TargetsType.StraightProjectile:
                     List<Point> line = GetCardinalPoints(client.User.Point, 13, client.User.Direction);

@@ -24,14 +24,21 @@ namespace Chaos
         //dynamic host name, populated by setpaths
         internal static string HostName = "";
 
+#if DEBUG
         internal static string LogFiles => $@"{BaseDir}logs\";
         internal static string MetaFiles => $@"{BaseDir}metafiles\";
         internal static string MapFiles => $@"{BaseDir}maps\";
+#else
+        internal static string LogFiles => $@"logs\";
+        internal static string MetaFiles => $@"metafiles\";
+        internal static string MapFiles => $@"maps\";
+#endif
+
 
         public static void Set()
         {
-            BaseDir = Properties.Resources.PATH[0].Trim('\n', '\r');
-            HostName = Properties.Resources.PATH[1].Trim('\n', '\r', ' ');
+            BaseDir = Properties.Resources.PATH.Split('\n', '\r')[0];
+            HostName = Properties.Resources.PATH.Split('\n', '\r', ' ')[1];
 
             if (!BaseDir.EndsWith(@"\"))
                 BaseDir += @"\";

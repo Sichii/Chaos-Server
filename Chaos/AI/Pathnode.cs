@@ -24,6 +24,6 @@ namespace Chaos
             Neighbors = new Pathnode[4];
         }
 
-        public bool Equals(Pathnode other) => Point.GetHashCode() == other.Point.GetHashCode();
+        public bool Equals(Pathnode other) => !(other is null) && Point.GetHashCode() == other.Point.GetHashCode();
     }
 }

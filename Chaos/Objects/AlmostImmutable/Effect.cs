@@ -59,7 +59,7 @@ namespace Chaos
         /// Constructor for an effect with only an animation.
         /// </summary>
         internal Effect(uint animationDelay, TimeSpan duration, bool useParentAnimation, Animation animation = default)
-            : this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation)
+            : this(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, animationDelay, duration, useParentAnimation, animation ?? Animation.None)
         {
         }
 
@@ -117,7 +117,7 @@ namespace Chaos
         /// <summary>
         /// Static contructur for no effect.
         /// </summary>
-        internal static Effect None => default;
+        internal static Effect None => new Effect(0, TimeSpan.Zero, false);
 
         /// <summary>
         /// Returns the remaining duration of the effect in milliseconds.
@@ -158,6 +158,6 @@ namespace Chaos
 
         public override int GetHashCode() => Animation.GetHashCode() + (ushort)(AnimationDelay << 16) + (ushort)Duration.TotalMilliseconds;
         public override bool Equals(object obj) => (obj is Effect tEffect) ? Equals(tEffect) : false;
-        public bool Equals(Effect other) => GetHashCode() == other.GetHashCode();
+        public bool Equals(Effect other) => !(other is null) && GetHashCode() == other.GetHashCode();
     }
 }

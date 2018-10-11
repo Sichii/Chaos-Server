@@ -52,7 +52,7 @@ namespace Chaos
             EncryptionType method = EncryptionType;
             int pos = Data.Length;
             ushort a = (ushort)Utilities.Random(257, ushort.MaxValue);
-            byte b = (byte)Utilities.Random(101, 255);
+            byte b = (byte)Utilities.Random(101, byte.MaxValue);
             byte[] key = (method == EncryptionType.Normal) ? crypto.Key 
                 : (method == EncryptionType.MD5) ? crypto.GenerateKey(a, b) 
                 : new byte[1024];

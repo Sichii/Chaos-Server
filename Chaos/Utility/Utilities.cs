@@ -22,15 +22,15 @@ namespace Chaos
     /// </summary>
     internal static class Utilities
     {
-        private static readonly Random random = new Random();
+        private static readonly Random random = new Random((int)DateTime.UtcNow.Ticks);
 
         /// <summary>
-        /// Get a random number between two values.
+        /// Get a random number between two values. DOUBLE INCLUSIVE.
         /// </summary>
         /// <param name="minValue">Minimum value of the randomly generated number.</param>
         /// <param name="maxValue">Maximum value of the randomly generated number.</param>
         /// <param name="positiveOnly">Whether or not the number produced should be an absolute value.</param>
-        internal static int Random(int minValue = int.MinValue, int maxValue = int.MaxValue, bool positiveOnly = true) => positiveOnly ? Math.Abs(random.Next(minValue, maxValue)) : random.Next(minValue, maxValue);
+        internal static int Random(int minValue = int.MinValue, int maxValue = int.MaxValue, bool positiveOnly = true) => positiveOnly ? Math.Abs(random.Next(minValue, maxValue + 1)) : random.Next(minValue, maxValue + 1);
 
         /// <summary>
         /// Converts an image to a byte array and returns it.

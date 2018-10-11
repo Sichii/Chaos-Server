@@ -24,7 +24,7 @@ namespace Chaos
         private static void Main(string[] args)
         {
             Console.Title = "Chaos Server";
-            Console.WindowWidth = 150;
+            Console.WindowWidth = 200;
             Console.WindowHeight = 30;
 
             Paths.Set();

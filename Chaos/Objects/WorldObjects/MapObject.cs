@@ -39,7 +39,7 @@ namespace Chaos
             Location = location;
         }
 
-        public bool Equals(MapObject other) => GetHashCode() == other.GetHashCode();
+        public bool Equals(MapObject other) => !(other is null) && GetHashCode() == other.GetHashCode();
         public override int GetHashCode() => (ID << 16) + Point.GetHashCode();
 
         public override string ToString() => Location.ToString();
