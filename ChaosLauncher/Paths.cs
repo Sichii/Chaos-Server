@@ -15,9 +15,14 @@ namespace ChaosLauncher
     {
         private static string BaseDir = "";
         //dark ages directory, populated by setpaths
+
+#if DEBUG
         internal static string DarkAgesDir => $@"{BaseDir}ChaosDa\";
         //dark ages executable
         internal static string DarkAgesExe => $@"{DarkAgesDir}Darkages.exe";
+#else
+        internal static string DarkAgesExe => "Darkages.exe";
+#endif
         //dynamic host name, populated by setpaths
         internal static string HostName = "";
 

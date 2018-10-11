@@ -21,19 +21,41 @@ namespace Chaos
         /// </summary>
         internal static Direction Reverse(this Direction direction)
         {
-            byte dir = (byte)(direction + 2);
+            switch(direction)
+            {
+                case Direction.North:
+                    return Direction.South;
+                case Direction.East:
+                    return Direction.West;
+                case Direction.South:
+                    return Direction.North;
+                case Direction.West:
+                    return Direction.East;
+                default:
+                    return Direction.Invalid;
+            }
+        }
 
-            if (dir > 3)
-                dir -= 4;
+        internal static IEnumerable<Direction> StartEnumerable(this Direction direction)
+        {
+            int dir = (int)direction;
+            for(int i = 0; i < 4; i++)
+            {
+                yield return (Direction)(dir);
 
-            return (Direction)dir;
+                dir++;
+                dir = (dir > 3) ? dir - 4 : dir;
+            }
         }
 
         /// <summary>
-        /// Gets a generic IEnumerable at compile time.
+        /// Gets a generic IEnumerable at compile time, from an array.
         /// </summary>
         internal static IEnumerable<T> GetEnumerable<T>(this T[] arr) => arr;
 
+        /// <summary>
+        /// Flattens a 2d array and returns an iterator to go through all of it's indexes.
+        /// </summary>
         internal static IEnumerable<T> Flatten<T>(this T[,] map)
         {
             for (int x = 0; x < map.GetLength(0); x++)

@@ -26,8 +26,6 @@ namespace Chaos
     /// </summary>
     public sealed class Crypto
     {
-        private static readonly string key1 = GetMD5Hash("inhOrig").Substring(0, 8);
-        private static readonly string key2 = GetMD5Hash(key1).Substring(0, 8);
         internal byte Seed { get; set; }
         internal byte[] Key { get; set; }
         internal byte[] KeySalts { get; set; }
@@ -77,32 +75,65 @@ namespace Chaos
 
         public static void EncryptFile(MemoryStream fileData, string path)
         {
-            var DES = new DESCryptoServiceProvider()
+            //generate a random cipherkey
+            byte[] cipherKey = new byte[32];
+
+            for(int i = 0; i < 32; i++)
+                cipherKey[i] = (byte)Utilities.Random(0, byte.MaxValue, true);
+
+            var AES = new AesCryptoServiceProvider()
             {
-                Key = Encoding.ASCII.GetBytes(key1),
-                IV = Encoding.ASCII.GetBytes(key2)
+                BlockSize = 256,
+                KeySize = 256,
+                Key = cipherKey,
+                IV = Encoding.UTF8.GetBytes(GetMD5Hash(Encoding.UTF8.GetString(cipherKey)).Substring(30, 34))
             };
 
 
             FileStream file = File.Create(path);
-            ICryptoTransform encryptor = DES.CreateEncryptor();
+
+            ICryptoTransform encryptor = AES.CreateEncryptor();
             using (var crypt = new CryptoStream(file, encryptor, CryptoStreamMode.Write))
             {
                 byte[] data = fileData.ToArray();
                 crypt.Write(data, 0, data.Length);
             }
+
+            //insert cipher at random location, place index to cipher at the beginning of the file.
+            byte[] newData = File.ReadAllBytes(path);
+            string dataStr = Encoding.Unicode.GetString(newData);
+            byte pos = (byte)Utilities.Random(1, dataStr.Length - 1);
+            dataStr.Insert(pos, Encoding.UTF8.GetString(cipherKey));
+            dataStr.Insert(0, Encoding.UTF8.GetString(new byte[] { pos }));
+            //rewrite the file
+            File.WriteAllBytes(path, Encoding.Unicode.GetBytes(dataStr));
         }
         public static MemoryStream DecryptFile(string path)
         {
-            var DES = new DESCryptoServiceProvider()
+            //read the file
+            byte[] fileData = File.ReadAllBytes(path);
+            string dataStr = Encoding.Unicode.GetString(fileData);
+            //get the first byte as the position to the cipherkey
+            byte pos = Encoding.UTF8.GetBytes(new char[] { dataStr[0] })[0];
+            //read the cipher from the indexed location
+            byte[] cipherKey = Encoding.UTF8.GetBytes(dataStr.Substring(pos + 1, 32));
+            //generate the symmetric algorithm key from the cipherkey
+            byte[] symmetric = Encoding.UTF8.GetBytes(GetMD5Hash(Encoding.UTF8.GetString(cipherKey)).Substring(30, 34));
+            //remove the cipherkey and index from the data
+            byte[] newData = Encoding.Unicode.GetBytes(dataStr.Substring(1, pos) + dataStr.Substring(pos + 1 + 32));
+
+            //decrypt
+            var AES = new AesCryptoServiceProvider()
             {
-                Key = Encoding.ASCII.GetBytes(key1),
-                IV = Encoding.ASCII.GetBytes(key2)
+                BlockSize = 256,
+                KeySize = 256,
+                Key = cipherKey,
+                IV = symmetric
             };
 
-            FileStream file = File.OpenRead(path);
-            ICryptoTransform decryptor = DES.CreateDecryptor();
-            var crypt = new CryptoStream(file, decryptor, CryptoStreamMode.Read);
+            var dataStream = new MemoryStream(newData);
+            ICryptoTransform decryptor = AES.CreateDecryptor();
+            var crypt = new CryptoStream(dataStream, decryptor, CryptoStreamMode.Read);
 
             using (var reader = new StreamReader(crypt))
                 return new MemoryStream(Encoding.Unicode.GetBytes(reader.ReadToEnd()));

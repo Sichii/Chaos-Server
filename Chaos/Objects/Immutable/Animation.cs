@@ -92,11 +92,11 @@ namespace Chaos
         /// <summary>
         /// Static constructor for no animation.
         /// </summary>
-        internal static Animation None => default;
+        internal static Animation None => new Animation(0, 0, 0);
 
         public override int GetHashCode() => (SourceId << 16) + (TargetAnimation << 8) + TargetPoint.GetHashCode();
         public override bool Equals(object obj) => (obj is Animation ani) ? Equals(ani) : false;
-        public bool Equals(Animation other) => other != null && GetHashCode() == other.GetHashCode();
+        public bool Equals(Animation other) => !(other is null) && GetHashCode() == other.GetHashCode();
         public override string ToString() => (TargetPoint != Point.None) ? $@"TARGET_POINT: {TargetPoint} | TARGET_ANIMATION: {TargetAnimation}" : $@"SOURCE_ID: {SourceId} | SOURCE_ANIMATION: {SourceAnimation} | TARGET_ID: {TargetId} | TARGET_ANIMATION: {TargetAnimation}";
     }
 }

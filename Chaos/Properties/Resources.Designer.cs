@@ -64,9 +64,9 @@ namespace Chaos.Properties {
         ///   Looks up a localized string similar to C:\Users\Sichi\Desktop\ChaosProject
         ///chaosserver.dynu.net.
         /// </summary>
-        internal static string[] PATH {
+        internal static string PATH {
             get {
-                return ResourceManager.GetString("PATH", resourceCulture).Split('\n');
+                return ResourceManager.GetString("PATH", resourceCulture);
             }
         }
         

@@ -56,9 +56,7 @@ namespace Chaos
         internal GroupBox CreateBox(string text, byte maxLevel, byte[] maxAmounts)
         {
             lock (Sync)
-            {
                 return new GroupBox(text, maxLevel, maxAmounts);
-            }
         }
         /// <summary>
         /// Attempts to synchronously add a User to the Group.

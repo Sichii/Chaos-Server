@@ -173,11 +173,6 @@ namespace Chaos
             }
         }
 
-        internal void MonsterAI()
-        {
-
-        }
-
         #region MapObjects
         /// <summary>
         /// Synchronously adds a single object to a map. Sends and sets all relevant data.

@@ -121,15 +121,8 @@ namespace ChaosLauncher
             var procInfo = new ProcInfo();
             startInfo.Size = Marshal.SizeOf(startInfo);
 
-
-                //create the process
-                SafeNativeMethods.CreateProcess(
-#if DEBUG
-                Paths.DarkAgesExe
-#else
-                @"Darkages.exe"
-#endif
-                , null, IntPtr.Zero, IntPtr.Zero, false, ProcessCreationFlags.Suspended, IntPtr.Zero, null, ref startInfo, out procInfo);
+            //create the process
+            SafeNativeMethods.CreateProcess(Paths.DarkAgesExe, null, IntPtr.Zero, IntPtr.Zero, false, ProcessCreationFlags.Suspended, IntPtr.Zero, null, ref startInfo, out procInfo);
 
             //grab the process we created
             var proc = Process.GetProcessById(procInfo.ProcessId);

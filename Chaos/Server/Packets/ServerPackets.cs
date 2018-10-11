@@ -22,7 +22,6 @@ namespace Chaos
     #pragma warning disable IDE0022
     internal static class ServerPackets
     {
-        //packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] ";
         internal static ServerPacket ConnectionInfo(uint tableCheckSum, byte seed, byte[] key)
         {
             var packet = new ServerPacket(ServerOpCodes.ConnectionInfo);
@@ -768,8 +767,10 @@ namespace Chaos
 
             return staggeredData.ToArray();
         }
+
         internal static ServerPacket Cooldown(PanelObject obj)
         {
+
             var packet = new ServerPacket(ServerOpCodes.Cooldown);
 
             uint cd = Utilities.Clamp<uint>(obj.Cooldown.Subtract(obj.Elapsed).TotalSeconds, 0d, obj.Cooldown.TotalSeconds);
