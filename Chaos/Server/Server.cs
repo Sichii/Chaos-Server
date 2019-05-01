@@ -17,7 +17,6 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace Chaos
 {
@@ -72,7 +71,7 @@ namespace Chaos
                 AutoFlush = true
             };
             Today = DateTime.MinValue;
-            WriteLog("Initializing server...");
+            WriteLogAsync("Initializing server...");
 
             //initialize server
             ServerEndPoint = new IPEndPoint(ip, CONSTANTS.LOBBY_PORT);
@@ -112,22 +111,32 @@ namespace Chaos
 
             //start the server
             LobbySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            LobbySocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOBBY_PORT));
-            LobbySocket.Listen(25);
-            LobbySocket.BeginAccept(new AsyncCallback(EndAccept), LobbySocket);
-
             LoginSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            LoginSocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOGIN_PORT));
+            WorldSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            Task.Run(() =>
+            {
+                LobbySocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOBBY_PORT));
+                LobbySocket.Listen(25);
+                LobbySocket.BeginAccept(new AsyncCallback(EndAccept), LobbySocket);
+            });
+
+            Task.Run(() =>
+            {
+                LoginSocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.LOGIN_PORT));
             LoginSocket.Listen(25);
             LoginSocket.BeginAccept(new AsyncCallback(EndAccept), LoginSocket);
+            });
 
-            WorldSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Task.Run(() =>
+            {
             WorldSocket.Bind(new IPEndPoint(IPAddress.Any, CONSTANTS.WORLD_PORT));
             WorldSocket.Listen(25);
             WorldSocket.BeginAccept(new AsyncCallback(EndAccept), WorldSocket);
+            });
 
-            OutboundController = FlushSendQueueAsync(); //Task.Run(FlushSendQueueAsync);
-            WriteLog($"Server is ready on {ServerEndPoint.Address}");
+            OutboundController = Task.Run(() => FlushSendQueueAsync()); //Task.Run(FlushSendQueueAsync);
+            WriteLogAsync($"Server is ready on {ServerEndPoint.Address}");
         }
 
         ~Server()
@@ -211,12 +220,12 @@ namespace Chaos
                     ServerType = serverType
                 };
 
-                WriteLog($@"Incoming connection", newClient);
+                WriteLogAsync($@"Incoming connection", newClient);
                 newClient.Connect();
             }
         }
 
-        internal static void WriteLog(string message, Client client = null)
+        internal static Task WriteLogAsync(string message, Client client = null) => Task.Run(() =>
         {
             lock (SyncWrite)
             {
@@ -236,10 +245,20 @@ namespace Chaos
 
                 LogWriter.Write($@"{message}{Environment.NewLine}");
             }
-        }
+        });
 
-        internal bool TryGetUser(string name, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.Name?.Equals(name, StringComparison.CurrentCultureIgnoreCase) == true)?.User) != null;
-        internal bool TryGetUser(int id, out User user) => (user = WorldClients.FirstOrDefault(client => client?.User?.ID == id)?.User) != null;
+        internal bool TryGetUser(string name, out User user)
+        {
+            user = WorldClients.FirstOrDefault(client => client.User.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.User;
+
+            return user != null;
+        }
+        internal bool TryGetUser(int id, out User user)
+        {
+            user = WorldClients.FirstOrDefault(client => client.User.ID == id).User;
+
+            return user != null;
+        }
 
         internal static int GetPort(ServerType serverType)
         {

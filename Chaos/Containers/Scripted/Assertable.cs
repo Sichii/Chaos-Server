@@ -29,7 +29,7 @@ namespace Chaos
             Server = server;
             World = world;
 
-            Server.WriteLog("Starting game controllers...");
+            Server.WriteLogAsync("Starting game controllers...");
             StatusController = Task.Run(AssertStatusesAsync);
             EffectController = Task.Run(AssertEffectsAsync);
         }

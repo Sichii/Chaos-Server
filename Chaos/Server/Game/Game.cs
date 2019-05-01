@@ -39,7 +39,7 @@ namespace Chaos
         /// </summary>
         internal static void Intialize(Server server)
         {
-            Server.WriteLog("Initializing game...");
+            Server.WriteLogAsync("Initializing game...");
 
             Server = server;
             World = new World(Server, out Task Init);
@@ -79,7 +79,7 @@ namespace Chaos
         internal static void Login(Client client, string name, string password)
         {
             //checks the userhash to see if the given name and password exist
-            if (!Server.DataBase.CheckHash(name, Crypto.GetMD5Hash(password)))
+            if (!Server.DataBase.CheckPassword(name, password))
                 client.SendLoginMessage(LoginMessageType.ClearNameMessage, "Incorrect user name or password.");
             //checks to see if the user is currently logged on
             else if (Server.TryGetUser(name, out User user))
@@ -186,6 +186,8 @@ namespace Chaos
                         client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You need {item.Weight} available weight to carry this item.");
                     else if (client.User.Inventory.AvailableSlots == 0)
                         client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You have no space for that.");
+                    else if (client.User.Inventory.Contains(item) && (client.User.Inventory[item.Name].Count + item.Count) > CONSTANTS.ITEM_STACK_MAX)
+                        client.SendServerMessage(ServerMessageType.ActiveMessage, $@"You cannot carry any more {item.Name}.");
                     else
                     {
                         item.Slot = slot;
@@ -761,7 +763,7 @@ namespace Chaos
                 return;
             }
 
-            DialogOption opt = Enum.IsDefined(CONSTANTS.DIALOGOPTION_TYPE, dialogId - dialog.Id) ? (DialogOption)(dialogId - dialog.Id) 
+            DialogOption opt = Enum.IsDefined(CONSTANTS.DIALOGOPTION_TYPE, Convert.ToSByte(dialogId - dialog.Id)) ? (DialogOption)(dialogId - dialog.Id) 
                 : DialogOption.Close;
 
             switch (opt)
@@ -835,32 +837,33 @@ namespace Chaos
                     //if it's a monster, display it's name
                     if (vObj is Monster tMonster)
                     {
-                        if (tMonster.ShouldDisplay)
+                        if (tMonster.ShouldDisplay(client.User.ID))
+                        {
                             client.SendServerMessage(ServerMessageType.OrangeBar1, vObj.Name);
-                        else
-                            tMonster.LastClicked = DateTime.UtcNow;
+                            tMonster.LastClicked[client.User.ID] = DateTime.UtcNow;
+                        }
                     }
                     //if it's a user, send us their profile
                     else if (vObj is User tUser)
                     {
-                        if (tUser.ShouldDisplay)
+                        if (tUser.ShouldDisplay(client.User.ID))
+                        {
                             client.Enqueue(ServerPackets.Profile(tUser));
-                        else
-                            tUser.LastClicked = DateTime.UtcNow;
+                            tUser.LastClicked[client.User.ID] = DateTime.UtcNow;
+                        }                            
                     }
                     //if its a merchant, send us the merchant menu
                     else if (vObj is Merchant tMerchant)
                     {
-                        if (tMerchant.ShouldDisplay)
+                        if (tMerchant.ShouldDisplay(client.User.ID))
                         {
                             if (tMerchant.Menu != null)
                                 client.SendMenu(tMerchant);
                             else
                                 client.SendDialog(tMerchant, Dialogs[tMerchant.NextDialogId]);
-                        }
-                        else
-                            tMerchant.LastClicked = DateTime.UtcNow;
 
+                            tMerchant.LastClicked[client.User.ID] = DateTime.UtcNow;
+                        }
                     }
                 }
             }

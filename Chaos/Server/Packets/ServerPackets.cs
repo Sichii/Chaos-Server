@@ -623,7 +623,7 @@ namespace Chaos
                 packet.WriteUInt16(user.Equipment[slot]?.ItemSprite.OffsetSprite ?? 0);
                 packet.WriteByte(user.Equipment[slot]?.Color ?? 0);
             }
-            packet.WriteBoolean(user.IsGrouped);
+            packet.WriteByte((byte)user.SocialStatus);
             packet.WriteString8(user.Name);
             packet.WriteByte((byte)user.Nation);
             packet.WriteString8(user.Titles.FirstOrDefault() ?? "");

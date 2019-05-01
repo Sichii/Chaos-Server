@@ -40,6 +40,7 @@ namespace Chaos
                             new DialogMenuItem(5, "Kill User"),
                             new DialogMenuItem(0, "Revive Yourself", PursuitIds.ReviveSelf),
                             new DialogMenuItem(8, "Revive User"),
+                            new DialogMenuItem(16, "Force Give"),
                         })),
                 TextEntryDialog(PursuitIds.Teleport, 2,
                     "To where? \"mapid x y\" or \"characterName\"\r" +
@@ -63,6 +64,7 @@ namespace Chaos
                         })),
                 NormalDialog(PursuitIds.None, 7, false, false, "Need a room, do you? Please, help yourself upstairs.", 0),
                 TextEntryDialog(PursuitIds.ReviveUser, 8, "Who would you like to revive?", 12, 0),
+                TextEntryDialog(PursuitIds.ForceGive, 16, "Give an Item Name, and User Name pair... \"Item Name:User Name\"", 30, 0),
 
                 //Tutorial
                 NormalDialog(PursuitIds.None, 9, false, true, "I thought you'd never wake up. Greetings and welcome to my home. ", 10),

@@ -11,7 +11,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 using System.Linq;
 using System;
 
@@ -193,8 +192,8 @@ namespace Chaos
                 var usersToSend = new List<User>();
 
                 //get all objects that would be visible to this object and handle them
-                foreach (VisibleObject obj in vObject.Map.ObjectsVisibleFrom(point).OfType<VisibleObject>())
-                    if (obj is User aUser)
+                foreach (VisibleObject obj in vObject.Map.ObjectsVisibleFrom(point, true).OfType<VisibleObject>())
+                    if (obj is User aUser && obj != vObject)
                         usersToSend.Add(aUser);
                     else
                         itemMonsterToSend.Add(obj);
@@ -202,7 +201,7 @@ namespace Chaos
                 //if this object is a user
                 if (vObject is User tUser)
                 {
-                    tUser.Client.Enqueue(ServerPackets.MapChangePending());     //send pending map change
+                    tUser.Client.Enqueue(ServerPackets.MapChangePending());      //send pending map change
                     tUser.Client.Enqueue(ServerPackets.MapInfo(tUser.Map));      //send map info
                     tUser.Client.Enqueue(ServerPackets.Location(tUser.Point));   //send location
 
@@ -216,7 +215,7 @@ namespace Chaos
                     tUser.Client.Enqueue(ServerPackets.Door(tUser.Map.DoorsVisibleFrom(point).ToArray()));     //send the user all nearby doors
                     tUser.Client.Enqueue(ServerPackets.MapChangeComplete());    //send it mapchangecomplete
                     tUser.Client.Enqueue(ServerPackets.MapLoadComplete());      //send it maploadcomplete
-                    tUser.Client.Enqueue(ServerPackets.DisplayUser(tUser));      //send it itself
+                    tUser.Client.Enqueue(ServerPackets.DisplayUser(tUser));     //send it itself
 
                     tUser.AnimationHistory.Clear();
                 }
@@ -410,12 +409,12 @@ namespace Chaos
         {
             lock (Sync)
             {
-                if (Doors.TryGetValue(point, out Door door))
+                if (Doors.TryGetValue(point, out Door tDoor))
                 {
-                    var doors = new List<Door>() { door };
+                    var doors = new List<Door>() { tDoor };
 
                     //for each surrounding point from the door
-                    foreach (Point p in Targeting.GetCardinalPoints(door.Point))
+                    foreach (Point p in Targeting.GetCardinalPoints(tDoor.Point))
                         //if it's also a door
                         if (Doors.TryGetValue(p, out Door door2))
                         {
@@ -423,7 +422,7 @@ namespace Chaos
                             doors.Add(door2);
 
                             //if this 2nd door has another door 1 space in the same direction, we can break.
-                            if (Doors.TryGetValue(p.Offset(p.Relation(door.Point)), out Door door3))
+                            if (Doors.TryGetValue(p.Offset(p.Relation(tDoor.Point)), out Door door3))
                             {
                                 //add that door as well
                                 doors.Add(door3);
@@ -431,11 +430,15 @@ namespace Chaos
                             }
                         }
 
-                    foreach (Door door2 in doors)
-                        door2.Toggle();
+                    var doorToSend = new List<Door>();
 
-                    foreach (User user in ObjectsVisibleFrom(door.Point).OfType<User>())
-                        user.Client.Enqueue(ServerPackets.Door(doors.ToArray()));
+                    foreach (Door door in doors)
+                        if (door.Toggle())
+                            doorToSend.Add(door);
+
+                    if (doorToSend.Count > 0)
+                        foreach (User user in ObjectsVisibleFrom(tDoor.Point).OfType<User>())
+                            user.Client.Enqueue(ServerPackets.Door(doorToSend.ToArray()));
                 }
             }
         }
@@ -487,10 +490,10 @@ namespace Chaos
                     return;
                 }
 
-                var visibleBefore = ObjectsVisibleFrom(client.User.Point).ToList();
+                var visibleBefore = ObjectsVisibleFrom(client.User.Point, true).Where(obj => obj != client.User).ToList();
                 var doorsBefore = DoorsVisibleFrom(client.User.Point).ToList();
                 client.User.Location = (Id, startPoint.Offset(direction));
-                var visibleAfter = ObjectsVisibleFrom(client.User.Point).ToList();
+                var visibleAfter = ObjectsVisibleFrom(client.User.Point, true).Where(obj => obj != client.User).ToList();
                 var itemMonster = new List<VisibleObject>().ToList();
                 var doorsAfter = DoorsVisibleFrom(client.User.Point).ToList();
                 var doors = doorsAfter.Except(doorsBefore).ToList();

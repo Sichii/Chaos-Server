@@ -128,6 +128,31 @@ namespace Chaos
             client.User.Nation = Nation.Loures;
         }
 
+        private static void ForceGive(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
+        {
+            string[] args = userInput.Split(':');
+            Item item = client.User.Inventory[args[0]];
+
+            if (item == null)
+                client.SendServerMessage(ServerMessageType.ActiveMessage, $"You do not own {args[0]}.");
+            else if (server.TryGetUser(args[1], out User user))
+            {
+                Item result;
+                if (item.Count > 1)
+                {
+                    result = item.Split(1);
+                    client.Enqueue(ServerPackets.AddItem(item));
+                }
+                else if (client.User.Inventory.TryGetRemove(item.Slot, out Item oItem))
+                {
+                    user.Inventory.TryAdd(oItem);
+                    user.Client.Enqueue(ServerPackets.AddItem(oItem));
+                }
+            }
+            else
+                client.SendServerMessage(ServerMessageType.ActiveMessage, $"{args[1]} cannot be found.");
+        }
+
         private static void BecomeWarrior(Client client, Server server, bool closing = false, byte menuOption = 0, string userInput = null)
         {
             client.User.BaseClass = BaseClass.Warrior;

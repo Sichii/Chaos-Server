@@ -34,7 +34,6 @@ namespace Chaos
         internal static Warp Home(User user)
         {
             Location home = Location.None;
-
             switch(user.Nation)
             {
                 case Nation.None:

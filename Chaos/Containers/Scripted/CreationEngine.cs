@@ -135,7 +135,7 @@ namespace Chaos
                 return true;
             }
 
-            if (!client.User.Gender.HasFlag(item.Gender))
+            if (!item.Gender.HasFlag(client.User.Gender))
             {
                 client.SendServerMessage(ServerMessageType.ActiveMessage, "This item does not fit you.");
                 return false;
@@ -252,7 +252,7 @@ namespace Chaos
             return targets.Count > 0;
         }
         /// <summary>
-        /// Applies a spell to any enemy, single context.Target. Applies an effect to the world in any area-size.
+        /// Applies a spell to any enemy, single Target. Applies an effect to the world in any area-size.
         /// </summary>
         private bool WorldSpell2(Client client, Server server, ActivationContext context)
         {

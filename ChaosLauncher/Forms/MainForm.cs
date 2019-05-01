@@ -51,8 +51,6 @@ namespace ChaosLauncher
                 pinnedArr.Free();
             }
 
-            
-
             launchBtn.Font = new System.Drawing.Font(pfc.Families[0], launchBtn.Font.Size, launchBtn.Font.Style);
             serverStatusLbl.Font = new System.Drawing.Font(pfc.Families[0], serverStatusLbl.Font.Size, serverStatusLbl.Font.Style);
             
@@ -81,38 +79,29 @@ namespace ChaosLauncher
 
         private async void ServerStatus(object o, PingCompletedEventArgs a)
         {
-            if (a.Reply.Status == IPStatus.Success)
+            if (!InvokeRequired)
             {
-                if (!InvokeRequired)
+                if(a.Reply.Status == IPStatus.Success)
                 {
                     serverStatusImg.Image = Properties.Resources.serverUp;
                     launchBtn.Enabled = true;
                 }
                 else
-                    Invoke((Action)(() =>
-                    {
-                        serverStatusImg.Image = Properties.Resources.serverUp;
-                        launchBtn.Enabled = true;
-                    }));
-            }
-            else
-            {
-                if (!InvokeRequired)
                 {
                     serverStatusImg.Image = Properties.Resources.serverDown;
                     launchBtn.Enabled = false;
-
                 }
-                else
-                    Invoke((Action)(() =>
-                    {
-                        serverStatusImg.Image = Properties.Resources.serverDown;
-                        launchBtn.Enabled = false;
-                    }));
-            }
 
-            await Task.Delay(5000);
-            ping.SendAsync(IpToUse, 5000, buffer, options, token);
+                await Task.Delay(5000);
+                ping.SendAsync(IpToUse, 5000, buffer, options, token);
+            }
+            else
+            {
+                Invoke((Action)(() =>
+                {
+                    ServerStatus(o, a);
+                }));
+            }
         }
 
         private void LaunchBtn_Click(object sender, EventArgs e)

@@ -41,12 +41,14 @@ namespace Chaos
             int dir = (int)direction;
             for(int i = 0; i < 4; i++)
             {
-                yield return (Direction)(dir);
+                yield return (Direction)dir;
 
                 dir++;
                 dir = (dir > 3) ? dir - 4 : dir;
             }
         }
+
+        
 
         /// <summary>
         /// Gets a generic IEnumerable at compile time, from an array.

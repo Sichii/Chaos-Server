@@ -134,7 +134,6 @@ namespace Chaos
                 DisplayData.User = this;
 
             IsAdmin = isAdmin;
-            LastClicked = DateTime.MinValue;
 
             State = state;
             Status = status;
@@ -152,7 +151,7 @@ namespace Chaos
                 newItem.Slot = i.Slot;
 
                 Inventory.TryRemove(i.Slot);
-                inventory.TryAdd(newItem);
+                Inventory.TryAdd(newItem);
             }
 
             foreach (Item i in Equipment.ToList())
@@ -164,8 +163,8 @@ namespace Chaos
                 newItem.CurrentDurability = i.CurrentDurability;
                 newItem.Slot = i.Slot;
 
-                Inventory.TryRemove(i.Slot);
-                inventory.TryAdd(newItem);
+                Equipment.TryRemove(i.Slot);
+                Equipment.TryAdd(newItem);
             }
 
             foreach (Spell s in SpellBook.ToList())

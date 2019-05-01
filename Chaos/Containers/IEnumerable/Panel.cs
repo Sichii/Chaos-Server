@@ -10,13 +10,9 @@
 // ****************************************************************************
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace Chaos
 {
@@ -31,14 +27,16 @@ namespace Chaos
         private readonly T[] Objects;
         private readonly byte[] Invalid;
         private readonly byte Length;
+        private readonly int TotalSlots;
 
         internal T this[EquipmentSlot slot] => this[(byte)slot];
         internal T this[byte slot] => TryGetObject(slot, out T outObj) ? outObj : null;
+        internal T this[string name] => this.FirstOrDefault(obj => obj.Name == name);
 
         /// <summary>
         /// Synchronously checks of the panel is full.
         /// </summary>
-        internal int AvailableSlots => this.Count();
+        internal int AvailableSlots => TotalSlots - this.Count();
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -62,12 +60,12 @@ namespace Chaos
             {
                 case PanelType.SkillBook:
                 case PanelType.SpellBook:
-                    Length = 90;
-                    Invalid = new byte[] { 36, 72, 90 };
+                    Length = 89;
+                    Invalid = new byte[] { 36, 72 };
                     break;
                 case PanelType.Inventory:
-                    Length = 60;
-                    Invalid = new byte[] { 60 };
+                    Length = 59;
+                    Invalid = new byte[] { };
                     break;
                 case PanelType.Equipment:
                     Length = 18;
@@ -78,8 +76,11 @@ namespace Chaos
 
             Objects = new T[Length + 1];
 
-            for (int i = 0; i <= Length; i++) //create slots +1 (so we can index without 0-based)
-                Objects[i] = null;
+            for (int i = 1; i <= Length; i++) //create slots +1 (so we can index without 0-based)
+                if (Valid((byte)i))
+                    Objects[i] = null;
+
+            TotalSlots = Objects.Count(obj => obj == null);
         }
 
         /// <summary>
@@ -94,12 +95,12 @@ namespace Chaos
             {
                 case PanelType.SkillBook:
                 case PanelType.SpellBook:
-                    Length = 90;
-                    Invalid = new byte[] { 36, 72, 90 };
+                    Length = 89;
+                    Invalid = new byte[] { 36, 72 };
                     break;
                 case PanelType.Inventory:
-                    Length = 60;
-                    Invalid = new byte[] { 60 };
+                    Length = 59;
+                    Invalid = new byte[] { };
                     break;
                 case PanelType.Equipment:
                     Length = 18;
@@ -108,6 +109,7 @@ namespace Chaos
             }
 
             Objects = objects;
+            TotalSlots = Objects.Count(obj => obj == null);
         }
 
         /// <summary>
@@ -140,6 +142,9 @@ namespace Chaos
                     //if it exists, increase the count
                     if (Objects.FirstOrDefault(obj => tItem.Equals(obj)) is Item existingItem)
                     {
+                        if (tItem.Count + existingItem.Count > CONSTANTS.ITEM_STACK_MAX)
+                            return false;
+
                         tItem.Slot = existingItem.Slot;
                         tItem.Count += existingItem.Count;
                         tItem.LastUse = existingItem.LastUse;

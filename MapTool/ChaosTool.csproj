@@ -70,6 +70,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Capricorn\Drawing\DAGraphics.cs" />
+    <Compile Include="Capricorn\Drawing\EPFFrame.cs" />
+    <Compile Include="Capricorn\Drawing\EPFImage.cs" />
+    <Compile Include="Capricorn\Drawing\HPFImage.cs" />
+    <Compile Include="Capricorn\Drawing\ImageType.cs" />
+    <Compile Include="Capricorn\Drawing\MAPFile.cs" />
+    <Compile Include="Capricorn\Drawing\MapTile.cs" />
+    <Compile Include="Capricorn\Drawing\MPFFrame.cs" />
+    <Compile Include="Capricorn\Drawing\MPFImage.cs" />
+    <Compile Include="Capricorn\Drawing\Palette256.cs" />
+    <Compile Include="Capricorn\Drawing\PaletteTable.cs" />
+    <Compile Include="Capricorn\Drawing\PaletteTableEntry.cs" />
+    <Compile Include="Capricorn\Drawing\Tileset.cs" />
+    <Compile Include="Capricorn\IO\Compression\HPFCompression.cs" />
+    <Compile Include="Capricorn\IO\DATArchive.cs" />
+    <Compile Include="Capricorn\IO\DATFileEntry.cs" />
+    <Compile Include="Capricorn\IO\KhanArchive.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
