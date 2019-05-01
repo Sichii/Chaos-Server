@@ -34,6 +34,7 @@ namespace Chaos
         internal const int GLOBAL_SPELL_COOLDOWN_MS = 250;
         internal const int REFRESH_DELAY_MS = 1000;
         internal const string DEVELOPER_GUILD_NAME = "Chaos Team";
+        internal const int ITEM_STACK_MAX = 255;
 
         internal static readonly Location STARTING_LOCATION = (8984, 10, 10);
         internal static readonly Location DEATH_LOCATION = (5031, 15, 15);
@@ -58,11 +59,11 @@ namespace Chaos
         //long data}
         internal static readonly ImmutableArray<byte> LOBBY_OPCODES = ImmutableArray.Create(new byte[]
             {
-                0, 87, 69, 98, 117
+                0, 11, 87, 69, 98, 117
             });
         internal static readonly ImmutableArray<byte> LOGIN_OPCODES = ImmutableArray.Create(new byte[]
             {
-                2, 3, 4, 16, 38, 69, 75, 98, 104, 117, 123
+                2, 3, 4, 11, 16, 38, 69, 75, 98, 104, 117, 123
             });
         internal static readonly ImmutableArray<byte> WORLD_OPCODES = ImmutableArray.Create(new byte[]
             {
@@ -112,7 +113,7 @@ namespace Chaos
             });
 
         //crypto
-        internal static readonly ImmutableArray<uint> TABLE16 = ImmutableArray.Create(new uint[]
+        internal static readonly ImmutableArray<ushort> TABLE16 = ImmutableArray.Create(new ushort[]
             {
                 0, 4129, 8258, 12387, 16516, 20645, 24774, 28903, 33032, 37161, 41290, 45419, 49548, 53677, 57806, 61935,
                 4657, 528, 12915, 8786, 21173, 17044, 29431, 25302, 37689, 33560, 45947, 41818, 54205, 50076, 62463, 58334,

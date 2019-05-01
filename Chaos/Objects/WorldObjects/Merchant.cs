@@ -32,7 +32,6 @@ namespace Chaos
             : base(name, location, (ushort)(sprite + CONSTANTS.CREATURE_SPRITE_OFFSET), CreatureType.Merchant, direction)
         {
             NextDialogId = nextDialogId;
-            LastClicked = DateTime.MinValue;
             Menu = menu;
         }
     }

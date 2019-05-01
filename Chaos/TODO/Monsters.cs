@@ -11,13 +11,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chaos
 {
     internal sealed class Monsters
     {
+        private readonly Dictionary<string, Monster> MonsterDic;
+
+        internal Monsters()
+        {
+            var monsters = new List<Monster>()
+            {
+                new Monster("Lich", (8984, 5, 5), 205, CreatureType.Normal, TimeSpan.FromMilliseconds(500), 5000000)
+            };
+        }
     }
 }

@@ -88,7 +88,7 @@ namespace Chaos
 
         private void RequestConnectionInfo(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}]", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}]", client);
             Game.RequestConnectionInfo(client);
         }
 
@@ -97,7 +97,7 @@ namespace Chaos
             string name = packet.ReadString8();
             string pw = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] NAME: {name} | PASSWORD: {pw}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] NAME: {name} | PASSWORD: {pw}", client);
             Game.CreateChar1(client, name, pw);
         }
 
@@ -113,7 +113,7 @@ namespace Chaos
             packet.ReadUInt16();
             packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] NAME: {name} | PASSWORD: {pw}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] NAME: {name} | PASSWORD: {pw}", client);
             Game.Login(client, name, pw);
         }
 
@@ -123,13 +123,13 @@ namespace Chaos
             var gender = (Gender)packet.ReadByte();
             byte hairColor = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] HAIR: {hairStyle} | GENDER: {gender} | COLOR: {hairColor}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] HAIR: {hairStyle} | GENDER: {gender} | COLOR: {hairColor}", client);
             Game.CreateChar2(client, hairStyle, gender, hairColor);
         }
 
         private void RequestMapData(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.RequestMapData(client);
         }
         private void ClientWalk(Client client, ClientPacket packet)
@@ -137,7 +137,7 @@ namespace Chaos
             var direction = (Direction)packet.ReadByte();
             int stepCount = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] DIRECTION: {direction} | STEPS: {stepCount}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] DIRECTION: {direction} | STEPS: {stepCount}", client);
             Game.ClientWalk(client, direction, stepCount);
         }
         private void Pickup(Client client, ClientPacket packet)
@@ -145,7 +145,7 @@ namespace Chaos
             byte slot = packet.ReadByte();
             Point groundPoint = packet.ReadPoint();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] DESTINATION_SLOT: {slot} | SOURCE_POINT: {groundPoint}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] DESTINATION_SLOT: {slot} | SOURCE_POINT: {groundPoint}", client);
             Game.Pickup(client, slot, groundPoint);
         }
         private void Drop(Client client, ClientPacket packet)
@@ -154,7 +154,7 @@ namespace Chaos
             Point groundPoint = packet.ReadPoint();
             uint count = packet.ReadUInt32();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot} | DESTINATION_POINT: {groundPoint} | COUNT: {count}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot} | DESTINATION_POINT: {groundPoint} | COUNT: {count}", client);
             Game.Drop(client, slot, groundPoint, count);
         }
         private void ExitClient(Client client, ClientPacket packet)
@@ -164,7 +164,7 @@ namespace Chaos
             if (packet.Position != packet.Length)
                 requestExit = packet.ReadBoolean();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] EXIT: {requestExit}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] EXIT: {requestExit}", client);
             Game.ExitClient(client, requestExit);
         }
         private void Ignore(Client client, ClientPacket packet)
@@ -175,7 +175,7 @@ namespace Chaos
             if (type != IgnoreType.Request)
                 targetName = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET: {targetName ?? "n/a"}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET: {targetName ?? "n/a"}", client);
             Game.Ignore(client, type, targetName);
         }
         private void PublicChat(Client client, ClientPacket packet)
@@ -183,7 +183,7 @@ namespace Chaos
             var type = (PublicMessageType)packet.ReadByte();
             string message = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | MESSAGE: {message}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | MESSAGE: {message}", client);
             Game.PublicChat(client, type, message);
         }
         private void UseSpell(Client client, ClientPacket packet)
@@ -201,7 +201,7 @@ namespace Chaos
                 targetPoint = packet.ReadPoint();
             }
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot} | TARGET_ID: {targetId} | TARGET_POINT: {targetPoint}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot} | TARGET_ID: {targetId} | TARGET_POINT: {targetPoint}", client);
             Game.UseSpell(client, slot, targetId, targetPoint, prompt);
         }
         private void JoinClient(Client client, ClientPacket packet)
@@ -211,7 +211,7 @@ namespace Chaos
             string name = packet.ReadString8();
             uint id = packet.ReadUInt32();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SEED: {seed} | KEY: {key} | NAME: {name} | ID: {id}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SEED: {seed} | KEY: {key} | NAME: {name} | ID: {id}", client);
             Redirect redirect = client.Server.Redirects.FirstOrDefault(r => r.Id == id);
 
             if (redirect != null)
@@ -227,18 +227,18 @@ namespace Chaos
         {
             var direction = (Direction)packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] DIRECTION: {direction}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] DIRECTION: {direction}", client);
             Game.Turn(client, direction);
         }
 
         private void SpaceBar(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.SpaceBar(client);
         }
         private void RequestWorldList(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.RequestWorldList(client);
         }
         private void Whisper(Client client, ClientPacket packet)
@@ -246,21 +246,21 @@ namespace Chaos
             string targetName = packet.ReadString8();
             string message = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TARGET: {targetName} | MESSAGE: {message}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TARGET: {targetName} | MESSAGE: {message}", client);
             Game.Whisper(client, targetName, message);
         }
         private void ToggleUserOption(Client client, ClientPacket packet)
         {
             var option = (UserOption)packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] OPTION: {option}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] OPTION: {option}", client);
             Game.ToggleUserOption(client, option);
         }
         private void UseItem(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot}", client);
             Game.UseItem(client, slot);
         }
         private void Emote(Client client, ClientPacket packet)
@@ -270,7 +270,7 @@ namespace Chaos
 
             if (animNum > 35) return;
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] EMOTE: {anim}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] EMOTE: {anim}", client);
             Game.AnimateCreature(client, anim);
         }
         private void DropGold(Client client, ClientPacket packet)
@@ -278,7 +278,7 @@ namespace Chaos
             uint amount = packet.ReadUInt32();
             Point groundPoint = packet.ReadPoint();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] AMOUNT: {amount} | DESTINATION_POINT: {groundPoint}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] AMOUNT: {amount} | DESTINATION_POINT: {groundPoint}", client);
             Game.DropGold(client, amount, groundPoint);
         }
         private void ChangePassword(Client client, ClientPacket packet)
@@ -287,7 +287,7 @@ namespace Chaos
             string currentPw = packet.ReadString8();
             string newPw = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] NAME: {name} | CURRENT: {currentPw} | NEW: {newPw}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] NAME: {name} | CURRENT: {currentPw} | NEW: {newPw}", client);
             Game.ChangePassword(client, name, currentPw, newPw);
         }
         private void DropItemOnCreature(Client client, ClientPacket packet)
@@ -296,7 +296,7 @@ namespace Chaos
             int targetId = packet.ReadInt32();
             byte count = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot} | TARGET_ID: {targetId} | COUNT: {count}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot} | TARGET_ID: {targetId} | COUNT: {count}", client);
             Game.DropItemOnCreature(client, slot, targetId, count);
         }
         private void DropGoldOnCreature(Client client, ClientPacket packet)
@@ -304,12 +304,12 @@ namespace Chaos
             uint amount = packet.ReadUInt32();
             int targetId = packet.ReadInt32();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] AMOUNT: {amount} | TARGET_ID: {targetId}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] AMOUNT: {amount} | TARGET_ID: {targetId}", client);
             Game.DropGoldOnCreature(client, amount, targetId);
         }
         private void RequestProfile(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.RequestProfile(client);
         }
         private void RequestGroup(Client client, ClientPacket packet)
@@ -335,12 +335,12 @@ namespace Chaos
             }
             string targetName = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET: {targetName}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET: {targetName}", client);
             Game.RequestGroup(client, type, targetName, box);
         }
         private void ToggleGroup(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.ToggleGroup(client);
         }
         private void SwapSlot(Client client, ClientPacket packet)
@@ -349,12 +349,12 @@ namespace Chaos
             byte origSlot = packet.ReadByte();
             byte endSlot = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] PANEL: {panelType} | FROM: {origSlot} | TO: {endSlot}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] PANEL: {panelType} | FROM: {origSlot} | TO: {endSlot}", client);
             Game.SwapSlot(client, panelType, origSlot, endSlot);
         }
         private void RequestRefresh(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.RequestRefresh(client);
         }
         private void RequestPursuit(Client client, ClientPacket packet)
@@ -366,7 +366,7 @@ namespace Chaos
                 : PursuitIds.None;
             byte[] args = packet.ReadBytes(packet.Length - packet.Position);
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] OBJECT: {objType} | OBJECT_ID: {objId} | PURSUIT: {pursuitId} | ARGS: {args.Length > 0}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] OBJECT: {objType} | OBJECT_ID: {objId} | PURSUIT: {pursuitId} | ARGS: {args.Length > 0}", client);
             Game.RequestPursuit(client, objType, objId, pursuitId, args);
         }
         private void ReplyDialog(Client client, ClientPacket packet)
@@ -397,7 +397,7 @@ namespace Chaos
                 }
             }
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] OBJECT: {objType} | OBJECT_ID: {objId} | PURSUIT: {pursuitId} | DIALOG_ID: {dialogId} | ARGS: {argsType}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] OBJECT: {objType} | OBJECT_ID: {objId} | PURSUIT: {pursuitId} | DIALOG_ID: {dialogId} | ARGS: {argsType}", client);
             Game.ReplyDialog(client, objType, objId, pursuitId, dialogId, argsType, opt, input);
         }
 
@@ -469,14 +469,14 @@ namespace Chaos
                     }
             }
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type}", client);
             Game.Boards(client);
         }
         private void UseSkill(Client client, ClientPacket packet)
         {
             byte slot = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SOURCE_SLOT: {slot}", client);
             Game.UseSkill(client, slot);
         }
 
@@ -485,7 +485,7 @@ namespace Chaos
             ushort nodeCheckSum = packet.ReadUInt16();
             Location targetLocation = (packet.ReadUInt16(), packet.ReadPoint());
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] CHKSUM: {nodeCheckSum} TARGET_LOCATION: {targetLocation}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] CHKSUM: {nodeCheckSum} TARGET_LOCATION: {targetLocation}", client);
             Game.ClickWorldMap(client, nodeCheckSum, targetLocation);
         }
         private void ClickObject(Client client, ClientPacket packet)
@@ -495,12 +495,12 @@ namespace Chaos
             {
                 case 1:
                     int objectId = packet.ReadInt32();
-                    Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | OBJECT_ID: {objectId}", client);
+                    Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | OBJECT_ID: {objectId}", client);
                     Game.ClickObject(client, objectId);
                     break;
                 case 3:
                     Point clickPoint = packet.ReadPoint();
-                    Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | CLICK_POINT: {clickPoint}", client);
+                    Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | CLICK_POINT: {clickPoint}", client);
                     Game.ClickObject(client, clickPoint);
                     break;
             }
@@ -509,7 +509,7 @@ namespace Chaos
         {
             var slot = (EquipmentSlot)packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SLOT: {slot}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SLOT: {slot}", client);
             Game.RemoveEquipment(client, slot);
         }
         private void KeepAlive(Client client, ClientPacket packet)
@@ -517,14 +517,14 @@ namespace Chaos
             byte b = packet.ReadByte();
             byte a = packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.KeepAlive(client, a, b);
         }
         private void ChangeStat(Client client, ClientPacket packet)
         {
             var stat = (Stat)packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] STAT: {stat}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] STAT: {stat}", client);
             Game.ChangeStat(client, stat);
         }
         private void Exchange(Client client, ClientPacket packet)
@@ -536,7 +536,7 @@ namespace Chaos
             {
                 case ExchangeType.StartExchange:
                     {
-                        Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId}", client);
+                        Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId}", client);
                         Game.Exchange(client, type, targetId);
                         break;
                     }
@@ -544,7 +544,7 @@ namespace Chaos
                     {
                         byte slot = packet.ReadByte();
 
-                        Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId} | SOURCE_SLOT: {slot}", client);
+                        Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId} | SOURCE_SLOT: {slot}", client);
                         Game.Exchange(client, type, targetId, 0, slot, 0);
                         break;
                     }
@@ -553,7 +553,7 @@ namespace Chaos
                         byte slot = packet.ReadByte();
                         byte count = packet.ReadByte();
 
-                        Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId} | SOURCE_SLOT: {slot} | COUNT: {count}", client);
+                        Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId} | SOURCE_SLOT: {slot} | COUNT: {count}", client);
                         Game.Exchange(client, type, targetId, 0, slot, count);
                         break;
                     }
@@ -561,33 +561,33 @@ namespace Chaos
                     {
                         uint amount = packet.ReadUInt32();
 
-                        Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId} | AMOUNT: {amount}", client);
+                        Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type} | TARGET_ID: {targetId} | AMOUNT: {amount}", client);
                         Game.Exchange(client, type, targetId, amount);
                         break;
                     }
                 case ExchangeType.Cancel:
                 case ExchangeType.Accept:
-                    Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type}", client);
+                    Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] TYPE: {type}", client);
                     Game.Exchange(client, type);
                     break;
             }
         }
         private void RequestLoginNotification(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.RequestLoginNotification(true, client);
         }
 
         private void BeginChant(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.BeginChant(client);
         }
         private void DisplayChant(Client client, ClientPacket packet)
         {
             string chant = packet.ReadString8();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] CHANT: {chant}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] CHANT: {chant}", client);
             Game.DisplayChant(client, chant);
         }
         private void Personal(Client client, ClientPacket packet)
@@ -597,19 +597,19 @@ namespace Chaos
             byte[] portraitData = packet.ReadBytes(portraitLength);
             string profileMsg = packet.ReadString16();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] DATA_SIZE: {portraitLength} | MESSAGE_LENGTH: {profileMsg.Length}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] DATA_SIZE: {portraitLength} | MESSAGE_LENGTH: {profileMsg.Length}", client);
             Game.Personal(client, portraitData, profileMsg);
         }
         private void RequestServerTable(Client client, ClientPacket packet)
         {
             bool requestTable = packet.ReadBoolean();
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] REQUEST: {requestTable}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] REQUEST: {requestTable}", client);
             Game.RequestServerTable(client, requestTable);
         }
-        private void ChangeSequence(Client client, ClientPacket packet) => client.Sequence = packet.Sequence;
+        private void ChangeSequence(Client client, ClientPacket packet) => client.ReceiveSequence = packet.Sequence;
         private void RequestHomepage(Client client, ClientPacket packet)
         {
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] ", client);
             Game.RequestHomepage(client);
         }
         private void SynchronizeTicks(Client client, ClientPacket packet)
@@ -617,21 +617,21 @@ namespace Chaos
             var serverTicks = new TimeSpan(packet.ReadUInt32());
             var clientTicks = new TimeSpan(packet.ReadUInt32());
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] SERVER_TICKS: {serverTicks} | CLIENT_TICKS: {clientTicks}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] SERVER_TICKS: {serverTicks} | CLIENT_TICKS: {clientTicks}", client);
             Game.SynchronizeTicks(client, serverTicks, clientTicks);
         }
         private void ChangeSocialStatus(Client client, ClientPacket packet)
         {
             var status = (SocialStatus)packet.ReadByte();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] DESIRED_STATUS: {status}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] DESIRED_STATUS: {status}", client);
             Game.ChangeSocialStatus(client, status);
         }
         private void RequestMetaFile(Client client, ClientPacket packet)
         {
             bool requestFile = packet.ReadBoolean();
 
-            Server.WriteLog($@"Recv [{(ClientOpCodes)packet.OpCode}] REQUEST_FILE: {requestFile}", client);
+            Server.WriteLogAsync($@"Recv [{(ClientOpCodes)packet.OpCode}] REQUEST_FILE: {requestFile}", client);
             Game.RequestMetaFile(client, requestFile);
         }
     }

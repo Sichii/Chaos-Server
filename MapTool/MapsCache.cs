@@ -103,7 +103,7 @@ namespace ChaosTool
                         byte targetX = reader.ReadByte();
                         byte targetY = reader.ReadByte();
                         var warp = new Chaos.Warp(mapId, sourceX, sourceY, targetMapId, targetX, targetY);
-                        newMap.Warps[newMap[sourceX, sourceY]] = warp;
+                        newMap.Warps[(sourceX, sourceY)] = warp;
                     }
 
                     //load worldmaps for this map
@@ -114,7 +114,7 @@ namespace ChaosTool
                         byte y = reader.ReadByte();
                         uint CRC = reader.ReadUInt32();
                         if (WorldMaps.ContainsKey(CRC))
-                            newMap.WorldMaps[newMap[x, y]] = WorldMaps[CRC];
+                            newMap.WorldMaps[(x, y)] = WorldMaps[CRC];
                     }
 
                     //add the map to the map list

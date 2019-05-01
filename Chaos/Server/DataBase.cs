@@ -40,7 +40,7 @@ namespace Chaos
 
         internal DataBase(Server server)
         {
-            Server.WriteLog("Creating the database connection...");
+            Server.WriteLogAsync("Creating the database connection...");
 
             Server = server;
             //create the serializing cache db
@@ -122,7 +122,7 @@ namespace Chaos
         /// </summary>
         /// <param name="name">Name of the user.</param>
         /// <param name="hash">Hash of the user's password.</param>
-        internal bool CheckHash(string name, string hash) => UserHash.Any(kvp => kvp.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase) && kvp.Value.Equals(hash));
+        internal bool CheckPassword(string name, string password) => UserHash.Any(kvp => kvp.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase) && kvp.Value.Equals(Crypto.GetMD5Hash(password)));
 
         /// <summary>
         /// Changes the password hash of the given username
@@ -132,7 +132,7 @@ namespace Chaos
         /// <param name="newPw">Password to change to.</param>
         internal bool ChangePassword(string name, string currentPw, string newPw)
         {
-            if (CheckHash(name, currentPw))
+            if (CheckPassword(name, currentPw))
             {
                 Dictionary<string, string> userHash = UserHash;
                 userHash[name] = Crypto.GetMD5Hash(newPw);

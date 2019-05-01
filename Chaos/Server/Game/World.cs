@@ -13,7 +13,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Chaos
@@ -48,7 +47,7 @@ namespace Chaos
         /// </summary>
         internal void Initialize()
         {
-            Server.WriteLog("Initializing world...");
+            Server.WriteLogAsync("Initializing world...");
 
             #region Load Maps
             using (var reader = new BinaryReader(new MemoryStream(Server.DataBase.MapData)))
@@ -134,7 +133,7 @@ namespace Chaos
         /// </summary>
         internal void Save()
         {
-            Server.WriteLog("Saving world...");
+            Server.WriteLogAsync("Saving world...");
 
             var buffer = new MemoryStream();
             using (var writer = new BinaryWriter(buffer))

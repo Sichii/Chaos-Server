@@ -35,7 +35,6 @@ namespace Chaos
         internal byte Slot { get; set; }
         internal int CooldownReduction { get; set; }
         internal DateTime LastUse { get; set; }
-
         [JsonProperty]
         internal TimeSpan Elapsed => DateTime.UtcNow.Subtract(LastUse);
         internal TimeSpan Cooldown => new TimeSpan(0, 0, 0, 0, (int)(BaseCooldown.TotalMilliseconds * (Utilities.Clamp<int>(100 - CooldownReduction, 0, 100)/100)));

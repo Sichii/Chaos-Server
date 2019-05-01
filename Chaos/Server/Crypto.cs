@@ -14,6 +14,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Collections.Immutable;
+using System.Linq;
+
 namespace Chaos
 {
     // *************************************************************************************************
@@ -73,70 +75,81 @@ namespace Chaos
         }
         public static string GetMD5Hash(string value) => BitConverter.ToString(HashAlgorithm.Create("MD5").ComputeHash(Encoding.ASCII.GetBytes(value))).Replace("-", string.Empty).ToLower();
 
-        public static void EncryptFile(MemoryStream fileData, string path)
+        public static void EncryptFile(MemoryStream rawStream, string path)
         {
             //generate a random cipherkey
             byte[] cipherKey = new byte[32];
 
-            for(int i = 0; i < 32; i++)
+            for (int i = 0; i < 32; i++)
                 cipherKey[i] = (byte)Utilities.Random(0, byte.MaxValue, true);
 
             var AES = new AesCryptoServiceProvider()
             {
-                BlockSize = 256,
+                BlockSize = 128,
                 KeySize = 256,
                 Key = cipherKey,
-                IV = Encoding.UTF8.GetBytes(GetMD5Hash(Encoding.UTF8.GetString(cipherKey)).Substring(30, 34))
+                //generate the symmetric algorithm key from the cipherkey
+                IV = Encoding.UTF8.GetBytes(GetMD5Hash(Encoding.UTF8.GetString(cipherKey)).Substring(7, 16))
             };
 
-
-            FileStream file = File.Create(path);
-
+            var encryptedStream = new MemoryStream();
             ICryptoTransform encryptor = AES.CreateEncryptor();
-            using (var crypt = new CryptoStream(file, encryptor, CryptoStreamMode.Write))
-            {
-                byte[] data = fileData.ToArray();
-                crypt.Write(data, 0, data.Length);
-            }
 
-            //insert cipher at random location, place index to cipher at the beginning of the file.
-            byte[] newData = File.ReadAllBytes(path);
-            string dataStr = Encoding.Unicode.GetString(newData);
-            byte pos = (byte)Utilities.Random(1, dataStr.Length - 1);
-            dataStr.Insert(pos, Encoding.UTF8.GetString(cipherKey));
-            dataStr.Insert(0, Encoding.UTF8.GetString(new byte[] { pos }));
-            //rewrite the file
-            File.WriteAllBytes(path, Encoding.Unicode.GetBytes(dataStr));
+            using (var cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write))
+            {
+                byte[] data = rawStream.ToArray();
+                cryptoStream.Write(data, 0, data.Length);
+
+                //get the data from the encrypted stream
+                var encryptedData = encryptedStream.ToArray().ToList();
+                //generate a random location within the data
+                byte position = (byte)Utilities.Random(1, encryptedData.Count - 1);
+
+                //insert the cipherkey at the random location, and the index to the key at the beginning of the data
+                encryptedData.InsertRange(position, cipherKey);
+                encryptedData.Insert(0, position);
+
+                //encode the data as a base64 string
+                string encryptedBase64 = Convert.ToBase64String(encryptedData.ToArray());
+
+                //write the file in utf8
+                File.WriteAllBytes(path, Encoding.UTF8.GetBytes(encryptedBase64));
+            }
         }
+
         public static MemoryStream DecryptFile(string path)
         {
-            //read the file
-            byte[] fileData = File.ReadAllBytes(path);
-            string dataStr = Encoding.Unicode.GetString(fileData);
+            //read the file data, convert it to a string, then decode from base64
+            byte[] fileData = Convert.FromBase64String(Encoding.UTF8.GetString(File.ReadAllBytes(path)));
             //get the first byte as the position to the cipherkey
-            byte pos = Encoding.UTF8.GetBytes(new char[] { dataStr[0] })[0];
+            byte pos = fileData[0];
             //read the cipher from the indexed location
-            byte[] cipherKey = Encoding.UTF8.GetBytes(dataStr.Substring(pos + 1, 32));
-            //generate the symmetric algorithm key from the cipherkey
-            byte[] symmetric = Encoding.UTF8.GetBytes(GetMD5Hash(Encoding.UTF8.GetString(cipherKey)).Substring(30, 34));
-            //remove the cipherkey and index from the data
-            byte[] newData = Encoding.Unicode.GetBytes(dataStr.Substring(1, pos) + dataStr.Substring(pos + 1 + 32));
+            byte[] cipherKey = new byte[32];
+            Buffer.BlockCopy(fileData, pos + 1, cipherKey, 0, 32);
 
-            //decrypt
+            //generate the symmetric algorithm key from the cipherkey
+            byte[] symmetric = Encoding.UTF8.GetBytes(GetMD5Hash(Encoding.UTF8.GetString(cipherKey)).Substring(7, 16));
+
+            //remove the cipherkey and index from the data
+            byte[] encryptedData = new byte[fileData.Length - 33];
+            Buffer.BlockCopy(fileData, 1, encryptedData, 0, pos + 1);
+            Buffer.BlockCopy(fileData, pos + 33, encryptedData, pos, fileData.Length - (pos + 33));
+
             var AES = new AesCryptoServiceProvider()
             {
-                BlockSize = 256,
+                BlockSize = 128,
                 KeySize = 256,
                 Key = cipherKey,
                 IV = symmetric
             };
 
-            var dataStream = new MemoryStream(newData);
+            var encryptedStream = new MemoryStream(encryptedData);
             ICryptoTransform decryptor = AES.CreateDecryptor();
-            var crypt = new CryptoStream(dataStream, decryptor, CryptoStreamMode.Read);
 
-            using (var reader = new StreamReader(crypt))
-                return new MemoryStream(Encoding.Unicode.GetBytes(reader.ReadToEnd()));
+            //decrypt the data and return it as a stream
+            var cryptpoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read);
+            using (var reader = new StreamReader(cryptpoStream))
+                return new MemoryStream(Encoding.UTF8.GetBytes(reader.ReadToEnd()));
         }
     }
 }

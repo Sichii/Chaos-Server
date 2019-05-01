@@ -196,6 +196,7 @@ namespace Chaos
         BecomeMonk = 11,
         BecomeRogue = 12,
         GiveTatteredRobe = 13,
+        ForceGive = 14,
     }
     #endregion
 
@@ -547,7 +548,7 @@ namespace Chaos
         CloseDialog = 10
     }
 
-    internal enum DialogOption
+    internal enum DialogOption : sbyte
     {
         Previous = -1,
         Close = 0,

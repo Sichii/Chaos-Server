@@ -84,20 +84,18 @@ namespace Chaos
 
                 if (item.AccountBound)
                 {
-                    user.Client.SendServerMessage(0, $"{item.Name} is account bound.");
+                    user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.Name} is account bound.");
                     return;
                 }
                 if (otherUser.Inventory.AvailableSlots == 0 && (!item.Stackable || !User1Items.Contains(item)))
                 {
-                    user.Client.SendServerMessage(0, $"{otherUser.Name} cannot hold any more items.");
-                    otherUser.Client.SendServerMessage(0, "You cannot hold any more items.");
+                    user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} cannot hold any more items.");
+                    otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You cannot hold any more items.");
                     return;
                 }
 
                 if (!item.Stackable)
                 {
-
-
                     //remove item from their inventory
                     user.Inventory.TryRemove(slot);
                     user.Client.Enqueue(ServerPackets.RemoveItem(slot));
@@ -137,10 +135,17 @@ namespace Chaos
                 Item splitItem;
                 int index;
                 bool user1Src = user == User1;
+                User otherUser = OtherUser(user);
 
                 //if slot is null, or not stackable, or invalid count, then return
                 if (!IsActive || !user.Inventory.TryGetObject(slot, out Item item) || !item.Stackable || count > item.Count || item.AccountBound || (user1Src ? User1Accept : User2Accept))
                     return;
+
+                if(otherUser.Inventory.Contains(item) && (otherUser.Inventory[item.Name].Count + count) > CONSTANTS.ITEM_STACK_MAX)
+                {
+                    user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} cannot hold that many {item.Name}.");
+                    return;
+                }
 
                 //remove the item if we're exchanging all that we have
                 if (item.Count == count)

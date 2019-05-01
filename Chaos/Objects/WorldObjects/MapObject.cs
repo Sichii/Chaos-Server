@@ -28,8 +28,6 @@ namespace Chaos
         internal Map Map => Game.World.Maps.TryGetValue(Location.MapID, out Map map) ? map : null;
         public Point Point => Location.Point;
 
-
-
         /// <summary>
         /// Master constructor for an object representing something that exists on the map.
         /// </summary>

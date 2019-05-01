@@ -37,8 +37,8 @@ namespace Chaos
         internal abstract uint CurrentHP { get; set; }
         internal Dictionary<int, DateTime> AnimationHistory { get; set; }
         internal Dictionary<int, DateTime> WorldAnimationHistory { get; set; }
-        internal DateTime LastClicked { get; set; }
-        internal bool ShouldDisplay => DateTime.UtcNow.Subtract(LastClicked).TotalMilliseconds < 500;
+        internal Dictionary<int, DateTime> LastClicked { get; set; }
+        internal bool ShouldDisplay(int id) => !LastClicked.TryGetValue(id, out DateTime lastClick) || DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500;
 
         /// <summary>
         /// Json & Master constructor for a creature.
@@ -53,6 +53,7 @@ namespace Chaos
 
             AnimationHistory = new Dictionary<int, DateTime>();
             WorldAnimationHistory = new Dictionary<int, DateTime>();
+            LastClicked = new Dictionary<int, DateTime>();
         }
 
         /// <summary>

@@ -82,9 +82,9 @@ namespace Chaos
 
         internal void DecryptDialog()
         {
-            byte num1 = (byte)(Data[1] ^ (byte)(Data[0] - 45));
-            byte num2 = (byte)(num1 + 114);
-            byte num3 = (byte)(num1 + 40);
+            byte num1 = (byte)(Data[1] ^ (uint)(byte)(Data[0] - 45U));
+            byte num2 = (byte)(num1 + 114U);
+            byte num3 = (byte)(num1 + 40U);
 
             Data[2] ^= num2;
             Data[3] ^= (byte)(num2 + 1);

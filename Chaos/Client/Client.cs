@@ -33,7 +33,8 @@ namespace Chaos
         internal Socket ClientSocket { get; private set; }
 
         internal bool IsLoopback { get; set; }
-        internal byte Sequence { get; set; }
+        internal byte SendSequence { get; set; }
+        internal byte ReceiveSequence { get; set; }
         internal byte StepCount { get; set; }
         internal ServerType ServerType { get; set; }
         internal Crypto Crypto { get; set; }
@@ -62,7 +63,8 @@ namespace Chaos
             ClientSocket = socket;
             Crypto = new Crypto();
             PacketHandlers = ClientPackets.Handlers;
-            Sequence = 0;
+            SendSequence = 0;
+            ReceiveSequence = 0;
             StepCount = 1;
 
             if (socket.RemoteEndPoint is IPEndPoint ipEndPoint)
@@ -75,7 +77,7 @@ namespace Chaos
 
         ~Client()
         {
-            Disconnect();
+            ClientSocket.Disconnect(false);
         }
 
         /// <summary>
@@ -83,21 +85,22 @@ namespace Chaos
         /// </summary>
         internal void Connect()
         {
+            Connected = true;
+
             if (Server.TryAddClient(this))
             {
-                Connected = true;
-
                 //when we receive data, copy the readable data to the client buffer and call endreceive
                 ClientSocket.BeginReceive(ClientBuffer, 0, ClientBuffer.Length, SocketFlags.None, new AsyncCallback(ClientEndReceive), ClientSocket);
 
                 if (ServerType != ServerType.World)
                     Enqueue(ServerPackets.AcceptConnection());
 
-                Server.WriteLog("Connection accepted", this);
+                Server.WriteLogAsync("Connection accepted", this);
             }
             else
             {
-                Server.WriteLog("Connection failure", this);
+                Connected = false;
+                Server.WriteLogAsync("Connection failure", this);
             }
         }
 
@@ -105,23 +108,31 @@ namespace Chaos
         /// Disconnects the client from the server.
         /// </summary>
         /// <param name="wait">False if you want to immediately kill the client. True if you want the client to time out.</param>
-        internal void Disconnect(bool wait = false)
+        internal void Disconnect()
         {
             lock (Sync)
             {
-                Connected = false;
-                if (wait)
-                    return;
-
-                if (Server.TryRemoveClient(this))
+                try
                 {
-                    if (User != null)
-                        try { Game.World.RemoveClient(this); }
-                        catch (Exception e) { Server.WriteLog(e.ToString(), this); }
-                    ClientSocket.Disconnect(false);
-                }
+                    if (Connected)
+                    {
+                        Connected = false;
 
-                Server.WriteLog("Connection terminated.", this);
+                        if (Server.TryRemoveClient(this))
+                        {
+                            if (User != null)
+                                try { Game.World.RemoveClient(this); }
+                                catch (Exception e) { Server.WriteLogAsync(e.Message, this); }
+                            ClientSocket.Disconnect(false);
+                        }
+
+                        Server.WriteLogAsync("Connection terminated.", this);
+                    }
+                }
+                catch(Exception e)
+                {
+                    Server.WriteLogAsync($"{Environment.NewLine}DISCONNECTION ERROR: {e.Message}{Environment.NewLine}");
+                }
             }
         }
 
@@ -131,20 +142,17 @@ namespace Chaos
         internal void FlushSendQueue()
         {
             if (!Connected)
-            {
-                Disconnect();
                 return;
-            }
 
             while (!SendQueue.IsEmpty)
             {
                 if (SendQueue.TryDequeue(out ServerPacket tServerPacket))
                 {
-                    Server.WriteLog(tServerPacket.LogString, this);
+                    Server.WriteLogAsync(tServerPacket.LogString, this);
 
                     if (tServerPacket.ShouldEncrypt)
                     {
-                        tServerPacket.Sequence = Sequence++;
+                        tServerPacket.Sequence = SendSequence++;
                         tServerPacket.Encrypt(Crypto);
                     }
                     Send(tServerPacket);
@@ -182,10 +190,11 @@ namespace Chaos
                             var clientPacket = new ClientPacket(FullClientBuffer.GetRange(0, count).ToArray());
                             //remove the data from the fullclientbuffer
                             FullClientBuffer.RemoveRange(0, count);
-                            //send it off to be processed by the server
 
+                            //send it off to be processed by the server
                             if (clientPacket != null)
                             {
+                                //make sure the opcode is consistent with the client's current server type
                                 if ((ServerType == ServerType.World) ? CONSTANTS.WORLD_OPCODES.Contains(clientPacket.OpCode)
                                     : (ServerType == ServerType.Login) ? CONSTANTS.LOGIN_OPCODES.Contains(clientPacket.OpCode)
                                     : (ServerType == ServerType.Lobby) ? CONSTANTS.LOBBY_OPCODES.Contains(clientPacket.OpCode)
@@ -203,11 +212,11 @@ namespace Chaos
                                     }
                                     catch (Exception e)
                                     {
-                                        Server.WriteLog($@"{Environment.NewLine}HANDLER EXCEPTION: {e.ToString()}{Environment.NewLine}", this);
+                                        Server.WriteLogAsync($@"{Environment.NewLine}HANDLER EXCEPTION: {e.Message}{Environment.NewLine}", this);
                                     }
                                 }
                                 else
-                                    Server.WriteLog($@"{Environment.NewLine}INVALID PACKET[{clientPacket.OpCode}]: {ServerType} => {clientPacket}{Environment.NewLine}");
+                                    Server.WriteLogAsync($@"{Environment.NewLine}INVALID PACKET[{clientPacket.OpCode}]: {ServerType} => {clientPacket}{Environment.NewLine}");
                             }
                         }
                         else
@@ -217,7 +226,7 @@ namespace Chaos
             }
             catch(Exception e)
             {
-                Server.WriteLog($@"{Environment.NewLine}ENDRECEIVE EXCEPTION: {e.ToString()}{Environment.NewLine}");
+                Server.WriteLogAsync($@"{Environment.NewLine}ENDRECEIVE EXCEPTION: {e.ToString()}{Environment.NewLine}");
             }
             finally
             {

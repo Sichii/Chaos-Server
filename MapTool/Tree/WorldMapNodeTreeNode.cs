@@ -9,7 +9,6 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ChaosTool

@@ -60,7 +60,7 @@ namespace Chaos
             for (int i = 0; i < Data.Length; ++i)
             {
                 byte saltI = (byte)(i / crypto.Key.Length);
-                Data[i] ^= (byte)(crypto.Salts[saltI] ^ key[i % key.Length]);
+                Data[i] ^= (byte)(crypto.Salts[saltI] ^ (uint)key[i % key.Length]);
                 if (saltI != Sequence)
                     Data[i] ^= crypto.Salts[Sequence];
             }
