@@ -90,7 +90,7 @@ namespace Chaos
                 packet.WritePoint16(obj.Point);
                 packet.WriteInt32(obj.ID);
                 packet.WriteUInt16(obj.Sprite);
-                if (obj.Sprite < 32768) //monster and merchant sprites
+                if (obj.Sprite < CONSTANTS.ITEM_SPRITE_OFFSET) //monster and merchant sprites
                 {
                     var newObj = obj as Creature;
                     packet.Write(new byte[4]); //dunno
@@ -435,17 +435,76 @@ namespace Chaos
                         packet.WriteUInt16((ushort)pursuit.PursuitId);
                     }
                     break;
+                case MenuType.MenuWithArgs:
+                    /*
+                        writestring8(args)
+                        foreachpursuit
+                        {
+                            writestring8 text
+                            writeuint16 pursuitid
+                        }
+                    */
+                    break;
                 case MenuType.TextEntry:
+                    /*
+                        writeuint16 pursuitid
+                    */
                     break;
-                case MenuType.Buy:
+                case MenuType.WithdrawlOrBuy:
+                    /*
+                        writeuint16 pursuitid
+                        writeuint16 count
+
+                        foreach item
+                            writeuint16 sprite
+                            writebyte color
+                            writeuint32 itemCount
+                            writestring8 name
+                            writestring8 unknownStr
+                    */
                     break;
-                case MenuType.Sell:
-                    break;
-                case MenuType.Display:
+                case MenuType.DepositOrSell:
+                    /*
+                        writeuint16 pursuitid
+                        writeuint16 count
+
+                        foreach occupiedSlot
+                            writebyte slotnum
+                    */
                     break;
                 case MenuType.LearnSpell:
+                    /*
+                        writeuint16 pursuitid
+                        writeuint16 count
+
+                        foreach spell
+                            writebyte 2
+                            writeuint16 sprite
+                            writebyte 0
+                            writestring8 name
+                    */
                     break;
-                case MenuType.LearnSkill:
+                case MenuType.LearnSkills:
+                    /*
+                        writeuint16 pursuitid
+                        writeuint16 count
+
+                        foreach spell
+                            writebyte 3
+                            writeuint16 sprite
+                            writebyte 0
+                            writestring8 name
+                    */
+                    break;
+                case MenuType.DisplaySpells:
+                    /*
+                        writeuint16 pursuitid
+                    */
+                    break;
+                case MenuType.DisplaySkills:
+                    /*
+                        writeuint16 pursuitid
+                    */
                     break;
                 case MenuType.Dialog:
                     client.SendDialog(merchant, dialog);
@@ -874,17 +933,18 @@ namespace Chaos
             packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] ";
             return packet;
         }
-        internal static ServerPacket LoginNotification(bool request, uint loginMsgCheckSum = 0, byte[] notif = null)
+        internal static ServerPacket LoginNotification(bool full, uint loginMsgCheckSum = 0, byte[] notif = null)
         {
             var packet = new ServerPacket(ServerOpCodes.LoginNotification);
 
-            packet.WriteBoolean(request);
-            if (request)
+            packet.WriteBoolean(full);
+            if (full)
                 packet.WriteData16(notif);
             else
                 packet.WriteUInt32(loginMsgCheckSum);
 
-            packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] " + (request ? $@"REQUEST: {request}" : $@"CHKSUM: {loginMsgCheckSum}");
+
+            packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] " + (full ? $@"REQUEST: {full}" : $@"CHKSUM: {loginMsgCheckSum}");
             return packet;
         }
         internal static ServerPacket GroupRequest(GroupRequestType type, string source)

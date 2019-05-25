@@ -1605,7 +1605,7 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == MapsTab)
                 {
-                    Chaos.Map map = (tWorldMapTreeNode.Parent as MapTreeNode).Map;
+                    Chaos.Map map = (tWorldMapTreeNode.Parent.Parent as MapTreeNode).Map;
 
                     if (!map.WorldMaps.ContainsKey(tWorldMapTreeNode.Point))
                         MessageBox.Show("No WorldMap exists on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);

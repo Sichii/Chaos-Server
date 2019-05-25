@@ -44,11 +44,11 @@ namespace Chaos
                 byte[] key = new byte[9];
                 for (int i = 0; i < 9; i++)
                 {
-                    int x = Utility.Random(0, 10);
+                    int x = Utilities.Random(1, 10);
                     if (x > 5)
-                        key[i] = (byte)Utility.Random(65, 90);
+                        key[i] = (byte)Utilities.Random(65, 90);
                     else
-                        key[i] = (byte)Utility.Random(97, 122);
+                        key[i] = (byte)Utilities.Random(97, 122);
                 }
 
                 Key = key;
