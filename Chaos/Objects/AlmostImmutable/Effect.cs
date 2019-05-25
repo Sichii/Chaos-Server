@@ -156,7 +156,7 @@ namespace Chaos
 
         internal void EndEffect() => Duration = TimeSpan.Zero;
 
-        public override int GetHashCode() => Animation.GetHashCode() + (ushort)(AnimationDelay << 16) + (ushort)Duration.TotalMilliseconds;
+        public override int GetHashCode() => (Animation.GetHashCode() << 24) + (ushort)(AnimationDelay << 16) + (ushort)Duration.TotalMilliseconds;
         public override bool Equals(object obj) => (obj is Effect tEffect) ? Equals(tEffect) : false;
         public bool Equals(Effect other) => !(other is null) && GetHashCode() == other.GetHashCode();
     }

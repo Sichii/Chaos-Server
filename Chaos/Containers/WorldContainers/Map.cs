@@ -106,7 +106,6 @@ namespace Chaos
 
             //load warps
             ushort warpCount = reader.ReadUInt16();
-            var warpEff = new Effect(4500, TimeSpan.Zero, false, new Animation(96, 0, 250));
             var doorPoints = GetLockedInstance<Door>().Select(d => d.Point).ToList();
 
             for (int i = 0; i < warpCount; i++)
@@ -116,12 +115,12 @@ namespace Chaos
                 ushort targetMapId = reader.ReadUInt16();
                 byte targetX = reader.ReadByte();
                 byte targetY = reader.ReadByte();
-                bool shouldDisplay = !doorPoints.Contains(Points[sourceX, sourceY]);
+                bool shouldDisplay = !doorPoints.Contains((sourceX, sourceY));
                 var warp = new Warp(Id, sourceX, sourceY, targetMapId, targetX, targetY);
-                Warps[Points[sourceX, sourceY]] = warp;
+                Warps[(sourceX, sourceY)] = warp;
 
                 if (shouldDisplay)
-                    AddEffect(warpEff.GetTargetedEffect(Points[sourceX, sourceY]));
+                    AddEffect(new Effect(4500, TimeSpan.Zero, false, new Animation((sourceX, sourceY), 96, 250)));
             }
 
             var wmapEff = new Effect(1250, TimeSpan.Zero, false, new Animation(214, 0, 250));
@@ -136,7 +135,7 @@ namespace Chaos
                 if(Game.World.WorldMaps.TryGetValue(checkSum, out WorldMap worldMap))
                 {
                     WorldMaps[Points[x, y]] = worldMap;
-                    AddEffect(wmapEff.GetTargetedEffect(Points[x, y]));
+                    AddEffect(new Effect(1250, TimeSpan.Zero, false, new Animation((x, y), 214, 250)));
                 }
             }
         }

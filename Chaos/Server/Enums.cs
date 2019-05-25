@@ -523,12 +523,14 @@ namespace Chaos
     internal enum MenuType : byte
     {
         Menu = 0,
+        MenuWithArgs = 1,
         TextEntry = 2,
-        Buy = 4,
-        Sell = 5,
-        Display = 6,
-        LearnSpell = 8,
-        LearnSkill = 9,
+        WithdrawlOrBuy = 4,
+        DepositOrSell = 5,
+        LearnSpell = 6,
+        LearnSkills = 7,
+        DisplaySpells = 8,
+        DisplaySkills = 9,
         Dialog = 255
     }
     internal enum DialogArgsType : byte

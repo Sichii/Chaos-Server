@@ -963,9 +963,9 @@ namespace Chaos
             }
         }
 
-        internal static void RequestLoginNotification(bool request, Client client)
+        internal static void RequestLoginNotification(bool check, Client client)
         {
-            client.Enqueue(ServerPackets.LoginNotification(request, Server.LoginMessageCheckSum, Server.LoginMessage));
+            client.Enqueue(ServerPackets.LoginNotification(check, Server.LoginMessageCheckSum, Server.LoginMessage));
         }
 
         internal static void BeginChant(Client client)
