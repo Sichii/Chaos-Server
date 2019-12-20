@@ -498,7 +498,7 @@ namespace Chaos
                 var doors = doorsAfter.Except(doorsBefore).ToList();
 
                 //send ourselves the walk
-                client.Enqueue(ServerPackets.ConfirmClientWalk(direction, client.User.Point));
+                client.Enqueue(ServerPackets.ConfirmClientWalk(direction, startPoint));
 
                 //for all the things that will go off screen, remove them from the before list, our screen, and remove us from their screen(if theyre a user)
                 foreach (VisibleObject obj in visibleBefore.Except(visibleAfter).ToList())
