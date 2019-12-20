@@ -143,7 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="chaos.ico" />
-    <None Include="Resources\PATH.txt" />
+    <Content Include="Resources\PATH.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Chaos\Chaos.csproj">
@@ -154,14 +154,14 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if"$(ConfigurationName)"=="Release" (
-cd "$(SolutionDir)"
+    <PostBuildEvent>cd "$(SolutionDir)"
+if $(ConfigurationName) == Release (
 set /p wDir=&lt; PATH.txt
 xcopy /C /y "%25cd%25\MapTool\bin\Release\ChaosTool.exe" "%25wDir%25\"
 ) else ( exit )</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)MapTool\Resources"</PreBuildEvent>
+    <PreBuildEvent>xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)MapTool\Resources\PATH.txt"</PreBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

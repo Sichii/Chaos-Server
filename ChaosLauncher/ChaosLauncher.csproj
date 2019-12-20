@@ -115,12 +115,12 @@
   <PropertyGroup>
     <PostBuildEvent>cd "$(SolutionDir)"
 set /p wDir=&lt; PATH.txt
-if"$(ConfigurationName)"=="Release" (
+if $(ConfigurationName) == Release (
 xcopy /C /y "%25cd%25\ChaosLauncher\bin\Release\ChaosLauncher.exe" "%25wDir%25\ChaosDa\"
 ) else ( exit )</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)ChaosLauncher\Resources"</PreBuildEvent>
+    <PreBuildEvent>xcopy /C /y "$(SolutionDir)PATH.txt" "$(SolutionDir)ChaosLauncher\Resources\PATH.txt"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
