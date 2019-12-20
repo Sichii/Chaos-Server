@@ -172,14 +172,14 @@ namespace Chaos
             packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] TYPE: {type} | MESSAGE: {message}";
             return packet;
         }
-        internal static ServerPacket ConfirmClientWalk(Direction direction, Point nextPoint)
+        internal static ServerPacket ConfirmClientWalk(Direction direction, Point oldPoint)
         {
             var packet = new ServerPacket(ServerOpCodes.ClientWalk);
 
             packet.WriteByte((byte)direction);
-            packet.WritePoint16(nextPoint);
+            packet.WritePoint16(oldPoint);
 
-            packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] DIRECTION: {direction} | DESTINATION_POINT: {nextPoint}";
+            packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] DIRECTION: {direction} | OLD_POINT: {oldPoint}";
             return packet;
         }
         internal static ServerPacket CreatureWalk(int id, Point point, Direction direction)
@@ -190,7 +190,7 @@ namespace Chaos
             packet.WritePoint16(point);
             packet.WriteByte((byte)direction);
 
-            packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] ID: {id} | DIRECTION: {direction} | DESTINATION_POINT: {point}";
+            packet.LogString = $@"Send [{(ServerOpCodes)packet.OpCode}] ID: {id} | DIRECTION: {direction} | OLD_POINT: {point}";
             return packet;
         }
         internal static ServerPacket PublicChat(PublicMessageType type, int id, string message)
