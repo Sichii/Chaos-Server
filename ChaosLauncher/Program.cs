@@ -11,6 +11,7 @@
 
 using System;
 using System.Windows.Forms;
+using ChaosLauncher.Forms;
 
 namespace ChaosLauncher
 {

@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using Capricorn.Drawing;
-using Capricorn.IO;
+using ChaosTool.Capricorn.Drawing;
+using ChaosTool.Capricorn.IO;
 
 namespace ChaosTool
 {

@@ -4,7 +4,7 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-namespace Capricorn.IO
+namespace ChaosTool.Capricorn.IO
 {
     public class DATFileEntry
     {

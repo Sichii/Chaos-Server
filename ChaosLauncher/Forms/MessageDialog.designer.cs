@@ -9,7 +9,7 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-namespace ChaosLauncher
+namespace ChaosLauncher.Forms
 {
     partial class MessageDialog
     {

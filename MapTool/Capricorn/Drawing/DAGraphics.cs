@@ -4,13 +4,13 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-using Capricorn.IO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using ChaosTool.Capricorn.IO;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class DAGraphics
     {
@@ -39,13 +39,13 @@ namespace Capricorn.Drawing
         
         private static unsafe Bitmap SimpleRender(int width, int height, byte[] data, Palette256 palette, ImageType type)
         {
-            Bitmap bitmap = new Bitmap(width, height);
-            BitmapData bitmapdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+            var bitmap = new Bitmap(width, height);
+            var bitmapdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.WriteOnly, bitmap.PixelFormat);
-            for (int index1 = 0; index1 < bitmapdata.Height; ++index1)
+            for (var index1 = 0; index1 < bitmapdata.Height; ++index1)
             {
-                byte* numPtr = (byte*) ((Int32) (void*) bitmapdata.Scan0 + index1 * bitmapdata.Stride);
-                for (int index2 = 0; index2 < bitmapdata.Width; ++index2)
+                var numPtr = (byte*) ((Int32) (void*) bitmapdata.Scan0 + index1 * bitmapdata.Stride);
+                for (var index2 = 0; index2 < bitmapdata.Width; ++index2)
                 {
                     int index3 = type != ImageType.EPF
                         ? data[index1 * width + index2]
@@ -67,7 +67,7 @@ namespace Capricorn.Drawing
                         }
                         else if (bitmapdata.PixelFormat == PixelFormat.Format16bppRgb555)
                         {
-                            ushort num =
+                            var num =
                                 (ushort)
                                     (((palette[index3].R & 248) << 7) + ((palette[index3].G & 248) << 2) +
                                      (palette[index3].B >> 3));
@@ -76,7 +76,7 @@ namespace Capricorn.Drawing
                         }
                         else if (bitmapdata.PixelFormat == PixelFormat.Format16bppRgb565)
                         {
-                            ushort num =
+                            var num =
                                 (ushort)
                                     (((palette[index3].R & 248) << 8) + ((palette[index3].G & 252) << 3) +
                                      (palette[index3].B >> 3));
@@ -98,23 +98,23 @@ namespace Capricorn.Drawing
         public static Bitmap RenderMap(MAPFile map, Tileset tiles, PaletteTable tileTable, PaletteTable wallTable,
             DATArchive wallSource)
         {
-            int num1 = 256;
-            int num2 = 96;
-            Bitmap bitmap1 = new Bitmap(56*map.Width, 27*(map.Height + 1) + num1 + num2);
-            Graphics graphics = Graphics.FromImage(bitmap1);
-            int num3 = bitmap1.Width / 2 - 1 - 28 + 1;
-            int num4 = num1;
-            Dictionary<int, Bitmap> dictionary1 = new Dictionary<int, Bitmap>();
-            for (int index1 = 0; index1 < map.Height; ++index1)
+            var num1 = 256;
+            var num2 = 96;
+            var bitmap1 = new Bitmap(56*map.Width, 27*(map.Height + 1) + num1 + num2);
+            var graphics = Graphics.FromImage(bitmap1);
+            var num3 = bitmap1.Width / 2 - 1 - 28 + 1;
+            var num4 = num1;
+            var dictionary1 = new Dictionary<int, Bitmap>();
+            for (var index1 = 0; index1 < map.Height; ++index1)
             {
-                for (int index2 = 0; index2 < map.Width; ++index2)
+                for (var index2 = 0; index2 < map.Width; ++index2)
                 {
                     int key = map[index2, index1].FloorTile;
                     if (key > 0)
                         --key;
                     if (!dictionary1.ContainsKey(key))
                     {
-                        Bitmap bitmap2 = DAGraphics.RenderTile(tiles[key], tileTable[key + 2]);
+                        var bitmap2 = DAGraphics.RenderTile(tiles[key], tileTable[key + 2]);
                         dictionary1.Add(key, bitmap2);
                     }
                     graphics.DrawImageUnscaled(dictionary1[key], num3 + index2*56/2, num4 + index2*28/2);
@@ -122,17 +122,17 @@ namespace Capricorn.Drawing
                 num3 -= 28;
                 num4 += 14;
             }
-            int num5 = bitmap1.Width/ 2 - 1 - 28 + 1;
-            int num6 = num1;
-            Dictionary<int, Bitmap> dictionary2 = new Dictionary<int, Bitmap>();
-            for (int index1 = 0; index1 < map.Height; ++index1)
+            var num5 = bitmap1.Width/ 2 - 1 - 28 + 1;
+            var num6 = num1;
+            var dictionary2 = new Dictionary<int, Bitmap>();
+            for (var index1 = 0; index1 < map.Height; ++index1)
             {
-                for (int index2 = 0; index2 < map.Width; ++index2)
+                for (var index2 = 0; index2 < map.Width; ++index2)
                 {
                     int key1 = map[index2, index1].LeftWall;
                     if (!dictionary2.ContainsKey(key1))
                     {
-                        Bitmap bitmap2 =
+                        var bitmap2 =
                             DAGraphics.RenderImage(
                                 HPFImage.FromArchive("stc" + key1.ToString().PadLeft(5, '0') + ".hpf", true, wallSource),
                                 wallTable[key1 + 1]);
@@ -144,7 +144,7 @@ namespace Capricorn.Drawing
                     int key2 = map[index2, index1].RightWall;
                     if (!dictionary2.ContainsKey(key2))
                     {
-                        Bitmap bitmap2 =
+                        var bitmap2 =
                             DAGraphics.RenderImage(
                                 HPFImage.FromArchive("stc" + key2.ToString().PadLeft(5, '0') + ".hpf", true, wallSource),
                                 wallTable[key2 + 1]);

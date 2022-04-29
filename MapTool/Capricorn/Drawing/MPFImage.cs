@@ -4,10 +4,10 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-using Capricorn.IO;
 using System.IO;
+using ChaosTool.Capricorn.IO;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class MPFImage
     {
@@ -140,8 +140,8 @@ namespace Capricorn.Drawing
         private static MPFImage LoadMPF(Stream stream)
         {
             stream.Seek(0L, SeekOrigin.Begin);
-            BinaryReader binaryReader = new BinaryReader(stream);
-            MPFImage mpfImage = new MPFImage();
+            var binaryReader = new BinaryReader(stream);
+            var mpfImage = new MPFImage();
             if ((int)binaryReader.ReadUInt32() == -1)
             {
                 mpfImage.isFFFormat = true;
@@ -178,19 +178,19 @@ namespace Capricorn.Drawing
                 mpfImage.idleLength = binaryReader.ReadByte();
                 mpfImage.idleSpeed = binaryReader.ReadUInt16();
             }
-            long num1 = binaryReader.BaseStream.Length - mpfImage.expectedDataSize;
-            for (int index = 0; index < mpfImage.expectedFrames; ++index)
+            var num1 = binaryReader.BaseStream.Length - mpfImage.expectedDataSize;
+            for (var index = 0; index < mpfImage.expectedFrames; ++index)
             {
                 int left = binaryReader.ReadUInt16();
                 int top = binaryReader.ReadUInt16();
                 int num2 = binaryReader.ReadUInt16();
                 int num3 = binaryReader.ReadUInt16();
-                int width = num2 - left;
-                int height = num3 - top;
+                var width = num2 - left;
+                var height = num3 - top;
                 int num4 = binaryReader.ReadUInt16();
                 int num5 = binaryReader.ReadUInt16();
-                int xOffset = (num4 % 256 << 8) + num4 / 256;
-                int yOffset = (num5 % 256 << 8) + num5 / 256;
+                var xOffset = (num4 % 256 << 8) + num4 / 256;
+                var yOffset = (num5 % 256 << 8) + num5 / 256;
                 long num6 = binaryReader.ReadUInt32();
                 if (left == ushort.MaxValue && num2 == ushort.MaxValue)
                 {
@@ -202,7 +202,7 @@ namespace Capricorn.Drawing
                 byte[] rawData = null;
                 if (height > 0 && width > 0)
                 {
-                    long position = binaryReader.BaseStream.Position;
+                    var position = binaryReader.BaseStream.Position;
                     binaryReader.BaseStream.Seek(num1 + num6, SeekOrigin.Begin);
                     rawData = binaryReader.ReadBytes(height * width);
                     binaryReader.BaseStream.Seek(position, SeekOrigin.Begin);

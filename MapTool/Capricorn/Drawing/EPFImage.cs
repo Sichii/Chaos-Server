@@ -4,10 +4,10 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-using Capricorn.IO;
 using System.IO;
+using ChaosTool.Capricorn.IO;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class EPFImage
     {
@@ -111,8 +111,8 @@ namespace Capricorn.Drawing
         private static EPFImage LoadEPF(Stream stream)
         {
             stream.Seek(0L, SeekOrigin.Begin);
-            BinaryReader binaryReader = new BinaryReader(stream);
-            EPFImage epfImage = new EPFImage();
+            var binaryReader = new BinaryReader(stream);
+            var epfImage = new EPFImage();
             epfImage.expectedFrames = binaryReader.ReadUInt16();
             epfImage.width = binaryReader.ReadUInt16();
             epfImage.height = binaryReader.ReadUInt16();
@@ -121,17 +121,17 @@ namespace Capricorn.Drawing
             if (epfImage.expectedFrames <= 0)
                 return epfImage;
             epfImage.frames = new EPFFrame[epfImage.expectedFrames];
-            for (int index = 0; index < epfImage.expectedFrames; ++index)
+            for (var index = 0; index < epfImage.expectedFrames; ++index)
             {
                 binaryReader.BaseStream.Seek(epfImage.tocAddress + index * 16, SeekOrigin.Begin);
                 int left = binaryReader.ReadUInt16();
                 int top = binaryReader.ReadUInt16();
                 int num1 = binaryReader.ReadUInt16();
                 int num2 = binaryReader.ReadUInt16();
-                int width = num1 - left;
-                int height = num2 - top;
-                uint num3 = binaryReader.ReadUInt32() + 12U;
-                uint num4 = binaryReader.ReadUInt32() + 12U;
+                var width = num1 - left;
+                var height = num2 - top;
+                var num3 = binaryReader.ReadUInt32() + 12U;
+                var num4 = binaryReader.ReadUInt32() + 12U;
                 binaryReader.BaseStream.Seek(num3, SeekOrigin.Begin);
                 epfImage.rawData = num4 - num3 == width * height ? binaryReader.ReadBytes((int)num4 - (int)num3) : binaryReader.ReadBytes((int)(epfImage.tocAddress - num3));
                 epfImage.frames[index] = new EPFFrame(left, top, width, height, epfImage.rawData);

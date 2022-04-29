@@ -9,14 +9,14 @@
 // You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
 // ****************************************************************************
 
-namespace ChaosLauncher
-{
-    using System;
-    using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Text;
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
-    internal sealed class ProcMemoryStream : Stream, IDisposable
+namespace ChaosLauncher.PInvoke
+{
+    internal class ProcMemoryStream : Stream, IDisposable
     {
         private readonly ProcessAccess AccessType;
         private bool Disposed;
@@ -47,11 +47,11 @@ namespace ChaosLauncher
                 throw new ObjectDisposedException("ProcMemoryStream");
             if (ProcessHandle == IntPtr.Zero)
                 throw new InvalidOperationException("Process is not open.");
-            IntPtr num = Marshal.AllocHGlobal(count);
+            var num = Marshal.AllocHGlobal(count);
             if (num == IntPtr.Zero)
                 throw new InvalidOperationException("Unable to allocate memory.");
 
-            SafeNativeMethods.ReadProcessMemory(ProcessHandle, (IntPtr)Position, num, (IntPtr)count, out int bytesRead);
+            SafeNativeMethods.ReadProcessMemory(ProcessHandle, (IntPtr)Position, num, (IntPtr)count, out var bytesRead);
             Position += bytesRead;
             Marshal.Copy(num, buffer, offset, count);
             Marshal.FreeHGlobal(num);
@@ -82,12 +82,12 @@ namespace ChaosLauncher
                 throw new ObjectDisposedException("ProcMemoryStream");
             if (ProcessHandle == IntPtr.Zero)
                 throw new InvalidOperationException("Process is not open.");
-            IntPtr allocDestination = Marshal.AllocHGlobal(count);
+            var allocDestination = Marshal.AllocHGlobal(count);
             if (allocDestination == IntPtr.Zero)
                 throw new InvalidOperationException("Unable to allocate memory.");
             Marshal.Copy(buffer, offset, allocDestination, count);
 
-            SafeNativeMethods.WriteProcessMemory(ProcessHandle, (IntPtr)Position, allocDestination, (IntPtr)count, out int bytes);
+            SafeNativeMethods.WriteProcessMemory(ProcessHandle, (IntPtr)Position, allocDestination, (IntPtr)count, out var bytes);
             Position += bytes;
             Marshal.FreeHGlobal(allocDestination);
         }

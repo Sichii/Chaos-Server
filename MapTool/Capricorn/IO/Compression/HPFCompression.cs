@@ -7,22 +7,22 @@
 using System;
 using System.IO;
 
-namespace Capricorn.IO.Compression
+namespace ChaosTool.Capricorn.IO.Compression
 {
     public class HPFCompression
     {
         public static byte[] Decompress(string file)
         {
-            uint num1 = 7U;
-            uint num2 = 0U;
-            uint num3 = 0U;
-            uint num4 = 0U;
-            byte[] numArray1 = File.ReadAllBytes(file);
-            byte[] numArray2 = new byte[numArray1.Length * 10];
-            uint[] numArray3 = new uint[256];
-            uint[] numArray4 = new uint[256];
-            byte[] numArray5 = new byte[513];
-            for (uint index = 0U; index < 256U; ++index)
+            var num1 = 7U;
+            var num2 = 0U;
+            var num3 = 0U;
+            var num4 = 0U;
+            var numArray1 = File.ReadAllBytes(file);
+            var numArray2 = new byte[numArray1.Length * 10];
+            var numArray3 = new uint[256];
+            var numArray4 = new uint[256];
+            var numArray5 = new byte[513];
+            for (var index = 0U; index < 256U; ++index)
             {
                 numArray3[(Int32)index] = (uint)(2 * (int)index + 1);
                 numArray4[(Int32)index] = (uint)(2 * (int)index + 2);
@@ -42,11 +42,11 @@ namespace Capricorn.IO.Compression
                     else
                         ++num1;
                 }
-                uint num6 = num5;
+                var num6 = num5;
                 for (uint index = numArray5[(Int32)num5]; (int)num6 != 0 && (int)index != 0; index = numArray5[(Int32)num6])
                 {
                     uint num7 = numArray5[(Int32)index];
-                    uint num8 = numArray3[(Int32)num7];
+                    var num8 = numArray3[(Int32)num7];
                     if ((int)num8 == (int)index)
                     {
                         num8 = numArray4[(Int32)num7];
@@ -69,22 +69,22 @@ namespace Capricorn.IO.Compression
                     ++num4;
                 }
             }
-            byte[] numArray6 = new byte[(Int32)num4];
+            var numArray6 = new byte[(Int32)num4];
             Buffer.BlockCopy(numArray2, 0, numArray6, 0, (int)num4);
             return numArray6;
         }
 
         public static byte[] Decompress(byte[] hpfBytes)
         {
-            uint num1 = 7U;
-            uint num2 = 0U;
-            uint num3 = 0U;
-            uint num4 = 0U;
-            byte[] numArray1 = new byte[hpfBytes.Length * 10];
-            uint[] numArray2 = new uint[256];
-            uint[] numArray3 = new uint[256];
-            byte[] numArray4 = new byte[513];
-            for (uint index = 0U; index < 256U; ++index)
+            var num1 = 7U;
+            var num2 = 0U;
+            var num3 = 0U;
+            var num4 = 0U;
+            var numArray1 = new byte[hpfBytes.Length * 10];
+            var numArray2 = new uint[256];
+            var numArray3 = new uint[256];
+            var numArray4 = new byte[513];
+            for (var index = 0U; index < 256U; ++index)
             {
                 numArray2[(Int32)index] = (uint)(2 * (int)index + 1);
                 numArray3[(Int32)index] = (uint)(2 * (int)index + 2);
@@ -104,11 +104,11 @@ namespace Capricorn.IO.Compression
                     else
                         ++num1;
                 }
-                uint num6 = num5;
+                var num6 = num5;
                 for (uint index = numArray4[(Int32)num5]; (int)num6 != 0 && (int)index != 0; index = numArray4[(Int32)num6])
                 {
                     uint num7 = numArray4[(Int32)index];
-                    uint num8 = numArray2[(Int32)num7];
+                    var num8 = numArray2[(Int32)num7];
                     if ((int)num8 == (int)index)
                     {
                         num8 = numArray3[(Int32)num7];
@@ -131,7 +131,7 @@ namespace Capricorn.IO.Compression
                     ++num4;
                 }
             }
-            byte[] numArray5 = new byte[(Int32)num4];
+            var numArray5 = new byte[(Int32)num4];
             Buffer.BlockCopy(numArray1, 0, numArray5, 0, (int)num4);
             return numArray5;
         }
