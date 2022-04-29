@@ -12,19 +12,24 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+
 #pragma warning disable IDE0007 // Use implicit type
 #pragma warning disable IDE0003 // Remove qualification
 
 
-namespace ChaosLauncher
+namespace ChaosLauncher.Forms
 {
     public partial class MessageDialog : Form
     {
         internal static DialogResult Show(Form owner, IWin32Window location = null)
         {
             if (owner.InvokeRequired)
-                return (DialogResult)owner.Invoke((Action)(() => Show(owner, location)));
-            else
+            {
+                var result = DialogResult.None;
+                owner.Invoke((Action)(() => result = Show(owner, location)));
+
+                return result;
+            } else
                 using (var message = new MessageDialog())
                     return message.ShowDialog(location ?? owner);
         }

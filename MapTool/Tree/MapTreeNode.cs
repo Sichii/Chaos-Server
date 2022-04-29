@@ -10,14 +10,16 @@
 // ****************************************************************************
 
 using System.Windows.Forms;
+using Chaos.Containers.WorldContainers;
+using Chaos.Objects.Data;
 
-namespace ChaosTool
+namespace ChaosTool.Tree
 {
     internal class MapTreeNode : TreeNode
     {
-        internal Chaos.Map Map { get; }
+        internal Map Map { get; }
 
-        internal MapTreeNode(Chaos.Map map, string name)
+        internal MapTreeNode(Map map, string name)
             : base(name)
         {
             Map = map;

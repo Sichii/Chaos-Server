@@ -11,7 +11,7 @@
 
 using System;
 
-namespace ChaosLauncher
+namespace ChaosLauncher.PInvoke
 {
     internal struct ProcInfo
     {

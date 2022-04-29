@@ -4,12 +4,12 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-using Capricorn.IO;
-using Capricorn.IO.Compression;
 using System;
 using System.IO;
+using ChaosTool.Capricorn.IO;
+using ChaosTool.Capricorn.IO.Compression;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class HPFImage
     {
@@ -77,15 +77,15 @@ namespace Capricorn.Drawing
         private static HPFImage LoadHPF(Stream stream)
         {
             stream.Seek(0L, SeekOrigin.Begin);
-            BinaryReader binaryReader1 = new BinaryReader(stream);
-            uint num = binaryReader1.ReadUInt32();
+            var binaryReader1 = new BinaryReader(stream);
+            var num = binaryReader1.ReadUInt32();
             binaryReader1.BaseStream.Seek(-4L, SeekOrigin.Current);
             if ((int)num != -16602539)
                 throw new ArgumentException("Invalid file format, does not contain HPF signature bytes.");
-            HPFImage hpfImage = new HPFImage();
-            byte[] buffer = HPFCompression.Decompress(binaryReader1.ReadBytes((int)binaryReader1.BaseStream.Length));
+            var hpfImage = new HPFImage();
+            var buffer = HPFCompression.Decompress(binaryReader1.ReadBytes((int)binaryReader1.BaseStream.Length));
             binaryReader1.Close();
-            BinaryReader binaryReader2 = new BinaryReader(new MemoryStream(buffer));
+            var binaryReader2 = new BinaryReader(new MemoryStream(buffer));
             hpfImage.headerData = binaryReader2.ReadBytes(8);
             hpfImage.rawData = binaryReader2.ReadBytes(buffer.Length - 8);
             binaryReader2.Close();

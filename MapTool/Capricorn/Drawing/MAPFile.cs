@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class MAPFile
     {
@@ -87,14 +87,14 @@ namespace Capricorn.Drawing
 
         public static MAPFile FromFile(string file)
         {
-            MAPFile mapFile = MAPFile.LoadMap(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var mapFile = MAPFile.LoadMap(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
             mapFile.id = Convert.ToInt32(Path.GetFileNameWithoutExtension(file).Remove(0, 3));
             return mapFile;
         }
 
         public static MAPFile FromFile(string file, int width, int height)
         {
-            MAPFile mapFile = MAPFile.LoadMap(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var mapFile = MAPFile.LoadMap(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
             mapFile.width = width;
             mapFile.height = height;
             mapFile.id = Convert.ToInt32(Path.GetFileNameWithoutExtension(file).Remove(0, 3));
@@ -108,7 +108,7 @@ namespace Capricorn.Drawing
 
         public static MAPFile FromRawData(byte[] data, int width, int height)
         {
-            MAPFile mapFile = MAPFile.LoadMap(new MemoryStream(data));
+            var mapFile = MAPFile.LoadMap(new MemoryStream(data));
             mapFile.width = width;
             mapFile.height = height;
             return mapFile;
@@ -117,15 +117,15 @@ namespace Capricorn.Drawing
         private static MAPFile LoadMap(Stream stream)
         {
             stream.Seek(0L, SeekOrigin.Begin);
-            BinaryReader binaryReader = new BinaryReader(stream);
-            int length = (int)(binaryReader.BaseStream.Length / 6L);
-            MAPFile mapFile = new MAPFile();
+            var binaryReader = new BinaryReader(stream);
+            var length = (int)(binaryReader.BaseStream.Length / 6L);
+            var mapFile = new MAPFile();
             mapFile.tiles = new MapTile[length];
-            for (int index = 0; index < length; ++index)
+            for (var index = 0; index < length; ++index)
             {
-                ushort floor = binaryReader.ReadUInt16();
-                ushort leftWall = binaryReader.ReadUInt16();
-                ushort rightWall = binaryReader.ReadUInt16();
+                var floor = binaryReader.ReadUInt16();
+                var leftWall = binaryReader.ReadUInt16();
+                var rightWall = binaryReader.ReadUInt16();
                 mapFile.tiles[index] = new MapTile(floor, leftWall, rightWall);
             }
             binaryReader.Close();

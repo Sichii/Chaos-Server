@@ -10,8 +10,9 @@
 // ****************************************************************************
 
 using System.Collections;
+using Chaos.Structs;
 
-namespace ChaosTool
+namespace ChaosTool.Tree
 {
     internal class TreeNodeSorter : IComparer
     {
@@ -34,7 +35,7 @@ namespace ChaosTool
                 int id1 = node1.Warp.TargetLocation.MapID, id2 = node2.Warp.TargetLocation.MapID;
                 if (id1 == id2)
                 {
-                    Chaos.Point p1 = node1.Warp.Point, p2 = node2.Warp.Point;
+                    Point p1 = node1.Warp.Point, p2 = node2.Warp.Point;
                     return p1.X == p2.X ? p1.Y.CompareTo(p2.Y) : p1.X.CompareTo(p2.X);
                 }
                 else

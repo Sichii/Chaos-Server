@@ -4,12 +4,12 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-using Capricorn.IO;
 using System;
 using System.Drawing;
 using System.IO;
+using ChaosTool.Capricorn.IO;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class Palette256
     {
@@ -62,9 +62,9 @@ namespace Capricorn.Drawing
         private static Palette256 LoadPalette(Stream stream)
         {
             stream.Seek(0L, SeekOrigin.Begin);
-            BinaryReader binaryReader = new BinaryReader(stream);
-            Palette256 palette256 = new Palette256();
-            for (int index = 0; index < 256; ++index)
+            var binaryReader = new BinaryReader(stream);
+            var palette256 = new Palette256();
+            for (var index = 0; index < 256; ++index)
                 palette256.colors[index] = Color.FromArgb(binaryReader.ReadByte(), binaryReader.ReadByte(), binaryReader.ReadByte());
             return palette256;
         }
@@ -73,19 +73,19 @@ namespace Capricorn.Drawing
         {
             if (dye <= 0)
                 return pal;
-            StreamReader streamReader = new StreamReader("\\color.tbl");
-            Color[,] colorArray = new Color[Convert.ToInt32(streamReader.ReadLine()), 6];
+            var streamReader = new StreamReader("\\color.tbl");
+            var colorArray = new Color[Convert.ToInt32(streamReader.ReadLine()), 6];
             while (!streamReader.EndOfStream)
             {
-                int int32_1 = Convert.ToInt32(streamReader.ReadLine());
-                for (int index = 0; index < 6; ++index)
+                var int32_1 = Convert.ToInt32(streamReader.ReadLine());
+                for (var index = 0; index < 6; ++index)
                 {
-                    string[] strArray = streamReader.ReadLine().Trim().Split(',');
+                    var strArray = streamReader.ReadLine().Trim().Split(',');
                     if (strArray.Length == 3)
                     {
-                        int int32_2 = Convert.ToInt32(strArray[0]);
-                        int int32_3 = Convert.ToInt32(strArray[1]);
-                        int int32_4 = Convert.ToInt32(strArray[2]);
+                        var int32_2 = Convert.ToInt32(strArray[0]);
+                        var int32_3 = Convert.ToInt32(strArray[1]);
+                        var int32_4 = Convert.ToInt32(strArray[2]);
                         if (int32_2 > (int)byte.MaxValue)
                             int32_2 -= (int)byte.MaxValue;
                         if (int32_3 > (int)byte.MaxValue)
@@ -97,8 +97,8 @@ namespace Capricorn.Drawing
                 }
             }
             streamReader.Close();
-            Palette256 palette256 = new Palette256();
-            for (int index = 0; index < 256; ++index)
+            var palette256 = new Palette256();
+            for (var index = 0; index < 256; ++index)
                 palette256[index] = pal[index];
             palette256[98] = colorArray[dye, 0];
             palette256[99] = colorArray[dye, 1];

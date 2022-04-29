@@ -1,44 +1,58 @@
-// ****************************************************************************
-// This file belongs to the Chaos-Server project.
-// 
-// This project is free and open-source, provided that any alterations or
-// modifications to any portions of this project adhere to the
-// Affero General Public License (Version 3).
-// 
-// A copy of the AGPLv3 can be found in the project directory.
-// You may also find a copy at <https://www.gnu.org/licenses/agpl-3.0.html>
-// ****************************************************************************
-
 using System;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
+using System.IO;
+using System.Threading.Tasks;
+using Chaos.Containers;
+using Chaos.DataObjects;
+using Chaos.Effects.Interfaces;
+using Chaos.Managers.Interfaces;
+using Chaos.Servers.Interfaces;
+using Chaos.Templates;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Chaos
+namespace Chaos;
+
+public class Program
 {
-    public class Program
+    public static async Task LoadCaches(IServiceProvider provider)
     {
-        private static Server Server;
-        private static void Main(string[] args)
-        {
-            Console.Title = "Chaos Server";
-            Console.WindowWidth = 200;
-            Console.WindowHeight = 30;
+        await Task.WhenAll(provider.GetRequiredService<ICacheManager<string, IEffect>>().LoadCacheAsync(),
+            provider.GetRequiredService<ICacheManager<string, ItemTemplate>>().LoadCacheAsync(),
+            provider.GetRequiredService<ICacheManager<string, SkillTemplate>>().LoadCacheAsync(),
+            provider.GetRequiredService<ICacheManager<string, SpellTemplate>>().LoadCacheAsync(),
+            provider.GetRequiredService<ICacheManager<string, Metafile>>().LoadCacheAsync(),
+            provider.GetRequiredService<ICacheManager<short, MapTemplate>>().LoadCacheAsync());
 
-            Paths.Set();
+        await provider.GetRequiredService<ICacheManager<string, MapInstance>>().LoadCacheAsync();
+    }
 
-            //create the server, start it in a new thread
-            IPAddress localIP =
-#if DEBUG
-            IPAddress.Loopback;
-#else
-            Dns.GetHostEntry(Paths.HostName).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-#endif
-            Server = new Server(localIP);
+    private static async Task Main(string[] args)
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            #if DEBUG
+            .AddJsonFile("appsettings.local.json")
+            #endif
+            .Build();
 
-            //this thread will block for command line input for use as an admin panel
-            while (Server.Running)
-                Console.ReadLine(); //we can do server commands here when the time comes
-        }
+        var services = new ServiceCollection();
+        var startup = new Startup(configuration);
+        startup.ConfigureServices(services);
+
+        var provider = services.BuildServiceProvider();
+        await LoadCaches(provider);
+
+        var lobbyServer = provider.GetRequiredService<ILobbyServer>();
+        lobbyServer.Start();
+
+        var loginServer = provider.GetRequiredService<ILoginServer>();
+        loginServer.Start();
+
+        var worldServer = provider.GetRequiredService<IWorldServer>();
+        worldServer.Start();
+
+        //do nothing
+        await Task.Delay(-1).ConfigureAwait(false);
     }
 }

@@ -11,13 +11,13 @@
 
 using System.Windows.Forms;
 
-namespace ChaosTool
+namespace ChaosTool.Tree
 {
     internal class WarpTreeNode : TreeNode
     {
-        internal Chaos.Warp Warp { get; }
+        internal Warp Warp { get; }
 
-        internal WarpTreeNode(Chaos.Warp warp, string name)
+        internal WarpTreeNode(Warp warp, string name)
             : base(name)
         {
             Warp = warp;

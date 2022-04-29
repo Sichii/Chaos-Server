@@ -11,20 +11,22 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Chaos.Containers.WorldContainers;
+using Chaos.Structs;
 
-namespace ChaosTool
+namespace ChaosTool.Tree
 {
     internal class WorldMapTreeNode : TreeNode
     {
-        internal Chaos.Point Point { get; }
-        internal Chaos.WorldMap WorldMap { get; }
+        internal Point Point { get; }
+        internal WorldMap WorldMap { get; }
 
-        internal WorldMapTreeNode(Chaos.WorldMap wmap, string name)
-            :this(new KeyValuePair<Chaos.Point, Chaos.WorldMap>(Chaos.Point.None, wmap), name)
+        internal WorldMapTreeNode(WorldMap wmap, string name)
+            :this(new KeyValuePair<Point, WorldMap>(Point.None, wmap), name)
         {
         }
 
-        internal WorldMapTreeNode(KeyValuePair<Chaos.Point, Chaos.WorldMap> kvp, string name)
+        internal WorldMapTreeNode(KeyValuePair<Point, WorldMap> kvp, string name)
             : base(name)
         {
             Point = kvp.Key;

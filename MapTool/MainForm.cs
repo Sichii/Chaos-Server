@@ -13,6 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Chaos.Containers.WorldContainers;
+using Chaos.Objects.Data;
+using Chaos.Server;
+using Chaos.Structs;
+using ChaosTool.Tree;
+
 #pragma warning disable IDE0007 // Use implicit type
 #pragma warning disable IDE0003 // Remove qualification
 
@@ -110,7 +116,7 @@ namespace ChaosTool
         }
         internal void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MapTree = new System.Windows.Forms.TreeView();
             this.MainTabControl = new System.Windows.Forms.TabControl();
             this.MapsTab = new System.Windows.Forms.TabPage();
@@ -1177,7 +1183,7 @@ namespace ChaosTool
                 WorldMapTree.Nodes.Clear();
 
                 //for each map
-                foreach (Chaos.Map map in MapsCache.Maps.Values)
+                foreach (var map in MapsCache.Maps.Values)
                 {
                     //each map gets a Node
                     var Map = new MapTreeNode(map, $@"{map.Name} - {map.Id} ({map.SizeX},{map.SizeY})");
@@ -1199,7 +1205,7 @@ namespace ChaosTool
                     Map.Nodes.Add(WorldMaps);
 
                     //each Warp gets a subNode
-                    foreach (Chaos.Warp Warp in map.Warps.Values)
+                    foreach (var Warp in map.Warps.Values)
                         try
                         {
                             Warps.Nodes.Add(new WarpTreeNode(Warp, $@"{MapsCache.Maps[Warp.TargetLocation.MapID].Name} - {Warp}"));
@@ -1210,7 +1216,7 @@ namespace ChaosTool
                         }
 
                     //each worldmap gets a subNode
-                    foreach (KeyValuePair<Chaos.Point, Chaos.WorldMap> kvp in map.WorldMaps)
+                    foreach (var kvp in map.WorldMaps)
                         WorldMaps.Nodes.Add(new WorldMapTreeNode(kvp, $@"{kvp.Key} => {kvp.Value.CheckSum}"));
 
                     //add this map to the map tree
@@ -1221,13 +1227,13 @@ namespace ChaosTool
                 WMapFieldNameCombox.Items.AddRange(new string[] { "field001", "field002", "field003" });
 
                 //for each worldmap
-                foreach (KeyValuePair<uint, Chaos.WorldMap> kvp in MapsCache.WorldMaps)
+                foreach (var kvp in MapsCache.WorldMaps)
                 {
                     //each worldmap gets a Node
                     var WorldMap = new WorldMapTreeNode(kvp.Value, $@"{kvp.Key} => {kvp.Value.Field}");
 
                     //each worldmapNode gets a subNode
-                    foreach (Chaos.WorldMapNode wmn in kvp.Value.Nodes)
+                    foreach (var wmn in kvp.Value.Nodes)
                         WorldMap.Nodes.Add(new WorldMapNodeTreeNode(wmn, $@"{wmn.Position} - {wmn.Location} - ({MapsCache.Maps[wmn.MapId].Name})"));
 
                     //add this worldmap to the worldmap tree
@@ -1242,7 +1248,7 @@ namespace ChaosTool
         {
             if (e.Node is MapTreeNode tMapTreeNode)
             {
-                Chaos.Map map = tMapTreeNode.Map;
+                var map = tMapTreeNode.Map;
 
                 MapIdNum.Value = map.Id;
                 MapSizeXNum.Value = map.SizeX;
@@ -1253,7 +1259,7 @@ namespace ChaosTool
             }
             else if (e.Node is WarpTreeNode tWarpTreeNode)
             {
-                Chaos.Warp warp = tWarpTreeNode.Warp;
+                var warp = tWarpTreeNode.Warp;
 
                 WarpSourceXNum.Value = warp.Point.X;
                 WarpSourceYNum.Value = warp.Point.Y;
@@ -1263,8 +1269,8 @@ namespace ChaosTool
             }
             else if (e.Node is WorldMapTreeNode tWorldMapTreeNode)
             {
-                Chaos.Point point = tWorldMapTreeNode.Point;
-                Chaos.WorldMap worldMap = tWorldMapTreeNode.WorldMap;
+                var point = tWorldMapTreeNode.Point;
+                var worldMap = tWorldMapTreeNode.WorldMap;
 
                 WMapSourceXNum.Value = point.X;
                 WMapSourceYNum.Value = point.Y;
@@ -1276,7 +1282,7 @@ namespace ChaosTool
         {
             if (e.Node is WorldMapTreeNode tWorldMapTreeNode)
             {
-                Chaos.WorldMap worldMap = tWorldMapTreeNode.WorldMap;
+                var worldMap = tWorldMapTreeNode.WorldMap;
 
                 WMapSourceXNum.Value = 0;
                 WMapSourceYNum.Value = 0;
@@ -1284,7 +1290,7 @@ namespace ChaosTool
             }
             else if (e.Node is WorldMapNodeTreeNode tWorldMapNodeTreeNode)
             {
-                Chaos.WorldMapNode worldMapNode = tWorldMapNodeTreeNode.WorldMapNode;
+                var worldMapNode = tWorldMapNodeTreeNode.WorldMapNode;
 
                 NodePositionXNum.Value = worldMapNode.Position.X;
                 NodePositionYNum.Value = worldMapNode.Position.Y;
@@ -1300,21 +1306,21 @@ namespace ChaosTool
         {
             try
             {
-                string message = "";
-                string mapName = MapNameTbox.Text;
-                ushort mapId = decimal.ToUInt16(MapIdNum.Value);
-                byte sizeX = decimal.ToByte(MapSizeXNum.Value);
-                byte sizeY = decimal.ToByte(MapSizeYNum.Value);
-                sbyte music = decimal.ToSByte(MusicNum.Value);
+                var message = "";
+                var mapName = MapNameTbox.Text;
+                var mapId = decimal.ToUInt16(MapIdNum.Value);
+                var sizeX = decimal.ToByte(MapSizeXNum.Value);
+                var sizeY = decimal.ToByte(MapSizeYNum.Value);
+                var music = decimal.ToSByte(MusicNum.Value);
 
                 message = MapsCache.Maps.ContainsKey(mapId) ? $@"Map ID:{MapIdNum.Value} is already in use. Overwrite? Will Delete doors and Warps."
                     : $@"Add this as a new map? Make sure info is correct.";
 
-                if (uint.TryParse(FlagSumLbl.Text, out uint flags))
+                if (uint.TryParse(FlagSumLbl.Text, out var flags))
                 {
                     if (MessageBox.Show(message, "Chaos MapTool", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
-                        MapsCache.Maps[mapId] = new Chaos.Map(mapId, sizeX, sizeY, (Chaos.MapFlags)flags, mapName, music);
+                        MapsCache.Maps[mapId] = new Map(mapId, sizeX, sizeY, (MapFlags)flags, mapName, music);
                         MapsCache.Save();
                         LoadTrees();
                     }
@@ -1334,12 +1340,12 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
-                    string message = "";
-                    string mapName = MapNameTbox.Text;
-                    ushort mapId = tMapTreeNode.Map.Id;
-                    byte sizeX = decimal.ToByte(MapSizeXNum.Value);
-                    byte sizeY = decimal.ToByte(MapSizeYNum.Value);
-                    sbyte music = decimal.ToSByte(MusicNum.Value);
+                    var message = "";
+                    var mapName = MapNameTbox.Text;
+                    var mapId = tMapTreeNode.Map.Id;
+                    var sizeX = decimal.ToByte(MapSizeXNum.Value);
+                    var sizeY = decimal.ToByte(MapSizeYNum.Value);
+                    var music = decimal.ToSByte(MusicNum.Value);
                     uint flags = 0;
 
                     if (!MapsCache.Maps.ContainsKey(mapId))
@@ -1356,7 +1362,7 @@ namespace ChaosTool
                                 MapsCache.Maps[mapId].SizeX = sizeX;
                                 MapsCache.Maps[mapId].SizeY = sizeY;
                                 MapsCache.Maps[mapId].Music = music;
-                                MapsCache.Maps[mapId].Flags = (Chaos.MapFlags)flags;
+                                MapsCache.Maps[mapId].Flags = (MapFlags)flags;
                                 MapsCache.Save();
                                 LoadTrees();
                                 MapTree.SelectedNode = MapTree.Nodes[mapName];
@@ -1379,8 +1385,8 @@ namespace ChaosTool
             {;
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
-                    string message = "";
-                    ushort mapId = tMapTreeNode.Map.Id;
+                    var message = "";
+                    var mapId = tMapTreeNode.Map.Id;
 
                     if (!MapsCache.Maps.ContainsKey(mapId))
                         MessageBox.Show("Map doesn't exist, please select a map.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1410,8 +1416,8 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode)
                 {
-                    Chaos.Map map = tMapTreeNode.Map;
-                    var newWarp = new Chaos.Warp(map.Id, (ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetMapIDNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value);
+                    var map = tMapTreeNode.Map;
+                    var newWarp = new Warp(map.Id, (ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetMapIDNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value);
 
                     if (map.Warps.ContainsKey(newWarp.Point))
                         MessageBox.Show("Map already contains Warp on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1438,9 +1444,9 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
                 {
-                    Chaos.Warp oldWarp = tWarpTreeNode.Warp;
-                    Chaos.Map map = MapsCache.Maps[oldWarp.Location.MapID];
-                    var newWarp = new Chaos.Warp(oldWarp.Location.MapID, (ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetMapIDNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value);
+                    var oldWarp = tWarpTreeNode.Warp;
+                    var map = MapsCache.Maps[oldWarp.Location.MapID];
+                    var newWarp = new Warp(oldWarp.Location.MapID, (ushort)WarpSourceXNum.Value, (ushort)WarpSourceYNum.Value, (ushort)WarpTargetMapIDNum.Value, (ushort)WarpTargetXNum.Value, (ushort)WarpTargetYNum.Value);
 
                     if (!map.Warps.ContainsKey(oldWarp.Point))
                         MessageBox.Show("Map does not contain that Warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1467,8 +1473,8 @@ namespace ChaosTool
         {
             if (MapTree.SelectedNode is WarpTreeNode tWarpTreeNode)
             {
-                Chaos.Warp Warp = tWarpTreeNode.Warp;
-                Chaos.Map map = MapsCache.Maps[Warp.Location.MapID];
+                var Warp = tWarpTreeNode.Warp;
+                var map = MapsCache.Maps[Warp.Location.MapID];
 
                 if (!map.Warps.ContainsKey(Warp.Point))
                     MessageBox.Show("Map does not contain that Warp.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1493,9 +1499,9 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is MapTreeNode tMapTreeNode && MainTabControl.SelectedTab == MapsTab)
                 {
-                    Chaos.Map map = tMapTreeNode.Map;
-                    Chaos.WorldMap newWmap = MapsCache.WorldMaps.FirstOrDefault(kvp => WMapFieldNameCombox.Text == kvp.Key.ToString()).Value;
-                    Chaos.Point sourcePoint = ((int)WMapSourceXNum.Value, (int)WMapSourceYNum.Value);
+                    var map = tMapTreeNode.Map;
+                    var newWmap = MapsCache.WorldMaps.FirstOrDefault(kvp => WMapFieldNameCombox.Text == kvp.Key.ToString()).Value;
+                    Point sourcePoint = ((int)WMapSourceXNum.Value, (int)WMapSourceYNum.Value);
 
                     if (newWmap == null)
                         MessageBox.Show("WorldMap does not exist.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1515,7 +1521,7 @@ namespace ChaosTool
                 }
                 else if (MainTabControl.SelectedTab == WorldMapsTab)
                 {
-                    Chaos.WorldMap newWmap = new Chaos.WorldMap(WMapFieldNameCombox.Text);
+                    var newWmap = new WorldMap(WMapFieldNameCombox.Text);
 
                     if (newWmap == null)
                         MessageBox.Show("Check data.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1544,9 +1550,9 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == MapsTab)
                 {
-                    Chaos.Map map = (tWorldMapTreeNode.Parent.Parent as MapTreeNode).Map;
-                    Chaos.WorldMap newWmap = MapsCache.WorldMaps.FirstOrDefault(kvp => WMapFieldNameCombox.Text == kvp.Key.ToString() || WMapFieldNameCombox.Text == kvp.Value.Field).Value;
-                    Chaos.Point newPoint = ((int)WMapSourceXNum.Value, (int)WMapSourceYNum.Value);
+                    var map = (tWorldMapTreeNode.Parent.Parent as MapTreeNode).Map;
+                    var newWmap = MapsCache.WorldMaps.FirstOrDefault(kvp => WMapFieldNameCombox.Text == kvp.Key.ToString() || WMapFieldNameCombox.Text == kvp.Value.Field).Value;
+                    Point newPoint = ((int)WMapSourceXNum.Value, (int)WMapSourceYNum.Value);
 
 
                     if(newWmap == null)
@@ -1568,8 +1574,8 @@ namespace ChaosTool
                 }
                 else if (WorldMapTree.SelectedNode is WorldMapTreeNode uWorldMapTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
                 {
-                    Chaos.WorldMap oldMap = uWorldMapTreeNode.WorldMap;
-                    Chaos.WorldMap newWmap = new Chaos.WorldMap(WMapFieldNameCombox.Text, oldMap.Nodes.ToArray());
+                    var oldMap = uWorldMapTreeNode.WorldMap;
+                    var newWmap = new WorldMap(WMapFieldNameCombox.Text, oldMap.Nodes.ToArray());
 
                     if (newWmap == null || oldMap == null)
                         MessageBox.Show("Error, check values.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1581,8 +1587,8 @@ namespace ChaosTool
                         MapsCache.WorldMaps.Add(newWmap.CheckSum, newWmap);
 
                         //correct instanced map data
-                        foreach (Chaos.Map map in MapsCache.Maps.Values.ToList())
-                            foreach (KeyValuePair<Chaos.Point, Chaos.WorldMap> kvp in map.WorldMaps.ToList())
+                        foreach (var map in MapsCache.Maps.Values.ToList())
+                            foreach (var kvp in map.WorldMaps.ToList())
                                 if (kvp.Value.CheckSum == oldMap.CheckSum)
                                     MapsCache.Maps[map.Id].WorldMaps[kvp.Key] = newWmap;
 
@@ -1605,7 +1611,7 @@ namespace ChaosTool
             {
                 if (MapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == MapsTab)
                 {
-                    Chaos.Map map = (tWorldMapTreeNode.Parent.Parent as MapTreeNode).Map;
+                    var map = (tWorldMapTreeNode.Parent.Parent as MapTreeNode).Map;
 
                     if (!map.WorldMaps.ContainsKey(tWorldMapTreeNode.Point))
                         MessageBox.Show("No WorldMap exists on that point.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1647,8 +1653,8 @@ namespace ChaosTool
             {
                 if (WorldMapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
                 {
-                    Chaos.WorldMap wMap = tWorldMapTreeNode.WorldMap;
-                    Chaos.WorldMapNode newNode = new Chaos.WorldMapNode(((int)NodePositionXNum.Value, (int)NodePositionYNum.Value), MapsCache.Maps[(ushort)NodeTargetMapIDNum.Value].Name, (ushort)NodeTargetMapIDNum.Value, ((int)NodeTargetXNum.Value, (int)NodeTargetYNum.Value));
+                    var wMap = tWorldMapTreeNode.WorldMap;
+                    var newNode = new WorldMapNode(((int)NodePositionXNum.Value, (int)NodePositionYNum.Value), MapsCache.Maps[(ushort)NodeTargetMapIDNum.Value].Name, (ushort)NodeTargetMapIDNum.Value, ((int)NodeTargetXNum.Value, (int)NodeTargetYNum.Value));
 
                     if (wMap.Nodes.Contains(newNode))
                         MessageBox.Show("WorldMap already contains that Node.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1659,7 +1665,7 @@ namespace ChaosTool
                         MapsCache.Save();
                         LoadTrees();
 
-                        string wMapNum = wMap.CheckSum.ToString();
+                        var wMapNum = wMap.CheckSum.ToString();
                         WorldMapTree.Nodes[wMapNum].Expand();
                         WorldMapTree.SelectedNode = WorldMapTree.Nodes[wMapNum].Nodes[newNode.CheckSum.ToString()];
                     }
@@ -1677,9 +1683,9 @@ namespace ChaosTool
             {
                 if (WorldMapTree.SelectedNode is WorldMapNodeTreeNode tWorldMapNodeTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
                 {
-                    Chaos.WorldMapNode node = tWorldMapNodeTreeNode.WorldMapNode;
-                    Chaos.WorldMap wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
-                    Chaos.WorldMapNode newNode = new Chaos.WorldMapNode(((int)NodePositionXNum.Value, (int)NodePositionYNum.Value), MapsCache.Maps[(ushort)NodeTargetMapIDNum.Value].Name, (ushort)NodeTargetMapIDNum.Value, ((int)NodeTargetXNum.Value, (int)NodeTargetYNum.Value));
+                    var node = tWorldMapNodeTreeNode.WorldMapNode;
+                    var wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
+                    var newNode = new WorldMapNode(((int)NodePositionXNum.Value, (int)NodePositionYNum.Value), MapsCache.Maps[(ushort)NodeTargetMapIDNum.Value].Name, (ushort)NodeTargetMapIDNum.Value, ((int)NodeTargetXNum.Value, (int)NodeTargetYNum.Value));
 
                     if (!wMap.Nodes.Contains(node))
                         MessageBox.Show("WorldMap does not contain that Node.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1691,7 +1697,7 @@ namespace ChaosTool
                         MapsCache.Save();
                         LoadTrees();
 
-                        string wMapNum = wMap.CheckSum.ToString();
+                        var wMapNum = wMap.CheckSum.ToString();
                         WorldMapTree.Nodes[wMapNum].Expand();
                         WorldMapTree.SelectedNode = WorldMapTree.Nodes[wMapNum].Nodes[newNode.CheckSum.ToString()];
                     }
@@ -1709,8 +1715,8 @@ namespace ChaosTool
             {
                 if (WorldMapTree.SelectedNode is WorldMapNodeTreeNode tWorldMapNodeTreeNode && MainTabControl.SelectedTab == WorldMapsTab)
                 {
-                    Chaos.WorldMapNode node = tWorldMapNodeTreeNode.WorldMapNode;
-                    Chaos.WorldMap wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
+                    var node = tWorldMapNodeTreeNode.WorldMapNode;
+                    var wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
 
                     if (!wMap.Nodes.Contains(node))
                         MessageBox.Show("WorldMap does not contain that Node.", "Chaos MapTool", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1721,7 +1727,7 @@ namespace ChaosTool
                         MapsCache.Save();
                         LoadTrees();
 
-                        string wMapNum = wMap.CheckSum.ToString();
+                        var wMapNum = wMap.CheckSum.ToString();
                         WorldMapTree.Nodes[wMapNum].Expand();
                         WorldMapTree.SelectedNode = WorldMapTree.Nodes[wMapNum];
                     }
@@ -1739,14 +1745,14 @@ namespace ChaosTool
             {
                 if (MainTabControl.SelectedTab == WorldMapsTab)
                 {
-                    Chaos.WorldMap wMap = null;
+                    WorldMap wMap = null;
 
                     if (WorldMapTree.SelectedNode is WorldMapNodeTreeNode tWorldMapNodeTreeNode)
                         wMap = (tWorldMapNodeTreeNode.Parent as WorldMapTreeNode).WorldMap;
                     else if (WorldMapTree.SelectedNode is WorldMapTreeNode tWorldMapTreeNode)
                         wMap = tWorldMapTreeNode.WorldMap;
 
-                    PositionSelector newSelector = new PositionSelector(this, wMap.Field);
+                    var newSelector = new PositionSelector(this, wMap.Field);
                     newSelector.Show();
                 }
             }

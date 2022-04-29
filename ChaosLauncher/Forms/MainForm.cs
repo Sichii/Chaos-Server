@@ -13,18 +13,18 @@ using System;
 using System.Diagnostics;
 using System.Drawing.Text;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ChaosLauncher.PInvoke;
+
 #pragma warning disable IDE0007 // Use implicit type
 #pragma warning disable IDE0003 // Remove qualification
 
-namespace ChaosLauncher
+namespace ChaosLauncher.Forms
 {
     internal partial class Launcher : Form
     {
@@ -45,7 +45,7 @@ namespace ChaosLauncher
 
             using (var fontStream = new MemoryStream(Properties.Resources.SWTORTrajan))
             {
-                byte[] pfcData = fontStream.ToArray();
+                var pfcData = fontStream.ToArray();
                 var pinnedArr = GCHandle.Alloc(pfcData, GCHandleType.Pinned);
                 pfc.AddMemoryFont(pinnedArr.AddrOfPinnedObject(), pfcData.Length);
                 pinnedArr.Free();
@@ -123,7 +123,7 @@ namespace ChaosLauncher
                 memory.WriteByte(0xEB);
 
                 //edit the direct ip to the server ip
-                byte[] address = IpToUse.GetAddressBytes();
+                var address = IpToUse.GetAddressBytes();
                 memory.Position = 0x4333C2;
                 memory.WriteByte(106);
                 memory.WriteByte(address[3]);

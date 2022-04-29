@@ -1,251 +1,48 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{032C0163-368F-4D73-9542-C265BE0F94DB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Chaos</RootNamespace>
-    <AssemblyName>Chaos</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\CodeRules.ruleset</CodeAnalysisRuleSet>
-    <NoWarn>
-    </NoWarn>
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Chaos.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>chaos.ico</ApplicationIcon>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Costura, Version=3.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.3.1.0\lib\net46\Costura.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="StackExchange.Redis.Extensions.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=d7d863643bcd13ef, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.Extensions.Core.3.5.0\lib\net46\StackExchange.Redis.Extensions.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="StackExchange.Redis.Extensions.Newtonsoft, Version=3.5.0.0, Culture=neutral, PublicKeyToken=d7d863643bcd13ef, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.Extensions.Newtonsoft.3.5.0\lib\net46\StackExchange.Redis.Extensions.Newtonsoft.dll</HintPath>
-    </Reference>
-    <Reference Include="StackExchange.Redis.StrongName, Version=1.2.6.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.StrongName.1.2.6\lib\net46\StackExchange.Redis.StrongName.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="zlib.net, Version=1.0.3.0, Culture=neutral, PublicKeyToken=47d7877cb3620160">
-      <HintPath>..\packages\zlib.net.1.0.4.0\lib\zlib.net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AI\Pathfinder.cs" />
-    <Compile Include="AI\Pathnode.cs" />
-    <Compile Include="Containers\IEnumerable\EffectsBar.cs" />
-    <Compile Include="Containers\IEnumerable\Legend.cs" />
-    <Compile Include="Containers\IEnumerable\DialogMenu.cs" />
-    <Compile Include="Objects\Immutable\Result.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="TODO\Monsters.cs" />
-    <Compile Include="TODO\Board.cs" />
-    <Compile Include="Objects\AlmostImmutable\LegendMark.cs" />
-    <Compile Include="Containers\IEnumerable\Panel.cs" />
-    <Compile Include="Client\UserOptions.cs" />
-    <Compile Include="TODO\Bank.cs" />
-    <Compile Include="Containers\WorldContainers\Exchange.cs" />
-    <Compile Include="Containers\IEnumerable\Group.cs" />
-    <Compile Include="Containers\IEnumerable\Guild.cs" />
-    <Compile Include="Client\IgnoreList.cs" />
-    <Compile Include="Containers\Scripted\MerchantMenu.cs" />
-    <Compile Include="Server\MetaFile.cs" />
-    <Compile Include="Containers\IEnumerable\PursuitMenu.cs" />
-    <Compile Include="TODO\WorldBoard.cs" />
-    <Compile Include="Objects\PanelObjects\ActivationContext.cs" />
-    <Compile Include="Utility\RateController.cs" />
-    <Compile Include="Utility\Extensions.cs" />
-    <Compile Include="Server\Game\CONSTANTS.cs" />
-    <Compile Include="Containers\Scripted\CreationEngine.cs" />
-    <Compile Include="Containers\Scripted\Dialogs.cs" />
-    <Compile Include="Containers\Scripted\Assertable.cs" />
-    <Compile Include="Containers\Scripted\Merchants.cs" />
-    <Compile Include="Containers\Scripted\Pursuits.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Objects\Immutable\GroupBox.cs" />
-    <Compile Include="Server\Packets\ClientPacket.cs" />
-    <Compile Include="Server\Packets\ClientPackets.cs" />
-    <Compile Include="Server\Crypto.cs" />
-    <Compile Include="Server\Enums.cs" />
-    <Compile Include="Server\DataBase.cs" />
-    <Compile Include="Objects\WorldObjects\Creature.cs" />
-    <Compile Include="Objects\AlmostImmutable\Dialog.cs" />
-    <Compile Include="Objects\WorldObjects\GroundObject.cs" />
-    <Compile Include="Objects\PanelObjects\Item.cs" />
-    <Compile Include="Containers\WorldContainers\Map.cs" />
-    <Compile Include="Objects\WorldObjects\MapObject.cs" />
-    <Compile Include="Objects\WorldObjects\Merchant.cs" />
-    <Compile Include="Objects\WorldObjects\Monster.cs" />
-    <Compile Include="Objects\PanelObjects\PanelObject.cs" />
-    <Compile Include="Objects\WorldObjects\User.cs" />
-    <Compile Include="Objects\WorldObjects\VisibleObject.cs" />
-    <Compile Include="Objects\WorldObjects\Warp.cs" />
-    <Compile Include="Objects\WorldObjects\WorldObject.cs" />
-    <Compile Include="Server\Packets\Packet.cs" />
-    <Compile Include="Server\Paths.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\Game\Game.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Server\Redirect.cs" />
-    <Compile Include="Server\Server.cs" />
-    <Compile Include="Client\Client.cs" />
-    <Compile Include="Server\Packets\ServerPacket.cs" />
-    <Compile Include="Server\Packets\ServerPackets.cs" />
-    <Compile Include="Objects\WorldObjects\Door.cs" />
-    <Compile Include="Objects\Immutable\Animation.cs" />
-    <Compile Include="Client\Attributes.cs" />
-    <Compile Include="Client\DisplayData.cs" />
-    <Compile Include="Server\GameTime.cs" />
-    <Compile Include="Objects\Immutable\DialogMenuItem.cs" />
-    <Compile Include="Objects\AlmostImmutable\Effect.cs" />
-    <Compile Include="Structs\ItemSprite.cs" />
-    <Compile Include="Structs\Location.cs" />
-    <Compile Include="TODO\Post.cs" />
-    <Compile Include="Structs\MetaFileNode.cs" />
-    <Compile Include="Structs\Point.cs" />
-    <Compile Include="Objects\PanelObjects\Skill.cs" />
-    <Compile Include="Objects\PanelObjects\Spell.cs" />
-    <Compile Include="Objects\Immutable\PursuitMenuItem.cs" />
-    <Compile Include="Structs\Tile.cs" />
-    <Compile Include="Containers\WorldContainers\WorldMap.cs" />
-    <Compile Include="Structs\WorldMapNode.cs" />
-    <Compile Include="Client\Portrait.cs" />
-    <Compile Include="Utility\Targeting.cs" />
-    <Compile Include="Utility\Utilities.cs" />
-    <Compile Include="Server\Game\World.cs" />
-    <Compile Include="Server\ZLIB.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\sotp.dat" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FodyWeavers.xml">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="chaos.ico" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Resources\PATH.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.7">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.7 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <PublishUrl>publish\</PublishUrl>
+        <AssemblyTitle>Chaos Server</AssemblyTitle>
+        <Company>Chaotic Minds</Company>
+        <Product>Chaos Server</Product>
+        <NeutralLanguage>en</NeutralLanguage>
+        <Description>A private server for Dark Ages</Description>
+        <Copyright>Copyright © 2022</Copyright>
+        <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <LangVersion>default</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Fody.3.2.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.2.1\build\Fody.targets'))" />
-  </Target>
-  <Import Project="..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.3.1.0\build\Costura.Fody.targets')" />
-  <Import Project="..\packages\Fody.3.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.3.2.1\build\Fody.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+    <PropertyGroup>
+        <ApplicationIcon>chaos.ico</ApplicationIcon>
+    </PropertyGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\sotp.dat" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="chaos.ico" />
+        <None Include="Resources\PATH.txt" />
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.local.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Old" />
+        <Folder Include="Scripts\ItemScripts" />
+        <Folder Include="Scripts\SkillScripts" />
+        <Folder Include="Scripts\SpellScripts" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
+        <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Collection" Version="8.0.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    </ItemGroup>
 </Project>

@@ -4,11 +4,11 @@
 // MVID: A987DE0D-CB54-451E-92F3-D381FD0B091A
 // Assembly location: D:\Dropbox\Ditto (1)\Other Bots and TOols\Kyle's Known Bots\Accolade\Accolade.exe
 
-using Capricorn.IO;
 using System.Collections.Generic;
 using System.IO;
+using ChaosTool.Capricorn.IO;
 
-namespace Capricorn.Drawing
+namespace ChaosTool.Capricorn.Drawing
 {
     public class Tileset
     {
@@ -70,7 +70,7 @@ namespace Capricorn.Drawing
 
         public static Tileset FromFile(string file)
         {
-            Tileset tileset = Tileset.LoadTiles(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var tileset = Tileset.LoadTiles(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read));
             tileset.name = Path.GetFileNameWithoutExtension(file).ToUpper();
             tileset.filename = file;
             return tileset;
@@ -78,7 +78,7 @@ namespace Capricorn.Drawing
 
         public static Tileset FromRawData(byte[] data)
         {
-            Tileset tileset = Tileset.LoadTiles(new MemoryStream(data));
+            var tileset = Tileset.LoadTiles(new MemoryStream(data));
             tileset.name = "Unknown Tileset";
             return tileset;
         }
@@ -87,7 +87,7 @@ namespace Capricorn.Drawing
         {
             if (!archive.Contains(file))
                 return null;
-            Tileset tileset = Tileset.LoadTiles(new MemoryStream(archive.ExtractFile(file)));
+            var tileset = Tileset.LoadTiles(new MemoryStream(archive.ExtractFile(file)));
             tileset.name = Path.GetFileNameWithoutExtension(file).ToUpper();
             tileset.filename = file;
             return tileset;
@@ -97,7 +97,7 @@ namespace Capricorn.Drawing
         {
             if (!archive.Contains(file, ignoreCase))
                 return null;
-            Tileset tileset = Tileset.LoadTiles(new MemoryStream(archive.ExtractFile(file, ignoreCase)));
+            var tileset = Tileset.LoadTiles(new MemoryStream(archive.ExtractFile(file, ignoreCase)));
             tileset.name = Path.GetFileNameWithoutExtension(file).ToUpper();
             tileset.filename = file;
             return tileset;
@@ -106,12 +106,12 @@ namespace Capricorn.Drawing
         private static Tileset LoadTiles(Stream stream)
         {
             stream.Seek(0L, SeekOrigin.Begin);
-            BinaryReader binaryReader = new BinaryReader(stream);
-            Tileset tileset = new Tileset();
+            var binaryReader = new BinaryReader(stream);
+            var tileset = new Tileset();
             tileset.tileCount = (int)(binaryReader.BaseStream.Length / 1512L);
-            for (int index = 0; index < tileset.tileCount; ++index)
+            for (var index = 0; index < tileset.tileCount; ++index)
             {
-                byte[] numArray = binaryReader.ReadBytes(1512);
+                var numArray = binaryReader.ReadBytes(1512);
                 tileset.tiles.Add(numArray);
             }
             binaryReader.Close();
