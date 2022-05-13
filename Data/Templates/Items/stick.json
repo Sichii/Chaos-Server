@@ -1,0 +1,17 @@
+{
+    "TemplateKey": "Stick",
+    "Name": "Stick",
+    "Cost": 1000,
+    "EquipmentType": "Weapon",
+    "Gender": "Unisex",
+    "ItemSprite": {
+        "DisplaySprite": 1,
+        "PanelSprite": 86
+    },
+    "MaxDurability": 1000,
+    "Modifiers": {
+        "Str": 1
+    },
+    "Weight": 1,
+    "ScriptKeys": ["Equipment"]
+}
