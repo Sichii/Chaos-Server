@@ -15,9 +15,9 @@ public record AttributesSerializer : ServerPacketSerializer<AttributesArgs>
 
         if (args.IsAdmin)
             updateType |= StatUpdateType.GameMasterA;
-        
+
         writer.WriteByte((byte)updateType);
-        
+
         if (args.StatUpdateType.HasFlag(StatUpdateType.Primary))
         {
             writer.WriteBytes(new byte[3]); //dunno

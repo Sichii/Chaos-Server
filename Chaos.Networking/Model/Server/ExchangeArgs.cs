@@ -7,12 +7,13 @@ public record ExchangeArgs : ISendArgs
 {
     public byte? ExchangeIndex { get; set; }
     public ExchangeResponseType ExchangeResponseType { get; set; }
-    public uint? FromId { get; set; }
-    public string FromName { get; set; } = null!;
     public byte? FromSlot { get; set; }
-    public uint? GoldAmount { get; set; }
-    public bool? IsFromSelf { get; set; }
+    public int? GoldAmount { get; set; }
     public DisplayColor? ItemColor { get; set; }
     public string? ItemName { get; set; }
     public ushort? ItemSprite { get; set; }
+    public bool? RightSide { get; set; }
+    public uint? OtherUserId { get; set; }
+    public string OtherUserName { get; set; } = null!;
+    public bool? PersistExchange { get; set; }
 }

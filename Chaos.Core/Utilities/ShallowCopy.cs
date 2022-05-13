@@ -19,11 +19,17 @@ public static class ShallowCopy<T>
             var targetEx = Expression.Parameter(typeof(T));
 
             var properties = GetRecursiveProperties(typeof(T));
+            var fields = GetRecursiveFields(typeof(T));
 
-            var assignmentExpressions =
+            var propertyAssignments =
                 properties.Select(p => Expression.Assign(Expression.Property(targetEx, p), Expression.Property(fromEx, p)));
 
-            AssignmentDelegate = Expression.Lambda<Action<T, T>>(Expression.Block(assignmentExpressions), fromEx, targetEx).Compile();
+            var fieldAssignments =
+                fields.Select(f => Expression.Assign(Expression.Field(targetEx, f), Expression.Field(fromEx, f)));
+
+            var assignmentBlock = Expression.Block(propertyAssignments.Concat(fieldAssignments));
+
+            AssignmentDelegate = Expression.Lambda<Action<T, T>>(assignmentBlock, fromEx, targetEx).Compile();
         }
     }
 
@@ -51,6 +57,13 @@ public static class ShallowCopy<T>
 
         return instance;
     }
+
+    private static IEnumerable<FieldInfo> GetRecursiveFields(Type type) => !type.IsInterface
+        ? type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(f => !f.IsInitOnly && !f.IsLiteral)
+        : new[] { type }.Concat(type.GetInterfaces())
+            .SelectMany(i => i.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            .Where(f => !f.IsInitOnly && !f.IsLiteral)
+            .DistinctBy(p => p.Name);
 
     private static IEnumerable<PropertyInfo> GetRecursiveProperties(Type type) => !type.IsInterface
         ? type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(p => p.CanRead && p.CanWrite)

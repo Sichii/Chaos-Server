@@ -7,4 +7,5 @@ public record WorldMapNode(
     string Text,
     ushort DestinationMapId,
     Point DestinationPoint,
-    ushort CheckSum);
+    ushort CheckSum
+);

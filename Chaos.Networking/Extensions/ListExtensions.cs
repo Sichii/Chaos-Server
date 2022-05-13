@@ -10,7 +10,8 @@ internal static class ListExtensions
         int startIndex,
         T[] sourceArray,
         int sourceIndex,
-        int count)
+        int count
+    )
     {
         for (var i = 0; i < count; i++)
         {

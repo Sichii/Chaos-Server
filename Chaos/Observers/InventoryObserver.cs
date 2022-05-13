@@ -1,6 +1,7 @@
+using Chaos.Core.Definitions;
+using Chaos.Objects.Panel;
+using Chaos.Objects.World;
 using Chaos.Observers.Interfaces;
-using Chaos.PanelObjects;
-using Chaos.WorldObjects;
 
 namespace Chaos.Observers;
 
@@ -10,9 +11,19 @@ public class InventoryObserver : IPanelObserver<Item>
 
     public InventoryObserver(User user) => User = user;
 
-    public void OnAdded(Item obj) => User.Client.SendAddItemToPane(obj);
+    public void OnAdded(Item obj)
+    {
+        User.Client.SendAddItemToPane(obj);
+        User.StatSheet.AddWeight(obj.Template.Weight);
+        User.Client.SendAttributes(StatUpdateType.Primary);
+    }
 
-    public void OnRemoved(byte slot, Item obj) => User.Client.SendRemoveItemFromPane(slot);
+    public void OnRemoved(byte slot, Item obj)
+    {
+        User.Client.SendRemoveItemFromPane(slot);
+        User.StatSheet.AddWeight(-obj.Template.Weight);
+        User.Client.SendAttributes(StatUpdateType.Primary);
+    }
 
     public void OnUpdated(byte originalSlot, Item obj) => User.Client.SendAddItemToPane(obj);
 }

@@ -1,7 +1,5 @@
 using System;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Options;
 

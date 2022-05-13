@@ -32,11 +32,7 @@ public class PacketSerializer : IPacketSerializer
 
     private void LoadDeserializersFromAssembly()
     {
-        var deserializers = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => !a.IsDynamic)
-            .SelectMany(a => a.GetTypes())
-            .Where(asmType => !asmType.IsInterface && !asmType.IsAbstract)
-            .Where(asmType => asmType.IsAssignableTo(typeof(IClientPacketDeserializer)))
+        var deserializers = TypeLoader.LoadTypes<IClientPacketDeserializer>()
             .Select(asmType => (IClientPacketDeserializer)Activator.CreateInstance(asmType)!)
             .ToArray();
 
@@ -56,11 +52,7 @@ public class PacketSerializer : IPacketSerializer
 
     private void LoadSerializersFromAssembly()
     {
-        var serializers = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => !a.IsDynamic)
-            .SelectMany(a => a.GetTypes())
-            .Where(asmType => !asmType.IsInterface && !asmType.IsAbstract)
-            .Where(asmType => asmType.IsAssignableTo(typeof(IServerPacketSerializer)))
+        var serializers = TypeLoader.LoadTypes<IServerPacketSerializer>()
             .Select(asmType => (IServerPacketSerializer)Activator.CreateInstance(asmType)!)
             .ToArray();
 

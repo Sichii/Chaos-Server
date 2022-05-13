@@ -41,7 +41,7 @@ public enum Quest : ulong
 public enum Status : ulong
 {
     None = 0,
-    Dead = 1,
+    Dead = 1
     //add more statuses here, double each time
 }
 
@@ -50,6 +50,7 @@ public enum UserState : ulong
 {
     None = 0,
     IsChanting = 1,
+    Exchanging = 2
     //add more user states here, double each time
 }
 
@@ -433,6 +434,25 @@ public enum EquipmentSlot : byte
     OverHelm = 16,
     Accessory2 = 17,
     Accessory3 = 18
+}
+
+public enum EquipmentType : byte
+{
+    NotEquipment,
+    Weapon,
+    Armor,
+    OverArmor,
+    Shield,
+    Helmet,
+    OverHelmet,
+    Earrings,
+    Necklace,
+    Ring,
+    Gauntlet,
+    Belt,
+    Greaves,
+    Boots,
+    Accessory
 }
 #endregion
 

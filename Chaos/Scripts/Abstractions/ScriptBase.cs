@@ -1,16 +1,27 @@
+using System;
 using Chaos.Scripts.Interfaces;
 
 namespace Chaos.Scripts.Abstractions;
 
-public interface IScript
+public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
 {
     public string ScriptKey { get; }
-}
 
-public abstract class ScriptBase<T> : IScript where T: IScripted
-{
-    public string ScriptKey { get; set; } = null!;
-    protected virtual T Obj { get; }
+    protected ScriptBase() => ScriptKey = GetScriptKey(GetType());
 
-    protected ScriptBase(T obj) => Obj = obj;
+    public bool Equals(ScriptBase? other)
+    {
+        if (ReferenceEquals(null, other))
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return string.Equals(ScriptKey, other.ScriptKey, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is ScriptBase other && Equals(other));
+
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(ScriptKey);
+    public static string GetScriptKey(Type type) => type.Name.Replace("Script", string.Empty);
 }

@@ -14,7 +14,7 @@ public record ExchangeDeserializer : ClientPacketDeserializer<ExchangeArgs>
         var exchangeType = (ExchangeRequestType)reader.ReadByte();
         var otherPlayerId = reader.ReadUInt32();
         var sourceSlot = default(byte?);
-        var goldAmount = default(uint?);
+        var goldAmount = default(int?);
         var itemCount = default(byte?);
 
         switch (exchangeType)
@@ -32,7 +32,7 @@ public record ExchangeDeserializer : ClientPacketDeserializer<ExchangeArgs>
 
                 break;
             case ExchangeRequestType.SetGold:
-                goldAmount = reader.ReadUInt32();
+                goldAmount = reader.ReadInt32();
 
                 break;
             case ExchangeRequestType.Cancel:
@@ -43,6 +43,11 @@ public record ExchangeDeserializer : ClientPacketDeserializer<ExchangeArgs>
                 throw new ArgumentOutOfRangeException(nameof(exchangeType), exchangeType, "Unknown enum value");
         }
 
-        return new ExchangeArgs(exchangeType, otherPlayerId, sourceSlot, itemCount, goldAmount);
+        return new ExchangeArgs(
+            exchangeType,
+            otherPlayerId,
+            sourceSlot,
+            itemCount,
+            goldAmount);
     }
 }

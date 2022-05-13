@@ -6,9 +6,9 @@ public record Animation
 {
     public ushort AnimationSpeed { get; init; }
     public ushort SourceAnimation { get; init; }
-    public int? SourceId { get; init; }
+    public uint? SourceId { get; init; }
     public ushort TargetAnimation { get; init; }
-    public int? TargetId { get; init; }
+    public uint? TargetId { get; init; }
     public Point? TargetPoint { get; init; }
 
     /// <summary>
@@ -19,7 +19,7 @@ public record Animation
     /// <summary>
     ///     Returns a re-targeted animation based on IDs. (Does not remove sourceAnimation)
     /// </summary>
-    public Animation GetTargetedAnimation(int targetId, int sourceId) =>
+    public Animation GetTargetedAnimation(uint targetId, uint sourceId) =>
         this with { TargetPoint = null, TargetId = targetId, SourceId = sourceId };
 
     /// <summary>
@@ -31,7 +31,7 @@ public record Animation
     /// <summary>
     ///     Returns a re-targeted animation based on IDs. Removes sourceAnimation.
     /// </summary>
-    public Animation GetTargetedEffectAnimation(int targetId, int sourceId) => this with
+    public Animation GetTargetedEffectAnimation(uint targetId, uint sourceId) => this with
     {
         TargetPoint = null, TargetId = targetId, SourceId = sourceId, SourceAnimation = 0
     };

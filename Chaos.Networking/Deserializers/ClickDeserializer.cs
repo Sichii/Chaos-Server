@@ -27,7 +27,7 @@ public record ClickDeserializer : ClientPacketDeserializer<ClickArgs>
 
                 break;
             case ClickType.Unknown:
-                //i have no idea, coords are in here somehow
+            //i have no idea, coords are in here somehow
             default:
                 throw new ArgumentOutOfRangeException(nameof(clickType), clickType, "Unknown enum value");
         }

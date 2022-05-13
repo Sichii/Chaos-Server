@@ -16,7 +16,7 @@ public record ProfileArgs : ISendArgs
     public string Name { get; set; } = null!;
     public Nation Nation { get; set; }
     public byte[] Portrait { get; set; } = Array.Empty<byte>();
-    public SocialStatus SocialStatus { get; set; }
     public string? ProfileText { get; set; }
+    public SocialStatus SocialStatus { get; set; }
     public ICollection<string> Titles { get; set; } = new List<string>();
 }

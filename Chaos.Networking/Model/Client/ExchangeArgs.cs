@@ -8,4 +8,5 @@ public record ExchangeArgs(
     uint OtherPlayerId,
     byte? SourceSlot,
     byte? ItemCount,
-    uint? GoldAmount) : IReceiveArgs;
+    int? GoldAmount
+) : IReceiveArgs;

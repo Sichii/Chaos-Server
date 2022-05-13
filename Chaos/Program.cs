@@ -1,12 +1,15 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.DataObjects;
+using Chaos.Core.Data;
 using Chaos.Effects.Interfaces;
+using Chaos.Factories.Interfaces;
 using Chaos.Managers.Interfaces;
 using Chaos.Servers.Interfaces;
 using Chaos.Templates;
+using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,25 +17,45 @@ namespace Chaos;
 
 public class Program
 {
-    public static async Task LoadCaches(IServiceProvider provider)
+    public static Task InitializeAsync(IServiceProvider provider)
     {
-        await Task.WhenAll(provider.GetRequiredService<ICacheManager<string, IEffect>>().LoadCacheAsync(),
-            provider.GetRequiredService<ICacheManager<string, ItemTemplate>>().LoadCacheAsync(),
-            provider.GetRequiredService<ICacheManager<string, SkillTemplate>>().LoadCacheAsync(),
-            provider.GetRequiredService<ICacheManager<string, SpellTemplate>>().LoadCacheAsync(),
-            provider.GetRequiredService<ICacheManager<string, Metafile>>().LoadCacheAsync(),
-            provider.GetRequiredService<ICacheManager<short, MapTemplate>>().LoadCacheAsync());
+        //initialize the singleton
+        _ = provider.GetRequiredService<ItemUtility>();
 
-        await provider.GetRequiredService<ICacheManager<string, MapInstance>>().LoadCacheAsync();
+        LoadScripts(provider);
+
+        return LoadCachesAsync(provider);
     }
 
-    private static async Task Main(string[] args)
+    public static async Task LoadCachesAsync(IServiceProvider provider)
+    {
+        await Task.WhenAll(
+            provider.GetRequiredService<ISimpleCache<string, IEffect>>().LoadCacheAsync(),
+            provider.GetRequiredService<ISimpleCache<string, ItemTemplate>>().LoadCacheAsync(),
+            provider.GetRequiredService<ISimpleCache<string, SkillTemplate>>().LoadCacheAsync(),
+            provider.GetRequiredService<ISimpleCache<string, SpellTemplate>>().LoadCacheAsync(),
+            provider.GetRequiredService<ISimpleCache<string, Metafile>>().LoadCacheAsync(),
+            provider.GetRequiredService<ISimpleCache<string, MapTemplate>>().LoadCacheAsync());
+
+        await provider.GetRequiredService<ISimpleCache<string, MapInstance>>().LoadCacheAsync();
+    }
+
+    public static void LoadScripts(IServiceProvider provider)
+    {
+        _ = provider.GetRequiredService<IItemScriptFactory>();
+        _ = provider.GetRequiredService<ISkillScriptFactory>();
+        _ = provider.GetRequiredService<ISpellScriptFactory>();
+    }
+
+    private static async Task Main()
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             #if DEBUG
             .AddJsonFile("appsettings.local.json")
+            #else
+            .AddJsonFile("appsettings.prod.json")
             #endif
             .Build();
 
@@ -40,9 +63,18 @@ public class Program
         var startup = new Startup(configuration);
         startup.ConfigureServices(services);
 
-        var provider = services.BuildServiceProvider();
-        await LoadCaches(provider);
+        await using var provider = services.BuildServiceProvider();
+        await using var defaultScope = provider.CreateAsyncScope();
 
+        await InitializeAsync(defaultScope.ServiceProvider);
+        RunApplication(defaultScope.ServiceProvider);
+
+        //do nothing
+        await Task.Delay(-1).ConfigureAwait(false);
+    }
+
+    public static void RunApplication(IServiceProvider provider)
+    {
         var lobbyServer = provider.GetRequiredService<ILobbyServer>();
         lobbyServer.Start();
 
@@ -51,8 +83,5 @@ public class Program
 
         var worldServer = provider.GetRequiredService<IWorldServer>();
         worldServer.Start();
-
-        //do nothing
-        await Task.Delay(-1).ConfigureAwait(false);
     }
 }

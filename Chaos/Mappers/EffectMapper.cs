@@ -1,24 +1,24 @@
 using System.Collections.Generic;
 using AutoMapper;
+using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.DataObjects.Serializable;
 using Chaos.Effects.Interfaces;
-using Chaos.Extensions;
 using Chaos.Managers.Interfaces;
+using Chaos.Objects.Serializable;
 
 namespace Chaos.Mappers;
 
 public class EffectMapper : Profile
 {
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ICacheManager<string, IEffect> EffectManager;
+    private readonly ISimpleCache<string, IEffect> EffectCache;
 
-    public EffectMapper(ICacheManager<string, IEffect> effectManager)
+    public EffectMapper(ISimpleCache<string, IEffect> effectCache)
     {
-        EffectManager = effectManager;
+        EffectCache = effectCache;
 
         CreateMap<SerializableEffect, IEffect>(MemberList.None)
-            .ConstructUsing(e => EffectManager.GetObject(e.EffectKey));
+            .ConstructUsing(e => EffectCache.GetObject(e.EffectKey));
 
         CreateMap<IEnumerable<SerializableEffect>, EffectsBar>(MemberList.None)
             .ConstructUsing((e, rc) => new EffectsBar());

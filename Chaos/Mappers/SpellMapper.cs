@@ -1,66 +1,95 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
-using Chaos.Containers;
-using Chaos.DataObjects.Serializable;
-using Chaos.Extensions;
+using Chaos.Caches.Interfaces;
+using Chaos.Containers.Interfaces;
+using Chaos.Factories.Interfaces;
 using Chaos.Managers.Interfaces;
 using Chaos.Networking.Model.Server;
-using Chaos.PanelObjects;
+using Chaos.Objects.Panel;
+using Chaos.Objects.Serializable;
 using Chaos.Templates;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Mappers;
 
 public class SpellMapper : Profile
 {
+    private readonly ILogger Logger;
+    private readonly ISpellScriptFactory SpellScriptFactory;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ICacheManager<string, SpellTemplate> SpellTemplateManager;
+    private readonly ISimpleCache<string, SpellTemplate> SpellTemplateCache;
 
-    public SpellMapper(ICacheManager<string, SpellTemplate> spellTemplateManager)
+    public SpellMapper(
+        ISimpleCache<string, SpellTemplate> spellTemplateCache,
+        ISpellScriptFactory spellScriptFactory,
+        ILogger<SpellMapper> logger
+    )
     {
-        SpellTemplateManager = spellTemplateManager;
-        //TODO: script manager
-        //TODO: cooldown
+        SpellTemplateCache = spellTemplateCache;
+        SpellScriptFactory = spellScriptFactory;
+        Logger = logger;
 
         CreateMap<SerializableSpell, Spell>(MemberList.None)
-            .ConstructUsing((s, c) => new Spell(SpellTemplateManager.GetObject(s.TemplateKey)));
+            .ConstructUsing(s => new Spell(SpellTemplateCache.GetObject(s.TemplateKey)))
+            .ForMember(
+                dest => dest.Elapsed,
+                o => o.MapFrom(src => TimeSpan.FromMilliseconds(src.ElapsedMs)))
+            .AfterMap(
+                (_, dest) =>
+                {
+                    var scriptKeys = dest.Template.ScriptKeys
+                        .Concat(dest.ScriptKeys)
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                    dest.Script = SpellScriptFactory.CreateScript(scriptKeys, dest);
+                });
 
         CreateMap<Spell, SerializableSpell>(MemberList.None)
-            .ForMember(s => s.TemplateKey,
+            .ForMember(
+                dest => dest.ElapsedMs,
+                o => o.MapFrom(src => src.Elapsed.TotalMilliseconds))
+            .ForMember(
+                s => s.TemplateKey,
                 o => o.MapFrom(s => s.Template.TemplateKey));
 
         CreateMap<Spell, SpellArg>(MemberList.None)
-            .ForMember(a => a.Name,
+            .ForMember(
+                a => a.Name,
                 o => o.MapFrom(s => s.Template.Name))
-            .ForMember(a => a.Sprite,
-                o => o.MapFrom(s => s.Template.Sprite))
-            .ForMember(a => a.Prompt,
+            .ForMember(
+                a => a.Sprite,
+                o => o.MapFrom(s => s.Template.PanelSprite))
+            .ForMember(
+                a => a.Prompt,
                 o => o.MapFrom(s => s.Template.Prompt))
-            .ForMember(a => a.SpellType,
+            .ForMember(
+                a => a.SpellType,
                 o => o.MapFrom(s => s.Template.SpellType));
-        
-        CreateMap<IEnumerable<SerializableSpell>, SpellBook>(MemberList.None)
-            .DisableCtorValidation()
-            .IgnoreAllUnmapped()
-            .AfterMap((src, dest, rc) =>
-            {
-                foreach (var sSpell in src)
-                {
-                    var spell = rc.Mapper.Map<Spell>(sSpell);
-                    dest.TryAdd(spell.Slot, spell);
-                }
-            });
 
-        
-        CreateMap<SpellBook, List<SerializableSpell>>(MemberList.None)
-            .ConstructUsing(src => new List<SerializableSpell>())
-            .IgnoreAllUnmapped()
-            .AfterMap((src, dest, rc) =>
-            {
-                foreach (var spell in src)
+        CreateMap<IEnumerable<SerializableSpell>, IPanel<Spell>>(MemberList.None)
+            .DisableCtorValidation()
+            .AfterMap(
+                (src, dest, rc) =>
                 {
-                    var sSpell = rc.Mapper.Map<SerializableSpell>(spell);
-                    dest.Add(sSpell);
-                }
-            });
+                    foreach (var sSpell in src)
+                    {
+                        var spell = rc.Mapper.Map<Spell>(sSpell);
+                        dest.TryAdd(spell.Slot, spell);
+                    }
+                });
+
+        CreateMap<IPanel<Spell>, ICollection<SerializableSpell>>(MemberList.None)
+            .ConstructUsing(src => new List<SerializableSpell>())
+            .AfterMap(
+                (src, dest, rc) =>
+                {
+                    foreach (var spell in src)
+                    {
+                        var sSpell = rc.Mapper.Map<SerializableSpell>(spell);
+                        dest.Add(sSpell);
+                    }
+                });
     }
 }

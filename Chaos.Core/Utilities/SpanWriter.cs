@@ -20,7 +20,7 @@ public ref struct SpanWriter
         AutoGrow = false;
     }
 
-    public SpanWriter(Encoding encoding, int initialBufferSize = 100, bool autoGrow = true)
+    public SpanWriter(Encoding encoding, int initialBufferSize = 50, bool autoGrow = true)
     {
         Buffer = new Span<byte>(new byte[initialBufferSize]);
         Encoding = encoding;
@@ -38,9 +38,10 @@ public ref struct SpanWriter
         if (!AutoGrow)
             throw new EndOfStreamException();
 
-        ref var buffer = ref Buffer;
-        //create a new buffer of length * 3 OR length + bytesToWrite (whichever is bigger)
-        var newBuffer = new byte[(Buffer.Length + bytesToWrite) * 3];
+        var buffer = Buffer;
+        //create a new buffer of length * 3 OR (length + bytesToWrite) * 1.5 (whichever is bigger)
+        var newLength = (int)Math.Max(buffer.Length * 3, (buffer.Length + bytesToWrite) * 1.5);
+        var newBuffer = new byte[newLength];
         Buffer = new Span<byte>(newBuffer);
         buffer.CopyTo(Buffer);
     }
@@ -83,7 +84,11 @@ public ref struct SpanWriter
 
     public void WriteInt16(short value) => WriteBytes((byte)(value >> 8), (byte)value);
 
-    public void WriteInt32(int value) => WriteBytes((byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value);
+    public void WriteInt32(int value) => WriteBytes(
+        (byte)(value >> 24),
+        (byte)(value >> 16),
+        (byte)(value >> 8),
+        (byte)value);
 
     public void WriteObjects(params object[] objects)
     {
@@ -175,5 +180,9 @@ public ref struct SpanWriter
     public void WriteUInt16(ushort value) => WriteBytes((byte)(value >> 8), (byte)value);
 
     public void WriteUInt32(uint value) =>
-        WriteBytes((byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value);
+        WriteBytes(
+            (byte)(value >> 24),
+            (byte)(value >> 16),
+            (byte)(value >> 8),
+            (byte)value);
 }

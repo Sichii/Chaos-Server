@@ -19,23 +19,19 @@
         <ApplicationIcon>chaos.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Resources\sotp.dat" />
-    </ItemGroup>
-    <ItemGroup>
         <Content Include="chaos.ico" />
-        <None Include="Resources\PATH.txt" />
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.local.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="appsettings.prod.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Old" />
-        <Folder Include="Scripts\ItemScripts" />
-        <Folder Include="Scripts\SkillScripts" />
-        <Folder Include="Scripts\SpellScripts" />
+        <Folder Include="Effects" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />

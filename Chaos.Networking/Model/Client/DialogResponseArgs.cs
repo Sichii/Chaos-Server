@@ -10,4 +10,5 @@ public record DialogResponseArgs(
     ushort DialogId,
     DialogArgsType? DialogArgsType,
     byte? Option,
-    params string[]? Args) : IReceiveArgs;
+    params string[]? Args
+) : IReceiveArgs;

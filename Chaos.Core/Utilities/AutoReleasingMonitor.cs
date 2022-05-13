@@ -5,18 +5,18 @@ public class AutoReleasingMonitor
     private readonly object Root;
 
     public AutoReleasingMonitor(object? root = null) => Root = root ?? new object();
-    
+
     public IDisposable Enter()
     {
         Monitor.Enter(Root);
 
         return new AutoReleasingSubscription(Root);
     }
-    
+
     private record AutoReleasingSubscription : IDisposable
     {
-        private int Disposed = 0;
         private readonly object Root;
+        private int Disposed;
 
         internal AutoReleasingSubscription(object root) => Root = root;
 

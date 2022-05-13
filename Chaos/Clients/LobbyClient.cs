@@ -1,9 +1,9 @@
 using System.Net.Sockets;
 using Chaos.Clients.Interfaces;
-using Chaos.Containers;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Model.Server;
+using Chaos.Objects;
 using Chaos.Packets.Interfaces;
 using Chaos.Servers.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -17,8 +17,14 @@ public class LobbyClient : SocketClientBase, ILobbyClient
         ICryptoClient cryptoClient,
         ILobbyServer server,
         IPacketSerializer packetSerializer,
-        ILogger<LobbyClient> logger)
-        : base(socket, cryptoClient, server, packetSerializer, logger) { }
+        ILogger<LobbyClient> logger
+    )
+        : base(
+            socket,
+            cryptoClient,
+            server,
+            packetSerializer,
+            logger) { }
 
     public void SendConnectionInfo(uint serverTableCheckSum)
     {

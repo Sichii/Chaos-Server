@@ -16,8 +16,8 @@ public record ExchangeSerializer : ServerPacketSerializer<ExchangeArgs>
         switch (args.ExchangeResponseType)
         {
             case ExchangeResponseType.StartExchange:
-                writer.WriteUInt32(args.FromId!.Value);
-                writer.WriteString8(args.FromName);
+                writer.WriteUInt32(args.OtherUserId!.Value);
+                writer.WriteString8(args.OtherUserName);
 
                 break;
             case ExchangeResponseType.RequestAmount:
@@ -25,7 +25,7 @@ public record ExchangeSerializer : ServerPacketSerializer<ExchangeArgs>
 
                 break;
             case ExchangeResponseType.AddItem:
-                writer.WriteBoolean(args.IsFromSelf!.Value);
+                writer.WriteBoolean(args.RightSide!.Value);
                 writer.WriteByte(args.ExchangeIndex!.Value);
                 writer.WriteUInt16(args.ItemSprite!.Value);
                 writer.WriteByte((byte)args.ItemColor!.Value);
@@ -33,22 +33,23 @@ public record ExchangeSerializer : ServerPacketSerializer<ExchangeArgs>
 
                 break;
             case ExchangeResponseType.SetGold:
-                writer.WriteBoolean(args.IsFromSelf!.Value);
-                writer.WriteUInt32(args.GoldAmount!.Value);
+                writer.WriteBoolean(args.RightSide!.Value);
+                writer.WriteInt32(args.GoldAmount!.Value);
 
                 break;
             case ExchangeResponseType.Cancel:
-                writer.WriteBoolean(!args.IsFromSelf!.Value);
+                writer.WriteBoolean(args.RightSide!.Value);
                 writer.WriteString8("Exchange cancelled.");
 
                 break;
             case ExchangeResponseType.Accept:
-                writer.WriteBoolean(!args.IsFromSelf!.Value);
+                writer.WriteBoolean(args.PersistExchange!.Value);
                 writer.WriteString8("Exchange completed.");
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(args.ExchangeResponseType),
+                throw new ArgumentOutOfRangeException(
+                    nameof(args.ExchangeResponseType),
                     args.ExchangeResponseType,
                     "Unknown exchange response type");
         }

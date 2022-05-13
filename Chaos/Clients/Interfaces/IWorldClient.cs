@@ -1,17 +1,17 @@
 using System.Collections.Generic;
+using Chaos.Caches.Interfaces;
 using Chaos.Containers;
 using Chaos.Core.Data;
 using Chaos.Core.Definitions;
 using Chaos.Core.Geometry;
-using Chaos.DataObjects;
 using Chaos.Effects.Abstractions;
 using Chaos.Managers.Interfaces;
 using Chaos.Networking.Interfaces;
+using Chaos.Objects.Panel;
+using Chaos.Objects.Panel.Abstractions;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
-using Chaos.PanelObjects;
-using Chaos.PanelObjects.Abstractions;
-using Chaos.WorldObjects;
-using Chaos.WorldObjects.Abstractions;
 
 namespace Chaos.Clients.Interfaces;
 
@@ -23,7 +23,14 @@ public interface IWorldClient : ISocketClient
     void SendAddSpellToPane(Spell spell);
     void SendAnimation(Animation animation);
     void SendAttributes(StatUpdateType statUpdateType);
-    void SendBodyAnimation(uint id, BodyAnimation bodyAnimation, ushort speed, byte? sound = null);
+
+    void SendBodyAnimation(
+        uint id,
+        BodyAnimation bodyAnimation,
+        ushort speed,
+        byte? sound = null
+    );
+
     void SendCancelCasting();
     void SendConfirmClientWalk(Point oldPoint, Direction direction);
     void SendConfirmExit();
@@ -39,7 +46,12 @@ public interface IWorldClient : ISocketClient
     void SendDoors(params Door[] doors);
     void SendEffect(EffectBase effect);
     void SendEquipment(Item item);
-    void SendExchange(ExchangeResponseType exchangeResponseType);
+    void SendExchangeAccepted(bool persistExchange);
+    void SendExchangeAddItem(bool rightSide, byte index, Item item);
+    void SendExchangeCancel(bool rightSide);
+    void SendExchangeRequestAmount(byte slot);
+    void SendExchangeSetGold(bool rightSide, int amount);
+    void SendExchangeStart(User fromUser);
     void SendForcedClientPacket(ref ClientPacket clientPacket);
     void SendGroupRequest(GroupRequestType groupRequestType, string fromName);
     void SendHealthBar(Creature creature, byte? sound = null);
@@ -50,6 +62,7 @@ public interface IWorldClient : ISocketClient
     void SendMapData();
     void SendMapInfo();
     void SendMapLoadComplete();
+    void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<string, Metafile> metafile, string? name = null);
     void SendProfile(User user);
     void SendProfileRequest();
     void SendPublicMessage(uint id, PublicMessageType publicMessageType, string message);
@@ -66,5 +79,4 @@ public interface IWorldClient : ISocketClient
     void SendVisibleObjects(params VisibleObject[] objects);
     void SendWorldList(ICollection<User> users);
     void SendWorldMap(WorldMap worldMap);
-    void SendMetafile(MetafileRequestType metafileRequestType, ICacheManager<string, Metafile> metafileManager, string? name = null);
 }

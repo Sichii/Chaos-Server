@@ -23,6 +23,11 @@ public class LoginClientFactory : IClientFactory<LoginClient>
         var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
         var logger = ServiceProvider.GetRequiredService<ILogger<LoginClient>>();
 
-        return new LoginClient(socket, crypto, server, serializer, logger);
+        return new LoginClient(
+            socket,
+            crypto,
+            server,
+            serializer,
+            logger);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Chaos.Core.Definitions;
-using Chaos.WorldObjects;
+using Chaos.Objects.World;
 
 namespace Chaos.Containers;
 
@@ -78,8 +78,10 @@ public class Group : IEnumerable<User>
 
     public static Group Create(User sender, User receiver)
     {
-        var group = new Group(sender);
-        group.Add(receiver);
+        var group = new Group(sender)
+        {
+            receiver
+        };
 
         return group;
     }
@@ -162,7 +164,8 @@ public class Group : IEnumerable<User>
             if (user.Group != this)
                 return;
 
-            user.Client.SendServerMessage(ServerMessageType.ActiveMessage,
+            user.Client.SendServerMessage(
+                ServerMessageType.ActiveMessage,
                 Members.Count > 1 ? "You have left the group" : "The group has disbanded");
 
             Remove(user);

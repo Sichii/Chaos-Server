@@ -1,24 +1,43 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Chaos.Containers.Abstractions;
 using Chaos.Containers.Interfaces;
 using Chaos.Core.Definitions;
 using Chaos.Core.Extensions;
-using Chaos.PanelObjects;
+using Chaos.Objects.Panel;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Containers;
 
-public class Inventory : PanelBase<Item>, IPanelWithStacking<Item>
+public class Inventory : PanelBase<Item>, IInventory
 {
-    public Inventory(ILogger logger)
-        : base(PanelType.Inventory, 60, new byte[] { 0 }, logger) { }
+    public Inventory()
+        : base(
+            PanelType.Inventory,
+            60,
+            new byte[] { 0 }) { }
+
+    public int CountOf(string name)
+    {
+        lock (Sync)
+            return this.Where(item => item.DisplayName.EqualsI(name)).Sum(item => item.Count);
+    }
+
+    public bool HasCount(string name, int quantity)
+    {
+        lock (Sync)
+            return CountOf(name) >= quantity;
+    }
 
     public bool RemoveQuantity(string name, int quantity)
     {
         lock (Sync)
         {
+            if (quantity <= 0)
+                return false;
+
             var items = this
                 .Where(item => item.DisplayName.EqualsI(name))
                 .ToList();
@@ -32,7 +51,9 @@ public class Inventory : PanelBase<Item>, IPanelWithStacking<Item>
                 return false;
 
             foreach (var item in items)
-                if (item.Count <= quantity)
+                if (quantity <= 0)
+                    break;
+                else if (item.Count <= quantity)
                 {
                     Objects[item.Slot] = null;
                     BroadcastOnRemoved(item.Slot, item);
@@ -48,12 +69,63 @@ public class Inventory : PanelBase<Item>, IPanelWithStacking<Item>
             return true;
         }
     }
-    
+
+    public bool RemoveQuantity(string name, int quantity, [MaybeNullWhen(false)] out ICollection<Item> items)
+    {
+        lock (Sync)
+        {
+            items = null;
+
+            if (quantity <= 0)
+                return false;
+
+            var existingItems = this
+                .Where(item => item.DisplayName.EqualsI(name))
+                .ToList();
+
+            if (!existingItems.Any())
+                return false;
+
+            var sum = existingItems.Sum(item => item.Count);
+
+            if (sum < quantity)
+                return false;
+
+            var ret = new List<Item>();
+
+            foreach (var item in existingItems)
+                if (quantity <= 0)
+                    break;
+                else if (item.Count <= quantity)
+                {
+                    Objects[item.Slot] = null;
+                    BroadcastOnRemoved(item.Slot, item);
+                    quantity -= item.Count;
+                    ret.Add(item);
+                } else
+                {
+                    var split = item.Split(quantity);
+                    BroadcastOnUpdated(item.Slot, item);
+                    ret.Add(split);
+
+                    break;
+                }
+
+            items = ret;
+
+            return true;
+        }
+    }
+
     public bool RemoveQuantity(byte slot, int quantity, [MaybeNullWhen(false)] out Item item)
     {
         lock (Sync)
         {
             item = null;
+
+            if (quantity <= 0)
+                return false;
+
             if (!TryGetObject(slot, out var slotItem))
                 return false;
 
@@ -66,6 +138,7 @@ public class Inventory : PanelBase<Item>, IPanelWithStacking<Item>
             if (slotItem.Count == quantity)
             {
                 item = slotItem;
+
                 return Remove(slot);
             }
 
@@ -114,9 +187,7 @@ public class Inventory : PanelBase<Item>, IPanelWithStacking<Item>
                         item.Count = (ushort)(existingStacks + amountToAdd);
                         obj.Count = (ushort)Math.Clamp(incomingStacks - amountToAdd, 0, obj.Count);
                         BroadcastOnUpdated(item.Slot, item);
-
-                        //TODO: anything else to update?
-
+                        
                         if (obj.Count <= 0)
                             return true;
                     }

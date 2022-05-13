@@ -218,8 +218,9 @@ public class CryptoClient : ICryptoClient
 
     #region Utility
     public string GetMd5Hash(string value) =>
-        BitConverter.ToString(MD5.Create()
-                .ComputeHash(Encoding.ASCII.GetBytes(value)))
+        BitConverter.ToString(
+                MD5.Create()
+                    .ComputeHash(Encoding.ASCII.GetBytes(value)))
             .Replace("-", string.Empty)
             .ToLower();
 

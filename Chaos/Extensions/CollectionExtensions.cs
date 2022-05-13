@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Chaos.WorldObjects.Abstractions;
+using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Extensions;
 

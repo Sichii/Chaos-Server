@@ -13,11 +13,12 @@ public record MetafileRequestDeserializer : ClientPacketDeserializer<MetafileReq
     {
         var metafileRequestType = (MetafileRequestType)reader.ReadByte();
         var name = default(string?);
-        
-        switch(metafileRequestType)
+
+        switch (metafileRequestType)
         {
             case MetafileRequestType.DataByName:
                 name = reader.ReadString8();
+
                 break;
             case MetafileRequestType.AllCheckSums:
                 break;

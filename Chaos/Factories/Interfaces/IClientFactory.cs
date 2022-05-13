@@ -3,7 +3,7 @@ using Chaos.Networking.Interfaces;
 
 namespace Chaos.Factories.Interfaces;
 
-public interface IClientFactory<out T> where T: ISocketClient
+public interface IClientFactory<out TClient> where TClient: ISocketClient
 {
-    T CreateClient(Socket socket);
+    TClient CreateClient(Socket socket);
 }

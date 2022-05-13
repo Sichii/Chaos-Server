@@ -65,7 +65,7 @@ public class UserOptions
 
     public string ToString(UserOption opt)
     {
-        const string OPTIONS_FORMAT = "{0,-18}:{1,3}";
+        const string OPTIONS_FORMAT = "{0,-18}:{1,-3}";
 
         return opt switch
         {
@@ -84,10 +84,10 @@ public class UserOptions
 
     public override string ToString()
     {
-        var options = new string[9];
+        var options = new string[8];
 
-        for (var i = 1; i <= 8; i++)
-            options[i - 1] = ToString((UserOption)i).Remove(0, 1);
+        for (var i = 0; i < 8; i++)
+            options[i] = ToString((UserOption)i + 1).Remove(0, 1);
 
         return $"0{string.Join("\t", options)}";
     }

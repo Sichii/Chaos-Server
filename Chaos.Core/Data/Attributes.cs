@@ -1,79 +1,147 @@
-using Chaos.Core.Definitions;
+using System.Text.Json.Serialization;
+
+// ReSharper disable InconsistentNaming
 
 namespace Chaos.Core.Data;
 
-public class Attributes
+public record Attributes
 {
-    public byte Ability { get; set; }
+    protected int _ac;
+    protected int _attackSpeed;
+    protected int _con;
+    protected int _cooldownReduction;
+    protected int _dex;
+    protected int _dmg;
+    protected int _hit;
+    protected int _int;
+    protected int _magicResistance;
+    protected int _maximumHp;
+    protected int _maximumMp;
+    protected int _str;
+    protected int _wis;
 
-    public uint AbilityExp { get; set; }
+    [JsonInclude]
+    public int Ac
+    {
+        get => _ac;
+        private set => _ac = value;
+    }
 
-    public byte BaseCon { get; set; }
+    [JsonInclude]
+    public int AttackSpeed
+    {
+        get => _attackSpeed;
+        private set => _attackSpeed = value;
+    }
 
-    public byte BaseDex { get; set; }
+    [JsonInclude]
+    public int Con
+    {
+        get => _con;
+        private set => _con = value;
+    }
 
-    public uint BaseHP { get; set; }
+    [JsonInclude]
+    public int CooldownReduction
+    {
+        get => _cooldownReduction;
+        private set => _cooldownReduction = value;
+    }
 
-    public byte BaseInt { get; set; }
+    [JsonInclude]
+    public int Dex
+    {
+        get => _dex;
+        private set => _dex = value;
+    }
 
-    public uint BaseMP { get; set; }
-    public byte BaseStr { get; set; }
+    [JsonInclude]
+    public int Dmg
+    {
+        get => _dmg;
+        private set => _dmg = value;
+    }
 
-    public byte BaseWis { get; set; }
-    public int ConMod { get; set; }
+    [JsonInclude]
+    public int Hit
+    {
+        get => _hit;
+        private set => _hit = value;
+    }
 
-    //Vitality
+    [JsonInclude]
+    public int Int
+    {
+        get => _int;
+        private set => _int = value;
+    }
 
-    public uint CurrentHP { get; set; }
+    [JsonInclude]
+    public int MagicResistance
+    {
+        get => _magicResistance;
+        private set => _magicResistance = value;
+    }
 
-    public uint CurrentMP { get; set; }
-    public int DexMod { get; set; }
-    public int DmgMod { get; set; }
+    [JsonInclude]
+    public int MaximumHp
+    {
+        get => _maximumHp;
+        private set => _maximumHp = value;
+    }
 
-    //Experience
+    [JsonInclude]
+    public int MaximumMp
+    {
+        get => _maximumMp;
+        private set => _maximumMp = value;
+    }
 
-    public uint Experience { get; set; }
+    [JsonInclude]
+    public int Str
+    {
+        get => _str;
+        private set => _str = value;
+    }
 
-    public uint GamePoints { get; set; }
+    [JsonInclude]
+    public int Wis
+    {
+        get => _wis;
+        private set => _wis = value;
+    }
 
-    public uint Gold { get; set; }
-    public int HitMod { get; set; }
-    public int IntMod { get; set; }
+    public virtual void Add(Attributes other)
+    {
+        Interlocked.Add(ref _ac, other.Ac);
+        Interlocked.Add(ref _attackSpeed, other.AttackSpeed);
+        Interlocked.Add(ref _cooldownReduction, other.CooldownReduction);
+        Interlocked.Add(ref _dmg, other.Dmg);
+        Interlocked.Add(ref _hit, other.Hit);
+        Interlocked.Add(ref _str, other.Str);
+        Interlocked.Add(ref _int, other.Int);
+        Interlocked.Add(ref _wis, other.Wis);
+        Interlocked.Add(ref _con, other.Con);
+        Interlocked.Add(ref _dex, other.Dex);
+        Interlocked.Add(ref _magicResistance, other.MagicResistance);
+        Interlocked.Add(ref _maximumHp, other.MaximumHp);
+        Interlocked.Add(ref _maximumMp, other.MaximumHp);
+    }
 
-    //Primary
-    public byte Level { get; set; }
-    public int MagicResistanceMod { get; set; }
-    public int MaxHPMod { get; set; }
-    public int MaxMPMod { get; set; }
-
-    //addedValues
-    public int StrMod { get; set; }
-
-    public uint ToNextAbility { get; set; }
-
-    public uint ToNextLevel { get; set; }
-
-    public byte UnspentPoints { get; set; }
-    public int WisMod { get; set; }
-    public sbyte ArmorClass => 50;
-
-    //Secondary
-    public byte Blind => 0;
-    public byte CurrentCon => (byte)Math.Clamp(BaseCon + ConMod, 0, byte.MaxValue);
-    public byte CurrentDex => (byte)Math.Clamp(BaseDex + DexMod, 0, byte.MaxValue);
-    public byte CurrentInt => (byte)Math.Clamp(BaseInt + IntMod, 0, byte.MaxValue);
-    public byte CurrentStr => (byte)Math.Clamp(BaseStr + StrMod, 0, byte.MaxValue);
-    public short CurrentWeight => 0;
-    public byte CurrentWis => (byte)Math.Clamp(BaseWis + WisMod, 0, byte.MaxValue);
-    public Element DefenseElement => Element.None;
-    public byte Dmg => 0;
-    public bool HasUnspentPoints => UnspentPoints != 0;
-    public byte Hit => 0;
-    public byte MagicResistance => 0;
-    public MailFlag MailFlags => MailFlag.None;
-
-    public uint MaximumHP => (uint)Math.Clamp(BaseHP + MaxHPMod, 0, uint.MaxValue);
-    public uint MaximumMP => (uint)Math.Clamp(BaseMP + MaxMPMod, 0, uint.MaxValue);
-    public short MaximumWeight => (short)(40 + BaseStr / 2);
-    public Element OffenseElement => Element.None;
+    public virtual void Subtract(Attributes other)
+    {
+        Interlocked.Add(ref _ac, -other.Ac);
+        Interlocked.Add(ref _attackSpeed, -other.AttackSpeed);
+        Interlocked.Add(ref _cooldownReduction, -other.CooldownReduction);
+        Interlocked.Add(ref _dmg, -other.Dmg);
+        Interlocked.Add(ref _hit, -other.Hit);
+        Interlocked.Add(ref _str, -other.Str);
+        Interlocked.Add(ref _int, -other.Int);
+        Interlocked.Add(ref _wis, -other.Wis);
+        Interlocked.Add(ref _con, -other.Con);
+        Interlocked.Add(ref _dex, -other.Dex);
+        Interlocked.Add(ref _magicResistance, -other.MagicResistance);
+        Interlocked.Add(ref _maximumHp, -other.MaximumHp);
+        Interlocked.Add(ref _maximumMp, -other.MaximumHp);
+    }
 }

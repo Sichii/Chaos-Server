@@ -7,6 +7,7 @@ using Chaos.Networking.Options;
 using Chaos.Packets;
 using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -27,7 +28,8 @@ public abstract class ServerBase : IServer
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<ServerOptions> options,
-        ILogger<ServerBase> logger)
+        ILogger<ServerBase> logger
+    )
     {
         RedirectManager = redirectManager;
         Logger = logger;
