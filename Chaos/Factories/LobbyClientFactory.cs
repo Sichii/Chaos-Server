@@ -23,6 +23,11 @@ public class LobbyClientFactory : IClientFactory<LobbyClient>
         var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
         var logger = ServiceProvider.GetRequiredService<ILogger<LobbyClient>>();
 
-        return new LobbyClient(socket, crypto, server, serializer, logger);
+        return new LobbyClient(
+            socket,
+            crypto,
+            server,
+            serializer,
+            logger);
     }
 }

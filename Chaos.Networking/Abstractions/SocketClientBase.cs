@@ -37,7 +37,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         ICryptoClient cryptoClient,
         IServer server,
         IPacketSerializer packetSerializer,
-        ILogger<SocketClientBase> logger)
+        ILogger<SocketClientBase> logger
+    )
     {
         Id = ClientId.NextId;
         ReceiveSync = new SemaphoreSlim(1, 1);
@@ -75,6 +76,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             CryptoClient.Decrypt(ref packet);
 
         Logger.LogTrace("[Rcv] {Packet}", packet.GetHexString());
+
         return Server.HandlePacketAsync(this, ref packet);
     }
 
@@ -118,7 +120,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Connected = true;
         await Task.Yield();
 
-        var args = DequeueArgs(MemoryBuffer);
+        var args = new SocketAsyncEventArgs();
+        args.SetBuffer(MemoryBuffer);
         args.Completed += ReceiveEventHandler;
         Socket.ReceiveAndForget(args, ReceiveEventHandler);
     }
@@ -200,9 +203,9 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             return;
 
         Logger.LogTrace("[Snd] {Packet}", packet.GetHexString());
-        
+
         packet.ShouldEncrypt = CryptoClient.ShouldEncrypt((byte)packet.OpCode);
-        
+
         if (packet.ShouldEncrypt)
         {
             packet.Sequence = (byte)Interlocked.Increment(ref Sequence);
@@ -216,6 +219,9 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
     public virtual void Disconnect()
     {
+        if (!Connected)
+            return;
+
         Connected = false;
 
         try
@@ -233,7 +239,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         {
             //ignored
         }
-        
+
         Dispose();
     }
     #endregion

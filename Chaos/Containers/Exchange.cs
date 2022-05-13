@@ -1,340 +1,283 @@
-/*
-internal class Exchange
+using System.Linq;
+using Chaos.Core.Definitions;
+using Chaos.Core.Utilities;
+using Chaos.Objects.World;
+using Chaos.Observers;
+using Chaos.Utilities;
+using Microsoft.Extensions.Logging;
+
+namespace Chaos.Containers;
+
+public class Exchange
 {
-    private readonly object Sync = new object();
+    private readonly ILogger Logger;
+    private readonly AutoReleasingMonitor Sync;
     private readonly User User1;
+    private readonly Inventory User1Items;
     private readonly User User2;
-    private uint User1Gold;
-    private uint User2Gold;
+    private readonly Inventory User2Items;
+    private ulong ExchangeId;
+    private bool IsActive;
     private bool User1Accept;
+    private int User1Gold;
     private bool User2Accept;
-    private List<Item> User1Items;
-    private List<Item> User2Items;
+    private int User2Gold;
 
-    internal User OtherUser(User user) => user == User1 ? User2 : User1;
-    internal int ID { get; }
-    internal bool IsActive { get; private set; }
-
-    /// <summary>
-    /// Base constructor for an object representing an in-game exchange, or trade.
-    /// </summary>
-    /// <param name="sender">The user who requested the trade.</param>
-    /// <param name="receiver">The user to receive the trade.</param>
-    internal Exchange(User sender, User receiver)
+    public Exchange(User sender, User receiver, ILogger<Exchange> logger)
     {
-        ID = Interlocked.Increment(ref Server.Server.NextID);
+        ExchangeId = ServerId.NextId;
+        Logger = logger;
         User1 = sender;
         User2 = receiver;
-        User1Items = new List<Item>();
-        User2Items = new List<Item>();
-        User1Gold = 0;
-        User2Gold = 0;
+        User1Items = new Inventory();
+        User1Items.AddObserver(new ExchangeObserver(User1, User2));
+        User2Items = new Inventory();
+        User2Items.AddObserver(new ExchangeObserver(User2, User1));
+        Sync = new AutoReleasingMonitor();
     }
 
-    /// <summary>
-    /// Synchronously activates the exchange window, setting relevant variables and sending the packet to create the window on each client.
-    /// </summary>
-    internal void Activate()
+    public void Accept(User user)
     {
-        lock (Sync)
+        using var sync = Sync.Enter();
+
+        var otherUser = GetOtherUser(user);
+        (var gold, var items, var accepted) = GetUserVars(user);
+        (var otherGold, var otherItems, var otherAccepted) = GetUserVars(otherUser);
+
+        if (!IsActive || accepted)
+            return;
+
+        SetUserAccepted(user, true);
+        accepted = true;
+
+        otherUser.Client.SendExchangeAccepted(true);
+
+        if (accepted && otherAccepted)
         {
-            //set each player's exchange to this
-            User1.ExchangeID = ID;
-            User2.ExchangeID = ID;
+            Distribute(user, otherGold, otherItems);
+            Distribute(otherUser, gold, items);
 
-            //active exchange window on each client
-            User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.StartExchange, User2.ID, User2.Name));
-            User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.StartExchange, User1.ID, User1.Name));
+            user.Client.SendExchangeAccepted(false);
+            otherUser.Client.SendExchangeAccepted(false);
 
-            IsActive = true;
+            Deactivate();
         }
     }
 
-    /// <summary>
-    /// Synchronously adds an item from the user's inventory to the trade window. Sends a prompt for stackable items. Updates both user's screens with the info.
-    /// </summary>
-    /// <param name="user">The user who is adding the item.</param>
-    /// <param name="slot">The slot that item is in.</param>
-    internal void AddItem(User user, byte slot)
+    public void Activate()
     {
-        lock (Sync)
+        using var sync = Sync.Enter();
+
+        User1.UserState |= UserState.Exchanging;
+        User2.UserState |= UserState.Exchanging;
+        User1.Client.SendExchangeStart(User2);
+        User2.Client.SendExchangeStart(User1);
+
+        Logger.LogDebug(
+            "Starting exchange between {User1Name} and {User2Name} with exchange id {ExchangeId}",
+            User1.Name,
+            User2.Name,
+            ExchangeId);
+
+        IsActive = true;
+    }
+
+    public void AddItem(User user, byte slot)
+    {
+        using var sync = Sync.Enter();
+
+        var otherUser = GetOtherUser(user);
+        (_, var userItems, var userAccepted) = GetUserVars(user);
+
+        if (!IsActive || !user.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
+            return;
+
+        if (item.Template.AccountBound)
         {
-            byte index;
-            var user1Src = user == User1;
-            var otherUser = OtherUser(user);
+            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
 
-            if (!IsActive || !user.Inventory.TryGetObject(slot, out var item) || (user1Src ? User1Accept : User2Accept))
-                return;
+            return;
+        }
 
-            if (item.AccountBound)
-            {
-                user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.Name} is account bound.");
-                return;
-            }
-            if (otherUser.Inventory.AvailableSlots == 0 && (!item.Stackable || !User1Items.Contains(item)))
-            {
-                user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} cannot hold any more items.");
-                otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You cannot hold any more items.");
-                return;
-            }
+        if (!otherUser.CanCarry(userItems.Prepend(item).ToArray()))
+        {
+            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
+            otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");
 
-            if (!item.Stackable)
-            {
-                //remove item from their inventory
-                user.Inventory.TryRemove(slot);
-                user.Client.Enqueue(ServerPackets.RemoveItem(slot));
+            return;
+        }
 
-                //add item to exchange
-                if (user1Src)
-                {
-                    User1Items.Add(item);
-                    index = (byte)(User1Items.IndexOf(item) + 1);
-                }
-                else
-                {
-                    User2Items.Add(item);
-                    index = (byte)(User2Items.IndexOf(item) + 1);
-                }
+        if (item.Template.Stackable)
+            user.Client.SendExchangeRequestAmount(item.Slot);
+        else
+        {
+            user.Inventory.Remove(slot);
+            userItems.TryAddToNextSlot(item);
 
-                //update exchange window
-
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.AddItem, !user1Src, index, item.ItemSprite.OffsetSprite, item.Color, item.Name));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.AddItem, user1Src, index, item.ItemSprite.OffsetSprite, item.Color, item.Name));
-            }
-            else //if it's stackable, send a prompty asking for how many
-                user.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.RequestAmount, item.Slot));
+            Logger.LogDebug(
+                "[Exchange: {ExchangeId}]: {UserName} added {Item}",
+                ExchangeId,
+                user.Name,
+                item);
         }
     }
 
-    /// <summary>
-    /// Synchronously adds a stackable item to the trade. Updates both user's screens with the info. This method is requested after the user replys to the prompt from AddItem for stackable items.
-    /// </summary>
-    /// <param name="user">The user who is adding the item.</param>
-    /// <param name="slot">The slot that item is in.</param>
-    /// <param name="count">The number of that item to add.</param>
-    internal void AddStackableItem(User user, byte slot, byte count)
+    public void AddStackableItem(User user, byte slot, byte amount)
     {
-        lock (Sync)
+        using var sync = Sync.Enter();
+
+        var otherUser = GetOtherUser(user);
+        (_, var userItems, var userAccepted) = GetUserVars(user);
+
+        if (!IsActive || (amount <= 0) || !user.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
+            return;
+
+        if (item.Template.AccountBound)
         {
-            Item splitItem;
-            int index;
-            var user1Src = user == User1;
-            var otherUser = OtherUser(user);
+            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
 
-            //if slot is null, or not stackable, or invalid count, then return
-            if (!IsActive || !user.Inventory.TryGetObject(slot, out var item) || !item.Stackable || count > item.Count || item.AccountBound || (user1Src ? User1Accept : User2Accept))
-                return;
+            return;
+        }
 
-            if(otherUser.Inventory.Contains(item) && (otherUser.Inventory[item.Name].Count + count) > CONSTANTS.ITEM_STACK_MAX)
-            {
-                user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} cannot hold that many {item.Name}.");
-                return;
-            }
+        if (!user.Inventory.HasCount(item.DisplayName, amount))
+        {
+            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You don't have {amount} of {item.DisplayName}");
 
-            //remove the item if we're exchanging all that we have
-            if (item.Count == count)
-            {
-                user.Inventory.TryGetRemove(slot, out splitItem);
-                user.Client.Enqueue(ServerPackets.RemoveItem(slot));
-            }
-            else
-            {
-                //otherwise split the item stack and update the user's inventory
-                splitItem = item.Split(count);
-                user.Client.Enqueue(ServerPackets.AddItem(item));
-            }
+            return;
+        }
 
-            //depending on which user is activating this, do different things
-            if (user1Src)
-            {
-                //if there's a stackable item with this name already, grab it
-                var oldItem = User1Items.FirstOrDefault(itm => itm.Name.Equals(splitItem.Name));
+        //we need to check if they can carry the items before we actually take or give anything
+        var cloned = ItemUtility.Instance.Clone(item);
+        cloned.Count = amount;
+        var corrected = cloned.FixStacks();
 
-                //if it was successfully grabbed
-                if (oldItem != null)
-                {
-                    //combine what we took from the inventory with the old amount
-                    splitItem.Count += oldItem.Count;
-                    //set the old item as the new item with the new count
-                    User1Items[User1Items.IndexOf(oldItem)] = splitItem;
-                }
-                else
-                    //if no old item, just add the new item stack
-                    User1Items.Add(splitItem);
+        if (!otherUser.CanCarry(userItems.Concat(corrected).ToArray()))
+        {
+            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
+            otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");
 
-                //index of this item inthe trade is it's index in the item list + 1 (cuz no zero index)
-                index = User1Items.IndexOf(splitItem) + 1;
-            }
-            else
-            {
-                //do the same thing for the other use, using it's lists
-                var oldItem = User2Items.FirstOrDefault(itm => itm.Name.Equals(splitItem.Name));
+            return;
+        }
 
-                if (oldItem != null)
-                {
-                    splitItem.Count += oldItem.Count;
-                    User2Items[User2Items.IndexOf(oldItem)] = splitItem;
-                }
-                else
-                    User2Items.Add(splitItem);
+        if (!user.Inventory.RemoveQuantity(item.DisplayName, amount, out var removedItems))
+            return;
 
-                index = User2Items.IndexOf(splitItem) + 1;
-            }
+        foreach (var removedItem in removedItems)
+        {
+            userItems.TryAddToNextSlot(removedItem);
 
-            //update exchange window
-            User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.AddItem, !user1Src, (byte)index, splitItem.ItemSprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
-            User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.AddItem, user1Src, (byte)index, splitItem.ItemSprite.OffsetSprite, splitItem.Color, $@"{splitItem.Name}[{splitItem.Count}]"));
+            Logger.LogDebug(
+                "[Exchange: {ExchangeId}]: {UserName} added {Item}",
+                ExchangeId,
+                user.Name,
+                item);
         }
     }
 
-    /// <summary>
-    /// Synchronously sets the gold to be traded. Does necessary checks and modifications.
-    /// </summary>
-    /// <param name="user">User whos gold should be set.</param>
-    /// <param name="amount">The total amount of gold they want to trade.</param>
-    internal void SetGold(User user, uint amount)
+    public void Cancel(User user)
     {
-        lock (Sync)
-        {
-            var user1Src = user == User1;
+        using var sync = Sync.Enter();
 
-            if (!IsActive || (user1Src ? User1Accept : User2Accept))
-                return;
+        var otherUser = GetOtherUser(user);
+        (var gold, var items, _) = GetUserVars(user);
+        (var otherGold, var otherItems, _) = GetUserVars(otherUser);
 
-            //if the user already had gold entered, give it back (because this is a set, not an addition)
-            user.Attributes.Gold += user1Src ? User1Gold : User2Gold;
+        if (!IsActive)
+            return;
 
-            //if the amount they want to set is greater than what they have, set it to the max value
-            if (amount > user.Attributes.Gold)
-                amount = user.Attributes.Gold;
+        Distribute(user, gold, items);
+        Distribute(otherUser, otherGold, otherItems);
 
-            //do things depending on which user is requesting
-            if (user1Src)
-            {
-                //subtract the gold we want to add from the user
-                User1.Attributes.Gold -= amount;
-                //set the gold in the exchange
-                User1Gold = amount;
-                //update the user's gold
-                User1.Client.SendAttributes(StatUpdateType.ExpGold);
-            }
-            else
-            {
-                //do same thing for other user
-                User2.Attributes.Gold -= amount;
-                User2Gold = amount;
-                User2.Client.SendAttributes(StatUpdateType.ExpGold);
-            }
+        user.Client.SendExchangeCancel(false);
+        otherUser.Client.SendExchangeCancel(true);
+        Logger.LogDebug("[Exchange: {ExchangeId}]: {UserName} canceled the trade", ExchangeId, user.Name);
 
-            //update exchange window
-            User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.SetGold, !user1Src, user1Src ? User1Gold : User2Gold));
-            User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.SetGold, user1Src, user1Src ? User1Gold : User2Gold));
-        }
+        Deactivate();
     }
 
-    /// <summary>
-    /// Synchronously cancels the trade, returning any gold and items that were added to the trade to their owners.
-    /// </summary>
-    /// <param name="user"></param>
-    internal void Cancel(User user)
+    private void Deactivate()
     {
-        lock(Sync)
-        {
-            if (!IsActive)
-                return;
-
-            //give the items and gold back to their owners
-            User1.Attributes.Gold += User1Gold;
-            User1.Client.SendAttributes(StatUpdateType.ExpGold);
-            foreach (var item in User1Items)
-            {
-                User1.Inventory.TryAdd(item);
-                User1.Client.Enqueue(ServerPackets.AddItem(item));
-            }
-
-            User2.Attributes.Gold += User2Gold;
-            User2.Client.SendAttributes(StatUpdateType.ExpGold);
-            foreach (var item in User2Items)
-            {
-                User2.Inventory.TryAdd(item);
-                User2.Client.Enqueue(ServerPackets.AddItem(item));
-            }
-
-            //send cancel packet to close the exchange
-            var user1Src = user == User1;
-            User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.Cancel, !user1Src));
-            User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.Cancel, user1Src));
-
-            //destroy the exchange object from the server
-            Destroy();
-        }
-    }
-
-    /// <summary>
-    /// Synchronously accepts the trade. If both users have accepted, the added items and gold are of each user are added to the other user's inventory.
-    /// </summary>
-    /// <param name="user">The user who accepted the trade.</param>
-    internal void Accept(User user)
-    {
-        lock(Sync)
-        {
-            if (!IsActive)
-                return;
-
-            var user1Src = user == User1;
-
-            //keep track of which user has hit accept
-            if (user1Src)
-                User1Accept = true;
-            else
-                User2Accept = true;
-
-            //only send the opposite user a true accept packet (accept button on other side)
-            if (user1Src)
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.Accept, true));
-            else
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.Accept, true));
-
-            //if both players accepted, give eachother the items and gold in eachother's lists
-            if (User1Accept && User2Accept)
-            {
-                User2.Attributes.Gold += User1Gold;
-                User2.Client.SendAttributes(StatUpdateType.ExpGold);
-                foreach (var item in User1Items)
-                {
-                    User2.Inventory.AddToNextSlot(item);
-                    User2.Client.Enqueue(ServerPackets.AddItem(item));
-                }
-
-                User1.Attributes.Gold += User2Gold;
-                User1.Client.SendAttributes(StatUpdateType.ExpGold);
-                foreach (var item in User2Items)
-                {
-                    User1.Inventory.AddToNextSlot(item);
-                    User1.Client.Enqueue(ServerPackets.AddItem(item));
-                }
-
-                //update exchange window (to close it)
-                User1.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.Accept, false));
-                User2.Client.Enqueue(ServerPackets.Exchange(ExchangeRequestType.Accept, false));
-
-                //destroy the exchange object from the server
-                Destroy();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Destroys the exchange. Should only be called from cancel, to avoid losing items and gold to the abyss.
-    /// </summary>
-    private void Destroy()
-    {
-        //remove the exchange from existence
-        User1.ExchangeID = 0;
-        User2.ExchangeID = 0;
-        Game.World.Exchanges.TryRemove(ID, out var exOut);
-        exOut = null;
         IsActive = false;
-    }
-}*/
+        if(User1.ActiveObject.TryRemove(this))
+            User1.UserState &= ~UserState.Exchanging;
 
+        if (User2.ActiveObject.TryRemove(this))
+            User2.UserState &= ~UserState.Exchanging;
+
+    }
+
+    private void Distribute(User user, int gold, Inventory items)
+    {
+        user.GiveGold(gold);
+
+        Logger.LogDebug(
+            "[Exchange: {ExchangeId}]: {UserName} received {Gold} gold",
+            ExchangeId,
+            user.Name,
+            gold);
+
+        foreach (var item in items)
+        {
+            items.Remove(item.Slot);
+
+            if (user.Inventory.TryAddToNextSlot(item))
+                Logger.LogDebug(
+                    "[Exchange: {ExchangeId}]: {UserName} received {Item}",
+                    ExchangeId,
+                    user.Name,
+                    item);
+        }
+    }
+
+    public User GetOtherUser(User user) => user.Equals(User1) ? User2 : User1;
+
+    private (int Gold, Inventory Items, bool Accepted) GetUserVars(User user) =>
+        user.Equals(User1) ? (User1Gold, User1Items, User1Accept) : (User2Gold, User2Items, User2Accept);
+
+    public void SetGold(User user, int amount)
+    {
+        using var sync = Sync.Enter();
+
+        var otherUser = GetOtherUser(user);
+        var uuserVars = GetUserVars(user);
+        (var gold, _, var accepted) = uuserVars;
+
+        if (!IsActive || accepted)
+            return;
+
+        //this is a set, so we should start by returning whatever gold is already in the exchange
+        user.GiveGold(gold);
+        SetUserGold(user, 0);
+
+        if (user.Gold >= amount)
+        {
+            user.GiveGold(-amount);
+            SetUserGold(user, amount);
+
+            Logger.LogDebug(
+                "[Exchange: {ExchangeId}]: {UserName} set his gold amount to {Gold}",
+                ExchangeId,
+                user.Name,
+                gold);
+        }
+
+        user.Client.SendExchangeSetGold(false, amount);
+        otherUser.Client.SendExchangeSetGold(true, amount);
+    }
+
+    private void SetUserAccepted(User user, bool accepted)
+    {
+        if (user.Equals(User1))
+            User1Accept = accepted;
+        else
+            User2Accept = accepted;
+    }
+
+    private void SetUserGold(User user, int amount)
+    {
+        if (user.Equals(User1))
+            User1Gold = amount;
+        else
+            User2Gold = amount;
+    }
+}

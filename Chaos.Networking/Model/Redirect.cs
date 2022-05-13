@@ -18,7 +18,8 @@ public record Redirect
         ICryptoClient cryptoClient,
         RedirectInfo serverInfo,
         ServerType type,
-        string? name = null)
+        string? name = null
+    )
     {
         Id = ClientId.NextId;
         Type = type;

@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using AutoMapper;
+using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Core.Data;
 using Chaos.Core.Definitions;
 using Chaos.Core.Geometry;
 using Chaos.Cryptography.Interfaces;
-using Chaos.DataObjects;
 using Chaos.Effects.Abstractions;
 using Chaos.Managers.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Model.Server;
+using Chaos.Networking.Serializers;
+using Chaos.Objects.Panel;
+using Chaos.Objects.Panel.Abstractions;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
-using Chaos.PanelObjects;
-using Chaos.PanelObjects.Abstractions;
 using Chaos.Servers.Interfaces;
-using Chaos.WorldObjects;
-using Chaos.WorldObjects.Abstractions;
 using Microsoft.Extensions.Logging;
-using ServerPacketEx = Chaos.Utilities.ServerPacket;
+using ServerPacket = Chaos.Utilities.ServerPacket;
 
 namespace Chaos.Clients;
 
@@ -38,8 +39,14 @@ public class WorldClient : SocketClientBase, IWorldClient
         ICryptoClient cryptoClient,
         IWorldServer server,
         IPacketSerializer packetSerializer,
-        ILogger<WorldClient> logger)
-        : base(socket, cryptoClient, server, packetSerializer, logger) => Mapper = mapper;
+        ILogger<WorldClient> logger
+    )
+        : base(
+            socket,
+            cryptoClient,
+            server,
+            packetSerializer,
+            logger) => Mapper = mapper;
 
     public void SendAddItemToPane(Item item)
     {
@@ -71,7 +78,20 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendAnimation(Animation animation) => throw new NotImplementedException();
+    public void SendAnimation(Animation animation)
+    {
+        var args = new AnimationArgs
+        {
+            AnimationSpeed = animation.AnimationSpeed,
+            SourceAnimation = animation.SourceAnimation,
+            SourceId = animation.SourceId,
+            TargetAnimation = animation.TargetAnimation,
+            TargetId = animation.TargetId,
+            TargetPoint = animation.TargetPoint
+        };
+        
+        Send(args);
+    }
 
     public void SendAttributes(StatUpdateType statUpdateType)
     {
@@ -80,7 +100,12 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendBodyAnimation(uint id, BodyAnimation bodyAnimation, ushort speed, byte? sound = null)
+    public void SendBodyAnimation(
+        uint id,
+        BodyAnimation bodyAnimation,
+        ushort speed,
+        byte? sound = null
+    )
     {
         var args = new BodyAnimationArgs
         {
@@ -95,7 +120,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendCancelCasting()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.CancelCasting);
+        var packet = ServerPacket.FromData(ServerOpCode.CancelCasting);
         Send(ref packet);
     }
 
@@ -158,7 +183,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     public void SendDisplayUser(User user)
     {
         var args = Mapper.Map<DisplayAislingArgs>(user);
-        
+
         Send(args);
     }
 
@@ -166,12 +191,13 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new DoorArgs
         {
-            Doors = doors.Select(door => new DoorArg
-                {
-                    Point = door.Point,
-                    Closed = door.Closed,
-                    OpenRight = door.OpenRight
-                })
+            Doors = doors.Select(
+                    door => new DoorArg
+                    {
+                        Point = door.Point,
+                        Closed = door.Closed,
+                        OpenRight = door.OpenRight
+                    })
                 .ToList()
         };
 
@@ -191,10 +217,79 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendExchange(ExchangeResponseType exchangeResponseType)
+    public void SendExchangeAccepted(bool persistExchange)
     {
-        //TODO: this
-        var args = new ExchangeArgs();
+        var args = new ExchangeArgs
+        {
+            ExchangeResponseType = ExchangeResponseType.Accept,
+            PersistExchange = persistExchange
+        };
+
+        Send(args);
+    }
+
+    public void SendExchangeAddItem(bool rightSide, byte index, Item item)
+    {
+        var args = new ExchangeArgs
+        {
+            ExchangeResponseType = ExchangeResponseType.AddItem,
+            RightSide = rightSide,
+            ExchangeIndex = index,
+            ItemSprite = item.Template.ItemSprite.OffsetPanelSprite,
+            ItemColor = item.Color,
+            ItemName = item.DisplayName
+        };
+
+        if (item.Count > 1)
+            args.ItemName = $"{item.DisplayName} [{item.Count}]";
+
+        Send(args);
+    }
+
+    public void SendExchangeCancel(bool rightSide)
+    {
+        var args = new ExchangeArgs
+        {
+            ExchangeResponseType = ExchangeResponseType.Cancel,
+            RightSide = rightSide
+        };
+
+        Send(args);
+    }
+
+    public void SendExchangeRequestAmount(byte slot)
+    {
+        var args = new ExchangeArgs
+        {
+            ExchangeResponseType = ExchangeResponseType.RequestAmount,
+            FromSlot = slot
+        };
+
+        Send(args);
+    }
+
+    public void SendExchangeSetGold(bool rightSide, int amount)
+    {
+        var args = new ExchangeArgs
+        {
+            ExchangeResponseType = ExchangeResponseType.SetGold,
+            RightSide = rightSide,
+            GoldAmount = amount
+        };
+
+        Send(args);
+    }
+
+    public void SendExchangeStart(User fromUser)
+    {
+        var args = new ExchangeArgs
+        {
+            ExchangeResponseType = ExchangeResponseType.StartExchange,
+            OtherUserId = fromUser.Id,
+            OtherUserName = fromUser.Name
+        };
+
+        Send(args);
     }
 
     public void SendForcedClientPacket(ref ClientPacket clientPacket) => throw new NotImplementedException();
@@ -241,14 +336,15 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapChangeComplete()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.MapChangeComplete, PacketSerializer.Encoding, new byte[2]);
+        var packet = ServerPacket.FromData(ServerOpCode.MapChangeComplete, PacketSerializer.Encoding, new byte[2]);
 
         Send(ref packet);
     }
 
     public void SendMapChangePending()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.MapChangePending,
+        var packet = ServerPacket.FromData(
+            ServerOpCode.MapChangePending,
             PacketSerializer.Encoding,
             3,
             0,
@@ -285,7 +381,7 @@ public class WorldClient : SocketClientBase, IWorldClient
         var args = new MapInfoArgs
         {
             Name = instance.Name,
-            MapId = mapTemplate.TemplateKey,
+            MapId = mapTemplate.MapId,
             Width = mapTemplate.Width,
             Height = mapTemplate.Height,
             CheckSum = mapTemplate.CheckSum,
@@ -297,9 +393,53 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapLoadComplete()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.MapLoadComplete, PacketSerializer.Encoding, 0);
+        var packet = ServerPacket.FromData(ServerOpCode.MapLoadComplete, PacketSerializer.Encoding, 0);
 
         Send(ref packet);
+    }
+
+    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<string, Metafile> metafileCache, string? name = null)
+    {
+        var args = new MetafileArgs
+        {
+            MetafileRequestType = metafileRequestType
+        };
+
+        switch (metafileRequestType)
+        {
+            case MetafileRequestType.DataByName:
+            {
+                if (name == null)
+                    throw new ArgumentNullException(nameof(name));
+
+                var metafile = metafileCache.GetObject(name);
+
+                args.MetafileData = new MetafileDataArg
+                {
+                    Name = metafile.Name,
+                    CheckSum = metafile.CheckSum,
+                    Data = metafile.Data
+                };
+
+                break;
+            }
+            case MetafileRequestType.AllCheckSums:
+            {
+                args.Info = metafileCache.Select(
+                        metafile => new MetafileDataArg
+                        {
+                            Name = metafile.Name,
+                            CheckSum = metafile.CheckSum
+                        })
+                    .ToList();
+
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException(nameof(metafileRequestType), metafileRequestType, "Unknown enum value");
+        }
+
+        Send(args);
     }
 
     public void SendProfile(User user)
@@ -311,7 +451,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendProfileRequest()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.ProfileRequest);
+        var packet = ServerPacket.FromData(ServerOpCode.ProfileRequest);
 
         Send(ref packet);
     }
@@ -330,7 +470,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendRefreshResponse()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.RefreshResponse);
+        var packet = ServerPacket.FromData(ServerOpCode.RefreshResponse);
 
         Send(ref packet);
     }
@@ -429,23 +569,25 @@ public class WorldClient : SocketClientBase, IWorldClient
 
         foreach (var obj in objects)
             if (obj is GroundItem groundItem)
-                visibleArgs.Add(new GroundItemArg
-                {
-                    Id = groundItem.Id,
-                    Color = groundItem.Item.Color,
-                    Point = groundItem.Point,
-                    Sprite = groundItem.Sprite
-                });
+                visibleArgs.Add(
+                    new GroundItemArg
+                    {
+                        Id = groundItem.Id,
+                        Color = groundItem.Item.Color,
+                        Point = groundItem.Point,
+                        Sprite = groundItem.Sprite
+                    });
             else if (obj is Creature creature)
-                visibleArgs.Add(new CreatureArg
-                {
-                    Id = creature.Id,
-                    Point = creature.Point,
-                    Sprite = creature.Sprite,
-                    CreatureType = creature.Type,
-                    Direction = creature.Direction,
-                    Name = creature.Name
-                });
+                visibleArgs.Add(
+                    new CreatureArg
+                    {
+                        Id = creature.Id,
+                        Point = creature.Point,
+                        Sprite = creature.Sprite,
+                        CreatureType = creature.Type,
+                        Direction = creature.Direction,
+                        Name = creature.Name
+                    });
 
         Send(args);
     }
@@ -492,49 +634,6 @@ public class WorldClient : SocketClientBase, IWorldClient
             ImageIndex = 1,
             Nodes = worldMap.Nodes
         };
-
-        Send(args);
-    }
-    
-    public void SendMetafile(MetafileRequestType metafileRequestType, ICacheManager<string, Metafile> metafileManager, string? name = null)
-    {
-        var args = new MetafileArgs
-        {
-            MetafileRequestType = metafileRequestType
-        };
-
-        switch (metafileRequestType)
-        {
-            case MetafileRequestType.DataByName:
-            {
-                if (name == null)
-                    throw new ArgumentNullException(nameof(name));
-
-                var metafile = metafileManager.GetObject(name);
-
-                args.MetafileData = new MetafileDataArg
-                {
-                    Name = metafile.Name,
-                    CheckSum = metafile.CheckSum,
-                    Data = metafile.Data
-                };
-
-                break;
-            }
-            case MetafileRequestType.AllCheckSums:
-            {
-                args.Info = metafileManager.Select(metafile => new MetafileDataArg
-                    {
-                        Name = metafile.Name,
-                        CheckSum = metafile.CheckSum
-                    })
-                    .ToList();
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException(nameof(metafileRequestType), metafileRequestType, "Unknown enum value");
-        }
 
         Send(args);
     }

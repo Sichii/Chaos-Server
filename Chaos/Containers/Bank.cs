@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Chaos.PanelObjects;
+using Chaos.Objects.Panel;
 
 namespace Chaos.Containers;
 

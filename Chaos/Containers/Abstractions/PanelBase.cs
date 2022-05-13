@@ -5,9 +5,8 @@ using System.Linq;
 using Chaos.Containers.Interfaces;
 using Chaos.Core.Definitions;
 using Chaos.Core.Extensions;
+using Chaos.Objects.Panel.Abstractions;
 using Chaos.Observers.Interfaces;
-using Chaos.PanelObjects.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Containers.Abstractions;
 
@@ -25,6 +24,15 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         }
     }
 
+    public virtual int AvailableSlots
+    {
+        get
+        {
+            lock (Sync)
+                return TotalSlots - Objects.Count(obj => obj != null);
+        }
+    }
+
     public virtual bool IsFull
     {
         get
@@ -34,19 +42,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         }
     }
 
-    public virtual int AvailableSlots
-    {
-        get
-        {
-            lock (Sync)
-                return TotalSlots - Objects.Count(obj => obj != null);
-        }
-    }
-    
     public PanelType PaneType { get; }
     protected byte[] InvalidSlots { get; }
     protected int Length { get; }
-    protected ILogger Logger { get; }
     protected T?[] Objects { get; }
 
     protected ICollection<IPanelObserver<T>> Observers { get; }
@@ -56,16 +54,15 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     protected PanelBase(
         PanelType panelType,
         int length,
-        byte[] invalidSlots,
-        ILogger logger)
+        byte[] invalidSlots
+    )
     {
         PaneType = panelType;
         Length = length;
         Objects = new T[Length];
         InvalidSlots = invalidSlots;
-        TotalSlots = Length = invalidSlots.Length;
+        TotalSlots = Length - invalidSlots.Length;
         Sync = new object();
-        Logger = logger;
         Observers = new List<IPanelObserver<T>>();
     }
 
@@ -78,19 +75,37 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     protected void BroadcastOnAdded(T obj)
     {
         foreach (var observer in Observers)
-            observer.OnAdded(obj);
+            try
+            {
+                observer.OnAdded(obj);
+            } catch
+            {
+                //ignored
+            }
     }
 
     protected void BroadcastOnRemoved(byte slot, T obj)
     {
         foreach (var observer in Observers)
-            observer.OnRemoved(slot, obj);
+            try
+            {
+                observer.OnRemoved(slot, obj);
+            } catch
+            {
+                //ignored
+            }
     }
 
     protected void BroadcastOnUpdated(byte originalSlot, T obj)
     {
         foreach (var observer in Observers)
-            observer.OnUpdated(originalSlot, obj);
+            try
+            {
+                observer.OnUpdated(originalSlot, obj);
+            } catch
+            {
+                //ignored
+            }
     }
 
     public virtual bool Contains(T obj)

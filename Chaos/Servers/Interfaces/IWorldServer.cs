@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
+using Chaos.Containers;
 using Chaos.Networking.Interfaces;
+using Chaos.Objects.World;
 using Chaos.Packets;
 
 namespace Chaos.Servers.Interfaces;
@@ -9,11 +11,11 @@ public interface IWorldServer : IServer
 {
     ValueTask OnBeginChant(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnBoardRequest(IWorldClient client, ref ClientPacket clientPacket);
+    ValueTask OnChant(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnClick(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnClientRedirected(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnClientWalk(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnDialogResponse(IWorldClient client, ref ClientPacket clientPacket);
-    ValueTask OnChant(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnEmote(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnExchange(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnExitRequest(IWorldClient client, ref ClientPacket clientPacket);
@@ -45,4 +47,6 @@ public interface IWorldServer : IServer
     ValueTask OnWhisper(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnWorldListRequest(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnWorldMapClick(IWorldClient client, ref ClientPacket clientPacket);
+    
+    Exchange CreateExchange(User sender, User receiver);
 }

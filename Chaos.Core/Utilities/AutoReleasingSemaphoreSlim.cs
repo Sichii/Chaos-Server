@@ -1,7 +1,5 @@
 namespace Chaos.Core.Utilities;
 
-
-
 public class AutoReleasingSemaphoreSlim
 {
     public SemaphoreSlim SemaphoreSlim { get; }
@@ -14,11 +12,11 @@ public class AutoReleasingSemaphoreSlim
 
         return new AutoReleasingSubscription(SemaphoreSlim);
     }
-    
+
     private record AutoReleasingSubscription : IAsyncDisposable
     {
-        private int Disposed = 0;
         private readonly SemaphoreSlim SemaphoreSlim;
+        private int Disposed;
 
         internal AutoReleasingSubscription(SemaphoreSlim semaphoreSlim) => SemaphoreSlim = semaphoreSlim;
 

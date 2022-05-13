@@ -1,7 +1,7 @@
 using Chaos.Core.Definitions;
+using Chaos.Objects.Panel;
+using Chaos.Objects.World;
 using Chaos.Observers.Interfaces;
-using Chaos.PanelObjects;
-using Chaos.WorldObjects;
 
 namespace Chaos.Observers;
 
@@ -15,15 +15,26 @@ public class EquipmentObserver : IPanelObserver<Item>
     {
         User.Client.SendEquipment(obj);
         User.MapInstance.ShowUser(User);
+        User.StatSheet.AddWeight(obj.Template.Weight);
+
+        if (obj.Template.Modifiers != null)
+            User.StatSheet.Add(obj.Template.Modifiers);
+
         User.Client.SendAttributes(StatUpdateType.Full);
     }
 
     public void OnRemoved(byte slot, Item obj)
     {
-        User.Client.SendSelfProfile();
-        User.Client.SendAttributes(StatUpdateType.Full);
         User.Client.SendUnequip((EquipmentSlot)slot);
         User.MapInstance.ShowUser(User);
+        User.Client.SendSelfProfile();
+
+        User.StatSheet.AddWeight(-obj.Template.Weight);
+
+        if (obj.Template.Modifiers != null)
+            User.StatSheet.Subtract(obj.Template.Modifiers);
+
+        User.Client.SendAttributes(StatUpdateType.Full);
     }
 
     public void OnUpdated(byte originalSlot, Item obj)

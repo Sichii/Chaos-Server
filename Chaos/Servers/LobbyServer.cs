@@ -5,13 +5,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
-using Chaos.Containers;
 using Chaos.Core.Definitions;
 using Chaos.Factories.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Networking.Model.Client;
+using Chaos.Objects;
 using Chaos.Options;
 using Chaos.Packets;
 using Chaos.Packets.Definitions;
@@ -36,8 +36,13 @@ public class LobbyServer : ServerBase, ILobbyServer
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<LobbyOptions> options,
         Encoding encoding,
-        ILogger<LobbyServer> logger)
-        : base(redirectManager, packetSerializer, options, logger)
+        ILogger<LobbyServer> logger
+    )
+        : base(
+            redirectManager,
+            packetSerializer,
+            options,
+            logger)
     {
         ClientFactory = clientFactory;
         ServerTable = new ServerTable(options.Value.Servers, encoding);
@@ -48,9 +53,53 @@ public class LobbyServer : ServerBase, ILobbyServer
         IndexHandlers();
     }
 
+    #region OnHandlers
+    public ValueTask OnConnectionInfoRequest(ILobbyClient client, ref ClientPacket _)
+    {
+        client.SendConnectionInfo(ServerTable.CheckSum);
+
+        return default;
+    }
+
+    public ValueTask OnServerTableRequest(ILobbyClient client, ref ClientPacket packet)
+    {
+        (var serverTableRequestType, var serverId) = PacketSerializer.Deserialize<ServerTableRequestArgs>(ref packet);
+
+        switch (serverTableRequestType)
+        {
+            case ServerTableRequestType.ServerId:
+                if (ServerTable.Servers.TryGetValue(serverId!.Value, out var serverInfo))
+                {
+                    var redirect = new Redirect(client.CryptoClient, serverInfo, ServerType.Login);
+                    RedirectManager.Add(redirect);
+
+                    Logger.LogDebug(
+                        "Redirecting lobby client to server {ServerName} with id {ServerId} at {ServerAddress}:{ServerPort}",
+                        serverInfo.Name,
+                        serverInfo.Id,
+                        serverInfo.Address,
+                        serverInfo.Port);
+
+                    client.SendRedirect(redirect);
+                } else
+                    throw new InvalidOperationException($"Server id \"{serverId}\" requested, but does not exist.");
+
+                break;
+            case ServerTableRequestType.RequestTable:
+                client.SendServerTable(ServerTable);
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        return default;
+    }
+    #endregion
+
     #region Connection / Handler
     protected delegate ValueTask LobbyClientHandler(ILobbyClient client, ref ClientPacket packet);
-    
+
     public override ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet)
     {
         if (client is ILobbyClient lobbyClient)
@@ -67,7 +116,7 @@ public class LobbyServer : ServerBase, ILobbyServer
     {
         if (ClientHandlers == null!)
             return;
-        
+
         base.IndexHandlers();
         var oldHandlers = base.ClientHandlers;
 
@@ -105,49 +154,16 @@ public class LobbyServer : ServerBase, ILobbyServer
             return;
         }
 
-        client.OnDisconnected += (sender, args) =>
-        {
-            var sClient = (ILobbyClient)sender!;
-            Clients.TryRemove(sClient.Id, out _);
-        };
+        client.OnDisconnected += OnDisconnect;
 
         client.BeginReceive();
         client.SendAcceptConnection();
     }
+
+    private void OnDisconnect(object? sender, EventArgs e)
+    {
+        var client = (ILobbyClient)sender!;
+        Clients.TryRemove(client.Id, out _);
+    }
     #endregion
-
-    public ValueTask OnConnectionInfoRequest(ILobbyClient client, ref ClientPacket _)
-    {
-        client.SendConnectionInfo(ServerTable.CheckSum);
-
-        return default;
-    }
-
-    public ValueTask OnServerTableRequest(ILobbyClient client, ref ClientPacket packet)
-    {
-        (var serverTableRequestType, var serverId) = PacketSerializer.Deserialize<ServerTableRequestArgs>(ref packet);
-
-        switch (serverTableRequestType)
-        {
-            case ServerTableRequestType.ServerId:
-                if (ServerTable.Servers.TryGetValue(serverId!.Value, out var serverInfo))
-                {
-                    var redirect = new Redirect(client.CryptoClient, serverInfo, ServerType.Login);
-                    RedirectManager.Add(redirect);
-
-                    client.SendRedirect(redirect);
-                } else
-                    throw new InvalidOperationException($"Server id \"{serverId}\" requested, but does not exist.");
-
-                break;
-            case ServerTableRequestType.RequestTable:
-                client.SendServerTable(ServerTable);
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        return default;
-    }
 }

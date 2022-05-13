@@ -16,6 +16,10 @@ public record ClientRedirectedDeserializer : ClientPacketDeserializer<ClientRedi
         var name = reader.ReadString8();
         var id = reader.ReadUInt32();
 
-        return new ClientRedirectedArgs(seed, Encoding.ASCII.GetBytes(key), name, id);
+        return new ClientRedirectedArgs(
+            seed,
+            Encoding.ASCII.GetBytes(key),
+            name,
+            id);
     }
 }

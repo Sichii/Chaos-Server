@@ -1,6 +1,6 @@
 namespace Chaos.Templates.Interfaces;
 
-public interface ITemplate<out TKey>
+public interface ITemplate
 {
-    TKey TemplateKey { get; }
+    string TemplateKey { get; }
 }

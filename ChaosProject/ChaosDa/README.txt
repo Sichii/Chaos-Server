@@ -1,1 +1,0 @@
-Do not install darkages here until you COPY(ctrl + c) this folder out of the project folder.

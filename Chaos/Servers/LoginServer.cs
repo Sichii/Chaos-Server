@@ -4,12 +4,13 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
+using Chaos.Core.Data;
 using Chaos.Core.Definitions;
 using Chaos.Core.Extensions;
 using Chaos.Cryptography;
-using Chaos.DataObjects;
 using Chaos.Exceptions;
 using Chaos.Factories.Interfaces;
 using Chaos.Managers.Interfaces;
@@ -17,12 +18,13 @@ using Chaos.Networking.Abstractions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Networking.Model.Client;
+using Chaos.Objects;
+using Chaos.Objects.World;
 using Chaos.Options;
 using Chaos.Packets;
 using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
 using Chaos.Servers.Interfaces;
-using Chaos.WorldObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -31,10 +33,9 @@ namespace Chaos.Servers;
 public class LoginServer : ServerBase, ILoginServer
 {
     private readonly IClientFactory<ILoginClient> ClientFactory;
-    private readonly IUserFactory UserFactory;
     private readonly ICredentialManager CredentialManager;
-    private readonly ICacheManager<string, MapInstance> MapInstanceManager;
-    private readonly ICacheManager<string, Metafile> MetafileManager;
+    private readonly ISimpleCache<string, MapInstance> MapInstanceCache;
+    private readonly ISimpleCache<string, Metafile> MetafileCache;
     private readonly Notice Notice;
     private readonly ISaveManager<User> UserSaveManager;
     public ConcurrentDictionary<uint, ILoginClient> Clients { get; }
@@ -45,23 +46,26 @@ public class LoginServer : ServerBase, ILoginServer
     public LoginServer(
         ISaveManager<User> userSaveManager,
         IClientFactory<ILoginClient> clientFactory,
-        IUserFactory userFactory,
         ICredentialManager credentialManager,
-        ICacheManager<string, MapInstance> mapInstanceManager,
-        ICacheManager<string, Metafile> metafileManager,
+        ISimpleCache<string, MapInstance> mapInstanceCache,
+        ISimpleCache<string, Metafile> metafileCache,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<LoginOptions> options,
         Encoding encoding,
-        ILogger<LoginServer> logger)
-        : base(redirectManager, packetSerializer, options, logger)
+        ILogger<LoginServer> logger
+    )
+        : base(
+            redirectManager,
+            packetSerializer,
+            options,
+            logger)
     {
         UserSaveManager = userSaveManager;
         ClientFactory = clientFactory;
-        UserFactory = userFactory;
         CredentialManager = credentialManager;
-        MapInstanceManager = mapInstanceManager;
-        MetafileManager = metafileManager;
+        MapInstanceCache = mapInstanceCache;
+        MetafileCache = metafileCache;
         Notice = new Notice(options.Value.NoticeMessage, encoding);
         Clients = new ConcurrentDictionary<uint, ILoginClient>();
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
@@ -71,76 +75,7 @@ public class LoginServer : ServerBase, ILoginServer
         IndexHandlers();
     }
 
-    #region Connection / Handler
-    protected delegate ValueTask LoginClientHandler(ILoginClient client, ref ClientPacket packet);
-    
-    public override ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet)
-    {
-        if (client is ILoginClient loginClient)
-        {
-            var handler = ClientHandlers[(byte)packet.OpCode];
-
-            return handler?.Invoke(loginClient, ref packet) ?? default;
-        }
-
-        return base.HandlePacketAsync(client, ref packet);
-    }
-
-    protected sealed override void IndexHandlers()
-    {
-        if (ClientHandlers == null!)
-            return;
-        
-        base.IndexHandlers();
-        var oldHandlers = base.ClientHandlers;
-
-        for (var i = 0; i < byte.MaxValue; i++)
-        {
-            var old = oldHandlers[i];
-
-            if (old == null)
-                continue;
-
-            ClientHandlers[i] = new LoginClientHandler(old);
-        }
-
-        ClientHandlers[(byte)ClientOpCode.CreateCharRequest] = OnCreateCharRequest;
-        ClientHandlers[(byte)ClientOpCode.CreateCharFinalize] = OnCreateCharFinalize;
-        ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
-        ClientHandlers[(byte)ClientOpCode.HomepageRequest] = OnHomepageRequest;
-        ClientHandlers[(byte)ClientOpCode.Login] = OnLogin;
-        ClientHandlers[(byte)ClientOpCode.MetafileRequest] = OnMetafileRequest;
-        ClientHandlers[(byte)ClientOpCode.NoticeRequest] = OnNoticeRequest;
-        ClientHandlers[(byte)ClientOpCode.PasswordChange] = OnPasswordChange;
-    }
-    
-    protected override void OnConnection(IAsyncResult ar)
-    {
-        var serverSocket = (Socket)ar.AsyncState!;
-        var clientSocket = serverSocket.EndAccept(ar);
-
-        serverSocket.BeginAccept(OnConnection, serverSocket);
-
-        var client = ClientFactory.CreateClient(clientSocket);
-
-        if (!Clients.TryAdd(client.Id, client))
-        {
-            Logger.LogError("Somehow two clients got the same id. (Id: {Id})", client.Id);
-            client.Disconnect();
-
-            return;
-        }
-        
-        client.OnDisconnected += (sender, args) =>
-        {
-            var sClient = (ILoginClient)sender!;
-            Clients.TryRemove(sClient.Id, out _);
-        };
-        client.BeginReceive();
-        client.SendAcceptConnection();
-    }
-    #endregion
-
+    #region OnHandlers
     public ValueTask OnClientRedirected(ILoginClient client, ref ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(ref packet);
@@ -179,9 +114,16 @@ public class LoginServer : ServerBase, ILoginServer
         if (CreateCharRequests.TryGetValue(client.Id, out var requestArgs))
         {
             (var hairStyle, var gender, var hairColor) = args;
-            var user = UserFactory.CreateUser(requestArgs.Name, gender, hairStyle, hairColor);
-            var startingMap = MapInstanceManager.GetObject(Options.StartingMapInstanceId);
+
+            var user = new User(
+                requestArgs.Name,
+                gender,
+                hairStyle,
+                hairColor);
+
+            var startingMap = MapInstanceCache.GetObject(Options.StartingMapInstanceId);
             user.MapInstance = startingMap;
+            user.Point = Options.StartingPoint;
 
             await UserSaveManager.SaveAsync(user);
             Logger.LogDebug("New character created ({Name})", user.Name);
@@ -236,7 +178,8 @@ public class LoginServer : ServerBase, ILoginServer
         {
             if (!await CredentialManager.ValidateCredentialsAsync(name, password))
             {
-                client.SendLoginMessage(LoginMessageType.WrongPassword,
+                client.SendLoginMessage(
+                    LoginMessageType.WrongPassword,
                     $"Login failed. Reason: Password-{PasswordCredentialException.ReasonType.WrongPassword}");
 
                 return;
@@ -248,7 +191,17 @@ public class LoginServer : ServerBase, ILoginServer
             return;
         }
 
-        var redirect = new Redirect(client.CryptoClient, Options.WorldRedirect, ServerType.World, name);
+        var redirect = new Redirect(
+            client.CryptoClient,
+            Options.WorldRedirect,
+            ServerType.World,
+            name);
+
+        Logger.LogDebug(
+            "Redirecting login client to world server at {ServerAddress}:{ServerPort}",
+            Options.WorldRedirect.Address,
+            Options.WorldRedirect.Port);
+
         RedirectManager.Add(redirect);
         client.SendLoginMessage(LoginMessageType.Confirm);
         client.SendRedirect(redirect);
@@ -258,7 +211,7 @@ public class LoginServer : ServerBase, ILoginServer
     {
         (var metafileRequestType, var name) = PacketSerializer.Deserialize<MetafileRequestArgs>(ref packet);
 
-        client.SendMetafile(metafileRequestType, MetafileManager, name);
+        client.SendMetafile(metafileRequestType, MetafileCache, name);
 
         return default;
     }
@@ -291,6 +244,78 @@ public class LoginServer : ServerBase, ILoginServer
             client.SendLoginMessage(LoginMessageType.ClearPswdMessage, $"Failed to change password. Reason: Password-{e.Reason}");
         }
     }
+    #endregion
 
+    #region Connection / Handler
+    protected delegate ValueTask LoginClientHandler(ILoginClient client, ref ClientPacket packet);
 
+    public override ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet)
+    {
+        if (client is ILoginClient loginClient)
+        {
+            var handler = ClientHandlers[(byte)packet.OpCode];
+
+            return handler?.Invoke(loginClient, ref packet) ?? default;
+        }
+
+        return base.HandlePacketAsync(client, ref packet);
+    }
+
+    protected sealed override void IndexHandlers()
+    {
+        if (ClientHandlers == null!)
+            return;
+
+        base.IndexHandlers();
+        var oldHandlers = base.ClientHandlers;
+
+        for (var i = 0; i < byte.MaxValue; i++)
+        {
+            var old = oldHandlers[i];
+
+            if (old == null)
+                continue;
+
+            ClientHandlers[i] = new LoginClientHandler(old);
+        }
+
+        ClientHandlers[(byte)ClientOpCode.CreateCharRequest] = OnCreateCharRequest;
+        ClientHandlers[(byte)ClientOpCode.CreateCharFinalize] = OnCreateCharFinalize;
+        ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
+        ClientHandlers[(byte)ClientOpCode.HomepageRequest] = OnHomepageRequest;
+        ClientHandlers[(byte)ClientOpCode.Login] = OnLogin;
+        ClientHandlers[(byte)ClientOpCode.MetafileRequest] = OnMetafileRequest;
+        ClientHandlers[(byte)ClientOpCode.NoticeRequest] = OnNoticeRequest;
+        ClientHandlers[(byte)ClientOpCode.PasswordChange] = OnPasswordChange;
+    }
+
+    protected override void OnConnection(IAsyncResult ar)
+    {
+        var serverSocket = (Socket)ar.AsyncState!;
+        var clientSocket = serverSocket.EndAccept(ar);
+
+        serverSocket.BeginAccept(OnConnection, serverSocket);
+
+        var client = ClientFactory.CreateClient(clientSocket);
+
+        if (!Clients.TryAdd(client.Id, client))
+        {
+            Logger.LogError("Somehow two clients got the same id. (Id: {Id})", client.Id);
+            client.Disconnect();
+
+            return;
+        }
+
+        client.OnDisconnected += OnDisconnect;
+
+        client.BeginReceive();
+        client.SendAcceptConnection();
+    }
+
+    private void OnDisconnect(object? sender, EventArgs e)
+    {
+        var client = (ILoginClient)sender!;
+        Clients.TryRemove(client.Id, out _);
+    }
+    #endregion
 }

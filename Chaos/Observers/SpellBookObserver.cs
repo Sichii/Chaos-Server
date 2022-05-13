@@ -1,6 +1,6 @@
+using Chaos.Objects.Panel;
+using Chaos.Objects.World;
 using Chaos.Observers.Interfaces;
-using Chaos.PanelObjects;
-using Chaos.WorldObjects;
 
 namespace Chaos.Observers;
 

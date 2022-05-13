@@ -24,8 +24,9 @@ public class WorldClientFactory : IClientFactory<WorldClient>
         var mapper = ServiceProvider.GetRequiredService<IMapper>();
         var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
         var logger = ServiceProvider.GetRequiredService<ILogger<WorldClient>>();
-        
-        return new WorldClient(socket,
+
+        return new WorldClient(
+            socket,
             mapper,
             crypto,
             server,

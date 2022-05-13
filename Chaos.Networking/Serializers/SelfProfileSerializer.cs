@@ -18,10 +18,8 @@ public record SelfProfileSerializer : ServerPacketSerializer<SelfProfileArgs>
         var str = args.GroupString;
 
         if (string.IsNullOrEmpty(str))
-            str = args.SpouseName;
-
-        str = !string.IsNullOrEmpty(str) ? $"Spouse: {args.SpouseName}" : "Adventuring alone";
-
+            str = !string.IsNullOrEmpty(args.SpouseName) ? $"Spouse: {args.SpouseName}" : "Adventuring Alone";
+        
         writer.WriteString8(str);
         writer.WriteBoolean(args.GroupOpen);
         writer.WriteBoolean(false); //TODO: groupbox fml

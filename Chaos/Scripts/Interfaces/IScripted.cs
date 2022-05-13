@@ -1,10 +1,8 @@
-using Chaos.Scripts.Abstractions;
+using System.Collections.Generic;
 
 namespace Chaos.Scripts.Interfaces;
 
-public interface IScripted { }
-
-public interface IScripted<out TScript> : IScripted where TScript: IScript
+public interface IScripted
 {
-    TScript? Script { get; }
+    ICollection<string> ScriptKeys { get; }
 }

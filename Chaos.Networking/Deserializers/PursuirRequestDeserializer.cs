@@ -19,6 +19,10 @@ public record PursuitRequestDeserializer : ClientPacketDeserializer<PursuitReque
         if (args.Length == 0)
             args = null;
 
-        return new PursuitRequestArgs(gameObjectType, objectId, pursuitId, args);
+        return new PursuitRequestArgs(
+            gameObjectType,
+            objectId,
+            pursuitId,
+            args);
     }
 }

@@ -34,7 +34,8 @@ public record DialogResponseDeserializer : ClientPacketDeserializer<DialogRespon
             }
         }
 
-        return new DialogResponseArgs(worldObjectType,
+        return new DialogResponseArgs(
+            worldObjectType,
             objectId,
             pursuitId,
             dialogId,

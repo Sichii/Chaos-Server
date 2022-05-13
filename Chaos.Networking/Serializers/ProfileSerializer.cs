@@ -15,7 +15,7 @@ public record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
 
         foreach (var slot in CONSTANTS.PROFILE_EQUIPMENTSLOT_ORDER)
         {
-            var item = args.Equipment[slot];
+            args.Equipment.TryGetValue(slot, out var item);
 
             writer.WriteUInt16(item?.Sprite ?? 0);
             writer.WriteByte((byte)(item?.Color ?? DisplayColor.None));

@@ -8,6 +8,7 @@ namespace Chaos.Containers.Interfaces;
 public interface IPanel<T> : IEnumerable<T>
 {
     T? this[byte slot] { get; }
+    int AvailableSlots { get; }
     bool IsFull { get; }
     PanelType PaneType { get; }
     void AddObserver(IPanelObserver<T> observer);

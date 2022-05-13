@@ -1,9 +1,14 @@
-using Chaos.PanelObjects;
+using Chaos.Objects;
+using Chaos.Objects.Panel;
+using Chaos.Scripts.Interfaces;
 
 namespace Chaos.Scripts.Abstractions;
 
-public abstract class SpellScriptBase : ScriptBase<Spell>
+public abstract class SpellScriptBase : ScriptBase, ISpellScript
 {
-    protected SpellScriptBase(Spell spell)
-        : base(spell) { }
+    protected Spell Source { get; }
+
+    protected SpellScriptBase(Spell spell) => Source = spell;
+
+    public abstract void OnUse(ActivationContext context);
 }

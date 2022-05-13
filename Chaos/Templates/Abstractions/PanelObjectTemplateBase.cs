@@ -1,18 +1,17 @@
 using System;
+using System.Collections.Generic;
 using Chaos.Core.Data;
-using Chaos.Core.Definitions;
+using Chaos.Scripts.Interfaces;
 using Chaos.Templates.Interfaces;
 
 namespace Chaos.Templates.Abstractions;
 
-public abstract class PanelObjectTemplateBase : ITemplate<string>
+public abstract class PanelObjectTemplateBase : ITemplate, IScripted
 {
     public Animation Animation { get; init; } = Animation.None;
     public TimeSpan BaseCooldown { get; init; } = TimeSpan.Zero;
-    public int BaseDamage { get; init; } = 0;
-    public BodyAnimation BodyAnimation { get; init; } = BodyAnimation.None;
     public string Name { get; init; } = "REPLACE ME";
-    public virtual ushort Sprite { get; init; } = 0;
-    public TargetsType TargetType { get; init; } = TargetsType.None;
+    public virtual ushort PanelSprite { get; init; } = 0;
+    public ICollection<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public abstract string TemplateKey { get; init; }
 }

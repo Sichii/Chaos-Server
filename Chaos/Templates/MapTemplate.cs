@@ -1,25 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Chaos.Core.Data;
 using Chaos.Core.Geometry;
-using Chaos.DataObjects;
+using Chaos.Objects.World;
 using Chaos.Templates.Interfaces;
-using Chaos.WorldObjects;
 
 namespace Chaos.Templates;
 
-public record MapTemplate : ITemplate<short>
+public record MapTemplate : ITemplate
 {
     [JsonIgnore]
     public ushort CheckSum { get; set; }
     [JsonIgnore]
     public Dictionary<Point, Door> Doors { get; set; } = new();
     public byte Height { get; set; }
-    public short TemplateKey { get; init; }
+    public string TemplateKey { get; init; } = null!;
     [JsonIgnore]
     public Tile[,] Tiles { get; set; } = new Tile[0, 0];
     public Point[][] WarpPointGroups { get; set; } = Array.Empty<Point[]>();
     public byte Width { get; set; }
+    public short MapId => short.Parse(TemplateKey);
 
     public IEnumerable<byte> GetRowData(byte row)
     {
@@ -33,9 +34,9 @@ public record MapTemplate : ITemplate<short>
             yield return (byte)Tiles[x, row].RightForeground;
         }
     }
-    
-    public bool WithinMap(Point point) => (point.X < Width) && (point.Y < Height);
 
     public bool IsWall(Point point) =>
-        !WithinMap(point) || (Doors.TryGetValue(point, out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
+        !IsWithinMap(point) || (Doors.TryGetValue(point, out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
+
+    public bool IsWithinMap(Point point) => (point.X < Width) && (point.Y < Height);
 }

@@ -15,6 +15,6 @@ public static class ServiceCollectionExtensions
             path = $"{subSection}:{typeName}";
 
         return services.AddOptions<T>()
-            .Configure<IConfiguration>((o, c) => c.Bind(path, o));
+            .Configure<IConfiguration>((o, c) => c.GetSection(path).Bind(o, options => options.ErrorOnUnknownConfiguration = true));
     }
 }

@@ -1,14 +1,16 @@
 using System;
 using System.Linq;
 using System.Net.Sockets;
+using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
+using Chaos.Core.Data;
 using Chaos.Core.Definitions;
 using Chaos.Cryptography.Interfaces;
-using Chaos.DataObjects;
 using Chaos.Managers.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model.Server;
+using Chaos.Objects;
 using Chaos.Packets.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -21,8 +23,14 @@ public class LoginClient : SocketClientBase, ILoginClient
         ICryptoClient cryptoClient,
         IServer server,
         IPacketSerializer packetSerializer,
-        ILogger<LoginClient> logger)
-        : base(socket, cryptoClient, server, packetSerializer, logger) { }
+        ILogger<LoginClient> logger
+    )
+        : base(
+            socket,
+            cryptoClient,
+            server,
+            packetSerializer,
+            logger) { }
 
     public void SendLoginControls(LoginControlsType loginControlsType, string message)
     {
@@ -60,8 +68,8 @@ public class LoginClient : SocketClientBase, ILoginClient
 
         Send(args);
     }
-    
-    public void SendMetafile(MetafileRequestType metafileRequestType, ICacheManager<string, Metafile> metafileManager, string? name = null)
+
+    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<string, Metafile> metafileCache, string? name = null)
     {
         var args = new MetafileArgs
         {
@@ -75,7 +83,7 @@ public class LoginClient : SocketClientBase, ILoginClient
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                var metafile = metafileManager.GetObject(name);
+                var metafile = metafileCache.GetObject(name);
 
                 args.MetafileData = new MetafileDataArg
                 {
@@ -88,11 +96,12 @@ public class LoginClient : SocketClientBase, ILoginClient
             }
             case MetafileRequestType.AllCheckSums:
             {
-                args.Info = metafileManager.Select(metafile => new MetafileDataArg
-                    {
-                        Name = metafile.Name,
-                        CheckSum = metafile.CheckSum
-                    })
+                args.Info = metafileCache.Select(
+                        metafile => new MetafileDataArg
+                        {
+                            Name = metafile.Name,
+                            CheckSum = metafile.CheckSum
+                        })
                     .ToList();
 
                 break;

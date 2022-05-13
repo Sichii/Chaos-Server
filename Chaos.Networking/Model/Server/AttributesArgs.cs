@@ -5,9 +5,7 @@ namespace Chaos.Networking.Model.Server;
 
 public record AttributesArgs : ISendArgs
 {
-    public bool IsAdmin { get; set; }
     public byte Ability { get; set; }
-    public uint TotalAbility { get; set; }
     public sbyte Ac { get; set; }
     public bool Blind { get; set; }
     public byte Con { get; set; }
@@ -17,11 +15,11 @@ public record AttributesArgs : ISendArgs
     public Element DefenseElement { get; set; }
     public byte Dex { get; set; }
     public byte Dmg { get; set; }
-    public uint TotalExp { get; set; }
     public uint GamePoints { get; set; }
     public uint Gold { get; set; }
     public byte Hit { get; set; }
     public byte Int { get; set; }
+    public bool IsAdmin { get; set; }
     public byte Level { get; set; }
     public byte MagicResistance { get; set; }
     public MailFlag MailFlags { get; set; }
@@ -33,6 +31,8 @@ public record AttributesArgs : ISendArgs
     public byte Str { get; set; }
     public uint ToNextAbility { get; set; }
     public uint ToNextLevel { get; set; }
+    public uint TotalAbility { get; set; }
+    public uint TotalExp { get; set; }
     public byte UnspentPoints { get; set; }
     public byte Wis { get; set; }
     public bool HasUnspentPoints => UnspentPoints != 0;
