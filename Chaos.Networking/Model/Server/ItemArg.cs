@@ -1,5 +1,3 @@
-using Chaos.Core.Definitions;
-
 namespace Chaos.Networking.Model.Server;
 
 public record ItemArg

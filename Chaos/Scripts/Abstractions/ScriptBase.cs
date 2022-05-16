@@ -1,4 +1,3 @@
-using System;
 using Chaos.Scripts.Interfaces;
 
 namespace Chaos.Scripts.Abstractions;
@@ -23,5 +22,5 @@ public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
     public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is ScriptBase other && Equals(other));
 
     public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(ScriptKey);
-    public static string GetScriptKey(Type type) => type.Name.Replace("Script", string.Empty);
+    public static string GetScriptKey(Type type) => type.Name.Replace("Script", string.Empty, StringComparison.OrdinalIgnoreCase);
 }

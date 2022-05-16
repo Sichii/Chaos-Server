@@ -1,13 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.Extensions;
 using Chaos.Objects.World;
 using Chaos.Options;
 using Chaos.Templates;
@@ -63,7 +58,7 @@ public class MapInstanceCache : ISimpleCache<string, MapInstance>
         await Parallel.ForEachAsync(
             instances,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            async (path, token) =>
+            async (path, _) =>
             {
                 var mapInstance = await LoadInstanceFromFileAsync(path);
                 Cache.TryAdd(mapInstance.InstanceId, mapInstance);

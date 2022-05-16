@@ -1,5 +1,3 @@
-using Chaos.Core.Definitions;
-
 namespace Chaos.Core.Data;
 
 public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable<GameTime>

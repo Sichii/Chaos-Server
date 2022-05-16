@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using Chaos.Core.Utilities;
 using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel;
@@ -28,7 +24,7 @@ public class ItemScriptFactory : IItemScriptFactory
     {
         if (!scriptKeys.Any())
             throw new InvalidOperationException($"No script keys specified for item \"{source.DisplayName}\"");
-        
+
         var compositeScript = new CompositeItemScript(source);
 
         if (scriptKeys.Count == 1)
@@ -44,8 +40,7 @@ public class ItemScriptFactory : IItemScriptFactory
                 throw new InvalidCastException($"Script obtained from key \"{scriptKey}\" is not a valid item script");
 
             compositeScript.Add(itemScript);
-        }
-        else
+        } else
             foreach (var scriptKey in scriptKeys)
                 if (ScriptTypeCache.TryGetValue(scriptKey, out var scriptType))
                 {

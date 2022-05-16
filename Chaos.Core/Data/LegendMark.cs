@@ -1,6 +1,4 @@
-﻿using Chaos.Core.Definitions;
-
-namespace Chaos.Core.Data;
+﻿namespace Chaos.Core.Data;
 
 public record LegendMark(
     string Text,

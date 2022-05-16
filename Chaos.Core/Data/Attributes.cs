@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-
 // ReSharper disable InconsistentNaming
+
+using System.Text.Json.Serialization;
 
 namespace Chaos.Core.Data;
 

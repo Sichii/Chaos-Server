@@ -1,7 +1,5 @@
 using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.Data;
-using Chaos.Managers.Interfaces;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Objects.World;
@@ -23,7 +21,7 @@ public class WarpTile : ReactorTile
         if (creature is User user)
         {
             var targetMap = MapInstanceCache.GetObject(Warp.TargetLocation.MapId);
-            ((MapObject)this).MapInstance.RemoveObject(user);
+            this.MapInstance.RemoveObject(user);
             targetMap.AddObject(user, Warp.TargetLocation.Point);
         }
     }

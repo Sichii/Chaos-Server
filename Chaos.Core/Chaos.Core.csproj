@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
-        <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0"/>
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0"/>
-        <PackageReference Include="zlib.net-mutliplatform" Version="1.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+        <PackageReference Include="zlib.net-mutliplatform" Version="1.0.6" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\sotp.dat"/>
+        <EmbeddedResource Include="Resources\sotp.dat" />
         <EmbeddedResource Update="Resources\Resources.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -1,5 +1,3 @@
-using Chaos.Core.Geometry;
-
 namespace Chaos.Core.Data;
 
 public record WorldMapNode(

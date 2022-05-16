@@ -1,8 +1,5 @@
-using System;
 using Chaos.Containers;
 using Chaos.Core.Collections.Synchronized;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 

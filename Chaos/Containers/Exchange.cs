@@ -1,5 +1,5 @@
-using System.Linq;
-using Chaos.Core.Definitions;
+using Chaos.Core.Identity;
+using Chaos.Core.Synchronization;
 using Chaos.Core.Utilities;
 using Chaos.Objects.World;
 using Chaos.Observers;
@@ -16,7 +16,7 @@ public class Exchange
     private readonly Inventory User1Items;
     private readonly User User2;
     private readonly Inventory User2Items;
-    private ulong ExchangeId;
+    private readonly ulong ExchangeId;
     private bool IsActive;
     private bool User1Accept;
     private int User1Gold;
@@ -198,12 +198,12 @@ public class Exchange
     private void Deactivate()
     {
         IsActive = false;
-        if(User1.ActiveObject.TryRemove(this))
+
+        if (User1.ActiveObject.TryRemove(this))
             User1.UserState &= ~UserState.Exchanging;
 
         if (User2.ActiveObject.TryRemove(this))
             User2.UserState &= ~UserState.Exchanging;
-
     }
 
     private void Distribute(User user, int gold, Inventory items)

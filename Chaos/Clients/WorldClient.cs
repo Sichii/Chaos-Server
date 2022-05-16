@@ -1,20 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using AutoMapper;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
 using Chaos.Cryptography.Interfaces;
-using Chaos.Effects.Abstractions;
-using Chaos.Managers.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Model.Server;
-using Chaos.Networking.Serializers;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -89,7 +80,7 @@ public class WorldClient : SocketClientBase, IWorldClient
             TargetId = animation.TargetId,
             TargetPoint = animation.TargetPoint
         };
-        
+
         Send(args);
     }
 
@@ -192,19 +183,28 @@ public class WorldClient : SocketClientBase, IWorldClient
         var args = new DoorArgs
         {
             Doors = doors.Select(
-                    door => new DoorArg
-                    {
-                        Point = door.Point,
-                        Closed = door.Closed,
-                        OpenRight = door.OpenRight
-                    })
-                .ToList()
+                             door => new DoorArg
+                             {
+                                 Point = door.Point,
+                                 Closed = door.Closed,
+                                 OpenRight = door.OpenRight
+                             })
+                         .ToList()
         };
 
         Send(args);
     }
 
-    public void SendEffect(EffectBase effect) => throw new NotImplementedException();
+    public void SendEffect(EffectColor effectColor, byte effectIcon)
+    {
+        var args = new EffectArgs
+        {
+            EffectColor = effectColor,
+            EffectIcon = effectIcon
+        };
+
+        Send(args);
+    }
 
     public void SendEquipment(Item item)
     {
@@ -426,12 +426,12 @@ public class WorldClient : SocketClientBase, IWorldClient
             case MetafileRequestType.AllCheckSums:
             {
                 args.Info = metafileCache.Select(
-                        metafile => new MetafileDataArg
-                        {
-                            Name = metafile.Name,
-                            CheckSum = metafile.CheckSum
-                        })
-                    .ToList();
+                                             metafile => new MetafileDataArg
+                                             {
+                                                 Name = metafile.Name,
+                                                 CheckSum = metafile.CheckSum
+                                             })
+                                         .ToList();
 
                 break;
             }

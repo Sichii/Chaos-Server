@@ -1,4 +1,4 @@
-namespace Chaos.Core.Utilities;
+namespace Chaos.Core.Identity;
 
 public static class ClientId
 {

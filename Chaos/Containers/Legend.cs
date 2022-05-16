@@ -1,11 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Chaos.Core.Data;
-
 namespace Chaos.Containers;
 
 public class Legend : IEnumerable<LegendMark>

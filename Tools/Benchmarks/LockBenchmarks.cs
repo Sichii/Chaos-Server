@@ -1,5 +1,7 @@
 using BenchmarkDotNet.Attributes;
+using Chaos.Core.Synchronization;
 using Chaos.Core.Utilities;
+// ReSharper disable NotAccessedVariable
 
 namespace Benchmarks;
 
@@ -8,9 +10,9 @@ public class LockBenchmarks
 {
     private readonly object Sync = new object();
     private readonly AutoReleasingMonitor Auto = new AutoReleasingMonitor();
-    
+
     [Params(100, 1000, 10000)]
-    public int NumRuns;
+    public int NumRuns { get; set; }
 
     [Benchmark(Baseline = true)]
     public void NormalLock()

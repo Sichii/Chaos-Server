@@ -1,5 +1,3 @@
-using Chaos.Containers;
-using Chaos.Core.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.Abstractions;

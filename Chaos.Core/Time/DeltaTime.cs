@@ -1,26 +1,26 @@
-using System.Diagnostics;
-
-namespace Chaos.Core.Utilities;
+namespace Chaos.Core.Time;
 
 /// <summary>
 ///     Provides an easy way to obtain a high-precision time-based value.
 /// </summary>
-public static class DeltaTime
+public class DeltaTime
 {
-    private static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
-    private static long LastValue;
+    private readonly Stopwatch Stopwatch = Stopwatch.StartNew();
+    private long LastValue;
 
     /// <summary>
     ///     Gets the current time value in milliseconds.
     /// </summary>
-    public static long Elapsed
+    public long Elapsed
     {
         get
         {
             var newValue = Stopwatch.ElapsedMilliseconds - LastValue;
-            LastValue = newValue;
+            LastValue += newValue;
 
             return newValue;
         }
     }
+
+    public TimeSpan ElapsedSpan => TimeSpan.FromMilliseconds(Elapsed);
 }

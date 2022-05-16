@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using Chaos.Caches.Interfaces;
 using Chaos.Containers.Interfaces;
 using Chaos.Factories.Interfaces;
-using Chaos.Managers.Interfaces;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
@@ -39,8 +35,8 @@ public class SkillMapper : Profile
                 (_, dest) =>
                 {
                     var scriptKeys = dest.Template.ScriptKeys
-                        .Concat(dest.ScriptKeys)
-                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                                         .Concat(dest.ScriptKeys)
+                                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
                     dest.Script = SkillScriptFactory.CreateScript(scriptKeys, dest);
                 });

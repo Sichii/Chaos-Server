@@ -19,7 +19,7 @@
         <ApplicationIcon>chaos.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
-        <Content Include="chaos.ico" />
+        <Content Include="chaos.ico"/>
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -27,18 +27,15 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.prod.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Effects" />
+        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
+        <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
-        <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="AutoMapper.Collection" Version="8.0.0" />
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+        <PackageReference Include="AutoMapper.Collection" Version="8.0.0"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
     </ItemGroup>
 </Project>

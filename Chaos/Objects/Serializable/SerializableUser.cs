@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
-
 namespace Chaos.Objects.Serializable;
 
 public record SerializableUser

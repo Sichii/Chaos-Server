@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Chaos.Core.Interfaces;
 using Chaos.Scripts.Interfaces;
 using Chaos.Templates.Abstractions;

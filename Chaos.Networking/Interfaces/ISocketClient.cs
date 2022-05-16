@@ -9,6 +9,7 @@ public interface ISocketClient
 {
     ICryptoClient CryptoClient { get; set; }
     event EventHandler? OnDisconnected;
+    SemaphoreSlim ReceiveSync { get; }
     bool Connected { get; }
     uint Id { get; }
 

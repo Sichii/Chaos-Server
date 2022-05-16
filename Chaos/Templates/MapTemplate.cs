@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Chaos.Core.Data;
-using Chaos.Core.Geometry;
 using Chaos.Objects.World;
 using Chaos.Templates.Interfaces;
 

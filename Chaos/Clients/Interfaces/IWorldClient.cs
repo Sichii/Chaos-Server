@@ -1,11 +1,5 @@
-using System.Collections.Generic;
 using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
-using Chaos.Effects.Abstractions;
-using Chaos.Managers.Interfaces;
 using Chaos.Networking.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
@@ -44,7 +38,7 @@ public interface IWorldClient : ISocketClient
     //void SendDialog
     //void SendBoard
     void SendDoors(params Door[] doors);
-    void SendEffect(EffectBase effect);
+    void SendEffect(EffectColor effectColor, byte effectIcon);
     void SendEquipment(Item item);
     void SendExchangeAccepted(bool persistExchange);
     void SendExchangeAddItem(bool rightSide, byte index, Item item);

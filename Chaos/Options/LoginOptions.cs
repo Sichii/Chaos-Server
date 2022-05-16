@@ -1,5 +1,3 @@
-using System;
-using Chaos.Core.Geometry;
 using Chaos.Networking.Options;
 using Microsoft.Extensions.Logging;
 

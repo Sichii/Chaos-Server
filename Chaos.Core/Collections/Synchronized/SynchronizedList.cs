@@ -1,23 +1,25 @@
-using System.Collections;
+using Chaos.Core.Synchronization;
+using Chaos.Core.Utilities;
 
 namespace Chaos.Core.Collections.Synchronized;
 
 public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 {
     private readonly List<T> List;
-    private readonly object Sync = new();
+    private readonly AutoReleasingMonitor Sync;
 
     public T this[int index]
     {
         get
         {
-            lock (Sync)
-                return List[index];
+            using var @lock = Sync.Enter();
+
+            return List[index];
         }
         set
         {
-            lock (Sync)
-                List[index] = value;
+            using var @lock = Sync.Enter();
+            List[index] = value;
         }
     }
 
@@ -25,8 +27,9 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
     {
         get
         {
-            lock (Sync)
-                return List.Count;
+            using var @lock = Sync.Enter();
+
+            return List.Count;
         }
     }
 
@@ -34,39 +37,41 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 
     public SynchronizedList(IEnumerable<T>? items = null)
     {
+        Sync = new AutoReleasingMonitor();
         items ??= Enumerable.Empty<T>();
         List = new List<T>(items);
     }
 
     public void Add(T item)
     {
-        lock (Sync)
-            List.Add(item);
+        using var @lock = Sync.Enter();
+        List.Add(item);
     }
 
     public void Clear()
     {
-        lock (Sync)
-            List.Clear();
+        using var @lock = Sync.Enter();
+        List.Clear();
     }
 
     public bool Contains(T item)
     {
-        lock (Sync)
-            return List.Contains(item);
+        using var @lock = Sync.Enter();
+
+        return List.Contains(item);
     }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        lock (Sync)
-            List.CopyTo(array, arrayIndex);
+        using var @lock = Sync.Enter();
+        List.CopyTo(array, arrayIndex);
     }
 
     public IEnumerator<T> GetEnumerator()
     {
         List<T> snapshot;
 
-        lock (Sync)
+        using (Sync.Enter())
             snapshot = List.ToList();
 
         foreach (var item in snapshot)
@@ -77,25 +82,27 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 
     public int IndexOf(T item)
     {
-        lock (Sync)
-            return List.IndexOf(item);
+        using var @lock = Sync.Enter();
+
+        return List.IndexOf(item);
     }
 
     public void Insert(int index, T item)
     {
-        lock (Sync)
-            List.Insert(index, item);
+        using var @lock = Sync.Enter();
+        List.Insert(index, item);
     }
 
     public bool Remove(T item)
     {
-        lock (Sync)
-            return List.Remove(item);
+        using var @lock = Sync.Enter();
+
+        return List.Remove(item);
     }
 
     public void RemoveAt(int index)
     {
-        lock (Sync)
-            List.RemoveAt(index);
+        using var @lock = Sync.Enter();
+        List.RemoveAt(index);
     }
 }

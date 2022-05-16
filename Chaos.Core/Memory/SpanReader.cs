@@ -1,7 +1,6 @@
 using System.Text;
-using Chaos.Core.Geometry;
 
-namespace Chaos.Core.Utilities;
+namespace Chaos.Core.Memory;
 
 public ref struct SpanReader
 {

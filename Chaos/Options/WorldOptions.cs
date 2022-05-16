@@ -10,6 +10,8 @@ public record WorldOptions : ServerOptions, IWorldOptions
     public int PickupRange { get; set; }
     public int RefreshIntervalMs { get; set; }
     public int TradeRange { get; set; }
+    public int UpdatedPerSecond { get; set; }
+    public int SaveIntervalMins { get; set; }
 
     public static void PostConfigure(WorldOptions options) => options.LoginRedirect.PopulateAddress();
 }

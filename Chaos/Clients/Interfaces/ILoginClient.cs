@@ -1,7 +1,4 @@
 using Chaos.Caches.Interfaces;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Managers.Interfaces;
 using Chaos.Networking.Interfaces;
 using Chaos.Objects;
 

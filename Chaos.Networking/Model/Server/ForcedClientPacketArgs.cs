@@ -1,4 +1,3 @@
-using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Networking.Model.Server;

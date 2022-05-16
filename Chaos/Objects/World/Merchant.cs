@@ -1,8 +1,4 @@
-using System;
 using Chaos.Containers;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Objects.World;

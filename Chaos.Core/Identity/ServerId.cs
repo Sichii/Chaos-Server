@@ -1,7 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Chaos.Core.Synchronization;
 
-namespace Chaos.Core.Utilities;
+namespace Chaos.Core.Identity;
 
 public static class ServerId
 {
@@ -15,10 +16,14 @@ public static class ServerId
 [JsonConverter(typeof(SerializableUniqueIdConverter))]
 public class SerializableUniqueId
 {
-    private readonly object Sync = new();
+    private readonly AutoReleasingMonitor Sync;
     private ulong CurrentId;
-    
-    private SerializableUniqueId(ulong currentId) => CurrentId = currentId;
+
+    private SerializableUniqueId(ulong currentId)
+    {
+        Sync = new AutoReleasingMonitor();
+        CurrentId = currentId;
+    }
 
     public static SerializableUniqueId Deserialize()
     {
@@ -37,35 +42,33 @@ public class SerializableUniqueId
 
     public ulong NextId()
     {
-        lock (Sync)
-        {
-            CurrentId++;
-            Serialize();
+        using var @lock = Sync.Enter();
+        
+        CurrentId++;
+        Serialize();
 
-            return CurrentId;
-        }
+        return CurrentId;
     }
 
-    public void Serialize()
+    private void Serialize()
     {
         using var fileStream = File.Create("UniqueId.json");
         JsonSerializer.Serialize(fileStream, this);
     }
 
-    
     public class SerializableUniqueIdConverter : JsonConverter<SerializableUniqueId>
     {
         public override SerializableUniqueId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var id = 0UL;
-            
+
             if (reader.TokenType == JsonTokenType.StartObject)
                 reader.Read();
 
             if (reader.TokenType == JsonTokenType.PropertyName)
                 reader.Read();
-            
-            if(reader.TokenType == JsonTokenType.Number)
+
+            if (reader.TokenType == JsonTokenType.Number)
                 id = reader.GetUInt64();
 
             reader.Read();

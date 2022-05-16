@@ -1,6 +1,7 @@
-using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using Chaos.Core.Identity;
+using Chaos.Core.Memory;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Networking.Extensions;
@@ -8,7 +9,6 @@ using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Networking.Model.Server;
 using Chaos.Packets;
-using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +18,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 {
     private readonly byte[] Buffer;
     private readonly Memory<byte> MemoryBuffer;
-    private readonly SemaphoreSlim ReceiveSync;
+    public SemaphoreSlim ReceiveSync { get; }
     private readonly Socket Socket;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Chaos.Objects.Panel;
 using Chaos.Scripts.Interfaces;
 

@@ -1,4 +1,3 @@
-using Chaos.Core.Definitions;
 using Chaos.Templates.Abstractions;
 
 namespace Chaos.Templates;

@@ -1,12 +1,13 @@
 namespace Chaos.Core.Definitions;
 
 #region Server
+/*
 public enum EncryptionType
 {
     None = 0,
     Normal = 1,
     MD5 = 2
-}
+}*/
 
 public enum ServerType : byte
 {

@@ -1,6 +1,3 @@
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
-
 namespace Chaos.Core.Extensions;
 
 public static class PointExtensions

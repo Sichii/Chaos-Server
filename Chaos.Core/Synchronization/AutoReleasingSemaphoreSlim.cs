@@ -1,4 +1,4 @@
-namespace Chaos.Core.Utilities;
+namespace Chaos.Core.Synchronization;
 
 public class AutoReleasingSemaphoreSlim
 {

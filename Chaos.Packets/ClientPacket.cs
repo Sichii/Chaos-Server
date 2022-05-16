@@ -29,7 +29,7 @@ public ref struct ClientPacket
 
         if (replaceNewline)
             str = str.Replace((char)10, ' ')
-                .Replace((char)13, ' ');
+                     .Replace((char)13, ' ');
 
         return str;
     }

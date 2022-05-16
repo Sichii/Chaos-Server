@@ -1,6 +1,4 @@
-using System.Diagnostics;
-
-namespace Chaos.Core.Utilities;
+namespace Chaos.Core.Time;
 
 public readonly ref struct ValueStopwatch
 {
