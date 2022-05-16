@@ -1,12 +1,9 @@
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.Data;
 using Chaos.Effects.Interfaces;
 using Chaos.Factories.Interfaces;
-using Chaos.Managers.Interfaces;
 using Chaos.Servers.Interfaces;
 using Chaos.Templates;
 using Chaos.Utilities;
@@ -50,14 +47,14 @@ public class Program
     private static async Task Main()
     {
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            #if DEBUG
-            .AddJsonFile("appsettings.local.json")
-            #else
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json")
+                            #if DEBUG
+                            .AddJsonFile("appsettings.local.json")
+                            #else
             .AddJsonFile("appsettings.prod.json")
-            #endif
-            .Build();
+                            #endif
+                            .Build();
 
         var services = new ServiceCollection();
         var startup = new Startup(configuration);

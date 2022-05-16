@@ -1,12 +1,7 @@
-using System;
-using System.Linq;
 using System.Net.Sockets;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
 using Chaos.Cryptography.Interfaces;
-using Chaos.Managers.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model.Server;
@@ -97,12 +92,12 @@ public class LoginClient : SocketClientBase, ILoginClient
             case MetafileRequestType.AllCheckSums:
             {
                 args.Info = metafileCache.Select(
-                        metafile => new MetafileDataArg
-                        {
-                            Name = metafile.Name,
-                            CheckSum = metafile.CheckSum
-                        })
-                    .ToList();
+                                             metafile => new MetafileDataArg
+                                             {
+                                                 Name = metafile.Name,
+                                                 CheckSum = metafile.CheckSum
+                                             })
+                                         .ToList();
 
                 break;
             }

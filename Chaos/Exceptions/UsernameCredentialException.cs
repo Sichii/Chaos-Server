@@ -1,5 +1,3 @@
-using System;
-
 namespace Chaos.Exceptions;
 
 public class UsernameCredentialException : Exception

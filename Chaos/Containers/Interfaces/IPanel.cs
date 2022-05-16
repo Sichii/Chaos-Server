@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using Chaos.Core.Definitions;
+using Chaos.Core.Interfaces;
 using Chaos.Observers.Interfaces;
 
 namespace Chaos.Containers.Interfaces;
 
-public interface IPanel<T> : IEnumerable<T>
+public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
 {
     T? this[byte slot] { get; }
     int AvailableSlots { get; }

@@ -2,7 +2,6 @@ using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Chaos.Core.Definitions;
-using Chaos.Factories.Interfaces;
 using Chaos.Objects.Serializable;
 using Chaos.Objects.World;
 using FluentAssertions;

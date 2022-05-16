@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Chaos.Core.Utilities;
@@ -61,16 +60,16 @@ public static class ShallowCopy<T>
     private static IEnumerable<FieldInfo> GetRecursiveFields(Type type) => !type.IsInterface
         ? type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(f => !f.IsInitOnly && !f.IsLiteral)
         : new[] { type }.Concat(type.GetInterfaces())
-            .SelectMany(i => i.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-            .Where(f => !f.IsInitOnly && !f.IsLiteral)
-            .DistinctBy(p => p.Name);
+                        .SelectMany(i => i.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+                        .Where(f => !f.IsInitOnly && !f.IsLiteral)
+                        .DistinctBy(p => p.Name);
 
     private static IEnumerable<PropertyInfo> GetRecursiveProperties(Type type) => !type.IsInterface
         ? type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(p => p.CanRead && p.CanWrite)
         : new[] { type }.Concat(type.GetInterfaces())
-            .SelectMany(i => i.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-            .Where(p => p.CanRead && p.CanWrite)
-            .DistinctBy(p => p.Name);
+                        .SelectMany(i => i.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+                        .Where(p => p.CanRead && p.CanWrite)
+                        .DistinctBy(p => p.Name);
 
     /// <summary>
     ///     Merges all (public/non-public) instanced properties from <paramref name="fromObj" /> into

@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Concurrent;
-using System.Linq;
 using Chaos.Containers;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
 using Chaos.Effects.Interfaces;
 
 namespace Chaos.Objects.World.Abstractions;
@@ -12,7 +6,7 @@ namespace Chaos.Objects.World.Abstractions;
 public abstract class Creature : NamedObject, IEffected
 {
     public Direction Direction { get; set; } = Direction.South;
-    public EffectsBar Effects { get; init; } = new(Enumerable.Empty<IEffect>());
+    public IEffectsBar Effects { get; init; }
     public int GamePoints { get; set; }
     public int Gold { get; set; }
     public ConcurrentDictionary<uint, DateTime> LastClicked { get; init; } = new();
@@ -32,7 +26,7 @@ public abstract class Creature : NamedObject, IEffected
             name,
             mapInstance,
             point,
-            sprite) { }
+            sprite) => Effects = new EffectsBar(this, Enumerable.Empty<IEffect>());
 
     public bool ClickIsValid(uint fromId) =>
         !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);

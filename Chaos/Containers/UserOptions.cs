@@ -1,6 +1,3 @@
-using System;
-using Chaos.Core.Definitions;
-
 namespace Chaos.Containers;
 
 public class UserOptions

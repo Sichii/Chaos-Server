@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,8 +7,6 @@ using Chaos.Caches;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
-using Chaos.Containers.Interfaces;
-using Chaos.Core.Data;
 using Chaos.Core.JsonConverters;
 using Chaos.Cryptography;
 using Chaos.Cryptography.Interfaces;
@@ -23,7 +19,6 @@ using Chaos.Managers.Interfaces;
 using Chaos.Mappers;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
-using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Options;
 using Chaos.Packets;
@@ -48,6 +43,20 @@ public class Startup
     public Startup(IConfiguration configuration) => Configuration = configuration;
 
     /// <summary>
+    ///     Configure all cache objects
+    /// </summary>
+    public void ConfigureCaches(IServiceCollection services)
+    {
+        services.AddSingleton<ISimpleCache<string, IEffect>, EffectCache>();
+        services.AddSingleton<ISimpleCache<string, ItemTemplate>, ItemTemplateCache>();
+        services.AddSingleton<ISimpleCache<string, SkillTemplate>, SkillTemplateCache>();
+        services.AddSingleton<ISimpleCache<string, SpellTemplate>, SpellTemplateCache>();
+        services.AddSingleton<ISimpleCache<string, MapTemplate>, MapTemplateCache>();
+        services.AddSingleton<ISimpleCache<string, MapInstance>, MapInstanceCache>();
+        services.AddSingleton<ISimpleCache<string, Metafile>, MetafileCache>();
+    }
+
+    /// <summary>
     ///     Configure all factory objects
     /// </summary>
     public void ConfigureFactories(IServiceCollection services)
@@ -64,20 +73,6 @@ public class Startup
         services.AddTransient<ISpellFactory, SpellFactory>();
     }
 
-    /// <summary>
-    ///     Configure all cache objects
-    /// </summary>
-    public void ConfigureCaches(IServiceCollection services)
-    {
-        services.AddSingleton<ISimpleCache<string, IEffect>, EffectCache>();
-        services.AddSingleton<ISimpleCache<string, ItemTemplate>, ItemTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, SkillTemplate>, SkillTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, SpellTemplate>, SpellTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, MapTemplate>, MapTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, MapInstance>, MapInstanceCache>();
-        services.AddSingleton<ISimpleCache<string, Metafile>, MetafileCache>();
-    }
-    
     /// <summary>
     ///     Configure all manager objects
     /// </summary>
@@ -147,7 +142,7 @@ public class Startup
         services.AddOptions();
 
         services.AddOptionsFromConfig<ActiveDirectoryCredentialManagerOptions>(ConfigKeys.Options.Key)
-            .PostConfigure(ActiveDirectoryCredentialManagerOptions.PostConfigure);
+                .PostConfigure(ActiveDirectoryCredentialManagerOptions.PostConfigure);
 
         services.AddOptionsFromConfig<ItemTemplateManagerOptions>(ConfigKeys.Options.Key);
         services.AddOptionsFromConfig<SkillTemplateManagerOptions>(ConfigKeys.Options.Key);
@@ -158,29 +153,29 @@ public class Startup
         services.AddOptionsFromConfig<MetafileManagerOptions>(ConfigKeys.Options.Key);
 
         services.AddOptionsFromConfig<LobbyOptions>(ConfigKeys.Options.Key)
-            .PostConfigure(LobbyOptions.PostConfigure)
-            .Validate<ILogger<LobbyOptions>>(LobbyOptions.Validate);
+                .PostConfigure(LobbyOptions.PostConfigure)
+                .Validate<ILogger<LobbyOptions>>(LobbyOptions.Validate);
 
         services.AddOptionsFromConfig<LoginOptions>(ConfigKeys.Options.Key)
-            .PostConfigure<ILogger<LoginOptions>>(LoginOptions.PostConfigure);
+                .PostConfigure<ILogger<LoginOptions>>(LoginOptions.PostConfigure);
 
         services.AddOptionsFromConfig<WorldOptions>(ConfigKeys.Options.Key)
-            .PostConfigure(WorldOptions.PostConfigure);
+                .PostConfigure(WorldOptions.PostConfigure);
 
         services.AddOptions<JsonSerializerOptions>()
-            .Configure(
-                o =>
-                {
-                    o.WriteIndented = true;
-                    o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-                    o.PropertyNameCaseInsensitive = true;
-                    o.IgnoreReadOnlyProperties = true;
-                    o.IgnoreReadOnlyFields = true;
-                    o.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    o.AllowTrailingCommas = true;
-                    o.Converters.Add(new PointConverter());
-                    o.Converters.Add(new JsonStringEnumConverter());
-                });
+                .Configure(
+                    o =>
+                    {
+                        o.WriteIndented = true;
+                        o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                        o.PropertyNameCaseInsensitive = true;
+                        o.IgnoreReadOnlyProperties = true;
+                        o.IgnoreReadOnlyFields = true;
+                        o.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        o.AllowTrailingCommas = true;
+                        o.Converters.Add(new PointConverter());
+                        o.Converters.Add(new JsonStringEnumConverter());
+                    });
     }
 
     /// <summary>
@@ -196,7 +191,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton(Configuration);
-        
+
         services.AddLogging(
             logging =>
             {
@@ -230,7 +225,7 @@ public class Startup
         ConfigureFactories(services);
         ConfigureServers(services);
     }
-    
+
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
     public static class ConfigKeys
     {

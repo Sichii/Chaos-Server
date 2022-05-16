@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Chaos.Caches.Interfaces;
+using Chaos.Core.Identity;
 using Chaos.Core.Utilities;
 using Chaos.Factories.Interfaces;
-using Chaos.Managers.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Templates;
 using Microsoft.Extensions.Logging;
@@ -35,8 +32,8 @@ public class ItemFactory : IItemFactory
         var item = new Item(template);
 
         var scriptKeys = template.ScriptKeys
-            .Concat(extraScriptKeys)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                                 .Concat(extraScriptKeys)
+                                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         item.Script = ItemScriptFactory.CreateScript(scriptKeys, item);
         item.UniqueId = ServerId.NextId;

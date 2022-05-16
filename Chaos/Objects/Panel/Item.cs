@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Scripts.Interfaces;

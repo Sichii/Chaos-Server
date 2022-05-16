@@ -1,21 +1,15 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Containers.Interfaces;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Geometry;
 using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
 public class User : Creature
 {
+    private readonly IExchangeFactory ExchangeFactory = null!;
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
     public int FaceSprite { get; set; }
@@ -27,10 +21,12 @@ public class User : Creature
     public int HairStyle { get; set; }
     public bool IsAdmin { get; set; }
     public DateTime LastRefresh { get; set; }
+    public bool Loading { get; set; } = true;
     public byte[] Portrait { get; set; }
     public string ProfileMessage { get; set; }
     public SocialStatus SocialStatus { get; set; }
     public UserState UserState { get; set; }
+    public ActiveObject ActiveObject { get; }
     public Bank Bank { get; }
     public IWorldClient Client { get; }
     public IEquipment Equipment { get; }
@@ -43,8 +39,6 @@ public class User : Creature
     public override UserStatSheet StatSheet { get; }
     public TitleList Titles { get; }
     public override CreatureType Type => CreatureType.User;
-    private readonly IExchangeFactory ExchangeFactory = null!;
-    public ActiveObject ActiveObject { get; }
 
     public User(IWorldClient worldClient, string name, IExchangeFactory exchangeFactory)
         : this(
@@ -144,11 +138,19 @@ public class User : Creature
     {
         if (!TryStartExchange(source, out var exchange))
             return;
-        
-        if(count == 0)
+
+        if (count == 0)
             exchange.AddItem(source, slot);
         else
             exchange.AddStackableItem(this, slot, count);
+    }
+
+    public override void OnClicked(User source)
+    {
+        if (source.Equals(this))
+            source.Client.SendSelfProfile();
+        else if (IsVisibleTo(source))
+            source.Client.SendProfile(this);
     }
 
     private bool TryStartExchange(User source, [MaybeNullWhen(false)] out Exchange exchange)
@@ -174,19 +176,18 @@ public class User : Creature
 
             return false;
         }
-        
+
         exchange.Activate();
 
         return true;
     }
 
-    public override void OnClicked(User source)
+    public override void Update(TimeSpan delta)
     {
-        if (source.Equals(this))
-            source.Client.SendSelfProfile();
-        else if (IsVisibleTo(source))
-            source.Client.SendProfile(this);
+        Equipment.Update(delta);
+        Inventory.Update(delta);
+        SkillBook.Update(delta);
+        SpellBook.Update(delta);
+        base.Update(delta);
     }
-
-    public override void Update(TimeSpan delta) => base.Update(delta);
 }

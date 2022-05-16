@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Chaos.Core.Definitions;
-
 namespace Chaos.Objects.Serializable;
 
 public record SerializableItem

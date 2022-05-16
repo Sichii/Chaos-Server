@@ -1,4 +1,3 @@
-using System;
 using Chaos.Containers;
 using Chaos.Factories.Interfaces;
 using Chaos.Objects.World;

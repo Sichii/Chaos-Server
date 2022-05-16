@@ -1,13 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model.Client;
 using Chaos.Networking.Options;
 using Chaos.Packets;
-using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

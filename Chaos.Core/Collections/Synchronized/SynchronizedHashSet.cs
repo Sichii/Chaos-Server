@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+using Chaos.Core.Synchronization;
+using Chaos.Core.Utilities;
 
 namespace Chaos.Core.Collections.Synchronized;
 
 public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 {
     private readonly HashSet<T> Set;
-    private readonly object Sync = new();
+    private readonly AutoReleasingMonitor Sync;
 
     public int Count
     {
         get
         {
-            lock (Sync)
-                return Set.Count;
+            using var @lock = Sync.Enter();
+
+            return Set.Count;
         }
     }
 
@@ -21,6 +22,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 
     public SynchronizedHashSet(IEnumerable<T>? items = null, IEqualityComparer<T>? comparer = null)
     {
+        Sync = new AutoReleasingMonitor();
         items ??= Enumerable.Empty<T>();
         comparer ??= EqualityComparer<T>.Default;
 
@@ -31,39 +33,41 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 
     public bool Add(T item)
     {
-        lock (Sync)
-            return Set.Add(item);
+        using var @lock = Sync.Enter();
+
+        return Set.Add(item);
     }
 
     public void Clear()
     {
-        lock (Sync)
-            Set.Clear();
+        using var @lock = Sync.Enter();
+        Set.Clear();
     }
 
     public bool Contains(T item)
     {
-        lock (Sync)
-            return Set.Contains(item);
+        using var @lock = Sync.Enter();
+
+        return Set.Contains(item);
     }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        lock (Sync)
-            Set.CopyTo(array, arrayIndex);
+        using var @lock = Sync.Enter();
+        Set.CopyTo(array, arrayIndex);
     }
 
     public void ExceptWith(IEnumerable<T> other)
     {
-        lock (Sync)
-            Set.ExceptWith(other);
+        using var @lock = Sync.Enter();
+        Set.ExceptWith(other);
     }
 
     public IEnumerator<T> GetEnumerator()
     {
         List<T> snapshot;
 
-        lock (Sync)
+        using (Sync.Enter())
             snapshot = Set.ToList();
 
         foreach (var item in snapshot)
@@ -74,67 +78,75 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void IntersectWith(IEnumerable<T> other)
     {
-        lock (Sync)
-            Set.IntersectWith(other);
+        using var @lock = Sync.Enter();
+        Set.IntersectWith(other);
     }
 
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
-        lock (Sync)
-            return Set.IsProperSubsetOf(other);
+        using var @lock = Sync.Enter();
+
+        return Set.IsProperSubsetOf(other);
     }
 
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
-        lock (Sync)
-            return Set.IsProperSupersetOf(other);
+        using var @lock = Sync.Enter();
+
+        return Set.IsProperSupersetOf(other);
     }
 
     public bool IsSubsetOf(IEnumerable<T> other)
     {
-        lock (Sync)
-            return Set.IsSubsetOf(other);
+        using var @lock = Sync.Enter();
+
+        return Set.IsSubsetOf(other);
     }
 
     public bool IsSupersetOf(IEnumerable<T> other)
     {
-        lock (Sync)
-            return Set.IsSupersetOf(other);
+        using var @lock = Sync.Enter();
+
+        return Set.IsSupersetOf(other);
     }
 
     public bool Overlaps(IEnumerable<T> other)
     {
-        lock (Sync)
-            return Set.Overlaps(other);
+        using var @lock = Sync.Enter();
+
+        return Set.Overlaps(other);
     }
 
     public bool Remove(T item)
     {
-        lock (Sync)
-            return Set.Remove(item);
+        using var @lock = Sync.Enter();
+
+        return Set.Remove(item);
     }
 
     public bool SetEquals(IEnumerable<T> other)
     {
-        lock (Sync)
-            return Set.SetEquals(other);
+        using var @lock = Sync.Enter();
+
+        return Set.SetEquals(other);
     }
 
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
-        lock (Sync)
-            Set.SymmetricExceptWith(other);
+        using var @lock = Sync.Enter();
+        Set.SymmetricExceptWith(other);
     }
 
     public bool TryGetValue(T equalValue, [MaybeNullWhen(false)] out T actualValue)
     {
-        lock (Sync)
-            return Set.TryGetValue(equalValue, out actualValue);
+        using var @lock = Sync.Enter();
+
+        return Set.TryGetValue(equalValue, out actualValue);
     }
 
     public void UnionWith(IEnumerable<T> other)
     {
-        lock (Sync)
-            Set.UnionWith(other);
+        using var @lock = Sync.Enter();
+        Set.UnionWith(other);
     }
 }

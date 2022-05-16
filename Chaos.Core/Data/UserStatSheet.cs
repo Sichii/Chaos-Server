@@ -1,7 +1,6 @@
-using System.Text.Json.Serialization;
-using Chaos.Core.Definitions;
-
 // ReSharper disable InconsistentNaming
+
+using System.Text.Json.Serialization;
 
 namespace Chaos.Core.Data;
 
@@ -17,7 +16,7 @@ public record UserStatSheet : StatSheet
 
     public AdvClass AdvClass { get; set; }
     public BaseClass BaseClass { get; set; }
-    
+
     public int CurrentWeight
     {
         get => _currentWeight;

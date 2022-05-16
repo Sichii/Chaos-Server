@@ -9,12 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.1"/>
-        <PackageReference Include="Bogus" Version="34.0.2"/>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+        <PackageReference Include="Bogus" Version="34.0.2" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Chaos.Core\Chaos.Core.csproj"/>
+        <ProjectReference Include="..\..\Chaos.Core\Chaos.Core.csproj" />
     </ItemGroup>
 
 </Project>

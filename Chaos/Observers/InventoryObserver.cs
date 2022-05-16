@@ -1,4 +1,3 @@
-using Chaos.Core.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Observers.Interfaces;

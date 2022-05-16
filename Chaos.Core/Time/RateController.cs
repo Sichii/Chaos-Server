@@ -1,4 +1,4 @@
-﻿namespace Chaos.Core.Utilities;
+﻿namespace Chaos.Core.Time;
 
 /// <summary>
 ///     An object used to control the rate of execution.

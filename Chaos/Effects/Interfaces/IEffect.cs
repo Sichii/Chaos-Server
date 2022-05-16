@@ -1,13 +1,16 @@
-using Chaos.Core.Definitions;
 using Chaos.Core.Interfaces;
-using Chaos.Objects;
 
 namespace Chaos.Effects.Interfaces;
 
-public interface IEffect : IDeltaUpdatable
+public interface IEffect : IDeltaUpdatable, IEquatable<IEffect>
 {
+    TimeSpan? Remaining { get; set; }
+    string CommonIdentifier { get; }
+    byte Icon { get; }
     string Name { get; }
-    bool Apply(ActivationContext context);
-    EffectColor GetColor();
-    bool ShouldSendColor();
+    void OnApplied();
+    void OnDispelled();
+    void OnFailedToApply(string reason);
+    void OnTerminated();
+    void OnUpdated();
 }

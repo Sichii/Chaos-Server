@@ -1,6 +1,3 @@
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-
 namespace Chaos.Objects.Serializable;
 
 public record SerializableBankItem

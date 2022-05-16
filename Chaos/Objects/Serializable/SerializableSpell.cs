@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Chaos.Objects.Serializable;
 
 public record SerializableSpell

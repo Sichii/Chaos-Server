@@ -1,5 +1,3 @@
-using Chaos.Core.Geometry;
-
 namespace Chaos.Networking.Model.Server;
 
 public record DoorArg

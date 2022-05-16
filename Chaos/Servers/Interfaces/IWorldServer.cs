@@ -47,6 +47,4 @@ public interface IWorldServer : IServer
     ValueTask OnWhisper(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnWorldListRequest(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnWorldMapClick(IWorldClient client, ref ClientPacket clientPacket);
-    
-    Exchange CreateExchange(User sender, User receiver);
 }

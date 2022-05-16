@@ -1,4 +1,3 @@
-using Chaos.Containers;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.Interfaces;

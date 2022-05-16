@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Chaos.Networking.Interfaces;
 
 namespace Chaos.Networking.Model;

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Chaos.Scripts.Interfaces;
 
 public interface ICompositeScript<TScript> : IEnumerable<TScript> where TScript: IScript

@@ -1,7 +1,6 @@
-using Chaos.Core.Definitions;
+using Chaos.Core.Memory;
 using Chaos.Core.Utilities;
 using Chaos.Networking.Model.Server;
-using Chaos.Packets.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
@@ -19,7 +18,7 @@ public record SelfProfileSerializer : ServerPacketSerializer<SelfProfileArgs>
 
         if (string.IsNullOrEmpty(str))
             str = !string.IsNullOrEmpty(args.SpouseName) ? $"Spouse: {args.SpouseName}" : "Adventuring Alone";
-        
+
         writer.WriteString8(str);
         writer.WriteBoolean(args.GroupOpen);
         writer.WriteBoolean(false); //TODO: groupbox fml

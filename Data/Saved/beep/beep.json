@@ -3,7 +3,7 @@
     "items": []
   },
   "bodySprite": "Male",
-  "direction": "South",
+  "direction": "East",
   "effects": [],
   "equipment": [],
   "gender": "Male",
@@ -12,6 +12,7 @@
   "inventory": [
     {
       "currentDurability": 1000,
+      "elapsedMs": 93760769,
       "scriptKeys": [],
       "slot": 1,
       "templateKey": "Stick",
@@ -23,13 +24,14 @@
   "name": "beep",
   "nation": "None",
   "options": {
+    "group": true,
     "guildChat": true,
     "magic": true,
     "shout": true,
     "whisper": true,
     "wisdom": true
   },
-  "point": "(5, 5)",
+  "point": "(8, 16)",
   "skillBook": [],
   "spellBook": [],
   "statSheet": {

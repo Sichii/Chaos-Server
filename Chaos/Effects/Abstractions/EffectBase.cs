@@ -1,41 +1,85 @@
-using System;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
 using Chaos.Effects.Interfaces;
-using Chaos.Objects;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Effects.Abstractions;
 
 public abstract class EffectBase : IEffect
 {
-    public Animation? Animation { get; init; }
-    public EffectColor Color { get; set; } = EffectColor.None;
-    public ushort DisplayImage { get; init; }
-    public TimeSpan Duration { get; init; } = TimeSpan.Zero;
-    public TimeSpan Elapsed { get; set; }
-    public uint UpdateRateMs { get; init; }
-    public abstract string Name { get; }
-    public TimeSpan Remaining => Duration - Elapsed;
+    public byte Icon { get; init; }
 
-    public abstract bool Apply(ActivationContext activationContext);
+    public TimeSpan? Remaining
+    {
+        get => Duration - Elapsed;
+        set
+        {
+            //not expected to be called in parallel to Update(delta)
+            if (Duration.HasValue && value.HasValue)
+                Elapsed = Duration.Value - value.Value;
+        }
+    }
 
-    public virtual bool Equals(EffectBase? other) => other is not null && (other.DisplayImage == DisplayImage);
+    protected EffectColor Color { get; set; } = EffectColor.None;
+    protected TimeSpan? Duration { get; init; } = TimeSpan.Zero;
+    protected TimeSpan Elapsed { get; set; }
+    protected User? SourceUser { get; set; }
+    protected User? TargetUser { get; set; }
+    protected uint UpdateRateMs { get; init; }
 
-    public EffectColor GetColor() =>
-        Remaining.Seconds switch
+    public virtual string CommonIdentifier => Name;
+    public virtual string Name { get; }
+    protected Creature Source { get; }
+    protected Creature Target { get; }
+
+    protected EffectBase(Creature source, Creature target)
+    {
+        Source = source;
+        Target = target;
+        SourceUser = source as User;
+        TargetUser = target as User;
+        Name = GetEffectName(GetType());
+    }
+
+    public virtual bool Equals(IEffect? other) => other is not null && (other.Icon == Icon);
+
+    protected EffectColor GetColor()
+    {
+        var remaining = Remaining;
+
+        if (remaining == null)
+            return EffectColor.White;
+
+        return remaining.Value.Seconds switch
         {
             >= 60 => EffectColor.White,
-            >= 45 => EffectColor.Red,
-            >= 30 => EffectColor.Orange,
-            >= 15 => EffectColor.Yellow,
-            >= 10 => EffectColor.Green,
-            >= 5  => EffectColor.Blue,
+            >= 30 => EffectColor.Red,
+            >= 15 => EffectColor.Orange,
+            >= 10 => EffectColor.Yellow,
+            >= 5  => EffectColor.Green,
+            >= 0  => EffectColor.Blue,
             _     => EffectColor.None
         };
+    }
 
-    public override int GetHashCode() => DisplayImage.GetHashCode();
+    public static string GetEffectName(Type type) => type.Name.Replace("effect", string.Empty, StringComparison.OrdinalIgnoreCase);
 
-    public bool ShouldSendColor()
+    public override int GetHashCode() => Icon.GetHashCode();
+
+    public virtual void OnApplied() => SendColor();
+    public virtual void OnDispelled() => RemoveEffect();
+    public virtual void OnFailedToApply(string reason) => SourceUser?.Client.SendServerMessage(ServerMessageType.ActiveMessage, reason);
+    public virtual void OnTerminated() => RemoveEffect();
+    public virtual void OnUpdated() => SendColor();
+
+    protected void RemoveEffect() => SourceUser?.Client.SendEffect(EffectColor.None, Icon);
+
+    protected void SendColor()
+    {
+        if (SourceUser is not null && ShouldSendColor())
+            SourceUser.Client.SendEffect(Color, Icon);
+    }
+
+    protected bool ShouldSendColor()
     {
         var currentColor = GetColor();
 
@@ -49,5 +93,5 @@ public abstract class EffectBase : IEffect
         return false;
     }
 
-    public abstract void Update(TimeSpan delta);
+    public virtual void Update(TimeSpan delta) => Elapsed += delta;
 }

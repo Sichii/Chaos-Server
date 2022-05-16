@@ -1,9 +1,8 @@
-using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Chaos.Core.Extensions;
+using Chaos.Core.Synchronization;
 using Chaos.Core.Utilities;
 using Chaos.Exceptions;
 using Chaos.Managers.Interfaces;

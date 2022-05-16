@@ -1,5 +1,5 @@
 using System.Net;
-using Chaos.Core.Definitions;
+using Chaos.Core.Identity;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Networking.Options;

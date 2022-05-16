@@ -1,44 +1,92 @@
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Chaos.Core.Interfaces;
+using Chaos.Core.Synchronization;
+using Chaos.Core.Utilities;
 using Chaos.Effects.Interfaces;
+using Chaos.Networking.Extensions;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Containers;
 
-public class EffectsBar : IEnumerable<IEffect>, IDeltaUpdatable
+public class EffectsBar : IEffectsBar
 {
-    private readonly ConcurrentDictionary<string, IEffect> Effects;
+    private readonly Creature Effected;
+    private readonly Dictionary<string, IEffect> Effects;
+    private readonly AutoReleasingMonitor Sync;
+    private readonly User? User;
 
-    public EffectsBar(IEnumerable<IEffect>? effects = null)
+    public EffectsBar(Creature effected, IEnumerable<IEffect>? effects = null)
     {
+        Effected = effected;
+        User = Effected as User;
+        Sync = new AutoReleasingMonitor();
         effects ??= Enumerable.Empty<IEffect>();
 
-        Effects = new ConcurrentDictionary<string, IEffect>(effects.ToDictionary(effect => effect.Name));
+        Effects = new Dictionary<string, IEffect>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var effect in effects)
+            Effects.TryAdd(effect.CommonIdentifier, effect);
     }
 
-    public void Clear() => Effects.Clear();
+    public void Add(IEffect effect)
+    {
+        using var @lock = Sync.Enter();
+        Effects.TryAdd(effect.CommonIdentifier, effect);
+    }
+
+    public virtual void Apply(IEffect effect)
+    {
+        using var @lock = Sync.Enter();
+
+        if (Effects.TryAdd(effect.CommonIdentifier, effect))
+            effect.OnApplied();
+        else if (Effects.TryGetValue(effect.CommonIdentifier, out var existingEffect))
+            effect.OnFailedToApply($"{Effected.Name} is already effected by {existingEffect.Name}");
+    }
+
+    public void Dispel(string commonIdentifier)
+    {
+        using var @lock = Sync.Enter();
+
+        if (Effects.TryRemove(commonIdentifier, out var effect))
+            effect.OnDispelled();
+    }
 
     public IEnumerator<IEffect> GetEnumerator()
     {
-        using var enumerator = Effects.GetEnumerator();
+        List<IEffect> snapshot;
 
-        while (enumerator.MoveNext())
-            yield return enumerator.Current.Value;
+        using (Sync.Enter())
+            snapshot = Effects.Values.ToList();
+
+        return snapshot.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public bool Remove(string name, [MaybeNullWhen(false)] out IEffect effect) => Effects.Remove(name, out effect);
+    public void Terminate(string commonIdentifier)
+    {
+        using var @lock = Sync.Enter();
 
-    public bool TryAdd(IEffect effect) => Effects.TryAdd(effect.Name, effect);
+        if (Effects.TryRemove(commonIdentifier, out var effect))
+            effect.OnTerminated();
+    }
 
     public void Update(TimeSpan delta)
     {
-        foreach (var effect in this)
+        using var @lock = Sync.Enter();
+
+        foreach (var effect in Effects.Values.ToList())
+        {
             effect.Update(delta);
+
+            if (effect.Remaining.HasValue && (effect.Remaining <= TimeSpan.Zero))
+            {
+                Terminate(effect.CommonIdentifier);
+
+                continue;
+            }
+
+            effect.OnUpdated();
+        }
     }
 }

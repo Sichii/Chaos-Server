@@ -1,7 +1,3 @@
-using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-
 namespace Chaos.Core.Utilities;
 
 public static class InstanceFactory
@@ -13,9 +9,9 @@ public static class InstanceFactory
         var types = new[] { key.Item1, key.Item2, key.Item3, key.Item4 };
 
         var method = typeof(InstanceFactory)
-            .GetMethods()
-            .Where(m => m.Name == "CreateInstance")
-            .Single(m => m.GetParameters().Length == 4);
+                     .GetMethods()
+                     .Where(m => m.Name == "CreateInstance")
+                     .Single(m => m.GetParameters().Length == 4);
 
         var generic = method.MakeGenericMethod(key.Item2, key.Item3, key.Item4);
 

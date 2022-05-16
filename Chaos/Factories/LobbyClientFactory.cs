@@ -1,4 +1,3 @@
-using System;
 using System.Net.Sockets;
 using Chaos.Clients;
 using Chaos.Cryptography.Interfaces;

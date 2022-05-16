@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Concurrent;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.Data;
-using Chaos.Core.Definitions;
-using Chaos.Core.Extensions;
 using Chaos.Cryptography;
 using Chaos.Exceptions;
 using Chaos.Factories.Interfaces;
@@ -81,7 +75,7 @@ public class LoginServer : ServerBase, ILoginServer
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(ref packet);
 
         var reserved = Options.ReservedRedirects
-            .FirstOrDefault(rr => (rr.Id == args.Id) && rr.Name.EqualsI(args.Name));
+                              .FirstOrDefault(rr => (rr.Id == args.Id) && rr.Name.EqualsI(args.Name));
 
         if (reserved != null)
         {

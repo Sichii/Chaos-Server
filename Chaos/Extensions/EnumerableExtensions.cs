@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using Chaos.Core.Geometry;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 

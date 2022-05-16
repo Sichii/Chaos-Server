@@ -1,5 +1,3 @@
-using Chaos.Core.Definitions;
-
 namespace Chaos.Networking.Model.Server;
 
 public record WorldListArg
@@ -9,5 +7,5 @@ public record WorldListArg
     public bool IsMaster { get; set; }
     public string Name { get; set; } = null!;
     public SocialStatus SocialStatus { get; set; }
-    public string Title { get; set; } = null!;
+    public string? Title { get; set; }
 }

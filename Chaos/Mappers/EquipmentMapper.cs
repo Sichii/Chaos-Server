@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using Chaos.Caches.Interfaces;
 using Chaos.Containers.Interfaces;
-using Chaos.Core.Definitions;
 using Chaos.Factories.Interfaces;
-using Chaos.Managers.Interfaces;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
@@ -21,10 +16,11 @@ public class EquipmentMapper : Profile
     private readonly ISimpleCache<string, ItemTemplate> ItemTemplateCache;
     private readonly ILogger Logger;
 
-    public EquipmentMapper(        
+    public EquipmentMapper(
         ISimpleCache<string, ItemTemplate> itemTemplateCache,
         IItemScriptFactory itemScriptFactory,
-        ILogger<EquipmentMapper> logger)
+        ILogger<EquipmentMapper> logger
+    )
     {
         ItemTemplateCache = itemTemplateCache;
         ItemScriptFactory = itemScriptFactory;
@@ -39,8 +35,8 @@ public class EquipmentMapper : Profile
                 (_, dest) =>
                 {
                     var scriptKeys = dest.Template.ScriptKeys
-                        .Concat(dest.ScriptKeys)
-                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                                         .Concat(dest.ScriptKeys)
+                                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
                     dest.Script = ItemScriptFactory.CreateScript(scriptKeys, dest);
                 });

@@ -1,5 +1,3 @@
-using Chaos.Core.Definitions;
-
 namespace Chaos.Core.Geometry;
 
 public readonly struct Point : IEquatable<Point>

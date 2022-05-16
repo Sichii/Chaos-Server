@@ -1,7 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Chaos.Core.Geometry;
-using Chaos.Cryptography.Definitions;
 using Chaos.Cryptography.Interfaces;
 
 namespace Chaos.Cryptography;
@@ -219,10 +217,10 @@ public class CryptoClient : ICryptoClient
     #region Utility
     public string GetMd5Hash(string value) =>
         BitConverter.ToString(
-                MD5.Create()
-                    .ComputeHash(Encoding.ASCII.GetBytes(value)))
-            .Replace("-", string.Empty)
-            .ToLower();
+                        MD5.Create()
+                           .ComputeHash(Encoding.ASCII.GetBytes(value)))
+                    .Replace("-", string.Empty)
+                    .ToLower();
 
     public int GenerateRandom() => Random.Shared.Next();
 
@@ -252,7 +250,7 @@ public class CryptoClient : ICryptoClient
         writer.Flush();
 
         return data.ToArray()
-            .Generate16();
+                   .Generate16();
     }
     #endregion
 }

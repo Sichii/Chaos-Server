@@ -1,5 +1,3 @@
-using Chaos.Core.Definitions;
-
 namespace Chaos.Core.Extensions;
 
 public static class EnumExtensions

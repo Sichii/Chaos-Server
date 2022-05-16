@@ -1,7 +1,6 @@
 using AutoMapper;
 using Chaos.Caches.Interfaces;
 using Chaos.Containers;
-using Chaos.Managers.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
 using Chaos.Templates;

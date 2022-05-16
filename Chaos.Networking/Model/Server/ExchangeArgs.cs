@@ -1,4 +1,3 @@
-using Chaos.Core.Definitions;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Networking.Model.Server;
@@ -12,8 +11,8 @@ public record ExchangeArgs : ISendArgs
     public DisplayColor? ItemColor { get; set; }
     public string? ItemName { get; set; }
     public ushort? ItemSprite { get; set; }
-    public bool? RightSide { get; set; }
     public uint? OtherUserId { get; set; }
     public string OtherUserName { get; set; } = null!;
     public bool? PersistExchange { get; set; }
+    public bool? RightSide { get; set; }
 }

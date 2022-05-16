@@ -11,7 +11,7 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     protected Item Source { get; }
 
     public CompositeItemScript(Item source) => Source = source;
-    
+
     public void OnUnequip(User user)
     {
         foreach (var component in Components)
@@ -28,7 +28,7 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 
             return;
         }
-        
+
         foreach (var component in Components)
             component.OnUse(user);
     }

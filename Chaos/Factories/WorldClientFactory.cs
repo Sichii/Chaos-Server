@@ -1,4 +1,3 @@
-using System;
 using System.Net.Sockets;
 using AutoMapper;
 using Chaos.Clients;

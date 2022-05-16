@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Chaos.Containers.Interfaces;
-using Chaos.Core.Definitions;
-using Chaos.Core.Extensions;
+using Chaos.Core.Synchronization;
+using Chaos.Core.Utilities;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Observers.Interfaces;
 
@@ -16,9 +12,10 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     {
         get
         {
-            lock (Sync)
-                if (IsValidSlot(slot))
-                    return Objects[slot];
+            using var @lock = Sync.Enter();
+
+            if (IsValidSlot(slot))
+                return Objects[slot];
 
             return default;
         }
@@ -28,8 +25,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     {
         get
         {
-            lock (Sync)
-                return TotalSlots - Objects.Count(obj => obj != null);
+            using var @lock = Sync.Enter();
+
+            return TotalSlots - Objects.Count(obj => obj != null);
         }
     }
 
@@ -37,8 +35,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     {
         get
         {
-            lock (Sync)
-                return Objects.Count(obj => obj != null) >= TotalSlots;
+            using var @lock = Sync.Enter();
+
+            return Objects.Count(obj => obj != null) >= TotalSlots;
         }
     }
 
@@ -48,7 +47,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     protected T?[] Objects { get; }
 
     protected ICollection<IPanelObserver<T>> Observers { get; }
-    protected object Sync { get; }
+    protected AutoReleasingMonitor Sync { get; }
     protected int TotalSlots { get; }
 
     protected PanelBase(
@@ -62,14 +61,14 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         Objects = new T[Length];
         InvalidSlots = invalidSlots;
         TotalSlots = Length - invalidSlots.Length;
-        Sync = new object();
+        Sync = new AutoReleasingMonitor();
         Observers = new List<IPanelObserver<T>>();
     }
 
     public void AddObserver(IPanelObserver<T> observer)
     {
-        lock (Sync)
-            Observers.Add(observer);
+        using var @lock = Sync.Enter();
+        Observers.Add(observer);
     }
 
     protected void BroadcastOnAdded(T obj)
@@ -110,15 +109,16 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
     public virtual bool Contains(T obj)
     {
-        lock (Sync)
-            return Objects.Contains(obj);
+        using var @lock = Sync.Enter();
+
+        return Objects.Contains(obj);
     }
 
     public IEnumerator<T> GetEnumerator()
     {
         List<T?> snapshot;
 
-        lock (Sync)
+        using (Sync.Enter())
             snapshot = Objects.ToList();
 
         using var enumerator = snapshot.GetEnumerator();
@@ -140,15 +140,14 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
     public bool Remove(string name)
     {
-        lock (Sync)
-        {
-            var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
+        using var @lock = Sync.Enter();
 
-            if (obj == null)
-                return false;
+        var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
 
-            return Remove(obj.Slot);
-        }
+        if (obj == null)
+            return false;
+
+        return Remove(obj.Slot);
     }
 
     public virtual bool Remove(byte slot)
@@ -156,18 +155,17 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         if (!IsValidSlot(slot))
             return false;
 
-        lock (Sync)
-        {
-            var existing = Objects[slot];
+        using var @lock = Sync.Enter();
 
-            if (existing == null)
-                return false;
+        var existing = Objects[slot];
 
-            Objects[slot] = null;
-            BroadcastOnRemoved(slot, existing);
+        if (existing == null)
+            return false;
 
-            return true;
-        }
+        Objects[slot] = null;
+        BroadcastOnRemoved(slot, existing);
+
+        return true;
     }
 
     public virtual bool TryAdd(byte slot, T obj)
@@ -175,27 +173,27 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         if (!IsValidSlot(slot))
             return false;
 
-        lock (Sync)
-        {
-            var existing = Objects[slot];
+        using var @lock = Sync.Enter();
 
-            if (existing != null)
-                return false;
+        var existing = Objects[slot];
 
-            Objects[slot] = obj;
-            obj.Slot = slot;
-            BroadcastOnAdded(obj);
+        if (existing != null)
+            return false;
 
-            return true;
-        }
+        Objects[slot] = obj;
+        obj.Slot = slot;
+        BroadcastOnAdded(obj);
+
+        return true;
     }
 
     public virtual bool TryAddToNextSlot(T obj)
     {
-        lock (Sync)
-            for (byte i = 1; i < Length; i++)
-                if ((Objects[i] == null) && IsValidSlot(i))
-                    return TryAdd(i, obj);
+        using var @lock = Sync.Enter();
+
+        for (byte i = 1; i < Length; i++)
+            if ((Objects[i] == null) && IsValidSlot(i))
+                return TryAdd(i, obj);
 
         return false;
     }
@@ -207,12 +205,11 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         if (!IsValidSlot(slot))
             return false;
 
-        lock (Sync)
-        {
-            obj = Objects[slot];
+        using var @lock = Sync.Enter();
 
-            return true;
-        }
+        obj = Objects[slot];
+
+        return true;
     }
 
     public virtual bool TryGetRemove(byte slot, out T? obj)
@@ -222,18 +219,17 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         if (!IsValidSlot(slot))
             return false;
 
-        lock (Sync)
-        {
-            obj = Objects[slot];
+        using var @lock = Sync.Enter();
 
-            if (obj == null)
-                return false;
+        obj = Objects[slot];
 
-            Objects[slot] = default;
-            BroadcastOnRemoved(slot, obj);
+        if (obj == null)
+            return false;
 
-            return true;
-        }
+        Objects[slot] = default;
+        BroadcastOnRemoved(slot, obj);
+
+        return true;
     }
 
     public virtual bool TrySwap(byte slot1, byte slot2)
@@ -241,32 +237,31 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         if (!IsValidSlot(slot1) || !IsValidSlot(slot2))
             return false;
 
-        lock (Sync)
-        {
-            var obj1 = Objects[slot1];
-            var obj2 = Objects[slot2];
+        using var @lock = Sync.Enter();
 
-            if (obj1 != null)
-                obj1.Slot = slot2;
+        var obj1 = Objects[slot1];
+        var obj2 = Objects[slot2];
 
-            if (obj2 != null)
-                obj2.Slot = slot1;
+        if (obj1 != null)
+            obj1.Slot = slot2;
 
-            Objects[slot1] = obj2;
-            Objects[slot2] = obj1;
+        if (obj2 != null)
+            obj2.Slot = slot1;
 
-            if (obj1 != null)
-                BroadcastOnUpdated(slot1, obj1);
-            else if (obj2 != null)
-                BroadcastOnRemoved(slot2, obj2);
+        Objects[slot1] = obj2;
+        Objects[slot2] = obj1;
 
-            if (obj2 != null)
-                BroadcastOnUpdated(slot2, obj2);
-            else if (obj1 != null)
-                BroadcastOnRemoved(slot1, obj1);
+        if (obj1 != null)
+            BroadcastOnUpdated(slot1, obj1);
+        else if (obj2 != null)
+            BroadcastOnRemoved(slot2, obj2);
 
-            return true;
-        }
+        if (obj2 != null)
+            BroadcastOnUpdated(slot2, obj2);
+        else if (obj1 != null)
+            BroadcastOnRemoved(slot1, obj1);
+
+        return true;
     }
 
     public void Update(byte slot, Action<T>? action = null)
@@ -274,15 +269,22 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         if (!IsValidSlot(slot))
             return;
 
-        lock (Sync)
-        {
-            var obj = Objects[slot];
+        using var @lock = Sync.Enter();
 
-            if (obj == null)
-                return;
+        var obj = Objects[slot];
 
-            action?.Invoke(obj);
-            BroadcastOnUpdated(slot, obj);
-        }
+        if (obj == null)
+            return;
+
+        action?.Invoke(obj);
+        BroadcastOnUpdated(slot, obj);
+    }
+
+    public void Update(TimeSpan delta)
+    {
+        using var @lock = Sync.Enter();
+        
+        foreach (var obj in Objects)
+            obj?.Update(delta);
     }
 }

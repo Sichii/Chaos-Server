@@ -1,6 +1,3 @@
-using Chaos.Core.Definitions;
-using Chaos.Core.Extensions;
-
 namespace Chaos.Core.Geometry;
 
 public readonly struct Location : IEquatable<Location>
