@@ -1,3 +1,4 @@
+using Chaos.Geometry.Definitions;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Networking.Model.Server;
@@ -33,7 +34,8 @@ public record DisplayAislingArgs : ISendArgs
     public NameTagStyle NameTagStyle { get; set; }
     public DisplayColor OvercoatColor { get; set; }
     public ushort OvercoatSprite { get; set; }
-    public Point Point { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
     public RestPosition RestPosition { get; set; }
     public byte ShieldSprite { get; set; }
     public ushort? Sprite { get; set; }

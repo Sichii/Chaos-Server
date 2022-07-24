@@ -16,9 +16,9 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Managers;
 
-public class UserSaveManager : ISaveManager<User>
+public class UserSaveManager : ISaveManager<Aisling>
 {
-    private readonly IExchangeFactory ExchangeFactory;
+    private readonly IWorldObjectFactory WorldObjectFactory;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
     private readonly IMapper Mapper;
@@ -27,14 +27,14 @@ public class UserSaveManager : ISaveManager<User>
 
     public UserSaveManager(
         IMapper mapper,
-        IExchangeFactory exchangeFactory,
+        IWorldObjectFactory worldObjectFactory,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<UserSaveManagerOptions> options,
         ILogger<UserSaveManager> logger
     )
     {
         Mapper = mapper;
-        ExchangeFactory = exchangeFactory;
+        WorldObjectFactory = worldObjectFactory;
         Options = options.Value;
         Logger = logger;
         Sync = new AutoReleasingSemaphoreSlim(1, 1);
@@ -44,7 +44,7 @@ public class UserSaveManager : ISaveManager<User>
             Directory.CreateDirectory(Options.Directory);
     }
 
-    public async Task<User> LoadAsync(IWorldClient worldClient, string name)
+    public async Task<Aisling> LoadAsync(IWorldClient worldClient, string name)
     {
         Logger.LogDebug("Loading user {Name}", name);
 
@@ -53,7 +53,7 @@ public class UserSaveManager : ISaveManager<User>
         await using var stream = File.OpenRead(path);
 
         var serialized = JsonSerializer.Deserialize<SerializableUser>(stream, JsonSerializerOptions)!;
-        var user = new User(worldClient, name, ExchangeFactory);
+        var user = WorldObjectFactory.CreateUser(worldClient, name);
 
         var inventoryObserver = new InventoryObserver(user);
         var equipmentObserver = new EquipmentObserver(user);
@@ -73,22 +73,22 @@ public class UserSaveManager : ISaveManager<User>
         return user;
     }
 
-    public async Task SaveAsync(User user)
+    public async Task SaveAsync(Aisling aisling)
     {
         await using var sync = await Sync.WaitAsync();
 
-        Logger.LogDebug("Saving user {Name}", user.Name);
+        Logger.LogDebug("Saving user {Name}", aisling.Name);
 
-        var serializable = Mapper.Map<SerializableUser>(user);
-        var directory = Path.Combine(Options.Directory, user.Name.ToLower());
+        var serializable = Mapper.Map<SerializableUser>(aisling);
+        var directory = Path.Combine(Options.Directory, aisling.Name.ToLower());
 
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
 
-        var path = Path.Combine(directory, $"{user.Name.ToLower()}.json");
+        var path = Path.Combine(directory, $"{aisling.Name.ToLower()}.json");
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
         await JsonSerializer.SerializeAsync(stream, serializable, JsonSerializerOptions);
 
-        Logger.LogTrace("Saved user {Name}", user.Name);
+        Logger.LogTrace("Saved user {Name}", aisling.Name);
     }
 }

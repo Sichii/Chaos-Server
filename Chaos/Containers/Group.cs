@@ -4,13 +4,13 @@ using Chaos.Objects.World;
 
 namespace Chaos.Containers;
 
-public class Group : IEnumerable<User>
+public class Group : IEnumerable<Aisling>
 {
-    private readonly List<User> Members;
+    private readonly List<Aisling> Members;
     private readonly HashSet<GroupInvite> PendingInvites;
     private readonly AutoReleasingMonitor Sync;
 
-    public User Leader
+    public Aisling Leader
     {
         get
         {
@@ -20,14 +20,14 @@ public class Group : IEnumerable<User>
         }
     }
 
-    private Group(User sender)
+    private Group(Aisling sender)
     {
-        Members = new List<User> { sender };
+        Members = new List<Aisling> { sender };
         PendingInvites = new HashSet<GroupInvite>();
         Sync = new AutoReleasingMonitor();
     }
 
-    public void AcceptInvite(User sender, User receiver)
+    public void AcceptInvite(Aisling sender, Aisling receiver)
     {
         using var @lock = Sync.Enter();
 
@@ -52,17 +52,17 @@ public class Group : IEnumerable<User>
         Add(receiver);
     }
 
-    private void Add(User user)
+    private void Add(Aisling aisling)
     {
         using var @lock = Sync.Enter();
-        Members.Add(user);
+        Members.Add(aisling);
 
         foreach (var member in Members)
         {
-            if (member.Equals(user))
-                user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have joined {Leader.Name}'s group");
+            if (member.Equals(aisling))
+                aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have joined {Leader.Name}'s group");
             else
-                member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{user.Name} has joined the group");
+                member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{aisling.Name} has joined the group");
 
             member.Client.SendSelfProfile();
         }
@@ -77,7 +77,7 @@ public class Group : IEnumerable<User>
                 existingInvite.Refresh();
     }
 
-    public static Group Create(User sender, User receiver)
+    public static Group Create(Aisling sender, Aisling receiver)
     {
         var group = new Group(sender)
         {
@@ -87,9 +87,9 @@ public class Group : IEnumerable<User>
         return group;
     }
 
-    public IEnumerator<User> GetEnumerator()
+    public IEnumerator<Aisling> GetEnumerator()
     {
-        List<User> snapshot;
+        List<Aisling> snapshot;
 
         using (Sync.Enter())
             snapshot = Members.ToList();
@@ -99,7 +99,7 @@ public class Group : IEnumerable<User>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public void Invite(User sender, User receiver)
+    public void Invite(Aisling sender, Aisling receiver)
     {
         using var @lock = Sync.Enter();
         var fromLeader = Leader.Equals(sender);
@@ -138,52 +138,52 @@ public class Group : IEnumerable<User>
         receiver.Client.SendGroupRequest(GroupRequestType.FormalInvite, sender.Name);
     }
 
-    private void Kick(User user)
+    private void Kick(Aisling aisling)
     {
         using var @lock = Sync.Enter();
 
-        if (user.Group != this)
+        if (aisling.Group != this)
             return;
 
-        user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have been kicked from the group by {Leader.Name}");
-        Remove(user);
+        aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have been kicked from the group by {Leader.Name}");
+        Remove(aisling);
 
         foreach (var member in Members)
         {
-            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{user.Name} has been kicked from the group");
+            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{aisling.Name} has been kicked from the group");
             member.Client.SendSelfProfile();
         }
     }
 
-    public void Leave(User user)
+    public void Leave(Aisling aisling)
     {
         using var @lock = Sync.Enter();
 
-        if (user.Group != this)
+        if (aisling.Group != this)
             return;
 
-        user.Client.SendServerMessage(
+        aisling.Client.SendServerMessage(
             ServerMessageType.ActiveMessage,
             Members.Count > 1 ? "You have left the group" : "The group has disbanded");
 
-        Remove(user);
+        Remove(aisling);
 
         foreach (var member in Members)
         {
-            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{user.Name} has left the group");
+            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{aisling.Name} has left the group");
             member.Client.SendSelfProfile();
         }
     }
 
-    private void Remove(User user)
+    private void Remove(Aisling aisling)
     {
         using var @lock = Sync.Enter();
 
         var leader = Leader;
 
-        Members.Remove(user);
-        user.Group = null;
-        user.Client.SendSelfProfile();
+        Members.Remove(aisling);
+        aisling.Group = null;
+        aisling.Client.SendSelfProfile();
 
         if (Members.Count == 0)
             return;
@@ -197,7 +197,7 @@ public class Group : IEnumerable<User>
         }
 
         //if this user was the leader
-        if (user.Equals(leader))
+        if (aisling.Equals(leader))
         {
             var newLeader = Leader;
 

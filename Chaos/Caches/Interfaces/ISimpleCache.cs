@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 
 namespace Chaos.Caches.Interfaces;
 
-public interface ISimpleCache<in TKey, out TResult> : IEnumerable<TResult>
+public interface ISimpleCache<out TResult> : IEnumerable<TResult>
 {
-    TResult GetObject(TKey key);
+    TResult GetObject(string key);
     Task LoadCacheAsync();
 }

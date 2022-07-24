@@ -12,24 +12,24 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 
     public CompositeItemScript(Item source) => Source = source;
 
-    public void OnUnequip(User user)
+    public void OnUnequip(Aisling aisling)
     {
         foreach (var component in Components)
-            component.OnUnequip(user);
+            component.OnUnequip(aisling);
     }
 
-    public void OnUse(User user)
+    public void OnUse(Aisling aisling)
     {
-        var exchange = user.ActiveObject.TryGet<Exchange>();
+        var exchange = aisling.ActiveObject.TryGet<Exchange>();
 
         if (exchange != null)
         {
-            exchange.AddItem(user, Source.Slot);
+            exchange.AddItem(aisling, Source.Slot);
 
             return;
         }
 
         foreach (var component in Components)
-            component.OnUse(user);
+            component.OnUse(aisling);
     }
 }

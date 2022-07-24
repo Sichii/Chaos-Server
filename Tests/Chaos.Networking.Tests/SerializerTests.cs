@@ -15,17 +15,5 @@ public class SerializerTests
         Encoding.RegisterProvider(provider);
         Encoding = provider.GetEncoding(949)!;
     }
-
-    [Fact]
-    public void PacketWriterTest()
-    {
-        var obj = new HeartBeatResponseArgs
-        {
-            First = 10,
-            Second = 20
-        };
-
-        var serializer = new PacketSerializer(Encoding);
-        var packet = serializer.Serialize(obj);
-    }
+    
 }

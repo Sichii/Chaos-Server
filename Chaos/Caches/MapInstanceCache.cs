@@ -11,24 +11,24 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Caches;
 
-public class MapInstanceCache : ISimpleCache<string, MapInstance>
+public class MapInstanceCache : ISimpleCache<MapInstance>
 {
     private readonly ConcurrentDictionary<string, MapInstance> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
-    private readonly ISimpleCache<string, MapTemplate> MapTemplate;
-    private readonly MapInstanceManagerOptions Options;
+    private readonly ISimpleCache<MapTemplate> MapTemplateCache;
+    private readonly MapInstanceCacheOptions Options;
     private readonly WorldOptions WorldOptions;
 
     public MapInstanceCache(
-        ISimpleCache<string, MapTemplate> mapTemplate,
+        ISimpleCache<MapTemplate> mapTemplateCache,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<WorldOptions> worldOptions,
-        IOptionsSnapshot<MapInstanceManagerOptions> options,
+        IOptionsSnapshot<MapInstanceCacheOptions> options,
         ILogger<MapInstanceCache> logger
     )
     {
-        MapTemplate = mapTemplate;
+        MapTemplateCache = mapTemplateCache;
         WorldOptions = worldOptions.Value;
         Options = options.Value;
         Logger = logger;
@@ -53,7 +53,7 @@ public class MapInstanceCache : ISimpleCache<string, MapInstance>
 
     public async Task LoadCacheAsync()
     {
-        var instances = Directory.GetFiles(Options.Directory, "*.json");
+        var instances = Directory.GetDirectories(Options.Directory);
 
         await Parallel.ForEachAsync(
             instances,
@@ -68,17 +68,34 @@ public class MapInstanceCache : ISimpleCache<string, MapInstance>
         Logger.LogInformation("{Count} map instances loaded", Cache.Count);
     }
 
-    private async ValueTask<MapInstance> LoadInstanceFromFileAsync(string path)
+    private async Task<MapInstance> LoadInstanceFromFileAsync(string directory)
     {
-        await using var stream = File.OpenRead(path);
+        var mapInstanceFilePath = Path.Combine(directory, "instance.json");
+        await using var stream = File.OpenRead(mapInstanceFilePath);
         var mapInstance = await JsonSerializer.DeserializeAsync<MapInstance>(stream, JsonSerializerOptions);
-        var template = MapTemplate.GetObject(mapInstance!.MapId.ToString());
+        var template = MapTemplateCache.GetObject(mapInstance!.MapId.ToString());
         mapInstance.Template = template;
         mapInstance.WorldOptions = WorldOptions;
 
-        foreach (var warp in mapInstance.WarpGroups.Flatten())
-            mapInstance.SimpleAdd(new WarpTile(this, warp));
+        foreach (var door in template.Doors.Values)
+        {
+            var cloned = new Door
+            {
+                Sprite = door.Sprite, 
+                Closed = door.Closed
+            };
+            cloned.SetLocation(mapInstance, door);
+            mapInstance.SimpleAdd(cloned);
+        }
 
+        foreach (var warp in mapInstance.WarpGroups.Flatten())
+        {
+            var cloned = new WarpTile(this) { Warp = warp };
+            cloned.SetLocation(mapInstance, warp.SourceLocation!.Value);
+
+            mapInstance.SimpleAdd(cloned);
+        }
+        
         return mapInstance!;
     }
 }

@@ -15,13 +15,11 @@ namespace Chaos.Managers;
 
 public class ActiveDirectoryCredentialManager : ICredentialManager
 {
-    private readonly Encoding Encoding;
     private readonly ActiveDirectoryCredentialManagerOptions Options;
     private readonly AutoReleasingSemaphoreSlim Sync;
 
-    public ActiveDirectoryCredentialManager(Encoding encoding, IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options)
+    public ActiveDirectoryCredentialManager(IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options)
     {
-        Encoding = encoding;
         Options = options.Value;
         Sync = new AutoReleasingSemaphoreSlim(1, 1);
 
@@ -47,7 +45,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
     private string ComputeHash(string password)
     {
         using var algorithm = HashAlgorithm.Create(Options.HashAlgorithmName);
-        var buffer = Encoding.GetBytes(password);
+        var buffer = Encoding.UTF8.GetBytes(password);
         var hash = algorithm!.ComputeHash(buffer);
 
         return Convert.ToHexString(hash);

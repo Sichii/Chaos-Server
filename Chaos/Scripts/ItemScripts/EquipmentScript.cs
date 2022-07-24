@@ -9,26 +9,26 @@ public class EquipmentScript : ItemScriptBase
     public EquipmentScript(Item item)
         : base(item) { }
 
-    public override void OnUnequip(User user)
+    public override void OnUnequip(Aisling aisling)
     {
         //stuff like.. if the item applies an effect or something, undo it?
     }
 
-    public override void OnUse(User user)
+    public override void OnUse(Aisling aisling)
     {
         //gender check
-        if ((Source.Template.Gender != user.Gender) && (Source.Template.Gender != Gender.Unisex))
+        if ((Source.Template.Gender != aisling.Gender) && (Source.Template.Gender != Gender.Unisex))
             return;
 
         var slot = Source.Slot;
 
         //try equip,
-        if (user.Equipment.TryEquip(Source, out var returnedItem))
+        if (aisling.Equipment.TryEquip(Source, out var returnedItem))
         {
-            user.Inventory.Remove(slot);
+            aisling.Inventory.Remove(slot);
 
             if (returnedItem != null)
-                user.Inventory.TryAddToNextSlot(returnedItem);
+                aisling.Inventory.TryAddToNextSlot(returnedItem);
         }
     }
 }

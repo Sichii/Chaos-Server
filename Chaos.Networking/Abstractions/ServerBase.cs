@@ -5,12 +5,14 @@ using Chaos.Networking.Model.Client;
 using Chaos.Networking.Options;
 using Chaos.Packets;
 using Chaos.Packets.Interfaces;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TaskExtensions = Chaos.Core.Extensions.TaskExtensions;
 
 namespace Chaos.Networking.Abstractions;
 
-public abstract class ServerBase : IServer
+public abstract class ServerBase : BackgroundService, IServer
 {
     protected ClientHandler?[] ClientHandlers { get; }
     protected IPEndPoint EndPoint { get; }
@@ -42,13 +44,15 @@ public abstract class ServerBase : IServer
 
     protected abstract void OnConnection(IAsyncResult ar);
 
-    public virtual void Start()
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
         Socket.Bind(endPoint);
         Socket.Listen(20);
         Socket.BeginAccept(OnConnection, Socket);
         Logger.LogInformation("Listening on {EndPoint}", endPoint);
+
+        return stoppingToken.WaitTillCanceled();
     }
 
     protected delegate ValueTask ClientHandler(ISocketClient client, ref ClientPacket packet);
@@ -61,7 +65,7 @@ public abstract class ServerBase : IServer
         ClientHandlers[(byte)ClientOpCode.SynchronizeTicks] = OnSynchronizeTicksAsync;
     }
 
-    public virtual ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet) where TClient: ISocketClient
+    public virtual ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 

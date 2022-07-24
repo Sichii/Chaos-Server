@@ -1,9 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Core.Identity;
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
 using Chaos.Cryptography.Interfaces;
+using Chaos.IO.Memory;
 using Chaos.Networking.Extensions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
@@ -213,7 +212,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             CryptoClient.Encrypt(ref packet);
         }
 
-        var args = DequeueArgs(packet.ToArray());
+        var args = DequeueArgs(packet.ToMemory());
         Socket.SendAndForget(args, ReuseSocketAsyncEventArgs);
     }
 

@@ -6,34 +6,34 @@ namespace Chaos.Observers;
 
 public class EquipmentObserver : IPanelObserver<Item>
 {
-    private readonly User User;
+    private readonly Aisling Aisling;
 
-    public EquipmentObserver(User user) => User = user;
+    public EquipmentObserver(Aisling aisling) => Aisling = aisling;
 
     public void OnAdded(Item obj)
     {
-        User.Client.SendEquipment(obj);
-        User.MapInstance.ShowUser(User);
-        User.StatSheet.AddWeight(obj.Template.Weight);
+        Aisling.Client.SendEquipment(obj);
+        Aisling.MapInstance.Display(Aisling);
+        Aisling.StatSheet.AddWeight(obj.Template.Weight);
 
         if (obj.Template.Modifiers != null)
-            User.StatSheet.Add(obj.Template.Modifiers);
+            Aisling.StatSheet.Add(obj.Template.Modifiers);
 
-        User.Client.SendAttributes(StatUpdateType.Full);
+        Aisling.Client.SendAttributes(StatUpdateType.Full);
     }
 
     public void OnRemoved(byte slot, Item obj)
     {
-        User.Client.SendUnequip((EquipmentSlot)slot);
-        User.MapInstance.ShowUser(User);
-        User.Client.SendSelfProfile();
+        Aisling.Client.SendUnequip((EquipmentSlot)slot);
+        Aisling.MapInstance.Display(Aisling);
+        Aisling.Client.SendSelfProfile();
 
-        User.StatSheet.AddWeight(-obj.Template.Weight);
+        Aisling.StatSheet.AddWeight(-obj.Template.Weight);
 
         if (obj.Template.Modifiers != null)
-            User.StatSheet.Subtract(obj.Template.Modifiers);
+            Aisling.StatSheet.Subtract(obj.Template.Modifiers);
 
-        User.Client.SendAttributes(StatUpdateType.Full);
+        Aisling.Client.SendAttributes(StatUpdateType.Full);
     }
 
     public void OnUpdated(byte originalSlot, Item obj)

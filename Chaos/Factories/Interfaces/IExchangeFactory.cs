@@ -5,5 +5,5 @@ namespace Chaos.Factories.Interfaces;
 
 public interface IExchangeFactory
 {
-    Exchange CreateExchange(User sender, User receiver);
+    Exchange CreateExchange(Aisling sender, Aisling receiver);
 }

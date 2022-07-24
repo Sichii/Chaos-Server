@@ -1,6 +1,7 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Server;
+using Chaos.Packets.Abstractions;
+using Chaos.Networking.Extensions;
 
 namespace Chaos.Networking.Serializers;
 

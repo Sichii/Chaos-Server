@@ -1,8 +1,8 @@
+using Chaos.Caches;
 using Chaos.Caches.Interfaces;
-using Chaos.Core.Identity;
-using Chaos.Core.Utilities;
 using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel;
+using Chaos.Objects.Serializable;
 using Chaos.Templates;
 using Microsoft.Extensions.Logging;
 
@@ -12,10 +12,10 @@ public class SkillFactory : ISkillFactory
 {
     private readonly ILogger Logger;
     private readonly ISkillScriptFactory SkillScriptFactory;
-    private readonly ISimpleCache<string, SkillTemplate> SkillTemplateCache;
+    private readonly ISimpleCache<SkillTemplate> SkillTemplateCache;
 
     public SkillFactory(
-        ISimpleCache<string, SkillTemplate> skillTemplateCache,
+        ISimpleCache<SkillTemplate> skillTemplateCache,
         ISkillScriptFactory skillScriptFactory,
         ILogger<SkillFactory> logger
     )
@@ -27,19 +27,37 @@ public class SkillFactory : ISkillFactory
 
     public Skill CreateSkill(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
-        extraScriptKeys ??= new List<string>();
+        extraScriptKeys ??= Array.Empty<string>();
         var template = SkillTemplateCache.GetObject(templateKey);
-        var skill = new Skill(template);
-
-        var scriptKeys = template.ScriptKeys
-                                 .Concat(extraScriptKeys)
-                                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        skill.Script = SkillScriptFactory.CreateScript(scriptKeys, skill);
-        skill.UniqueId = ServerId.NextId;
-
-        Logger.LogDebug("Created skill \"{SkillName}\" with unique id \"{UniqueId}\"", skill.Template.Name, skill.UniqueId);
+        var skill = new Skill(template, SkillScriptFactory, extraScriptKeys);
+        
+        Logger.LogDebug("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
 
         return skill;
+    }
+
+    public Skill DeserializeSkill(SerializableSkill serializableSkill)
+    {
+        var skill = new Skill(serializableSkill, SkillTemplateCache, SkillScriptFactory);
+
+        Logger.LogDebug("Deserialized skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
+
+        return skill;
+    }
+
+    public Skill CloneSkill(Skill skill)
+    {
+        var cloned = new Skill(skill.Template, SkillScriptFactory, skill.ScriptKeys)
+        {
+            Elapsed = skill.Elapsed,
+        };
+
+        Logger.LogDebug(
+            "Cloned skill - Name: {SkillName}, UniqueId: {UniqueId}, ClonedId: {ClonedId}",
+            skill.Template.Name,
+            skill.UniqueId,
+            cloned.UniqueId);
+
+        return cloned;
     }
 }

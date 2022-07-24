@@ -12,9 +12,9 @@ public class Exchange
 {
     private readonly ILogger Logger;
     private readonly AutoReleasingMonitor Sync;
-    private readonly User User1;
+    private readonly Aisling User1;
     private readonly Inventory User1Items;
-    private readonly User User2;
+    private readonly Aisling User2;
     private readonly Inventory User2Items;
     private readonly ulong ExchangeId;
     private bool IsActive;
@@ -23,7 +23,7 @@ public class Exchange
     private bool User2Accept;
     private int User2Gold;
 
-    public Exchange(User sender, User receiver, ILogger<Exchange> logger)
+    public Exchange(Aisling sender, Aisling receiver, ILogger logger)
     {
         ExchangeId = ServerId.NextId;
         Logger = logger;
@@ -36,28 +36,28 @@ public class Exchange
         Sync = new AutoReleasingMonitor();
     }
 
-    public void Accept(User user)
+    public void Accept(Aisling aisling)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(user);
-        (var gold, var items, var accepted) = GetUserVars(user);
+        var otherUser = GetOtherUser(aisling);
+        (var gold, var items, var accepted) = GetUserVars(aisling);
         (var otherGold, var otherItems, var otherAccepted) = GetUserVars(otherUser);
 
         if (!IsActive || accepted)
             return;
 
-        SetUserAccepted(user, true);
+        SetUserAccepted(aisling, true);
         accepted = true;
 
         otherUser.Client.SendExchangeAccepted(true);
 
         if (accepted && otherAccepted)
         {
-            Distribute(user, otherGold, otherItems);
+            Distribute(aisling, otherGold, otherItems);
             Distribute(otherUser, gold, items);
 
-            user.Client.SendExchangeAccepted(false);
+            aisling.Client.SendExchangeAccepted(false);
             otherUser.Client.SendExchangeAccepted(false);
 
             Deactivate();
@@ -82,66 +82,66 @@ public class Exchange
         IsActive = true;
     }
 
-    public void AddItem(User user, byte slot)
+    public void AddItem(Aisling aisling, byte slot)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(user);
-        (_, var userItems, var userAccepted) = GetUserVars(user);
+        var otherUser = GetOtherUser(aisling);
+        (_, var userItems, var userAccepted) = GetUserVars(aisling);
 
-        if (!IsActive || !user.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
+        if (!IsActive || !aisling.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
             return;
 
         if (item.Template.AccountBound)
         {
-            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
+            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
 
             return;
         }
 
         if (!otherUser.CanCarry(userItems.Prepend(item).ToArray()))
         {
-            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
+            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
             otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");
 
             return;
         }
 
         if (item.Template.Stackable)
-            user.Client.SendExchangeRequestAmount(item.Slot);
+            aisling.Client.SendExchangeRequestAmount(item.Slot);
         else
         {
-            user.Inventory.Remove(slot);
+            aisling.Inventory.Remove(slot);
             userItems.TryAddToNextSlot(item);
 
             Logger.LogDebug(
                 "[Exchange: {ExchangeId}]: {UserName} added {Item}",
                 ExchangeId,
-                user.Name,
+                aisling.Name,
                 item);
         }
     }
 
-    public void AddStackableItem(User user, byte slot, byte amount)
+    public void AddStackableItem(Aisling aisling, byte slot, byte amount)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(user);
-        (_, var userItems, var userAccepted) = GetUserVars(user);
+        var otherUser = GetOtherUser(aisling);
+        (_, var userItems, var userAccepted) = GetUserVars(aisling);
 
-        if (!IsActive || (amount <= 0) || !user.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
+        if (!IsActive || (amount <= 0) || !aisling.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
             return;
 
         if (item.Template.AccountBound)
         {
-            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
+            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
 
             return;
         }
 
-        if (!user.Inventory.HasCount(item.DisplayName, amount))
+        if (!aisling.Inventory.HasCount(item.DisplayName, amount))
         {
-            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You don't have {amount} of {item.DisplayName}");
+            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You don't have {amount} of {item.DisplayName}");
 
             return;
         }
@@ -153,13 +153,13 @@ public class Exchange
 
         if (!otherUser.CanCarry(userItems.Concat(corrected).ToArray()))
         {
-            user.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
+            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
             otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");
 
             return;
         }
 
-        if (!user.Inventory.RemoveQuantity(item.DisplayName, amount, out var removedItems))
+        if (!aisling.Inventory.RemoveQuantity(item.DisplayName, amount, out var removedItems))
             return;
 
         foreach (var removedItem in removedItems)
@@ -169,28 +169,28 @@ public class Exchange
             Logger.LogDebug(
                 "[Exchange: {ExchangeId}]: {UserName} added {Item}",
                 ExchangeId,
-                user.Name,
+                aisling.Name,
                 item);
         }
     }
 
-    public void Cancel(User user)
+    public void Cancel(Aisling aisling)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(user);
-        (var gold, var items, _) = GetUserVars(user);
+        var otherUser = GetOtherUser(aisling);
+        (var gold, var items, _) = GetUserVars(aisling);
         (var otherGold, var otherItems, _) = GetUserVars(otherUser);
 
         if (!IsActive)
             return;
 
-        Distribute(user, gold, items);
+        Distribute(aisling, gold, items);
         Distribute(otherUser, otherGold, otherItems);
 
-        user.Client.SendExchangeCancel(false);
+        aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
-        Logger.LogDebug("[Exchange: {ExchangeId}]: {UserName} canceled the trade", ExchangeId, user.Name);
+        Logger.LogDebug("[Exchange: {ExchangeId}]: {UserName} canceled the trade", ExchangeId, aisling.Name);
 
         Deactivate();
     }
@@ -206,76 +206,76 @@ public class Exchange
             User2.UserState &= ~UserState.Exchanging;
     }
 
-    private void Distribute(User user, int gold, Inventory items)
+    private void Distribute(Aisling aisling, int gold, Inventory items)
     {
-        user.GiveGold(gold);
+        aisling.GiveGold(gold);
 
         Logger.LogDebug(
             "[Exchange: {ExchangeId}]: {UserName} received {Gold} gold",
             ExchangeId,
-            user.Name,
+            aisling.Name,
             gold);
 
         foreach (var item in items)
         {
             items.Remove(item.Slot);
 
-            if (user.Inventory.TryAddToNextSlot(item))
+            if (aisling.Inventory.TryAddToNextSlot(item))
                 Logger.LogDebug(
                     "[Exchange: {ExchangeId}]: {UserName} received {Item}",
                     ExchangeId,
-                    user.Name,
+                    aisling.Name,
                     item);
         }
     }
 
-    public User GetOtherUser(User user) => user.Equals(User1) ? User2 : User1;
+    public Aisling GetOtherUser(Aisling aisling) => aisling.Equals(User1) ? User2 : User1;
 
-    private (int Gold, Inventory Items, bool Accepted) GetUserVars(User user) =>
-        user.Equals(User1) ? (User1Gold, User1Items, User1Accept) : (User2Gold, User2Items, User2Accept);
+    private (int Gold, Inventory Items, bool Accepted) GetUserVars(Aisling aisling) =>
+        aisling.Equals(User1) ? (User1Gold, User1Items, User1Accept) : (User2Gold, User2Items, User2Accept);
 
-    public void SetGold(User user, int amount)
+    public void SetGold(Aisling aisling, int amount)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(user);
-        var uuserVars = GetUserVars(user);
+        var otherUser = GetOtherUser(aisling);
+        var uuserVars = GetUserVars(aisling);
         (var gold, _, var accepted) = uuserVars;
 
         if (!IsActive || accepted)
             return;
 
         //this is a set, so we should start by returning whatever gold is already in the exchange
-        user.GiveGold(gold);
-        SetUserGold(user, 0);
+        aisling.GiveGold(gold);
+        SetUserGold(aisling, 0);
 
-        if (user.Gold >= amount)
+        if (aisling.Gold >= amount)
         {
-            user.GiveGold(-amount);
-            SetUserGold(user, amount);
+            aisling.GiveGold(-amount);
+            SetUserGold(aisling, amount);
 
             Logger.LogDebug(
                 "[Exchange: {ExchangeId}]: {UserName} set his gold amount to {Gold}",
                 ExchangeId,
-                user.Name,
+                aisling.Name,
                 gold);
         }
 
-        user.Client.SendExchangeSetGold(false, amount);
+        aisling.Client.SendExchangeSetGold(false, amount);
         otherUser.Client.SendExchangeSetGold(true, amount);
     }
 
-    private void SetUserAccepted(User user, bool accepted)
+    private void SetUserAccepted(Aisling aisling, bool accepted)
     {
-        if (user.Equals(User1))
+        if (aisling.Equals(User1))
             User1Accept = accepted;
         else
             User2Accept = accepted;
     }
 
-    private void SetUserGold(User user, int amount)
+    private void SetUserGold(Aisling aisling, int amount)
     {
-        if (user.Equals(User1))
+        if (aisling.Equals(User1))
             User1Gold = amount;
         else
             User2Gold = amount;

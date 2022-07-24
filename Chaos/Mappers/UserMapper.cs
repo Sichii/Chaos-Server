@@ -1,7 +1,4 @@
 using AutoMapper;
-using Chaos.Caches.Interfaces;
-using Chaos.Containers;
-using Chaos.Core.Utilities;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Serializable;
 using Chaos.Objects.World;
@@ -10,23 +7,10 @@ namespace Chaos.Mappers;
 
 public class UserMapper : Profile
 {
-    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ISimpleCache<string, MapInstance> MapInstanceCache;
-
-    public UserMapper(ISimpleCache<string, MapInstance> mapInstanceCache)
+    
+    public UserMapper()
     {
-        MapInstanceCache = mapInstanceCache;
-
-        CreateMap<SerializableUser, User>(MemberList.None)
-            .DisableCtorValidation()
-            .BeforeMap(
-                (src, dest) =>
-                {
-                    dest.MapInstance = MapInstanceCache.GetObject(src.MapInstanceId);
-                    ShallowCopy<UserStatSheet>.Merge(src.StatSheet, dest.StatSheet);
-                });
-
-        CreateMap<User, SerializableUser>(MemberList.None)
+        CreateMap<Aisling, SerializableUser>(MemberList.None)
             .ForMember(
                 s => s.MapInstanceId,
                 o => o.MapFrom(u => u.MapInstance.InstanceId))
@@ -34,7 +18,7 @@ public class UserMapper : Profile
                 s => s.Nation,
                 o => o.MapFrom(u => u.StatSheet.Nation));
 
-        CreateMap<User, AttributesArgs>(MemberList.Destination)
+        CreateMap<Aisling, AttributesArgs>(MemberList.Destination)
             .ForMember(
                 s => s.Ability,
                 o => o.MapFrom(u => u.StatSheet.Ability))
@@ -126,7 +110,7 @@ public class UserMapper : Profile
                 s => s.Wis,
                 o => o.MapFrom(u => u.StatSheet.EffectiveWis));
 
-        CreateMap<User, ProfileArgs>()
+        CreateMap<Aisling, ProfileArgs>()
             .ForMember(
                 a => a.AdvClass,
                 o => o.MapFrom(u => u.StatSheet.AdvClass))
@@ -140,7 +124,7 @@ public class UserMapper : Profile
                 a => a.GroupOpen,
                 o => o.MapFrom(u => u.Options.Group));
 
-        CreateMap<User, SelfProfileArgs>(MemberList.None)
+        CreateMap<Aisling, SelfProfileArgs>(MemberList.None)
             .ForMember(
                 a => a.AdvClass,
                 o => o.MapFrom(u => u.StatSheet.AdvClass))
@@ -160,7 +144,7 @@ public class UserMapper : Profile
                 a => a.IsMaster,
                 o => o.MapFrom(u => u.StatSheet.Master));
 
-        CreateMap<User, WorldListArg>(MemberList.None)
+        CreateMap<Aisling, WorldListMemberInfo>(MemberList.None)
             .ForMember(
                 a => a.BaseClass,
                 o => o.MapFrom(u => u.StatSheet.BaseClass))
@@ -174,14 +158,14 @@ public class UserMapper : Profile
                 a => a.Title,
                 o => o.MapFrom(u => u.Titles.FirstOrDefault()));
 
-        CreateMap<User, UserIdArgs>(MemberList.None)
+        CreateMap<Aisling, UserIdArgs>(MemberList.None)
             .ForMember(
                 a => a.BaseClass,
                 o => o.MapFrom(u => u.StatSheet.BaseClass));
 
-        CreateMap<User, DisplayAislingArgs>(MemberList.None)
+        CreateMap<Aisling, DisplayAislingArgs>(MemberList.None)
             .ConstructUsing(
-                (src, rc) =>
+                (src, _) =>
                 {
                     var overHelm = src.Equipment[EquipmentSlot.OverHelm];
                     var helmet = src.Equipment[EquipmentSlot.Helmet];
@@ -231,15 +215,13 @@ public class UserMapper : Profile
                         LanternSize = LanternSize.None,
                         Name = src.Name,
                         NameTagStyle = NameTagStyle.NeutralHover,
-                        Point = src.Point,
+                        X = src.X,
+                        Y = src.Y,
                         RestPosition = RestPosition.None,
                         Sprite = src.Sprite == 0 ? null : src.Sprite
                     };
 
                     return args;
                 });
-
-        //TODO: blind
-        //TODO: mailflags
     }
 }

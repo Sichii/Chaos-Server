@@ -11,6 +11,8 @@
 
 using System.IO;
 using Chaos.Cryptography.Definitions;
+using Chaos.Cryptography.Extensions;
+using Chaos.Data;
 
 namespace Chaos.Containers;
 

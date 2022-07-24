@@ -10,7 +10,7 @@ public abstract class ItemScriptBase : ScriptBase, IItemScript
 
     protected ItemScriptBase(Item item) => Source = item;
 
-    public abstract void OnUnequip(User user);
+    public abstract void OnUnequip(Aisling aisling);
 
-    public abstract void OnUse(User user);
+    public abstract void OnUse(Aisling aisling);
 }

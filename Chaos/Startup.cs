@@ -7,13 +7,12 @@ using Chaos.Caches;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.JsonConverters;
-using Chaos.Cryptography;
-using Chaos.Cryptography.Interfaces;
-using Chaos.Effects.Interfaces;
+using Chaos.Cryptography.Extensions;
+using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Factories;
 using Chaos.Factories.Interfaces;
+using Chaos.Geometry.JsonConverters;
 using Chaos.Managers;
 using Chaos.Managers.Interfaces;
 using Chaos.Mappers;
@@ -21,12 +20,9 @@ using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Objects.World;
 using Chaos.Options;
-using Chaos.Packets;
-using Chaos.Packets.Interfaces;
+using Chaos.Packets.Extensions;
 using Chaos.Servers;
-using Chaos.Servers.Interfaces;
 using Chaos.Templates;
-using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -47,13 +43,12 @@ public class Startup
     /// </summary>
     public void ConfigureCaches(IServiceCollection services)
     {
-        services.AddSingleton<ISimpleCache<string, IEffect>, EffectCache>();
-        services.AddSingleton<ISimpleCache<string, ItemTemplate>, ItemTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, SkillTemplate>, SkillTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, SpellTemplate>, SpellTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, MapTemplate>, MapTemplateCache>();
-        services.AddSingleton<ISimpleCache<string, MapInstance>, MapInstanceCache>();
-        services.AddSingleton<ISimpleCache<string, Metafile>, MetafileCache>();
+        services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
+        services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
+        services.AddSingleton<ISimpleCache<SpellTemplate>, SpellTemplateCache>();
+        services.AddSingleton<ISimpleCache<MapTemplate>, MapTemplateCache>();
+        services.AddSingleton<ISimpleCache<MapInstance>, MapInstanceCache>();
+        services.AddSingleton<ISimpleCache<Metafile>, MetafileCache>();
     }
 
     /// <summary>
@@ -64,6 +59,7 @@ public class Startup
         services.AddSingleton<IItemScriptFactory, ItemScriptFactory>();
         services.AddSingleton<ISkillScriptFactory, SkillScriptFactory>();
         services.AddSingleton<ISpellScriptFactory, SpellScriptFactory>();
+        services.AddSingleton<IEffectFactory, EffectFactory>();
         services.AddTransient<IExchangeFactory, ExchangeFactory>();
         services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();
         services.AddTransient<IClientFactory<ILoginClient>, LoginClientFactory>();
@@ -71,6 +67,7 @@ public class Startup
         services.AddTransient<IItemFactory, ItemFactory>();
         services.AddTransient<ISkillFactory, SkillFactory>();
         services.AddTransient<ISpellFactory, SpellFactory>();
+        services.AddTransient<IWorldObjectFactory, WorldObjectFactory>();
     }
 
     /// <summary>
@@ -80,7 +77,7 @@ public class Startup
     {
         services.AddSingleton<IRedirectManager, RedirectManager>();
         services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
-        services.AddSingleton<ISaveManager<User>, UserSaveManager>();
+        services.AddSingleton<ISaveManager<Aisling>, UserSaveManager>();
     }
 
     /// <summary>
@@ -144,13 +141,13 @@ public class Startup
         services.AddOptionsFromConfig<ActiveDirectoryCredentialManagerOptions>(ConfigKeys.Options.Key)
                 .PostConfigure(ActiveDirectoryCredentialManagerOptions.PostConfigure);
 
-        services.AddOptionsFromConfig<ItemTemplateManagerOptions>(ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<SkillTemplateManagerOptions>(ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<SpellTemplateManagerOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<ItemTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<SkillTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<SpellTemplateCacheOptions>(ConfigKeys.Options.Key);
         services.AddOptionsFromConfig<UserSaveManagerOptions>(ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<MapTemplateManagerOptions>(ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<MapInstanceManagerOptions>(ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<MetafileManagerOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MapTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MapInstanceCacheOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MetafileCacheOptions>(ConfigKeys.Options.Key);
 
         services.AddOptionsFromConfig<LobbyOptions>(ConfigKeys.Options.Key)
                 .PostConfigure(LobbyOptions.PostConfigure)
@@ -177,17 +174,7 @@ public class Startup
                         o.Converters.Add(new JsonStringEnumConverter());
                     });
     }
-
-    /// <summary>
-    ///     Configure game servers
-    /// </summary>
-    public void ConfigureServers(IServiceCollection services)
-    {
-        services.AddScoped<ILobbyServer, LobbyServer>();
-        services.AddScoped<ILoginServer, LoginServer>();
-        services.AddScoped<IWorldServer, WorldServer>();
-    }
-
+    
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton(Configuration);
@@ -208,22 +195,18 @@ public class Startup
 
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
-
-        var codePage = Configuration.GetValue<int>(ConfigKeys.Options.CodePage);
-        var encoding = Encoding.GetEncoding(codePage);
-        services.AddSingleton(encoding);
-        services.AddSingleton<ItemUtility>();
-
+        
+        services.AddPacketSerialization();
+        services.AddCryptography();
+        services.AddHostedService<LobbyServer>();
+        services.AddHostedService<LoginServer>();
+        services.AddHostedService<WorldServer>();
+        
         ConfigureOptions(services);
-
-        services.AddSingleton<IPacketSerializer, PacketSerializer>();
-        services.AddTransient<ICryptoClient, CryptoClient>();
-
         ConfigureCaches(services);
         ConfigureManagers(services);
         ConfigureMappings(services);
         ConfigureFactories(services);
-        ConfigureServers(services);
     }
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
@@ -231,7 +214,6 @@ public class Startup
     {
         public static class Options
         {
-            public static string CodePage => $"{Key}:CodePage";
             public static string Key => "Options";
         }
 

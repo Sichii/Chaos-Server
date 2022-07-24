@@ -6,12 +6,12 @@ public record ProfileArgs : ISendArgs
 {
     public AdvClass? AdvClass { get; set; }
     public BaseClass BaseClass { get; set; }
-    public IDictionary<EquipmentSlot, ItemArg?> Equipment { get; set; } = new Dictionary<EquipmentSlot, ItemArg?>();
+    public IDictionary<EquipmentSlot, ItemInfo?> Equipment { get; set; } = new Dictionary<EquipmentSlot, ItemInfo?>();
     public bool GroupOpen { get; set; }
     public string? GuildName { get; set; }
     public string? GuildTitle { get; set; }
     public uint Id { get; set; }
-    public ICollection<LegendMarkArg> LegendMarks { get; set; } = new List<LegendMarkArg>();
+    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = new List<LegendMarkInfo>();
     public string Name { get; set; } = null!;
     public Nation Nation { get; set; }
     public byte[] Portrait { get; set; } = Array.Empty<byte>();

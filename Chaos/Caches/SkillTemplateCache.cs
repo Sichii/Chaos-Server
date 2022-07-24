@@ -9,16 +9,16 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Caches;
 
-public class SkillTemplateCache : ISimpleCache<string, SkillTemplate>
+public class SkillTemplateCache : ISimpleCache<SkillTemplate>
 {
     private readonly ConcurrentDictionary<string, SkillTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
-    private readonly SkillTemplateManagerOptions Options;
+    private readonly SkillTemplateCacheOptions Options;
 
     public SkillTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<SkillTemplateManagerOptions> options,
+        IOptionsSnapshot<SkillTemplateCacheOptions> options,
         ILogger<SkillTemplateCache> logger
     )
     {
@@ -60,7 +60,7 @@ public class SkillTemplateCache : ISimpleCache<string, SkillTemplate>
         Logger.LogInformation("{Count} skill templates loaded", Cache.Count);
     }
 
-    private async ValueTask<SkillTemplate> LoadTemplateFromFileAsync(string path)
+    private async Task<SkillTemplate> LoadTemplateFromFileAsync(string path)
     {
         await using var stream = File.OpenRead(path);
         var skillTemplate = await JsonSerializer.DeserializeAsync<SkillTemplate>(stream, JsonSerializerOptions);

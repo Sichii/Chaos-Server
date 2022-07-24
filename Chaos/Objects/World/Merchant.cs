@@ -1,36 +1,25 @@
 using Chaos.Containers;
+using Chaos.Data;
+using Chaos.Geometry.Interfaces;
 using Chaos.Objects.World.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
-/// <summary>
-///     Represents an in-game merchant.
-/// </summary>
-internal class Merchant : Creature
+public class Merchant : Creature
 {
     public override bool IsAlive => true;
-    public override StatSheet StatSheet { get; }
+    public override StatSheet StatSheet => StatSheet.Maxed;
 
     public override CreatureType Type => CreatureType.Merchant;
-
-    public Merchant(
-        string name,
-        MapInstance mapInstance,
-        Point point,
-        ushort sprite
-    )
-        : base(
-            name,
-            mapInstance,
-            point,
-            sprite) => StatSheet = StatSheet.Maxed;
-
-    public override void GoldDroppedOn(int amount, User source)
+    
+    /*
+    public override void OnGoldDroppedOn(int amount, User source)
     {
         //TODO: quests or something?
     }
 
-    public override void ItemDroppedOn(byte slot, byte count, User source)
+    public override void OnItemDroppedOn(byte slot, byte count, User source)
     {
         //TODO: quests or something?
     }
@@ -39,6 +28,17 @@ internal class Merchant : Creature
     {
         //TODO: open a menu or something
     }
+    */
 
-    public override void Update(TimeSpan delta) => base.Update(delta);
+    public Merchant(
+        string name,
+        ushort sprite,
+        MapInstance mapInstance,
+        IPoint point
+    )
+        : base(
+            name,
+            sprite,
+            mapInstance,
+            point) { }
 }

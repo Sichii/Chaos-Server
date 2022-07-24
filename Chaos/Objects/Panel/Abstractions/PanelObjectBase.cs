@@ -1,6 +1,7 @@
-using Chaos.Core.Interfaces;
+using Chaos.Core.Identity;
 using Chaos.Scripts.Interfaces;
 using Chaos.Templates.Abstractions;
+using Chaos.Time.Interfaces;
 
 namespace Chaos.Objects.Panel.Abstractions;
 
@@ -11,16 +12,19 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 {
     public TimeSpan Cooldown { get; set; }
     public TimeSpan Elapsed { get; set; }
-    public ICollection<string> ScriptKeys { get; set; } = new List<string>();
+    public ISet<string> ScriptKeys { get; }
     public byte Slot { get; set; }
-    public ulong UniqueId { get; set; }
+    public ulong UniqueId { get; }
     public virtual PanelObjectTemplateBase Template { get; }
-
-    protected PanelObjectBase(PanelObjectTemplateBase template)
+    
+    protected PanelObjectBase(PanelObjectTemplateBase template, ulong? uniqueId = null)
     {
+        uniqueId ??= ServerId.NextId;
         Template = template;
         Cooldown = template.BaseCooldown;
         Elapsed = TimeSpan.FromDays(1);
+        ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
+        UniqueId = uniqueId.Value;
     }
 
     private TimeSpan ActualCooldown(double cooldownReduction)

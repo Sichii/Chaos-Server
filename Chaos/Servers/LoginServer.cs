@@ -1,10 +1,10 @@
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Cryptography;
+using Chaos.Data;
 using Chaos.Exceptions;
 using Chaos.Factories.Interfaces;
 using Chaos.Managers.Interfaces;
@@ -28,25 +28,24 @@ public class LoginServer : ServerBase, ILoginServer
 {
     private readonly IClientFactory<ILoginClient> ClientFactory;
     private readonly ICredentialManager CredentialManager;
-    private readonly ISimpleCache<string, MapInstance> MapInstanceCache;
-    private readonly ISimpleCache<string, Metafile> MetafileCache;
+    private readonly ISimpleCache<MapInstance> MapInstanceCache;
+    private readonly ISimpleCache<Metafile> MetafileCache;
     private readonly Notice Notice;
-    private readonly ISaveManager<User> UserSaveManager;
+    private readonly ISaveManager<Aisling> UserSaveManager;
     public ConcurrentDictionary<uint, ILoginClient> Clients { get; }
     public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
     protected new LoginClientHandler?[] ClientHandlers { get; }
     protected override LoginOptions Options { get; }
 
     public LoginServer(
-        ISaveManager<User> userSaveManager,
+        ISaveManager<Aisling> userSaveManager,
         IClientFactory<ILoginClient> clientFactory,
         ICredentialManager credentialManager,
-        ISimpleCache<string, MapInstance> mapInstanceCache,
-        ISimpleCache<string, Metafile> metafileCache,
+        ISimpleCache<MapInstance> mapInstanceCache,
+        ISimpleCache<Metafile> metafileCache,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<LoginOptions> options,
-        Encoding encoding,
         ILogger<LoginServer> logger
     )
         : base(
@@ -55,16 +54,18 @@ public class LoginServer : ServerBase, ILoginServer
             options,
             logger)
     {
+        var opts = options.Value;
+        
+        Options = opts;
         UserSaveManager = userSaveManager;
         ClientFactory = clientFactory;
         CredentialManager = credentialManager;
         MapInstanceCache = mapInstanceCache;
         MetafileCache = metafileCache;
-        Notice = new Notice(options.Value.NoticeMessage, encoding);
+        Notice = new Notice(options.Value.NoticeMessage);
         Clients = new ConcurrentDictionary<uint, ILoginClient>();
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
         ClientHandlers = new LoginClientHandler[byte.MaxValue];
-        Options = options.Value;
 
         IndexHandlers();
     }
@@ -108,16 +109,15 @@ public class LoginServer : ServerBase, ILoginServer
         if (CreateCharRequests.TryGetValue(client.Id, out var requestArgs))
         {
             (var hairStyle, var gender, var hairColor) = args;
-
-            var user = new User(
+            
+            var user = new Aisling(
                 requestArgs.Name,
                 gender,
                 hairStyle,
                 hairColor);
 
             var startingMap = MapInstanceCache.GetObject(Options.StartingMapInstanceId);
-            user.MapInstance = startingMap;
-            user.Point = Options.StartingPoint;
+            user.SetLocation(startingMap, Options.StartingPoint);
 
             await UserSaveManager.SaveAsync(user);
             Logger.LogDebug("New character created ({Name})", user.Name);
@@ -243,16 +243,19 @@ public class LoginServer : ServerBase, ILoginServer
     #region Connection / Handler
     protected delegate ValueTask LoginClientHandler(ILoginClient client, ref ClientPacket packet);
 
-    public override ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet)
+    public override ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
     {
         if (client is ILoginClient loginClient)
-        {
-            var handler = ClientHandlers[(byte)packet.OpCode];
-
-            return handler?.Invoke(loginClient, ref packet) ?? default;
-        }
-
+            return HandlePacketAsync(loginClient, ref packet);
+        
         return base.HandlePacketAsync(client, ref packet);
+    }
+
+    private ValueTask HandlePacketAsync(ILoginClient client, ref ClientPacket packet)
+    {
+        var handler = ClientHandlers[(byte)packet.OpCode];
+
+        return handler?.Invoke(client, ref packet) ?? default;
     }
 
     protected sealed override void IndexHandlers()

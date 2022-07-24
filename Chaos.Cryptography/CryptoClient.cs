@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Chaos.Cryptography.Extensions;
 using Chaos.Cryptography.Interfaces;
 
 namespace Chaos.Cryptography;
@@ -81,8 +82,8 @@ public class CryptoClient : ICryptoClient
     public void Encrypt(ref Span<byte> buffer, byte opCode, byte sequence)
     {
         IReadOnlyList<byte> thisKey;
-        var a = (ushort)GenerateRandom(256, ushort.MaxValue);
-        var b = (byte)GenerateRandom(100, byte.MaxValue);
+        var a = (ushort)Random.Shared.Next(256, ushort.MaxValue);
+        var b = (byte)Random.Shared.Next(100, byte.MaxValue);
         var type = ServerEncryptionType(opCode);
 
         switch (type)
@@ -102,7 +103,7 @@ public class CryptoClient : ICryptoClient
         for (var i = 0; i < buffer.Length; i++)
         {
             var index = (byte)(i / Key.Length);
-            buffer[i] ^= (byte)(Salts[index] ^ (uint)thisKey[i % thisKey.Count]);
+            buffer[i] ^= (byte)(Salts[index] ^ thisKey[i % thisKey.Count]);
 
             if (index != sequence)
                 buffer[i] ^= Salts[sequence];
@@ -221,31 +222,16 @@ public class CryptoClient : ICryptoClient
                            .ComputeHash(Encoding.ASCII.GetBytes(value)))
                     .Replace("-", string.Empty)
                     .ToLower();
-
-    public int GenerateRandom() => Random.Shared.Next();
-
-    public int GenerateRandom(int minValue, int maxValue) => Random.Shared.Next(minValue, maxValue);
-
-    public uint GenerateRandom(uint minValue, uint maxValue)
-    {
-        if (maxValue < int.MaxValue)
-            return (uint)GenerateRandom((int)minValue, (int)maxValue);
-
-        var diff = maxValue - minValue;
-        var random = (uint)GenerateRandom(int.MinValue, int.MaxValue);
-
-        return random % diff + minValue;
-    }
-
-    public ushort GenerateFieldNodeChecksum(Location location, string text)
+    
+    public ushort GenerateFieldNodeChecksum(ushort mapId, byte x, byte y, string text)
     {
         using var data = new MemoryStream();
         using var writer = new BinaryWriter(data);
 
         writer.Write(Encoding.Unicode.GetBytes(text));
-        writer.Write(location.MapId);
-        writer.Write(location.Point.X);
-        writer.Write(location.Point.Y);
+        writer.Write(mapId);
+        writer.Write(x);
+        writer.Write(y);
 
         writer.Flush();
 

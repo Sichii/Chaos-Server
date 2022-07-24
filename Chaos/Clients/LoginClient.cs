@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Cryptography.Interfaces;
+using Chaos.Data;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model.Server;
@@ -64,7 +65,7 @@ public class LoginClient : SocketClientBase, ILoginClient
         Send(args);
     }
 
-    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<string, Metafile> metafileCache, string? name = null)
+    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<Metafile> metafileCache, string? name = null)
     {
         var args = new MetafileArgs
         {
@@ -80,7 +81,7 @@ public class LoginClient : SocketClientBase, ILoginClient
 
                 var metafile = metafileCache.GetObject(name);
 
-                args.MetafileData = new MetafileDataArg
+                args.MetafileData = new MetafileInfo
                 {
                     Name = metafile.Name,
                     CheckSum = metafile.CheckSum,
@@ -92,7 +93,7 @@ public class LoginClient : SocketClientBase, ILoginClient
             case MetafileRequestType.AllCheckSums:
             {
                 args.Info = metafileCache.Select(
-                                             metafile => new MetafileDataArg
+                                             metafile => new MetafileInfo
                                              {
                                                  Name = metafile.Name,
                                                  CheckSum = metafile.CheckSum

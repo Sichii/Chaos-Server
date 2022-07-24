@@ -1,22 +1,26 @@
 using System.Collections.Concurrent;
 using System.Text;
-using Chaos.Core.Memory;
 using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Packets;
 
 public class PacketSerializer : IPacketSerializer
 {
-    private readonly ConcurrentDictionary<Type, IClientPacketDeserializer> Deserializers = new();
-    private readonly ConcurrentDictionary<Type, IServerPacketSerializer> Serializers = new();
+    private readonly ConcurrentDictionary<Type, IClientPacketDeserializer> Deserializers;
+    private readonly ConcurrentDictionary<Type, IServerPacketSerializer> Serializers;
     public Encoding Encoding { get; }
 
-    public PacketSerializer(Encoding encoding)
+    public PacketSerializer(
+        Encoding encoding,
+        IDictionary<Type, IClientPacketDeserializer> deserializers,
+        IDictionary<Type, IServerPacketSerializer> serializers
+    )
     {
         Encoding = encoding;
-        LoadDeserializersFromAssembly();
-        LoadSerializersFromAssembly();
+        Deserializers = new ConcurrentDictionary<Type, IClientPacketDeserializer>(deserializers);
+        Serializers = new ConcurrentDictionary<Type, IServerPacketSerializer>(serializers);
     }
 
     public T Deserialize<T>(ref ClientPacket packet) where T: IReceiveArgs
@@ -30,47 +34,7 @@ public class PacketSerializer : IPacketSerializer
 
         return (T)deserializer.Deserialize(ref reader);
     }
-
-    private void LoadDeserializersFromAssembly()
-    {
-        var deserializers = TypeLoader.LoadTypes<IClientPacketDeserializer>()
-                                      .Select(asmType => (IClientPacketDeserializer)Activator.CreateInstance(asmType)!)
-                                      .ToArray();
-
-        foreach (var deserializer in deserializers)
-        {
-            var type = deserializer.GetType()
-                                   .GetInterfaces()
-                                   .Where(i => i.IsGenericType)
-                                   .First(i => i.GetGenericTypeDefinition() == typeof(IClientPacketDeserializer<>));
-
-            var typeParam = type.GetGenericArguments()
-                                .First();
-
-            Deserializers.TryAdd(typeParam, deserializer);
-        }
-    }
-
-    private void LoadSerializersFromAssembly()
-    {
-        var serializers = TypeLoader.LoadTypes<IServerPacketSerializer>()
-                                    .Select(asmType => (IServerPacketSerializer)Activator.CreateInstance(asmType)!)
-                                    .ToArray();
-
-        foreach (var serializer in serializers)
-        {
-            var type = serializer.GetType()
-                                 .GetInterfaces()
-                                 .Where(i => i.IsGenericType)
-                                 .First(i => i.GetGenericTypeDefinition() == typeof(IServerPacketSerializer<>));
-
-            var typeParam = type.GetGenericArguments()
-                                .First();
-
-            Serializers.TryAdd(typeParam, serializer);
-        }
-    }
-
+    
     public ServerPacket Serialize<T>(T obj) where T: ISendArgs
     {
         if (obj == null)

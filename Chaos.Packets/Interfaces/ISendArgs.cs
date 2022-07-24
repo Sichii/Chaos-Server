@@ -1,4 +1,6 @@
 namespace Chaos.Packets.Interfaces;
 
-//novel marker for args objects that can be serialized / sent via socket
+/// <summary>
+/// Marker interface for objects that can be serialized by <see cref="IPacketSerializer"/>
+/// </summary>
 public interface ISendArgs { }

@@ -1,13 +1,12 @@
 using Chaos.Packets;
+using Microsoft.Extensions.Hosting;
 
 namespace Chaos.Networking.Interfaces;
 
-public interface IServer
+public interface IServer : IHostedService
 {
-    ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet) where TClient: ISocketClient;
+    ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet);
     ValueTask OnHeartBeatAsync(ISocketClient client, ref ClientPacket packet);
     ValueTask OnSequenceChangeAsync(ISocketClient client, ref ClientPacket packet);
     ValueTask OnSynchronizeTicksAsync(ISocketClient client, ref ClientPacket packet);
-
-    void Start();
 }

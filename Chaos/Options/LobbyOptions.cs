@@ -1,3 +1,4 @@
+using System.Text;
 using Chaos.Networking.Options;
 using Microsoft.Extensions.Logging;
 

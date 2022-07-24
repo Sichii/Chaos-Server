@@ -1,3 +1,4 @@
+using Chaos.Data;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Effects.Abstractions;

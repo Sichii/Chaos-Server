@@ -1,5 +1,5 @@
-using Chaos.Core.Interfaces;
 using Chaos.Observers.Interfaces;
+using Chaos.Time.Interfaces;
 
 namespace Chaos.Containers.Interfaces;
 

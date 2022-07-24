@@ -9,46 +9,16 @@ namespace Chaos.Mappers;
 
 public class BankMapper : Profile
 {
-    private readonly ISimpleCache<string, ItemTemplate> ItemTemplateCache;
-
-    public BankMapper(ISimpleCache<string, ItemTemplate> itemTemplateCache)
+    public BankMapper()
     {
-        ItemTemplateCache = itemTemplateCache;
-
-        CreateMap<SerializableBankItem, Item>(MemberList.None)
-            .ConstructUsing(s => new Item(ItemTemplateCache.GetObject(s.TemplateKey)));
-
         CreateMap<Item, SerializableBankItem>(MemberList.None)
             .ForMember(
-                s => s.ScriptKey,
-                o => o.MapFrom(i => i.Script!.ScriptKey))
+                s => s.ScriptKeys,
+                o => o.MapFrom(i => i.ScriptKeys))
             .ForMember(
                 s => s.TemplateKey,
                 o => o.MapFrom(i => i.Template.TemplateKey));
-
-        CreateMap<SerializableBank, Bank>(MemberList.None)
-            .ForMember(
-                b => b.Gold,
-                o => o.MapFrom(s => s.Gold))
-            .ForMember(
-                b => b.Items,
-                o => o.MapFrom(
-                    (
-                        src,
-                        dest,
-                        prop,
-                        rc
-                    ) =>
-                    {
-                        foreach (var sItem in src.Items)
-                        {
-                            var item = rc.Mapper.Map<Item>(sItem);
-                            prop.Add(item.DisplayName, item);
-                        }
-
-                        return prop;
-                    }));
-
+        
         CreateMap<Bank, SerializableBank>(MemberList.None)
             .ForMember(
                 s => s.Gold,

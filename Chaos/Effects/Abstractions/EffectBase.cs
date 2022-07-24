@@ -22,8 +22,8 @@ public abstract class EffectBase : IEffect
     protected EffectColor Color { get; set; } = EffectColor.None;
     protected TimeSpan? Duration { get; init; } = TimeSpan.Zero;
     protected TimeSpan Elapsed { get; set; }
-    protected User? SourceUser { get; set; }
-    protected User? TargetUser { get; set; }
+    protected Aisling? SourceUser { get; set; }
+    protected Aisling? TargetUser { get; set; }
     protected uint UpdateRateMs { get; init; }
 
     public virtual string CommonIdentifier => Name;
@@ -35,9 +35,9 @@ public abstract class EffectBase : IEffect
     {
         Source = source;
         Target = target;
-        SourceUser = source as User;
-        TargetUser = target as User;
-        Name = GetEffectName(GetType());
+        SourceUser = source as Aisling;
+        TargetUser = target as Aisling;
+        Name = GetEffectKey(GetType());
     }
 
     public virtual bool Equals(IEffect? other) => other is not null && (other.Icon == Icon);
@@ -61,7 +61,7 @@ public abstract class EffectBase : IEffect
         };
     }
 
-    public static string GetEffectName(Type type) => type.Name.Replace("effect", string.Empty, StringComparison.OrdinalIgnoreCase);
+    public static string GetEffectKey(Type type) => type.Name.Replace("effect", string.Empty, StringComparison.OrdinalIgnoreCase);
 
     public override int GetHashCode() => Icon.GetHashCode();
 

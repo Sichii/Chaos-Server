@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
-using Chaos.Core.Compression;
-using Chaos.Cryptography.Definitions;
+using Chaos.Cryptography.Extensions;
+using Chaos.IO.Compression;
 using Chaos.Networking.Options;
 
 namespace Chaos.Objects;
@@ -12,9 +12,10 @@ public class ServerTable
     public byte[] Data { get; }
     public Dictionary<byte, ServerInfo> Servers { get; }
 
-    public ServerTable(ICollection<ServerInfo> servers, Encoding encoding)
+    public ServerTable(ICollection<ServerInfo> servers)
     {
         Servers = servers.ToDictionary(info => info.Id);
+        var encoding = Encoding.GetEncoding(949);
 
         using var buffer = new MemoryStream();
         using var writer = new BinaryWriter(buffer);
@@ -37,7 +38,7 @@ public class ServerTable
 
         var data = buffer.ToArray();
         CheckSum = data.Generate32();
-        ZLIB.CompressInPlace(ref data);
+        ZLIB.Compress(ref data);
 
         Data = data;
     }

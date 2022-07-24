@@ -4,6 +4,8 @@ using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Cryptography.Interfaces;
+using Chaos.Data;
+using Chaos.Geometry.Definitions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
@@ -22,7 +24,7 @@ namespace Chaos.Clients;
 public class WorldClient : SocketClientBase, IWorldClient
 {
     private readonly IMapper Mapper;
-    public User User { get; set; } = null!;
+    public Aisling Aisling { get; set; } = null!;
 
     public WorldClient(
         Socket socket,
@@ -43,7 +45,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddItemToPaneArgs
         {
-            Item = Mapper.Map<ItemArg>(item)
+            Item = Mapper.Map<ItemInfo>(item)
         };
 
         Send(args);
@@ -53,7 +55,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddSkillToPaneArgs
         {
-            Skill = Mapper.Map<SkillArg>(skill)
+            Skill = Mapper.Map<SkillInfo>(skill)
         };
 
         Send(args);
@@ -63,7 +65,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddSpellToPaneArgs
         {
-            Spell = Mapper.Map<SpellArg>(spell)
+            Spell = Mapper.Map<SpellInfo>(spell)
         };
 
         Send(args);
@@ -86,7 +88,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendAttributes(StatUpdateType statUpdateType)
     {
-        var args = Mapper.Map<AttributesArgs>(User);
+        var args = Mapper.Map<AttributesArgs>(Aisling);
         args.StatUpdateType = statUpdateType;
         Send(args);
     }
@@ -171,28 +173,30 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendDisplayUser(User user)
+    public void SendDisplayAisling(Aisling aisling)
     {
-        var args = Mapper.Map<DisplayAislingArgs>(user);
+        var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
         Send(args);
     }
 
-    public void SendDoors(params Door[] doors)
+    public void SendDoors(IEnumerable<Door> doors)
     {
         var args = new DoorArgs
         {
             Doors = doors.Select(
-                             door => new DoorArg
+                             door => new DoorInfo
                              {
-                                 Point = door.Point,
+                                 X = door.X,
+                                 Y = door.Y,
                                  Closed = door.Closed,
                                  OpenRight = door.OpenRight
                              })
                          .ToList()
         };
 
-        Send(args);
+        if (args.Doors.Any())
+            Send(args);
     }
 
     public void SendEffect(EffectColor effectColor, byte effectIcon)
@@ -211,7 +215,7 @@ public class WorldClient : SocketClientBase, IWorldClient
         var args = new EquipmentArgs
         {
             Slot = (EquipmentSlot)item.Slot,
-            Item = Mapper.Map<ItemArg>(item)
+            Item = Mapper.Map<ItemInfo>(item)
         };
 
         Send(args);
@@ -280,13 +284,13 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendExchangeStart(User fromUser)
+    public void SendExchangeStart(Aisling fromAisling)
     {
         var args = new ExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.StartExchange,
-            OtherUserId = fromUser.Id,
-            OtherUserName = fromUser.Name
+            OtherUserId = fromAisling.Id,
+            OtherUserName = fromAisling.Name
         };
 
         Send(args);
@@ -329,7 +333,11 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendLocation()
     {
-        var args = new LocationArgs { Point = User.Point };
+        var args = new LocationArgs
+        {
+            X = Aisling.X,
+            Y = Aisling.Y
+        };
 
         Send(args);
     }
@@ -358,7 +366,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapData()
     {
-        var mapTemplate = User.MapInstance.Template;
+        var mapTemplate = Aisling.MapInstance.Template;
 
         for (byte y = 0; y < mapTemplate.Height; y++)
         {
@@ -375,7 +383,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapInfo()
     {
-        var instance = User.MapInstance;
+        var instance = Aisling.MapInstance;
         var mapTemplate = instance.Template;
 
         var args = new MapInfoArgs
@@ -398,7 +406,7 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(ref packet);
     }
 
-    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<string, Metafile> metafileCache, string? name = null)
+    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<Metafile> metafileCache, string? name = null)
     {
         var args = new MetafileArgs
         {
@@ -414,7 +422,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
                 var metafile = metafileCache.GetObject(name);
 
-                args.MetafileData = new MetafileDataArg
+                args.MetafileData = new MetafileInfo
                 {
                     Name = metafile.Name,
                     CheckSum = metafile.CheckSum,
@@ -426,7 +434,7 @@ public class WorldClient : SocketClientBase, IWorldClient
             case MetafileRequestType.AllCheckSums:
             {
                 args.Info = metafileCache.Select(
-                                             metafile => new MetafileDataArg
+                                             metafile => new MetafileInfo
                                              {
                                                  Name = metafile.Name,
                                                  CheckSum = metafile.CheckSum
@@ -442,9 +450,9 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendProfile(User user)
+    public void SendProfile(Aisling aisling)
     {
-        var args = Mapper.Map<ProfileArgs>(user);
+        var args = Mapper.Map<ProfileArgs>(aisling);
 
         Send(args);
     }
@@ -517,7 +525,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendSelfProfile()
     {
-        var args = Mapper.Map<SelfProfileArgs>(User);
+        var args = Mapper.Map<SelfProfileArgs>(Aisling);
 
         Send(args);
     }
@@ -556,34 +564,36 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendUserId()
     {
-        var args = Mapper.Map<UserIdArgs>(User);
+        var args = Mapper.Map<UserIdArgs>(Aisling);
 
         Send(args);
     }
 
-    public void SendVisibleObjects(params VisibleObject[] objects)
+    public void SendVisibleObjects(IEnumerable<VisibleEntity> objects)
     {
         var args = new DisplayVisibleObjectArgs();
-        var visibleArgs = new List<VisibleArg>();
+        var visibleArgs = new List<VisibleObjectInfo>();
         args.VisibleObjects = visibleArgs;
 
         foreach (var obj in objects)
             if (obj is GroundItem groundItem)
                 visibleArgs.Add(
-                    new GroundItemArg
+                    new GroundItemInfo
                     {
                         Id = groundItem.Id,
                         Color = groundItem.Item.Color,
-                        Point = groundItem.Point,
-                        Sprite = groundItem.Sprite
+                        X = groundItem.X,
+                        Y = groundItem.Y,
+                        Sprite = groundItem.Sprite!.Value
                     });
             else if (obj is Creature creature)
                 visibleArgs.Add(
-                    new CreatureArg
+                    new CreatureInfo
                     {
                         Id = creature.Id,
-                        Point = creature.Point,
-                        Sprite = creature.Sprite,
+                        X = creature.Point.X,
+                        Y = creature.Point.Y,
+                        Sprite = creature.Sprite!.Value,
                         CreatureType = creature.Type,
                         Direction = creature.Direction,
                         Name = creature.Name
@@ -592,9 +602,9 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendWorldList(ICollection<User> users)
+    public void SendWorldList(IEnumerable<Aisling> users)
     {
-        var worldList = new List<WorldListArg>();
+        var worldList = new List<WorldListMemberInfo>();
 
         var args = new WorldListArgs
         {
@@ -602,19 +612,19 @@ public class WorldClient : SocketClientBase, IWorldClient
         };
 
         //these 2 statements are graphed as opposing intersecting lines
-        //conal-ly positive (level range grows as level goes up)
+        //conal-positive (level range grows as level goes up)
         //the idea here is to be able to calculate level ranges for 2 people
         //on the edge of eachother's level range, but theyre both still
         //in eachother's range
         //if a flat range value was calculated based on level
         //a low level person would be in a high level person's larger range,
         //but the high level person would not be in the lower level person's range
-        var upperBound = Math.Floor(User.StatSheet.Level + User.StatSheet.Level / 5m + 3);
-        var lowerBound = Math.Ceiling(Math.Max(0, User.StatSheet.Level * 5m - 15) / 6);
+        var upperBound = Math.Floor(Aisling.StatSheet.Level + Aisling.StatSheet.Level / 5m + 3);
+        var lowerBound = Math.Ceiling(Math.Max(0, Aisling.StatSheet.Level * 5m - 15) / 6);
 
         foreach (var user in users)
         {
-            var arg = Mapper.Map<WorldListArg>(user);
+            var arg = Mapper.Map<WorldListMemberInfo>(user);
 
             if ((user.StatSheet.Level <= upperBound) && (user.StatSheet.Level >= lowerBound))
                 arg.Color = WorldListColor.WithinLevelRange;
@@ -632,7 +642,7 @@ public class WorldClient : SocketClientBase, IWorldClient
         {
             FieldName = worldMap.Field,
             ImageIndex = 1,
-            Nodes = worldMap.Nodes
+            Nodes = worldMap.Nodes.Cast<WorldMapNodeInfo>().ToList()
         };
 
         Send(args);

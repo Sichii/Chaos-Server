@@ -6,13 +6,13 @@ namespace Chaos.Observers;
 
 public class SkillBookObserver : IPanelObserver<Skill>
 {
-    private readonly User User;
+    private readonly Aisling Aisling;
 
-    public SkillBookObserver(User user) => User = user;
+    public SkillBookObserver(Aisling aisling) => Aisling = aisling;
 
-    public void OnAdded(Skill obj) => User.Client.SendAddSkillToPane(obj);
+    public void OnAdded(Skill obj) => Aisling.Client.SendAddSkillToPane(obj);
 
-    public void OnRemoved(byte slot, Skill obj) => User.Client.SendRemoveSkillFromPane(slot);
+    public void OnRemoved(byte slot, Skill obj) => Aisling.Client.SendRemoveSkillFromPane(slot);
 
-    public void OnUpdated(byte originalSlot, Skill obj) => User.Client.SendAddSkillToPane(obj);
+    public void OnUpdated(byte originalSlot, Skill obj) => Aisling.Client.SendAddSkillToPane(obj);
 }

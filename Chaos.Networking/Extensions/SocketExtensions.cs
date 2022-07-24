@@ -15,7 +15,7 @@ public static class SocketExtensions
 
         //if we receive false, it means the io operation completed synchronously, and the completed event will not be raised
         if (completedSynchronously)
-            Task.Run(() => completedEvent(socket, args));
+            completedEvent(socket, args);
     }
 
     public static void SendAndForget(this Socket socket, SocketAsyncEventArgs args, EventHandler<SocketAsyncEventArgs> completedEvent)
@@ -23,6 +23,6 @@ public static class SocketExtensions
         var completedSynchronously = !socket.SendAsync(args);
 
         if (completedSynchronously)
-            Task.Run(() => completedEvent(socket, args));
+            completedEvent(socket, args);
     }
 }

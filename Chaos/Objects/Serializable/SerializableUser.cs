@@ -1,3 +1,6 @@
+using Chaos.Data;
+using Chaos.Geometry.Definitions;
+
 namespace Chaos.Objects.Serializable;
 
 public record SerializableUser

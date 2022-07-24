@@ -1,6 +1,6 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Server;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Serializers;
 
@@ -14,11 +14,11 @@ public record DisplayVisibleObjectSerializer : ServerPacketSerializer<DisplayVis
 
         foreach (var obj in args.VisibleObjects)
         {
-            writer.WritePoint16(obj.Point);
+            writer.WritePoint16((ushort)obj.X, (ushort)obj.Y);
             writer.WriteUInt32(obj.Id);
             writer.WriteUInt16(obj.Sprite);
 
-            if (obj is CreatureArg creature)
+            if (obj is CreatureInfo creature)
             {
                 //creatures
                 writer.WriteBytes(new byte[4]); //dunno
@@ -28,7 +28,7 @@ public record DisplayVisibleObjectSerializer : ServerPacketSerializer<DisplayVis
 
                 if (creature.CreatureType == CreatureType.Merchant)
                     writer.WriteString8(creature.Name);
-            } else if (obj is GroundItemArg groundItem)
+            } else if (obj is GroundItemInfo groundItem)
             {
                 writer.WriteByte((byte)groundItem.Color);
                 writer.WriteBytes(new byte[3]);
