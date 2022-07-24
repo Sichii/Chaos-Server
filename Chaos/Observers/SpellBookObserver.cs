@@ -6,13 +6,13 @@ namespace Chaos.Observers;
 
 public class SpellBookObserver : IPanelObserver<Spell>
 {
-    private readonly User User;
+    private readonly Aisling Aisling;
 
-    public SpellBookObserver(User user) => User = user;
+    public SpellBookObserver(Aisling aisling) => Aisling = aisling;
 
-    public void OnAdded(Spell obj) => User.Client.SendAddSpellToPane(obj);
+    public void OnAdded(Spell obj) => Aisling.Client.SendAddSpellToPane(obj);
 
-    public void OnRemoved(byte slot, Spell obj) => User.Client.SendRemoveSpellFromPane(slot);
+    public void OnRemoved(byte slot, Spell obj) => Aisling.Client.SendRemoveSpellFromPane(slot);
 
-    public void OnUpdated(byte originalSlot, Spell obj) => User.Client.SendAddSpellToPane(obj);
+    public void OnUpdated(byte originalSlot, Spell obj) => Aisling.Client.SendAddSpellToPane(obj);
 }

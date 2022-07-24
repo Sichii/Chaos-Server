@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
-using Chaos.Containers;
 using Chaos.Networking.Interfaces;
-using Chaos.Objects.World;
 using Chaos.Packets;
 
 namespace Chaos.Servers.Interfaces;

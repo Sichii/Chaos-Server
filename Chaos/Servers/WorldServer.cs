@@ -1,15 +1,18 @@
+using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
-using Chaos.Core.JsonConverters;
-using Chaos.Core.Time;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography;
+using Chaos.Data;
+using Chaos.Extensions;
 using Chaos.Factories.Interfaces;
+using Chaos.Geometry.JsonConverters;
 using Chaos.Managers.Interfaces;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Interfaces;
@@ -23,6 +26,7 @@ using Chaos.Packets;
 using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
 using Chaos.Servers.Interfaces;
+using Chaos.Time;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -30,24 +34,27 @@ namespace Chaos.Servers;
 
 public class WorldServer : ServerBase, IWorldServer
 {
+    private readonly PeriodicTimer PeriodicTimer;
     private readonly IClientFactory<IWorldClient> ClientFactory;
-    private readonly ISimpleCache<string, Metafile> Metafile;
-    private readonly ISaveManager<User> UserSaveManager;
-    private readonly ISimpleCache<string, MapInstance> MapInstanceCache;
+    private readonly IWorldObjectFactory WorldObjectFactory;
+    private readonly ISimpleCache<Metafile> Metafile;
+    private readonly ISaveManager<Aisling> UserSaveManager;
+    private readonly ISimpleCache<MapInstance> MapInstanceCache;
     private readonly ParallelOptions ParallelOptions;
     public ConcurrentDictionary<uint, IWorldClient> Clients { get; }
 
-    public IEnumerable<User> Users => Clients
-                                      .Select(kvp => kvp.Value.User)
+    public IEnumerable<Aisling> Users => Clients
+                                      .Select(kvp => kvp.Value.Aisling)
                                       .Where(user => (user != null!) && !user.Loading);
     protected new WorldClientHandler?[] ClientHandlers { get; }
     protected override WorldOptions Options { get; }
 
     public WorldServer(
         IClientFactory<IWorldClient> clientFactory,
-        ISimpleCache<string, Metafile> metafile,
-        ISimpleCache<string, MapInstance> mapInstanceCache,
-        ISaveManager<User> userSaveManager,
+        IWorldObjectFactory worldObjectFactory,
+        ISimpleCache<Metafile> metafile,
+        ISimpleCache<MapInstance> mapInstanceCache,
+        ISaveManager<Aisling> userSaveManager,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<WorldOptions> options,
@@ -59,11 +66,14 @@ public class WorldServer : ServerBase, IWorldServer
             options,
             logger)
     {
+        Options = options.Value;
+        PeriodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000.0 / options.Value.UpdatesPerSecond));
         ClientFactory = clientFactory;
+        WorldObjectFactory = worldObjectFactory;
         Metafile = metafile;
         MapInstanceCache = mapInstanceCache;
         UserSaveManager = userSaveManager;
-        Options = options.Value;
+
         Clients = new ConcurrentDictionary<uint, IWorldClient>();
         ClientHandlers = new WorldClientHandler[byte.MaxValue];
 
@@ -76,25 +86,26 @@ public class WorldServer : ServerBase, IWorldServer
     }
 
     #region Server Loop
-    public override void Start()
+    
+    /// <inheritdoc />
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        base.Start();
-        ServerUpdateLoop();
-    }
+        var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
+        Socket.Bind(endPoint);
+        Socket.Listen(20);
+        Socket.BeginAccept(OnConnection, Socket);
+        Logger.LogInformation("Listening on {EndPoint}", endPoint);
 
-    private async void ServerUpdateLoop()
-    {
-        await Task.Yield();
-
-        var rateController = new RateController(Options.UpdatedPerSecond, 3);
-        var saveInterval = new IntervalTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins));
         var deltaTime = new DeltaTime();
-
+        var saveInterval = new IntervalTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins));
+        
         while (true)
-        {
             try
             {
-                await rateController.ThrottleAsync();
+                if (stoppingToken.IsCancellationRequested)
+                    return;
+                
+                await PeriodicTimer.WaitForNextTickAsync(stoppingToken);
                 var delta = deltaTime.ElapsedSpan;
                 saveInterval.Update(delta);
 
@@ -106,9 +117,6 @@ public class WorldServer : ServerBase, IWorldServer
             {
                 Logger.LogError(e, "Server update loop had an unhandled exception");
             }
-        }
-        
-        // ReSharper disable once FunctionNeverReturns
     }
 
     private Task ParallelUpdateAsync(TimeSpan delta) => Parallel.ForEachAsync(
@@ -139,11 +147,11 @@ public class WorldServer : ServerBase, IWorldServer
                 }
             });
 
-    private async Task SaveUserAsync(User user)
+    private async Task SaveUserAsync(Aisling aisling)
     {
         try
         {
-            await UserSaveManager.SaveAsync(user);
+            await UserSaveManager.SaveAsync(aisling);
         } catch (Exception e)
         {
             var jsonSerializerOptions = new JsonSerializerOptions
@@ -158,7 +166,7 @@ public class WorldServer : ServerBase, IWorldServer
 
             jsonSerializerOptions.Converters.Add(new PointConverter());
             jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            Logger.LogError(e, "Exception while saving user. {User}", JsonSerializer.Serialize(user));
+            Logger.LogError(e, "Exception while saving user. {User}", JsonSerializer.Serialize(aisling));
         }
     }
     #endregion
@@ -166,8 +174,8 @@ public class WorldServer : ServerBase, IWorldServer
     #region OnHandlers
     public ValueTask OnBeginChant(IWorldClient client, ref ClientPacket clientPacket)
     {
-        if (!client.User.Status.HasFlag(Status.Dead))
-            client.User.UserState |= UserState.IsChanting;
+        if (!client.Aisling.Status.HasFlag(Status.Dead))
+            client.Aisling.UserState |= UserState.IsChanting;
         else
             client.SendCancelCasting();
 
@@ -180,7 +188,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<DisplayChantArgs>(ref clientPacket);
 
-        client.User.MapInstance.ShowPublicMessage(PublicMessageType.Chant, args.ChantMessage, client.User);
+        client.Aisling.MapInstance.ShowPublicMessage(PublicMessageType.Chant, args.ChantMessage, client.Aisling);
 
         return default;
     }
@@ -190,9 +198,9 @@ public class WorldServer : ServerBase, IWorldServer
         (var targetId, var targetPoint) = PacketSerializer.Deserialize<ClickArgs>(ref clientPacket);
 
         if (targetId.HasValue)
-            client.User.MapInstance.Click(targetId.Value, client.User);
-        else if (targetPoint.HasValue)
-            client.User.MapInstance.Click(targetPoint.Value, client.User);
+            client.Aisling.MapInstance.Click(targetId.Value, client.Aisling);
+        else if (targetPoint is not null)
+            client.Aisling.MapInstance.Click(targetPoint, client.Aisling);
 
         return default;
     }
@@ -249,7 +257,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ClientWalkArgs>(ref clientPacket);
 
-        client.User.MapInstance.ClientWalk(client.User, args.Direction);
+        client.Aisling.MapInstance.ClientWalk(client.Aisling, args.Direction);
 
         return default;
     }
@@ -261,7 +269,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<EmoteArgs>(ref clientPacket);
 
         if ((int)args.BodyAnimation <= 44)
-            client.User.MapInstance.ShowBodyAnimation(args.BodyAnimation, client.User);
+            client.Aisling.MapInstance.ShowBodyAnimation(args.BodyAnimation, client.Aisling);
 
         return default;
     }
@@ -270,38 +278,38 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ExchangeArgs>(ref clientPacket);
 
-        var exchange = client.User.ActiveObject.TryGet<Exchange>();
+        var exchange = client.Aisling.ActiveObject.TryGet<Exchange>();
 
         if (exchange == null)
             return default;
 
-        if (exchange.GetOtherUser(client.User).Id != args.OtherPlayerId)
+        if (exchange.GetOtherUser(client.Aisling).Id != args.OtherPlayerId)
             return default;
 
         switch (args.ExchangeRequestType)
         {
             case ExchangeRequestType.StartExchange:
-                Logger.LogError("Someone attempted to directly start an exchange ({UserName})", client.User.Name);
+                Logger.LogError("Someone attempted to directly start an exchange ({UserName})", client.Aisling.Name);
 
                 break;
             case ExchangeRequestType.AddItem:
-                exchange.AddItem(client.User, args.SourceSlot!.Value);
+                exchange.AddItem(client.Aisling, args.SourceSlot!.Value);
 
                 break;
             case ExchangeRequestType.AddStackableItem:
-                exchange.AddStackableItem(client.User, args.SourceSlot!.Value, args.ItemCount!.Value);
+                exchange.AddStackableItem(client.Aisling, args.SourceSlot!.Value, args.ItemCount!.Value);
 
                 break;
             case ExchangeRequestType.SetGold:
-                exchange.SetGold(client.User, args.GoldAmount!.Value);
+                exchange.SetGold(client.Aisling, args.GoldAmount!.Value);
 
                 break;
             case ExchangeRequestType.Cancel:
-                exchange.Cancel(client.User);
+                exchange.Cancel(client.Aisling);
 
                 break;
             case ExchangeRequestType.Accept:
-                exchange.Accept(client.User);
+                exchange.Accept(client.Aisling);
 
                 break;
             default:
@@ -336,24 +344,24 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnGoldDropped(IWorldClient client, ref ClientPacket clientPacket)
     {
         (var amount, var destinationPoint) = PacketSerializer.Deserialize<GoldDropArgs>(ref clientPacket);
-        var map = client.User.MapInstance;
+        var map = client.Aisling.MapInstance;
 
         if (amount <= 0)
             return default;
 
-        if (!client.User.WithinRange(destinationPoint, Options.DropRange))
+        if (!client.Aisling.WithinRange(destinationPoint, Options.DropRange))
             return default;
 
         if (map.IsWall(destinationPoint))
             return default;
 
-        var currentGold = client.User.Gold;
+        var currentGold = client.Aisling.Gold;
 
         if (currentGold < amount)
             return default;
 
         currentGold -= amount;
-        client.User.Gold = currentGold;
+        client.Aisling.Gold = currentGold;
 
         client.SendAttributes(StatUpdateType.ExpGold);
 
@@ -366,21 +374,21 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnGoldDroppedOnCreature(IWorldClient client, ref ClientPacket clientPacket)
     {
         (var amount, var targetId) = PacketSerializer.Deserialize<GoldDroppedOnCreatureArgs>(ref clientPacket);
-        var map = client.User.MapInstance;
+        var map = client.Aisling.MapInstance;
 
         if (amount <= 0)
             return default;
 
-        if (client.User.Gold < amount)
+        if (client.Aisling.Gold < amount)
             return default;
 
         if (!map.TryGetObject<Creature>(targetId, out var target))
             return default;
 
-        if (!client.User.WithinRange(target, Options.TradeRange))
+        if (!client.Aisling.WithinRange(target, Options.TradeRange))
             return default;
 
-        target.GoldDroppedOn(amount, client.User);
+        target.OnGoldDroppedOn(amount, client.Aisling);
 
         return default;
     }
@@ -402,38 +410,38 @@ public class WorldServer : ServerBase, IWorldServer
             case GroupRequestType.FormalInvite:
                 Logger.LogWarning(
                     "Player \"{Name}\" attempted to send a formal invite to the server. This type of group request is something only the server should send",
-                    client.User.Name);
+                    client.Aisling.Name);
 
                 return default;
             case GroupRequestType.TryInvite:
             {
-                var existingGroup = client.User.Group;
+                var existingGroup = client.Aisling.Group;
 
                 if (existingGroup != null)
-                    existingGroup.Invite(client.User, target);
+                    existingGroup.Invite(client.Aisling, target);
                 else if (target.Group != null)
                 {
                     client.SendServerMessage(ServerMessageType.ActiveMessage, $"{target.Name} is already in a group");
 
                     return default;
                 } else
-                    target.Client.SendGroupRequest(GroupRequestType.FormalInvite, client.User.Name);
+                    target.Client.SendGroupRequest(GroupRequestType.FormalInvite, client.Aisling.Name);
 
                 return default;
             }
             case GroupRequestType.AcceptInvite:
             {
-                var existingGroup = client.User.Group;
+                var existingGroup = client.Aisling.Group;
 
                 if (existingGroup != null)
                     client.SendServerMessage(ServerMessageType.ActiveMessage, "You are already in a group");
                 else if (target.Group != null)
-                    target.Group.AcceptInvite(target, client.User);
+                    target.Group.AcceptInvite(target, client.Aisling);
                 else
                 {
-                    var group = Group.Create(target, client.User);
+                    var group = Group.Create(target, client.Aisling);
                     target.Group = group;
-                    client.User.Group = group;
+                    client.Aisling.Group = group;
                 }
 
                 return default;
@@ -458,17 +466,17 @@ public class WorldServer : ServerBase, IWorldServer
         switch (ignoreType)
         {
             case IgnoreType.Request:
-                client.SendServerMessage(ServerMessageType.ScrollWindow, client.User.IgnoreList.ToString());
+                client.SendServerMessage(ServerMessageType.ScrollWindow, client.Aisling.IgnoreList.ToString());
 
                 break;
             case IgnoreType.AddUser:
                 if (!string.IsNullOrEmpty(targetName))
-                    client.User.IgnoreList.Add(targetName);
+                    client.Aisling.IgnoreList.Add(targetName);
 
                 break;
             case IgnoreType.RemoveUser:
                 if (!string.IsNullOrEmpty(targetName))
-                    client.User.IgnoreList.Remove(targetName);
+                    client.Aisling.IgnoreList.Remove(targetName);
 
                 break;
             default:
@@ -482,18 +490,20 @@ public class WorldServer : ServerBase, IWorldServer
     {
         (var sourceSlot, var destinationPoint, var count) = PacketSerializer.Deserialize<ItemDropArgs>(ref clientPacket);
 
-        var map = client.User.MapInstance;
+        var map = client.Aisling.MapInstance;
 
         if (map.IsWall(destinationPoint))
             return default;
 
-        if (!client.User.WithinRange(destinationPoint, Options.DropRange))
+        if (!client.Aisling.WithinRange(destinationPoint, Options.DropRange))
             return default;
 
-        if (!client.User.Inventory.RemoveQuantity(sourceSlot, count, out var item))
+        if (!client.Aisling.Inventory.RemoveQuantity(sourceSlot, count, out var item))
             return default;
 
-        map.AddObject(item.ToGroundItem(), destinationPoint);
+        Logger.LogDebug("{UserName} dropped {Item}", client.Aisling.Name, item);
+        var groundItem = WorldObjectFactory.CreateGroundItem(item);
+        map.AddObject(groundItem, destinationPoint);
 
         return default;
     }
@@ -502,15 +512,15 @@ public class WorldServer : ServerBase, IWorldServer
     {
         (var sourceSlot, var targetId, var count) = PacketSerializer.Deserialize<ItemDroppedOnCreatureArgs>(ref clientPacket);
 
-        var map = client.User.MapInstance;
+        var map = client.Aisling.MapInstance;
 
         if (!map.TryGetObject<Creature>(targetId, out var target))
             return default;
 
-        if (!client.User.WithinRange(target, Options.TradeRange))
+        if (!client.Aisling.WithinRange(target, Options.TradeRange))
             return default;
 
-        if (!client.User.Inventory.TryGetObject(sourceSlot, out var item))
+        if (!client.Aisling.Inventory.TryGetObject(sourceSlot, out var item))
             return default;
 
         if (item == null)
@@ -519,7 +529,7 @@ public class WorldServer : ServerBase, IWorldServer
         if (item.Count < count)
             return default;
 
-        target.ItemDroppedOn(sourceSlot, count, client.User);
+        target.OnItemDroppedOn(sourceSlot, count, client.Aisling);
 
         return default;
     }
@@ -556,9 +566,9 @@ public class WorldServer : ServerBase, IWorldServer
     {
         (var destinationSlot, var sourcePoint) = PacketSerializer.Deserialize<PickupArgs>(ref clientPacket);
 
-        var map = client.User.MapInstance;
+        var map = client.Aisling.MapInstance;
 
-        if (!client.User.WithinRange(sourcePoint, Options.PickupRange))
+        if (!client.Aisling.WithinRange(sourcePoint, Options.PickupRange))
             return default;
 
         var obj = map.ObjectsAtPoint<GroundItem>(sourcePoint).FirstOrDefault();
@@ -566,11 +576,14 @@ public class WorldServer : ServerBase, IWorldServer
         if (obj == null)
             return default;
 
-        if (!client.User.CanCarry(obj.Item))
+        if (!client.Aisling.CanCarry(obj.Item))
             return default;
 
-        if (client.User.Inventory.TryAdd(destinationSlot, obj.Item))
+        if (client.Aisling.Inventory.TryAdd(destinationSlot, obj.Item))
+        {
+            Logger.LogDebug("{UserName} picked up {Item}", client.Aisling.Name, obj.Item);
             map.RemoveObject(obj);
+        }
 
         return default;
     }
@@ -579,8 +592,8 @@ public class WorldServer : ServerBase, IWorldServer
     {
         (var portraitData, var profileMessage) = PacketSerializer.Deserialize<ProfileArgs>(ref clientPacket);
 
-        client.User.Portrait = portraitData;
-        client.User.ProfileMessage = profileMessage;
+        client.Aisling.Portrait = portraitData;
+        client.Aisling.ProfileMessage = profileMessage;
 
         return default;
     }
@@ -596,7 +609,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         (var publicMessageType, var message) = PacketSerializer.Deserialize<PublicMessageArgs>(ref clientPacket);
 
-        client.User.MapInstance.ShowPublicMessage(publicMessageType, $"{client.User.Name}: {message}", client.User);
+        client.Aisling.MapInstance.ShowPublicMessage(publicMessageType, $"{client.Aisling.Name}: {message}", client.Aisling);
 
         return default;
     }
@@ -607,8 +620,8 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<RaiseStatArgs>(ref clientPacket);
 
-        if (client.User.StatSheet.UnspentPoints > 0)
-            if (client.User.StatSheet.AddStat(args.Stat))
+        if (client.Aisling.StatSheet.UnspentPoints > 0)
+            if (client.Aisling.StatSheet.AddStat(args.Stat))
                 client.SendAttributes(StatUpdateType.Full);
 
         return default;
@@ -616,7 +629,7 @@ public class WorldServer : ServerBase, IWorldServer
 
     public ValueTask OnRefreshRequest(IWorldClient client, ref ClientPacket clientPacket)
     {
-        client.User.MapInstance.Refresh(client.User);
+        client.Aisling.MapInstance.Refresh(client.Aisling);
 
         return default;
     }
@@ -625,7 +638,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<SocialStatusArgs>(ref clientPacket);
 
-        client.User.SocialStatus = args.SocialStatus;
+        client.Aisling.SocialStatus = args.SocialStatus;
 
         return default;
     }
@@ -641,15 +654,15 @@ public class WorldServer : ServerBase, IWorldServer
         switch (panelType)
         {
             case PanelType.Inventory:
-                client.User.Inventory.TrySwap(slot1, slot2);
+                client.Aisling.Inventory.TrySwap(slot1, slot2);
 
                 break;
             case PanelType.SpellBook:
-                client.User.SpellBook.TrySwap(slot1, slot2);
+                client.Aisling.SpellBook.TrySwap(slot1, slot2);
 
                 break;
             case PanelType.SkillBook:
-                client.User.SkillBook.TrySwap(slot1, slot2);
+                client.Aisling.SkillBook.TrySwap(slot1, slot2);
 
                 break;
             case PanelType.Equipment:
@@ -664,10 +677,10 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnToggleGroup(IWorldClient client, ref ClientPacket clientPacket)
     {
         //don't need to send the updated option, because they arent currently looking at it
-        client.User.Options.Toggle(UserOption.Group);
+        client.Aisling.Options.Toggle(UserOption.Group);
 
-        if (client.User.Group != null)
-            client.User.Group?.Leave(client.User);
+        if (client.Aisling.Group != null)
+            client.Aisling.Group?.Leave(client.Aisling);
         else
             client.SendSelfProfile();
 
@@ -678,8 +691,8 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<TurnArgs>(ref clientPacket);
 
-        client.User.Direction = args.Direction;
-        client.User.MapInstance.ShowTurn(args.Direction, client.User);
+        client.Aisling.Direction = args.Direction;
+        client.Aisling.MapInstance.ShowTurn(args.Direction, client.Aisling);
 
         return default;
     }
@@ -688,17 +701,17 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<UnequipArgs>(ref clientPacket);
 
-        if (client.User.Inventory.IsFull)
+        if (client.Aisling.Inventory.IsFull)
             return default;
 
-        if (!client.User.Equipment.TryGetRemove((byte)args.EquipmentSlot, out var item))
+        if (!client.Aisling.Equipment.TryGetRemove((byte)args.EquipmentSlot, out var item))
             return default;
 
         if (item == null)
             return default;
 
-        item.Script.OnUnequip(client.User);
-        client.User.Inventory.TryAddToNextSlot(item);
+        item.Script.OnUnequip(client.Aisling);
+        client.Aisling.Inventory.TryAddToNextSlot(item);
 
         return default;
     }
@@ -707,8 +720,8 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ItemUseArgs>(ref clientPacket);
 
-        if (client.User.Inventory.TryGetObject(args.SourceSlot, out var item))
-            item?.Script.OnUse(client.User);
+        if (client.Aisling.Inventory.TryGetObject(args.SourceSlot, out var item))
+            item?.Script.OnUse(client.Aisling);
 
         return default;
     }
@@ -719,13 +732,13 @@ public class WorldServer : ServerBase, IWorldServer
 
         if (args.UserOption == UserOption.Request)
         {
-            client.SendServerMessage(ServerMessageType.UserOptions, client.User.Options.ToString());
+            client.SendServerMessage(ServerMessageType.UserOptions, client.Aisling.Options.ToString());
 
             return default;
         }
 
-        client.User.Options.Toggle(args.UserOption);
-        client.SendServerMessage(ServerMessageType.UserOptions, client.User.Options.ToString(args.UserOption));
+        client.Aisling.Options.Toggle(args.UserOption);
+        client.SendServerMessage(ServerMessageType.UserOptions, client.Aisling.Options.ToString(args.UserOption));
 
         return default;
     }
@@ -734,8 +747,8 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<SkillUseArgs>(ref clientPacket);
 
-        if (client.User.SkillBook.TryGetObject(args.SourceSlot, out var skill))
-            skill?.Script.OnUse(client.User);
+        if (client.Aisling.SkillBook.TryGetObject(args.SourceSlot, out var skill))
+            skill?.Script.OnUse(client.Aisling);
 
         return default;
     }
@@ -743,11 +756,11 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnUseSpell(IWorldClient client, ref ClientPacket clientPacket)
     {
         (var sourceSlot, var argsData) = PacketSerializer.Deserialize<SpellUseArgs>(ref clientPacket);
-        var mapInstance = client.User.MapInstance;
+        var mapInstance = client.Aisling.MapInstance;
 
-        if (client.User.SpellBook.TryGetObject(sourceSlot, out var spell) && (spell != null))
+        if (client.Aisling.SpellBook.TryGetObject(sourceSlot, out var spell) && (spell != null))
         {
-            var source = (Creature)client.User;
+            var source = (Creature)client.Aisling;
             var target = source;
             var prompt = default(string?);
 
@@ -821,7 +834,7 @@ public class WorldServer : ServerBase, IWorldServer
             return default;
         }
 
-        if (targetUser.Equals(client.User))
+        if (targetUser.Equals(client.Aisling))
         {
             client.SendServerMessage(ServerMessageType.Whisper, "Talking to yourself?");
 
@@ -837,12 +850,12 @@ public class WorldServer : ServerBase, IWorldServer
 
         //if someone is being ignored, they shouldnt know it
         //let them waste their time typing for no reason
-        if (targetUser.IgnoreList.ContainsI(client.User.Name))
+        if (targetUser.IgnoreList.ContainsI(client.Aisling.Name))
         {
             Logger.LogInformation(
                 "Ignored by: {TargetName}, From: {FromName}, Message: {Message}",
                 targetUser.Name,
-                client.User.Name,
+                client.Aisling.Name,
                 message);
 
             client.SendServerMessage(ServerMessageType.Whisper, $"[{targetUser.Name}] > {message}");
@@ -851,7 +864,7 @@ public class WorldServer : ServerBase, IWorldServer
         }
 
         client.SendServerMessage(ServerMessageType.Whisper, $"[{targetUser.Name}] > {message}");
-        targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $"[{client.User.Name}] < {message}");
+        targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $"[{client.Aisling.Name}] < {message}");
 
         return default;
     }
@@ -876,26 +889,29 @@ public class WorldServer : ServerBase, IWorldServer
     #region Connection / Handler
     protected delegate ValueTask WorldClientHandler(IWorldClient client, ref ClientPacket packet);
 
-    public override ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet)
+    public override ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
     {
         if (client is IWorldClient worldClient)
-        {
-            var handler = ClientHandlers[(byte)packet.OpCode];
-
-            var mapInstance = worldClient.User?.MapInstance;
-
-            if (mapInstance == null)
-                return handler?.Invoke(worldClient, ref packet) ?? default;
-
-            //yes, i know this handler is returning a ValueTask
-            //however, only 1 handler ever calls asynchronous code, and thus only 1 handler will ever run synchronously
-            //that handler also happens to be the one where the user is loaded, and wont have a map instance when we receive the packet, so it's ok
-            //methods that return tasks that do not ever call asynchronous code, will run entirely synchrnously, so this is fine
-            using var mapSync = mapInstance.Sync.EnterWithSafeExit();
-            return handler?.Invoke(worldClient, ref packet) ?? default;
-        }
-
+            return HandlePacketAsync(worldClient, ref packet);
+        
         return base.HandlePacketAsync(client, ref packet);
+    }
+
+    private ValueTask HandlePacketAsync(IWorldClient client, ref ClientPacket packet)
+    {
+        var handler = ClientHandlers[(byte)packet.OpCode];
+
+        var mapInstance = client.Aisling?.MapInstance;
+
+        if (mapInstance == null)
+            return handler?.Invoke(client, ref packet) ?? default;
+        
+        //yes, i know this handler is returning a ValueTask
+        //however, only 1 handler ever calls asynchronous code, and thus only 1 handler will ever run asynchronously
+        //that handler also happens to be the one where the user is loaded, and wont have a map instance when we receive the packet, so it's ok
+        //methods that return tasks that do not ever call asynchronous code, will run entirely synchronously, so this is fine
+        using var mapSync = mapInstance.Sync.EnterWithSafeExit();
+        return handler?.Invoke(client, ref packet) ?? default;
     }
 
     protected sealed override void IndexHandlers()
@@ -986,8 +1002,8 @@ public class WorldServer : ServerBase, IWorldServer
         Clients.TryRemove(client.Id, out _);
 
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        client.User.MapInstance?.RemoveObject(client.User);
-        AsyncHelpers.RunSync(() => SaveUserAsync(client.User));
+        client.Aisling.MapInstance?.RemoveObject(client.Aisling);
+        AsyncHelpers.RunSync(() => SaveUserAsync(client.Aisling));
     }
     #endregion
 }

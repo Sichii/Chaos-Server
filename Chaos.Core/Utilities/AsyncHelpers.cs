@@ -3,20 +3,13 @@ namespace Chaos.Core.Utilities;
 
 public static class AsyncHelpers
 {
-    /// <summary>
-    /// Execute's an async Task
-    /// method which has a void return value synchronously
-    /// </summary>
-    /// <param name="task">Task
-    ///     method to execute
-    /// </param>
     public static void RunSync(Func<Task> task)
     {
         var oldContext = SynchronizationContext.Current;
-        var synch = new ExclusiveSynchronizationContext();
-        SynchronizationContext.SetSynchronizationContext(synch);
+        var sync = new ExclusiveSynchronizationContext();
+        SynchronizationContext.SetSynchronizationContext(sync);
 
-        synch.Post(
+        sync.Post(
             async _ =>
             {
                 try
@@ -24,17 +17,17 @@ public static class AsyncHelpers
                     await task();
                 } catch (Exception e)
                 {
-                    synch.InnerException = e;
+                    sync.InnerException = e;
 
                     throw;
                 } finally
                 {
-                    synch.EndMessageLoop();
+                    sync.EndMessageLoop();
                 }
             },
             null);
 
-        synch.BeginMessageLoop();
+        sync.BeginMessageLoop();
 
         SynchronizationContext.SetSynchronizationContext(oldContext);
     }
@@ -91,9 +84,7 @@ public static class AsyncHelpers
         public override void Post(SendOrPostCallback d, object? state)
         {
             lock (Items)
-            {
                 Items.Enqueue(Tuple.Create(d, state)!);
-            }
 
             WorkItemsWaiting.Set();
         }
@@ -107,25 +98,17 @@ public static class AsyncHelpers
                 Tuple<SendOrPostCallback, object>? task = null;
 
                 lock (Items)
-                {
                     if (Items.Count > 0)
-                    {
                         task = Items.Dequeue();
-                    }
-                }
 
                 if (task != null)
                 {
                     task.Item1(task.Item2);
 
                     if (InnerException != null) // the method threw an exeption
-                    {
                         throw new AggregateException("AsyncHelpers.Run method threw an exception.", InnerException);
-                    }
                 } else
-                {
                     WorkItemsWaiting.WaitOne();
-                }
             }
         }
 

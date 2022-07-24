@@ -1,22 +1,19 @@
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
+using Chaos.Data;
+using Chaos.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Caches;
 
-public record MetafileManagerOptions
-{
-    public string Directory { get; set; } = null!;
-}
-
-public class MetafileCache : ISimpleCache<string, Metafile>
+public class MetafileCache : ISimpleCache<Metafile>
 {
     private readonly ConcurrentDictionary<string, Metafile> Cache;
     private readonly ILogger Logger;
-    private readonly MetafileManagerOptions Options;
+    private readonly MetafileCacheOptions Options;
 
-    public MetafileCache(IOptionsSnapshot<MetafileManagerOptions> options, ILogger<MetafileCache> logger)
+    public MetafileCache(IOptionsSnapshot<MetafileCacheOptions> options, ILogger<MetafileCache> logger)
     {
         Cache = new ConcurrentDictionary<string, Metafile>(StringComparer.OrdinalIgnoreCase);
         Options = options.Value;

@@ -3,6 +3,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Chaos.Caches.Interfaces;
 using Chaos.Cryptography.Definitions;
+using Chaos.Cryptography.Extensions;
+using Chaos.Data;
 using Chaos.Objects.World;
 using Chaos.Options;
 using Chaos.Templates;
@@ -11,17 +13,17 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Caches;
 
-public class MapTemplateCache : ISimpleCache<string, MapTemplate>
+public class MapTemplateCache : ISimpleCache<MapTemplate>
 {
     private readonly ConcurrentDictionary<string, MapTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
     private readonly string NeedsMapDataDir;
-    private readonly MapTemplateManagerOptions Options;
+    private readonly MapTemplateCacheOptions Options;
 
     public MapTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<MapTemplateManagerOptions> options,
+        IOptionsSnapshot<MapTemplateCacheOptions> options,
         ILogger<MapTemplateCache> logger
     )
     {
@@ -73,7 +75,7 @@ public class MapTemplateCache : ISimpleCache<string, MapTemplate>
         for (var y = 0; y < mapTemplate.Height; y++)
             for (var x = 0; x < mapTemplate.Width; x++)
             {
-                Point point = (x, y);
+                var point = new Point(x, y);
                 var background = (ushort)(data[index++] | (data[index++] << 8));
                 var leftForeground = (ushort)(data[index++] | (data[index++] << 8));
                 var rightForeground = (ushort)(data[index++] | (data[index++] << 8));
@@ -82,9 +84,9 @@ public class MapTemplateCache : ISimpleCache<string, MapTemplate>
                 mapTemplate.Tiles[x, y] = tile;
 
                 if (CONSTANTS.DOOR_SPRITES.Contains(leftForeground))
-                    mapTemplate.Doors[point] = new Door(point, leftForeground, true);
+                    mapTemplate.Doors[point] = new Door(leftForeground, true) { Point = point };
                 else if (CONSTANTS.DOOR_SPRITES.Contains(rightForeground))
-                    mapTemplate.Doors[point] = new Door(point, rightForeground, false);
+                    mapTemplate.Doors[point] = new Door(rightForeground, false) { Point = point };
             }
 
         mapTemplate.CheckSum = data.Generate16();
@@ -106,7 +108,7 @@ public class MapTemplateCache : ISimpleCache<string, MapTemplate>
         }
     }
 
-    private async ValueTask<MapTemplate> LoadTemplateFromFileAsync(string path)
+    private async Task<MapTemplate> LoadTemplateFromFileAsync(string path)
     {
         await using var stream = File.OpenRead(path);
         var mapTemplate = await JsonSerializer.DeserializeAsync<MapTemplate>(stream, JsonSerializerOptions);

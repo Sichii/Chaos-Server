@@ -1,6 +1,7 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.Geometry.Definitions;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Client;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Deserializers;
 

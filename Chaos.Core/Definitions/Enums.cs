@@ -1,13 +1,6 @@
 namespace Chaos.Core.Definitions;
 
 #region Server
-/*
-public enum EncryptionType
-{
-    None = 0,
-    Normal = 1,
-    MD5 = 2
-}*/
 
 public enum ServerType : byte
 {
@@ -86,6 +79,13 @@ public enum PursuitId : ushort
     BecomeRogue = 12,
     GiveTatteredRobe = 13,
     ForceGive = 14
+}
+
+public enum ReactorTileType
+{
+    Walk = 0,
+    DropMoney = 1,
+    DropItem = 2,
 }
 #endregion
 
@@ -188,6 +188,9 @@ public enum MarkColor : byte
 #region DisplayData
 public enum DisplayColor : byte
 {
+    /// <summary>
+    /// Actually Lavender
+    /// </summary>
     None,
     Black,
     Red,
@@ -297,16 +300,6 @@ public enum BodySprite : byte
     FemaleHead = 144,
     BlankMale = 160,
     BlankFemale = 176
-}
-
-public enum Direction : byte
-{
-    North = 0,
-    East = 1,
-    South = 2,
-    West = 3,
-    All = 4,
-    Invalid = 255
 }
 
 [Flags]

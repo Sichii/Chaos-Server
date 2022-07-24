@@ -12,12 +12,12 @@ public class EffectsBar : IEffectsBar
     private readonly Creature Effected;
     private readonly Dictionary<string, IEffect> Effects;
     private readonly AutoReleasingMonitor Sync;
-    private readonly User? User;
+    private readonly Aisling? User;
 
     public EffectsBar(Creature effected, IEnumerable<IEffect>? effects = null)
     {
         Effected = effected;
-        User = Effected as User;
+        User = Effected as Aisling;
         Sync = new AutoReleasingMonitor();
         effects ??= Enumerable.Empty<IEffect>();
 

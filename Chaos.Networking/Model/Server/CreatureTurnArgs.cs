@@ -1,3 +1,4 @@
+using Chaos.Geometry.Definitions;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Networking.Model.Server;

@@ -1,8 +1,19 @@
+using Chaos.Objects.Panel;
+
 namespace Chaos.Objects.Serializable;
 
 public record SerializableSpell
 {
-    public int ElapsedMs { get; set; }
-    public ICollection<string> ScriptKeys { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    public string TemplateKey { get; set; } = null!;
+    public ulong UniqueId { get; }
+    public int ElapsedMs { get; }
+    public ICollection<string> ScriptKeys { get; set; }
+    public string TemplateKey { get; set; }
+
+    public SerializableSpell(Spell spell)
+    {
+        UniqueId = spell.UniqueId;
+        ElapsedMs = Convert.ToInt32(spell.Elapsed.TotalMilliseconds);
+        ScriptKeys = spell.ScriptKeys.Except(spell.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        TemplateKey = spell.Template.TemplateKey;
+    }
 }

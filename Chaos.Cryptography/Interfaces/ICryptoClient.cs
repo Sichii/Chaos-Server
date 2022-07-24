@@ -20,16 +20,10 @@ public interface ICryptoClient
     /// </summary>
     void Encrypt(ref Span<byte> buffer, byte opCode, byte sequence);
 
-    ushort GenerateFieldNodeChecksum(Location location, string text);
+    ushort GenerateFieldNodeChecksum(ushort mapId, byte x, byte y, string text);
 
     byte[] GenerateKey(ushort a, byte b);
     byte[] GenerateKeySalts(string seed);
-
-    int GenerateRandom();
-
-    int GenerateRandom(int minValue, int maxValue);
-
-    uint GenerateRandom(uint minValue, uint maxValue);
 
     /// <summary>
     ///     Which type of encryption, if any, should be used with the given opcode on a packet sent from the client.

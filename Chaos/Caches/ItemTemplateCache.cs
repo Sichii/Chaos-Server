@@ -9,16 +9,16 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Caches;
 
-public class ItemTemplateCache : ISimpleCache<string, ItemTemplate>
+public class ItemTemplateCache : ISimpleCache<ItemTemplate>
 {
     private readonly ConcurrentDictionary<string, ItemTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
-    private readonly ItemTemplateManagerOptions Options;
+    private readonly ItemTemplateCacheOptions Options;
 
     public ItemTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ItemTemplateManagerOptions> options,
+        IOptionsSnapshot<ItemTemplateCacheOptions> options,
         ILogger<ItemTemplateCache> logger
     )
     {
@@ -50,7 +50,7 @@ public class ItemTemplateCache : ISimpleCache<string, ItemTemplate>
         await Parallel.ForEachAsync(
             templates,
             new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-            async (path, token) =>
+            async (path, _) =>
             {
                 var itemTemplate = await LoadTemplateFromFileAsync(path);
                 Cache.TryAdd(itemTemplate.TemplateKey, itemTemplate);
@@ -60,7 +60,7 @@ public class ItemTemplateCache : ISimpleCache<string, ItemTemplate>
         Logger.LogInformation("{Count} item templates loaded", Cache.Count);
     }
 
-    private async ValueTask<ItemTemplate> LoadTemplateFromFileAsync(string path)
+    private async Task<ItemTemplate> LoadTemplateFromFileAsync(string path)
     {
         await using var stream = File.OpenRead(path);
         var itemTemplate = await JsonSerializer.DeserializeAsync<ItemTemplate>(stream, JsonSerializerOptions);

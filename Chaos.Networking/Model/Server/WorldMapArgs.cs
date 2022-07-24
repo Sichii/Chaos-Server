@@ -6,5 +6,5 @@ public record WorldMapArgs : ISendArgs
 {
     public string FieldName { get; set; } = null!;
     public byte ImageIndex { get; set; }
-    public ICollection<WorldMapNode> Nodes { get; set; } = new List<WorldMapNode>();
+    public ICollection<WorldMapNodeInfo> Nodes { get; set; } = new List<WorldMapNodeInfo>();
 }

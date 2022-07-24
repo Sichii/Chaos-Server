@@ -4,7 +4,7 @@ namespace Chaos.Scripts.Interfaces;
 
 public interface IItemScript : IScript
 {
-    void OnUnequip(User user);
+    void OnUnequip(Aisling aisling);
 
-    void OnUse(User user);
+    void OnUse(Aisling aisling);
 }

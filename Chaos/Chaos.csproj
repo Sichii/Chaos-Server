@@ -19,7 +19,7 @@
         <ApplicationIcon>chaos.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
-        <Content Include="chaos.ico"/>
+        <Content Include="chaos.ico" />
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -31,11 +31,15 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
-        <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj"/>
+        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
+        <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj" />
+        <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Collection" Version="8.0.0"/>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+        <PackageReference Include="AutoMapper.Collection" Version="8.0.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Objects\Dialog" />
     </ItemGroup>
 </Project>

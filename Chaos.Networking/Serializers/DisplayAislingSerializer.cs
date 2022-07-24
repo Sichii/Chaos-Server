@@ -1,6 +1,6 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Server;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Serializers;
 
@@ -10,7 +10,7 @@ public record DisplayAislingSerializer : ServerPacketSerializer<DisplayAislingAr
 
     public override void Serialize(ref SpanWriter writer, DisplayAislingArgs args)
     {
-        writer.WritePoint16(args.Point);
+        writer.WritePoint16((ushort)args.X, (ushort)args.Y);
         writer.WriteByte((byte)args.Direction);
         writer.WriteUInt32(args.Id);
 
@@ -31,7 +31,7 @@ public record DisplayAislingSerializer : ServerPacketSerializer<DisplayAislingAr
         } else
         {
             writer.WriteUInt16(args.HeadSprite);
-            writer.WriteByte((byte)args.BodySprite);
+            writer.WriteByte((byte)args.BodySprite); //add pants to body sprite
             writer.WriteUInt16(args.ArmorSprite1);
             writer.WriteByte(args.BootsSprite);
             writer.WriteUInt16(args.ArmorSprite2);

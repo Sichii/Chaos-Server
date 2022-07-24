@@ -1,4 +1,7 @@
+using Chaos.Caches.Interfaces;
+using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel.Abstractions;
+using Chaos.Objects.Serializable;
 using Chaos.Scripts.Interfaces;
 using Chaos.Templates;
 
@@ -9,9 +12,34 @@ namespace Chaos.Objects.Panel;
 /// </summary>
 public class Skill : PanelObjectBase, IScriptedSkill
 {
-    public ISkillScript Script { get; set; } = null!;
+    public ISkillScript Script { get; }
     public override SkillTemplate Template { get; }
 
-    public Skill(SkillTemplate template)
-        : base(template) => Template = template;
+    public Skill(
+        SkillTemplate template,
+        ISkillScriptFactory skillScriptFactory,
+        ICollection<string>? extraScriptKeys = null,
+        ulong? uniqueId = null
+    )
+        : base(template, uniqueId)
+    {
+        Template = template;
+
+        if (extraScriptKeys != null)
+            ScriptKeys.AddRange(extraScriptKeys);
+
+        Script = skillScriptFactory.CreateScript(ScriptKeys, this);
+    }
+
+    public Skill(
+        SerializableSkill serializableSkill,
+        ISimpleCache<SkillTemplate> skillTemplateCache,
+        ISkillScriptFactory skillScriptFactory
+    )
+        : this(
+            skillTemplateCache.GetObject(serializableSkill.TemplateKey),
+            skillScriptFactory,
+            serializableSkill.ScriptKeys,
+            serializableSkill.UniqueId) =>
+        Elapsed = TimeSpan.FromMilliseconds(serializableSkill.ElapsedMs);
 }

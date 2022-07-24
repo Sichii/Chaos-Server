@@ -1,38 +1,31 @@
 using Chaos.Containers;
+using Chaos.Geometry.Interfaces;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Objects.World;
 
-/// <summary>
-///     Represents a clickable door, which can open or close in game.
-/// </summary>
-public class Door : VisibleObject
+public class Door : VisibleEntity
 {
     public bool Closed { get; set; }
-    public DateTime LastClick { get; set; } = DateTime.MinValue;
+    public DateTime LastClick { get; set; }
     public bool OpenRight { get; }
-    public bool RecentlyClicked => DateTime.UtcNow.Subtract(LastClick).TotalSeconds < 1.5;
+    public bool ShouldRegisterClick => DateTime.UtcNow.Subtract(LastClick).TotalSeconds > 1.5;
 
-    public Door(
-        MapInstance mapInstance,
-        Point point,
-        ushort sprite,
-        bool openRight
-    )
-        : base(mapInstance, point, sprite) =>
+    public Door(bool openRight, ushort sprite, MapInstance mapInstance, IPoint point)
+    :base(sprite, mapInstance, point)
+    {
         OpenRight = openRight;
+        LastClick = DateTime.Now.Subtract(TimeSpan.FromHours(1));
+    }
 
-    //constructor for MapTemplate doors
-    public Door(Point point, ushort sprite, bool openRight)
-        : base(null!, point, sprite) => OpenRight = openRight;
-
+    /*
     public override void OnClicked(User source)
     {
-        if (!RecentlyClicked)
+        if (ShouldRegisterClick)
         {
             Closed = !Closed;
             LastClick = DateTime.UtcNow;
             source.Client.SendDoors(this);
         }
-    }
+    }*/
 }

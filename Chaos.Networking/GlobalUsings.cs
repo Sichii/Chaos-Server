@@ -6,8 +6,6 @@ global using System.Collections.Concurrent;
 global using System.Diagnostics;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Linq.Expressions;
-global using Chaos.Core.Data;
 global using Chaos.Core.Definitions;
 global using Chaos.Core.Extensions;
-global using Chaos.Core.Geometry;
 global using Chaos.Packets.Definitions;

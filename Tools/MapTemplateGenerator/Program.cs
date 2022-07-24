@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Chaos.Core.Collections.Synchronized;
-using Chaos.Core.JsonConverters;
+using Chaos.Geometry.JsonConverters;
 using Chaos.Templates;
 
 const string FILENAME = "Master_Maplist.txt";

@@ -1,7 +1,7 @@
 using System.Text;
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Client;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Deserializers;
 

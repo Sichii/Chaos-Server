@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using Chaos.Data;
+using Chaos.Geometry.Interfaces;
 using Chaos.Objects.World;
 using Chaos.Templates.Interfaces;
 
@@ -31,8 +33,8 @@ public record MapTemplate : ITemplate
         }
     }
 
-    public bool IsWall(Point point) =>
-        !IsWithinMap(point) || (Doors.TryGetValue(point, out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
+    public bool IsWall(IPoint point) =>
+        !IsWithinMap(point) || (Doors.TryGetValue(Point.From(point), out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
 
-    public bool IsWithinMap(Point point) => (point.X < Width) && (point.Y < Height);
+    public bool IsWithinMap(IPoint point) => (point.X >= 0) && (point.Y >= 0) && (point.X < Width) && (point.Y < Height);
 }

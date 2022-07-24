@@ -6,23 +6,23 @@ namespace Chaos.Observers;
 
 public class InventoryObserver : IPanelObserver<Item>
 {
-    private readonly User User;
+    private readonly Aisling Aisling;
 
-    public InventoryObserver(User user) => User = user;
+    public InventoryObserver(Aisling aisling) => Aisling = aisling;
 
     public void OnAdded(Item obj)
     {
-        User.Client.SendAddItemToPane(obj);
-        User.StatSheet.AddWeight(obj.Template.Weight);
-        User.Client.SendAttributes(StatUpdateType.Primary);
+        Aisling.Client.SendAddItemToPane(obj);
+        Aisling.StatSheet.AddWeight(obj.Template.Weight);
+        Aisling.Client.SendAttributes(StatUpdateType.Primary);
     }
 
     public void OnRemoved(byte slot, Item obj)
     {
-        User.Client.SendRemoveItemFromPane(slot);
-        User.StatSheet.AddWeight(-obj.Template.Weight);
-        User.Client.SendAttributes(StatUpdateType.Primary);
+        Aisling.Client.SendRemoveItemFromPane(slot);
+        Aisling.StatSheet.AddWeight(-obj.Template.Weight);
+        Aisling.Client.SendAttributes(StatUpdateType.Primary);
     }
 
-    public void OnUpdated(byte originalSlot, Item obj) => User.Client.SendAddItemToPane(obj);
+    public void OnUpdated(byte originalSlot, Item obj) => Aisling.Client.SendAddItemToPane(obj);
 }

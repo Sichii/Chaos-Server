@@ -1,4 +1,5 @@
 using Chaos.Core.Interfaces;
+using Chaos.Time.Interfaces;
 
 namespace Chaos.Effects.Interfaces;
 

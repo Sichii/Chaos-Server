@@ -58,5 +58,24 @@ public ref struct ClientPacket
         return resultBuffer;
     }
 
+    public Memory<byte> ToMemory()
+    {
+        //the length of the packet after the length portion of the header plus the packet tail (determined by encryption type)
+        var resultLength = Buffer.Length + (IsEncrypted ? 5 : 4) - 3;
+        var memBuffer = new byte[resultLength + 3];
+        
+        //write packet header
+        memBuffer[0] = Signature;
+        memBuffer[1] = (byte)(resultLength / 256);
+        memBuffer[2] = (byte)(resultLength % 256);
+        memBuffer[3] = (byte)OpCode;
+        memBuffer[4] = Sequence;
+
+        var memory = new Memory<byte>(memBuffer);
+        Buffer.CopyTo(memory.Span[^Buffer.Length..]);
+
+        return memory;
+    }
+
     public override string ToString() => GetHexString();
 }

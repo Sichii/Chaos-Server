@@ -13,34 +13,11 @@ namespace Chaos.Mappers;
 public class EquipmentMapper : Profile
 {
     private readonly IItemScriptFactory ItemScriptFactory;
-    private readonly ISimpleCache<string, ItemTemplate> ItemTemplateCache;
+    private readonly ISimpleCache<ItemTemplate> ItemTemplateCache;
     private readonly ILogger Logger;
 
-    public EquipmentMapper(
-        ISimpleCache<string, ItemTemplate> itemTemplateCache,
-        IItemScriptFactory itemScriptFactory,
-        ILogger<EquipmentMapper> logger
-    )
+    public EquipmentMapper()
     {
-        ItemTemplateCache = itemTemplateCache;
-        ItemScriptFactory = itemScriptFactory;
-        Logger = logger;
-
-        CreateMap<SerialiableEquipment, Item>(MemberList.None)
-            .ConstructUsing(s => new Item(ItemTemplateCache.GetObject(s.TemplateKey)))
-            .ForMember(
-                dest => dest.Elapsed,
-                o => o.MapFrom(src => TimeSpan.FromMilliseconds(src.ElapsedMs)))
-            .AfterMap(
-                (_, dest) =>
-                {
-                    var scriptKeys = dest.Template.ScriptKeys
-                                         .Concat(dest.ScriptKeys)
-                                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-                    dest.Script = ItemScriptFactory.CreateScript(scriptKeys, dest);
-                });
-
         CreateMap<Item, SerialiableEquipment>(MemberList.None)
             .ForMember(
                 s => s.ElapsedMs,
@@ -51,19 +28,7 @@ public class EquipmentMapper : Profile
             .ForMember(
                 dest => dest.Slot,
                 o => o.MapFrom(src => (EquipmentSlot)src.Slot));
-
-        CreateMap<IEnumerable<SerialiableEquipment>, IEquipment>(MemberList.None)
-            .DisableCtorValidation()
-            .AfterMap(
-                (src, dest, rc) =>
-                {
-                    foreach (var sItem in src)
-                    {
-                        var item = rc.Mapper.Map<Item>(sItem);
-                        dest.TryAdd(item.Slot, item);
-                    }
-                });
-
+        
         CreateMap<IEquipment, ICollection<SerialiableEquipment>>(MemberList.None)
             .ConstructUsing(src => new List<SerialiableEquipment>())
             .AfterMap(
@@ -76,21 +41,7 @@ public class EquipmentMapper : Profile
                     }
                 });
 
-        CreateMap<Item, KeyValuePair<EquipmentSlot, ItemArg>>()
-            .ConstructUsing((src, rc) => new KeyValuePair<EquipmentSlot, ItemArg>((EquipmentSlot)src.Slot, rc.Mapper.Map<ItemArg>(src)));
-
-        /* Mapping is bugged? maybe the above map will be enough
-        CreateMap<IEquipment, Dictionary<EquipmentSlot, ItemArg>>(MemberList.None)
-            //.ConstructUsing(src => new Dictionary<EquipmentSlot, ItemArg>())
-            //.IgnoreAllUnmapped()
-            .AfterMap((src, dest, rc) =>
-            {
-                foreach (var item in src)
-                {
-                    var arg = rc.Mapper.Map<ItemArg>(item);
-                    dest.Add((EquipmentSlot)arg.Slot, arg);
-                }
-            });
-            */
+        CreateMap<Item, KeyValuePair<EquipmentSlot, ItemInfo>>()
+            .ConstructUsing((src, rc) => new KeyValuePair<EquipmentSlot, ItemInfo>((EquipmentSlot)src.Slot, rc.Mapper.Map<ItemInfo>(src)));
     }
 }

@@ -1,20 +1,24 @@
 using System.Text.Json.Serialization;
 using Chaos.Clients.Interfaces;
 using Chaos.Core.Collections;
-using Chaos.Core.Interfaces;
 using Chaos.Core.Synchronization;
 using Chaos.Core.Utilities;
+using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Geometry.Definitions;
+using Chaos.Geometry.Extensions;
+using Chaos.Geometry.Interfaces;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Options;
 using Chaos.Templates;
+using Chaos.Time.Interfaces;
 
 namespace Chaos.Containers;
 
 public class MapInstance : IDeltaUpdatable
 {
-    private readonly TypeCheckingDictionary<uint, MapObject> Objects;
+    private readonly TypeCheckingDictionary<uint, MapEntity> Objects;
     //private readonly ConcurrentDictionary<Exchange>
     public AutoReleasingMonitor Sync { get; }
     public MapFlags Flags { get; set; }
@@ -31,7 +35,7 @@ public class MapInstance : IDeltaUpdatable
     {
         Name = name;
         InstanceId = instanceId;
-        Objects = new TypeCheckingDictionary<uint, MapObject>();
+        Objects = new TypeCheckingDictionary<uint, MapEntity>();
         Sync = new AutoReleasingMonitor();
     }
 
@@ -39,90 +43,52 @@ public class MapInstance : IDeltaUpdatable
     {
         using var @lock = Sync.Enter();
 
-        var reactors = ObjectsAtPoint<ReactorTile>(creature.Point);
+        var reactors = ObjectsAtPoint<ReactorTile>(creature);
 
         foreach (var reactor in reactors)
             reactor.Activate(creature);
     }
 
-    public void AddObject(VisibleObject visibleObject, Point point)
+    public void AddObject(VisibleEntity visibleEntity, IPoint point)
     {
-        var temp = Sync.TryEnter(5);
-        
-        //TODO: was considering reentrancy a potential problem (YOU ARE HERE)
-        //a user failed to enter because we're currently inside it's map instance lock and trying to enter a different map
-        //this means we're entering 2 locks at once, which could cause a deadlock if the reverse order happens for another user
-        //the solution here is to exit the old map's lock and try to reacquire the current map's lock
-        if ((temp == null) && visibleObject is User && visibleObject.MapInstance.Sync.IsEntered)
+        using var @lock = Sync.Enter();
+
+        visibleEntity.X = point.X;
+        visibleEntity.Y = point.Y;
+        visibleEntity.MapInstance = this;
+        Objects.Add(visibleEntity.Id, visibleEntity);
+
+        if (visibleEntity is Aisling aisling)
         {
-            visibleObject.MapInstance.Sync.Exit();
-            temp = Sync.TryEnter(10);
-        }
+            (var aislings, var doors, var otherVisibles) = ObjectsWithinRange<VisibleEntity>(point).SortBySendType();
 
-        temp ??= AutoReleasingMonitor.NoOpDisposable;
+            aisling.Client.SendMapChangePending();
+            aisling.Client.SendMapInfo();
+            aisling.Client.SendLocation();
 
-        using var @lock = temp;
-
-        visibleObject.Point = point;
-        visibleObject.MapInstance = this;
-        Objects.Add(visibleObject.Id, visibleObject);
-
-        if (visibleObject is User user)
-        {
-            var nearbyObjects = ObjectsWithinRange<VisibleObject>(point);
-
-            var nearbyUsers = new List<User>();
-            var nearbyOthers = new List<VisibleObject>();
-            var nearbyDoors = new List<Door>();
-
-            foreach (var obj in nearbyObjects)
-                switch (obj)
-                {
-                    case User userObj:
-                        nearbyUsers.Add(userObj);
-
-                        break;
-                    case Creature creatureObj:
-                        nearbyOthers.Add(creatureObj);
-
-                        break;
-                    case GroundItem groundItemObj:
-                        nearbyOthers.Add(groundItemObj);
-
-                        break;
-                    case Door doorObj:
-                        nearbyDoors.Add(doorObj);
-
-                        break;
-                }
-
-            user.Client.SendMapChangePending();
-            user.Client.SendMapInfo();
-            user.Client.SendLocation();
-
-            foreach (var nearbyUser in nearbyUsers)
+            foreach (var nearbyUser in aislings)
             {
-                if (nearbyUser.Equals(user))
+                if (nearbyUser.Equals(aisling))
                     continue;
 
-                if (user.IsVisibleTo(nearbyUser))
-                    nearbyUser.Client.SendDisplayUser(user);
+                if (aisling.IsVisibleTo(nearbyUser))
+                    nearbyUser.Client.SendDisplayAisling(aisling);
 
-                if (nearbyUser.IsVisibleTo(user))
-                    user.Client.SendDisplayUser(nearbyUser);
+                if (nearbyUser.IsVisibleTo(aisling))
+                    aisling.Client.SendDisplayAisling(nearbyUser);
             }
 
-            user.Client.SendVisibleObjects(nearbyOthers.ToArray());
-            user.Client.SendDoors(nearbyDoors.ToArray());
-            user.Client.SendMapChangeComplete();
-            user.Client.SendMapLoadComplete();
-            user.Client.SendDisplayUser(user);
+            aisling.Client.SendVisibleObjects(otherVisibles);
+            aisling.Client.SendDoors(doors);
+            aisling.Client.SendMapChangeComplete();
+            aisling.Client.SendMapLoadComplete();
+            aisling.Client.SendDisplayAisling(aisling);
         } else
-            foreach (var nearbyUser in ObjectsThatSee<User>(visibleObject))
-                nearbyUser.Client.SendVisibleObjects(visibleObject);
+            foreach (var nearbyUser in ObjectsThatSee<Aisling>(visibleEntity))
+                nearbyUser.Client.SendVisibleObjects(visibleEntity);
     }
 
-    public void AddObjects<T>(ICollection<T> visibleObjects) where T: VisibleObject
+    public void AddObjects<T>(ICollection<T> visibleObjects) where T: VisibleEntity
     {
         using var @lock = Sync.Enter();
 
@@ -132,129 +98,104 @@ public class MapInstance : IDeltaUpdatable
             Objects.Add(visibleObj.Id, visibleObj);
         }
 
-        foreach (var user in Objects.Values<User>())
+        foreach (var aisling in Objects.Values<Aisling>())
         {
             var objectsInRange = visibleObjects
-                                 .Where(obj => obj.WithinRange(user) && obj.IsVisibleTo(user))
-                                 .ToArray<VisibleObject>();
+                                 .Where(obj => obj.WithinRange(aisling) && obj.IsVisibleTo(aisling))
+                                 .ToArray<VisibleEntity>();
 
             if (objectsInRange.Any())
-                user.Client.SendVisibleObjects(objectsInRange);
+                aisling.Client.SendVisibleObjects(objectsInRange);
         }
     }
-
-    public void Click(uint id, User source)
+    
+    public void Click(uint id, Aisling source)
     {
         using var @lock = Sync.Enter();
 
-        if (TryGetObject<VisibleObject>(id, out var obj))
+        if (TryGetObject<VisibleEntity>(id, out var obj))
             if (obj.WithinRange(source) && obj.IsVisibleTo(source))
                 obj.OnClicked(source);
     }
 
-    public void Click(Point point, User source)
+    public void Click(IPoint point, Aisling source)
     {
         using var @lock = Sync.Enter();
 
-        var obj = ObjectsAtPoint<VisibleObject>(point)
+        var obj = ObjectsAtPoint<VisibleEntity>(point)
                   .ThatAreVisibleTo(source)
                   .FirstOrDefault();
 
         obj?.OnClicked(source);
     }
 
-    public void ClientWalk(User user, Direction direction)
+    public void ClientWalk(Aisling aisling, Direction direction)
     {
         using var @lock = Sync.Enter();
 
-        user.Direction = direction;
+        aisling.Direction = direction;
 
-        var startPoint = user.Point;
-        var newPoint = startPoint.Offset(direction);
+        var startPoint = aisling.Point;
+        var newPoint = startPoint.DirectionalOffset(direction);
 
-        if (!user.IsAdmin && !IsWalkable(newPoint))
+        if (!aisling.IsAdmin && !IsWalkable(newPoint))
         {
-            Refresh(user, true);
+            Refresh(aisling, true);
 
             return;
         }
 
-        var visibleBefore = ObjectsWithinRange<VisibleObject>(user).ToList();
-        user.Point = newPoint;
-        var visibleAfter = ObjectsWithinRange<VisibleObject>(user).ToList();
-        var otherObjectsToSend = new List<VisibleObject>();
+        var visibleBefore = ObjectsWithinRange<VisibleEntity>(aisling).ToList();
+        aisling.SetLocation(newPoint);
+        var visibleAfter = ObjectsWithinRange<VisibleEntity>(aisling).ToList();
+        var otherObjectsToSend = new List<VisibleEntity>();
         var doorsToSend = new List<Door>();
 
-        user.Client.SendConfirmClientWalk(startPoint, direction);
+        aisling.Client.SendConfirmClientWalk(startPoint, direction);
 
         //for all objects we can no longer see
-        //remove them from our screen, remove use from their if theyre a user
+        //remove them from our screen, remove use from their if theyre a aisling
         foreach (var obj in visibleBefore.Except(visibleAfter))
             if (obj is GroundItem or Creature)
             {
-                user.Client.SendRemoveObject(obj.Id);
+                aisling.Client.SendRemoveObject(obj.Id);
 
-                if (obj is User otherUser)
-                    otherUser.Client.SendRemoveObject(user.Id);
+                if (obj is Aisling otherUser)
+                    otherUser.Client.SendRemoveObject(aisling.Id);
             }
 
         //for all objects we couldnt see before
-        //display them to us, display us to them if theyre a user
+        //display them to us, display us to them if theyre a aisling
         foreach (var obj in visibleAfter.Except(visibleBefore))
-            if (obj is User otherUser)
+            if (obj is Aisling otherUser)
             {
-                if (user.IsVisibleTo(otherUser))
-                    otherUser.Client.SendDisplayUser(user);
+                if (aisling.IsVisibleTo(otherUser))
+                    otherUser.Client.SendDisplayAisling(aisling);
 
-                if (otherUser.IsVisibleTo(user))
-                    user.Client.SendDisplayUser(otherUser);
+                if (otherUser.IsVisibleTo(aisling))
+                    aisling.Client.SendDisplayAisling(otherUser);
             } else if (obj is GroundItem or Creature)
             {
-                if (obj.IsVisibleTo(user))
+                if (obj.IsVisibleTo(aisling))
                     otherObjectsToSend.Add(obj);
             } else if (obj is Door door)
                 doorsToSend.Add(door);
 
-        //send all non-users at the same time
+        //send all non-aislings at the same time
         if (otherObjectsToSend.Any())
-            user.Client.SendVisibleObjects(otherObjectsToSend.ToArray());
+            aisling.Client.SendVisibleObjects(otherObjectsToSend.ToArray());
 
         if (doorsToSend.Any())
-            user.Client.SendDoors(doorsToSend.ToArray());
+            aisling.Client.SendDoors(doorsToSend.ToArray());
 
-        foreach (var otherUser in visibleBefore.Intersect(visibleAfter).OfType<User>().ThatCanSee(user))
-            if (!otherUser.Equals(user))
-                otherUser.Client.SendCreatureWalk(user.Id, startPoint, direction);
+        foreach (var otherUser in visibleBefore.Intersect(visibleAfter).OfType<Aisling>().ThatCanSee(aisling))
+            if (!otherUser.Equals(aisling))
+                otherUser.Client.SendCreatureWalk(aisling.Id, startPoint, direction);
 
-        ActivateReactors(user);
+        ActivateReactors(aisling);
     }
-
-    public void CreatureWalk(Creature creature, Direction direction)
-    {
-        using var @lock = Sync.Enter();
-
-        creature.Direction = direction;
-        var startPoint = creature.Point;
-        var newPoint = startPoint.Offset(direction);
-
-        if (!IsWalkable(newPoint, creature.Type == CreatureType.WalkThrough))
-            return;
-
-        var visibleBefore = ObjectsThatSee<User>(creature).ToList();
-        creature.Point = newPoint;
-        var visibleAfter = ObjectsThatSee<User>(creature).ToList();
-
-        foreach (var user in visibleBefore.Except(visibleAfter))
-            user.Client.SendRemoveObject(creature.Id);
-
-        foreach (var user in visibleAfter.Except(visibleBefore))
-            user.Client.SendVisibleObjects(creature);
-
-        foreach (var user in visibleBefore.Intersect(visibleAfter))
-            user.Client.SendCreatureWalk(creature.Id, startPoint, direction);
-    }
-
-    public bool IsWalkable(Point point, bool toWalkthroughCreature = false)
+    
+    public bool IsWalkable(IPoint point, bool toWalkthroughCreature = false)
     {
         if (toWalkthroughCreature ? !IsWithinMap(point) : IsWall(point))
             return false;
@@ -267,20 +208,20 @@ public class MapInstance : IDeltaUpdatable
                    creature =>
                    {
                        if (toWalkthroughCreature)
-                           return (creature.Type != CreatureType.WalkThrough) || (creature.Point != point);
+                           return (creature.Type != CreatureType.WalkThrough) || (Point.From(creature) != point);
 
-                       return (creature.Type == CreatureType.WalkThrough) || (creature.Point != point);
+                       return (creature.Type == CreatureType.WalkThrough) || (Point.From(creature) != point);
                    });
     }
 
-    public bool IsWall(Point point) => Template.IsWall(point);
+    public bool IsWall(IPoint point) => Template.IsWall(point);
 
-    public bool IsWithinMap(Point point) => Template.IsWithinMap(point);
+    public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 
-    public IEnumerable<T> ObjectsAtPoint<T>(Point point) where T: MapObject
+    public IEnumerable<T> ObjectsAtPoint<T>(IPoint point) where T: MapEntity
     {
         var objects = Objects.Values<T>()
-                             .Where(obj => obj.Point == point)
+                             .Where(obj => Point.From(obj) == point)
                              .OrderByDescending(obj => obj.Creation);
 
         if (Sync.IsEntered)
@@ -291,13 +232,13 @@ public class MapInstance : IDeltaUpdatable
         return objects.ToList();
     }
 
-    public IEnumerable<T> ObjectsThatSee<T>(VisibleObject visibleObject, int distance = 13) where T: MapObject
+    public IEnumerable<T> ObjectsThatSee<T>(VisibleEntity visibleEntity, int distance = 13) where T: MapEntity
     {
         var objects = Objects.Values<T>()
-                             .Where(obj => visibleObject.WithinRange(obj, distance));
+                             .Where(obj => visibleEntity.WithinRange(obj, distance));
 
         if (objects is IEnumerable<Creature> creatures)
-            objects = creatures.ThatCanSee(visibleObject).Cast<T>();
+            objects = creatures.ThatCanSee(visibleEntity).Cast<T>();
 
         if (Sync.IsEntered)
             return objects;
@@ -307,26 +248,13 @@ public class MapInstance : IDeltaUpdatable
         return objects.ToList();
     }
 
-    public IEnumerable<T> ObjectsVisibleTo<T>(MapObject mapObject, int distance = 13) where T: VisibleObject
+    public IEnumerable<T> ObjectsVisibleTo<T>(MapEntity mapEntity, int distance = 13) where T: VisibleEntity
     {
         var objects = Objects.Values<T>()
-                             .Where(obj => mapObject.WithinRange(obj, distance));
+                             .Where(obj => mapEntity.WithinRange(obj, distance));
 
-        if (mapObject is User user)
-            objects = objects.ThatAreVisibleTo(user);
-
-        if (Sync.IsEntered)
-            return objects;
-
-        using var @lock = Sync.Enter();
-
-        return objects.ToList();
-    }
-
-    public IEnumerable<T> ObjectsWithinRange<T>(MapObject mapObject, int distance = 13) where T: MapObject
-    {
-        var objects = Objects.Values<T>()
-                             .Where(obj => mapObject.WithinRange(obj, distance));
+        if (mapEntity is Aisling aisling)
+            objects = objects.ThatAreVisibleTo(aisling);
 
         if (Sync.IsEntered)
             return objects;
@@ -335,8 +263,8 @@ public class MapInstance : IDeltaUpdatable
 
         return objects.ToList();
     }
-
-    public IEnumerable<T> ObjectsWithinRange<T>(Point point, int distance = 13) where T: MapObject
+    
+    public IEnumerable<T> ObjectsWithinRange<T>(IPoint point, int distance = 13) where T: MapEntity
     {
         var objects = Objects.Values<T>()
                              .Where(obj => obj.WithinRange(point, distance));
@@ -348,94 +276,53 @@ public class MapInstance : IDeltaUpdatable
 
         return objects.ToList();
     }
-
-    public void Refresh(User user, bool forceRefresh = false)
+    
+    public void Refresh(Aisling aisling, bool forceRefresh = false)
     {
         using var @lock = Sync.Enter();
 
         var now = DateTime.UtcNow;
 
-        if (!forceRefresh && (now.Subtract(user.LastRefresh).TotalMilliseconds < WorldOptions.RefreshIntervalMs))
+        if (!forceRefresh && (now.Subtract(aisling.LastRefresh).TotalMilliseconds < WorldOptions.RefreshIntervalMs))
             return;
 
-        var nearbyObjects = ObjectsWithinRange<VisibleObject>(user);
+        (var aislings, var doors, var otherVisibles) = ObjectsWithinRange<VisibleEntity>(aisling).SortBySendType();
+        
+        aisling.LastRefresh = now;
+        aisling.Client.SendMapInfo();
+        aisling.Client.SendLocation();
+        aisling.Client.SendAttributes(StatUpdateType.Full);
 
-        var nearbyUsers = new List<User>();
-        var nearbyOthers = new List<VisibleObject>();
-        var nearbyDoors = new List<Door>();
-
-        foreach (var obj in nearbyObjects)
-            switch (obj)
-            {
-                case User userObj:
-                    nearbyUsers.Add(userObj);
-
-                    break;
-                case Creature creatureObj:
-                    nearbyOthers.Add(creatureObj);
-
-                    break;
-                case GroundItem groundItemObj:
-                    nearbyOthers.Add(groundItemObj);
-
-                    break;
-                case Door doorObj:
-                    nearbyDoors.Add(doorObj);
-
-                    break;
-            }
-
-        user.LastRefresh = now;
-        user.Client.SendMapInfo();
-        user.Client.SendLocation();
-        user.Client.SendAttributes(StatUpdateType.Full);
-
-        foreach (var nearbyUser in nearbyUsers)
+        foreach (var nearbyAisling in aislings)
         {
-            if (nearbyUser.Equals(user))
+            if (nearbyAisling.Equals(aisling))
                 continue;
 
-            if (user.IsVisibleTo(nearbyUser))
-                nearbyUser.Client.SendDisplayUser(user);
+            if (aisling.IsVisibleTo(nearbyAisling))
+                nearbyAisling.Client.SendDisplayAisling(aisling);
 
-            if (nearbyUser.IsVisibleTo(user))
-                user.Client.SendDisplayUser(nearbyUser);
+            if (nearbyAisling.IsVisibleTo(aisling))
+                aisling.Client.SendDisplayAisling(nearbyAisling);
         }
+        
+        aisling.Client.SendVisibleObjects(otherVisibles);
+        aisling.Client.SendDoors(doors);
+        aisling.Client.SendMapLoadComplete();
+        aisling.Client.SendDisplayAisling(aisling);
+        aisling.Client.SendRefreshResponse();
 
-        user.Client.SendVisibleObjects(nearbyOthers.ToArray());
-        user.Client.SendDoors(nearbyDoors.ToArray());
-        user.Client.SendMapLoadComplete();
-        user.Client.SendDisplayUser(user);
-        user.Client.SendRefreshResponse();
-
-        ActivateReactors(user);
+        ActivateReactors(aisling);
     }
-
-    public void RemoveObject(MapObject mapObject)
+    
+    public void RemoveObject(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
 
-        Objects.Remove(mapObject.Id);
+        Objects.Remove(mapEntity.Id);
 
-        if (mapObject is VisibleObject visibleObject)
-            foreach (var user in ObjectsThatSee<User>(visibleObject))
-                user.Client.SendRemoveObject(visibleObject.Id);
-    }
-
-    public void Show(Action<IWorldClient> action, Point source)
-    {
-        using var @lock = Sync.Enter();
-
-        foreach (var user in ObjectsWithinRange<User>(source))
-            action(user.Client);
-    }
-
-    public void Show(Action<IWorldClient> action, VisibleObject source)
-    {
-        using var @lock = Sync.Enter();
-
-        foreach (var user in ObjectsThatSee<User>(source))
-            action(user.Client);
+        if (mapEntity is VisibleEntity visibleObject)
+            foreach (var aisling in ObjectsThatSee<Aisling>(visibleObject))
+                aisling.Client.SendRemoveObject(visibleObject.Id);
     }
 
     public void ShowAnimation(Animation animation)
@@ -445,80 +332,49 @@ public class MapInstance : IDeltaUpdatable
         if (animation.TargetId.HasValue)
         {
             if (TryGetObject<Creature>(animation.TargetId.Value, out var target))
-                foreach (var user in ObjectsThatSee<User>(target))
-                    user.Client.SendAnimation(animation);
-        } else if (animation.TargetPoint.HasValue)
-            foreach (var user in ObjectsWithinRange<User>(animation.TargetPoint.Value))
-                user.Client.SendAnimation(animation);
+                foreach (var aisling in ObjectsThatSee<Aisling>(target))
+                    aisling.Client.SendAnimation(animation);
+        } else if (animation.TargetPoint != default)
+            foreach (var aisling in ObjectsWithinRange<Aisling>(animation.TargetPoint))
+                aisling.Client.SendAnimation(animation);
     }
 
     public void ShowBodyAnimation(BodyAnimation bodyAnimation, Creature source, byte? sound = null)
     {
         using var @lock = Sync.Enter();
 
-        foreach (var user in ObjectsThatSee<User>(source))
-            user.Client.SendBodyAnimation(
+        foreach (var aisling in ObjectsThatSee<Aisling>(source))
+            aisling.Client.SendBodyAnimation(
                 source.Id,
                 bodyAnimation,
                 100,
                 sound);
     }
-
-    public void ShowOthers(Action<IWorldClient> action, VisibleObject source)
+    
+    public void SimpleAdd(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
-
-        foreach (var user in ObjectsThatSee<User>(source))
-            if (!user.Equals(source))
-                action(user.Client);
+        Objects.Add(mapEntity.Id, mapEntity);
     }
 
-    public void ShowPublicMessage(PublicMessageType publicMessageType, string message, Creature source)
+    public void ToggleDoor(IPoint point)
     {
         using var @lock = Sync.Enter();
 
-        foreach (var user in ObjectsThatSee<User>(source))
-            user.Client.SendPublicMessage(source.Id, publicMessageType, message);
-    }
-
-    public void ShowTurn(Direction direction, Creature source)
-    {
-        using var @lock = Sync.Enter();
-
-        foreach (var user in ObjectsThatSee<User>(source))
-            user.Client.SendCreatureTurn(source.Id, direction);
-    }
-
-    public void ShowUser(User source)
-    {
-        using var @lock = Sync.Enter();
-
-        foreach (var user in ObjectsThatSee<User>(source))
-            user.Client.SendDisplayUser(source);
-    }
-
-    public void SimpleAdd(MapObject mapObject)
-    {
-        using var @lock = Sync.Enter();
-        Objects.Add(mapObject.Id, mapObject);
-    }
-
-    public void ToggleDoor(Point point)
-    {
-        using var @lock = Sync.Enter();
-
+        var actualPoint = Point.From(point);
+        
         var allDoors = Objects
                        .Values<Door>()
-                       .ToDictionary(door => door.Point);
-
-        IEnumerable<Door> GetSurroundingDoors(Point doorPoint)
+                       .ToDictionary(Point.From);
+        
+        IEnumerable<Door> GetSurroundingDoors(IPoint doorPoint)
         {
             foreach (var cardinalPoint in doorPoint.GetCardinalPoints())
                 if (allDoors.TryGetValue(cardinalPoint, out var adjacentDoor))
                     yield return adjacentDoor;
         }
 
-        if (allDoors.TryGetValue(point, out var targetDoor))
+        if (allDoors.TryGetValue(actualPoint, out var targetDoor))
         {
             var allTouchingDoors = new HashSet<Door> { targetDoor };
             var pendingDiscovery = new Stack<Door>();
@@ -529,19 +385,17 @@ public class MapInstance : IDeltaUpdatable
             {
                 var popped = pendingDiscovery.Pop();
 
-                foreach (var innerDoor in GetSurroundingDoors(popped.Point))
+                foreach (var innerDoor in GetSurroundingDoors(popped))
                     if (allTouchingDoors.Add(innerDoor))
                         pendingDiscovery.Push(innerDoor);
             }
 
-            foreach (var user in Objects.Values<User>())
+            foreach (var aisling in Objects.Values<Aisling>())
             {
                 var doorsInRange = allTouchingDoors
-                                   .Where(door => door.WithinRange(user))
-                                   .ToArray();
+                    .Where(door => door.WithinRange(aisling));
 
-                if (doorsInRange.Any())
-                    user.Client.SendDoors(doorsInRange);
+                aisling.Client.SendDoors(doorsInRange);
             }
         }
     }

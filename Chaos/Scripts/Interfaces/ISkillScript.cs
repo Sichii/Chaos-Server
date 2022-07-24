@@ -4,5 +4,5 @@ namespace Chaos.Scripts.Interfaces;
 
 public interface ISkillScript : IScript
 {
-    void OnUse(User user);
+    void OnUse(Aisling aisling);
 }

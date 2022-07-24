@@ -1,6 +1,7 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
+using Chaos.Networking.Extensions;
 using Chaos.Networking.Model.Server;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Serializers;
 
@@ -10,13 +11,13 @@ public record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
 
     public override void Serialize(ref SpanWriter writer, AnimationArgs args)
     {
-        if (args.TargetPoint.HasValue)
+        if (args.TargetPoint != null)
         {
             //writer.WriteBytes(new byte[4]); //dunno
             writer.WriteUInt32(args.SourceId ?? 0);
             writer.WriteUInt16(args.TargetAnimation);
             writer.WriteUInt16(args.AnimationSpeed);
-            writer.WritePoint16(args.TargetPoint.Value);
+            writer.WritePoint16(args.TargetPoint);
         } else
         {
             writer.WriteUInt32(args.TargetId ?? 0);

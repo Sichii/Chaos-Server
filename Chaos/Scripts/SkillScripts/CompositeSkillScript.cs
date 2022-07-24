@@ -6,9 +6,9 @@ namespace Chaos.Scripts.SkillScripts;
 
 public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScript
 {
-    public void OnUse(User user)
+    public void OnUse(Aisling aisling)
     {
         foreach (var component in Components)
-            component.OnUse(user);
+            component.OnUse(aisling);
     }
 }

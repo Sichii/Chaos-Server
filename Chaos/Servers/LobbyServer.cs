@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
 using Chaos.Factories.Interfaces;
@@ -32,7 +31,6 @@ public class LobbyServer : ServerBase, ILobbyServer
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<LobbyOptions> options,
-        Encoding encoding,
         ILogger<LobbyServer> logger
     )
         : base(
@@ -41,11 +39,13 @@ public class LobbyServer : ServerBase, ILobbyServer
             options,
             logger)
     {
+        var opts = options.Value;
+        
         ClientFactory = clientFactory;
-        ServerTable = new ServerTable(options.Value.Servers, encoding);
+        ServerTable = new ServerTable(options.Value.Servers);
         Clients = new ConcurrentDictionary<uint, ILobbyClient>();
         ClientHandlers = new LobbyClientHandler?[byte.MaxValue];
-        Options = options.Value;
+        Options = opts;
 
         IndexHandlers();
     }
@@ -97,16 +97,19 @@ public class LobbyServer : ServerBase, ILobbyServer
     #region Connection / Handler
     protected delegate ValueTask LobbyClientHandler(ILobbyClient client, ref ClientPacket packet);
 
-    public override ValueTask HandlePacketAsync<TClient>(TClient client, ref ClientPacket packet)
+    public override ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
     {
         if (client is ILobbyClient lobbyClient)
-        {
-            var handler = ClientHandlers[(byte)packet.OpCode];
-
-            return handler?.Invoke(lobbyClient, ref packet) ?? default;
-        }
-
+            return HandlePacketAsync(lobbyClient, ref packet);
+        
         return base.HandlePacketAsync(client, ref packet);
+    }
+
+    private ValueTask HandlePacketAsync(ILobbyClient client, ref ClientPacket packet)
+    {
+        var handler = ClientHandlers[(byte)packet.OpCode];
+
+        return handler?.Invoke(client, ref packet) ?? default;
     }
 
     protected sealed override void IndexHandlers()

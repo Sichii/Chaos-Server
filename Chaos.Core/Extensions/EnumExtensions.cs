@@ -2,23 +2,7 @@ namespace Chaos.Core.Extensions;
 
 public static class EnumExtensions
 {
-    public static IEnumerable<Direction> AsEnumerable(this Direction direction)
-    {
-        if (direction == Direction.All)
-            direction = Direction.North;
 
-        var dir = (int)direction;
-
-        for (var i = 0; i < 4; i++)
-        {
-            yield return (Direction)dir;
-
-            dir++;
-
-            if (dir >= 4)
-                dir -= 4;
-        }
-    }
 
     public static IEnumerable<T> Flatten<T>(this T[,] map)
     {
@@ -37,27 +21,7 @@ public static class EnumExtensions
                 yield return arr[y];
         }
     }
-
-    /// <summary>
-    ///     Returns the Direction Enum equivalent of the reverse of a given cardinal direction.
-    /// </summary>
-    public static Direction Reverse(this Direction direction)
-    {
-        switch (direction)
-        {
-            case Direction.North:
-                return Direction.South;
-            case Direction.East:
-                return Direction.West;
-            case Direction.South:
-                return Direction.North;
-            case Direction.West:
-                return Direction.East;
-            default:
-                return Direction.Invalid;
-        }
-    }
-
+    
     public static IEnumerable<EquipmentSlot> ToEquipmentSlots(this EquipmentType type)
     {
         switch (type)

@@ -1,6 +1,5 @@
 using System.Text;
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Packets.Definitions;
 
 namespace Chaos.Utilities;

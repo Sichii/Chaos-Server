@@ -1,3 +1,5 @@
+using Chaos.Data;
+
 namespace Chaos.Containers;
 
 public class Legend : IEnumerable<LegendMark>

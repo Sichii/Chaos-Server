@@ -7,22 +7,9 @@ namespace Chaos.Mappers;
 
 public class EffectMapper : Profile
 {
-    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ISimpleCache<string, IEffect> EffectCache;
 
-    public EffectMapper(ISimpleCache<string, IEffect> effectCache)
+    public EffectMapper()
     {
-        EffectCache = effectCache;
-
-        CreateMap<SerializableEffect, IEffect>(MemberList.None)
-            .ConstructUsing(e => EffectCache.GetObject(e.Name))
-            .ForMember(
-                dest => dest.Remaining,
-                o =>
-                {
-                    o.PreCondition(src => src.RemainingSecs.HasValue);
-                    o.MapFrom(src => TimeSpan.FromSeconds(src.RemainingSecs!.Value));
-                });
 
         CreateMap<IEffect, SerializableEffect>(MemberList.None)
             .ForMember(
@@ -32,16 +19,7 @@ public class EffectMapper : Profile
                     o.PreCondition(src => src.Remaining.HasValue);
                     o.MapFrom(src => src.Remaining!.Value.TotalSeconds);
                 });
-
-        CreateMap<IEnumerable<SerializableEffect>, IEffectsBar>(MemberList.None)
-            .DisableCtorValidation()
-            .AfterMap(
-                (src, dest, rc) =>
-                {
-                    foreach (var serializableEffect in src)
-                        dest.Add(rc.Mapper.Map<IEffect>(serializableEffect));
-                });
-
+        
         CreateMap<IEffectsBar, IEnumerable<SerializableEffect>>(MemberList.None)
             .ConstructUsing(
                 (src, rc) =>

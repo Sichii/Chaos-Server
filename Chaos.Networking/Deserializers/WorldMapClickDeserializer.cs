@@ -1,6 +1,7 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.Geometry;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Client;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Deserializers;
 
@@ -12,7 +13,7 @@ public record WorldMapClickDeserializer : ClientPacketDeserializer<WorldMapClick
     {
         var nodeCheckSum = reader.ReadUInt16();
         var mapId = reader.ReadUInt16();
-        var point = reader.ReadPoint16();
+        Point point = reader.ReadPoint16();
 
         return new WorldMapClickArgs(nodeCheckSum, mapId, point);
     }

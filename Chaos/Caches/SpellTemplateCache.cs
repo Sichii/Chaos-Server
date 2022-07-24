@@ -9,16 +9,16 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Caches;
 
-public class SpellTemplateCache : ISimpleCache<string, SpellTemplate>
+public class SpellTemplateCache : ISimpleCache<SpellTemplate>
 {
     private readonly ConcurrentDictionary<string, SpellTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
-    private readonly SpellTemplateManagerOptions Options;
+    private readonly SpellTemplateCacheOptions Options;
 
     public SpellTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<SpellTemplateManagerOptions> options,
+        IOptionsSnapshot<SpellTemplateCacheOptions> options,
         ILogger<SpellTemplateCache> logger
     )
     {
@@ -60,7 +60,7 @@ public class SpellTemplateCache : ISimpleCache<string, SpellTemplate>
         Logger.LogInformation("{Count} spell templates loaded", Cache.Count);
     }
 
-    private async ValueTask<SpellTemplate> LoadTemplateFromFileAsync(string path)
+    private async Task<SpellTemplate> LoadTemplateFromFileAsync(string path)
     {
         await using var stream = File.OpenRead(path);
         var spellTemplate = await JsonSerializer.DeserializeAsync<SpellTemplate>(stream, JsonSerializerOptions);

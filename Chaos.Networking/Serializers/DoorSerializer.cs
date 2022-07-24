@@ -1,6 +1,6 @@
-using Chaos.Core.Memory;
-using Chaos.Core.Utilities;
+using Chaos.IO.Memory;
 using Chaos.Networking.Model.Server;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Serializers;
 
@@ -14,7 +14,7 @@ public record DoorSerializer : ServerPacketSerializer<DoorArgs>
 
         foreach (var door in args.Doors)
         {
-            writer.WritePoint8(door.Point);
+            writer.WritePoint8((byte)door.X, (byte)door.Y);
             writer.WriteBoolean(door.Closed);
             writer.WriteBoolean(door.OpenRight);
         }

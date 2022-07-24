@@ -6,10 +6,10 @@ namespace Chaos.Observers;
 
 public class ExchangeObserver : IPanelObserver<Item>
 {
-    private readonly User Other;
-    private readonly User Owner;
+    private readonly Aisling Other;
+    private readonly Aisling Owner;
 
-    public ExchangeObserver(User owner, User other)
+    public ExchangeObserver(Aisling owner, Aisling other)
     {
         Owner = owner;
         Other = other;

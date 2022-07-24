@@ -9,7 +9,7 @@ public class BasicScript : ItemScriptBase
     public BasicScript(Item item)
         : base(item) { }
 
-    public override void OnUnequip(User user) { }
+    public override void OnUnequip(Aisling aisling) { }
 
-    public override void OnUse(User user) => user.Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't use that");
+    public override void OnUse(Aisling aisling) => aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't use that");
 }

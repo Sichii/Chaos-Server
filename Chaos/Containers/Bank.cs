@@ -1,4 +1,6 @@
+using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel;
+using Chaos.Objects.Serializable;
 
 namespace Chaos.Containers;
 
@@ -12,6 +14,16 @@ public class Bank : IEnumerable<Item>
         items ??= Enumerable.Empty<Item>();
 
         Items = items.ToDictionary(item => item.DisplayName, StringComparer.OrdinalIgnoreCase);
+    }
+
+    public Bank(SerializableBank serializableBank, IItemFactory itemFactory)
+    {
+        Gold = serializableBank.Gold;
+
+        foreach (var serializableItem in serializableBank.Items)
+        {
+            
+        }
     }
 
     public IEnumerator<Item> GetEnumerator()
