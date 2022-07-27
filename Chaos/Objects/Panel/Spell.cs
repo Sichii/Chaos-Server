@@ -1,8 +1,9 @@
-using Chaos.Caches.Interfaces;
-using Chaos.Factories.Interfaces;
+using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.Serializable;
 using Chaos.Scripts.Interfaces;
+using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Factories.Interfaces;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -44,4 +45,14 @@ public class Spell : PanelObjectBase, IScriptedSpell
             serializableSpell.ScriptKeys,
             serializableSpell.UniqueId) =>
         Elapsed = TimeSpan.FromMilliseconds(serializableSpell.ElapsedMs);
+
+    public SpellInfo ToSpellInfo() => new()
+    {
+        CastLines = CastLines,
+        Name = Template.Name,
+        Prompt = Template.Prompt ?? string.Empty,
+        Slot = Slot,
+        SpellType = Template.SpellType,
+        Sprite = Template.PanelSprite
+    };
 }

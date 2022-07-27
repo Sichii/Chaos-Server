@@ -1,8 +1,11 @@
 ﻿using System.Collections;
+using System.Text.Json.Serialization;
 using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.JsonConverters;
 
 namespace Chaos.Geometry;
 
+[JsonConverter(typeof(RectangleConverter))]
 public class Rectangle : IRectangle, IEquatable<IRectangle>
 {
     public int Bottom { get; init; }

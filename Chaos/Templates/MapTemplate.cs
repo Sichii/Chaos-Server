@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Data;
 using Chaos.Geometry.Interfaces;
-using Chaos.Objects.World;
 using Chaos.Templates.Interfaces;
 
 namespace Chaos.Templates;
@@ -11,7 +10,7 @@ public record MapTemplate : ITemplate
     [JsonIgnore]
     public ushort CheckSum { get; set; }
     [JsonIgnore]
-    public Dictionary<Point, Door> Doors { get; set; } = new();
+    public Dictionary<Point, DoorTemplate> Doors { get; set; } = new();
     public byte Height { get; set; }
     public string TemplateKey { get; init; } = null!;
     [JsonIgnore]

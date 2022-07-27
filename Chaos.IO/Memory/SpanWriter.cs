@@ -27,7 +27,7 @@ public ref struct SpanWriter
         AutoGrow = autoGrow;
     }
 
-    public Span<byte> Flush() => Buffer[..Position];
+    public void Flush() => Buffer = Buffer[..Position];
 
     private void GrowIfNeeded(int bytesToWrite)
     {
@@ -179,4 +179,12 @@ public ref struct SpanWriter
             (byte)(value >> 16),
             (byte)(value >> 8),
             (byte)value);
+
+    public Span<byte> ToSpan()
+    {
+        if(Buffer.Length != Position)
+            Flush();
+        
+        return Buffer;
+    }
 }

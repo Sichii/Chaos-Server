@@ -1,4 +1,3 @@
-using Chaos.Caches.Interfaces;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Definitions;
@@ -8,6 +7,7 @@ using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
+using Chaos.Services.Caches.Interfaces;
 
 namespace Chaos.Clients.Interfaces;
 
@@ -32,7 +32,7 @@ public interface IWorldClient : ISocketClient
     void SendConfirmExit();
     void SendCooldown(PanelObjectBase panelObjectBase);
     void SendCreatureTurn(uint id, Direction direction);
-    void SendCreatureWalk(uint id, Point point, Direction direction);
+    void SendCreatureWalk(uint id, Point startPoint, Direction direction);
 
     void SendDisplayAisling(Aisling aisling);
 

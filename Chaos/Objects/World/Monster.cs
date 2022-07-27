@@ -3,6 +3,7 @@ using Chaos.Data;
 using Chaos.Geometry.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
@@ -11,10 +12,9 @@ public class Monster : Creature
     public List<Item> Items { get; }
     public override StatSheet StatSheet { get; }
     public sealed override CreatureType Type { get; }
-    
-    
-    /*
-    public override void OnGoldDroppedOn(int amount, User source)
+    protected override ILogger<Monster> Logger { get; }
+
+    public override void OnGoldDroppedOn(int amount, Aisling source)
     {
         if ((uint)Gold + amount > int.MaxValue)
             return;
@@ -25,7 +25,7 @@ public class Monster : Creature
         source.Client.SendAttributes(StatUpdateType.ExpGold);
     }
 
-    public override void OnItemDroppedOn(byte slot, byte count, User source)
+    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
     {
         if (source.Inventory.RemoveQuantity(slot, count, out var item))
         {
@@ -38,7 +38,7 @@ public class Monster : Creature
         }
     }
 
-    public override void OnClicked(User source)
+    public override void OnClicked(Aisling source)
     {
         var now = DateTime.UtcNow;
 
@@ -49,10 +49,11 @@ public class Monster : Creature
         LastClicked[source.Id] = now;
         source.Client.SendServerMessage(ServerMessageType.OrangeBar1, Name);
     }
-    */
+    
     
     public Monster(
         string name,
+        ILogger<Monster> logger,
         ushort sprite,
         MapInstance mapInstance,
         IPoint point,
@@ -64,6 +65,7 @@ public class Monster : Creature
             mapInstance,
             point)
     {
+        Logger = logger;
         Items = new List<Item>();
         Type = type;
         StatSheet = new StatSheet();

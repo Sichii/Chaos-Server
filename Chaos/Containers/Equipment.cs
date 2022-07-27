@@ -2,6 +2,9 @@ using Chaos.Containers.Abstractions;
 using Chaos.Containers.Interfaces;
 using Chaos.Data;
 using Chaos.Objects.Panel;
+using Chaos.Objects.Serializable;
+using Chaos.Observers.Interfaces;
+using Chaos.Services.Serialization.Interfaces;
 
 namespace Chaos.Containers;
 
@@ -15,6 +18,19 @@ public class Equipment : PanelBase<Item>, IEquipment
             PanelType.Equipment,
             19,
             new byte[] { 0 }) => Modifiers = new Attributes();
+
+    public Equipment(
+        IEnumerable<SerializableItem> serializedItems,
+        ISerialTransformService<Item, SerializableItem> itemTransformer
+    )
+        : this()
+    {
+        foreach (var serialized in serializedItems)
+        {
+            var item = itemTransformer.Transform(serialized);
+            Objects[item.Slot] = item;
+        }
+    }
 
     public bool TryEquip(Item item, out Item? returnedItem)
     {

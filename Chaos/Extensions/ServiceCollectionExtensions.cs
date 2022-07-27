@@ -18,4 +18,27 @@ public static class ServiceCollectionExtensions
                        .Configure<IConfiguration>(
                            (o, c) => c.GetSection(path).Bind(o, options => options.ErrorOnUnknownConfiguration = true));
     }
+
+    public static void AddTransient<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2
+                                                                                   where TI1: class
+                                                                                   where TI2: class
+    {
+        services.AddTransient<TI1, T>();
+        services.AddTransient<TI2, T>();
+    }
+    
+    /// <summary>
+    /// Adds a singleton service that can be retreived via multiple base types
+    /// </summary>
+    /// <param name="services">The service collection to add to</param>
+    /// <typeparam name="TI1">A base type of <typeparamref name="T"/></typeparam>
+    /// <typeparam name="TI2">Another base type of <typeparamref name="T"/></typeparam>
+    /// <typeparam name="T">An implementation of the previous two types</typeparam>
+    public static void AddSingleton<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2
+                                                                                   where TI1: class
+                                                                                   where TI2: class
+    {
+        services.AddSingleton<TI1, T>();
+        services.AddSingleton<TI2, T>(p => (T)p.GetRequiredService<TI1>());
+    }
 }

@@ -4,16 +4,21 @@ namespace Chaos.Objects.Serializable;
 
 public record SerializableItem
 {
-    public DisplayColor Color { get; }
-    public int Count { get; }
-    public int? CurrentDurability { get; }
-    public int ElapsedMs { get; }
-    public ICollection<string>? ScriptKeys { get; }
-    public byte? Slot { get; }
-    public string TemplateKey { get; }
-    public ulong UniqueId { get; }
+    public DisplayColor Color { get; init; }
+    public int Count { get; init; }
+    public int? CurrentDurability { get; init; }
+    public int ElapsedMs { get; init; }
+    public ICollection<string>? ScriptKeys { get; init; }
+    public byte? Slot { get; init; }
+    public string TemplateKey { get; init; }
+    public ulong UniqueId { get; init; }
 
-    public SerializableItem(Item item, bool serializeSlot = true)
+    #pragma warning disable CS8618
+    //json constructor
+    public SerializableItem() { }
+    #pragma warning restore CS8618
+    
+    public SerializableItem(Item item, bool shouldSerializeSlot = true)
     {
         UniqueId = item.UniqueId;
         ElapsedMs = Convert.ToInt32(item.Elapsed.TotalMilliseconds);
@@ -22,6 +27,6 @@ public record SerializableItem
         Color = item.Color;
         Count = item.Count;
         CurrentDurability = item.CurrentDurability;
-        Slot = serializeSlot ? item.Slot : null;
+        Slot = shouldSerializeSlot ? item.Slot : null;
     }
 }

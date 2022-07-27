@@ -1,4 +1,7 @@
-﻿namespace Chaos.Data;
+﻿using Chaos.Networking.Model.Server;
+using Chaos.Objects.Serializable;
+
+namespace Chaos.Data;
 
 public record LegendMark(
     string Text,
@@ -11,6 +14,15 @@ public record LegendMark(
 {
     public GameTime Added { get; set; } = Added;
     public int Count { get; set; } = Count;
+
+    public LegendMark(SerializableLegendMark serializableLegendMark)
+        : this(
+            serializableLegendMark.Text,
+            serializableLegendMark.Key,
+            serializableLegendMark.Icon,
+            serializableLegendMark.Color,
+            serializableLegendMark.Count,
+            new GameTime(serializableLegendMark.Added)) { }
 
     public virtual bool Equals(LegendMark? other)
     {
@@ -25,5 +37,13 @@ public record LegendMark(
 
     public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Text);
 
+    public LegendMarkInfo ToLegendMarkInfo() => new()
+    {
+        Color = Color,
+        Icon = Icon,
+        Key = Key,
+        Text = ToString()
+    };
+    
     public override string ToString() => Count > 1 ? $@"{Text} ({Count}) - {Added.ToString()}" : $@"{Text} - {Added.ToString()}";
 }

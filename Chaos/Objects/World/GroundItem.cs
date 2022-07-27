@@ -10,17 +10,18 @@ public class GroundItem : NamedEntity
 {
     public Item Item { get; }
     
-    /*
-    public override void OnClicked(User source)
+    
+    public override void OnClicked(Aisling source)
     {
         //nothing
         //there's a different packet for picking up items
-    }*/
+    }
     
     public GroundItem(Item item, MapInstance mapInstance, IPoint point)
         : base(
             item.DisplayName,
             item.Template.ItemSprite.OffsetPanelSprite,
             mapInstance,
-            point) => Item = item;
+            point) =>
+        Item = item;
 }

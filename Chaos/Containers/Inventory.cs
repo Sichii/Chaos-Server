@@ -1,16 +1,47 @@
 using Chaos.Containers.Abstractions;
 using Chaos.Containers.Interfaces;
 using Chaos.Objects.Panel;
+using Chaos.Objects.Serializable;
+using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Utility.Interfaces;
 
 namespace Chaos.Containers;
 
 public class Inventory : PanelBase<Item>, IInventory
 {
+    private readonly ICloningService<Item> ItemCloner;
+
+    /// <summary>
+    /// Used for character creation
+    /// </summary>
     public Inventory()
+        : this(null!) { }
+
+    /// <summary>
+    /// General use constructor
+    /// </summary>
+    public Inventory(ICloningService<Item> itemCloner)
         : base(
             PanelType.Inventory,
             60,
-            new byte[] { 0 }) { }
+            new byte[] { 0 }) => ItemCloner = itemCloner;
+
+    /// <summary>
+    /// Used for converting from serial format
+    /// </summary>
+    public Inventory(
+        ICloningService<Item> itemCloner,
+        IEnumerable<SerializableItem> serializedItems,
+        ISerialTransformService<Item, SerializableItem> itemTransformer
+    )
+        : this(itemCloner)
+    {
+        foreach (var serialized in serializedItems)
+        {
+            var item = itemTransformer.Transform(serialized);
+            Objects[item.Slot] = item;
+        }
+    }
 
     public int CountOf(string name)
     {
@@ -98,7 +129,7 @@ public class Inventory : PanelBase<Item>, IInventory
                 ret.Add(item);
             } else
             {
-                var split = item.Split(quantity);
+                var split = item.Split(quantity, ItemCloner);
                 BroadcastOnUpdated(item.Slot, item);
                 ret.Add(split);
 
@@ -135,7 +166,7 @@ public class Inventory : PanelBase<Item>, IInventory
             return Remove(slot);
         }
 
-        item = slotItem.Split(quantity);
+        item = slotItem.Split(quantity, ItemCloner);
         Update(slot);
 
         return true;

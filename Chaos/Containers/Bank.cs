@@ -1,6 +1,7 @@
-using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
+using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Serialization.Interfaces;
 
 namespace Chaos.Containers;
 
@@ -16,14 +17,13 @@ public class Bank : IEnumerable<Item>
         Items = items.ToDictionary(item => item.DisplayName, StringComparer.OrdinalIgnoreCase);
     }
 
-    public Bank(SerializableBank serializableBank, IItemFactory itemFactory)
+    public Bank(uint gold, IEnumerable<SerializableItem> serializableItems, ISerialTransformService<Item, SerializableItem> itemTransform)
     {
-        Gold = serializableBank.Gold;
+        Gold = gold;
 
-        foreach (var serializableItem in serializableBank.Items)
-        {
-            
-        }
+        Items = serializableItems
+                .Select(itemTransform.Transform)
+                .ToDictionary(i => i.DisplayName, StringComparer.OrdinalIgnoreCase);
     }
 
     public IEnumerator<Item> GetEnumerator()

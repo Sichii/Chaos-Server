@@ -2,14 +2,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Chaos;
-using Chaos.Caches.Interfaces;
-using Chaos.Containers;
-using Chaos.Data;
-using Chaos.Effects.Interfaces;
-using Chaos.Servers;
-using Chaos.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var services = new ServiceCollection();
 var configuration = new ConfigurationBuilder()
@@ -28,26 +23,12 @@ startup.ConfigureServices(services);
 
 await using var provider = services.BuildServiceProvider();
 
-//initialize caches
-await Task.WhenAll(
-    provider.GetRequiredService<ISimpleCache<IEffect>>().LoadCacheAsync(),
-    provider.GetRequiredService<ISimpleCache<ItemTemplate>>().LoadCacheAsync(),
-    provider.GetRequiredService<ISimpleCache<SkillTemplate>>().LoadCacheAsync(),
-    provider.GetRequiredService<ISimpleCache<SpellTemplate>>().LoadCacheAsync(),
-    provider.GetRequiredService<ISimpleCache<Metafile>>().LoadCacheAsync(),
-    provider.GetRequiredService<ISimpleCache<MapTemplate>>().LoadCacheAsync());
-
-await provider.GetRequiredService<ISimpleCache<MapInstance>>().LoadCacheAsync();
-
-var lobbyServer = provider.GetRequiredService<LobbyServer>();
-var loginServer = provider.GetRequiredService<LoginServer>();
-var worldServer = provider.GetRequiredService<WorldServer>();
-
 var ctx = new CancellationTokenSource();
+var hostedServices = provider.GetServices<IHostedService>();
 
-await Task.WhenAll(lobbyServer.StartAsync(ctx.Token), 
-    loginServer.StartAsync(ctx.Token), 
-    worldServer.StartAsync(ctx.Token));
+var startFuncs = hostedServices
+                 .Select<IHostedService, Func<CancellationToken, Task>>(s => s.StartAsync)
+                 .ToArray();
 
-//do nothing
+await ctx.Token.WhenAllWithCancellation(startFuncs);
 await ctx.Token.WaitTillCanceled();

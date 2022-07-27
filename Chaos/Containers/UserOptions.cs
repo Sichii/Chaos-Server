@@ -1,3 +1,5 @@
+using Chaos.Objects.Serializable;
+
 namespace Chaos.Containers;
 
 public class UserOptions
@@ -16,6 +18,20 @@ public class UserOptions
     public bool Whisper { get; set; } = true;
 
     public bool Wisdom { get; set; } = true;
+
+    public UserOptions() { }
+
+    public UserOptions(SerializableOptions serializableOptions)
+    {
+        Exchange = serializableOptions.Exchange;
+        FastMove = serializableOptions.FastMove;
+        Group = serializableOptions.FastMove;
+        GuildChat = serializableOptions.GuildChat;
+        Magic = serializableOptions.GuildChat;
+        Shout = serializableOptions.Shout;
+        Whisper = serializableOptions.Whisper;
+        Wisdom = serializableOptions.Wisdom;
+    }
 
     /// <summary>
     ///     Toggles the given UserOption.

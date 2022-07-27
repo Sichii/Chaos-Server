@@ -26,7 +26,6 @@ public record UserStatSheet : StatSheet
 
     public bool Master { get; set; }
     public int MaxWeight { get; set; }
-    public Nation Nation { get; set; }
 
     [JsonInclude]
     public int ToNextAbility
@@ -65,7 +64,6 @@ public record UserStatSheet : StatSheet
 
     public static UserStatSheet NewCharacter => new()
     {
-        Nation = Nation.None,
         MaxWeight = 40,
         _toNextLevel = 100,
         _str = 1,

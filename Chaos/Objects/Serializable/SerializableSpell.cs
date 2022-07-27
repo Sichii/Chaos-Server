@@ -4,11 +4,16 @@ namespace Chaos.Objects.Serializable;
 
 public record SerializableSpell
 {
-    public ulong UniqueId { get; }
-    public int ElapsedMs { get; }
-    public ICollection<string> ScriptKeys { get; set; }
-    public string TemplateKey { get; set; }
+    public int ElapsedMs { get; init; }
+    public ICollection<string> ScriptKeys { get; init; }
+    public string TemplateKey { get; init; }
+    public ulong UniqueId { get; init; }
 
+    #pragma warning disable CS8618
+    //json constructor
+    public SerializableSpell() { }
+    #pragma warning restore CS8618
+    
     public SerializableSpell(Spell spell)
     {
         UniqueId = spell.UniqueId;

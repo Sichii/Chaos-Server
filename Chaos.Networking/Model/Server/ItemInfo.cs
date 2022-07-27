@@ -2,15 +2,15 @@ namespace Chaos.Networking.Model.Server;
 
 public record ItemInfo
 {
-    public BaseClass Class { get; set; }
-    public DisplayColor Color { get; set; }
-    public int? Cost { get; set; }
-    public uint? Count { get; set; }
-    public int CurrentDurability { get; set; }
-    public GameObjectType GameObjectType { get; set; }
-    public int MaxDurability { get; set; }
-    public string Name { get; set; } = null!;
-    public byte Slot { get; set; }
-    public ushort Sprite { get; set; }
-    public bool Stackable { get; set; }
+    public BaseClass Class { get; init; }
+    public DisplayColor Color { get; init; }
+    public int? Cost { get; init; }
+    public uint? Count { get; init; }
+    public int CurrentDurability { get; init; }
+    public GameObjectType GameObjectType { get; init; }
+    public int MaxDurability { get; init; }
+    public string Name { get; init; } = null!;
+    public byte Slot { get; init; }
+    public ushort Sprite { get; init; }
+    public bool Stackable { get; init; }
 }

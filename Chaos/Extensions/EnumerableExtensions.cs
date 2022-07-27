@@ -1,14 +1,15 @@
-using Chaos.Factories.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Services.Utility;
+using Chaos.Services.Utility.Interfaces;
 
 namespace Chaos.Extensions;
 
 public static class EnumerableExtensions
 {
-    public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, IItemFactory itemFactory) =>
-        items.SelectMany(item => item.FixStacks(itemFactory));
+    public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, ICloningService<Item> itemCloner) =>
+        items.SelectMany(item => item.FixStacks(itemCloner));
 
     public static Item ToSingleStack(this IEnumerable<Item> items) =>
         items.Aggregate(
