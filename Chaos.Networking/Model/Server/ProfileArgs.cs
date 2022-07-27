@@ -6,7 +6,7 @@ public record ProfileArgs : ISendArgs
 {
     public AdvClass? AdvClass { get; set; }
     public BaseClass BaseClass { get; set; }
-    public IDictionary<EquipmentSlot, ItemInfo?> Equipment { get; set; } = new Dictionary<EquipmentSlot, ItemInfo?>();
+    public Dictionary<EquipmentSlot, ItemInfo?> Equipment { get; set; } = new();
     public bool GroupOpen { get; set; }
     public string? GuildName { get; set; }
     public string? GuildTitle { get; set; }

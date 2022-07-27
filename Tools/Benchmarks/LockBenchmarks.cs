@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using Chaos.Core.Synchronization;
-using Chaos.Core.Utilities;
+
 // ReSharper disable NotAccessedVariable
 
 namespace Benchmarks;

@@ -1,5 +1,4 @@
 using System.Net.Sockets;
-using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Data;
@@ -8,6 +7,7 @@ using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects;
 using Chaos.Packets.Interfaces;
+using Chaos.Services.Caches.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;

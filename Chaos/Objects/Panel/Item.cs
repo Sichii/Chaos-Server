@@ -1,8 +1,10 @@
-using Chaos.Caches.Interfaces;
-using Chaos.Factories.Interfaces;
+using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.Serializable;
 using Chaos.Scripts.Interfaces;
+using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Utility.Interfaces;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -49,7 +51,7 @@ public class Item : PanelObjectBase, IScriptedItem
         Slot = serializableItem.Slot ?? 0;
     }
     
-    public IEnumerable<Item> FixStacks(IItemFactory itemFactory)
+    public IEnumerable<Item> FixStacks(ICloningService<Item> itemCloner)
     {
         if (Count <= Template.MaxStacks)
         {
@@ -63,7 +65,7 @@ public class Item : PanelObjectBase, IScriptedItem
 
         for (var i = 0; i < stackCount; i++)
         {
-            var clone = itemFactory.CloneItem(this);
+            var clone = itemCloner.Clone(this);
             clone.Count = Template.MaxStacks;
 
             yield return clone;
@@ -71,14 +73,14 @@ public class Item : PanelObjectBase, IScriptedItem
 
         if (extra > 0)
         {
-            var clone = itemFactory.CloneItem(this);
+            var clone = itemCloner.Clone(this);
             clone.Count = extra;
 
             yield return clone;
         }
     }
 
-    public Item Split(int count, IItemFactory itemFactory)
+    public Item Split(int count, ICloningService<Item> itemCloner)
     {
         lock (this)
         {
@@ -90,12 +92,29 @@ public class Item : PanelObjectBase, IScriptedItem
 
             Count -= count;
 
-            var clone = itemFactory.CloneItem(this);
+            var clone = itemCloner.Clone(this);
             clone.Count = count;
 
             return clone;
         }
     }
+
+    public ItemInfo ToItemInfo() => new()
+    {
+        Class = Template.BaseClass ?? BaseClass.Peasant,
+        Color = Color,
+        Cost = Template.Value,
+        Count = Count < 0
+            ? throw new InvalidOperationException($"Item \"{DisplayName}\" has negative count of {Count}")
+            : Convert.ToUInt32(Count),
+        CurrentDurability = CurrentDurability ?? 0,
+        GameObjectType = GameObjectType.Item,
+        MaxDurability = Template.MaxDurability ?? 0,
+        Name = DisplayName,
+        Slot = Slot,
+        Sprite = Template.ItemSprite.PanelSprite,
+        Stackable = Template.Stackable
+    };
 
     public override string ToString() => $@"(Id: {UniqueId}, Name: {DisplayName}, Count: {Count})";
 }

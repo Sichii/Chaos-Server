@@ -1,9 +1,7 @@
 using Chaos.Core.Identity;
 using Chaos.Core.Synchronization;
-using Chaos.Core.Utilities;
 using Chaos.Objects.World;
 using Chaos.Observers;
-using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Containers;
@@ -146,12 +144,11 @@ public class Exchange
             return;
         }
 
-        //we need to check if they can carry the items before we actually take or give anything
-        var cloned = ItemUtility.Instance.Clone(item);
-        cloned.Count = amount;
-        var corrected = cloned.FixStacks();
+        var hypotheticalItems = userItems
+                                .Select(i => (i, i.Count))
+                                .Append((item, amount));
 
-        if (!otherUser.CanCarry(userItems.Concat(corrected).ToArray()))
+        if (!otherUser.CanCarry(hypotheticalItems))
         {
             aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
             otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");

@@ -59,17 +59,17 @@ public record StatSheet : Attributes
     public byte EffectiveDmg => (byte)Math.Clamp(Dmg + DmgMod, byte.MinValue, byte.MaxValue);
     public byte EffectiveHit => (byte)Math.Clamp(Hit + HitMod, byte.MinValue, byte.MaxValue);
     public byte EffectiveInt => (byte)Math.Clamp(Int + IntMod, byte.MinValue, byte.MaxValue);
-    public sbyte EffectiveMagicResistance => (sbyte)Math.Clamp(MagicResistance + MagicResistantMod, sbyte.MinValue, sbyte.MaxValue);
-    public int EffectiveMaximumHp => Math.Max(MaximumHp + MaximumHpMod, 0);
-    public int EffectiveMaximumMp => Math.Max(MaximumMp + MaximumMpMod, 0);
+    public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistantMod, sbyte.MinValue, sbyte.MaxValue);
+    public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 0);
+    public uint EffectiveMaximumMp => (uint)Math.Max(MaximumMp + MaximumMpMod, 0);
     public byte EffectiveStr => (byte)Math.Clamp(Str + StrMod, byte.MinValue, byte.MaxValue);
     public byte EffectiveWis => (byte)Math.Clamp(Wis + WisMod, byte.MinValue, byte.MaxValue);
-    public int HealthPercent => CurrentHp / EffectiveMaximumHp * 100;
+    public int HealthPercent => (int)(CurrentHp / EffectiveMaximumHp * 100);
     public int HitMod => _hitMod;
     public int IntMod => _intMod;
 
     public int MagicResistantMod => _magicResistanceMod;
-    public int ManaPercent => CurrentMp / EffectiveMaximumMp * 100;
+    public int ManaPercent => (int)(CurrentMp / EffectiveMaximumMp * 100);
 
     public static StatSheet Maxed => new()
     {

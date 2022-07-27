@@ -3,6 +3,7 @@ using Chaos.Data;
 using Chaos.Effects.Interfaces;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
+using Microsoft.Extensions.Logging;
 using PointExtensions = Chaos.Geometry.Extensions.PointExtensions;
 
 namespace Chaos.Objects.World.Abstractions;
@@ -18,10 +19,11 @@ public abstract class Creature : NamedEntity, IEffected
     public virtual bool IsAlive => StatSheet.CurrentHp > 0;
     public abstract StatSheet StatSheet { get; }
     public abstract CreatureType Type { get; }
+    protected abstract ILogger Logger { get; }
     
     public bool ShouldRegisterClick(uint fromId) =>
         !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);
-    
+
     protected Creature(
         string name,
         ushort sprite,
@@ -38,7 +40,7 @@ public abstract class Creature : NamedEntity, IEffected
         Effects = new EffectsBar(this);
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
     }
-    
+
     public virtual void Update(TimeSpan delta) => Effects.Update(delta);
 
     public void TraverseMap(MapInstance destinationMap, IPoint destinationPoint)
@@ -72,11 +74,11 @@ public abstract class Creature : NamedEntity, IEffected
             aisling.Client.SendCreatureTurn(Id, direction);
     }
 
-    public void Say(string message) => PublicMessage(PublicMessageType.Normal, message);
-    public void Shout(string message) => PublicMessage(PublicMessageType.Shout, message);
-    public void Chant(string message) => PublicMessage(PublicMessageType.Chant, message);
+    public void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
+    public void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
+    public void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
     
-    protected void PublicMessage(PublicMessageType publicMessageType, string message)
+    public void ShowPublicMessage(PublicMessageType publicMessageType, string message)
     {
         foreach (var aisling in MapInstance.ObjectsThatSee<Aisling>(this))
             aisling.Client.SendPublicMessage(Id, publicMessageType, message);
@@ -85,6 +87,7 @@ public abstract class Creature : NamedEntity, IEffected
     public virtual void Walk(Direction direction)
     {
         Direction = direction;
+        var startPoint = Point.From(this);
         var endPoint = PointExtensions.DirectionalOffset(this, direction);
         
         if (!MapInstance.IsWalkable(endPoint, Type == CreatureType.WalkThrough))
@@ -99,12 +102,18 @@ public abstract class Creature : NamedEntity, IEffected
                                       .ToList();
         
         foreach (var aisling in visibleBefore.Except(visibleAfter))
-            RemoveFromViewOf(aisling);
+            HideFrom(aisling);
 
         foreach (var aisling in visibleAfter.Except(visibleBefore))
-            DisplayTo(aisling);
+            ShowTo(aisling);
 
         foreach (var aisling in visibleAfter.Intersect(visibleBefore))
-            aisling.Client.SendCreatureWalk(Id, endPoint, Direction);
+            aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
+
+        MapInstance.ActivateReactors(this);
     }
+
+    public abstract void OnGoldDroppedOn(int amount, Aisling source);
+
+    public abstract void OnItemDroppedOn(byte slot, byte count, Aisling source);
 }

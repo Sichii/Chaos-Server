@@ -1,7 +1,7 @@
 using Chaos.Containers;
 using Chaos.Geometry.Interfaces;
 using Chaos.Objects.World.Abstractions;
-using Microsoft.Extensions.Logging;
+using Chaos.Services.Hosted.Options;
 
 namespace Chaos.Objects.World;
 
@@ -22,11 +22,20 @@ public class Money : VisibleEntity
     public Money(int amount, MapInstance mapInstance, IPoint point)
         : base(GetSprite(amount), mapInstance, point) => Amount = amount;
     
-    /*
-    public override void OnClicked(User source)
+    
+    public override void OnClicked(Aisling source)
     {
+        if (source.Gold + Amount > WorldOptions.Instance.MaxGoldHeld)
+        {
+            source.Client.SendServerMessage(
+                ServerMessageType.ActiveMessage,
+                $"You can't hold more than {WorldOptions.Instance.MaxGoldHeld} gold");
+            
+            return;
+        }
+        
         MapInstance.RemoveObject(this);
         source.Gold += Amount;
         source.Client.SendAttributes(StatUpdateType.ExpGold);
-    }*/
+    }
 }

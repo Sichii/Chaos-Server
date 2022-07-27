@@ -1,4 +1,3 @@
-using Chaos.Geometry.Extensions;
 using Chaos.Geometry.Interfaces;
 
 namespace Chaos.Extensions;

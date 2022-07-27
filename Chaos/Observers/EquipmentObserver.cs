@@ -13,7 +13,7 @@ public class EquipmentObserver : IPanelObserver<Item>
     public void OnAdded(Item obj)
     {
         Aisling.Client.SendEquipment(obj);
-        Aisling.MapInstance.Display(Aisling);
+        Aisling.Display();
         Aisling.StatSheet.AddWeight(obj.Template.Weight);
 
         if (obj.Template.Modifiers != null)
@@ -25,7 +25,7 @@ public class EquipmentObserver : IPanelObserver<Item>
     public void OnRemoved(byte slot, Item obj)
     {
         Aisling.Client.SendUnequip((EquipmentSlot)slot);
-        Aisling.MapInstance.Display(Aisling);
+        Aisling.Display();
         Aisling.Client.SendSelfProfile();
 
         Aisling.StatSheet.AddWeight(-obj.Template.Weight);

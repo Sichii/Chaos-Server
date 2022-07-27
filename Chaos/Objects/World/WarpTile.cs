@@ -1,7 +1,7 @@
-using Chaos.Caches.Interfaces;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Services.Caches.Interfaces;
 
 namespace Chaos.Objects.World;
 

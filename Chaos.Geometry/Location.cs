@@ -1,8 +1,12 @@
-﻿using Chaos.Geometry.Definitions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.JsonConverters;
 
 namespace Chaos.Geometry;
 
+[JsonConverter(typeof(LocationConverter))]
 public readonly struct Location : ILocation, IEquatable<ILocation>
 {
     public int X { get; init; }
@@ -36,9 +40,9 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
 
     public override int GetHashCode() => HashCode.Combine(X, Y, Map);
     
-    public static bool TryParse(string str, out Location? location)
+    public static bool TryParse(string str, out Location location)
     {
-        location = null;
+        location = new Location();
         var match = RegexCache.LOCATION_REGEX.Match(str);
 
         if (!match.Success)

@@ -7,9 +7,12 @@ public static class TaskExtensions
         try
         {
             await Task.Delay(-1, cancellationToken);
-        } catch (TaskCanceledException e)
+        } catch (TaskCanceledException)
         {
             //ignored
         }
     }
+
+    public static Task WhenAllWithCancellation(this CancellationToken token, params Func<CancellationToken, Task>[] taskFuncs) =>
+        Task.WhenAll(taskFuncs.Select(task => task(token)));
 }

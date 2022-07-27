@@ -8,7 +8,6 @@ using Chaos.Packets.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TaskExtensions = Chaos.Core.Extensions.TaskExtensions;
 
 namespace Chaos.Networking.Abstractions;
 

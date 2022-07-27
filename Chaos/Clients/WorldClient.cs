@@ -1,6 +1,4 @@
 using System.Net.Sockets;
-using AutoMapper;
-using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Cryptography.Interfaces;
@@ -15,7 +13,8 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
-using Chaos.Servers.Interfaces;
+using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Hosted.Interfaces;
 using Microsoft.Extensions.Logging;
 using ServerPacket = Chaos.Utilities.ServerPacket;
 
@@ -23,12 +22,10 @@ namespace Chaos.Clients;
 
 public class WorldClient : SocketClientBase, IWorldClient
 {
-    private readonly IMapper Mapper;
     public Aisling Aisling { get; set; } = null!;
 
     public WorldClient(
         Socket socket,
-        IMapper mapper,
         ICryptoClient cryptoClient,
         IWorldServer server,
         IPacketSerializer packetSerializer,
@@ -39,13 +36,13 @@ public class WorldClient : SocketClientBase, IWorldClient
             cryptoClient,
             server,
             packetSerializer,
-            logger) => Mapper = mapper;
+            logger) { }
 
     public void SendAddItemToPane(Item item)
     {
         var args = new AddItemToPaneArgs
         {
-            Item = Mapper.Map<ItemInfo>(item)
+            Item = item.ToItemInfo()
         };
 
         Send(args);
@@ -55,7 +52,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddSkillToPaneArgs
         {
-            Skill = Mapper.Map<SkillInfo>(skill)
+            Skill = skill.ToSkillInfo()
         };
 
         Send(args);
@@ -65,7 +62,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddSpellToPaneArgs
         {
-            Spell = Mapper.Map<SpellInfo>(spell)
+            Spell = spell.ToSpellInfo()
         };
 
         Send(args);
@@ -88,7 +85,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendAttributes(StatUpdateType statUpdateType)
     {
-        var args = Mapper.Map<AttributesArgs>(Aisling);
+        var args = Aisling.ToAttributeArgs();
         args.StatUpdateType = statUpdateType;
         Send(args);
     }
@@ -161,12 +158,12 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendCreatureWalk(uint id, Point point, Direction direction)
+    public void SendCreatureWalk(uint id, Point startPoint, Direction direction)
     {
         var args = new CreatureWalkArgs
         {
             SourceId = id,
-            OldPoint = point,
+            OldPoint = startPoint,
             Direction = direction
         };
 
@@ -175,7 +172,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendDisplayAisling(Aisling aisling)
     {
-        var args = Mapper.Map<DisplayAislingArgs>(aisling);
+        var args = aisling.ToDisplayAislingArgs();
 
         Send(args);
     }
@@ -215,7 +212,7 @@ public class WorldClient : SocketClientBase, IWorldClient
         var args = new EquipmentArgs
         {
             Slot = (EquipmentSlot)item.Slot,
-            Item = Mapper.Map<ItemInfo>(item)
+            Item = item.ToItemInfo()
         };
 
         Send(args);
@@ -452,7 +449,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendProfile(Aisling aisling)
     {
-        var args = Mapper.Map<ProfileArgs>(aisling);
+        var args = aisling.ToProfileArgs();
 
         Send(args);
     }
@@ -525,7 +522,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendSelfProfile()
     {
-        var args = Mapper.Map<SelfProfileArgs>(Aisling);
+        var args = Aisling.ToSelfProfileArgs();
 
         Send(args);
     }
@@ -564,7 +561,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendUserId()
     {
-        var args = Mapper.Map<UserIdArgs>(Aisling);
+        var args = Aisling.ToUserIdArgs();
 
         Send(args);
     }
@@ -584,25 +581,26 @@ public class WorldClient : SocketClientBase, IWorldClient
                         Color = groundItem.Item.Color,
                         X = groundItem.X,
                         Y = groundItem.Y,
-                        Sprite = groundItem.Sprite!.Value
+                        Sprite = groundItem.Sprite
                     });
             else if (obj is Creature creature)
                 visibleArgs.Add(
                     new CreatureInfo
                     {
                         Id = creature.Id,
-                        X = creature.Point.X,
-                        Y = creature.Point.Y,
-                        Sprite = creature.Sprite!.Value,
+                        X = creature.X,
+                        Y = creature.Y,
+                        Sprite = creature.Sprite,
                         CreatureType = creature.Type,
                         Direction = creature.Direction,
                         Name = creature.Name
                     });
 
-        Send(args);
+        if (args.VisibleObjects.Any())
+            Send(args);
     }
 
-    public void SendWorldList(IEnumerable<Aisling> users)
+    public void SendWorldList(IEnumerable<Aisling> aislings)
     {
         var worldList = new List<WorldListMemberInfo>();
 
@@ -622,11 +620,11 @@ public class WorldClient : SocketClientBase, IWorldClient
         var upperBound = Math.Floor(Aisling.StatSheet.Level + Aisling.StatSheet.Level / 5m + 3);
         var lowerBound = Math.Ceiling(Math.Max(0, Aisling.StatSheet.Level * 5m - 15) / 6);
 
-        foreach (var user in users)
+        foreach (var aisling in aislings)
         {
-            var arg = Mapper.Map<WorldListMemberInfo>(user);
+            var arg = aisling.ToWorldListMemberInfo();
 
-            if ((user.StatSheet.Level <= upperBound) && (user.StatSheet.Level >= lowerBound))
+            if ((aisling.StatSheet.Level <= upperBound) && (aisling.StatSheet.Level >= lowerBound))
                 arg.Color = WorldListColor.WithinLevelRange;
 
             worldList.Add(arg);

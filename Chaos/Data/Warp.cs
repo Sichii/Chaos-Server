@@ -1,5 +1,3 @@
-using Chaos.Geometry.Interfaces;
-
 namespace Chaos.Data;
 
 public record Warp

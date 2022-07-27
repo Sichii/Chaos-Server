@@ -1,8 +1,11 @@
-﻿using Chaos.Geometry.Definitions;
+﻿using System.Text.Json.Serialization;
+using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.JsonConverters;
 
 namespace Chaos.Geometry;
 
+[JsonConverter(typeof(PointConverter))]
 public readonly struct Point : IPoint, IEquatable<IPoint>
 {
     public int X { get; init; }

@@ -1,5 +1,4 @@
 using Chaos.Containers;
-using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Geometry.Interfaces;
 
@@ -25,30 +24,30 @@ public abstract class VisibleEntity : MapEntity
         return true;
     }
     
-    public virtual void DisplayTo(Aisling aisling) => aisling.Client.SendVisibleObjects(this);
-    public virtual void RemoveFromViewOf(Aisling aisling) => aisling.Client.SendRemoveObject(Id);
-    
+    public virtual void ShowTo(Aisling aisling) => aisling.Client.SendVisibleObjects(this);
+    public virtual void HideFrom(Aisling aisling) => aisling.Client.SendRemoveObject(Id);
+
     public void Display()
     {
         foreach (var aisling in MapInstance.ObjectsThatSee<Aisling>(this))
-            DisplayTo(aisling);
+            ShowTo(aisling);
     }
     
-    public void RemoveFromView()
+    public void Hide()
     {
         foreach(var aisling in MapInstance.ObjectsThatSee<Aisling>(this))
             if (!aisling.Equals(this))
-                RemoveFromViewOf(aisling);
+                HideFrom(aisling);
     }
 
     public override void WarpTo(IPoint destinationPoint)
     {
-        RemoveFromView();
+        Hide();
         SetLocation(destinationPoint);
         Display();
     }
 
-    //public abstract void OnClicked(User source);
+    public abstract void OnClicked(Aisling source);
 
     public override string ToString() => $@"({Sprite} - {ILocation.ToString(this)})";
 }

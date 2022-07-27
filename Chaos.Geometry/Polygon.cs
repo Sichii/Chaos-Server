@@ -1,8 +1,11 @@
 ﻿using System.Collections;
+using System.Text.Json.Serialization;
 using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.JsonConverters;
 
 namespace Chaos.Geometry;
 
+[JsonConverter(typeof(PolygonConverter))]
 public class Polygon : IPolygon, IEquatable<IPolygon>
 {
     public IReadOnlyList<IPoint> Vertices { get; init; }

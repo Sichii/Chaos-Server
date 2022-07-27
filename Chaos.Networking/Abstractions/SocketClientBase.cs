@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Core.Identity;
+using Chaos.Core.Synchronization;
 using Chaos.Cryptography.Interfaces;
 using Chaos.IO.Memory;
 using Chaos.Networking.Extensions;
@@ -17,7 +18,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 {
     private readonly byte[] Buffer;
     private readonly Memory<byte> MemoryBuffer;
-    public SemaphoreSlim ReceiveSync { get; }
+    public FifoSemaphoreSlim ReceiveSync { get; }
     private readonly Socket Socket;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
@@ -40,7 +41,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     )
     {
         Id = ClientId.NextId;
-        ReceiveSync = new SemaphoreSlim(1, 1);
+        ReceiveSync = new FifoSemaphoreSlim(1, 1);
         Socket = socket;
         CryptoClient = cryptoClient;
         Server = server;
@@ -58,18 +59,13 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     {
         GC.SuppressFinalize(this);
         Socket.Dispose();
-        ReceiveSync.Dispose();
     }
 
     protected ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
         var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
-
-        var packet = new ClientPacket(ref span, isEncrypted)
-        {
-            OpCode = (ClientOpCode)opCode
-        };
+        var packet = new ClientPacket(ref span, isEncrypted);
 
         if (isEncrypted)
             CryptoClient.Decrypt(ref packet);
@@ -107,7 +103,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         writer.WriteByte(27);
         writer.WriteString("CONNECTED SERVER", true);
-        packet.Buffer = writer.Flush();
+        packet.Buffer = writer.ToSpan();
 
         Send(ref packet);
     }
@@ -175,7 +171,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             //if we received the first few bytes of a new packet, they wont be at the beginning of the buffer
             //copy those couple bytes to the beginning of the buffer
             if (Count > 0)
-                MemoryBuffer.Slice(endPosition, Count).CopyTo(MemoryBuffer);
+                MemoryBuffer.Slice(endPosition - Count, Count).CopyTo(MemoryBuffer);
 
             e.SetBuffer(MemoryBuffer[Count..]);
             Socket.ReceiveAndForget(e, ReceiveEventHandler);

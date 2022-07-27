@@ -12,33 +12,34 @@ public class Merchant : Creature
     public override StatSheet StatSheet => StatSheet.Maxed;
 
     public override CreatureType Type => CreatureType.Merchant;
-    
-    /*
-    public override void OnGoldDroppedOn(int amount, User source)
+    protected override ILogger<Merchant> Logger { get; }
+
+    public override void OnGoldDroppedOn(int amount, Aisling source)
     {
         //TODO: quests or something?
     }
 
-    public override void OnItemDroppedOn(byte slot, byte count, User source)
+    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
     {
         //TODO: quests or something?
     }
 
-    public override void OnClicked(User source)
+    public override void OnClicked(Aisling source)
     {
         //TODO: open a menu or something
     }
-    */
+
 
     public Merchant(
         string name,
         ushort sprite,
         MapInstance mapInstance,
-        IPoint point
+        IPoint point,
+        ILogger<Merchant> logger
     )
         : base(
             name,
             sprite,
             mapInstance,
-            point) { }
+            point) => Logger = logger;
 }

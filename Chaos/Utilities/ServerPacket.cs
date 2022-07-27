@@ -14,7 +14,7 @@ public static class ServerPacket
         {
             var writer = new SpanWriter(encoding!, data.Length);
             writer.WriteBytes(data);
-            packet.Buffer = writer.Flush();
+            packet.Buffer = writer.ToSpan();
         }
 
         return packet;

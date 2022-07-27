@@ -1,7 +1,7 @@
-using Chaos.Caches.Interfaces;
 using Chaos.Data;
 using Chaos.Networking.Interfaces;
 using Chaos.Objects;
+using Chaos.Services.Caches.Interfaces;
 
 namespace Chaos.Clients.Interfaces;
 

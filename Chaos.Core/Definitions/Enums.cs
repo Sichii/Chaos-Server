@@ -703,7 +703,7 @@ public enum CreatureType : byte
     WalkThrough = 1,
     Merchant = 2,
     WhiteSquare = 3,
-    User = 4
+    Aisling = 4
 }
 
 public enum GroupRequestType : byte

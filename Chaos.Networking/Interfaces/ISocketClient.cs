@@ -1,3 +1,4 @@
+using Chaos.Core.Synchronization;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Packets;
@@ -9,7 +10,7 @@ public interface ISocketClient
 {
     ICryptoClient CryptoClient { get; set; }
     event EventHandler? OnDisconnected;
-    SemaphoreSlim ReceiveSync { get; }
+    FifoSemaphoreSlim ReceiveSync { get; }
     bool Connected { get; }
     uint Id { get; }
 

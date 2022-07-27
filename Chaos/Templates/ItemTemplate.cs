@@ -19,4 +19,5 @@ public class ItemTemplate : PanelObjectTemplateBase
     public bool Stackable { get; init; }
     public override string TemplateKey { get; init; } = "PLACEHOLDER";
     public byte Weight { get; init; }
+    public override ushort PanelSprite => ItemSprite.PanelSprite;
 }

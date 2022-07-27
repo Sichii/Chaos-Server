@@ -1,7 +1,6 @@
 using System.Text;
 using Chaos.Core.Utilities;
 using Chaos.Packets.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Packets.Extensions;
@@ -10,12 +9,11 @@ public static class ServiceCollectionExtensions
 {
     public static void AddPacketSerialization(this IServiceCollection serviceCollection) =>
         serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>(
-            provider =>
+            _ =>
             {
-                var encoding = provider.GetRequiredService<Encoding>();
                 var serializers = LoadSerializersFromAssembly();
                 var deserializers = LoadDeserializersFromAssembly();
-                var serializer = new PacketSerializer(encoding, deserializers, serializers);
+                var serializer = new PacketSerializer(Encoding.GetEncoding(949), deserializers, serializers);
 
                 return serializer;
             });

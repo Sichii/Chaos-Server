@@ -222,21 +222,5 @@ public class CryptoClient : ICryptoClient
                            .ComputeHash(Encoding.ASCII.GetBytes(value)))
                     .Replace("-", string.Empty)
                     .ToLower();
-    
-    public ushort GenerateFieldNodeChecksum(ushort mapId, byte x, byte y, string text)
-    {
-        using var data = new MemoryStream();
-        using var writer = new BinaryWriter(data);
-
-        writer.Write(Encoding.Unicode.GetBytes(text));
-        writer.Write(mapId);
-        writer.Write(x);
-        writer.Write(y);
-
-        writer.Flush();
-
-        return data.ToArray()
-                   .Generate16();
-    }
     #endregion
 }

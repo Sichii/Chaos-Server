@@ -12,7 +12,7 @@ public record SelfProfileSerializer : ServerPacketSerializer<SelfProfileArgs>
     {
         writer.WriteByte((byte)args.Nation);
         writer.WriteString8(args.GuildTitle ?? string.Empty);
-        writer.WriteString8(args.Titles?.FirstOrDefault() ?? string.Empty);
+        writer.WriteString8(args.Titles.FirstOrDefault() ?? string.Empty);
 
         var str = args.GroupString;
 

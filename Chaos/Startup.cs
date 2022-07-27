@@ -1,30 +1,38 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AutoMapper;
-using AutoMapper.EquivalencyExpression;
-using Chaos.Caches;
-using Chaos.Caches.Interfaces;
 using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Cryptography.Extensions;
 using Chaos.Data;
 using Chaos.Extensions;
-using Chaos.Factories;
-using Chaos.Factories.Interfaces;
 using Chaos.Geometry.JsonConverters;
-using Chaos.Managers;
-using Chaos.Managers.Interfaces;
-using Chaos.Mappers;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
+using Chaos.Objects.Panel;
+using Chaos.Objects.Serializable;
 using Chaos.Objects.World;
-using Chaos.Options;
 using Chaos.Packets.Extensions;
-using Chaos.Servers;
+using Chaos.Scripts.Interfaces;
+using Chaos.Services.Caches;
+using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Caches.Options;
+using Chaos.Services.Factories;
+using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Hosted;
+using Chaos.Services.Hosted.Interfaces;
+using Chaos.Services.Hosted.Options;
+using Chaos.Services.Providers;
+using Chaos.Services.Providers.Interfaces;
+using Chaos.Services.Serialization;
+using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Serialization.Options;
+using Chaos.Services.Utility;
+using Chaos.Services.Utility.Interfaces;
 using Chaos.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 
@@ -56,81 +64,48 @@ public class Startup
     /// </summary>
     public void ConfigureFactories(IServiceCollection services)
     {
-        services.AddSingleton<IItemScriptFactory, ItemScriptFactory>();
-        services.AddSingleton<ISkillScriptFactory, SkillScriptFactory>();
-        services.AddSingleton<ISpellScriptFactory, SpellScriptFactory>();
+        services.AddSingleton<IScriptFactory<IItemScript, Item>, IItemScriptFactory, ItemScriptFactory>();
+        services.AddSingleton<IScriptFactory<ISkillScript, Skill>, ISkillScriptFactory, SkillScriptFactory>();
+        services.AddSingleton<IScriptFactory<ISpellScript, Spell>, ISpellScriptFactory, SpellScriptFactory>();
         services.AddSingleton<IEffectFactory, EffectFactory>();
+
         services.AddTransient<IExchangeFactory, ExchangeFactory>();
+        services.AddTransient<IPanelObjectFactory<Item>, IItemFactory, ItemFactory>();
+        services.AddTransient<IPanelObjectFactory<Skill>, ISkillFactory, SkillFactory>();
+        services.AddTransient<IPanelObjectFactory<Spell>, ISpellFactory, SpellFactory>();
         services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();
         services.AddTransient<IClientFactory<ILoginClient>, LoginClientFactory>();
         services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
-        services.AddTransient<IItemFactory, ItemFactory>();
-        services.AddTransient<ISkillFactory, SkillFactory>();
-        services.AddTransient<ISpellFactory, SpellFactory>();
-        services.AddTransient<IWorldObjectFactory, WorldObjectFactory>();
+    }
+
+    public void ConfigureProviders(IServiceCollection services)
+    {
+        services.AddTransient<IScriptFactoryProvider, ScriptFactoryProvider>();
+        services.AddTransient<IPanelObjectFactoryProvider, PanelObjectFactoryProvider>();
+        services.AddTransient<ISerialTransformProvider, SerialTransformProvider>();
+        services.AddTransient<ISimpleCacheProvider, SimpleCacheProvider>();
+    }
+
+    public void ConfigureSerialization(IServiceCollection services)
+    {
+        services.AddPacketSerialization();
+        services.AddSingleton<ISaveManager<Aisling>, UserSaveManager>();
+        services.AddTransient<ISerialTransformService<Aisling, SerializableAisling>, AislingSerialTransformService>();
+        services.AddTransient<ISerialTransformService<Item, SerializableItem>, ItemSerialTransformService>();
+        services.AddTransient<ISerialTransformService<Skill, SerializableSkill>, SkillSerialTransformService>();
+        services.AddTransient<ISerialTransformService<Spell, SerializableSpell>, SpellSerialTransformService>();
     }
 
     /// <summary>
     ///     Configure all manager objects
     /// </summary>
-    public void ConfigureManagers(IServiceCollection services)
+    public void ConfigureSecurity(IServiceCollection services)
     {
+        services.AddCryptography();
         services.AddSingleton<IRedirectManager, RedirectManager>();
         services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
-        services.AddSingleton<ISaveManager<Aisling>, UserSaveManager>();
     }
-
-    /// <summary>
-    ///     Configure automappers for converting between serializable objects and normal objects
-    /// </summary>
-    public void ConfigureMappings(IServiceCollection services)
-    {
-        //some of these mappers use injected cache managers to help with the mapping
-        //so they must be added to the service provider, so that those managers can be resolved
-        services.AddTransient<EffectMapper>();
-        services.AddTransient<ItemMapper>();
-        services.AddTransient<EquipmentMapper>();
-        services.AddTransient<BankMapper>();
-        services.AddTransient<LegendMapper>();
-        services.AddTransient<SkillMapper>();
-        services.AddTransient<SpellMapper>();
-        services.AddTransient<UserMapper>();
-        services.AddTransient<UserOptionsMapper>();
-
-        services.AddSingleton<IMapper>(
-            provider =>
-            {
-                var effectMapper = provider.GetRequiredService<EffectMapper>();
-                var itemMapper = provider.GetRequiredService<ItemMapper>();
-                var equipmentMapper = provider.GetRequiredService<EquipmentMapper>();
-                var bankMapper = provider.GetRequiredService<BankMapper>();
-                var legendMapper = provider.GetRequiredService<LegendMapper>();
-                var skillMapper = provider.GetRequiredService<SkillMapper>();
-                var spellMapper = provider.GetRequiredService<SpellMapper>();
-                var userOptionsMapper = provider.GetRequiredService<UserOptionsMapper>();
-                var userMapper = provider.GetRequiredService<UserMapper>();
-
-                //the profiles must be added this way
-                //otherwise AutoMapper will complain about the profiles not having a parameterless constructor
-                var mapperConfig = new MapperConfiguration(
-                    cfg =>
-                    {
-                        cfg.AddCollectionMappers();
-                        cfg.AddProfile(effectMapper);
-                        cfg.AddProfile(itemMapper);
-                        cfg.AddProfile(equipmentMapper);
-                        cfg.AddProfile(bankMapper);
-                        cfg.AddProfile(legendMapper);
-                        cfg.AddProfile(skillMapper);
-                        cfg.AddProfile(spellMapper);
-                        cfg.AddProfile(userOptionsMapper);
-                        cfg.AddProfile(userMapper);
-                    });
-
-                return mapperConfig.CreateMapper(provider.GetRequiredService);
-            });
-    }
-
+    
     /// <summary>
     ///     Configure options objects used by other DI implementations. These are generally serialized out of the config
     /// </summary>
@@ -196,17 +171,17 @@ public class Startup
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
         
-        services.AddPacketSerialization();
-        services.AddCryptography();
-        services.AddHostedService<LobbyServer>();
-        services.AddHostedService<LoginServer>();
-        services.AddHostedService<WorldServer>();
+        services.AddSingleton<ILobbyServer, IHostedService, LobbyServer>();
+        services.AddSingleton<ILoginServer, IHostedService, LoginServer>();
+        services.AddSingleton<IWorldServer, IHostedService, WorldServer>();
+        services.AddTransient<ICloningService<Item>, ItemCloningService>();
         
         ConfigureOptions(services);
+        ConfigureSerialization(services);
         ConfigureCaches(services);
-        ConfigureManagers(services);
-        ConfigureMappings(services);
+        ConfigureSecurity(services);
         ConfigureFactories(services);
+        ConfigureProviders(services);
     }
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]

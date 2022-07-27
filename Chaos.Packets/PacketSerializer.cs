@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Text;
-using Chaos.Core.Utilities;
 using Chaos.IO.Memory;
 using Chaos.Packets.Interfaces;
 
@@ -48,9 +47,9 @@ public class PacketSerializer : IPacketSerializer
         var packet = new ServerPacket(serializer.ServerOpCode);
         var writer = new SpanWriter(Encoding);
         serializer.Serialize(ref writer, obj);
-
-        packet.Buffer = writer.Flush();
-
+        
+        packet.Buffer = writer.ToSpan();
+        
         return packet;
     }
 }
