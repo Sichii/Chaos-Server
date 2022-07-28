@@ -1,5 +1,4 @@
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Templates;
@@ -24,22 +23,11 @@ public class SkillFactory : ISkillFactory
         Logger = logger;
     }
 
-    public Skill Create(string templateKey, ICollection<string>? extraScriptKeys = null)
-    {
-        extraScriptKeys ??= Array.Empty<string>();
-        var template = SkillTemplateCache.GetObject(templateKey);
-        var skill = new Skill(template, SkillScriptFactory, extraScriptKeys);
-        
-        Logger.LogDebug("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
-
-        return skill;
-    }
-
     public Skill Clone(Skill obj)
     {
         var cloned = new Skill(obj.Template, SkillScriptFactory, obj.ScriptKeys)
         {
-            Elapsed = obj.Elapsed,
+            Elapsed = obj.Elapsed
         };
 
         Logger.LogDebug(
@@ -49,5 +37,16 @@ public class SkillFactory : ISkillFactory
             cloned.UniqueId);
 
         return cloned;
+    }
+
+    public Skill Create(string templateKey, ICollection<string>? extraScriptKeys = null)
+    {
+        extraScriptKeys ??= Array.Empty<string>();
+        var template = SkillTemplateCache.GetObject(templateKey);
+        var skill = new Skill(template, SkillScriptFactory, extraScriptKeys);
+
+        Logger.LogDebug("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
+
+        return skill;
     }
 }

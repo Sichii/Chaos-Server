@@ -6,7 +6,7 @@ namespace Chaos.Objects.World.Abstractions;
 public abstract class ReactorTile : MapEntity
 {
     public abstract ReactorTileType ReactorTileType { get; }
-    
+
     protected ReactorTile(MapInstance mapInstance, IPoint point)
         : base(mapInstance, point) { }
 

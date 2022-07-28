@@ -10,8 +10,8 @@ namespace Chaos.Services.Serialization;
 
 public class ItemSerialTransformService : ISerialTransformService<Item, SerializableItem>
 {
-    private readonly ISimpleCache<ItemTemplate> ItemTemplateCache;
     private readonly IItemScriptFactory ItemScriptFactory;
+    private readonly ISimpleCache<ItemTemplate> ItemTemplateCache;
     private readonly ILogger<ItemSerialTransformService> Logger;
 
     public ItemSerialTransformService(

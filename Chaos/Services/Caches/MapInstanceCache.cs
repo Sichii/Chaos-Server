@@ -17,10 +17,10 @@ public class MapInstanceCache : ISimpleCache<MapInstance>
 {
     private readonly ConcurrentDictionary<string, MapInstance> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
+    private readonly int Loaded;
     private readonly ILogger Logger;
     private readonly ISimpleCache<MapTemplate> MapTemplateCache;
     private readonly MapInstanceCacheOptions Options;
-    private readonly int Loaded;
 
     public MapInstanceCache(
         ISimpleCache<MapTemplate> mapTemplateCache,
@@ -37,7 +37,7 @@ public class MapInstanceCache : ISimpleCache<MapInstance>
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
-        
+
         if (Interlocked.CompareExchange(ref Loaded, 1, 0) == 0)
             AsyncHelpers.RunSync(LoadCacheAsync);
     }

@@ -13,6 +13,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
         {
             using var @lock = Sync.Enter();
             var ret = Set.Count;
+
             return ret;
         }
     }

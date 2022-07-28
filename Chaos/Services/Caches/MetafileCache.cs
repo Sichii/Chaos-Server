@@ -12,16 +12,16 @@ namespace Chaos.Services.Caches;
 public class MetafileCache : ISimpleCache<Metafile>
 {
     private readonly ConcurrentDictionary<string, Metafile> Cache;
+    private readonly int Loaded;
     private readonly ILogger Logger;
     private readonly MetafileCacheOptions Options;
-    private readonly int Loaded;
 
     public MetafileCache(IOptionsSnapshot<MetafileCacheOptions> options, ILogger<MetafileCache> logger)
     {
         Cache = new ConcurrentDictionary<string, Metafile>(StringComparer.OrdinalIgnoreCase);
         Options = options.Value;
         Logger = logger;
-        
+
         if (Interlocked.CompareExchange(ref Loaded, 1, 0) == 0)
             AsyncHelpers.RunSync(LoadCacheAsync);
     }

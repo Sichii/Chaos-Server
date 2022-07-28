@@ -14,14 +14,16 @@ public class Item : PanelObjectBase, IScriptedItem
     public DisplayColor Color { get; set; }
     public int Count { get; set; }
     public int? CurrentDurability { get; set; }
-    public IItemScript Script { get; }
     public string DisplayName => Color == DisplayColor.None ? Template.Name : $"{Color} {Template.Name}";
+    public IItemScript Script { get; }
     public override ItemTemplate Template { get; }
 
-    public Item(ItemTemplate template,
+    public Item(
+        ItemTemplate template,
         IItemScriptFactory itemScriptFactory,
         ICollection<string>? extraScriptKeys = null,
-        ulong? uniqueId = null)
+        ulong? uniqueId = null
+    )
         : base(template, uniqueId)
     {
         Template = template;
@@ -30,7 +32,7 @@ public class Item : PanelObjectBase, IScriptedItem
         CurrentDurability = template.MaxDurability;
         //default slot is 0
 
-        if(extraScriptKeys != null)
+        if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
 
         Script = itemScriptFactory.CreateScript(ScriptKeys, this);
@@ -40,17 +42,19 @@ public class Item : PanelObjectBase, IScriptedItem
         SerializableItem serializableItem,
         ISimpleCache<ItemTemplate> itemTemplateCache,
         IItemScriptFactory itemScriptFactory
-    ) : this(itemTemplateCache.GetObject(serializableItem.TemplateKey),
-        itemScriptFactory,
-        serializableItem.ScriptKeys,
-        serializableItem.UniqueId)
+    )
+        : this(
+            itemTemplateCache.GetObject(serializableItem.TemplateKey),
+            itemScriptFactory,
+            serializableItem.ScriptKeys,
+            serializableItem.UniqueId)
     {
         Color = serializableItem.Color;
         Count = serializableItem.Count;
         CurrentDurability = serializableItem.CurrentDurability;
         Slot = serializableItem.Slot ?? 0;
     }
-    
+
     public IEnumerable<Item> FixStacks(ICloningService<Item> itemCloner)
     {
         if (Count <= Template.MaxStacks)
@@ -84,11 +88,11 @@ public class Item : PanelObjectBase, IScriptedItem
     {
         lock (this)
         {
-            if (!Template.Stackable)
-                throw new InvalidOperationException($"{DisplayName} is not a stackable item.");
-
             if (Count <= count)
                 throw new InvalidOperationException($"Current count {Count} is not greater than split amount {count}.");
+
+            if (!Template.Stackable)
+                throw new InvalidOperationException($"{DisplayName} is not a stackable item.");
 
             Count -= count;
 

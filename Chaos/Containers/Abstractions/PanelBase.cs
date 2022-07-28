@@ -120,17 +120,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         using (Sync.Enter())
             snapshot = Objects.ToList();
 
-        using var enumerator = snapshot.GetEnumerator();
-        byte index = 0;
-
-        while (enumerator.MoveNext())
-        {
-            if ((enumerator.Current != null)
-                && IsValidSlot(index))
-                yield return enumerator.Current;
-
-            index++;
-        }
+        return snapshot
+               .Where((obj, index) => (obj != null) && IsValidSlot((byte)index))
+               .GetEnumerator()!;
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -282,7 +274,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     public void Update(TimeSpan delta)
     {
         using var @lock = Sync.Enter();
-        
+
         foreach (var obj in Objects)
             obj?.Update(delta);
     }

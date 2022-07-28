@@ -2,21 +2,13 @@ using Chaos.Containers;
 using Chaos.Geometry.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
 public class GroundItem : NamedEntity
 {
     public Item Item { get; }
-    
-    
-    public override void OnClicked(Aisling source)
-    {
-        //nothing
-        //there's a different packet for picking up items
-    }
-    
+
     public GroundItem(Item item, MapInstance mapInstance, IPoint point)
         : base(
             item.DisplayName,
@@ -24,4 +16,10 @@ public class GroundItem : NamedEntity
             mapInstance,
             point) =>
         Item = item;
+
+    public override void OnClicked(Aisling source)
+    {
+        //nothing
+        //there's a different packet for picking up items
+    }
 }

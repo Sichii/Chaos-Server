@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Geometry.Definitions;
@@ -36,7 +35,7 @@ public record SerializableAisling
     public ICollection<string> Titles { get; init; }
     public int X { get; init; }
     public int Y { get; init; }
-    
+
     #pragma warning disable CS8618
     //json constructor
     public SerializableAisling() { }

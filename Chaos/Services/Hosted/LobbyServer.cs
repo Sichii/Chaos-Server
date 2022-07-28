@@ -40,7 +40,7 @@ public class LobbyServer : ServerBase, ILobbyServer
             logger)
     {
         var opts = options.Value;
-        
+
         ClientFactory = clientFactory;
         ServerTable = new ServerTable(options.Value.Servers);
         Clients = new ConcurrentDictionary<uint, ILobbyClient>();
@@ -101,7 +101,7 @@ public class LobbyServer : ServerBase, ILobbyServer
     {
         if (client is ILobbyClient lobbyClient)
             return HandlePacketAsync(lobbyClient, ref packet);
-        
+
         return base.HandlePacketAsync(client, ref packet);
     }
 

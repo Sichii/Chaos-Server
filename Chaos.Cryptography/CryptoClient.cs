@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Chaos.Cryptography.Extensions;
 using Chaos.Cryptography.Interfaces;
 
 namespace Chaos.Cryptography;
@@ -41,6 +40,15 @@ public class CryptoClient : ICryptoClient
 
         return Encoding.ASCII.GetBytes(saltTable);
     }
+
+    #region Utility
+    public string GetMd5Hash(string value) =>
+        BitConverter.ToString(
+                        MD5.Create()
+                           .ComputeHash(Encoding.ASCII.GetBytes(value)))
+                    .Replace("-", string.Empty)
+                    .ToLower();
+    #endregion
 
     #region Client Encryption
     /// <summary>
@@ -213,14 +221,5 @@ public class CryptoClient : ICryptoClient
             111 => EncryptionType.Normal,
             _   => EncryptionType.MD5
         };
-    #endregion
-
-    #region Utility
-    public string GetMd5Hash(string value) =>
-        BitConverter.ToString(
-                        MD5.Create()
-                           .ComputeHash(Encoding.ASCII.GetBytes(value)))
-                    .Replace("-", string.Empty)
-                    .ToLower();
     #endregion
 }

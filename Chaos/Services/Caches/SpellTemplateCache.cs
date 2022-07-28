@@ -15,10 +15,10 @@ public class SpellTemplateCache : ISimpleCache<SpellTemplate>
 {
     private readonly ConcurrentDictionary<string, SpellTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
+    private readonly int Loaded;
     private readonly ILogger Logger;
     private readonly SpellTemplateCacheOptions Options;
-    private readonly int Loaded;
-    
+
     public SpellTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<SpellTemplateCacheOptions> options,
@@ -32,7 +32,7 @@ public class SpellTemplateCache : ISimpleCache<SpellTemplate>
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
-        
+
         if (Interlocked.CompareExchange(ref Loaded, 1, 0) == 0)
             AsyncHelpers.RunSync(LoadCacheAsync);
     }

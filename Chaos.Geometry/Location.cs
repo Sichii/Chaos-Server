@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
 using Chaos.Geometry.JsonConverters;
@@ -9,9 +8,13 @@ namespace Chaos.Geometry;
 [JsonConverter(typeof(LocationConverter))]
 public readonly struct Location : ILocation, IEquatable<ILocation>
 {
+    public string Map { get; init; }
     public int X { get; init; }
     public int Y { get; init; }
-    public string Map { get; init; }
+
+    public static bool operator ==(Location left, ILocation right) => left.Equals(right);
+
+    public static bool operator !=(Location left, ILocation right) => !left.Equals(right);
 
     public Location(string map, int x, int y)
     {
@@ -26,10 +29,6 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
         x = X;
         y = Y;
     }
-    
-    public static bool operator ==(Location left, ILocation right) => left.Equals(right);
-
-    public static bool operator !=(Location left, ILocation right) => !left.Equals(right);
 
     public bool Equals(ILocation? other) => other is not null
                                             && (X == other.X)
@@ -39,7 +38,7 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
     public override bool Equals(object? obj) => obj is ILocation other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(X, Y, Map);
-    
+
     public static bool TryParse(string str, out Location location)
     {
         location = new Location();

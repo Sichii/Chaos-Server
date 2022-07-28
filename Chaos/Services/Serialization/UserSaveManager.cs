@@ -5,8 +5,6 @@ using Chaos.Clients.Interfaces;
 using Chaos.Core.Synchronization;
 using Chaos.Objects.Serializable;
 using Chaos.Objects.World;
-using Chaos.Observers;
-using Chaos.Services.Providers.Interfaces;
 using Chaos.Services.Serialization.Interfaces;
 using Chaos.Services.Serialization.Options;
 using Microsoft.Extensions.Logging;
@@ -16,9 +14,9 @@ namespace Chaos.Services.Serialization;
 
 public class UserSaveManager : ISaveManager<Aisling>
 {
+    private readonly ISerialTransformService<Aisling, SerializableAisling> AislingTransformer;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
-    private readonly ISerialTransformService<Aisling, SerializableAisling> AislingTransformer;
     private readonly UserSaveManagerOptions Options;
     private readonly AutoReleasingSemaphoreSlim Sync;
 
@@ -49,7 +47,7 @@ public class UserSaveManager : ISaveManager<Aisling>
 
         var serialized = JsonSerializer.Deserialize<SerializableAisling>(stream, JsonSerializerOptions)!;
         var user = AislingTransformer.Transform(serialized);
-        
+
         Logger.LogTrace("Loaded user {Name}", name);
 
         return user;

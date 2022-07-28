@@ -1,7 +1,7 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Extensions;
 using Chaos.Networking.Model.Server;
 using Chaos.Packets.Abstractions;
-using Chaos.Networking.Extensions;
 
 namespace Chaos.Networking.Serializers;
 

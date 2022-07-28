@@ -1,37 +1,120 @@
+using Chaos.Core.Synchronization;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
-using Chaos.Services.Factories.Interfaces;
 using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Utility.Interfaces;
 
 namespace Chaos.Containers;
 
 public class Bank : IEnumerable<Item>
 {
+    private readonly ICloningService<Item> ItemCloner;
+    private readonly Dictionary<string, Item> Items;
+    private readonly AutoReleasingMonitor Sync;
     public uint Gold { get; set; }
-    public Dictionary<string, Item> Items { get; set; }
 
     public Bank(IEnumerable<Item>? items = null)
     {
         items ??= Enumerable.Empty<Item>();
-
+        Sync = new AutoReleasingMonitor();
         Items = items.ToDictionary(item => item.DisplayName, StringComparer.OrdinalIgnoreCase);
+        ItemCloner = null!;
     }
 
-    public Bank(uint gold, IEnumerable<SerializableItem> serializableItems, ISerialTransformService<Item, SerializableItem> itemTransform)
+    public Bank(
+        uint gold,
+        IEnumerable<SerializableItem> serializableItems,
+        ISerialTransformService<Item, SerializableItem> itemTransform,
+        ICloningService<Item> itemCloner
+    )
     {
+        ItemCloner = itemCloner;
         Gold = gold;
 
         Items = serializableItems
                 .Select(itemTransform.Transform)
                 .ToDictionary(i => i.DisplayName, StringComparer.OrdinalIgnoreCase);
+
+        Sync = new AutoReleasingMonitor();
+    }
+
+    public bool Contains(string itemName)
+    {
+        using var @lock = Sync.Enter();
+
+        return Items.ContainsKey(itemName);
+    }
+
+    public int CountOf(string itemName)
+    {
+        using var @lock = Sync.Enter();
+
+        if (Items.TryGetValue(itemName, out var item))
+            return item.Count;
+
+        return 0;
+    }
+
+    public void Deposit(Item item)
+    {
+        using var @lock = Sync.Enter();
+
+        if (item.Count < 1)
+            throw new ArgumentOutOfRangeException($"{nameof(item)} count must be greater than 0");
+
+        if (Items.TryGetValue(item.DisplayName, out var existingItem))
+        {
+            existingItem.Count += item.Count;
+            item.Count = 0;
+        } else
+            Items.Add(item.DisplayName, item);
     }
 
     public IEnumerator<Item> GetEnumerator()
     {
-        var enumerable = Enumerable.Empty<Item>();
+        List<Item> snapshot;
 
-        return enumerable.GetEnumerator();
+        using (Sync.Enter())
+            snapshot = Items.Values.ToList();
+
+        return snapshot.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private IEnumerable<Item> SplitItem(Item item, int amount)
+    {
+        if (item.Template.Stackable)
+            item = item.Split(amount, ItemCloner);
+        else
+        {
+            item.Count -= amount;
+            item = ItemCloner.Clone(item);
+            item.Count = amount;
+        }
+
+        return item.FixStacks(ItemCloner);
+    }
+
+    public bool TryWithdraw(string itemName, int amount, [MaybeNullWhen(false)] out IEnumerable<Item> outItems)
+    {
+        if (amount < 1)
+            throw new ArgumentOutOfRangeException($"{nameof(amount)} must be greater than 0");
+
+        using var @lock = Sync.Enter();
+
+        outItems = null;
+
+        if (!Items.TryGetValue(itemName, out var item) || (item.Count < amount))
+            return false;
+
+        if (item.Count == amount)
+        {
+            Items.Remove(itemName);
+            outItems = item.FixStacks(ItemCloner);
+        } else
+            outItems = SplitItem(item, amount);
+
+        return true;
+    }
 }

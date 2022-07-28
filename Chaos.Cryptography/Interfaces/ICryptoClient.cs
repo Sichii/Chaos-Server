@@ -19,7 +19,7 @@ public interface ICryptoClient
     ///     Encrypts a packet that's being sent to a client.
     /// </summary>
     void Encrypt(ref Span<byte> buffer, byte opCode, byte sequence);
-    
+
     byte[] GenerateKey(ushort a, byte b);
     byte[] GenerateKeySalts(string seed);
 

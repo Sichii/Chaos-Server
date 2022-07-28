@@ -13,7 +13,7 @@ public record SerializableSkill
     //json constructor
     public SerializableSkill() { }
     #pragma warning restore CS8618
-    
+
     public SerializableSkill(Skill skill)
     {
         UniqueId = skill.UniqueId;

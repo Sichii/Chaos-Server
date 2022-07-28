@@ -55,7 +55,7 @@ public class LoginServer : ServerBase, ILoginServer
             logger)
     {
         var opts = options.Value;
-        
+
         Options = opts;
         UserSaveManager = userSaveManager;
         ClientFactory = clientFactory;
@@ -109,7 +109,7 @@ public class LoginServer : ServerBase, ILoginServer
         if (CreateCharRequests.TryGetValue(client.Id, out var requestArgs))
         {
             (var hairStyle, var gender, var hairColor) = args;
-            
+
             var startingMap = MapInstanceCache.GetObject(Options.StartingMapInstanceId);
 
             var user = new Aisling(
@@ -119,7 +119,7 @@ public class LoginServer : ServerBase, ILoginServer
                 hairColor,
                 startingMap,
                 Options.StartingPoint);
-            
+
             await UserSaveManager.SaveAsync(user);
             Logger.LogDebug("New character created ({Name})", user.Name);
             client.SendLoginMessage(LoginMessageType.Confirm);
@@ -248,7 +248,7 @@ public class LoginServer : ServerBase, ILoginServer
     {
         if (client is ILoginClient loginClient)
             return HandlePacketAsync(loginClient, ref packet);
-        
+
         return base.HandlePacketAsync(client, ref packet);
     }
 

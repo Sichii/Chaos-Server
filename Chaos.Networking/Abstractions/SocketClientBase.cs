@@ -18,7 +18,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 {
     private readonly byte[] Buffer;
     private readonly Memory<byte> MemoryBuffer;
-    public FifoSemaphoreSlim ReceiveSync { get; }
     private readonly Socket Socket;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
@@ -28,6 +27,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
     public event EventHandler? OnDisconnected;
     public uint Id { get; }
+    public FifoSemaphoreSlim ReceiveSync { get; }
     protected ILogger Logger { get; }
     protected IPacketSerializer PacketSerializer { get; }
     protected IServer Server { get; }

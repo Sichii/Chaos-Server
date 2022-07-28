@@ -9,14 +9,14 @@ namespace Chaos.Services.Factories;
 
 public class EffectFactory : IEffectFactory
 {
-    private readonly ILogger Logger;
     private readonly ConcurrentDictionary<string, Type> EffectTypeCache;
+    private readonly ILogger Logger;
 
     public EffectFactory(ILogger<EffectFactory> logger)
     {
         EffectTypeCache = new ConcurrentDictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
-        
+
         LoadEffectTypes();
     }
 

@@ -15,9 +15,9 @@ public class ItemTemplateCache : ISimpleCache<ItemTemplate>
 {
     private readonly ConcurrentDictionary<string, ItemTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
+    private readonly int Loaded;
     private readonly ILogger Logger;
     private readonly ItemTemplateCacheOptions Options;
-    private readonly int Loaded;
 
     public ItemTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,

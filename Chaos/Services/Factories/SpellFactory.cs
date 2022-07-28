@@ -24,26 +24,6 @@ public class SpellFactory : ISpellFactory
         Logger = logger;
     }
 
-    public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
-    {
-        extraScriptKeys ??= Array.Empty<string>();
-        var template = SpellTemplateCache.GetObject(templateKey);
-        var spell = new Spell(template, SpellScriptFactory, extraScriptKeys);
-        
-        Logger.LogDebug("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
-
-        return spell;
-    }
-
-    public Spell Deserialize(SerializableSpell serialized)
-    {
-        var spell = new Spell(serialized, SpellTemplateCache, SpellScriptFactory);
-
-        Logger.LogDebug("Deserialized spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
-
-        return spell;
-    }
-
     public Spell Clone(Spell obj)
     {
         var cloned = new Spell(obj.Template, SpellScriptFactory, obj.ScriptKeys)
@@ -58,5 +38,25 @@ public class SpellFactory : ISpellFactory
             cloned.UniqueId);
 
         return cloned;
+    }
+
+    public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
+    {
+        extraScriptKeys ??= Array.Empty<string>();
+        var template = SpellTemplateCache.GetObject(templateKey);
+        var spell = new Spell(template, SpellScriptFactory, extraScriptKeys);
+
+        Logger.LogDebug("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
+
+        return spell;
+    }
+
+    public Spell Deserialize(SerializableSpell serialized)
+    {
+        var spell = new Spell(serialized, SpellTemplateCache, SpellScriptFactory);
+
+        Logger.LogDebug("Deserialized spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
+
+        return spell;
     }
 }

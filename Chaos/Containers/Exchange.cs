@@ -8,13 +8,13 @@ namespace Chaos.Containers;
 
 public class Exchange
 {
+    private readonly ulong ExchangeId;
     private readonly ILogger Logger;
     private readonly AutoReleasingMonitor Sync;
     private readonly Aisling User1;
     private readonly Inventory User1Items;
     private readonly Aisling User2;
     private readonly Inventory User2Items;
-    private readonly ulong ExchangeId;
     private bool IsActive;
     private bool User1Accept;
     private int User1Gold;

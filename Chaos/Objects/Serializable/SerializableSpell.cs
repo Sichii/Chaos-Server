@@ -13,7 +13,7 @@ public record SerializableSpell
     //json constructor
     public SerializableSpell() { }
     #pragma warning restore CS8618
-    
+
     public SerializableSpell(Spell spell)
     {
         UniqueId = spell.UniqueId;

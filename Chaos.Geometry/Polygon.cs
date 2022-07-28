@@ -14,9 +14,6 @@ public class Polygon : IPolygon, IEquatable<IPolygon>
 
     public Polygon() => Vertices = new List<IPoint>();
 
-    public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
     public bool Equals(IPolygon? other)
     {
         if (ReferenceEquals(null, other))
@@ -35,9 +32,12 @@ public class Polygon : IPolygon, IEquatable<IPolygon>
 
         if (ReferenceEquals(this, obj))
             return true;
-        
+
         return Equals((IPolygon)obj);
     }
+
+    public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public override int GetHashCode() => Vertices.GetHashCode();
 }

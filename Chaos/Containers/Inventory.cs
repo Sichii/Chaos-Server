@@ -12,13 +12,13 @@ public class Inventory : PanelBase<Item>, IInventory
     private readonly ICloningService<Item> ItemCloner;
 
     /// <summary>
-    /// Used for character creation
+    ///     Used for character creation
     /// </summary>
     public Inventory()
         : this(null!) { }
 
     /// <summary>
-    /// General use constructor
+    ///     General use constructor
     /// </summary>
     public Inventory(ICloningService<Item> itemCloner)
         : base(
@@ -27,7 +27,7 @@ public class Inventory : PanelBase<Item>, IInventory
             new byte[] { 0 }) => ItemCloner = itemCloner;
 
     /// <summary>
-    /// Used for converting from serial format
+    ///     Used for converting from serial format
     /// </summary>
     public Inventory(
         ICloningService<Item> itemCloner,

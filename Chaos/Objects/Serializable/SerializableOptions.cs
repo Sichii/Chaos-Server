@@ -17,7 +17,7 @@ public record SerializableOptions
     //json constructor
     public SerializableOptions() { }
     #pragma warning restore CS8618
-    
+
     public SerializableOptions(UserOptions userOptions)
     {
         Exchange = userOptions.Exchange;

@@ -12,14 +12,14 @@ namespace Chaos.Services.Serialization;
 
 public class AislingSerialTransformService : ISerialTransformService<Aisling, SerializableAisling>
 {
-    private readonly ISimpleCache<MapInstance> MapInstanceCache;
+    private readonly IExchangeFactory ExchangeFactory;
+    private readonly ICloningService<Item> ItemCloner;
     private readonly ISerialTransformService<Item, SerializableItem> ItemTransformer;
+    private readonly ILogger<AislingSerialTransformService> Logger;
+    private readonly ILoggerFactory LoggerFactory;
+    private readonly ISimpleCache<MapInstance> MapInstanceCache;
     private readonly ISerialTransformService<Skill, SerializableSkill> SkillTransformer;
     private readonly ISerialTransformService<Spell, SerializableSpell> SpellTransformer;
-    private readonly ICloningService<Item> ItemCloner;
-    private readonly IExchangeFactory ExchangeFactory;
-    private readonly ILoggerFactory LoggerFactory;
-    private readonly ILogger<AislingSerialTransformService> Logger;
 
     public AislingSerialTransformService(
         ISimpleCache<MapInstance> mapInstanceCache,

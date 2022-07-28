@@ -32,9 +32,8 @@ public class Door : VisibleEntity
             mapInstance,
             doorTemplate.Point) { }
 
-    public override void ShowTo(Aisling aisling) => aisling.Client.SendDoors(this);
     public override void HideFrom(Aisling aisling) { }
-    
+
     public override void OnClicked(Aisling source)
     {
         if (ShouldRegisterClick)
@@ -79,4 +78,6 @@ public class Door : VisibleEntity
             }
         }
     }
+
+    public override void ShowTo(Aisling aisling) => aisling.Client.SendDoors(this);
 }

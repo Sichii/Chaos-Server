@@ -44,6 +44,6 @@ public record LegendMark(
         Key = Key,
         Text = ToString()
     };
-    
+
     public override string ToString() => Count > 1 ? $@"{Text} ({Count}) - {Added.ToString()}" : $@"{Text} - {Added.ToString()}";
 }

@@ -1,6 +1,3 @@
 namespace Chaos.Scripts.Interfaces;
 
-public interface IMerchantScript
-{
-    
-}
+public interface IMerchantScript { }

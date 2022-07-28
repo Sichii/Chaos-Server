@@ -1,3 +1,5 @@
+using Chaos.Core.Resources;
+
 namespace Chaos.Data;
 
 public readonly struct Tile
@@ -8,7 +10,7 @@ public readonly struct Tile
     public ushort LeftForeground { get; }
     public ushort RightForeground { get; }
 
-    public static byte[] Sotp { get; } = Core.Resources.Resources.sotp;
+    public static byte[] Sotp { get; } = Resources.sotp;
 
     public Tile(ushort background, ushort leftForeground, ushort rightForeground)
     {

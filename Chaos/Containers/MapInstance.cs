@@ -3,11 +3,9 @@ using Chaos.Core.Collections;
 using Chaos.Core.Synchronization;
 using Chaos.Data;
 using Chaos.Extensions;
-using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Hosted.Options;
 using Chaos.Templates;
 using Chaos.Time.Interfaces;
 
@@ -16,8 +14,6 @@ namespace Chaos.Containers;
 public class MapInstance : IDeltaUpdatable
 {
     private readonly TypeCheckingDictionary<uint, MapEntity> Objects;
-    //private readonly ConcurrentDictionary<Exchange>
-    public AutoReleasingMonitor Sync { get; }
     public MapFlags Flags { get; set; }
     public string InstanceId { get; init; }
     public short MapId { get; set; }
@@ -25,6 +21,8 @@ public class MapInstance : IDeltaUpdatable
     public string Name { get; set; }
     public MapTemplate Template { get; set; } = null!;
     public Warp[][] WarpGroups { get; set; } = Array.Empty<Warp[]>();
+    //private readonly ConcurrentDictionary<Exchange>
+    public AutoReleasingMonitor Sync { get; }
 
     [JsonConstructor]
     public MapInstance(string name, string instanceId)
@@ -35,11 +33,12 @@ public class MapInstance : IDeltaUpdatable
         Sync = new AutoReleasingMonitor();
     }
 
-    public void ActivateReactors(Creature creature)
+    public void ActivateReactors(Creature creature, ReactorTileType reactorTileType)
     {
         using var @lock = Sync.Enter();
 
-        var reactors = ObjectsAtPoint<ReactorTile>(creature);
+        var reactors = ObjectsAtPoint<ReactorTile>(creature)
+            .Where(reactor => reactor.ReactorTileType == reactorTileType);
 
         foreach (var reactor in reactors)
             reactor.Activate(creature);
@@ -104,7 +103,7 @@ public class MapInstance : IDeltaUpdatable
                 aisling.Client.SendVisibleObjects(objectsInRange);
         }
     }
-    
+
     public void Click(uint id, Aisling source)
     {
         using var @lock = Sync.Enter();
@@ -124,7 +123,7 @@ public class MapInstance : IDeltaUpdatable
 
         obj?.OnClicked(source);
     }
-    
+
     public bool IsWalkable(IPoint point, bool toWalkthroughCreature = false)
     {
         if (toWalkthroughCreature ? !IsWithinMap(point) : IsWall(point))
@@ -193,7 +192,7 @@ public class MapInstance : IDeltaUpdatable
 
         return objects.ToList();
     }
-    
+
     public IEnumerable<T> ObjectsWithinRange<T>(IPoint point, int distance = 13) where T: MapEntity
     {
         var objects = Objects.Values<T>()
@@ -206,9 +205,7 @@ public class MapInstance : IDeltaUpdatable
 
         return objects.ToList();
     }
-    
 
-    
     public void RemoveObject(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
@@ -245,13 +242,13 @@ public class MapInstance : IDeltaUpdatable
                 100,
                 sound);
     }
-    
+
     public void SimpleAdd(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
         Objects.Add(mapEntity.Id, mapEntity);
     }
-    
+
     public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj)
     {
         using var @lock = Sync.Enter();

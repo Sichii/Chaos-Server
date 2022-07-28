@@ -4,8 +4,5 @@ namespace Chaos.Tests;
 
 public class MapperTests
 {
-    public MapperTests(ITestOutputHelper helper)
-    {
-    }
-    
+    public MapperTests(ITestOutputHelper helper) { }
 }

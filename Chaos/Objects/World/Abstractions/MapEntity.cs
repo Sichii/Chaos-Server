@@ -8,7 +8,9 @@ public abstract class MapEntity : WorldEntity, ILocation
     public MapInstance MapInstance { get; set; } = null!;
     public int X { get; set; }
     public int Y { get; set; }
-    
+
+    string ILocation.Map => MapInstance.InstanceId;
+
     protected MapEntity(MapInstance mapInstance, IPoint point) => SetLocation(mapInstance, point);
 
     public void SetLocation(IPoint point)
@@ -19,7 +21,7 @@ public abstract class MapEntity : WorldEntity, ILocation
         X = point.X;
         Y = point.Y;
     }
-    
+
     public void SetLocation(MapInstance mapInstance, IPoint point)
     {
         if (mapInstance == null)
@@ -33,6 +35,4 @@ public abstract class MapEntity : WorldEntity, ILocation
     }
 
     public virtual void WarpTo(IPoint destinationPoint) => SetLocation(destinationPoint);
-
-    string ILocation.Map => MapInstance.InstanceId;
 }

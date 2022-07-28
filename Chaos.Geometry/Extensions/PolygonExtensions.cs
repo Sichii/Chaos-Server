@@ -9,7 +9,10 @@ public static class PolygonExtensions
         var inside = false;
         var count = polygon.Vertices.Count;
 
-        for (int i = 0, j = count - 1; i < count; j = i++)
+        for (int i = 0,
+                 j = count - 1;
+             i < count;
+             j = i++)
         {
             var iVertex = polygon.Vertices[i];
             var jVertex = polygon.Vertices[j];

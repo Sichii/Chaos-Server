@@ -10,9 +10,14 @@ public class DictionaryBenchmarks
     private readonly ConcurrentDictionary<string, string> ConcurrentDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> NormalDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> ValuesList = new();
-    [Params(10, 50, 100, 500, 1000)]
+    [Params(
+        10,
+        50,
+        100,
+        500,
+        1000)]
     public int NumRecords;
-    
+
     [Benchmark]
     public void ConcurrentSelectBenchmark()
     {
@@ -23,6 +28,12 @@ public class DictionaryBenchmarks
     public void ConcurrentValuesBenchmark()
     {
         var result = ConcurrentDictionary.Values.ToList();
+    }
+
+    [Benchmark(Baseline = true)]
+    public void ListBenchmark()
+    {
+        var result = ValuesList.ToList();
     }
 
     [Benchmark]
@@ -37,12 +48,6 @@ public class DictionaryBenchmarks
         var result = NormalDictionary.Values.ToList();
     }
 
-    [Benchmark(Baseline = true)]
-    public void ListBenchmark()
-    {
-        var result = ValuesList.ToList();
-    }
-
     [GlobalSetup]
     public void Setup()
     {
@@ -51,14 +56,14 @@ public class DictionaryBenchmarks
         var faker = new Faker();
 
         var randomKeys = Enumerable
-            .Range(0, NumRecords)
-            .Select(_ => faker.Random.String2(3, 15) + faker.UniqueIndex)
-            .ToList();
+                         .Range(0, NumRecords)
+                         .Select(_ => faker.Random.String2(3, 15) + faker.UniqueIndex)
+                         .ToList();
 
         var randomValues = Enumerable
-            .Range(0, NumRecords)
-            .Select(_ => faker.Random.String2(10, 20))
-            .ToList();
+                           .Range(0, NumRecords)
+                           .Select(_ => faker.Random.String2(10, 20))
+                           .ToList();
 
         foreach ((var key, var value) in randomKeys.Zip(randomValues))
         {
