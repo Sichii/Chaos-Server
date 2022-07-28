@@ -10,9 +10,9 @@ namespace Chaos.Services.Serialization;
 
 public class SkillSerialTransformService : ISerialTransformService<Skill, SerializableSkill>
 {
-    private readonly ISimpleCache<SkillTemplate> SkillTemplateCache;
-    private readonly ISkillScriptFactory SkillScriptFactory;
     private readonly ILogger<SkillSerialTransformService> Logger;
+    private readonly ISkillScriptFactory SkillScriptFactory;
+    private readonly ISimpleCache<SkillTemplate> SkillTemplateCache;
 
     public SkillSerialTransformService(
         ISimpleCache<SkillTemplate> skillTemplateCache,

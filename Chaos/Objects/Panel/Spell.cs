@@ -27,13 +27,13 @@ public class Spell : PanelObjectBase, IScriptedSpell
     {
         Template = template;
         CastLines = template.CastLines;
-        
-        if(extraScriptKeys != null)
+
+        if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
 
         Script = spellScriptFactory.CreateScript(ScriptKeys, this);
     }
-    
+
     public Spell(
         SerializableSpell serializableSpell,
         ISimpleCache<SpellTemplate> skillTemplateCache,

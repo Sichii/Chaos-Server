@@ -1,4 +1,5 @@
 // ReSharper disable AsyncVoidLambda
+
 namespace Chaos.Core.Utilities;
 
 public static class AsyncHelpers
@@ -33,11 +34,12 @@ public static class AsyncHelpers
     }
 
     /// <summary>
-    /// Execute's an async Task
-    /// method which has a T return type synchronously
+    ///     Execute's an async Task
+    ///     method which has a T return type synchronously
     /// </summary>
     /// <typeparam name="T">Return Type</typeparam>
-    /// <param name="task">Task
+    /// <param name="task">
+    ///     Task
     ///     method to execute
     /// </param>
     /// <returns></returns>
@@ -74,22 +76,10 @@ public static class AsyncHelpers
 
     private class ExclusiveSynchronizationContext : SynchronizationContext
     {
+        private readonly Queue<Tuple<SendOrPostCallback, object>?> Items = new();
+        private readonly AutoResetEvent WorkItemsWaiting = new(false);
         private bool Done;
         public Exception? InnerException { get; set; }
-        private readonly AutoResetEvent WorkItemsWaiting = new(false);
-        private readonly Queue<Tuple<SendOrPostCallback, object>?> Items = new();
-
-        public override void Send(SendOrPostCallback d, object? state) => throw new NotSupportedException("We cannot send to our same thread");
-
-        public override void Post(SendOrPostCallback d, object? state)
-        {
-            lock (Items)
-                Items.Enqueue(Tuple.Create(d, state)!);
-
-            WorkItemsWaiting.Set();
-        }
-
-        public void EndMessageLoop() => Post(_ => Done = true, null);
 
         public void BeginMessageLoop()
         {
@@ -113,5 +103,18 @@ public static class AsyncHelpers
         }
 
         public override SynchronizationContext CreateCopy() => this;
+
+        public void EndMessageLoop() => Post(_ => Done = true, null);
+
+        public override void Post(SendOrPostCallback d, object? state)
+        {
+            lock (Items)
+                Items.Enqueue(Tuple.Create(d, state)!);
+
+            WorkItemsWaiting.Set();
+        }
+
+        public override void Send(SendOrPostCallback d, object? state) =>
+            throw new NotSupportedException("We cannot send to our same thread");
     }
 }

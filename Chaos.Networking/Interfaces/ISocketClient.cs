@@ -10,9 +10,9 @@ public interface ISocketClient
 {
     ICryptoClient CryptoClient { get; set; }
     event EventHandler? OnDisconnected;
-    FifoSemaphoreSlim ReceiveSync { get; }
     bool Connected { get; }
     uint Id { get; }
+    FifoSemaphoreSlim ReceiveSync { get; }
 
     void BeginReceive();
     void Disconnect();

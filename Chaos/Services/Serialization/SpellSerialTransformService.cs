@@ -10,9 +10,9 @@ namespace Chaos.Services.Serialization;
 
 public class SpellSerialTransformService : ISerialTransformService<Spell, SerializableSpell>
 {
-    private readonly ISimpleCache<SpellTemplate> SpellTemplateCache;
-    private readonly ISpellScriptFactory SpellScriptFactory;
     private readonly ILogger<SpellSerialTransformService> Logger;
+    private readonly ISpellScriptFactory SpellScriptFactory;
+    private readonly ISimpleCache<SpellTemplate> SpellTemplateCache;
 
     public SpellSerialTransformService(
         ISimpleCache<SpellTemplate> spellTemplateCache,

@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Chaos.Cryptography.Extensions;
+﻿namespace Chaos.Cryptography.Extensions;
 
 public static class CrcExtensions
 {

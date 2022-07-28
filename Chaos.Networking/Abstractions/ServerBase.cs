@@ -41,8 +41,6 @@ public abstract class ServerBase : BackgroundService, IServer
         IndexHandlers();
     }
 
-    protected abstract void OnConnection(IAsyncResult ar);
-
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
@@ -53,6 +51,8 @@ public abstract class ServerBase : BackgroundService, IServer
 
         return stoppingToken.WaitTillCanceled();
     }
+
+    protected abstract void OnConnection(IAsyncResult ar);
 
     protected delegate ValueTask ClientHandler(ISocketClient client, ref ClientPacket packet);
 

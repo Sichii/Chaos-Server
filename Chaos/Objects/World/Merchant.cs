@@ -14,22 +14,6 @@ public class Merchant : Creature
     public override CreatureType Type => CreatureType.Merchant;
     protected override ILogger<Merchant> Logger { get; }
 
-    public override void OnGoldDroppedOn(int amount, Aisling source)
-    {
-        //TODO: quests or something?
-    }
-
-    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
-    {
-        //TODO: quests or something?
-    }
-
-    public override void OnClicked(Aisling source)
-    {
-        //TODO: open a menu or something
-    }
-
-
     public Merchant(
         string name,
         ushort sprite,
@@ -42,4 +26,19 @@ public class Merchant : Creature
             sprite,
             mapInstance,
             point) => Logger = logger;
+
+    public override void OnClicked(Aisling source)
+    {
+        //TODO: open a menu or something
+    }
+
+    public override void OnGoldDroppedOn(int amount, Aisling source)
+    {
+        //TODO: quests or something?
+    }
+
+    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
+    {
+        //TODO: quests or something?
+    }
 }

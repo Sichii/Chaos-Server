@@ -12,7 +12,7 @@ public static class LocationExtensions
 
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction));
-        
+
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         return direction switch
         {
@@ -23,7 +23,32 @@ public static class LocationExtensions
             _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
     }
-    
+
+    public static Direction DirectionalRelationTo(this ILocation location, ILocation other)
+    {
+        var ret = PointExtensions.DirectionalRelationTo(location, other);
+
+        EnsureSameMap(location, other);
+
+        return ret;
+    }
+
+    public static int DistanceFrom(this ILocation location, ILocation other)
+    {
+        var ret = PointExtensions.DistanceFrom(location, other);
+
+        EnsureSameMap(location, other);
+
+        return ret;
+    }
+
+    private static void EnsureSameMap(ILocation location1, ILocation location2)
+    {
+        if (!location1.OnSameMapAs(location2))
+            throw new InvalidOperationException(
+                $"{ILocation.ToString(location1)} is not on the same map as {ILocation.ToString(location2)}");
+    }
+
     public static Location OffsetTowards(this ILocation location, ILocation other)
     {
         if (location == null)
@@ -37,31 +62,6 @@ public static class LocationExtensions
         var direction = other.DirectionalRelationTo(location);
 
         return location.DirectionalOffset(direction);
-    }
-
-    public static Direction DirectionalRelationTo(this ILocation location, ILocation other)
-    {
-        var ret = PointExtensions.DirectionalRelationTo(location, other);
-        
-        EnsureSameMap(location, other);
-
-        return ret;
-    }
-
-    public static int DistanceFrom(this ILocation location, ILocation other)
-    {
-        var ret = PointExtensions.DistanceFrom(location, other);
-        
-        EnsureSameMap(location, other);
-
-        return ret;
-    }
-
-    private static void EnsureSameMap(ILocation location1, ILocation location2)
-    {
-        if (!location1.OnSameMapAs(location2))
-            throw new InvalidOperationException(
-                $"{ILocation.ToString(location1)} is not on the same map as {ILocation.ToString(location2)}");
     }
 
     public static bool OnSameMapAs(this ILocation location, ILocation other) =>

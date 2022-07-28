@@ -12,5 +12,4 @@ public class SerializerTests
         Encoding.RegisterProvider(provider);
         Encoding = provider.GetEncoding(949)!;
     }
-    
 }

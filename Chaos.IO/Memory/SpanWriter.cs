@@ -45,6 +45,14 @@ public ref struct SpanWriter
         buffer.CopyTo(Buffer);
     }
 
+    public Span<byte> ToSpan()
+    {
+        if (Buffer.Length != Position)
+            Flush();
+
+        return Buffer;
+    }
+
     public void WriteBoolean(bool value) => WriteByte((byte)(value ? 1 : 0));
 
     public void WriteByte(byte value)
@@ -132,7 +140,7 @@ public ref struct SpanWriter
                     break;
             }
     }
-    
+
     public void WritePoint16(ushort x, ushort y)
     {
         WriteUInt16(x);
@@ -144,6 +152,7 @@ public ref struct SpanWriter
         WriteByte(x);
         WriteByte(y);
     }
+
     public void WriteSByte(sbyte value) => WriteByte((byte)value);
 
     public void WriteString(string value, bool terminate = false)
@@ -179,12 +188,4 @@ public ref struct SpanWriter
             (byte)(value >> 16),
             (byte)(value >> 8),
             (byte)value);
-
-    public Span<byte> ToSpan()
-    {
-        if(Buffer.Length != Position)
-            Flush();
-        
-        return Buffer;
-    }
 }

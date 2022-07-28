@@ -7,16 +7,16 @@ public class TypeSortedCollection
     public TypeSortedCollection(IEnumerable<object> objects, params Type[] types)
     {
         var objectColl = objects.ToList();
-        
+
         TypeCollections = new ConcurrentDictionary<Type, IEnumerable>();
         var genericList = typeof(List<>);
-        
+
         //populate type collections
         foreach (var type in types)
         {
             var typeCol = (IList)TypeCollections.GetOrAdd(type, (IEnumerable)Activator.CreateInstance(genericList.MakeGenericType(type))!);
-            
-            foreach(var obj in objectColl)
+
+            foreach (var obj in objectColl)
                 if (type.IsInstanceOfType(obj))
                     typeCol.Add(obj);
         }

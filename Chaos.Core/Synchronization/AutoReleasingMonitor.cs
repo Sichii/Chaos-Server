@@ -4,10 +4,12 @@ public class AutoReleasingMonitor
 {
     private readonly object Root;
 
+    public bool IsEntered => Monitor.IsEntered(Root);
+
+    public static IDisposable NoOpDisposable => new NoOpSubscription();
+
     public AutoReleasingMonitor(object? root = null) => Root = root ?? new object();
 
-    public bool IsEntered => Monitor.IsEntered(Root);
-    
     public IDisposable Enter()
     {
         Monitor.Enter(Root);
@@ -22,6 +24,8 @@ public class AutoReleasingMonitor
         return new SafeAutoReleasingSubscription(Root);
     }
 
+    public void Exit() => Monitor.Exit(Root);
+
     public IDisposable? TryEnter(int timeoutMs)
     {
         if (Monitor.TryEnter(Root, timeoutMs))
@@ -30,15 +34,11 @@ public class AutoReleasingMonitor
         return default;
     }
 
-    public void Exit() => Monitor.Exit(Root);
-
-    public static IDisposable NoOpDisposable => new NoOpSubscription();
-    
     private record NoOpSubscription : IDisposable
     {
         public void Dispose() { }
     }
-    
+
     private record SafeAutoReleasingSubscription : IDisposable
     {
         private readonly object Root;
@@ -52,7 +52,7 @@ public class AutoReleasingMonitor
                 Monitor.Exit(Root);
         }
     }
-    
+
     private record AutoReleasingSubscription : IDisposable
     {
         private readonly object Root;
@@ -62,7 +62,7 @@ public class AutoReleasingMonitor
 
         public void Dispose()
         {
-            if ((Interlocked.CompareExchange(ref Disposed, 1, 0) == 0))
+            if (Interlocked.CompareExchange(ref Disposed, 1, 0) == 0)
                 Monitor.Exit(Root);
         }
     }

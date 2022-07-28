@@ -34,17 +34,17 @@ namespace Chaos.Services.Hosted;
 
 public class WorldServer : ServerBase, IWorldServer
 {
-    private readonly PeriodicTimer PeriodicTimer;
     private readonly IClientFactory<IWorldClient> ClientFactory;
-    private readonly ISimpleCache<Metafile> Metafile;
-    private readonly ISaveManager<Aisling> UserSaveManager;
     private readonly ISimpleCache<MapInstance> MapInstanceCache;
+    private readonly ISimpleCache<Metafile> Metafile;
     private readonly ParallelOptions ParallelOptions;
-    public ConcurrentDictionary<uint, IWorldClient> Clients { get; }
+    private readonly PeriodicTimer PeriodicTimer;
+    private readonly ISaveManager<Aisling> UserSaveManager;
 
     public IEnumerable<Aisling> Aislings => Clients
-                                      .Select(kvp => kvp.Value.Aisling)
-                                      .Where(user => (user != null!));
+                                            .Select(kvp => kvp.Value.Aisling)
+                                            .Where(user => user != null!);
+    public ConcurrentDictionary<uint, IWorldClient> Clients { get; }
     protected new WorldClientHandler?[] ClientHandlers { get; }
     protected override WorldOptions Options { get; }
 
@@ -83,7 +83,6 @@ public class WorldServer : ServerBase, IWorldServer
     }
 
     #region Server Loop
-    
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -95,13 +94,13 @@ public class WorldServer : ServerBase, IWorldServer
 
         var deltaTime = new DeltaTime();
         var saveInterval = new IntervalTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins));
-        
+
         while (true)
             try
             {
                 if (stoppingToken.IsCancellationRequested)
                     return;
-                
+
                 await PeriodicTimer.WaitForNextTickAsync(stoppingToken);
                 var delta = deltaTime.ElapsedSpan;
                 saveInterval.Update(delta);
@@ -186,7 +185,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<DisplayChantArgs>(ref clientPacket);
 
         client.Aisling.Chant(args.ChantMessage);
-        
+
         return default;
     }
 
@@ -242,10 +241,10 @@ public class WorldServer : ServerBase, IWorldServer
     {
         client.CryptoClient = new CryptoClient(args.Seed, args.Key, args.Name);
         var aisling = await UserSaveManager.LoadAsync(client, redirect.Name);
-        
+
         client.Aisling = aisling;
         aisling.Client = client;
-        
+
         client.SendAttributes(StatUpdateType.Full);
         client.SendLightLevel(LightLevel.Lightest);
         client.SendUserId();
@@ -258,7 +257,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<ClientWalkArgs>(ref clientPacket);
 
         client.Aisling.Walk(args.Direction);
-        
+
         return default;
     }
 
@@ -630,7 +629,7 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnRefreshRequest(IWorldClient client, ref ClientPacket clientPacket)
     {
         client.Aisling.Refresh();
-        
+
         return default;
     }
 
@@ -692,7 +691,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<TurnArgs>(ref clientPacket);
 
         client.Aisling.Turn(args.Direction);
-        
+
         return default;
     }
 
@@ -893,7 +892,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         if (client is IWorldClient worldClient)
             return HandlePacketAsync(worldClient, ref packet);
-        
+
         return base.HandlePacketAsync(client, ref packet);
     }
 
@@ -906,12 +905,13 @@ public class WorldServer : ServerBase, IWorldServer
 
         if (mapInstance == null)
             return handler?.Invoke(client, ref packet) ?? default;
-        
+
         //yes, i know this handler is returning a ValueTask
         //however, only 1 handler ever calls asynchronous code, and thus only 1 handler will ever run asynchronously
         //that handler also happens to be the one where the user is loaded, and wont have a map instance when we receive the packet, so it's ok
         //methods that return tasks that do not ever call asynchronous code, will run entirely synchronously, so this is fine
         using var mapSync = mapInstance.Sync.EnterWithSafeExit();
+
         return handler?.Invoke(client, ref packet) ?? default;
     }
 

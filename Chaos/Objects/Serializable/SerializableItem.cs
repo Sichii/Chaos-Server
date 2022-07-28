@@ -17,7 +17,7 @@ public record SerializableItem
     //json constructor
     public SerializableItem() { }
     #pragma warning restore CS8618
-    
+
     public SerializableItem(Item item, bool shouldSerializeSlot = true)
     {
         UniqueId = item.UniqueId;

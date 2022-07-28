@@ -1,13 +1,12 @@
 using Chaos.Containers;
 using Chaos.Geometry.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World.Abstractions;
 
 public abstract class NamedEntity : VisibleEntity
 {
     public string Name { get; init; }
-    
+
     protected NamedEntity(
         string name,
         ushort sprite,

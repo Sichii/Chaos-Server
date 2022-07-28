@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var services = new ServiceCollection();
+
 var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")
@@ -16,7 +17,6 @@ var configuration = new ConfigurationBuilder()
                     .AddJsonFile("appsettings.prod.json")
                     #endif
                     .Build();
-
 
 var startup = new Startup(configuration);
 startup.ConfigureServices(services);

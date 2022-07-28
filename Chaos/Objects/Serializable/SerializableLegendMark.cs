@@ -15,7 +15,7 @@ public record SerializableLegendMark
     //json constructor
     public SerializableLegendMark() { }
     #pragma warning restore CS8618
-    
+
     public SerializableLegendMark(LegendMark legendMark)
     {
         Added = legendMark.Added.Ticks;

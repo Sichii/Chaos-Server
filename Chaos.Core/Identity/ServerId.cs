@@ -43,7 +43,7 @@ public class SerializableUniqueId
     public ulong NextId()
     {
         using var @lock = Sync.Enter();
-        
+
         CurrentId++;
         Serialize();
 

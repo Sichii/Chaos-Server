@@ -40,7 +40,7 @@ public class ItemFactory : IItemFactory
         var item = new Item(serialized, ItemTemplateCache, ItemScriptFactory);
 
         Logger.LogDebug("Deserialized item - Name: {ItemName}, UniqueId: {UniqueId}", item.DisplayName, item.UniqueId);
-        
+
         return item;
     }
 }

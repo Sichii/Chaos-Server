@@ -24,19 +24,6 @@ public static class PointExtensions
         };
     }
 
-    public static Point OffsetTowards(this IPoint point, IPoint other)
-    {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
-
-        if (other == null)
-            throw new ArgumentNullException(nameof(other));
-
-        var direction = other.DirectionalRelationTo(point);
-
-        return point.DirectionalOffset(direction);
-    }
-
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -47,7 +34,7 @@ public static class PointExtensions
 
         var direction = Direction.Invalid;
         var degree = 0;
-        
+
         if (point.Y < other.Y)
         {
             degree = other.Y - point.Y;
@@ -57,16 +44,14 @@ public static class PointExtensions
             degree = point.Y - other.Y;
             direction = Direction.Down;
         }
-        
+
         if (point.X > other.X)
         {
             if (point.X - other.X > degree)
                 direction = Direction.Right;
         } else if (point.X < other.X)
-        {
             if (other.X - point.X > degree)
                 direction = Direction.Left;
-        }
 
         return direction;
     }
@@ -81,7 +66,7 @@ public static class PointExtensions
 
         return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
     }
-    
+
     /// <summary>
     ///     Retreives a list of points in a line from the user, with an option for distance and direction. Direction.All is
     ///     optional. Direction.Invalid direction returns empty list.
@@ -171,6 +156,19 @@ public static class PointExtensions
                 default:
                     yield break;
             }
+    }
+
+    public static Point OffsetTowards(this IPoint point, IPoint other)
+    {
+        if (point == null)
+            throw new ArgumentNullException(nameof(point));
+
+        if (other == null)
+            throw new ArgumentNullException(nameof(other));
+
+        var direction = other.DirectionalRelationTo(point);
+
+        return point.DirectionalOffset(direction);
     }
 
     public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)

@@ -31,7 +31,8 @@ options.Converters.Add(new JsonStringEnumConverter());
 if (!Directory.Exists(DIRECTORY))
     Directory.CreateDirectory(DIRECTORY);
 
-await Parallel.ForEachAsync(lines,
+await Parallel.ForEachAsync(
+    lines,
     new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
     ParseLineToFileAsync);
 

@@ -2,8 +2,6 @@ namespace Chaos.Core.Extensions;
 
 public static class EnumExtensions
 {
-
-
     public static IEnumerable<T> Flatten<T>(this T[,] map)
     {
         for (var x = 0; x < map.GetLength(0); x++)
@@ -21,7 +19,7 @@ public static class EnumExtensions
                 yield return arr[y];
         }
     }
-    
+
     public static IEnumerable<EquipmentSlot> ToEquipmentSlots(this EquipmentType type)
     {
         switch (type)

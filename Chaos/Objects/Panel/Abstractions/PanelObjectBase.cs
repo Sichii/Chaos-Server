@@ -12,11 +12,11 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 {
     public TimeSpan Cooldown { get; set; }
     public TimeSpan Elapsed { get; set; }
-    public ISet<string> ScriptKeys { get; }
     public byte Slot { get; set; }
-    public ulong UniqueId { get; }
+    public ISet<string> ScriptKeys { get; }
     public virtual PanelObjectTemplateBase Template { get; }
-    
+    public ulong UniqueId { get; }
+
     protected PanelObjectBase(PanelObjectTemplateBase template, ulong? uniqueId = null)
     {
         uniqueId ??= ServerId.NextId;

@@ -1,7 +1,6 @@
 namespace Chaos.Core.Definitions;
 
 #region Server
-
 public enum ServerType : byte
 {
     Lobby = 0,
@@ -85,7 +84,7 @@ public enum ReactorTileType
 {
     Walk = 0,
     DropMoney = 1,
-    DropItem = 2,
+    DropItem = 2
 }
 #endregion
 
@@ -189,7 +188,7 @@ public enum MarkColor : byte
 public enum DisplayColor : byte
 {
     /// <summary>
-    /// Actually Lavender
+    ///     Actually Lavender
     /// </summary>
     None,
     Black,

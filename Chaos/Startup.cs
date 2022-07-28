@@ -78,34 +78,6 @@ public class Startup
         services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
     }
 
-    public void ConfigureProviders(IServiceCollection services)
-    {
-        services.AddTransient<IScriptFactoryProvider, ScriptFactoryProvider>();
-        services.AddTransient<IPanelObjectFactoryProvider, PanelObjectFactoryProvider>();
-        services.AddTransient<ISerialTransformProvider, SerialTransformProvider>();
-        services.AddTransient<ISimpleCacheProvider, SimpleCacheProvider>();
-    }
-
-    public void ConfigureSerialization(IServiceCollection services)
-    {
-        services.AddPacketSerialization();
-        services.AddSingleton<ISaveManager<Aisling>, UserSaveManager>();
-        services.AddTransient<ISerialTransformService<Aisling, SerializableAisling>, AislingSerialTransformService>();
-        services.AddTransient<ISerialTransformService<Item, SerializableItem>, ItemSerialTransformService>();
-        services.AddTransient<ISerialTransformService<Skill, SerializableSkill>, SkillSerialTransformService>();
-        services.AddTransient<ISerialTransformService<Spell, SerializableSpell>, SpellSerialTransformService>();
-    }
-
-    /// <summary>
-    ///     Configure all manager objects
-    /// </summary>
-    public void ConfigureSecurity(IServiceCollection services)
-    {
-        services.AddCryptography();
-        services.AddSingleton<IRedirectManager, RedirectManager>();
-        services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
-    }
-    
     /// <summary>
     ///     Configure options objects used by other DI implementations. These are generally serialized out of the config
     /// </summary>
@@ -149,7 +121,35 @@ public class Startup
                         o.Converters.Add(new JsonStringEnumConverter());
                     });
     }
-    
+
+    public void ConfigureProviders(IServiceCollection services)
+    {
+        services.AddTransient<IScriptFactoryProvider, ScriptFactoryProvider>();
+        services.AddTransient<IPanelObjectFactoryProvider, PanelObjectFactoryProvider>();
+        services.AddTransient<ISerialTransformProvider, SerialTransformProvider>();
+        services.AddTransient<ISimpleCacheProvider, SimpleCacheProvider>();
+    }
+
+    /// <summary>
+    ///     Configure all manager objects
+    /// </summary>
+    public void ConfigureSecurity(IServiceCollection services)
+    {
+        services.AddCryptography();
+        services.AddSingleton<IRedirectManager, RedirectManager>();
+        services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
+    }
+
+    public void ConfigureSerialization(IServiceCollection services)
+    {
+        services.AddPacketSerialization();
+        services.AddSingleton<ISaveManager<Aisling>, UserSaveManager>();
+        services.AddTransient<ISerialTransformService<Aisling, SerializableAisling>, AislingSerialTransformService>();
+        services.AddTransient<ISerialTransformService<Item, SerializableItem>, ItemSerialTransformService>();
+        services.AddTransient<ISerialTransformService<Skill, SerializableSkill>, SkillSerialTransformService>();
+        services.AddTransient<ISerialTransformService<Spell, SerializableSpell>, SpellSerialTransformService>();
+    }
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton(Configuration);
@@ -170,12 +170,12 @@ public class Startup
 
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
-        
+
         services.AddSingleton<ILobbyServer, IHostedService, LobbyServer>();
         services.AddSingleton<ILoginServer, IHostedService, LoginServer>();
         services.AddSingleton<IWorldServer, IHostedService, WorldServer>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();
-        
+
         ConfigureOptions(services);
         ConfigureSerialization(services);
         ConfigureCaches(services);

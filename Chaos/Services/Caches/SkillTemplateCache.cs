@@ -15,9 +15,9 @@ public class SkillTemplateCache : ISimpleCache<SkillTemplate>
 {
     private readonly ConcurrentDictionary<string, SkillTemplate> Cache;
     private readonly JsonSerializerOptions JsonSerializerOptions;
+    private readonly int Loaded;
     private readonly ILogger Logger;
     private readonly SkillTemplateCacheOptions Options;
-    private readonly int Loaded;
 
     public SkillTemplateCache(
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -32,7 +32,7 @@ public class SkillTemplateCache : ISimpleCache<SkillTemplate>
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
-        
+
         if (Interlocked.CompareExchange(ref Loaded, 1, 0) == 0)
             AsyncHelpers.RunSync(LoadCacheAsync);
     }

@@ -2,27 +2,30 @@ using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Containers.Interfaces;
 using Chaos.Data;
+using Chaos.Extensions;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Serialization.Interfaces;
-using Chaos.Services.Utility.Interfaces;
-using Chaos.Extensions;
 using Chaos.Observers;
+using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Services.Hosted.Options;
+using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Utility.Interfaces;
 using Microsoft.Extensions.Logging;
+using PointExtensions = Chaos.Geometry.Extensions.PointExtensions;
 
 namespace Chaos.Objects.World;
 
 public class Aisling : Creature
 {
+    private readonly IExchangeFactory ExchangeFactory;
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
+    public IWorldClient Client { get; set; }
     public int FaceSprite { get; set; }
     public Gender Gender { get; set; }
     public Group? Group { get; set; }
@@ -39,7 +42,6 @@ public class Aisling : Creature
     public UserState UserState { get; set; }
     public ActiveObject ActiveObject { get; }
     public Bank Bank { get; }
-    public IWorldClient Client { get; set; }
     public IEquipment Equipment { get; }
     public IgnoreList IgnoreList { get; }
     public IInventory Inventory { get; }
@@ -50,7 +52,6 @@ public class Aisling : Creature
     public override UserStatSheet StatSheet { get; }
     public TitleList Titles { get; }
     public override CreatureType Type => CreatureType.Aisling;
-    private readonly IExchangeFactory ExchangeFactory;
     protected override ILogger<Aisling> Logger { get; }
 
     public Aisling(
@@ -71,7 +72,7 @@ public class Aisling : Creature
     {
         ExchangeFactory = exchangeFactory;
         Logger = logger;
-        
+
         BodyColor = serializableAisling.BodyColor;
         BodySprite = serializableAisling.BodySprite;
         Direction = serializableAisling.Direction;
@@ -93,7 +94,13 @@ public class Aisling : Creature
         Options = new UserOptions(serializableAisling.Options);
         IgnoreList = new IgnoreList(serializableAisling.IgnoreList);
         Legend = new Legend(serializableAisling.Legend.Select(s => new LegendMark(s)));
-        Bank = new Bank(serializableAisling.BankedGold, serializableAisling.Bank, itemTransformer);
+
+        Bank = new Bank(
+            serializableAisling.BankedGold,
+            serializableAisling.Bank,
+            itemTransformer,
+            itemCloner);
+
         Equipment = new Equipment(serializableAisling.Equipment, itemTransformer);
         Inventory = new Inventory(itemCloner, serializableAisling.Inventory, itemTransformer);
         SkillBook = new SkillBook(serializableAisling.SkillBook, skillTransformer);
@@ -103,7 +110,7 @@ public class Aisling : Creature
         Client = null!;
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
-        
+
         //add observers
         var inventoryObserver = new InventoryObserver(this);
         var spellBookObserver = new SpellBookObserver(this);
@@ -114,14 +121,14 @@ public class Aisling : Creature
         SpellBook.AddObserver(spellBookObserver);
         SkillBook.AddObserver(skillBookObserver);
         Equipment.AddObserver(equipmentObserver);
-        
-        foreach(var item in Equipment)
+
+        foreach (var item in Equipment)
             equipmentObserver.OnAdded(item);
-        
-        foreach(var item in Inventory)
+
+        foreach (var item in Inventory)
             inventoryObserver.OnAdded(item);
-        
-        foreach(var spell in SpellBook)
+
+        foreach (var spell in SpellBook)
             spellBookObserver.OnAdded(spell);
 
         foreach (var skill in SkillBook)
@@ -134,7 +141,7 @@ public class Aisling : Creature
         Gender gender,
         int hairStyle,
         DisplayColor hairColor,
-        MapInstance mapInstance, 
+        MapInstance mapInstance,
         IPoint point
     )
         : this(name, mapInstance, point)
@@ -149,7 +156,11 @@ public class Aisling : Creature
     }
 
     private Aisling(string name, MapInstance mapInstance, IPoint point)
-        : base(name, 0, mapInstance, point)
+        : base(
+            name,
+            0,
+            mapInstance,
+            point)
     {
         //initialize all the things
         StatSheet = new UserStatSheet();
@@ -166,13 +177,114 @@ public class Aisling : Creature
         ActiveObject = new ActiveObject();
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
-        
+
         //this object is purely intended to be created and immediately serialized
         //these pieces should never come into play
         Client = null!;
         Logger = null!;
         ExchangeFactory = null!;
     }
+
+    public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));
+
+    public bool CanCarry(IEnumerable<(Item Item, int Count)> hypotheticalItems)
+    {
+        var weightSum = 0;
+        var slotSum = 0;
+
+        //group all separated stacks together by summing their counts
+        foreach (var set in hypotheticalItems.GroupBy(
+                     set => set.Item.DisplayName,
+                     (_, grp) =>
+                     {
+                         var col = grp.ToList();
+
+                         return (col.First().Item, Count: col.Sum(i => i.Count));
+                     }))
+        {
+            //separate each stack into it's most condensed possible form
+            var maxStacks = set.Item.Template.MaxStacks;
+            var estimatedStacks = set.Count / maxStacks + (set.Count & maxStacks);
+            weightSum += set.Item.Template.Weight * estimatedStacks;
+            slotSum += estimatedStacks;
+        }
+
+        return (StatSheet.CurrentWeight + weightSum <= StatSheet.MaxWeight) && (Inventory.AvailableSlots >= slotSum);
+    }
+
+    public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
+
+    public void GiveGold(int amount)
+    {
+        Gold += amount;
+        Client.SendAttributes(StatUpdateType.ExpGold);
+    }
+
+    public override void OnClicked(Aisling source)
+    {
+        if (source.Equals(this))
+            source.Client.SendSelfProfile();
+        else if (IsVisibleTo(source))
+            source.Client.SendProfile(this);
+    }
+
+    public override void OnGoldDroppedOn(int amount, Aisling source)
+    {
+        if (!TryStartExchange(source, out var exchange))
+            return;
+
+        exchange.SetGold(source, amount);
+    }
+
+    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
+    {
+        if (!TryStartExchange(source, out var exchange))
+            return;
+
+        if (count == 0)
+            exchange.AddItem(source, slot);
+        else
+            exchange.AddStackableItem(this, slot, count);
+    }
+
+    public void Refresh(bool forceRefresh = false)
+    {
+        var now = DateTime.UtcNow;
+
+        if (!forceRefresh && (now.Subtract(LastRefresh).TotalMilliseconds < WorldOptions.Instance.RefreshIntervalMs))
+            return;
+
+        (var aislings, var doors, var otherVisibles) = MapInstance
+                                                       .ObjectsWithinRange<VisibleEntity>(this)
+                                                       .SortBySendType();
+
+        LastRefresh = now;
+        Client.SendMapInfo();
+        Client.SendLocation();
+        Client.SendAttributes(StatUpdateType.Full);
+
+        foreach (var nearbyAisling in aislings)
+        {
+            if (nearbyAisling.Equals(this))
+                continue;
+
+            if (IsVisibleTo(nearbyAisling))
+                nearbyAisling.Client.SendDisplayAisling(this);
+
+            if (nearbyAisling.IsVisibleTo(this))
+                Client.SendDisplayAisling(nearbyAisling);
+        }
+
+        Client.SendVisibleObjects(otherVisibles.ThatAreVisibleTo(this));
+        Client.SendDoors(doors);
+        Client.SendMapLoadComplete();
+        Client.SendDisplayAisling(this);
+        Client.SendRefreshResponse();
+
+        MapInstance.ActivateReactors(this, ReactorTileType.Walk);
+    }
+
+    public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
 
     public AttributesArgs ToAttributeArgs() => new()
     {
@@ -206,7 +318,7 @@ public class Aisling : Creature
         UnspentPoints = (byte)StatSheet.UnspentPoints,
         Wis = StatSheet.EffectiveWis
     };
-    
+
     public DisplayAislingArgs ToDisplayAislingArgs()
     {
         var weapon = Equipment[EquipmentSlot.Weapon];
@@ -318,69 +430,6 @@ public class Aisling : Creature
         Title = Titles.FirstOrDefault()
     };
 
-    public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));
-
-    public bool CanCarry(IEnumerable<(Item Item, int Count)> hypotheticalItems)
-    {
-        var weightSum = 0;
-        var slotSum = 0;
-
-        //group all separated stacks together by summing their counts
-        foreach (var set in hypotheticalItems.GroupBy(
-                     set => set.Item.DisplayName,
-                     (_, grp) =>
-                     {
-                         var col = grp.ToList();
-
-                         return (col.First().Item, Count: col.Sum(i => i.Count));
-                     }))
-        {
-            //separate each stack into it's most condensed possible form
-            var maxStacks = set.Item.Template.MaxStacks;
-            var estimatedStacks = set.Count / maxStacks + (set.Count & maxStacks);
-            weightSum += set.Item.Template.Weight * estimatedStacks;
-            slotSum += estimatedStacks;
-        }
-
-        return (StatSheet.CurrentWeight + weightSum <= StatSheet.MaxWeight) && (Inventory.AvailableSlots >= slotSum);
-    }
-
-    public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
-
-    public void GiveGold(int amount)
-    {
-        Gold += amount;
-        Client.SendAttributes(StatUpdateType.ExpGold);
-    }
-    
-    public override void OnGoldDroppedOn(int amount, Aisling source)
-    {
-        if (!TryStartExchange(source, out var exchange))
-            return;
-
-        exchange.SetGold(source, amount);
-    }
-
-    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
-    {
-        if (!TryStartExchange(source, out var exchange))
-            return;
-
-        if (count == 0)
-            exchange.AddItem(source, slot);
-        else
-            exchange.AddStackableItem(this, slot, count);
-    }
-
-    public override void OnClicked(Aisling source)
-    {
-        if (source.Equals(this))
-            source.Client.SendSelfProfile();
-        else if (IsVisibleTo(source))
-            source.Client.SendProfile(this);
-    }
-    
-
     private bool TryStartExchange(Aisling source, [MaybeNullWhen(false)] out Exchange exchange)
     {
         exchange = ExchangeFactory.CreateExchange(source, this);
@@ -419,25 +468,24 @@ public class Aisling : Creature
         base.Update(delta);
     }
 
-    public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
-
     public override void Walk(Direction direction)
     {
         Direction = direction;
         var startPoint = Point.From(this);
-        var endPoint = Geometry.Extensions.PointExtensions.DirectionalOffset(this, direction);
-        
+        var endPoint = PointExtensions.DirectionalOffset(this, direction);
+
         //admins can walk through creatures and walls
         if (!IsAdmin && !MapInstance.IsWalkable(endPoint))
         {
             Refresh(true);
+
             return;
         }
 
         var objsBeforeWalk = MapInstance
                              .ObjectsWithinRange<VisibleEntity>(this)
                              .SortBySendType();
-        
+
         SetLocation(endPoint);
 
         var objsAfterWalk = MapInstance
@@ -487,49 +535,12 @@ public class Aisling : Creature
         var aislingsToUpdate = objsBeforeWalk.Aislings
                                              .Intersect(objsAfterWalk.Aislings)
                                              .ThatCanSee(this);
-        
-        foreach(var aisling in aislingsToUpdate)
+
+        foreach (var aisling in aislingsToUpdate)
             if (!aisling.Equals(this))
                 aisling.Client.SendCreatureWalk(Id, startPoint, direction);
-        
+
         Client.SendConfirmClientWalk(startPoint, direction);
-        MapInstance.ActivateReactors(this);
-    }
-    
-    public void Refresh(bool forceRefresh = false)
-    {
-        var now = DateTime.UtcNow;
-
-        if (!forceRefresh && (now.Subtract(LastRefresh).TotalMilliseconds < WorldOptions.Instance.RefreshIntervalMs))
-            return;
-
-        (var aislings, var doors, var otherVisibles) = MapInstance
-                                                    .ObjectsWithinRange<VisibleEntity>(this)
-                                                    .SortBySendType();
-        
-        LastRefresh = now;
-        Client.SendMapInfo();
-        Client.SendLocation();
-        Client.SendAttributes(StatUpdateType.Full);
-
-        foreach (var nearbyAisling in aislings)
-        {
-            if (nearbyAisling.Equals(this))
-                continue;
-
-            if (IsVisibleTo(nearbyAisling))
-                nearbyAisling.Client.SendDisplayAisling(this);
-
-            if (nearbyAisling.IsVisibleTo(this))
-                Client.SendDisplayAisling(nearbyAisling);
-        }
-
-        Client.SendVisibleObjects(otherVisibles.ThatAreVisibleTo(this));
-        Client.SendDoors(doors);
-        Client.SendMapLoadComplete();
-        Client.SendDisplayAisling(this);
-        Client.SendRefreshResponse();
-
-        MapInstance.ActivateReactors(this);
+        MapInstance.ActivateReactors(this, ReactorTileType.Walk);
     }
 }

@@ -17,7 +17,7 @@ public class RectangleConverter : JsonConverter<Rectangle>
         var left = 0;
         var width = 0;
         var height = 0;
-        
+
         while (reader.TokenType != JsonTokenType.EndObject)
         {
             var pName = reader.GetString()!.ToLower();
@@ -57,9 +57,9 @@ public class RectangleConverter : JsonConverter<Rectangle>
     public override void Write(Utf8JsonWriter writer, Rectangle value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        
+
         writer.WritePropertyName("Top");
-        
+
         writer.WriteNumber("Top", value.Top);
         writer.WriteNumber("Left", value.Left);
         writer.WriteNumber("Width", value.Width);

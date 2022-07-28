@@ -81,10 +81,10 @@ public ref struct SpanReader
         | (ReadByte() << 8)
         | ReadByte();
 
+    public (ushort X, ushort Y) ReadPoint16() => (ReadUInt16(), ReadUInt16());
+
     public (byte X, byte Y) ReadPoint8() => (ReadByte(), ReadByte());
 
-    public (ushort X, ushort Y) ReadPoint16() => (ReadUInt16(), ReadUInt16());
-    
     public sbyte ReadSByte() => (sbyte)ReadByte();
 
     public string ReadString()

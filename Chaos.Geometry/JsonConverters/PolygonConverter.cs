@@ -19,7 +19,7 @@ public class PolygonConverter : JsonConverter<Polygon>
         while (reader.TokenType != JsonTokenType.EndArray)
         {
             var str = reader.GetString()!;
-            
+
             if (!Point.TryParse(str, out var point))
                 throw new InvalidOperationException("Invalid point format");
 
@@ -38,7 +38,7 @@ public class PolygonConverter : JsonConverter<Polygon>
 
         foreach (var vertex in value)
             writer.WriteStringValue(IPoint.ToString(vertex));
-        
+
         writer.WriteEndArray();
     }
 }

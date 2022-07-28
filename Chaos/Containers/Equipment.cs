@@ -3,7 +3,6 @@ using Chaos.Containers.Interfaces;
 using Chaos.Data;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
-using Chaos.Observers.Interfaces;
 using Chaos.Services.Serialization.Interfaces;
 
 namespace Chaos.Containers;

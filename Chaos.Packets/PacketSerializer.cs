@@ -33,7 +33,7 @@ public class PacketSerializer : IPacketSerializer
 
         return (T)deserializer.Deserialize(ref reader);
     }
-    
+
     public ServerPacket Serialize<T>(T obj) where T: ISendArgs
     {
         if (obj == null)
@@ -47,9 +47,9 @@ public class PacketSerializer : IPacketSerializer
         var packet = new ServerPacket(serializer.ServerOpCode);
         var writer = new SpanWriter(Encoding);
         serializer.Serialize(ref writer, obj);
-        
+
         packet.Buffer = writer.ToSpan();
-        
+
         return packet;
     }
 }
