@@ -1,5 +1,9 @@
 namespace Chaos.Core.Utilities;
 
+/// <summary>
+///     A utility used to create instances of objects using reflection to find a matching constructor.
+///     Class was pulled from Microsoft.Windows.Design.Model and modified a bit.
+/// </summary>
 public static class InstanceFactory
 {
     private static readonly ConcurrentDictionary<Tuple<Type, Type, Type, Type>, CreateDelegate> CachedGenerator = new();

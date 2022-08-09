@@ -5,6 +5,7 @@ using Chaos.Cryptography.Interfaces;
 using Chaos.Data;
 using Chaos.Geometry.Definitions;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
@@ -390,7 +391,7 @@ public class WorldClient : SocketClientBase, IWorldClient
             Width = mapTemplate.Width,
             Height = mapTemplate.Height,
             CheckSum = mapTemplate.CheckSum,
-            Flags = instance.Flags
+            Flags = (byte)instance.Flags
         };
 
         Send(args);

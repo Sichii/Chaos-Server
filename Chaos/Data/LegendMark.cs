@@ -1,4 +1,5 @@
-﻿using Chaos.Networking.Model.Server;
+﻿using Chaos.Networking.Definitions;
+using Chaos.Networking.Model.Server;
 using Chaos.Objects.Serializable;
 
 namespace Chaos.Data;

@@ -2,9 +2,11 @@ using Chaos.Clients.Interfaces;
 using Chaos.Containers;
 using Chaos.Containers.Interfaces;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
@@ -91,7 +93,7 @@ public class Aisling : Creature
 
         StatSheet = serializableAisling.StatSheet;
         Titles = new TitleList(serializableAisling.Titles);
-        Options = new UserOptions(serializableAisling.Options);
+        Options = new UserOptions(serializableAisling.UserOptions);
         IgnoreList = new IgnoreList(serializableAisling.IgnoreList);
         Legend = new Legend(serializableAisling.Legend.Select(s => new LegendMark(s)));
 
@@ -183,6 +185,16 @@ public class Aisling : Creature
         Client = null!;
         Logger = null!;
         ExchangeFactory = null!;
+    }
+
+    protected override void ApplyAcModifier(ref float damage)
+    {
+        if (StatSheet.Ac == 0)
+            return;
+
+        var ac = Math.Clamp(StatSheet.Ac, WorldOptions.Instance.MinimumAislingAc, WorldOptions.Instance.MaximumAislingAc);
+        var mod = 1 + ac / 100.0f;
+        damage *= mod;
     }
 
     public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));

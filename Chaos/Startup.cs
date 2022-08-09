@@ -13,6 +13,7 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.Serializable;
 using Chaos.Objects.World;
 using Chaos.Packets.Extensions;
+using Chaos.Pathfinding.Extensions;
 using Chaos.Scripts.Interfaces;
 using Chaos.Services.Caches;
 using Chaos.Services.Caches.Interfaces;
@@ -167,6 +168,8 @@ public class Startup
                         LoggingConfigurationSectionName = ConfigKeys.Logging.NLog.Key
                     });
             });
+
+        services.AddPathfinding();
 
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);

@@ -1,6 +1,7 @@
 using Chaos.Containers;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.Abstractions;
 using Chaos.Scripts.Interfaces;
 
@@ -12,10 +13,28 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 
     public CompositeItemScript(Item source) => Source = source;
 
-    public void OnUnequip(Aisling aisling)
+    public void OnDropped(Creature creature, MapInstance mapInstance)
     {
         foreach (var component in Components)
-            component.OnUnequip(aisling);
+            component.OnDropped(creature, mapInstance);
+    }
+
+    public void OnEquipped(Aisling aisling)
+    {
+        foreach (var component in Components)
+            component.OnEquipped(aisling);
+    }
+
+    public void OnPickup(Aisling aisling)
+    {
+        foreach (var component in Components)
+            component.OnPickup(aisling);
+    }
+
+    public void OnUnEquipped(Aisling aisling)
+    {
+        foreach (var component in Components)
+            component.OnUnEquipped(aisling);
     }
 
     public void OnUse(Aisling aisling)

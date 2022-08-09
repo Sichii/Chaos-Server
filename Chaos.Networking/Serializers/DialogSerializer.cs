@@ -1,4 +1,5 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Packets.Abstractions;
 
@@ -21,7 +22,7 @@ public record DialogSerializer : ServerPacketSerializer<DialogArgs>
         writer.WriteBytes(new byte[2]);
         writer.WriteUInt16(args.Sprite);
         writer.WriteByte(0);
-        writer.WriteUInt16((ushort)(args.PursuitId ?? 0));
+        writer.WriteUInt16(args.PursuitId ?? 0);
         writer.WriteUInt16(args.DialogId);
         writer.WriteBoolean(args.HasPreviousButton);
         writer.WriteBoolean(args.HasNextButton);

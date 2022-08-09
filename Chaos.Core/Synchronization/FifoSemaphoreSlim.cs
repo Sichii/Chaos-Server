@@ -1,5 +1,8 @@
 namespace Chaos.Core.Synchronization;
 
+/// <summary>
+///     The same as <see cref="SemaphoreSlim" />, except with first-in-first-out (FIFO) behavior.
+/// </summary>
 public class FifoSemaphoreSlim
 {
     private readonly SemaphoreSlim Sync;
@@ -21,10 +24,14 @@ public class FifoSemaphoreSlim
             tcs.SetResult(true);
     }
 
+    /// <summary>
+    ///     Releases the internal <see cref="SemaphoreSlim" /> once.
+    /// </summary>
     public void Release() => Sync.Release();
 
-    public void Wait() => WaitAsync().Wait();
-
+    /// <summary>
+    ///     Asynchronously waits for a signal to continue.
+    /// </summary>
     public Task WaitAsync()
     {
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

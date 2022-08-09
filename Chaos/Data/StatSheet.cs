@@ -2,6 +2,7 @@
 
 using System.Text.Json.Serialization;
 using System.Threading;
+using Chaos.Networking.Definitions;
 
 namespace Chaos.Data;
 

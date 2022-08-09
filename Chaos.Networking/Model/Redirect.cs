@@ -1,6 +1,7 @@
 using System.Net;
 using Chaos.Core.Identity;
 using Chaos.Cryptography.Interfaces;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Options;
 
 namespace Chaos.Networking.Model;

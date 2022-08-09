@@ -1,4 +1,5 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Packets.Abstractions;
 
@@ -12,7 +13,7 @@ public record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
     {
         writer.WriteUInt32(args.Id);
 
-        foreach (var slot in CONSTANTS.PROFILE_EQUIPMENTSLOT_ORDER)
+        foreach (var slot in NETWORKING_CONSTANTS.PROFILE_EQUIPMENTSLOT_ORDER)
         {
             args.Equipment.TryGetValue(slot, out var item);
 

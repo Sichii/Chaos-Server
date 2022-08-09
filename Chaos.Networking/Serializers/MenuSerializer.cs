@@ -1,4 +1,5 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Packets.Abstractions;
 
@@ -30,7 +31,7 @@ public record MenuSerializer : ServerPacketSerializer<MenuArgs>
                 foreach (var pursuit in args.Options)
                 {
                     writer.WriteString8(pursuit.ToString());
-                    writer.WriteUInt16((ushort)pursuit);
+                    writer.WriteUInt16(pursuit);
                 }
 
                 break;
@@ -41,7 +42,7 @@ public record MenuSerializer : ServerPacketSerializer<MenuArgs>
                 foreach (var pursuit in args.Options)
                 {
                     writer.WriteString8(pursuit.ToString());
-                    writer.WriteUInt16((ushort)pursuit);
+                    writer.WriteUInt16(pursuit);
                 }
 
                 break;

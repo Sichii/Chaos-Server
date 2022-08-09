@@ -1,6 +1,7 @@
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Interfaces;
+using Chaos.Networking.Definitions;
 using Chaos.Objects.World.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +27,13 @@ public class Merchant : Creature
             sprite,
             mapInstance,
             point) => Logger = logger;
+
+    public override void ApplyDamage(
+        Creature source,
+        int amount,
+        byte hitSound = 1,
+        bool ignoreAc = false
+    ) { }
 
     public override void OnClicked(Aisling source)
     {

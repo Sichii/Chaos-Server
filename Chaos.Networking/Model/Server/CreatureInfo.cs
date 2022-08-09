@@ -1,4 +1,5 @@
 using Chaos.Geometry.Definitions;
+using Chaos.Networking.Definitions;
 
 namespace Chaos.Networking.Model.Server;
 

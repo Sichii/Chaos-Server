@@ -2,7 +2,7 @@ using Chaos.Containers;
 
 namespace Chaos.Objects.Serializable;
 
-public record SerializableOptions
+public record SerializableUserOptions
 {
     public bool Exchange { get; init; }
     public bool FastMove { get; init; }
@@ -15,10 +15,10 @@ public record SerializableOptions
 
     #pragma warning disable CS8618
     //json constructor
-    public SerializableOptions() { }
+    public SerializableUserOptions() { }
     #pragma warning restore CS8618
 
-    public SerializableOptions(UserOptions userOptions)
+    public SerializableUserOptions(UserOptions userOptions)
     {
         Exchange = userOptions.Exchange;
         FastMove = userOptions.FastMove;

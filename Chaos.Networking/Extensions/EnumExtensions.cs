@@ -1,25 +1,9 @@
-namespace Chaos.Core.Extensions;
+using Chaos.Networking.Definitions;
+
+namespace Chaos.Networking.Extensions;
 
 public static class EnumExtensions
 {
-    public static IEnumerable<T> Flatten<T>(this T[,] map)
-    {
-        for (var x = 0; x < map.GetLength(0); x++)
-            for (var y = 0; y < map.GetLength(1); y++)
-                yield return map[x, y];
-    }
-
-    public static IEnumerable<T> Flatten<T>(this T[][] map)
-    {
-        for (var x = 0; x < map.Length; x++)
-        {
-            var arr = map[x];
-
-            for (var y = 0; y < arr.Length; y++)
-                yield return arr[y];
-        }
-    }
-
     public static IEnumerable<EquipmentSlot> ToEquipmentSlots(this EquipmentType type)
     {
         switch (type)

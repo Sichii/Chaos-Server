@@ -1,6 +1,7 @@
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Definitions;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;

@@ -1,4 +1,5 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Packets.Abstractions;
 
@@ -17,7 +18,7 @@ public record DisplayAislingSerializer : ServerPacketSerializer<DisplayAislingAr
         if (args.Sprite.HasValue && (args.Sprite != 0))
         {
             writer.WriteUInt16(ushort.MaxValue);
-            writer.WriteUInt16((ushort)(args.Sprite.Value + CONSTANTS.CREATURE_SPRITE_OFFSET));
+            writer.WriteUInt16((ushort)(args.Sprite.Value + NETWORKING_CONSTANTS.CREATURE_SPRITE_OFFSET));
             writer.WriteByte((byte)args.HeadColor);
             writer.WriteByte((byte)args.BootsColor);
             writer.WriteBytes(new byte[6]);

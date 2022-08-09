@@ -6,6 +6,7 @@ using Chaos.Cryptography;
 using Chaos.Data;
 using Chaos.Exceptions;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Networking.Model.Client;

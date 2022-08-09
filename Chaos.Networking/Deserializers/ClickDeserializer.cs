@@ -1,5 +1,6 @@
 using Chaos.Geometry;
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Client;
 using Chaos.Packets.Abstractions;
 

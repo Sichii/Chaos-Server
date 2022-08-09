@@ -1,3 +1,5 @@
+using Chaos.Networking.Definitions;
+
 namespace Chaos.Networking.Model.Server;
 
 public record GroundItemInfo : VisibleObjectInfo

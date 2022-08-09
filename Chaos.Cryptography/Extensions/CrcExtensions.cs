@@ -2,8 +2,14 @@
 
 public static class CrcExtensions
 {
+    /// <summary>
+    ///     Generates a 16bit checksum for a given byte array.
+    /// </summary>
     public static ushort Generate16(this IReadOnlyList<byte> data) => Generate16(data, 0, data.Count);
 
+    /// <summary>
+    ///     Generates a 16bit checksum for a subset of a given byte array.
+    /// </summary>
     public static ushort Generate16(this IReadOnlyList<byte> data, int index, int length)
     {
         uint checkSum = 0;
@@ -14,8 +20,14 @@ public static class CrcExtensions
         return (ushort)checkSum;
     }
 
+    /// <summary>
+    ///     Generates a 32bit checksum for a given byte array.
+    /// </summary>
     public static uint Generate32(this IReadOnlyList<byte> data) => Generate32(data, 0, data.Count);
 
+    /// <summary>
+    ///     Generates a 32bit checksum for a subset of a given byte array.
+    /// </summary>
     public static uint Generate32(this IReadOnlyList<byte> data, int index, int length)
     {
         var checkSum = uint.MaxValue;

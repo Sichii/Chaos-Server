@@ -1,4 +1,3 @@
-using Chaos.Objects;
 using Chaos.Objects.Panel;
 using Chaos.Scripts.Abstractions;
 
@@ -8,6 +7,4 @@ public class NoOpSpellScript : SpellScriptBase
 {
     public NoOpSpellScript(Spell spell)
         : base(spell) { }
-
-    public override void OnUse(ActivationContext context) { }
 }

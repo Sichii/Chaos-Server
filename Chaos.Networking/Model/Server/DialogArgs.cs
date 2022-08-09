@@ -1,3 +1,4 @@
+using Chaos.Networking.Definitions;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Networking.Model.Server;
@@ -11,7 +12,7 @@ public record DialogArgs : ISendArgs
     public bool HasPreviousButton { get; set; }
     public string Name { get; set; } = null!;
     public ICollection<string>? Options { get; set; }
-    public PursuitId? PursuitId { get; set; }
+    public ushort? PursuitId { get; set; }
     public uint? SourceId { get; set; }
     public ushort Sprite { get; set; }
     public string Text { get; set; } = null!;

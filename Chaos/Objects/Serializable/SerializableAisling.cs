@@ -1,6 +1,7 @@
 using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Geometry.Definitions;
+using Chaos.Networking.Definitions;
 using Chaos.Objects.World;
 
 namespace Chaos.Objects.Serializable;
@@ -28,11 +29,11 @@ public record SerializableAisling
     public string MapInstanceId { get; init; }
     public string Name { get; init; }
     public Nation Nation { get; init; }
-    public SerializableOptions Options { get; init; }
     public ICollection<SerializableSkill> SkillBook { get; init; }
     public ICollection<SerializableSpell> SpellBook { get; init; }
     public UserStatSheet StatSheet { get; init; }
     public ICollection<string> Titles { get; init; }
+    public SerializableUserOptions UserOptions { get; init; }
     public int X { get; init; }
     public int Y { get; init; }
 
@@ -63,7 +64,7 @@ public record SerializableAisling
 
         StatSheet = ShallowCopy<UserStatSheet>.Clone(aisling.StatSheet);
         Titles = aisling.Titles.ToList();
-        Options = new SerializableOptions(aisling.Options);
+        UserOptions = new SerializableUserOptions(aisling.Options);
         IgnoreList = aisling.IgnoreList.ToList();
 
         Legend = aisling.Legend

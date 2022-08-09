@@ -2,8 +2,18 @@
 
 namespace Chaos.Core.Utilities;
 
+/// <summary>
+///     A utility class used to run tasks synchronously.
+///     Class was pulled from the microsoft unity mixed reality toolkit.
+/// </summary>
 public static class AsyncHelpers
 {
+    /// <summary>
+    ///     Execute's an async Task method which has a void return type synchronously
+    /// </summary>
+    /// <param name="task">
+    ///     Task method to execute
+    /// </param>
     public static void RunSync(Func<Task> task)
     {
         var oldContext = SynchronizationContext.Current;
@@ -34,15 +44,12 @@ public static class AsyncHelpers
     }
 
     /// <summary>
-    ///     Execute's an async Task
-    ///     method which has a T return type synchronously
+    ///     Execute's an async Task method which has a T return type synchronously
     /// </summary>
     /// <typeparam name="T">Return Type</typeparam>
     /// <param name="task">
-    ///     Task
-    ///     method to execute
+    ///     Task method to execute
     /// </param>
-    /// <returns></returns>
     public static T? RunSync<T>(Func<Task<T>> task)
     {
         var oldContext = SynchronizationContext.Current;

@@ -2,6 +2,10 @@ using Chaos.Core.Synchronization;
 
 namespace Chaos.Core.Collections.Synchronized;
 
+/// <summary>
+///     Wraps a <see cref="List{T}" />, entering a lock for each of it's methods. Enumeration will occur on a snapshot.
+/// </summary>
+/// <inheritdoc cref="List{T}" />
 public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 {
     private readonly List<T> List;

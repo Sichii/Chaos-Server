@@ -1,3 +1,4 @@
+using Chaos.Networking.Definitions;
 using Chaos.Objects.Serializable;
 
 namespace Chaos.Containers;
@@ -21,16 +22,16 @@ public class UserOptions
 
     public UserOptions() { }
 
-    public UserOptions(SerializableOptions serializableOptions)
+    public UserOptions(SerializableUserOptions serializableUserOptions)
     {
-        Exchange = serializableOptions.Exchange;
-        FastMove = serializableOptions.FastMove;
-        Group = serializableOptions.FastMove;
-        GuildChat = serializableOptions.GuildChat;
-        Magic = serializableOptions.GuildChat;
-        Shout = serializableOptions.Shout;
-        Whisper = serializableOptions.Whisper;
-        Wisdom = serializableOptions.Wisdom;
+        Exchange = serializableUserOptions.Exchange;
+        FastMove = serializableUserOptions.FastMove;
+        Group = serializableUserOptions.FastMove;
+        GuildChat = serializableUserOptions.GuildChat;
+        Magic = serializableUserOptions.GuildChat;
+        Shout = serializableUserOptions.Shout;
+        Whisper = serializableUserOptions.Whisper;
+        Wisdom = serializableUserOptions.Wisdom;
     }
 
     /// <summary>
