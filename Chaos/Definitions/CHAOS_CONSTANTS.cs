@@ -1,15 +1,9 @@
 using System.Collections.Immutable;
 
-namespace Chaos.Core.Definitions;
+namespace Chaos.Definitions;
 
-/// <summary>
-///     Contains all game constant variables.
-/// </summary>
-public static class CONSTANTS
+public static class CHAOS_CONSTANTS
 {
-    public const int CREATURE_SPRITE_OFFSET = 16384;
-    public const int ITEM_SPRITE_OFFSET = 32768;
-
     public static readonly ImmutableHashSet<ushort> DOOR_SPRITES = ImmutableHashSet.Create(
         new ushort[]
         {
@@ -32,24 +26,4 @@ public static class CONSTANTS
             346, 347, 349, 383, 392, 397, 411, 412, 433, 435, 437, 438, 440, 441, 447, 448, 449, 459, 460, 461,
             476, 482, 483
         });
-
-    public static readonly ImmutableArray<EquipmentSlot> PROFILE_EQUIPMENTSLOT_ORDER = ImmutableArray.Create(
-        EquipmentSlot.Weapon,
-        EquipmentSlot.Armor,
-        EquipmentSlot.Shield,
-        EquipmentSlot.Helmet,
-        EquipmentSlot.Earrings,
-        EquipmentSlot.Necklace,
-        EquipmentSlot.LeftRing,
-        EquipmentSlot.RightRing,
-        EquipmentSlot.LeftGaunt,
-        EquipmentSlot.RightGaunt,
-        EquipmentSlot.Belt,
-        EquipmentSlot.Greaves,
-        EquipmentSlot.Accessory1,
-        EquipmentSlot.Boots,
-        EquipmentSlot.Overcoat,
-        EquipmentSlot.OverHelm,
-        EquipmentSlot.Accessory2,
-        EquipmentSlot.Accessory3);
 }

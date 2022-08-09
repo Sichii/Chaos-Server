@@ -1,3 +1,4 @@
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.Serializable;

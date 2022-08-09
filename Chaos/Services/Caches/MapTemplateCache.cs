@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography.Extensions;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Caches.Options;
 using Chaos.Templates;
@@ -87,7 +88,7 @@ public class MapTemplateCache : ISimpleCache<MapTemplate>
 
                 mapTemplate.Tiles[x, y] = tile;
 
-                if (CONSTANTS.DOOR_SPRITES.Contains(leftForeground))
+                if (CHAOS_CONSTANTS.DOOR_SPRITES.Contains(leftForeground))
                     mapTemplate.Doors[point] = new DoorTemplate
                     {
                         Sprite = leftForeground,
@@ -95,7 +96,7 @@ public class MapTemplateCache : ISimpleCache<MapTemplate>
                         Closed = true,
                         Point = point
                     };
-                else if (CONSTANTS.DOOR_SPRITES.Contains(rightForeground))
+                else if (CHAOS_CONSTANTS.DOOR_SPRITES.Contains(rightForeground))
                     mapTemplate.Doors[point] = new DoorTemplate
                     {
                         Sprite = rightForeground,

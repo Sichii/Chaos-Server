@@ -1,3 +1,4 @@
+using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 
 namespace Chaos.Objects.Serializable;

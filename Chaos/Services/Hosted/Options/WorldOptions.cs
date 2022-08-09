@@ -8,6 +8,10 @@ public record WorldOptions : ServerOptions, IWorldOptions
     public static IWorldOptions Instance { get; set; } = null!;
     public RedirectInfo LoginRedirect { get; init; } = null!;
     public int MaxGoldHeld { get; init; }
+    public int MaximumAislingAc { get; init; }
+    public int MaximumMonsterAc { get; init; }
+    public int MinimumAislingAc { get; init; }
+    public int MinimumMonsterAc { get; init; }
     public int PickupRange { get; init; }
     public int RefreshIntervalMs { get; init; }
     public int SaveIntervalMins { get; init; }

@@ -1,16 +1,23 @@
 namespace Chaos.Core.Synchronization;
 
+/// <summary>
+///     An object that offers subscription-style non-blocking FIFO synchronization by abusing the using pattern.
+/// </summary>
 public class FifoAutoReleasingSemaphoreSlim
 {
-    public FifoSemaphoreSlim SemaphoreSlim { get; }
+    public FifoSemaphoreSlim Root { get; }
 
-    public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount) => SemaphoreSlim = new FifoSemaphoreSlim(initialCount, maxCount);
+    public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new FifoSemaphoreSlim(initialCount, maxCount);
 
+    /// <summary>
+    ///     The same as <see cref="FifoSemaphoreSlim.WaitAsync()" />.
+    ///     Returns a disposable object that when disposed will release the internal <see cref="FifoSemaphoreSlim" />.
+    /// </summary>
     public async ValueTask<IAsyncDisposable> WaitAsync()
     {
-        await SemaphoreSlim.WaitAsync();
+        await Root.WaitAsync();
 
-        return new AutoReleasingSubscription(SemaphoreSlim);
+        return new AutoReleasingSubscription(Root);
     }
 
     private record AutoReleasingSubscription : IAsyncDisposable

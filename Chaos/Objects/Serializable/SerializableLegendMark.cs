@@ -1,4 +1,5 @@
 using Chaos.Data;
+using Chaos.Networking.Definitions;
 
 namespace Chaos.Objects.Serializable;
 

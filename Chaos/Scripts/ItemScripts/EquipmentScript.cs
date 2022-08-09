@@ -1,3 +1,4 @@
+using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.Abstractions;
@@ -8,11 +9,6 @@ public class EquipmentScript : ItemScriptBase
 {
     public EquipmentScript(Item item)
         : base(item) { }
-
-    public override void OnUnequip(Aisling aisling)
-    {
-        //stuff like.. if the item applies an effect or something, undo it?
-    }
 
     public override void OnUse(Aisling aisling)
     {
@@ -26,6 +22,7 @@ public class EquipmentScript : ItemScriptBase
         if (aisling.Equipment.TryEquip(Source, out var returnedItem))
         {
             aisling.Inventory.Remove(slot);
+            Source.Script.OnEquipped(aisling);
 
             if (returnedItem != null)
                 aisling.Inventory.TryAddToNextSlot(returnedItem);

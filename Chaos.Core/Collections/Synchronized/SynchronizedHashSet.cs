@@ -2,6 +2,10 @@ using Chaos.Core.Synchronization;
 
 namespace Chaos.Core.Collections.Synchronized;
 
+/// <summary>
+///     Wraps a <see cref="HashSet{T}" />, entering a lock for each of it's methods. Enumeration will occur on a snapshot.
+/// </summary>
+/// <inheritdoc cref="HashSet{T}" />
 public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 {
     private readonly HashSet<T> Set;

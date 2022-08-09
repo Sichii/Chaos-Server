@@ -1,16 +1,23 @@
 namespace Chaos.Core.Synchronization;
 
+/// <summary>
+///     An object that offers subscription-style non-blocking synchronization by abusing the using pattern.
+/// </summary>
 public class AutoReleasingSemaphoreSlim
 {
-    public SemaphoreSlim SemaphoreSlim { get; }
+    private readonly SemaphoreSlim Root;
 
-    public AutoReleasingSemaphoreSlim(int initialCount, int maxCount) => SemaphoreSlim = new SemaphoreSlim(initialCount, maxCount);
+    public AutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new SemaphoreSlim(initialCount, maxCount);
 
-    public async ValueTask<IAsyncDisposable> WaitAsync()
+    /// <summary>
+    ///     The same as <see cref="SemaphoreSlim.WaitAsync()" />.
+    ///     Returns a disposable object that when disposed will release the internal <see cref="SemaphoreSlim" />.
+    /// </summary>
+    public async Task<IAsyncDisposable> WaitAsync()
     {
-        await SemaphoreSlim.WaitAsync();
+        await Root.WaitAsync();
 
-        return new AutoReleasingSubscription(SemaphoreSlim);
+        return new AutoReleasingSubscription(Root);
     }
 
     private record AutoReleasingSubscription : IAsyncDisposable

@@ -1,8 +1,11 @@
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Effects.Interfaces;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
+using Chaos.Networking.Definitions;
+using Chaos.Services.Hosted.Options;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World.Abstractions;
@@ -35,6 +38,29 @@ public abstract class Creature : NamedEntity, IEffected
         Direction = Direction.Down;
         Effects = new EffectsBar(this);
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
+    }
+
+    protected virtual void ApplyAcModifier(ref float damage)
+    {
+        if (StatSheet.Ac == 0)
+            return;
+
+        var ac = Math.Clamp(StatSheet.Ac, WorldOptions.Instance.MinimumMonsterAc, WorldOptions.Instance.MaximumMonsterAc);
+        var mod = 1 + ac / 100.0f;
+        damage *= mod;
+    }
+
+    public virtual void ApplyDamage(
+        Creature source,
+        int amount,
+        byte hitSound = 1,
+        bool ignoreAc = false
+    )
+    {
+        var damage = (float)amount;
+
+        if (!ignoreAc)
+            ApplyAcModifier(ref damage);
     }
 
     public void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);

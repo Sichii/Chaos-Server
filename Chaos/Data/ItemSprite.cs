@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Chaos.Networking.Definitions;
 
 namespace Chaos.Data;
 
@@ -23,6 +24,6 @@ public record ItemSprite
     {
         PanelSprite = panelSprite;
         DisplaySprite = displaySprite;
-        OffsetPanelSprite = (ushort)(panelSprite + CONSTANTS.ITEM_SPRITE_OFFSET);
+        OffsetPanelSprite = (ushort)(panelSprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET);
     }
 }

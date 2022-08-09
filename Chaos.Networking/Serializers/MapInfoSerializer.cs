@@ -13,7 +13,7 @@ public record MapInfoSerializer : ServerPacketSerializer<MapInfoArgs>
         writer.WriteInt16(args.MapId);
         writer.WriteByte(args.Width);
         writer.WriteByte(args.Height);
-        writer.WriteByte((byte)args.Flags);
+        writer.WriteByte(args.Flags);
         writer.WriteBytes(new byte[2]);
         writer.WriteUInt16(args.CheckSum);
         writer.WriteString8(args.Name);

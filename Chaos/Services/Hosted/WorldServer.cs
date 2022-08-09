@@ -9,9 +9,11 @@ using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model;
 using Chaos.Networking.Model.Client;
@@ -170,10 +172,16 @@ public class WorldServer : ServerBase, IWorldServer
     #region OnHandlers
     public ValueTask OnBeginChant(IWorldClient client, ref ClientPacket clientPacket)
     {
-        if (!client.Aisling.Status.HasFlag(Status.Dead))
-            client.Aisling.UserState |= UserState.IsChanting;
-        else
+        var args = PacketSerializer.Deserialize<BeginChantArgs>(ref clientPacket);
+
+        if (client.Aisling.Status.HasFlag(Status.Dead))
+        {
             client.SendCancelCasting();
+
+            return default;
+        }
+
+        client.Aisling.UserState |= UserState.IsChanting;
 
         return default;
     }
@@ -503,6 +511,7 @@ public class WorldServer : ServerBase, IWorldServer
         Logger.LogDebug("{UserName} dropped {Item}", client.Aisling.Name, item);
         var groundItem = new GroundItem(item, map, destinationPoint);
         map.AddObject(groundItem, destinationPoint);
+        item.Script.OnDropped(client.Aisling, map);
 
         return default;
     }
@@ -582,6 +591,7 @@ public class WorldServer : ServerBase, IWorldServer
         {
             Logger.LogDebug("{UserName} picked up {Item}", client.Aisling.Name, obj.Item);
             map.RemoveObject(obj);
+            obj.Item.Script.OnPickup(client.Aisling);
         }
 
         return default;
@@ -708,8 +718,8 @@ public class WorldServer : ServerBase, IWorldServer
         if (item == null)
             return default;
 
-        item.Script.OnUnequip(client.Aisling);
         client.Aisling.Inventory.TryAddToNextSlot(item);
+        item.Script.OnUnEquipped(client.Aisling);
 
         return default;
     }

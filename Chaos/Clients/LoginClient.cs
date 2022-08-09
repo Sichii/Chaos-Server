@@ -3,6 +3,7 @@ using Chaos.Clients.Interfaces;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Data;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
 using Chaos.Networking.Model.Server;
 using Chaos.Objects;

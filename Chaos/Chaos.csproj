@@ -33,6 +33,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
         <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj"/>
+        <ProjectReference Include="..\Chaos.Pathfinding\Chaos.Pathfinding.csproj"/>
         <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj"/>
     </ItemGroup>
     <ItemGroup>

@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
+using Chaos.Extensions;
 using Chaos.Objects.World;
+using Chaos.Pathfinding.Interfaces;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Caches.Options;
 using Chaos.Templates;
@@ -21,15 +23,18 @@ public class MapInstanceCache : ISimpleCache<MapInstance>
     private readonly ILogger Logger;
     private readonly ISimpleCache<MapTemplate> MapTemplateCache;
     private readonly MapInstanceCacheOptions Options;
+    private readonly IPathfindingService PathfindingService;
 
     public MapInstanceCache(
         ISimpleCache<MapTemplate> mapTemplateCache,
+        IPathfindingService pathfindingService,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<MapInstanceCacheOptions> options,
         ILogger<MapInstanceCache> logger
     )
     {
         MapTemplateCache = mapTemplateCache;
+        PathfindingService = pathfindingService;
         Options = options.Value;
         Logger = logger;
         Cache = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
@@ -87,9 +92,14 @@ public class MapInstanceCache : ISimpleCache<MapInstance>
 
         foreach (var warp in mapInstance.WarpGroups.Flatten())
         {
+            if (warp.SourceLocation == null)
+                continue;
+
             var warpTile = new WarpTile(warp, this);
             mapInstance.SimpleAdd(warpTile);
         }
+
+        PathfindingService.RegisterGrid(mapInstance);
 
         return mapInstance;
     }

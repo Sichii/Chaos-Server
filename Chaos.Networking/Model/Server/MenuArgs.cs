@@ -1,3 +1,4 @@
+using Chaos.Networking.Definitions;
 using Chaos.Packets.Interfaces;
 
 namespace Chaos.Networking.Model.Server;
@@ -9,8 +10,8 @@ public record MenuArgs : ISendArgs
     public ICollection<ItemInfo>? Items { get; set; }
     public MenuType MenuType { get; set; }
     public string Name { get; set; } = null!;
-    public ICollection<PursuitId>? Options { get; set; }
-    public PursuitId? PursuitId { get; set; }
+    public ICollection<ushort>? Options { get; set; }
+    public ushort? PursuitId { get; set; }
     public ICollection<SkillInfo>? Skills { get; set; }
     public ICollection<byte>? Slots { get; set; }
     public uint? SourceId { get; set; }

@@ -1,5 +1,6 @@
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Services.Caches.Interfaces;
 

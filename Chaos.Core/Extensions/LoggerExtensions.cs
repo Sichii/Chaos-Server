@@ -4,6 +4,9 @@ namespace Chaos.Core.Extensions;
 
 public static class LoggerExtensions
 {
+    /// <summary>
+    ///     Logs an error with an object as a data context. The object is converted to a string and logged.
+    /// </summary>
     public static void LogErrorWithContext(
         this ILogger logger,
         string message,

@@ -9,5 +9,8 @@ public class DamageScript : SkillScriptBase
     public DamageScript(Skill skill)
         : base(skill) { }
 
-    public override void OnUse(Aisling aisling) { }
+    public override void OnUse(Aisling aisling)
+    {
+        //TODO: damage calculations n shit
+    }
 }

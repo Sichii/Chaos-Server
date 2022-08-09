@@ -4,10 +4,16 @@ using Chaos.Core.Synchronization;
 
 namespace Chaos.Core.Identity;
 
+/// <summary>
+///     A utility for generating unique ids in a thread safe manner. These ids will persist through application restarts.
+/// </summary>
 public static class ServerId
 {
     private static readonly SerializableUniqueId SerializableUniqueId;
 
+    /// <summary>
+    ///     Generates the next id in the sequence. This is thread safe.
+    /// </summary>
     public static ulong NextId => SerializableUniqueId.NextId();
 
     static ServerId() => SerializableUniqueId = SerializableUniqueId.Deserialize();
