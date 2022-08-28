@@ -1,15 +1,15 @@
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Cryptography;
 using Chaos.Data;
+using Chaos.Entities.Networking;
+using Chaos.Entities.Networking.Client;
 using Chaos.Exceptions;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
-using Chaos.Networking.Model;
-using Chaos.Networking.Model.Client;
 using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Packets;
@@ -19,6 +19,7 @@ using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Services.Hosted.Interfaces;
 using Chaos.Services.Hosted.Options;
+using Chaos.Services.Security.Interfaces;
 using Chaos.Services.Serialization.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,10 +28,9 @@ namespace Chaos.Services.Hosted;
 
 public class LoginServer : ServerBase, ILoginServer
 {
+    private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
     private readonly ICredentialManager CredentialManager;
-    private readonly ISimpleCache<MapInstance> MapInstanceCache;
-    private readonly ISimpleCache<Metafile> MetafileCache;
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
     public ConcurrentDictionary<uint, ILoginClient> Clients { get; }
@@ -42,8 +42,7 @@ public class LoginServer : ServerBase, ILoginServer
         ISaveManager<Aisling> userSaveManager,
         IClientFactory<ILoginClient> clientFactory,
         ICredentialManager credentialManager,
-        ISimpleCache<MapInstance> mapInstanceCache,
-        ISimpleCache<Metafile> metafileCache,
+        ISimpleCacheProvider cacheProvider,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<LoginOptions> options,
@@ -61,8 +60,7 @@ public class LoginServer : ServerBase, ILoginServer
         UserSaveManager = userSaveManager;
         ClientFactory = clientFactory;
         CredentialManager = credentialManager;
-        MapInstanceCache = mapInstanceCache;
-        MetafileCache = metafileCache;
+        CacheProvider = cacheProvider;
         Notice = new Notice(options.Value.NoticeMessage);
         Clients = new ConcurrentDictionary<uint, ILoginClient>();
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
@@ -111,7 +109,8 @@ public class LoginServer : ServerBase, ILoginServer
         {
             (var hairStyle, var gender, var hairColor) = args;
 
-            var startingMap = MapInstanceCache.GetObject(Options.StartingMapInstanceId);
+            var mapInstanceCache = CacheProvider.GetCache<MapInstance>();
+            var startingMap = mapInstanceCache.GetObject(Options.StartingMapInstanceId);
 
             var user = new Aisling(
                 requestArgs.Name,
@@ -188,9 +187,10 @@ public class LoginServer : ServerBase, ILoginServer
         }
 
         var redirect = new Redirect(
-            client.CryptoClient,
             Options.WorldRedirect,
             ServerType.World,
+            client.CryptoClient.Key,
+            client.CryptoClient.Seed,
             name);
 
         Logger.LogDebug(
@@ -207,7 +207,7 @@ public class LoginServer : ServerBase, ILoginServer
     {
         (var metafileRequestType, var name) = PacketSerializer.Deserialize<MetafileRequestArgs>(ref packet);
 
-        client.SendMetafile(metafileRequestType, MetafileCache, name);
+        client.SendMetafile(metafileRequestType, CacheProvider.GetCache<Metafile>(), name);
 
         return default;
     }

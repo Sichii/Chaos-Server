@@ -1,7 +1,7 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Definitions;
-using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
@@ -60,6 +60,15 @@ public interface IWorldClient : ISocketClient
     void SendMapInfo();
     void SendMapLoadComplete();
     void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<Metafile> metafile, string? name = null);
+
+    void SendNotepad(
+        byte identifier,
+        NotepadType type,
+        byte height,
+        byte width,
+        string message
+    );
+
     void SendProfile(Aisling aisling);
     void SendProfileRequest();
     void SendPublicMessage(uint id, PublicMessageType publicMessageType, string message);

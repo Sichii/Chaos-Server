@@ -1,4 +1,4 @@
-using Chaos.Networking.Model;
+using Chaos.Entities.Networking;
 
 namespace Chaos.Networking.Interfaces;
 

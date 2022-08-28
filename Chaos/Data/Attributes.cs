@@ -1,16 +1,14 @@
 // ReSharper disable InconsistentNaming
 
-using System.Text.Json.Serialization;
 using System.Threading;
+using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Data;
 
 public record Attributes
 {
     protected int _ac;
-    protected int _attackSpeed;
     protected int _con;
-    protected int _cooldownReduction;
     protected int _dex;
     protected int _dmg;
     protected int _hit;
@@ -21,102 +19,48 @@ public record Attributes
     protected int _str;
     protected int _wis;
 
-    [JsonInclude]
-    public int Ac
-    {
-        get => _ac;
-        private set => _ac = value;
-    }
+    public int Ac => _ac;
 
-    [JsonInclude]
-    public int AttackSpeed
-    {
-        get => _attackSpeed;
-        private set => _attackSpeed = value;
-    }
+    public int Con => _con;
 
-    [JsonInclude]
-    public int Con
-    {
-        get => _con;
-        private set => _con = value;
-    }
+    public int Dex => _dex;
 
-    [JsonInclude]
-    public int CooldownReduction
-    {
-        get => _cooldownReduction;
-        private set => _cooldownReduction = value;
-    }
+    public int Dmg => _dmg;
 
-    [JsonInclude]
-    public int Dex
-    {
-        get => _dex;
-        private set => _dex = value;
-    }
+    public int Hit => _hit;
 
-    [JsonInclude]
-    public int Dmg
-    {
-        get => _dmg;
-        private set => _dmg = value;
-    }
+    public int Int => _int;
 
-    [JsonInclude]
-    public int Hit
-    {
-        get => _hit;
-        private set => _hit = value;
-    }
+    public int MagicResistance => _magicResistance;
 
-    [JsonInclude]
-    public int Int
-    {
-        get => _int;
-        private set => _int = value;
-    }
+    public int MaximumHp => _maximumHp;
 
-    [JsonInclude]
-    public int MagicResistance
-    {
-        get => _magicResistance;
-        private set => _magicResistance = value;
-    }
+    public int MaximumMp => _maximumMp;
 
-    [JsonInclude]
-    public int MaximumHp
-    {
-        get => _maximumHp;
-        private set => _maximumHp = value;
-    }
+    public int Str => _str;
 
-    [JsonInclude]
-    public int MaximumMp
-    {
-        get => _maximumMp;
-        private set => _maximumMp = value;
-    }
+    public int Wis => _wis;
 
-    [JsonInclude]
-    public int Str
-    {
-        get => _str;
-        private set => _str = value;
-    }
+    public Attributes() { }
 
-    [JsonInclude]
-    public int Wis
+    public Attributes(AttributesSchema schema)
     {
-        get => _wis;
-        private set => _wis = value;
+        _ac = schema.Ac;
+        _dmg = schema.Dmg;
+        _hit = schema.Hit;
+        _str = schema.Str;
+        _int = schema.Int;
+        _wis = schema.Wis;
+        _con = schema.Con;
+        _dex = schema.Dex;
+        _magicResistance = schema.MagicResistance;
+        _maximumHp = schema.MaximumHp;
+        _maximumMp = schema.MaximumMp;
     }
 
     public virtual void Add(Attributes other)
     {
         Interlocked.Add(ref _ac, other.Ac);
-        Interlocked.Add(ref _attackSpeed, other.AttackSpeed);
-        Interlocked.Add(ref _cooldownReduction, other.CooldownReduction);
         Interlocked.Add(ref _dmg, other.Dmg);
         Interlocked.Add(ref _hit, other.Hit);
         Interlocked.Add(ref _str, other.Str);
@@ -132,8 +76,6 @@ public record Attributes
     public virtual void Subtract(Attributes other)
     {
         Interlocked.Add(ref _ac, -other.Ac);
-        Interlocked.Add(ref _attackSpeed, -other.AttackSpeed);
-        Interlocked.Add(ref _cooldownReduction, -other.CooldownReduction);
         Interlocked.Add(ref _dmg, -other.Dmg);
         Interlocked.Add(ref _hit, -other.Hit);
         Interlocked.Add(ref _str, -other.Str);

@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,8 +1,8 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
-using Chaos.Networking.Definitions;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 
 namespace Chaos.Containers;
 
@@ -14,12 +14,12 @@ public class SkillBook : PanelBase<Skill>
             89,
             new byte[] { 0, 36, 72 }) { }
 
-    public SkillBook(IEnumerable<SerializableSkill> serializedSkills, ISerialTransformService<Skill, SerializableSkill> skillTransformer)
+    public SkillBook(IEnumerable<SkillSchema> skillSchemas, ITypeMapper mapper)
         : this()
     {
-        foreach (var serialized in serializedSkills)
+        foreach (var schema in skillSchemas)
         {
-            var skill = skillTransformer.Transform(serialized);
+            var skill = mapper.Map<Skill>(schema);
             Objects[skill.Slot] = skill;
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Chaos.Common.Definitions;
 
 namespace Chaos.Networking.Definitions;
 

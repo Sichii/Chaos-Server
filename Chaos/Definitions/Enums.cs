@@ -31,20 +31,6 @@ public enum UserState : ulong
     //add more user states here, double each time
 }
 
-[Flags]
-public enum MapFlags : ulong
-{
-    None = 0,
-    Hostile = 1,
-    NonHostile = 2,
-    NoSpells = 4,
-    NoSkills = 8,
-    NoChat = 16,
-    Snowing = 32,
-    PvP = 64
-    //and whatever else we decide
-}
-
 public enum PursuitId : ushort
 {
     None = 0,

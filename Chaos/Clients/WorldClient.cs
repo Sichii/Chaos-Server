@@ -1,12 +1,12 @@
 using System.Net.Sockets;
 using Chaos.Clients.Interfaces;
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Data;
+using Chaos.Entities.Networking.Server;
 using Chaos.Geometry.Definitions;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Definitions;
-using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -16,6 +16,7 @@ using Chaos.Packets.Definitions;
 using Chaos.Packets.Interfaces;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Hosted.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 using Microsoft.Extensions.Logging;
 using ServerPacket = Chaos.Utilities.ServerPacket;
 
@@ -23,10 +24,12 @@ namespace Chaos.Clients;
 
 public class WorldClient : SocketClientBase, IWorldClient
 {
+    private readonly ITypeMapper Mapper;
     public Aisling Aisling { get; set; } = null!;
 
     public WorldClient(
         Socket socket,
+        ITypeMapper mapper,
         ICryptoClient cryptoClient,
         IWorldServer server,
         IPacketSerializer packetSerializer,
@@ -37,13 +40,14 @@ public class WorldClient : SocketClientBase, IWorldClient
             cryptoClient,
             server,
             packetSerializer,
-            logger) { }
+            logger) =>
+        Mapper = mapper;
 
     public void SendAddItemToPane(Item item)
     {
         var args = new AddItemToPaneArgs
         {
-            Item = item.ToItemInfo()
+            Item = Mapper.Map<ItemInfo>(item)
         };
 
         Send(args);
@@ -53,7 +57,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddSkillToPaneArgs
         {
-            Skill = skill.ToSkillInfo()
+            Skill = Mapper.Map<SkillInfo>(skill)
         };
 
         Send(args);
@@ -63,7 +67,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new AddSpellToPaneArgs
         {
-            Spell = spell.ToSpellInfo()
+            Spell = Mapper.Map<SpellInfo>(spell)
         };
 
         Send(args);
@@ -86,7 +90,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendAttributes(StatUpdateType statUpdateType)
     {
-        var args = Aisling.ToAttributeArgs();
+        var args = Mapper.Map<AttributesArgs>(Aisling);
         args.StatUpdateType = statUpdateType;
         Send(args);
     }
@@ -173,7 +177,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendDisplayAisling(Aisling aisling)
     {
-        var args = aisling.ToDisplayAislingArgs();
+        var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
         Send(args);
     }
@@ -182,14 +186,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new DoorArgs
         {
-            Doors = doors.Select(
-                             door => new DoorInfo
-                             {
-                                 X = door.X,
-                                 Y = door.Y,
-                                 Closed = door.Closed,
-                                 OpenRight = door.OpenRight
-                             })
+            Doors = doors.Select(Mapper.Map<DoorInfo>)
                          .ToList()
         };
 
@@ -213,7 +210,7 @@ public class WorldClient : SocketClientBase, IWorldClient
         var args = new EquipmentArgs
         {
             Slot = (EquipmentSlot)item.Slot,
-            Item = item.ToItemInfo()
+            Item = Mapper.Map<ItemInfo>(item)
         };
 
         Send(args);
@@ -448,9 +445,29 @@ public class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
+    public void SendNotepad(
+        byte identifier,
+        NotepadType type,
+        byte height,
+        byte width,
+        string? message
+    )
+    {
+        var args = new NotepadArgs
+        {
+            Slot = identifier,
+            NotepadType = type,
+            Height = height,
+            Width = width,
+            Message = message ?? string.Empty
+        };
+
+        Send(args);
+    }
+
     public void SendProfile(Aisling aisling)
     {
-        var args = aisling.ToProfileArgs();
+        var args = Mapper.Map<ProfileArgs>(aisling);
 
         Send(args);
     }
@@ -523,7 +540,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendSelfProfile()
     {
-        var args = Aisling.ToSelfProfileArgs();
+        var args = Mapper.Map<SelfProfileArgs>(Aisling);
 
         Send(args);
     }
@@ -562,7 +579,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendUserId()
     {
-        var args = Aisling.ToUserIdArgs();
+        var args = Mapper.Map<UserIdArgs>(Aisling);
 
         Send(args);
     }
@@ -623,7 +640,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
         foreach (var aisling in aislings)
         {
-            var arg = aisling.ToWorldListMemberInfo();
+            var arg = Mapper.Map<WorldListMemberInfo>(aisling);
 
             if ((aisling.StatSheet.Level <= upperBound) && (aisling.StatSheet.Level >= lowerBound))
                 arg.Color = WorldListColor.WithinLevelRange;

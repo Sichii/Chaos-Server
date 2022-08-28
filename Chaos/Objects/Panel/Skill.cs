@@ -1,6 +1,6 @@
-using Chaos.Networking.Model.Server;
+using Chaos.Entities.Networking.Server;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Objects.Serializable;
 using Chaos.Scripts.Interfaces;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
@@ -20,9 +20,10 @@ public class Skill : PanelObjectBase, IScriptedSkill
         SkillTemplate template,
         ISkillScriptFactory skillScriptFactory,
         ICollection<string>? extraScriptKeys = null,
-        ulong? uniqueId = null
+        ulong? uniqueId = null,
+        int? elapsedMs = null
     )
-        : base(template, uniqueId)
+        : base(template, uniqueId, elapsedMs)
     {
         Template = template;
 
@@ -33,21 +34,14 @@ public class Skill : PanelObjectBase, IScriptedSkill
     }
 
     public Skill(
-        SerializableSkill serializableSkill,
-        ISimpleCache<SkillTemplate> skillTemplateCache,
+        SkillSchema schema,
+        ISimpleCache simpleCache,
         ISkillScriptFactory skillScriptFactory
     )
         : this(
-            skillTemplateCache.GetObject(serializableSkill.TemplateKey),
+            simpleCache.GetObject<SkillTemplate>(schema.TemplateKey),
             skillScriptFactory,
-            serializableSkill.ScriptKeys,
-            serializableSkill.UniqueId) =>
-        Elapsed = TimeSpan.FromMilliseconds(serializableSkill.ElapsedMs);
-
-    public SkillInfo ToSkillInfo() => new()
-    {
-        Name = Template.Name,
-        Slot = Slot,
-        Sprite = Template.PanelSprite
-    };
+            schema.ScriptKeys,
+            schema.UniqueId,
+            schema.ElapsedMs) { }
 }

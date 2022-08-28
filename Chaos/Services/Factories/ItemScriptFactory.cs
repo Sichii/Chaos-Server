@@ -64,7 +64,7 @@ public class ItemScriptFactory : IItemScriptFactory
 
     private void LoadScriptTypes()
     {
-        var types = TypeLoader.LoadTypes<IItemScript>();
+        var types = TypeLoader.LoadImplementations<IItemScript>();
 
         //add type to dictionary
         foreach (var type in types)

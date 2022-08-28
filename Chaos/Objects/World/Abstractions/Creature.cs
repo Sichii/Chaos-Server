@@ -1,10 +1,10 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Definitions;
 using Chaos.Effects.Interfaces;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
-using Chaos.Networking.Definitions;
 using Chaos.Services.Hosted.Options;
 using Microsoft.Extensions.Logging;
 

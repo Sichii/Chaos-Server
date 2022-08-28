@@ -7,7 +7,7 @@ namespace Chaos.Packets.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddPacketSerialization(this IServiceCollection serviceCollection) =>
+    public static void AddPacketSerializersFromAssembly(this IServiceCollection serviceCollection) =>
         serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>(
             _ =>
             {
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     {
         var ret = new Dictionary<Type, IClientPacketDeserializer>();
 
-        var deserializers = TypeLoader.LoadTypes<IClientPacketDeserializer>()
+        var deserializers = TypeLoader.LoadImplementations<IClientPacketDeserializer>()
                                       .Select(asmType => (IClientPacketDeserializer)Activator.CreateInstance(asmType)!)
                                       .ToArray();
 
@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
     {
         var ret = new Dictionary<Type, IServerPacketSerializer>();
 
-        var serializers = TypeLoader.LoadTypes<IServerPacketSerializer>()
+        var serializers = TypeLoader.LoadImplementations<IServerPacketSerializer>()
                                     .Select(asmType => (IServerPacketSerializer)Activator.CreateInstance(asmType)!)
                                     .ToArray();
 

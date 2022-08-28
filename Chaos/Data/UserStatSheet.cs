@@ -1,71 +1,36 @@
 // ReSharper disable InconsistentNaming
 
-using System.Text.Json.Serialization;
 using System.Threading;
-using Chaos.Networking.Definitions;
+using Chaos.Common.Definitions;
+using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Data;
 
 public record UserStatSheet : StatSheet
 {
+    protected AdvClass _advClass;
+    protected BaseClass _baseClass;
     // ReSharper disable once UnassignedField.Global
     protected int _currentWeight;
-    protected int _toNextAbility;
-    protected int _toNextLevel;
-    protected uint _totalAbility;
-    protected uint _totalExp;
+    protected bool _master;
+    protected int _maxWeight;
+    protected long _toNextAbility;
+    protected long _toNextLevel;
+    protected long _totalAbility;
+    protected long _totalExp;
     protected int _unspentPoints;
 
-    public AdvClass AdvClass { get; set; }
-    public BaseClass BaseClass { get; set; }
+    public AdvClass AdvClass => _advClass;
+    public BaseClass BaseClass => _baseClass;
 
-    public int CurrentWeight
-    {
-        get => _currentWeight;
-        private set => _currentWeight = value;
-    }
+    public int CurrentWeight => _currentWeight;
 
-    public bool Master { get; set; }
-    public int MaxWeight { get; set; }
-
-    [JsonInclude]
-    public int ToNextAbility
-    {
-        get => _toNextAbility;
-        set => _toNextAbility = value;
-    }
-
-    [JsonInclude]
-    public int ToNextLevel
-    {
-        get => _toNextLevel;
-        set => _toNextLevel = value;
-    }
-
-    [JsonInclude]
-    public uint TotalAbility
-    {
-        get => _totalAbility;
-        set => _totalAbility = value;
-    }
-
-    [JsonInclude]
-    public uint TotalExp
-    {
-        get => _totalExp;
-        set => _totalExp = value;
-    }
-
-    [JsonInclude]
-    public int UnspentPoints
-    {
-        get => _unspentPoints;
-        set => _unspentPoints = value;
-    }
+    public bool Master => _master;
+    public int MaxWeight => _maxWeight;
 
     public static UserStatSheet NewCharacter => new()
     {
-        MaxWeight = 40,
+        _maxWeight = 40,
         _toNextLevel = 100,
         _str = 1,
         _int = 1,
@@ -76,48 +41,54 @@ public record UserStatSheet : StatSheet
         _maximumHp = 100,
         _currentMp = 50,
         _maximumMp = 50,
-        _level = 1
+        _level = 1,
+        _master = false,
+        _baseClass = BaseClass.Peasant,
+        _advClass = AdvClass.None
     };
 
-    public void AddAbility(uint amount)
+    public uint ToNextAbility => Convert.ToUInt32(_toNextAbility);
+
+    public uint ToNextLevel => Convert.ToUInt32(_toNextLevel);
+
+    public uint TotalAbility => Convert.ToUInt32(_totalAbility);
+
+    public uint TotalExp => Convert.ToUInt32(_totalExp);
+
+    public int UnspentPoints => _unspentPoints;
+
+    public UserStatSheet() { }
+
+    public UserStatSheet(UserStatSheetSchema schema)
+        : base(schema)
     {
-        if (amount > 0)
-        {
-            if (amount > int.MaxValue)
-            {
-                amount -= int.MaxValue;
-                Interlocked.Add(ref _toNextAbility, -int.MaxValue);
-            }
-
-            Interlocked.Add(ref _toNextAbility, -(int)amount);
-        }
-
-        Interlocked.Add(ref _totalAbility, amount);
+        _toNextAbility = Convert.ToInt64(schema.ToNextAbility);
+        _toNextLevel = Convert.ToInt64(schema.ToNextLevel);
+        _totalAbility = Convert.ToInt64(schema.TotalAbility);
+        _totalExp = Convert.ToInt64(schema.TotalExp);
+        _unspentPoints = schema.UnspentPoints;
+        _baseClass = schema.BaseClass;
+        _advClass = schema.AdvClass;
     }
 
-    public void AddExp(uint amount)
-    {
-        if (amount > 0)
-        {
-            if (amount > int.MaxValue)
-            {
-                amount -= int.MaxValue;
-                Interlocked.Add(ref _toNextLevel, -int.MaxValue);
-            }
+    public void AddTNA(long amount) => Interlocked.Add(ref _toNextAbility, amount);
 
-            Interlocked.Add(ref _toNextLevel, -(int)amount);
-        }
+    public void AddTNI(long amount) => Interlocked.Add(ref _toNextLevel, amount);
 
-        Interlocked.Add(ref _totalExp, amount);
-    }
+    public void AddTotalAbility(long amount) => Interlocked.Add(ref _totalAbility, amount);
 
-    public void AddLevel()
+    public void AddTotalExp(long amount) => Interlocked.Add(ref _totalExp, amount);
+
+    public void AddWeight(int amount) => Interlocked.Add(ref _currentWeight, amount);
+
+    public void IncrementLevel()
     {
         Interlocked.Increment(ref _level);
         Interlocked.Increment(ref _unspentPoints);
+        RecalculateMaxWeight();
     }
 
-    public bool AddStat(Stat stat)
+    public bool IncrementStat(Stat stat)
     {
         //if it's 0, do nothing
         if (_unspentPoints == 0)
@@ -134,6 +105,7 @@ public record UserStatSheet : StatSheet
         {
             case Stat.STR:
                 Interlocked.Increment(ref _str);
+                RecalculateMaxWeight();
 
                 break;
             case Stat.INT:
@@ -159,5 +131,9 @@ public record UserStatSheet : StatSheet
         return true;
     }
 
-    public void AddWeight(int amount) => Interlocked.Add(ref _currentWeight, amount);
+    private void RecalculateMaxWeight() => _maxWeight = 40 + _level + _str;
+
+    public void SetAdvClass(AdvClass advClass) => _advClass = advClass;
+
+    public void SetBaseClass(BaseClass baseClass) => _baseClass = baseClass;
 }

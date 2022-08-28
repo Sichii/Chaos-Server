@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Chaos.Data;
+using Chaos.Entities.Schemas.Templates;
 using Chaos.Geometry.Interfaces;
 using Chaos.Templates.Interfaces;
 
@@ -7,17 +7,23 @@ namespace Chaos.Templates;
 
 public record MapTemplate : ITemplate
 {
-    [JsonIgnore]
     public ushort CheckSum { get; set; }
-    [JsonIgnore]
     public Dictionary<Point, DoorTemplate> Doors { get; set; } = new();
     public byte Height { get; set; }
     public string TemplateKey { get; init; } = null!;
-    [JsonIgnore]
     public Tile[,] Tiles { get; set; } = new Tile[0, 0];
-    public Point[][] WarpPointGroups { get; set; } = Array.Empty<Point[]>();
+    public Point[] WarpPoints { get; set; } = Array.Empty<Point>();
     public byte Width { get; set; }
     public short MapId => short.Parse(TemplateKey);
+
+    public MapTemplate(MapTemplateSchema schema)
+    {
+        Width = schema.Width;
+        Height = schema.Height;
+        TemplateKey = schema.TemplateKey;
+        WarpPoints = schema.WarpPoints;
+        Tiles = new Tile[Width, Height];
+    }
 
     public IEnumerable<byte> GetRowData(byte row)
     {

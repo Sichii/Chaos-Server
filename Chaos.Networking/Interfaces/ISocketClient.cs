@@ -1,6 +1,6 @@
 using Chaos.Core.Synchronization;
 using Chaos.Cryptography.Interfaces;
-using Chaos.Networking.Model;
+using Chaos.Entities.Networking;
 using Chaos.Packets;
 using Chaos.Packets.Interfaces;
 

@@ -8,21 +8,21 @@ namespace Chaos.Objects.World;
 
 public class WarpTile : ReactorTile
 {
-    private readonly ISimpleCache<MapInstance> MapInstanceCache;
+    private readonly ISimpleCache SimpleCache;
 
     public override ReactorTileType ReactorTileType => ReactorTileType.Walk;
     public Warp Warp { get; }
 
-    public WarpTile(Warp warp, ISimpleCache<MapInstance> mapInstanceCache)
-        : base(mapInstanceCache.GetObject(warp.SourceLocation!.Value.Map), warp.SourceLocation.Value)
+    public WarpTile(Warp warp, ISimpleCache simpleCache)
+        : base(simpleCache.GetObject<MapInstance>(warp.SourceLocation!.Value.Map), warp.SourceLocation.Value)
     {
         Warp = warp;
-        MapInstanceCache = mapInstanceCache;
+        SimpleCache = simpleCache;
     }
 
     public override void Activate(Creature creature)
     {
-        var targetMap = MapInstanceCache.GetObject(Warp.TargetLocation.Map);
+        var targetMap = SimpleCache.GetObject<MapInstance>(Warp.TargetLocation.Map);
         creature.TraverseMap(targetMap, Warp.TargetLocation);
     }
 }

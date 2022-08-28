@@ -1,11 +1,86 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Chaos.Clients.Interfaces;
+using Chaos.Containers;
+using Chaos.Core.Utilities;
+using Chaos.Data;
+using Chaos.Geometry.JsonConverters;
+using Chaos.Networking.Entities;
+using Chaos.Networking.Interfaces;
+using Chaos.Objects.Panel;
+using Chaos.Objects.World;
+using Chaos.Scripts.Interfaces;
+using Chaos.Services.Caches;
+using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Caches.Options;
+using Chaos.Services.Factories;
+using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Hosted;
+using Chaos.Services.Hosted.Interfaces;
+using Chaos.Services.Hosted.Options;
+using Chaos.Services.Mappers;
+using Chaos.Services.Mappers.Interfaces;
+using Chaos.Services.Security;
+using Chaos.Services.Security.Interfaces;
+using Chaos.Services.Security.Options;
+using Chaos.Services.Serialization;
+using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Serialization.Options;
+using Chaos.Services.Utility;
+using Chaos.Services.Utility.Interfaces;
+using Chaos.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static void AddAislingSerialization(this IServiceCollection services)
+    {
+        services.AddOptions<JsonSerializerOptions>()
+                .Configure(
+                    o =>
+                    {
+                        o.WriteIndented = true;
+                        o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                        o.PropertyNameCaseInsensitive = true;
+                        o.IgnoreReadOnlyProperties = true;
+                        o.IgnoreReadOnlyFields = true;
+                        o.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        o.AllowTrailingCommas = true;
+                        o.Converters.Add(new PointConverter());
+                        o.Converters.Add(new JsonStringEnumConverter());
+                    });
+
+        services.AddOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
+    }
+
+    public static void AddLobbyServer(this IServiceCollection services)
+    {
+        services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();
+
+        services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key)
+                .PostConfigure(LobbyOptions.PostConfigure)
+                .Validate<ILogger<LobbyOptions>>(LobbyOptions.Validate);
+
+        services.AddSingleton<ILobbyServer, IHostedService, LobbyServer>();
+    }
+
+    public static void AddLoginserver(this IServiceCollection services)
+    {
+        services.AddTransient<IClientFactory<ILoginClient>, LoginClientFactory>();
+
+        services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key)
+                .PostConfigure<ILogger<LoginOptions>>(LoginOptions.PostConfigure);
+
+        services.AddSingleton<ILoginServer, IHostedService, LoginServer>();
+    }
+
     public static OptionsBuilder<T> AddOptionsFromConfig<T>(this IServiceCollection services, string? subSection = null) where T: class
     {
         var typeName = typeof(T).Name;
@@ -17,6 +92,45 @@ public static class ServiceCollectionExtensions
         return services.AddOptions<T>()
                        .Configure<IConfiguration>(
                            (o, c) => c.GetSection(path).Bind(o, options => options.ErrorOnUnknownConfiguration = true));
+    }
+
+    public static void AddScripting(this IServiceCollection services)
+    {
+        services.AddSingleton<IScriptFactory<IItemScript, Item>, IItemScriptFactory, ItemScriptFactory>();
+        services.AddSingleton<IScriptFactory<ISkillScript, Skill>, ISkillScriptFactory, SkillScriptFactory>();
+        services.AddSingleton<IScriptFactory<ISpellScript, Spell>, ISpellScriptFactory, SpellScriptFactory>();
+        services.AddTransient<ICloningService<Item>, ItemCloningService>();
+
+        services.AddTransient<IScriptFactoryProvider, ScriptFactoryProvider>();
+    }
+
+    public static void AddServerAuthentication(this IServiceCollection services)
+    {
+        services.AddOptionsFromConfig<ActiveDirectoryCredentialManagerOptions>(Startup.ConfigKeys.Options.Key)
+                .PostConfigure(ActiveDirectoryCredentialManagerOptions.PostConfigure);
+
+        services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
+        services.AddSingleton<IRedirectManager, RedirectManager>();
+    }
+
+    public static void AddSimpleCaches(this IServiceCollection services)
+    {
+        services.AddOptionsFromConfig<ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<SpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
+        services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
+        services.AddSingleton<ISimpleCache<SpellTemplate>, SpellTemplateCache>();
+        services.AddSingleton<ISimpleCache<MapTemplate>, MapTemplateCache>();
+        services.AddSingleton<ISimpleCache<MapInstance>, MapInstanceCache>();
+        services.AddSingleton<ISimpleCache<Metafile>, MetafileCache>();
+
+        services.AddSingleton<ISimpleCache, SimpleCache>();
+        services.AddSingleton<ISimpleCacheProvider, SimpleCache>();
     }
 
     /// <summary>
@@ -40,5 +154,38 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<TI1, T>();
         services.AddTransient<TI2, T>();
+    }
+    
+    public static void AddTypeMappersFromAssembly(this IServiceCollection services)
+    {
+        var genericInterfaceType = typeof(ITypeMapper<,>);
+        var typeMapperImplementations = TypeLoader.LoadImplementationsOfGeneric(genericInterfaceType);
+
+        foreach (var implType in typeMapperImplementations)
+            foreach (var iFaceType in implType.ExtractGenericInterfaces(genericInterfaceType))
+                services.AddSingleton(iFaceType, implType);
+
+        services.AddSingleton<ITypeMapper, TypeMapper>();
+    }
+
+    public static void AddWorldFactories(this IServiceCollection services)
+    {
+        services.AddTransient<IPanelObjectFactory<Item>, IItemFactory, ItemFactory>();
+        services.AddTransient<IPanelObjectFactory<Skill>, ISkillFactory, SkillFactory>();
+        services.AddTransient<IPanelObjectFactory<Spell>, ISpellFactory, SpellFactory>();
+        services.AddSingleton<IEffectFactory, EffectFactory>();
+        services.AddTransient<IExchangeFactory, ExchangeFactory>();
+
+        services.AddTransient<IPanelObjectFactoryProvider, PanelObjectFactoryProvider>();
+    }
+
+    public static void AddWorldServer(this IServiceCollection services)
+    {
+        services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
+
+        services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key)
+                .PostConfigure(WorldOptions.PostConfigure);
+
+        services.AddSingleton<IWorldServer, IHostedService, WorldServer>();
     }
 }

@@ -1,5 +1,5 @@
+using Chaos.Entities.Networking.Server;
 using Chaos.IO.Memory;
-using Chaos.Networking.Model.Server;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Serializers;

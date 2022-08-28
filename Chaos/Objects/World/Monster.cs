@@ -1,7 +1,7 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Interfaces;
-using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Microsoft.Extensions.Logging;

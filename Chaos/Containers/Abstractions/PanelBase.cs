@@ -1,6 +1,6 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers.Interfaces;
 using Chaos.Core.Synchronization;
-using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Observers.Interfaces;
 

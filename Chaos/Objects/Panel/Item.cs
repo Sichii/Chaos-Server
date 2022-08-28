@@ -1,7 +1,7 @@
-using Chaos.Networking.Definitions;
-using Chaos.Networking.Model.Server;
+using Chaos.Common.Definitions;
+using Chaos.Entities.Networking.Server;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Objects.Serializable;
 using Chaos.Scripts.Interfaces;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
@@ -23,9 +23,10 @@ public class Item : PanelObjectBase, IScriptedItem
         ItemTemplate template,
         IItemScriptFactory itemScriptFactory,
         ICollection<string>? extraScriptKeys = null,
-        ulong? uniqueId = null
+        ulong? uniqueId = null,
+        int? elapsedMs = null
     )
-        : base(template, uniqueId)
+        : base(template, uniqueId, elapsedMs)
     {
         Template = template;
         Color = template.Color;
@@ -40,20 +41,21 @@ public class Item : PanelObjectBase, IScriptedItem
     }
 
     public Item(
-        SerializableItem serializableItem,
-        ISimpleCache<ItemTemplate> itemTemplateCache,
+        ItemSchema schema,
+        ISimpleCache simpleCache,
         IItemScriptFactory itemScriptFactory
     )
         : this(
-            itemTemplateCache.GetObject(serializableItem.TemplateKey),
+            simpleCache.GetObject<ItemTemplate>(schema.TemplateKey),
             itemScriptFactory,
-            serializableItem.ScriptKeys,
-            serializableItem.UniqueId)
+            schema.ScriptKeys,
+            schema.UniqueId,
+            schema.ElapsedMs)
     {
-        Color = serializableItem.Color;
-        Count = serializableItem.Count;
-        CurrentDurability = serializableItem.CurrentDurability;
-        Slot = serializableItem.Slot ?? 0;
+        Color = schema.Color;
+        Count = schema.Count;
+        CurrentDurability = schema.CurrentDurability;
+        Slot = schema.Slot ?? 0;
     }
 
     public IEnumerable<Item> FixStacks(ICloningService<Item> itemCloner)
@@ -103,23 +105,6 @@ public class Item : PanelObjectBase, IScriptedItem
             return clone;
         }
     }
-
-    public ItemInfo ToItemInfo() => new()
-    {
-        Class = Template.BaseClass ?? BaseClass.Peasant,
-        Color = Color,
-        Cost = Template.Value,
-        Count = Count < 0
-            ? throw new InvalidOperationException($"Item \"{DisplayName}\" has negative count of {Count}")
-            : Convert.ToUInt32(Count),
-        CurrentDurability = CurrentDurability ?? 0,
-        GameObjectType = GameObjectType.Item,
-        MaxDurability = Template.MaxDurability ?? 0,
-        Name = DisplayName,
-        Slot = Slot,
-        Sprite = Template.ItemSprite.PanelSprite,
-        Stackable = Template.Stackable
-    };
 
     public override string ToString() => $@"(Id: {UniqueId}, Name: {DisplayName}, Count: {Count})";
 }

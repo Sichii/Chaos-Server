@@ -64,7 +64,7 @@ public class SpellScriptFactory : ISpellScriptFactory
 
     private void LoadScryptTypes()
     {
-        var types = TypeLoader.LoadTypes<ISpellScript>();
+        var types = TypeLoader.LoadImplementations<ISpellScript>();
 
         foreach (var type in types)
         {

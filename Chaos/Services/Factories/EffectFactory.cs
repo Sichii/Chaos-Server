@@ -35,7 +35,7 @@ public class EffectFactory : IEffectFactory
 
     private void LoadEffectTypes()
     {
-        var types = TypeLoader.LoadTypes<IEffect>();
+        var types = TypeLoader.LoadImplementations<IEffect>();
 
         foreach (var type in types)
         {

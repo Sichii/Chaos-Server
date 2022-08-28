@@ -1,10 +1,10 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
 using Chaos.Containers.Interfaces;
 using Chaos.Data;
-using Chaos.Networking.Definitions;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 
 namespace Chaos.Containers;
 
@@ -20,14 +20,14 @@ public class Equipment : PanelBase<Item>, IEquipment
             new byte[] { 0 }) => Modifiers = new Attributes();
 
     public Equipment(
-        IEnumerable<SerializableItem> serializedItems,
-        ISerialTransformService<Item, SerializableItem> itemTransformer
+        IEnumerable<ItemSchema> itemSchemas,
+        ITypeMapper mapper
     )
         : this()
     {
-        foreach (var serialized in serializedItems)
+        foreach (var schema in itemSchemas)
         {
-            var item = itemTransformer.Transform(serialized);
+            var item = mapper.Map<Item>(schema);
             Objects[item.Slot] = item;
         }
     }

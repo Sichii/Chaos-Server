@@ -1,5 +1,5 @@
+using Chaos.Common.Definitions;
 using Chaos.Data;
-using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
 using Chaos.Objects;
 using Chaos.Services.Caches.Interfaces;

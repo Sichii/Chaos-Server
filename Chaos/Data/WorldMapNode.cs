@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 using Chaos.Cryptography.Extensions;
-using Chaos.Networking.Model.Server;
+using Chaos.Entities.Networking.Server;
 
 namespace Chaos.Data;
 

@@ -5,8 +5,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Chaos.Core.Collections.Synchronized;
+using Chaos.Entities.Schemas.Templates;
 using Chaos.Geometry.JsonConverters;
-using Chaos.Templates;
 
 const string FILENAME = "Master_Maplist.txt";
 const string DIRECTORY = "templates";
@@ -56,7 +56,7 @@ async ValueTask ParseLineToFileAsync(string line, CancellationToken _)
 
         var path = Path.Combine(DIRECTORY, $"{mapId}.json");
 
-        var template = new MapTemplate
+        var template = new MapTemplateSchema
         {
             TemplateKey = mapIdNum.ToString(),
             Width = widthNum,

@@ -1,7 +1,7 @@
 using Chaos.Core.Synchronization;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 using Chaos.Services.Utility.Interfaces;
 
 namespace Chaos.Containers;
@@ -23,16 +23,16 @@ public class Bank : IEnumerable<Item>
 
     public Bank(
         uint gold,
-        IEnumerable<SerializableItem> serializableItems,
-        ISerialTransformService<Item, SerializableItem> itemTransform,
+        IEnumerable<ItemSchema> itemSchemas,
+        ITypeMapper mapper,
         ICloningService<Item> itemCloner
     )
     {
         ItemCloner = itemCloner;
         Gold = gold;
 
-        Items = serializableItems
-                .Select(itemTransform.Transform)
+        Items = itemSchemas
+                .Select(mapper.Map<Item>)
                 .ToDictionary(i => i.DisplayName, StringComparer.OrdinalIgnoreCase);
 
         Sync = new AutoReleasingMonitor();

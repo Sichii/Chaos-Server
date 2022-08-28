@@ -1,8 +1,8 @@
 using System.Net.Sockets;
 using Chaos.Clients.Interfaces;
 using Chaos.Cryptography.Interfaces;
+using Chaos.Entities.Networking.Server;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Model.Server;
 using Chaos.Objects;
 using Chaos.Packets.Interfaces;
 using Chaos.Services.Hosted.Interfaces;

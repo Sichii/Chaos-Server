@@ -5,18 +5,18 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography;
 using Chaos.Data;
 using Chaos.Definitions;
+using Chaos.Entities.Networking;
+using Chaos.Entities.Networking.Client;
 using Chaos.Extensions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
-using Chaos.Networking.Model;
-using Chaos.Networking.Model.Client;
 using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
@@ -36,9 +36,8 @@ namespace Chaos.Services.Hosted;
 
 public class WorldServer : ServerBase, IWorldServer
 {
+    private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<IWorldClient> ClientFactory;
-    private readonly ISimpleCache<MapInstance> MapInstanceCache;
-    private readonly ISimpleCache<Metafile> Metafile;
     private readonly ParallelOptions ParallelOptions;
     private readonly PeriodicTimer PeriodicTimer;
     private readonly ISaveManager<Aisling> UserSaveManager;
@@ -52,8 +51,7 @@ public class WorldServer : ServerBase, IWorldServer
 
     public WorldServer(
         IClientFactory<IWorldClient> clientFactory,
-        ISimpleCache<Metafile> metafile,
-        ISimpleCache<MapInstance> mapInstanceCache,
+        ISimpleCacheProvider cacheProvider,
         ISaveManager<Aisling> userSaveManager,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
@@ -69,8 +67,7 @@ public class WorldServer : ServerBase, IWorldServer
         Options = options.Value;
         PeriodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000.0 / options.Value.UpdatesPerSecond));
         ClientFactory = clientFactory;
-        Metafile = metafile;
-        MapInstanceCache = mapInstanceCache;
+        CacheProvider = cacheProvider;
         UserSaveManager = userSaveManager;
 
         Clients = new ConcurrentDictionary<uint, IWorldClient>();
@@ -118,7 +115,7 @@ public class WorldServer : ServerBase, IWorldServer
     }
 
     private Task ParallelUpdateAsync(TimeSpan delta) => Parallel.ForEachAsync(
-        MapInstanceCache,
+        CacheProvider.GetCache<MapInstance>(),
         ParallelOptions,
         (mapInstance, _) =>
         {
@@ -334,7 +331,12 @@ public class WorldServer : ServerBase, IWorldServer
             client.SendConfirmExit();
         else
         {
-            var redirect = new Redirect(client.CryptoClient, Options.LoginRedirect, ServerType.Login);
+            var redirect = new Redirect(
+                Options.LoginRedirect,
+                ServerType.Login,
+                client.CryptoClient.Key,
+                client.CryptoClient.Seed);
+
             RedirectManager.Add(redirect);
 
             Logger.LogDebug(
@@ -552,15 +554,16 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnMetafileRequest(IWorldClient client, ref ClientPacket clientPacket)
     {
         (var metafileRequestType, var name) = PacketSerializer.Deserialize<MetafileRequestArgs>(ref clientPacket);
+        var metafileCache = CacheProvider.GetCache<Metafile>();
 
         switch (metafileRequestType)
         {
             case MetafileRequestType.DataByName:
-                client.SendMetafile(MetafileRequestType.DataByName, Metafile, name);
+                client.SendMetafile(MetafileRequestType.DataByName, metafileCache, name);
 
                 break;
             case MetafileRequestType.AllCheckSums:
-                client.SendMetafile(MetafileRequestType.AllCheckSums, Metafile);
+                client.SendMetafile(MetafileRequestType.AllCheckSums, metafileCache);
 
                 break;
             default:
@@ -630,7 +633,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<RaiseStatArgs>(ref clientPacket);
 
         if (client.Aisling.StatSheet.UnspentPoints > 0)
-            if (client.Aisling.StatSheet.AddStat(args.Stat))
+            if (client.Aisling.StatSheet.IncrementStat(args.Stat))
                 client.SendAttributes(StatUpdateType.Full);
 
         return default;
