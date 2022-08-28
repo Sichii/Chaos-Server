@@ -1,5 +1,5 @@
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Templates;
@@ -10,16 +10,16 @@ namespace Chaos.Services.Factories;
 public class SpellFactory : ISpellFactory
 {
     private readonly ILogger Logger;
+    private readonly ISimpleCache SimpleCache;
     private readonly ISpellScriptFactory SpellScriptFactory;
-    private readonly ISimpleCache<SpellTemplate> SpellTemplateCache;
 
     public SpellFactory(
-        ISimpleCache<SpellTemplate> spellTemplateCache,
+        ISimpleCache simpleCache,
         ISpellScriptFactory spellScriptFactory,
         ILogger<SpellFactory> logger
     )
     {
-        SpellTemplateCache = spellTemplateCache;
+        SimpleCache = simpleCache;
         SpellScriptFactory = spellScriptFactory;
         Logger = logger;
     }
@@ -43,7 +43,7 @@ public class SpellFactory : ISpellFactory
     public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
-        var template = SpellTemplateCache.GetObject(templateKey);
+        var template = SimpleCache.GetObject<SpellTemplate>(templateKey);
         var spell = new Spell(template, SpellScriptFactory, extraScriptKeys);
 
         Logger.LogDebug("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
@@ -51,9 +51,9 @@ public class SpellFactory : ISpellFactory
         return spell;
     }
 
-    public Spell Deserialize(SerializableSpell serialized)
+    public Spell Deserialize(SpellSchema schema)
     {
-        var spell = new Spell(serialized, SpellTemplateCache, SpellScriptFactory);
+        var spell = new Spell(schema, SimpleCache, SpellScriptFactory);
 
         Logger.LogDebug("Deserialized spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
 

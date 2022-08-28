@@ -1,4 +1,4 @@
-using Chaos.Networking.Definitions;
+using Chaos.Common.Definitions;
 
 namespace Chaos.Networking.Extensions;
 

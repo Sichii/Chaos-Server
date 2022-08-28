@@ -9,16 +9,16 @@ namespace Chaos.Services.Factories;
 public class SkillFactory : ISkillFactory
 {
     private readonly ILogger Logger;
+    private readonly ISimpleCache SimpleCache;
     private readonly ISkillScriptFactory SkillScriptFactory;
-    private readonly ISimpleCache<SkillTemplate> SkillTemplateCache;
 
     public SkillFactory(
-        ISimpleCache<SkillTemplate> skillTemplateCache,
+        ISimpleCache simpleCache,
         ISkillScriptFactory skillScriptFactory,
         ILogger<SkillFactory> logger
     )
     {
-        SkillTemplateCache = skillTemplateCache;
+        SimpleCache = simpleCache;
         SkillScriptFactory = skillScriptFactory;
         Logger = logger;
     }
@@ -42,7 +42,7 @@ public class SkillFactory : ISkillFactory
     public Skill Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
-        var template = SkillTemplateCache.GetObject(templateKey);
+        var template = SimpleCache.GetObject<SkillTemplate>(templateKey);
         var skill = new Skill(template, SkillScriptFactory, extraScriptKeys);
 
         Logger.LogDebug("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);

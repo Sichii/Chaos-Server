@@ -1,11 +1,11 @@
 using System.Net.Sockets;
 using Chaos.Clients.Interfaces;
+using Chaos.Common.Definitions;
 using Chaos.Cryptography.Interfaces;
 using Chaos.Data;
+using Chaos.Entities.Networking.Server;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
-using Chaos.Networking.Model.Server;
 using Chaos.Objects;
 using Chaos.Packets.Interfaces;
 using Chaos.Services.Caches.Interfaces;

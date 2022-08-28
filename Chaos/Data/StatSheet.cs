@@ -1,61 +1,28 @@
 // ReSharper disable InconsistentNaming
 
-using System.Text.Json.Serialization;
 using System.Threading;
-using Chaos.Networking.Definitions;
+using Chaos.Common.Definitions;
+using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Data;
 
 public record StatSheet : Attributes
 {
-    protected int _ability;
-    protected int _currentHp;
-    protected int _currentMp;
-    protected int _level;
-
-    [JsonInclude]
-    public int Ability
-    {
-        get => _ability;
-        private set => _ability = value;
-    }
-
-    [JsonInclude]
-    public int CurrentHp
-    {
-        get => _currentHp;
-        private set => _currentHp = value;
-    }
-
-    [JsonInclude]
-    public int CurrentMp
-    {
-        get => _currentMp;
-        private set => _currentMp = value;
-    }
-
-    public Element DefenseElement { get; set; }
-
-    [JsonInclude]
-    public int Level
-    {
-        get => _level;
-        private set => _level = value;
-    }
-
-    public Element OffenseElement { get; set; }
+    public int Ability => _ability;
 
     public int AcMod => _acMod;
-    public int AttackSpeedMod => _attackSpeedMod;
     public int ConMod => _conMod;
-    public int CooldownReductionMod => _cooldownReductionMod;
+
+    public int CurrentHp => _currentHp;
+
+    public int CurrentMp => _currentMp;
+
+    public Element DefenseElement => _defenseElement;
     public int DexMod => _dexMod;
 
     public int DmgMod => _dmgMod;
     public sbyte EffectiveAc => (sbyte)Math.Clamp(Ac + AcMod, sbyte.MinValue, sbyte.MaxValue);
-    public int EffectiveAttackSpeed => AttackSpeed + AttackSpeedMod;
     public byte EffectiveCon => (byte)Math.Clamp(Con + ConMod, byte.MinValue, byte.MaxValue);
-    public int EffectiveCooldownReduction => CooldownReduction + CooldownReductionMod;
     public byte EffectiveDex => (byte)Math.Clamp(Dex + DexMod, byte.MinValue, byte.MaxValue);
     public byte EffectiveDmg => (byte)Math.Clamp(Dmg + DmgMod, byte.MinValue, byte.MaxValue);
     public byte EffectiveHit => (byte)Math.Clamp(Hit + HitMod, byte.MinValue, byte.MaxValue);
@@ -68,6 +35,8 @@ public record StatSheet : Attributes
     public int HealthPercent => (int)(CurrentHp / EffectiveMaximumHp * 100);
     public int HitMod => _hitMod;
     public int IntMod => _intMod;
+
+    public int Level => _level;
 
     public int MagicResistantMod => _magicResistanceMod;
     public int ManaPercent => (int)(CurrentMp / EffectiveMaximumMp * 100);
@@ -84,20 +53,43 @@ public record StatSheet : Attributes
         _maximumHp = int.MaxValue,
         _maximumMp = int.MaxValue,
         _magicResistance = int.MaxValue,
-        _ac = int.MinValue,
-        _cooldownReduction = int.MaxValue,
-        _attackSpeed = int.MaxValue
+        _ac = int.MinValue
     };
     public int MaximumHpMod => _maximumHpMod;
     public int MaximumMpMod => _maximumMpMod;
+
+    public Element OffenseElement => _offenseElement;
     public int StrMod => _strMod;
     public int WisMod => _wisMod;
 
-    public override void Add(Attributes other)
+    public StatSheet() { }
+
+    public StatSheet(StatSheetSchema schema)
+        : base(schema)
+    {
+        _acMod = 0;
+        _dmgMod = 0;
+        _hitMod = 0;
+        _strMod = 0;
+        _intMod = 0;
+        _wisMod = 0;
+        _conMod = 0;
+        _dexMod = 0;
+        _magicResistanceMod = 0;
+        _maximumHpMod = 0;
+        _maximumMpMod = 0;
+
+        _currentHp = schema.CurrentHp;
+        _currentMp = schema.CurrentMp;
+        _ability = schema.Ability;
+        _level = schema.Level;
+        _defenseElement = Element.None;
+        _offenseElement = Element.None;
+    }
+
+    public void AddBonus(Attributes other)
     {
         Interlocked.Add(ref _acMod, other.Ac);
-        Interlocked.Add(ref _attackSpeedMod, other.AttackSpeed);
-        Interlocked.Add(ref _cooldownReductionMod, other.CooldownReduction);
         Interlocked.Add(ref _dmgMod, other.Dmg);
         Interlocked.Add(ref _hitMod, other.Hit);
         Interlocked.Add(ref _strMod, other.Str);
@@ -122,11 +114,13 @@ public record StatSheet : Attributes
             _currentMp = 0;
     }
 
-    public override void Subtract(Attributes other)
+    public void SetDefenseElement(Element element) => _defenseElement = element;
+
+    public void SetOffenseElement(Element element) => _offenseElement = element;
+
+    public void SubtractBonus(Attributes other)
     {
         Interlocked.Add(ref _acMod, -other.Ac);
-        Interlocked.Add(ref _attackSpeedMod, -other.AttackSpeed);
-        Interlocked.Add(ref _cooldownReductionMod, -other.CooldownReduction);
         Interlocked.Add(ref _dmgMod, -other.Dmg);
         Interlocked.Add(ref _hitMod, -other.Hit);
         Interlocked.Add(ref _strMod, -other.Str);
@@ -139,11 +133,18 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _maximumMpMod, -other.MaximumHp);
     }
 
+    #region SharedAttributes
+    protected int _ability;
+    protected int _currentHp;
+    protected int _currentMp;
+    protected int _level;
+    protected Element _defenseElement;
+    protected Element _offenseElement;
+    #endregion
+
     #region Mods
     protected int _acMod;
-    protected int _attackSpeedMod;
     protected int _conMod;
-    protected int _cooldownReductionMod;
     protected int _dexMod;
     protected int _intMod;
     protected int _magicResistanceMod;

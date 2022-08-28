@@ -1,9 +1,9 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
 using Chaos.Containers.Interfaces;
-using Chaos.Networking.Definitions;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 using Chaos.Services.Utility.Interfaces;
 
 namespace Chaos.Containers;
@@ -32,14 +32,14 @@ public class Inventory : PanelBase<Item>, IInventory
     /// </summary>
     public Inventory(
         ICloningService<Item> itemCloner,
-        IEnumerable<SerializableItem> serializedItems,
-        ISerialTransformService<Item, SerializableItem> itemTransformer
+        IEnumerable<ItemSchema> itemSchemas,
+        ITypeMapper mapper
     )
         : this(itemCloner)
     {
-        foreach (var serialized in serializedItems)
+        foreach (var schema in itemSchemas)
         {
-            var item = itemTransformer.Transform(serialized);
+            var item = mapper.Map<Item>(schema);
             Objects[item.Slot] = item;
         }
     }

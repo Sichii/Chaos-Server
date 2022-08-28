@@ -1,5 +1,5 @@
-using Chaos.Networking.Definitions;
-using Chaos.Objects.Serializable;
+using Chaos.Common.Definitions;
+using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Containers;
 
@@ -22,16 +22,16 @@ public class UserOptions
 
     public UserOptions() { }
 
-    public UserOptions(SerializableUserOptions serializableUserOptions)
+    public UserOptions(UserOptionsSchema userOptionsSchema)
     {
-        Exchange = serializableUserOptions.Exchange;
-        FastMove = serializableUserOptions.FastMove;
-        Group = serializableUserOptions.FastMove;
-        GuildChat = serializableUserOptions.GuildChat;
-        Magic = serializableUserOptions.GuildChat;
-        Shout = serializableUserOptions.Shout;
-        Whisper = serializableUserOptions.Whisper;
-        Wisdom = serializableUserOptions.Wisdom;
+        Exchange = userOptionsSchema.Exchange;
+        FastMove = userOptionsSchema.FastMove;
+        Group = userOptionsSchema.FastMove;
+        GuildChat = userOptionsSchema.GuildChat;
+        Magic = userOptionsSchema.GuildChat;
+        Shout = userOptionsSchema.Shout;
+        Whisper = userOptionsSchema.Whisper;
+        Wisdom = userOptionsSchema.Wisdom;
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public class UserOptions
 
     public string ToString(UserOption opt)
     {
-        const string OPTIONS_FORMAT = "{0,-18}:{1,-3}";
+        const string OPTIONS_FORMAT = "{0,-25}:{1,-3}";
 
         return opt switch
         {

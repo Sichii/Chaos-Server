@@ -3,8 +3,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
 using Chaos.Core.Synchronization;
-using Chaos.Objects.Serializable;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.World;
+using Chaos.Services.Mappers.Interfaces;
 using Chaos.Services.Serialization.Interfaces;
 using Chaos.Services.Serialization.Options;
 using Microsoft.Extensions.Logging;
@@ -14,23 +15,23 @@ namespace Chaos.Services.Serialization;
 
 public class UserSaveManager : ISaveManager<Aisling>
 {
-    private readonly ISerialTransformService<Aisling, SerializableAisling> AislingTransformer;
+    private static readonly AutoReleasingSemaphoreSlim Sync = new(1, 1);
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
+    private readonly ITypeMapper Mapper;
     private readonly UserSaveManagerOptions Options;
-    private readonly AutoReleasingSemaphoreSlim Sync;
 
     public UserSaveManager(
-        ISerialTransformService<Aisling, SerializableAisling> aislingTransformer,
+        ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<UserSaveManagerOptions> options,
         ILogger<UserSaveManager> logger
     )
     {
         Options = options.Value;
-        AislingTransformer = aislingTransformer;
+        Mapper = mapper;
         Logger = logger;
-        Sync = new AutoReleasingSemaphoreSlim(1, 1);
+        //Sync = new AutoReleasingSemaphoreSlim(1, 1);
         JsonSerializerOptions = jsonSerializerOptions.Value;
 
         if (!Directory.Exists(Options.Directory))
@@ -39,16 +40,18 @@ public class UserSaveManager : ISaveManager<Aisling>
 
     public async Task<Aisling> LoadAsync(IWorldClient worldClient, string name)
     {
-        Logger.LogDebug("Loading user {Name}", name);
+        await using var sync = await Sync.WaitAsync();
+
+        Logger.LogDebug("Loading aisling {Name}", name);
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
         var path = Path.Combine(directory, $"{name.ToLower()}.json");
         await using var stream = File.OpenRead(path);
 
-        var serialized = JsonSerializer.Deserialize<SerializableAisling>(stream, JsonSerializerOptions)!;
-        var user = AislingTransformer.Transform(serialized);
+        var schema = JsonSerializer.Deserialize<AislingSchema>(stream, JsonSerializerOptions)!;
+        var user = Mapper.Map<Aisling>(schema);
 
-        Logger.LogTrace("Loaded user {Name}", name);
+        Logger.LogTrace("Loaded aisling {Name}", name);
 
         return user;
     }
@@ -57,9 +60,9 @@ public class UserSaveManager : ISaveManager<Aisling>
     {
         await using var sync = await Sync.WaitAsync();
 
-        Logger.LogDebug("Saving user {Name}", aisling.Name);
+        Logger.LogDebug("Saving aisling {Name}", aisling.Name);
 
-        var serializable = new SerializableAisling(aisling);
+        var schema = Mapper.Map<AislingSchema>(aisling);
         var directory = Path.Combine(Options.Directory, aisling.Name.ToLower());
 
         if (!Directory.Exists(directory))
@@ -67,8 +70,8 @@ public class UserSaveManager : ISaveManager<Aisling>
 
         var path = Path.Combine(directory, $"{aisling.Name.ToLower()}.json");
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
-        await JsonSerializer.SerializeAsync(stream, serializable, JsonSerializerOptions);
+        await JsonSerializer.SerializeAsync(stream, schema, JsonSerializerOptions);
 
-        Logger.LogTrace("Saved user {Name}", aisling.Name);
+        Logger.LogTrace("Saved aisling {Name}", aisling.Name);
     }
 }

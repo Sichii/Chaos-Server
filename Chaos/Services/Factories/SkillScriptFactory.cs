@@ -65,7 +65,7 @@ public class SkillScriptFactory : ISkillScriptFactory
 
     private void LoadScriptTypes()
     {
-        var types = TypeLoader.LoadTypes<ISkillScript>();
+        var types = TypeLoader.LoadImplementations<ISkillScript>();
 
         foreach (var type in types)
         {

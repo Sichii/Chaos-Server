@@ -4,22 +4,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Chaos.Core.Synchronization;
 using Chaos.Exceptions;
-using Chaos.Services.Serialization.Interfaces;
-using Chaos.Services.Serialization.Options;
+using Chaos.Services.Security.Interfaces;
+using Chaos.Services.Security.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NameReasonType = Chaos.Exceptions.UsernameCredentialException.ReasonType;
 using PasswordReasonType = Chaos.Exceptions.PasswordCredentialException.ReasonType;
 
-namespace Chaos.Services.Serialization;
+namespace Chaos.Services.Security;
 
 public class ActiveDirectoryCredentialManager : ICredentialManager
 {
     private readonly ActiveDirectoryCredentialManagerOptions Options;
     private readonly AutoReleasingSemaphoreSlim Sync;
+    private readonly ILogger Logger;
 
-    public ActiveDirectoryCredentialManager(IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options)
+    public ActiveDirectoryCredentialManager(IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options, ILogger<ActiveDirectoryCredentialManager> logger)
     {
         Options = options.Value;
+        Logger = logger;
         Sync = new AutoReleasingSemaphoreSlim(1, 1);
 
         if (!Directory.Exists(Options.Directory))
@@ -29,16 +32,20 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
     public async Task ChangePasswordAsync(string name, string oldPassword, string newPassword)
     {
         await using var sync = await Sync.WaitAsync();
+        
+        Logger.LogDebug("Changing password for {Name}", name);
 
         if (!await InnerValidateCredentialsAsync(name, oldPassword))
             throw new PasswordCredentialException(PasswordReasonType.WrongPassword);
 
         ValidatePassword(newPassword);
+        Logger.LogTrace("Validated password against rules for {Name}", name);
 
         var newHash = ComputeHash(newPassword);
         var passwordPath = Path.Combine(Options.Directory, name, "password.txt");
 
         await File.WriteAllTextAsync(passwordPath, newHash);
+        Logger.LogTrace("Changed password for {Name}", name);
     }
 
     private string ComputeHash(string password)
@@ -70,6 +77,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
 
         ValidateUserName(name);
         ValidatePassword(password);
+        Logger.LogTrace("Validated password against rules for {Name}", name);
 
         var characterDir = Path.Combine(Options.Directory, name);
 
@@ -81,18 +89,22 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
 
         var passwordPath = Path.Combine(characterDir, "password.txt");
         await File.WriteAllTextAsync(passwordPath, hash);
+        Logger.LogTrace("Saved new credentials for {Name}", name);
     }
 
     public async Task<bool> ValidateCredentialsAsync(string name, string password)
     {
         await using var sync = await Sync.WaitAsync();
 
-        return await InnerValidateCredentialsAsync(name, password);
+        var ret = await InnerValidateCredentialsAsync(name, password);
+        Logger.LogTrace("Validated credentials for {Name}", name);
+
+        return ret;
     }
 
     private void ValidatePassword(string password)
     {
-        if (password.Length < Options.MinUsernameLength)
+        if (password.Length < Options.MinPasswordLength)
             throw new PasswordCredentialException(PasswordReasonType.TooShort);
 
         if (password.Length > Options.MaxPasswordLength)
@@ -119,5 +131,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
         foreach (var filtered in Options.PhraseFilter)
             if (name.ContainsI(filtered))
                 throw new UsernameCredentialException(name, NameReasonType.NotAllowed);
+        
+        Logger.LogTrace("Validated username against rules for {Name}", name);
     }
 }

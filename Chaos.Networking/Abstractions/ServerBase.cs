@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
+using Chaos.Entities.Networking.Client;
 using Chaos.Networking.Interfaces;
-using Chaos.Networking.Model.Client;
 using Chaos.Networking.Options;
 using Chaos.Packets;
 using Chaos.Packets.Interfaces;

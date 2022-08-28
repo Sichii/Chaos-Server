@@ -3,27 +3,18 @@ using Chaos.Networking.Definitions;
 
 namespace Chaos.Data;
 
-public record ItemSprite
+public record ItemSprite(ushort PanelSprite, ushort DisplaySprite)
 {
     /// <summary>
     ///     The sprite number for displaying the item on your character when the item is equipped.
     /// </summary>
-    public ushort DisplaySprite { get; init; }
+    public ushort DisplaySprite { get; init; } = DisplaySprite;
     /// <summary>
     ///     The sprite number with the positive offset. Used for items on the ground.
     /// </summary>
-    [JsonIgnore]
-    public ushort OffsetPanelSprite { get; init; }
+    public ushort OffsetPanelSprite { get; init; } = (ushort)(PanelSprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET);
     /// <summary>
     ///     The sprite number for displaying the item on the UI. (Inventory and Equipment panels)
     /// </summary>
-    public ushort PanelSprite { get; init; }
-
-    [JsonConstructor]
-    public ItemSprite(ushort panelSprite, ushort displaySprite)
-    {
-        PanelSprite = panelSprite;
-        DisplaySprite = displaySprite;
-        OffsetPanelSprite = (ushort)(panelSprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET);
-    }
+    public ushort PanelSprite { get; init; } = PanelSprite;
 }

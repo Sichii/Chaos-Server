@@ -1,6 +1,6 @@
-using Chaos.Networking.Model.Server;
+using Chaos.Entities.Networking.Server;
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Objects.Serializable;
 using Chaos.Scripts.Interfaces;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
@@ -21,9 +21,10 @@ public class Spell : PanelObjectBase, IScriptedSpell
         SpellTemplate template,
         ISpellScriptFactory spellScriptFactory,
         ICollection<string>? extraScriptKeys = null,
-        ulong? uniqueId = null
+        ulong? uniqueId = null,
+        int? elapsedMs = null
     )
-        : base(template, uniqueId)
+        : base(template, uniqueId, elapsedMs)
     {
         Template = template;
         CastLines = template.CastLines;
@@ -35,24 +36,14 @@ public class Spell : PanelObjectBase, IScriptedSpell
     }
 
     public Spell(
-        SerializableSpell serializableSpell,
-        ISimpleCache<SpellTemplate> skillTemplateCache,
+        SpellSchema schema,
+        ISimpleCache simpleCache,
         ISpellScriptFactory skillScriptFactory
     )
         : this(
-            skillTemplateCache.GetObject(serializableSpell.TemplateKey),
+            simpleCache.GetObject<SpellTemplate>(schema.TemplateKey),
             skillScriptFactory,
-            serializableSpell.ScriptKeys,
-            serializableSpell.UniqueId) =>
-        Elapsed = TimeSpan.FromMilliseconds(serializableSpell.ElapsedMs);
-
-    public SpellInfo ToSpellInfo() => new()
-    {
-        CastLines = CastLines,
-        Name = Template.Name,
-        Prompt = Template.Prompt ?? string.Empty,
-        Slot = Slot,
-        SpellType = Template.SpellType,
-        Sprite = Template.PanelSprite
-    };
+            schema.ScriptKeys,
+            schema.UniqueId,
+            schema.ElapsedMs) { }
 }

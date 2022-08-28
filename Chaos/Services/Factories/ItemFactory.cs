@@ -1,5 +1,5 @@
+using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Templates;
@@ -10,16 +10,16 @@ namespace Chaos.Services.Factories;
 public class ItemFactory : IItemFactory
 {
     private readonly IItemScriptFactory ItemScriptFactory;
-    private readonly ISimpleCache<ItemTemplate> ItemTemplateCache;
     private readonly ILogger Logger;
+    private readonly ISimpleCache SimpleCache;
 
     public ItemFactory(
-        ISimpleCache<ItemTemplate> itemTemplateCache,
+        ISimpleCache simpleCache,
         IItemScriptFactory itemScriptFactory,
         ILogger<ItemFactory> logger
     )
     {
-        ItemTemplateCache = itemTemplateCache;
+        SimpleCache = simpleCache;
         ItemScriptFactory = itemScriptFactory;
         Logger = logger;
     }
@@ -27,7 +27,7 @@ public class ItemFactory : IItemFactory
     public Item Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= new List<string>();
-        var template = ItemTemplateCache.GetObject(templateKey);
+        var template = SimpleCache.GetObject<ItemTemplate>(templateKey);
         var item = new Item(template, ItemScriptFactory, extraScriptKeys);
 
         Logger.LogDebug("Created item - Name: {ItemName}, UniqueId: {UniqueId}", item.DisplayName, item.UniqueId);
@@ -35,9 +35,9 @@ public class ItemFactory : IItemFactory
         return item;
     }
 
-    public Item Deserialize(SerializableItem serialized)
+    public Item Deserialize(ItemSchema schema)
     {
-        var item = new Item(serialized, ItemTemplateCache, ItemScriptFactory);
+        var item = new Item(schema, SimpleCache, ItemScriptFactory);
 
         Logger.LogDebug("Deserialized item - Name: {ItemName}, UniqueId: {UniqueId}", item.DisplayName, item.UniqueId);
 

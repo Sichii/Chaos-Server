@@ -4,12 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
+using Chaos.Entities.Schemas.World;
 using Chaos.Extensions;
-using Chaos.Objects.World;
 using Chaos.Pathfinding.Interfaces;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Caches.Options;
-using Chaos.Templates;
+using Chaos.Services.Mappers.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -21,19 +21,19 @@ public class MapInstanceCache : ISimpleCache<MapInstance>
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly int Loaded;
     private readonly ILogger Logger;
-    private readonly ISimpleCache<MapTemplate> MapTemplateCache;
+    private readonly ITypeMapper Mapper;
     private readonly MapInstanceCacheOptions Options;
     private readonly IPathfindingService PathfindingService;
 
     public MapInstanceCache(
-        ISimpleCache<MapTemplate> mapTemplateCache,
+        ITypeMapper mapper,
         IPathfindingService pathfindingService,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<MapInstanceCacheOptions> options,
         ILogger<MapInstanceCache> logger
     )
     {
-        MapTemplateCache = mapTemplateCache;
+        Mapper = mapper;
         PathfindingService = pathfindingService;
         Options = options.Value;
         Logger = logger;
@@ -80,24 +80,8 @@ public class MapInstanceCache : ISimpleCache<MapInstance>
     {
         var mapInstanceFilePath = Path.Combine(directory, "instance.json");
         await using var stream = File.OpenRead(mapInstanceFilePath);
-        var mapInstance = await JsonSerializer.DeserializeAsync<MapInstance>(stream, JsonSerializerOptions);
-        var template = MapTemplateCache.GetObject(mapInstance!.MapId.ToString());
-        mapInstance.Template = template;
-
-        foreach (var doorTemplate in template.Doors.Values)
-        {
-            var door = new Door(doorTemplate, mapInstance);
-            mapInstance.SimpleAdd(door);
-        }
-
-        foreach (var warp in mapInstance.WarpGroups.Flatten())
-        {
-            if (warp.SourceLocation == null)
-                continue;
-
-            var warpTile = new WarpTile(warp, this);
-            mapInstance.SimpleAdd(warpTile);
-        }
+        var schema = await JsonSerializer.DeserializeAsync<MapInstanceSchema>(stream, JsonSerializerOptions);
+        var mapInstance = Mapper.Map<MapInstance>(schema!);
 
         PathfindingService.RegisterGrid(mapInstance);
 

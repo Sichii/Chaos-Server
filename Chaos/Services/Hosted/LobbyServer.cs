@@ -2,11 +2,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Chaos.Clients.Interfaces;
+using Chaos.Common.Definitions;
+using Chaos.Entities.Networking;
+using Chaos.Entities.Networking.Client;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Definitions;
 using Chaos.Networking.Interfaces;
-using Chaos.Networking.Model;
-using Chaos.Networking.Model.Client;
 using Chaos.Objects;
 using Chaos.Packets;
 using Chaos.Packets.Definitions;
@@ -68,7 +68,12 @@ public class LobbyServer : ServerBase, ILobbyServer
             case ServerTableRequestType.ServerId:
                 if (ServerTable.Servers.TryGetValue(serverId!.Value, out var serverInfo))
                 {
-                    var redirect = new Redirect(client.CryptoClient, serverInfo, ServerType.Login);
+                    var redirect = new Redirect(
+                        serverInfo,
+                        ServerType.Login,
+                        client.CryptoClient.Key,
+                        client.CryptoClient.Seed);
+
                     RedirectManager.Add(redirect);
 
                     Logger.LogDebug(

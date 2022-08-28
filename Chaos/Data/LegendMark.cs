@@ -1,6 +1,7 @@
-﻿using Chaos.Networking.Definitions;
-using Chaos.Networking.Model.Server;
-using Chaos.Objects.Serializable;
+﻿using Chaos.Common.Definitions;
+using Chaos.Entities.Networking.Server;
+using Chaos.Entities.Schemas.World;
+using Chaos.Time;
 
 namespace Chaos.Data;
 
@@ -16,14 +17,14 @@ public record LegendMark(
     public GameTime Added { get; set; } = Added;
     public int Count { get; set; } = Count;
 
-    public LegendMark(SerializableLegendMark serializableLegendMark)
+    public LegendMark(LegendMarkSchema legendMarkSchema)
         : this(
-            serializableLegendMark.Text,
-            serializableLegendMark.Key,
-            serializableLegendMark.Icon,
-            serializableLegendMark.Color,
-            serializableLegendMark.Count,
-            new GameTime(serializableLegendMark.Added)) { }
+            legendMarkSchema.Text,
+            legendMarkSchema.Key,
+            legendMarkSchema.Icon,
+            legendMarkSchema.Color,
+            legendMarkSchema.Count,
+            new GameTime(legendMarkSchema.Added)) { }
 
     public virtual bool Equals(LegendMark? other)
     {

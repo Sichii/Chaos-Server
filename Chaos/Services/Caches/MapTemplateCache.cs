@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
@@ -6,8 +7,10 @@ using Chaos.Core.Utilities;
 using Chaos.Cryptography.Extensions;
 using Chaos.Data;
 using Chaos.Definitions;
+using Chaos.Entities.Schemas.Templates;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Caches.Options;
+using Chaos.Services.Mappers.Interfaces;
 using Chaos.Templates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,15 +23,18 @@ public class MapTemplateCache : ISimpleCache<MapTemplate>
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly int Loaded;
     private readonly ILogger Logger;
+    private readonly ITypeMapper Mapper;
     private readonly string NeedsMapDataDir;
     private readonly MapTemplateCacheOptions Options;
 
     public MapTemplateCache(
+        ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptionsSnapshot<MapTemplateCacheOptions> options,
         ILogger<MapTemplateCache> logger
     )
     {
+        Mapper = mapper;
         Options = options.Value;
         Logger = logger;
         Cache = new ConcurrentDictionary<string, MapTemplate>();
@@ -114,6 +120,7 @@ public class MapTemplateCache : ISimpleCache<MapTemplate>
         try
         {
             var mapTemplate = await LoadTemplateFromFileAsync(path);
+            
             Cache.TryAdd(mapTemplate.TemplateKey, mapTemplate);
             Logger.LogTrace("Loaded map template {MapId}", mapTemplate.TemplateKey);
         } catch (FileNotFoundException e)
@@ -128,10 +135,11 @@ public class MapTemplateCache : ISimpleCache<MapTemplate>
     private async Task<MapTemplate> LoadTemplateFromFileAsync(string path)
     {
         await using var stream = File.OpenRead(path);
-        var mapTemplate = await JsonSerializer.DeserializeAsync<MapTemplate>(stream, JsonSerializerOptions);
-        mapTemplate!.Tiles = new Tile[mapTemplate.Width + 1, mapTemplate.Height + 1];
+        var schema = await JsonSerializer.DeserializeAsync<MapTemplateSchema>(stream, JsonSerializerOptions);
+        var mapTemplate = Mapper.Map<MapTemplate>(schema!);
+        
         await LoadMapDataAsync(mapTemplate);
 
-        return mapTemplate!;
+        return mapTemplate;
     }
 }

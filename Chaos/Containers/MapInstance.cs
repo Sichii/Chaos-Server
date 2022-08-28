@@ -1,13 +1,14 @@
-using System.Text.Json.Serialization;
+using Chaos.Common.Definitions;
 using Chaos.Core.Collections;
 using Chaos.Core.Synchronization;
 using Chaos.Data;
 using Chaos.Definitions;
+using Chaos.Entities.Schemas.World;
 using Chaos.Extensions;
 using Chaos.Geometry.Interfaces;
-using Chaos.Networking.Definitions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Services.Caches.Interfaces;
 using Chaos.Templates;
 using Chaos.Time.Interfaces;
 
@@ -18,21 +19,39 @@ public class MapInstance : IDeltaUpdatable
     private readonly TypeCheckingDictionary<uint, MapEntity> Objects;
     public MapFlags Flags { get; set; }
     public string InstanceId { get; init; }
-    public short MapId { get; set; }
     public sbyte Music { get; set; }
     public string Name { get; set; }
-    public MapTemplate Template { get; set; } = null!;
+    public MapTemplate Template { get; set; }
     public Warp[][] WarpGroups { get; set; } = Array.Empty<Warp[]>();
-    //private readonly ConcurrentDictionary<Exchange>
     public AutoReleasingMonitor Sync { get; }
 
-    [JsonConstructor]
-    public MapInstance(string name, string instanceId)
+    public MapInstance(MapTemplate template, string name, string instanceId)
     {
         Name = name;
         InstanceId = instanceId;
         Objects = new TypeCheckingDictionary<uint, MapEntity>();
         Sync = new AutoReleasingMonitor();
+        Template = template;
+    }
+
+    public MapInstance(MapInstanceSchema schema, ISimpleCache simpleCache)
+        : this(simpleCache.GetObject<MapTemplate>(schema.TemplateKey), schema.Name, schema.InstanceId)
+    {
+        Flags = schema.Flags;
+        Music = schema.Music;
+
+        foreach (var doorTemplate in Template.Doors.Values)
+        {
+            var door = new Door(doorTemplate, this);
+            SimpleAdd(door);
+        }
+
+        foreach (var warpSchema in schema.Warps)
+        {
+            var warp = new Warp(warpSchema, InstanceId);
+            var warpTile = new WarpTile(warp, simpleCache);
+            SimpleAdd(warpTile);
+        }
     }
 
     public void ActivateReactors(Creature creature, ReactorTileType reactorTileType)

@@ -4,6 +4,7 @@ using Chaos.Cryptography.Interfaces;
 using Chaos.Packets.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Services.Hosted.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -17,6 +18,7 @@ public class WorldClientFactory : IClientFactory<WorldClient>
 
     public WorldClient CreateClient(Socket socket)
     {
+        var typeMapper = ServiceProvider.GetRequiredService<ITypeMapper>();
         var crypto = ServiceProvider.GetRequiredService<ICryptoClient>();
         var server = ServiceProvider.GetRequiredService<IWorldServer>();
         var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
@@ -24,6 +26,7 @@ public class WorldClientFactory : IClientFactory<WorldClient>
 
         return new WorldClient(
             socket,
+            typeMapper,
             crypto,
             server,
             serializer,

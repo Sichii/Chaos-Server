@@ -1,5 +1,5 @@
+using Chaos.Entities.Networking.Client;
 using Chaos.IO.Memory;
-using Chaos.Networking.Model.Client;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Deserializers;

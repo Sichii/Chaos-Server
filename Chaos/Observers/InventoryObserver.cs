@@ -1,4 +1,4 @@
-using Chaos.Networking.Definitions;
+using Chaos.Common.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Observers.Interfaces;

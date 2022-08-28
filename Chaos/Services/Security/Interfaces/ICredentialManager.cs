@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Chaos.Services.Serialization.Interfaces;
+namespace Chaos.Services.Security.Interfaces;
 
 public interface ICredentialManager
 {

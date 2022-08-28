@@ -1,21 +1,20 @@
 using Chaos.Clients.Interfaces;
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Containers.Interfaces;
 using Chaos.Data;
 using Chaos.Definitions;
+using Chaos.Entities.Schemas.World;
 using Chaos.Extensions;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Interfaces;
-using Chaos.Networking.Definitions;
-using Chaos.Networking.Model.Server;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Serializable;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
 using Chaos.Services.Caches.Interfaces;
 using Chaos.Services.Factories.Interfaces;
 using Chaos.Services.Hosted.Options;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Mappers.Interfaces;
 using Chaos.Services.Utility.Interfaces;
 using Microsoft.Extensions.Logging;
 using PointExtensions = Chaos.Geometry.Extensions.PointExtensions;
@@ -57,56 +56,54 @@ public class Aisling : Creature
     protected override ILogger<Aisling> Logger { get; }
 
     public Aisling(
-        SerializableAisling serializableAisling,
-        ISimpleCache<MapInstance> mapInstanceCache,
+        AislingSchema schema,
+        ISimpleCache simpleCache,
         ICloningService<Item> itemCloner,
-        ISerialTransformService<Item, SerializableItem> itemTransformer,
-        ISerialTransformService<Skill, SerializableSkill> skillTransformer,
-        ISerialTransformService<Spell, SerializableSpell> spellTransformer,
+        ITypeMapper mapper,
         IExchangeFactory exchangeFactory,
         ILogger<Aisling> logger
     )
         : base(
-            serializableAisling.Name,
+            schema.Name,
             0,
-            mapInstanceCache.GetObject(serializableAisling.MapInstanceId),
-            new Point(serializableAisling.X, serializableAisling.Y))
+            simpleCache.GetObject<MapInstance>(schema.MapInstanceId),
+            new Point(schema.X, schema.Y))
     {
         ExchangeFactory = exchangeFactory;
         Logger = logger;
 
-        BodyColor = serializableAisling.BodyColor;
-        BodySprite = serializableAisling.BodySprite;
-        Direction = serializableAisling.Direction;
-        FaceSprite = serializableAisling.FaceSprite;
-        GamePoints = serializableAisling.GamePoints;
-        Gender = serializableAisling.Gender;
-        Gold = serializableAisling.Gold;
-        GuildName = serializableAisling.GuildName;
-        GuildTitle = serializableAisling.GuildTitle;
-        HairColor = serializableAisling.HairColor;
-        HairStyle = serializableAisling.HairStyle;
-        Name = serializableAisling.Name;
-        Nation = serializableAisling.Nation;
-        X = serializableAisling.X;
-        Y = serializableAisling.Y;
+        BodyColor = schema.BodyColor;
+        BodySprite = schema.BodySprite;
+        Direction = schema.Direction;
+        FaceSprite = schema.FaceSprite;
+        GamePoints = schema.GamePoints;
+        Gender = schema.Gender;
+        Gold = schema.Gold;
+        GuildName = schema.GuildName;
+        GuildTitle = schema.GuildTitle;
+        HairColor = schema.HairColor;
+        HairStyle = schema.HairStyle;
+        Name = schema.Name;
+        Nation = schema.Nation;
+        X = schema.X;
+        Y = schema.Y;
 
-        StatSheet = serializableAisling.StatSheet;
-        Titles = new TitleList(serializableAisling.Titles);
-        Options = new UserOptions(serializableAisling.UserOptions);
-        IgnoreList = new IgnoreList(serializableAisling.IgnoreList);
-        Legend = new Legend(serializableAisling.Legend.Select(s => new LegendMark(s)));
+        StatSheet = mapper.Map<UserStatSheet>(schema.StatSheet);
+        Options = mapper.Map<UserOptions>(schema.UserOptions);
+        Titles = new TitleList(schema.Titles);
+        IgnoreList = new IgnoreList(schema.IgnoreList);
+        Legend = new Legend(schema.Legend.Select(s => new LegendMark(s)));
 
         Bank = new Bank(
-            serializableAisling.BankedGold,
-            serializableAisling.Bank,
-            itemTransformer,
+            schema.BankedGold,
+            schema.Bank,
+            mapper,
             itemCloner);
 
-        Equipment = new Equipment(serializableAisling.Equipment, itemTransformer);
-        Inventory = new Inventory(itemCloner, serializableAisling.Inventory, itemTransformer);
-        SkillBook = new SkillBook(serializableAisling.SkillBook, skillTransformer);
-        SpellBook = new SpellBook(serializableAisling.SpellBook, spellTransformer);
+        Equipment = new Equipment(schema.Equipment, mapper);
+        Inventory = new Inventory(itemCloner, schema.Inventory, mapper);
+        SkillBook = new SkillBook(schema.SkillBook, mapper);
+        SpellBook = new SpellBook(schema.SpellBook, mapper);
         //TODO: Effects
         ActiveObject = new ActiveObject();
         Client = null!;
@@ -297,151 +294,7 @@ public class Aisling : Creature
     }
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
-
-    public AttributesArgs ToAttributeArgs() => new()
-    {
-        Ability = (byte)StatSheet.Ability,
-        Ac = StatSheet.EffectiveAc,
-        //TODO: blind
-        Con = StatSheet.EffectiveCon,
-        CurrentHp = (uint)Math.Clamp(StatSheet.CurrentHp, 0, int.MaxValue),
-        CurrentMp = (uint)Math.Clamp(StatSheet.CurrentMp, 0, int.MaxValue),
-        CurrentWeight = (short)StatSheet.CurrentWeight,
-        DefenseElement = StatSheet.DefenseElement,
-        Dex = StatSheet.EffectiveDex,
-        Dmg = StatSheet.EffectiveDmg,
-        GamePoints = (uint)GamePoints,
-        Gold = (uint)Gold,
-        Hit = StatSheet.EffectiveHit,
-        Int = StatSheet.EffectiveInt,
-        IsAdmin = IsAdmin,
-        Level = (byte)StatSheet.Level,
-        MagicResistance = StatSheet.EffectiveMagicResistance,
-        MailFlags = MailFlag.None, //TODO: mail system
-        MaximumHp = StatSheet.EffectiveMaximumHp,
-        MaximumMp = StatSheet.EffectiveMaximumMp,
-        MaxWeight = (short)StatSheet.MaxWeight,
-        OffenseElement = StatSheet.OffenseElement,
-        Str = StatSheet.EffectiveStr,
-        ToNextAbility = (uint)StatSheet.ToNextAbility,
-        ToNextLevel = (uint)StatSheet.ToNextLevel,
-        TotalAbility = StatSheet.TotalAbility,
-        TotalExp = StatSheet.TotalExp,
-        UnspentPoints = (byte)StatSheet.UnspentPoints,
-        Wis = StatSheet.EffectiveWis
-    };
-
-    public DisplayAislingArgs ToDisplayAislingArgs()
-    {
-        var weapon = Equipment[EquipmentSlot.Weapon];
-        var armor = Equipment[EquipmentSlot.Armor];
-        var shield = Equipment[EquipmentSlot.Shield];
-        var overHelm = Equipment[EquipmentSlot.OverHelm];
-        var helmet = Equipment[EquipmentSlot.Helmet];
-        var boots = Equipment[EquipmentSlot.Boots];
-        var acc1 = Equipment[EquipmentSlot.Accessory1];
-        var acc2 = Equipment[EquipmentSlot.Accessory2];
-        var acc3 = Equipment[EquipmentSlot.Accessory3];
-        var overcoat = Equipment[EquipmentSlot.Overcoat];
-
-        return new DisplayAislingArgs
-        {
-            AccessoryColor1 = acc1?.Color ?? DisplayColor.None,
-            AccessoryColor2 = acc2?.Color ?? DisplayColor.None,
-            AccessoryColor3 = acc3?.Color ?? DisplayColor.None,
-            AccessorySprite1 = acc1?.Template.PanelSprite ?? 0,
-            AccessorySprite2 = acc2?.Template.PanelSprite ?? 0,
-            AccessorySprite3 = acc3?.Template.PanelSprite ?? 0,
-            ArmorSprite1 = armor?.Template.PanelSprite ?? 0, //TODO: figure this out again cuz i deleted it
-            ArmorSprite2 = armor?.Template.PanelSprite ?? 0,
-            BodyColor = BodyColor,
-            BodySprite = BodySprite,
-            BootsColor = boots?.Color ?? DisplayColor.None,
-            BootsSprite = (byte)(boots?.Template.PanelSprite ?? 0),
-            CreatureType = Type,
-            Direction = Direction,
-            FaceSprite = (byte)FaceSprite,
-            GameObjectType = GameObjectType.Misc,
-            Gender = Gender,
-            GroupBoxText = null,
-            HeadColor = overHelm?.Template.Color ?? helmet?.Template.Color ?? HairColor,
-            HeadSprite = overHelm?.Template.PanelSprite ?? helmet?.Template.PanelSprite ?? (ushort)HairStyle,
-            Id = Id,
-            IsDead = !IsAlive,
-            IsHidden = false, //TODO: invisibility
-            IsMaster = StatSheet.Master,
-            LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
-            Name = Name,
-            NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
-            OvercoatColor = overcoat?.Color ?? DisplayColor.None,
-            OvercoatSprite = overcoat?.Template.PanelSprite ?? 0,
-            X = X,
-            Y = Y,
-            RestPosition = RestPosition.None, //TODO: if we add rest positions in later,
-            ShieldSprite = (byte)(shield?.Template.PanelSprite ?? 0),
-            Sprite = Sprite,
-            WeaponSprite = weapon?.Template.PanelSprite ?? 0
-        };
-    }
-
-    public ProfileArgs ToProfileArgs() =>
-        new()
-        {
-            AdvClass = StatSheet.AdvClass,
-            BaseClass = StatSheet.BaseClass,
-            Equipment = Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, i => i.ToItemInfo())!,
-            GroupOpen = Options.Group,
-            GuildName = GuildName,
-            GuildTitle = GuildTitle,
-            Id = Id,
-            LegendMarks = Legend.Select(l => l.ToLegendMarkInfo()).ToList(),
-            Name = Name,
-            Nation = Nation,
-            Portrait = Portrait,
-            ProfileText = ProfileText,
-            SocialStatus = SocialStatus,
-            Titles = Titles.ToList()
-        };
-
-    public SelfProfileArgs ToSelfProfileArgs() =>
-        new()
-        {
-            AdvClass = StatSheet.AdvClass,
-            BaseClass = StatSheet.BaseClass,
-            Equipment = Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, i => i.ToItemInfo()),
-            GroupOpen = Options.Group,
-            GroupString = null, //TODO: when we implement group box
-            GuildName = GuildName,
-            GuildTitle = GuildTitle,
-            IsMaster = StatSheet.Master,
-            LegendMarks = Legend.Select(l => l.ToLegendMarkInfo()).ToList(),
-            Name = Name,
-            Nation = Nation,
-            Portrait = Portrait,
-            ProfileText = ProfileText,
-            SocialStatus = SocialStatus,
-            SpouseName = null, //TODO: when we implement marraige i guess
-            Titles = Titles.ToList()
-        };
-
-    public UserIdArgs ToUserIdArgs() => new()
-    {
-        BaseClass = StatSheet.BaseClass,
-        Direction = Direction,
-        Gender = Gender,
-        Id = Id
-    };
-
-    public WorldListMemberInfo ToWorldListMemberInfo() => new()
-    {
-        BaseClass = StatSheet.BaseClass,
-        Color = WorldListColor.White,
-        IsMaster = StatSheet.Master,
-        Name = Name,
-        SocialStatus = SocialStatus,
-        Title = Titles.FirstOrDefault()
-    };
-
+    
     private bool TryStartExchange(Aisling source, [MaybeNullWhen(false)] out Exchange exchange)
     {
         exchange = ExchangeFactory.CreateExchange(source, this);
