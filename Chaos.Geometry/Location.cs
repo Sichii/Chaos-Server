@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
 using Chaos.Geometry.JsonConverters;
 
 namespace Chaos.Geometry;
@@ -21,6 +21,14 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
         X = x;
         Y = y;
         Map = map;
+    }
+
+    public static Location From(ILocation location)
+    {
+        if (location is Location loc)
+            return loc;
+
+        return new Location(location.Map, location.X, location.Y);
     }
 
     public void Deconstruct(out string map, out int x, out int y)

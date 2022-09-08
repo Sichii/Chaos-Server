@@ -1,7 +1,7 @@
 using Chaos.Core.Identity;
-using Chaos.Scripts.Interfaces;
+using Chaos.Scripts.Abstractions;
 using Chaos.Templates.Abstractions;
-using Chaos.Time.Interfaces;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Objects.Panel.Abstractions;
 
@@ -10,7 +10,7 @@ namespace Chaos.Objects.Panel.Abstractions;
 /// </summary>
 public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 {
-    public TimeSpan Cooldown { get; set; }
+    public TimeSpan? Cooldown { get; set; }
     public TimeSpan? Elapsed { get; set; }
     public byte Slot { get; set; }
     public ISet<string> ScriptKeys { get; }
@@ -29,16 +29,22 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
             Elapsed = TimeSpan.FromMilliseconds(elapsedMs.Value);
     }
 
-    public virtual bool CanUse() => (Cooldown.TotalMilliseconds == 0) || !Elapsed.HasValue || (Elapsed > Cooldown);
+    public virtual bool CanUse() =>
+        !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
 
     public override string ToString() => $@"(Id: {UniqueId}, Name: {Template.Name})";
 
+    
+    
     public void Update(TimeSpan delta)
     {
         if (Elapsed.HasValue)
         {
             var value = Elapsed.Value + delta;
             Elapsed = value;
+
+            if (Elapsed > Cooldown)
+                Elapsed = null;
         }
     }
 }

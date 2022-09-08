@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Chaos.Core.Synchronization;
 using Chaos.Exceptions;
-using Chaos.Services.Security.Interfaces;
+using Chaos.Services.Security.Abstractions;
 using Chaos.Services.Security.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,11 +15,14 @@ namespace Chaos.Services.Security;
 
 public class ActiveDirectoryCredentialManager : ICredentialManager
 {
+    private readonly ILogger Logger;
     private readonly ActiveDirectoryCredentialManagerOptions Options;
     private readonly AutoReleasingSemaphoreSlim Sync;
-    private readonly ILogger Logger;
 
-    public ActiveDirectoryCredentialManager(IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options, ILogger<ActiveDirectoryCredentialManager> logger)
+    public ActiveDirectoryCredentialManager(
+        IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options,
+        ILogger<ActiveDirectoryCredentialManager> logger
+    )
     {
         Options = options.Value;
         Logger = logger;
@@ -32,14 +35,14 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
     public async Task ChangePasswordAsync(string name, string oldPassword, string newPassword)
     {
         await using var sync = await Sync.WaitAsync();
-        
+
         Logger.LogDebug("Changing password for {Name}", name);
 
         if (!await InnerValidateCredentialsAsync(name, oldPassword))
             throw new PasswordCredentialException(PasswordReasonType.WrongPassword);
 
-        ValidatePassword(newPassword);
-        Logger.LogTrace("Validated password against rules for {Name}", name);
+        ValidatePasswordRules(newPassword);
+        Logger.LogTrace("Validated password rules for {Name}", name);
 
         var newHash = ComputeHash(newPassword);
         var passwordPath = Path.Combine(Options.Directory, name, "password.txt");
@@ -50,7 +53,10 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
 
     private string ComputeHash(string password)
     {
+        #pragma warning disable SYSLIB0045
         using var algorithm = HashAlgorithm.Create(Options.HashAlgorithmName);
+        #pragma warning restore SYSLIB0045
+        
         var buffer = Encoding.UTF8.GetBytes(password);
         var hash = algorithm!.ComputeHash(buffer);
 
@@ -75,9 +81,9 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
     {
         await using var sync = await Sync.WaitAsync();
 
-        ValidateUserName(name);
-        ValidatePassword(password);
-        Logger.LogTrace("Validated password against rules for {Name}", name);
+        ValidateUserNameRules(name);
+        ValidatePasswordRules(password);
+        Logger.LogTrace("Validated password rules for {Name}", name);
 
         var characterDir = Path.Combine(Options.Directory, name);
 
@@ -102,7 +108,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
         return ret;
     }
 
-    private void ValidatePassword(string password)
+    private void ValidatePasswordRules(string password)
     {
         if (password.Length < Options.MinPasswordLength)
             throw new PasswordCredentialException(PasswordReasonType.TooShort);
@@ -111,7 +117,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
             throw new PasswordCredentialException(PasswordReasonType.TooLong);
     }
 
-    private void ValidateUserName(string name)
+    private void ValidateUserNameRules(string name)
     {
         if (!Options.ValidCharactersRegex.IsMatch(name))
             throw new UsernameCredentialException(name, NameReasonType.InvalidCharacters);
@@ -131,7 +137,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
         foreach (var filtered in Options.PhraseFilter)
             if (name.ContainsI(filtered))
                 throw new UsernameCredentialException(name, NameReasonType.NotAllowed);
-        
-        Logger.LogTrace("Validated username against rules for {Name}", name);
+
+        Logger.LogTrace("Validated username rules for {Name}", name);
     }
 }

@@ -1,6 +1,5 @@
+using Chaos.Services.Caches.Abstractions;
+
 namespace Chaos.Services.Caches.Options;
 
-public record ItemTemplateCacheOptions
-{
-    public string Directory { get; set; } = null!;
-}
+public class ItemTemplateCacheOptions : FileCacheOptionsBase { }

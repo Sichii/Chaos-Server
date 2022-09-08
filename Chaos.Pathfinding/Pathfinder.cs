@@ -1,10 +1,10 @@
 using Chaos.Core.Extensions;
 using Chaos.Core.Synchronization;
 using Chaos.Geometry;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.Extensions;
-using Chaos.Geometry.Interfaces;
-using Chaos.Pathfinding.Interfaces;
+using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;
 
@@ -46,7 +46,7 @@ public class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        IEnumerable<IPoint> creatures
+        ICollection<IPoint> creatures
     )
     {
         using var @lock = Sync.Enter();
@@ -54,7 +54,7 @@ public class Pathfinder : IPathfinder
         //the only points the truly matter are the ones around the target
         //imagine a monster is pathing to you...
         //if it paths outside of your view, it will no longer aggro you
-        var subGrid = new Rectangle(end, 13, 13); //CalculateSubGrid(start, end);
+        var subGrid = new Rectangle(end, 26, 26); //CalculateSubGrid(start, end);
         var creatureCollection = creatures.ToList();
 
         InitializeSubGrid(subGrid, creatureCollection);
@@ -121,10 +121,16 @@ public class Pathfinder : IPathfinder
     private Direction FindSimpleDirectionOrInvalid(
         IPoint start,
         IPoint end,
-        bool ignoreWalls
+        bool ignoreWalls,
+        ICollection<IPoint> creatures
     )
     {
-        var optimalPoint = GetFirstWalkablePoint(start.GetCardinalPoints().OrderBy(p => p.DistanceFrom(end)), ignoreWalls);
+        var directionBias = end.DirectionalRelationTo(start);
+        var points = start.GetCardinalPoints()
+                          .Shuffle()
+                          .WithDirectionBias(directionBias);
+
+        var optimalPoint = GetFirstWalkablePoint(points, ignoreWalls, creatures);
 
         if (!optimalPoint.HasValue)
             return Direction.Invalid;
@@ -132,21 +138,24 @@ public class Pathfinder : IPathfinder
         return optimalPoint.DirectionalRelationTo(start);
     }
 
-    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls)
+    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, ICollection<IPoint> creatures)
     {
+        var unwalkable = creatures.Select(Point.From).ToList();
+        
         foreach (var point in points)
-            if (WithinGrid(point) && PathNodes[point.X, point.Y].IsWalkable(ignoreWalls))
+            if (WithinGrid(point) && PathNodes[point.X, point.Y].IsWalkable(ignoreWalls) && !unwalkable.Contains(point))
                 return point;
 
         return null;
     }
 
-    private void InitializeSubGrid(IRectangle subGrid, IEnumerable<IPoint> creatures)
+    private void InitializeSubGrid(IRectangle subGrid, ICollection<IPoint> creatures)
     {
         //un-close all the nodes in the sub grid
         //the sub grid is the path-searchable area
         foreach (var point in subGrid.Points())
-            PathNodes[point.X, point.Y].Closed = false;
+            if (WithinGrid(point))
+                PathNodes[point.X, point.Y].Closed = false;
 
         foreach (var creature in creatures)
             PathNodes[creature.X, creature.Y].IsCreature = true;
@@ -156,7 +165,7 @@ public class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        IEnumerable<IPoint> creatures
+        ICollection<IPoint> creatures
     )
     {
         //if we're standing on the end already
@@ -165,7 +174,8 @@ public class Pathfinder : IPathfinder
             return FindSimpleDirectionOrInvalid(
                 start,
                 end,
-                ignoreWalls);
+                ignoreWalls,
+                creatures);
 
         var nextPoint = FindOptimalPoint(
             start,
@@ -179,15 +189,28 @@ public class Pathfinder : IPathfinder
             return FindSimpleDirectionOrInvalid(
                 start,
                 end,
-                ignoreWalls);
+                ignoreWalls,
+                creatures);
 
         return nextPoint.DirectionalRelationTo(start);
     }
 
-    private void ResetSubGrid(IRectangle subGrid, IEnumerable<IPoint> creatures)
+    /// <inheritdoc />
+    public Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> creatures)
+    {
+        var optimalPoint = GetFirstWalkablePoint(start.GetCardinalPoints().OrderBy(_ => Random.Shared.Next()), ignoreWalls, creatures);
+
+        if (!optimalPoint.HasValue)
+            return Direction.Invalid;
+
+        return optimalPoint.DirectionalRelationTo(start);
+    }
+
+    private void ResetSubGrid(IRectangle subGrid, ICollection<IPoint> creatures)
     {
         foreach (var point in subGrid.Points())
-            PathNodes[point.X, point.Y].Reset();
+            if (WithinGrid(point))
+                PathNodes[point.X, point.Y].Reset();
 
         foreach (var creature in creatures)
             PathNodes[creature.X, creature.Y].IsCreature = false;

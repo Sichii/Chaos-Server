@@ -1,6 +1,5 @@
 using Chaos.IO.Memory;
 using Chaos.Packets.Definitions;
-using Chaos.Packets.Interfaces;
 
 namespace Chaos.Packets.Abstractions;
 

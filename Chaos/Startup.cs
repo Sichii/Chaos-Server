@@ -21,6 +21,9 @@ public class Startup
         services.AddSingleton(Configuration);
         services.AddOptions();
 
+        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key)
+                .Validate(o => !string.IsNullOrEmpty(o.StagingDirectory), "RootDirectory is required");
+        
         services.AddLogging(
             logging =>
             {

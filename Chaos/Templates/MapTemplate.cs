@@ -1,11 +1,11 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Templates;
-using Chaos.Geometry.Interfaces;
-using Chaos.Templates.Interfaces;
+using Chaos.Geometry.Abstractions;
+using Chaos.Scripts.Abstractions;
+using Chaos.Templates.Abstractions;
 
 namespace Chaos.Templates;
 
-public record MapTemplate : ITemplate
+public record MapTemplate : ITemplate, IScripted
 {
     public ushort CheckSum { get; set; }
     public Dictionary<Point, DoorTemplate> Doors { get; set; } = new();
@@ -15,15 +15,6 @@ public record MapTemplate : ITemplate
     public Point[] WarpPoints { get; set; } = Array.Empty<Point>();
     public byte Width { get; set; }
     public short MapId => short.Parse(TemplateKey);
-
-    public MapTemplate(MapTemplateSchema schema)
-    {
-        Width = schema.Width;
-        Height = schema.Height;
-        TemplateKey = schema.TemplateKey;
-        WarpPoints = schema.WarpPoints;
-        Tiles = new Tile[Width, Height];
-    }
 
     public IEnumerable<byte> GetRowData(byte row)
     {
@@ -42,4 +33,6 @@ public record MapTemplate : ITemplate
         !IsWithinMap(point) || (Doors.TryGetValue(Point.From(point), out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
 
     public bool IsWithinMap(IPoint point) => (point.X >= 0) && (point.Y >= 0) && (point.X < Width) && (point.Y < Height);
+    /// <inheritdoc />
+    public ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 }

@@ -1,10 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
-using Chaos.Containers.Interfaces;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Services.Mappers.Interfaces;
-using Chaos.Services.Utility.Interfaces;
+using Chaos.Services.Utility.Abstractions;
 
 namespace Chaos.Containers;
 
@@ -15,34 +12,25 @@ public class Inventory : PanelBase<Item>, IInventory
     /// <summary>
     ///     Used for character creation
     /// </summary>
-    public Inventory()
-        : this(null!) { }
+    public Inventory(IEnumerable<Item>? items = null)
+        : base(
+            PanelType.Inventory,
+            60,
+            new byte[] { 0 })
+    {
+        ItemCloner = null!;
+        items ??= Array.Empty<Item>();
+        
+        foreach (var item in items)
+            Objects[item.Slot] = item;
+    }
 
     /// <summary>
     ///     General use constructor
     /// </summary>
-    public Inventory(ICloningService<Item> itemCloner)
-        : base(
-            PanelType.Inventory,
-            60,
-            new byte[] { 0 }) => ItemCloner = itemCloner;
-
-    /// <summary>
-    ///     Used for converting from serial format
-    /// </summary>
-    public Inventory(
-        ICloningService<Item> itemCloner,
-        IEnumerable<ItemSchema> itemSchemas,
-        ITypeMapper mapper
-    )
-        : this(itemCloner)
-    {
-        foreach (var schema in itemSchemas)
-        {
-            var item = mapper.Map<Item>(schema);
-            Objects[item.Slot] = item;
-        }
-    }
+    public Inventory(ICloningService<Item> itemCloner, IEnumerable<Item>? items = null)
+        :this(items) =>
+        ItemCloner = itemCloner;
 
     public int CountOf(string name)
     {

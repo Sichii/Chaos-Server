@@ -1,11 +1,11 @@
 using Chaos.Common.Definitions;
-using Chaos.Entities.Networking.Server;
-using Chaos.Entities.Schemas.World;
+using Chaos.Containers;
+using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Scripts.Interfaces;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Factories.Interfaces;
-using Chaos.Services.Utility.Interfaces;
+using Chaos.Objects.World;
+using Chaos.Scripts.Abstractions;
+using Chaos.Services.Scripting.Abstractions;
+using Chaos.Services.Utility.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -21,7 +21,7 @@ public class Item : PanelObjectBase, IScriptedItem
 
     public Item(
         ItemTemplate template,
-        IItemScriptFactory itemScriptFactory,
+        IScriptProvider scriptProvider,
         ICollection<string>? extraScriptKeys = null,
         ulong? uniqueId = null,
         int? elapsedMs = null
@@ -37,27 +37,11 @@ public class Item : PanelObjectBase, IScriptedItem
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
 
-        Script = itemScriptFactory.CreateScript(ScriptKeys, this);
+        Script = scriptProvider.CreateScript<IItemScript, Item>(ScriptKeys, this);
     }
 
-    public Item(
-        ItemSchema schema,
-        ISimpleCache simpleCache,
-        IItemScriptFactory itemScriptFactory
-    )
-        : this(
-            simpleCache.GetObject<ItemTemplate>(schema.TemplateKey),
-            itemScriptFactory,
-            schema.ScriptKeys,
-            schema.UniqueId,
-            schema.ElapsedMs)
-    {
-        Color = schema.Color;
-        Count = schema.Count;
-        CurrentDurability = schema.CurrentDurability;
-        Slot = schema.Slot ?? 0;
-    }
-
+    public void OnUse(Aisling source) => Script.OnUse(source);
+    
     public IEnumerable<Item> FixStacks(ICloningService<Item> itemCloner)
     {
         if (Count <= Template.MaxStacks)

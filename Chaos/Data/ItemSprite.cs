@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Chaos.Networking.Definitions;
+﻿using Chaos.Networking.Definitions;
 
 namespace Chaos.Data;
 

@@ -1,44 +1,30 @@
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Chaos.Core.Utilities;
 using Chaos.Data;
-using Chaos.Services.Caches.Interfaces;
+using Chaos.Entities.Schemas.Content;
+using Chaos.Services.Caches.Abstractions;
 using Chaos.Services.Caches.Options;
+using Chaos.Services.Mappers.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Caches;
 
-public class MetafileCache : ISimpleCache<Metafile>
+public class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema, MetafileCacheOptions>
 {
-    private readonly ConcurrentDictionary<string, Metafile> Cache;
-    private readonly int Loaded;
-    private readonly ILogger Logger;
-    private readonly MetafileCacheOptions Options;
+    /// <inheritdoc />
+    public MetafileCache(
+        ITypeMapper mapper,
+        IOptions<JsonSerializerOptions> jsonSerializerOptions,
+        IOptionsSnapshot<MetafileCacheOptions> options,
+        ILogger<MetafileCache> logger
+    )
+        : base(
+            mapper,
+            jsonSerializerOptions,
+            options,
+            logger) => AsyncHelpers.RunSync(LoadCacheAsync);
 
-    public MetafileCache(IOptionsSnapshot<MetafileCacheOptions> options, ILogger<MetafileCache> logger)
-    {
-        Cache = new ConcurrentDictionary<string, Metafile>(StringComparer.OrdinalIgnoreCase);
-        Options = options.Value;
-        Logger = logger;
-
-        if (Interlocked.CompareExchange(ref Loaded, 1, 0) == 0)
-            AsyncHelpers.RunSync(LoadCacheAsync);
-    }
-
-    public IEnumerator<Metafile> GetEnumerator()
-    {
-        foreach (var kvp in Cache)
-            yield return kvp.Value;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    public Metafile GetObject(string key) => Cache.TryGetValue(key, out var template)
-        ? template
-        : throw new KeyNotFoundException($"Metafile key {key} was not found");
-
-    private Task LoadCacheAsync() =>
-        //TBD
-        Task.CompletedTask;
+    /// <inheritdoc />
+    protected override Func<Metafile, string> KeySelector => m => m.Name;
 }

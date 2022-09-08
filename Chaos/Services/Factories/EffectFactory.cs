@@ -1,8 +1,7 @@
 using Chaos.Core.Utilities;
 using Chaos.Effects.Abstractions;
-using Chaos.Effects.Interfaces;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Factories.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;

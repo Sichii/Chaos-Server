@@ -1,17 +1,19 @@
 {
     "TemplateKey": "Stick",
-    "Name": "Stick",
-    "Cost": 1000,
+    "AccountBound": false,
+    "BaseClass": "Peasant",
+    "AdvClass": "None",
+    "DisplaySprite": 1,
     "EquipmentType": "Weapon",
     "Gender": "Unisex",
-    "ItemSprite": {
-        "DisplaySprite": 1,
-        "PanelSprite": 86
-    },
     "MaxDurability": 1000,
+    "MaxStacks": 1,
     "Modifiers": {
         "Str": 1
     },
+    "Value": 1000,
     "Weight": 1,
+    "Name": "Stick",
+    "PanelSprite": 86,
     "ScriptKeys": ["Equipment"]
 }

@@ -1,14 +1,13 @@
 using System.Net.Sockets;
-using Chaos.Clients.Interfaces;
+using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
-using Chaos.Cryptography.Interfaces;
+using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
 using Chaos.Entities.Networking.Server;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Interfaces;
 using Chaos.Objects;
-using Chaos.Packets.Interfaces;
-using Chaos.Services.Caches.Interfaces;
+using Chaos.Packets.Abstractions;
+using Chaos.Services.Caches.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;

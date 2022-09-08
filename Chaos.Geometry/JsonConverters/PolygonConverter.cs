@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 

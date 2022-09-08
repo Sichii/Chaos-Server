@@ -1,5 +1,5 @@
 using Chaos.Containers;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 

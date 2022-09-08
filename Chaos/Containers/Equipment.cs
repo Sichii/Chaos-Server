@@ -1,35 +1,23 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
-using Chaos.Containers.Interfaces;
-using Chaos.Data;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Services.Mappers.Interfaces;
 
 namespace Chaos.Containers;
 
 public class Equipment : PanelBase<Item>, IEquipment
 {
     public Item? this[EquipmentSlot slot] => this[(byte)slot];
-    public Attributes Modifiers { get; }
 
-    public Equipment()
+    public Equipment(IEnumerable<Item>? items = null)
         : base(
             PanelType.Equipment,
             19,
-            new byte[] { 0 }) => Modifiers = new Attributes();
-
-    public Equipment(
-        IEnumerable<ItemSchema> itemSchemas,
-        ITypeMapper mapper
-    )
-        : this()
+            new byte[] { 0 })
     {
-        foreach (var schema in itemSchemas)
-        {
-            var item = mapper.Map<Item>(schema);
+        items ??= Array.Empty<Item>();
+
+        foreach (var item in items)
             Objects[item.Slot] = item;
-        }
     }
 
     public bool TryEquip(Item item, out Item? returnedItem)

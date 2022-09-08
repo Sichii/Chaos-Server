@@ -1,6 +1,6 @@
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Scripts.Interfaces;
+using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Scripts.Abstractions;
 
@@ -12,5 +12,5 @@ public abstract class SkillScriptBase : ScriptBase, ISkillScript
     public virtual void OnForgotten(Aisling aisling) { }
     public virtual void OnLearned(Aisling aisling) { }
 
-    public virtual void OnUse(Aisling aisling) { }
+    public virtual void OnUse(Creature source) { }
 }

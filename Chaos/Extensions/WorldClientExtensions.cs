@@ -1,4 +1,4 @@
-using Chaos.Clients.Interfaces;
+using Chaos.Clients.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 

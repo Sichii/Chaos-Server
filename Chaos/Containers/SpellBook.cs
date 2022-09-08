@@ -1,26 +1,20 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Services.Mappers.Interfaces;
 
 namespace Chaos.Containers;
 
 public class SpellBook : PanelBase<Spell>
 {
-    public SpellBook()
+    public SpellBook(IEnumerable<Spell>? spells = null)
         : base(
             PanelType.SpellBook,
             90,
-            new byte[] { 0, 36, 72 }) { }
-
-    public SpellBook(IEnumerable<SpellSchema> spelSchemas, ITypeMapper mapper)
-        : this()
+            new byte[] { 0, 36, 72 })
     {
-        foreach (var schema in spelSchemas)
-        {
-            var spell = mapper.Map<Spell>(schema);
+        spells ??= Array.Empty<Spell>();
+
+        foreach (var spell in spells)
             Objects[spell.Slot] = spell;
-        }
     }
 }

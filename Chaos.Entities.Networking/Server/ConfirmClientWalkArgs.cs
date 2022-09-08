@@ -1,6 +1,6 @@
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
-using Chaos.Packets.Interfaces;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Entities.Networking.Server;
 

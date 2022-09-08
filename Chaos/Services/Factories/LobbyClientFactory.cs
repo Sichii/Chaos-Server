@@ -1,9 +1,9 @@
 using System.Net.Sockets;
 using Chaos.Clients;
-using Chaos.Cryptography.Interfaces;
-using Chaos.Packets.Interfaces;
-using Chaos.Services.Factories.Interfaces;
-using Chaos.Services.Hosted.Interfaces;
+using Chaos.Cryptography.Abstractions;
+using Chaos.Packets.Abstractions;
+using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Hosted.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

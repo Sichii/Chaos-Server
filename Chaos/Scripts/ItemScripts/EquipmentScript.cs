@@ -10,22 +10,22 @@ public class EquipmentScript : ItemScriptBase
     public EquipmentScript(Item item)
         : base(item) { }
 
-    public override void OnUse(Aisling aisling)
+    public override void OnUse(Aisling source)
     {
         //gender check
-        if ((Source.Template.Gender != aisling.Gender) && (Source.Template.Gender != Gender.Unisex))
+        if ((Source.Template.Gender != source.Gender) && (Source.Template.Gender != Gender.Unisex))
             return;
 
         var slot = Source.Slot;
 
         //try equip,
-        if (aisling.Equipment.TryEquip(Source, out var returnedItem))
+        if (source.Equipment.TryEquip(Source, out var returnedItem))
         {
-            aisling.Inventory.Remove(slot);
-            Source.Script.OnEquipped(aisling);
+            source.Inventory.Remove(slot);
+            Source.Script.OnEquipped(source);
 
             if (returnedItem != null)
-                aisling.Inventory.TryAddToNextSlot(returnedItem);
+                source.Inventory.TryAddToNextSlot(returnedItem);
         }
     }
 }

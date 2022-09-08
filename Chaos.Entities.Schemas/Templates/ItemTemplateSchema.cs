@@ -1,20 +1,20 @@
 using Chaos.Common.Definitions;
-using Chaos.Entities.Schemas.World;
+using Chaos.Entities.Schemas.Aisling;
 
 namespace Chaos.Entities.Schemas.Templates;
 
 public record ItemTemplateSchema : PanelObjectTemplateSchema
 {
-    public bool AccountBound { get; init; }
-    public AdvClass? AdvClass { get; init; }
-    public BaseClass? BaseClass { get; init; }
-    public DisplayColor Color { get; init; }
-    public ushort? DisplaySprite { get; init; }
-    public EquipmentType? EquipmentType { get; init; }
-    public Gender? Gender { get; init; }
-    public int? MaxDurability { get; init; }
-    public int MaxStacks { get; init; } = 1;
-    public AttributesSchema? Modifiers { get; init; }
-    public int Value { get; init; }
-    public byte Weight { get; init; }
+    public required bool AccountBound { get; init; }
+    public required AdvClass? AdvClass { get; init; }
+    public required BaseClass? BaseClass { get; init; }
+    public required DisplayColor Color { get; init; }
+    public required ushort? DisplaySprite { get; init; }
+    public required EquipmentType? EquipmentType { get; init; }
+    public required Gender? Gender { get; init; }
+    public required int? MaxDurability { get; init; }
+    public required int MaxStacks { get; init; } = 1;
+    public required AttributesSchema? Modifiers { get; init; }
+    public required int Value { get; init; }
+    public required byte Weight { get; init; }
 }

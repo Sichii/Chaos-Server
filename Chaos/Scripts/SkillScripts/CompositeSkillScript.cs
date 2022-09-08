@@ -1,6 +1,6 @@
 using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.Abstractions;
-using Chaos.Scripts.Interfaces;
 
 namespace Chaos.Scripts.SkillScripts;
 
@@ -18,9 +18,9 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
             component.OnLearned(aisling);
     }
 
-    public void OnUse(Aisling aisling)
+    public void OnUse(Creature source)
     {
         foreach (var component in Components)
-            component.OnUse(aisling);
+            component.OnUse(source);
     }
 }

@@ -1,7 +1,6 @@
 using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Scripts.Abstractions;
-using Chaos.Scripts.Interfaces;
 
 namespace Chaos.Scripts.SpellScripts;
 

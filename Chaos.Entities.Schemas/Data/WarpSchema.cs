@@ -4,6 +4,6 @@ namespace Chaos.Entities.Schemas.Data;
 
 public record WarpSchema
 {
-    public Location Destination { get; init; }
-    public Point Source { get; init; }
+    public required Location Destination { get; init; }
+    public required Point Source { get; init; }
 }

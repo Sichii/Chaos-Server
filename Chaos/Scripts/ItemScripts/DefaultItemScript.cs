@@ -10,5 +10,5 @@ public class DefaultItemScript : ItemScriptBase
     public DefaultItemScript(Item item)
         : base(item) { }
 
-    public override void OnUse(Aisling aisling) => aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't use that");
+    public override void OnUse(Aisling source) => source.Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't use that");
 }

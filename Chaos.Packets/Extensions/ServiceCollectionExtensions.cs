@@ -1,6 +1,6 @@
 using System.Text;
 using Chaos.Core.Utilities;
-using Chaos.Packets.Interfaces;
+using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Packets.Extensions;

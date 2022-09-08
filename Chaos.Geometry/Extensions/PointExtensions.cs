@@ -1,5 +1,5 @@
-﻿using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
+﻿using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.Definitions;
 
 namespace Chaos.Geometry.Extensions;
 
@@ -47,11 +47,21 @@ public static class PointExtensions
 
         if (point.X > other.X)
         {
-            if (point.X - other.X > degree)
+            var xDegree = point.X - other.X;
+            
+            //if xdegree is higher, the point is more to the right of the other point
+            //if xdegree is equal, there's a 50% chance to get the vertical or horizonal direction
+            if ((xDegree > degree) || ((xDegree == degree) && (Random.Shared.Next(0, 101) < 50)))
                 direction = Direction.Right;
         } else if (point.X < other.X)
-            if (other.X - point.X > degree)
+        {
+            var xDegree = other.X - point.X;
+            
+            //if xdegree is higher, the point is more to the right of the other point
+            //if xdegree is equal, there's a 50% chance to get the vertical or horizonal direction
+            if ((xDegree > degree) || ((xDegree == degree) && (Random.Shared.Next(0, 101) < 50)))
                 direction = Direction.Left;
+        }
 
         return direction;
     }
@@ -91,6 +101,30 @@ public static class PointExtensions
 
                     break;
             }
+    }
+
+    /// <summary>
+    /// Orders points by their X or Y values, based on the direction given.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
+    {
+        if (points == null)
+            throw new ArgumentNullException(nameof(points));
+
+        if (direction == Direction.Invalid)
+            throw new ArgumentOutOfRangeException(nameof(direction));
+
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        return direction switch
+        {
+            Direction.Up    => points.OrderBy(p => p.Y),
+            Direction.Right => points.OrderByDescending(p => p.X),
+            Direction.Down  => points.OrderByDescending(p => p.Y),
+            Direction.Left  => points.OrderBy(p => p.X),
+            _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+        };
     }
 
     /// <summary>

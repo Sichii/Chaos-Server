@@ -1,8 +1,8 @@
 using System.Net.Sockets;
-using Chaos.Clients.Interfaces;
+using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
-using Chaos.Cryptography.Interfaces;
+using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
 using Chaos.Entities.Networking.Server;
 using Chaos.Geometry.Definitions;
@@ -12,13 +12,13 @@ using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
+using Chaos.Packets.Abstractions;
 using Chaos.Packets.Definitions;
-using Chaos.Packets.Interfaces;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Hosted.Interfaces;
-using Chaos.Services.Mappers.Interfaces;
+using Chaos.Services.Caches.Abstractions;
+using Chaos.Services.Hosted.Abstractions;
+using Chaos.Services.Mappers.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
-using ServerPacket = Chaos.Utilities.ServerPacket;
 
 namespace Chaos.Clients;
 
@@ -115,7 +115,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendCancelCasting()
     {
-        var packet = ServerPacket.FromData(ServerOpCode.CancelCasting);
+        var packet = ServerPacketEx.FromData(ServerOpCode.CancelCasting);
         Send(ref packet);
     }
 
@@ -142,11 +142,14 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendCooldown(PanelObjectBase panelObjectBase)
     {
+        if (!panelObjectBase.Cooldown.HasValue)
+            return;
+
         var args = new CooldownArgs
         {
             IsSkill = panelObjectBase is Skill,
             Slot = panelObjectBase.Slot,
-            CooldownSecs = Convert.ToUInt32(panelObjectBase.Cooldown.TotalSeconds)
+            CooldownSecs = Convert.ToUInt32(panelObjectBase.Cooldown.Value.TotalSeconds)
         };
 
         Send(args);
@@ -186,8 +189,7 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new DoorArgs
         {
-            Doors = doors.Select(Mapper.Map<DoorInfo>)
-                         .ToList()
+            Doors = Mapper.MapMany<DoorInfo>(doors).ToList()
         };
 
         if (args.Doors.Any())
@@ -339,14 +341,14 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapChangeComplete()
     {
-        var packet = ServerPacket.FromData(ServerOpCode.MapChangeComplete, PacketSerializer.Encoding, new byte[2]);
+        var packet = ServerPacketEx.FromData(ServerOpCode.MapChangeComplete, PacketSerializer.Encoding, new byte[2]);
 
         Send(ref packet);
     }
 
     public void SendMapChangePending()
     {
-        var packet = ServerPacket.FromData(
+        var packet = ServerPacketEx.FromData(
             ServerOpCode.MapChangePending,
             PacketSerializer.Encoding,
             3,
@@ -396,7 +398,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapLoadComplete()
     {
-        var packet = ServerPacket.FromData(ServerOpCode.MapLoadComplete, PacketSerializer.Encoding, 0);
+        var packet = ServerPacketEx.FromData(ServerOpCode.MapLoadComplete, PacketSerializer.Encoding, 0);
 
         Send(ref packet);
     }
@@ -474,7 +476,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendProfileRequest()
     {
-        var packet = ServerPacket.FromData(ServerOpCode.ProfileRequest);
+        var packet = ServerPacketEx.FromData(ServerOpCode.ProfileRequest);
 
         Send(ref packet);
     }
@@ -493,7 +495,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendRefreshResponse()
     {
-        var packet = ServerPacket.FromData(ServerOpCode.RefreshResponse);
+        var packet = ServerPacketEx.FromData(ServerOpCode.RefreshResponse);
 
         Send(ref packet);
     }
@@ -627,22 +629,11 @@ public class WorldClient : SocketClientBase, IWorldClient
             WorldList = worldList
         };
 
-        //these 2 statements are graphed as opposing intersecting lines
-        //conal-positive (level range grows as level goes up)
-        //the idea here is to be able to calculate level ranges for 2 people
-        //on the edge of eachother's level range, but theyre both still
-        //in eachother's range
-        //if a flat range value was calculated based on level
-        //a low level person would be in a high level person's larger range,
-        //but the high level person would not be in the lower level person's range
-        var upperBound = Math.Floor(Aisling.StatSheet.Level + Aisling.StatSheet.Level / 5m + 3);
-        var lowerBound = Math.Ceiling(Math.Max(0, Aisling.StatSheet.Level * 5m - 15) / 6);
-
         foreach (var aisling in aislings)
         {
             var arg = Mapper.Map<WorldListMemberInfo>(aisling);
 
-            if ((aisling.StatSheet.Level <= upperBound) && (aisling.StatSheet.Level >= lowerBound))
+            if (Aisling.WithinLevelRange(aisling))
                 arg.Color = WorldListColor.WithinLevelRange;
 
             worldList.Add(arg);

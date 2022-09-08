@@ -1,4 +1,4 @@
-using Chaos.Cryptography.Interfaces;
+using Chaos.Cryptography.Abstractions;
 using Chaos.Packets;
 
 namespace Chaos.Networking.Extensions;

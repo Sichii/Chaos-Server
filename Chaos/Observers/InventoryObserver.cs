@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Observers.Interfaces;
+using Chaos.Observers.Abstractions;
 
 namespace Chaos.Observers;
 
@@ -14,14 +14,14 @@ public class InventoryObserver : IPanelObserver<Item>
     public void OnAdded(Item obj)
     {
         Aisling.Client.SendAddItemToPane(obj);
-        Aisling.StatSheet.AddWeight(obj.Template.Weight);
+        Aisling.UserStatSheet.AddWeight(obj.Template.Weight);
         Aisling.Client.SendAttributes(StatUpdateType.Primary);
     }
 
     public void OnRemoved(byte slot, Item obj)
     {
         Aisling.Client.SendRemoveItemFromPane(slot);
-        Aisling.StatSheet.AddWeight(-obj.Template.Weight);
+        Aisling.UserStatSheet.AddWeight(-obj.Template.Weight);
         Aisling.Client.SendAttributes(StatUpdateType.Primary);
     }
 

@@ -1,21 +1,16 @@
-using Chaos.Clients.Interfaces;
+using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
-using Chaos.Containers.Interfaces;
+using Chaos.Containers.Abstractions;
 using Chaos.Data;
-using Chaos.Definitions;
-using Chaos.Entities.Schemas.World;
 using Chaos.Extensions;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Hosted.Options;
-using Chaos.Services.Mappers.Interfaces;
-using Chaos.Services.Utility.Interfaces;
 using Microsoft.Extensions.Logging;
 using PointExtensions = Chaos.Geometry.Extensions.PointExtensions;
 
@@ -42,96 +37,31 @@ public class Aisling : Creature
     public SocialStatus SocialStatus { get; set; }
     public UserState UserState { get; set; }
     public ActiveObject ActiveObject { get; }
-    public Bank Bank { get; }
-    public IEquipment Equipment { get; }
-    public IgnoreList IgnoreList { get; }
-    public IInventory Inventory { get; }
-    public Legend Legend { get; }
-    public UserOptions Options { get; }
-    public IPanel<Skill> SkillBook { get; }
-    public IPanel<Spell> SpellBook { get; }
-    public override UserStatSheet StatSheet { get; }
-    public TitleList Titles { get; }
+    public Bank Bank { get; private set; }
+    public IEquipment Equipment { get; private set; }
+    public IgnoreList IgnoreList { get; init; }
+    public IInventory Inventory { get; private set; }
+    public Legend Legend { get; private set; }
+    public UserOptions Options { get; init; }
+    public IPanel<Skill> SkillBook { get; private set; }
+    public IPanel<Spell> SpellBook { get; private set; }
+    public override StatSheet StatSheet => UserStatSheet;
+    public UserStatSheet UserStatSheet { get; init; }
+    public TitleList Titles { get; init; }
     public override CreatureType Type => CreatureType.Aisling;
     protected override ILogger<Aisling> Logger { get; }
 
     public Aisling(
-        AislingSchema schema,
-        ISimpleCache simpleCache,
-        ICloningService<Item> itemCloner,
-        ITypeMapper mapper,
+        string name,
+        MapInstance mapInstance,
+        IPoint point,
         IExchangeFactory exchangeFactory,
         ILogger<Aisling> logger
     )
-        : base(
-            schema.Name,
-            0,
-            simpleCache.GetObject<MapInstance>(schema.MapInstanceId),
-            new Point(schema.X, schema.Y))
+        : this(name, mapInstance, point)
     {
         ExchangeFactory = exchangeFactory;
         Logger = logger;
-
-        BodyColor = schema.BodyColor;
-        BodySprite = schema.BodySprite;
-        Direction = schema.Direction;
-        FaceSprite = schema.FaceSprite;
-        GamePoints = schema.GamePoints;
-        Gender = schema.Gender;
-        Gold = schema.Gold;
-        GuildName = schema.GuildName;
-        GuildTitle = schema.GuildTitle;
-        HairColor = schema.HairColor;
-        HairStyle = schema.HairStyle;
-        Name = schema.Name;
-        Nation = schema.Nation;
-        X = schema.X;
-        Y = schema.Y;
-
-        StatSheet = mapper.Map<UserStatSheet>(schema.StatSheet);
-        Options = mapper.Map<UserOptions>(schema.UserOptions);
-        Titles = new TitleList(schema.Titles);
-        IgnoreList = new IgnoreList(schema.IgnoreList);
-        Legend = new Legend(schema.Legend.Select(s => new LegendMark(s)));
-
-        Bank = new Bank(
-            schema.BankedGold,
-            schema.Bank,
-            mapper,
-            itemCloner);
-
-        Equipment = new Equipment(schema.Equipment, mapper);
-        Inventory = new Inventory(itemCloner, schema.Inventory, mapper);
-        SkillBook = new SkillBook(schema.SkillBook, mapper);
-        SpellBook = new SpellBook(schema.SpellBook, mapper);
-        //TODO: Effects
-        ActiveObject = new ActiveObject();
-        Client = null!;
-        Portrait = Array.Empty<byte>();
-        ProfileText = string.Empty;
-
-        //add observers
-        var inventoryObserver = new InventoryObserver(this);
-        var spellBookObserver = new SpellBookObserver(this);
-        var skillBookObserver = new SkillBookObserver(this);
-        var equipmentObserver = new EquipmentObserver(this);
-
-        Inventory.AddObserver(inventoryObserver);
-        SpellBook.AddObserver(spellBookObserver);
-        SkillBook.AddObserver(skillBookObserver);
-        Equipment.AddObserver(equipmentObserver);
-
-        foreach (var item in Equipment)
-            equipmentObserver.OnAdded(item);
-
-        foreach (var item in Inventory)
-            inventoryObserver.OnAdded(item);
-
-        foreach (var spell in SpellBook)
-            spellBookObserver.OnAdded(spell);
-
-        foreach (var skill in SkillBook)
-            skillBookObserver.OnAdded(skill);
     }
 
     //default user
@@ -151,7 +81,7 @@ public class Aisling : Creature
         BodySprite = Gender == Gender.Male ? BodySprite.Male : BodySprite.Female;
         HairStyle = hairStyle;
         HairColor = hairColor;
-        StatSheet = UserStatSheet.NewCharacter;
+        UserStatSheet = UserStatSheet.NewCharacter;
     }
 
     private Aisling(string name, MapInstance mapInstance, IPoint point)
@@ -162,7 +92,7 @@ public class Aisling : Creature
             point)
     {
         //initialize all the things
-        StatSheet = new UserStatSheet();
+        UserStatSheet = new UserStatSheet();
         Titles = new TitleList();
         Options = new UserOptions();
         IgnoreList = new IgnoreList();
@@ -182,6 +112,49 @@ public class Aisling : Creature
         Client = null!;
         Logger = null!;
         ExchangeFactory = null!;
+    }
+
+    public void Initialize(
+        IWorldClient client,
+        Bank bank,
+        Equipment equipment,
+        Inventory inventory,
+        SkillBook skillBook,
+        SpellBook spellBook,
+        Legend legend
+    )
+    {
+        Client = client;
+        Bank = bank;
+        Equipment = equipment;
+        Inventory = inventory;
+        SkillBook = skillBook;
+        SpellBook = spellBook;
+        Legend = legend;
+        
+        //add observers
+        var inventoryObserver = new InventoryObserver(this);
+        var spellBookObserver = new SpellBookObserver(this);
+        var skillBookObserver = new SkillBookObserver(this);
+        var equipmentObserver = new EquipmentObserver(this);
+
+        inventory.AddObserver(inventoryObserver);
+        spellBook.AddObserver(spellBookObserver);
+        skillBook.AddObserver(skillBookObserver);
+        equipment.AddObserver(equipmentObserver);
+
+        //trigger observers
+        foreach (var item in equipment)
+            equipmentObserver.OnAdded(item);
+
+        foreach (var item in inventory)
+            inventoryObserver.OnAdded(item);
+
+        foreach (var spell in spellBook)
+            spellBookObserver.OnAdded(spell);
+
+        foreach (var skill in skillBook)
+            skillBookObserver.OnAdded(skill);
     }
 
     protected override void ApplyAcModifier(ref float damage)
@@ -213,12 +186,12 @@ public class Aisling : Creature
         {
             //separate each stack into it's most condensed possible form
             var maxStacks = set.Item.Template.MaxStacks;
-            var estimatedStacks = set.Count / maxStacks + (set.Count & maxStacks);
+            var estimatedStacks = (int)Math.Ceiling(set.Count / (decimal)maxStacks);
             weightSum += set.Item.Template.Weight * estimatedStacks;
             slotSum += estimatedStacks;
         }
 
-        return (StatSheet.CurrentWeight + weightSum <= StatSheet.MaxWeight) && (Inventory.AvailableSlots >= slotSum);
+        return (UserStatSheet.CurrentWeight + weightSum <= UserStatSheet.MaxWeight) && (Inventory.AvailableSlots >= slotSum);
     }
 
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
@@ -229,6 +202,50 @@ public class Aisling : Creature
         Client.SendAttributes(StatUpdateType.ExpGold);
     }
 
+    public void GiveExp(long amount)
+    {
+        if (amount + UserStatSheet.TotalExp > uint.MaxValue)
+            amount = uint.MaxValue - UserStatSheet.TotalExp;
+
+        //if you're at max level, you don't gain exp
+        if (UserStatSheet.Level >= WorldOptions.Instance.MaxLevel)
+            return;
+
+        Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have gained {amount} experience!");
+
+        while (amount > 0)
+        {
+            var expToGive = Math.Min(amount, UserStatSheet.ToNextLevel);
+            UserStatSheet.AddTotalExp(expToGive);
+            UserStatSheet.AddTNL(-expToGive);
+            
+            amount -= expToGive;
+
+            if (UserStatSheet.ToNextLevel <= 0)
+                LevelUp();
+        }
+
+        Client.SendAttributes(StatUpdateType.Full);
+    }
+
+    public void LevelUp()
+    {
+        UserStatSheet.IncrementLevel();
+        //TODO: what should go up with level?
+    }
+
+    public void Pickup(GroundItem groundItem, byte destinationSlot)
+    {
+        var item = groundItem.Item;
+        
+        if (Inventory.TryAdd(destinationSlot, item))
+        {
+            Logger.LogDebug("{UserName} picked up {Item}", Name, item);
+            MapInstance.RemoveObject(groundItem);
+            item.Script.OnPickup(this);
+        }
+    }
+    
     public override void OnClicked(Aisling source)
     {
         if (source.Equals(this))
@@ -237,7 +254,7 @@ public class Aisling : Creature
             source.Client.SendProfile(this);
     }
 
-    public override void OnGoldDroppedOn(int amount, Aisling source)
+    public override void OnGoldDroppedOn(Aisling source, int amount)
     {
         if (!TryStartExchange(source, out var exchange))
             return;
@@ -245,7 +262,7 @@ public class Aisling : Creature
         exchange.SetGold(source, amount);
     }
 
-    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
+    public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
         if (!TryStartExchange(source, out var exchange))
             return;
@@ -294,7 +311,7 @@ public class Aisling : Creature
     }
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
-    
+
     private bool TryStartExchange(Aisling source, [MaybeNullWhen(false)] out Exchange exchange)
     {
         exchange = ExchangeFactory.CreateExchange(source, this);

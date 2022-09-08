@@ -1,5 +1,5 @@
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Factories.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Services.Factories;

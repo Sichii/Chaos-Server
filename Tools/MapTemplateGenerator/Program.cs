@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Chaos.Core.Collections.Synchronized;
 using Chaos.Entities.Schemas.Templates;
+using Chaos.Geometry;
 using Chaos.Geometry.JsonConverters;
 
 const string FILENAME = "Master_Maplist.txt";
@@ -60,7 +61,8 @@ async ValueTask ParseLineToFileAsync(string line, CancellationToken _)
         {
             TemplateKey = mapIdNum.ToString(),
             Width = widthNum,
-            Height = heightNum
+            Height = heightNum,
+            WarpPoints = Array.Empty<Point>()
         };
 
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);

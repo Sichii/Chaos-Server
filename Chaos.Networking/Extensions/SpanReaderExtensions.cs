@@ -1,5 +1,5 @@
 using Chaos.Geometry;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 using Chaos.IO.Memory;
 
 namespace Chaos.Networking.Extensions;

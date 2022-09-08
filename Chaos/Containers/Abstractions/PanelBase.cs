@@ -1,8 +1,7 @@
 using Chaos.Common.Definitions;
-using Chaos.Containers.Interfaces;
 using Chaos.Core.Synchronization;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Observers.Interfaces;
+using Chaos.Observers.Abstractions;
 
 namespace Chaos.Containers.Abstractions;
 

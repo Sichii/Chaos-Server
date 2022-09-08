@@ -4,30 +4,28 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Chaos.Clients.Interfaces;
+using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography;
 using Chaos.Data;
-using Chaos.Definitions;
 using Chaos.Entities.Networking;
 using Chaos.Entities.Networking.Client;
 using Chaos.Extensions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Interfaces;
 using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
+using Chaos.Packets.Abstractions;
 using Chaos.Packets.Definitions;
-using Chaos.Packets.Interfaces;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Factories.Interfaces;
-using Chaos.Services.Hosted.Interfaces;
+using Chaos.Services.Caches.Abstractions;
+using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Hosted.Abstractions;
 using Chaos.Services.Hosted.Options;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Serialization.Abstractions;
 using Chaos.Time;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -397,7 +395,7 @@ public class WorldServer : ServerBase, IWorldServer
         if (!client.Aisling.WithinRange(target, Options.TradeRange))
             return default;
 
-        target.OnGoldDroppedOn(amount, client.Aisling);
+        target.OnGoldDroppedOn(client.Aisling, amount);
 
         return default;
     }
@@ -511,9 +509,7 @@ public class WorldServer : ServerBase, IWorldServer
             return default;
 
         Logger.LogDebug("{UserName} dropped {Item}", client.Aisling.Name, item);
-        var groundItem = new GroundItem(item, map, destinationPoint);
-        map.AddObject(groundItem, destinationPoint);
-        item.Script.OnDropped(client.Aisling, map);
+        client.Aisling.Drop(destinationPoint, item);
 
         return default;
     }
@@ -539,7 +535,7 @@ public class WorldServer : ServerBase, IWorldServer
         if (item.Count < count)
             return default;
 
-        target.OnItemDroppedOn(sourceSlot, count, client.Aisling);
+        target.OnItemDroppedOn(client.Aisling, sourceSlot, count);
 
         return default;
     }
@@ -590,12 +586,7 @@ public class WorldServer : ServerBase, IWorldServer
         if (!client.Aisling.CanCarry(obj.Item))
             return default;
 
-        if (client.Aisling.Inventory.TryAdd(destinationSlot, obj.Item))
-        {
-            Logger.LogDebug("{UserName} picked up {Item}", client.Aisling.Name, obj.Item);
-            map.RemoveObject(obj);
-            obj.Item.Script.OnPickup(client.Aisling);
-        }
+        client.Aisling.Pickup(obj, destinationSlot);
 
         return default;
     }
@@ -632,8 +623,8 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<RaiseStatArgs>(ref clientPacket);
 
-        if (client.Aisling.StatSheet.UnspentPoints > 0)
-            if (client.Aisling.StatSheet.IncrementStat(args.Stat))
+        if (client.Aisling.UserStatSheet.UnspentPoints > 0)
+            if (client.Aisling.UserStatSheet.IncrementStat(args.Stat))
                 client.SendAttributes(StatUpdateType.Full);
 
         return default;

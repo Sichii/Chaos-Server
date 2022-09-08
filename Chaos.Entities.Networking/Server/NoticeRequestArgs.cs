@@ -1,4 +1,4 @@
-using Chaos.Packets.Interfaces;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Entities.Networking.Server;
 

@@ -1,11 +1,13 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Definitions;
-using Chaos.Effects.Interfaces;
+using Chaos.Effects.Abstractions;
+using Chaos.Entities.Schemas.Aisling;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
+using Chaos.Objects.Panel;
 using Chaos.Services.Hosted.Options;
+using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World.Abstractions;
@@ -65,9 +67,9 @@ public abstract class Creature : NamedEntity, IEffected
 
     public void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
-    public abstract void OnGoldDroppedOn(int amount, Aisling source);
+    public abstract void OnGoldDroppedOn(Aisling source, int amount);
 
-    public abstract void OnItemDroppedOn(byte slot, byte count, Aisling source);
+    public abstract void OnItemDroppedOn(Aisling source, byte slot, byte count);
 
     public void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
 
@@ -115,6 +117,23 @@ public abstract class Creature : NamedEntity, IEffected
 
     public virtual void Update(TimeSpan delta) => Effects.Update(delta);
 
+    public virtual bool WillCollideWith(Creature creature)
+    {
+        //merchanges will collide with everything
+        if ((creature.Type == CreatureType.Merchant) || (Type == CreatureType.Merchant))
+            return true;
+
+        //walkthrough creatures only collide with eachother (and merchants)
+        if ((Type == CreatureType.WalkThrough) && (creature.Type == CreatureType.WalkThrough))
+            return true;
+
+        //normal monsters don't collide with walkthrough creatures
+        if ((Type == CreatureType.Normal) && (creature.Type != CreatureType.WalkThrough))
+            return true;
+
+        return false;
+    }
+    
     public virtual void Walk(Direction direction)
     {
         Direction = direction;
@@ -143,4 +162,86 @@ public abstract class Creature : NamedEntity, IEffected
 
         MapInstance.ActivateReactors(this, ReactorTileType.Walk);
     }
+    
+    public void Pathfind(IPoint target)
+    {
+        var nearbyCreatures = MapInstance.ObjectsWithinRange<Creature>(this)
+                                         .Where(WillCollideWith)
+                                         .ToList<IPoint>();
+
+        var direction = MapInstance.Pathfinder.Pathfind(
+            MapInstance.InstanceId,
+            this,
+            target,
+            Type == CreatureType.WalkThrough,
+            nearbyCreatures);
+
+        if (direction == Direction.Invalid)
+            return;
+
+        Walk(direction);
+    }
+
+    public void Wander()
+    {
+        var nearbyCreatures = MapInstance.ObjectsWithinRange<Creature>(this)
+                                         .Where(WillCollideWith)
+                                         .ToList<IPoint>();
+
+        var direction = MapInstance.Pathfinder.Wander(
+            MapInstance.InstanceId,
+            this,
+            Type == CreatureType.WalkThrough,
+            nearbyCreatures);
+
+        if (direction == Direction.Invalid)
+            return;
+        
+        Walk(direction);
+    }
+
+    public virtual void Drop(IPoint point, IEnumerable<Item> items)
+    {
+        var groundItems = items.Select(i => new GroundItem(i, MapInstance, point))
+                               .ToList();
+
+        if (!groundItems.Any())
+            return;
+        
+        MapInstance.AddObjects(groundItems);
+        
+        foreach(var groundItem in groundItems)
+            groundItem.Item.Script.OnDropped(this, MapInstance);
+    }
+
+    public virtual void DropGold(IPoint point, int amount)
+    {
+        if (amount <= 0)
+            return;
+        
+        var money = new Money(amount, MapInstance, point);
+        
+        MapInstance.AddObject(money, point);
+    }
+
+    public virtual bool WithinLevelRange(Creature other)
+    {
+        //these 2 statements are graphed as opposing intersecting lines
+        //conal-positive (level range grows as level goes up)
+        //the idea here is to be able to calculate level ranges for 2 people
+        //on the edge of eachother's level range, but theyre both still
+        //in eachother's range
+        //if a flat range value was calculated based on level
+        //a low level person would be in a high level person's larger range,
+        //but the high level person would not be in the lower level person's range
+        var upperBound = LevelRange.GetUpperBound(StatSheet.Level);
+        var lowerBound = LevelRange.GetLowerBound(StatSheet.Level);
+
+        if((other.StatSheet.Level <= upperBound) && (other.StatSheet.Level >= lowerBound))
+            return true;
+
+        return false;
+    }
+    
+    public void Drop(IPoint point, params Item[] items) => Drop(point, items.AsEnumerable());
 }

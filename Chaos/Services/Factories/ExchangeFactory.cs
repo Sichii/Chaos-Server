@@ -1,6 +1,6 @@
 using Chaos.Containers;
 using Chaos.Objects.World;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Factories.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;

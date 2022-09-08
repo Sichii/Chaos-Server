@@ -2,19 +2,21 @@ using Chaos.Common.Definitions;
 using Chaos.Core.Collections;
 using Chaos.Core.Synchronization;
 using Chaos.Data;
-using Chaos.Definitions;
-using Chaos.Entities.Schemas.World;
 using Chaos.Extensions;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.Definitions;
+using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Caches.Interfaces;
+using Chaos.Pathfinding.Abstractions;
+using Chaos.Scripts.Abstractions;
+using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
-using Chaos.Time.Interfaces;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Containers;
 
-public class MapInstance : IDeltaUpdatable
+public class MapInstance : IScriptedMap, IDeltaUpdatable
 {
     private readonly TypeCheckingDictionary<uint, MapEntity> Objects;
     public MapFlags Flags { get; set; }
@@ -22,36 +24,31 @@ public class MapInstance : IDeltaUpdatable
     public sbyte Music { get; set; }
     public string Name { get; set; }
     public MapTemplate Template { get; set; }
+    public IPathfindingService Pathfinder { get; set; } = null!;
+    private readonly ICollection<MonsterSpawn> MonsterSpawns;
     public Warp[][] WarpGroups { get; set; } = Array.Empty<Warp[]>();
     public AutoReleasingMonitor Sync { get; }
 
-    public MapInstance(MapTemplate template, string name, string instanceId)
+    public MapInstance(
+        MapTemplate template,
+        IScriptProvider scriptProvider,
+        string name,
+        string instanceId,
+        ICollection<string>? extraScriptKeys = null
+    )
     {
         Name = name;
         InstanceId = instanceId;
         Objects = new TypeCheckingDictionary<uint, MapEntity>();
+        MonsterSpawns = new List<MonsterSpawn>();
         Sync = new AutoReleasingMonitor();
         Template = template;
-    }
+        ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
 
-    public MapInstance(MapInstanceSchema schema, ISimpleCache simpleCache)
-        : this(simpleCache.GetObject<MapTemplate>(schema.TemplateKey), schema.Name, schema.InstanceId)
-    {
-        Flags = schema.Flags;
-        Music = schema.Music;
+        if (extraScriptKeys != null)
+            ScriptKeys.AddRange(extraScriptKeys);
 
-        foreach (var doorTemplate in Template.Doors.Values)
-        {
-            var door = new Door(doorTemplate, this);
-            SimpleAdd(door);
-        }
-
-        foreach (var warpSchema in schema.Warps)
-        {
-            var warp = new Warp(warpSchema, InstanceId);
-            var warpTile = new WarpTile(warp, simpleCache);
-            SimpleAdd(warpTile);
-        }
+        Script = scriptProvider.CreateScript<IMapScript, MapInstance>(ScriptKeys, this);
     }
 
     public void ActivateReactors(Creature creature, ReactorTileType reactorTileType)
@@ -104,8 +101,21 @@ public class MapInstance : IDeltaUpdatable
                 nearbyUser.Client.SendVisibleObjects(visibleEntity);
     }
 
+    public void AddSpawner(MonsterSpawn monsterSpawn)
+    {
+        using var @lock = Sync.Enter();
+
+        monsterSpawn.MapInstance = this;
+        monsterSpawn.SpawnArea ??= new Rectangle(0, 0, Template.Width, Template.Height);
+        
+        MonsterSpawns.Add(monsterSpawn);
+    }
+
     public void AddObjects<T>(ICollection<T> visibleObjects) where T: VisibleEntity
     {
+        if (visibleObjects.Count == 0)
+            return;
+        
         using var @lock = Sync.Enter();
 
         foreach (var visibleObj in visibleObjects)
@@ -167,6 +177,16 @@ public class MapInstance : IDeltaUpdatable
     public bool IsWall(IPoint point) => Template.IsWall(point);
 
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
+
+    public IEnumerable<T> AllObjects<T>() where T : MapEntity
+    {
+        if (Sync.IsEntered)
+            return Objects.Values<T>();
+        
+        using var @lock = Sync.Enter();
+
+        return Objects.Values<T>().ToList();
+    }
 
     public IEnumerable<T> ObjectsAtPoint<T>(IPoint point) where T: MapEntity
     {
@@ -283,5 +303,13 @@ public class MapInstance : IDeltaUpdatable
 
         foreach (var updateable in Objects.Values<IDeltaUpdatable>())
             updateable.Update(delta);
+        
+        foreach(var spawn in MonsterSpawns)
+            spawn.Update(delta);
     }
+
+    /// <inheritdoc />
+    public ISet<string> ScriptKeys { get; }
+    /// <inheritdoc />
+    public IMapScript Script { get; }
 }

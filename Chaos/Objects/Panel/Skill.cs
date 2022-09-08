@@ -1,9 +1,7 @@
-using Chaos.Entities.Networking.Server;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Scripts.Interfaces;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Objects.World.Abstractions;
+using Chaos.Scripts.Abstractions;
+using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -18,7 +16,7 @@ public class Skill : PanelObjectBase, IScriptedSkill
 
     public Skill(
         SkillTemplate template,
-        ISkillScriptFactory skillScriptFactory,
+        IScriptProvider scriptProvider,
         ICollection<string>? extraScriptKeys = null,
         ulong? uniqueId = null,
         int? elapsedMs = null
@@ -30,18 +28,8 @@ public class Skill : PanelObjectBase, IScriptedSkill
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
 
-        Script = skillScriptFactory.CreateScript(ScriptKeys, this);
+        Script = scriptProvider.CreateScript<ISkillScript, Skill>(ScriptKeys, this);
     }
 
-    public Skill(
-        SkillSchema schema,
-        ISimpleCache simpleCache,
-        ISkillScriptFactory skillScriptFactory
-    )
-        : this(
-            simpleCache.GetObject<SkillTemplate>(schema.TemplateKey),
-            skillScriptFactory,
-            schema.ScriptKeys,
-            schema.UniqueId,
-            schema.ElapsedMs) { }
+    public void Use(Creature source) => Script.OnUse(source);
 }
