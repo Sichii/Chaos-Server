@@ -1,5 +1,5 @@
 using Chaos.Geometry;
-using Chaos.Pathfinding.Interfaces;
+using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;
 

@@ -1,5 +1,5 @@
-using Chaos.Geometry.Interfaces;
-using Chaos.Packets.Interfaces;
+using Chaos.Geometry.Abstractions;
+using Chaos.Packets.Abstractions;
 
 namespace Chaos.Entities.Networking.Client;
 

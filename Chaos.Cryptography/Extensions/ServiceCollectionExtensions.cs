@@ -1,4 +1,4 @@
-using Chaos.Cryptography.Interfaces;
+using Chaos.Cryptography.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Cryptography.Extensions;

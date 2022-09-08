@@ -4,7 +4,7 @@ namespace Chaos.Entities.Schemas.Templates;
 
 public record SpellTemplateSchema : PanelObjectTemplateSchema
 {
-    public byte CastLines { get; init; }
-    public string? Prompt { get; init; }
-    public SpellType SpellType { get; init; }
+    public required byte CastLines { get; init; }
+    public required string? Prompt { get; init; }
+    public required SpellType SpellType { get; init; }
 }

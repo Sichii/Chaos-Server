@@ -1,33 +1,36 @@
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Chaos.Clients.Interfaces;
+using Chaos.Clients.Abstractions;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Geometry.JsonConverters;
+using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
-using Chaos.Networking.Interfaces;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Scripts.Interfaces;
+using Chaos.Scripts.Abstractions;
 using Chaos.Services.Caches;
-using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Caches.Abstractions;
 using Chaos.Services.Caches.Options;
 using Chaos.Services.Factories;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Hosted;
-using Chaos.Services.Hosted.Interfaces;
+using Chaos.Services.Hosted.Abstractions;
 using Chaos.Services.Hosted.Options;
 using Chaos.Services.Mappers;
-using Chaos.Services.Mappers.Interfaces;
+using Chaos.Services.Mappers.Abstractions;
+using Chaos.Services.Scripting;
+using Chaos.Services.Scripting.Abstractions;
 using Chaos.Services.Security;
-using Chaos.Services.Security.Interfaces;
+using Chaos.Services.Security.Abstractions;
 using Chaos.Services.Security.Options;
 using Chaos.Services.Serialization;
-using Chaos.Services.Serialization.Interfaces;
+using Chaos.Services.Serialization.Abstractions;
 using Chaos.Services.Serialization.Options;
 using Chaos.Services.Utility;
-using Chaos.Services.Utility.Interfaces;
+using Chaos.Services.Utility.Abstractions;
 using Chaos.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +59,9 @@ public static class ServiceCollectionExtensions
                         o.Converters.Add(new JsonStringEnumConverter());
                     });
 
-        services.AddOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key)
+                .PostConfigure<IOptionsSnapshot<ChaosOptions>>(UserSaveManagerOptions.PostConfigure);
+
         services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
     }
 
@@ -96,18 +101,20 @@ public static class ServiceCollectionExtensions
 
     public static void AddScripting(this IServiceCollection services)
     {
-        services.AddSingleton<IScriptFactory<IItemScript, Item>, IItemScriptFactory, ItemScriptFactory>();
-        services.AddSingleton<IScriptFactory<ISkillScript, Skill>, ISkillScriptFactory, SkillScriptFactory>();
-        services.AddSingleton<IScriptFactory<ISpellScript, Spell>, ISpellScriptFactory, SpellScriptFactory>();
+        services.AddSingleton<IScriptFactory<IItemScript, Item>, ScriptFactory<IItemScript, Item>>();
+        services.AddSingleton<IScriptFactory<ISkillScript, Skill>, ScriptFactory<ISkillScript, Skill>>();
+        services.AddSingleton<IScriptFactory<ISpellScript, Spell>, ScriptFactory<ISpellScript, Spell>>();
+        services.AddSingleton<IScriptFactory<IMonsterScript, Monster>, ScriptFactory<IMonsterScript, Monster>>();
+        services.AddSingleton<IScriptFactory<IMapScript, MapInstance>, ScriptFactory<IMapScript, MapInstance>>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();
 
-        services.AddTransient<IScriptFactoryProvider, ScriptFactoryProvider>();
+        services.AddTransient<IScriptProvider, ScriptProvider>();
     }
 
     public static void AddServerAuthentication(this IServiceCollection services)
     {
         services.AddOptionsFromConfig<ActiveDirectoryCredentialManagerOptions>(Startup.ConfigKeys.Options.Key)
-                .PostConfigure(ActiveDirectoryCredentialManagerOptions.PostConfigure);
+                .PostConfigure<IOptionsSnapshot<ChaosOptions>>(ActiveDirectoryCredentialManagerOptions.PostConfigure);
 
         services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
         services.AddSingleton<IRedirectManager, RedirectManager>();
@@ -115,12 +122,14 @@ public static class ServiceCollectionExtensions
 
     public static void AddSimpleCaches(this IServiceCollection services)
     {
-        services.AddOptionsFromConfig<ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<SpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddOptionsFromConfig<MetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddCacheOptions<ItemTemplateCacheOptions>();
+        services.AddCacheOptions<SkillTemplateCacheOptions>();
+        services.AddCacheOptions<SpellTemplateCacheOptions>();
+        services.AddCacheOptions<MapTemplateCacheOptions>();
+        services.AddCacheOptions<MapInstanceCacheOptions>();
+        services.AddCacheOptions<MetafileCacheOptions>();
+        services.AddCacheOptions<MonsterTemplateCacheOptions>();
+        services.AddCacheOptions<LootTableCacheOptions>();
 
         services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
         services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
@@ -128,9 +137,20 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache<MapTemplate>, MapTemplateCache>();
         services.AddSingleton<ISimpleCache<MapInstance>, MapInstanceCache>();
         services.AddSingleton<ISimpleCache<Metafile>, MetafileCache>();
+        services.AddSingleton<ISimpleCache<MonsterTemplate>, MonsterTemplateCache>();
+        services.AddSingleton<ISimpleCache<LootTable>, LootTableCache>();
 
         services.AddSingleton<ISimpleCache, SimpleCache>();
         services.AddSingleton<ISimpleCacheProvider, SimpleCache>();
+    }
+
+    public static void AddCacheOptions<T>(this IServiceCollection services, string? subSection = null) where T : class, IFileCacheOptions
+    {
+        subSection ??= Startup.ConfigKeys.Options.Key;
+
+        services.AddOptionsFromConfig<T>(subSection)
+                .PostConfigure<IOptionsSnapshot<ChaosOptions>>((o, co) => o.UseRootDirectory(co.Value.StagingDirectory))
+                .Validate(o => !string.IsNullOrEmpty(o.Directory), "Directory must be set");
     }
 
     /// <summary>
@@ -155,10 +175,10 @@ public static class ServiceCollectionExtensions
         services.AddTransient<TI1, T>();
         services.AddTransient<TI2, T>();
     }
-    
+
     public static void AddTypeMappersFromAssembly(this IServiceCollection services)
     {
-        var genericInterfaceType = typeof(ITypeMapper<,>);
+        var genericInterfaceType = typeof(IMapperProfile<,>);
         var typeMapperImplementations = TypeLoader.LoadImplementationsOfGeneric(genericInterfaceType);
 
         foreach (var implType in typeMapperImplementations)
@@ -173,6 +193,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPanelObjectFactory<Item>, IItemFactory, ItemFactory>();
         services.AddTransient<IPanelObjectFactory<Skill>, ISkillFactory, SkillFactory>();
         services.AddTransient<IPanelObjectFactory<Spell>, ISpellFactory, SpellFactory>();
+        services.AddTransient<IMonsterFactory, MonsterFactory>();
         services.AddSingleton<IEffectFactory, EffectFactory>();
         services.AddTransient<IExchangeFactory, ExchangeFactory>();
 

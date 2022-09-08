@@ -2,14 +2,13 @@ using System.Net;
 using System.Net.Sockets;
 using Chaos.Core.Identity;
 using Chaos.Core.Synchronization;
-using Chaos.Cryptography.Interfaces;
+using Chaos.Cryptography.Abstractions;
 using Chaos.Entities.Networking;
 using Chaos.Entities.Networking.Server;
 using Chaos.IO.Memory;
 using Chaos.Networking.Extensions;
-using Chaos.Networking.Interfaces;
 using Chaos.Packets;
-using Chaos.Packets.Interfaces;
+using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Networking.Abstractions;

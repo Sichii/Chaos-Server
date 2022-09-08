@@ -2,7 +2,6 @@
 
 using System.Threading;
 using Chaos.Common.Definitions;
-using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Data;
 
@@ -20,13 +19,35 @@ public record UserStatSheet : StatSheet
     protected long _totalExp;
     protected int _unspentPoints;
 
-    public AdvClass AdvClass => _advClass;
-    public BaseClass BaseClass => _baseClass;
+    public AdvClass AdvClass
+    {
+        get => _advClass;
+        init => _advClass = value;
+    }
 
-    public int CurrentWeight => _currentWeight;
+    public BaseClass BaseClass
+    {
+        get => _baseClass;
+        init => _baseClass = value;
+    }
 
-    public bool Master => _master;
-    public int MaxWeight => _maxWeight;
+    public int CurrentWeight
+    {
+        get => _currentWeight;
+        init => _currentWeight = value;
+    }
+
+    public bool Master
+    {
+        get => _master;
+        init => _master = value;
+    }
+
+    public int MaxWeight
+    {
+        get => _maxWeight;
+        init => _maxWeight = value;
+    }
 
     public static UserStatSheet NewCharacter => new()
     {
@@ -47,33 +68,39 @@ public record UserStatSheet : StatSheet
         _advClass = AdvClass.None
     };
 
-    public uint ToNextAbility => Convert.ToUInt32(_toNextAbility);
-
-    public uint ToNextLevel => Convert.ToUInt32(_toNextLevel);
-
-    public uint TotalAbility => Convert.ToUInt32(_totalAbility);
-
-    public uint TotalExp => Convert.ToUInt32(_totalExp);
-
-    public int UnspentPoints => _unspentPoints;
-
-    public UserStatSheet() { }
-
-    public UserStatSheet(UserStatSheetSchema schema)
-        : base(schema)
+    public uint ToNextAbility
     {
-        _toNextAbility = Convert.ToInt64(schema.ToNextAbility);
-        _toNextLevel = Convert.ToInt64(schema.ToNextLevel);
-        _totalAbility = Convert.ToInt64(schema.TotalAbility);
-        _totalExp = Convert.ToInt64(schema.TotalExp);
-        _unspentPoints = schema.UnspentPoints;
-        _baseClass = schema.BaseClass;
-        _advClass = schema.AdvClass;
+        get => Convert.ToUInt32(_toNextAbility);
+        init => _toNextAbility = value;
+    }
+
+    public uint ToNextLevel
+    {
+        get => Convert.ToUInt32(_toNextLevel);
+        init => _toNextLevel = value;
+    }
+
+    public uint TotalAbility
+    {
+        get => Convert.ToUInt32(_totalAbility);
+        init => _totalAbility = value;
+    }
+
+    public uint TotalExp
+    {
+        get => Convert.ToUInt32(_totalExp);
+        init => _totalExp = value;
+    }
+
+    public int UnspentPoints
+    {
+        get => _unspentPoints;
+        init => _unspentPoints = value;
     }
 
     public void AddTNA(long amount) => Interlocked.Add(ref _toNextAbility, amount);
 
-    public void AddTNI(long amount) => Interlocked.Add(ref _toNextLevel, amount);
+    public void AddTNL(long amount) => Interlocked.Add(ref _toNextLevel, amount);
 
     public void AddTotalAbility(long amount) => Interlocked.Add(ref _totalAbility, amount);
 

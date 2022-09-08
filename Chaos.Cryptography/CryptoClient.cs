@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Chaos.Cryptography.Interfaces;
+using Chaos.Cryptography.Abstractions;
 
 namespace Chaos.Cryptography;
 

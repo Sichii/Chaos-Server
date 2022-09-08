@@ -1,5 +1,3 @@
-using Chaos.Scripts.Interfaces;
-
 namespace Chaos.Scripts.Abstractions;
 
 public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScript<TScript> where TScript: IScript

@@ -1,24 +1,24 @@
 using Chaos.Objects.Panel;
-using Chaos.Services.Factories.Interfaces;
-using Chaos.Services.Utility.Interfaces;
+using Chaos.Services.Scripting.Abstractions;
+using Chaos.Services.Utility.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Utility;
 
 public class ItemCloningService : ICloningService<Item>
 {
-    private readonly IItemScriptFactory ItemScriptFactory;
+    private readonly IScriptProvider ScriptProvider;
     private readonly ILogger<ItemCloningService> Logger;
 
-    public ItemCloningService(IItemScriptFactory itemScriptFactory, ILogger<ItemCloningService> logger)
+    public ItemCloningService(IScriptProvider scriptProvider, ILogger<ItemCloningService> logger)
     {
-        ItemScriptFactory = itemScriptFactory;
+        ScriptProvider = scriptProvider;
         Logger = logger;
     }
 
     public Item Clone(Item obj)
     {
-        var cloned = new Item(obj.Template, ItemScriptFactory, obj.ScriptKeys)
+        var cloned = new Item(obj.Template, ScriptProvider, obj.ScriptKeys)
         {
             Color = obj.Color,
             Count = obj.Count,

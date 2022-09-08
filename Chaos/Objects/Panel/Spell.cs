@@ -1,9 +1,6 @@
-using Chaos.Entities.Networking.Server;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Scripts.Interfaces;
-using Chaos.Services.Caches.Interfaces;
-using Chaos.Services.Factories.Interfaces;
+using Chaos.Scripts.Abstractions;
+using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -19,7 +16,7 @@ public class Spell : PanelObjectBase, IScriptedSpell
 
     public Spell(
         SpellTemplate template,
-        ISpellScriptFactory spellScriptFactory,
+        IScriptProvider scriptProvider,
         ICollection<string>? extraScriptKeys = null,
         ulong? uniqueId = null,
         int? elapsedMs = null
@@ -32,18 +29,8 @@ public class Spell : PanelObjectBase, IScriptedSpell
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
 
-        Script = spellScriptFactory.CreateScript(ScriptKeys, this);
+        Script = scriptProvider.CreateScript<ISpellScript, Spell>(ScriptKeys, this);
     }
 
-    public Spell(
-        SpellSchema schema,
-        ISimpleCache simpleCache,
-        ISpellScriptFactory skillScriptFactory
-    )
-        : this(
-            simpleCache.GetObject<SpellTemplate>(schema.TemplateKey),
-            skillScriptFactory,
-            schema.ScriptKeys,
-            schema.UniqueId,
-            schema.ElapsedMs) { }
+    public void Use(ActivationContext context) => Script.OnUse(context);
 }

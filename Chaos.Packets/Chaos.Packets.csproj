@@ -1,15 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
-        <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj"/>
+        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
+        <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj" />
     </ItemGroup>
 
 </Project>

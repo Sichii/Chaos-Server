@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -40,12 +40,12 @@ public class Merchant : Creature
         //TODO: open a menu or something
     }
 
-    public override void OnGoldDroppedOn(int amount, Aisling source)
+    public override void OnGoldDroppedOn(Aisling source, int amount)
     {
         //TODO: quests or something?
     }
 
-    public override void OnItemDroppedOn(byte slot, byte count, Aisling source)
+    public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
         //TODO: quests or something?
     }

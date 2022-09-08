@@ -1,4 +1,6 @@
+using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Security.Options;
 
@@ -17,9 +19,10 @@ public record ActiveDirectoryCredentialManagerOptions
     public string ValidFormatPattern { get; set; } = null!;
     public Regex ValidFormatRegex { get; set; } = null!;
 
-    public static void PostConfigure(ActiveDirectoryCredentialManagerOptions options)
+    public static void PostConfigure(ActiveDirectoryCredentialManagerOptions options, IOptionsSnapshot<ChaosOptions> chaosOptions)
     {
         options.ValidCharactersRegex = new Regex(options.ValidCharactersPattern, RegexOptions.Compiled);
         options.ValidFormatRegex = new Regex(options.ValidFormatPattern, RegexOptions.Compiled);
+        options.Directory = Path.Combine(chaosOptions.Value.StagingDirectory, options.Directory);
     }
 }

@@ -1,6 +1,6 @@
 using Chaos.Containers;
 using Chaos.Pathfinding;
-using Chaos.Pathfinding.Interfaces;
+using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Extensions;
 

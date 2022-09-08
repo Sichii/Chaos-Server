@@ -1,6 +1,6 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers;
-using Chaos.Definitions;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Objects.World.Abstractions;
 

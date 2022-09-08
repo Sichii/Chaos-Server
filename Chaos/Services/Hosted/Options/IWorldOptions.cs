@@ -11,4 +11,5 @@ public interface IWorldOptions
     int PickupRange { get; }
     int RefreshIntervalMs { get; }
     int TradeRange { get; }
+    int MaxLevel { get; }
 }

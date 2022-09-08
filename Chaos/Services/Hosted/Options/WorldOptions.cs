@@ -17,6 +17,7 @@ public record WorldOptions : ServerOptions, IWorldOptions
     public int RefreshIntervalMs { get; init; }
     public int SaveIntervalMins { get; init; }
     public int TradeRange { get; init; }
+    public int MaxLevel { get; init; }
     public int UpdatesPerSecond { get; init; }
 
     public static void PostConfigure(WorldOptions options)

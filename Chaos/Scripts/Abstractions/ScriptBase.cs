@@ -1,5 +1,3 @@
-using Chaos.Scripts.Interfaces;
-
 namespace Chaos.Scripts.Abstractions;
 
 public abstract class ScriptBase : IScript, IEquatable<ScriptBase>

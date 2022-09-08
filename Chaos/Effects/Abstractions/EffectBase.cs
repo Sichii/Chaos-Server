@@ -1,5 +1,4 @@
 using Chaos.Common.Definitions;
-using Chaos.Effects.Interfaces;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 

@@ -1,4 +1,4 @@
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.Extensions;
 
@@ -46,4 +46,8 @@ public static class RectangleExtensions
             for (var y = rect.Top; y <= rect.Bottom; y++)
                 yield return new Point(x, y);
     }
+
+    public static Point RandomPoint(this IRectangle rect) => new(
+        rect.Left + Random.Shared.Next(rect.Width),
+        rect.Top + Random.Shared.Next(rect.Height));
 }

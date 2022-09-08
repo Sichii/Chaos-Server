@@ -1,7 +1,6 @@
 // ReSharper disable InconsistentNaming
 
 using System.Threading;
-using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Data;
 
@@ -19,43 +18,70 @@ public record Attributes
     protected int _str;
     protected int _wis;
 
-    public int Ac => _ac;
-
-    public int Con => _con;
-
-    public int Dex => _dex;
-
-    public int Dmg => _dmg;
-
-    public int Hit => _hit;
-
-    public int Int => _int;
-
-    public int MagicResistance => _magicResistance;
-
-    public int MaximumHp => _maximumHp;
-
-    public int MaximumMp => _maximumMp;
-
-    public int Str => _str;
-
-    public int Wis => _wis;
-
-    public Attributes() { }
-
-    public Attributes(AttributesSchema schema)
+    public int Ac
     {
-        _ac = schema.Ac;
-        _dmg = schema.Dmg;
-        _hit = schema.Hit;
-        _str = schema.Str;
-        _int = schema.Int;
-        _wis = schema.Wis;
-        _con = schema.Con;
-        _dex = schema.Dex;
-        _magicResistance = schema.MagicResistance;
-        _maximumHp = schema.MaximumHp;
-        _maximumMp = schema.MaximumMp;
+        get => _ac;
+        init => _ac = value;
+    }
+
+    public int Con
+    {
+        get => _con;
+        init => _con = value;
+    }
+
+    public int Dex
+    {
+        get => _dex;
+        init => _dex = value;
+    }
+
+    public int Dmg
+    {
+        get => _dmg;
+        init => _dmg = value;
+    }
+
+    public int Hit
+    {
+        get => _hit;
+        init => _hit = value;
+    }
+
+    public int Int
+    {
+        get => _int;
+        init => _int = value;
+    }
+
+    public int MagicResistance
+    {
+        get => _magicResistance;
+        init => _magicResistance = value;
+    }
+
+    public int MaximumHp
+    {
+        get => _maximumHp;
+        init => _maximumHp = value;
+    }
+
+    public int MaximumMp
+    {
+        get => _maximumMp;
+        init => _maximumMp = value;
+    }
+
+    public int Str
+    {
+        get => _str;
+        init => _str = value;
+    }
+
+    public int Wis
+    {
+        get => _wis;
+        init => _wis = value;
     }
 
     public virtual void Add(Attributes other)

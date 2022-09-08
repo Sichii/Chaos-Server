@@ -1,6 +1,4 @@
 ﻿using Chaos.Common.Definitions;
-using Chaos.Entities.Networking.Server;
-using Chaos.Entities.Schemas.World;
 using Chaos.Time;
 
 namespace Chaos.Data;
@@ -17,15 +15,6 @@ public record LegendMark(
     public GameTime Added { get; set; } = Added;
     public int Count { get; set; } = Count;
 
-    public LegendMark(LegendMarkSchema legendMarkSchema)
-        : this(
-            legendMarkSchema.Text,
-            legendMarkSchema.Key,
-            legendMarkSchema.Icon,
-            legendMarkSchema.Color,
-            legendMarkSchema.Count,
-            new GameTime(legendMarkSchema.Added)) { }
-
     public virtual bool Equals(LegendMark? other)
     {
         if (ReferenceEquals(null, other))
@@ -38,14 +27,6 @@ public record LegendMark(
     }
 
     public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Text);
-
-    public LegendMarkInfo ToLegendMarkInfo() => new()
-    {
-        Color = Color,
-        Icon = Icon,
-        Key = Key,
-        Text = ToString()
-    };
 
     public override string ToString() => Count > 1 ? $@"{Text} ({Count}) - {Added.ToString()}" : $@"{Text} - {Added.ToString()}";
 }

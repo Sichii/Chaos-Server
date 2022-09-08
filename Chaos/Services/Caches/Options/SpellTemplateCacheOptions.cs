@@ -1,6 +1,5 @@
+using Chaos.Services.Caches.Abstractions;
+
 namespace Chaos.Services.Caches.Options;
 
-public record SpellTemplateCacheOptions
-{
-    public string Directory { get; set; } = null!;
-}
+public class SpellTemplateCacheOptions : FileCacheOptionsBase { }

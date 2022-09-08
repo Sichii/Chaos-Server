@@ -1,5 +1,5 @@
 using Chaos.Containers;
-using Chaos.Geometry.Interfaces;
+using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Objects.World.Abstractions;
 

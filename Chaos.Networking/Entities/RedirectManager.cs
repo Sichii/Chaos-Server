@@ -1,5 +1,5 @@
 using Chaos.Entities.Networking;
-using Chaos.Networking.Interfaces;
+using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking.Entities;
 

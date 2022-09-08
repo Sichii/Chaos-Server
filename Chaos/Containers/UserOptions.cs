@@ -1,5 +1,4 @@
 using Chaos.Common.Definitions;
-using Chaos.Entities.Schemas.World;
 
 namespace Chaos.Containers;
 
@@ -19,20 +18,7 @@ public class UserOptions
     public bool Whisper { get; set; } = true;
 
     public bool Wisdom { get; set; } = true;
-
-    public UserOptions() { }
-
-    public UserOptions(UserOptionsSchema userOptionsSchema)
-    {
-        Exchange = userOptionsSchema.Exchange;
-        FastMove = userOptionsSchema.FastMove;
-        Group = userOptionsSchema.FastMove;
-        GuildChat = userOptionsSchema.GuildChat;
-        Magic = userOptionsSchema.GuildChat;
-        Shout = userOptionsSchema.Shout;
-        Whisper = userOptionsSchema.Whisper;
-        Wisdom = userOptionsSchema.Wisdom;
-    }
+    
 
     /// <summary>
     ///     Toggles the given UserOption.

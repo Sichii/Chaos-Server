@@ -1,26 +1,20 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers.Abstractions;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Services.Mappers.Interfaces;
 
 namespace Chaos.Containers;
 
 public class SkillBook : PanelBase<Skill>
 {
-    public SkillBook()
+    public SkillBook(IEnumerable<Skill>? skills = null)
         : base(
             PanelType.SkillBook,
             89,
-            new byte[] { 0, 36, 72 }) { }
-
-    public SkillBook(IEnumerable<SkillSchema> skillSchemas, ITypeMapper mapper)
-        : this()
+            new byte[] { 0, 36, 72 })
     {
-        foreach (var schema in skillSchemas)
-        {
-            var skill = mapper.Map<Skill>(schema);
+        skills ??= Array.Empty<Skill>();
+
+        foreach (var skill in skills)
             Objects[skill.Slot] = skill;
-        }
     }
 }

@@ -1,4 +1,4 @@
-using Chaos.Pathfinding.Interfaces;
+using Chaos.Pathfinding.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Pathfinding.Extensions;

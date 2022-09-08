@@ -1,5 +1,5 @@
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
 
 namespace Chaos.Geometry.Extensions;
 

@@ -1,6 +1,6 @@
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.Interfaces;
-using Chaos.Pathfinding.Interfaces;
+using Chaos.Pathfinding.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Chaos.Pathfinding;
@@ -36,16 +36,29 @@ public class PathfindingService : IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        IEnumerable<IPoint> creatures
+        ICollection<IPoint> creatures
     )
     {
         var pathFinder = MemoryCache.GetOrCreate(key, CreatePathfinder);
 
-        return pathFinder.Pathfind(
+        return pathFinder!.Pathfind(
             start,
             end,
             ignoreWalls,
             creatures);
+    }
+
+    /// <inheritdoc />
+    public Direction Wander(
+        string key,
+        IPoint start,
+        bool ignoreWalls,
+        ICollection<IPoint> creatures
+    )
+    {
+        var pathFinder = MemoryCache.GetOrCreate(key, CreatePathfinder);
+
+        return pathFinder!.Wander(start, ignoreWalls, creatures);
     }
 
     public void RegisterGrid(

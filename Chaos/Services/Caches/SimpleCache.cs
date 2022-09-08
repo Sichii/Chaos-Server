@@ -1,4 +1,4 @@
-using Chaos.Services.Caches.Interfaces;
+using Chaos.Services.Caches.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Services.Caches;

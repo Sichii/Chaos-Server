@@ -1,5 +1,5 @@
 using Chaos.Core.Synchronization;
-using Chaos.Effects.Interfaces;
+using Chaos.Effects.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 

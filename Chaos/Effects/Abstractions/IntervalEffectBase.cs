@@ -1,5 +1,5 @@
 using Chaos.Objects.World.Abstractions;
-using Chaos.Time.Interfaces;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Effects.Abstractions;
 

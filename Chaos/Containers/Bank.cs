@@ -1,8 +1,6 @@
 using Chaos.Core.Synchronization;
-using Chaos.Entities.Schemas.World;
 using Chaos.Objects.Panel;
-using Chaos.Services.Mappers.Interfaces;
-using Chaos.Services.Utility.Interfaces;
+using Chaos.Services.Utility.Abstractions;
 
 namespace Chaos.Containers;
 
@@ -11,7 +9,7 @@ public class Bank : IEnumerable<Item>
     private readonly ICloningService<Item> ItemCloner;
     private readonly Dictionary<string, Item> Items;
     private readonly AutoReleasingMonitor Sync;
-    public uint Gold { get; set; }
+    public uint Gold { get; private set; }
 
     public Bank(IEnumerable<Item>? items = null)
     {
@@ -22,21 +20,11 @@ public class Bank : IEnumerable<Item>
     }
 
     public Bank(
-        uint gold,
-        IEnumerable<ItemSchema> itemSchemas,
-        ITypeMapper mapper,
+        IEnumerable<Item>? items,
         ICloningService<Item> itemCloner
     )
-    {
+        : this(items) =>
         ItemCloner = itemCloner;
-        Gold = gold;
-
-        Items = itemSchemas
-                .Select(mapper.Map<Item>)
-                .ToDictionary(i => i.DisplayName, StringComparer.OrdinalIgnoreCase);
-
-        Sync = new AutoReleasingMonitor();
-    }
 
     public bool Contains(string itemName)
     {
@@ -114,6 +102,25 @@ public class Bank : IEnumerable<Item>
             outItems = item.FixStacks(ItemCloner);
         } else
             outItems = SplitItem(item, amount);
+
+        return true;
+    }
+    
+    public void AddGold(uint amount)
+    {
+        using var @lock = Sync.Enter();
+        
+        Gold += amount;
+    }
+
+    public bool RemoveGold(uint amount)
+    {
+        using var @lock = Sync.Enter();
+
+        if (Gold < amount)
+            return false;
+
+        Gold -= amount;
 
         return true;
     }
