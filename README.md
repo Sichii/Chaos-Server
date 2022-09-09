@@ -18,13 +18,13 @@ A configurable Dark Ages server emulator
  ┣📂Metafiles (TODO)  
  ┣📂Saved  
  ┃ ┗📂bonk  
- ┃   ┗📜aisling.json  
- ┃   ┗📜bank.json  
- ┃   ┗📜equipment.json  
- ┃   ┗📜inventory.json  
- ┃   ┗📜legend.json  
- ┃   ┗📜password.txt (hashed)  
- ┃   ┗📜skills.json  
+ ┃   ┣📜aisling.json  
+ ┃   ┣📜bank.json  
+ ┃   ┣📜equipment.json  
+ ┃   ┣📜inventory.json  
+ ┃   ┣📜legend.json  
+ ┃   ┣📜password.txt (hashed)  
+ ┃   ┣📜skills.json  
  ┃   ┗📜spells.json  
  ┗📂[Templates](#templates-folder)  
    ┣📂[Items](#items-folder)  
@@ -427,7 +427,7 @@ A configurable Dark Ages server emulator
 |ScriptKeys|array{string}|A collection of names of spell scripts to attach to this spell by default|
 |CastLines|number<br>(0-9)|The number of chant lines this spell requires by default|
 |SpellType|string<br>None<br>Prompt<br>Targeted<br>Prompt4Nums<br>Prompt3Nums<br>NoTarget<br>Prompt2Nums<br>Prompt1Num|The way the spell is cast by the player|
-|Prompt|string(optional)|Defaults to null. Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when cast|
+|Prompt|string(optional)|Defaults to null<br>Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when cast|
 
 ### Example file "srad tut.json"
 ```json
