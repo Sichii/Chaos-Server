@@ -1,6 +1,16 @@
 # Chaos
 A configurable Dark Ages server emulator 
 
+# Configuration (appsettings.json)
+- General configurations can be changed via appsettings.json (and it's environment specific forms)
+- It's recommended to keep the [staging data](#folder-structure) out of the repo, this base staging directory can be changed at Options:ChaosOptions:StagingDirectory
+- Username/Password rules can be changed via Options:ActiveDirectoryCreentialManagerOptions
+- General world options such as pickup/trade range, level cap, etc can be changed via Options:WorldOptions
+- If you want to spin up multiple worlds, or offer redirects to other people's worlds, you can add additional servers via Options:LobbyOptions:Servers
+- If you want to accept redirects from other people, you need to communicate a reserved redirect id, and configure it via Options:LoginOptions:ReservedRedirects
+- Edit your login notice message via Options:LoginOptions:NoticeMessage
+- Edit your new character initial spawn point via Options:LoginOptions:StartingMapInstanceId and StartingPointStr
+
 # Folder Structure
 📂Data  
  ┣📂[LootTables](#loottables-folder)  
