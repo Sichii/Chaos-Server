@@ -1,22 +1,35 @@
 # Chaos
 A configurable Dark Ages server emulator 
 
-## Folder Structure
-- Data
-  - LootTables
-  - MapData
-  - MapInstances
-  - Metafiles
-  - Saved
-  - Templates
-    - Items
-    - Maps
-    - Monsters
-    - Skills
-    - Spells
-    
-    
-## LootTables Folder
+# Folder Structure
+📂Data  
+ ┣📂[LootTables](#loottables-folder)  
+ ┃ ┗📜rat1Sticks.json  
+ ┣📂[MapData](#mapdata-folder)  
+ ┃ ┣📜lod500.map  
+ ┃ ┗📜lod3006.map  
+ ┣📂[MapInstances](#mapinstances-folder)  
+ ┃ ┣📂mileth1  
+ ┃ ┃ ┣📜instance.json  
+ ┃ ┃ ┗📜spawns.json  
+ ┃ ┗📂milethVillageWay1  
+ ┃   ┣📜instance.json  
+ ┃   ┗📜spawns.json  
+ ┣📂Metafiles (TODO)  
+ ┣📂Saved (TODO)  
+ ┗📂[Templates](#templates-folder)  
+   ┣📂[Items](#items-folder)  
+   ┃ ┗📜stick.json  
+   ┣📂[Maps](#maps-folder)  
+   ┃ ┗📜500.json  
+   ┣📂[Monsters](#monsters-folder)  
+   ┃ ┗📜rat1.json  
+   ┣📂[Skills](#skills-folder)  
+   ┃ ┗📜assail.json  
+   ┗📂[Spells](#spells-folder)  
+     ┗📜srad tut.json
+     
+# LootTables Folder
 Contains .json files such as "lootTableKey.json"  
 
 ### LootTable Properties
@@ -49,7 +62,7 @@ A loot table that gives a creature a 10% chance to drop a stick and a 30% chance
 }
 ```
 
-## MapData Folder
+# MapData Folder
 Contains .map files containing tile data for maps  
 
 ### Example
@@ -57,12 +70,12 @@ lod0.map
 lod1.map  
 lod2.map  
 
-## MapInstances Folder
+# MapInstances Folder
 Contains subfolders, one for each map instance  
 Multiple map instances can have the same numeric map id, but must have unique instance ids  
 Best practice is for the folder name to match the map instance id  
 
-## MapInstance Sub-Folder "Mileth"
+# MapInstance Sub-Folder "Mileth"
 Contains two .json files, "instance.json" and "spawns.json"  
 instance.json contains basic information about the map instance  
 spawns.json contains a collection of spawn objects  
@@ -103,10 +116,10 @@ spawns.json contains a collection of spawn objects
 ### Rectangle Properties
 |Name|Type/Values|Description|
 |:---|:----:|:---|
-|Top|int|The lowest Y coordinate of the rectangle|
-|Left|int|The lowest X coordinate of the rectangle|
-|Width|int|The width of the rectangle|
-|Height|int|The height of the rectangle|
+|Top|byte<br>(0-255)|The lowest Y coordinate of the rectangle|
+|Left|byte<br>(0-255)|The lowest X coordinate of the rectangle|
+|Width|byte<br>(0-255)|The width of the rectangle|
+|Height|byte<br>(0-255)|The height of the rectangle|
 
 ### Example instance.json
 This is the mileth village map with the added flags of falling snow and usage of the snow tileset  
@@ -164,3 +177,24 @@ They will aggressively target anyone who comes within 6 spaces of them
   }
 ]
 ```
+
+# Metafiles Folder
+Not implemented yet
+
+# Templates Folder
+Contains subfolders for each type of template  
+
+## Items Folder
+Contains templates for each possible item in the game
+
+## Maps Folder
+Contains templates for each possible map in the game
+
+## Monsters Folder
+Contains templates for each possible monster in the game
+
+## Skills Folder
+Contains templates for each possible skill in the game
+
+## Spells Folder
+Contains templates for each possible spell in the game
