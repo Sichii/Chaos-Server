@@ -16,7 +16,16 @@ A configurable Dark Ages server emulator
  ┃   ┣📜instance.json  
  ┃   ┗📜spawns.json  
  ┣📂Metafiles (TODO)  
- ┣📂Saved (TODO)  
+ ┣📂Saved  
+ ┃ ┗📂bonk  
+ ┃   ┗📜aisling.json  
+ ┃   ┗📜bank.json  
+ ┃   ┗📜equipment.json  
+ ┃   ┗📜inventory.json  
+ ┃   ┗📜legend.json  
+ ┃   ┗📜password.txt (hashed)  
+ ┃   ┗📜skills.json  
+ ┃   ┗📜spells.json  
  ┗📂[Templates](#templates-folder)  
    ┣📂[Items](#items-folder)  
    ┃ ┗📜stick.json  
@@ -30,22 +39,23 @@ A configurable Dark Ages server emulator
      ┗📜srad tut.json
      
 # LootTables Folder
-Contains .json files such as "lootTableKey.json"  
+ Contains .json files such as "lootTableKey.json"  
 
 ### LootTable Properties
 |Name|Type/Values|Description|
 |:---|:----:|:---|
 |Key|string|A unique id specific to this loot table. Best practice is to match the file name|
-|LootDrops|array<lootDrop>|A collection of lootDrops|
+|LootDrops|array<lootDrop>|A collection of lootDrops. Every item in the list is calculated, allowing multiple drops|
 
 ### LootDrop Properties
 |Name|Type/Values|Description|
 |:---|:----:|:---|
 |ItemTemplateKey|string|A unique id specific to the template of the item that should drop|
-|DropChance|int<br>(0-100)|The chance of the item to drop. Every item in the list is calculated, allowing multiple drops|
+|DropChance|int<br>(0-100)|The chance of the item to drop|
 
 ### Example file
-A loot table that gives a creature a 10% chance to drop a stick and a 30% chance to drop an apple  
+ A loot table that gives a creature a 10% chance to drop a stick and a 30% chance to drop an apple  
+
 ```json
 {
   "key": "rat1Sticks",
@@ -63,22 +73,22 @@ A loot table that gives a creature a 10% chance to drop a stick and a 30% chance
 ```
 
 # MapData Folder
-Contains .map files containing tile data for maps  
+ Contains .map files containing tile data for maps  
 
 ### Example
-lod0.map  
-lod1.map  
-lod2.map  
+ lod0.map  
+ lod1.map  
+ lod2.map  
 
 # MapInstances Folder
-Contains subfolders, one for each map instance  
-Multiple map instances can have the same numeric map id, but must have unique instance ids  
-Best practice is for the folder name to match the map instance id  
+ Contains subfolders, one for each map instance  
+ Multiple map instances can have the same numeric map id, but must have unique instance ids  
+ Best practice is for the folder name to match the map instance id  
 
-# MapInstance Sub-Folder "Mileth"
-Contains two .json files, "instance.json" and "spawns.json"  
-instance.json contains basic information about the map instance  
-spawns.json contains a collection of spawn objects  
+## MapInstance Sub-Folder "Mileth"
+ Contains two .json files, "instance.json" and "spawns.json"  
+ instance.json contains basic information about the map instance  
+ spawns.json contains a collection of spawn objects  
 
 ### MapInstance Properties
 |Name|Type/Values|Description|
@@ -103,15 +113,15 @@ spawns.json contains a collection of spawn objects
 |MonsterTemplateKey|string|A unique id for the template of the monster to spawn|
 |LootTableKey|string|A unique id for the loot table used to determine monster drops from this spawn|
 |IntervalSecs|int|A number of seconds between each trigger of this spawn|
-|IntervalVariancePct|int(optional)|If specified, will randomize the interval by the percentage specified.<br>Ex. With an interval of 60, and a Variance of 50, the spawn interval would var from 30-90secs|
+|IntervalVariancePct|int(optional)|Defaults to 0<br>If specified, will randomize the interval by the percentage specified<br>Ex. With an interval of 60, and a Variance of 50, the spawn interval would var from 30-90secs|
 |MaxAmount|int|The maximum number of monsters that can be on the map from this spawn|
 |MaxPerSpawn|int|The maximum number of monsters to create per interval of this spawn|
-|AggroRange|int(optional)|If specified, monsters created by this spawn will be aggressive, and attack enemies if they come within the specified distance|
+|AggroRange|int(optional)|Defaults to 0<br>If specified, monsters created by this spawn will be aggressive, and attack enemies if they come within the specified distance|
 |MinGoldDrop|int|Minimum amount of gold for monsters created by this spawn to drop|
 |MaxGoldDrop|int|Maximum amount of gold for monsters created by this spawn to drop|
 |ExpReward|int|The amount of exp monsters created by this spawn will reward when killed|
 |ExtraScriptKeys|array<string>|A collection of extra monster script keys to add to the monsters created by this spawn|
-|SpawnArea|rectangle(optional)|If specified, monsters will only spawn within the specified bounds. If not specified, monsters will spawn anywhere on the map|
+|SpawnArea|rectangle(optional)|Defaults to spawn on entire map<br>If specified, monsters will only spawn within the specified bounds|
 
 ### Rectangle Properties
 |Name|Type/Values|Description|
@@ -122,9 +132,9 @@ spawns.json contains a collection of spawn objects
 |Height|byte<br>(0-255)|The height of the rectangle|
 
 ### Example instance.json
-This is the mileth village map with the added flags of falling snow and usage of the snow tileset  
-This map will have 2 warps to mileth village way  
-The map has a quest script on it  
+ This is the mileth village map with the added flags of falling snow and usage of the snow tileset  
+ This map will have 2 warps to mileth village way  
+ The map has a quest script on it  
 
 ```json
 {
@@ -150,9 +160,9 @@ The map has a quest script on it
 ```
 
 ### Example spawns.json
-This will spawn 25 rats that drop sticks/apples/20-30 gold/12 exp every 126-236 seconds up to a maximum of 50 rats  
-The rats will spawn at the bottom quadrant of the map  
-They will aggressively target anyone who comes within 6 spaces of them  
+ This will spawn 25 rats that drop sticks/apples/20-30 gold/12 exp every 126-236 seconds up to a maximum of 50 rats  
+ The rats will spawn at the bottom quadrant of the map  
+ They will aggressively target anyone who comes within 6 spaces of them  
 
 ```json
 [
@@ -179,22 +189,30 @@ They will aggressively target anyone who comes within 6 spaces of them
 ```
 
 # Metafiles Folder
-Not implemented yet
+ Not implemented yet
 
 # Templates Folder
-Contains subfolders for each type of template  
+ Contains subfolders for each type of template  
 
 ## Items Folder
-Contains templates for each possible item in the game
+ Contains templates for each possible item in the game  
+
+### ItemTemplate Properties
+|Name|Type/Values|Description|
+|:---|:----:|:---|
+|TemplateKey|string|A unique id specific to this item template. Should match the file name|
+|Name|string|The base name of the item|
+|PanelSprite|ushort<br>(1-500)|The sprite id used to display the item in the inventory, minus the offset|
+
 
 ## Maps Folder
-Contains templates for each possible map in the game
+ Contains templates for each possible map in the game
 
 ## Monsters Folder
-Contains templates for each possible monster in the game
+ Contains templates for each possible monster in the game
 
 ## Skills Folder
-Contains templates for each possible skill in the game
+ Contains templates for each possible skill in the game
 
 ## Spells Folder
-Contains templates for each possible spell in the game
+ Contains templates for each possible spell in the game
