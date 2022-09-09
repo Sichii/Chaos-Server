@@ -13,8 +13,8 @@ A configurable Dark Ages server emulator
  ┃ ┃ ┣📜instance.json  
  ┃ ┃ ┗📜spawns.json  
  ┃ ┗📂milethVillageWay1  
- ┃   ┣📜instance.json  
- ┃   ┗📜spawns.json  
+ ┃   ┣📜instance.json  
+ ┃   ┗📜spawns.json  
  ┣📂Metafiles (TODO)  
  ┣📂Saved  
  ┃ ┗📂bonk  
