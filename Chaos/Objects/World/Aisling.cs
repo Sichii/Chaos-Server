@@ -115,6 +115,7 @@ public class Aisling : Creature
     }
 
     public void Initialize(
+        string name,
         IWorldClient client,
         Bank bank,
         Equipment equipment,
@@ -124,6 +125,7 @@ public class Aisling : Creature
         Legend legend
     )
     {
+        Name = name;
         Client = client;
         Bank = bank;
         Equipment = equipment;

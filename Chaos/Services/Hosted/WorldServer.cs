@@ -244,7 +244,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         client.CryptoClient = new CryptoClient(args.Seed, args.Key, args.Name);
         var aisling = await UserSaveManager.LoadAsync(client, redirect.Name);
-
+        
         client.Aisling = aisling;
         aisling.Client = client;
 
