@@ -73,8 +73,7 @@ public class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> 
     private void LoadScriptTypes()
     {
         var types = TypeLoader.LoadImplementations<TScript>();
-
-
+        
         foreach (var type in types)
         {
             var scriptKey = ScriptBase.GetScriptKey(type);

@@ -64,6 +64,7 @@ public class UserSaveManager : ISaveManager<Aisling>
 
         worldClient.Aisling = aisling;
         aisling.Initialize(
+            name,
             worldClient,
             bank,
             equipment,

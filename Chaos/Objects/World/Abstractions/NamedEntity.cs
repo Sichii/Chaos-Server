@@ -5,7 +5,7 @@ namespace Chaos.Objects.World.Abstractions;
 
 public abstract class NamedEntity : VisibleEntity
 {
-    public string Name { get; init; }
+    public string Name { get; protected set; }
 
     protected NamedEntity(
         string name,
