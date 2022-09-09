@@ -45,7 +45,7 @@ A configurable Dark Ages server emulator
 |Name|Type/Values|Description|
 |:---|:----:|:---|
 |Key|string|A unique id specific to this loot table. Best practice is to match the file name|
-|LootDrops|array<lootDrop>|A collection of lootDrops. Every item in the list is calculated, allowing multiple drops|
+|LootDrops|array{[lootDrop](#lootdrop-properties)}|A collection of lootDrops. Every item in the list is calculated, allowing multiple drops|
 
 ### LootDrop Properties
 |Name|Type/Values|Description|
@@ -98,8 +98,8 @@ A configurable Dark Ages server emulator
 |InstanceId|string|A unique id specific to this map instance<br>Best practice is to match the folder name|
 |Music|number<br>(0-255)|The byte values of the music track to play when entering the map<br>These values aren't explored yet, so you'll have to figure out what's available yourself|
 |Flags|string<br>None<br>Snow<br>Rain<br>Darkness<br>NoTabMap<br>SnowTileset|A flag, or combination of flags that should affect the map<br>You can combine multiple flags by separating them with commas<br>Ex. "Snow, NoTabMap"|
-|ScriptKeys|array<string>|A collection of script keys to load for this map (TODO: scripts section)|
-|Warps|array<warp>|A collection of warps|
+|ScriptKeys|array{string}|A collection of script keys to load for this map (TODO: scripts section)|
+|Warps|array{[warp](#warp-properties)}|A collection of warps|
 
 ### Warp Properties
 |Name|Type/Values|Description|
@@ -120,8 +120,8 @@ A configurable Dark Ages server emulator
 |MinGoldDrop|number|Minimum amount of gold for monsters created by this spawn to drop|
 |MaxGoldDrop|number|Maximum amount of gold for monsters created by this spawn to drop|
 |ExpReward|number|The amount of exp monsters created by this spawn will reward when killed|
-|ExtraScriptKeys|array<string>|A collection of extra monster script keys to add to the monsters created by this spawn|
-|SpawnArea|rectangle(optional)|Defaults to spawn on entire map<br>If specified, monsters will only spawn within the specified bounds|
+|ExtraScriptKeys|array{string}|A collection of extra monster script keys to add to the monsters created by this spawn|
+|SpawnArea|[rectangle](#rectangle-properties)(optional)|Defaults to spawn on entire map<br>If specified, monsters will only spawn within the specified bounds|
 
 ### Rectangle Properties
 |Name|Type/Values|Description|
@@ -215,9 +215,9 @@ A configurable Dark Ages server emulator
 |Value|number|Not fully implemented|
 |Weight|number<br>(0-255)|The weight of the item in the inventory, or equipped|
 |CooldownMs|number(optional)|Defaults to null. If specified, any on-use effect of this item will use this cooldown|
-|Animation|animation(optional)|Defaults to null. If specified, this will be used by any on-use effect|
-|ScriptKeys|array<string>|A collection of names of item scripts to attach to this item by default|
-|Modifiers|attributes(optional)|Defaults to null<br>If specified, these are the stats this item grants when equipped|
+|Animation|[animation](#animation-properties)(optional)|Defaults to null. If specified, this will be used by any on-use effect|
+|ScriptKeys|array{string}|A collection of names of item scripts to attach to this item by default|
+|Modifiers|[attributes](#attributes-properties)(optional)|Defaults to null<br>If specified, these are the stats this item grants when equipped|
 
 ### Animation Properties
 |Name|Type/Values|Description|
@@ -229,20 +229,20 @@ A configurable Dark Ages server emulator
 ### Attributes Properties
 |Name|Type/Values|Description|
 |:---|:----:|:---|
-|Ac|number||
-|Str|number||
-|Int|number||
-|Wis|number||
-|Con|number||
-|Dex|number||
-|Hit|number||
-|Dam|number||
+|Ac|number<br>(-127-127)||
+|Str|number<br>(0-255)||
+|Int|number<br>(0-255)||
+|Wis|number<br>(0-255)||
+|Con|number<br>(0-255)||
+|Dex|number<br>(0-255)||
+|Hit|number<br>(0-255)||
+|Dam|number<br>(0-255)||
 |MagicResistance|number||
 |MaximumHp|number||
 |MaximumMp|number||
  
 #### Color Options
-| | | | | | |
+|||||||
 |-|-|-|-|-|-|
 |None|Black|Red|Orange|Blonde|Cyan|
 |Blue|Mulberry|Olive|Green|Fire|Brown|
@@ -297,8 +297,8 @@ A configurable Dark Ages server emulator
 |TemplateKey|string|A unique id specific to this map template<br>Best practice is to match the name of the file, and use the numeric id the map this template is for|
 |Width|number<br>(1-255)|The width of the map|
 |Height|number<br>(1-255)|The height of the map|
-|WarpPoints|array<string>|The coordinates of each warp tile on the map|
-|ScriptKeys|array<string>|A collection of names of map scripts to attach to this map by default|
+|WarpPoints|array{string}|The coordinates of each warp tile on the map|
+|ScriptKeys|array{string}|A collection of names of map scripts to attach to this map by default|
   
 ### Example file "500.json"
 ```json
@@ -323,9 +323,126 @@ A configurable Dark Ages server emulator
 |Name|Type/Values|Description|
 |:---|:----:|:---|
 |TemplateKey|string|A unique id specific to this monster template<br>Best practice is to match the name of the file|
+|Name|string|The name of the monster when double clicked|
+|Sprite|number<br>(1-1500)|The sprite id of the monster minus the offset|
+|Type|string<br>Normal<br>WalkThrough<br>WhiteSquare|The monster's type. WhiteSquare has no additional functionality, it just appears as a white square on the tab map|
+|Direction|string<br>Up<br>Down<br>Left<br>Right|The initial direction of the monster when spawned|
+|WanderingIntervalMs|number|The number of miliseconds between movements while this monster is wandering when it has no target|
+|MoveIntervalMs|number|The number of miliseconds between movements while this monster is targeting an enemy|
+|AttackIntervalMs|number|The number of miliseconds between usages of skills|
+|CastIntervalMs|number|The number of miliseconds between usages of spells|
+|StatSheet|[statsheet](#statsheet-properties)|The base stats of this monster|
+|ScriptKeys|array{string}|A collection of names of monsters scripts to attach to this monster<br>TODO: scripts section|
+|SkillTemplateKeys|array{string}|A collection of template keys of skills this monster will use|
+|SpellTemplateKeys|array{string}|A collection of template keys of spells this monster will cast|
+
+### StatSheet Properties
+|Name|Type/Values|Description|
+|:---|:----:|:---|
+|Ability|number|The ability level of this monster|
+|Level|number|The level of this monster|
+|Ac|number<br>(-127-127)||
+|Str|number<br>(0-255)||
+|Int|number<br>(0-255)||
+|Wis|number<br>(0-255)||
+|Con|number<br>(0-255)||
+|Dex|number<br>(0-255)||
+|Hit|number<br>(0-255)||
+|Dam|number<br>(0-255)||
+|MagicResistance|number||
+|MaximumHp|number||
+|MaximumMp|number||
+
+### Example file "rat1.json"
+```json
+{
+  "TemplateKey": "rat1",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 1,
+    "MaximumHp": 100,
+    "MaximumMp": 100,
+    "Ac": 50,
+    "Str": 1,
+    "Int": 1,
+    "Wis": 1,
+    "Con": 2,
+    "Dex": 1,
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Common Rat",
+  "Sprite": 7,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1500,
+  "AttackIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": [ "assail" ],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}
+```
 
 ## Skills Folder
- Contains templates for each possible skill in the game
+ Contains .json files to be used as blueprints for skills
+ 
+### SkillTemplate Properties
+|Name|Type/Values|Description|
+|:---|:----:|:---|
+|TemplateKey|string|A unique id specific to this skill template. Best practice is to match the file name|
+|Name|string|The base name of the skill|
+|PanelSprite|number<br>(1-500)|The sprite id used to display the skill in the skill pane|
+|CooldownMs|number(optional)|Defaults to null. If specified, any on-use effect of this skill will use this cooldown|
+|Animation|[animation](#animation-properties)(optional)|Defaults to null. If specified, this will be used by any on-use effect|
+|ScriptKeys|array{string}|A collection of names of skill scripts to attach to this skill by default|
+|IsAssail|bool<br>true/false|Whether or not the skill is an assail and should be used when spacebar is pressed|
+
+### Example file "assail.json"
+```json
+{
+  "templateKey": "assail",
+  "name": "Assail",
+  "panelSprite": 1,
+  "cooldownMs": 1500,
+  "scriptKeys": [
+    "damageSkill"
+  ],
+  "isAssail": true
+}
+```
 
 ## Spells Folder
- Contains templates for each possible spell in the game
+ Contains .json files to be used as blueprints for spells
+ 
+### SpellTemplate Properties
+|Name|Type/Values|Description|
+|:---|:----:|:---|
+|TemplateKey|string|A unique id specific to this spell template. Best practice is to match the file name|
+|Name|string|The base name of the spell|
+|PanelSprite|number<br>(1-500)|The sprite id used to display the spell in the skill pane|
+|CooldownMs|number(optional)|Defaults to null. If specified, any on-use effect of this spell will use this cooldown|
+|Animation|[animation](#animation-properties)(optional)|Defaults to null. If specified, this will be used by any on-use effect|
+|ScriptKeys|array{string}|A collection of names of spell scripts to attach to this spell by default|
+|CastLines|number<br>(0-9)|The number of chant lines this spell requires by default|
+|SpellType|string<br>None<br>Prompt<br>Targeted<br>Prompt4Nums<br>Prompt3Nums<br>NoTarget<br>Prompt2Nums<br>Prompt1Num|The way the spell is cast by the player|
+|Prompt|string(optional)|Defaults to null. Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when cast|
+
+### Example file "srad tut.json"
+```json
+{
+  "templateKey": "srad tut",
+  "name": "Srad Tut",
+  "panelSprite": 40,
+  "animation": {
+    "animationSpeed": 1000,
+    "targetAnimation": 12
+  },
+  "scriptKeys": [
+    "damageSpell"
+  ],
+  "castLines": 1,
+  "spellType": "targeted"
+}
+```
