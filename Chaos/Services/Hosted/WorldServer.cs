@@ -271,7 +271,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<EmoteArgs>(ref clientPacket);
 
         if ((int)args.BodyAnimation <= 44)
-            client.Aisling.MapInstance.ShowBodyAnimation(args.BodyAnimation, client.Aisling);
+            client.Aisling.AnimateBody(args.BodyAnimation);
 
         return default;
     }

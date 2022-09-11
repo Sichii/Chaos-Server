@@ -16,8 +16,11 @@ public class DeathScript : MonsterScriptBase
     /// <inheritdoc />
     public override void OnDeath(Creature source)
     {
+        if (!Map.RemoveObject(Monster))
+            return;
+
         base.OnDeath(source);
-        
+
         Monster.Drop(Monster, Monster.Items);
         Monster.DropGold(Monster, Monster.Gold);
 
@@ -25,8 +28,7 @@ public class DeathScript : MonsterScriptBase
         {
             //TODO: distribute exp
         }
-        
-        Map.RemoveObject(Monster);
+
     }
 
     protected virtual void DistributeExp(Aisling source)

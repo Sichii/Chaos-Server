@@ -34,8 +34,10 @@ public class Money : VisibleEntity
             return;
         }
 
-        MapInstance.RemoveObject(this);
-        source.Gold += Amount;
-        source.Client.SendAttributes(StatUpdateType.ExpGold);
+        if (MapInstance.RemoveObject(this))
+        {
+            source.Gold += Amount;
+            source.Client.SendAttributes(StatUpdateType.ExpGold);
+        }
     }
 }

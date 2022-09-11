@@ -10,7 +10,7 @@ namespace Chaos.Data;
 public class MonsterSpawn : IDeltaUpdatable
 {
     public MapInstance MapInstance { get; set; } = null!;
-    public required LootTable LootTable { get; init; }
+    public required LootTable? LootTable { get; init; }
     public required IIntervalTimer SpawnTimer { get; init; }
     public required int MaxPerSpawn { get; init; }
     public required int MaxAmount { get; init; }
@@ -21,7 +21,7 @@ public class MonsterSpawn : IDeltaUpdatable
     public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
     public required IMonsterFactory MonsterFactory { get; init; }
     public required MonsterTemplate MonsterTemplate { get; init; }
-    public Rectangle? SpawnArea { get; set; } = null!;
+    public Rectangle? SpawnArea { get; set; }
 
     /// <inheritdoc />
     public void Update(TimeSpan delta)
@@ -75,7 +75,9 @@ public class MonsterSpawn : IDeltaUpdatable
 
     private void GenerateRewards(Monster monster)
     {
-        monster.Items.AddRange(LootTable.GenerateLoot());
+        if (LootTable != null)
+            monster.Items.AddRange(LootTable.GenerateLoot());
+        
         monster.Gold = Random.Shared.Next(MinGoldDrop, MaxGoldDrop + 1);
         monster.Experience = ExpReward;
     }

@@ -62,7 +62,8 @@ async ValueTask ParseLineToFileAsync(string line, CancellationToken _)
             TemplateKey = mapIdNum.ToString(),
             Width = widthNum,
             Height = heightNum,
-            WarpPoints = Array.Empty<Point>()
+            WarpPoints = Array.Empty<Point>(),
+            ScriptKeys = Array.Empty<string>()
         };
 
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);

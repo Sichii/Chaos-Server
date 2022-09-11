@@ -247,15 +247,18 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         return objects.ToList();
     }
 
-    public void RemoveObject(MapEntity mapEntity)
+    public bool RemoveObject(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
 
-        Objects.Remove(mapEntity.Id);
+        if (!Objects.Remove(mapEntity.Id))
+            return false;
 
         if (mapEntity is VisibleEntity visibleObject)
             foreach (var aisling in ObjectsThatSee<Aisling>(visibleObject))
                 aisling.Client.SendRemoveObject(visibleObject.Id);
+
+        return true;
     }
 
     public void ShowAnimation(Animation animation)
@@ -270,18 +273,6 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         } else if (animation.TargetPoint != default)
             foreach (var aisling in ObjectsWithinRange<Aisling>(animation.TargetPoint))
                 aisling.Client.SendAnimation(animation);
-    }
-
-    public void ShowBodyAnimation(BodyAnimation bodyAnimation, Creature source, byte? sound = null)
-    {
-        using var @lock = Sync.Enter();
-
-        foreach (var aisling in ObjectsThatSee<Aisling>(source))
-            aisling.Client.SendBodyAnimation(
-                source.Id,
-                bodyAnimation,
-                100,
-                sound);
     }
 
     public void SimpleAdd(MapEntity mapEntity)
