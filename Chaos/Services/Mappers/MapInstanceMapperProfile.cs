@@ -11,14 +11,12 @@ namespace Chaos.Services.Mappers;
 
 public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>
 {
-    private readonly ITypeMapper Mapper;
     private readonly ISimpleCache SimpleCache;
     private readonly IScriptProvider ScriptProvider;
 
-    public MapInstanceMapperProfile(ISimpleCache simpleCache, ITypeMapper mapper, IScriptProvider scriptProvider)
+    public MapInstanceMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider)
     {
         SimpleCache = simpleCache;
-        Mapper = mapper;
         ScriptProvider = scriptProvider;
     }
 
@@ -43,9 +41,15 @@ public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceS
             mapInstance.SimpleAdd(door);
         }
 
-        foreach (var warp in Mapper.MapMany<Warp>(obj.Warps))
+        foreach (var warpSchema in obj.Warps)
         {
-            var warpTile = new WarpTile(warp, SimpleCache);
+            var warp = new Warp
+            {
+                SourceLocation = new Location(obj.InstanceId, warpSchema.Source.X, warpSchema.Source.Y),
+                TargetLocation = new Location(warpSchema.Destination.Map, warpSchema.Destination.X, warpSchema.Destination.Y)
+            };
+            
+            var warpTile = new WarpTile(mapInstance, SimpleCache, warp);
             mapInstance.SimpleAdd(warpTile);
         }
 

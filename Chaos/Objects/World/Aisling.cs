@@ -243,8 +243,9 @@ public class Aisling : Creature
         if (Inventory.TryAdd(destinationSlot, item))
         {
             Logger.LogDebug("{UserName} picked up {Item}", Name, item);
-            MapInstance.RemoveObject(groundItem);
-            item.Script.OnPickup(this);
+
+            if (MapInstance.RemoveObject(groundItem))
+                item.Script.OnPickup(this);
         }
     }
     

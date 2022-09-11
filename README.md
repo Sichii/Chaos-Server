@@ -71,11 +71,11 @@ A configurable Dark Ages server emulator
   "key": "rat1Sticks",
   "lootDrops": [
     {
-      "itemTemplateKey": "stick",
+      "itemTemplateKey": "stick1",
       "dropChance": 10
     },
     {
-      "itemTemplateKey": "rotten apple",
+      "itemTemplateKey": "rotten apple1",
       "dropChance": 30
     }
   ]
@@ -115,13 +115,13 @@ A configurable Dark Ages server emulator
 |Name|Type/Values|Description|
 |:---|:----:|:---|
 |Source|string<br>"(X, Y)"|A string representation of a point.<br>The tile coordinates the warp is on<br>Ex. "(50, 15)"|
-|Destination|string<br>"MapInstanceId:(X, Y)"|A string representation of a location<br>The map and coordinates of the map the warp sends you to when stepped on<br> Ex. "500:(10, 10)"|
+|Destination|string<br>"MapInstanceId:(X, Y)"|A string representation of a location<br>The map instance id and coordinates the warp sends you to when stepped on<br> Ex. "mileth1:(10, 10)"|
 
 ### Spawn Properties
 |Name|Type/Values|Description|
 |:---|:----:|:---|
 |MonsterTemplateKey|string|The unique id for the template of the monster to spawn|
-|LootTableKey|string|The unique id for the loot table used to determine monster drops from this spawn|
+|LootTableKey|string(options)|Default is to not have a loot table. If specified, the unique id for the loot table used to determine monster drops from this spawn|
 |IntervalSecs|number|A number of seconds between each trigger of this spawn|
 |IntervalVariancePct|number(optional)|Defaults to 0<br>If specified, will randomize the interval by the percentage specified<br>Ex. With an interval of 60, and a Variance of 50, the spawn interval would var from 45-75secs|
 |MaxAmount|number|The maximum number of monsters that can be on the map from this spawn|
@@ -148,7 +148,7 @@ A configurable Dark Ages server emulator
 
 ```json
 {
-  "templateKey": 500,
+  "templateKey": "500",
   "name": "Mileth",
   "instanceId": "Mileth1",
   "music": 1,
@@ -159,11 +159,11 @@ A configurable Dark Ages server emulator
   "warps": [
     {
       "source": "(99, 30)",
-      "destination": "3006:(0, 15)"
+      "destination": "milethVillageWay1:(0, 15)"
     },
     {
       "source": "(99, 31)",
-      "destination": "3006:(0, 16)"
+      "destination": "milethVillageWay1:(0, 16)"
     }
   ]
 }
@@ -277,7 +277,7 @@ A configurable Dark Ages server emulator
   
 ```json
 {
-  "templateKey": "stick",
+  "templateKey": "stick1",
   "accountBound": false,
   "baseClass": "Peasant",
   "advClass": "None",
@@ -366,30 +366,30 @@ A configurable Dark Ages server emulator
 ### Example file "rat1.json"
 ```json
 {
-  "TemplateKey": "rat1",
-  "StatSheet": {
-    "Ability": 0,
-    "Level": 1,
-    "MaximumHp": 100,
-    "MaximumMp": 100,
-    "Ac": 50,
-    "Str": 1,
-    "Int": 1,
-    "Wis": 1,
-    "Con": 2,
-    "Dex": 1,
+  "templateKey": "rat1",
+  "statSheet": {
+    "ability": 0,
+    "level": 1,
+    "maximumHp": 100,
+    "maximumMp": 100,
+    "ac": 50,
+    "str": 1,
+    "int": 1,
+    "wis": 1,
+    "con": 2,
+    "dex": 1
   },
-  "Type": "Normal",
-  "Direction": "Down",
-  "Name": "Common Rat",
-  "Sprite": 7,
-  "WanderIntervalMs": 2000,
-  "MoveIntervalMs": 1500,
-  "AttackIntervalMs": 1500,
-  "CastIntervalMs": 10000,
-  "SpellTemplateKeys": [],
-  "SkillTemplateKeys": [ "assail" ],
-  "ScriptKeys": [
+  "type": "Normal",
+  "direction": "Down",
+  "name": "Common Rat",
+  "sprite": 7,
+  "wanderIntervalMs": 2000,
+  "moveIntervalMs": 1500,
+  "attackIntervalMs": 1500,
+  "castIntervalMs": 10000,
+  "spellTemplateKeys": [],
+  "skillTemplateKeys": [ "assail" ],
+  "scriptKeys": [
     "commonMonster"
   ]
 }

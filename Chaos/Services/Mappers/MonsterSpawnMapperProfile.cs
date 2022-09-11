@@ -24,7 +24,7 @@ public class MonsterSpawnMapperProfile : IMapperProfile<MonsterSpawn, MonsterSpa
     {
         AggroRange = obj.AggroRange ?? 0,
         ExpReward = obj.ExpReward,
-        LootTable = SimpleCache.GetObject<LootTable>(obj.LootTableKey),
+        LootTable = obj.LootTableKey == null ? null : SimpleCache.GetObject<LootTable>(obj.LootTableKey),
         MaxAmount = obj.MaxAmount,
         MaxGoldDrop = obj.MaxGoldDrop,
         MinGoldDrop = obj.MinGoldDrop,

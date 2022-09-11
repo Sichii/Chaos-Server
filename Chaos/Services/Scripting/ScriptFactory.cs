@@ -30,9 +30,6 @@ public class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> 
     /// <inheritdoc />
     public TScript CreateScript(ICollection<string> scriptKeys, TSource source)
     {
-        if (!scriptKeys.Any())
-            throw new InvalidOperationException("No script keys specified");
-
         var composite = (ICompositeScript<TScript>)InstanceFactory.CreateInstance(CompositeType, source);
 
         if (scriptKeys.Count == 1)
@@ -63,10 +60,7 @@ public class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> 
 
                     composite.Add(tScript);
                 }
-
-        if (!composite.Any())
-            throw new InvalidOperationException($"No scripts found for keys {string.Join(", ", scriptKeys)}");
-
+        
         return (TScript)composite;
     }
 

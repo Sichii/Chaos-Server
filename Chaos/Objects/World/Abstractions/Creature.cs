@@ -87,7 +87,9 @@ public abstract class Creature : NamedEntity, IEffected
     public void TraverseMap(MapInstance destinationMap, IPoint destinationPoint)
     {
         var currentMap = MapInstance;
-        currentMap.RemoveObject(this);
+
+        if (!currentMap.RemoveObject(this))
+            return;
 
         //if this thread has a lock taken out on the current map
         //we have to release it, because adding to another map takes out that map's lock
@@ -241,6 +243,16 @@ public abstract class Creature : NamedEntity, IEffected
             return true;
 
         return false;
+    }
+
+    public virtual void AnimateBody(BodyAnimation bodyAnimation, ushort speed = 1000, byte? sound = null)
+    {
+        foreach (var aisling in MapInstance.ObjectsThatSee<Aisling>(this))
+            aisling.Client.SendBodyAnimation(
+                Id,
+                bodyAnimation,
+                speed,
+                sound);
     }
     
     public void Drop(IPoint point, params Item[] items) => Drop(point, items.AsEnumerable());

@@ -6,7 +6,7 @@ namespace Chaos.Entities.Schemas.Content;
 
 public record MonsterSpawnSchema
 {
-    public required string LootTableKey { get; init; }
+    public required string? LootTableKey { get; init; }
     public required int IntervalSecs { get; init; }
     public required int? IntervalVariancePct { get; init; }
     public required int MaxPerSpawn { get; init; }
