@@ -5,20 +5,22 @@ namespace Chaos.Services.Hosted.Options;
 
 public record WorldOptions : ServerOptions, IWorldOptions
 {
-    public int DropRange { get; init; }
+    public int AislingAssailIntervalMs { get; init; }
+    public required int DropRange { get; init; }
     public static IWorldOptions Instance { get; set; } = null!;
-    public RedirectInfo LoginRedirect { get; init; } = null!;
-    public int MaxGoldHeld { get; init; }
-    public int MaximumAislingAc { get; init; }
-    public int MaximumMonsterAc { get; init; }
-    public int MinimumAislingAc { get; init; }
-    public int MinimumMonsterAc { get; init; }
-    public int PickupRange { get; init; }
-    public int RefreshIntervalMs { get; init; }
-    public int SaveIntervalMins { get; init; }
-    public int TradeRange { get; init; }
-    public int MaxLevel { get; init; }
-    public int UpdatesPerSecond { get; init; }
+    public required RedirectInfo LoginRedirect { get; init; }
+    public required int MaxActionsPerSecond { get; init; }
+    public required int MaxGoldHeld { get; init; }
+    public required int MaximumAislingAc { get; init; }
+    public required int MaximumMonsterAc { get; init; }
+    public required int MaxLevel { get; init; }
+    public required int MinimumAislingAc { get; init; }
+    public required int MinimumMonsterAc { get; init; }
+    public required int PickupRange { get; init; }
+    public required int RefreshIntervalMs { get; init; }
+    public required int SaveIntervalMins { get; init; }
+    public required int TradeRange { get; init; }
+    public required int UpdatesPerSecond { get; init; }
 
     public static void PostConfigure(WorldOptions options)
     {

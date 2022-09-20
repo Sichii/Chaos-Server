@@ -10,6 +10,8 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
     public DateTime Creation { get; init; } = DateTime.UtcNow;
     public uint Id { get; init; } = ClientId.NextId;
 
+    public static IEqualityComparer<WorldEntity> IdComparer { get; } = new IdEqualityComparer();
+
     public bool Equals(WorldEntity? other)
     {
         if (ReferenceEquals(null, other))
@@ -34,4 +36,23 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
     }
 
     public override int GetHashCode() => Id.GetHashCode();
+
+    private sealed class IdEqualityComparer : IEqualityComparer<WorldEntity>
+    {
+        public bool Equals(WorldEntity? x, WorldEntity? y)
+        {
+            if (ReferenceEquals(x, y))
+                return true;
+
+            if (ReferenceEquals(x, null))
+                return false;
+
+            if (ReferenceEquals(y, null))
+                return false;
+
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(WorldEntity obj) => (int)obj.Id;
+    }
 }

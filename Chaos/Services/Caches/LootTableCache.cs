@@ -13,6 +13,9 @@ namespace Chaos.Services.Caches;
 public class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSchema, LootTableCacheOptions>
 {
     /// <inheritdoc />
+    protected override Func<LootTable, string> KeySelector => l => l.Key;
+
+    /// <inheritdoc />
     public LootTableCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -24,8 +27,5 @@ public class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSchema, Lo
             jsonSerializerOptions,
             options,
             logger) =>
-        AsyncHelpers.RunSync(LoadCacheAsync);
-
-    /// <inheritdoc />
-    protected override Func<LootTable, string> KeySelector => l => l.Key;
+        AsyncHelpers.RunSync(ReloadAsync);
 }

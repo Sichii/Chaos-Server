@@ -9,7 +9,13 @@ public static class EnumerableExtensions
         enumerable.Contains(str, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    ///     Re-streams the contents of a sequence in a random order
+    ///     Randomizes the order of the elements in a sequence
     /// </summary>
-    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> objects) => objects.OrderBy(_ => Random.Shared.Next());
+    public static List<T> Shuffle<T>(this IEnumerable<T> objects)
+    {
+        var list = objects.ToList();
+        list.Shuffle();
+
+        return list;
+    }
 }

@@ -1,10 +1,10 @@
 using Chaos.Objects.Panel;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.SkillScripts.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts;
 
 public class NoOpSkillScript : SkillScriptBase
 {
-    public NoOpSkillScript(Skill skill)
-        : base(skill) { }
+    public NoOpSkillScript(Skill subject)
+        : base(subject) { }
 }

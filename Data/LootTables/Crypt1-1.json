@@ -1,0 +1,9 @@
+{
+    "Key": "Crypt 1-1",
+    "LootDrops": [
+        {
+            "ItemTemplateKey": "Stick",
+            "DropChance": 25
+        }
+    ]
+}

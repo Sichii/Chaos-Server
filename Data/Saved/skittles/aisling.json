@@ -1,0 +1,38 @@
+{
+  "bodySprite": "Male",
+  "direction": "Right",
+  "effects": [],
+  "gender": "Male",
+  "gold": 30,
+  "hairStyle": 3,
+  "ignoreList": [],
+  "isAdmin": true,
+  "mapInstanceId": "test9",
+  "name": "skittles",
+  "statSheet": {
+    "maxWeight": 109,
+    "toNextLevel": 83250,
+    "totalExp": 5050,
+    "currentHp": 97878,
+    "currentMp": 100000,
+    "level": 21,
+    "atkSpeedPct": 600,
+    "con": 2,
+    "dex": 1,
+    "int": 1,
+    "maximumHp": 100000,
+    "maximumMp": 100000,
+    "str": 21,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 23,
+  "y": 20
+}

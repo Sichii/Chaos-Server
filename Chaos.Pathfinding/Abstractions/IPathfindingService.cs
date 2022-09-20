@@ -13,10 +13,15 @@ public interface IPathfindingService
         ICollection<IPoint> creatures
     );
 
-    Direction Wander(string key, IPoint start, bool ignoreWalls, ICollection<IPoint> creatures);
-    
     void RegisterGrid(
         string key,
         IGridDetails gridDetails
+    );
+
+    Direction Wander(
+        string key,
+        IPoint start,
+        bool ignoreWalls,
+        ICollection<IPoint> creatures
     );
 }

@@ -1,25 +1,24 @@
-using Chaos.Extensions;
 using Chaos.Objects.World;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.MonsterScripts.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
 public class MoveToTargetScript : MonsterScriptBase
 {
     /// <inheritdoc />
-    public MoveToTargetScript(Monster monster)
-        : base(monster) { }
+    public MoveToTargetScript(Monster subject)
+        : base(subject) { }
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)
     {
         base.Update(delta);
 
-        if ((Target == null) || !ShouldMove || Monster.WithinRange(Target, 1))
+        if ((Target == null) || !ShouldMove || (Subject.DistanceFrom(Target) == 1))
             return;
 
-        Monster.Pathfind(Target);
-        Monster.WanderTimer.Reset();
-        Monster.AttackTimer.Reset();
+        Subject.Pathfind(Target);
+        Subject.WanderTimer.Reset();
+        Subject.SkillTimer.Reset();
     }
 }

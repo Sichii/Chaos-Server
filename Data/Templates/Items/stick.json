@@ -9,7 +9,8 @@
     "MaxDurability": 1000,
     "MaxStacks": 1,
     "Modifiers": {
-        "Str": 1
+        "Str": 1,
+        "AtkSpeedPct": 100
     },
     "Value": 1000,
     "Weight": 1,

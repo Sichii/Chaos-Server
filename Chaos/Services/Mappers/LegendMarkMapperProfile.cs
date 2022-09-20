@@ -18,6 +18,7 @@ public class LegendMarkMapperProfile : IMapperProfile<LegendMark, LegendMarkSche
         new GameTime(obj.Added));
 
     public LegendMark Map(LegendMarkInfo obj) => throw new NotImplementedException();
+
     LegendMarkInfo IMapperProfile<LegendMark, LegendMarkInfo>.Map(LegendMark obj) => new()
     {
         Color = obj.Color,

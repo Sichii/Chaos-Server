@@ -7,6 +7,7 @@ namespace Chaos.Data;
 public record Attributes
 {
     protected int _ac;
+    protected int _atkSpeedPct;
     protected int _con;
     protected int _dex;
     protected int _dmg;
@@ -22,6 +23,12 @@ public record Attributes
     {
         get => _ac;
         init => _ac = value;
+    }
+
+    public int AtkSpeedPct
+    {
+        get => _atkSpeedPct;
+        init => _atkSpeedPct = value;
     }
 
     public int Con
@@ -97,6 +104,7 @@ public record Attributes
         Interlocked.Add(ref _magicResistance, other.MagicResistance);
         Interlocked.Add(ref _maximumHp, other.MaximumHp);
         Interlocked.Add(ref _maximumMp, other.MaximumHp);
+        Interlocked.Add(ref _atkSpeedPct, other.AtkSpeedPct);
     }
 
     public virtual void Subtract(Attributes other)
@@ -112,5 +120,6 @@ public record Attributes
         Interlocked.Add(ref _magicResistance, -other.MagicResistance);
         Interlocked.Add(ref _maximumHp, -other.MaximumHp);
         Interlocked.Add(ref _maximumMp, -other.MaximumHp);
+        Interlocked.Add(ref _atkSpeedPct, -other.AtkSpeedPct);
     }
 }

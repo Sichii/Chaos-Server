@@ -13,6 +13,7 @@ public class MonsterSpawnMapperProfile : IMapperProfile<MonsterSpawn, MonsterSpa
 {
     private readonly IMonsterFactory MonsterFactory;
     private readonly ISimpleCache SimpleCache;
+
     public MonsterSpawnMapperProfile(IMonsterFactory monsterFactory, ISimpleCache simpleCache)
     {
         MonsterFactory = monsterFactory;

@@ -10,7 +10,7 @@ public class MonsterSpawnsSchema : IEnumerable<MonsterSpawnSchema>
     public ICollection<MonsterSpawnSchema> Values { get; init; }
 
     public MonsterSpawnsSchema(IEnumerable<MonsterSpawnSchema> values) => Values = values.ToList();
-    
+
     /// <inheritdoc />
     public IEnumerator<MonsterSpawnSchema> GetEnumerator() => Values.GetEnumerator();
 

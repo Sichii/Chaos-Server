@@ -10,8 +10,8 @@ namespace Chaos.Services.Factories;
 public class SkillFactory : ISkillFactory
 {
     private readonly ILogger Logger;
-    private readonly ISimpleCache SimpleCache;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
     public SkillFactory(
         ISimpleCache simpleCache,

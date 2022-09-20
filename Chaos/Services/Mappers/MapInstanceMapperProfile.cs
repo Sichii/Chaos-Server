@@ -11,13 +11,15 @@ namespace Chaos.Services.Mappers;
 
 public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>
 {
-    private readonly ISimpleCache SimpleCache;
+    private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
-    public MapInstanceMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider)
+    public MapInstanceMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
+        Mapper = mapper;
     }
 
     public MapInstance Map(MapInstanceSchema obj)
@@ -32,7 +34,9 @@ public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceS
             obj.ScriptKeys)
         {
             Flags = obj.Flags,
-            Music = obj.Music
+            Music = obj.Music,
+            MinimumLevel = obj.MinimumLevel,
+            MaximumLevel = obj.MaximumLevel
         };
 
         foreach (var doorTemplate in template.Doors.Values)
@@ -41,14 +45,8 @@ public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceS
             mapInstance.SimpleAdd(door);
         }
 
-        foreach (var warpSchema in obj.Warps)
+        foreach (var warp in Mapper.MapMany<Warp>(obj.Warps))
         {
-            var warp = new Warp
-            {
-                SourceLocation = new Location(obj.InstanceId, warpSchema.Source.X, warpSchema.Source.Y),
-                TargetLocation = new Location(warpSchema.Destination.Map, warpSchema.Destination.X, warpSchema.Destination.Y)
-            };
-            
             var warpTile = new WarpTile(mapInstance, SimpleCache, warp);
             mapInstance.SimpleAdd(warpTile);
         }

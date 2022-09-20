@@ -38,10 +38,10 @@ public class TypeMapper : ITypeMapper
 
         if (!objs.Any())
             yield break;
-        
+
         var mapper = ResolverCache.GetOrAdd((objs.First().GetType(), typeof(TResult)), ResolveMapper);
-        
-        foreach(var o in objs)
+
+        foreach (var o in objs)
             yield return (TResult)mapper(o);
     }
 

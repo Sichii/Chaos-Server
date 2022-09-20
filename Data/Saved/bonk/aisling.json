@@ -1,0 +1,35 @@
+{
+  "bodySprite": "Female",
+  "direction": "Right",
+  "effects": [],
+  "gender": "Female",
+  "hairStyle": 4,
+  "ignoreList": [],
+  "mapInstanceId": "Test1",
+  "name": "bonk",
+  "statSheet": {
+    "toNextLevel": 400,
+    "totalExp": 500,
+    "unspentPoints": 2,
+    "maxWeight": 43,
+    "currentMp": 50,
+    "level": 2,
+    "con": 1,
+    "dex": 1,
+    "int": 1,
+    "maximumHp": 111,
+    "maximumMp": 61,
+    "str": 1,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 6,
+  "y": 7
+}

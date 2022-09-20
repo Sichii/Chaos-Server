@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        
+
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
+        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
     </ItemGroup>
 
 </Project>

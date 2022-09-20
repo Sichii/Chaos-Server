@@ -1,3 +1,4 @@
+using Chaos.Core.Collections;
 using Chaos.Data;
 using Chaos.Entities.Schemas.Templates;
 using Chaos.Services.Mappers.Abstractions;
@@ -29,6 +30,11 @@ public class ItemTemplateMapperProfile : IMapperProfile<ItemTemplate, ItemTempla
         Weight = obj.Weight,
         Animation = obj.Animation == null ? null : Mapper.Map<Animation>(obj.Animation),
         Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+        BodyAnimationOverride = obj.BodyAnimationOverride,
+        PanelSprite = obj.PanelSprite,
+        ScriptVars = new Dictionary<string, DynamicVars>(
+            obj.ScriptVars ?? Enumerable.Empty<KeyValuePair<string, DynamicVars>>(),
+            StringComparer.OrdinalIgnoreCase)
     };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();

@@ -10,8 +10,8 @@ namespace Chaos.Services.Factories;
 public class SpellFactory : ISpellFactory
 {
     private readonly ILogger Logger;
-    private readonly ISimpleCache SimpleCache;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
     public SpellFactory(
         ISimpleCache simpleCache,

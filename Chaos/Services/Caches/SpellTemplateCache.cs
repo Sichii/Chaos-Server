@@ -13,6 +13,9 @@ namespace Chaos.Services.Caches;
 public class SpellTemplateCache : SimpleFileCacheBase<SpellTemplate, SpellTemplateSchema, SpellTemplateCacheOptions>
 {
     /// <inheritdoc />
+    protected override Func<SpellTemplate, string> KeySelector => t => t.TemplateKey;
+
+    /// <inheritdoc />
     public SpellTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -23,8 +26,5 @@ public class SpellTemplateCache : SimpleFileCacheBase<SpellTemplate, SpellTempla
             mapper,
             jsonSerializerOptions,
             options,
-            logger) => AsyncHelpers.RunSync(LoadCacheAsync);
-
-    /// <inheritdoc />
-    protected override Func<SpellTemplate, string> KeySelector => t => t.TemplateKey;
+            logger) => AsyncHelpers.RunSync(ReloadAsync);
 }

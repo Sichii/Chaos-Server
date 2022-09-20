@@ -9,8 +9,8 @@ public class WarpMapperProfile : IMapperProfile<Warp, WarpSchema>
     /// <inheritdoc />
     public Warp Map(WarpSchema obj) => new()
     {
-        SourceLocation = new Location(null!, obj.Source.X, obj.Source.Y),
-        TargetLocation = obj.Destination
+        Source = new Point(obj.Source.X, obj.Source.Y),
+        Destination = obj.Destination
     };
 
     /// <inheritdoc />

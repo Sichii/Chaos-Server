@@ -8,7 +8,7 @@ namespace Chaos.Entities.Schemas.Aisling;
 public class LegendSchema : IEnumerable<LegendMarkSchema>
 {
     public ICollection<LegendMarkSchema> LegendMarks { get; init; }
-    
+
     public LegendSchema(IEnumerable<LegendMarkSchema> marks) => LegendMarks = marks.ToList();
 
     public IEnumerator<LegendMarkSchema> GetEnumerator() => LegendMarks.GetEnumerator();

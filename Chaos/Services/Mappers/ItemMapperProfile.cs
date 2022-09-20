@@ -11,10 +11,10 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Services.Mappers;
 
 public class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
-                              IMapperProfile<Item, ItemInfo>
+                                 IMapperProfile<Item, ItemInfo>
 {
-    private readonly IScriptProvider ScriptProvider;
     private readonly ILogger<ItemMapperProfile> Logger;
+    private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
     public ItemMapperProfile(

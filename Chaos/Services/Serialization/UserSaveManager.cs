@@ -38,6 +38,15 @@ public class UserSaveManager : ISaveManager<Aisling>
             Directory.CreateDirectory(Options.Directory);
     }
 
+    private async ValueTask<T> DesierlizeAsync<T>(string directory, string fileName)
+    {
+        var path = Path.Combine(directory, fileName);
+        await using var stream = File.OpenRead(path);
+        var ret = await JsonSerializer.DeserializeAsync<T>(stream, JsonSerializerOptions);
+
+        return ret!;
+    }
+
     public async Task<Aisling> LoadAsync(IWorldClient worldClient, string name)
     {
         await using var sync = await Sync.WaitAsync();
@@ -63,6 +72,7 @@ public class UserSaveManager : ISaveManager<Aisling>
         var legend = Mapper.Map<Legend>(legendSchema);
 
         worldClient.Aisling = aisling;
+
         aisling.Initialize(
             name,
             worldClient,
@@ -113,14 +123,5 @@ public class UserSaveManager : ISaveManager<Aisling>
         var path = Path.Combine(directory, fileName);
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
         await JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptions);
-    }
-
-    private async ValueTask<T> DesierlizeAsync<T>(string directory, string fileName)
-    {
-        var path = Path.Combine(directory, fileName);
-        await using var stream = File.OpenRead(path);
-        var ret = await JsonSerializer.DeserializeAsync<T>(stream, JsonSerializerOptions);
-
-        return ret!;
     }
 }

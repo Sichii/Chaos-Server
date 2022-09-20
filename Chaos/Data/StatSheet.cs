@@ -19,6 +19,12 @@ public record StatSheet : Attributes
         init => _acMod = value;
     }
 
+    public int AtkSpeedPctMod
+    {
+        get => _atkSpeedPctMod;
+        init => _atkSpeedPctMod = value;
+    }
+
     public int ConMod
     {
         get => _conMod;
@@ -55,30 +61,6 @@ public record StatSheet : Attributes
         init => _dmgMod = value;
     }
 
-    public sbyte EffectiveAc => (sbyte)Math.Clamp(Ac + AcMod, sbyte.MinValue, sbyte.MaxValue);
-
-    public byte EffectiveCon => (byte)Math.Clamp(Con + ConMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveDex => (byte)Math.Clamp(Dex + DexMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveDmg => (byte)Math.Clamp(Dmg + DmgMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveHit => (byte)Math.Clamp(Hit + HitMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveInt => (byte)Math.Clamp(Int + IntMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistanceMod, sbyte.MinValue, sbyte.MaxValue);
-
-    public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 0);
-
-    public uint EffectiveMaximumMp => (uint)Math.Max(MaximumMp + MaximumMpMod, 0);
-
-    public byte EffectiveStr => (byte)Math.Clamp(Str + StrMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveWis => (byte)Math.Clamp(Wis + WisMod, byte.MinValue, byte.MaxValue);
-
-    public int HealthPercent => (int)(CurrentHp / EffectiveMaximumHp * 100);
-
     public int HitMod
     {
         get => _hitMod;
@@ -102,24 +84,6 @@ public record StatSheet : Attributes
         get => _magicResistanceMod;
         init => _magicResistanceMod = value;
     }
-
-    public int ManaPercent => (int)(CurrentMp / EffectiveMaximumMp * 100);
-
-    public static StatSheet Maxed =>
-        new()
-        {
-            _currentHp = int.MaxValue,
-            _currentMp = int.MaxValue,
-            _str = int.MaxValue,
-            _int = int.MaxValue,
-            _wis = int.MaxValue,
-            _con = int.MaxValue,
-            _dex = int.MaxValue,
-            _maximumHp = int.MaxValue,
-            _maximumMp = int.MaxValue,
-            _magicResistance = int.MaxValue,
-            _ac = int.MinValue
-        };
 
     public int MaximumHpMod
     {
@@ -151,6 +115,51 @@ public record StatSheet : Attributes
         init => _wisMod = value;
     }
 
+    public sbyte EffectiveAc => (sbyte)Math.Clamp(Ac + AcMod, sbyte.MinValue, sbyte.MaxValue);
+
+    public int EffectiveAttackSpeedPct => Math.Clamp(AtkSpeedPct + AtkSpeedPctMod, -200, 200);
+
+    public byte EffectiveCon => (byte)Math.Clamp(Con + ConMod, byte.MinValue, byte.MaxValue);
+
+    public byte EffectiveDex => (byte)Math.Clamp(Dex + DexMod, byte.MinValue, byte.MaxValue);
+
+    public byte EffectiveDmg => (byte)Math.Clamp(Dmg + DmgMod, byte.MinValue, byte.MaxValue);
+
+    public byte EffectiveHit => (byte)Math.Clamp(Hit + HitMod, byte.MinValue, byte.MaxValue);
+
+    public byte EffectiveInt => (byte)Math.Clamp(Int + IntMod, byte.MinValue, byte.MaxValue);
+
+    public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistanceMod, sbyte.MinValue, sbyte.MaxValue);
+
+    public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 0);
+
+    public uint EffectiveMaximumMp => (uint)Math.Max(MaximumMp + MaximumMpMod, 0);
+
+    public byte EffectiveStr => (byte)Math.Clamp(Str + StrMod, byte.MinValue, byte.MaxValue);
+
+    public byte EffectiveWis => (byte)Math.Clamp(Wis + WisMod, byte.MinValue, byte.MaxValue);
+
+    public int HealthPercent => Math.Clamp((int)(CurrentHp / (float)EffectiveMaximumHp * 100), 0, 100);
+
+    public int ManaPercent => (int)(CurrentMp / (float)EffectiveMaximumMp * 100);
+
+    public static StatSheet Maxed =>
+        new()
+        {
+            _currentHp = int.MaxValue,
+            _currentMp = int.MaxValue,
+            _str = int.MaxValue,
+            _int = int.MaxValue,
+            _wis = int.MaxValue,
+            _con = int.MaxValue,
+            _dex = int.MaxValue,
+            _maximumHp = int.MaxValue,
+            _maximumMp = int.MaxValue,
+            _magicResistance = int.MaxValue,
+            _ac = int.MinValue,
+            _atkSpeedPct = 500
+        };
+
     public void AddBonus(Attributes other)
     {
         Interlocked.Add(ref _acMod, other.Ac);
@@ -164,6 +173,7 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _magicResistanceMod, other.MagicResistance);
         Interlocked.Add(ref _maximumHpMod, other.MaximumHp);
         Interlocked.Add(ref _maximumMpMod, other.MaximumHp);
+        Interlocked.Add(ref _atkSpeedPctMod, other.AtkSpeedPct);
     }
 
     public void AddHp(int amount)
@@ -177,6 +187,9 @@ public record StatSheet : Attributes
         if (Interlocked.Add(ref _currentMp, amount) < 0)
             _currentMp = 0;
     }
+
+    public int CalculateEffectiveAssailInterval(int baseAssailIntervalMs) =>
+        Convert.ToInt32(baseAssailIntervalMs / (1 + EffectiveAttackSpeedPct / 100.0f));
 
     public void SetDefenseElement(Element element) => _defenseElement = element;
 
@@ -195,6 +208,19 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _magicResistanceMod, -other.MagicResistance);
         Interlocked.Add(ref _maximumHpMod, -other.MaximumHp);
         Interlocked.Add(ref _maximumMpMod, -other.MaximumHp);
+        Interlocked.Add(ref _atkSpeedPctMod, -other.AtkSpeedPct);
+    }
+
+    public void SubtractHp(int amount)
+    {
+        if (Interlocked.Add(ref _currentHp, -amount) < 0)
+            _currentHp = 0;
+    }
+
+    public void SubtractMp(int amount)
+    {
+        if (Interlocked.Add(ref _currentMp, -amount) < 0)
+            _currentMp = 0;
     }
 
     #region SharedAttributes
@@ -218,5 +244,6 @@ public record StatSheet : Attributes
     protected int _wisMod;
     protected int _dmgMod;
     protected int _hitMod;
+    protected int _atkSpeedPctMod;
     #endregion
 }

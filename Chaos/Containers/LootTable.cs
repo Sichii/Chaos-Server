@@ -13,7 +13,7 @@ public class LootTable
 
     public IEnumerable<Item> GenerateLoot()
     {
-        foreach(var drop in LootDrops)
+        foreach (var drop in LootDrops)
             if (Randomizer.RollChance(drop.DropChance))
                 yield return ItemFactory.Create(drop.ItemTemplateKey);
     }

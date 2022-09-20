@@ -1,5 +1,5 @@
 using Chaos.Objects.World;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.MonsterScripts.Abstractions;
 using Chaos.Scripts.MonsterScripts.Components;
 using Chaos.Services.Scripting.Abstractions;
 
@@ -18,15 +18,15 @@ public class CommonMonsterScript : CompositeMonsterScript
     };
 
     /// <inheritdoc />
-    public CommonMonsterScript(IScriptProvider scriptProvider, Monster source)
-        : base(source)
+    public CommonMonsterScript(IScriptProvider scriptProvider, Monster subject)
+        : base(subject)
     {
-        var script = scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, source) as CompositeMonsterScript;
+        var script = scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, subject) as CompositeMonsterScript;
 
         if (script == null)
             throw new InvalidOperationException("Unable to create componentized script");
-        
-        foreach(var component in script)
+
+        foreach (var component in script)
             Add(component);
     }
 }

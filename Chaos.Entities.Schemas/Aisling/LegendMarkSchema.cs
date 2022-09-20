@@ -8,6 +8,6 @@ public record LegendMarkSchema
     public required MarkColor Color { get; init; }
     public required int Count { get; init; }
     public required MarkIcon Icon { get; init; }
-    public required string Key { get; init; } 
+    public required string Key { get; init; }
     public required string Text { get; init; }
 }

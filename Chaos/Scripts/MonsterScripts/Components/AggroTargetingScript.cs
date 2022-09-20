@@ -1,6 +1,7 @@
+using Chaos.Extensions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.MonsterScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 
@@ -12,9 +13,21 @@ public class AggroTargetingScript : MonsterScriptBase
     private int InitialAggro = 10;
 
     /// <inheritdoc />
-    public AggroTargetingScript(Monster monster)
-        : base(monster) => TargetUpdateTimer =
-        new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(500, Monster.Template.AttackIntervalMs)));
+    public AggroTargetingScript(Monster subject)
+        : base(subject) => TargetUpdateTimer =
+        new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(500, Subject.Template.SkillIntervalMs)));
+
+    /// <inheritdoc />
+    public override void OnAttacked(Creature source, ref int damage)
+    {
+        base.OnAttacked(source, ref damage);
+        var localDamage = damage;
+
+        if ((damage <= 0) || source.Equals(Subject))
+            return;
+
+        AggroList.AddOrUpdate(source.Id, _ => localDamage, (_, currentAggro) => currentAggro + localDamage);
+    }
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)
@@ -29,29 +42,37 @@ public class AggroTargetingScript : MonsterScriptBase
         if (Target is { IsAlive: false })
         {
             AggroList.Remove(Target.Id, out _);
-            Monster.Target = null;
+            Subject.Target = null;
         }
 
-        //grab the creature with the highest aggro
-        //if nothing is aggro, grab the closest Aisling
-        Target = Map.ObjectsVisibleTo<Creature>(Monster, AggroRange)
-                                 .Where(c => c.IsAlive && (c is Aisling || AggroList.ContainsKey(c.Id)))
-                                 .OrderByDescending(c => AggroList.TryGetValue(c.Id, out var aggro) ? aggro : 0)
-                                 .ThenBy(c => c.DistanceFrom(Monster))
-                                 .FirstOrDefault();
+        Target = null;
 
-        if ((Target != null) && !AggroList.ContainsKey(Target.Id))
-            AggroList[Target.Id] = InitialAggro++;
-    }
+        //first try to get target via aggro list
+        //if something is already aggro, ignore aggro range
+        foreach (var kvp in AggroList.OrderByDescending(kvp => kvp.Value))
+        {
+            if (!Map.TryGetObject<Creature>(kvp.Key, out var possibleTarget))
+                continue;
 
-    /// <inheritdoc />
-    public override void OnAttacked(Creature source, int damage)
-    {
-        base.OnAttacked(source, damage);
+            if (!possibleTarget.IsAlive || !possibleTarget.IsVisibleTo(Subject) || !possibleTarget.WithinRange(Subject))
+                continue;
 
-        if (damage <= 0)
+            Target = possibleTarget;
+
+            break;
+        }
+
+        if (Target != null)
             return;
 
-        AggroList.AddOrUpdate(source.Id, _ => damage, (_, currentAggro) => currentAggro + damage);
+        //if we failed to get a target via aggroList, grab the closest aisling within aggro range
+        Target ??= Map.GetEntitiesWithinRange<Creature>(Subject, AggroRange)
+                      .ThatAreVisibleTo(Subject)
+                      .Where(obj => !obj.Equals(Subject) && obj.IsAlive)
+                      .ClosestOrDefault(Subject);
+
+        //since we grabbed a new target, give them some initial aggro so we stick to them
+        if (Target != null)
+            AggroList[Target.Id] = InitialAggro++;
     }
 }

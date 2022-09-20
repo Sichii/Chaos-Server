@@ -13,6 +13,9 @@ namespace Chaos.Services.Caches;
 public class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema, MetafileCacheOptions>
 {
     /// <inheritdoc />
+    protected override Func<Metafile, string> KeySelector => m => m.Name;
+
+    /// <inheritdoc />
     public MetafileCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -23,8 +26,5 @@ public class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema, Metaf
             mapper,
             jsonSerializerOptions,
             options,
-            logger) => AsyncHelpers.RunSync(LoadCacheAsync);
-
-    /// <inheritdoc />
-    protected override Func<Metafile, string> KeySelector => m => m.Name;
+            logger) => AsyncHelpers.RunSync(ReloadAsync);
 }

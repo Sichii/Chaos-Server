@@ -6,18 +6,24 @@ namespace Chaos.Templates;
 
 public class ItemTemplate : PanelObjectTemplateBase
 {
-    public bool AccountBound { get; init; }
-    public AdvClass? AdvClass { get; init; }
-    public BaseClass? BaseClass { get; init; }
-    public DisplayColor Color { get; init; }
-    public EquipmentType? EquipmentType { get; init; }
-    public Gender? Gender { get; init; }
-    public ItemSprite ItemSprite { get; init; } = null!;
-    public int? MaxDurability { get; init; }
-    public int MaxStacks { get; init; } = 1;
-    public Attributes? Modifiers { get; init; }
-    public override ushort PanelSprite => ItemSprite.PanelSprite;
-    public int Value { get; init; }
-    public byte Weight { get; init; } = 1;
+    public required bool AccountBound { get; init; }
+    public required AdvClass? AdvClass { get; init; }
+    public required BaseClass? BaseClass { get; init; }
+    public required DisplayColor Color { get; init; }
+    public required EquipmentType? EquipmentType { get; init; }
+    public required Gender? Gender { get; init; }
+    public required ItemSprite ItemSprite { get; init; } = null!;
+    public required int? MaxDurability { get; init; }
+    public required int MaxStacks { get; init; } = 1;
+    public required Attributes? Modifiers { get; init; }
+
+    public override required ushort PanelSprite
+    {
+        get => ItemSprite.PanelSprite;
+        init { }
+    }
+
+    public required int Value { get; init; }
+    public required byte Weight { get; init; } = 1;
     public bool Stackable => MaxStacks > 1;
 }

@@ -1,13 +1,13 @@
 using Chaos.Objects.World;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.MonsterScripts.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
 public class WanderingScript : MonsterScriptBase
 {
     /// <inheritdoc />
-    public WanderingScript(Monster monster)
-        : base(monster) { }
+    public WanderingScript(Monster subject)
+        : base(subject) { }
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)
@@ -17,7 +17,7 @@ public class WanderingScript : MonsterScriptBase
         if ((Target != null) || !ShouldWander)
             return;
 
-        Monster.Wander();
-        Monster.MoveTimer.Reset();
+        Subject.Wander();
+        Subject.MoveTimer.Reset();
     }
 }

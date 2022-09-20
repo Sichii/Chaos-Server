@@ -10,11 +10,11 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Services.Mappers;
 
 public class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
-                               IMapperProfile<Skill, SkillInfo>
+                                  IMapperProfile<Skill, SkillInfo>
 {
     private readonly ILogger<SkillMapperProfile> Logger;
-    private readonly ISimpleCache SimpleCache;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
     public SkillMapperProfile(
         ISimpleCache simpleCache,

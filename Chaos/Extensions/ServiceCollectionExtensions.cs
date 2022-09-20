@@ -1,7 +1,8 @@
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chaos.Clients.Abstractions;
+using Chaos.Commands;
+using Chaos.Commands.Abstractions;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Data;
@@ -10,7 +11,11 @@ using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.ItemScripts.Abstractions;
+using Chaos.Scripts.MapScripts.Abstractions;
+using Chaos.Scripts.MonsterScripts.Abstractions;
+using Chaos.Scripts.SkillScripts.Abstractions;
+using Chaos.Scripts.SpellScripts.Abstractions;
 using Chaos.Services.Caches;
 using Chaos.Services.Caches.Abstractions;
 using Chaos.Services.Caches.Options;
@@ -64,6 +69,18 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
     }
+
+    public static void AddCacheOptions<T>(this IServiceCollection services, string? subSection = null) where T: class, IFileCacheOptions
+    {
+        subSection ??= Startup.ConfigKeys.Options.Key;
+
+        services.AddOptionsFromConfig<T>(subSection)
+                .PostConfigure<IOptionsSnapshot<ChaosOptions>>((o, co) => o.UseRootDirectory(co.Value.StagingDirectory))
+                .Validate(o => !string.IsNullOrEmpty(o.Directory), "Directory must be set");
+    }
+
+    public static void AddCommandInterceptor(this IServiceCollection services) =>
+        services.AddSingleton<ICommandInterceptor, CommandInterceptor>();
 
     public static void AddLobbyServer(this IServiceCollection services)
     {
@@ -142,15 +159,6 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<ISimpleCache, SimpleCache>();
         services.AddSingleton<ISimpleCacheProvider, SimpleCache>();
-    }
-
-    public static void AddCacheOptions<T>(this IServiceCollection services, string? subSection = null) where T : class, IFileCacheOptions
-    {
-        subSection ??= Startup.ConfigKeys.Options.Key;
-
-        services.AddOptionsFromConfig<T>(subSection)
-                .PostConfigure<IOptionsSnapshot<ChaosOptions>>((o, co) => o.UseRootDirectory(co.Value.StagingDirectory))
-                .Validate(o => !string.IsNullOrEmpty(o.Directory), "Directory must be set");
     }
 
     /// <summary>

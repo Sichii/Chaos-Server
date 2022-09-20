@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
 
@@ -5,6 +6,7 @@ namespace Chaos.Geometry.Extensions;
 
 public static class LocationExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Location DirectionalOffset(this ILocation location, Direction direction, int distance = 1)
     {
         if (location == null)
@@ -24,6 +26,7 @@ public static class LocationExtensions
         };
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Direction DirectionalRelationTo(this ILocation location, ILocation other)
     {
         var ret = PointExtensions.DirectionalRelationTo(location, other);
@@ -33,6 +36,7 @@ public static class LocationExtensions
         return ret;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static int DistanceFrom(this ILocation location, ILocation other)
     {
         var ret = PointExtensions.DistanceFrom(location, other);
@@ -42,6 +46,7 @@ public static class LocationExtensions
         return ret;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     private static void EnsureSameMap(ILocation location1, ILocation location2)
     {
         if (!location1.OnSameMapAs(location2))
@@ -49,6 +54,7 @@ public static class LocationExtensions
                 $"{ILocation.ToString(location1)} is not on the same map as {ILocation.ToString(location2)}");
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Location OffsetTowards(this ILocation location, ILocation other)
     {
         if (location == null)
@@ -64,6 +70,7 @@ public static class LocationExtensions
         return location.DirectionalOffset(direction);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static bool OnSameMapAs(this ILocation location, ILocation other) =>
         location.Map.Equals(other.Map, StringComparison.OrdinalIgnoreCase);
 }

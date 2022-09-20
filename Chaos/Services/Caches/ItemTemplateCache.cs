@@ -13,6 +13,9 @@ namespace Chaos.Services.Caches;
 public class ItemTemplateCache : SimpleFileCacheBase<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>
 {
     /// <inheritdoc />
+    protected override Func<ItemTemplate, string> KeySelector => t => t.TemplateKey;
+
+    /// <inheritdoc />
     public ItemTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -23,8 +26,5 @@ public class ItemTemplateCache : SimpleFileCacheBase<ItemTemplate, ItemTemplateS
             mapper,
             jsonSerializerOptions,
             options,
-            logger) => AsyncHelpers.RunSync(LoadCacheAsync);
-
-    /// <inheritdoc />
-    protected override Func<ItemTemplate, string> KeySelector => t => t.TemplateKey;
+            logger) => AsyncHelpers.RunSync(ReloadAsync);
 }

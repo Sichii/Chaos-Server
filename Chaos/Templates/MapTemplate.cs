@@ -1,5 +1,6 @@
 using Chaos.Data;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.EqualityComparers;
 using Chaos.Scripts.Abstractions;
 using Chaos.Templates.Abstractions;
 
@@ -8,8 +9,10 @@ namespace Chaos.Templates;
 public record MapTemplate : ITemplate, IScripted
 {
     public ushort CheckSum { get; set; }
-    public Dictionary<Point, DoorTemplate> Doors { get; set; } = new();
+    public Dictionary<IPoint, DoorTemplate> Doors { get; set; } = new(PointEqualityComparer.Instance);
     public byte Height { get; set; }
+    /// <inheritdoc />
+    public ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public string TemplateKey { get; init; } = null!;
     public Tile[,] Tiles { get; set; } = new Tile[0, 0];
     public Point[] WarpPoints { get; set; } = Array.Empty<Point>();
@@ -30,9 +33,7 @@ public record MapTemplate : ITemplate, IScripted
     }
 
     public bool IsWall(IPoint point) =>
-        !IsWithinMap(point) || (Doors.TryGetValue(Point.From(point), out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
+        !IsWithinMap(point) || (Doors.TryGetValue(point, out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
 
     public bool IsWithinMap(IPoint point) => (point.X >= 0) && (point.Y >= 0) && (point.X < Width) && (point.Y < Height);
-    /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 }

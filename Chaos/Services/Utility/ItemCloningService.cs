@@ -7,8 +7,8 @@ namespace Chaos.Services.Utility;
 
 public class ItemCloningService : ICloningService<Item>
 {
-    private readonly IScriptProvider ScriptProvider;
     private readonly ILogger<ItemCloningService> Logger;
+    private readonly IScriptProvider ScriptProvider;
 
     public ItemCloningService(IScriptProvider scriptProvider, ILogger<ItemCloningService> logger)
     {

@@ -8,7 +8,7 @@ namespace Chaos.Entities.Schemas.Aisling;
 public class SkillBookSchema : IEnumerable<SkillSchema>
 {
     public ICollection<SkillSchema> Skills { get; init; }
-    
+
     public SkillBookSchema(IEnumerable<SkillSchema> skills) => Skills = skills.ToList();
 
     public IEnumerator<SkillSchema> GetEnumerator() => Skills.GetEnumerator();

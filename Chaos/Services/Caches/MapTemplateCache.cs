@@ -19,6 +19,9 @@ public class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSche
 {
     private readonly string NeedsMapDataDir;
 
+    /// <inheritdoc />
+    protected override Func<MapTemplate, string> KeySelector => t => t.TemplateKey;
+
     public MapTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -36,7 +39,34 @@ public class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSche
         if (!Directory.Exists(NeedsMapDataDir))
             Directory.CreateDirectory(NeedsMapDataDir);
 
-        AsyncHelpers.RunSync(LoadCacheAsync);
+        AsyncHelpers.RunSync(ReloadAsync);
+    }
+
+    private async Task<MapTemplate> InnerLoadFromFileAsync(string path)
+    {
+        await using var stream = File.OpenRead(path);
+        var schema = await JsonSerializer.DeserializeAsync<MapTemplateSchema>(stream, JsonSerializerOptions);
+        var mapTemplate = Mapper.Map<MapTemplate>(schema!);
+
+        await LoadMapDataAsync(mapTemplate);
+
+        return mapTemplate;
+    }
+
+    protected override async Task<MapTemplate?> LoadFromFileAsync(string path)
+    {
+        try
+        {
+            return await InnerLoadFromFileAsync(path);
+        } catch (FileNotFoundException e)
+        {
+            var mapDataFileName = Path.GetFileName(e.FileName);
+            var templateFileName = Path.GetFileName(path);
+            File.Move(path, Path.Combine(NeedsMapDataDir, templateFileName));
+            Logger.LogError("Map data not found for {FileName}", mapDataFileName);
+
+            return null;
+        }
     }
 
     private async Task LoadMapDataAsync(MapTemplate mapTemplate)
@@ -75,35 +105,5 @@ public class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSche
             }
 
         mapTemplate.CheckSum = data.Generate16();
-    }
-
-    /// <inheritdoc />
-    protected override Func<MapTemplate, string> KeySelector => t => t.TemplateKey;
-
-    protected override async Task<MapTemplate?> LoadFromFileAsync(string path)
-    {
-        try
-        {
-            return await InnerLoadFromFileAsync(path);
-        } catch (FileNotFoundException e)
-        {
-            var mapDataFileName = Path.GetFileName(e.FileName);
-            var templateFileName = Path.GetFileName(path);
-            File.Move(path, Path.Combine(NeedsMapDataDir, templateFileName));
-            Logger.LogError("Map data not found for {FileName}", mapDataFileName);
-            
-            return null;
-        }
-    }
-
-    private async Task<MapTemplate> InnerLoadFromFileAsync(string path)
-    {
-        await using var stream = File.OpenRead(path);
-        var schema = await JsonSerializer.DeserializeAsync<MapTemplateSchema>(stream, JsonSerializerOptions);
-        var mapTemplate = Mapper.Map<MapTemplate>(schema!);
-
-        await LoadMapDataAsync(mapTemplate);
-
-        return mapTemplate;
     }
 }

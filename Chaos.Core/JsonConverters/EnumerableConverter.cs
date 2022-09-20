@@ -4,7 +4,7 @@ using Chaos.Core.Utilities;
 
 namespace Chaos.Core.JsonConverters;
 
-public class EnumerableConverter<T, TObj> : JsonConverter<T> where T : IEnumerable<TObj>
+public class EnumerableConverter<T, TObj> : JsonConverter<T> where T: IEnumerable<TObj>
 {
     /// <inheritdoc />
     public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

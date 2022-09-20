@@ -26,6 +26,13 @@ public class Bank : IEnumerable<Item>
         : this(items) =>
         ItemCloner = itemCloner;
 
+    public void AddGold(uint amount)
+    {
+        using var @lock = Sync.Enter();
+
+        Gold += amount;
+    }
+
     public bool Contains(string itemName)
     {
         using var @lock = Sync.Enter();
@@ -70,6 +77,18 @@ public class Bank : IEnumerable<Item>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    public bool RemoveGold(uint amount)
+    {
+        using var @lock = Sync.Enter();
+
+        if (Gold < amount)
+            return false;
+
+        Gold -= amount;
+
+        return true;
+    }
+
     private IEnumerable<Item> SplitItem(Item item, int amount)
     {
         if (item.Template.Stackable)
@@ -102,25 +121,6 @@ public class Bank : IEnumerable<Item>
             outItems = item.FixStacks(ItemCloner);
         } else
             outItems = SplitItem(item, amount);
-
-        return true;
-    }
-    
-    public void AddGold(uint amount)
-    {
-        using var @lock = Sync.Enter();
-        
-        Gold += amount;
-    }
-
-    public bool RemoveGold(uint amount)
-    {
-        using var @lock = Sync.Enter();
-
-        if (Gold < amount)
-            return false;
-
-        Gold -= amount;
 
         return true;
     }

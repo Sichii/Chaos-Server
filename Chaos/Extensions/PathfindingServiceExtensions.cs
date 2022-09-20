@@ -1,4 +1,5 @@
 using Chaos.Containers;
+using Chaos.Objects.World;
 using Chaos.Pathfinding;
 using Chaos.Pathfinding.Abstractions;
 
@@ -11,9 +12,8 @@ public static class PathfindingServiceExtensions
         var walls = new List<Point>();
 
         walls.AddRange(
-            mapInstance.WarpGroups
-                       .Flatten()
-                       .Select(warp => Point.From(warp.SourceLocation!)));
+            mapInstance.GetEntities<WarpTile>()
+                       .Select(wt => wt.Warp.Source!.Value));
 
         //tiles that are walls are added to pathfinder grid details
         for (var x = 0; x < mapInstance.Template.Width; x++)

@@ -6,6 +6,7 @@ using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.World;
 using Chaos.Services.Caches.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Hosted.Options;
 using Chaos.Services.Mappers.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +31,7 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
         ITypeMapper mapper,
         IExchangeFactory exchangeFactory,
         ILoggerFactory loggerFactory,
-        ILogger<AislingMapperProfile> logger 
+        ILogger<AislingMapperProfile> logger
     )
     {
         Mapper = mapper;
@@ -113,7 +114,7 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
     AttributesArgs IMapperProfile<Aisling, AttributesArgs>.Map(Aisling obj) => new()
     {
         Ability = (byte)obj.UserStatSheet.Ability,
-        Ac = obj.UserStatSheet.EffectiveAc,
+        Ac = (sbyte)Math.Clamp(obj.UserStatSheet.EffectiveAc, WorldOptions.Instance.MinimumAislingAc, WorldOptions.Instance.MaximumAislingAc),
         //TODO: blind
         Con = obj.UserStatSheet.EffectiveCon,
         CurrentHp = (uint)Math.Clamp(obj.UserStatSheet.CurrentHp, 0, int.MaxValue),
@@ -164,15 +165,15 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
                 AccessoryColor1 = acc1?.Color ?? DisplayColor.None,
                 AccessoryColor2 = acc2?.Color ?? DisplayColor.None,
                 AccessoryColor3 = acc3?.Color ?? DisplayColor.None,
-                AccessorySprite1 = acc1?.Template.PanelSprite ?? 0,
-                AccessorySprite2 = acc2?.Template.PanelSprite ?? 0,
-                AccessorySprite3 = acc3?.Template.PanelSprite ?? 0,
-                ArmorSprite1 = armor?.Template.PanelSprite ?? 0, //TODO: figure this out again cuz i deleted it
-                ArmorSprite2 = armor?.Template.PanelSprite ?? 0,
+                AccessorySprite1 = acc1?.Template.ItemSprite.DisplaySprite ?? 0,
+                AccessorySprite2 = acc2?.Template.ItemSprite.DisplaySprite ?? 0,
+                AccessorySprite3 = acc3?.Template.ItemSprite.DisplaySprite ?? 0,
+                ArmorSprite1 = armor?.Template.ItemSprite.DisplaySprite ?? 0, //TODO: figure this out again cuz i deleted it
+                ArmorSprite2 = armor?.Template.ItemSprite.DisplaySprite ?? 0,
                 BodyColor = obj.BodyColor,
                 BodySprite = obj.BodySprite,
                 BootsColor = boots?.Color ?? DisplayColor.None,
-                BootsSprite = (byte)(boots?.Template.PanelSprite ?? 0),
+                BootsSprite = (byte)(boots?.Template.ItemSprite.DisplaySprite ?? 0),
                 CreatureType = obj.Type,
                 Direction = obj.Direction,
                 FaceSprite = (byte)obj.FaceSprite,
@@ -180,20 +181,21 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
                 Gender = obj.Gender,
                 GroupBoxText = null,
                 HeadColor = overHelm?.Template.Color ?? helmet?.Template.Color ?? obj.HairColor,
-                HeadSprite = overHelm?.Template.PanelSprite ?? helmet?.Template.PanelSprite ?? (ushort)obj.HairStyle,
+                HeadSprite = overHelm?.Template.ItemSprite.DisplaySprite
+                             ?? helmet?.Template.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,
-                IsDead = !obj.IsAlive,
+                IsDead = obj.IsDead,
                 IsHidden = false, //TODO: invisibility
                 IsMaster = obj.UserStatSheet.Master,
                 LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
                 OvercoatColor = overcoat?.Color ?? DisplayColor.None,
-                OvercoatSprite = overcoat?.Template.PanelSprite ?? 0,
+                OvercoatSprite = overcoat?.Template.ItemSprite.DisplaySprite ?? 0,
                 X = obj.X,
                 Y = obj.Y,
                 RestPosition = RestPosition.None, //TODO: if we add rest positions in later,
-                ShieldSprite = (byte)(shield?.Template.PanelSprite ?? 0),
+                ShieldSprite = (byte)(shield?.Template.ItemSprite.DisplaySprite ?? 0),
                 Sprite = obj.Sprite,
                 WeaponSprite = weapon?.Template.ItemSprite.DisplaySprite ?? 0
             };

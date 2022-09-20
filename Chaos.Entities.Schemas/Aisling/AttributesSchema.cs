@@ -3,6 +3,7 @@ namespace Chaos.Entities.Schemas.Aisling;
 public record AttributesSchema
 {
     public required int Ac { get; init; }
+    public required int AtkSpeedPct { get; init; }
     public required int Con { get; init; }
     public required int Dex { get; init; }
     public required int Dmg { get; init; }

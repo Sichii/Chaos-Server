@@ -1,0 +1,19 @@
+{
+    "TemplateKey": "cuckArmor",
+    "AccountBound": false,
+    "BaseClass": "Peasant",
+    "AdvClass": "None",
+    "DisplaySprite": 4,
+    "EquipmentType": "Armor",
+    "Gender": "Male",
+    "MaxDurability": 1000,
+    "MaxStacks": 1,
+    "Modifiers": {
+        "Con": 1
+    },
+    "Value": 1000,
+    "Weight": 10,
+    "Name": "Cuck Plate",
+    "PanelSprite": 99,
+    "ScriptKeys": ["Equipment"]
+}

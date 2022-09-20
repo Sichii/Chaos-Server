@@ -9,6 +9,7 @@ public static partial class RegexCache
 
     [RegexGenerator(@"(.+?)(?::| |: )\(?(\d+),? ?(\d+)\)?", RegexOptions.Compiled)]
     private static partial Regex GeneratedLocationRegex();
+
     [RegexGenerator(@"\(?(\d+),? ?(\d+)\)?", RegexOptions.Compiled)]
     private static partial Regex GeneratedPointRegex();
 }

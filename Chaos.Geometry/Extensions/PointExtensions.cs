@@ -1,10 +1,12 @@
-﻿using Chaos.Geometry.Abstractions;
+﻿using System.Runtime.CompilerServices;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
 
 namespace Chaos.Geometry.Extensions;
 
 public static class PointExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
     {
         if (point == null)
@@ -24,6 +26,7 @@ public static class PointExtensions
         };
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -48,7 +51,7 @@ public static class PointExtensions
         if (point.X > other.X)
         {
             var xDegree = point.X - other.X;
-            
+
             //if xdegree is higher, the point is more to the right of the other point
             //if xdegree is equal, there's a 50% chance to get the vertical or horizonal direction
             if ((xDegree > degree) || ((xDegree == degree) && (Random.Shared.Next(0, 101) < 50)))
@@ -56,7 +59,7 @@ public static class PointExtensions
         } else if (point.X < other.X)
         {
             var xDegree = other.X - point.X;
-            
+
             //if xdegree is higher, the point is more to the right of the other point
             //if xdegree is equal, there's a 50% chance to get the vertical or horizonal direction
             if ((xDegree > degree) || ((xDegree == degree) && (Random.Shared.Next(0, 101) < 50)))
@@ -66,6 +69,7 @@ public static class PointExtensions
         return direction;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static int DistanceFrom(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -81,6 +85,7 @@ public static class PointExtensions
     ///     Retreives a list of points in a line from the user, with an option for distance and direction. Direction.All is
     ///     optional. Direction.Invalid direction returns empty list.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetCardinalPoints(this IPoint start, int radius = 1, Direction direction = Direction.All)
     {
         if (direction == Direction.Invalid)
@@ -104,34 +109,11 @@ public static class PointExtensions
     }
 
     /// <summary>
-    /// Orders points by their X or Y values, based on the direction given.
-    /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
-    {
-        if (points == null)
-            throw new ArgumentNullException(nameof(points));
-
-        if (direction == Direction.Invalid)
-            throw new ArgumentOutOfRangeException(nameof(direction));
-
-        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        return direction switch
-        {
-            Direction.Up    => points.OrderBy(p => p.Y),
-            Direction.Right => points.OrderByDescending(p => p.X),
-            Direction.Down  => points.OrderByDescending(p => p.Y),
-            Direction.Left  => points.OrderBy(p => p.X),
-            _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
-        };
-    }
-
-    /// <summary>
     ///     Creates an enumerable list of points representing a path between two given points, and returns it.
     /// </summary>
     /// <param name="start">Starting point for the creation of the path.</param>
     /// <param name="end">Ending point for the creation of the path.</param>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
     {
         var current = Point.From(start);
@@ -152,6 +134,7 @@ public static class PointExtensions
     ///     Retreives a list of diagonal points in relevance to the user, with an optional distance and direction.
     ///     Direction.All is optional. Direction.Invalid direction returns empty list.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetInterCardinalIoints(this IPoint start, int radius = 1, Direction direction = Direction.All)
     {
         if (direction == Direction.Invalid)
@@ -192,6 +175,7 @@ public static class PointExtensions
             }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Point OffsetTowards(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -205,17 +189,20 @@ public static class PointExtensions
         return point.DirectionalOffset(direction);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
     {
         var currentPoint = Point.From(point);
         var radius = 1;
+
+        yield return currentPoint;
 
         for (; radius <= maxRadius; radius++)
         {
             currentPoint = currentPoint.DirectionalOffset(Direction.Up);
 
             //travel from north to east
-            while (point.X != currentPoint.X)
+            while (point.Y != currentPoint.Y)
             {
                 currentPoint = new Point(currentPoint.X + 1, currentPoint.Y + 1);
 
@@ -223,7 +210,7 @@ public static class PointExtensions
             }
 
             //travel from east to south
-            while (point.Y != currentPoint.Y)
+            while (point.X != currentPoint.X)
             {
                 currentPoint = new Point(currentPoint.X - 1, currentPoint.Y + 1);
 
@@ -231,7 +218,7 @@ public static class PointExtensions
             }
 
             //travel from south to west
-            while (point.X != currentPoint.X)
+            while (point.Y != currentPoint.Y)
             {
                 currentPoint = new Point(currentPoint.X - 1, currentPoint.Y - 1);
 
@@ -239,12 +226,37 @@ public static class PointExtensions
             }
 
             //travel from west to north
-            while (point.Y != currentPoint.Y)
+            while (point.X != currentPoint.X)
             {
                 currentPoint = new Point(currentPoint.X + 1, currentPoint.Y - 1);
 
                 yield return currentPoint;
             }
         }
+    }
+
+    /// <summary>
+    ///     Orders points by their X or Y values, based on the direction given.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+    public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
+    {
+        if (points == null)
+            throw new ArgumentNullException(nameof(points));
+
+        if (direction == Direction.Invalid)
+            throw new ArgumentOutOfRangeException(nameof(direction));
+
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        return direction switch
+        {
+            Direction.Up    => points.OrderBy(p => p.Y),
+            Direction.Right => points.OrderByDescending(p => p.X),
+            Direction.Down  => points.OrderByDescending(p => p.Y),
+            Direction.Left  => points.OrderBy(p => p.X),
+            _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+        };
     }
 }

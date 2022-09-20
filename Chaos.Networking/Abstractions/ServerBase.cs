@@ -40,15 +40,17 @@ public abstract class ServerBase : BackgroundService, IServer
         IndexHandlers();
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await Task.Yield();
+
         var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
         Socket.Bind(endPoint);
         Socket.Listen(20);
         Socket.BeginAccept(OnConnection, Socket);
         Logger.LogInformation("Listening on {EndPoint}", endPoint);
 
-        return stoppingToken.WaitTillCanceled();
+        await stoppingToken.WaitTillCanceled();
     }
 
     protected abstract void OnConnection(IAsyncResult ar);

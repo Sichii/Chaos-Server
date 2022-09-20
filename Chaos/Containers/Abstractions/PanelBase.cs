@@ -189,7 +189,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         return false;
     }
 
-    public virtual bool TryGetObject(byte slot, out T? obj)
+    public virtual bool TryGetObject(byte slot, [MaybeNullWhen(false)] out T obj)
     {
         obj = default;
 
@@ -200,10 +200,10 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
         obj = Objects[slot];
 
-        return true;
+        return obj != null;
     }
 
-    public virtual bool TryGetRemove(byte slot, out T? obj)
+    public virtual bool TryGetRemove(byte slot, [MaybeNullWhen(false)] out T obj)
     {
         obj = default;
 

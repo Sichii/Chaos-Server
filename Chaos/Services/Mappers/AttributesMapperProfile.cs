@@ -18,7 +18,8 @@ public class AttributesMapperProfile : IMapperProfile<Attributes, AttributesSche
         Dex = obj.Dex,
         MagicResistance = obj.MagicResistance,
         MaximumHp = obj.MaximumHp,
-        MaximumMp = obj.MaximumMp
+        MaximumMp = obj.MaximumMp,
+        AtkSpeedPct = obj.AtkSpeedPct
     };
 
     public AttributesSchema Map(Attributes obj) => new()
@@ -33,6 +34,7 @@ public class AttributesMapperProfile : IMapperProfile<Attributes, AttributesSche
         MaximumHp = obj.MaximumHp,
         MaximumMp = obj.MaximumMp,
         Str = obj.Str,
-        Wis = obj.Wis
+        Wis = obj.Wis,
+        AtkSpeedPct = obj.AtkSpeedPct
     };
 }

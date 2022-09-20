@@ -10,11 +10,11 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Services.Mappers;
 
 public class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
-                               IMapperProfile<Spell, SpellInfo>
+                                  IMapperProfile<Spell, SpellInfo>
 {
     private readonly ILogger<SpellMapperProfile> Logger;
-    private readonly ISimpleCache SimpleCache;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
     public SpellMapperProfile(
         ISimpleCache simpleCache,

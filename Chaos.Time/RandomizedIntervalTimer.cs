@@ -18,6 +18,14 @@ public class RandomizedIntervalTimer : IntervalTimer
         SetRandomizedInterval();
     }
 
+    /// <inheritdoc />
+    public override void Reset()
+    {
+        base.Reset();
+
+        SetRandomizedInterval();
+    }
+
     protected void SetRandomizedInterval()
     {
         var randomPct = Random.Shared.Next(0, MaxRandomizationPct);
@@ -52,21 +60,13 @@ public class RandomizedIntervalTimer : IntervalTimer
         var amountToAdd = new TimeSpan((long)(Interval.Ticks * applicablePct));
         RandomizedInterval = Interval + amountToAdd;
     }
-    
-    /// <inheritdoc />
-    public override void Reset()
-    {
-        base.Reset();
-        
-        SetRandomizedInterval();
-    }
 
     public override void Update(TimeSpan delta)
     {
         IntervalElapsed = false;
         //add delta to elapsed
         Elapsed += delta;
-        
+
         //if the interval has elapsed, subtract the interval, set intervalElapsed to true
         if (Elapsed >= RandomizedInterval)
         {

@@ -20,6 +20,9 @@ public class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSche
 {
     private readonly IPathfindingService PathfindingService;
 
+    /// <inheritdoc />
+    protected override Func<MapInstance, string> KeySelector => m => m.InstanceId;
+
     public MapInstanceCache(
         ITypeMapper mapper,
         IPathfindingService pathfindingService,
@@ -27,27 +30,28 @@ public class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSche
         IOptionsSnapshot<MapInstanceCacheOptions> options,
         ILogger<MapInstanceCache> logger
     )
-        : base(mapper, jsonSerializerOptions, options, logger)
+        : base(
+            mapper,
+            jsonSerializerOptions,
+            options,
+            logger)
     {
         PathfindingService = pathfindingService;
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
-        
-        AsyncHelpers.RunSync(LoadCacheAsync);
-    }
 
-    /// <inheritdoc />
-    protected override Func<MapInstance, string> KeySelector => m => m.InstanceId;
+        AsyncHelpers.RunSync(ReloadAsync);
+    }
 
     protected override async Task<MapInstance?> LoadFromFileAsync(string directory)
     {
         var mapInstancePath = Path.Combine(directory, "instance.json");
         var monsterSpawnsPath = Path.Combine(directory, "spawns.json");
-        
+
         await using var mapInstanceStream = File.OpenRead(mapInstancePath);
         await using var monsterSpawnsStream = File.OpenRead(monsterSpawnsPath);
-        
+
         var mapInstanceSchema = await JsonSerializer.DeserializeAsync<MapInstanceSchema>(mapInstanceStream, JsonSerializerOptions);
         var monsterSpawnsSchema = await JsonSerializer.DeserializeAsync<MonsterSpawnsSchema>(monsterSpawnsStream, JsonSerializerOptions);
 
@@ -62,7 +66,7 @@ public class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSche
 
         foreach (var spawn in spawns)
             mapInstance.AddSpawner(spawn);
-        
+
         return mapInstance;
     }
 }

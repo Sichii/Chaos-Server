@@ -66,12 +66,12 @@ public enum TargetsType : byte
     Front = 2,
     Surround = 3,
     Cleave = 4,
-    StraightProjectile = 5,
+    StraightAhead = 5,
 
     //spells(usually)
-    Cluster1 = 252,
-    Cluster2 = 253,
-    Cluster3 = 254,
+    Cluster5 = 252,
+    Cluster13 = 253,
+    Cluster21 = 254,
     Screen = 255
 }
 #endregion
