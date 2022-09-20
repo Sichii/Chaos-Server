@@ -10,10 +10,10 @@ namespace Chaos.Services.Factories;
 
 public class ItemFactory : IItemFactory
 {
-    private readonly IScriptProvider ScriptProvider;
     private readonly ILogger Logger;
-    private readonly ISimpleCache SimpleCache;
     private readonly ITypeMapper Mapper;
+    private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
     public ItemFactory(
         ISimpleCache simpleCache,

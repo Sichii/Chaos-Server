@@ -29,22 +29,19 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
             Elapsed = TimeSpan.FromMilliseconds(elapsedMs.Value);
     }
 
-    public virtual bool CanUse() =>
-        !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
+    public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
 
     public override string ToString() => $@"(Id: {UniqueId}, Name: {Template.Name})";
 
-    
-    
     public void Update(TimeSpan delta)
     {
-        if (Elapsed.HasValue)
-        {
-            var value = Elapsed.Value + delta;
-            Elapsed = value;
+        if (!Elapsed.HasValue)
+            return;
 
-            if (Elapsed > Cooldown)
-                Elapsed = null;
-        }
+        var value = Elapsed.Value + delta;
+        Elapsed = value;
+
+        if (Elapsed > Cooldown)
+            Elapsed = null;
     }
 }

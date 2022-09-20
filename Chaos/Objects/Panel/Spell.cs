@@ -1,5 +1,5 @@
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.SpellScripts.Abstractions;
 using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 
@@ -8,7 +8,7 @@ namespace Chaos.Objects.Panel;
 /// <summary>
 ///     Represents an object that exists within the spell panel.
 /// </summary>
-public class Spell : PanelObjectBase, IScriptedSpell
+public sealed class Spell : PanelObjectBase, IScriptedSpell
 {
     public byte CastLines { get; set; }
     public ISpellScript Script { get; }

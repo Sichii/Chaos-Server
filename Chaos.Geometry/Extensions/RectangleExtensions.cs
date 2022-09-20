@@ -1,9 +1,11 @@
+using System.Runtime.CompilerServices;
 using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.Extensions;
 
 public static class RectangleExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static bool Contains(this IRectangle rect, IRectangle other)
     {
         if (rect == null)
@@ -15,6 +17,7 @@ public static class RectangleExtensions
         return (rect.Bottom >= other.Bottom) && (rect.Left >= other.Left) && (rect.Right <= other.Right) && (rect.Top <= other.Top);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static bool Contains(this IRectangle rect, IPoint point)
     {
         if (rect == null)
@@ -26,6 +29,7 @@ public static class RectangleExtensions
         return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static bool Intersects(this IRectangle rect, IRectangle other)
     {
         if (rect == null)
@@ -37,6 +41,7 @@ public static class RectangleExtensions
         return !((rect.Bottom >= other.Top) || (rect.Left >= other.Right) || (rect.Right <= other.Left) || (rect.Top <= other.Bottom));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> Points(this IRectangle rect)
     {
         if (rect == null)
@@ -47,6 +52,7 @@ public static class RectangleExtensions
                 yield return new Point(x, y);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Point RandomPoint(this IRectangle rect) => new(
         rect.Left + Random.Shared.Next(rect.Width),
         rect.Top + Random.Shared.Next(rect.Height));

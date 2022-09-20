@@ -20,7 +20,7 @@ public class Inventory : PanelBase<Item>, IInventory
     {
         ItemCloner = null!;
         items ??= Array.Empty<Item>();
-        
+
         foreach (var item in items)
             Objects[item.Slot] = item;
     }
@@ -29,7 +29,7 @@ public class Inventory : PanelBase<Item>, IInventory
     ///     General use constructor
     /// </summary>
     public Inventory(ICloningService<Item> itemCloner, IEnumerable<Item>? items = null)
-        :this(items) =>
+        : this(items) =>
         ItemCloner = itemCloner;
 
     public int CountOf(string name)

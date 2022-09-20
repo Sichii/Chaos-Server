@@ -56,7 +56,7 @@ public class ActiveDirectoryCredentialManager : ICredentialManager
         #pragma warning disable SYSLIB0045
         using var algorithm = HashAlgorithm.Create(Options.HashAlgorithmName);
         #pragma warning restore SYSLIB0045
-        
+
         var buffer = Encoding.UTF8.GetBytes(password);
         var hash = algorithm!.ComputeHash(buffer);
 

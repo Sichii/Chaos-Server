@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Chaos.Core.Extensions;
 
 public static class ArrayExtensions
@@ -23,6 +25,19 @@ public static class ArrayExtensions
 
             for (var x = 0; x < arr.Length; x++)
                 yield return arr[x];
+        }
+    }
+
+    /// <summary>
+    ///     Randomized the order of the elements in the array.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static void Shuffle<T>(this IList<T> arr)
+    {
+        for (var i = arr.Count - 1; i > 0; i--)
+        {
+            var j = Random.Shared.Next(i + 1);
+            (arr[i], arr[j]) = (arr[j], arr[i]);
         }
     }
 }

@@ -18,6 +18,7 @@ public record AislingSchema
     public required DisplayColor HairColor { get; init; }
     public required int HairStyle { get; init; }
     public required ICollection<string> IgnoreList { get; init; } = Array.Empty<string>();
+    public required bool IsAdmin { get; init; }
     public required string MapInstanceId { get; init; }
     public required string Name { get; init; }
     public required Nation Nation { get; init; }
@@ -26,5 +27,4 @@ public record AislingSchema
     public required UserOptionsSchema UserOptions { get; init; }
     public required int X { get; init; }
     public required int Y { get; init; }
-    public required bool IsAdmin { get; init; }
 }

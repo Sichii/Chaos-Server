@@ -51,7 +51,7 @@ public readonly struct Point : IPoint, IEquatable<IPoint>
         return new Point(point);
     }
 
-    public override int GetHashCode() => HashCode.Combine(X, Y);
+    public override int GetHashCode() => (X << 16) + Y;
 
     public static bool TryParse(string str, out Point point)
     {

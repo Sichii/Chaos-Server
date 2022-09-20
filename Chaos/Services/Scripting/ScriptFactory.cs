@@ -9,11 +9,11 @@ namespace Chaos.Services.Scripting;
 public class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> where TScript: IScript
                                                                                 where TSource: IScripted
 {
-    private readonly IServiceProvider ServiceProvider;
+    private readonly Type CompositeType;
     private readonly ILogger Logger;
     private readonly ConcurrentDictionary<string, Type> ScriptTypeCache;
+    private readonly IServiceProvider ServiceProvider;
     private readonly string TypeName;
-    private readonly Type CompositeType;
 
     public ScriptFactory(ILogger<ScriptFactory<TScript, TSource>> logger, IServiceProvider serviceProvider)
     {
@@ -60,18 +60,18 @@ public class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> 
 
                     composite.Add(tScript);
                 }
-        
+
         return (TScript)composite;
     }
 
     private void LoadScriptTypes()
     {
         var types = TypeLoader.LoadImplementations<TScript>();
-        
+
         foreach (var type in types)
         {
             var scriptKey = ScriptBase.GetScriptKey(type);
-            ScriptTypeCache.TryAdd(scriptKey, type);
+            ScriptTypeCache[scriptKey] = type;
 
             Logger.LogTrace(
                 "Loaded {TScriptName} with key {ScriptKey} for type {Type}",

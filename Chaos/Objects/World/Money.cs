@@ -1,43 +1,35 @@
-using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Geometry.Abstractions;
+using Chaos.Networking.Definitions;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Hosted.Options;
 
 namespace Chaos.Objects.World;
 
-public class Money : VisibleEntity
+public sealed class Money : GroundEntity
 {
     public int Amount { get; init; }
 
     public Money(int amount, MapInstance mapInstance, IPoint point)
-        : base(GetSprite(amount), mapInstance, point) => Amount = amount;
+        : base(
+            "Coins",
+            GetSprite(amount),
+            mapInstance,
+            point) => Amount = amount;
 
-    public static byte GetSprite(int amount) => amount switch
+    public static ushort GetSprite(int amount)
     {
-        >= 5000 => 140,
-        >= 1000 => 141,
-        >= 500  => 142,
-        >= 100  => 137,
-        >= 1    => 138,
-        _       => 139
-    };
-
-    public override void OnClicked(Aisling source)
-    {
-        if (source.Gold + Amount > WorldOptions.Instance.MaxGoldHeld)
+        var sprite = amount switch
         {
-            source.Client.SendServerMessage(
-                ServerMessageType.ActiveMessage,
-                $"You can't hold more than {WorldOptions.Instance.MaxGoldHeld} gold");
+            >= 5000 => 140,
+            >= 1000 => 141,
+            >= 500  => 142,
+            >= 100  => 137,
+            >= 1    => 138,
+            _       => 139
+        };
 
-            return;
-        }
-
-        if (MapInstance.RemoveObject(this))
-        {
-            source.Gold += Amount;
-            source.Client.SendAttributes(StatUpdateType.ExpGold);
-        }
+        return (ushort)(sprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET);
     }
+
+    public override void OnClicked(Aisling source) { }
 }

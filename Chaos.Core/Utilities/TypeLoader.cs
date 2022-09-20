@@ -14,6 +14,9 @@ public static class TypeLoader
                                                                              .Where(asmType => asmType.IsAssignableTo(typeof(TType)))
                                                                              .Where(asmType => !asmType.IsInterface && !asmType.IsAbstract);
 
+    /// <summary>
+    ///     Returns all constructable types that inherit from the specified generic type definition.
+    /// </summary>
     public static IEnumerable<Type> LoadImplementationsOfGeneric(Type genericType) =>
         AppDomain.CurrentDomain
                  .GetAssemblies()

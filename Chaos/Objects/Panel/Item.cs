@@ -1,16 +1,14 @@
 using Chaos.Common.Definitions;
-using Chaos.Containers;
-using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.ItemScripts.Abstractions;
 using Chaos.Services.Scripting.Abstractions;
 using Chaos.Services.Utility.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
 
-public class Item : PanelObjectBase, IScriptedItem
+public sealed class Item : PanelObjectBase, IScriptedItem
 {
     public DisplayColor Color { get; set; }
     public int Count { get; set; }
@@ -40,8 +38,6 @@ public class Item : PanelObjectBase, IScriptedItem
         Script = scriptProvider.CreateScript<IItemScript, Item>(ScriptKeys, this);
     }
 
-    public void OnUse(Aisling source) => Script.OnUse(source);
-    
     public IEnumerable<Item> FixStacks(ICloningService<Item> itemCloner)
     {
         if (Count <= Template.MaxStacks)
@@ -91,4 +87,6 @@ public class Item : PanelObjectBase, IScriptedItem
     }
 
     public override string ToString() => $@"(Id: {UniqueId}, Name: {DisplayName}, Count: {Count})";
+
+    public void Use(Aisling source) => Script.OnUse(source);
 }

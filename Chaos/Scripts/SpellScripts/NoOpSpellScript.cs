@@ -1,10 +1,10 @@
 using Chaos.Objects.Panel;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.SpellScripts.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts;
 
 public class NoOpSpellScript : SpellScriptBase
 {
-    public NoOpSpellScript(Spell spell)
-        : base(spell) { }
+    public NoOpSpellScript(Spell subject)
+        : base(subject) { }
 }

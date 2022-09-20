@@ -9,8 +9,8 @@ public enum SearchResultType
 public interface IFileCacheOptions
 {
     string Directory { get; set; }
-    SearchResultType SearchResultType { get; init; }
     string? FilePattern { get; init; }
-    
+    SearchResultType SearchResultType { get; init; }
+
     public void UseRootDirectory(string rootDirectory);
 }

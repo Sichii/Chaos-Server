@@ -1,12 +1,13 @@
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.EqualityComparers;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.World;
 
-public class Door : VisibleEntity
+public sealed class Door : VisibleEntity
 {
     public bool Closed { get; set; }
     public DateTime LastClick { get; set; }
@@ -38,9 +39,8 @@ public class Door : VisibleEntity
     {
         if (ShouldRegisterClick)
         {
-            var allDoors = MapInstance
-                           .ObjectsWithinRange<Door>(this)
-                           .ToDictionary(Point.From);
+            var allDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
+                                      .ToDictionary(d => d, PointEqualityComparer.Instance);
 
             IEnumerable<Door> GetSurroundingDoors(IPoint doorPoint)
             {
@@ -63,10 +63,11 @@ public class Door : VisibleEntity
                         pendingDiscovery.Push(innerDoor);
             }
 
-            foreach (var aisling in MapInstance.ObjectsThatSee<Aisling>(this, 20))
+            foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 20)
+                                               .ThatCanSee(this))
             {
                 var doorsInRange = allTouchingDoors
-                    .Where(touchingDoor => touchingDoor.WithinRange(aisling));
+                    .ThatAreWithinRange(aisling);
 
                 aisling.Client.SendDoors(doorsInRange);
             }

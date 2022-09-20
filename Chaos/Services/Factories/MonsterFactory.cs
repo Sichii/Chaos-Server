@@ -13,8 +13,8 @@ public class MonsterFactory : IMonsterFactory
 {
     private readonly ILogger Logger;
     private readonly ILoggerFactory LoggerFactory;
-    private readonly ISimpleCache SimpleCache;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
     private readonly ISkillFactory SkillFactory;
     private readonly ISpellFactory SpellFactory;
 
@@ -36,7 +36,12 @@ public class MonsterFactory : IMonsterFactory
     }
 
     /// <inheritdoc />
-    public Monster Create(string templateKey, MapInstance mapInstance, IPoint point, ICollection<string>? extraScriptKeys = null)
+    public Monster Create(
+        string templateKey,
+        MapInstance mapInstance,
+        IPoint point,
+        ICollection<string>? extraScriptKeys = null
+    )
     {
         extraScriptKeys ??= Array.Empty<string>();
         var template = SimpleCache.GetObject<MonsterTemplate>(templateKey);
@@ -66,7 +71,7 @@ public class MonsterFactory : IMonsterFactory
             "Created monster {MonsterName} at location {Location}",
             monster.Name,
             Location.From(monster));
-        
+
         return monster;
     }
 }

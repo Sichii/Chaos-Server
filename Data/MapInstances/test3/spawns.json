@@ -1,0 +1,14 @@
+[
+    {
+        "LootTableKey": "Crypt 1-1",
+        "IntervalSecs": 30,
+        "IntervalVariancePct": 50,
+        "MaxPerSpawn": 300,
+        "MaxAmount": 500,
+        "AggroRange": 13,
+        "MinGoldDrop": 10,
+        "MaxGoldDrop": 30,
+        "ExpReward": 50,
+        "MonsterTemplateKey": "Common Rat"
+    }
+]

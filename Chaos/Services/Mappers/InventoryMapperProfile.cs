@@ -8,8 +8,8 @@ namespace Chaos.Services.Mappers;
 
 public class InventoryMapperProfile : IMapperProfile<Inventory, InventorySchema>
 {
-    private readonly ITypeMapper Mapper;
     private readonly ICloningService<Item> ItemCloner;
+    private readonly ITypeMapper Mapper;
 
     public InventoryMapperProfile(ITypeMapper mapper, ICloningService<Item> itemCloner)
     {

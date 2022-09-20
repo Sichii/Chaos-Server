@@ -7,8 +7,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
-public class Merchant : Creature
+public sealed class Merchant : Creature
 {
+    /// <inheritdoc />
+    public override int AssailIntervalMs => 500;
     public override bool IsAlive => true;
     public override StatSheet StatSheet => StatSheet.Maxed;
 
@@ -31,8 +33,7 @@ public class Merchant : Creature
     public override void ApplyDamage(
         Creature source,
         int amount,
-        byte hitSound = 1,
-        bool ignoreAc = false
+        byte? hitSound = 1
     ) { }
 
     public override void OnClicked(Aisling source)

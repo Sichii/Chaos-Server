@@ -4,24 +4,29 @@ using Chaos.Containers;
 using Chaos.Containers.Abstractions;
 using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Formulae.LevelUp;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
 using Chaos.Objects.Panel;
+using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Hosted.Options;
+using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 using PointExtensions = Chaos.Geometry.Extensions.PointExtensions;
 
 namespace Chaos.Objects.World;
 
-public class Aisling : Creature
+public sealed class Aisling : Creature
 {
     private readonly IExchangeFactory ExchangeFactory;
+    public Bank Bank { get; private set; }
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
     public IWorldClient Client { get; set; }
+    public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
     public Gender Gender { get; set; }
     public Group? Group { get; set; }
@@ -29,25 +34,26 @@ public class Aisling : Creature
     public string? GuildTitle { get; set; }
     public DisplayColor HairColor { get; set; }
     public int HairStyle { get; set; }
-    public bool IsAdmin { get; set; }
-    public DateTime LastRefresh { get; set; }
-    public Nation Nation { get; set; }
-    public byte[] Portrait { get; set; }
-    public string ProfileText { get; set; }
-    public SocialStatus SocialStatus { get; set; }
-    public UserState UserState { get; set; }
-    public ActiveObject ActiveObject { get; }
-    public Bank Bank { get; private set; }
-    public IEquipment Equipment { get; private set; }
     public IgnoreList IgnoreList { get; init; }
     public IInventory Inventory { get; private set; }
+    public bool IsAdmin { get; set; }
+    public DateTime LastRefresh { get; set; }
     public Legend Legend { get; private set; }
+    public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
+    public byte[] Portrait { get; set; }
+    public string ProfileText { get; set; }
     public IPanel<Skill> SkillBook { get; private set; }
+    public SocialStatus SocialStatus { get; set; }
     public IPanel<Spell> SpellBook { get; private set; }
-    public override StatSheet StatSheet => UserStatSheet;
-    public UserStatSheet UserStatSheet { get; init; }
     public TitleList Titles { get; init; }
+    public UserState UserState { get; set; }
+    public UserStatSheet UserStatSheet { get; init; }
+    public ResettingCounter ActionThrottle { get; }
+    public ActiveObject ActiveObject { get; }
+    /// <inheritdoc />
+    public override int AssailIntervalMs { get; }
+    public override StatSheet StatSheet => UserStatSheet;
     public override CreatureType Type => CreatureType.Aisling;
     protected override ILogger<Aisling> Logger { get; }
 
@@ -106,6 +112,8 @@ public class Aisling : Creature
         ActiveObject = new ActiveObject();
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
+        ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond);
+        AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
 
         //this object is purely intended to be created and immediately serialized
         //these pieces should never come into play
@@ -114,59 +122,15 @@ public class Aisling : Creature
         ExchangeFactory = null!;
     }
 
-    public void Initialize(
-        string name,
-        IWorldClient client,
-        Bank bank,
-        Equipment equipment,
-        Inventory inventory,
-        SkillBook skillBook,
-        SpellBook spellBook,
-        Legend legend
-    )
+    /// <inheritdoc />
+    public override void ApplyDamage(Creature source, int amount, byte? hitSound = 1)
     {
-        Name = name;
-        Client = client;
-        Bank = bank;
-        Equipment = equipment;
-        Inventory = inventory;
-        SkillBook = skillBook;
-        SpellBook = spellBook;
-        Legend = legend;
-        
-        //add observers
-        var inventoryObserver = new InventoryObserver(this);
-        var spellBookObserver = new SpellBookObserver(this);
-        var skillBookObserver = new SkillBookObserver(this);
-        var equipmentObserver = new EquipmentObserver(this);
+        StatSheet.SubtractHp(amount);
+        Client.SendAttributes(StatUpdateType.Vitality);
 
-        inventory.AddObserver(inventoryObserver);
-        spellBook.AddObserver(spellBookObserver);
-        skillBook.AddObserver(skillBookObserver);
-        equipment.AddObserver(equipmentObserver);
-
-        //trigger observers
-        foreach (var item in equipment)
-            equipmentObserver.OnAdded(item);
-
-        foreach (var item in inventory)
-            inventoryObserver.OnAdded(item);
-
-        foreach (var spell in spellBook)
-            spellBookObserver.OnAdded(spell);
-
-        foreach (var skill in skillBook)
-            skillBookObserver.OnAdded(skill);
-    }
-
-    protected override void ApplyAcModifier(ref float damage)
-    {
-        if (StatSheet.Ac == 0)
-            return;
-
-        var ac = Math.Clamp(StatSheet.Ac, WorldOptions.Instance.MinimumAislingAc, WorldOptions.Instance.MaximumAislingAc);
-        var mod = 1 + ac / 100.0f;
-        damage *= mod;
+        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                       .ThatCanSee(this))
+            obj.Client.SendHealthBar(obj, hitSound);
     }
 
     public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));
@@ -198,11 +162,8 @@ public class Aisling : Creature
 
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
 
-    public void GiveGold(int amount)
-    {
-        Gold += amount;
-        Client.SendAttributes(StatUpdateType.ExpGold);
-    }
+    /// <inheritdoc />
+    public override bool CanUse(PanelObjectBase panelObject) => base.CanUse(panelObject) && ActionThrottle.TryIncrement();
 
     public void GiveExp(long amount)
     {
@@ -220,7 +181,7 @@ public class Aisling : Creature
             var expToGive = Math.Min(amount, UserStatSheet.ToNextLevel);
             UserStatSheet.AddTotalExp(expToGive);
             UserStatSheet.AddTNL(-expToGive);
-            
+
             amount -= expToGive;
 
             if (UserStatSheet.ToNextLevel <= 0)
@@ -230,25 +191,64 @@ public class Aisling : Creature
         Client.SendAttributes(StatUpdateType.Full);
     }
 
+    public void GiveGold(int amount)
+    {
+        Gold += amount;
+        Client.SendAttributes(StatUpdateType.ExpGold);
+    }
+
+    public void Initialize(
+        string name,
+        IWorldClient client,
+        Bank bank,
+        Equipment equipment,
+        Inventory inventory,
+        SkillBook skillBook,
+        SpellBook spellBook,
+        Legend legend
+    )
+    {
+        Name = name;
+        Client = client;
+        Bank = bank;
+        Equipment = equipment;
+        Inventory = inventory;
+        SkillBook = skillBook;
+        SpellBook = spellBook;
+        Legend = legend;
+
+        //add observers
+        var inventoryObserver = new InventoryObserver(this);
+        var spellBookObserver = new SpellBookObserver(this);
+        var skillBookObserver = new SkillBookObserver(this);
+        var equipmentObserver = new EquipmentObserver(this);
+
+        inventory.AddObserver(inventoryObserver);
+        spellBook.AddObserver(spellBookObserver);
+        skillBook.AddObserver(skillBookObserver);
+        equipment.AddObserver(equipmentObserver);
+
+        //trigger observers
+        foreach (var item in equipment)
+            equipmentObserver.OnAdded(item);
+
+        foreach (var item in inventory)
+            inventoryObserver.OnAdded(item);
+
+        foreach (var spell in spellBook)
+            spellBookObserver.OnAdded(spell);
+
+        foreach (var skill in skillBook)
+            skillBookObserver.OnAdded(skill);
+    }
+
     public void LevelUp()
     {
-        UserStatSheet.IncrementLevel();
-        //TODO: what should go up with level?
+        //maybe use a diff formula for each class? idk
+        var levelUpFormula = new DefaultLevelUpFormula();
+        levelUpFormula.LevelUp(this);
     }
 
-    public void Pickup(GroundItem groundItem, byte destinationSlot)
-    {
-        var item = groundItem.Item;
-        
-        if (Inventory.TryAdd(destinationSlot, item))
-        {
-            Logger.LogDebug("{UserName} picked up {Item}", Name, item);
-
-            if (MapInstance.RemoveObject(groundItem))
-                item.Script.OnPickup(this);
-        }
-    }
-    
     public override void OnClicked(Aisling source)
     {
         if (source.Equals(this))
@@ -276,6 +276,25 @@ public class Aisling : Creature
             exchange.AddStackableItem(this, slot, count);
     }
 
+    public void PickupItem(GroundItem groundItem, byte destinationSlot)
+    {
+        var item = groundItem.Item;
+
+        if (Inventory.TryAdd(destinationSlot, item))
+        {
+            Logger.LogDebug("{UserName} picked up {Item}", Name, item);
+
+            if (MapInstance.RemoveObject(groundItem))
+                item.Script.OnPickup(this);
+        }
+    }
+
+    public void PickupMoney(Money money)
+    {
+        GiveGold(money.Amount);
+        MapInstance.RemoveObject(money);
+    }
+
     public void Refresh(bool forceRefresh = false)
     {
         var now = DateTime.UtcNow;
@@ -283,9 +302,8 @@ public class Aisling : Creature
         if (!forceRefresh && (now.Subtract(LastRefresh).TotalMilliseconds < WorldOptions.Instance.RefreshIntervalMs))
             return;
 
-        (var aislings, var doors, var otherVisibles) = MapInstance
-                                                       .ObjectsWithinRange<VisibleEntity>(this)
-                                                       .SortBySendType();
+        (var aislings, var doors, var otherVisibles) = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                                                                  .PartitionBySendType();
 
         LastRefresh = now;
         Client.SendMapInfo();
@@ -344,12 +362,47 @@ public class Aisling : Creature
         return true;
     }
 
+    public bool TryUseItem(byte slot)
+    {
+        if (!Inventory.TryGetObject(slot, out var item))
+            return false;
+
+        return TryUseItem(item);
+    }
+
+    public bool TryUseItem(Item item)
+    {
+        if (!CanUse(item))
+            return false;
+
+        item.Use(this);
+
+        return true;
+    }
+
+    public bool TryUseSkill(byte slot)
+    {
+        if (!SkillBook.TryGetObject(slot, out var skill))
+            return false;
+
+        return TryUseSkill(skill);
+    }
+
+    public bool TryUseSpell(byte slot, uint? targetId = null, string? prompt = null)
+    {
+        if (!SpellBook.TryGetObject(slot, out var spell))
+            return false;
+
+        return TryUseSpell(spell, targetId, prompt);
+    }
+
     public override void Update(TimeSpan delta)
     {
         Equipment.Update(delta);
         Inventory.Update(delta);
         SkillBook.Update(delta);
         SpellBook.Update(delta);
+        ActionThrottle.Update(delta);
         base.Update(delta);
     }
 
@@ -367,15 +420,13 @@ public class Aisling : Creature
             return;
         }
 
-        var objsBeforeWalk = MapInstance
-                             .ObjectsWithinRange<VisibleEntity>(this)
-                             .SortBySendType();
+        var objsBeforeWalk = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                                        .PartitionBySendType();
 
         SetLocation(endPoint);
 
-        var objsAfterWalk = MapInstance
-                            .ObjectsWithinRange<VisibleEntity>(this)
-                            .SortBySendType();
+        var objsAfterWalk = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                                       .PartitionBySendType();
 
         //for each aisling that just left view range
         //if they were able to see eachother

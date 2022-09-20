@@ -23,14 +23,6 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
         Map = map;
     }
 
-    public static Location From(ILocation location)
-    {
-        if (location is Location loc)
-            return loc;
-
-        return new Location(location.Map, location.X, location.Y);
-    }
-
     public void Deconstruct(out string map, out int x, out int y)
     {
         map = Map;
@@ -44,6 +36,14 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
                                             && (Map == other.Map);
 
     public override bool Equals(object? obj) => obj is ILocation other && Equals(other);
+
+    public static Location From(ILocation location)
+    {
+        if (location is Location loc)
+            return loc;
+
+        return new Location(location.Map, location.X, location.Y);
+    }
 
     public override int GetHashCode() => HashCode.Combine(X, Y, Map);
 

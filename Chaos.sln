@@ -47,6 +47,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,10 @@ Global
 		{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E48BCA88-A7A6-469B-B34D-BD0411A04153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E48BCA88-A7A6-469B-B34D-BD0411A04153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E48BCA88-A7A6-469B-B34D-BD0411A04153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E48BCA88-A7A6-469B-B34D-BD0411A04153}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -134,5 +140,6 @@ Global
 		{E2E4C420-1801-4CF8-B5E2-1AFDF9B845CA} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{02766DC1-4AA3-4454-B373-B717B46D5EFC} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{3B41579D-99A2-40DA-998F-8453AC96C2B7} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
+		{E48BCA88-A7A6-469B-B34D-BD0411A04153} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 	EndGlobalSection
 EndGlobal

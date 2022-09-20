@@ -8,8 +8,9 @@ namespace Chaos.Services.Mappers;
 
 public class BankMapperProfile : IMapperProfile<Bank, BankSchema>
 {
-    private readonly ITypeMapper Mapper;
     private readonly ICloningService<Item> CloningService;
+    private readonly ITypeMapper Mapper;
+
     public BankMapperProfile(ICloningService<Item> cloningService, ITypeMapper mapper)
     {
         CloningService = cloningService;

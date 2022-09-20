@@ -9,10 +9,25 @@ namespace Chaos.Geometry;
 public class Rectangle : IRectangle, IEquatable<IRectangle>
 {
     private IReadOnlyList<IPoint>? _vertices;
+    /// <summary>
+    /// The highest Y coordinate of the rectangle
+    /// </summary>
     public int Bottom { get; init; }
+    /// <summary>
+    /// The height of the rectangle
+    /// </summary>
     public int Height { get; init; }
+    /// <summary>
+    /// The lowest X coordinate of the rectangle
+    /// </summary>
     public int Left { get; init; }
+    /// <summary>
+    /// The highest X coordinate of the rectangle
+    /// </summary>
     public int Right { get; init; }
+    /// <summary>
+    /// The lowest Y coordinate of the rectangle
+    /// </summary>
     public int Top { get; init; }
 
     public IReadOnlyList<IPoint> Vertices
@@ -21,7 +36,12 @@ public class Rectangle : IRectangle, IEquatable<IRectangle>
         init => _vertices = value;
     }
 
+    /// <summary>
+    /// The width of the rectangle
+    /// </summary>
     public int Width { get; init; }
+
+    public int Area => Height * Width;
 
     public Rectangle() { }
 
@@ -36,8 +56,8 @@ public class Rectangle : IRectangle, IEquatable<IRectangle>
         Height = height;
         Left = left;
         Top = top;
-        Right = left + width;
-        Bottom = top + height;
+        Right = left + width - 1;
+        Bottom = top + height - 1;
         _vertices = GenerateVertices();
     }
 

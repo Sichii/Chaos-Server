@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
 using Chaos.Pathfinding.Abstractions;
@@ -7,12 +8,12 @@ namespace Chaos.Pathfinding;
 
 public class PathfindingService : IPathfindingService
 {
-    private readonly Dictionary<string, IGridDetails> GridDetails;
+    private readonly ConcurrentDictionary<string, IGridDetails> GridDetails;
     private readonly IMemoryCache MemoryCache;
 
     public PathfindingService(IMemoryCache memoryCache)
     {
-        GridDetails = new Dictionary<string, IGridDetails>(StringComparer.OrdinalIgnoreCase);
+        GridDetails = new ConcurrentDictionary<string, IGridDetails>(StringComparer.OrdinalIgnoreCase);
         MemoryCache = memoryCache;
     }
 
@@ -48,6 +49,8 @@ public class PathfindingService : IPathfindingService
             creatures);
     }
 
+    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key] = gridDetails;
+
     /// <inheritdoc />
     public Direction Wander(
         string key,
@@ -60,9 +63,4 @@ public class PathfindingService : IPathfindingService
 
         return pathFinder!.Wander(start, ignoreWalls, creatures);
     }
-
-    public void RegisterGrid(
-        string key,
-        IGridDetails gridDetails
-    ) => GridDetails.Add(key, gridDetails);
 }

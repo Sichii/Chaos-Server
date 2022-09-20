@@ -1,0 +1,19 @@
+[
+  {
+    "color": "Red",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "Stick",
+    "uniqueId": 1
+  },
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "cuckArmor",
+    "uniqueId": 2
+  }
+]

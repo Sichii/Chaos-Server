@@ -1,3 +1,4 @@
+using Chaos.Core.Collections;
 using Chaos.Data;
 using Chaos.Entities.Schemas.Templates;
 using Chaos.Services.Mappers.Abstractions;
@@ -19,7 +20,11 @@ public class SkillTemplateMapperProfile : IMapperProfile<SkillTemplate, SkillTem
         PanelSprite = obj.PanelSprite,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
         Animation = obj.Animation == null ? null : Mapper.Map<Animation>(obj.Animation),
-        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value)
+        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+        BodyAnimationOverride = obj.BodyAnimationOverride,
+        ScriptVars = new Dictionary<string, DynamicVars>(
+            obj.ScriptVars ?? Enumerable.Empty<KeyValuePair<string, DynamicVars>>(),
+            StringComparer.OrdinalIgnoreCase)
     };
 
     public SkillTemplateSchema Map(SkillTemplate obj) => throw new NotImplementedException();

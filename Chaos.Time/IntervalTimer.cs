@@ -6,6 +6,11 @@ public class IntervalTimer : IIntervalTimer
 {
     public bool IntervalElapsed { get; protected set; }
 
+    protected TimeSpan Elapsed { get; set; }
+    protected TimeSpan Interval { get; set; }
+
+    public IntervalTimer(TimeSpan interval) => Interval = interval;
+
     /// <inheritdoc />
     public virtual void Reset()
     {
@@ -13,17 +18,12 @@ public class IntervalTimer : IIntervalTimer
         IntervalElapsed = false;
     }
 
-    protected TimeSpan Elapsed { get; set; }
-    protected TimeSpan Interval { get; set; }
-
-    public IntervalTimer(TimeSpan interval) => Interval = interval;
-
     public virtual void Update(TimeSpan delta)
     {
         IntervalElapsed = false;
         //add delta to elapsed
         Elapsed += delta;
-        
+
         //if the interval has elapsed, subtract the interval, set intervalElapsed to true
         if (Elapsed >= Interval)
         {

@@ -588,36 +588,57 @@ public class WorldClient : SocketClientBase, IWorldClient
 
     public void SendVisibleObjects(IEnumerable<VisibleEntity> objects)
     {
-        var args = new DisplayVisibleObjectArgs();
-        var visibleArgs = new List<VisibleObjectInfo>();
-        args.VisibleObjects = visibleArgs;
+        foreach (var chunk in objects.OrderBy(o => o.Creation).Chunk(5000))
+        {
+            var args = new DisplayVisibleObjectArgs();
+            var visibleArgs = new List<VisibleObjectInfo>();
+            args.VisibleObjects = visibleArgs;
 
-        foreach (var obj in objects)
-            if (obj is GroundItem groundItem)
-                visibleArgs.Add(
-                    new GroundItemInfo
-                    {
-                        Id = groundItem.Id,
-                        Color = groundItem.Item.Color,
-                        X = groundItem.X,
-                        Y = groundItem.Y,
-                        Sprite = groundItem.Sprite
-                    });
-            else if (obj is Creature creature)
-                visibleArgs.Add(
-                    new CreatureInfo
-                    {
-                        Id = creature.Id,
-                        X = creature.X,
-                        Y = creature.Y,
-                        Sprite = creature.Sprite,
-                        CreatureType = creature.Type,
-                        Direction = creature.Direction,
-                        Name = creature.Name
-                    });
+            foreach (var obj in chunk)
+                switch (obj)
+                {
+                    case GroundItem groundItem:
+                        visibleArgs.Add(
+                            new GroundItemInfo
+                            {
+                                Id = groundItem.Id,
+                                Color = groundItem.Item.Color,
+                                X = groundItem.X,
+                                Y = groundItem.Y,
+                                Sprite = groundItem.Sprite
+                            });
 
-        if (args.VisibleObjects.Any())
+                        break;
+                    case Money money:
+                        visibleArgs.Add(
+                            new GroundItemInfo
+                            {
+                                Id = money.Id,
+                                Color = DisplayColor.None,
+                                X = money.X,
+                                Y = money.Y,
+                                Sprite = money.Sprite
+                            });
+
+                        break;
+                    case Creature creature:
+                        visibleArgs.Add(
+                            new CreatureInfo
+                            {
+                                Id = creature.Id,
+                                X = creature.X,
+                                Y = creature.Y,
+                                Sprite = creature.Sprite,
+                                CreatureType = creature.Type,
+                                Direction = creature.Direction,
+                                Name = creature.Name
+                            });
+
+                        break;
+                }
+
             Send(args);
+        }
     }
 
     public void SendWorldList(IEnumerable<Aisling> aislings)

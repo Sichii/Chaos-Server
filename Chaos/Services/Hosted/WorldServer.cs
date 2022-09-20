@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
+using Chaos.Commands.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
@@ -15,7 +16,6 @@ using Chaos.Entities.Networking.Client;
 using Chaos.Extensions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
-using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
@@ -36,6 +36,7 @@ public class WorldServer : ServerBase, IWorldServer
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<IWorldClient> ClientFactory;
+    private readonly ICommandInterceptor CommandInterceptor;
     private readonly ParallelOptions ParallelOptions;
     private readonly PeriodicTimer PeriodicTimer;
     private readonly ISaveManager<Aisling> UserSaveManager;
@@ -53,6 +54,7 @@ public class WorldServer : ServerBase, IWorldServer
         ISaveManager<Aisling> userSaveManager,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
+        ICommandInterceptor commandInterceptor,
         IOptionsSnapshot<WorldOptions> options,
         ILogger<WorldServer> logger
     )
@@ -67,6 +69,7 @@ public class WorldServer : ServerBase, IWorldServer
         ClientFactory = clientFactory;
         CacheProvider = cacheProvider;
         UserSaveManager = userSaveManager;
+        CommandInterceptor = commandInterceptor;
 
         Clients = new ConcurrentDictionary<uint, IWorldClient>();
         ClientHandlers = new WorldClientHandler[byte.MaxValue];
@@ -83,6 +86,8 @@ public class WorldServer : ServerBase, IWorldServer
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await Task.Yield();
+
         var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
         Socket.Bind(endPoint);
         Socket.Listen(20);
@@ -244,7 +249,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         client.CryptoClient = new CryptoClient(args.Seed, args.Key, args.Name);
         var aisling = await UserSaveManager.LoadAsync(client, redirect.Name);
-        
+
         client.Aisling = aisling;
         aisling.Client = client;
 
@@ -529,9 +534,6 @@ public class WorldServer : ServerBase, IWorldServer
         if (!client.Aisling.Inventory.TryGetObject(sourceSlot, out var item))
             return default;
 
-        if (item == null)
-            return default;
-
         if (item.Count < count)
             return default;
 
@@ -578,15 +580,41 @@ public class WorldServer : ServerBase, IWorldServer
         if (!client.Aisling.WithinRange(sourcePoint, Options.PickupRange))
             return default;
 
-        var obj = map.ObjectsAtPoint<GroundItem>(sourcePoint).FirstOrDefault();
+        var obj = map.GetEntitiesAtPoint<GroundEntity>(sourcePoint)
+                     .TopOrDefault();
 
         if (obj == null)
             return default;
 
-        if (!client.Aisling.CanCarry(obj.Item))
-            return default;
+        switch (obj)
+        {
+            case GroundItem groundItem:
+                if (!client.Aisling.CanCarry(groundItem.Item))
+                {
+                    client.SendServerMessage(
+                        ServerMessageType.ActiveMessage,
+                        $"You can't carry {groundItem.Name}. (Weight: {groundItem.Item.Template.Weight})");
 
-        client.Aisling.Pickup(obj, destinationSlot);
+                    return default;
+                }
+
+                client.Aisling.PickupItem(groundItem, destinationSlot);
+
+                break;
+            case Money money:
+                if (client.Aisling.Gold + money.Amount > Options.MaxGoldHeld)
+                {
+                    client.SendServerMessage(
+                        ServerMessageType.ActiveMessage,
+                        $"You can't hold more than {Options.MaxGoldHeld} gold");
+
+                    return default;
+                }
+
+                client.Aisling.PickupMoney(money);
+
+                break;
+        }
 
         return default;
     }
@@ -612,6 +640,13 @@ public class WorldServer : ServerBase, IWorldServer
     {
         (var publicMessageType, var message) = PacketSerializer.Deserialize<PublicMessageArgs>(ref clientPacket);
 
+        if (CommandInterceptor.IsCommand(message))
+        {
+            CommandInterceptor.HandleCommand(client.Aisling, message);
+
+            return default;
+        }
+
         client.Aisling.ShowPublicMessage(publicMessageType, $"{client.Aisling.Name}: {message}");
 
         return default;
@@ -625,7 +660,12 @@ public class WorldServer : ServerBase, IWorldServer
 
         if (client.Aisling.UserStatSheet.UnspentPoints > 0)
             if (client.Aisling.UserStatSheet.IncrementStat(args.Stat))
+            {
+                if (args.Stat == Stat.STR)
+                    client.Aisling.UserStatSheet.RecalculateMaxWeight();
+
                 client.SendAttributes(StatUpdateType.Full);
+            }
 
         return default;
     }
@@ -646,9 +686,14 @@ public class WorldServer : ServerBase, IWorldServer
         return default;
     }
 
-    public ValueTask OnSpacebar(IWorldClient client, ref ClientPacket clientPacket) =>
-        //TODO: assails i guess
-        default;
+    public ValueTask OnSpacebar(IWorldClient client, ref ClientPacket clientPacket)
+    {
+        foreach (var skill in client.Aisling.SkillBook)
+            if (skill.Template.IsAssail)
+                client.Aisling.TryUseSkill(skill);
+
+        return default;
+    }
 
     public ValueTask OnSwapSlot(IWorldClient client, ref ClientPacket clientPacket)
     {
@@ -709,9 +754,6 @@ public class WorldServer : ServerBase, IWorldServer
         if (!client.Aisling.Equipment.TryGetRemove((byte)args.EquipmentSlot, out var item))
             return default;
 
-        if (item == null)
-            return default;
-
         client.Aisling.Inventory.TryAddToNextSlot(item);
         item.Script.OnUnEquipped(client.Aisling);
 
@@ -723,7 +765,7 @@ public class WorldServer : ServerBase, IWorldServer
         var args = PacketSerializer.Deserialize<ItemUseArgs>(ref clientPacket);
 
         if (client.Aisling.Inventory.TryGetObject(args.SourceSlot, out var item))
-            item?.Script.OnUse(client.Aisling);
+            item.Script.OnUse(client.Aisling);
 
         return default;
     }
@@ -749,8 +791,7 @@ public class WorldServer : ServerBase, IWorldServer
     {
         var args = PacketSerializer.Deserialize<SkillUseArgs>(ref clientPacket);
 
-        if (client.Aisling.SkillBook.TryGetObject(args.SourceSlot, out var skill))
-            skill?.Script.OnUse(client.Aisling);
+        client.Aisling.TryUseSkill(args.SourceSlot);
 
         return default;
     }
@@ -758,13 +799,12 @@ public class WorldServer : ServerBase, IWorldServer
     public ValueTask OnUseSpell(IWorldClient client, ref ClientPacket clientPacket)
     {
         (var sourceSlot, var argsData) = PacketSerializer.Deserialize<SpellUseArgs>(ref clientPacket);
-        var mapInstance = client.Aisling.MapInstance;
 
-        if (client.Aisling.SpellBook.TryGetObject(sourceSlot, out var spell) && (spell != null))
+        if (client.Aisling.SpellBook.TryGetObject(sourceSlot, out var spell))
         {
             var source = (Creature)client.Aisling;
-            var target = source;
             var prompt = default(string?);
+            uint? targetId = null;
 
             //it's impossible to know what kind of spell is being used during deserialization
             //there is no spell type specified in the packet, so we arent sure if the packet will
@@ -777,25 +817,21 @@ public class WorldServer : ServerBase, IWorldServer
                     return default;
                 case SpellType.Prompt:
                     prompt = PacketSerializer.Encoding.GetString(argsData);
-                    target = source;
 
                     break;
                 case SpellType.Targeted:
                     var targetIdSegment = new ArraySegment<byte>(argsData, 0, 4);
                     var targetPointSegment = new ArraySegment<byte>(argsData, 4, 4);
 
-                    var targetId = (uint)((targetIdSegment[0] << 24)
-                                          | (targetIdSegment[1] << 16)
-                                          | (targetIdSegment[2] << 8)
-                                          | targetIdSegment[3]);
+                    targetId = (uint)((targetIdSegment[0] << 24)
+                                      | (targetIdSegment[1] << 16)
+                                      | (targetIdSegment[2] << 8)
+                                      | targetIdSegment[3]);
 
                     // ReSharper disable once UnusedVariable
                     var targetPoint = new Point(
                         (targetPointSegment[0] << 8) | targetPointSegment[1],
                         (targetPointSegment[2] << 8) | targetPointSegment[3]);
-
-                    if (mapInstance.TryGetObject<Creature>(targetId, out var creature))
-                        target = creature;
 
                     break;
 
@@ -806,7 +842,7 @@ public class WorldServer : ServerBase, IWorldServer
                     break;
 
                 case SpellType.NoTarget:
-                    target = source;
+                    targetId = source.Id;
 
                     break;
 
@@ -814,8 +850,7 @@ public class WorldServer : ServerBase, IWorldServer
                     throw new ArgumentOutOfRangeException();
             }
 
-            var context = new ActivationContext(target, source, prompt);
-            spell.Script.OnUse(context);
+            client.Aisling.TryUseSpell(spell, targetId, prompt);
         }
 
         return default;

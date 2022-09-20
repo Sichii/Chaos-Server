@@ -4,5 +4,5 @@ namespace Chaos.Templates;
 
 public class SkillTemplate : PanelObjectTemplateBase
 {
-    public bool IsAssail { get; init; }
+    public required bool IsAssail { get; init; }
 }

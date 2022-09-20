@@ -16,13 +16,15 @@ public abstract class VisibleEntity : MapEntity
 
     public void Display()
     {
-        foreach (var aisling in MapInstance.ObjectsThatSee<Aisling>(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanSee(this))
             ShowTo(aisling);
     }
 
     public void Hide()
     {
-        foreach (var aisling in MapInstance.ObjectsThatSee<Aisling>(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanSee(this))
             if (!aisling.Equals(this))
                 HideFrom(aisling);
     }

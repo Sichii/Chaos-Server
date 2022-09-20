@@ -1,3 +1,4 @@
+using Chaos.Core.Collections;
 using Chaos.Data;
 using Chaos.Entities.Schemas.Templates;
 using Chaos.Services.Mappers.Abstractions;
@@ -19,8 +20,13 @@ public class SpellTemplateMapperProfile : IMapperProfile<SpellTemplate, SpellTem
         Prompt = obj.Prompt,
         SpellType = obj.SpellType,
         Animation = obj.Animation == null ? null : Mapper.Map<Animation>(obj.Animation),
-        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value)
+        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+        BodyAnimationOverride = obj.BodyAnimationOverride,
+        PanelSprite = obj.PanelSprite,
+        ScriptVars = new Dictionary<string, DynamicVars>(
+            obj.ScriptVars ?? Enumerable.Empty<KeyValuePair<string, DynamicVars>>(),
+            StringComparer.OrdinalIgnoreCase)
     };
-    
+
     public SpellTemplateSchema Map(SpellTemplate obj) => throw new NotImplementedException();
 }

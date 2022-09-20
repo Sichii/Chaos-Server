@@ -1,5 +1,4 @@
 using System.IO;
-using Chaos.Services.Caches.Abstractions;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Serialization.Options;

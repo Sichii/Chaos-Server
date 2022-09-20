@@ -8,6 +8,7 @@ public class UserStatSheetMapperProfile : IMapperProfile<UserStatSheet, UserStat
 {
     public UserStatSheet Map(UserStatSheetSchema obj) => new()
     {
+        AtkSpeedPct = obj.AtkSpeedPct,
         Ac = obj.Ac,
         Dmg = obj.Dmg,
         Hit = obj.Hit,
@@ -35,6 +36,7 @@ public class UserStatSheetMapperProfile : IMapperProfile<UserStatSheet, UserStat
 
     public UserStatSheetSchema Map(UserStatSheet obj) => new()
     {
+        AtkSpeedPct = obj.AtkSpeedPct,
         Ability = obj.Ability,
         Ac = obj.Ac,
         AdvClass = obj.AdvClass,

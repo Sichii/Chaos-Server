@@ -124,7 +124,7 @@ public static class AsyncHelpers
         public override void Send(SendOrPostCallback d, object? state) =>
             throw new NotSupportedException("We cannot send to our same thread");
     }
-    
+
     /*
          public static void RunSync(Func<Task> taskFactory) => taskFactory.WithNoContext().Wait();
 

@@ -1,9 +1,11 @@
+using System.Runtime.CompilerServices;
 using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.Extensions;
 
 public static class PolygonExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static bool Contains(this IPolygon polygon, IPoint point)
     {
         var inside = false;

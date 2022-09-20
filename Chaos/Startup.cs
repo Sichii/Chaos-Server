@@ -18,12 +18,15 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var encodingProvider = CodePagesEncodingProvider.Instance;
+        Encoding.RegisterProvider(encodingProvider);
+
         services.AddSingleton(Configuration);
         services.AddOptions();
 
         services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key)
                 .Validate(o => !string.IsNullOrEmpty(o.StagingDirectory), "RootDirectory is required");
-        
+
         services.AddLogging(
             logging =>
             {
@@ -38,6 +41,7 @@ public class Startup
                     });
             });
 
+        services.AddCommandInterceptor();
         services.AddServerAuthentication();
         services.AddCryptography();
         services.AddPacketSerializersFromAssembly();
@@ -52,9 +56,6 @@ public class Startup
         services.AddLobbyServer();
         services.AddLoginserver();
         services.AddWorldServer();
-
-        var encodingProvider = CodePagesEncodingProvider.Instance;
-        Encoding.RegisterProvider(encodingProvider);
     }
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]

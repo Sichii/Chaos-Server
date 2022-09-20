@@ -13,6 +13,9 @@ namespace Chaos.Services.Caches;
 public class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>
 {
     /// <inheritdoc />
+    protected override Func<MonsterTemplate, string> KeySelector => t => t.TemplateKey;
+
+    /// <inheritdoc />
     public MonsterTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -23,8 +26,5 @@ public class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, Monster
             mapper,
             jsonSerializerOptions,
             options,
-            logger) => AsyncHelpers.RunSync(LoadCacheAsync);
-
-    /// <inheritdoc />
-    protected override Func<MonsterTemplate, string> KeySelector => t => t.TemplateKey;
+            logger) => AsyncHelpers.RunSync(ReloadAsync);
 }

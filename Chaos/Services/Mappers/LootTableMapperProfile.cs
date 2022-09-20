@@ -10,7 +10,7 @@ public class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>
 {
     private readonly IItemFactory ItemFactory;
     private readonly ITypeMapper Mapper;
-    
+
     public LootTableMapperProfile(IItemFactory itemFactory, ITypeMapper mapper)
     {
         ItemFactory = itemFactory;

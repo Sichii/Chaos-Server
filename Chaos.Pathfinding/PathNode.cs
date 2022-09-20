@@ -18,6 +18,7 @@ internal class PathNode : IEquatable<IPoint>, IPoint
         X = x;
         Y = y;
         Neighbors = new PathNode?[4];
+        Closed = true;
     }
 
     public bool Equals(IPoint? other)

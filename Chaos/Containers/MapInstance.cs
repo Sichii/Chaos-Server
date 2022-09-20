@@ -1,15 +1,12 @@
 using Chaos.Common.Definitions;
-using Chaos.Core.Collections;
 using Chaos.Core.Synchronization;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Definitions;
-using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Pathfinding.Abstractions;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.MapScripts.Abstractions;
 using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 using Chaos.Time.Abstractions;
@@ -18,15 +15,21 @@ namespace Chaos.Containers;
 
 public class MapInstance : IScriptedMap, IDeltaUpdatable
 {
-    private readonly TypeCheckingDictionary<uint, MapEntity> Objects;
+    private readonly ICollection<MonsterSpawn> MonsterSpawns;
+    private readonly MapEntityCollection Objects;
     public MapFlags Flags { get; set; }
     public string InstanceId { get; init; }
+    public int? MaximumLevel { get; set; }
+    public int? MinimumLevel { get; set; }
     public sbyte Music { get; set; }
     public string Name { get; set; }
-    public MapTemplate Template { get; set; }
     public IPathfindingService Pathfinder { get; set; } = null!;
-    private readonly ICollection<MonsterSpawn> MonsterSpawns;
-    public Warp[][] WarpGroups { get; set; } = Array.Empty<Warp[]>();
+    public MapTemplate Template { get; set; }
+    /// <inheritdoc />
+    public IMapScript Script { get; }
+
+    /// <inheritdoc />
+    public ISet<string> ScriptKeys { get; }
     public AutoReleasingMonitor Sync { get; }
 
     public MapInstance(
@@ -39,7 +42,8 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     {
         Name = name;
         InstanceId = instanceId;
-        Objects = new TypeCheckingDictionary<uint, MapEntity>();
+        var walkableArea = template.Height * template.Width - template.Tiles.Flatten().Count(t => t.IsWall);
+        Objects = new MapEntityCollection(template.Width, template.Height, walkableArea);
         MonsterSpawns = new List<MonsterSpawn>();
         Sync = new AutoReleasingMonitor();
         Template = template;
@@ -55,8 +59,8 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     {
         using var @lock = Sync.Enter();
 
-        var reactors = ObjectsAtPoint<ReactorTile>(creature)
-            .Where(reactor => reactor.ReactorTileType == reactorTileType);
+        var reactors = Objects.AtPoint<ReactorTile>(creature)
+                              .Where(reactor => reactor.ReactorTileType == reactorTileType);
 
         foreach (var reactor in reactors)
             reactor.Activate(creature);
@@ -66,14 +70,13 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     {
         using var @lock = Sync.Enter();
 
-        visibleEntity.X = point.X;
-        visibleEntity.Y = point.Y;
-        visibleEntity.MapInstance = this;
+        visibleEntity.SetLocation(this, point);
         Objects.Add(visibleEntity.Id, visibleEntity);
 
         if (visibleEntity is Aisling aisling)
         {
-            (var aislings, var doors, var otherVisibles) = ObjectsWithinRange<VisibleEntity>(point).SortBySendType();
+            (var aislings, var doors, var otherVisibles) = Objects.WithinRange<VisibleEntity>(point)
+                                                                  .PartitionBySendType();
 
             aisling.Client.SendMapChangePending();
             aisling.Client.SendMapInfo();
@@ -97,25 +100,16 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
             aisling.Client.SendMapLoadComplete();
             aisling.Client.SendDisplayAisling(aisling);
         } else
-            foreach (var nearbyUser in ObjectsThatSee<Aisling>(visibleEntity))
+            foreach (var nearbyUser in Objects.WithinRange<Aisling>(visibleEntity)
+                                              .ThatCanSee(visibleEntity))
                 nearbyUser.Client.SendVisibleObjects(visibleEntity);
-    }
-
-    public void AddSpawner(MonsterSpawn monsterSpawn)
-    {
-        using var @lock = Sync.Enter();
-
-        monsterSpawn.MapInstance = this;
-        monsterSpawn.SpawnArea ??= new Rectangle(0, 0, Template.Width, Template.Height);
-        
-        MonsterSpawns.Add(monsterSpawn);
     }
 
     public void AddObjects<T>(ICollection<T> visibleObjects) where T: VisibleEntity
     {
         if (visibleObjects.Count == 0)
             return;
-        
+
         using var @lock = Sync.Enter();
 
         foreach (var visibleObj in visibleObjects)
@@ -127,12 +121,28 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         foreach (var aisling in Objects.Values<Aisling>())
         {
             var objectsInRange = visibleObjects
-                                 .Where(obj => obj.WithinRange(aisling) && obj.IsVisibleTo(aisling))
-                                 .ToArray<VisibleEntity>();
+                                 .ThatAreWithinRange(aisling)
+                                 .ThatAreVisibleTo(aisling)
+                                 .ToList();
 
             if (objectsInRange.Any())
                 aisling.Client.SendVisibleObjects(objectsInRange);
         }
+    }
+
+    public void AddSpawner(MonsterSpawn monsterSpawn)
+    {
+        using var @lock = Sync.Enter();
+
+        monsterSpawn.MapInstance = this;
+
+        monsterSpawn.SpawnArea ??= new Rectangle(
+            0,
+            0,
+            Template.Width,
+            Template.Height);
+
+        MonsterSpawns.Add(monsterSpawn);
     }
 
     public void Click(uint id, Aisling source)
@@ -148,11 +158,41 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     {
         using var @lock = Sync.Enter();
 
-        var obj = ObjectsAtPoint<VisibleEntity>(point)
-                  .ThatAreVisibleTo(source)
-                  .FirstOrDefault();
+        var obj = Objects.AtPoint<VisibleEntity>(point)
+                         .ThatAreVisibleTo(source)
+                         .TopOrDefault();
 
         obj?.OnClicked(source);
+    }
+
+    public IEnumerable<T> GetEntities<T>() where T: MapEntity
+    {
+        if (Sync.IsEntered)
+            return Objects.Values<T>();
+
+        using var @lock = Sync.Enter();
+
+        return Objects.Values<T>().ToList();
+    }
+
+    public IEnumerable<T> GetEntitiesAtPoint<T>(IPoint point) where T: MapEntity
+    {
+        if (Sync.IsEntered)
+            return Objects.AtPoint<T>(point);
+
+        using var @lock = Sync.Enter();
+
+        return Objects.AtPoint<T>(point).ToList();
+    }
+
+    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 13) where T: MapEntity
+    {
+        if (Sync.IsEntered)
+            return Objects.WithinRange<T>(point, range);
+
+        using var @lock = Sync.Enter();
+
+        return Objects.WithinRange<T>(point, range).ToList();
     }
 
     public bool IsWalkable(IPoint point, bool toWalkthroughCreature = false)
@@ -160,92 +200,24 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         if (toWalkthroughCreature ? !IsWithinMap(point) : IsWall(point))
             return false;
 
-        using var @lock = Sync.Enter();
+        var objs = Objects.AtPoint<Creature>(point);
 
-        return Objects
-               .Values<Creature>()
-               .All(
-                   creature =>
-                   {
-                       if (toWalkthroughCreature)
-                           return (creature.Type != CreatureType.WalkThrough) || (Point.From(creature) != point);
+        if (toWalkthroughCreature)
+            return objs.All(creature => creature.Type != CreatureType.WalkThrough);
 
-                       return (creature.Type == CreatureType.WalkThrough) || (Point.From(creature) != point);
-                   });
+        return objs.All(creature => creature.Type == CreatureType.WalkThrough);
     }
 
     public bool IsWall(IPoint point) => Template.IsWall(point);
 
+    public bool IsWarp(IPoint point) => Objects.AtPoint<WarpTile>(point).Any();
+
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 
-    public IEnumerable<T> AllObjects<T>() where T : MapEntity
-    {
-        if (Sync.IsEntered)
-            return Objects.Values<T>();
-        
-        using var @lock = Sync.Enter();
-
-        return Objects.Values<T>().ToList();
-    }
-
-    public IEnumerable<T> ObjectsAtPoint<T>(IPoint point) where T: MapEntity
-    {
-        var objects = Objects.Values<T>()
-                             .Where(obj => Point.From(obj) == point)
-                             .OrderByDescending(obj => obj.Creation);
-
-        if (Sync.IsEntered)
-            return objects;
-
-        using var @lock = Sync.Enter();
-
-        return objects.ToList();
-    }
-
-    public IEnumerable<T> ObjectsThatSee<T>(VisibleEntity visibleEntity, int distance = 13) where T: MapEntity
-    {
-        var objects = Objects.Values<T>()
-                             .Where(obj => visibleEntity.WithinRange(obj, distance));
-
-        if (objects is IEnumerable<Creature> creatures)
-            objects = creatures.ThatCanSee(visibleEntity).Cast<T>();
-
-        if (Sync.IsEntered)
-            return objects;
-
-        using var @lock = Sync.Enter();
-
-        return objects.ToList();
-    }
-
-    public IEnumerable<T> ObjectsVisibleTo<T>(MapEntity mapEntity, int distance = 13) where T: VisibleEntity
-    {
-        var objects = Objects.Values<T>()
-                             .Where(obj => mapEntity.WithinRange(obj, distance));
-
-        if (mapEntity is Aisling aisling)
-            objects = objects.ThatAreVisibleTo(aisling);
-
-        if (Sync.IsEntered)
-            return objects;
-
-        using var @lock = Sync.Enter();
-
-        return objects.ToList();
-    }
-
-    public IEnumerable<T> ObjectsWithinRange<T>(IPoint point, int distance = 13) where T: MapEntity
-    {
-        var objects = Objects.Values<T>()
-                             .Where(obj => obj.WithinRange(point, distance));
-
-        if (Sync.IsEntered)
-            return objects;
-
-        using var @lock = Sync.Enter();
-
-        return objects.ToList();
-    }
+    /// <summary>
+    ///     Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU ARE DOING.
+    /// </summary>
+    public void MoveEntity(MapEntity entity, Point oldPoint) => Objects.MoveEntity(entity, oldPoint);
 
     public bool RemoveObject(MapEntity mapEntity)
     {
@@ -255,7 +227,8 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
             return false;
 
         if (mapEntity is VisibleEntity visibleObject)
-            foreach (var aisling in ObjectsThatSee<Aisling>(visibleObject))
+            foreach (var aisling in Objects.WithinRange<Aisling>(visibleObject)
+                                           .ThatCanSee(visibleObject))
                 aisling.Client.SendRemoveObject(visibleObject.Id);
 
         return true;
@@ -268,10 +241,11 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         if (animation.TargetId.HasValue)
         {
             if (TryGetObject<Creature>(animation.TargetId.Value, out var target))
-                foreach (var aisling in ObjectsThatSee<Aisling>(target))
+                foreach (var aisling in Objects.WithinRange<Aisling>(target)
+                                               .ThatCanSee(target))
                     aisling.Client.SendAnimation(animation);
         } else if (animation.TargetPoint != default)
-            foreach (var aisling in ObjectsWithinRange<Aisling>(animation.TargetPoint))
+            foreach (var aisling in Objects.WithinRange<Aisling>(animation.TargetPoint))
                 aisling.Client.SendAnimation(animation);
     }
 
@@ -292,15 +266,9 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     {
         using var @lock = Sync.Enter();
 
-        foreach (var updateable in Objects.Values<IDeltaUpdatable>())
-            updateable.Update(delta);
-        
-        foreach(var spawn in MonsterSpawns)
+        Objects.Update(delta);
+
+        foreach (var spawn in MonsterSpawns)
             spawn.Update(delta);
     }
-
-    /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; }
-    /// <inheritdoc />
-    public IMapScript Script { get; }
 }

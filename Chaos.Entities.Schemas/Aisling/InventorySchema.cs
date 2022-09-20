@@ -8,7 +8,7 @@ namespace Chaos.Entities.Schemas.Aisling;
 public class InventorySchema : IEnumerable<ItemSchema>
 {
     public ICollection<ItemSchema> Items { get; init; }
-    
+
     public InventorySchema(IEnumerable<ItemSchema> items) => Items = items.ToList();
 
     public IEnumerator<ItemSchema> GetEnumerator() => Items.GetEnumerator();

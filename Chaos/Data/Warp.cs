@@ -1,17 +1,15 @@
-using Chaos.Entities.Schemas.Data;
-
 namespace Chaos.Data;
 
 public record Warp
 {
-    public Location? SourceLocation { get; init; }
-    public Location TargetLocation { get; init; }
-    
-    public override string ToString() => $@"{SourceLocation.ToString()} => {TargetLocation.ToString()}";
+    public Location Destination { get; init; }
+    public Point? Source { get; init; }
+
+    public override string ToString() => $@"{Source.ToString()} => {Destination.ToString()}";
 
     public static Warp Unsourced(Location targetLocation) => new()
     {
-        TargetLocation = targetLocation,
-        SourceLocation = null
+        Destination = targetLocation,
+        Source = null
     };
 }

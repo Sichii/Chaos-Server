@@ -1,11 +1,13 @@
 using Chaos.Containers;
+using Chaos.Data;
+using Chaos.Extensions;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Objects.World;
 
-public class GroundItem : NamedEntity
+public sealed class GroundItem : GroundEntity
 {
     public Item Item { get; }
 
@@ -21,5 +23,22 @@ public class GroundItem : NamedEntity
     {
         //nothing
         //there's a different packet for picking up items
+    }
+
+    /// <inheritdoc />
+    public override void Animate(Animation animation, uint? sourceId = null)
+    {
+        var targetedAnimation = animation.GetTargetedAnimation(Id, sourceId);
+
+        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                       .ThatCanSee(this))
+            obj.Client.SendAnimation(targetedAnimation);
+    }
+
+    /// <inheritdoc />
+    public override void Update(TimeSpan delta)
+    {
+        Item.Update(delta);
+        base.Update(delta);
     }
 }

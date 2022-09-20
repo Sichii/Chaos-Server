@@ -1,0 +1,15 @@
+{
+    "templateKey": "assail",
+    "name": "Assail",
+    "panelSprite": 1,
+    "isAssail": true,
+    "scriptKeys": ["statBasedDamage"],
+    "bodyAnimationOverride": "assail",
+    "scriptVars": {
+        "statBasedDamage": {
+            "stat": "str",
+            "damage": 6,
+            "statCoefficient": 0.333
+        }
+    }
+}

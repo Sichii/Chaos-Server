@@ -8,6 +8,7 @@ public class StatSheetMapperProfile : IMapperProfile<StatSheet, StatSheetSchema>
 {
     public StatSheet Map(StatSheetSchema obj) => new()
     {
+        AtkSpeedPct = obj.AtkSpeedPct,
         Ac = obj.Ac,
         Dmg = obj.Dmg,
         Hit = obj.Hit,
@@ -22,11 +23,12 @@ public class StatSheetMapperProfile : IMapperProfile<StatSheet, StatSheetSchema>
         CurrentHp = obj.CurrentHp,
         CurrentMp = obj.CurrentMp,
         Ability = obj.Ability,
-        Level = obj.Level,
+        Level = obj.Level
     };
 
     public StatSheetSchema Map(StatSheet obj) => new()
     {
+        AtkSpeedPct = obj.AtkSpeedPct,
         Ability = obj.Ability,
         Ac = obj.Ac,
         Con = obj.Con,

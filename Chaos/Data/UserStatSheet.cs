@@ -49,25 +49,6 @@ public record UserStatSheet : StatSheet
         init => _maxWeight = value;
     }
 
-    public static UserStatSheet NewCharacter => new()
-    {
-        _maxWeight = 40,
-        _toNextLevel = 100,
-        _str = 1,
-        _int = 1,
-        _wis = 1,
-        _con = 1,
-        _dex = 1,
-        _currentHp = 100,
-        _maximumHp = 100,
-        _currentMp = 50,
-        _maximumMp = 50,
-        _level = 1,
-        _master = false,
-        _baseClass = BaseClass.Peasant,
-        _advClass = AdvClass.None
-    };
-
     public uint ToNextAbility
     {
         get => Convert.ToUInt32(_toNextAbility);
@@ -98,6 +79,26 @@ public record UserStatSheet : StatSheet
         init => _unspentPoints = value;
     }
 
+    public static UserStatSheet NewCharacter => new()
+    {
+        _maxWeight = 40,
+        _toNextLevel = 100,
+        _str = 1,
+        _int = 1,
+        _wis = 1,
+        _con = 1,
+        _dex = 1,
+        _currentHp = 100,
+        _maximumHp = 100,
+        _currentMp = 50,
+        _maximumMp = 50,
+        _level = 1,
+        _master = false,
+        _baseClass = BaseClass.Peasant,
+        _advClass = AdvClass.None,
+        _atkSpeedPct = 1500
+    };
+
     public void AddTNA(long amount) => Interlocked.Add(ref _toNextAbility, amount);
 
     public void AddTNL(long amount) => Interlocked.Add(ref _toNextLevel, amount);
@@ -108,12 +109,9 @@ public record UserStatSheet : StatSheet
 
     public void AddWeight(int amount) => Interlocked.Add(ref _currentWeight, amount);
 
-    public void IncrementLevel()
-    {
-        Interlocked.Increment(ref _level);
-        Interlocked.Increment(ref _unspentPoints);
-        RecalculateMaxWeight();
-    }
+    public void GivePoints(int amount) => Interlocked.Add(ref _unspentPoints, amount);
+
+    public void IncrementLevel() => Interlocked.Increment(ref _level);
 
     public bool IncrementStat(Stat stat)
     {
@@ -132,7 +130,6 @@ public record UserStatSheet : StatSheet
         {
             case Stat.STR:
                 Interlocked.Increment(ref _str);
-                RecalculateMaxWeight();
 
                 break;
             case Stat.INT:
@@ -158,7 +155,7 @@ public record UserStatSheet : StatSheet
         return true;
     }
 
-    private void RecalculateMaxWeight() => _maxWeight = 40 + _level + _str;
+    public void RecalculateMaxWeight() => _maxWeight = 40 + _level + _str;
 
     public void SetAdvClass(AdvClass advClass) => _advClass = advClass;
 

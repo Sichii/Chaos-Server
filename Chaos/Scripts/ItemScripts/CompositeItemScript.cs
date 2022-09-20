@@ -3,14 +3,15 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.Abstractions;
+using Chaos.Scripts.ItemScripts.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts;
 
 public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 {
-    protected Item Source { get; }
+    protected Item Subject { get; }
 
-    public CompositeItemScript(Item source) => Source = source;
+    public CompositeItemScript(Item subject) => Subject = subject;
 
     public void OnDropped(Creature source, MapInstance mapInstance)
     {
@@ -42,7 +43,7 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 
         if (exchange != null)
         {
-            exchange.AddItem(source, Source.Slot);
+            exchange.AddItem(source, Subject.Slot);
 
             return;
         }

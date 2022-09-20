@@ -15,11 +15,12 @@ public class MonsterTemplateMapperProfile : IMapperProfile<MonsterTemplate, Mons
     {
         obj.StatSheet.CurrentHp = obj.StatSheet.MaximumHp;
         obj.StatSheet.CurrentMp = obj.StatSheet.MaximumMp;
-        
+
         return new MonsterTemplate
         {
-            AttackIntervalMs = obj.AttackIntervalMs,
-            CastIntervalMs = obj.CastIntervalMs,
+            AssailIntervalMs = obj.AssailIntervalMs,
+            SkillIntervalMs = obj.SkillIntervalMs,
+            SpellIntervalMs = obj.SpellIntervalMs,
             Direction = obj.Direction,
             MoveIntervalMs = obj.MoveIntervalMs,
             Name = obj.Name,
@@ -30,7 +31,7 @@ public class MonsterTemplateMapperProfile : IMapperProfile<MonsterTemplate, Mons
             StatSheet = Mapper.Map<StatSheet>(obj.StatSheet),
             TemplateKey = obj.TemplateKey,
             Type = obj.Type,
-            WanderingIntervalMs = obj.WanderIntervalMs
+            WanderIntervalMs = obj.WanderIntervalMs
         };
     }
 

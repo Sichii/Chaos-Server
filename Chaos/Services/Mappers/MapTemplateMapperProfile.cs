@@ -16,6 +16,6 @@ public class MapTemplateMapperProfile : IMapperProfile<MapTemplate, MapTemplateS
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
         Tiles = new Tile[obj.Width, obj.Height]
     };
-    
+
     public MapTemplateSchema Map(MapTemplate obj) => throw new NotImplementedException();
 }

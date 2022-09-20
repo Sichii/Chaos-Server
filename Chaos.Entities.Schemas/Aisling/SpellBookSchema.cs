@@ -8,7 +8,7 @@ namespace Chaos.Entities.Schemas.Aisling;
 public class SpellBookSchema : IEnumerable<SpellSchema>
 {
     public ICollection<SpellSchema> Spells { get; init; }
-    
+
     public SpellBookSchema(IEnumerable<SpellSchema> spells) => Spells = spells.ToList();
 
     public IEnumerator<SpellSchema> GetEnumerator() => Spells.GetEnumerator();

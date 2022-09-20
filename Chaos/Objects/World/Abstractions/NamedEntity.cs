@@ -1,9 +1,10 @@
 using Chaos.Containers;
 using Chaos.Geometry.Abstractions;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Objects.World.Abstractions;
 
-public abstract class NamedEntity : VisibleEntity
+public abstract class NamedEntity : VisibleEntity, IDeltaUpdatable
 {
     public string Name { get; protected set; }
 
@@ -15,4 +16,7 @@ public abstract class NamedEntity : VisibleEntity
     )
         : base(sprite, mapInstance, point) =>
         Name = name;
+
+    /// <inheritdoc />
+    public abstract void Update(TimeSpan delta);
 }

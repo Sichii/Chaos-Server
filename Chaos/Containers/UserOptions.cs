@@ -18,7 +18,6 @@ public class UserOptions
     public bool Whisper { get; set; } = true;
 
     public bool Wisdom { get; set; } = true;
-    
 
     /// <summary>
     ///     Toggles the given UserOption.
