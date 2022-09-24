@@ -1,4 +1,4 @@
-using Chaos.Core.Collections.Synchronized;
+using Chaos.Common.Collections.Synchronized;
 
 namespace Chaos.Containers;
 

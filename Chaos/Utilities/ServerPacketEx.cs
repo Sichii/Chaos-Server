@@ -1,7 +1,7 @@
 using System.Text;
 using Chaos.IO.Memory;
 using Chaos.Packets;
-using Chaos.Packets.Definitions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Utilities;
 

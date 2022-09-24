@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Data;
 using Chaos.Formulae;
 using Chaos.Objects;
 using Chaos.Objects.Panel;
@@ -8,25 +9,45 @@ namespace Chaos.Scripts.SpellScripts;
 
 public class DamageScript : ConfigurableSpellScriptBase
 {
-    private readonly int Damage;
+    protected int Damage { get; init; }
+    protected byte? Sound { get; init; }
+    protected BodyAnimation? BodyAnimation { get; init; }
+    protected ushort AnimationSpeed { get; init; } = 100;
+    protected ushort? SourceAnimation { get; init; }
+    protected ushort? TargetAnimation { get; init; }
+    protected Animation? Animation { get; init; }
 
     /// <inheritdoc />
     public DamageScript(Spell subject)
-        : base(subject) => Damage = ScriptVars.Get<int>("damage");
-    
+        : base(subject)
+    {
+        if (SourceAnimation.HasValue || TargetAnimation.HasValue)
+            Animation = new Animation
+            {
+                AnimationSpeed = AnimationSpeed,
+                SourceAnimation = SourceAnimation ?? 0,
+                TargetAnimation = TargetAnimation ?? 0
+            };
+    }
+
     /// <inheritdoc />
     public override void OnUse(ActivationContext context)
     {
         var source = context.Source;
         var target = context.Target;
+        var map = source.MapInstance;
+        
+        if (BodyAnimation.HasValue)
+            source.AnimateBody(BodyAnimation.Value);
 
-        if (Subject.Template.Animation != null)
-            source.Animate(Subject.Template.Animation, source.Id);
+        if (Sound.HasValue)
+            map.PlaySound(Sound.Value, target);
         
-        source.AnimateBody(Subject.Template.BodyAnimationOverride ?? BodyAnimation.WizardCast);
-        
+        if (Animation != null)
+            target.Animate(Animation, source.Id);
+
         var damage = DamageFormulae.Default.Calculate(source, target, Damage);
-        
+
         target.ApplyDamage(source, damage);
     }
 }

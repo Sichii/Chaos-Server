@@ -1,5 +1,6 @@
 using Chaos.Containers;
 using Chaos.Extensions;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
 using Chaos.Objects.World.Abstractions;

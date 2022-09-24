@@ -1,19 +1,22 @@
 {
-    "TemplateKey": "cuckArmor",
-    "AccountBound": false,
-    "BaseClass": "Peasant",
-    "AdvClass": "None",
-    "DisplaySprite": 4,
-    "EquipmentType": "Armor",
-    "Gender": "Male",
-    "MaxDurability": 1000,
-    "MaxStacks": 1,
-    "Modifiers": {
-        "Con": 1
+    "templateKey": "cuckArmor",
+    "accountBound": false,
+    "maxDurability": 1000,
+    "maxStacks": 1,
+    "value": 1000,
+    "weight": 10,
+    "name": "Cuck Plate",
+    "panelSprite": 96,
+    "displaySprite": 1,
+    "modifiers": {
+        "con": 1
     },
-    "Value": 1000,
-    "Weight": 10,
-    "Name": "Cuck Plate",
-    "PanelSprite": 99,
-    "ScriptKeys": ["Equipment"]
+    "pantsColor": "black",
+    "scriptKeys": ["Equipment"],
+    "scriptVars": {
+        "equipment": {
+            "equipmentType": "armor",
+            "gender": "male"
+        }
+    }
 }

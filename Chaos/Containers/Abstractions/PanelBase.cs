@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
+using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Observers.Abstractions;
 
 namespace Chaos.Containers.Abstractions;
 
@@ -45,7 +45,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     protected int Length { get; }
     protected T?[] Objects { get; }
 
-    protected ICollection<IPanelObserver<T>> Observers { get; }
+    protected ICollection<Observers.Abstractions.IObserver<T>> Observers { get; }
     protected AutoReleasingMonitor Sync { get; }
     protected int TotalSlots { get; }
 
@@ -61,10 +61,10 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         InvalidSlots = invalidSlots;
         TotalSlots = Length - invalidSlots.Length;
         Sync = new AutoReleasingMonitor();
-        Observers = new List<IPanelObserver<T>>();
+        Observers = new List<Observers.Abstractions.IObserver<T>>();
     }
 
-    public void AddObserver(IPanelObserver<T> observer)
+    public void AddObserver(Observers.Abstractions.IObserver<T> observer)
     {
         using var @lock = Sync.Enter();
         Observers.Add(observer);

@@ -6,5 +6,5 @@ public record PanelObjectSchema
     public required ICollection<string> ScriptKeys { get; init; } = Array.Empty<string>();
     public required byte? Slot { get; init; }
     public required string TemplateKey { get; init; }
-    public required ulong UniqueId { get; init; }
+    public required ulong UniqueId { get; set; }
 }

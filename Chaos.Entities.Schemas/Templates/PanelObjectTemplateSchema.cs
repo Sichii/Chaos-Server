@@ -1,19 +1,11 @@
+using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
-using Chaos.Core.Collections;
 using Chaos.Entities.Schemas.Data;
 
 namespace Chaos.Entities.Schemas.Templates;
 
 public record PanelObjectTemplateSchema
 {
-    /// <summary>
-    ///     Defaults to null<br />If specified, this will be used by any on-use effect
-    /// </summary>
-    public required AnimationSchema? Animation { get; init; }
-    /// <summary>
-    ///     Defaults to null<br />If specified, this body animation is shown instead of what the script specifies
-    /// </summary>
-    public required BodyAnimation? BodyAnimationOverride { get; init; }
     /// <summary>
     ///     Defaults to null<br />If specified, any on-use effect of this object will use this cooldown
     /// </summary>

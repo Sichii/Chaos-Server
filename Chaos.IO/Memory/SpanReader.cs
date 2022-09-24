@@ -52,9 +52,12 @@ public ref struct SpanReader
         if (Remaining < length)
             throw new EndOfStreamException();
 
-        Position += length;
+        var start = Position;
+        var end = Position + length;
 
-        return Buffer[..length].ToArray();
+        Position = end;
+
+        return Buffer[start..end].ToArray();
     }
 
     public byte[] ReadData() => ReadBytes(Remaining);

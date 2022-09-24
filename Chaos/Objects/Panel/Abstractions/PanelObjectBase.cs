@@ -1,5 +1,5 @@
 using Chaos.Core.Identity;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Templates.Abstractions;
 using Chaos.Time.Abstractions;
 
@@ -13,9 +13,9 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
     public TimeSpan? Cooldown { get; set; }
     public TimeSpan? Elapsed { get; set; }
     public byte Slot { get; set; }
+    public ulong UniqueId { get; }
     public ISet<string> ScriptKeys { get; }
     public virtual PanelObjectTemplateBase Template { get; }
-    public ulong UniqueId { get; }
 
     protected PanelObjectBase(PanelObjectTemplateBase template, ulong? uniqueId = null, int? elapsedMs = null)
     {

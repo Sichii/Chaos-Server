@@ -1,6 +1,7 @@
+using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.SpellScripts.Abstractions;
-using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;

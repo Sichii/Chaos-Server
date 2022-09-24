@@ -6,16 +6,16 @@ using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Formulae.LevelUp;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Definitions;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
 using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Hosted.Options;
+using Chaos.Services.Servers.Options;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
-using PointExtensions = Chaos.Geometry.Extensions.PointExtensions;
+using PointExtensions = Chaos.Extensions.Geometry.PointExtensions;
 
 namespace Chaos.Objects.World;
 
@@ -133,6 +133,33 @@ public sealed class Aisling : Creature
             obj.Client.SendHealthBar(obj, hitSound);
     }
 
+    public void BeginObserving()
+    {
+        //add observers
+        var inventoryObserver = new InventoryObserver(this);
+        var spellBookObserver = new SpellBookObserver(this);
+        var skillBookObserver = new SkillBookObserver(this);
+        var equipmentObserver = new EquipmentObserver(this);
+
+        Inventory.AddObserver(inventoryObserver);
+        SpellBook.AddObserver(spellBookObserver);
+        SkillBook.AddObserver(skillBookObserver);
+        Equipment.AddObserver(equipmentObserver);
+
+        //trigger observers
+        foreach (var item in Equipment)
+            equipmentObserver.OnAdded(item);
+
+        foreach (var item in Inventory)
+            inventoryObserver.OnAdded(item);
+
+        foreach (var spell in SpellBook)
+            spellBookObserver.OnAdded(spell);
+
+        foreach (var skill in SkillBook)
+            skillBookObserver.OnAdded(skill);
+    }
+
     public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));
 
     public bool CanCarry(IEnumerable<(Item Item, int Count)> hypotheticalItems)
@@ -199,7 +226,6 @@ public sealed class Aisling : Creature
 
     public void Initialize(
         string name,
-        IWorldClient client,
         Bank bank,
         Equipment equipment,
         Inventory inventory,
@@ -209,37 +235,12 @@ public sealed class Aisling : Creature
     )
     {
         Name = name;
-        Client = client;
         Bank = bank;
         Equipment = equipment;
         Inventory = inventory;
         SkillBook = skillBook;
         SpellBook = spellBook;
         Legend = legend;
-
-        //add observers
-        var inventoryObserver = new InventoryObserver(this);
-        var spellBookObserver = new SpellBookObserver(this);
-        var skillBookObserver = new SkillBookObserver(this);
-        var equipmentObserver = new EquipmentObserver(this);
-
-        inventory.AddObserver(inventoryObserver);
-        spellBook.AddObserver(spellBookObserver);
-        skillBook.AddObserver(skillBookObserver);
-        equipment.AddObserver(equipmentObserver);
-
-        //trigger observers
-        foreach (var item in equipment)
-            equipmentObserver.OnAdded(item);
-
-        foreach (var item in inventory)
-            inventoryObserver.OnAdded(item);
-
-        foreach (var spell in spellBook)
-            spellBookObserver.OnAdded(spell);
-
-        foreach (var skill in skillBook)
-            skillBookObserver.OnAdded(skill);
     }
 
     public void LevelUp()
@@ -404,6 +405,15 @@ public sealed class Aisling : Creature
         SpellBook.Update(delta);
         ActionThrottle.Update(delta);
         base.Update(delta);
+    }
+
+    /// <inheritdoc />
+    public override void WarpTo(IPoint destinationPoint)
+    {
+        Hide();
+        SetLocation(destinationPoint);
+        Client.SendLocation();
+        Display();
     }
 
     public override void Walk(Direction direction)

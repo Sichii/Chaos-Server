@@ -3,11 +3,12 @@ using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.MonsterScripts.Abstractions;
-using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -37,21 +38,9 @@ public sealed class Monster : Creature, IScriptedMonster
     public IIntervalTimer SpellTimer { get; }
     public override StatSheet StatSheet { get; }
     public MonsterTemplate Template { get; }
-    public sealed override CreatureType Type { get; }
+    public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
     protected override ILogger<Monster> Logger { get; }
-
-    /// <inheritdoc />
-    public override void ApplyDamage(Creature source, int amount, byte? hitSound = 1)
-    {
-        Script.OnAttacked(source, ref amount);
-        
-        StatSheet.SubtractHp(amount);
-
-        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                       .ThatCanSee(this))
-            obj.Client.SendHealthBar(this, hitSound);
-    }
 
     public Monster(
         MonsterTemplate template,
@@ -88,6 +77,18 @@ public sealed class Monster : Creature, IScriptedMonster
         Script = scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, this);
     }
 
+    /// <inheritdoc />
+    public override void ApplyDamage(Creature source, int amount, byte? hitSound = 1)
+    {
+        Script.OnAttacked(source, ref amount);
+
+        StatSheet.SubtractHp(amount);
+
+        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                       .ThatCanSee(this))
+            obj.Client.SendHealthBar(this, hitSound);
+    }
+
     public override void OnClicked(Aisling source)
     {
         var now = DateTime.UtcNow;
@@ -106,6 +107,12 @@ public sealed class Monster : Creature, IScriptedMonster
         if ((uint)Gold + amount > int.MaxValue)
             return;
 
+        Logger.LogDebug(
+            "{UserName} dropped {Amount} gold on {MonsterName}",
+            source.Name,
+            amount,
+            Name);
+        
         source.Gold -= amount;
         Gold += amount;
 

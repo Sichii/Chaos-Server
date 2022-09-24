@@ -1,4 +1,5 @@
 using Chaos.Extensions;
+using Chaos.Extensions.Geometry;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.MonsterScripts.Abstractions;
@@ -39,7 +40,7 @@ public class AggroTargetingScript : MonsterScriptBase
         if (!TargetUpdateTimer.IntervalElapsed)
             return;
 
-        if (Target is { IsAlive: false })
+        if ((Target != null) && (!Target.IsAlive || !Target.OnSameMapAs(Subject)))
         {
             AggroList.Remove(Target.Id, out _);
             Subject.Target = null;

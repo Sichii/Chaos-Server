@@ -1,7 +1,7 @@
 using Chaos.Objects.Panel;
-using Chaos.Services.Caches.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Scripting.Abstractions;
+using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +30,7 @@ public class SkillFactory : ISkillFactory
         var template = SimpleCache.GetObject<SkillTemplate>(templateKey);
         var skill = new Skill(template, ScriptProvider, extraScriptKeys);
 
-        Logger.LogDebug("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
+        Logger.LogTrace("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
 
         return skill;
     }

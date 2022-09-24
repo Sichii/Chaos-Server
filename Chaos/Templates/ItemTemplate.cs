@@ -7,15 +7,12 @@ namespace Chaos.Templates;
 public class ItemTemplate : PanelObjectTemplateBase
 {
     public required bool AccountBound { get; init; }
-    public required AdvClass? AdvClass { get; init; }
-    public required BaseClass? BaseClass { get; init; }
     public required DisplayColor Color { get; init; }
-    public required EquipmentType? EquipmentType { get; init; }
-    public required Gender? Gender { get; init; }
     public required ItemSprite ItemSprite { get; init; } = null!;
     public required int? MaxDurability { get; init; }
     public required int MaxStacks { get; init; } = 1;
     public required Attributes? Modifiers { get; init; }
+    public required DisplayColor? PantsColor { get; init; }
 
     public override required ushort PanelSprite
     {

@@ -2,9 +2,9 @@ using System.Net.Sockets;
 
 namespace Chaos.Networking.Extensions;
 
-public static class SocketExtensions
+internal static class SocketExtensions
 {
-    public static void ReceiveAndForget(
+    internal static void ReceiveAndForget(
         this Socket socket,
         SocketAsyncEventArgs args,
         EventHandler<SocketAsyncEventArgs> completedEvent
@@ -18,7 +18,7 @@ public static class SocketExtensions
             completedEvent(socket, args);
     }
 
-    public static void SendAndForget(this Socket socket, SocketAsyncEventArgs args, EventHandler<SocketAsyncEventArgs> completedEvent)
+    internal static void SendAndForget(this Socket socket, SocketAsyncEventArgs args, EventHandler<SocketAsyncEventArgs> completedEvent)
     {
         var completedSynchronously = !socket.SendAsync(args);
 

@@ -30,13 +30,32 @@
         </None>
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj" />
+        <ProjectReference Include="..\Chaos.CommandInterceptor\Chaos.CommandInterceptor.csproj" />
         <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
         <ProjectReference Include="..\Chaos.Entities.Schemas\Chaos.Entities.Schemas.csproj" />
+        <ProjectReference Include="..\Chaos.Extensions.CommandInterceptor\Chaos.Extensions.CommandInterceptor.csproj" />
+        <ProjectReference Include="..\Chaos.Extensions.Cryptography\Chaos.Extensions.Cryptography.csproj" />
+        <ProjectReference Include="..\Chaos.Extensions.Packets\Chaos.Extensions.Packets.csproj" />
+        <ProjectReference Include="..\Chaos.Extensions.Pathfinding\Chaos.Extensions.Pathfinding.csproj" />
+        <ProjectReference Include="..\Chaos.Extensions.Security\Chaos.Extensions.Security.csproj" />
+        <ProjectReference Include="..\Chaos.Extensions.TypeMapper\Chaos.Extensions.TypeMapper.csproj" />
         <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj" />
         <ProjectReference Include="..\Chaos.Pathfinding\Chaos.Pathfinding.csproj" />
+        <ProjectReference Include="..\Chaos.Scripting\Chaos.Scripting.csproj" />
+        <ProjectReference Include="..\Chaos.Security\Chaos.Security.csproj" />
+        <ProjectReference Include="..\Chaos.Storage.Abstractions\Chaos.Storage.Abstractions.csproj" />
         <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj" />
+        <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Objects\Dialog" />
+    </ItemGroup>
+    <ItemGroup>
+
+
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4" />
     </ItemGroup>
 </Project>

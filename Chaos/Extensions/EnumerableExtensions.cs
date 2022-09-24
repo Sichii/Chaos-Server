@@ -1,9 +1,10 @@
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Utility.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Extensions;
 

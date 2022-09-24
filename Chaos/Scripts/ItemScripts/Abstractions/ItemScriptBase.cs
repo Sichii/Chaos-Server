@@ -2,7 +2,7 @@ using Chaos.Containers;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts.Abstractions;
 

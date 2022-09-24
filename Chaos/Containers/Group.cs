@@ -1,5 +1,5 @@
 using Chaos.Common.Definitions;
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
 using Chaos.Objects.World;
 
 namespace Chaos.Containers;

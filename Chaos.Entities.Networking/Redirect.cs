@@ -1,6 +1,5 @@
 using System.Net;
 using Chaos.Common.Definitions;
-using Chaos.Core.Identity;
 
 namespace Chaos.Entities.Networking;
 
@@ -14,6 +13,7 @@ public record Redirect
     public ServerType Type { get; }
 
     public Redirect(
+        uint id,
         RedirectInfo serverInfo,
         ServerType type,
         byte[] key,
@@ -21,7 +21,7 @@ public record Redirect
         string? name = null
     )
     {
-        Id = ClientId.NextId;
+        Id = id;
         Type = type;
         Key = key;
         Seed = seed;

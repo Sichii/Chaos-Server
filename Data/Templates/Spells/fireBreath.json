@@ -1,0 +1,21 @@
+{
+    "templateKey": "fireBreath",
+    "name": "Fire Breath",
+    "panelSprite": 39,
+    "scriptKeys": ["cascade"],
+    "spellType": "notarget",
+    "castLines": 0,
+    "scriptVars": {
+        "cascade": {
+            "damage": 100,
+            "sound": 140,
+            "bodyAnimation": "wizardCast",
+            "minSoundDelayMs": 2000,
+            "propagationDelayMs": 300,
+            "range": 15,
+            "shape": "cone",
+            "stopAtWalls": true,
+            "targetAnimation": 138
+        }
+    }
+}

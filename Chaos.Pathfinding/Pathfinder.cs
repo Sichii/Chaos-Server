@@ -1,11 +1,11 @@
 using System.Runtime.CompilerServices;
-using Chaos.Core.Extensions;
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
+using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Definitions;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Geometry.EqualityComparers;
-using Chaos.Geometry.Extensions;
 using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;

@@ -4,7 +4,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Chaos.Core.Collections.Synchronized;
+using Chaos.Common.Collections.Synchronized;
 using Chaos.Entities.Schemas.Templates;
 using Chaos.Geometry;
 using Chaos.Geometry.JsonConverters;

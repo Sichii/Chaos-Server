@@ -5,7 +5,7 @@ A configurable Dark Ages server emulator
 # Configuration (appsettings.json)
 
 You can configure the Login and Lobby servers via appsettings.json file  
-Here are a few quick tips, but there are more options available than are listed  
+Here are a few quick tips, but there are more options available than are listed
 
 - It's recommended to keep the [staging data](#folder-structure) out of the repo, this base staging directory can be changed at Options:
   ChaosOptions:StagingDirectory
@@ -17,10 +17,10 @@ Here are a few quick tips, but there are more options available than are listed
 - Edit your login notice message via Options:LoginOptions:NoticeMessage
 - Edit your new character initial spawn point via Options:LoginOptions:StartingMapInstanceId and StartingPointStr
 
-
 General world options are also changed via Options:WorldOptions
 
 ### World Options
+
 | Name                    |     Type/Values     | Description                                                                                                                   |
 |:------------------------|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------|
 | AislingAssailIntervalMs |       number        | The base assail interval for aislings<br/>This value is modified by the AtkSpeedPct attribute                                 |
@@ -38,44 +38,43 @@ General world options are also changed via Options:WorldOptions
 | TradeRange              |  number<br/>0-255   | The tiles range around an aisling that they can engage a trade with another aisling                                           |
 | UpdatesPerSecond        |       number        | The number of server updates executed per second<br/>The server uses a time delta, so this number doesnt need to be very high |
 
-
 # Folder Structure
 
 📂Data  
-┣📂[LootTables](#loottables-folder)  
-┃ ┗📜rat1Sticks.json  
-┣📂[MapData](#mapdata-folder)  
-┃ ┣📜lod500.map  
-┃ ┗📜lod3006.map  
-┣📂[MapInstances](#mapinstances-folder)  
-┃ ┣📂mileth1  
-┃ ┃ ┣📜instance.json  
-┃ ┃ ┗📜spawns.json  
-┃ ┗📂milethVillageWay1  
-┃   ┣📜instance.json  
-┃   ┗📜spawns.json  
-┣📂Metafiles (TODO)  
-┣📂Saved  
-┃ ┗📂bonk  
-┃   ┣📜aisling.json  
-┃   ┣📜bank.json  
-┃   ┣📜equipment.json  
-┃   ┣📜inventory.json  
-┃   ┣📜legend.json  
-┃   ┣📜password.txt (hashed)  
-┃   ┣📜skills.json  
-┃   ┗📜spells.json  
-┗📂[Templates](#templates-folder)  
-   ┣📂[Items](#items-folder)  
-   ┃ ┗📜stick.json   
-   ┣📂[Maps](#maps-folder)  
-   ┃ ┗📜500.json  
-   ┣📂[Monsters](#monsters-folder)  
-   ┃ ┗📜rat1.json  
-   ┣📂[Skills](#skills-folder)  
-   ┃ ┗📜assail.json  
-   ┗📂[Spells](#spells-folder)  
-      ┗📜srad tut.json
+ ┣📂[LootTables](#loottables-folder)  
+ ┃ ┗📜rat__stick_apple.json  
+ ┣📂[MapData](#mapdata-folder)  
+ ┃ ┣📜lod500.map  
+ ┃ ┗📜lod3006.map  
+ ┣📂[MapInstances](#mapinstances-folder)  
+ ┃ ┣📂mileth1  
+ ┃ ┃ ┣📜instance.json  
+ ┃ ┃ ┗📜spawns.json  
+ ┃ ┗📂milethVillageWay1  
+ ┃   ┣📜instance.json  
+ ┃   ┗📜spawns.json  
+ ┣📂Metafiles (TODO)  
+ ┣📂Saved  
+ ┃ ┗📂bonk  
+ ┃   ┣📜aisling.json  
+ ┃   ┣📜bank.json  
+ ┃   ┣📜equipment.json  
+ ┃   ┣📜inventory.json  
+ ┃   ┣📜legend.json  
+ ┃   ┣📜password.txt (hashed)  
+ ┃   ┣📜skills.json  
+ ┃   ┗📜spells.json  
+ ┗📂[Templates](#templates-folder)  
+   ┣📂[Items](#items-folder)  
+   ┃ ┗📜stick.json  
+   ┣📂[Maps](#maps-folder)  
+   ┃ ┗📜500.json  
+   ┣📂[Monsters](#monsters-folder)  
+   ┃ ┗📜common_rat.json  
+   ┣📂[Skills](#skills-folder)  
+   ┃ ┗📜assail.json  
+   ┗📂[Spells](#spells-folder)  
+     ┗📜fire_breath.json
 
 # LootTables Folder
 
@@ -101,15 +100,11 @@ A loot table that gives a creature a 10% chance to drop a stick and a 30% chance
 
 ```json
 {
-  "key": "rat1Sticks",
+  "key": "rat__stick_apple",
   "lootDrops": [
     {
-      "itemTemplateKey": "stick1",
+      "itemTemplateKey": "stick",
       "dropChance": 10
-    },
-    {
-      "itemTemplateKey": "rotten apple1",
-      "dropChance": 30
     }
   ]
 }
@@ -194,7 +189,7 @@ The map has a quest script on it
 {
   "templateKey": "500",
   "name": "Mileth",
-  "instanceId": "mileth1",
+  "instanceId": "mileth",
   "music": 1,
   "flags": "snow, snowtileset",
   "scriptKeys": [
@@ -203,11 +198,11 @@ The map has a quest script on it
   "warps": [
     {
       "source": "(99, 30)",
-      "destination": "milethVillageWay1:(0, 15)"
+      "destination": "milethVillageWay:(0, 15)"
     },
     {
       "source": "(99, 31)",
-      "destination": "milethVillageWay1:(0, 16)"
+      "destination": "milethVillageWay:(0, 16)"
     }
   ]
 }
@@ -222,8 +217,8 @@ They will aggressively target anyone who comes within 6 spaces of them
 ```json
 [
   {
-    "monsterTemplateKey": "rat1",
-    "lootTableKey": "rat1Sticks",
+    "monsterTemplateKey": "common_rat",
+    "lootTableKey": "rat__stick_apple",
     "intervalSecs": 180,
     "intervalVariancePct": 30,
     "maxAmount": 50,
@@ -257,43 +252,30 @@ Contains .json files to be used as blueprints for items
 
 ### ItemTemplate Properties
 
-| Name                  |                                    Type/Values                                     | Description                                                                                                                                                                                  |
-|:----------------------|:----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| AccountBound          |                                bool<br/>true/false                                 | If the item is account bound, it cannot be traded or dropped                                                                                                                                 |
-| AdvClass              | string(optional)<br/>None<br/>Gladiator<br/>Druid<br/>Archer<br/>Bard<br/>Summoner | Defaults to null<br/>If specified, this advanced class flag is required to equip this item                                                                                                   |
-| BaseClass             | string(optional)<br/>Peasant<br/>Warrior<br/>Rogue<br/>Wizard<br/>Priest<br/>Monk  | Defaults to null<br/>If specified, this base class flag is required to equip this item                                                                                                       |
-| Color                 |                     string<br/>[Color Options](#color-options)                     | Defaults to None(lavender)<br/>If the item is dyeable, this is the dye color                                                                                                                 |
-| DisplaySprite         |                                  number(optional)                                  | Defaults to null<br/>If specified, this is the sprite used to display the item on character when it is equipped                                                                              |
-| EquipmentType         |        string(optional)<br/>[EquipmentType Options](#equipmenttype-options)        | Default to null<br/>If specified, this is type of equipment the item is, determining what slot it can be equipped to                                                                         |
-| Gender                |                  string(optional)<br/>Male<br/>Female<br/>Unisex                   | Defaults to null<br/>If specified, player must be of this gender to equip the item                                                                                                           |
-| MaxDurability         |                                  number(optional)                                  | Defaults to null<br/>If specified, the base max durability of the item                                                                                                                       |
-| MaxStacks             |                                       number                                       | The maximum number of this item that can be in a stack. If set to 1, the item will not be stackable                                                                                          |
-| Modifiers             |                   [attributes](#attributes-properties)(optional)                   | Defaults to null<br/>If specified, these are the stats this item grants when equipped                                                                                                        |
-| Value                 |                                       number                                       | Not fully implemented                                                                                                                                                                        |
-| Weight                |                                 number<br/>(0-255)                                 | The weight of the item in the inventory, or equipped                                                                                                                                         |
-| Animation             |                    [animation](#animation-properties)(optional)                    | Defaults to null<br/>If specified, this will be used by any on-use effect                                                                                                                    |
-| BodyAnimationOverride |          string(optional)[BodyAnimation Options](#bodyanimation-options)           | Defaults to null<br/>If specified, this body animation is shown instead of what the script specifies                                                                                         |
-| CooldownMs            |                                  number(optional)                                  | Defaults to null<br/>If specified, any on-use effect of this object will use this cooldown                                                                                                   |
-| Name                  |                                       string                                       | The base name of the item                                                                                                                                                                    |
-| PanelSprite           |                                 number<br/>(1-500)                                 | The sprite id used to display the item in the inventory, minus the offset                                                                                                                    |
-| ScriptKeys            |                                   array{string}                                    | A collection of names of item scripts to attach to this item by default                                                                                                                      |
-| ScriptVars            |                    dictionary{string, dictionary{string, any}}                     | A collection of key-value pairs of key-value pairs<br/>Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
-| TemplateKey           |                                       string                                       | A unique id specific to this item template. Best practice is to match the file name                                                                                                          |
-
-### Animation Properties
-
-| Name            | Type/Values | Description                                                       |
-|:----------------|:-----------:|:------------------------------------------------------------------|
-| AnimationSpeed  |   number    | Defaults to 100<br/>How fast the animation plays, lower is faster |
-| SourceAnimation |   number    | The id of the animation to play on the source of this action      |
-| TargetAnimation |   number    | The id of the animation to play on the target of this action      |
+| Name          |                                   Type/Values                                    | Description                                                                                                                                                                                  |
+|:--------------|:--------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AccountBound  |                               bool<br/>true/false                                | If the item is account bound, it cannot be traded or dropped                                                                                                                                 |
+| Color         |                    string<br/>[Color Options](#color-options)                    | Defaults to None(lavender)<br/>If the item is dyeable, this is the dye color                                                                                                                 |
+| DisplaySprite |                                 number(optional)                                 | Defaults to null<br/>If specified, this is the sprite used to display the item on character when it is equipped                                                                              |
+| MaxDurability |                                 number(optional)                                 | Defaults to null<br/>If specified, the base max durability of the item                                                                                                                       |
+| MaxStacks     |                                      number                                      | The maximum number of this item that can be in a stack. If set to 1, the item will not be stackable                                                                                          |
+| Modifiers     |                  [attributes](#attributes-properties)(optional)                  | Defaults to null<br/>If specified, these are the stats this item grants when equipped                                                                                                        |
+| PantsColor    | string<br/>any color between Black and White<br/>[Color Options](#color-options) | Default null<br />If specified, this armor will have pants, and they will be this color                                                                                                      |
+| Value         |                                      number                                      | Not fully implemented                                                                                                                                                                        |
+| Weight        |                                number<br/>(0-255)                                | The weight of the item in the inventory, or equipped                                                                                                                                         |
+| CooldownMs    |                                 number(optional)                                 | Defaults to null<br/>If specified, any on-use effect of this object will use this cooldown                                                                                                   |
+| Name          |                                      string                                      | The base name of the item                                                                                                                                                                    |
+| PanelSprite   |                                number<br/>(1-500)                                | The sprite id used to display the item in the inventory, minus the offset                                                                                                                    |
+| ScriptKeys    |                                  array{string}                                   | A collection of names of item scripts to attach to this item by default                                                                                                                      |
+| ScriptVars    |                   dictionary{string, dictionary{string, any}}                    | A collection of key-value pairs of key-value pairs<br/>Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
+| TemplateKey   |                                      string                                      | A unique id specific to this item template. Best practice is to match the file name                                                                                                          |
 
 ### Attributes Properties
 
 | Name            |      Type/Values      | Description |
 |:----------------|:---------------------:|:------------|
 | Ac              | number<br/>(-127-127) ||
-| AtkSpeedPct     | number<br/>(-200-200) |
+| AtkSpeedPct     | number<br/>(-200-200) ||
 | Con             |  number<br/>(0-255)   ||
 | Dam             |  number<br/>(0-255)   ||
 | Dex             |  number<br/>(0-255)   ||
@@ -320,54 +302,34 @@ Contains .json files to be used as blueprints for items
 | Harlequin | Amethyst  | NeonRed   | NeonYellow | Rose     | Salmon     |
 | Scarlet   | Honey     |||||
 
-#### EquipmentType Options
-
-|              |          |           |           |          |        |
-|--------------|----------|-----------|-----------|----------|--------|
-| NotEquipment | Weapon   | Armor     | OverArmor | Shield   | Helmet |
-| OverHelmet   | Earrings | Necklace  | Ring      | Gauntlet | Belt   |
-| Greaves      | Boots    | Accessory ||||
-
-#### BodyAnimation Options
-
-|            |            |            |              |             |                |
-|------------|------------|------------|--------------|-------------|----------------|
-| None       | Assail     | HandsUp    | Smile        | Cry         | Frown          |
-| Wink       | Surprise   | Tongue     | Pleasant     | Snore       | Mouth          |
-| BlowKiss   | Wave       | RockOn     | Peace        | Stop        | Ouch           |
-| Impatient  | Shock      | Pleasure   | Love         | SweatDrop   | Whistle        |
-| Irritation | Silly      | Cute       | Yelling      | Mischievous | Evil           |
-| Horror     | PuppyDog   | StoneFaced | Tears        | FiredUp     | Confused       |
-| PriestCast | TwoHandAtk | Jump       | Kick         | Punch       | RoundHouseKick |
-| Stab       | DoubleStab | WizardCast | PlayNotes    | HandsUp2    | Swipe          |
-| HeavySwipe | JumpAttack | BowShot    | HeavyBowShot | LongBowShot | Summon         |
-
 ### Example file "stick.json"
 
 A basic stick item that gives 1 str
 
 ```json
 {
-  "templateKey": "stick1",
+  "templateKey": "stick",
   "accountBound": false,
-  "baseClass": "Peasant",
-  "advClass": "None",
-  "displaySprite": 1,
-  "equipmentType": "Weapon",
-  "gender": "Unisex",
   "maxDurability": 1000,
   "maxStacks": 1,
-  "modifiers": {
-    "str": 1
-  },
   "value": 1000,
-  "weight": 1,
+  "weight": 10,
   "name": "Stick",
   "panelSprite": 86,
-  "scriptKeys": [
-    "Equipment"
-  ]
+  "displaySprite": 1,
+  "modifiers": {
+    "str": 1,
+    "atkSpeedPct": 100
+  },
+  "pantsColor": "black",
+  "scriptKeys": ["Equipment"],
+  "scriptVars": {
+    "equipment": {
+      "equipmentType": "weapon"
+    }
+  }
 }
+
 ```
 
 ## Maps Folder
@@ -396,9 +358,7 @@ Each template should match up to the numeric id of a mapdata file
     "(99, 30)",
     "(99, 31)"
   ],
-  "scriptKeys": [
-    "someQuestScript"
-  ]
+  "scriptKeys": []
 }
 ```
 
@@ -443,14 +403,14 @@ Contains .json files to be used as blueprints for monsters
 | MaximumHp       |        number         ||
 | MaximumMp       |        number         ||
 
-### Example file "rat1.json"
+### Example file "common_rat.json"
 
 ```json
 {
-  "templateKey": "rat1",
+  "templateKey": "common_rat",
   "statSheet": {
     "ability": 0,
-    "level": 1,
+    "level": 5,
     "maximumHp": 100,
     "maximumMp": 100,
     "ac": 50,
@@ -458,24 +418,23 @@ Contains .json files to be used as blueprints for monsters
     "int": 1,
     "wis": 1,
     "con": 2,
-    "dex": 1
+    "dex": 1,
+    "magicResistance": 0
   },
-  "type": "Normal",
-  "direction": "Down",
+  "type": "normal",
+  "direction": "down",
   "name": "Common Rat",
   "sprite": 7,
   "wanderIntervalMs": 2000,
   "moveIntervalMs": 1500,
-  "attackIntervalMs": 1500,
-  "castIntervalMs": 10000,
+  "skillIntervalMs": 1500,
+  "spellIntervalMs": 10000,
+  "assailIntervalMs": 1500,
   "spellTemplateKeys": [],
-  "skillTemplateKeys": [
-    "assail"
-  ],
-  "scriptKeys": [
-    "commonMonster"
-  ]
+  "skillTemplateKeys": ["assail"],
+  "scriptKeys": ["commonMonster"]
 }
+
 ```
 
 ## Skills Folder
@@ -487,8 +446,6 @@ Contains .json files to be used as blueprints for skills
 | Name                  |                           Type/Values                           | Description                                                                                                                                                                                  |
 |:----------------------|:---------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | IsAssail              |                       bool<br/>true/false                       | Whether or not the skill is an assail and should be used when spacebar is pressed<br/>Assail cooldowns are handled by AssailIntervalMs and AtkSpeedPct                                       |
-| Animation             |          [animation](#animation-properties)(optional)           | Defaults to null. If specified, this will be used by any on-use effect                                                                                                                       |
-| BodyAnimationOverride | string(optional)[BodyAnimation Options](#bodyanimation-options) | Defaults to null<br/>If specified, this body animation is shown instead of what the script specifies                                                                                         |
 | CooldownMs            |                        number(optional)                         | Defaults to null. If specified, any on-use effect of this skill will use this cooldown                                                                                                       |
 | Name                  |                             string                              | The base name of the skill                                                                                                                                                                   |
 | PanelSprite           |                       number<br/>(1-500)                        | The sprite id used to display the skill in the skill pane                                                                                                                                    |
@@ -503,16 +460,18 @@ Contains .json files to be used as blueprints for skills
   "templateKey": "assail",
   "name": "Assail",
   "panelSprite": 1,
-  "scriptKeys": [
-    "damage"
-  ],
+  "isAssail": true,
+  "scriptKeys": ["statBasedDamage"],
   "scriptVars": {
-    "damage": {
-      "damage": 10
+    "statBasedDamage": {
+      "damage": 6,
+      "bodyAnimation": "assail",
+      "stat": "str",
+      "statCoefficient": 0.333
     }
-  },
-  "isAssail": true
+  }
 }
+
 ```
 
 ## Spells Folder
@@ -526,8 +485,6 @@ Contains .json files to be used as blueprints for spells
 | CastLines             |                                                   number<br/>(0-9)                                                   | The number of chant lines this spell requires by default                                                                                                                                     |
 | Prompt                |                                                   string(optional)                                                   | Defaults to null<br/>Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when cast                                                                    |
 | SpellType             | string<br/>None<br/>Prompt<br/>Targeted<br/>Prompt4Nums<br/>Prompt3Nums<br/>NoTarget<br/>Prompt2Nums<br/>Prompt1Num  | The way the spell is cast by the player                                                                                                                                                      |
-| Animation             |                                     [animation](#animation-properties)(optional)                                     | Defaults to null. If specified, this will be used by any on-use effect                                                                                                                       |
-| BodyAnimationOverride |                           string(optional)[BodyAnimation Options](#bodyanimation-options)                            | Defaults to null<br/>If specified, this body animation is shown instead of what the script specifies                                                                                         |
 | CooldownMs            |                                                   number(optional)                                                   | Defaults to null. If specified, any on-use effect of this spell will use this cooldown                                                                                                       |
 | Name                  |                                                        string                                                        | The base name of the spell                                                                                                                                                                   |
 | PanelSprite           |                                                  number<br/>(1-500)                                                  | The sprite id used to display the spell in the skill pane                                                                                                                                    |
@@ -535,26 +492,28 @@ Contains .json files to be used as blueprints for spells
 | ScriptVars            |                                     dictionary{string, dictionary{string, any}}                                      | A collection of key-value pairs of key-value pairs<br/>Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
 | TemplateKey           |                                                        string                                                        | A unique id specific to this spell template. Best practice is to match the file name                                                                                                         |
 
-### Example file "srad tut.json"
+### Example file "fireBreath.json"
 
 ```json
 {
-  "templateKey": "srad tut",
-  "name": "Srad Tut",
-  "panelSprite": 40,
-  "animation": {
-    "animationSpeed": 1000,
-    "targetAnimation": 12
-  },
-  "scriptKeys": [
-    "damage"
-  ],
+  "templateKey": "fire_Breath",
+  "name": "Fire Breath",
+  "panelSprite": 39,
+  "scriptKeys": ["cascade"],
+  "spellType": "notarget",
+  "castLines": 0,
   "scriptVars": {
-    "damage": {
-      "damage": 10
+    "cascade": {
+      "damage": 100,
+      "sound": 140,
+      "bodyAnimation": "wizardCast",
+      "minSoundDelayMs": 2000,
+      "propagationDelayMs": 300,
+      "range": 15,
+      "shape": "cone",
+      "stopAtWalls": true,
+      "targetAnimation": 138
     }
-  },
-  "castLines": 1,
-  "spellType": "targeted"
+  }
 }
 ```

@@ -1,10 +1,9 @@
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Observers.Abstractions;
 
 namespace Chaos.Observers;
 
-public class SkillBookObserver : IPanelObserver<Skill>
+public class SkillBookObserver : Abstractions.IObserver<Skill>
 {
     private readonly Aisling Aisling;
 

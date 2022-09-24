@@ -20,16 +20,17 @@ public class Equipment : PanelBase<Item>, IEquipment
             Objects[item.Slot] = item;
     }
 
-    public bool TryEquip(Item item, out Item? returnedItem)
+    public bool TryEquip(EquipmentType equipmentType, Item item, out Item? returnedItem)
     {
         returnedItem = null;
 
-        if (item.Template.EquipmentType is null or EquipmentType.NotEquipment)
-            return false;
+        if (equipmentType == EquipmentType.NotEquipment)
+            throw new InvalidOperationException(
+                $"Item {item.DisplayName} ({item.UniqueId}) has equipment type of {EquipmentType.NotEquipment}");
 
         using var @lock = Sync.Enter();
 
-        var possibleSlots = item.Template.EquipmentType.Value.ToEquipmentSlots();
+        var possibleSlots = equipmentType.ToEquipmentSlots();
         byte bSlot = 0;
 
         //check for empty slots

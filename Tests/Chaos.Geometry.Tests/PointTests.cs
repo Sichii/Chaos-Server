@@ -1,4 +1,4 @@
-using Chaos.Geometry.Extensions;
+using Chaos.Extensions.Geometry;
 using FluentAssertions;
 using Xunit;
 

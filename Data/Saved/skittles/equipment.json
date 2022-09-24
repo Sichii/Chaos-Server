@@ -1,12 +1,11 @@
 [
   {
-    "color": "Red",
     "count": 1,
     "currentDurability": 1000,
     "scriptKeys": [],
     "slot": 1,
-    "templateKey": "Stick",
-    "uniqueId": 1
+    "templateKey": "stick",
+    "uniqueId": 1007783
   },
   {
     "count": 1,

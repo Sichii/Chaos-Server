@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Extensions;

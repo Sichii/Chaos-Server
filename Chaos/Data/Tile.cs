@@ -2,7 +2,7 @@ using Chaos.Core.Resources;
 
 namespace Chaos.Data;
 
-public readonly struct Tile
+public readonly struct Tile : IEquatable<Tile>
 {
     public ushort Background { get; }
     public bool IsWall => ((LeftForeground > 0) && ((Sotp[LeftForeground - 1] & 15) == 15))
@@ -18,4 +18,16 @@ public readonly struct Tile
         LeftForeground = leftForeground;
         RightForeground = rightForeground;
     }
+
+    /// <inheritdoc />
+    public bool Equals(Tile other) =>
+        (Background == other.Background)
+        && (LeftForeground == other.LeftForeground)
+        && (RightForeground == other.RightForeground);
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is Tile other && Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(Background, LeftForeground, RightForeground);
 }

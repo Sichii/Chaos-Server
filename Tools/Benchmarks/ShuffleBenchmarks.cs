@@ -1,5 +1,5 @@
 using BenchmarkDotNet.Attributes;
-using Chaos.Core.Extensions;
+using Chaos.Extensions.Common;
 
 namespace Benchmarks;
 

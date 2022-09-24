@@ -1,7 +1,7 @@
 using Chaos.Data;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Templates.Abstractions;
 
 namespace Chaos.Templates;

@@ -4,7 +4,40 @@
     "currentDurability": 1000,
     "scriptKeys": [],
     "slot": 1,
-    "templateKey": "Stick",
+    "templateKey": "stick",
     "uniqueId": 297650
+  },
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 3,
+    "templateKey": "stick",
+    "uniqueId": 1005215
+  },
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 4,
+    "templateKey": "stick",
+    "uniqueId": 1002380
+  },
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 5,
+    "templateKey": "stick",
+    "uniqueId": 1008027
+  },
+  {
+    "color": "Red",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 6,
+    "templateKey": "stick",
+    "uniqueId": 1
   }
 ]

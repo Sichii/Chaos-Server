@@ -11,7 +11,13 @@
         <ProjectReference Include="..\Chaos.Cryptography\Chaos.Cryptography.csproj"/>
         <ProjectReference Include="..\Chaos.Geometry\Chaos.Geometry.csproj"/>
         <ProjectReference Include="..\Chaos.Entities.Networking\Chaos.Entities.Networking.csproj"/>
+        <ProjectReference Include="..\Chaos.Networking.Abstractions\Chaos.Networking.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.Packets\Chaos.Packets.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+
+
     </ItemGroup>
 
 </Project>

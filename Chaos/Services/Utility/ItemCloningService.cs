@@ -1,6 +1,7 @@
+using Chaos.Core.Identity;
+using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.Panel;
-using Chaos.Services.Scripting.Abstractions;
-using Chaos.Services.Utility.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Utility;
@@ -8,26 +9,22 @@ namespace Chaos.Services.Utility;
 public class ItemCloningService : ICloningService<Item>
 {
     private readonly ILogger<ItemCloningService> Logger;
-    private readonly IScriptProvider ScriptProvider;
+    private readonly ITypeMapper Mapper;
 
-    public ItemCloningService(IScriptProvider scriptProvider, ILogger<ItemCloningService> logger)
+    public ItemCloningService(ITypeMapper mapper, ILogger<ItemCloningService> logger)
     {
-        ScriptProvider = scriptProvider;
         Logger = logger;
+        Mapper = mapper;
     }
 
     public Item Clone(Item obj)
     {
-        var cloned = new Item(obj.Template, ScriptProvider, obj.ScriptKeys)
-        {
-            Color = obj.Color,
-            Count = obj.Count,
-            CurrentDurability = obj.CurrentDurability,
-            Slot = obj.Slot
-        };
+        var schema = Mapper.Map<ItemSchema>(obj);
+        schema.UniqueId = ServerId.NextId;
+        var cloned = Mapper.Map<Item>(schema);
 
         Logger.LogDebug(
-            "Cloned item - Name: {ItemName} UniqueId: {UniqueId}, ClonedId: {ClonedId}",
+            "Cloned item - Name: {ItemName} FromUniqueId: {UniqueId}, ToUniqueId: {ClonedId}",
             obj.DisplayName,
             obj.UniqueId,
             cloned.UniqueId);

@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry;
-using Chaos.Geometry.Extensions;
 
 namespace Benchmarks;
 

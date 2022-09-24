@@ -1,5 +1,4 @@
 using Chaos.Common.Definitions;
-using Chaos.Observers.Abstractions;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Containers.Abstractions;
@@ -10,7 +9,7 @@ public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
     int AvailableSlots { get; }
     bool IsFull { get; }
     PanelType PaneType { get; }
-    void AddObserver(IPanelObserver<T> observer);
+    void AddObserver(Observers.Abstractions.IObserver<T> observer);
     bool Contains(T obj);
     bool IsValidSlot(byte slot);
     bool Remove(byte slot);

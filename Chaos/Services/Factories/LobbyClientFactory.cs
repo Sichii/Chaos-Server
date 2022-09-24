@@ -3,7 +3,7 @@ using Chaos.Clients;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Hosted.Abstractions;
+using Chaos.Services.Servers.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

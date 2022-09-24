@@ -1,11 +1,16 @@
 using System.Text;
-using Chaos.Cryptography.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Chaos.Common.Abstractions;
 using Chaos.Extensions;
-using Chaos.Packets.Extensions;
-using Chaos.Pathfinding.Extensions;
+using Chaos.Extensions.DependencyInjection;
+using Chaos.Geometry.JsonConverters;
+using Chaos.Objects.World;
+using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 
 namespace Chaos;
@@ -25,7 +30,9 @@ public class Startup
         services.AddOptions();
 
         services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key)
-                .Validate(o => !string.IsNullOrEmpty(o.StagingDirectory), "RootDirectory is required");
+                .Validate(o => !string.IsNullOrEmpty(o.StagingDirectory), "StagingDirectory is required");
+
+        services.AddSingleton<IStagingDirectory, ChaosOptions>(p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>().Value);
 
         services.AddLogging(
             logging =>
@@ -41,21 +48,30 @@ public class Startup
                     });
             });
 
-        services.AddCommandInterceptor();
+        services.AddOptions<JsonSerializerOptions>()
+                .Configure(
+                    o =>
+                    {
+                        o.WriteIndented = true;
+                        o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                        o.PropertyNameCaseInsensitive = true;
+                        o.IgnoreReadOnlyProperties = true;
+                        o.IgnoreReadOnlyFields = true;
+                        o.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        o.AllowTrailingCommas = true;
+                        o.Converters.Add(new PointConverter());
+                        o.Converters.Add(new JsonStringEnumConverter());
+                    });
+
+        services.AddCommandInterceptorForType<Aisling>("/", a => a.IsAdmin, a => a.Name);
         services.AddServerAuthentication();
         services.AddCryptography();
-        services.AddPacketSerializersFromAssembly();
-        services.AddAislingSerialization();
-
+        services.AddPacketSerializer();
         services.AddPathfinding();
-        services.AddSimpleCaches();
+        services.AddStorage();
         services.AddScripting();
         services.AddWorldFactories();
-        services.AddTypeMappersFromAssembly();
-
-        services.AddLobbyServer();
-        services.AddLoginserver();
-        services.AddWorldServer();
+        services.AddTypeMapper();
     }
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]

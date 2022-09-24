@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Chaos.Geometry.Abstractions\Chaos.Geometry.Abstractions.csproj"/>
+    </ItemGroup>
+
 </Project>

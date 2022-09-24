@@ -1,5 +1,5 @@
 using BenchmarkDotNet.Attributes;
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
 
 // ReSharper disable NotAccessedVariable
 

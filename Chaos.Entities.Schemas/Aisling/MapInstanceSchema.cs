@@ -30,7 +30,7 @@ public record MapInstanceSchema
     ///     The byte values of the music track to play when entering the map<br />These values aren't explored yet, so you'll have to figure out
     ///     what's available yourself
     /// </summary>
-    public required sbyte Music { get; init; }
+    public required byte Music { get; init; }
 
     /// <summary>
     ///     The name of the map that will display in-game
