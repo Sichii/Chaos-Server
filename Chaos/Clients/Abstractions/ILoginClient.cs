@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Networking.Abstractions;
 using Chaos.Objects;
-using Chaos.Services.Caches.Abstractions;
+using Chaos.Storage.Abstractions;
 
 namespace Chaos.Clients.Abstractions;
 

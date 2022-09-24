@@ -1,9 +1,11 @@
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Entities.Networking.Client;
+using Chaos.Extensions.Common;
 using Chaos.Networking.Options;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

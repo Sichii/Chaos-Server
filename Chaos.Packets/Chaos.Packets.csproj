@@ -7,8 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
-        <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj"/>
+        <ProjectReference Include="..\Chaos.Packets.Abstractions\Chaos.Packets.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -7,5 +7,5 @@ public interface IEquipment : IPanel<Item>
 {
     Item? this[EquipmentSlot slot] { get; }
 
-    bool TryEquip(Item item, out Item? returnedItem);
+    bool TryEquip(EquipmentType equipmentType, Item item, out Item? returnedItem);
 }

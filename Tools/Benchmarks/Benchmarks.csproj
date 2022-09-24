@@ -15,6 +15,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Chaos.Core\Chaos.Core.csproj"/>
+        <ProjectReference Include="..\..\Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj"/>
         <ProjectReference Include="..\..\Chaos.Geometry\Chaos.Geometry.csproj"/>
     </ItemGroup>
 

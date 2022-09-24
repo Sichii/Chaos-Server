@@ -1,11 +1,10 @@
 using Chaos.Common.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Observers.Abstractions;
 
 namespace Chaos.Observers;
 
-public class EquipmentObserver : IPanelObserver<Item>
+public class EquipmentObserver : Abstractions.IObserver<Item>
 {
     private readonly Aisling Aisling;
 
@@ -18,7 +17,7 @@ public class EquipmentObserver : IPanelObserver<Item>
         Aisling.UserStatSheet.AddWeight(obj.Template.Weight);
 
         if (obj.Template.Modifiers != null)
-            Aisling.UserStatSheet.Add(obj.Template.Modifiers);
+            Aisling.UserStatSheet.AddBonus(obj.Template.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
     }
@@ -32,7 +31,7 @@ public class EquipmentObserver : IPanelObserver<Item>
         Aisling.UserStatSheet.AddWeight(-obj.Template.Weight);
 
         if (obj.Template.Modifiers != null)
-            Aisling.UserStatSheet.Subtract(obj.Template.Modifiers);
+            Aisling.UserStatSheet.SubtractBonus(obj.Template.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
     }

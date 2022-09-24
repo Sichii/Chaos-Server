@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Text.Json.Serialization;
-using Chaos.Core.JsonConverters;
+using Chaos.Common.JsonConverters;
 
 namespace Chaos.Entities.Schemas.Content;
 

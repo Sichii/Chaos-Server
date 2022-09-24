@@ -3,9 +3,10 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Effects.Abstractions;
 using Chaos.Extensions;
+using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Definitions;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
@@ -43,6 +44,16 @@ public abstract class Creature : NamedEntity, IEffected
         Direction = Direction.Down;
         Effects = new EffectsBar(this);
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
+    }
+
+    /// <inheritdoc />
+    public override void Animate(Animation animation, uint? sourceId = null)
+    {
+        var targetedAnimation = animation.GetTargetedAnimation(Id, sourceId);
+
+        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                       .ThatCanSee(this))
+            obj.Client.SendAnimation(targetedAnimation);
     }
 
     public virtual void AnimateBody(BodyAnimation bodyAnimation, ushort speed = 25, byte? sound = null)
@@ -121,16 +132,6 @@ public abstract class Creature : NamedEntity, IEffected
         !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);
 
     public void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
-
-    /// <inheritdoc />
-    public override void Animate(Animation animation, uint? sourceId = null)
-    {
-        var targetedAnimation = animation.GetTargetedAnimation(Id, sourceId);
-
-        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                       .ThatCanSee(this))
-            obj.Client.SendAnimation(targetedAnimation);
-    }
 
     public void ShowPublicMessage(PublicMessageType publicMessageType, string message)
     {

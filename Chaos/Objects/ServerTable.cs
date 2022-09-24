@@ -1,6 +1,6 @@
 using System.IO;
 using System.Text;
-using Chaos.Cryptography.Extensions;
+using Chaos.Extensions.Cryptography;
 using Chaos.IO.Compression;
 using Chaos.Networking.Options;
 

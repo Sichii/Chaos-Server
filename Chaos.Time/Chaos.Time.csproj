@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

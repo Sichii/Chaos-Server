@@ -14,6 +14,12 @@ public abstract class MapEntity : WorldEntity, ILocation
 
     protected MapEntity(MapInstance mapInstance, IPoint point) => SetLocation(mapInstance, point);
 
+    public virtual void Animate(Animation animation, uint? sourceId = null)
+    {
+        var pointAnimation = animation.GetPointAnimation(Point.From(this), sourceId);
+        MapInstance.ShowAnimation(pointAnimation);
+    }
+
     public void SetLocation(IPoint point)
     {
         if (point == null)
@@ -40,12 +46,6 @@ public abstract class MapEntity : WorldEntity, ILocation
         X = point.X;
         Y = point.Y;
         MapInstance = mapInstance;
-    }
-
-    public virtual void Animate(Animation animation, uint? sourceId = null)
-    {
-        var pointAnimation = animation.GetPointAnimation(Point.From(this), sourceId);
-        MapInstance.ShowAnimation(pointAnimation);
     }
 
     public virtual void WarpTo(IPoint destinationPoint) => SetLocation(destinationPoint);

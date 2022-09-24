@@ -10,23 +10,23 @@ public class Rectangle : IRectangle, IEquatable<IRectangle>
 {
     private IReadOnlyList<IPoint>? _vertices;
     /// <summary>
-    /// The highest Y coordinate of the rectangle
+    ///     The highest Y coordinate of the rectangle
     /// </summary>
     public int Bottom { get; init; }
     /// <summary>
-    /// The height of the rectangle
+    ///     The height of the rectangle
     /// </summary>
     public int Height { get; init; }
     /// <summary>
-    /// The lowest X coordinate of the rectangle
+    ///     The lowest X coordinate of the rectangle
     /// </summary>
     public int Left { get; init; }
     /// <summary>
-    /// The highest X coordinate of the rectangle
+    ///     The highest X coordinate of the rectangle
     /// </summary>
     public int Right { get; init; }
     /// <summary>
-    /// The lowest Y coordinate of the rectangle
+    ///     The lowest Y coordinate of the rectangle
     /// </summary>
     public int Top { get; init; }
 
@@ -37,7 +37,7 @@ public class Rectangle : IRectangle, IEquatable<IRectangle>
     }
 
     /// <summary>
-    /// The width of the rectangle
+    ///     The width of the rectangle
     /// </summary>
     public int Width { get; init; }
 

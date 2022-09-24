@@ -1,6 +1,6 @@
 using Chaos.Common.Definitions;
+using Chaos.Common.Synchronization;
 using Chaos.Core.Identity;
-using Chaos.Core.Synchronization;
 using Chaos.Objects.World;
 using Chaos.Observers;
 using Microsoft.Extensions.Logging;

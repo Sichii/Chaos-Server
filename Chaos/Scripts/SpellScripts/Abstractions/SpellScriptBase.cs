@@ -1,7 +1,7 @@
 using Chaos.Objects;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts.Abstractions;
 

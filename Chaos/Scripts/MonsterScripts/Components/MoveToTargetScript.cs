@@ -1,3 +1,4 @@
+using Chaos.Extensions.Geometry;
 using Chaos.Objects.World;
 using Chaos.Scripts.MonsterScripts.Abstractions;
 

@@ -1,13 +1,14 @@
 using Chaos.Common.Definitions;
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
 using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Pathfinding.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.MapScripts.Abstractions;
-using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 using Chaos.Time.Abstractions;
 
@@ -21,7 +22,7 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     public string InstanceId { get; init; }
     public int? MaximumLevel { get; set; }
     public int? MinimumLevel { get; set; }
-    public sbyte Music { get; set; }
+    public byte Music { get; set; }
     public string Name { get; set; }
     public IPathfindingService Pathfinder { get; set; } = null!;
     public MapTemplate Template { get; set; }
@@ -97,6 +98,7 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
             aisling.Client.SendVisibleObjects(otherVisibles);
             aisling.Client.SendDoors(doors);
             aisling.Client.SendMapChangeComplete();
+            aisling.Client.SendSound(Music, true);
             aisling.Client.SendMapLoadComplete();
             aisling.Client.SendDisplayAisling(aisling);
         } else
@@ -247,6 +249,22 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         } else if (animation.TargetPoint != default)
             foreach (var aisling in Objects.WithinRange<Aisling>(animation.TargetPoint))
                 aisling.Client.SendAnimation(animation);
+    }
+
+    public void PlaySound(byte sound, IPoint point)
+    {
+        using var @lock = Sync.Enter();
+        
+        foreach(var aisling in Objects.WithinRange<Aisling>(point))
+            aisling.Client.SendSound(sound, false);
+    }
+
+    public void PlayMusic(byte music)
+    {
+        using var @lock = Sync.Enter();
+
+        foreach (var aisling in Objects.Values<Aisling>())
+            aisling.Client.SendSound(music, true);
     }
 
     public void SimpleAdd(MapEntity mapEntity)

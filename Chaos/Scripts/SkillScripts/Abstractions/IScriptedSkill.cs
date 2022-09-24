@@ -1,4 +1,4 @@
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts.Abstractions;
 

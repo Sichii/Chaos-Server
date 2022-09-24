@@ -1,5 +1,5 @@
 using Chaos.Common.Definitions;
-using Chaos.Geometry.Definitions;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Entities.Networking.Server;

@@ -1,12 +1,14 @@
 using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Entities.Schemas.Aisling;
+using Chaos.Entities.Schemas.Templates;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Caches.Abstractions;
-using Chaos.Services.Mappers.Abstractions;
+using Chaos.Services.Servers.Abstractions;
+using Chaos.Storage.Abstractions;
 using Chaos.Templates;
+using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Extensions;
@@ -26,23 +28,43 @@ public static class ServiceProviderExtensions
         {
             using var @lock = mapInstance.Sync.Enter();
 
+            foreach (var groundItem in mapInstance.GetEntities<GroundItem>().ToList())
+            {
+                var schema = mapper.Map<ItemSchema>(groundItem.Item);
+                var item = mapper.Map<Item>(schema);
+
+                groundItem.Item = item;
+            }
+
             foreach (var creature in mapInstance.GetEntities<Creature>())
                 switch (creature)
                 {
                     case Aisling aisling:
                     {
-                        var schemas = mapper.MapMany<ItemSchema>(aisling.Inventory);
-                        var items = mapper.MapMany<Item>(schemas).ToList();
+                        //if the aisling has an exchange open, cancel it
+                        var exchange = aisling.ActiveObject.TryGet<Exchange>();
+                        exchange?.Cancel(aisling);
 
-                        foreach (var item in items)
+                        var inventorySchemas = mapper.MapMany<ItemSchema>(aisling.Inventory);
+                        var inventoryItems = mapper.MapMany<Item>(inventorySchemas).ToList();
+
+                        foreach (var item in inventoryItems)
                         {
                             aisling.Inventory.Remove(item.Slot);
                             aisling.Inventory.TryAdd(item.Slot, item);
                         }
-                    }
+
+                        var equipmentSchemas = mapper.MapMany<ItemSchema>(aisling.Equipment);
+                        var equipmentItems = mapper.MapMany<Item>(equipmentSchemas);
+
+                        foreach (var item in equipmentItems)
+                        {
+                            aisling.Equipment.Remove(item.Slot);
+                            aisling.Equipment.TryAdd(item.Slot, item);
+                        }
 
                         break;
-
+                    }
                     case Monster monster:
                     {
                         {
@@ -52,9 +74,9 @@ public static class ServiceProviderExtensions
                             monster.Items.Clear();
                             monster.Items.AddRange(items);
                         }
-                    }
 
                         break;
+                    }
                 }
         }
     }
@@ -149,5 +171,51 @@ public static class ServiceProviderExtensions
                         break;
                 }
         }
+    }
+
+    public static void ReloadMonsters(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+        var monsterTemplateCache = cacheProvider.GetCache<MonsterTemplate>();
+        var mapper = provider.GetRequiredService<ITypeMapper>();
+
+        AsyncHelpers.RunSync(() => monsterTemplateCache.ReloadAsync());
+        
+        foreach (var mapInstance in mapCache)
+        {
+            using var @lock = mapInstance.Sync.Enter();
+
+            var monstersToAdd = new List<Monster>();
+            
+            foreach (var monster in mapInstance.GetEntities<Monster>().ToList())
+            {
+                var schema = mapper.Map<MonsterTemplateSchema>(monster);
+                var newMonster = mapper.Map<Monster>(schema);
+
+                monster.MapInstance.RemoveObject(monster);
+                monstersToAdd.Add(newMonster);
+            }
+
+            mapInstance.AddObjects(monstersToAdd);
+        }
+    }
+
+    public static void ReloadMaps(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+        var loginServer = provider.GetRequiredService<ILoginServer>();
+        var worldServer = provider.GetRequiredService<IWorldServer>();
+        
+
+        //lock all players
+        //reload maps from files
+        //copy all entities from old to new
+        //unlock all players
+        
+        
+        
+        AsyncHelpers.RunSync(() => mapCache.ReloadAsync());
     }
 }

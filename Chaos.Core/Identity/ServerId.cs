@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
 
 namespace Chaos.Core.Identity;
 

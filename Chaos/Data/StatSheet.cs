@@ -223,6 +223,26 @@ public record StatSheet : Attributes
             _currentMp = 0;
     }
 
+    public int GetEffectiveStat(Stat stat) => stat switch
+    {
+        Stat.STR => EffectiveStr,
+        Stat.DEX => EffectiveDex,
+        Stat.INT => EffectiveInt,
+        Stat.WIS => EffectiveWis,
+        Stat.CON => EffectiveCon,
+        _        => throw new ArgumentOutOfRangeException()
+    };
+
+    public int GetBaseStat(Stat stat) => stat switch
+    {
+        Stat.STR => Str,
+        Stat.DEX => Dex,
+        Stat.INT => Int,
+        Stat.WIS => Wis,
+        Stat.CON => Con,
+        _        => throw new ArgumentOutOfRangeException()
+    };
+
     #region SharedAttributes
     protected int _ability;
     protected int _currentHp;

@@ -9,7 +9,7 @@ namespace Chaos.Objects.World;
 
 public sealed class GroundItem : GroundEntity
 {
-    public Item Item { get; }
+    public Item Item { get; set; }
 
     public GroundItem(Item item, MapInstance mapInstance, IPoint point)
         : base(
@@ -19,12 +19,6 @@ public sealed class GroundItem : GroundEntity
             point) =>
         Item = item;
 
-    public override void OnClicked(Aisling source)
-    {
-        //nothing
-        //there's a different packet for picking up items
-    }
-
     /// <inheritdoc />
     public override void Animate(Animation animation, uint? sourceId = null)
     {
@@ -33,6 +27,12 @@ public sealed class GroundItem : GroundEntity
         foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
                                        .ThatCanSee(this))
             obj.Client.SendAnimation(targetedAnimation);
+    }
+
+    public override void OnClicked(Aisling source)
+    {
+        //nothing
+        //there's a different packet for picking up items
     }
 
     /// <inheritdoc />

@@ -1,4 +1,5 @@
-using Chaos.Commands.Abstractions;
+using Chaos.CommandInterceptor;
+using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Extensions;
 using Chaos.Objects.World;
@@ -6,7 +7,7 @@ using Chaos.Objects.World;
 namespace Chaos.Commands;
 
 [Command("reload")]
-public class ReloadCommand : ICommand
+public class ReloadCommand : ICommand<Aisling>
 {
     private readonly IServiceProvider ServiceProvider;
     public ReloadCommand(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
@@ -34,6 +35,11 @@ public class ReloadCommand : ICommand
             case "items":
                 ServiceProvider.ReloadItems();
                 aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Items reloaded");
+
+                break;
+            case "monsters":
+                ServiceProvider.ReloadMonsters();
+                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Monsters reloaded");
 
                 break;
         }

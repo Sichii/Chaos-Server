@@ -7,7 +7,7 @@ using Chaos.Entities.Networking.Server;
 using Chaos.Networking.Abstractions;
 using Chaos.Objects;
 using Chaos.Packets.Abstractions;
-using Chaos.Services.Caches.Abstractions;
+using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;

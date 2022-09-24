@@ -1,7 +1,7 @@
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Hosted.Options;
+using Chaos.Services.Servers.Options;
 
 namespace Chaos.Formulae.Damage;
 
@@ -11,7 +11,7 @@ public class DefaultDamageFormula : IDamageFormula
     {
         var minimum = toAisling ? WorldOptions.Instance.MinimumAislingAc : WorldOptions.Instance.MinimumMonsterAc;
         var maximum = toAisling ? WorldOptions.Instance.MaximumAislingAc : WorldOptions.Instance.MaximumMonsterAc;
-        
+
         if (ac == 0)
             return Convert.ToInt32(damage);
 

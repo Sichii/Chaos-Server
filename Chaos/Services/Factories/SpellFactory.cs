@@ -1,7 +1,7 @@
 using Chaos.Objects.Panel;
-using Chaos.Services.Caches.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Scripting.Abstractions;
+using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +30,7 @@ public class SpellFactory : ISpellFactory
         var template = SimpleCache.GetObject<SpellTemplate>(templateKey);
         var spell = new Spell(template, ScriptProvider, extraScriptKeys);
 
-        Logger.LogDebug("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
+        Logger.LogTrace("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
 
         return spell;
     }

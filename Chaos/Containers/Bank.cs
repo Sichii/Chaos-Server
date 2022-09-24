@@ -1,6 +1,6 @@
-using Chaos.Core.Synchronization;
+using Chaos.Common.Synchronization;
 using Chaos.Objects.Panel;
-using Chaos.Services.Utility.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Containers;
 

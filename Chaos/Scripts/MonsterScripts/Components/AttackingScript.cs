@@ -1,5 +1,6 @@
 using Chaos.Core.Utilities;
-using Chaos.Geometry.Definitions;
+using Chaos.Extensions.Geometry;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Objects.World;
 using Chaos.Scripts.MonsterScripts.Abstractions;
 using Chaos.Time;

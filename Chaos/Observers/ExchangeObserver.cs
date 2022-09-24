@@ -1,10 +1,9 @@
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
-using Chaos.Observers.Abstractions;
 
 namespace Chaos.Observers;
 
-public class ExchangeObserver : IPanelObserver<Item>
+public class ExchangeObserver : Abstractions.IObserver<Item>
 {
     private readonly Aisling Other;
     private readonly Aisling Owner;

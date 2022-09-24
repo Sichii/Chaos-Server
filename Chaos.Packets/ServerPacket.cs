@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using Chaos.Packets.Definitions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Packets;
 

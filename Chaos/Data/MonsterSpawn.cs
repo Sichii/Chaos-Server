@@ -1,5 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
+using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
 using Chaos.Objects.World;
@@ -77,8 +79,8 @@ public class MonsterSpawn : IDeltaUpdatable
         }
 
         MapInstance.AddObjects(monsters);
-        
-        foreach(var monster in monsters)
+
+        foreach (var monster in monsters)
             monster.Script.OnSpawn();
     }
 

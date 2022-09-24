@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Definitions;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Pathfinding.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 

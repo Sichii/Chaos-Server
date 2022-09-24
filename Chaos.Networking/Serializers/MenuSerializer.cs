@@ -2,6 +2,7 @@ using Chaos.Common.Definitions;
 using Chaos.Entities.Networking.Server;
 using Chaos.IO.Memory;
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
@@ -60,7 +61,7 @@ public record MenuSerializer : ServerPacketSerializer<MenuArgs>
                     writer.WriteByte((byte)item.Color);
                     writer.WriteUInt32((uint)item.Cost!.Value);
                     writer.WriteString8(item.Name);
-                    writer.WriteString8(item.Class.ToString());
+                    writer.WriteString8("what is this");
                 }
 
                 break;

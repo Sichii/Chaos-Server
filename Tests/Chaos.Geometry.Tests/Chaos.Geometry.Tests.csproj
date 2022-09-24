@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj"/>
         <ProjectReference Include="..\..\Chaos.Geometry\Chaos.Geometry.csproj"/>
     </ItemGroup>
 

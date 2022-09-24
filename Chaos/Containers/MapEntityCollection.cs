@@ -1,4 +1,6 @@
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
@@ -9,14 +11,14 @@ namespace Chaos.Containers;
 public class MapEntityCollection : IDeltaUpdatable
 {
     private readonly HashSet<Aisling> Aislings;
-    private readonly int WalkableArea;
+    private readonly Rectangle Bounds;
     private readonly HashSet<Creature> Creatures;
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
     private readonly HashSet<MapEntity>[,] PointLookup;
     private readonly HashSet<ReactorTile> Reactors;
-    private readonly Rectangle Bounds;
+    private readonly int WalkableArea;
 
     public MapEntityCollection(int mapWidth, int mapHeight, int walkableWalkableArea)
     {
@@ -33,10 +35,10 @@ public class MapEntityCollection : IDeltaUpdatable
             0,
             mapWidth,
             mapHeight);
-        
+
         WalkableArea = walkableWalkableArea;
-        
-        for(var x = 0; x < mapWidth; x++)
+
+        for (var x = 0; x < mapWidth; x++)
             for (var y = 0; y < mapHeight; y++)
                 PointLookup[x, y] = new HashSet<MapEntity>(WorldEntity.IdComparer);
     }
@@ -77,12 +79,6 @@ public class MapEntityCollection : IDeltaUpdatable
     {
         var entities = PointLookup[mapEntity.X, mapEntity.Y];
         entities.Add(mapEntity);
-    }
-
-    public bool RemoveFromPointLookup(MapEntity mapEntity)
-    {
-        var entities = PointLookup[mapEntity.X, mapEntity.Y];
-        return entities.Remove(mapEntity);
     }
 
     public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity =>
@@ -132,6 +128,13 @@ public class MapEntityCollection : IDeltaUpdatable
         }
 
         return true;
+    }
+
+    public bool RemoveFromPointLookup(MapEntity mapEntity)
+    {
+        var entities = PointLookup[mapEntity.X, mapEntity.Y];
+
+        return entities.Remove(mapEntity);
     }
 
     public bool TryGetValue<T>(uint id, [NotNullWhen(true)] out T? entity)

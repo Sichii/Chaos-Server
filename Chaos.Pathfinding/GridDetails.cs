@@ -1,4 +1,4 @@
-using Chaos.Geometry;
+using Chaos.Geometry.Abstractions;
 using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;
@@ -6,6 +6,6 @@ namespace Chaos.Pathfinding;
 public class GridDetails : IGridDetails
 {
     public int Height { get; init; }
-    public ICollection<Point> Walls { get; init; } = Array.Empty<Point>();
+    public ICollection<IPoint> Walls { get; init; } = Array.Empty<IPoint>();
     public int Width { get; init; }
 }

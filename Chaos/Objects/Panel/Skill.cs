@@ -1,8 +1,9 @@
+using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
-using Chaos.Services.Scripting.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;

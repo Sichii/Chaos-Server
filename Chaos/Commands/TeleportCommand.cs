@@ -1,12 +1,13 @@
-using Chaos.Commands.Abstractions;
+using Chaos.CommandInterceptor;
+using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Containers;
 using Chaos.Objects.World;
-using Chaos.Services.Caches.Abstractions;
+using Chaos.Storage.Abstractions;
 
 namespace Chaos.Commands;
 
 [Command("tp")]
-public class TeleportCommand : ICommand
+public class TeleportCommand : ICommand<Aisling>
 {
     private readonly ISimpleCache Cache;
     public TeleportCommand(ISimpleCache cache) => Cache = cache;

@@ -2,7 +2,7 @@ using Chaos.Containers;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.ItemScripts.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts;
@@ -39,15 +39,6 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 
     public void OnUse(Aisling source)
     {
-        var exchange = source.ActiveObject.TryGet<Exchange>();
-
-        if (exchange != null)
-        {
-            exchange.AddItem(source, Subject.Slot);
-
-            return;
-        }
-
         foreach (var component in Components)
             component.OnUse(source);
     }

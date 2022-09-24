@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
+        <ProjectReference Include="..\Chaos.Cryptography.Abstractions\Chaos.Cryptography.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>
