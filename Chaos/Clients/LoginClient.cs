@@ -1,12 +1,14 @@
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
-using Chaos.Entities.Networking.Server;
 using Chaos.Networking.Abstractions;
-using Chaos.Objects;
+using Chaos.Networking.Entities.Server;
+using Chaos.Packets;
 using Chaos.Packets.Abstractions;
+using Chaos.Services.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -14,19 +16,20 @@ namespace Chaos.Clients;
 
 public class LoginClient : SocketClientBase, ILoginClient
 {
+    protected ILoginServer Server { get; }
+
     public LoginClient(
         Socket socket,
         ICryptoClient cryptoClient,
-        IServer server,
+        ILoginServer server,
         IPacketSerializer packetSerializer,
         ILogger<LoginClient> logger
     )
         : base(
             socket,
             cryptoClient,
-            server,
             packetSerializer,
-            logger) { }
+            logger) => Server = server;
 
     public void SendLoginControls(LoginControlsType loginControlsType, string message)
     {
@@ -50,7 +53,7 @@ public class LoginClient : SocketClientBase, ILoginClient
         Send(args);
     }
 
-    public void SendLoginNotice(bool full, Notice notice)
+    public void SendLoginNotice(bool full, INotice notice)
     {
         var args = new NoticeRequestArgs
         {
@@ -108,4 +111,20 @@ public class LoginClient : SocketClientBase, ILoginClient
 
         Send(args);
     }
+    
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            CryptoClient.Decrypt(ref packet);
+
+        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, ref packet);
+    }
+    
 }

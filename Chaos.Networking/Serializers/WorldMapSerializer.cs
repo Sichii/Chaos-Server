@@ -1,5 +1,5 @@
-using Chaos.Entities.Networking.Server;
 using Chaos.IO.Memory;
+using Chaos.Networking.Entities.Server;
 using Chaos.Networking.Extensions;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;

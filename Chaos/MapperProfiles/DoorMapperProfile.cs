@@ -1,4 +1,4 @@
-using Chaos.Entities.Networking.Server;
+using Chaos.Networking.Entities.Server;
 using Chaos.Objects.World;
 using Chaos.TypeMapper.Abstractions;
 

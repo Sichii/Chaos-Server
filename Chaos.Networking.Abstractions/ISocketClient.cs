@@ -1,6 +1,5 @@
 using Chaos.Common.Synchronization;
 using Chaos.Cryptography.Abstractions;
-using Chaos.Entities.Networking;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 
@@ -21,6 +20,6 @@ public interface ISocketClient
     void Send(ref ServerPacket packet);
     void SendAcceptConnection();
     void SendHeartBeat(byte first, byte second);
-    void SendRedirect(Redirect redirect);
+    void SendRedirect(IRedirect redirect);
     void SetSequence(byte newSequence);
 }

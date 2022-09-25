@@ -5,7 +5,7 @@ using Chaos.Packets;
 
 namespace Chaos.Services.Servers.Abstractions;
 
-public interface ILoginServer : IServer
+public interface ILoginServer : IServer<ILoginClient>
 {
     ValueTask OnClientRedirected(ILoginClient client, ref ClientPacket packet);
     ValueTask OnCreateCharFinalize(ILoginClient client, ref ClientPacket packet);

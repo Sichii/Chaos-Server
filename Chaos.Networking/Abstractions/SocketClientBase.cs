@@ -3,9 +3,8 @@ using System.Net.Sockets;
 using Chaos.Common.Synchronization;
 using Chaos.Core.Identity;
 using Chaos.Cryptography.Abstractions;
-using Chaos.Entities.Networking;
-using Chaos.Entities.Networking.Server;
 using Chaos.IO.Memory;
+using Chaos.Networking.Entities.Server;
 using Chaos.Networking.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
@@ -30,12 +29,10 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     public FifoSemaphoreSlim ReceiveSync { get; }
     protected ILogger Logger { get; }
     protected IPacketSerializer PacketSerializer { get; }
-    protected IServer Server { get; }
 
     protected SocketClientBase(
         Socket socket,
         ICryptoClient cryptoClient,
-        IServer server,
         IPacketSerializer packetSerializer,
         ILogger<SocketClientBase> logger
     )
@@ -44,7 +41,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         ReceiveSync = new FifoSemaphoreSlim(1, 1);
         Socket = socket;
         CryptoClient = cryptoClient;
-        Server = server;
         Buffer = new byte[short.MaxValue];
         MemoryBuffer = new Memory<byte>(Buffer);
         Logger = logger;
@@ -61,7 +57,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Socket.Dispose();
     }
 
-    protected ValueTask HandlePacketAsync(Span<byte> span)
+    protected abstract ValueTask HandlePacketAsync(Span<byte> span);
+    /*
     {
         var opCode = span[3];
         var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
@@ -70,22 +67,22 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         if (isEncrypted)
             CryptoClient.Decrypt(ref packet);
 
-        Logger.LogTrace("[Rcv] {Packet}", packet.GetHexString());
+        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, ref packet);
-    }
+    }*/
 
     #region Actions
-    public void SendRedirect(Redirect redirect)
+    public virtual void SendRedirect(IRedirect redirect)
     {
         var args = new RedirectArgs(redirect);
 
         Send(args);
     }
 
-    public void SetSequence(byte newSequence) => Sequence = newSequence;
+    public virtual void SetSequence(byte newSequence) => Sequence = newSequence;
 
-    public void SendHeartBeat(byte first, byte second)
+    public virtual void SendHeartBeat(byte first, byte second)
     {
         var args = new HeartBeatResponseArgs
         {
@@ -110,7 +107,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     #endregion
 
     #region Networking
-    public async void BeginReceive()
+    public virtual async void BeginReceive()
     {
         Connected = true;
         await Task.Yield();
@@ -121,7 +118,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Socket.ReceiveAndForget(args, ReceiveEventHandler);
     }
 
-    public bool IsLoopback()
+    public virtual bool IsLoopback()
     {
         if (Socket.RemoteEndPoint is IPEndPoint ipEndPoint)
             return IPAddress.IsLoopback(ipEndPoint.Address);
@@ -186,13 +183,13 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         }
     }
 
-    public void Send<T>(T obj) where T: ISendArgs
+    public virtual void Send<T>(T obj) where T: ISendArgs
     {
         var packet = PacketSerializer.Serialize(obj);
         Send(ref packet);
     }
 
-    public void Send(ref ServerPacket packet)
+    public virtual void Send(ref ServerPacket packet)
     {
         if (!Connected)
             return;

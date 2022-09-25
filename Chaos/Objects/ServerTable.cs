@@ -2,17 +2,17 @@ using System.IO;
 using System.Text;
 using Chaos.Extensions.Cryptography;
 using Chaos.IO.Compression;
-using Chaos.Networking.Options;
+using Chaos.Networking.Abstractions;
 
 namespace Chaos.Objects;
 
-public class ServerTable
+public class ServerTable : IServerTable
 {
     public uint CheckSum { get; }
     public byte[] Data { get; }
-    public Dictionary<byte, ServerInfo> Servers { get; }
+    public Dictionary<byte, IServerInfo> Servers { get; }
 
-    public ServerTable(ICollection<ServerInfo> servers)
+    public ServerTable(ICollection<IServerInfo> servers)
     {
         Servers = servers.ToDictionary(info => info.Id);
         var encoding = Encoding.GetEncoding(949);

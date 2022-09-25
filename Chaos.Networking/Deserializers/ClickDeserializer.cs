@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
-using Chaos.Entities.Networking.Client;
 using Chaos.Geometry;
 using Chaos.IO.Memory;
+using Chaos.Networking.Entities.Client;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
 

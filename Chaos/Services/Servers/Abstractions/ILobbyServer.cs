@@ -5,7 +5,7 @@ using Chaos.Packets;
 
 namespace Chaos.Services.Servers.Abstractions;
 
-public interface ILobbyServer : IServer
+public interface ILobbyServer : IServer<ILobbyClient>
 {
     ValueTask OnConnectionInfoRequest(ILobbyClient client, ref ClientPacket packet);
     ValueTask OnServerTableRequest(ILobbyClient client, ref ClientPacket packet);

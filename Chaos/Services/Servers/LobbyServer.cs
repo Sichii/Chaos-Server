@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Core.Identity;
-using Chaos.Entities.Networking;
-using Chaos.Entities.Networking.Client;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities.Client;
+using Chaos.Networking.Options;
 using Chaos.Objects;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
@@ -19,12 +19,11 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public class LobbyServer : ServerBase, ILobbyServer
+public class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer
 {
     private readonly IClientFactory<ILobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
     public ConcurrentDictionary<uint, ILobbyClient> Clients { get; }
-    protected new LobbyClientHandler?[] ClientHandlers { get; }
     protected override LobbyOptions Options { get; }
 
     public LobbyServer(
@@ -45,7 +44,6 @@ public class LobbyServer : ServerBase, ILobbyServer
         ClientFactory = clientFactory;
         ServerTable = new ServerTable(options.Value.Servers);
         Clients = new ConcurrentDictionary<uint, ILobbyClient>();
-        ClientHandlers = new LobbyClientHandler?[byte.MaxValue];
         Options = opts;
 
         IndexHandlers();
@@ -103,16 +101,8 @@ public class LobbyServer : ServerBase, ILobbyServer
 
     #region Connection / Handler
     protected delegate ValueTask LobbyClientHandler(ILobbyClient client, ref ClientPacket packet);
-
-    public override ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
-    {
-        if (client is ILobbyClient lobbyClient)
-            return HandlePacketAsync(lobbyClient, ref packet);
-
-        return base.HandlePacketAsync(client, ref packet);
-    }
-
-    private ValueTask HandlePacketAsync(ILobbyClient client, ref ClientPacket packet)
+    
+    public override ValueTask HandlePacketAsync(ILobbyClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 
@@ -125,17 +115,6 @@ public class LobbyServer : ServerBase, ILobbyServer
             return;
 
         base.IndexHandlers();
-        var oldHandlers = base.ClientHandlers;
-
-        for (var i = 0; i < byte.MaxValue; i++)
-        {
-            var old = oldHandlers[i];
-
-            if (old == null)
-                continue;
-
-            ClientHandlers[i] = new LobbyClientHandler(old);
-        }
 
         ClientHandlers[(byte)ClientOpCode.ConnectionInfoRequest] = OnConnectionInfoRequest;
         ClientHandlers[(byte)ClientOpCode.ServerTableRequest] = OnServerTableRequest;

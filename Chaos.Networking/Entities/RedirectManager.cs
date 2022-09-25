@@ -1,13 +1,12 @@
-using Chaos.Entities.Networking;
 using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking.Entities;
 
 public class RedirectManager : IRedirectManager
 {
-    private readonly ConcurrentDictionary<uint, Redirect> Redirects = new();
+    private readonly ConcurrentDictionary<uint, IRedirect> Redirects = new();
 
-    public void Add(Redirect redirect) => Redirects.TryAdd(redirect.Id, redirect);
+    public void Add(IRedirect redirect) => Redirects.TryAdd(redirect.Id, redirect);
 
-    public bool TryGetRemove(uint id, out Redirect redirect) => Redirects.TryRemove(id, out redirect!);
+    public bool TryGetRemove(uint id, out IRedirect redirect) => Redirects.TryRemove(id, out redirect!);
 }

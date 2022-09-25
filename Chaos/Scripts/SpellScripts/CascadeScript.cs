@@ -3,6 +3,7 @@ using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Objects;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
@@ -72,11 +73,11 @@ public class CascadeScript : ConfigurableSpellScriptBase
         {
             CascadeShape.Straight => start.GetDirectPath(end)
                                           .ToList(),
-            CascadeShape.Cone => start.ConalSearch(direction, Range)
-                                      .ToList(),
-            CascadeShape.Diamond => start.ConalSearch(direction, Range)
-                                         .Where(pt => pt.DistanceFrom(sourcePoint) <= Range)
-                                         .ToList(),
+            CascadeShape.Cone => sourcePoint.ConalSearch(direction, Range)
+                                            .ToList(),
+            CascadeShape.Diamond => sourcePoint.ConalSearch(direction, Range)
+                                               .Where(pt => pt.DistanceFrom(sourcePoint) <= Range)
+                                               .ToList(),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -85,21 +86,7 @@ public class CascadeScript : ConfigurableSpellScriptBase
             foreach (var point in allPossiblePoints.ToList())
                 if (map.IsWall(point) || sourcePoint.RayTraceTo(point).Any(pt => map.IsWall(pt)))
                     allPossiblePoints.Remove(point);
-
-        var pointSelector = (Func<int, IEnumerable<Point>>)(Shape switch
-        {
-            CascadeShape.Straight => (r => allPossiblePoints.Where(pt => pt.DistanceFrom(sourcePoint) == r)),
-            CascadeShape.Cone => r =>
-            {
-                var travelsOnXAxis = end.X != start.X;
-                var nextOffset = sourcePoint.DirectionalOffset(direction, r);
-
-                return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
-            },
-            CascadeShape.Diamond => r => allPossiblePoints.Where(pt => pt.DistanceFrom(sourcePoint) == r),
-            _                    => throw new ArgumentOutOfRangeException()
-        });
-
+        
         var elapsedMs = MinSoundDelayMs;
 
         _ = Task.Run(
@@ -107,7 +94,12 @@ public class CascadeScript : ConfigurableSpellScriptBase
             {
                 for (var i = 1; i <= Range; i++)
                 {
-                    var points = pointSelector(i).ToList();
+                    var points = SelectPointsForRange(
+                            allPossiblePoints,
+                            sourcePoint,
+                            direction,
+                            i)
+                        .ToList();
 
                     foreach (var point in points)
                         ApplyToPoint(context, point);
@@ -128,5 +120,28 @@ public class CascadeScript : ConfigurableSpellScriptBase
             });
 
         base.OnUse(context);
+    }
+
+    private IEnumerable<Point> SelectPointsForRange(
+        IEnumerable<Point> allPossiblePoints,
+        Point sourcePoint,
+        Direction aoeDirection,
+        int range
+    )
+    {
+        switch (Shape)
+        {
+            case CascadeShape.Straight:
+            case CascadeShape.Diamond:
+                return allPossiblePoints.Where(pt => pt.DistanceFrom(sourcePoint) == range);
+            
+            case CascadeShape.Cone:
+                var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
+                var nextOffset = sourcePoint.DirectionalOffset(aoeDirection, range);
+
+                return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }

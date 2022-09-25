@@ -1,5 +1,5 @@
-using Chaos.Entities.Networking.Server;
 using Chaos.Entities.Schemas.Aisling;
+using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;

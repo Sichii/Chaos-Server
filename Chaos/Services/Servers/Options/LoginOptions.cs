@@ -1,4 +1,3 @@
-using Chaos.Entities.Networking;
 using Chaos.Networking.Options;
 using Microsoft.Extensions.Logging;
 

@@ -1,10 +1,11 @@
 using System.Text;
 using Chaos.Extensions.Cryptography;
 using Chaos.IO.Compression;
+using Chaos.Networking.Abstractions;
 
 namespace Chaos.Objects;
 
-public record Notice
+public record Notice : INotice
 {
     public uint CheckSum { get; }
     public byte[] Data { get; }
