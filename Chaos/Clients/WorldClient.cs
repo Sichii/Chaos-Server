@@ -1,12 +1,13 @@
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
-using Chaos.Entities.Networking.Server;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -26,6 +27,7 @@ public class WorldClient : SocketClientBase, IWorldClient
 {
     private readonly ITypeMapper Mapper;
     public Aisling Aisling { get; set; } = null!;
+    protected IWorldServer Server { get; }
 
     public WorldClient(
         Socket socket,
@@ -38,10 +40,12 @@ public class WorldClient : SocketClientBase, IWorldClient
         : base(
             socket,
             cryptoClient,
-            server,
             packetSerializer,
-            logger) =>
+            logger)
+    {
         Mapper = mapper;
+        Server = server;
+    }
 
     public void SendAddItemToPane(Item item)
     {
@@ -674,5 +678,20 @@ public class WorldClient : SocketClientBase, IWorldClient
         };
 
         Send(args);
+    }
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            CryptoClient.Decrypt(ref packet);
+
+        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, ref packet);
     }
 }

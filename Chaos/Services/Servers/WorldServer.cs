@@ -12,12 +12,12 @@ using Chaos.Core.Identity;
 using Chaos.Core.Utilities;
 using Chaos.Cryptography;
 using Chaos.Data;
-using Chaos.Entities.Networking;
-using Chaos.Entities.Networking.Client;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities.Client;
+using Chaos.Networking.Options;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
@@ -33,7 +33,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public class WorldServer : ServerBase, IWorldServer
+public class WorldServer : ServerBase<IWorldClient>, IWorldServer
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<IWorldClient> ClientFactory;
@@ -256,7 +256,7 @@ public class WorldServer : ServerBase, IWorldServer
         return OnClientRedirectedAsync(client, args, redirect);
     }
 
-    public async ValueTask OnClientRedirectedAsync(IWorldClient client, ClientRedirectedArgs args, Redirect redirect)
+    public async ValueTask OnClientRedirectedAsync(IWorldClient client, ClientRedirectedArgs args, IRedirect redirect)
     {
         client.CryptoClient = new CryptoClient(args.Seed, args.Key, args.Name);
         var aisling = await UserSaveManager.LoadAsync(redirect.Name);
@@ -950,16 +950,8 @@ public class WorldServer : ServerBase, IWorldServer
 
     #region Connection / Handler
     protected delegate ValueTask WorldClientHandler(IWorldClient client, ref ClientPacket packet);
-
-    public override ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
-    {
-        if (client is IWorldClient worldClient)
-            return HandlePacketAsync(worldClient, ref packet);
-
-        return base.HandlePacketAsync(client, ref packet);
-    }
-
-    private ValueTask HandlePacketAsync(IWorldClient client, ref ClientPacket packet)
+    
+    public override ValueTask HandlePacketAsync(IWorldClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 
@@ -984,18 +976,7 @@ public class WorldServer : ServerBase, IWorldServer
             return;
 
         base.IndexHandlers();
-        var oldHandlers = base.ClientHandlers;
-
-        for (var i = 0; i < byte.MaxValue; i++)
-        {
-            var old = oldHandlers[i];
-
-            if (old == null)
-                continue;
-
-            ClientHandlers[i] = new WorldClientHandler(old);
-        }
-
+        
         //ClientHandlers[(byte)ClientOpCode.] =
         ClientHandlers[(byte)ClientOpCode.RequestMapData] = OnMapDataRequest;
         ClientHandlers[(byte)ClientOpCode.ClientWalk] = OnClientWalk;

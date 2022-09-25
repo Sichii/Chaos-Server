@@ -6,7 +6,6 @@ using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Objects.World;
-using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

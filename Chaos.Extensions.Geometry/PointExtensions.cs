@@ -10,20 +10,16 @@ public static class PointExtensions
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> ConalSearch(this IPoint point, Direction direction, int maxDistance)
     {
-        (var side1Direction, var side2Direction) = direction.GetSideDirections();
-        var currentPoint = point;
-
-        for (var distance = 1; distance <= maxDistance; distance++)
+        if (direction == Direction.Invalid)
+            throw new ArgumentOutOfRangeException(nameof(direction), "Direction cannot be invalid");
+        
+        foreach (var edgePair in point.GetInterCardinalPoints(direction, maxDistance).Chunk(2))
         {
-            var edge1 = currentPoint.DirectionalOffset(side1Direction, distance);
-            var edge2 = currentPoint.DirectionalOffset(side2Direction, distance);
-            var side1Points = currentPoint.GetDirectPath(edge1);
-            var side2Points = currentPoint.GetDirectPath(edge2);
+            var edge1 = edgePair[0];
+            var edge2 = edgePair[1];
 
-            foreach (var pt in side1Points.Concat(side2Points).Distinct())
+            foreach (var pt in edge1.GetDirectPath(edge2))
                 yield return pt;
-
-            currentPoint = currentPoint.DirectionalOffset(direction);
         }
     }
 
@@ -154,7 +150,7 @@ public static class PointExtensions
     ///     Direction.All is optional. Direction.Invalid direction returns empty list.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<Point> GetInterCardinalIoints(this IPoint start, int radius = 1, Direction direction = Direction.All)
+    public static IEnumerable<Point> GetInterCardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
     {
         if (direction == Direction.Invalid)
             yield break;

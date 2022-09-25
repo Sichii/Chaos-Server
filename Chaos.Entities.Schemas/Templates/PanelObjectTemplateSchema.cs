@@ -1,6 +1,4 @@
 using Chaos.Common.Collections;
-using Chaos.Common.Definitions;
-using Chaos.Entities.Schemas.Data;
 
 namespace Chaos.Entities.Schemas.Templates;
 

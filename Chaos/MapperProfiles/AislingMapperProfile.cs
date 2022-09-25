@@ -1,8 +1,8 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Entities.Networking.Server;
 using Chaos.Entities.Schemas.Aisling;
+using Chaos.Networking.Entities.Server;
 using Chaos.Objects.World;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;

@@ -6,10 +6,10 @@ using Chaos.Containers;
 using Chaos.Core.Identity;
 using Chaos.Cryptography;
 using Chaos.Data;
-using Chaos.Entities.Networking;
-using Chaos.Entities.Networking.Client;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities.Client;
+using Chaos.Networking.Options;
 using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Packets;
@@ -26,7 +26,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public class LoginServer : ServerBase, ILoginServer
+public class LoginServer : ServerBase<ILoginClient>, ILoginServer
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
@@ -245,16 +245,8 @@ public class LoginServer : ServerBase, ILoginServer
 
     #region Connection / Handler
     protected delegate ValueTask LoginClientHandler(ILoginClient client, ref ClientPacket packet);
-
-    public override ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
-    {
-        if (client is ILoginClient loginClient)
-            return HandlePacketAsync(loginClient, ref packet);
-
-        return base.HandlePacketAsync(client, ref packet);
-    }
-
-    private ValueTask HandlePacketAsync(ILoginClient client, ref ClientPacket packet)
+    
+    public override ValueTask HandlePacketAsync(ILoginClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 
@@ -267,18 +259,7 @@ public class LoginServer : ServerBase, ILoginServer
             return;
 
         base.IndexHandlers();
-        var oldHandlers = base.ClientHandlers;
-
-        for (var i = 0; i < byte.MaxValue; i++)
-        {
-            var old = oldHandlers[i];
-
-            if (old == null)
-                continue;
-
-            ClientHandlers[i] = new LoginClientHandler(old);
-        }
-
+        
         ClientHandlers[(byte)ClientOpCode.CreateCharRequest] = OnCreateCharRequest;
         ClientHandlers[(byte)ClientOpCode.CreateCharFinalize] = OnCreateCharFinalize;
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;

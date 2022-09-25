@@ -35,8 +35,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Time", "Chaos.Time\Ch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Pathfinding", "Chaos.Pathfinding\Chaos.Pathfinding.csproj", "{4EFE455B-61DB-43EF-9842-C6852AB7917C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Entities.Networking", "Chaos.Entities.Networking\Chaos.Entities.Networking.csproj", "{204046EC-42E9-4180-AEE1-68A13B0CF70D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Entities.Schemas", "Chaos.Entities.Schemas\Chaos.Entities.Schemas.csproj", "{1340C673-C65F-4343-A2CA-DDF3414BEA71}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Common", "Chaos.Common\Chaos.Common.csproj", "{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}"
@@ -165,10 +163,6 @@ Global
 		{4EFE455B-61DB-43EF-9842-C6852AB7917C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EFE455B-61DB-43EF-9842-C6852AB7917C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EFE455B-61DB-43EF-9842-C6852AB7917C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{204046EC-42E9-4180-AEE1-68A13B0CF70D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{204046EC-42E9-4180-AEE1-68A13B0CF70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{204046EC-42E9-4180-AEE1-68A13B0CF70D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{204046EC-42E9-4180-AEE1-68A13B0CF70D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1340C673-C65F-4343-A2CA-DDF3414BEA71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1340C673-C65F-4343-A2CA-DDF3414BEA71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1340C673-C65F-4343-A2CA-DDF3414BEA71}.Release|Any CPU.ActiveCfg = Release|Any CPU

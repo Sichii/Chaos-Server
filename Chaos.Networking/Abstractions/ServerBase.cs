@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
-using Chaos.Entities.Networking.Client;
 using Chaos.Extensions.Common;
+using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking.Abstractions;
 
-public abstract class ServerBase : BackgroundService, IServer
+public abstract class ServerBase<T> : BackgroundService, IServer<T> where T : ISocketClient
 {
     protected ClientHandler?[] ClientHandlers { get; }
     protected IPEndPoint EndPoint { get; }
@@ -27,7 +27,7 @@ public abstract class ServerBase : BackgroundService, IServer
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptionsSnapshot<ServerOptions> options,
-        ILogger<ServerBase> logger
+        ILogger<ServerBase<T>> logger
     )
     {
         RedirectManager = redirectManager;
@@ -57,7 +57,7 @@ public abstract class ServerBase : BackgroundService, IServer
 
     protected abstract void OnConnection(IAsyncResult ar);
 
-    protected delegate ValueTask ClientHandler(ISocketClient client, ref ClientPacket packet);
+    protected delegate ValueTask ClientHandler(T client, ref ClientPacket packet);
 
     #region Handlers
     protected virtual void IndexHandlers()
@@ -67,14 +67,14 @@ public abstract class ServerBase : BackgroundService, IServer
         ClientHandlers[(byte)ClientOpCode.SynchronizeTicks] = OnSynchronizeTicksAsync;
     }
 
-    public virtual ValueTask HandlePacketAsync(ISocketClient client, ref ClientPacket packet)
+    public virtual ValueTask HandlePacketAsync(T client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 
         return handler?.Invoke(client, ref packet) ?? default;
     }
 
-    public ValueTask OnHeartBeatAsync(ISocketClient client, ref ClientPacket packet)
+    public ValueTask OnHeartBeatAsync(T client, ref ClientPacket packet)
     {
         (var first, var second) = PacketSerializer.Deserialize<HeartBeatArgs>(ref packet);
 
@@ -83,14 +83,14 @@ public abstract class ServerBase : BackgroundService, IServer
         return default;
     }
 
-    public ValueTask OnSequenceChangeAsync(ISocketClient client, ref ClientPacket packet)
+    public ValueTask OnSequenceChangeAsync(T client, ref ClientPacket packet)
     {
         client.SetSequence(packet.Sequence);
 
         return default;
     }
 
-    public ValueTask OnSynchronizeTicksAsync(ISocketClient client, ref ClientPacket packet) =>
+    public ValueTask OnSynchronizeTicksAsync(T client, ref ClientPacket packet) =>
         //_ = PacketSerializer.Deserialize<SynchronizeTicksArgs>(ref packet);
         //do nothing
         default;

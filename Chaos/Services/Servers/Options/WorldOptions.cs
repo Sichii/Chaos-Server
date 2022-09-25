@@ -1,4 +1,3 @@
-using Chaos.Entities.Networking;
 using Chaos.Networking.Options;
 
 namespace Chaos.Services.Servers.Options;

@@ -1,9 +1,17 @@
-using Chaos.Entities.Networking;
 
 namespace Chaos.Networking.Abstractions;
 
+/// <summary>
+///     An object used to manage redirects
+/// </summary>
 public interface IRedirectManager
 {
-    void Add(Redirect redirect);
-    bool TryGetRemove(uint id, out Redirect redirect);
+    /// <summary>
+    ///     Adds a redirect that is in progress
+    /// </summary>
+    void Add(IRedirect redirect);
+    /// <summary>
+    ///     Tries to remove a redirect that should be in progress
+    /// </summary>
+    bool TryGetRemove(uint id, out IRedirect redirect);
 }

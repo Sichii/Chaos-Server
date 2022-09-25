@@ -1,6 +1,6 @@
 using Chaos.Data;
-using Chaos.Entities.Networking.Server;
 using Chaos.Entities.Schemas.Aisling;
+using Chaos.Networking.Entities.Server;
 using Chaos.Time;
 using Chaos.TypeMapper.Abstractions;
 

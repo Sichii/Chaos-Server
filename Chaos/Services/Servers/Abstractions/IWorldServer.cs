@@ -5,7 +5,7 @@ using Chaos.Packets;
 
 namespace Chaos.Services.Servers.Abstractions;
 
-public interface IWorldServer : IServer
+public interface IWorldServer : IServer<IWorldClient>
 {
     ValueTask OnBeginChant(IWorldClient client, ref ClientPacket clientPacket);
     ValueTask OnBoardRequest(IWorldClient client, ref ClientPacket clientPacket);

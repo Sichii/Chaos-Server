@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Packets;
 
-public ref struct ClientPacket
+public ref partial struct ClientPacket
 {
     public Span<byte> Buffer;
     public bool IsEncrypted { get; set; }
@@ -34,7 +34,7 @@ public ref struct ClientPacket
         return str;
     }
 
-    public string GetHexString() => $"{OpCode}: {Regex.Replace(Convert.ToHexString(Buffer), "(.{2})", "$1 ", RegexOptions.Compiled)}";
+    public string GetHexString() => $"{OpCode}: {DoubleBytePattern().Replace(Convert.ToHexString(Buffer), "$1 ")}";
 
     public byte[] ToArray() => ToSpan().ToArray();
 
@@ -78,4 +78,6 @@ public ref struct ClientPacket
     }
 
     public override string ToString() => GetHexString();
+    [RegexGenerator("(.{2})", RegexOptions.Compiled)]
+    private static partial Regex DoubleBytePattern();
 }

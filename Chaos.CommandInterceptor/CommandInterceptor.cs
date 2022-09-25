@@ -44,7 +44,7 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
     }
 
     /// <inheritdoc />
-    public void HandleCommand(T obj, string commandStr)
+    public void HandleCommand(T source, string commandStr)
     {
         var command = commandStr[1..];
         var commandParts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -60,9 +60,9 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
 
         if (descriptor.Details.RequiresAdmin)
         {
-            var identifier = Configuration.IdentifierSelector(obj);
+            var identifier = Configuration.IdentifierSelector(source);
 
-            if (!Configuration.AdminPredicate(obj))
+            if (!Configuration.AdminPredicate(source))
             {
                 Logger.LogWarning("Non-Admin {Identifier} tried to execute admin command {CommandName}", identifier, commandName);
 
@@ -74,7 +74,7 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
 
         var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
 
-        commandInstance.Execute(obj, commandArgs);
+        commandInstance.Execute(source, commandArgs);
     }
 
     /// <inheritdoc />
