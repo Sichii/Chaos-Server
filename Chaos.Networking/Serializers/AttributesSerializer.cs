@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record AttributesSerializer : ServerPacketSerializer<AttributesArgs>
+public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Attributes;
 

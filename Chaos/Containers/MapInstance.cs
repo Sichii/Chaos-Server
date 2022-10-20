@@ -11,10 +11,11 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.MapScripts.Abstractions;
 using Chaos.Templates;
 using Chaos.Time.Abstractions;
+using Chaos.Utilities;
 
 namespace Chaos.Containers;
 
-public class MapInstance : IScriptedMap, IDeltaUpdatable
+public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 {
     private readonly ICollection<MonsterSpawn> MonsterSpawns;
     private readonly MapEntityCollection Objects;
@@ -56,12 +57,12 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         Script = scriptProvider.CreateScript<IMapScript, MapInstance>(ScriptKeys, this);
     }
 
-    public void ActivateReactors(Creature creature, ReactorTileType reactorTileType)
+    public void ActivateReactors(Creature creature, ReactorActivationType reactorActivationType)
     {
         using var @lock = Sync.Enter();
 
         var reactors = Objects.AtPoint<ReactorTile>(creature)
-                              .Where(reactor => reactor.ReactorTileType == reactorTileType);
+                              .Where(reactor => reactor.ReactorActivationType == reactorActivationType);
 
         foreach (var reactor in reactors)
             reactor.Activate(creature);
@@ -78,6 +79,9 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
         {
             (var aislings, var doors, var otherVisibles) = Objects.WithinRange<VisibleEntity>(point)
                                                                   .PartitionBySendType();
+
+            foreach (var otherCreature in otherVisibles.OfType<Creature>())
+                Helpers.HandleApproach(aisling, otherCreature);
 
             aisling.Client.SendMapChangePending();
             aisling.Client.SendMapInfo();
@@ -102,9 +106,28 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
             aisling.Client.SendMapLoadComplete();
             aisling.Client.SendDisplayAisling(aisling);
         } else
-            foreach (var nearbyUser in Objects.WithinRange<Aisling>(visibleEntity)
-                                              .ThatCanSee(visibleEntity))
-                nearbyUser.Client.SendVisibleObjects(visibleEntity);
+        {
+            //fast path for non creatures
+            if (visibleEntity is not Creature creature)
+            {
+                foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity)
+                                                  .ThatCanSee(visibleEntity))
+                    nearbyAisling.Client.SendVisibleObjects(visibleEntity);
+
+                return;
+            }
+            
+            foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
+            {
+                if (nearbyCreature.Equals(creature))
+                    continue;
+
+                Helpers.HandleApproach(creature, nearbyCreature);
+                
+                if (nearbyCreature is Aisling nearbyAisling && creature.IsVisibleTo(nearbyCreature))
+                    nearbyAisling.Client.SendVisibleObjects(visibleEntity);
+            }
+        }
     }
 
     public void AddObjects<T>(ICollection<T> visibleObjects) where T: VisibleEntity
@@ -120,15 +143,17 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
             Objects.Add(visibleObj.Id, visibleObj);
         }
 
-        foreach (var aisling in Objects.Values<Aisling>())
+        foreach (var creature in Objects.Values<Creature>())
         {
             var objectsInRange = visibleObjects
-                                 .ThatAreWithinRange(aisling)
-                                 .ThatAreVisibleTo(aisling)
+                                 .ThatAreWithinRange(creature)
                                  .ToList();
 
-            if (objectsInRange.Any())
-                aisling.Client.SendVisibleObjects(objectsInRange);
+            foreach (var nearbyCreature in objectsInRange.OfType<Creature>())
+                Helpers.HandleApproach(creature, nearbyCreature);
+
+            if (creature is Aisling aisling && objectsInRange.Any())
+                aisling.Client.SendVisibleObjects(objectsInRange.ThatAreVisibleTo(aisling));
         }
     }
 
@@ -221,6 +246,22 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
     /// </summary>
     public void MoveEntity(MapEntity entity, Point oldPoint) => Objects.MoveEntity(entity, oldPoint);
 
+    public void PlayMusic(byte music)
+    {
+        using var @lock = Sync.Enter();
+
+        foreach (var aisling in Objects.Values<Aisling>())
+            aisling.Client.SendSound(music, true);
+    }
+
+    public void PlaySound(byte sound, IPoint point)
+    {
+        using var @lock = Sync.Enter();
+
+        foreach (var aisling in Objects.WithinRange<Aisling>(point))
+            aisling.Client.SendSound(sound, false);
+    }
+
     public bool RemoveObject(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
@@ -233,6 +274,10 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
                                            .ThatCanSee(visibleObject))
                 aisling.Client.SendRemoveObject(visibleObject.Id);
 
+        if(mapEntity is Creature creature)
+            foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
+                Helpers.HandleDeparture(creature, nearbyCreature);
+        
         return true;
     }
 
@@ -251,25 +296,10 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
                 aisling.Client.SendAnimation(animation);
     }
 
-    public void PlaySound(byte sound, IPoint point)
-    {
-        using var @lock = Sync.Enter();
-        
-        foreach(var aisling in Objects.WithinRange<Aisling>(point))
-            aisling.Client.SendSound(sound, false);
-    }
-
-    public void PlayMusic(byte music)
-    {
-        using var @lock = Sync.Enter();
-
-        foreach (var aisling in Objects.Values<Aisling>())
-            aisling.Client.SendSound(music, true);
-    }
-
     public void SimpleAdd(MapEntity mapEntity)
     {
         using var @lock = Sync.Enter();
+        mapEntity.MapInstance = this;
         Objects.Add(mapEntity.Id, mapEntity);
     }
 
@@ -288,5 +318,13 @@ public class MapInstance : IScriptedMap, IDeltaUpdatable
 
         foreach (var spawn in MonsterSpawns)
             spawn.Update(delta);
+    }
+    
+    public void Destroy()
+    {
+        using var @lock = Sync.Enter();
+
+        Objects.Clear();
+        MonsterSpawns.Clear();
     }
 }

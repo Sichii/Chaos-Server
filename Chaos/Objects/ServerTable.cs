@@ -6,7 +6,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Objects;
 
-public class ServerTable : IServerTable
+public sealed class ServerTable : IServerTable
 {
     public uint CheckSum { get; }
     public byte[] Data { get; }

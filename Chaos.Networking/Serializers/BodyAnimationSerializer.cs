@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record BodyAnimationSerializer : ServerPacketSerializer<BodyAnimationArgs>
+public sealed record BodyAnimationSerializer : ServerPacketSerializer<BodyAnimationArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.BodyAnimation;
 

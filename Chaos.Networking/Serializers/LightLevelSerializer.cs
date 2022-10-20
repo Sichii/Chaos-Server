@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record LightLevelSerializer : ServerPacketSerializer<LightLevelArgs>
+public sealed record LightLevelSerializer : ServerPacketSerializer<LightLevelArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.LightLevel;
 

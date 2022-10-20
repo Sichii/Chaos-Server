@@ -1,6 +1,6 @@
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -9,8 +9,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.MapperProfiles;
 
-public class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
-                                  IMapperProfile<Skill, SkillInfo>
+public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
+                                         IMapperProfile<Skill, SkillInfo>
 {
     private readonly ILogger<SkillMapperProfile> Logger;
     private readonly IScriptProvider ScriptProvider;
@@ -29,7 +29,7 @@ public class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
 
     public Skill Map(SkillSchema obj)
     {
-        var template = SimpleCache.GetObject<SkillTemplate>(obj.TemplateKey);
+        var template = SimpleCache.Get<SkillTemplate>(obj.TemplateKey);
 
         var skill = new Skill(
             template,

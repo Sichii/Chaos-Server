@@ -1,7 +1,9 @@
+using Chaos.Common.Collections;
+
 namespace Chaos.CommandInterceptor.Abstractions;
 
 /// <summary>
-///     Represents a command
+///     Defines a command that can be executed on an object
 /// </summary>
 /// <typeparam name="T">The type of the object that is the source of the command</typeparam>
 public interface ICommand<in T>
@@ -11,5 +13,5 @@ public interface ICommand<in T>
     /// </summary>
     /// <param name="source">The source of the command</param>
     /// <param name="args">Arguments to be used by the command</param>
-    void Execute(T source, params string[] args);
+    void Execute(T source, ArgumentCollection args);
 }

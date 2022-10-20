@@ -6,13 +6,13 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record DialogResponseDeserializer : ClientPacketDeserializer<DialogResponseArgs>
+public sealed record DialogResponseDeserializer : ClientPacketDeserializer<DialogResponseArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.DialogResponse;
 
     public override DialogResponseArgs Deserialize(ref SpanReader reader)
     {
-        var worldObjectType = (GameObjectType)reader.ReadByte();
+        var worldObjectType = (EntityType)reader.ReadByte();
         var objectId = reader.ReadUInt32();
         var pursuitId = reader.ReadUInt16();
         var dialogId = reader.ReadUInt16();

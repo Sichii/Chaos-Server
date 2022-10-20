@@ -2,14 +2,14 @@ using System.Text.RegularExpressions;
 
 namespace Chaos.Geometry.Definitions;
 
-public static partial class RegexCache
+internal static partial class RegexCache
 {
-    public static readonly Regex LOCATION_REGEX = GeneratedLocationRegex();
-    public static readonly Regex POINT_REGEX = GeneratedPointRegex();
+    internal static readonly Regex LOCATION_REGEX = GenerateLocationRegex();
+    internal static readonly Regex POINT_REGEX = GeneratePointRegex();
 
     [RegexGenerator(@"(.+?)(?::| |: )\(?(\d+),? ?(\d+)\)?", RegexOptions.Compiled)]
-    private static partial Regex GeneratedLocationRegex();
+    private static partial Regex GenerateLocationRegex();
 
     [RegexGenerator(@"\(?(\d+),? ?(\d+)\)?", RegexOptions.Compiled)]
-    private static partial Regex GeneratedPointRegex();
+    private static partial Regex GeneratePointRegex();
 }

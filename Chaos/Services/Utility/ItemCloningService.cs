@@ -1,12 +1,12 @@
 using Chaos.Core.Identity;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Utility;
 
-public class ItemCloningService : ICloningService<Item>
+public sealed class ItemCloningService : ICloningService<Item>
 {
     private readonly ILogger<ItemCloningService> Logger;
     private readonly ITypeMapper Mapper;

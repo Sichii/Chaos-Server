@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Containers;
 
-public class UserOptions
+public sealed class UserOptions
 {
     public bool Exchange { get; set; }
 

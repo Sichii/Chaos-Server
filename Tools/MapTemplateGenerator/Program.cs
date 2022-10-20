@@ -5,9 +5,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Chaos.Common.Collections.Synchronized;
-using Chaos.Entities.Schemas.Templates;
 using Chaos.Geometry;
 using Chaos.Geometry.JsonConverters;
+using Chaos.Schemas.Templates;
 
 const string FILENAME = "Master_Maplist.txt";
 const string DIRECTORY = "templates";

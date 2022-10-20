@@ -13,5 +13,5 @@ public abstract class SpellScriptBase : ScriptBase, ISpellScript
     public virtual void OnForgotten(Aisling aisling) { }
     public virtual void OnLearned(Aisling aisling) { }
 
-    public virtual void OnUse(ActivationContext context) { }
+    public virtual void OnUse(SpellContext context) { }
 }

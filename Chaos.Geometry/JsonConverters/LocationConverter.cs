@@ -4,7 +4,7 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 
-public class LocationConverter : JsonConverter<Location>
+public sealed class LocationConverter : JsonConverter<Location>
 {
     public override Location Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

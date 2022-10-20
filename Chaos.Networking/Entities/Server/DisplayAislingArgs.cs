@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record DisplayAislingArgs : ISendArgs
+public sealed record DisplayAislingArgs : ISendArgs
 {
     public DisplayColor AccessoryColor1 { get; set; }
     public DisplayColor AccessoryColor2 { get; set; }
@@ -21,7 +21,7 @@ public record DisplayAislingArgs : ISendArgs
     public CreatureType CreatureType { get; set; }
     public Direction Direction { get; set; }
     public byte FaceSprite { get; set; }
-    public GameObjectType GameObjectType { get; set; }
+    public EntityType EntityType { get; set; }
     public Gender Gender { get; set; }
     public string? GroupBoxText { get; set; }
     public DisplayColor HeadColor { get; set; }

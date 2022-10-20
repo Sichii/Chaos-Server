@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record ConfirmClientWalkArgs : ISendArgs
+public sealed record ConfirmClientWalkArgs : ISendArgs
 {
     public Direction Direction { get; set; }
     public IPoint OldPoint { get; set; } = null!;

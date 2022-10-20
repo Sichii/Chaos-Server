@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record UserOptionToggleDeserializer : ClientPacketDeserializer<UserOptionToggleArgs>
+public sealed record UserOptionToggleDeserializer : ClientPacketDeserializer<UserOptionToggleArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.UserOptionToggle;
 

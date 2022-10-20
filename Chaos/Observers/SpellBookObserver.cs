@@ -3,7 +3,7 @@ using Chaos.Objects.World;
 
 namespace Chaos.Observers;
 
-public class SpellBookObserver : Abstractions.IObserver<Spell>
+public sealed class SpellBookObserver : Abstractions.IObserver<Spell>
 {
     private readonly Aisling Aisling;
 

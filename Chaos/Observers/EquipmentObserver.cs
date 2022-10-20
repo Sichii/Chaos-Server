@@ -4,7 +4,7 @@ using Chaos.Objects.World;
 
 namespace Chaos.Observers;
 
-public class EquipmentObserver : Abstractions.IObserver<Item>
+public sealed class EquipmentObserver : Abstractions.IObserver<Item>
 {
     private readonly Aisling Aisling;
 

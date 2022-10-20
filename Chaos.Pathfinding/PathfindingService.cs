@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Chaos.Pathfinding;
 
-public class PathfindingService : IPathfindingService
+public sealed class PathfindingService : IPathfindingService
 {
     private readonly ConcurrentDictionary<string, IGridDetails> GridDetails;
     private readonly IMemoryCache MemoryCache;
@@ -37,7 +37,7 @@ public class PathfindingService : IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        ICollection<IPoint> unwalkablePoints
     )
     {
         var pathFinder = MemoryCache.GetOrCreate(key, CreatePathfinder);
@@ -46,7 +46,7 @@ public class PathfindingService : IPathfindingService
             start,
             end,
             ignoreWalls,
-            creatures);
+            unwalkablePoints);
     }
 
     public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key] = gridDetails;
@@ -56,11 +56,11 @@ public class PathfindingService : IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        ICollection<IPoint> unwalkablePoints
     )
     {
         var pathFinder = MemoryCache.GetOrCreate(key, CreatePathfinder);
 
-        return pathFinder!.Wander(start, ignoreWalls, creatures);
+        return pathFinder!.Wander(start, ignoreWalls, unwalkablePoints);
     }
 }

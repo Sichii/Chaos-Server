@@ -1,10 +1,10 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class StatSheetMapperProfile : IMapperProfile<StatSheet, StatSheetSchema>
+public sealed class StatSheetMapperProfile : IMapperProfile<StatSheet, StatSheetSchema>
 {
     public StatSheet Map(StatSheetSchema obj) => new()
     {

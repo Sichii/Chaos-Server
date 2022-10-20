@@ -33,5 +33,5 @@ public sealed class Spell : PanelObjectBase, IScriptedSpell
         Script = scriptProvider.CreateScript<ISpellScript, Spell>(ScriptKeys, this);
     }
 
-    public void Use(ActivationContext context) => Script.OnUse(context);
+    public void Use(SpellContext context) => Script.OnUse(context);
 }

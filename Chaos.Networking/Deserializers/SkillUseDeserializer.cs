@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record SkillUseDeserializer : ClientPacketDeserializer<SkillUseArgs>
+public sealed record SkillUseDeserializer : ClientPacketDeserializer<SkillUseArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.SkillUse;
 

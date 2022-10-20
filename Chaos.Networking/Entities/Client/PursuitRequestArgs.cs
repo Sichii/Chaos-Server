@@ -3,8 +3,8 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record PursuitRequestArgs(
-    GameObjectType GameObjectType,
+public sealed record PursuitRequestArgs(
+    EntityType EntityType,
     uint ObjectId,
     ushort PursuitId,
     params string[]? Args

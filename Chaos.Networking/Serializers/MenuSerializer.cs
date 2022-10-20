@@ -6,14 +6,14 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record MenuSerializer : ServerPacketSerializer<MenuArgs>
+public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Menu;
 
     public override void Serialize(ref SpanWriter writer, MenuArgs args)
     {
         writer.WriteByte((byte)args.MenuType);
-        writer.WriteByte((byte)args.GameObjectType);
+        writer.WriteByte((byte)args.EntityType);
         writer.WriteUInt32(args.SourceId ?? 0);
         writer.WriteByte(1); //dunno
         writer.WriteUInt16(args.Sprite);
@@ -27,26 +27,32 @@ public record MenuSerializer : ServerPacketSerializer<MenuArgs>
         switch (args.MenuType)
         {
             case MenuType.Menu:
+            {
                 writer.WriteByte((byte)args.Options!.Count);
+                ushort index = 1;
 
                 foreach (var pursuit in args.Options)
                 {
-                    writer.WriteString8(pursuit.ToString());
-                    writer.WriteUInt16(pursuit);
+                    writer.WriteString8(pursuit);
+                    writer.WriteUInt16(index++);
                 }
 
                 break;
+            }
             case MenuType.MenuWithArgs:
+            {
                 writer.WriteString8(args.Args!);
                 writer.WriteByte((byte)args.Options!.Count);
+                ushort index = 1;
 
                 foreach (var pursuit in args.Options)
                 {
-                    writer.WriteString8(pursuit.ToString());
-                    writer.WriteUInt16(pursuit);
+                    writer.WriteString8(pursuit);
+                    writer.WriteUInt16(index++);
                 }
 
                 break;
+            }
             case MenuType.TextEntry:
                 writer.WriteUInt16((ushort)args.PursuitId!);
 

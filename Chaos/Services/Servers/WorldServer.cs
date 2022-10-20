@@ -18,6 +18,7 @@ using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
+using Chaos.Objects.Dialog;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
@@ -33,7 +34,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public class WorldServer : ServerBase<IWorldClient>, IWorldServer
+public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<IWorldClient> ClientFactory;
@@ -46,7 +47,6 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
                                             .Select(kvp => kvp.Value.Aisling)
                                             .Where(user => user != null!);
     public ConcurrentDictionary<uint, IWorldClient> Clients { get; }
-    protected new WorldClientHandler?[] ClientHandlers { get; }
     protected override WorldOptions Options { get; }
 
     public WorldServer(
@@ -73,7 +73,6 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
         CommandInterceptor = commandInterceptor;
 
         Clients = new ConcurrentDictionary<uint, IWorldClient>();
-        ClientHandlers = new WorldClientHandler[byte.MaxValue];
 
         ParallelOptions = new ParallelOptions
         {
@@ -149,8 +148,7 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
                 } catch (Exception e)
                 {
                     Logger.LogCritical(e, "Failed to save user {User}", user.Name);
-                }
-                finally
+                } finally
                 {
                     user.Client.ReceiveSync.Release();
                 }
@@ -270,6 +268,7 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
         client.SendUserId();
         aisling.MapInstance.AddObject(aisling, aisling);
         client.SendProfileRequest();
+        aisling.MapInstance.ActivateReactors(aisling, ReactorActivationType.Walk);
     }
 
     public ValueTask OnClientWalk(IWorldClient client, ref ClientPacket clientPacket)
@@ -281,7 +280,24 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
         return default;
     }
 
-    public ValueTask OnDialogResponse(IWorldClient client, ref ClientPacket clientPacket) => throw new NotImplementedException();
+    public ValueTask OnDialogResponse(IWorldClient client, ref ClientPacket clientPacket)
+    {
+        var args = PacketSerializer.Deserialize<DialogResponseArgs>(ref clientPacket);
+
+        var currentDialogContext = client.Aisling.ActiveObject.TryGet<DialogContext>();
+
+        //if there was no dialog, close whatever they think they have open
+        if (currentDialogContext != null)
+        {
+            client.SendDialog(Dialog.CloseDialog, client.Aisling);
+
+            return default;
+        }
+        
+        
+
+        return default;
+    }
 
     public ValueTask OnEmote(IWorldClient client, ref ClientPacket clientPacket)
     {
@@ -761,14 +777,7 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<UnequipArgs>(ref clientPacket);
 
-        if (client.Aisling.Inventory.IsFull)
-            return default;
-
-        if (!client.Aisling.Equipment.TryGetRemove((byte)args.EquipmentSlot, out var item))
-            return default;
-
-        client.Aisling.Inventory.TryAddToNextSlot(item);
-        item.Script.OnUnEquipped(client.Aisling);
+        client.Aisling.UnEquip(args.EquipmentSlot);
 
         return default;
     }
@@ -787,7 +796,7 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
                 return default;
             }
-            
+
             item.Script.OnUse(client.Aisling);
         }
 
@@ -942,15 +951,22 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<WorldMapClickArgs>(ref clientPacket);
 
-        //TODO: world maps dont exist yet
+        var worldMapTile = client.Aisling.MapInstance.GetEntitiesAtPoint<WorldMapTile>(client.Aisling)
+                                     .FirstOrDefault();
 
+        if (worldMapTile == null)
+            return default;
+
+        if (!worldMapTile.WorldMap.Nodes.TryGetValue(args.UniqueId, out var node))
+            return default;
+
+        node.OnClick(client.Aisling);
+        
         return default;
     }
     #endregion
 
     #region Connection / Handler
-    protected delegate ValueTask WorldClientHandler(IWorldClient client, ref ClientPacket packet);
-    
     public override ValueTask HandlePacketAsync(IWorldClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
@@ -970,13 +986,13 @@ public class WorldServer : ServerBase<IWorldClient>, IWorldServer
         return handler?.Invoke(client, ref packet) ?? default;
     }
 
-    protected sealed override void IndexHandlers()
+    protected override void IndexHandlers()
     {
         if (ClientHandlers == null!)
             return;
 
         base.IndexHandlers();
-        
+
         //ClientHandlers[(byte)ClientOpCode.] =
         ClientHandlers[(byte)ClientOpCode.RequestMapData] = OnMapDataRequest;
         ClientHandlers[(byte)ClientOpCode.ClientWalk] = OnClientWalk;

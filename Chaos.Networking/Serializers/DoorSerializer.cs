@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record DoorSerializer : ServerPacketSerializer<DoorArgs>
+public sealed record DoorSerializer : ServerPacketSerializer<DoorArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Door;
 

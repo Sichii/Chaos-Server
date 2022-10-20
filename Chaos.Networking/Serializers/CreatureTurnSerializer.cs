@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record CreatureTurnSerializer : ServerPacketSerializer<CreatureTurnArgs>
+public sealed record CreatureTurnSerializer : ServerPacketSerializer<CreatureTurnArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.CreatureTurn;
 

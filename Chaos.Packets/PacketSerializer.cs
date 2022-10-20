@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Packets;
 
-public class PacketSerializer : IPacketSerializer
+public sealed class PacketSerializer : IPacketSerializer
 {
     private readonly ConcurrentDictionary<Type, IClientPacketDeserializer> Deserializers;
     private readonly ConcurrentDictionary<Type, IServerPacketSerializer> Serializers;

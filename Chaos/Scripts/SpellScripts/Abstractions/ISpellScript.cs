@@ -9,5 +9,5 @@ public interface ISpellScript : IScript
     void OnForgotten(Aisling aisling);
 
     void OnLearned(Aisling aisling);
-    void OnUse(ActivationContext context);
+    void OnUse(SpellContext context);
 }

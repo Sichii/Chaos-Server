@@ -12,7 +12,7 @@ public static class PointExtensions
     {
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction), "Direction cannot be invalid");
-        
+
         foreach (var edgePair in point.GetInterCardinalPoints(direction, maxDistance).Chunk(2))
         {
             var edge1 = edgePair[0];

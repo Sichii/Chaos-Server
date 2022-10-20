@@ -5,9 +5,11 @@ using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
+using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
+using Chaos.Objects.Dialog;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -23,11 +25,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;
 
-public class WorldClient : SocketClientBase, IWorldClient
+public sealed class WorldClient : SocketClientBase, IWorldClient
 {
     private readonly ITypeMapper Mapper;
+    private readonly IWorldServer Server;
     public Aisling Aisling { get; set; } = null!;
-    protected IWorldServer Server { get; }
 
     public WorldClient(
         Socket socket,
@@ -45,6 +47,21 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         Mapper = mapper;
         Server = server;
+    }
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            CryptoClient.Decrypt(ref packet);
+
+        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, ref packet);
     }
 
     public void SendAddItemToPane(Item item)
@@ -187,6 +204,83 @@ public class WorldClient : SocketClientBase, IWorldClient
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
         Send(args);
+    }
+
+    /// <inheritdoc />
+    public void SendDialog(Dialog dialog, object source, string? menuArg = null)
+    {
+        var dialogType = dialog.Type.ToDialogType();
+        var menuType = dialog.Type.ToMenuType();
+        var entityType = Helpers.GetEntityType(source);
+        string name;
+        ushort sprite;
+        uint sourceId = 0;
+        
+        switch (source)
+        {
+            case Item item:
+                name = item.DisplayName;
+                sprite = item.Template.ItemSprite.OffsetPanelSprite;
+                sourceId = item.Id;
+                
+                break;
+            case NamedEntity namedEntity:
+                name = namedEntity.Name;
+                sprite = namedEntity.Sprite;
+                sourceId = namedEntity.Id;
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(source));
+        }
+
+        if (!entityType.HasValue)
+            throw new InvalidOperationException($"Entity type \"{source.GetType()}\" is not supported.");
+
+        if (dialogType != null)
+        {
+            var args = new DialogArgs
+            {
+                DialogId = 0,
+                DialogType = dialogType.Value,
+                EntityType = entityType.Value,
+                HasNextButton = !string.IsNullOrWhiteSpace(dialog.NextDialogKey),
+                HasPreviousButton = !string.IsNullOrWhiteSpace(dialog.NextDialogKey),
+                Name = name,
+                Options = dialog.Options?.Select(o => o.OptionText).ToList(),
+                PursuitId = 0,
+                SourceId = sourceId,
+                Sprite = sprite,
+                Text = dialog.Text,
+                TextBoxLength = dialog.TextBoxLength
+            };
+            
+            Send(args);
+            
+            return;
+        }
+
+        if (menuType != null)
+        {
+            var args = new MenuArgs
+            {
+                Args = menuArg,
+                EntityType = entityType.Value,
+                Items = dialog.Items != null ? Mapper.MapMany<ItemInfo>(dialog.Items).ToList() : null,
+                MenuType = menuType.Value,
+                Name = name,
+                Options = dialog.Options?.Select(op => op.OptionText).ToList(),
+                PursuitId = 0,
+                Skills = dialog.Skills != null ? Mapper.MapMany<SkillInfo>(dialog.Skills).ToList() : null,
+                Spells = dialog.Spells != null ? Mapper.MapMany<SpellInfo>(dialog.Spells).ToList() : null,
+                Slots = Aisling.Inventory.Select(i => i.Slot).ToList(),
+                SourceId = sourceId,
+                Sprite = sprite,
+                Text = dialog.Text
+            };
+
+            Send(args);
+        }
     }
 
     public void SendDoors(IEnumerable<Door> doors)
@@ -421,7 +515,7 @@ public class WorldClient : SocketClientBase, IWorldClient
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                var metafile = metafileCache.GetObject(name);
+                var metafile = metafileCache.Get(name);
 
                 args.MetafileData = new MetafileInfo
                 {
@@ -672,26 +766,11 @@ public class WorldClient : SocketClientBase, IWorldClient
     {
         var args = new WorldMapArgs
         {
-            FieldName = worldMap.Field,
-            ImageIndex = 1,
-            Nodes = worldMap.Nodes.Cast<WorldMapNodeInfo>().ToList()
+            FieldName = worldMap.WorldMapKey,
+            FieldIndex = worldMap.FieldIndex,
+            Nodes = worldMap.Nodes.Values.Cast<WorldMapNodeInfo>().ToList()
         };
 
         Send(args);
-    }
-
-    /// <inheritdoc />
-    protected override ValueTask HandlePacketAsync(Span<byte> span)
-    {
-        var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
-
-        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, ref packet);
     }
 }

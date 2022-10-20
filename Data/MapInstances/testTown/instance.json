@@ -1,0 +1,19 @@
+{
+    "flags": "None",
+    "instanceId": "testTown",
+    "music": 1,
+    "name": "Test Town",
+    "templateKey": "3043",
+    "warps": [
+        {
+            "destination": "testRoom:(4, 12)",
+            "source": "(18, 11)"
+        }
+    ],
+    "worldMapWarps": [
+        {
+            "worldMapKey": "field001",
+            "source": "(0, 13)"
+        }
+    ]
+}

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Scripting;
 
-public class ScriptProvider : IScriptProvider
+public sealed class ScriptProvider : IScriptProvider
 {
     private readonly IServiceProvider ServiceProvider;
 

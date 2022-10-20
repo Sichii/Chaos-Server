@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ClickDeserializer : ClientPacketDeserializer<ClickArgs>
+public sealed record ClickDeserializer : ClientPacketDeserializer<ClickArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Click;
 

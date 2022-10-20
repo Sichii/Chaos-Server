@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record RedirectSerializer : ServerPacketSerializer<RedirectArgs>
+public sealed record RedirectSerializer : ServerPacketSerializer<RedirectArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Redirect;
 

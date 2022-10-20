@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class SkillFactory : ISkillFactory
+public sealed class SkillFactory : ISkillFactory
 {
     private readonly ILogger Logger;
     private readonly IScriptProvider ScriptProvider;
@@ -27,7 +27,7 @@ public class SkillFactory : ISkillFactory
     public Skill Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
-        var template = SimpleCache.GetObject<SkillTemplate>(templateKey);
+        var template = SimpleCache.Get<SkillTemplate>(templateKey);
         var skill = new Skill(template, ScriptProvider, extraScriptKeys);
 
         Logger.LogTrace("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);

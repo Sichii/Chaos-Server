@@ -1,3 +1,3 @@
 namespace Chaos.Data;
 
-public record MetafileNode(string Name, ICollection<string> Properties);
+public sealed record MetafileNode(string Name, ICollection<string> Properties);

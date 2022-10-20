@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Time", "Chaos.Time\Ch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Pathfinding", "Chaos.Pathfinding\Chaos.Pathfinding.csproj", "{4EFE455B-61DB-43EF-9842-C6852AB7917C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Entities.Schemas", "Chaos.Entities.Schemas\Chaos.Entities.Schemas.csproj", "{1340C673-C65F-4343-A2CA-DDF3414BEA71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Schemas", "Chaos.Schemas\Chaos.Schemas.csproj", "{1340C673-C65F-4343-A2CA-DDF3414BEA71}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Common", "Chaos.Common\Chaos.Common.csproj", "{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}"
 EndProject

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Chaos.CommandInterceptor.Abstractions;
+using Chaos.Common.Collections;
 using Chaos.Core.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -74,7 +75,7 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
 
         var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
 
-        commandInstance.Execute(source, commandArgs);
+        commandInstance.Execute(source, new ArgumentCollection(commandArgs));
     }
 
     /// <inheritdoc />

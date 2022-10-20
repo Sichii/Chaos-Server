@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record HeartBeatResponseSerializer : ServerPacketSerializer<HeartBeatResponseArgs>
+public sealed record HeartBeatResponseSerializer : ServerPacketSerializer<HeartBeatResponseArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.HeartBeatResponse;
 

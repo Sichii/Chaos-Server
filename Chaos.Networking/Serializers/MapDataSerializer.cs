@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record MapDataSerializer : ServerPacketSerializer<MapDataArgs>
+public sealed record MapDataSerializer : ServerPacketSerializer<MapDataArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.MapData;
 

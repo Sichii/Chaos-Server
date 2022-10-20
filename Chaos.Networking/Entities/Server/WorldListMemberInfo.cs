@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record WorldListMemberInfo
+public sealed record WorldListMemberInfo
 {
     public BaseClass BaseClass { get; set; }
     public WorldListColor Color { get; set; }

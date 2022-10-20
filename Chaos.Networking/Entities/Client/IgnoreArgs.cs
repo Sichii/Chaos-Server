@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record IgnoreArgs(IgnoreType IgnoreType, string? TargetName) : IReceiveArgs;
+public sealed record IgnoreArgs(IgnoreType IgnoreType, string? TargetName) : IReceiveArgs;

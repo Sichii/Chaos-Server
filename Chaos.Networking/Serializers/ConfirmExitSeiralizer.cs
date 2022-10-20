@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record ConfirmExitSerializer : ServerPacketSerializer<ConfirmExitArgs>
+public sealed record ConfirmExitSerializer : ServerPacketSerializer<ConfirmExitArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.ConfirmExit;
 

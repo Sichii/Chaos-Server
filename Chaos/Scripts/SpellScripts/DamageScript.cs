@@ -9,13 +9,13 @@ namespace Chaos.Scripts.SpellScripts;
 
 public class DamageScript : ConfigurableSpellScriptBase
 {
+    protected Animation? Animation { get; init; }
+    protected ushort AnimationSpeed { get; init; } = 100;
+    protected BodyAnimation? BodyAnimation { get; init; }
     protected int Damage { get; init; }
     protected byte? Sound { get; init; }
-    protected BodyAnimation? BodyAnimation { get; init; }
-    protected ushort AnimationSpeed { get; init; } = 100;
     protected ushort? SourceAnimation { get; init; }
     protected ushort? TargetAnimation { get; init; }
-    protected Animation? Animation { get; init; }
 
     /// <inheritdoc />
     public DamageScript(Spell subject)
@@ -31,18 +31,18 @@ public class DamageScript : ConfigurableSpellScriptBase
     }
 
     /// <inheritdoc />
-    public override void OnUse(ActivationContext context)
+    public override void OnUse(SpellContext context)
     {
         var source = context.Source;
         var target = context.Target;
         var map = source.MapInstance;
-        
+
         if (BodyAnimation.HasValue)
             source.AnimateBody(BodyAnimation.Value);
 
         if (Sound.HasValue)
             map.PlaySound(Sound.Value, target);
-        
+
         if (Animation != null)
             target.Animate(Animation, source.Id);
 

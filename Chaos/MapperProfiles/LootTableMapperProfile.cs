@@ -1,12 +1,12 @@
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Content;
+using Chaos.Schemas.Content;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>
+public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>
 {
     private readonly IItemFactory ItemFactory;
     private readonly ITypeMapper Mapper;
@@ -18,9 +18,8 @@ public class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>
     }
 
     /// <inheritdoc />
-    public LootTable Map(LootTableSchema obj) => new()
+    public LootTable Map(LootTableSchema obj) => new(ItemFactory)
     {
-        ItemFactory = ItemFactory,
         Key = obj.Key,
         LootDrops = Mapper.MapMany<LootDrop>(obj.LootDrops).ToList()
     };

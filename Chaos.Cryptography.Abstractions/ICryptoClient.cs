@@ -2,6 +2,9 @@ using Chaos.Cryptography.Abstractions.Definitions;
 
 namespace Chaos.Cryptography.Abstractions;
 
+/// <summary>
+///     Defines a pattern for encryption and decryption on spans using opcodes
+/// </summary>
 public interface ICryptoClient
 {
     byte[] Key { get; }
@@ -26,7 +29,7 @@ public interface ICryptoClient
     ///     Generates a random encryption key from the given values
     /// </summary>
     byte[] GenerateKey(ushort a, byte b);
-    
+
     /// <summary>
     ///     Generates pseudo-random bytes from a seed
     /// </summary>

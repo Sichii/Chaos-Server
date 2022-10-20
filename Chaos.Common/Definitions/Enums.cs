@@ -32,26 +32,27 @@ public enum UserState : ulong
     //add more user states here, double each time
 }
 
-public enum PursuitId : ushort
+public enum MenuOrDialogType : byte
 {
-    None = 0,
-    ReviveSelf = 1,
-    ReviveUser = 2,
-    Teleport = 3,
-    SummonUser = 4,
-    SummonAll = 5,
-    KillUser = 6,
-    LouresCitizenship = 7,
-    BecomeWarrior = 8,
-    BecomeWizard = 9,
-    BecomePriest = 10,
-    BecomeMonk = 11,
-    BecomeRogue = 12,
-    GiveTatteredRobe = 13,
-    ForceGive = 14
+    Menu,
+    MenuWithArgs,
+    MenuTextEntry,
+    ShowItems,
+    ShowOwnedItems,
+    ShowSpells,
+    ShowSkills,
+    ShowLearnedSpells,
+    ShowLearnedSkills,
+    Normal,
+    ItemMenu,
+    DialogTextEntry,
+    Speak,
+    CreatureMenu,
+    Protected,
+    CloseDialog
 }
 
-public enum ReactorTileType
+public enum ReactorActivationType
 {
     Walk = 0,
     DropMoney = 1,
@@ -941,11 +942,11 @@ public enum ExchangeResponseType : byte
     Accept = 5
 }
 
-public enum GameObjectType : byte
+public enum EntityType : byte
 {
-    Merchant = 1,
+    Creature = 1,
     Item = 2,
-    Misc = 4
+    Aisling = 4
 }
 
 public enum IgnoreType : byte

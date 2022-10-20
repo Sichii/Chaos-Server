@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Chaos.Geometry.JsonConverters;
 
-public class PointConverter : JsonConverter<Point>
+public sealed class PointConverter : JsonConverter<Point>
 {
     public override Point Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

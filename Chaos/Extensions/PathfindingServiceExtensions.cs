@@ -12,9 +12,8 @@ public static class PathfindingServiceExtensions
     {
         var walls = new List<IPoint>();
 
-        walls.AddRange(
-            mapInstance.GetEntities<WarpTile>()
-                       .Select(wt => (IPoint)wt.Warp.Source!.Value));
+        walls.AddRange(mapInstance.GetEntities<WarpTile>());
+        walls.AddRange(mapInstance.GetEntities<WorldMapTile>());
 
         //tiles that are walls are added to pathfinder grid details
         for (var x = 0; x < mapInstance.Template.Width; x++)

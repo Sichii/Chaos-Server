@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting;
 
-public class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> where TScript: IScript
-                                                                                where TSource: IScripted
+public sealed class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> where TScript: IScript
+                                                                                       where TSource: IScripted
 {
     private readonly Type CompositeType;
     private readonly ILogger Logger;

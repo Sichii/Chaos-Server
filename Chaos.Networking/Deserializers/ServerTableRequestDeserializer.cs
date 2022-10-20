@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ServerTableRequestDeserializer : ClientPacketDeserializer<ServerTableRequestArgs>
+public sealed record ServerTableRequestDeserializer : ClientPacketDeserializer<ServerTableRequestArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.ServerTableRequest;
 

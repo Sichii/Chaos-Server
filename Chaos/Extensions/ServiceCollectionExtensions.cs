@@ -97,6 +97,8 @@ public static class ServiceCollectionExtensions
         services.AddDirectoryBoundOptionsFromConfig<MetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<MonsterTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<LootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<WorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
 
         services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
         services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
@@ -106,6 +108,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache<Metafile>, MetafileCache>();
         services.AddSingleton<ISimpleCache<MonsterTemplate>, MonsterTemplateCache>();
         services.AddSingleton<ISimpleCache<LootTable>, LootTableCache>();
+        services.AddSingleton<ISimpleCache<WorldMapNode>, WorldMapNodeCache>();
+        services.AddSingleton<ISimpleCache<WorldMap>, WorldMapCache>();
         services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
 
         services.AddSingleton<ISimpleCache, SimpleCache>();

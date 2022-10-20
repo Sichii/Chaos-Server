@@ -4,7 +4,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class DoorMapperProfile : IMapperProfile<Door, DoorInfo>
+public sealed class DoorMapperProfile : IMapperProfile<Door, DoorInfo>
 {
     public Door Map(DoorInfo obj) => throw new NotImplementedException();
 

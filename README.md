@@ -42,17 +42,26 @@ General world options are also changed via Options:WorldOptions
 
 📂Data  
  ┣📂[LootTables](#loottables-folder)  
- ┃ ┗📜rat__stick_apple.json  
+ ┃ ┗📜testAreaRats.json  
  ┣📂[MapData](#mapdata-folder)  
- ┃ ┣📜lod500.map  
- ┃ ┗📜lod3006.map  
+ ┃ ┣📜lod3043.map  
+ ┃ ┣📜lod3044.map  
+ ┃ ┗📜lod5219.map  
  ┣📂[MapInstances](#mapinstances-folder)  
- ┃ ┣📂mileth1  
+ ┃ ┣📂testTown  
  ┃ ┃ ┣📜instance.json  
  ┃ ┃ ┗📜spawns.json  
- ┃ ┗📂milethVillageWay1  
+ ┃ ┣📂testRoom  
+ ┃ ┃ ┣📜instance.json  
+ ┃ ┃ ┗📜spawns.json  
+ ┃ ┗📂testArea  
  ┃   ┣📜instance.json  
  ┃   ┗📜spawns.json  
+ ┣📂[WorldMaps](#worldMaps-folder)  
+ ┃ ┣📂[Nodes](#nodes-folder)  
+ ┃ ┃ ┣📜testTown.json  
+ ┃ ┃ ┗📜testArea.json  
+ ┃ ┗📜field001.json  
  ┣📂Metafiles (TODO)  
  ┣📂Saved  
  ┃ ┗📂bonk  
@@ -68,7 +77,9 @@ General world options are also changed via Options:WorldOptions
    ┣📂[Items](#items-folder)  
    ┃ ┗📜stick.json  
    ┣📂[Maps](#maps-folder)  
-   ┃ ┗📜500.json  
+   ┃ ┣📜3043.json  
+   ┃ ┣📜3044.json  
+   ┃ ┗📜5219.json  
    ┣📂[Monsters](#monsters-folder)  
    ┃ ┗📜common_rat.json  
    ┣📂[Skills](#skills-folder)  
@@ -94,20 +105,22 @@ Contains .json files such as "lootTableKey.json" that are used to determine loot
 | DropChance      | number<br/>(0-100)  | The chance of the item to drop                                     |
 | ItemTemplateKey |       string        | A unique id specific to the template of the item that should drop  |
 
-### Example file "rat1Sticks.json"
+### Example file "testAreaRats.json"
 
-A loot table that gives a creature a 10% chance to drop a stick and a 30% chance to drop an apple
+A loot table that gives a creature a 25% chance to drop a stick
 
 ```json
 {
-  "key": "rat__stick_apple",
-  "lootDrops": [
+  "Key": "testAreaRats",
+  "LootDrops": [
     {
-      "itemTemplateKey": "stick",
-      "dropChance": 10
+      "ItemTemplateKey": "stick",
+      "DropChance": 25
     }
   ]
 }
+
+
 ```
 
 # MapData Folder
@@ -126,7 +139,7 @@ Contains subfolders, one for each map instance
 Multiple map instances can have the same numeric map id, but must have unique instance ids  
 Best practice is for the folder name to match the map instance id
 
-## MapInstance Sub-Folder "Mileth"
+## MapInstance Sub-Folder "TestTown"
 
 Contains two .json files, "instance.json" and "spawns.json"  
 instance.json contains basic information about the map instance  
@@ -145,13 +158,21 @@ spawns.json contains a collection of spawn objects
 | ScriptKeys    |                                array{string}                                | A collection of script keys to load for this map (TODO: scripts section)                                                                                      |
 | TemplateKey   |                            string<br/>(0-32767)                             | A string representation of the map id. Ex. 500 for mileth                                                                                                     |
 | Warps         |                       array{[warp](#warp-properties)}                       | A collection of warps                                                                                                                                         |
+| WorldMapWarps |               array{[worldMapWarp](#warpMapWarp-properties)}                | A collection fo world map warps                                                                                                                               |
 
 ### Warp Properties
 
 | Name         |            Type/Values            | Description                                                                                                                                     |
 |:-------------|:---------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------|
 | Destination  | string<br/>"MapInstanceId:(X, Y)" | A string representation of a location<br/>The map instance id and coordinates the warp sends you to when stepped on<br/> Ex. "mileth1:(10, 10)" |
-| Source       |        string<br/>"(X, Y)"        | A string representation of a point.<br/>The tile coordinates the warp is on<br/>Ex. "(50, 15)"                                                  |
+| Source       |        string<br/>"(X, Y)"        | A string representation of a point<br/>The tile coordinates the warp is on<br/>Ex. "(50, 15)"                                                   |
+
+### WorldMapWarp Properties
+
+| Name        | Type/Values         | Description                                                                                        |
+|-------------|---------------------|----------------------------------------------------------------------------------------------------|
+| WorldMapKey | string              | The unique id of the world map this tile will show the player                                      |
+| Source      | string<br/>"(X, Y)" | A string representation of a point<br/>The tile coordinates the world map is on<br/>Ex. "(50, 15)" |
 
 ### Spawn Properties
 
@@ -181,28 +202,25 @@ spawns.json contains a collection of spawn objects
 
 ### Example file "instance.json"
 
-This is the mileth village map with the added flags of falling snow and usage of the snow tileset  
-This map will have 2 warps to mileth village way  
-The map has a quest script on it
+This is a test town that has a warp to testRoom, and a world map tile on it
 
 ```json
 {
-  "templateKey": "500",
-  "name": "Mileth",
-  "instanceId": "mileth",
+  "flags": "None",
+  "instanceId": "testTown",
   "music": 1,
-  "flags": "snow, snowtileset",
-  "scriptKeys": [
-    "SomeQuestScriptKey"
-  ],
+  "name": "Test Town",
+  "templateKey": "3043",
   "warps": [
     {
-      "source": "(99, 30)",
-      "destination": "milethVillageWay:(0, 15)"
-    },
+      "destination": "testRoom:(4, 12)",
+      "source": "(18, 11)"
+    }
+  ],
+  "worldMapWarps": [
     {
-      "source": "(99, 31)",
-      "destination": "milethVillageWay:(0, 16)"
+      "worldMapKey": "field001",
+      "source": "(0, 13)"
     }
   ]
 }
@@ -210,32 +228,70 @@ The map has a quest script on it
 
 ### Example file "spawns.json"
 
-This will spawn 25 rats that drop sticks/apples/20-30 gold/12 exp every 126-236 seconds up to a maximum of 50 rats  
-The rats will spawn at the bottom quadrant of the map  
-They will aggressively target anyone who comes within 6 spaces of them
+This will spawn 10 rats per 22.5 - 37.5 secs, upt to am aximum of 20  
+Those rats will aggro within 4 spaces
 
 ```json
 [
   {
-    "monsterTemplateKey": "common_rat",
-    "lootTableKey": "rat__stick_apple",
-    "intervalSecs": 180,
-    "intervalVariancePct": 30,
-    "maxAmount": 50,
-    "maxPerSpawn": 25,
-    "aggroRange": 6,
-    "minGoldDrop": 20,
-    "maxGoldDrop": 30,
-    "expReward": 12,
-    "extraScriptKeys": [],
-    "spawnArea": {
-      "top": 75,
-      "left": 75,
-      "width": 25,
-      "height": 25
-    }
+    "LootTableKey": "testAreaRats",
+    "IntervalSecs": 30,
+    "IntervalVariancePct": 50,
+    "MaxPerSpawn": 10,
+    "MaxAmount": 20,
+    "AggroRange": 4,
+    "MinGoldDrop": 10,
+    "MaxGoldDrop": 30,
+    "ExpReward": 50,
+    "MonsterTemplateKey": "Common Rat"
   }
 ]
+```
+
+# WorldMap Folder
+Contains a "Nodes" subfolder that contains all possible world map nodes  
+
+## Nodes Folder
+Contains all possible world map nodes
+
+### WorldMapNode Properties
+
+| Name           | Type/Values                       | Description                                                                                       |
+|----------------|-----------------------------------|---------------------------------------------------------------------------------------------------|
+| NodeKey        | string                            | A unique id specific to this world map node                                                       |
+| Destination    | string<br/>"MapInstanceId:(X, Y)" | A string representation of the map id and coordinates this node will take the player when clicked |
+| Text           | string                            | The text display on the world map for this node                                                   |
+| ScreenPosition | string<br/>"(X, Y)"               | A string representation of the screen coordinates this node will show in the world map            |
+
+### Example file "testTown.json"
+```json
+{
+    "nodeKey": "testTown",
+    "destination": "testTown:(1, 13)",
+    "text": "Test Town",
+    "screenPosition": "(300, 150)"
+}
+
+```
+
+### WorldMap Properties
+
+| Name        | Type/Values                                    | Description                                                                    |
+|-------------|------------------------------------------------|--------------------------------------------------------------------------------|
+| WorldMapKey | string                                         | A unique key specific to this world map                                        |
+| FieldIndex  | number(1-3)                                    | The image index the world map uses<br/>Temuair = 1<br/>Medenia = 2<br/>??? = 3 |
+| NodeKeys    | array{[worldMapNode](#worldMapNode-properties) | A collection of keys to world map nodes to display on this world map           |
+
+### Example file "field001.json"
+```json
+{
+    "worldMapKey": "field001",
+    "fieldIndex": 1,
+    "nodeKeys": [
+        "testTown",
+        "testArea"
+    ]
+}
 ```
 
 # Metafiles Folder
@@ -304,7 +360,7 @@ Contains .json files to be used as blueprints for items
 
 ### Example file "stick.json"
 
-A basic stick item that gives 1 str
+A basic stick item that gives 1 str and 100% atk speed
 
 ```json
 {
@@ -329,7 +385,6 @@ A basic stick item that gives 1 str
     }
   }
 }
-
 ```
 
 ## Maps Folder
@@ -347,18 +402,14 @@ Each template should match up to the numeric id of a mapdata file
 | WarpPoints  |   array{string}    | The coordinates of each warp tile on the map                                                                                                      |
 | Width       | number<br/>(1-255) | The width of the map                                                                                                                              |
 
-### Example file "500.json"
+### Example file "3044.json"
 
 ```json
 {
-  "height": 100,
-  "width": 100,
-  "templateKey": "500",
-  "warpPoints": [
-    "(99, 30)",
-    "(99, 31)"
-  ],
-  "scriptKeys": []
+  "height": 14,
+  "templateKey": "3044",
+  "warpPoints": [],
+  "width": 14
 }
 ```
 
@@ -407,34 +458,33 @@ Contains .json files to be used as blueprints for monsters
 
 ```json
 {
-  "templateKey": "common_rat",
-  "statSheet": {
-    "ability": 0,
-    "level": 5,
-    "maximumHp": 100,
-    "maximumMp": 100,
-    "ac": 50,
-    "str": 1,
-    "int": 1,
-    "wis": 1,
-    "con": 2,
-    "dex": 1,
-    "magicResistance": 0
+  "TemplateKey": "Common Rat",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 20,
+    "MaximumHp": 100,
+    "MaximumMp": 100,
+    "Ac": 50,
+    "Str": 1,
+    "Int": 1,
+    "Wis": 1,
+    "Con": 2,
+    "Dex": 1,
+    "MagicResistance": 0
   },
-  "type": "normal",
-  "direction": "down",
-  "name": "Common Rat",
-  "sprite": 7,
-  "wanderIntervalMs": 2000,
-  "moveIntervalMs": 1500,
-  "skillIntervalMs": 1500,
-  "spellIntervalMs": 10000,
-  "assailIntervalMs": 1500,
-  "spellTemplateKeys": [],
-  "skillTemplateKeys": ["assail"],
-  "scriptKeys": ["commonMonster"]
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Common Rat",
+  "Sprite": 7,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1500,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 10000,
+  "AssailIntervalMs": 1500,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["Assail"],
+  "ScriptKeys": ["CommonMonster"]
 }
-
 ```
 
 ## Skills Folder
@@ -471,7 +521,6 @@ Contains .json files to be used as blueprints for skills
     }
   }
 }
-
 ```
 
 ## Spells Folder
@@ -496,7 +545,7 @@ Contains .json files to be used as blueprints for spells
 
 ```json
 {
-  "templateKey": "fire_Breath",
+  "templateKey": "fireBreath",
   "name": "Fire Breath",
   "panelSprite": 39,
   "scriptKeys": ["cascade"],

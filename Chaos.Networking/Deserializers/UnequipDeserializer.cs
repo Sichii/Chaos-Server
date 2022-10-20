@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record UnequipDeserializer : ClientPacketDeserializer<UnequipArgs>
+public sealed record UnequipDeserializer : ClientPacketDeserializer<UnequipArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Unequip;
 

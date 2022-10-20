@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record ConfirmClientWalkSerializer : ServerPacketSerializer<ConfirmClientWalkArgs>
+public sealed record ConfirmClientWalkSerializer : ServerPacketSerializer<ConfirmClientWalkArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.ConfirmClientWalk;
 

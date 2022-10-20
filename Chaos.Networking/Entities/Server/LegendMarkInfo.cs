@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record LegendMarkInfo
+public sealed record LegendMarkInfo
 {
     public MarkColor Color { get; set; }
     public MarkIcon Icon { get; set; }

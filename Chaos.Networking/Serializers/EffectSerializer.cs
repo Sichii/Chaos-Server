@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record EffectSerializer : ServerPacketSerializer<EffectArgs>
+public sealed record EffectSerializer : ServerPacketSerializer<EffectArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Effect;
 

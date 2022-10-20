@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record UserIdArgs : ISendArgs
+public sealed record UserIdArgs : ISendArgs
 {
     public BaseClass BaseClass { get; set; }
     public Direction Direction { get; set; }

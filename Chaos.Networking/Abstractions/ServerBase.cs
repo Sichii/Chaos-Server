@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking.Abstractions;
 
-public abstract class ServerBase<T> : BackgroundService, IServer<T> where T : ISocketClient
+public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISocketClient
 {
     protected ClientHandler?[] ClientHandlers { get; }
     protected IPEndPoint EndPoint { get; }

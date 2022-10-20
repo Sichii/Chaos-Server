@@ -5,7 +5,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.TypeMapper;
 
-public class Mapper : ITypeMapper
+public sealed class Mapper : ITypeMapper
 {
     private static readonly ConcurrentDictionary<(Type From, Type To), Func<object, object>> ResolverCache;
     private readonly IServiceProvider Provider;

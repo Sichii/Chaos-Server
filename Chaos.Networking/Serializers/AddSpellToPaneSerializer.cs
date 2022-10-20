@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record AddSpellToPaneSerializer : ServerPacketSerializer<AddSpellToPaneArgs>
+public sealed record AddSpellToPaneSerializer : ServerPacketSerializer<AddSpellToPaneArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.AddSpellToPane;
 

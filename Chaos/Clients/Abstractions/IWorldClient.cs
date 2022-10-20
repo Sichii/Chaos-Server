@@ -3,6 +3,7 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Abstractions;
+using Chaos.Objects.Dialog;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -37,6 +38,7 @@ public interface IWorldClient : ISocketClient
 
     void SendDisplayAisling(Aisling aisling);
 
+    void SendDialog(Dialog dialog, object source, string? menuArg = null);
     //void SendMenu
     //void SendDialog
     //void SendBoard

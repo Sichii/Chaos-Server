@@ -1,6 +1,6 @@
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -9,8 +9,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.MapperProfiles;
 
-public class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
-                                  IMapperProfile<Spell, SpellInfo>
+public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
+                                         IMapperProfile<Spell, SpellInfo>
 {
     private readonly ILogger<SpellMapperProfile> Logger;
     private readonly IScriptProvider ScriptProvider;
@@ -29,7 +29,7 @@ public class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
 
     public Spell Map(SpellSchema obj)
     {
-        var template = SimpleCache.GetObject<SpellTemplate>(obj.TemplateKey);
+        var template = SimpleCache.Get<SpellTemplate>(obj.TemplateKey);
 
         var spell = new Spell(
             template,

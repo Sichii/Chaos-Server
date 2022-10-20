@@ -5,9 +5,10 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Containers;
 
-public class LootTable
+public sealed class LootTable
 {
-    public required IItemFactory ItemFactory { get; init; }
+    private readonly IItemFactory ItemFactory;
+    public LootTable(IItemFactory itemFactory) => ItemFactory = itemFactory;
     public required string Key { get; init; }
     public required ICollection<LootDrop> LootDrops { get; init; } = Array.Empty<LootDrop>();
 

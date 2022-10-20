@@ -1,17 +1,17 @@
 {
   "bodySprite": "Female",
-  "direction": "Right",
+  "direction": "Down",
   "effects": [],
   "gender": "Female",
   "hairStyle": 4,
   "ignoreList": [],
-  "mapInstanceId": "Test1",
+  "mapInstanceId": "testTown",
   "name": "bonk",
   "statSheet": {
+    "maxWeight": 43,
     "toNextLevel": 400,
     "totalExp": 500,
     "unspentPoints": 2,
-    "maxWeight": 43,
     "currentMp": 50,
     "level": 2,
     "con": 1,
@@ -30,6 +30,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 6,
-  "y": 7
+  "x": 25,
+  "y": 25
 }

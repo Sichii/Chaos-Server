@@ -1,10 +1,10 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class AttributesMapperProfile : IMapperProfile<Attributes, AttributesSchema>
+public sealed class AttributesMapperProfile : IMapperProfile<Attributes, AttributesSchema>
 {
     public Attributes Map(AttributesSchema obj) => new()
     {

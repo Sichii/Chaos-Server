@@ -6,7 +6,7 @@ using Chaos.Templates.Abstractions;
 
 namespace Chaos.Templates;
 
-public record MapTemplate : ITemplate, IScripted
+public sealed record MapTemplate : ITemplate, IScripted
 {
     public ushort CheckSum { get; set; }
     public Dictionary<IPoint, DoorTemplate> Doors { get; set; } = new(PointEqualityComparer.Instance);

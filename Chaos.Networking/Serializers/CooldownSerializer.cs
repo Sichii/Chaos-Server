@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record CooldownSerializer : ServerPacketSerializer<CooldownArgs>
+public sealed record CooldownSerializer : ServerPacketSerializer<CooldownArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Cooldown;
 

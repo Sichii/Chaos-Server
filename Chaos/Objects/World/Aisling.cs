@@ -13,6 +13,7 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Time;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 using PointExtensions = Chaos.Extensions.Geometry.PointExtensions;
@@ -38,6 +39,8 @@ public sealed class Aisling : Creature
     public IInventory Inventory { get; private set; }
     public bool IsAdmin { get; set; }
     public DateTime LastRefresh { get; set; }
+    public ResettingCounter WalkCounter { get; set; }
+    public DateTime LastEquipOrUnEquip { get; set; }
     public Legend Legend { get; private set; }
     public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
@@ -56,6 +59,27 @@ public sealed class Aisling : Creature
     public override StatSheet StatSheet => UserStatSheet;
     public override CreatureType Type => CreatureType.Aisling;
     protected override ILogger<Aisling> Logger { get; }
+    public bool ShouldRefresh => DateTime.UtcNow.Subtract(LastRefresh).TotalMilliseconds > WorldOptions.Instance.RefreshIntervalMs;
+    public bool ShouldWalk
+    {
+        get
+        {
+            if (WorldOptions.Instance.ProhibitF5Walk && (DateTime.UtcNow.Subtract(LastRefresh).TotalMilliseconds < 150))
+                return false;
+
+            if (WorldOptions.Instance.ProhibitItemSwitchWalk && (DateTime.UtcNow.Subtract(LastEquipOrUnEquip).TotalMilliseconds < 150))
+                return false;
+
+            if (WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
+            {
+                Logger.LogWarning("{Name} is probably speed walking", Name);
+                
+                return false;
+            }
+
+            return true;
+        }
+    }
 
     public Aisling(
         string name,
@@ -112,7 +136,8 @@ public sealed class Aisling : Creature
         ActiveObject = new ActiveObject();
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
-        ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond);
+        ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
+        WalkCounter = new ResettingCounter(10, new IntervalTimer(TimeSpan.FromSeconds(3)));
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
 
         //this object is purely intended to be created and immediately serialized
@@ -130,7 +155,7 @@ public sealed class Aisling : Creature
 
         foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
                                        .ThatCanSee(this))
-            obj.Client.SendHealthBar(obj, hitSound);
+            obj.Client.SendHealthBar(this, hitSound);
     }
 
     public void BeginObserving()
@@ -300,7 +325,7 @@ public sealed class Aisling : Creature
     {
         var now = DateTime.UtcNow;
 
-        if (!forceRefresh && (now.Subtract(LastRefresh).TotalMilliseconds < WorldOptions.Instance.RefreshIntervalMs))
+        if (!forceRefresh && !ShouldRefresh)
             return;
 
         (var aislings, var doors, var otherVisibles) = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
@@ -329,7 +354,7 @@ public sealed class Aisling : Creature
         Client.SendDisplayAisling(this);
         Client.SendRefreshResponse();
 
-        MapInstance.ActivateReactors(this, ReactorTileType.Walk);
+        MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
     }
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
@@ -404,20 +429,16 @@ public sealed class Aisling : Creature
         SkillBook.Update(delta);
         SpellBook.Update(delta);
         ActionThrottle.Update(delta);
+        WalkCounter.Update(delta);
         base.Update(delta);
-    }
-
-    /// <inheritdoc />
-    public override void WarpTo(IPoint destinationPoint)
-    {
-        Hide();
-        SetLocation(destinationPoint);
-        Client.SendLocation();
-        Display();
     }
 
     public override void Walk(Direction direction)
     {
+        //don't allow f5 walking
+        if (!ShouldWalk)
+            return;
+        
         Direction = direction;
         var startPoint = Point.From(this);
         var endPoint = PointExtensions.DirectionalOffset(this, direction);
@@ -454,8 +475,14 @@ public sealed class Aisling : Creature
         //if they were able to see eachother
         //remove eachother from eachother's view
         foreach (var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
+        {
             if (visible.IsVisibleTo(this))
                 visible.HideFrom(this);
+
+            //handle departure
+            if (visible is Creature creature)
+                Helpers.HandleDeparture(creature, this);
+        }
 
         //for each aisling that came into view
         //if they are able to see eachother
@@ -468,6 +495,11 @@ public sealed class Aisling : Creature
             if (IsVisibleTo(aisling))
                 ShowTo(aisling);
         }
+        
+        //handle approach
+        foreach(var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
+            if (visible is Creature creature)
+                Helpers.HandleApproach(creature, this);
 
         //send any doors that came into view
         Client.SendDoors(objsAfterWalk.Doors.Except(objsBeforeWalk.Doors));
@@ -487,6 +519,59 @@ public sealed class Aisling : Creature
                 aisling.Client.SendCreatureWalk(Id, startPoint, direction);
 
         Client.SendConfirmClientWalk(startPoint, direction);
-        MapInstance.ActivateReactors(this, ReactorTileType.Walk);
+        MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
+    }
+
+    /// <inheritdoc />
+    public override void WarpTo(IPoint destinationPoint)
+    {
+        Hide();
+
+        var creaturesBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                         .ToList();
+
+        SetLocation(destinationPoint);
+        Client.SendLocation();
+        
+        var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                        .ToList();
+        
+        foreach (var creature in creaturesBefore.Except(creaturesAfter))
+            Helpers.HandleDeparture(creature, this);
+        
+        foreach (var creature in creaturesAfter.Except(creaturesBefore))
+            Helpers.HandleApproach(creature, this);
+        
+        Display();
+    }
+
+    public void Equip(EquipmentType type, Item item)
+    {
+        var slot = item.Slot;
+        
+        //try equip,
+        if (Equipment.TryEquip(type, item, out var returnedItem))
+        {
+            Inventory.Remove(slot);
+            item.Script.OnEquipped(this);
+
+            if (returnedItem != null)
+                Inventory.TryAddToNextSlot(returnedItem);
+            
+            LastEquipOrUnEquip = DateTime.UtcNow;
+        }
+    }
+
+    public void UnEquip(EquipmentSlot slot)
+    {
+        if (Inventory.IsFull)
+            return;
+
+        if (!Equipment.TryGetRemove((byte)slot, out var item))
+            return;
+
+        Inventory.TryAddToNextSlot(item);
+        item.Script.OnUnEquipped(this);
+        LastEquipOrUnEquip = DateTime.UtcNow;
     }
 }

@@ -4,7 +4,7 @@ using Chaos.Objects.Panel;
 
 namespace Chaos.Containers;
 
-public class SkillBook : PanelBase<Skill>
+public sealed class SkillBook : PanelBase<Skill>
 {
     public SkillBook(IEnumerable<Skill>? skills = null)
         : base(

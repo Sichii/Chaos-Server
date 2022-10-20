@@ -1,6 +1,6 @@
 using System.Text;
-using System.Text.RegularExpressions;
 using Chaos.Packets.Abstractions.Definitions;
+using Chaos.Packets.Definitions;
 
 namespace Chaos.Packets;
 
@@ -41,7 +41,7 @@ public ref struct ServerPacket
         return str;
     }
 
-    public string GetHexString() => $"{OpCode}: {Regex.Replace(Convert.ToHexString(Buffer), "(.{2})", "$1 ", RegexOptions.Compiled)}";
+    public string GetHexString() => $"{OpCode}: {RegexCache.DOUBLE_BYTE_REGEX.Replace(Convert.ToHexString(Buffer), "$1 ")}";
 
     public byte[] ToArray() => ToSpan().ToArray();
 

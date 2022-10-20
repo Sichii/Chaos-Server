@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ItemDropDeserializer : ClientPacketDeserializer<ItemDropArgs>
+public sealed record ItemDropDeserializer : ClientPacketDeserializer<ItemDropArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.ItemDrop;
 

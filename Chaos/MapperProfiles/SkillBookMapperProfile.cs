@@ -1,11 +1,11 @@
 using Chaos.Containers;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class SkillBookMapperProfile : IMapperProfile<SkillBook, SkillBookSchema>
+public sealed class SkillBookMapperProfile : IMapperProfile<SkillBook, SkillBookSchema>
 {
     private readonly ITypeMapper Mapper;
     public SkillBookMapperProfile(ITypeMapper mapper) => Mapper = mapper;

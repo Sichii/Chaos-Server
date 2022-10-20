@@ -2,7 +2,7 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.EqualityComparers;
 
-public class LocationEqualityComparer : IEqualityComparer<ILocation>
+public sealed class LocationEqualityComparer : IEqualityComparer<ILocation>
 {
     public static IEqualityComparer<ILocation> Instance { get; } = new LocationEqualityComparer();
 

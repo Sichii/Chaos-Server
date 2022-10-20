@@ -2,7 +2,7 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.EqualityComparers;
 
-public class PointEqualityComparer : IEqualityComparer<IPoint>
+public sealed class PointEqualityComparer : IEqualityComparer<IPoint>
 {
     public static IEqualityComparer<IPoint> Instance { get; } = new PointEqualityComparer();
 

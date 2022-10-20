@@ -1,6 +1,6 @@
 namespace Chaos.Templates;
 
-public class DoorTemplate
+public sealed class DoorTemplate
 {
     public bool Closed { get; init; }
     public bool OpenRight { get; init; }

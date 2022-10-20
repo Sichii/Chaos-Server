@@ -2,7 +2,7 @@ using Chaos.Common.Collections.Synchronized;
 
 namespace Chaos.Containers;
 
-public class TitleList : SynchronizedHashSet<string>
+public sealed class TitleList : SynchronizedHashSet<string>
 {
     public TitleList(IEnumerable<string>? items = null)
         : base(items, StringComparer.OrdinalIgnoreCase) { }

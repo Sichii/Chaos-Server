@@ -10,6 +10,7 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World.Abstractions;
@@ -109,16 +110,21 @@ public abstract class Creature : NamedEntity, IEffected
 
     public void Pathfind(IPoint target)
     {
+        var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
+                                     .Where(door => door.Closed);
+
         var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                         .ThatCollideWith(this)
-                                         .ToList<IPoint>();
+                                         .ThatCollideWith(this);
+
+        var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
+                                                .ToList();
 
         var direction = MapInstance.Pathfinder.Pathfind(
             MapInstance.InstanceId,
             this,
             target,
             Type == CreatureType.WalkThrough,
-            nearbyCreatures);
+            nearbyUnwalkablePoints);
 
         if (direction == Direction.Invalid)
             return;
@@ -187,7 +193,7 @@ public abstract class Creature : NamedEntity, IEffected
         else if (!MapInstance.TryGetObject(targetId.Value, out target!))
             return false;
 
-        var context = new ActivationContext(target, this, prompt);
+        var context = new SpellContext(target, this, prompt);
 
         spell.Use(context);
 
@@ -214,39 +220,74 @@ public abstract class Creature : NamedEntity, IEffected
         if (!MapInstance.IsWalkable(endPoint, Type == CreatureType.WalkThrough))
             return;
 
-        var visibleBefore = MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                       .ThatCanSee(this)
+        var visibleBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                        .ToList();
 
         SetLocation(endPoint);
 
-        var visibleAfter = MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                      .ThatCanSee(this)
+        var visibleAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                       .ToList();
 
-        foreach (var aisling in visibleBefore.Except(visibleAfter))
-            HideFrom(aisling);
+        foreach (var creature in visibleBefore.Except(visibleAfter))
+        {
+            if (creature is Aisling aisling)
+                HideFrom(aisling);
 
-        foreach (var aisling in visibleAfter.Except(visibleBefore))
-            ShowTo(aisling);
+            Helpers.HandleDeparture(creature, this);
+        }
 
-        foreach (var aisling in visibleAfter.Intersect(visibleBefore))
+        foreach (var creature in visibleAfter.Except(visibleBefore))
+        {
+            if (creature is Aisling aisling)
+                ShowTo(aisling);
+
+            Helpers.HandleApproach(creature, this);
+        }
+
+        foreach (var aisling in visibleAfter.Intersect(visibleBefore).OfType<Aisling>())
             aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
 
-        MapInstance.ActivateReactors(this, ReactorTileType.Walk);
+        MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
+    }
+
+    /// <inheritdoc />
+    public override void WarpTo(IPoint destinationPoint)
+    {
+        Hide();
+
+        var creaturesBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                         .ToList();
+
+        SetLocation(destinationPoint);
+
+        var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                        .ToList();
+        
+        foreach (var creature in creaturesBefore.Except(creaturesAfter))
+            Helpers.HandleDeparture(creature, this);
+        
+        foreach (var creature in creaturesAfter.Except(creaturesBefore))
+            Helpers.HandleApproach(creature, this);
+        
+        Display();
     }
 
     public void Wander()
     {
-        var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this, 1)
-                                         .ThatCollideWith(this)
-                                         .ToList<IPoint>();
+        var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
+                                     .Where(door => door.Closed);
 
+        var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this, 1)
+                                         .ThatCollideWith(this);
+
+        var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
+                                                .ToList();
+        
         var direction = MapInstance.Pathfinder.Wander(
             MapInstance.InstanceId,
             this,
             Type == CreatureType.WalkThrough,
-            nearbyCreatures);
+            nearbyUnwalkablePoints);
 
         if (direction == Direction.Invalid)
             return;
@@ -273,4 +314,7 @@ public abstract class Creature : NamedEntity, IEffected
 
     public virtual bool WithinLevelRange(Creature other) =>
         LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);
+
+    public virtual void OnApproached(Creature creature) { }
+    public virtual void OnDeparture(Creature creature) { }
 }

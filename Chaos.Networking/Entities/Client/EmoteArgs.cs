@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record EmoteArgs(BodyAnimation BodyAnimation) : IReceiveArgs;
+public sealed record EmoteArgs(BodyAnimation BodyAnimation) : IReceiveArgs;

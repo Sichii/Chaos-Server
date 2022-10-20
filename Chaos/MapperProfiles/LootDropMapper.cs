@@ -1,10 +1,10 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Content;
+using Chaos.Schemas.Content;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class LootDropMapper : IMapperProfile<LootDrop, LootDropSchema>
+public sealed class LootDropMapper : IMapperProfile<LootDrop, LootDropSchema>
 {
     /// <inheritdoc />
     public LootDrop Map(LootDropSchema obj) => new()

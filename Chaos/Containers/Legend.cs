@@ -3,7 +3,7 @@ using Chaos.Time;
 
 namespace Chaos.Containers;
 
-public class Legend : IEnumerable<LegendMark>
+public sealed class Legend : IEnumerable<LegendMark>
 {
     private readonly ConcurrentDictionary<string, LegendMark> Marks;
 

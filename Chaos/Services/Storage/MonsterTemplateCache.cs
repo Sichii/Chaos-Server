@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Chaos.Core.Utilities;
-using Chaos.Entities.Schemas.Templates;
+using Chaos.Schemas.Templates;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>
+public sealed class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<MonsterTemplate, string> KeySelector => t => t.TemplateKey;

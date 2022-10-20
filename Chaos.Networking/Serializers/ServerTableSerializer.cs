@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record ServerTableSerializer : ServerPacketSerializer<ServerTableArgs>
+public sealed record ServerTableSerializer : ServerPacketSerializer<ServerTableArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.ServerTable;
 

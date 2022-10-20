@@ -5,7 +5,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Objects;
 
-public record Notice : INotice
+public sealed record Notice : INotice
 {
     public uint CheckSum { get; }
     public byte[] Data { get; }

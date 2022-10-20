@@ -8,11 +8,12 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Containers;
 
-public class MapEntityCollection : IDeltaUpdatable
+public sealed class MapEntityCollection : IDeltaUpdatable
 {
     private readonly HashSet<Aisling> Aislings;
     private readonly Rectangle Bounds;
-    private readonly HashSet<Creature> Creatures;
+    private readonly HashSet<Monster> Monsters;
+    private readonly HashSet<Merchant> Merchants;
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
@@ -24,7 +25,8 @@ public class MapEntityCollection : IDeltaUpdatable
     {
         EntityLookup = new Dictionary<uint, MapEntity>();
         PointLookup = new HashSet<MapEntity>[mapWidth, mapHeight];
-        Creatures = new HashSet<Creature>(WorldEntity.IdComparer);
+        Monsters = new HashSet<Monster>(WorldEntity.IdComparer);
+        Merchants = new HashSet<Merchant>(WorldEntity.IdComparer);
         Aislings = new HashSet<Aisling>(WorldEntity.IdComparer);
         GroundEntities = new HashSet<GroundEntity>(WorldEntity.IdComparer);
         Reactors = new HashSet<ReactorTile>(WorldEntity.IdComparer);
@@ -54,8 +56,12 @@ public class MapEntityCollection : IDeltaUpdatable
                 Aislings.Add(aisling);
 
                 break;
-            case Creature creature:
-                Creatures.Add(creature);
+            case Monster monster:
+                Monsters.Add(monster);
+
+                break;
+            case Merchant merchant:
+                Merchants.Add(merchant);
 
                 break;
             case GroundEntity groundEntity:
@@ -107,9 +113,13 @@ public class MapEntityCollection : IDeltaUpdatable
                 Aislings.Remove(aisling);
 
                 break;
-            case Creature creature:
-                Creatures.Remove(creature);
+            case Monster monster:
+                Monsters.Remove(monster);
 
+                break;
+            case Merchant merchant:
+                Merchants.Remove(merchant);
+                
                 break;
             case GroundEntity groundEntity:
                 GroundEntities.Remove(groundEntity);
@@ -157,7 +167,7 @@ public class MapEntityCollection : IDeltaUpdatable
         foreach (var aisling in Aislings)
             aisling.Update(delta);
 
-        foreach (var creature in Creatures)
+        foreach (var creature in Monsters)
             creature.Update(delta);
 
         foreach (var groundEntity in GroundEntities)
@@ -170,26 +180,39 @@ public class MapEntityCollection : IDeltaUpdatable
 
         if (type == typeof(MapEntity))
             return (IEnumerable<T>)EntityLookup.Values.AsEnumerable();
-
-        if (type.IsAssignableTo(typeof(ReactorTile)))
-            return Reactors.OfType<T>();
-
+        
         if (type == typeof(VisibleEntity))
-            return (IEnumerable<T>)Doors.Concat<VisibleEntity>(Creatures)
+            return (IEnumerable<T>)Doors.Concat<VisibleEntity>(Monsters)
+                                        .Concat(Merchants)
+                                        .Concat(Aislings)
                                         .Concat(GroundEntities);
 
         if (type == typeof(Door))
             return (IEnumerable<T>)Doors;
 
         if (type == typeof(NamedEntity))
-            return (IEnumerable<T>)Creatures.Concat<NamedEntity>(GroundEntities);
+            return (IEnumerable<T>)Monsters
+                                   .Concat<NamedEntity>(Merchants)
+                                   .Concat(Aislings)
+                                   .Concat(GroundEntities);
 
+        if (type == typeof(Creature))
+            return (IEnumerable<T>)Monsters
+                                   .Concat<Creature>(Merchants)
+                                   .Concat(Aislings);
+        
         if (type == typeof(Aisling))
             return (IEnumerable<T>)Aislings;
 
-        if (type.IsAssignableTo(typeof(Creature)))
-            return Creatures.Concat(Aislings).OfType<T>();
+        if (type == typeof(Monster))
+            return (IEnumerable<T>)Monsters;
 
+        if (type == typeof(Merchant))
+            return (IEnumerable<T>)Merchants;
+        
+        if (type.IsAssignableTo(typeof(ReactorTile)))
+            return Reactors.OfType<T>();
+        
         if (type.IsAssignableTo(typeof(GroundEntity)))
             return GroundEntities.OfType<T>();
 
@@ -207,7 +230,7 @@ public class MapEntityCollection : IDeltaUpdatable
         if (tType.IsAssignableTo(typeof(Aisling)))
             entityCount = Aislings.Count;
         else if (tType.IsAssignableTo(typeof(Creature)))
-            entityCount = Creatures.Count;
+            entityCount = Monsters.Count;
         else if (tType.IsAssignableTo(typeof(GroundEntity)))
             entityCount = GroundEntities.Count;
         else if (tType.IsAssignableFrom(typeof(VisibleEntity)))
@@ -227,5 +250,18 @@ public class MapEntityCollection : IDeltaUpdatable
 
         //otherwise just check every entity of that type with a distance check
         return Values<T>().ThatAreWithinRange(point, range);
+    }
+
+    public void Clear()
+    {
+        EntityLookup.Clear();
+        Aislings.Clear();
+        Monsters.Clear();
+        GroundEntities.Clear();
+        Reactors.Clear();
+        Doors.Clear();
+
+        foreach (var lookup in PointLookup.Flatten())
+            lookup.Clear();
     }
 }

@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record TurnDeserializer : ClientPacketDeserializer<TurnArgs>
+public sealed record TurnDeserializer : ClientPacketDeserializer<TurnArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Turn;
 

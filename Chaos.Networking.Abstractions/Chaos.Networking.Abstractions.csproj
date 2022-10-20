@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj" />
-        <ProjectReference Include="..\Chaos.Cryptography.Abstractions\Chaos.Cryptography.Abstractions.csproj" />
-        <ProjectReference Include="..\Chaos.Packets\Chaos.Packets.csproj" />
+        <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.Cryptography.Abstractions\Chaos.Cryptography.Abstractions.csproj"/>
+        <ProjectReference Include="..\Chaos.Packets\Chaos.Packets.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0"/>
     </ItemGroup>
 
 </Project>

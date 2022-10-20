@@ -1,15 +1,15 @@
+using System.Diagnostics;
 using Chaos.Core.Utilities;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Objects.World;
 using Chaos.Scripts.MonsterScripts.Abstractions;
-using Chaos.Time;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
 public class AttackingScript : MonsterScriptBase
 {
-    private ValueStopwatch? AttackDelay { get; set; }
+    private Stopwatch? AttackDelay { get; set; }
 
     /// <inheritdoc />
     public AttackingScript(Monster subject)
@@ -37,13 +37,13 @@ public class AttackingScript : MonsterScriptBase
         //if attack delay is null, it means we just reached our target
         if (AttackDelay is null)
         {
-            AttackDelay = ValueStopwatch.StartNew();
+            AttackDelay = Stopwatch.StartNew();
 
             return;
         }
 
         //we should wait a moment to turn and attack
-        if (AttackDelay.Value.GetElapsedTime().TotalMilliseconds < 750)
+        if (AttackDelay.ElapsedMilliseconds < 750)
             return;
 
         if (Subject.Direction != targetDirection)

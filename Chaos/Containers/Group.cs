@@ -4,7 +4,7 @@ using Chaos.Objects.World;
 
 namespace Chaos.Containers;
 
-public class Group : IEnumerable<Aisling>
+public sealed class Group : IEnumerable<Aisling>
 {
     private readonly List<Aisling> Members;
     private readonly HashSet<GroupInvite> PendingInvites;

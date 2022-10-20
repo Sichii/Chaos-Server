@@ -3,7 +3,7 @@ using Chaos.Time;
 
 namespace Chaos.Data;
 
-public record LegendMark(
+public sealed record LegendMark(
     string Text,
     string Key,
     MarkIcon Icon,
@@ -15,7 +15,7 @@ public record LegendMark(
     public GameTime Added { get; set; } = Added;
     public int Count { get; set; } = Count;
 
-    public virtual bool Equals(LegendMark? other)
+    public bool Equals(LegendMark? other)
     {
         if (ReferenceEquals(null, other))
             return false;

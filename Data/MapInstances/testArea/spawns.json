@@ -1,0 +1,14 @@
+[
+    {
+        "LootTableKey": "testAreaRats",
+        "IntervalSecs": 30,
+        "IntervalVariancePct": 50,
+        "MaxPerSpawn": 10,
+        "MaxAmount": 20,
+        "AggroRange": 4,
+        "MinGoldDrop": 10,
+        "MaxGoldDrop": 30,
+        "ExpReward": 50,
+        "MonsterTemplateKey": "common_rat"
+    }
+]

@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record SetNotepadDeserializer : ClientPacketDeserializer<SetNotepadArgs>
+public sealed record SetNotepadDeserializer : ClientPacketDeserializer<SetNotepadArgs>
 {
     public override ClientOpCode ClientOpCode { get; } = ClientOpCode.SetNotepad;
 

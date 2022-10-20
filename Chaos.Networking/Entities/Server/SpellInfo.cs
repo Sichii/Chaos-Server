@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record SpellInfo
+public sealed record SpellInfo
 {
     public byte CastLines { get; set; }
     public string Name { get; set; } = null!;

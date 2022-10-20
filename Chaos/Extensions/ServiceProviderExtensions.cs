@@ -1,10 +1,11 @@
 using Chaos.Containers;
 using Chaos.Core.Utilities;
-using Chaos.Entities.Schemas.Aisling;
-using Chaos.Entities.Schemas.Templates;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Templates;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -78,6 +79,67 @@ public static class ServiceProviderExtensions
                         break;
                     }
                 }
+        }
+    }
+
+    public static void ReloadMaps(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+        var oldMaps = mapCache.ToList();
+
+        AsyncHelpers.RunSync(() => mapCache.ReloadAsync());
+
+        foreach (var oldMap in oldMaps)
+        {
+            var newMap = mapCache.Get(oldMap.InstanceId);
+
+            foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
+                newMap.SimpleAdd(groundEntity);
+
+            foreach(var monster in oldMap.GetEntities<Monster>())
+                newMap.SimpleAdd(monster);
+
+            foreach (var aisling in oldMap.GetEntities<Aisling>())
+                newMap.AddObject(aisling, aisling);
+            
+            oldMap.Destroy();
+        }
+    }
+
+    public static void ReloadMonsters(this IServiceProvider provider)
+    {
+        var monsterFactory = provider.GetRequiredService<IMonsterFactory>();
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+        var monsterTemplateCache = cacheProvider.GetCache<MonsterTemplate>();
+
+        AsyncHelpers.RunSync(() => monsterTemplateCache.ReloadAsync());
+
+        foreach (var mapInstance in mapCache)
+        {
+            using var @lock = mapInstance.Sync.Enter();
+
+            var monstersToAdd = new List<Monster>();
+
+            foreach (var monster in mapInstance.GetEntities<Monster>().ToList())
+            {
+                var newMonster = monsterFactory.Create(
+                    monster.Template.TemplateKey,
+                    monster.MapInstance,
+                    monster,
+                    monster.ScriptKeys);
+
+                newMonster.Items.AddRange(monster.Items);
+                newMonster.Gold = monster.Gold;
+                newMonster.Experience = monster.Experience;
+                newMonster.AggroRange = monster.AggroRange;
+
+                monster.MapInstance.RemoveObject(monster);
+                monstersToAdd.Add(newMonster);
+            }
+
+            mapInstance.AddObjects(monstersToAdd);
         }
     }
 
@@ -171,51 +233,5 @@ public static class ServiceProviderExtensions
                         break;
                 }
         }
-    }
-
-    public static void ReloadMonsters(this IServiceProvider provider)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var monsterTemplateCache = cacheProvider.GetCache<MonsterTemplate>();
-        var mapper = provider.GetRequiredService<ITypeMapper>();
-
-        AsyncHelpers.RunSync(() => monsterTemplateCache.ReloadAsync());
-        
-        foreach (var mapInstance in mapCache)
-        {
-            using var @lock = mapInstance.Sync.Enter();
-
-            var monstersToAdd = new List<Monster>();
-            
-            foreach (var monster in mapInstance.GetEntities<Monster>().ToList())
-            {
-                var schema = mapper.Map<MonsterTemplateSchema>(monster);
-                var newMonster = mapper.Map<Monster>(schema);
-
-                monster.MapInstance.RemoveObject(monster);
-                monstersToAdd.Add(newMonster);
-            }
-
-            mapInstance.AddObjects(monstersToAdd);
-        }
-    }
-
-    public static void ReloadMaps(this IServiceProvider provider)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var loginServer = provider.GetRequiredService<ILoginServer>();
-        var worldServer = provider.GetRequiredService<IWorldServer>();
-        
-
-        //lock all players
-        //reload maps from files
-        //copy all entities from old to new
-        //unlock all players
-        
-        
-        
-        AsyncHelpers.RunSync(() => mapCache.ReloadAsync());
     }
 }

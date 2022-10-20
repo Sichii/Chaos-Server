@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record WorldMapClickArgs(ushort NodeCheckSum, ushort MapId, IPoint Point) : IReceiveArgs;
+public sealed record WorldMapClickArgs(ushort UniqueId, ushort MapId, IPoint Point) : IReceiveArgs;

@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record LoginNotificationSerializer : ServerPacketSerializer<NoticeRequestArgs>
+public sealed record LoginNotificationSerializer : ServerPacketSerializer<NoticeRequestArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.LoginNotification;
 

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class MonsterFactory : IMonsterFactory
+public sealed class MonsterFactory : IMonsterFactory
 {
     private readonly ILogger Logger;
     private readonly ILoggerFactory LoggerFactory;
@@ -44,7 +44,7 @@ public class MonsterFactory : IMonsterFactory
     )
     {
         extraScriptKeys ??= Array.Empty<string>();
-        var template = SimpleCache.GetObject<MonsterTemplate>(templateKey);
+        var template = SimpleCache.Get<MonsterTemplate>(templateKey);
         var logger = LoggerFactory.CreateLogger<Monster>();
 
         var monster = new Monster(

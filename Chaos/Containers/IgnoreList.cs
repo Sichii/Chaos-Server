@@ -2,7 +2,7 @@ using Chaos.Common.Collections.Synchronized;
 
 namespace Chaos.Containers;
 
-public class IgnoreList : SynchronizedHashSet<string>
+public sealed class IgnoreList : SynchronizedHashSet<string>
 {
     public IgnoreList(IEnumerable<string>? items = null)
         : base(items, StringComparer.OrdinalIgnoreCase) { }

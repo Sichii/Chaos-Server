@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record SoundSerializer : ServerPacketSerializer<SoundArgs>
+public sealed record SoundSerializer : ServerPacketSerializer<SoundArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Sound;
 

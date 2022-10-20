@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -10,8 +10,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.MapperProfiles;
 
-public class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
-                                 IMapperProfile<Item, ItemInfo>
+public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
+                                        IMapperProfile<Item, ItemInfo>
 {
     private readonly ILogger<ItemMapperProfile> Logger;
     private readonly IScriptProvider ScriptProvider;
@@ -30,7 +30,7 @@ public class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
 
     public Item Map(ItemSchema obj)
     {
-        var template = SimpleCache.GetObject<ItemTemplate>(obj.TemplateKey);
+        var template = SimpleCache.Get<ItemTemplate>(obj.TemplateKey);
 
         var item = new Item(
             template,
@@ -60,12 +60,12 @@ public class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             ? throw new InvalidOperationException($"Item \"{obj.DisplayName}\" has negative count of {obj.Count}")
             : Convert.ToUInt32(obj.Count),
         CurrentDurability = obj.CurrentDurability ?? 0,
-        GameObjectType = GameObjectType.Item,
+        EntityType = EntityType.Item,
         MaxDurability = obj.Template.MaxDurability ?? 0,
         Name = obj.DisplayName,
         Slot = obj.Slot,
         Sprite = obj.Template.ItemSprite.OffsetPanelSprite,
-        Stackable = obj.Template.Stackable,
+        Stackable = obj.Template.Stackable
     };
 
     public ItemSchema Map(Item obj)

@@ -1,9 +1,9 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.World;
+using Chaos.Schemas.Aisling;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
@@ -12,13 +12,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.MapperProfiles;
 
-public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
-                                    IMapperProfile<Aisling, AttributesArgs>,
-                                    IMapperProfile<Aisling, DisplayAislingArgs>,
-                                    IMapperProfile<Aisling, ProfileArgs>,
-                                    IMapperProfile<Aisling, SelfProfileArgs>,
-                                    IMapperProfile<Aisling, UserIdArgs>,
-                                    IMapperProfile<Aisling, WorldListMemberInfo>
+public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
+                                           IMapperProfile<Aisling, AttributesArgs>,
+                                           IMapperProfile<Aisling, DisplayAislingArgs>,
+                                           IMapperProfile<Aisling, ProfileArgs>,
+                                           IMapperProfile<Aisling, SelfProfileArgs>,
+                                           IMapperProfile<Aisling, UserIdArgs>,
+                                           IMapperProfile<Aisling, WorldListMemberInfo>
 {
     private readonly IExchangeFactory ExchangeFactory;
     private readonly ILogger<AislingMapperProfile> Logger;
@@ -43,7 +43,7 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
 
     public Aisling Map(AislingSchema obj)
     {
-        var mapInstance = SimpleCache.GetObject<MapInstance>(obj.MapInstanceId);
+        var mapInstance = SimpleCache.Get<MapInstance>(obj.MapInstanceId);
 
         var aisling = new Aisling(
             obj.Name,
@@ -181,7 +181,7 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
                 CreatureType = obj.Type,
                 Direction = obj.Direction,
                 FaceSprite = (byte)obj.FaceSprite,
-                GameObjectType = GameObjectType.Misc,
+                EntityType = EntityType.Aisling,
                 Gender = obj.Gender,
                 GroupBoxText = null,
                 HeadColor = overHelm?.Template.Color ?? helmet?.Template.Color ?? obj.HairColor,
@@ -201,7 +201,7 @@ public class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
                 RestPosition = RestPosition.None, //TODO: if we add rest positions in later,
                 ShieldSprite = (byte)(shield?.Template.ItemSprite.DisplaySprite ?? 0),
                 Sprite = obj.Sprite,
-                WeaponSprite = weapon?.Template.ItemSprite.DisplaySprite ?? 0,
+                WeaponSprite = weapon?.Template.ItemSprite.DisplaySprite ?? 0
             };
         }
     }

@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record UserIdSerializer : ServerPacketSerializer<UserIdArgs>
+public sealed record UserIdSerializer : ServerPacketSerializer<UserIdArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.UserId;
 

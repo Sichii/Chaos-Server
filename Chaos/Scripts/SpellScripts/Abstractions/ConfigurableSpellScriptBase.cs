@@ -12,7 +12,7 @@ public abstract class ConfigurableSpellScriptBase : SpellScriptBase
         if (!subject.Template.ScriptVars.TryGetValue(ScriptKey, out var scriptVars))
             throw new InvalidOperationException(
                 $"Spell \"{subject.Template.Name}\" does not have script variables for script \"{ScriptKey}\"");
-        
+
         var props = GetType()
                     .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
                     .Where(

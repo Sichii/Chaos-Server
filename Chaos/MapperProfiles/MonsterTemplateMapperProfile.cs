@@ -1,11 +1,11 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Templates;
+using Chaos.Schemas.Templates;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class MonsterTemplateMapperProfile : IMapperProfile<MonsterTemplate, MonsterTemplateSchema>
+public sealed class MonsterTemplateMapperProfile : IMapperProfile<MonsterTemplate, MonsterTemplateSchema>
 {
     private readonly ITypeMapper Mapper;
     public MonsterTemplateMapperProfile(ITypeMapper mapper) => Mapper = mapper;

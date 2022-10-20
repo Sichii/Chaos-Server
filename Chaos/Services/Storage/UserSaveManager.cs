@@ -3,8 +3,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.World;
+using Chaos.Schemas.Aisling;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class UserSaveManager : ISaveManager<Aisling>
+public sealed class UserSaveManager : ISaveManager<Aisling>
 {
     private static readonly AutoReleasingSemaphoreSlim Sync = new(1, 1);
     private readonly JsonSerializerOptions JsonSerializerOptions;

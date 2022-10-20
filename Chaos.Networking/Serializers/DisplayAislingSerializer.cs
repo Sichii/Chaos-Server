@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record DisplayAislingSerializer : ServerPacketSerializer<DisplayAislingArgs>
+public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAislingArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.DisplayAisling;
 

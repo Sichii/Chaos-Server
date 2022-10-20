@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Definitions;
-using Chaos.Entities.Schemas.Templates;
 using Chaos.Extensions.Cryptography;
+using Chaos.Schemas.Templates;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSchema, MapTemplateCacheOptions>
+public sealed class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSchema, MapTemplateCacheOptions>
 {
     private readonly string NeedsMapDataDir;
 

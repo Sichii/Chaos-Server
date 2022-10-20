@@ -112,7 +112,7 @@ public sealed class Monster : Creature, IScriptedMonster
             source.Name,
             amount,
             Name);
-        
+
         source.Gold -= amount;
         Gold += amount;
 
@@ -134,6 +134,12 @@ public sealed class Monster : Creature, IScriptedMonster
             Script.OnItemDroppedOn(source, item);
         }
     }
+
+    /// <inheritdoc />
+    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
+
+    /// <inheritdoc />
+    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

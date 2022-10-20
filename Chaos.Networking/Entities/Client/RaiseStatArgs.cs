@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record RaiseStatArgs(Stat Stat) : IReceiveArgs;
+public sealed record RaiseStatArgs(Stat Stat) : IReceiveArgs;

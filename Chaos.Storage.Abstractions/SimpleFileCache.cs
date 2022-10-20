@@ -41,7 +41,7 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public virtual T GetObject(string key) =>
+    public virtual T Get(string key) =>
         Cache.TryGetValue(key, out var value) ? value : throw new KeyNotFoundException($"Key {key} was not found");
 
     protected virtual async Task<T?> LoadFromFileAsync(string path)

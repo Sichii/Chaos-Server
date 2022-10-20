@@ -15,7 +15,7 @@ public class GeometryBenchmarks
         13)]
     public int Range;
 
-    [Benchmark]
+    [Benchmark(Baseline = true)]
     public void Rectangle()
     {
         var rect = new Rectangle(CenterPoint, Range * 2 + 1, Range * 2 + 1);

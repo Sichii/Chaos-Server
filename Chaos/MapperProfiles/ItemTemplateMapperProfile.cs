@@ -1,12 +1,12 @@
 using Chaos.Common.Collections;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Templates;
+using Chaos.Schemas.Templates;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class ItemTemplateMapperProfile : IMapperProfile<ItemTemplate, ItemTemplateSchema>
+public sealed class ItemTemplateMapperProfile : IMapperProfile<ItemTemplate, ItemTemplateSchema>
 {
     private readonly ITypeMapper Mapper;
     public ItemTemplateMapperProfile(ITypeMapper mapper) => Mapper = mapper;

@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record WorldListSerializer : ServerPacketSerializer<WorldListArgs>
+public sealed record WorldListSerializer : ServerPacketSerializer<WorldListArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.WorldList;
 

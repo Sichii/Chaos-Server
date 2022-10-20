@@ -1,4 +1,3 @@
-
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
@@ -10,6 +9,7 @@ public interface IRedirectManager
     ///     Adds a redirect that is in progress
     /// </summary>
     void Add(IRedirect redirect);
+
     /// <summary>
     ///     Tries to remove a redirect that should be in progress
     /// </summary>

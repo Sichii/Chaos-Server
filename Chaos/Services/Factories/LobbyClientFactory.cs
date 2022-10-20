@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class LobbyClientFactory : IClientFactory<LobbyClient>
+public sealed class LobbyClientFactory : IClientFactory<LobbyClient>
 {
     private readonly IServiceProvider ServiceProvider;
 

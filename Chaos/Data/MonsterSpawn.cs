@@ -11,7 +11,7 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Data;
 
-public class MonsterSpawn : IDeltaUpdatable
+public sealed class MonsterSpawn : IDeltaUpdatable
 {
     public required int AggroRange { get; init; }
     public required int ExpReward { get; init; }

@@ -11,13 +11,13 @@ namespace Chaos.Scripts.SkillScripts;
 
 public class DamageScript : ConfigurableSkillScriptBase
 {
+    protected Animation? Animation { get; init; }
+    protected ushort AnimationSpeed { get; init; } = 100;
+    protected BodyAnimation? BodyAnimation { get; init; }
     protected int Damage { get; init; }
     protected byte? Sound { get; init; }
-    protected BodyAnimation? BodyAnimation { get; init; }
-    protected ushort AnimationSpeed { get; init; } = 100;
     protected ushort? SourceAnimation { get; init; }
     protected ushort? TargetAnimation { get; init; }
-    protected Animation? Animation { get; init; }
 
     /// <inheritdoc />
     public DamageScript(Skill subject)
@@ -37,8 +37,9 @@ public class DamageScript : ConfigurableSkillScriptBase
     {
         if (BodyAnimation.HasValue)
             source.AnimateBody(BodyAnimation.Value);
-        
+
         var point = source.DirectionalOffset(source.Direction);
+
         var target = source.MapInstance.GetEntitiesAtPoint<Creature>(point)
                            .TopOrDefault();
 
@@ -49,8 +50,8 @@ public class DamageScript : ConfigurableSkillScriptBase
 
         if (Sound.HasValue)
             map.PlaySound(Sound.Value, target);
-            
-        if(Animation != null)
+
+        if (Animation != null)
             target.Animate(Animation, source.Id);
 
         var damage = DamageFormulae.Default.Calculate(source, target, Damage);

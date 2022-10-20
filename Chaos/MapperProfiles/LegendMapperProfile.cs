@@ -1,11 +1,11 @@
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class LegendMapperProfile : IMapperProfile<Legend, LegendSchema>
+public sealed class LegendMapperProfile : IMapperProfile<Legend, LegendSchema>
 {
     private readonly ITypeMapper Mapper;
     public LegendMapperProfile(ITypeMapper mapper) => Mapper = mapper;

@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record SocialStatusArgs(SocialStatus SocialStatus) : IReceiveArgs;
+public sealed record SocialStatusArgs(SocialStatus SocialStatus) : IReceiveArgs;
