@@ -1,6 +1,6 @@
 namespace Chaos.Networking.Entities.Server;
 
-public record SkillInfo
+public sealed record SkillInfo
 {
     public string Name { get; set; } = null!;
     public byte Slot { get; set; }

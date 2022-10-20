@@ -11,15 +11,15 @@ namespace Chaos.Scripts.SkillScripts;
 
 public class StatBasedDamageScript : ConfigurableSkillScriptBase
 {
+    protected Animation? Animation { get; init; }
+    protected ushort AnimationSpeed { get; init; } = 100;
+    protected BodyAnimation? BodyAnimation { get; init; }
     protected int Damage { get; init; }
     protected byte? Sound { get; init; }
-    protected BodyAnimation? BodyAnimation { get; init; }
-    protected ushort AnimationSpeed { get; init; } = 100;
     protected ushort? SourceAnimation { get; init; }
+    protected Stat Stat { get; init; }
+    protected decimal StatCoefficient { get; init; }
     protected ushort? TargetAnimation { get; init; }
-    protected Animation? Animation { get; init; }
-    protected Stat Stat {get; init;}
-    protected decimal StatCoefficient {get; init;}
 
     /// <inheritdoc />
     public StatBasedDamageScript(Skill subject)
@@ -39,8 +39,9 @@ public class StatBasedDamageScript : ConfigurableSkillScriptBase
     {
         if (BodyAnimation.HasValue)
             source.AnimateBody(BodyAnimation.Value);
-        
+
         var point = source.DirectionalOffset(source.Direction);
+
         var target = source.MapInstance.GetEntitiesAtPoint<Creature>(point)
                            .TopOrDefault();
 
@@ -51,8 +52,8 @@ public class StatBasedDamageScript : ConfigurableSkillScriptBase
 
         if (Sound.HasValue)
             map.PlaySound(Sound.Value, target);
-            
-        if(Animation != null)
+
+        if (Animation != null)
             target.Animate(Animation, source.Id);
 
         var statValue = source.StatSheet.GetEffectiveStat(Stat);

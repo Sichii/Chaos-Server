@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record PickupDeserializer : ClientPacketDeserializer<PickupArgs>
+public sealed record PickupDeserializer : ClientPacketDeserializer<PickupArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Pickup;
 

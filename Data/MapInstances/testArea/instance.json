@@ -1,0 +1,18 @@
+{
+    "flags": "None",
+    "instanceId": "testArea",
+    "music": 1,
+    "name": "Test Area",
+    "templateKey": "5219",
+    "warps": [],
+    "worldMapWarps": [
+        {
+            "worldMapKey": "field001",
+            "source": "(7, 16)"
+        },
+        {
+            "worldMapKey": "field001",
+            "source": "(8, 16)"
+        }
+    ]
+}

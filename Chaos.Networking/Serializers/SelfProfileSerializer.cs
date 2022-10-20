@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record SelfProfileSerializer : ServerPacketSerializer<SelfProfileArgs>
+public sealed record SelfProfileSerializer : ServerPacketSerializer<SelfProfileArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.SelfProfile;
 

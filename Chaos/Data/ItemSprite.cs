@@ -2,7 +2,7 @@
 
 namespace Chaos.Data;
 
-public record ItemSprite(ushort PanelSprite, ushort DisplaySprite)
+public sealed record ItemSprite(ushort PanelSprite, ushort DisplaySprite)
 {
     /// <summary>
     ///     The sprite number for displaying the item on your character when the item is equipped.

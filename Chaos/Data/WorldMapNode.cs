@@ -1,25 +1,20 @@
-using System.IO;
-using System.Text;
-using Chaos.Extensions.Cryptography;
+using Chaos.Containers;
 using Chaos.Networking.Entities.Server;
+using Chaos.Objects.World;
+using Chaos.Storage.Abstractions;
 
 namespace Chaos.Data;
 
-public record WorldMapNode : WorldMapNodeInfo
+public sealed record WorldMapNode : WorldMapNodeInfo
 {
-    public ushort GenerateCheckSum()
+    private readonly ISimpleCache SimpleCache;
+    public WorldMapNode(ISimpleCache simpleCache) => SimpleCache = simpleCache;
+
+    public required string NodeKey { get; init; }
+
+    public void OnClick(Aisling aisling)
     {
-        using var data = new MemoryStream();
-        using var writer = new BinaryWriter(data);
-
-        writer.Write(Encoding.Unicode.GetBytes(Text));
-        writer.Write(DestinationMapId);
-        writer.Write(DestinationPoint.X);
-        writer.Write(DestinationPoint.Y);
-
-        writer.Flush();
-
-        return data.ToArray()
-                   .Generate16();
+        var destinationMap = SimpleCache.Get<MapInstance>(Destination.Map);
+        destinationMap.AddObject(aisling, Destination);
     }
 }

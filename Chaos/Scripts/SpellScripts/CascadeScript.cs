@@ -20,18 +20,19 @@ public class CascadeScript : ConfigurableSpellScriptBase
         Cone = 3
     }
 
-    protected int Damage { get; init; }
-    protected byte Sound { get; init; }
+    protected Animation? Animation { get; init; }
+    protected ushort AnimationSpeed { get; init; } = 100;
     protected BodyAnimation BodyAnimation { get; init; }
+
+    protected int Damage { get; init; }
     protected int MinSoundDelayMs { get; init; }
     protected int PropagationDelayMs { get; init; }
     protected int Range { get; init; }
     protected CascadeShape Shape { get; init; }
-    protected bool StopAtWalls { get; init; }
-    protected ushort AnimationSpeed { get; init; } = 100;
+    protected byte Sound { get; init; }
     protected ushort? SourceAnimation { get; init; }
+    protected bool StopAtWalls { get; init; }
     protected ushort? TargetAnimation { get; init; }
-    protected Animation? Animation { get; init; }
 
     /// <inheritdoc />
     public CascadeScript(Spell subject)
@@ -46,7 +47,7 @@ public class CascadeScript : ConfigurableSpellScriptBase
             };
     }
 
-    private void ApplyToPoint(ActivationContext context, Point point)
+    private void ApplyToPoint(SpellContext context, Point point)
     {
         var map = context.Source.MapInstance;
         var creaturesAtPoint = map.GetEntitiesAtPoint<Monster>(point);
@@ -59,7 +60,7 @@ public class CascadeScript : ConfigurableSpellScriptBase
     }
 
     /// <inheritdoc />
-    public override void OnUse(ActivationContext context)
+    public override void OnUse(SpellContext context)
     {
         var map = context.Source.MapInstance;
         var direction = context.Source.Direction;
@@ -86,7 +87,7 @@ public class CascadeScript : ConfigurableSpellScriptBase
             foreach (var point in allPossiblePoints.ToList())
                 if (map.IsWall(point) || sourcePoint.RayTraceTo(point).Any(pt => map.IsWall(pt)))
                     allPossiblePoints.Remove(point);
-        
+
         var elapsedMs = MinSoundDelayMs;
 
         _ = Task.Run(
@@ -134,7 +135,7 @@ public class CascadeScript : ConfigurableSpellScriptBase
             case CascadeShape.Straight:
             case CascadeShape.Diamond:
                 return allPossiblePoints.Where(pt => pt.DistanceFrom(sourcePoint) == range);
-            
+
             case CascadeShape.Cone:
                 var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
                 var nextOffset = sourcePoint.DirectionalOffset(aoeDirection, range);

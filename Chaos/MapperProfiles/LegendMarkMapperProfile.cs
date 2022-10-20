@@ -1,13 +1,13 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Networking.Entities.Server;
+using Chaos.Schemas.Aisling;
 using Chaos.Time;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class LegendMarkMapperProfile : IMapperProfile<LegendMark, LegendMarkSchema>,
-                                       IMapperProfile<LegendMark, LegendMarkInfo>
+public sealed class LegendMarkMapperProfile : IMapperProfile<LegendMark, LegendMarkSchema>,
+                                              IMapperProfile<LegendMark, LegendMarkInfo>
 {
     public LegendMark Map(LegendMarkSchema obj) => new(
         obj.Text,

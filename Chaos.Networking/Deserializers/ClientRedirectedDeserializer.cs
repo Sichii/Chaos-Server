@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ClientRedirectedDeserializer : ClientPacketDeserializer<ClientRedirectedArgs>
+public sealed record ClientRedirectedDeserializer : ClientPacketDeserializer<ClientRedirectedArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.ClientRedirected;
 

@@ -1,11 +1,11 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Templates;
+using Chaos.Schemas.Templates;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class MapTemplateMapperProfile : IMapperProfile<MapTemplate, MapTemplateSchema>
+public sealed class MapTemplateMapperProfile : IMapperProfile<MapTemplate, MapTemplateSchema>
 {
     public MapTemplate Map(MapTemplateSchema obj) => new()
     {

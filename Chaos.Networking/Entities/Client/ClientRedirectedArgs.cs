@@ -2,7 +2,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record ClientRedirectedArgs(
+public sealed record ClientRedirectedArgs(
     byte Seed,
     byte[] Key,
     string Name,

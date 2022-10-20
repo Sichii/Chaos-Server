@@ -6,7 +6,7 @@
 public interface IPolygon : IEnumerable<IPoint>
 {
     /// <summary>
-    /// The vertices of the polygon in clockwise order
+    ///     The vertices of the polygon in clockwise order
     /// </summary>
     IReadOnlyList<IPoint> Vertices { get; }
 }

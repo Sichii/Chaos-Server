@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ExchangeDeserializer : ClientPacketDeserializer<ExchangeArgs>
+public sealed record ExchangeDeserializer : ClientPacketDeserializer<ExchangeArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Exchange;
 

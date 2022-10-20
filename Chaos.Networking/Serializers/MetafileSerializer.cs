@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record MetafileSerializer : ServerPacketSerializer<MetafileArgs>
+public sealed record MetafileSerializer : ServerPacketSerializer<MetafileArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Metafile;
 

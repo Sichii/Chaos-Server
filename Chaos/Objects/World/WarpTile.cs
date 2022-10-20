@@ -11,7 +11,7 @@ public sealed class WarpTile : ReactorTile
 {
     private readonly ISimpleCache SimpleCache;
 
-    public override ReactorTileType ReactorTileType => ReactorTileType.Walk;
+    public override ReactorActivationType ReactorActivationType => ReactorActivationType.Walk;
     public Warp Warp { get; }
 
     public WarpTile(MapInstance mapInstance, ISimpleCache simpleCache, Warp warp)
@@ -23,7 +23,7 @@ public sealed class WarpTile : ReactorTile
 
     public override void Activate(Creature creature)
     {
-        var targetMap = SimpleCache.GetObject<MapInstance>(Warp.Destination.Map);
+        var targetMap = SimpleCache.Get<MapInstance>(Warp.Destination.Map);
         var aisling = creature as Aisling;
 
         if (creature.StatSheet.Level < (targetMap.MinimumLevel ?? 0))

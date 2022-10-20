@@ -2,7 +2,7 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Pathfinding;
 
-internal class PathNode : IEquatable<IPoint>, IPoint
+internal sealed class PathNode : IEquatable<IPoint>, IPoint
 {
     public bool Closed { get; set; }
     public bool IsCreature { get; set; }

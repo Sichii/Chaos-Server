@@ -10,10 +10,10 @@ public class ResettingCounter : IDeltaUpdatable
     private readonly IIntervalTimer Timer;
     private int Counter;
 
-    public ResettingCounter(int maxCount)
+    public ResettingCounter(int maxPerSecond, IIntervalTimer timer)
     {
-        Timer = new IntervalTimer(TimeSpan.FromSeconds(1));
-        MaxCount = maxCount;
+        Timer = timer;
+        MaxCount = maxPerSecond;
     }
 
     public bool TryIncrement()
@@ -34,4 +34,6 @@ public class ResettingCounter : IDeltaUpdatable
         if (Timer.IntervalElapsed)
             Counter = 0;
     }
+    
+    public bool Maxed => Counter >= MaxCount;
 }

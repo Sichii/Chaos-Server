@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record EquipmentSerializer : ServerPacketSerializer<EquipmentArgs>
+public sealed record EquipmentSerializer : ServerPacketSerializer<EquipmentArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Equipment;
 

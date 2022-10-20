@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record UserOptionToggleArgs(UserOption UserOption) : IReceiveArgs;
+public sealed record UserOptionToggleArgs(UserOption UserOption) : IReceiveArgs;

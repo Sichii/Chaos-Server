@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class EffectFactory : IEffectFactory
+public sealed class EffectFactory : IEffectFactory
 {
     private readonly ConcurrentDictionary<string, Type> EffectTypeCache;
     private readonly ILogger Logger;

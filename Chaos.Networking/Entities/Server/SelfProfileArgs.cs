@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record SelfProfileArgs : ISendArgs
+public sealed record SelfProfileArgs : ISendArgs
 {
     public AdvClass? AdvClass { get; set; }
     public BaseClass BaseClass { get; set; }

@@ -2,6 +2,7 @@
 
 using System.Threading;
 using Chaos.Common.Definitions;
+using Chaos.Core.Utilities;
 
 namespace Chaos.Data;
 
@@ -188,8 +189,52 @@ public record StatSheet : Attributes
             _currentMp = 0;
     }
 
+    public void SetHealthPct(int pct) => InterlockedEx.SetValue(
+        ref _currentHp,
+        () => (int)Math.Clamp(EffectiveMaximumHp * pct / 100f, 0, EffectiveMaximumHp));
+
+    public void SetManaPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * pct / 100f, 0, EffectiveMaximumMp));
+
+    public void AddHealthPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * (pct + HealthPercent) / 100f, 0, EffectiveMaximumMp));
+    
+    public void SubtractHealthPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * (HealthPercent - pct) / 100f, 0, EffectiveMaximumMp));
+    
+    public void AddManaPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * (pct + ManaPercent) / 100f, 0, EffectiveMaximumMp));
+
+    public void SubtractManaPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * (ManaPercent - pct) / 100f, 0, EffectiveMaximumMp));
+    
     public int CalculateEffectiveAssailInterval(int baseAssailIntervalMs) =>
         Convert.ToInt32(baseAssailIntervalMs / (1 + EffectiveAttackSpeedPct / 100.0f));
+
+    public int GetBaseStat(Stat stat) => stat switch
+    {
+        Stat.STR => Str,
+        Stat.DEX => Dex,
+        Stat.INT => Int,
+        Stat.WIS => Wis,
+        Stat.CON => Con,
+        _        => throw new ArgumentOutOfRangeException()
+    };
+
+    public int GetEffectiveStat(Stat stat) => stat switch
+    {
+        Stat.STR => EffectiveStr,
+        Stat.DEX => EffectiveDex,
+        Stat.INT => EffectiveInt,
+        Stat.WIS => EffectiveWis,
+        Stat.CON => EffectiveCon,
+        _        => throw new ArgumentOutOfRangeException()
+    };
 
     public void SetDefenseElement(Element element) => _defenseElement = element;
 
@@ -222,26 +267,6 @@ public record StatSheet : Attributes
         if (Interlocked.Add(ref _currentMp, -amount) < 0)
             _currentMp = 0;
     }
-
-    public int GetEffectiveStat(Stat stat) => stat switch
-    {
-        Stat.STR => EffectiveStr,
-        Stat.DEX => EffectiveDex,
-        Stat.INT => EffectiveInt,
-        Stat.WIS => EffectiveWis,
-        Stat.CON => EffectiveCon,
-        _        => throw new ArgumentOutOfRangeException()
-    };
-
-    public int GetBaseStat(Stat stat) => stat switch
-    {
-        Stat.STR => Str,
-        Stat.DEX => Dex,
-        Stat.INT => Int,
-        Stat.WIS => Wis,
-        Stat.CON => Con,
-        _        => throw new ArgumentOutOfRangeException()
-    };
 
     #region SharedAttributes
     protected int _ability;

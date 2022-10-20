@@ -1,10 +1,10 @@
 using System.Text;
-using System.Text.RegularExpressions;
 using Chaos.Packets.Abstractions.Definitions;
+using Chaos.Packets.Definitions;
 
 namespace Chaos.Packets;
 
-public ref partial struct ClientPacket
+public ref struct ClientPacket
 {
     public Span<byte> Buffer;
     public bool IsEncrypted { get; set; }
@@ -34,7 +34,7 @@ public ref partial struct ClientPacket
         return str;
     }
 
-    public string GetHexString() => $"{OpCode}: {DoubleBytePattern().Replace(Convert.ToHexString(Buffer), "$1 ")}";
+    public string GetHexString() => $"{OpCode}: {RegexCache.DOUBLE_BYTE_REGEX.Replace(Convert.ToHexString(Buffer), "$1 ")}";
 
     public byte[] ToArray() => ToSpan().ToArray();
 
@@ -78,6 +78,4 @@ public ref partial struct ClientPacket
     }
 
     public override string ToString() => GetHexString();
-    [RegexGenerator("(.{2})", RegexOptions.Compiled)]
-    private static partial Regex DoubleBytePattern();
 }

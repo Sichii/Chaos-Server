@@ -1,11 +1,11 @@
 using Chaos.Containers;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class SpellBookMapperProfile : IMapperProfile<SpellBook, SpellBookSchema>
+public sealed class SpellBookMapperProfile : IMapperProfile<SpellBook, SpellBookSchema>
 {
     private readonly ITypeMapper Mapper;
     public SpellBookMapperProfile(ITypeMapper mapper) => Mapper = mapper;

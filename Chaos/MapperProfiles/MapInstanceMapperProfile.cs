@@ -1,7 +1,7 @@
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.World;
+using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -9,7 +9,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>
+public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>
 {
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
@@ -24,7 +24,7 @@ public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceS
 
     public MapInstance Map(MapInstanceSchema obj)
     {
-        var template = SimpleCache.GetObject<MapTemplate>(obj.TemplateKey);
+        var template = SimpleCache.Get<MapTemplate>(obj.TemplateKey);
 
         var mapInstance = new MapInstance(
             template,
@@ -49,6 +49,18 @@ public class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceS
         {
             var warpTile = new WarpTile(mapInstance, SimpleCache, warp);
             mapInstance.SimpleAdd(warpTile);
+        }
+
+        foreach (var worldMapWarp in obj.WorldMapWarps)
+        {
+            var worldMap = SimpleCache.Get<WorldMap>(worldMapWarp.WorldMapKey);
+
+            var worldMapTile = new WorldMapTile(
+                mapInstance,
+                worldMapWarp.Source,
+                worldMap);
+
+            mapInstance.SimpleAdd(worldMapTile);
         }
 
         return mapInstance;

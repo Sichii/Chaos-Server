@@ -3,7 +3,7 @@ using Chaos.Objects.World;
 
 namespace Chaos.Observers;
 
-public class SkillBookObserver : Abstractions.IObserver<Skill>
+public sealed class SkillBookObserver : Abstractions.IObserver<Skill>
 {
     private readonly Aisling Aisling;
 

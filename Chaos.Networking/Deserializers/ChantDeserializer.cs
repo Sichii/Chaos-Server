@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ChantDeserializer : ClientPacketDeserializer<DisplayChantArgs>
+public sealed record ChantDeserializer : ClientPacketDeserializer<DisplayChantArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Chant;
 

@@ -5,19 +5,19 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Data;
 
-public record UserStatSheet : StatSheet
+public sealed record UserStatSheet : StatSheet
 {
-    protected AdvClass _advClass;
-    protected BaseClass _baseClass;
+    private AdvClass _advClass;
+    private BaseClass _baseClass;
     // ReSharper disable once UnassignedField.Global
-    protected int _currentWeight;
-    protected bool _master;
-    protected int _maxWeight;
-    protected long _toNextAbility;
-    protected long _toNextLevel;
-    protected long _totalAbility;
-    protected long _totalExp;
-    protected int _unspentPoints;
+    private int _currentWeight;
+    private bool _master;
+    private int _maxWeight;
+    private long _toNextAbility;
+    private long _toNextLevel;
+    private long _totalAbility;
+    private long _totalExp;
+    private int _unspentPoints;
 
     public AdvClass AdvClass
     {

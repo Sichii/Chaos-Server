@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record PublicMessageDeserializer : ClientPacketDeserializer<PublicMessageArgs>
+public sealed record PublicMessageDeserializer : ClientPacketDeserializer<PublicMessageArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.PublicMessage;
 

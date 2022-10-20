@@ -2,4 +2,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record DisplayObjectRequestArgs(uint TargetId) : IReceiveArgs;
+public sealed record DisplayObjectRequestArgs(uint TargetId) : IReceiveArgs;

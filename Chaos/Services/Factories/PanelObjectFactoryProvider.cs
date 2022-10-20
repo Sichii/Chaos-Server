@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Services.Factories;
 
-public class PanelObjectFactoryProvider : IPanelObjectFactoryProvider
+public sealed class PanelObjectFactoryProvider : IPanelObjectFactoryProvider
 {
     private readonly IServiceProvider ServiceProvider;
 

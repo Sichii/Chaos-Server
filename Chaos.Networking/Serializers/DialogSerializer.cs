@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record DialogSerializer : ServerPacketSerializer<DialogArgs>
+public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Dialog;
 

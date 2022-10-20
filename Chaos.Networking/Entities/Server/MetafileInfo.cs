@@ -1,6 +1,6 @@
 namespace Chaos.Networking.Entities.Server;
 
-public record MetafileInfo
+public sealed record MetafileInfo
 {
     public uint CheckSum { get; set; }
     public byte[] Data { get; set; } = Array.Empty<byte>();

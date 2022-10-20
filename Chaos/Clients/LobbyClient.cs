@@ -11,9 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;
 
-public class LobbyClient : SocketClientBase, ILobbyClient
+public sealed class LobbyClient : SocketClientBase, ILobbyClient
 {
-    protected ILobbyServer Server { get; }
+    private readonly ILobbyServer Server;
 
     public LobbyClient(
         Socket socket,
@@ -27,6 +27,21 @@ public class LobbyClient : SocketClientBase, ILobbyClient
             cryptoClient,
             packetSerializer,
             logger) => Server = server;
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            CryptoClient.Decrypt(ref packet);
+
+        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, ref packet);
+    }
 
     public void SendConnectionInfo(uint serverTableCheckSum)
     {
@@ -48,20 +63,5 @@ public class LobbyClient : SocketClientBase, ILobbyClient
         };
 
         Send(args);
-    }
-
-    /// <inheritdoc />
-    protected override ValueTask HandlePacketAsync(Span<byte> span)
-    {
-        var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
-
-        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, ref packet);
     }
 }

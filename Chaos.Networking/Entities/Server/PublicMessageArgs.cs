@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record PublicMessageArgs : ISendArgs
+public sealed record PublicMessageArgs : ISendArgs
 {
     public string Message { get; set; } = null!;
     public PublicMessageType PublicMessageType { get; set; }

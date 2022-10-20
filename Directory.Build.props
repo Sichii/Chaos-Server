@@ -2,5 +2,6 @@
     <PropertyGroup>
         <LangVersion>preview</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
+        <TieredPGO>true</TieredPGO>
     </PropertyGroup>
 </Project>

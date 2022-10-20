@@ -1,5 +1,6 @@
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
+using Chaos.Common.Collections;
 using Chaos.Containers;
 using Chaos.Objects.World;
 using Chaos.Storage.Abstractions;
@@ -7,36 +8,25 @@ using Chaos.Storage.Abstractions;
 namespace Chaos.Commands;
 
 [Command("tp")]
-public class TeleportCommand : ICommand<Aisling>
+public sealed class TeleportCommand : ICommand<Aisling>
 {
     private readonly ISimpleCache Cache;
     public TeleportCommand(ISimpleCache cache) => Cache = cache;
 
     /// <inheritdoc />
-    public void Execute(Aisling aisling, params string[] args)
+    public void Execute(Aisling aisling, ArgumentCollection args)
     {
-        switch (args.Length)
-        {
-            case 1:
-            {
-                var mapInstanceId = args[0];
-                var mapInstance = Cache.GetObject<MapInstance>(mapInstanceId);
-                var centerPoint = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
-                aisling.TraverseMap(mapInstance, centerPoint);
+        if (!args.TryGet<string>(0, out var mapInstanceId))
+            return;
+        
+        var mapInstance = Cache.Get<MapInstance>(mapInstanceId);
+        Point point;
 
-                break;
-            }
-            case 3:
-            {
-                var mapInstanceId = args[0];
-                var x = int.Parse(args[1]);
-                var y = int.Parse(args[2]);
-                var point = new Point(x, y);
-                var mapInstance = Cache.GetObject<MapInstance>(mapInstanceId);
-                aisling.TraverseMap(mapInstance, point);
+        if (args.TryGet<int>(1, out var xPos) && args.TryGet<int>(2, out var yPos))
+            point = new Point(xPos, yPos);
+        else
+            point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
 
-                break;
-            }
-        }
+        aisling.TraverseMap(mapInstance, point);
     }
 }

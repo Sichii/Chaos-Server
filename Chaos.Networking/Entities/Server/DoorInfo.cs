@@ -1,6 +1,6 @@
 namespace Chaos.Networking.Entities.Server;
 
-public record DoorInfo
+public sealed record DoorInfo
 {
     public bool Closed { get; set; }
     public bool OpenRight { get; set; }

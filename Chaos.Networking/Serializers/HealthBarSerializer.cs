@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record HealthBarSerializer : ServerPacketSerializer<HealthBarArgs>
+public sealed record HealthBarSerializer : ServerPacketSerializer<HealthBarArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.HealthBar;
 

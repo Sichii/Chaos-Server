@@ -14,4 +14,7 @@ public interface IWorldOptions
     int PickupRange { get; }
     int RefreshIntervalMs { get; }
     int TradeRange { get; }
+    bool ProhibitF5Walk { get; }
+    bool ProhibitItemSwitchWalk { get; }
+    bool ProhibitSpeedWalk { get; }
 }

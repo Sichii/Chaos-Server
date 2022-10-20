@@ -2,4 +2,4 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Options;
 
-public class SpellTemplateCacheOptions : FileCacheOptionsBase { }
+public sealed class SpellTemplateCacheOptions : FileCacheOptionsBase { }

@@ -12,7 +12,7 @@ using PasswordReasonType = Chaos.Security.Exceptions.PasswordCredentialException
 
 namespace Chaos.Security;
 
-public class ActiveDirectoryCredentialManager : ICredentialManager
+public sealed class ActiveDirectoryCredentialManager : ICredentialManager
 {
     private readonly ILogger Logger;
     private readonly ActiveDirectoryCredentialManagerOptions Options;

@@ -12,11 +12,32 @@ public class AggroTargetingScript : MonsterScriptBase
 {
     private readonly IIntervalTimer TargetUpdateTimer;
     private int InitialAggro = 10;
+    private readonly Dictionary<uint, DateTime> ApproachTime;
 
     /// <inheritdoc />
     public AggroTargetingScript(Monster subject)
-        : base(subject) => TargetUpdateTimer =
-        new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(500, Subject.Template.SkillIntervalMs)));
+        : base(subject)
+    {
+        TargetUpdateTimer =
+            new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(250, Subject.Template.SkillIntervalMs)));
+        ApproachTime = new Dictionary<uint, DateTime>();
+    }
+
+    /// <inheritdoc />
+    public override void OnApproached(Creature source)
+    {
+        base.OnApproached(source);
+
+        ApproachTime.TryAdd(source.Id, DateTime.UtcNow);
+    }
+
+    /// <inheritdoc />
+    public override void OnDeparture(Creature source)
+    {
+        base.OnDeparture(source);
+        
+        ApproachTime.Remove(source.Id);
+    }
 
     /// <inheritdoc />
     public override void OnAttacked(Creature source, ref int damage)
@@ -36,15 +57,15 @@ public class AggroTargetingScript : MonsterScriptBase
         base.Update(delta);
 
         TargetUpdateTimer.Update(delta);
-
-        if (!TargetUpdateTimer.IntervalElapsed)
-            return;
-
+        
         if ((Target != null) && (!Target.IsAlive || !Target.OnSameMapAs(Subject)))
         {
             AggroList.Remove(Target.Id, out _);
-            Subject.Target = null;
+            Target = null;
         }
+        
+        if (!TargetUpdateTimer.IntervalElapsed)
+            return;
 
         Target = null;
 
@@ -67,9 +88,13 @@ public class AggroTargetingScript : MonsterScriptBase
             return;
 
         //if we failed to get a target via aggroList, grab the closest aisling within aggro range
-        Target ??= Map.GetEntitiesWithinRange<Creature>(Subject, AggroRange)
+        Target ??= Map.GetEntitiesWithinRange<Aisling>(Subject, AggroRange)
                       .ThatAreVisibleTo(Subject)
-                      .Where(obj => !obj.Equals(Subject) && obj.IsAlive)
+                      .Where(
+                          obj => !obj.Equals(Subject)
+                                 && obj.IsAlive
+                                 && ApproachTime.TryGetValue(obj.Id, out var time)
+                                 && ((DateTime.UtcNow - time).TotalSeconds >= 1.5))
                       .ClosestOrDefault(Subject);
 
         //since we grabbed a new target, give them some initial aggro so we stick to them

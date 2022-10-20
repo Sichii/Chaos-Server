@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class ExchangeFactory : IExchangeFactory
+public sealed class ExchangeFactory : IExchangeFactory
 {
     private readonly ILoggerFactory LoggerFactory;
 

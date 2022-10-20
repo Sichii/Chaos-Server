@@ -6,7 +6,7 @@ using Chaos.Templates.Abstractions;
 
 namespace Chaos.Templates;
 
-public record MonsterTemplate : ITemplate, IScripted
+public sealed record MonsterTemplate : ITemplate, IScripted
 {
     /// <summary>
     ///     The number of milliseconds between usages of assails

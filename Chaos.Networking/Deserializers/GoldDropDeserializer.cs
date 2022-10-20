@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record GoldDropDeserializer : ClientPacketDeserializer<GoldDropArgs>
+public sealed record GoldDropDeserializer : ClientPacketDeserializer<GoldDropArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.GoldDrop;
 

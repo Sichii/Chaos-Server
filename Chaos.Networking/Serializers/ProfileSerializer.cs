@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
+public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Profile;
 

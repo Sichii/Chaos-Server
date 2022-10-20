@@ -1,6 +1,6 @@
 [
     {
-        "LootTableKey": "Crypt 1-1",
+        "LootTableKey": "testAreaRats",
         "IntervalSecs": 30,
         "IntervalVariancePct": 50,
         "MaxPerSpawn": 20,
@@ -9,6 +9,6 @@
         "MinGoldDrop": 10,
         "MaxGoldDrop": 30,
         "ExpReward": 100,
-        "MonsterTemplateKey": "Common Rat"
+        "MonsterTemplateKey": "common_rat"
     }
 ]

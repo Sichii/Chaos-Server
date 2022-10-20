@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class WorldClientFactory : IClientFactory<WorldClient>
+public sealed class WorldClientFactory : IClientFactory<WorldClient>
 {
     private readonly IServiceProvider ServiceProvider;
 

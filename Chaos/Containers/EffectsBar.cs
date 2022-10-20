@@ -6,7 +6,7 @@ using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Containers;
 
-public class EffectsBar : IEffectsBar
+public sealed class EffectsBar : IEffectsBar
 {
     private readonly Creature Effected;
     private readonly Dictionary<string, IEffect> Effects;
@@ -32,7 +32,7 @@ public class EffectsBar : IEffectsBar
         Effects.TryAdd(effect.CommonIdentifier, effect);
     }
 
-    public virtual void Apply(IEffect effect)
+    public void Apply(IEffect effect)
     {
         using var @lock = Sync.Enter();
 

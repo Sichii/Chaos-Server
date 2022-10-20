@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record MetafileArgs : ISendArgs
+public sealed record MetafileArgs : ISendArgs
 {
     public ICollection<MetafileInfo>? Info { get; set; }
     public MetafileInfo? MetafileData { get; set; }

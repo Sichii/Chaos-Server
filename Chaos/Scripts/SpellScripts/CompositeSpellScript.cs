@@ -23,7 +23,7 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
             component.OnLearned(aisling);
     }
 
-    public void OnUse(ActivationContext context)
+    public void OnUse(SpellContext context)
     {
         foreach (var component in Components)
             component.OnUse(context);

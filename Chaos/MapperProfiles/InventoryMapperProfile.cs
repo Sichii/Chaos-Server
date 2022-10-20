@@ -1,11 +1,11 @@
 using Chaos.Containers;
-using Chaos.Entities.Schemas.Aisling;
 using Chaos.Objects.Panel;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class InventoryMapperProfile : IMapperProfile<Inventory, InventorySchema>
+public sealed class InventoryMapperProfile : IMapperProfile<Inventory, InventorySchema>
 {
     private readonly ICloningService<Item> ItemCloner;
     private readonly ITypeMapper Mapper;

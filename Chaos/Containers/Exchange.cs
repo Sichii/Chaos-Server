@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Containers;
 
-public class Exchange
+public sealed class Exchange
 {
     private readonly ulong ExchangeId;
     private readonly ILogger Logger;
@@ -88,7 +88,7 @@ public class Exchange
         var otherUser = GetOtherUser(aisling);
         (_, var userItems, var userAccepted) = GetUserVars(aisling);
 
-        if (!IsActive || !aisling.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
+        if (!IsActive || !aisling.Inventory.TryGetObject(slot, out var item) || userAccepted)
             return;
 
         if (item.Template.AccountBound)
@@ -128,7 +128,7 @@ public class Exchange
         var otherUser = GetOtherUser(aisling);
         (_, var userItems, var userAccepted) = GetUserVars(aisling);
 
-        if (!IsActive || (amount <= 0) || !aisling.Inventory.TryGetObject(slot, out var item) || (item == null) || userAccepted)
+        if (!IsActive || (amount <= 0) || !aisling.Inventory.TryGetObject(slot, out var item) || userAccepted)
             return;
 
         if (item.Template.AccountBound)

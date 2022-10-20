@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record IgnoreDeserializer : ClientPacketDeserializer<IgnoreArgs>
+public sealed record IgnoreDeserializer : ClientPacketDeserializer<IgnoreArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Ignore;
 

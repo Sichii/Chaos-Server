@@ -1,11 +1,11 @@
 using Chaos.Common.Collections;
-using Chaos.Entities.Schemas.Templates;
+using Chaos.Schemas.Templates;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class SpellTemplateMapperProfile : IMapperProfile<SpellTemplate, SpellTemplateSchema>
+public sealed class SpellTemplateMapperProfile : IMapperProfile<SpellTemplate, SpellTemplateSchema>
 {
     private readonly ITypeMapper Mapper;
     public SpellTemplateMapperProfile(ITypeMapper mapper) => Mapper = mapper;

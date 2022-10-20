@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record EquipmentArgs : ISendArgs
+public sealed record EquipmentArgs : ISendArgs
 {
     public ItemInfo Item { get; set; } = null!;
     public EquipmentSlot Slot { get; set; }

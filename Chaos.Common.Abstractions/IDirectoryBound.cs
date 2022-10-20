@@ -1,7 +1,7 @@
 namespace Chaos.Common.Abstractions;
 
 /// <summary>
-///     Represents an object that is bound to a base directory
+///     An object that is bound to a base directory
 /// </summary>
 public interface IDirectoryBound
 {

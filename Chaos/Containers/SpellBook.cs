@@ -4,7 +4,7 @@ using Chaos.Objects.Panel;
 
 namespace Chaos.Containers;
 
-public class SpellBook : PanelBase<Spell>
+public sealed class SpellBook : PanelBase<Spell>
 {
     public SpellBook(IEnumerable<Spell>? spells = null)
         : base(

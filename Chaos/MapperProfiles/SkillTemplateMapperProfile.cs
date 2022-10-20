@@ -1,11 +1,11 @@
 using Chaos.Common.Collections;
-using Chaos.Entities.Schemas.Templates;
+using Chaos.Schemas.Templates;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class SkillTemplateMapperProfile : IMapperProfile<SkillTemplate, SkillTemplateSchema>
+public sealed class SkillTemplateMapperProfile : IMapperProfile<SkillTemplate, SkillTemplateSchema>
 {
     private readonly ITypeMapper Mapper;
 

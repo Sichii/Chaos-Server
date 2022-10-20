@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record AnimationArgs : ISendArgs
+public sealed record AnimationArgs : ISendArgs
 {
     public ushort AnimationSpeed { get; set; }
     public ushort SourceAnimation { get; set; }

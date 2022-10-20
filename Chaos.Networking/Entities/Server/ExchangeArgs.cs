@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record ExchangeArgs : ISendArgs
+public sealed record ExchangeArgs : ISendArgs
 {
     public byte? ExchangeIndex { get; set; }
     public ExchangeResponseType ExchangeResponseType { get; set; }

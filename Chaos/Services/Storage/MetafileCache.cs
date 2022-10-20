@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Chaos.Core.Utilities;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Content;
+using Chaos.Schemas.Content;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema, MetafileCacheOptions>
+public sealed class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema, MetafileCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<Metafile, string> KeySelector => m => m.Name;

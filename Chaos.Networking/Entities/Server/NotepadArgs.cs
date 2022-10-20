@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record NotepadArgs : ISendArgs
+public sealed record NotepadArgs : ISendArgs
 {
     public byte Height { get; set; }
     public string Message { get; set; } = string.Empty;

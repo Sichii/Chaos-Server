@@ -4,7 +4,7 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 
-public class PolygonConverter : JsonConverter<Polygon>
+public sealed class PolygonConverter : JsonConverter<Polygon>
 {
     public override Polygon Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

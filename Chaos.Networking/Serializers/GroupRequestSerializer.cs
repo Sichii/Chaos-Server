@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record GroupRequestSerializer : ServerPacketSerializer<GroupInviteArgs>
+public sealed record GroupRequestSerializer : ServerPacketSerializer<GroupInviteArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.GroupRequest;
 

@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record ConnectionInfoSerializer : ServerPacketSerializer<ConnectionInfoArgs>
+public sealed record ConnectionInfoSerializer : ServerPacketSerializer<ConnectionInfoArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.ConnectionInfo;
 

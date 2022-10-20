@@ -2,7 +2,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking.Entities;
 
-public class RedirectManager : IRedirectManager
+public sealed class RedirectManager : IRedirectManager
 {
     private readonly ConcurrentDictionary<uint, IRedirect> Redirects = new();
 

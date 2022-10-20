@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record ForcedClientPacketSerializer : ServerPacketSerializer<ForcedClientPacketArgs>
+public sealed record ForcedClientPacketSerializer : ServerPacketSerializer<ForcedClientPacketArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.ForceClientPacket;
 

@@ -23,6 +23,7 @@ public sealed class Door : VisibleEntity
     )
         : base(sprite, mapInstance, point)
     {
+        Closed = true;
         OpenRight = openRight;
         LastClick = DateTime.Now.Subtract(TimeSpan.FromHours(1));
     }
@@ -64,6 +65,12 @@ public sealed class Door : VisibleEntity
                         pendingDiscovery.Push(innerDoor);
             }
 
+            foreach (var door in allTouchingDoors)
+            {
+                door.Closed = !door.Closed;
+                door.LastClick = DateTime.UtcNow;
+            }
+            
             foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 20)
                                                .ThatCanSee(this))
             {
@@ -71,12 +78,6 @@ public sealed class Door : VisibleEntity
                     .ThatAreWithinRange(aisling);
 
                 aisling.Client.SendDoors(doorsInRange);
-            }
-
-            foreach (var door in allTouchingDoors)
-            {
-                door.Closed = !door.Closed;
-                door.LastClick = DateTime.UtcNow;
             }
         }
     }

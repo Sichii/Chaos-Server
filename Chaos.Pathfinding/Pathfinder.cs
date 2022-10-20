@@ -10,7 +10,7 @@ using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;
 
-public class Pathfinder : IPathfinder
+public sealed class Pathfinder : IPathfinder
 {
     private readonly int Height;
     private readonly int[] NeighborIndexes;

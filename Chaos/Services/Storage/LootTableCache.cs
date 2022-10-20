@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
-using Chaos.Entities.Schemas.Content;
+using Chaos.Schemas.Content;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSchema, LootTableCacheOptions>
+public sealed class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSchema, LootTableCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<LootTable, string> KeySelector => l => l.Key;

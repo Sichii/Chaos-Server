@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
-public record RedirectArgs(IRedirect Redirect) : ISendArgs;
+public sealed record RedirectArgs(IRedirect Redirect) : ISendArgs;

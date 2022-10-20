@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record GroupRequestDeserializer : ClientPacketDeserializer<GroupRequestArgs>
+public sealed record GroupRequestDeserializer : ClientPacketDeserializer<GroupRequestArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.GroupRequest;
 

@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record SwapSlotDeserializer : ClientPacketDeserializer<SwapSlotArgs>
+public sealed record SwapSlotDeserializer : ClientPacketDeserializer<SwapSlotArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.SwapSlot;
 

@@ -1,10 +1,10 @@
 using Chaos.Containers;
-using Chaos.Entities.Schemas.Aisling;
+using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class UserOptionsSchemaMapperProfile : IMapperProfile<UserOptions, UserOptionsSchema>
+public sealed class UserOptionsSchemaMapperProfile : IMapperProfile<UserOptions, UserOptionsSchema>
 {
     public UserOptions Map(UserOptionsSchema obj) => new()
     {

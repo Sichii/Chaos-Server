@@ -10,7 +10,7 @@ public interface IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        ICollection<IPoint> unwalkablePoints
     );
 
     void RegisterGrid(
@@ -22,6 +22,6 @@ public interface IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        ICollection<IPoint> unwalkablePoints
     );
 }

@@ -1,10 +1,10 @@
 using Chaos.Data;
-using Chaos.Entities.Schemas.Data;
+using Chaos.Schemas.Data;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class WarpMapperProfile : IMapperProfile<Warp, WarpSchema>
+public sealed class WarpMapperProfile : IMapperProfile<Warp, WarpSchema>
 {
     /// <inheritdoc />
     public Warp Map(WarpSchema obj) => new()

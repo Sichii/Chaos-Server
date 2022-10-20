@@ -6,7 +6,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Containers;
 
-public class Inventory : PanelBase<Item>, IInventory
+public sealed class Inventory : PanelBase<Item>, IInventory
 {
     private readonly ICloningService<Item> ItemCloner;
 
@@ -174,7 +174,7 @@ public class Inventory : PanelBase<Item>, IInventory
 
     public bool TryAddDirect(byte slot, Item obj) => base.TryAdd(slot, obj);
 
-    protected virtual bool TryAddStackable(Item obj)
+    private bool TryAddStackable(Item obj)
     {
         if (!obj.Template.Stackable)
             return false;

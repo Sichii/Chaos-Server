@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record PasswordChangeDeserializer : ClientPacketDeserializer<PasswordChangeArgs>
+public sealed record PasswordChangeDeserializer : ClientPacketDeserializer<PasswordChangeArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.PasswordChange;
 

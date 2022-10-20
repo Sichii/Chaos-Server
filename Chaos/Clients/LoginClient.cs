@@ -14,9 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;
 
-public class LoginClient : SocketClientBase, ILoginClient
+public sealed class LoginClient : SocketClientBase, ILoginClient
 {
-    protected ILoginServer Server { get; }
+    private readonly ILoginServer Server;
 
     public LoginClient(
         Socket socket,
@@ -30,6 +30,21 @@ public class LoginClient : SocketClientBase, ILoginClient
             cryptoClient,
             packetSerializer,
             logger) => Server = server;
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            CryptoClient.Decrypt(ref packet);
+
+        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, ref packet);
+    }
 
     public void SendLoginControls(LoginControlsType loginControlsType, string message)
     {
@@ -82,7 +97,7 @@ public class LoginClient : SocketClientBase, ILoginClient
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                var metafile = metafileCache.GetObject(name);
+                var metafile = metafileCache.Get(name);
 
                 args.MetafileData = new MetafileInfo
                 {
@@ -111,20 +126,4 @@ public class LoginClient : SocketClientBase, ILoginClient
 
         Send(args);
     }
-    
-    /// <inheritdoc />
-    protected override ValueTask HandlePacketAsync(Span<byte> span)
-    {
-        var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
-
-        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, ref packet);
-    }
-    
 }

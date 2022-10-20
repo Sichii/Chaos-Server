@@ -5,7 +5,7 @@ using Chaos.Cryptography.Abstractions.Definitions;
 
 namespace Chaos.Cryptography;
 
-public class CryptoClient : ICryptoClient
+public sealed class CryptoClient : ICryptoClient
 {
     private readonly IReadOnlyList<byte> KeySalts;
     public byte[] Key { get; }

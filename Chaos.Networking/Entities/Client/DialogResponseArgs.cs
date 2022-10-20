@@ -3,8 +3,8 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record DialogResponseArgs(
-    GameObjectType GameObjectType,
+public sealed record DialogResponseArgs(
+    EntityType EntityType,
     uint ObjectId,
     ushort PursuitId,
     ushort DialogId,

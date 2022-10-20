@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class SpellFactory : ISpellFactory
+public sealed class SpellFactory : ISpellFactory
 {
     private readonly ILogger Logger;
     private readonly IScriptProvider ScriptProvider;
@@ -27,7 +27,7 @@ public class SpellFactory : ISpellFactory
     public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
-        var template = SimpleCache.GetObject<SpellTemplate>(templateKey);
+        var template = SimpleCache.Get<SpellTemplate>(templateKey);
         var spell = new Spell(template, ScriptProvider, extraScriptKeys);
 
         Logger.LogTrace("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);

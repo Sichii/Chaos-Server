@@ -5,7 +5,7 @@ namespace Chaos.Time;
 /// <summary>
 ///     Provides an easy way to obtain a high-precision time-based delta value.
 /// </summary>
-public class DeltaTime
+public sealed class DeltaTime
 {
     private readonly Stopwatch Stopwatch = Stopwatch.StartNew();
     private long LastValue;

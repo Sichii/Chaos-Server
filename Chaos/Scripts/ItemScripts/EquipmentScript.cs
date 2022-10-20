@@ -9,12 +9,12 @@ public class EquipmentScript : ConfigurableItemScriptBase
 {
     protected AdvClass AdvClass { get; init; } = AdvClass.None;
     protected BaseClass BaseClass { get; init; } = BaseClass.Peasant;
+    protected EquipmentType EquipmentType { get; init; }
     protected Gender Gender { get; init; } = Gender.Unisex;
     protected int? MinLevel { get; init; }
-    protected Stat? StatRequired { get; init; }
     protected int? StatAmountRequired { get; init; }
-    protected EquipmentType EquipmentType { get; init; }
-    
+    protected Stat? StatRequired { get; init; }
+
     public EquipmentScript(Item subject)
         : base(subject) { }
 
@@ -31,7 +31,7 @@ public class EquipmentScript : ConfigurableItemScriptBase
         if ((BaseClass != BaseClass.Peasant) && (BaseClass != source.UserStatSheet.BaseClass))
         {
             source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{Subject.DisplayName} does not seem to fit you");
-            
+
             return;
         }
 
@@ -41,8 +41,8 @@ public class EquipmentScript : ConfigurableItemScriptBase
 
             return;
         }
-        
-        if(MinLevel.HasValue && (MinLevel.Value > source.UserStatSheet.Level))
+
+        if (MinLevel.HasValue && (MinLevel.Value > source.UserStatSheet.Level))
         {
             source.Client.SendServerMessage(
                 ServerMessageType.OrangeBar1,
@@ -62,16 +62,6 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
-        var slot = Subject.Slot;
-
-        //try equip,
-        if (source.Equipment.TryEquip(EquipmentType, Subject, out var returnedItem))
-        {
-            source.Inventory.Remove(slot);
-            Subject.Script.OnEquipped(source);
-
-            if (returnedItem != null)
-                source.Inventory.TryAddToNextSlot(returnedItem);
-        }
+        source.Equip(EquipmentType, Subject);
     }
 }

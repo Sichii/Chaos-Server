@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ClientWalkDeserializer : ClientPacketDeserializer<ClientWalkArgs>
+public sealed record ClientWalkDeserializer : ClientPacketDeserializer<ClientWalkArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.ClientWalk;
 

@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record WorldMapClickDeserializer : ClientPacketDeserializer<WorldMapClickArgs>
+public sealed record WorldMapClickDeserializer : ClientPacketDeserializer<WorldMapClickArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.WorldMapClick;
 

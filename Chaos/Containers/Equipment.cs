@@ -4,7 +4,7 @@ using Chaos.Objects.Panel;
 
 namespace Chaos.Containers;
 
-public class Equipment : PanelBase<Item>, IEquipment
+public sealed class Equipment : PanelBase<Item>, IEquipment
 {
     public Item? this[EquipmentSlot slot] => this[(byte)slot];
 

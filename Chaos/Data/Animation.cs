@@ -2,7 +2,7 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Data;
 
-public record Animation
+public sealed record Animation
 {
     public ushort AnimationSpeed { get; init; }
     public ushort SourceAnimation { get; init; }

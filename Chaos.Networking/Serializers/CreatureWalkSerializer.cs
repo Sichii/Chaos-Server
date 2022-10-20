@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record CreatureWalkSerializer : ServerPacketSerializer<CreatureWalkArgs>
+public sealed record CreatureWalkSerializer : ServerPacketSerializer<CreatureWalkArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.CreatureWalk;
 

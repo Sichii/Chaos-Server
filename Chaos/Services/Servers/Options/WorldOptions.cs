@@ -19,6 +19,12 @@ public record WorldOptions : ServerOptions, IWorldOptions
     public required int RefreshIntervalMs { get; init; }
     public required int SaveIntervalMins { get; init; }
     public required int TradeRange { get; init; }
+    /// <inheritdoc />
+    public required bool ProhibitF5Walk { get; init; }
+    /// <inheritdoc />
+    public required bool ProhibitItemSwitchWalk { get; init; }
+    /// <inheritdoc />
+    public required bool ProhibitSpeedWalk { get; init; }
     public required int UpdatesPerSecond { get; init; }
 
     public static void PostConfigure(WorldOptions options)

@@ -1,6 +1,6 @@
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Content;
+using Chaos.Schemas.Content;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -9,7 +9,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public class MonsterSpawnMapperProfile : IMapperProfile<MonsterSpawn, MonsterSpawnSchema>
+public sealed class MonsterSpawnMapperProfile : IMapperProfile<MonsterSpawn, MonsterSpawnSchema>
 {
     private readonly IMonsterFactory MonsterFactory;
     private readonly ISimpleCache SimpleCache;
@@ -25,12 +25,12 @@ public class MonsterSpawnMapperProfile : IMapperProfile<MonsterSpawn, MonsterSpa
     {
         AggroRange = obj.AggroRange ?? 0,
         ExpReward = obj.ExpReward,
-        LootTable = obj.LootTableKey == null ? null : SimpleCache.GetObject<LootTable>(obj.LootTableKey),
+        LootTable = obj.LootTableKey == null ? null : SimpleCache.Get<LootTable>(obj.LootTableKey),
         MaxAmount = obj.MaxAmount,
         MaxGoldDrop = obj.MaxGoldDrop,
         MinGoldDrop = obj.MinGoldDrop,
         MonsterFactory = MonsterFactory,
-        MonsterTemplate = SimpleCache.GetObject<MonsterTemplate>(obj.MonsterTemplateKey),
+        MonsterTemplate = SimpleCache.Get<MonsterTemplate>(obj.MonsterTemplateKey),
         MaxPerSpawn = obj.MaxPerSpawn,
         ExtraScriptKeys = new HashSet<string>(obj.ExtraScriptKeys, StringComparer.OrdinalIgnoreCase),
         SpawnArea = obj.SpawnArea!,

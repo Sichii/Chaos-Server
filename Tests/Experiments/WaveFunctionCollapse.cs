@@ -48,8 +48,8 @@ public class WaveFunctionCollapse
 
         var simpleCacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = simpleCacheProvider.GetCache<MapTemplate>();
-        var oHeight = 50;
-        var oWidth = 50;
+        var oHeight = 100;
+        var oWidth = 100;
         var directory = "output";
 
         if (Directory.Exists(directory))
@@ -60,19 +60,40 @@ public class WaveFunctionCollapse
         var backgroundSample = new List<ChaosTile>
         {
             //pravate cave
-            new(3776, 0, 0),
-            new(3754, 0, 0)
-            //new(299, 0, 0),
-            //new(300, 0, 0)
+            //new(3776, 0, 0),
+            //new(3754, 0, 0)
+            //east woodlands
+            //new (28, 0, 0),
+            //new (215, 0, 0)
+            //shinewood
+            //new(14406, 0, 0),
+            //new(14960, 0, 0)
+            //hwarone
+            //new(15648, 0, 0),
+            //new (15698,0,0)
+            //chaos
+            new(4090, 0, 0),
+            new(4126, 0, 0)
         };
 
         var foregroundSample = new List<ChaosTile>
         {
             //pravat cave
-            new(0, 5052, 5053),
-            new(0, 5054, 5055)
-            //new(0, 913, 914),
-            //new(0, 2145, 2146)
+            //new(0, 5052, 5053),
+            //new(0, 5054, 5055)
+            //east woodlands
+            //new(0, 4876, 4877),
+            //new(0, 4898, 4899)
+            //shinewood
+            //new(0, 14025, 14026),
+            //new(0, 14027, 14028),
+            //new(0, 14066, 14067)
+            //hwarone
+            //new(0, 15494, 15495),
+            //new (0,15496,15497)
+            //shinewood
+            new(0, 5546, 5547),
+            new(0, 5542, 5543)
         };
 
         var model = TrainModel(
@@ -84,7 +105,7 @@ public class WaveFunctionCollapse
             out var emptyForegroundTiles);
 
         foreach (var emptyTile in emptyForegroundTiles.DistinctBy(t => t.Value))
-            model.MultiplyFrequency(emptyTile, 0.33);
+            model.MultiplyFrequency(emptyTile, 1);
 
         var outputTopology = new GridTopology(oWidth, oHeight, false);
 

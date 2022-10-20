@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ProfileDeserializer : ClientPacketDeserializer<ProfileArgs>
+public sealed record ProfileDeserializer : ClientPacketDeserializer<ProfileArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Profile;
 

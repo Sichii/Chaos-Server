@@ -3,4 +3,4 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record TurnArgs(Direction Direction) : IReceiveArgs;
+public sealed record TurnArgs(Direction Direction) : IReceiveArgs;

@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record DisplayObjectRequestDeserializer : ClientPacketDeserializer<DisplayObjectRequestArgs>
+public sealed record DisplayObjectRequestDeserializer : ClientPacketDeserializer<DisplayObjectRequestArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.DisplayObjectRequest;
 

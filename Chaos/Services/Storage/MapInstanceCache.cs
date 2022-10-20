@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Chaos.Containers;
 using Chaos.Core.Utilities;
 using Chaos.Data;
-using Chaos.Entities.Schemas.Aisling;
-using Chaos.Entities.Schemas.Content;
 using Chaos.Extensions;
 using Chaos.Pathfinding.Abstractions;
+using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Content;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSchema, MapInstanceCacheOptions>
+public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSchema, MapInstanceCacheOptions>
 {
     private readonly IPathfindingService PathfindingService;
 

@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-public record ExchangeArgs(
+public sealed record ExchangeArgs(
     ExchangeRequestType ExchangeRequestType,
     uint OtherPlayerId,
     byte? SourceSlot,

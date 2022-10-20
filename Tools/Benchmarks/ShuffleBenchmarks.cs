@@ -9,7 +9,7 @@ public class ShuffleBenchmark
     public int[] Array { get; } = Enumerable.Range(0, 100).Select(_ => Random.Shared.Next()).ToArray();
     public int[] RandomizedIndexes { get; } = Enumerable.Range(0, 100).Select(i => i).ToArray();
 
-    [Benchmark]
+    [Benchmark(Baseline = true)]
     public void OrderByShuffle()
     {
         foreach (var _ in Array.OrderBy(_ => Random.Shared.Next())) { }

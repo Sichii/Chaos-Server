@@ -1,5 +1,6 @@
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
+using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Extensions;
 using Chaos.Objects.World;
@@ -7,13 +8,13 @@ using Chaos.Objects.World;
 namespace Chaos.Commands;
 
 [Command("reload")]
-public class ReloadCommand : ICommand<Aisling>
+public sealed class ReloadCommand : ICommand<Aisling>
 {
     private readonly IServiceProvider ServiceProvider;
     public ReloadCommand(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
     /// <inheritdoc />
-    public void Execute(Aisling aisling, params string[] args)
+    public void Execute(Aisling aisling, ArgumentCollection args)
     {
         var arg = args.FirstOrDefault();
 
@@ -40,6 +41,11 @@ public class ReloadCommand : ICommand<Aisling>
             case "monsters":
                 ServiceProvider.ReloadMonsters();
                 aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Monsters reloaded");
+
+                break;
+            case "maps":
+                ServiceProvider.ReloadMaps();
+                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Maps reloaded");
 
                 break;
         }

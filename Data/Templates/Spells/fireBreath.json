@@ -12,8 +12,8 @@
             "bodyAnimation": "wizardCast",
             "minSoundDelayMs": 2000,
             "propagationDelayMs": 300,
-            "range": 15,
-            "shape": "cone",
+            "range": 6,
+            "shape": "straight",
             "stopAtWalls": true,
             "targetAnimation": 138
         }

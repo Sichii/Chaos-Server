@@ -4,7 +4,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Containers;
 
-public class Bank : IEnumerable<Item>
+public sealed class Bank : IEnumerable<Item>
 {
     private readonly ICloningService<Item> ItemCloner;
     private readonly Dictionary<string, Item> Items;

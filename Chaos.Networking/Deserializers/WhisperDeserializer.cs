@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record WhisperDeserializer : ClientPacketDeserializer<WhisperArgs>
+public sealed record WhisperDeserializer : ClientPacketDeserializer<WhisperArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Whisper;
 

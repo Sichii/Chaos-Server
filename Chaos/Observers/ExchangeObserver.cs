@@ -3,7 +3,7 @@ using Chaos.Objects.World;
 
 namespace Chaos.Observers;
 
-public class ExchangeObserver : Abstractions.IObserver<Item>
+public sealed class ExchangeObserver : Abstractions.IObserver<Item>
 {
     private readonly Aisling Other;
     private readonly Aisling Owner;

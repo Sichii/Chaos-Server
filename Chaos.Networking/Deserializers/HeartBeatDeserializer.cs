@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record HeartBeatDeserializer : ClientPacketDeserializer<HeartBeatArgs>
+public sealed record HeartBeatDeserializer : ClientPacketDeserializer<HeartBeatArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.HeartBeat;
 

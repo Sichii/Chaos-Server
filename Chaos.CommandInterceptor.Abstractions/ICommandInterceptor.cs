@@ -12,7 +12,7 @@ public interface ICommandInterceptor<in T>
     /// <param name="source">The object executing the command</param>
     /// <param name="commandStr">The full command string</param>
     void HandleCommand(T source, string commandStr);
-    
+
     /// <summary>
     ///     Determines whether or not a string is a valid command
     /// </summary>

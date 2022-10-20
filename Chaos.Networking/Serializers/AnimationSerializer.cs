@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
+public sealed record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Animation;
 

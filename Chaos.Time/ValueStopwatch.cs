@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Chaos.Time;
 
-public readonly struct ValueStopwatch
+public readonly ref struct ValueStopwatch
 {
     private static readonly double TIMESTAMP_TO_TICKS = TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
 

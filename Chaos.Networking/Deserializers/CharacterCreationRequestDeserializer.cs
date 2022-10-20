@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record CharacterCreationRequestDeserializer : ClientPacketDeserializer<CreateCharRequestArgs>
+public sealed record CharacterCreationRequestDeserializer : ClientPacketDeserializer<CreateCharRequestArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.CreateCharRequest;
 

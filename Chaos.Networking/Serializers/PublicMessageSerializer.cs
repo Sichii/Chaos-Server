@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record PublicMessageSerializer : ServerPacketSerializer<PublicMessageArgs>
+public sealed record PublicMessageSerializer : ServerPacketSerializer<PublicMessageArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.PublicMessage;
 

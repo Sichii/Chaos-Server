@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record ExitRequestDeserializer : ClientPacketDeserializer<ExitRequestArgs>
+public sealed record ExitRequestDeserializer : ClientPacketDeserializer<ExitRequestArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.ExitRequest;
 

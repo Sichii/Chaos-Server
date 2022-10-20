@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record SynchronizeTicksDeserializer : ClientPacketDeserializer<SynchronizeTicksArgs>
+public sealed record SynchronizeTicksDeserializer : ClientPacketDeserializer<SynchronizeTicksArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.SynchronizeTicks;
 

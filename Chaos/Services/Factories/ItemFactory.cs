@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public class ItemFactory : IItemFactory
+public sealed class ItemFactory : IItemFactory
 {
     private readonly ILogger Logger;
     private readonly ITypeMapper Mapper;
@@ -31,7 +31,7 @@ public class ItemFactory : IItemFactory
     public Item Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= new List<string>();
-        var template = SimpleCache.GetObject<ItemTemplate>(templateKey);
+        var template = SimpleCache.Get<ItemTemplate>(templateKey);
         var item = new Item(template, ScriptProvider, extraScriptKeys);
 
         Logger.LogTrace("Created item - Name: {ItemName}, UniqueId: {UniqueId}", item.DisplayName, item.UniqueId);

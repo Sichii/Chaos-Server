@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record EmoteDeserializer : ClientPacketDeserializer<EmoteArgs>
+public sealed record EmoteDeserializer : ClientPacketDeserializer<EmoteArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.Emote;
 

@@ -1,20 +1,20 @@
 {
   "bodySprite": "Male",
-  "direction": "Right",
+  "direction": "Down",
   "effects": [],
   "gender": "Male",
-  "gold": 443,
+  "gold": 507,
   "hairStyle": 3,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "test9",
+  "mapInstanceId": "mileth",
   "name": "skittles",
   "statSheet": {
     "maxWeight": 103,
-    "toNextLevel": 94200,
-    "totalExp": 311900,
+    "toNextLevel": 65300,
+    "totalExp": 340800,
     "unspentPoints": 6,
-    "currentHp": 85944,
+    "currentHp": 74586,
     "currentMp": 100000,
     "level": 24,
     "con": 20,
@@ -33,6 +33,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 26,
-  "y": 19
+  "x": 50,
+  "y": 70
 }

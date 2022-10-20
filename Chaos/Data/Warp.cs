@@ -1,6 +1,6 @@
 namespace Chaos.Data;
 
-public record Warp
+public sealed record Warp
 {
     public Location Destination { get; init; }
     public Point? Source { get; init; }

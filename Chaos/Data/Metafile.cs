@@ -1,6 +1,6 @@
 namespace Chaos.Data;
 
-public record Metafile(
+public sealed record Metafile(
     string Name,
     byte[] Data,
     ICollection<MetafileNode> Nodes,

@@ -14,15 +14,15 @@ public abstract class MonsterScriptBase : ScriptBase, IMonsterScript
         set => Subject.Target = value;
     }
 
-    protected ConcurrentDictionary<uint, int> AggroList => Subject.AggroList;
-    protected int AggroRange => Subject.AggroRange;
-    protected MapInstance Map => Subject.MapInstance;
-    protected bool ShouldMove => Subject.MoveTimer.IntervalElapsed;
-    protected bool ShouldUseSkill => Subject.SkillTimer.IntervalElapsed;
-    protected bool ShouldUseSpell => Subject.SpellTimer.IntervalElapsed;
-    protected bool ShouldWander => Subject.WanderTimer.IntervalElapsed;
-    protected ICollection<Skill> Skills => Subject.Skills;
-    protected IList<Spell> Spells => Subject.Spells;
+    protected virtual ConcurrentDictionary<uint, int> AggroList => Subject.AggroList;
+    protected virtual int AggroRange => Subject.AggroRange;
+    protected virtual MapInstance Map => Subject.MapInstance;
+    protected virtual bool ShouldMove => Subject.MoveTimer.IntervalElapsed;
+    protected virtual bool ShouldUseSkill => Subject.SkillTimer.IntervalElapsed;
+    protected virtual bool ShouldUseSpell => Subject.SpellTimer.IntervalElapsed;
+    protected virtual bool ShouldWander => Subject.WanderTimer.IntervalElapsed;
+    protected virtual ICollection<Skill> Skills => Subject.Skills;
+    protected virtual IList<Spell> Spells => Subject.Spells;
     protected Monster Subject { get; }
 
     protected MonsterScriptBase(Monster subject) => Subject = subject;

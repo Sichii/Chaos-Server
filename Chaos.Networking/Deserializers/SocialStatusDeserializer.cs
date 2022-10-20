@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
-public record SocialStatusDeserializer : ClientPacketDeserializer<SocialStatusArgs>
+public sealed record SocialStatusDeserializer : ClientPacketDeserializer<SocialStatusArgs>
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.SocialStatus;
 

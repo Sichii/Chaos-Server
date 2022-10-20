@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer
+public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer
 {
     private readonly IClientFactory<ILobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
@@ -100,8 +100,6 @@ public class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer
     #endregion
 
     #region Connection / Handler
-    protected delegate ValueTask LobbyClientHandler(ILobbyClient client, ref ClientPacket packet);
-    
     public override ValueTask HandlePacketAsync(ILobbyClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
@@ -109,7 +107,7 @@ public class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer
         return handler?.Invoke(client, ref packet) ?? default;
     }
 
-    protected sealed override void IndexHandlers()
+    protected override void IndexHandlers()
     {
         if (ClientHandlers == null!)
             return;

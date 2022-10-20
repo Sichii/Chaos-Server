@@ -5,7 +5,7 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public record NotepadSerializer : ServerPacketSerializer<NotepadArgs>
+public sealed record NotepadSerializer : ServerPacketSerializer<NotepadArgs>
 {
     public override ServerOpCode ServerOpCode => ServerOpCode.Notepad;
 

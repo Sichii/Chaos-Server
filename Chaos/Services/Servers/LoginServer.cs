@@ -26,7 +26,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public class LoginServer : ServerBase<ILoginClient>, ILoginServer
+public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
@@ -35,7 +35,6 @@ public class LoginServer : ServerBase<ILoginClient>, ILoginServer
     private readonly ISaveManager<Aisling> UserSaveManager;
     public ConcurrentDictionary<uint, ILoginClient> Clients { get; }
     public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
-    protected new LoginClientHandler?[] ClientHandlers { get; }
     protected override LoginOptions Options { get; }
 
     public LoginServer(
@@ -64,7 +63,6 @@ public class LoginServer : ServerBase<ILoginClient>, ILoginServer
         Notice = new Notice(options.Value.NoticeMessage);
         Clients = new ConcurrentDictionary<uint, ILoginClient>();
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
-        ClientHandlers = new LoginClientHandler[byte.MaxValue];
 
         IndexHandlers();
     }
@@ -110,7 +108,7 @@ public class LoginServer : ServerBase<ILoginClient>, ILoginServer
             (var hairStyle, var gender, var hairColor) = args;
 
             var mapInstanceCache = CacheProvider.GetCache<MapInstance>();
-            var startingMap = mapInstanceCache.GetObject(Options.StartingMapInstanceId);
+            var startingMap = mapInstanceCache.Get(Options.StartingMapInstanceId);
 
             var user = new Aisling(
                 requestArgs.Name,
@@ -244,8 +242,6 @@ public class LoginServer : ServerBase<ILoginClient>, ILoginServer
     #endregion
 
     #region Connection / Handler
-    protected delegate ValueTask LoginClientHandler(ILoginClient client, ref ClientPacket packet);
-    
     public override ValueTask HandlePacketAsync(ILoginClient client, ref ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
@@ -253,13 +249,13 @@ public class LoginServer : ServerBase<ILoginClient>, ILoginServer
         return handler?.Invoke(client, ref packet) ?? default;
     }
 
-    protected sealed override void IndexHandlers()
+    protected override void IndexHandlers()
     {
         if (ClientHandlers == null!)
             return;
 
         base.IndexHandlers();
-        
+
         ClientHandlers[(byte)ClientOpCode.CreateCharRequest] = OnCreateCharRequest;
         ClientHandlers[(byte)ClientOpCode.CreateCharFinalize] = OnCreateCharFinalize;
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
