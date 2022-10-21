@@ -1,5 +1,6 @@
 using System.Reflection;
 using Chaos.CommandInterceptor.Abstractions;
+using Chaos.CommandInterceptor.Definitions;
 using Chaos.Common.Collections;
 using Chaos.Core.Utilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +49,16 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
     public void HandleCommand(T source, string commandStr)
     {
         var command = commandStr[1..];
-        var commandParts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        var commandParts = RegexCache.COMMAND_SPLIT_REGEX.Matches(command)
+                                     .Select(match =>
+                                     {
+                                         if(!string.IsNullOrWhiteSpace(match.Groups[1].Value))
+                                             return match.Groups[1].Value;
+
+                                         return match.Groups[2].Value;
+                                     })
+                                     .ToArray();
 
         if (commandParts.Length == 0)
             return;

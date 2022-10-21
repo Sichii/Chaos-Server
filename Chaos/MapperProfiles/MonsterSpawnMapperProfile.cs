@@ -23,7 +23,7 @@ public sealed class MonsterSpawnMapperProfile : IMapperProfile<MonsterSpawn, Mon
     /// <inheritdoc />
     public MonsterSpawn Map(MonsterSpawnSchema obj) => new()
     {
-        AggroRange = obj.AggroRange ?? 0,
+        AggroRange = obj.AggroRange,
         ExpReward = obj.ExpReward,
         LootTable = obj.LootTableKey == null ? null : SimpleCache.Get<LootTable>(obj.LootTableKey),
         MaxAmount = obj.MaxAmount,

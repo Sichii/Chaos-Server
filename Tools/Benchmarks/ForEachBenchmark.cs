@@ -9,8 +9,8 @@ public class ForEachBenchmark
 {
     [Params(1, 10, 100, 1000, 10000)]
     public int CollectionSize { get; set; }
-    public List<int> Collection { get; set; }
-    public int[] Array { get; set; }
+    public List<int> Collection { get; set; } = null!;
+    public int[] Array { get; set; } = null!;
 
     [GlobalSetup]
     public void Setup()

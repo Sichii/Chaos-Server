@@ -6,5 +6,5 @@ public sealed record SkillTemplateSchema : PanelObjectTemplateSchema
     ///     Whether or not the skill is an assail and should be used when spacebar is pressed<br />Assail cooldowns are handled by AssailIntervalMs
     ///     and AtkSpeedPct
     /// </summary>
-    public required bool IsAssail { get; init; }
+    public bool IsAssail { get; init; }
 }

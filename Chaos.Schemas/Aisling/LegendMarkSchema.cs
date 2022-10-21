@@ -1,13 +1,18 @@
+using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 
 namespace Chaos.Schemas.Aisling;
 
 public sealed record LegendMarkSchema
 {
-    public required long Added { get; init; }
-    public required MarkColor Color { get; init; }
-    public required int Count { get; init; }
-    public required MarkIcon Icon { get; init; }
-    public required string Key { get; init; }
-    public required string Text { get; init; }
+    public long Added { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public MarkColor Color { get; init; }
+    public int Count { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public MarkIcon Icon { get; init; }
+    [JsonRequired]
+    public string Key { get; init; } = null!;
+    [JsonRequired]
+    public string Text { get; init; } = null!;
 }

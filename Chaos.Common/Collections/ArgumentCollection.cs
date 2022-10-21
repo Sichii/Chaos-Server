@@ -21,10 +21,13 @@ public class ArgumentCollection : IEnumerable<string>
 
         return value != null;
     }
-    
+
     /// <inheritdoc />
     public IEnumerator<string> GetEnumerator() => Arguments.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public override string ToString() => string.Join(" ", Arguments);
 }

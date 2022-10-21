@@ -1,11 +1,16 @@
+using System.Text.Json.Serialization;
 using Chaos.Geometry;
 
 namespace Chaos.Schemas.Data;
 
 public sealed record WorldMapNodeSchema
 {
-    public required string NodeKey { get; init; }
-    public required Location Destination { get; init; }
-    public required string Text { get; init; }
-    public required Point ScreenPosition { get; init; }
+    [JsonRequired]
+    public string NodeKey { get; init; } = null!;
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Location Destination { get; init; }
+    [JsonRequired]
+    public string Text { get; init; } = null!;
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Point ScreenPosition { get; init; }
 }
