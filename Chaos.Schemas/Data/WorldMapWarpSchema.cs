@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
 using Chaos.Geometry;
 
 namespace Chaos.Schemas.Data;
 
 public sealed record WorldMapWarpSchema
 {
-    public required string WorldMapKey { get; init; }
-    public required Point Source { get; init; }
+    [JsonRequired]
+    public string WorldMapKey { get; init; } = null!;
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Point Source { get; init; }
 }

@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Chaos.Schemas.Aisling;
 
 public sealed record EffectSchema
 {
-    public required string Name { get; init; }
-    public required int? RemainingSecs { get; init; }
+    [JsonRequired]
+    public string Name { get; init; } = null!;
+    public int? RemainingSecs { get; init; }
 }

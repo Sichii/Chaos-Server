@@ -53,6 +53,7 @@ public class Startup
                     {
                         o.WriteIndented = true;
                         o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                        o.NumberHandling = JsonNumberHandling.AllowReadingFromString;
                         o.PropertyNameCaseInsensitive = true;
                         o.IgnoreReadOnlyProperties = true;
                         o.IgnoreReadOnlyFields = true;

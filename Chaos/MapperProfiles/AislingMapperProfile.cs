@@ -166,9 +166,9 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
 
             return new DisplayAislingArgs
             {
-                AccessoryColor1 = acc1?.Color ?? DisplayColor.None,
-                AccessoryColor2 = acc2?.Color ?? DisplayColor.None,
-                AccessoryColor3 = acc3?.Color ?? DisplayColor.None,
+                AccessoryColor1 = acc1?.Color ?? DisplayColor.Default,
+                AccessoryColor2 = acc2?.Color ?? DisplayColor.Default,
+                AccessoryColor3 = acc3?.Color ?? DisplayColor.Default,
                 AccessorySprite1 = acc1?.Template.ItemSprite.DisplaySprite ?? 0,
                 AccessorySprite2 = acc2?.Template.ItemSprite.DisplaySprite ?? 0,
                 AccessorySprite3 = acc3?.Template.ItemSprite.DisplaySprite ?? 0,
@@ -176,7 +176,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 ArmorSprite2 = armor?.Template.ItemSprite.DisplaySprite ?? 0,
                 BodyColor = obj.BodyColor,
                 BodySprite = obj.BodySprite + pantsColor,
-                BootsColor = boots?.Color ?? DisplayColor.None,
+                BootsColor = boots?.Color ?? DisplayColor.Default,
                 BootsSprite = (byte)(boots?.Template.ItemSprite.DisplaySprite ?? 0),
                 CreatureType = obj.Type,
                 Direction = obj.Direction,
@@ -194,7 +194,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
-                OvercoatColor = overcoat?.Color ?? DisplayColor.None,
+                OvercoatColor = overcoat?.Color ?? DisplayColor.Default,
                 OvercoatSprite = overcoat?.Template.ItemSprite.DisplaySprite ?? 0,
                 X = obj.X,
                 Y = obj.Y,

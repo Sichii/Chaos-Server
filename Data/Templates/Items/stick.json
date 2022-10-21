@@ -9,8 +9,8 @@
     "panelSprite": 86,
     "displaySprite": 1,
     "modifiers": {
-        "str": 1,
-        "atkSpeedPct": 100
+        "atkspeedPct": 100,
+        "str": 1
     },
     "pantsColor": "black",
     "scriptKeys": ["Equipment"],

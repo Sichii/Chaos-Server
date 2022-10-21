@@ -20,7 +20,7 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
             args.Equipment.TryGetValue(slot, out var item);
 
             writer.WriteUInt16(item?.Sprite ?? 0);
-            writer.WriteByte((byte)(item?.Color ?? DisplayColor.None));
+            writer.WriteByte((byte)(item?.Color ?? DisplayColor.Default));
         }
 
         writer.WriteByte((byte)args.SocialStatus);

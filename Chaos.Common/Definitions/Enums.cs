@@ -337,7 +337,7 @@ public enum DisplayColor : byte
     /// <summary>
     ///     Actually Lavender
     /// </summary>
-    None,
+    Default,
     Black,
     Red,
     Orange,

@@ -14,7 +14,7 @@ public sealed class Item : PanelObjectBase, IScriptedItem
     public DisplayColor Color { get; set; }
     public int Count { get; set; }
     public int? CurrentDurability { get; set; }
-    public string DisplayName => Color == DisplayColor.None ? Template.Name : $"{Color} {Template.Name}";
+    public string DisplayName => Color == DisplayColor.Default ? Template.Name : $"{Color} {Template.Name}";
     public IItemScript Script { get; }
     public override ItemTemplate Template { get; }
 

@@ -712,7 +712,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
                             new GroundItemInfo
                             {
                                 Id = money.Id,
-                                Color = DisplayColor.None,
+                                Color = DisplayColor.Default,
                                 X = money.X,
                                 Y = money.Y,
                                 Sprite = money.Sprite

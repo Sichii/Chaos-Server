@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 using Chaos.Geometry.Abstractions.Definitions;
 
@@ -5,26 +6,36 @@ namespace Chaos.Schemas.Aisling;
 
 public sealed record AislingSchema
 {
-    public required BodyColor BodyColor { get; init; }
-    public required BodySprite BodySprite { get; init; }
-    public required Direction Direction { get; init; }
-    public required ICollection<EffectSchema> Effects { get; init; } = Array.Empty<EffectSchema>();
-    public required int FaceSprite { get; init; }
-    public required int GamePoints { get; init; }
-    public required Gender Gender { get; init; }
-    public required int Gold { get; init; }
-    public required string? GuildName { get; init; }
-    public required string? GuildTitle { get; init; }
-    public required DisplayColor HairColor { get; init; }
-    public required int HairStyle { get; init; }
-    public required ICollection<string> IgnoreList { get; init; } = Array.Empty<string>();
-    public required bool IsAdmin { get; init; }
-    public required string MapInstanceId { get; init; }
-    public required string Name { get; init; }
-    public required Nation Nation { get; init; }
-    public required UserStatSheetSchema StatSheet { get; init; }
-    public required ICollection<string> Titles { get; init; } = Array.Empty<string>();
-    public required UserOptionsSchema UserOptions { get; init; }
-    public required int X { get; init; }
-    public required int Y { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public BodyColor BodyColor { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public BodySprite BodySprite { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Direction Direction { get; init; }
+    public ICollection<EffectSchema> Effects { get; init; } = Array.Empty<EffectSchema>();
+    public int FaceSprite { get; init; }
+    public int GamePoints { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Gender Gender { get; init; }
+    public int Gold { get; init; }
+    public string? GuildName { get; init; }
+    public string? GuildTitle { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public DisplayColor HairColor { get; init; }
+    public int HairStyle { get; init; }
+    public ICollection<string> IgnoreList { get; init; } = Array.Empty<string>();
+    public bool IsAdmin { get; init; }
+    [JsonRequired]
+    public string MapInstanceId { get; init; } = null!;
+    [JsonRequired]
+    public string Name { get; init; } = null!;
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Nation Nation { get; init; }
+    [JsonRequired]
+    public UserStatSheetSchema StatSheet { get; init; } = null!;
+    public ICollection<string> Titles { get; init; } = Array.Empty<string>();
+    [JsonRequired]
+    public UserOptionsSchema UserOptions { get; init; } = null!;
+    public int X { get; init; }
+    public int Y { get; init; }
 }

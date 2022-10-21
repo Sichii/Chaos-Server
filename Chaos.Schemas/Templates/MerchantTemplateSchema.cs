@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 using Chaos.Geometry.Abstractions.Definitions;
 
@@ -5,10 +6,14 @@ namespace Chaos.Schemas.Templates;
 
 public sealed record MerchantTemplateSchema
 {
-    public required string TemplateKey { get; init; }
-    public required string Name { get; init; }
-    public required ushort Sprite { get; init; }
-    public required ICollection<string> ScriptKeys { get; init; } = Array.Empty<string>();
-    public required string? DialogKey { get; init; }
-    public required Direction Direction { get; init; }
+    [JsonRequired]
+    public string TemplateKey { get; init; } = null!;
+    [JsonRequired]
+    public string Name { get; init; } = null!;
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public ushort Sprite { get; init; }
+    public ICollection<string> ScriptKeys { get; init; } = Array.Empty<string>();
+    public string? DialogKey { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public Direction Direction { get; init; }
 }

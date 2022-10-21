@@ -1,10 +1,13 @@
+using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 
 namespace Chaos.Schemas.Aisling;
 
 public sealed record ItemSchema : PanelObjectSchema
 {
-    public required DisplayColor Color { get; init; }
-    public required int Count { get; init; }
-    public required int? CurrentDurability { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public DisplayColor Color { get; init; }
+    [JsonRequired]
+    public int Count { get; init; }
+    public int? CurrentDurability { get; init; }
 }

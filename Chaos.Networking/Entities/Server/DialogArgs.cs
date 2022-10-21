@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 public sealed record DialogArgs : ISendArgs
 {
     public required ushort DialogId { get; set; }
-    public required DialogType DialogType { get; set; } = DialogType.CloseDialog;
+    public required DialogType DialogType { get; set; }
     public required EntityType EntityType { get; set; }
     public required bool HasNextButton { get; set; }
     public required bool HasPreviousButton { get; set; }

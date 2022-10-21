@@ -4,6 +4,6 @@ namespace Chaos.Data;
 
 public class DialogContext
 {
-    public Dialog Dialog { get; set; }
-    public object SourceEntity { get; set; }
+    public required Dialog Dialog { get; set; }
+    public required object SourceEntity { get; set; }
 }

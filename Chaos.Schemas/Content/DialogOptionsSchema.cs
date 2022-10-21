@@ -1,7 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace Chaos.Schemas.Content;
 
 public sealed record DialogOptionSchema
 {
-    public required string OptionText { get; init; }
-    public required string DialogKey { get; init; }
+    [JsonRequired]
+    public string OptionText { get; init; } = null!;
+    [JsonRequired]
+    public string DialogKey { get; init; } = null!;
 }
