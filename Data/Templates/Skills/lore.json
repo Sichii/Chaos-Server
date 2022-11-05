@@ -1,0 +1,7 @@
+{
+    "templateKey": "lore",
+    "name": "Lore",
+    "panelSprite": 61,
+    "isAssail": false,
+    "scriptKeys": [ "Lore" ],
+}

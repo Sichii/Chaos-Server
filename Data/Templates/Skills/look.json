@@ -2,6 +2,6 @@
     "templateKey": "look",
     "name": "Look",
     "panelSprite": 8,
-    "isAssail": true,
+    "isAssail": false,
     "scriptKeys": [ "Look" ],
 }

@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "look",
+    "uniqueId": 53652
+  },
+  {
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "lore",
+    "uniqueId": 53666
+  }
+]
