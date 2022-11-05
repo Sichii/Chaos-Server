@@ -1,0 +1,13 @@
+{
+  "key": "scorpion",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "leather_belt",
+            "dropChance": 10
+        },
+        {
+            "itemTemplateKey": "bone_necklace",
+            "dropChance": 10
+        }
+    ]
+}

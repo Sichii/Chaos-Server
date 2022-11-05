@@ -1,0 +1,41 @@
+[
+  {
+    "monsterTemplateKey": "grimlock1",
+    "lootTableKey": "blank",
+    "intervalSecs": 120,
+    "intervalVariancePct": 30,
+    "maxAmount": 40,
+    "maxPerSpawn": 20,
+    "aggroRange": 6,
+    "minGoldDrop": 20,
+    "maxGoldDrop": 30,
+    "expReward": 320,
+    "extraScriptKeys": []
+  },
+  {
+    "monsterTemplateKey": "grimlock2",
+    "lootTableKey": "blank",
+    "intervalSecs": 120,
+    "intervalVariancePct": 30,
+    "maxAmount": 40,
+    "maxPerSpawn": 20,
+    "aggroRange": 6,
+    "minGoldDrop": 20,
+    "maxGoldDrop": 30,
+    "expReward": 320,
+    "extraScriptKeys": []
+  },
+  {
+    "monsterTemplateKey": "grimlockboss1",
+    "lootTableKey": "blank",
+    "intervalSecs": 15,
+    "intervalVariancePct": 30,
+    "maxAmount": 1,
+    "maxPerSpawn": 1,
+    "aggroRange": 8,
+    "minGoldDrop": 2000,
+    "maxGoldDrop": 5000,
+    "expReward": 15000,
+    "extraScriptKeys": []
+  }
+]

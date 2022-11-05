@@ -1,0 +1,28 @@
+{
+    "InstanceID": "bee1-7",
+    "Name": "Enchanted Garden",
+    "TemplateKey": "21107",
+    "ScriptKeys": [],
+    "minimumlevel": 14,
+    "maximumlevel": 34,
+    "warps": [
+        {
+            "source": "(0, 15)",
+            "destination": "bee1-6:(23, 12)"
+        },
+        {
+            "source": "(0, 14)",
+            "destination": "bee1-6:(23, 11)"
+        },
+        {
+            "source": "(24, 10,)",
+            "destination": "bee1-8:(1, 5)"
+        },
+        {
+            "source": "(24, 11,)",
+            "destination": "bee1-8:(1, 6)"
+        }
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

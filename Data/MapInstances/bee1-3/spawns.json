@@ -1,0 +1,28 @@
+[
+    {
+        "monsterTemplateKey": "bee1-1",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 6,
+        "minGoldDrop": 0,
+        "maxGoldDrop": 0,
+        "expReward": 800,
+        "extraScriptKeys": []
+    },
+    {
+        "monsterTemplateKey": "bee1-2",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 6,
+        "minGoldDrop": 0,
+        "maxGoldDrop": 0,
+        "expReward": 1050,
+        "extraScriptKeys": []
+    }
+]

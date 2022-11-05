@@ -1,0 +1,29 @@
+[
+    {
+        "monsterTemplateKey": "Crypt_spider",
+        "lootTableKey": "spider",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 25,
+        "maxPerSpawn": 15,
+        "aggroRange": 6,
+        "minGoldDrop": 1,
+        "maxGoldDrop": 3,
+        "expReward": 60,
+        "extraScriptKeys": []
+    },
+    {
+        "monsterTemplateKey": "Crypt_centipede",
+        "lootTableKey": "centipede",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 25,
+        "maxPerSpawn": 15,
+        "aggroRange": 6,
+        "minGoldDrop": 5,
+        "maxGoldDrop": 8,
+        "expReward": 140,
+        "extraScriptKeys": []
+    }
+
+]

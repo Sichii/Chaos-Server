@@ -3,13 +3,13 @@
     "name": "Assail",
     "panelSprite": 1,
     "isAssail": true,
-    "scriptKeys": ["statBasedDamage"],
+    "scriptKeys": [ "statBasedDamage" ],
     "scriptVars": {
         "statBasedDamage": {
-            "damage": 6,
+            "damage": 10,
             "bodyAnimation": "assail",
             "stat": "str",
-            "statCoefficient": 0.333
+            "statCoefficient": 1
         }
     }
 }

@@ -1,0 +1,29 @@
+[
+    {
+        "monsterTemplateKey": "crypt_bat",
+        "lootTableKey": "bat",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 25,
+        "maxPerSpawn": 15,
+        "aggroRange": 6,
+        "minGoldDrop": 10,
+        "maxGoldDrop": 20,
+        "expReward": 240,
+        "extraScriptKeys": []
+    },
+
+    {
+        "monsterTemplateKey": "Crypt_centipede",
+        "lootTableKey": "centipede",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 25,
+        "maxPerSpawn": 15,
+        "aggroRange": 6,
+        "minGoldDrop": 5,
+        "maxGoldDrop": 8,
+        "expReward": 140,
+        "extraScriptKeys": []
+    }
+]

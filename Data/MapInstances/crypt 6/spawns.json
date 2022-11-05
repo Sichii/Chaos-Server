@@ -1,0 +1,29 @@
+[
+    {
+        "monsterTemplateKey": "crypt_giantbat",
+        "lootTableKey": "giant_bat",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 6,
+        "minGoldDrop": 30,
+        "maxGoldDrop": 40,
+        "expReward": 900,
+        "extraScriptKeys": []
+    },
+
+    {
+        "monsterTemplateKey": "Crypt_kardi",
+        "lootTableKey": "kardi",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 7,
+        "minGoldDrop": 50,
+        "maxGoldDrop": 70,
+        "expReward": 1400,
+        "extraScriptKeys": []
+    }
+]

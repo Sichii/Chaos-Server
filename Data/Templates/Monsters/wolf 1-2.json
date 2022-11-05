@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "wolf1-2",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 30,
+    "MaximumHp": 2200,
+    "MaximumMp": 800,
+    "Ac": 60,
+    "Str": 18,
+    "Int": 18,
+    "Wis": 6,
+    "Con": 6,
+    "Dex": 6
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "White Wolf",
+  "Sprite": 547,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1300,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

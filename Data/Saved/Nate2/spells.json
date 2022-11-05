@@ -1,0 +1,20 @@
+[
+  {
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "fire_Breath",
+    "uniqueId": 1000015
+  },
+  {
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "zap",
+    "uniqueId": 1000016
+  },
+  {
+    "scriptKeys": [],
+    "slot": 3,
+    "templateKey": "heal",
+    "uniqueId": 1000017
+  }
+]

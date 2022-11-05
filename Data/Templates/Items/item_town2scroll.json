@@ -1,0 +1,18 @@
+
+  {
+    "templateKey": "town2scroll",
+    "accountBound": false,
+    "equipmentType": "notequipment",
+    "gender": "Unisex",
+    "maxStacks": 30,
+    "value": 100,
+    "weight": 0,
+    "name": "Town2 Scroll",
+    "panelSprite": 6,
+    "scriptKeys": ["TownScroll"],
+	"scriptVars": {
+        "townscroll": {
+            "destination": "town2_Inn 6 6",
+        }
+    }
+  }

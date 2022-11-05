@@ -1,0 +1,26 @@
+{
+  "InstanceID": "town2_faepriest",
+  "Name": "Priestess",
+  "TemplateKey": "302",
+  "ScriptKeys": [],
+  "Warps": [
+    {
+      "source": "(14, 8)",
+      "destination": "town2:(54, 33)"
+    },
+    {
+      "source": "(14, 7)",
+      "destination": "town2:(54, 33)"
+    },
+    {
+      "source": "(7, 14)",
+      "destination": "town2_combatarms:(12, 1)"
+    },
+    {
+      "source": "(8, 14)",
+      "destination": "town2_combatarms:(12, 1)"
+    }
+  ],
+  "Music": 1,
+  "Flags": "none"
+}

@@ -1,0 +1,13 @@
+{
+  "key": "Viper_boss1-1",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "jupe",
+            "dropChance": 100
+        },
+        {
+            "itemTemplateKey": "saber",
+            "dropChance": 10
+        }
+    ]
+}

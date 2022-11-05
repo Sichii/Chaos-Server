@@ -1,0 +1,29 @@
+[
+    {
+        "monsterTemplateKey": "crypt_reaper",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 7,
+        "minGoldDrop": 100,
+        "maxGoldDrop": 150,
+        "expReward": 4100,
+        "extraScriptKeys": []
+    },
+
+    {
+        "monsterTemplateKey": "Crypt_succubus",
+        "lootTableKey": "succubus",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 7,
+        "minGoldDrop": 90,
+        "maxGoldDrop": 120,
+        "expReward": 3000,
+        "extraScriptKeys": []
+    }
+]

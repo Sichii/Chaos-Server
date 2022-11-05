@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "crypt_headless",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 40,
+    "MaximumHp": 11500,
+    "MaximumMp": 3100,
+    "Ac": 10,
+    "Str": 40,
+    "Int": 8,
+    "Wis": 7,
+    "Con": 7,
+    "Dex": 7
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Headless Horseman",
+  "Sprite": 171,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1000,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1200,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

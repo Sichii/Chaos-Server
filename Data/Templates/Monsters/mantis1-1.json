@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "Mantis1-1",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 32,
+    "MaximumHp": 800,
+    "MaximumMp": 400,
+    "Ac": 70,
+    "Str": 9,
+    "Int": 1,
+    "Wis": 1,
+    "Con": 5,
+    "Dex": 3
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Green Mantis",
+  "Sprite": 87,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1500,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": [ "assail" ],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

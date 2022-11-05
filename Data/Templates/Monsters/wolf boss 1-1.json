@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "wolf_boss1-1",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 33,
+    "MaximumHp": 9820,
+    "MaximumMp": 800,
+    "Ac": 50,
+    "Str": 26,
+    "Int": 16,
+    "Wis": 6,
+    "Con": 6,
+    "Dex": 6
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Wolf",
+  "Sprite": 12,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1500,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1100,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

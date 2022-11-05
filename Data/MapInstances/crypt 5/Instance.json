@@ -1,0 +1,18 @@
+{
+    "InstanceID": "crypt5",
+    "Name": "Crypt 5",
+    "TemplateKey": "20105",
+    "ScriptKeys": [],
+    "warps": [
+        {
+            "source": "(0, 15)",
+            "destination": "crypt4:(18, 1)"
+        },
+        {
+            "source": "(19, 20)",
+            "destination": "crypt6:(1, 12)"
+        }
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

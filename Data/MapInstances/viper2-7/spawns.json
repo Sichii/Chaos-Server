@@ -1,0 +1,28 @@
+[
+    {
+        "monsterTemplateKey": "viper1-2",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 6,
+        "minGoldDrop": 20,
+        "maxGoldDrop": 40,
+        "expReward": 320,
+        "extraScriptKeys": []
+    },
+    {
+        "monsterTemplateKey": "viper1-3",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 6,
+        "minGoldDrop": 30,
+        "maxGoldDrop": 50,
+        "expReward": 420,
+        "extraScriptKeys": []
+    }
+]

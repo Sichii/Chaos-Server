@@ -1,0 +1,23 @@
+{
+    "templateKey": "jade_necklace",
+    "accountBound": false,
+    "baseClass": "Peasant",
+    "advClass": "None",
+    "displaySprite": 1,
+    "gender": "unisex",
+    "maxDurability": 5000,
+    "maxStacks": 1,
+    "modifiers": {
+        "atkspeedpct": 10
+    },
+    "value": 1000,
+    "weight": 1,
+    "name": "Jade Necklace",
+    "panelSprite": 195,
+    "scriptKeys": [ "Equipment" ],
+    "scriptVars": {
+        "equipment": {
+            "equipmentType": "necklace"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+  "key": "succubus",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "blood_dagger",
+            "dropChance": 10
+        },
+        {
+            "itemTemplateKey": "ruby_ring",
+            "dropChance": 10
+        }
+    ]
+}

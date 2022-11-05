@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "bee_boss1-1",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 28,
+    "MaximumHp": 2650,
+    "MaximumMp": 1300,
+    "Ac": 65,
+    "Str": 14,
+    "Int": 7,
+    "Wis": 7,
+    "Con": 7,
+    "Dex": 7
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Red Wasp",
+  "Sprite": 276,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1200,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1200,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

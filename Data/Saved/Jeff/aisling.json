@@ -1,0 +1,40 @@
+{
+  "bodySprite": "Male",
+  "effects": [],
+  "gender": "Male",
+  "gold": 28344,
+  "hairColor": "Brown",
+  "hairStyle": 9,
+  "ignoreList": [],
+  "isAdmin": true,
+  "mapInstanceId": "horse1-2",
+  "name": "Jeff",
+  "statSheet": {
+    "maxWeight": 200,
+    "toNextLevel": 351830,
+    "totalExp": 1127070,
+    "unspentPoints": 2,
+    "currentHp": 1,
+    "currentMp": 500,
+    "level": 50,
+    "ac": -17,
+    "atkSpeedPct": 1600,
+    "con": 11,
+    "dex": 1,
+    "int": 17,
+    "maximumHp": 6454,
+    "maximumMp": 5954,
+    "str": 110,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 12,
+  "y": 19
+}

@@ -1,0 +1,42 @@
+{
+  "InstanceID": "grimlock1-6",
+  "Name": "Grimlock 1-6",
+  "TemplateKey": "21506",
+  "ScriptKeys": [],
+  "warps": [
+    {
+      "source": "(0, 13)",
+      "destination": "grimlock1-5:(23, 9)"
+    },
+    {
+      "source": "(0, 14)",
+      "destination": "grimlock1-5:(23, 10)"
+    },
+    {
+      "source": "(0, 15)",
+      "destination": "grimlock1-5:(23, 11)"
+    },
+    {
+      "source": "(0, 16)",
+      "destination": "grimlock1-5:(23, 12)"
+    },
+    {
+      "source": "(13, 24)",
+      "destination": "grimlock1-7:(9, 1)"
+    },
+    {
+      "source": "(14, 24)",
+      "destination": "grimlock1-7:(10, 1)"
+    },
+    {
+      "source": "(15, 24)",
+      "destination": "grimlock1-7:(11, 1)"
+    },
+    {
+      "source": "(16, 24)",
+      "destination": "grimlock1-7:(12, 1)"
+    }
+  ],
+  "Music": 1,
+  "Flags": "none"
+}

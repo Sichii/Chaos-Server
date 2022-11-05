@@ -1,0 +1,18 @@
+{
+  "InstanceID": "town2_rogue",
+  "Name": "Special Skills Master",
+  "TemplateKey": "400",
+  "ScriptKeys": [],
+  "Warps": [
+    {
+      "source": "(6, 14)",
+      "destination": "town2:(6, 11)"
+    },
+    {
+      "source": "(7, 14)",
+      "destination": "town2:(6, 11)"
+    }
+  ],
+  "Music": 1,
+  "Flags": "none"
+}

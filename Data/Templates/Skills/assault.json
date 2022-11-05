@@ -1,0 +1,15 @@
+{
+    "templateKey": "assault",
+    "name": "Assault",
+    "panelSprite": 1,
+    "isAssail": true,
+    "scriptKeys": [ "statBasedDamage" ],
+    "scriptVars": {
+        "statBasedDamage": {
+            "damage": 6,
+            "bodyAnimation": "assail",
+            "stat": "str",
+            "statCoefficient": 1
+        }
+    }
+}

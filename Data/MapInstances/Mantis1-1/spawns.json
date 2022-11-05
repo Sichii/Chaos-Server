@@ -1,0 +1,15 @@
+[
+    {
+        "monsterTemplateKey": "Mantis1-1",
+        "lootTableKey": "blank",
+        "intervalSecs": 180,
+        "intervalVariancePct": 30,
+        "maxAmount": 35,
+        "maxPerSpawn": 18,
+        "aggroRange": 6,
+        "minGoldDrop": 0,
+        "maxGoldDrop": 0,
+        "expReward": 1620,
+        "extraScriptKeys": []
+    }
+]

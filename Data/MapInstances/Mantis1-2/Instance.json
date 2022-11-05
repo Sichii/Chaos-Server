@@ -1,0 +1,36 @@
+{
+    "InstanceID": "mantis1-2",
+    "Name": "Woodlands",
+    "TemplateKey": "21202",
+    "ScriptKeys": [],
+    "minimumlevel": 20,
+    "maximumlevel": 40,
+    "warps": [
+        {
+            "source": "(10, 24)",
+            "destination": "mantis1-1:(13, 1)"
+        },
+        {
+            "source": "(11, 24)",
+            "destination": "mantis1-1:(14, 1)"
+        },
+        {
+            "source": "(10, 0,)",
+            "destination": "mantis1-3:(13, 23)"
+        },
+        {
+            "source": "(11, 0,)",
+            "destination": "mantis1-3:(14, 23)"
+        },
+        {
+            "source": "(24, 12,)",
+            "destination": "mantis1-3:(1, 13)"
+        },
+        {
+            "source": "(24, 11,)",
+            "destination": "mantis1-8:(1, 12)"
+        }
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

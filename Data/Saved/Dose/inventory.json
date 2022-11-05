@@ -1,0 +1,18 @@
+[
+  {
+    "color": "Default",
+    "count": 1,
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "revivepot",
+    "uniqueId": 84886
+  },
+  {
+    "color": "Default",
+    "count": 53,
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "giftbox",
+    "uniqueId": 24404
+  }
+]

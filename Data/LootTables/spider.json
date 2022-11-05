@@ -1,0 +1,13 @@
+{
+  "key": "spider",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "apple",
+            "dropChance": 10
+        },
+        {
+            "itemTemplateKey": "spider_eye",
+            "dropChance": 10
+        }
+    ]
+}

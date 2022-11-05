@@ -1,0 +1,16 @@
+{
+    "templateKey": "heal",
+    "name": "Heal",
+    "panelSprite": 39,
+    "scriptKeys": [ "damage" ],
+    "spellType": "targeted",
+    "castLines": 0,
+    "scriptVars": {
+        "damage": {
+            "Healvalue": -1000,
+            "sound": 140,
+            "bodyAnimation": "wizardCast",
+            "targetAnimation": 139
+        }
+    }
+}

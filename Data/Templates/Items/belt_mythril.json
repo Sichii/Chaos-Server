@@ -1,0 +1,24 @@
+{
+    "templateKey": "mythril_belt",
+    "accountBound": false,
+    "baseClass": "Peasant",
+    "advClass": "None",
+    "displaySprite": 1,
+    "gender": "unisex",
+    "maxDurability": 5000,
+    "maxStacks": 1,
+    "modifiers": {
+        "str": 3,
+        "ac": -2
+    },
+    "value": 1000,
+    "weight": 1,
+    "name": "Mythril Belt",
+    "panelSprite": 236,
+    "scriptKeys": [ "Equipment" ],
+    "scriptVars": {
+        "equipment": {
+            "equipmentType": "belt"
+        }
+    }
+}

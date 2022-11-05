@@ -1,0 +1,39 @@
+{
+  "bodySprite": "Male",
+  "direction": "Right",
+  "effects": [],
+  "gender": "Male",
+  "gold": 93,
+  "hairColor": "Brown",
+  "hairStyle": 3,
+  "ignoreList": [],
+  "mapInstanceId": "crypt3",
+  "name": "nuil",
+  "statSheet": {
+    "maxWeight": 47,
+    "toNextLevel": 720,
+    "totalExp": 10180,
+    "unspentPoints": 6,
+    "currentHp": 10668,
+    "currentMp": 150,
+    "level": 5,
+    "atkSpeedPct": 1500,
+    "con": 2,
+    "dex": 1,
+    "int": 1,
+    "maximumHp": 11145,
+    "maximumMp": 95,
+    "str": 2,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 22,
+  "y": 22
+}
