@@ -1,0 +1,13 @@
+{
+    "templateKey": "home",
+    "name": "Home",
+    "panelSprite": 15,
+    "scriptKeys": ["home"]
+    "spellType": "notarget",
+    "castLines": 0,
+    "scriptVars": {
+        "home": {
+            "destination": "town2_Inn 6 6",
+        }
+    }
+}
