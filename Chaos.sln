@@ -101,6 +101,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Scripting.Abstraction
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Scripting", "Chaos.Scripting\Chaos.Scripting.csproj", "{8F53E199-9524-4F6E-B8D6-9719083FB7CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Scripting", "Chaos.Extensions.Scripting\Chaos.Extensions.Scripting.csproj", "{BF937891-1D8F-43A1-8F72-3C1BF445CD78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -275,6 +277,10 @@ Global
 		{8F53E199-9524-4F6E-B8D6-9719083FB7CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F53E199-9524-4F6E-B8D6-9719083FB7CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F53E199-9524-4F6E-B8D6-9719083FB7CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -310,5 +316,6 @@ Global
 		{6225495F-DF3A-409E-9238-BEECF342605B} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{1A52C64E-8EB3-4351-9572-C9B6C76DD166} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{2AC78F4C-4ADD-4F35-9687-D00568D72DC9} = {735CA129-8393-4DEA-B172-394D213DFF1A}
+		{BF937891-1D8F-43A1-8F72-3C1BF445CD78} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 	EndGlobalSection
 EndGlobal

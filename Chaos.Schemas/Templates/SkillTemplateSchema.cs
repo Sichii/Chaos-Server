@@ -1,3 +1,5 @@
+using Chaos.Schemas.Data;
+
 namespace Chaos.Schemas.Templates;
 
 public sealed record SkillTemplateSchema : PanelObjectTemplateSchema
@@ -7,4 +9,9 @@ public sealed record SkillTemplateSchema : PanelObjectTemplateSchema
     ///     and AtkSpeedPct
     /// </summary>
     public bool IsAssail { get; init; }
+
+    /// <summary>
+    ///     Defaults to null<br />If set, these are the requirements for the skill to be learned
+    /// </summary>
+    public LearningRequirementsSchema? LearningRequirements { get; init; }
 }

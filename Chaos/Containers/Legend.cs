@@ -1,4 +1,4 @@
-using Chaos.Data;
+using Chaos.Objects.Legend;
 using Chaos.Time;
 
 namespace Chaos.Containers;

@@ -1,11 +1,12 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Factories.Abstractions;
 using Chaos.Networking.Entities.Server;
+using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
-using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Servers.Options;
+using Chaos.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                                            IMapperProfile<Aisling, WorldListMemberInfo>
 {
     private readonly IExchangeFactory ExchangeFactory;
+    private readonly ICloningService<Item> ItemCloner;
     private readonly ILogger<AislingMapperProfile> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
@@ -31,11 +33,13 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         ITypeMapper mapper,
         IExchangeFactory exchangeFactory,
         ILoggerFactory loggerFactory,
-        ILogger<AislingMapperProfile> logger
+        ILogger<AislingMapperProfile> logger,
+        ICloningService<Item> itemCloner
     )
     {
         Mapper = mapper;
         Logger = logger;
+        ItemCloner = itemCloner;
         ExchangeFactory = exchangeFactory;
         SimpleCache = simpleCache;
         LoggerFactory = loggerFactory;
@@ -50,7 +54,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             mapInstance,
             new Point(obj.X, obj.Y),
             ExchangeFactory,
-            LoggerFactory.CreateLogger<Aisling>())
+            LoggerFactory.CreateLogger<Aisling>(),
+            ItemCloner)
         {
             BodyColor = obj.BodyColor,
             BodySprite = obj.BodySprite,

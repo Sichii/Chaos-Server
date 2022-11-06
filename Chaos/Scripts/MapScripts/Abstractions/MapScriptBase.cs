@@ -4,11 +4,11 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.MapScripts.Abstractions;
 
-public abstract class MapScriptBase : ScriptBase, IMapScript
+public abstract class MapScriptBase : SubjectiveScriptBase<MapInstance>, IMapScript
 {
-    protected MapInstance Subject { get; }
-
-    protected MapScriptBase(MapInstance subject) => Subject = subject;
+    /// <inheritdoc />
+    protected MapScriptBase(MapInstance subject)
+        : base(subject) { }
 
     /// <inheritdoc />
     public virtual void OnEntered(Creature creature) { }

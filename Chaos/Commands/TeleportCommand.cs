@@ -14,11 +14,11 @@ public sealed class TeleportCommand : ICommand<Aisling>
     public TeleportCommand(ISimpleCache cache) => Cache = cache;
 
     /// <inheritdoc />
-    public void Execute(Aisling aisling, ArgumentCollection args)
+    public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)
     {
         if (!args.TryGet<string>(0, out var mapInstanceId))
-            return;
-        
+            return default;
+
         var mapInstance = Cache.Get<MapInstance>(mapInstanceId);
         Point point;
 
@@ -28,5 +28,7 @@ public sealed class TeleportCommand : ICommand<Aisling>
             point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
 
         aisling.TraverseMap(mapInstance, point);
+
+        return default;
     }
 }

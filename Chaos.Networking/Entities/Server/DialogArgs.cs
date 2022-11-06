@@ -5,6 +5,7 @@ namespace Chaos.Networking.Entities.Server;
 
 public sealed record DialogArgs : ISendArgs
 {
+    public required DisplayColor Color { get; set; }
     public required ushort DialogId { get; set; }
     public required DialogType DialogType { get; set; }
     public required EntityType EntityType { get; set; }

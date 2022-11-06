@@ -10,7 +10,7 @@ public ref struct SpanReader
     public bool EndOfSpan => Position >= Buffer.Length;
     public int Remaining => Buffer.Length - Position;
 
-    public SpanReader(Encoding encoding, ref Span<byte> buffer)
+    public SpanReader(Encoding encoding, in Span<byte> buffer)
     {
         Buffer = buffer;
         Encoding = encoding;
@@ -92,17 +92,20 @@ public ref struct SpanReader
 
     public string ReadString()
     {
-        var terminatorPosition = 0;
+        var length = -1;
 
         for (var i = Position; i < Buffer.Length; i++)
-        {
-            terminatorPosition = i;
-
             if (Buffer[i] == 10)
-                break;
-        }
+            {
+                length = i;
 
-        var length = terminatorPosition - Position;
+                break;
+            }
+
+        //if no terminators were found, just read the rest of the buffer as a string
+        if (length == -1)
+            length = Buffer.Length - Position;
+
         var ret = Encoding.GetString(Buffer.Slice(Position, length));
         Position += length;
 

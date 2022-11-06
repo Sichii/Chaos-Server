@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Geometry.Abstractions;
@@ -46,7 +45,7 @@ public abstract class VisibleEntity : MapEntity
 
     public virtual void ShowTo(Aisling aisling) => aisling.Client.SendVisibleObjects(this);
 
-    public override string ToString() => $@"({Sprite} - {ILocation.ToString(this)})";
+    public override string ToString() => $@"Id:{Id} Sprite:{Sprite} Loc:{ILocation.ToString(this)})";
 
     public override void WarpTo(IPoint destinationPoint)
     {

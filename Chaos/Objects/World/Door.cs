@@ -70,7 +70,7 @@ public sealed class Door : VisibleEntity
                 door.Closed = !door.Closed;
                 door.LastClick = DateTime.UtcNow;
             }
-            
+
             foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 20)
                                                .ThatCanSee(this))
             {

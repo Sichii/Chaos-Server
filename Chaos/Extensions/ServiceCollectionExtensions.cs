@@ -2,26 +2,29 @@ using Chaos.Clients.Abstractions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions.DependencyInjection;
+using Chaos.Factories;
+using Chaos.Factories.Abstractions;
+using Chaos.MapperProfiles;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
+using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripts.DialogScripts.Abstractions;
 using Chaos.Scripts.ItemScripts.Abstractions;
 using Chaos.Scripts.MapScripts.Abstractions;
+using Chaos.Scripts.MerchantScripts.Abstractions;
 using Chaos.Scripts.MonsterScripts.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
 using Chaos.Scripts.SpellScripts.Abstractions;
-using Chaos.Services.Factories;
-using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Servers;
-using Chaos.Services.Servers.Abstractions;
-using Chaos.Services.Servers.Options;
-using Chaos.Services.Storage;
-using Chaos.Services.Storage.Options;
-using Chaos.Services.Utility;
+using Chaos.Servers;
+using Chaos.Servers.Abstractions;
+using Chaos.Servers.Options;
+using Chaos.Storage;
 using Chaos.Storage.Abstractions;
+using Chaos.Storage.Options;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,11 +58,13 @@ public static class ServiceCollectionExtensions
 
     public static void AddScripting(this IServiceCollection services)
     {
-        services.AddSingleton<IScriptFactory<IItemScript, Item>, ScriptFactory<IItemScript, Item>>();
-        services.AddSingleton<IScriptFactory<ISkillScript, Skill>, ScriptFactory<ISkillScript, Skill>>();
-        services.AddSingleton<IScriptFactory<ISpellScript, Spell>, ScriptFactory<ISpellScript, Spell>>();
-        services.AddSingleton<IScriptFactory<IMonsterScript, Monster>, ScriptFactory<IMonsterScript, Monster>>();
-        services.AddSingleton<IScriptFactory<IMapScript, MapInstance>, ScriptFactory<IMapScript, MapInstance>>();
+        services.AddScriptFactory<IItemScript, Item>();
+        services.AddScriptFactory<ISkillScript, Skill>();
+        services.AddScriptFactory<ISpellScript, Spell>();
+        services.AddScriptFactory<IMonsterScript, Monster>();
+        services.AddScriptFactory<IMapScript, MapInstance>();
+        services.AddScriptFactory<IMerchantScript, Merchant>();
+        services.AddScriptFactory<IDialogScript, Dialog>();
 
         services.AddTransient<IScriptProvider, ScriptProvider>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();
@@ -99,6 +104,8 @@ public static class ServiceCollectionExtensions
         services.AddDirectoryBoundOptionsFromConfig<LootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<WorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<MerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<DialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
 
         services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
         services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
@@ -110,6 +117,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache<LootTable>, LootTableCache>();
         services.AddSingleton<ISimpleCache<WorldMapNode>, WorldMapNodeCache>();
         services.AddSingleton<ISimpleCache<WorldMap>, WorldMapCache>();
+        services.AddSingleton<ISimpleCache<MerchantTemplate>, MerchantTemplateCache>();
+        services.AddSingleton<ISimpleCache<DialogTemplate>, DialogTemplateCache>();
         services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
 
         services.AddSingleton<ISimpleCache, SimpleCache>();
@@ -130,6 +139,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPanelObjectFactory<Skill>, ISkillFactory, SkillFactory>();
         services.AddTransient<IPanelObjectFactory<Spell>, ISpellFactory, SpellFactory>();
         services.AddTransient<IMonsterFactory, MonsterFactory>();
+        services.AddTransient<IMerchantFactory, MerchantFactory>();
+        services.AddTransient<IDialogFactory, DialogFactory>();
         services.AddSingleton<IEffectFactory, EffectFactory>();
         services.AddTransient<IExchangeFactory, ExchangeFactory>();
 

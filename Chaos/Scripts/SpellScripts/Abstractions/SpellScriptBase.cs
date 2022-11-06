@@ -5,13 +5,18 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts.Abstractions;
 
-public abstract class SpellScriptBase : ScriptBase, ISpellScript
+public abstract class SpellScriptBase : SubjectiveScriptBase<Spell>, ISpellScript
 {
-    protected Spell Subject { get; }
+    /// <inheritdoc />
+    protected SpellScriptBase(Spell subject)
+        : base(subject) { }
 
-    protected SpellScriptBase(Spell subject) => Subject = subject;
+    /// <inheritdoc />
     public virtual void OnForgotten(Aisling aisling) { }
+
+    /// <inheritdoc />
     public virtual void OnLearned(Aisling aisling) { }
 
+    /// <inheritdoc />
     public virtual void OnUse(SpellContext context) { }
 }

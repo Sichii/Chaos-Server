@@ -8,7 +8,7 @@ public sealed record DialogResponseArgs(
     uint ObjectId,
     ushort PursuitId,
     ushort DialogId,
-    DialogArgsType? DialogArgsType,
+    DialogArgsType DialogArgsType,
     byte? Option,
     params string[]? Args
 ) : IReceiveArgs;

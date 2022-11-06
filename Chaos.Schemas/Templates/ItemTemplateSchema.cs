@@ -12,6 +12,11 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     public bool AccountBound { get; init; }
 
     /// <summary>
+    ///     The amount of gold it costs to buy this item from a merchant
+    /// </summary>
+    public int BuyCost { get; init; }
+
+    /// <summary>
     ///     Defaults to None(lavender)<br />If the item is dyeable, this is the dye color
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
@@ -41,9 +46,9 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     public DisplayColor? PantsColor { get; init; }
 
     /// <summary>
-    ///     Not fully implemented
+    ///     The amount of gold given for selling this item to a merchant
     /// </summary>
-    public int Value { get; init; }
+    public int SellValue { get; init; }
 
     /// <summary>
     ///     The weight of the item in the inventory, or equipped

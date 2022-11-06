@@ -11,7 +11,7 @@ namespace Chaos.Objects.Panel;
 /// <summary>
 ///     Represents an object that exists within the skill panel.
 /// </summary>
-public sealed class Skill : PanelObjectBase, IScriptedSkill
+public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
 {
     public ISkillScript Script { get; }
     public override SkillTemplate Template { get; }

@@ -2,8 +2,11 @@
 
     <PropertyGroup>
 
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+
     </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Chaos.Common.Abstractions\Chaos.Common.Abstractions.csproj"/>
+    </ItemGroup>
 
 </Project>

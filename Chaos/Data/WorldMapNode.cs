@@ -8,9 +8,9 @@ namespace Chaos.Data;
 public sealed record WorldMapNode : WorldMapNodeInfo
 {
     private readonly ISimpleCache SimpleCache;
-    public WorldMapNode(ISimpleCache simpleCache) => SimpleCache = simpleCache;
 
     public required string NodeKey { get; init; }
+    public WorldMapNode(ISimpleCache simpleCache) => SimpleCache = simpleCache;
 
     public void OnClick(Aisling aisling)
     {

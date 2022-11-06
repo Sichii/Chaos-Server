@@ -5,13 +5,18 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts.Abstractions;
 
-public abstract class SkillScriptBase : ScriptBase, ISkillScript
+public abstract class SkillScriptBase : SubjectiveScriptBase<Skill>, ISkillScript
 {
-    protected Skill Subject { get; }
+    /// <inheritdoc />
+    protected SkillScriptBase(Skill subject)
+        : base(subject) { }
 
-    protected SkillScriptBase(Skill subject) => Subject = subject;
+    /// <inheritdoc />
     public virtual void OnForgotten(Aisling aisling) { }
+
+    /// <inheritdoc />
     public virtual void OnLearned(Aisling aisling) { }
 
+    /// <inheritdoc />
     public virtual void OnUse(Creature source) { }
 }

@@ -10,13 +10,16 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
 
     public void Add(TScript script) => Components.Add(script);
 
+    /// <inheritdoc />
+    public T? GetComponent<T>() where T: TScript => this.OfType<T>().FirstOrDefault();
+
     public IEnumerator<TScript> GetEnumerator()
     {
-        foreach(var component in Components)
+        foreach (var component in Components)
             if (component is ICompositeScript<TScript> composite)
             {
                 yield return component;
-                
+
                 foreach (var subComponent in composite)
                     yield return subComponent;
             } else
@@ -26,7 +29,4 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public void Remove(TScript script) => Components.Remove(script);
-
-    /// <inheritdoc />
-    public T? GetComponent<T>() where T: TScript => this.OfType<T>().FirstOrDefault();
 }

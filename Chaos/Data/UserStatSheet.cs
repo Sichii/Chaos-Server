@@ -1,6 +1,5 @@
 // ReSharper disable InconsistentNaming
 
-using System.Threading;
 using Chaos.Common.Definitions;
 
 namespace Chaos.Data;

@@ -1,23 +1,16 @@
 // ReSharper disable InconsistentNaming
 
-using System.Threading;
-
 namespace Chaos.Data;
 
-public record Attributes
+public record Attributes : Stats
 {
     protected int _ac;
     protected int _atkSpeedPct;
-    protected int _con;
-    protected int _dex;
     protected int _dmg;
     protected int _hit;
-    protected int _int;
     protected int _magicResistance;
     protected int _maximumHp;
     protected int _maximumMp;
-    protected int _str;
-    protected int _wis;
 
     public int Ac
     {
@@ -31,18 +24,6 @@ public record Attributes
         init => _atkSpeedPct = value;
     }
 
-    public int Con
-    {
-        get => _con;
-        init => _con = value;
-    }
-
-    public int Dex
-    {
-        get => _dex;
-        init => _dex = value;
-    }
-
     public int Dmg
     {
         get => _dmg;
@@ -53,12 +34,6 @@ public record Attributes
     {
         get => _hit;
         init => _hit = value;
-    }
-
-    public int Int
-    {
-        get => _int;
-        init => _int = value;
     }
 
     public int MagicResistance
@@ -77,18 +52,6 @@ public record Attributes
     {
         get => _maximumMp;
         init => _maximumMp = value;
-    }
-
-    public int Str
-    {
-        get => _str;
-        init => _str = value;
-    }
-
-    public int Wis
-    {
-        get => _wis;
-        init => _wis = value;
     }
 
     public virtual void Add(Attributes other)

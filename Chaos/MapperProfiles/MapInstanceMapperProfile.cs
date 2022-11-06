@@ -2,6 +2,7 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -9,7 +10,8 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>
+public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>,
+                                               IMapperProfile<MapTemplate, MapTemplateSchema>
 {
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
@@ -45,26 +47,20 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
             mapInstance.SimpleAdd(door);
         }
 
-        foreach (var warp in Mapper.MapMany<Warp>(obj.Warps))
-        {
-            var warpTile = new WarpTile(mapInstance, SimpleCache, warp);
-            mapInstance.SimpleAdd(warpTile);
-        }
-
-        foreach (var worldMapWarp in obj.WorldMapWarps)
-        {
-            var worldMap = SimpleCache.Get<WorldMap>(worldMapWarp.WorldMapKey);
-
-            var worldMapTile = new WorldMapTile(
-                mapInstance,
-                worldMapWarp.Source,
-                worldMap);
-
-            mapInstance.SimpleAdd(worldMapTile);
-        }
-
         return mapInstance;
     }
 
     public MapInstanceSchema Map(MapInstance obj) => throw new NotImplementedException();
+
+    public MapTemplate Map(MapTemplateSchema obj) => new()
+    {
+        Width = obj.Width,
+        Height = obj.Height,
+        TemplateKey = obj.TemplateKey,
+        WarpPoints = obj.WarpPoints,
+        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+        Tiles = new Tile[obj.Width, obj.Height]
+    };
+
+    public MapTemplateSchema Map(MapTemplate obj) => throw new NotImplementedException();
 }
