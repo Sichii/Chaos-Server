@@ -8,5 +8,4 @@ internal static partial class RegexCache
 
     [GeneratedRegex("""\"([^"]+)"|([^ ]+)""", RegexOptions.Compiled)]
     private static partial Regex GenerateCommandSplitRegex();
-    
 }

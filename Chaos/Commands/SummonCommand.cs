@@ -16,10 +16,10 @@ public class SummonCommand : ICommand<Aisling>
     public SummonCommand(ISimpleCacheProvider cacheProvider) => CacheProvider = cacheProvider;
 
     /// <inheritdoc />
-    public void Execute(Aisling source, ArgumentCollection args)
+    public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
         if (!args.TryGet<string>(0, out var name))
-            return;
+            return default;
 
         var mapCache = CacheProvider.GetCache<MapInstance>();
 
@@ -30,5 +30,7 @@ public class SummonCommand : ICommand<Aisling>
             source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{name} is not online");
         else
             aisling.TraverseMap(source.MapInstance, source);
+
+        return default;
     }
 }

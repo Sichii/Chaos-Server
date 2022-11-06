@@ -7,8 +7,8 @@ public abstract class IntervalEffectBase : EffectBase
 {
     protected abstract IIntervalTimer Interval { get; }
 
-    protected IntervalEffectBase(Creature source, Creature target)
-        : base(source, target) { }
+    protected IntervalEffectBase(Creature target)
+        : base(target) { }
 
     protected abstract void OnIntervalElapsed();
 

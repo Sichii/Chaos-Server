@@ -8,8 +8,8 @@ namespace Chaos.Networking.Abstractions;
 /// </summary>
 public interface IServer<in T> : IHostedService where T: ISocketClient
 {
-    ValueTask HandlePacketAsync(T client, ref ClientPacket packet);
-    ValueTask OnHeartBeatAsync(T client, ref ClientPacket packet);
-    ValueTask OnSequenceChangeAsync(T client, ref ClientPacket packet);
-    ValueTask OnSynchronizeTicksAsync(T client, ref ClientPacket packet);
+    ValueTask HandlePacketAsync(T client, in ClientPacket packet);
+    ValueTask OnHeartBeatAsync(T client, in ClientPacket packet);
+    ValueTask OnSequenceChangeAsync(T client, in ClientPacket packet);
+    ValueTask OnSynchronizeTicksAsync(T client, in ClientPacket packet);
 }

@@ -111,13 +111,14 @@ public sealed class Exchange
         else
         {
             aisling.Inventory.Remove(slot);
+            var amount = item.Count;
             userItems.TryAddToNextSlot(item);
 
             Logger.LogDebug(
                 "[Exchange: {ExchangeId}]: {UserName} added {Item}",
                 ExchangeId,
                 aisling.Name,
-                item);
+                item.ToString(amount));
         }
     }
 
@@ -206,7 +207,7 @@ public sealed class Exchange
 
     private void Distribute(Aisling aisling, int gold, Inventory items)
     {
-        aisling.GiveGold(gold);
+        aisling.TryGiveGold(gold);
 
         Logger.LogDebug(
             "[Exchange: {ExchangeId}]: {UserName} received {Gold} gold",
@@ -217,13 +218,14 @@ public sealed class Exchange
         foreach (var item in items)
         {
             items.Remove(item.Slot);
+            var amount = item.Count;
 
             if (aisling.Inventory.TryAddToNextSlot(item))
                 Logger.LogDebug(
                     "[Exchange: {ExchangeId}]: {UserName} received {Item}",
                     ExchangeId,
                     aisling.Name,
-                    item);
+                    item.ToString(amount));
         }
     }
 
@@ -244,12 +246,11 @@ public sealed class Exchange
             return;
 
         //this is a set, so we should start by returning whatever gold is already in the exchange
-        aisling.GiveGold(gold);
+        aisling.TryGiveGold(gold);
         SetUserGold(aisling, 0);
 
-        if (aisling.Gold >= amount)
+        if (aisling.TryTakeGold(amount))
         {
-            aisling.GiveGold(-amount);
             SetUserGold(aisling, amount);
 
             Logger.LogDebug(

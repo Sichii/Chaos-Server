@@ -13,5 +13,5 @@ public interface ICommand<in T>
     /// </summary>
     /// <param name="source">The source of the command</param>
     /// <param name="args">Arguments to be used by the command</param>
-    void Execute(T source, ArgumentCollection args);
+    ValueTask ExecuteAsync(T source, ArgumentCollection args);
 }

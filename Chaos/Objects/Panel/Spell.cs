@@ -9,7 +9,7 @@ namespace Chaos.Objects.Panel;
 /// <summary>
 ///     Represents an object that exists within the spell panel.
 /// </summary>
-public sealed class Spell : PanelObjectBase, IScriptedSpell
+public sealed class Spell : PanelObjectBase, IScripted<ISpellScript>
 {
     public byte CastLines { get; set; }
     public ISpellScript Script { get; }

@@ -15,15 +15,25 @@ public sealed record PursuitRequestDeserializer : ClientPacketDeserializer<Pursu
         var gameObjectType = (EntityType)reader.ReadByte();
         var objectId = reader.ReadUInt32();
         var pursuitId = reader.ReadUInt16();
-        var args = reader.ReadArgs().ToArray();
 
-        if (args.Length == 0)
+        var args = new List<string>();
+
+        if (reader.Remaining == 1)
+        {
+            var slotOrLength = reader.ReadByte();
+
+            if (slotOrLength > 0)
+                args.Add(slotOrLength.ToString());
+        } else
+            args = reader.ReadArgs8();
+
+        if (args.Count == 0)
             args = null;
 
         return new PursuitRequestArgs(
             gameObjectType,
             objectId,
             pursuitId,
-            args);
+            args?.ToArray());
     }
 }

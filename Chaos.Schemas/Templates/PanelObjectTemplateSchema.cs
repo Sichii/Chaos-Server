@@ -9,6 +9,11 @@ public record PanelObjectTemplateSchema
     ///     Defaults to null<br />If specified, any on-use effect of this object will use this cooldown
     /// </summary>
     public int? CooldownMs { get; init; }
+
+    /// <summary>
+    ///     A brief description of this entity
+    /// </summary>
+    public string? Description { get; init; } = null!;
     /// <summary>
     ///     The base name of the object
     /// </summary>

@@ -69,12 +69,14 @@ public sealed class Mapper : ITypeMapper
         //taking in an Object, converting it to the "From" type, and then calling the Map method on the mapper
         var genericInterfaceTypes = service.GetType().ExtractGenericInterfaces(typeof(IMapperProfile<,>));
 
+        //find the method with the correct signature
         var method = genericInterfaceTypes.SelectMany(iFaceType => iFaceType.GetMethods())
                                           .First(
                                               m => m.Name.EqualsI(nameof(IMapperProfile<object, object>.Map))
                                                    && m.GetParameters().Any(p => p.ParameterType == from)
                                                    && (m.ReturnType == to));
 
+        //create an expression that takes an object, converts it, and then calls the map method
         var objExpression = Expression.Parameter(typeof(object));
         var convertExpression = Expression.Convert(objExpression, from);
         var callExpression = Expression.Call(Expression.Constant(service), method, convertExpression);

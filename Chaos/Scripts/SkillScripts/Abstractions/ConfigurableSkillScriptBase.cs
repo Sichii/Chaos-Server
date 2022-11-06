@@ -1,32 +1,22 @@
-using System.Reflection;
 using Chaos.Objects.Panel;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts.Abstractions;
 
-public abstract class ConfigurableSkillScriptBase : SkillScriptBase
+public abstract class ConfigurableSkillScriptBase : ConfigurableScriptBase<Skill>, ISkillScript
 {
     /// <inheritdoc />
     protected ConfigurableSkillScriptBase(Skill subject)
-        : base(subject)
-    {
-        if (!subject.Template.ScriptVars.TryGetValue(ScriptKey, out var scriptVars))
-            throw new InvalidOperationException(
-                $"Skill \"{subject.Template.Name}\" does not have script variables for script \"{ScriptKey}\"");
+        : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
-        var props = GetType()
-                    .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                    .Where(
-                        prop => prop.CanWrite
-                                && (Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType)
-                                .IsAssignableTo(typeof(IConvertible)));
+    /// <inheritdoc />
+    public virtual void OnForgotten(Aisling aisling) { }
 
-        foreach (var prop in props)
-        {
-            var type = prop.PropertyType;
-            var value = scriptVars.Get(type, prop.Name);
+    /// <inheritdoc />
+    public virtual void OnLearned(Aisling aisling) { }
 
-            if (value != null)
-                prop.SetValue(this, value);
-        }
-    }
+    /// <inheritdoc />
+    public virtual void OnUse(Creature source) { }
 }

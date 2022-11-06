@@ -7,7 +7,9 @@ public abstract class FileCacheOptionsBase : IFileCacheOptions
     /// <inheritdoc />
     public string? FilePattern { get; init; }
     /// <inheritdoc />
-    public required SearchResultType SearchResultType { get; init; }
+    public bool Recursive { get; init; }
+    /// <inheritdoc />
+    public required SearchType SearchType { get; init; }
 
     /// <inheritdoc />
     public virtual void UseBaseDirectory(string rootDirectory) => Directory = Path.Combine(rootDirectory, Directory);

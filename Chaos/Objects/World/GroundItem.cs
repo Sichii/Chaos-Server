@@ -36,6 +36,10 @@ public sealed class GroundItem : GroundEntity
     }
 
     /// <inheritdoc />
+    public override string ToString() =>
+        $@"Id:{Id} Sprite:{Sprite} Loc:{ILocation.ToString(this)} UId:{Item.UniqueId} Name:{Item.DisplayName} Count:{Item.Count})";
+
+    /// <inheritdoc />
     public override void Update(TimeSpan delta)
     {
         Item.Update(delta);

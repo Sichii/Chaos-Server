@@ -35,14 +35,14 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     }
 
     /// <inheritdoc />
+    public virtual T Get(string key) =>
+        Cache.TryGetValue(key, out var value) ? value : throw new KeyNotFoundException($"{typeof(T).Name} Key {key} was not found");
+
+    /// <inheritdoc />
     public IEnumerator<T> GetEnumerator() => Cache.Values.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    /// <inheritdoc />
-    public virtual T Get(string key) =>
-        Cache.TryGetValue(key, out var value) ? value : throw new KeyNotFoundException($"Key {key} was not found");
 
     protected virtual async Task<T?> LoadFromFileAsync(string path)
     {
@@ -57,11 +57,13 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
 
     public virtual async Task ReloadAsync()
     {
-        var files = Options.SearchResultType switch
+        var searchPattern = Options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+        var files = Options.SearchType switch
         {
-            SearchResultType.Files       => Directory.GetFiles(Options.Directory, Options.FilePattern ?? string.Empty),
-            SearchResultType.Directories => Directory.GetDirectories(Options.Directory, Options.FilePattern ?? string.Empty),
-            _                            => throw new ArgumentOutOfRangeException()
+            SearchType.Files       => Directory.GetFiles(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
+            SearchType.Directories => Directory.GetDirectories(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
+            _                      => throw new ArgumentOutOfRangeException()
         };
 
         var objName = typeof(T).Name;

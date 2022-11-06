@@ -20,8 +20,8 @@ public sealed record DisplayAislingArgs : ISendArgs
     public byte BootsSprite { get; set; }
     public CreatureType CreatureType { get; set; }
     public Direction Direction { get; set; }
-    public byte FaceSprite { get; set; }
     public EntityType EntityType { get; set; }
+    public byte FaceSprite { get; set; }
     public Gender Gender { get; set; }
     public string? GroupBoxText { get; set; }
     public DisplayColor HeadColor { get; set; }

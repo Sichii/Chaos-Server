@@ -3,11 +3,5 @@
     "instanceId": "test1",
     "music": 1,
     "name": "Test",
-    "templateKey": "10288",
-    "warps": [
-        {
-            "source": "(7, 5)",
-            "destination": "test2:(51, 50)"
-        }
-    ]
+    "templateKey": "10288"
 }

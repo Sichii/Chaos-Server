@@ -1,5 +1,3 @@
-using System.Threading;
-using Chaos.Time;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Utilities;
@@ -9,6 +7,8 @@ public class ResettingCounter : IDeltaUpdatable
     private readonly int MaxCount;
     private readonly IIntervalTimer Timer;
     private int Counter;
+
+    public bool Maxed => Counter >= MaxCount;
 
     public ResettingCounter(int maxPerSecond, IIntervalTimer timer)
     {
@@ -34,6 +34,4 @@ public class ResettingCounter : IDeltaUpdatable
         if (Timer.IntervalElapsed)
             Counter = 0;
     }
-    
-    public bool Maxed => Counter >= MaxCount;
 }

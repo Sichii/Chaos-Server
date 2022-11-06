@@ -8,68 +8,64 @@ namespace Chaos.Scripts.MonsterScripts;
 
 public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMonsterScript
 {
-    protected Monster Subject { get; }
-
-    public CompositeMonsterScript(Monster subject) => Subject = subject;
-
     /// <inheritdoc />
-    public void OnApproached(Creature source)
+    public virtual void OnApproached(Creature source)
     {
         foreach (var component in Components)
             component.OnApproached(source);
     }
 
     /// <inheritdoc />
-    public void OnAttacked(Creature source, ref int damage)
+    public virtual void OnAttacked(Creature source, ref int damage)
     {
         foreach (var component in Components)
             component.OnAttacked(source, ref damage);
     }
 
     /// <inheritdoc />
-    public void OnClicked(Aisling source)
+    public virtual void OnClicked(Aisling source)
     {
         foreach (var component in Components)
             component.OnClicked(source);
     }
 
     /// <inheritdoc />
-    public void OnDeath()
+    public virtual void OnDeath()
     {
         foreach (var component in Components)
             component.OnDeath();
     }
 
     /// <inheritdoc />
-    public void OnDeparture(Creature source)
+    public virtual void OnDeparture(Creature source)
     {
         foreach (var component in Components)
             component.OnDeparture(source);
     }
 
     /// <inheritdoc />
-    public void OnGoldDroppedOn(Aisling source, int amount)
+    public virtual void OnGoldDroppedOn(Aisling source, int amount)
     {
         foreach (var component in Components)
             component.OnGoldDroppedOn(source, amount);
     }
 
     /// <inheritdoc />
-    public void OnItemDroppedOn(Aisling source, Item item)
+    public virtual void OnItemDroppedOn(Aisling source, Item item)
     {
         foreach (var component in Components)
             component.OnItemDroppedOn(source, item);
     }
 
     /// <inheritdoc />
-    public void OnSpawn()
+    public virtual void OnSpawn()
     {
         foreach (var component in Components)
             component.OnSpawn();
     }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta)
+    public virtual void Update(TimeSpan delta)
     {
         foreach (var component in Components)
             component.Update(delta);

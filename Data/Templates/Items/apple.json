@@ -1,0 +1,11 @@
+{
+    "templateKey": "apple",
+    "accountBound": false,
+    "maxStacks": 100,
+    "buyCost": 100,
+    "sellValue": 50,
+    "weight": 1,
+    "name": "Apple",
+    "panelSprite": 40,
+    "scriptKeys": ["default"]
+}

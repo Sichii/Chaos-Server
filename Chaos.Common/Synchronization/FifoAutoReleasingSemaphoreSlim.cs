@@ -1,3 +1,5 @@
+using Chaos.Common.Abstractions;
+
 namespace Chaos.Common.Synchronization;
 
 /// <summary>
@@ -9,28 +11,58 @@ public class FifoAutoReleasingSemaphoreSlim
 
     public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new FifoSemaphoreSlim(initialCount, maxCount);
 
+    public void Release()
+    {
+        try
+        {
+            Root.Release();
+        } catch
+        {
+            //ignored
+        }
+    }
+
     /// <summary>
     ///     The same as <see cref="FifoSemaphoreSlim.WaitAsync()" />.
     ///     Returns a disposable object that when disposed will release the internal <see cref="FifoSemaphoreSlim" />.
     /// </summary>
-    public async ValueTask<IAsyncDisposable> WaitAsync()
+    public async ValueTask<IPolyDisposable> WaitAsync()
     {
         await Root.WaitAsync();
 
         return new AutoReleasingSubscription(Root);
     }
 
-    private record AutoReleasingSubscription : IAsyncDisposable
+    private record AutoReleasingSubscription : IPolyDisposable
     {
         private readonly FifoSemaphoreSlim SemaphoreSlim;
         private int Disposed;
 
         internal AutoReleasingSubscription(FifoSemaphoreSlim semaphoreSlim) => SemaphoreSlim = semaphoreSlim;
 
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (Interlocked.CompareExchange(ref Disposed, 1, 0) == 0)
+                try
+                {
+                    SemaphoreSlim.Release();
+                } catch
+                {
+                    //ignored
+                }
+        }
+
         public ValueTask DisposeAsync()
         {
             if (Interlocked.CompareExchange(ref Disposed, 1, 0) == 0)
-                SemaphoreSlim.Release();
+                try
+                {
+                    SemaphoreSlim.Release();
+                } catch
+                {
+                    //ignored
+                }
 
             return ValueTask.CompletedTask;
         }

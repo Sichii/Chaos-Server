@@ -3,6 +3,24 @@
     "name": "Assail",
     "panelSprite": 1,
     "isAssail": true,
+    "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
+    "learningRequirements": {
+        "requiredStats": {
+            "str": 2,
+            "int": 1,
+            "wis": 1,
+            "con": 1,
+            "dex": 1
+        },
+        "itemRequirements": [
+            {
+                "itemTemplateKey": "apple",
+                "amountRequired": 20
+            }
+        ],
+        "requiredGold": 5000,
+        "requiredLevel": 1
+    },
     "scriptKeys": ["statBasedDamage"],
     "scriptVars": {
         "statBasedDamage": {

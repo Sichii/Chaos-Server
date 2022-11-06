@@ -13,10 +13,10 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
     public TimeSpan? Cooldown { get; set; }
     public TimeSpan? Elapsed { get; set; }
     public byte Slot { get; set; }
+    public uint Id => (uint)UniqueId;
     public ISet<string> ScriptKeys { get; }
     public virtual PanelObjectTemplateBase Template { get; }
     public ulong UniqueId { get; }
-    public uint Id => (uint)UniqueId;
 
     protected PanelObjectBase(PanelObjectTemplateBase template, ulong? uniqueId = null, int? elapsedMs = null)
     {
@@ -32,15 +32,15 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 
     public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
 
-    public override string ToString() => $@"(Id: {UniqueId}, Name: {Template.Name})";
+    public override string ToString() => $@"Id:{UniqueId} Name:{Template.Name})";
 
     public void Update(TimeSpan delta)
     {
         if (!Elapsed.HasValue)
             return;
 
-        var value = Elapsed.Value + delta;
-        Elapsed = value;
+        var ts = Elapsed.Value + delta;
+        Elapsed = ts;
 
         if (Elapsed > Cooldown)
             Elapsed = null;

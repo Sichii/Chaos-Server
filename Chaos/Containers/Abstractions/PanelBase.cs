@@ -110,7 +110,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     {
         using var @lock = Sync.Enter();
 
-        return Objects.Contains(obj);
+        return Objects.Any(o => (o != null) && o.Template.Name.EqualsI(obj.Template.Name));
     }
 
     public IEnumerator<T> GetEnumerator()

@@ -16,7 +16,7 @@ public sealed record DialogResponseDeserializer : ClientPacketDeserializer<Dialo
         var objectId = reader.ReadUInt32();
         var pursuitId = reader.ReadUInt16();
         var dialogId = reader.ReadUInt16();
-        var dialogArgsType = default(DialogArgsType?);
+        var dialogArgsType = default(DialogArgsType);
         var option = default(byte?);
         var args = default(string[]?);
 

@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
-using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Aisling;
 
@@ -51,14 +50,4 @@ public sealed record MapInstanceSchema
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; init; } = null!;
-
-    /// <summary>
-    ///     A collection of warps
-    /// </summary>
-    public ICollection<WarpSchema> Warps { get; init; } = Array.Empty<WarpSchema>();
-
-    /// <summary>
-    ///     A collection of warps that take you to the world map
-    /// </summary>
-    public ICollection<WorldMapWarpSchema> WorldMapWarps { get; init; } = Array.Empty<WorldMapWarpSchema>();
 }

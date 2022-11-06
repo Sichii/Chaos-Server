@@ -7,13 +7,13 @@ namespace Chaos.Utilities;
 
 public static class ServerPacketEx
 {
-    public static ServerPacket FromData(ServerOpCode opCode, Encoding? encoding = null, params byte[] data)
+    public static ServerPacket FromData(ServerOpCode opCode, Encoding encoding, params byte[] data)
     {
         var packet = new ServerPacket(opCode);
 
         if (data.Length > 0)
         {
-            var writer = new SpanWriter(encoding!, data.Length);
+            var writer = new SpanWriter(encoding, data.Length);
             writer.WriteBytes(data);
             packet.Buffer = writer.ToSpan();
         }

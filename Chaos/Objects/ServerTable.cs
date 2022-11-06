@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text;
 using Chaos.Extensions.Cryptography;
 using Chaos.IO.Compression;

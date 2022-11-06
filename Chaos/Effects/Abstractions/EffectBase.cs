@@ -19,24 +19,21 @@ public abstract class EffectBase : IEffect
         }
     }
 
+    protected Aisling? AislingSubject { get; set; }
+
     protected EffectColor Color { get; set; } = EffectColor.None;
     protected TimeSpan? Duration { get; init; } = TimeSpan.Zero;
     protected TimeSpan Elapsed { get; set; }
-    protected Aisling? SourceUser { get; set; }
-    protected Aisling? TargetUser { get; set; }
     protected uint UpdateRateMs { get; init; }
 
     public virtual string CommonIdentifier => Name;
     public virtual string Name { get; }
-    protected Creature Source { get; }
-    protected Creature Target { get; }
+    protected Creature Subject { get; }
 
-    protected EffectBase(Creature source, Creature target)
+    protected EffectBase(Creature subject)
     {
-        Source = source;
-        Target = target;
-        SourceUser = source as Aisling;
-        TargetUser = target as Aisling;
+        Subject = subject;
+        AislingSubject = subject as Aisling;
         Name = GetEffectKey(GetType());
     }
 
@@ -67,16 +64,18 @@ public abstract class EffectBase : IEffect
 
     public virtual void OnApplied() => SendColor();
     public virtual void OnDispelled() => RemoveEffect();
-    public virtual void OnFailedToApply(string reason) => SourceUser?.Client.SendServerMessage(ServerMessageType.ActiveMessage, reason);
+    public virtual void OnFailedToApply(string reason) { }
     public virtual void OnTerminated() => RemoveEffect();
     public virtual void OnUpdated() => SendColor();
 
-    protected void RemoveEffect() => SourceUser?.Client.SendEffect(EffectColor.None, Icon);
+    protected void RemoveEffect() { }
 
     protected void SendColor()
     {
+        /*
         if (SourceUser is not null && ShouldSendColor())
             SourceUser.Client.SendEffect(Color, Icon);
+            */
     }
 
     protected bool ShouldSendColor()
