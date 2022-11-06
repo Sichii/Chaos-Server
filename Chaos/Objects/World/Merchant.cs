@@ -11,20 +11,20 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
-public sealed class Merchant : Creature, IScriptedMerchant
+public sealed class Merchant : Creature, IScripted<IMerchantScript>
 {
     /// <inheritdoc />
     public override int AssailIntervalMs => 500;
     public override bool IsAlive => true;
+    /// <inheritdoc />
+    public IMerchantScript Script { get; }
+    /// <inheritdoc />
+    public ISet<string> ScriptKeys { get; }
     public override StatSheet StatSheet { get; }
+    public MerchantTemplate Template { get; }
 
     public override CreatureType Type { get; }
     protected override ILogger<Merchant> Logger { get; }
-    /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; }
-    /// <inheritdoc />
-    public IMerchantScript Script { get; }
-    public MerchantTemplate Template { get; }
 
     public Merchant(
         MerchantTemplate template,
@@ -46,7 +46,6 @@ public sealed class Merchant : Creature, IScriptedMerchant
         Logger = logger;
         StatSheet = StatSheet.Maxed;
         Type = CreatureType.Merchant;
-        Direction = template.Direction;
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
         ScriptKeys.AddRange(extraScriptKeys);
         Script = scriptProvider.CreateScript<IMerchantScript, Merchant>(ScriptKeys, this);
@@ -58,15 +57,15 @@ public sealed class Merchant : Creature, IScriptedMerchant
         byte? hitSound = 1
     ) => Script.OnAttacked(source, ref amount);
 
+    /// <inheritdoc />
+    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
+
     public override void OnClicked(Aisling source) => Script.OnClicked(source);
+
+    /// <inheritdoc />
+    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
 
     public override void OnGoldDroppedOn(Aisling source, int amount) => Script.OnGoldDroppedOn(source, amount);
 
     public override void OnItemDroppedOn(Aisling source, byte slot, byte count) => Script.OnItemDroppedOn(source, slot, count);
-
-    /// <inheritdoc />
-    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
-
-    /// <inheritdoc />
-    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
 }

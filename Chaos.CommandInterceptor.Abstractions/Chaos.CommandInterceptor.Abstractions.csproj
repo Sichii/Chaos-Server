@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+
+
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj" />
+        <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
     </ItemGroup>
 </Project>

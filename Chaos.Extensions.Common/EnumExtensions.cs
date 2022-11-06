@@ -7,7 +7,7 @@ public static class EnumExtensions
     public static DialogType? ToDialogType(this MenuOrDialogType value) => value switch
     {
         MenuOrDialogType.Normal          => DialogType.Normal,
-        MenuOrDialogType.ItemMenu        => DialogType.ItemMenu,
+        MenuOrDialogType.DialogMenu      => DialogType.DialogMenu,
         MenuOrDialogType.DialogTextEntry => DialogType.TextEntry,
         MenuOrDialogType.Speak           => DialogType.Speak,
         MenuOrDialogType.CreatureMenu    => DialogType.CreatureMenu,
@@ -18,15 +18,16 @@ public static class EnumExtensions
 
     public static MenuType? ToMenuType(this MenuOrDialogType value) => value switch
     {
-        MenuOrDialogType.Menu              => MenuType.Menu,
-        MenuOrDialogType.MenuWithArgs      => MenuType.MenuWithArgs,
-        MenuOrDialogType.MenuTextEntry     => MenuType.TextEntry,
-        MenuOrDialogType.ShowItems         => MenuType.ShowItems,
-        MenuOrDialogType.ShowOwnedItems    => MenuType.ShowOwnedItems,
-        MenuOrDialogType.ShowSpells        => MenuType.ShowSpells,
-        MenuOrDialogType.ShowSkills        => MenuType.ShowSkills,
-        MenuOrDialogType.ShowLearnedSpells => MenuType.ShowLearnedSpells,
-        MenuOrDialogType.ShowLearnedSkills => MenuType.ShowLearnedSkills,
-        _                                  => null
+        MenuOrDialogType.Menu                  => MenuType.Menu,
+        MenuOrDialogType.MenuWithArgs          => MenuType.MenuWithArgs,
+        MenuOrDialogType.MenuTextEntry         => MenuType.TextEntry,
+        MenuOrDialogType.MenuTextEntryWithArgs => MenuType.TextEntryWithArgs,
+        MenuOrDialogType.ShowItems             => MenuType.ShowItems,
+        MenuOrDialogType.ShowPlayerItems       => MenuType.ShowPlayerItems,
+        MenuOrDialogType.ShowSpells            => MenuType.ShowSpells,
+        MenuOrDialogType.ShowSkills            => MenuType.ShowSkills,
+        MenuOrDialogType.ShowPlayerSpells      => MenuType.ShowPlayerSpells,
+        MenuOrDialogType.ShowPlayerSkills      => MenuType.ShowPlayerSkills,
+        _                                      => null
     };
 }

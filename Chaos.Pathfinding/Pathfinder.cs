@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -46,7 +45,6 @@ public sealed class Pathfinder : IPathfinder
                 }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private IPoint? FindOptimalPoint(
         IPoint start,
         IPoint end,
@@ -73,7 +71,6 @@ public sealed class Pathfinder : IPathfinder
         return ret;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private IEnumerable<IPoint> FindPath(IPoint start, IPoint end, bool ignoreWalls)
     {
         var startNode = PathNodes[start.X, start.Y];
@@ -124,7 +121,6 @@ public sealed class Pathfinder : IPathfinder
         return TracePath(endNode);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private Direction FindSimpleDirectionOrInvalid(
         IPoint start,
         IPoint end,
@@ -146,7 +142,6 @@ public sealed class Pathfinder : IPathfinder
         return optimalPoint.DirectionalRelationTo(start);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, ICollection<IPoint> creatures)
     {
         var unwalkable = creatures.ToList();
@@ -160,7 +155,6 @@ public sealed class Pathfinder : IPathfinder
         return null;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private void InitializeSubGrid(IRectangle subGrid, ICollection<IPoint> creatures)
     {
         //un-close all the nodes in the sub grid
@@ -173,7 +167,6 @@ public sealed class Pathfinder : IPathfinder
             PathNodes[creature.X, creature.Y].IsCreature = true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public Direction Pathfind(
         IPoint start,
         IPoint end,
@@ -207,7 +200,6 @@ public sealed class Pathfinder : IPathfinder
         return nextPoint.DirectionalRelationTo(start);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private void ResetSubGrid(IRectangle subGrid, ICollection<IPoint> creatures)
     {
         foreach (var point in subGrid.Points())
@@ -218,10 +210,8 @@ public sealed class Pathfinder : IPathfinder
             PathNodes[creature.X, creature.Y].IsCreature = false;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private IEnumerable<IPoint> TracePath(PathNode pathNode)
     {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         IEnumerable<IPoint> InnerGetPath()
         {
             while (pathNode.Parent != null)
@@ -236,7 +226,6 @@ public sealed class Pathfinder : IPathfinder
     }
 
     /// <inheritdoc />
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> creatures)
     {
         var optimalPoint = GetFirstWalkablePoint(start.GetCardinalPoints().OrderBy(_ => Random.Shared.Next()), ignoreWalls, creatures);
@@ -247,6 +236,5 @@ public sealed class Pathfinder : IPathfinder
         return optimalPoint.DirectionalRelationTo(start);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private bool WithinGrid(IPoint point) => (point.X >= 0) && (point.X < Width) && (point.Y >= 0) && (point.Y < Height);
 }

@@ -22,14 +22,14 @@ public sealed class PacketSerializer : IPacketSerializer
         Serializers = new ConcurrentDictionary<Type, IServerPacketSerializer>(serializers);
     }
 
-    public T Deserialize<T>(ref ClientPacket packet) where T: IReceiveArgs
+    public T Deserialize<T>(in ClientPacket packet) where T: IReceiveArgs
     {
         var type = typeof(T);
 
         if (!Deserializers.TryGetValue(type, out var deserializer))
             throw new InvalidOperationException($"No deserializer exists for type \"{type.FullName}\"");
 
-        var reader = new SpanReader(Encoding, ref packet.Buffer);
+        var reader = new SpanReader(Encoding, in packet.Buffer);
 
         return (T)deserializer.Deserialize(ref reader);
     }

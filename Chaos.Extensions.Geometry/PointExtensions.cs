@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Chaos.Geometry;
+﻿using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 
@@ -7,7 +6,6 @@ namespace Chaos.Extensions.Geometry;
 
 public static class PointExtensions
 {
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> ConalSearch(this IPoint point, Direction direction, int maxDistance)
     {
         if (direction == Direction.Invalid)
@@ -23,7 +21,6 @@ public static class PointExtensions
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
     {
         if (point == null)
@@ -43,7 +40,6 @@ public static class PointExtensions
         };
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -86,7 +82,6 @@ public static class PointExtensions
         return direction;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static int DistanceFrom(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -102,7 +97,6 @@ public static class PointExtensions
     ///     Retreives a list of points in a line from the user, with an option for distance and direction. Direction.All is
     ///     optional. Direction.Invalid direction returns empty list.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetCardinalPoints(this IPoint start, int radius = 1, Direction direction = Direction.All)
     {
         if (direction == Direction.Invalid)
@@ -130,7 +124,6 @@ public static class PointExtensions
     /// </summary>
     /// <param name="start">Starting point for the creation of the path.</param>
     /// <param name="end">Ending point for the creation of the path.</param>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
     {
         var current = Point.From(start);
@@ -149,7 +142,6 @@ public static class PointExtensions
     ///     Retreives a list of diagonal points in relevance to the user, with an optional distance and direction.
     ///     Direction.All is optional. Direction.Invalid direction returns empty list.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetInterCardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
     {
         if (direction == Direction.Invalid)
@@ -190,7 +182,6 @@ public static class PointExtensions
             }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Point OffsetTowards(this IPoint point, IPoint other)
     {
         if (point == null)
@@ -217,7 +208,6 @@ public static class PointExtensions
     /// </returns>
     /// <exception cref="ArgumentNullException">point</exception>
     /// <exception cref="ArgumentNullException">other</exception>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static IEnumerable<Point> RayTraceTo(this IPoint point, IPoint other)
     {
         var x0 = point.X;
@@ -251,7 +241,6 @@ public static class PointExtensions
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
     {
         var currentPoint = Point.From(point);
@@ -302,7 +291,6 @@ public static class PointExtensions
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
     {
         if (points == null)

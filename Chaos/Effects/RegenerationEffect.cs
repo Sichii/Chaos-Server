@@ -5,6 +5,6 @@ namespace Chaos.Effects;
 
 public sealed class RegenerationEffect : EffectBase
 {
-    public RegenerationEffect(Creature source, Creature target)
-        : base(source, target) { }
+    public RegenerationEffect(Creature target)
+        : base(target) { }
 }

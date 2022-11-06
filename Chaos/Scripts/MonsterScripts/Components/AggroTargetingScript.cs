@@ -10,9 +10,9 @@ namespace Chaos.Scripts.MonsterScripts.Components;
 
 public class AggroTargetingScript : MonsterScriptBase
 {
+    private readonly Dictionary<uint, DateTime> ApproachTime;
     private readonly IIntervalTimer TargetUpdateTimer;
     private int InitialAggro = 10;
-    private readonly Dictionary<uint, DateTime> ApproachTime;
 
     /// <inheritdoc />
     public AggroTargetingScript(Monster subject)
@@ -20,6 +20,7 @@ public class AggroTargetingScript : MonsterScriptBase
     {
         TargetUpdateTimer =
             new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(250, Subject.Template.SkillIntervalMs)));
+
         ApproachTime = new Dictionary<uint, DateTime>();
     }
 
@@ -29,14 +30,6 @@ public class AggroTargetingScript : MonsterScriptBase
         base.OnApproached(source);
 
         ApproachTime.TryAdd(source.Id, DateTime.UtcNow);
-    }
-
-    /// <inheritdoc />
-    public override void OnDeparture(Creature source)
-    {
-        base.OnDeparture(source);
-        
-        ApproachTime.Remove(source.Id);
     }
 
     /// <inheritdoc />
@@ -52,18 +45,26 @@ public class AggroTargetingScript : MonsterScriptBase
     }
 
     /// <inheritdoc />
+    public override void OnDeparture(Creature source)
+    {
+        base.OnDeparture(source);
+
+        ApproachTime.Remove(source.Id);
+    }
+
+    /// <inheritdoc />
     public override void Update(TimeSpan delta)
     {
         base.Update(delta);
 
         TargetUpdateTimer.Update(delta);
-        
+
         if ((Target != null) && (!Target.IsAlive || !Target.OnSameMapAs(Subject)))
         {
             AggroList.Remove(Target.Id, out _);
             Target = null;
         }
-        
+
         if (!TargetUpdateTimer.IntervalElapsed)
             return;
 

@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting;
 
-public sealed class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TSource> where TScript: IScript
-                                                                                       where TSource: IScripted
+public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript
+                                                                                           where TScripted: IScripted
 {
     private readonly Type CompositeType;
     private readonly ILogger Logger;
@@ -16,7 +16,7 @@ public sealed class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TS
     private readonly IServiceProvider ServiceProvider;
     private readonly string TypeName;
 
-    public ScriptFactory(ILogger<ScriptFactory<TScript, TSource>> logger, IServiceProvider serviceProvider)
+    public ScriptFactory(ILogger<ScriptFactory<TScript, TScripted>> logger, IServiceProvider serviceProvider)
     {
         ScriptTypeCache = new ConcurrentDictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
@@ -25,13 +25,13 @@ public sealed class ScriptFactory<TScript, TSource> : IScriptFactory<TScript, TS
 
         LoadScriptTypes();
 
-        CompositeType = ScriptTypeCache.FirstOrDefault(x => x.Key.ContainsI("composite"))!.Value;
+        CompositeType = ScriptTypeCache.FirstOrDefault(x => x.Key.StartWithI("composite"))!.Value;
     }
 
     /// <inheritdoc />
-    public TScript CreateScript(ICollection<string> scriptKeys, TSource source)
+    public TScript CreateScript(ICollection<string> scriptKeys, TScripted source)
     {
-        var composite = (ICompositeScript<TScript>)Activator.CreateInstance(CompositeType, source)!;
+        var composite = (ICompositeScript<TScript>)Activator.CreateInstance(CompositeType)!;
 
         if (scriptKeys.Count == 1)
         {

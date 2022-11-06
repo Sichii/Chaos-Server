@@ -1,22 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+
+
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj" />
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-
-        <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-            <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.0-preview.7.22376.6\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-        </Reference>
-
+        <ProjectReference Include="..\Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj"/>
+        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
     </ItemGroup>
 
 </Project>

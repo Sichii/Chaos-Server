@@ -11,7 +11,7 @@ public class DynamicVarsConverter : JsonConverter<DynamicVars>
     {
         var dic = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(ref reader, options);
         var scriptVars = new DynamicVars(dic!, options);
-        
+
         return scriptVars;
     }
 

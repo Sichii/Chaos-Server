@@ -1,12 +1,11 @@
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
-using Chaos.Services.Servers.Abstractions;
+using Chaos.Servers.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;
@@ -40,7 +39,7 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
 
         Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
-        return Server.HandlePacketAsync(this, ref packet);
+        return Server.HandlePacketAsync(this, in packet);
     }
 
     public void SendConnectionInfo(uint serverTableCheckSum)

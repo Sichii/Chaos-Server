@@ -1,0 +1,39 @@
+{
+    "templateKey": "tendo_initial",
+    "text": "just a basic bitch dialog",
+    "type": "menu",
+    "options": [
+        {
+            "dialogKey": "tendo_buyShop",
+            "optionText": "Buy"
+        },
+        {
+            "dialogKey": "tendo_sellShop",
+            "optionText": "Sell"
+        },
+        {
+            "dialogKey": "generic_teleport",
+            "optionText": "Teleport"
+        },
+        {
+            "dialogKey": "tendo_goBack",
+            "optionText": "Test prev button"
+        },
+        {
+            "dialogKey": "tendo_learnSkills",
+            "optionText": "Learn Skills"
+        },
+        {
+            "dialogKey": "tendo_learnSpells",
+            "optionText": "Learn Spells"
+        },
+        {
+            "dialogKey": "generic_forgetSkills",
+            "optionText": "Forget Skills"
+        },
+        {
+            "dialogKey": "generic_forgetSpells",
+            "optionText": "Forget Spells"
+        }
+    ]
+}

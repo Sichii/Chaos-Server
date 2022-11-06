@@ -1,0 +1,11 @@
+{
+    "templateKey": "tendo_learnSkills",
+    "text": "What would you like to learn today?",
+    "type": "showSkills",
+    "scriptKeys": ["learnSkill"],
+    "scriptVars": {
+        "learnSkill": {
+            "skillTemplateKeys": ["assail", "assail"]
+        }
+    }
+}

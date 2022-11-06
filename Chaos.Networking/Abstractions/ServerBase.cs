@@ -14,6 +14,8 @@ namespace Chaos.Networking.Abstractions;
 
 public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISocketClient
 {
+    public delegate ValueTask ClientHandler(T client, in ClientPacket packet);
+
     protected ClientHandler?[] ClientHandlers { get; }
     protected IPEndPoint EndPoint { get; }
     protected ILogger Logger { get; }
@@ -57,8 +59,6 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
 
     protected abstract void OnConnection(IAsyncResult ar);
 
-    protected delegate ValueTask ClientHandler(T client, ref ClientPacket packet);
-
     #region Handlers
     protected virtual void IndexHandlers()
     {
@@ -67,30 +67,30 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         ClientHandlers[(byte)ClientOpCode.SynchronizeTicks] = OnSynchronizeTicksAsync;
     }
 
-    public virtual ValueTask HandlePacketAsync(T client, ref ClientPacket packet)
+    public virtual ValueTask HandlePacketAsync(T client, in ClientPacket packet)
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 
-        return handler?.Invoke(client, ref packet) ?? default;
+        return handler?.Invoke(client, in packet) ?? default;
     }
 
-    public ValueTask OnHeartBeatAsync(T client, ref ClientPacket packet)
+    public ValueTask OnHeartBeatAsync(T client, in ClientPacket packet)
     {
-        (var first, var second) = PacketSerializer.Deserialize<HeartBeatArgs>(ref packet);
+        (var first, var second) = PacketSerializer.Deserialize<HeartBeatArgs>(in packet);
 
         client.SendHeartBeat(second, first);
 
         return default;
     }
 
-    public ValueTask OnSequenceChangeAsync(T client, ref ClientPacket packet)
+    public ValueTask OnSequenceChangeAsync(T client, in ClientPacket packet)
     {
         client.SetSequence(packet.Sequence);
 
         return default;
     }
 
-    public ValueTask OnSynchronizeTicksAsync(T client, ref ClientPacket packet) =>
+    public ValueTask OnSynchronizeTicksAsync(T client, in ClientPacket packet) =>
         //_ = PacketSerializer.Deserialize<SynchronizeTicksArgs>(ref packet);
         //do nothing
         default;

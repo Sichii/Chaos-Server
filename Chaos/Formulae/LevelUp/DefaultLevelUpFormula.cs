@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
-using Chaos.Services.Servers.Options;
+using Chaos.Servers.Options;
 
 namespace Chaos.Formulae.LevelUp;
 

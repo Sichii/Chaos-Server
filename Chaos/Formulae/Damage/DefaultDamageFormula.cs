@@ -1,7 +1,7 @@
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Services.Servers.Options;
+using Chaos.Servers.Options;
 
 namespace Chaos.Formulae.Damage;
 

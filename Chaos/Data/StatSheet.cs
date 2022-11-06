@@ -1,6 +1,5 @@
 // ReSharper disable InconsistentNaming
 
-using System.Threading;
 using Chaos.Common.Definitions;
 using Chaos.Core.Utilities;
 
@@ -177,42 +176,22 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _atkSpeedPctMod, other.AtkSpeedPct);
     }
 
-    public void AddHp(int amount)
-    {
-        if (Interlocked.Add(ref _currentHp, amount) < 0)
-            _currentHp = 0;
-    }
-
-    public void AddMp(int amount)
-    {
-        if (Interlocked.Add(ref _currentMp, amount) < 0)
-            _currentMp = 0;
-    }
-
-    public void SetHealthPct(int pct) => InterlockedEx.SetValue(
-        ref _currentHp,
-        () => (int)Math.Clamp(EffectiveMaximumHp * pct / 100f, 0, EffectiveMaximumHp));
-
-    public void SetManaPct(int pct) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => (int)Math.Clamp(EffectiveMaximumMp * pct / 100f, 0, EffectiveMaximumMp));
-
     public void AddHealthPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,
         () => (int)Math.Clamp(EffectiveMaximumMp * (pct + HealthPercent) / 100f, 0, EffectiveMaximumMp));
-    
-    public void SubtractHealthPct(int pct) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => (int)Math.Clamp(EffectiveMaximumMp * (HealthPercent - pct) / 100f, 0, EffectiveMaximumMp));
-    
+
+    public void AddHp(int amount) => InterlockedEx.SetValue(
+        ref _currentHp,
+        () => (int)Math.Clamp(_currentHp + amount, 0, EffectiveMaximumHp));
+
     public void AddManaPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,
         () => (int)Math.Clamp(EffectiveMaximumMp * (pct + ManaPercent) / 100f, 0, EffectiveMaximumMp));
 
-    public void SubtractManaPct(int pct) => InterlockedEx.SetValue(
+    public void AddMp(int amount) => InterlockedEx.SetValue(
         ref _currentMp,
-        () => (int)Math.Clamp(EffectiveMaximumMp * (ManaPercent - pct) / 100f, 0, EffectiveMaximumMp));
-    
+        () => (int)Math.Clamp(_currentMp + amount, 0, EffectiveMaximumMp));
+
     public int CalculateEffectiveAssailInterval(int baseAssailIntervalMs) =>
         Convert.ToInt32(baseAssailIntervalMs / (1 + EffectiveAttackSpeedPct / 100.0f));
 
@@ -238,6 +217,14 @@ public record StatSheet : Attributes
 
     public void SetDefenseElement(Element element) => _defenseElement = element;
 
+    public void SetHealthPct(int pct) => InterlockedEx.SetValue(
+        ref _currentHp,
+        () => (int)Math.Clamp(EffectiveMaximumHp * pct / 100f, 0, EffectiveMaximumHp));
+
+    public void SetManaPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * pct / 100f, 0, EffectiveMaximumMp));
+
     public void SetOffenseElement(Element element) => _offenseElement = element;
 
     public void SubtractBonus(Attributes other)
@@ -256,11 +243,19 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _atkSpeedPctMod, -other.AtkSpeedPct);
     }
 
+    public void SubtractHealthPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * (HealthPercent - pct) / 100f, 0, EffectiveMaximumMp));
+
     public void SubtractHp(int amount)
     {
         if (Interlocked.Add(ref _currentHp, -amount) < 0)
             _currentHp = 0;
     }
+
+    public void SubtractManaPct(int pct) => InterlockedEx.SetValue(
+        ref _currentMp,
+        () => (int)Math.Clamp(EffectiveMaximumMp * (ManaPercent - pct) / 100f, 0, EffectiveMaximumMp));
 
     public void SubtractMp(int amount)
     {

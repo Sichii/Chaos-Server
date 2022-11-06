@@ -3,16 +3,5 @@
     "instanceId": "testRoom",
     "music": 1,
     "name": "Test Room",
-    "templateKey": "3044",
-    "warps": [
-        {
-            "destination": "testTown:(17, 12)",
-            "source": "(3, 13)"
-        },
-        {
-            "destination": "testTown:(18, 12)",
-            "source": "(4, 13)"
-        }
-    ],
-    "worldMapWarps": []
+    "templateKey": "3044"
 }

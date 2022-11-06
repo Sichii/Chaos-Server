@@ -1,12 +1,13 @@
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Factories.Abstractions;
 using Chaos.Schemas.Content;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;
 
-public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>
+public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>,
+                                             IMapperProfile<LootDrop, LootDropSchema>
 {
     private readonly IItemFactory ItemFactory;
     private readonly ITypeMapper Mapper;
@@ -26,4 +27,14 @@ public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTable
 
     /// <inheritdoc />
     public LootTableSchema Map(LootTable obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public LootDrop Map(LootDropSchema obj) => new()
+    {
+        ItemTemplateKey = obj.ItemTemplateKey,
+        DropChance = obj.DropChance
+    };
+
+    /// <inheritdoc />
+    public LootDropSchema Map(LootDrop obj) => throw new NotImplementedException();
 }

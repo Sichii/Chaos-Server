@@ -14,40 +14,81 @@ public sealed class ReloadCommand : ICommand<Aisling>
     public ReloadCommand(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
     /// <inheritdoc />
-    public void Execute(Aisling aisling, ArgumentCollection args)
+    public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)
     {
         var arg = args.FirstOrDefault();
 
         if (arg == null)
-            return;
+            return default;
 
         switch (arg.ToLower())
         {
             case "skills":
-                ServiceProvider.ReloadSkills();
-                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Skills reloaded");
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadSkills();
+
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Skills reloaded");
+                    });
 
                 break;
             case "spells":
-                ServiceProvider.ReloadSpells();
-                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Spells reloaded");
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadSpells();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Spells reloaded");
+                    });
 
                 break;
             case "items":
-                ServiceProvider.ReloadItems();
-                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Items reloaded");
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadItems();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Items reloaded");
+                    });
 
                 break;
             case "monsters":
-                ServiceProvider.ReloadMonsters();
-                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Monsters reloaded");
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadMonsters();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Monsters reloaded");
+                    });
+
+                break;
+            case "merchants":
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadMerchants();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Merchants reloaded");
+                    });
 
                 break;
             case "maps":
-                ServiceProvider.ReloadMaps();
-                aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Maps reloaded");
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadMaps();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Maps reloaded");
+                    });
+
+                break;
+            case "dialogs":
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadDialogs();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Dialogs reloaded");
+                    });
 
                 break;
         }
+
+        return default;
     }
 }

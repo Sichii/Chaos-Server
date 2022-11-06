@@ -1,12 +1,10 @@
 using Chaos.Containers;
-using Chaos.Core.Utilities;
+using Chaos.Extensions.Common;
+using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Schemas.Aisling;
-using Chaos.Schemas.Templates;
-using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
@@ -16,18 +14,26 @@ namespace Chaos.Extensions;
 
 public static class ServiceProviderExtensions
 {
-    public static void ReloadItems(this IServiceProvider provider)
+    public static async Task ReloadDialogs(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var dialogCache = cacheProvider.GetCache<DialogTemplate>();
+
+        await dialogCache.ReloadAsync();
+    }
+
+    public static async Task ReloadItems(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var itemTemplateCache = cacheProvider.GetCache<ItemTemplate>();
         var mapper = provider.GetRequiredService<ITypeMapper>();
 
-        AsyncHelpers.RunSync(() => itemTemplateCache.ReloadAsync());
+        await itemTemplateCache.ReloadAsync();
 
         foreach (var mapInstance in mapCache)
         {
-            using var @lock = mapInstance.Sync.Enter();
+            await using var sync = await mapInstance.Sync.WaitAsync();
 
             foreach (var groundItem in mapInstance.GetEntities<GroundItem>().ToList())
             {
@@ -82,43 +88,77 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static void ReloadMaps(this IServiceProvider provider)
+    public static async Task ReloadMaps(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var oldMaps = mapCache.ToList();
 
-        AsyncHelpers.RunSync(() => mapCache.ReloadAsync());
+        await mapCache.ReloadAsync();
 
         foreach (var oldMap in oldMaps)
         {
             var newMap = mapCache.Get(oldMap.InstanceId);
 
+            await using var newSync = await newMap.Sync.WaitAsync();
+            await using var sync = await oldMap.Sync.WaitAsync();
+
             foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
                 newMap.SimpleAdd(groundEntity);
 
-            foreach(var monster in oldMap.GetEntities<Monster>())
+            foreach (var monster in oldMap.GetEntities<Monster>())
                 newMap.SimpleAdd(monster);
 
             foreach (var aisling in oldMap.GetEntities<Aisling>())
                 newMap.AddObject(aisling, aisling);
-            
+
             oldMap.Destroy();
         }
     }
 
-    public static void ReloadMonsters(this IServiceProvider provider)
+    public static async Task ReloadMerchants(this IServiceProvider provider)
+    {
+        var merchantFactory = provider.GetRequiredService<IMerchantFactory>();
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+        var merchantTemplateCache = cacheProvider.GetCache<MerchantTemplate>();
+
+        await merchantTemplateCache.ReloadAsync();
+
+        foreach (var mapInstance in mapCache)
+        {
+            await using var sync = await mapInstance.Sync.WaitAsync();
+
+            var merchantsToAdd = new List<Merchant>();
+
+            foreach (var merchant in mapInstance.GetEntities<Merchant>().ToList())
+            {
+                var newMerchant = merchantFactory.Create(
+                    merchant.Template.TemplateKey,
+                    merchant.MapInstance,
+                    merchant,
+                    merchant.ScriptKeys);
+
+                merchant.MapInstance.RemoveObject(merchant);
+                merchantsToAdd.Add(newMerchant);
+            }
+
+            mapInstance.AddObjects(merchantsToAdd);
+        }
+    }
+
+    public static async Task ReloadMonsters(this IServiceProvider provider)
     {
         var monsterFactory = provider.GetRequiredService<IMonsterFactory>();
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var monsterTemplateCache = cacheProvider.GetCache<MonsterTemplate>();
 
-        AsyncHelpers.RunSync(() => monsterTemplateCache.ReloadAsync());
+        await monsterTemplateCache.ReloadAsync();
 
         foreach (var mapInstance in mapCache)
         {
-            using var @lock = mapInstance.Sync.Enter();
+            await using var sync = await mapInstance.Sync.WaitAsync();
 
             var monstersToAdd = new List<Monster>();
 
@@ -143,18 +183,18 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static void ReloadSkills(this IServiceProvider provider)
+    public static async Task ReloadSkills(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var skillTemplateCache = cacheProvider.GetCache<SkillTemplate>();
         var mapper = provider.GetRequiredService<ITypeMapper>();
 
-        AsyncHelpers.RunSync(() => skillTemplateCache.ReloadAsync());
+        await skillTemplateCache.ReloadAsync();
 
         foreach (var mapInstance in mapCache)
         {
-            using var @lock = mapInstance.Sync.Enter();
+            await using var sync = await mapInstance.Sync.WaitAsync();
 
             foreach (var creature in mapInstance.GetEntities<Creature>())
                 switch (creature)
@@ -189,18 +229,18 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static void ReloadSpells(this IServiceProvider provider)
+    public static async Task ReloadSpells(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var spellTemplateCache = cacheProvider.GetCache<SpellTemplate>();
         var mapper = provider.GetRequiredService<ITypeMapper>();
 
-        AsyncHelpers.RunSync(() => spellTemplateCache.ReloadAsync());
+        await spellTemplateCache.ReloadAsync();
 
         foreach (var mapInstance in mapCache)
         {
-            using var @lock = mapInstance.Sync.Enter();
+            await using var sync = await mapInstance.Sync.WaitAsync();
 
             foreach (var creature in mapInstance.GetEntities<Creature>())
                 switch (creature)

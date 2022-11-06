@@ -5,6 +5,28 @@
     "scriptKeys": ["cascade"],
     "spellType": "notarget",
     "castLines": 0,
+    "description": "A powerful spell that deals damage in a long ranged code shape in the direction you are facing.",
+    "learningRequirements": {
+        "requiredStats": {
+            "str": 1,
+            "int": 2,
+            "wis": 1,
+            "con": 1,
+            "dex": 1
+        },
+        "itemRequirements": [
+            {
+                "itemTemplateKey": "apple",
+                "amountRequired": 10
+            },
+            {
+                "itemTemplateKey": "stick",
+                "amountRequired": 5
+            }
+        ],
+        "requiredGold": 10000,
+        "requiredLevel": 5
+    },
     "scriptVars": {
         "cascade": {
             "damage": 100,

@@ -40,52 +40,14 @@ General world options are also changed via Options:WorldOptions
 
 # Folder Structure
 
-📂Data  
- ┣📂[LootTables](#loottables-folder)  
- ┃ ┗📜testAreaRats.json  
- ┣📂[MapData](#mapdata-folder)  
- ┃ ┣📜lod3043.map  
- ┃ ┣📜lod3044.map  
- ┃ ┗📜lod5219.map  
- ┣📂[MapInstances](#mapinstances-folder)  
- ┃ ┣📂testTown  
- ┃ ┃ ┣📜instance.json  
- ┃ ┃ ┗📜spawns.json  
- ┃ ┣📂testRoom  
- ┃ ┃ ┣📜instance.json  
- ┃ ┃ ┗📜spawns.json  
- ┃ ┗📂testArea  
- ┃   ┣📜instance.json  
- ┃   ┗📜spawns.json  
- ┣📂[WorldMaps](#worldMaps-folder)  
- ┃ ┣📂[Nodes](#nodes-folder)  
- ┃ ┃ ┣📜testTown.json  
- ┃ ┃ ┗📜testArea.json  
- ┃ ┗📜field001.json  
- ┣📂Metafiles (TODO)  
- ┣📂Saved  
- ┃ ┗📂bonk  
- ┃   ┣📜aisling.json  
- ┃   ┣📜bank.json  
- ┃   ┣📜equipment.json  
- ┃   ┣📜inventory.json  
- ┃   ┣📜legend.json  
- ┃   ┣📜password.txt (hashed)  
- ┃   ┣📜skills.json  
- ┃   ┗📜spells.json  
- ┗📂[Templates](#templates-folder)  
-   ┣📂[Items](#items-folder)  
-   ┃ ┗📜stick.json  
-   ┣📂[Maps](#maps-folder)  
-   ┃ ┣📜3043.json  
-   ┃ ┣📜3044.json  
-   ┃ ┗📜5219.json  
-   ┣📂[Monsters](#monsters-folder)  
-   ┃ ┗📜common_rat.json  
-   ┣📂[Skills](#skills-folder)  
-   ┃ ┗📜assail.json  
-   ┗📂[Spells](#spells-folder)  
-     ┗📜fire_breath.json
+📂Data ┣📂[LootTables](#loottables-folder)  ┃ ┗📜testAreaRats.json ┣📂[MapData](#mapdata-folder)  ┃ ┣📜lod3043.map ┃ ┣📜lod3044.map ┃
+┗📜lod5219.map ┣📂[MapInstances](#mapinstances-folder)  ┃ ┣📂testTown ┃ ┃ ┣📜instance.json ┃ ┃ ┗📜spawns.json ┃ ┣📂testRoom ┃ ┃
+┣📜instance.json ┃ ┃ ┗📜spawns.json ┃ ┗📂testArea ┃ ┣📜instance.json ┃ ┗📜spawns.json ┣📂[WorldMaps](#worldMaps-folder)  ┃
+┣📂[Nodes](#nodes-folder)  ┃ ┃ ┣📜testTown.json ┃ ┃ ┗📜testArea.json ┃ ┗📜field001.json ┣📂Metafiles (TODO)  ┣📂Saved ┃ ┗📂bonk ┃
+┣📜aisling.json ┃ ┣📜bank.json ┃ ┣📜equipment.json ┃ ┣📜inventory.json ┃ ┣📜legend.json ┃ ┣📜password.txt (hashed)  ┃ ┣📜skills.json ┃
+┗📜spells.json ┗📂[Templates](#templates-folder)  ┣📂[Items](#items-folder)  ┃ ┗📜stick.json ┣📂[Maps](#maps-folder)  ┃ ┣📜3043.json ┃
+┣📜3044.json ┃ ┗📜5219.json ┣📂[Monsters](#monsters-folder)  ┃ ┗📜common_rat.json ┣📂[Skills](#skills-folder)  ┃ ┗📜assail.json  
+┗📂[Spells](#spells-folder)  ┗📜fire_breath.json
 
 # LootTables Folder
 
@@ -249,9 +211,11 @@ Those rats will aggro within 4 spaces
 ```
 
 # WorldMap Folder
-Contains a "Nodes" subfolder that contains all possible world map nodes  
+
+Contains a "Nodes" subfolder that contains all possible world map nodes
 
 ## Nodes Folder
+
 Contains all possible world map nodes
 
 ### WorldMapNode Properties
@@ -264,6 +228,7 @@ Contains all possible world map nodes
 | ScreenPosition | string<br/>"(X, Y)"               | A string representation of the screen coordinates this node will show in the world map            |
 
 ### Example file "testTown.json"
+
 ```json
 {
     "nodeKey": "testTown",
@@ -283,6 +248,7 @@ Contains all possible world map nodes
 | NodeKeys    | array{[worldMapNode](#worldMapNode-properties) | A collection of keys to world map nodes to display on this world map           |
 
 ### Example file "field001.json"
+
 ```json
 {
     "worldMapKey": "field001",

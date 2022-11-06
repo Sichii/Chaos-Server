@@ -46,28 +46,29 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
     }
 
     /// <inheritdoc />
-    public void HandleCommand(T source, string commandStr)
+    public ValueTask HandleCommandAsync(T source, string commandStr)
     {
         var command = commandStr[1..];
 
         var commandParts = RegexCache.COMMAND_SPLIT_REGEX.Matches(command)
-                                     .Select(match =>
-                                     {
-                                         if(!string.IsNullOrWhiteSpace(match.Groups[1].Value))
-                                             return match.Groups[1].Value;
+                                     .Select(
+                                         match =>
+                                         {
+                                             if (!string.IsNullOrWhiteSpace(match.Groups[1].Value))
+                                                 return match.Groups[1].Value;
 
-                                         return match.Groups[2].Value;
-                                     })
+                                             return match.Groups[2].Value;
+                                         })
                                      .ToArray();
 
         if (commandParts.Length == 0)
-            return;
+            return default;
 
         var commandName = commandParts[0];
         var commandArgs = commandParts[1..];
 
         if (!Commands.TryGetValue(commandName, out var descriptor))
-            return;
+            return default;
 
         if (descriptor.Details.RequiresAdmin)
         {
@@ -77,7 +78,7 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
             {
                 Logger.LogWarning("Non-Admin {Identifier} tried to execute admin command {CommandName}", identifier, commandName);
 
-                return;
+                return default;
             }
 
             Logger.LogInformation("Admin {Identifier} executed command {CommandName}", identifier, commandName);
@@ -85,7 +86,7 @@ public class CommandInterceptor<T> : ICommandInterceptor<T>
 
         var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
 
-        commandInstance.Execute(source, new ArgumentCollection(commandArgs));
+        return commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
     }
 
     /// <inheritdoc />

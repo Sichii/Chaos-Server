@@ -1,5 +1,4 @@
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
@@ -9,7 +8,7 @@ using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
-using Chaos.Objects.Dialog;
+using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -17,7 +16,7 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Services.Servers.Abstractions;
+using Chaos.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
@@ -61,7 +60,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
         Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
-        return Server.HandlePacketAsync(this, ref packet);
+        return Server.HandlePacketAsync(this, in packet);
     }
 
     public void SendAddItemToPane(Item item)
@@ -116,6 +115,14 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
+    /// <inheritdoc />
+    public void SendBoard()
+    {
+        var packet = ServerPacketEx.FromData(ServerOpCode.BulletinBoard, PacketSerializer.Encoding, new byte[1]);
+
+        Send(ref packet);
+    }
+
     public void SendBodyAnimation(
         uint id,
         BodyAnimation bodyAnimation,
@@ -136,7 +143,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendCancelCasting()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.CancelCasting);
+        var packet = ServerPacketEx.FromData(ServerOpCode.CancelCasting, PacketSerializer.Encoding);
         Send(ref packet);
     }
 
@@ -199,88 +206,30 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
+    /// <inheritdoc />
+    public void SendDialog(Dialog dialog)
+    {
+        var dialogType = dialog.Type.ToDialogType();
+        var menuType = dialog.Type.ToMenuType();
+
+        if (dialogType != null)
+        {
+            var args = Mapper.Map<DialogArgs>(dialog);
+
+            Send(args);
+        } else if (menuType != null)
+        {
+            var args = Mapper.Map<MenuArgs>(dialog);
+
+            Send(args);
+        }
+    }
+
     public void SendDisplayAisling(Aisling aisling)
     {
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
         Send(args);
-    }
-
-    /// <inheritdoc />
-    public void SendDialog(Dialog dialog, object source, string? menuArg = null)
-    {
-        var dialogType = dialog.Type.ToDialogType();
-        var menuType = dialog.Type.ToMenuType();
-        var entityType = Helpers.GetEntityType(source);
-        string name;
-        ushort sprite;
-        uint sourceId = 0;
-        
-        switch (source)
-        {
-            case Item item:
-                name = item.DisplayName;
-                sprite = item.Template.ItemSprite.OffsetPanelSprite;
-                sourceId = item.Id;
-                
-                break;
-            case NamedEntity namedEntity:
-                name = namedEntity.Name;
-                sprite = namedEntity.Sprite;
-                sourceId = namedEntity.Id;
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(source));
-        }
-
-        if (!entityType.HasValue)
-            throw new InvalidOperationException($"Entity type \"{source.GetType()}\" is not supported.");
-
-        if (dialogType != null)
-        {
-            var args = new DialogArgs
-            {
-                DialogId = 0,
-                DialogType = dialogType.Value,
-                EntityType = entityType.Value,
-                HasNextButton = !string.IsNullOrWhiteSpace(dialog.NextDialogKey),
-                HasPreviousButton = !string.IsNullOrWhiteSpace(dialog.NextDialogKey),
-                Name = name,
-                Options = dialog.Options?.Select(o => o.OptionText).ToList(),
-                PursuitId = 0,
-                SourceId = sourceId,
-                Sprite = sprite,
-                Text = dialog.Text,
-                TextBoxLength = dialog.TextBoxLength
-            };
-            
-            Send(args);
-            
-            return;
-        }
-
-        if (menuType != null)
-        {
-            var args = new MenuArgs
-            {
-                Args = menuArg,
-                EntityType = entityType.Value,
-                Items = dialog.Items != null ? Mapper.MapMany<ItemInfo>(dialog.Items).ToList() : null,
-                MenuType = menuType.Value,
-                Name = name,
-                Options = dialog.Options?.Select(op => op.OptionText).ToList(),
-                PursuitId = 0,
-                Skills = dialog.Skills != null ? Mapper.MapMany<SkillInfo>(dialog.Skills).ToList() : null,
-                Spells = dialog.Spells != null ? Mapper.MapMany<SpellInfo>(dialog.Spells).ToList() : null,
-                Slots = Aisling.Inventory.Select(i => i.Slot).ToList(),
-                SourceId = sourceId,
-                Sprite = sprite,
-                Text = dialog.Text
-            };
-
-            Send(args);
-        }
     }
 
     public void SendDoors(IEnumerable<Door> doors)
@@ -574,7 +523,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendProfileRequest()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.ProfileRequest);
+        var packet = ServerPacketEx.FromData(ServerOpCode.ProfileRequest, PacketSerializer.Encoding);
 
         Send(ref packet);
     }
@@ -593,7 +542,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendRefreshResponse()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.RefreshResponse);
+        var packet = ServerPacketEx.FromData(ServerOpCode.RefreshResponse, PacketSerializer.Encoding);
 
         Send(ref packet);
     }

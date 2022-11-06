@@ -15,7 +15,7 @@ using Chaos.Utilities;
 
 namespace Chaos.Containers;
 
-public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
+public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
     private readonly ICollection<MonsterSpawn> MonsterSpawns;
     private readonly MapEntityCollection Objects;
@@ -32,7 +32,7 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
-    public AutoReleasingMonitor Sync { get; }
+    public FifoAutoReleasingSemaphoreSlim Sync { get; }
 
     public MapInstance(
         MapTemplate template,
@@ -47,7 +47,7 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
         var walkableArea = template.Height * template.Width - template.Tiles.Flatten().Count(t => t.IsWall);
         Objects = new MapEntityCollection(template.Width, template.Height, walkableArea);
         MonsterSpawns = new List<MonsterSpawn>();
-        Sync = new AutoReleasingMonitor();
+        Sync = new FifoAutoReleasingSemaphoreSlim(1, 1);
         Template = template;
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
 
@@ -59,8 +59,6 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void ActivateReactors(Creature creature, ReactorActivationType reactorActivationType)
     {
-        using var @lock = Sync.Enter();
-
         var reactors = Objects.AtPoint<ReactorTile>(creature)
                               .Where(reactor => reactor.ReactorActivationType == reactorActivationType);
 
@@ -70,8 +68,6 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void AddObject(VisibleEntity visibleEntity, IPoint point)
     {
-        using var @lock = Sync.Enter();
-
         visibleEntity.SetLocation(this, point);
         Objects.Add(visibleEntity.Id, visibleEntity);
 
@@ -111,19 +107,19 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
             if (visibleEntity is not Creature creature)
             {
                 foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity)
-                                                  .ThatCanSee(visibleEntity))
+                                                     .ThatCanSee(visibleEntity))
                     nearbyAisling.Client.SendVisibleObjects(visibleEntity);
 
                 return;
             }
-            
+
             foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
             {
                 if (nearbyCreature.Equals(creature))
                     continue;
 
                 Helpers.HandleApproach(creature, nearbyCreature);
-                
+
                 if (nearbyCreature is Aisling nearbyAisling && creature.IsVisibleTo(nearbyCreature))
                     nearbyAisling.Client.SendVisibleObjects(visibleEntity);
             }
@@ -134,8 +130,6 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
     {
         if (visibleObjects.Count == 0)
             return;
-
-        using var @lock = Sync.Enter();
 
         foreach (var visibleObj in visibleObjects)
         {
@@ -159,8 +153,6 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void AddSpawner(MonsterSpawn monsterSpawn)
     {
-        using var @lock = Sync.Enter();
-
         monsterSpawn.MapInstance = this;
 
         monsterSpawn.SpawnArea ??= new Rectangle(
@@ -174,8 +166,6 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void Click(uint id, Aisling source)
     {
-        using var @lock = Sync.Enter();
-
         if (TryGetObject<VisibleEntity>(id, out var obj))
             if (obj.WithinRange(source) && obj.IsVisibleTo(source))
                 obj.OnClicked(source);
@@ -183,8 +173,6 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void Click(IPoint point, Aisling source)
     {
-        using var @lock = Sync.Enter();
-
         var obj = Objects.AtPoint<VisibleEntity>(point)
                          .ThatAreVisibleTo(source)
                          .TopOrDefault();
@@ -192,35 +180,18 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
         obj?.OnClicked(source);
     }
 
-    public IEnumerable<T> GetEntities<T>() where T: MapEntity
+    public void Destroy()
     {
-        if (Sync.IsEntered)
-            return Objects.Values<T>();
-
-        using var @lock = Sync.Enter();
-
-        return Objects.Values<T>().ToList();
+        Objects.Clear();
+        MonsterSpawns.Clear();
     }
 
-    public IEnumerable<T> GetEntitiesAtPoint<T>(IPoint point) where T: MapEntity
-    {
-        if (Sync.IsEntered)
-            return Objects.AtPoint<T>(point);
+    public IEnumerable<T> GetEntities<T>() where T: MapEntity => Objects.Values<T>();
 
-        using var @lock = Sync.Enter();
+    public IEnumerable<T> GetEntitiesAtPoint<T>(IPoint point) where T: MapEntity => Objects.AtPoint<T>(point);
 
-        return Objects.AtPoint<T>(point).ToList();
-    }
-
-    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 13) where T: MapEntity
-    {
-        if (Sync.IsEntered)
-            return Objects.WithinRange<T>(point, range);
-
-        using var @lock = Sync.Enter();
-
-        return Objects.WithinRange<T>(point, range).ToList();
-    }
+    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 13) where T: MapEntity =>
+        Objects.WithinRange<T>(point, range);
 
     public bool IsWalkable(IPoint point, bool toWalkthroughCreature = false)
     {
@@ -248,24 +219,18 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void PlayMusic(byte music)
     {
-        using var @lock = Sync.Enter();
-
         foreach (var aisling in Objects.Values<Aisling>())
             aisling.Client.SendSound(music, true);
     }
 
     public void PlaySound(byte sound, IPoint point)
     {
-        using var @lock = Sync.Enter();
-
         foreach (var aisling in Objects.WithinRange<Aisling>(point))
             aisling.Client.SendSound(sound, false);
     }
 
     public bool RemoveObject(MapEntity mapEntity)
     {
-        using var @lock = Sync.Enter();
-
         if (!Objects.Remove(mapEntity.Id))
             return false;
 
@@ -274,17 +239,15 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
                                            .ThatCanSee(visibleObject))
                 aisling.Client.SendRemoveObject(visibleObject.Id);
 
-        if(mapEntity is Creature creature)
+        if (mapEntity is Creature creature)
             foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
                 Helpers.HandleDeparture(creature, nearbyCreature);
-        
+
         return true;
     }
 
     public void ShowAnimation(Animation animation)
     {
-        using var @lock = Sync.Enter();
-
         if (animation.TargetId.HasValue)
         {
             if (TryGetObject<Creature>(animation.TargetId.Value, out var target))
@@ -298,33 +261,17 @@ public sealed class MapInstance : IScriptedMap, IDeltaUpdatable
 
     public void SimpleAdd(MapEntity mapEntity)
     {
-        using var @lock = Sync.Enter();
         mapEntity.MapInstance = this;
         Objects.Add(mapEntity.Id, mapEntity);
     }
 
-    public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj)
-    {
-        using var @lock = Sync.Enter();
-
-        return Objects.TryGetValue(id, out obj);
-    }
+    public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
 
     public void Update(TimeSpan delta)
     {
-        using var @lock = Sync.Enter();
-
         Objects.Update(delta);
 
         foreach (var spawn in MonsterSpawns)
             spawn.Update(delta);
-    }
-    
-    public void Destroy()
-    {
-        using var @lock = Sync.Enter();
-
-        Objects.Clear();
-        MonsterSpawns.Clear();
     }
 }

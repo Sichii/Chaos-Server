@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Chaos.Core.Utilities;
 
 public static class InterlockedEx
@@ -33,7 +31,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static T SetReference<T>(ref T source, Func<T> valueFactory) where T: class
     {
         var newCurrentValue = source;
@@ -48,7 +46,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static int SetValue(ref int source, Func<int> valueFactory)
     {
         var newCurrentValue = source;
@@ -63,7 +61,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static uint SetValue(ref uint source, Func<uint> valueFactory)
     {
         var newCurrentValue = source;
@@ -78,7 +76,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static double SetValue(ref double source, Func<double> valueFactory)
     {
         var newCurrentValue = source;
@@ -93,7 +91,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static float SetValue(ref float source, Func<float> valueFactory)
     {
         var newCurrentValue = source;
@@ -108,7 +106,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static long SetValue(ref long source, Func<long> valueFactory)
     {
         var newCurrentValue = source;
@@ -123,7 +121,7 @@ public static class InterlockedEx
                 return newValue;
         }
     }
-    
+
     public static ulong SetValue(ref ulong source, Func<ulong> valueFactory)
     {
         var newCurrentValue = source;
