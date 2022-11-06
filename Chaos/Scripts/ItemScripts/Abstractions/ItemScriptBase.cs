@@ -6,16 +6,24 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts.Abstractions;
 
-public abstract class ItemScriptBase : ScriptBase, IItemScript
+public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
 {
-    protected Item Subject { get; }
+    /// <inheritdoc />
+    protected ItemScriptBase(Item subject)
+        : base(subject) { }
 
-    protected ItemScriptBase(Item subject) => Subject = subject;
+    /// <inheritdoc />
     public virtual void OnDropped(Creature source, MapInstance mapInstance) { }
+
+    /// <inheritdoc />
     public virtual void OnEquipped(Aisling aisling) { }
+
+    /// <inheritdoc />
     public virtual void OnPickup(Aisling aisling) { }
 
+    /// <inheritdoc />
     public virtual void OnUnEquipped(Aisling aisling) { }
 
+    /// <inheritdoc />
     public virtual void OnUse(Aisling source) { }
 }

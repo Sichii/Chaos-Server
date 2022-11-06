@@ -1,5 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
+using Chaos.Core.Definitions;
 using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Extensions;
@@ -12,12 +13,11 @@ using Chaos.Scripts.MonsterScripts.Abstractions;
 using Chaos.Templates;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
-using Chaos.Time.Definitions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
-public sealed class Monster : Creature, IScriptedMonster
+public sealed class Monster : Creature, IScripted<IMonsterScript>
 {
     public int AggroRange { get; set; }
     public int Experience { get; set; }
@@ -89,6 +89,9 @@ public sealed class Monster : Creature, IScriptedMonster
             obj.Client.SendHealthBar(this, hitSound);
     }
 
+    /// <inheritdoc />
+    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
+
     public override void OnClicked(Aisling source)
     {
         var now = DateTime.UtcNow;
@@ -102,22 +105,23 @@ public sealed class Monster : Creature, IScriptedMonster
         Script.OnClicked(source);
     }
 
+    /// <inheritdoc />
+    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
+
     public override void OnGoldDroppedOn(Aisling source, int amount)
     {
-        if ((uint)Gold + amount > int.MaxValue)
-            return;
+        if (source.TryTakeGold(amount))
+        {
+            Gold += amount;
+            source.Client.SendAttributes(StatUpdateType.ExpGold);
+            Script.OnGoldDroppedOn(source, amount);
 
-        Logger.LogDebug(
-            "{UserName} dropped {Amount} gold on {MonsterName}",
-            source.Name,
-            amount,
-            Name);
-
-        source.Gold -= amount;
-        Gold += amount;
-
-        source.Client.SendAttributes(StatUpdateType.ExpGold);
-        Script.OnGoldDroppedOn(source, amount);
+            Logger.LogDebug(
+                "{UserName} dropped {Amount} gold on {MonsterName}",
+                source.Name,
+                amount,
+                Name);
+        }
     }
 
     public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
@@ -134,12 +138,6 @@ public sealed class Monster : Creature, IScriptedMonster
             Script.OnItemDroppedOn(source, item);
         }
     }
-
-    /// <inheritdoc />
-    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
-
-    /// <inheritdoc />
-    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

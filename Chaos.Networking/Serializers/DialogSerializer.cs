@@ -17,17 +17,19 @@ public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
         if (args.DialogType == DialogType.CloseDialog)
             return;
 
+        writer.WriteByte((byte)args.EntityType);
         writer.WriteUInt32(args.SourceId ?? 0);
-        writer.WriteByte(0);
+        writer.WriteByte(0); //dunno
         writer.WriteUInt16(args.Sprite);
-        writer.WriteBytes(new byte[2]);
+        writer.WriteByte((byte)args.Color);
+        writer.WriteByte(0); //dunno
         writer.WriteUInt16(args.Sprite);
-        writer.WriteByte(0);
+        writer.WriteByte((byte)args.Color);
         writer.WriteUInt16(args.PursuitId ?? 0);
         writer.WriteUInt16(args.DialogId);
         writer.WriteBoolean(args.HasPreviousButton);
         writer.WriteBoolean(args.HasNextButton);
-        writer.WriteByte(0);
+        writer.WriteByte(5); //dunno
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 
@@ -35,7 +37,7 @@ public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
         {
             case DialogType.Normal:
                 break;
-            case DialogType.ItemMenu:
+            case DialogType.DialogMenu:
                 writer.WriteByte((byte)args.Options!.Count);
 
                 foreach (var option in args.Options)

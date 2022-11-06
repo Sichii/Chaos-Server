@@ -7,8 +7,8 @@ public abstract class AnimatingEffectBase : IntervalEffectBase
 {
     protected abstract Animation Animation { get; }
 
-    protected AnimatingEffectBase(Creature source, Creature target)
-        : base(source, target) { }
+    protected AnimatingEffectBase(Creature target)
+        : base(target) { }
 
-    protected override void OnIntervalElapsed() => Target.MapInstance.ShowAnimation(Animation);
+    protected override void OnIntervalElapsed() => Subject.MapInstance.ShowAnimation(Animation);
 }

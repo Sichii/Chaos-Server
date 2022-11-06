@@ -1,4 +1,5 @@
-using Chaos.Time.Definitions;
+using Chaos.Core.Definitions;
+using Chaos.Core.Utilities;
 
 namespace Chaos.Time;
 
@@ -28,37 +29,10 @@ public class RandomizedIntervalTimer : IntervalTimer
 
     protected void SetRandomizedInterval()
     {
-        var randomPct = Random.Shared.Next(0, MaxRandomizationPct);
-        decimal applicablePct;
+        var ticks = Interval.Ticks;
+        var randomizedTicks = Randomizer.RollRange(ticks, MaxRandomizationPct, Type);
 
-        switch (Type)
-        {
-            case RandomizationType.Balanced:
-            {
-                var half = MaxRandomizationPct / 2;
-
-                applicablePct = (randomPct - half) / 100m;
-
-                break;
-            }
-            case RandomizationType.Positive:
-            {
-                applicablePct = randomPct / 100m;
-
-                break;
-            }
-            case RandomizationType.Negative:
-            {
-                applicablePct = -(randomPct / 100m);
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        var amountToAdd = new TimeSpan((long)(Interval.Ticks * applicablePct));
-        RandomizedInterval = Interval + amountToAdd;
+        RandomizedInterval = new TimeSpan(randomizedTicks);
     }
 
     public override void Update(TimeSpan delta)

@@ -4,5 +4,5 @@ namespace Benchmarks;
 
 public static class Program
 {
-    public static void Main() => BenchmarkRunner.Run<ForEachBenchmark>();
+    public static void Main() => BenchmarkRunner.Run<LocalFunctionBenchmarks>();
 }

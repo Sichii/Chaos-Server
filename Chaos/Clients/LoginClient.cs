@@ -1,5 +1,4 @@
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
@@ -8,7 +7,7 @@ using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
-using Chaos.Services.Servers.Abstractions;
+using Chaos.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -43,7 +42,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
 
         Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
-        return Server.HandlePacketAsync(this, ref packet);
+        return Server.HandlePacketAsync(this, in packet);
     }
 
     public void SendLoginControls(LoginControlsType loginControlsType, string message)

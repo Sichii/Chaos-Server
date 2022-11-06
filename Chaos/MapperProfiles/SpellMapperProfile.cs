@@ -1,6 +1,9 @@
+using Chaos.Common.Collections;
+using Chaos.Data;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -10,21 +13,25 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.MapperProfiles;
 
 public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
-                                         IMapperProfile<Spell, SpellInfo>
+                                         IMapperProfile<Spell, SpellInfo>,
+                                         IMapperProfile<SpellTemplate, SpellTemplateSchema>
 {
     private readonly ILogger<SpellMapperProfile> Logger;
+    private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
     public SpellMapperProfile(
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
-        ILogger<SpellMapperProfile> logger
+        ILogger<SpellMapperProfile> logger,
+        ITypeMapper mapper
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
         Logger = logger;
+        Mapper = mapper;
     }
 
     public Spell Map(SpellSchema obj)
@@ -73,4 +80,21 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
 
         return ret;
     }
+
+    public SpellTemplate Map(SpellTemplateSchema obj) => new()
+    {
+        TemplateKey = obj.TemplateKey,
+        Name = obj.Name,
+        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+        CastLines = obj.CastLines,
+        Prompt = obj.Prompt,
+        SpellType = obj.SpellType,
+        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+        PanelSprite = obj.PanelSprite,
+        ScriptVars = new Dictionary<string, DynamicVars>(obj.ScriptVars, StringComparer.OrdinalIgnoreCase),
+        Description = obj.Description,
+        LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements)
+    };
+
+    public SpellTemplateSchema Map(SpellTemplate obj) => throw new NotImplementedException();
 }

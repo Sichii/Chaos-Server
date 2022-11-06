@@ -1,0 +1,11 @@
+{
+    "templateKey": "tendo_learnSpells",
+    "text": "What would you like to learn today?",
+    "type": "showSpells",
+    "scriptKeys": ["learnSpell"],
+    "scriptVars": {
+        "learnSpell": {
+            "spellTemplateKeys": ["firebreath"]
+        }
+    }
+}

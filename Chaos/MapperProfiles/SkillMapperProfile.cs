@@ -1,6 +1,9 @@
+using Chaos.Common.Collections;
+using Chaos.Data;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -10,21 +13,25 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.MapperProfiles;
 
 public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
-                                         IMapperProfile<Skill, SkillInfo>
+                                         IMapperProfile<Skill, SkillInfo>,
+                                         IMapperProfile<SkillTemplate, SkillTemplateSchema>
 {
     private readonly ILogger<SkillMapperProfile> Logger;
+    private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
     public SkillMapperProfile(
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
-        ILogger<SkillMapperProfile> logger
+        ILogger<SkillMapperProfile> logger,
+        ITypeMapper mapper
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
         Logger = logger;
+        Mapper = mapper;
     }
 
     public Skill Map(SkillSchema obj)
@@ -70,4 +77,19 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
 
         return ret;
     }
+
+    public SkillTemplate Map(SkillTemplateSchema obj) => new()
+    {
+        TemplateKey = obj.TemplateKey,
+        Name = obj.Name,
+        IsAssail = obj.IsAssail,
+        PanelSprite = obj.PanelSprite,
+        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+        ScriptVars = new Dictionary<string, DynamicVars>(obj.ScriptVars, StringComparer.OrdinalIgnoreCase),
+        Description = obj.Description,
+        LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements)
+    };
+
+    public SkillTemplateSchema Map(SkillTemplate obj) => throw new NotImplementedException();
 }

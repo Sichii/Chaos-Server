@@ -1,11 +1,9 @@
-using System.Runtime.CompilerServices;
 using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Extensions.Geometry;
 
 public static class DirectionExtensions
 {
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Direction> AsEnumerable(this Direction direction)
     {
         if (direction == Direction.All)
@@ -27,7 +25,6 @@ public static class DirectionExtensions
     /// <summary>
     ///     Returns the Directions that would be to the sides of a given cardinal direction.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static (Direction side1, Direction side2) GetSideDirections(this Direction direction) => direction switch
     {
         Direction.Up    => (Direction.Left, Direction.Right),
@@ -40,7 +37,6 @@ public static class DirectionExtensions
     /// <summary>
     ///     Returns the Direction Enum equivalent of the reverse of a given cardinal direction.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public static Direction Reverse(this Direction direction)
     {
         switch (direction)

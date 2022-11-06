@@ -6,7 +6,7 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Abstractions;
 
-public abstract class MonsterScriptBase : ScriptBase, IMonsterScript
+public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonsterScript
 {
     protected Creature? Target
     {
@@ -23,9 +23,10 @@ public abstract class MonsterScriptBase : ScriptBase, IMonsterScript
     protected virtual bool ShouldWander => Subject.WanderTimer.IntervalElapsed;
     protected virtual ICollection<Skill> Skills => Subject.Skills;
     protected virtual IList<Spell> Spells => Subject.Spells;
-    protected Monster Subject { get; }
 
-    protected MonsterScriptBase(Monster subject) => Subject = subject;
+    /// <inheritdoc />
+    protected MonsterScriptBase(Monster subject)
+        : base(subject) { }
 
     /// <inheritdoc />
     public virtual void OnApproached(Creature source) { }

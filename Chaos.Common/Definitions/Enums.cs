@@ -8,7 +8,7 @@ public enum MoveType
 }
 
 [Flags]
-public enum Quest : ulong
+public enum QuestFlag : ulong
 {
     None = 0,
     MaribelRobes = 1
@@ -37,14 +37,15 @@ public enum MenuOrDialogType : byte
     Menu,
     MenuWithArgs,
     MenuTextEntry,
+    MenuTextEntryWithArgs,
     ShowItems,
-    ShowOwnedItems,
+    ShowPlayerItems,
     ShowSpells,
     ShowSkills,
-    ShowLearnedSpells,
-    ShowLearnedSkills,
+    ShowPlayerSpells,
+    ShowPlayerSkills,
     Normal,
-    ItemMenu,
+    DialogMenu,
     DialogTextEntry,
     Speak,
     CreatureMenu,
@@ -736,13 +737,13 @@ public enum MenuType : byte
     Menu = 0,
     MenuWithArgs = 1,
     TextEntry = 2,
+    TextEntryWithArgs = 3,
     ShowItems = 4,
-    ShowOwnedItems = 5,
+    ShowPlayerItems = 5,
     ShowSpells = 6,
     ShowSkills = 7,
-    ShowLearnedSpells = 8,
-    ShowLearnedSkills = 9,
-    Dialog = 255
+    ShowPlayerSpells = 8,
+    ShowPlayerSkills = 9
 }
 
 /// <summary>
@@ -763,7 +764,7 @@ public enum DialogArgsType : byte
 public enum DialogType : byte
 {
     Normal = 0,
-    ItemMenu = 2,
+    DialogMenu = 2,
     TextEntry = 4,
     Speak = 5,
     CreatureMenu = 6,
@@ -775,7 +776,7 @@ public enum DialogType : byte
 ///     A byte representing which button on a dialog window was pressed.
 ///     Used by ClientOpCode.DialogResponse
 /// </summary>
-public enum DialogOption : sbyte
+public enum DialogResult : sbyte
 {
     Previous = -1,
     Close = 0,

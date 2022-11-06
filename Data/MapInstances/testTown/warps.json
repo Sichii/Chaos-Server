@@ -1,0 +1,10 @@
+[
+    {
+        "destination": "testTown:(17, 12)",
+        "source": "(3, 13)"
+    },
+    {
+        "destination": "testTown:(18, 12)",
+        "source": "(4, 13)"
+    }
+]

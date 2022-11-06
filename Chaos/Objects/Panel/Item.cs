@@ -9,7 +9,7 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Objects.Panel;
 
-public sealed class Item : PanelObjectBase, IScriptedItem
+public sealed class Item : PanelObjectBase, IScripted<IItemScript>
 {
     public DisplayColor Color { get; set; }
     public int Count { get; set; }
@@ -87,7 +87,12 @@ public sealed class Item : PanelObjectBase, IScriptedItem
         }
     }
 
-    public override string ToString() => $@"(Id: {UniqueId}, Name: {DisplayName}, Count: {Count})";
+    public string ToAmountString(int amount) => $@"{amount} {DisplayName}{(amount > 1 ? "s" : string.Empty)}";
+
+    /// <inheritdoc />
+    public override string ToString() => $@"Id:{UniqueId} Name:{DisplayName} Count:{Count})";
+
+    public string ToString(int amount) => $@"Id:{UniqueId} Name:{DisplayName} Count:{amount})";
 
     public void Use(Aisling source) => Script.OnUse(source);
 }

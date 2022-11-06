@@ -24,5 +24,5 @@
     "AssailIntervalMs": 1500,
     "SpellTemplateKeys": [],
     "SkillTemplateKeys": ["Assail"],
-    "ScriptKeys": ["CommonMonster"]
+    "ScriptKeys": ["default"]
 }

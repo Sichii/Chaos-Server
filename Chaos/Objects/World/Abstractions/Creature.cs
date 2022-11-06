@@ -89,10 +89,13 @@ public abstract class Creature : NamedEntity, IEffected
         MapInstance.AddObjects(groundItems);
 
         foreach (var groundItem in groundItems)
+        {
             groundItem.Item.Script.OnDropped(this, MapInstance);
+            Logger.LogDebug("{Name} dropped {Item}", Name, groundItem);
+        }
     }
 
-    public void Drop(IPoint point, params Item[] items) => Drop(point, items.AsEnumerable());
+    public virtual void Drop(IPoint point, params Item[] items) => Drop(point, items.AsEnumerable());
 
     public virtual void DropGold(IPoint point, int amount)
     {
@@ -103,6 +106,9 @@ public abstract class Creature : NamedEntity, IEffected
 
         MapInstance.AddObject(money, point);
     }
+
+    public virtual void OnApproached(Creature creature) { }
+    public virtual void OnDeparture(Creature creature) { }
 
     public abstract void OnGoldDroppedOn(Aisling source, int amount);
 
@@ -141,9 +147,41 @@ public abstract class Creature : NamedEntity, IEffected
 
     public void ShowPublicMessage(PublicMessageType publicMessageType, string message)
     {
-        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanSee(this))
-            aisling.Client.SendPublicMessage(Id, publicMessageType, message);
+        IEnumerable<Creature>? entitiesWithinRange;
+        var sendMessage = message;
+
+        switch (publicMessageType)
+        {
+            case PublicMessageType.Normal:
+                entitiesWithinRange = MapInstance.GetEntitiesWithinRange<Creature>(this);
+                sendMessage = $"{Name}: {message}";
+
+                break;
+            case PublicMessageType.Shout:
+                entitiesWithinRange = MapInstance.GetEntities<Creature>();
+                sendMessage = $"{Name}: {message}";
+
+                break;
+            case PublicMessageType.Chant:
+                entitiesWithinRange = MapInstance.GetEntities<Creature>();
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(publicMessageType), publicMessageType, null);
+        }
+
+        foreach (var creature in entitiesWithinRange)
+            switch (creature)
+            {
+                case Aisling aisling when IsVisibleTo(aisling):
+                    aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
+
+                    break;
+                case Merchant merchant:
+                    merchant.Script.OnPublicMessage(this, message);
+
+                    break;
+            }
     }
 
     public void TraverseMap(MapInstance destinationMap, IPoint destinationPoint)
@@ -153,22 +191,20 @@ public abstract class Creature : NamedEntity, IEffected
         if (!currentMap.RemoveObject(this))
             return;
 
-        //if this thread has a lock taken out on the current map
-        //we have to release it, because adding to another map takes out that map's lock
-        //deadlocks can occur if there is contention on both locks simultaneously
-        var wasEntered = false;
+        //set the creature's location and point
+        //but at this point they are not technically on the map yet
+        //this is so that if a player executes a handler, that handler will enter the new map's synchronization instead of the old one
+        //and if they do any movement or anything, it will on the new map
+        SetLocation(destinationMap, destinationPoint);
 
-        if (currentMap.Sync.IsEntered)
-        {
-            wasEntered = true;
-            currentMap.Sync.Exit();
-        }
-
-        destinationMap.AddObject(this, destinationPoint);
-
-        //there is no guarantee we can get the lock back
-        if (wasEntered)
-            currentMap.Sync.TryEnter(5);
+        //run a task that will await entrancy into the destination map
+        //once synchronized, the creature will be added to the map
+        Task.Run(
+            async () =>
+            {
+                await using var sync = await destinationMap.Sync.WaitAsync();
+                destinationMap.AddObject(this, destinationPoint);
+            });
     }
 
     public virtual bool TryUseSkill(Skill skill)
@@ -250,6 +286,29 @@ public abstract class Creature : NamedEntity, IEffected
         MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
     }
 
+    public void Wander()
+    {
+        var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
+                                     .Where(door => door.Closed);
+
+        var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this, 1)
+                                         .ThatCollideWith(this);
+
+        var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
+                                                .ToList();
+
+        var direction = MapInstance.Pathfinder.Wander(
+            MapInstance.InstanceId,
+            this,
+            Type == CreatureType.WalkThrough,
+            nearbyUnwalkablePoints);
+
+        if (direction == Direction.Invalid)
+            return;
+
+        Walk(direction);
+    }
+
     /// <inheritdoc />
     public override void WarpTo(IPoint destinationPoint)
     {
@@ -262,37 +321,14 @@ public abstract class Creature : NamedEntity, IEffected
 
         var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                         .ToList();
-        
+
         foreach (var creature in creaturesBefore.Except(creaturesAfter))
             Helpers.HandleDeparture(creature, this);
-        
+
         foreach (var creature in creaturesAfter.Except(creaturesBefore))
             Helpers.HandleApproach(creature, this);
-        
+
         Display();
-    }
-
-    public void Wander()
-    {
-        var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
-                                     .Where(door => door.Closed);
-
-        var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this, 1)
-                                         .ThatCollideWith(this);
-
-        var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
-                                                .ToList();
-        
-        var direction = MapInstance.Pathfinder.Wander(
-            MapInstance.InstanceId,
-            this,
-            Type == CreatureType.WalkThrough,
-            nearbyUnwalkablePoints);
-
-        if (direction == Direction.Invalid)
-            return;
-
-        Walk(direction);
     }
 
     public virtual bool WillCollideWith(Creature creature)
@@ -314,7 +350,4 @@ public abstract class Creature : NamedEntity, IEffected
 
     public virtual bool WithinLevelRange(Creature other) =>
         LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);
-
-    public virtual void OnApproached(Creature creature) { }
-    public virtual void OnDeparture(Creature creature) { }
 }

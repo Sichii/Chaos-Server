@@ -1,32 +1,29 @@
-using System.Reflection;
+using Chaos.Containers;
 using Chaos.Objects.Panel;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts.Abstractions;
 
-public abstract class ConfigurableItemScriptBase : ItemScriptBase
+public abstract class ConfigurableItemScriptBase : ConfigurableScriptBase<Item>, IItemScript
 {
     /// <inheritdoc />
     protected ConfigurableItemScriptBase(Item subject)
-        : base(subject)
-    {
-        if (!subject.Template.ScriptVars.TryGetValue(ScriptKey, out var scriptVars))
-            throw new InvalidOperationException(
-                $"Item \"{subject.Template.Name}\" does not have script variables for script \"{ScriptKey}\"");
+        : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
-        var props = GetType()
-                    .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                    .Where(
-                        prop => prop.CanWrite
-                                && (Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType)
-                                .IsAssignableTo(typeof(IConvertible)));
+    /// <inheritdoc />
+    public virtual void OnDropped(Creature source, MapInstance mapInstance) { }
 
-        foreach (var prop in props)
-        {
-            var type = prop.PropertyType;
-            var value = scriptVars.Get(type, prop.Name);
+    /// <inheritdoc />
+    public virtual void OnEquipped(Aisling aisling) { }
 
-            if (value != null)
-                prop.SetValue(this, value);
-        }
-    }
+    /// <inheritdoc />
+    public virtual void OnPickup(Aisling aisling) { }
+
+    /// <inheritdoc />
+    public virtual void OnUnEquipped(Aisling aisling) { }
+
+    /// <inheritdoc />
+    public virtual void OnUse(Aisling source) { }
 }

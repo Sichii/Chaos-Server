@@ -3,7 +3,7 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Abstractions;
-using Chaos.Objects.Dialog;
+using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -21,6 +21,7 @@ public interface IWorldClient : ISocketClient
     void SendAddSpellToPane(Spell spell);
     void SendAnimation(Animation animation);
     void SendAttributes(StatUpdateType statUpdateType);
+    void SendBoard();
 
     void SendBodyAnimation(
         uint id,
@@ -35,13 +36,8 @@ public interface IWorldClient : ISocketClient
     void SendCooldown(PanelObjectBase panelObjectBase);
     void SendCreatureTurn(uint id, Direction direction);
     void SendCreatureWalk(uint id, Point startPoint, Direction direction);
-
+    void SendDialog(Dialog dialog);
     void SendDisplayAisling(Aisling aisling);
-
-    void SendDialog(Dialog dialog, object source, string? menuArg = null);
-    //void SendMenu
-    //void SendDialog
-    //void SendBoard
     void SendDoors(IEnumerable<Door> doors);
     void SendEffect(EffectColor effectColor, byte effectIcon);
     void SendEquipment(Item item);

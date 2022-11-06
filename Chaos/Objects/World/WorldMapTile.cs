@@ -7,14 +7,13 @@ namespace Chaos.Objects.World;
 
 public class WorldMapTile : ReactorTile
 {
+    /// <inheritdoc />
+    public override ReactorActivationType ReactorActivationType => ReactorActivationType.Walk;
     public WorldMap WorldMap { get; }
 
     /// <inheritdoc />
     public WorldMapTile(MapInstance mapInstance, IPoint point, WorldMap worldMap)
         : base(mapInstance, point) => WorldMap = worldMap;
-
-    /// <inheritdoc />
-    public override ReactorActivationType ReactorActivationType => ReactorActivationType.Walk;
 
     /// <inheritdoc />
     public override void Activate(Creature creature)

@@ -3,5 +3,10 @@
         <LangVersion>preview</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <TieredPGO>true</TieredPGO>
+        <TieredCompilation>true</TieredCompilation>
+        <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+        <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 </Project>

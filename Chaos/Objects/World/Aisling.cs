@@ -1,19 +1,23 @@
 using Chaos.Clients.Abstractions;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
+using Chaos.Common.Synchronization;
 using Chaos.Containers;
 using Chaos.Containers.Abstractions;
 using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Factories.Abstractions;
 using Chaos.Formulae.LevelUp;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
-using Chaos.Services.Factories.Abstractions;
-using Chaos.Services.Servers.Options;
+using Chaos.Servers.Options;
 using Chaos.Time;
+using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 using PointExtensions = Chaos.Extensions.Geometry.PointExtensions;
@@ -23,9 +27,11 @@ namespace Chaos.Objects.World;
 public sealed class Aisling : Creature
 {
     private readonly IExchangeFactory ExchangeFactory;
+    private readonly ICloningService<Item> ItemCloner;
     public Bank Bank { get; private set; }
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
+    public ChantTimer ChantTimer { get; set; }
     public IWorldClient Client { get; set; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
@@ -38,10 +44,9 @@ public sealed class Aisling : Creature
     public IgnoreList IgnoreList { get; init; }
     public IInventory Inventory { get; private set; }
     public bool IsAdmin { get; set; }
-    public DateTime LastRefresh { get; set; }
-    public ResettingCounter WalkCounter { get; set; }
     public DateTime LastEquipOrUnEquip { get; set; }
-    public Legend Legend { get; private set; }
+    public DateTime LastRefresh { get; set; }
+    public Containers.Legend Legend { get; private set; }
     public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
     public byte[] Portrait { get; set; }
@@ -52,14 +57,14 @@ public sealed class Aisling : Creature
     public TitleList Titles { get; init; }
     public UserState UserState { get; set; }
     public UserStatSheet UserStatSheet { get; init; }
+    public ResettingCounter WalkCounter { get; set; }
     public ResettingCounter ActionThrottle { get; }
-    public ActiveObject ActiveObject { get; }
+    public IInterlockedObject<Dialog> ActiveDialog { get; }
+    public IInterlockedObject<object> ActiveObject { get; }
     /// <inheritdoc />
     public override int AssailIntervalMs { get; }
-    public override StatSheet StatSheet => UserStatSheet;
-    public override CreatureType Type => CreatureType.Aisling;
-    protected override ILogger<Aisling> Logger { get; }
     public bool ShouldRefresh => DateTime.UtcNow.Subtract(LastRefresh).TotalMilliseconds > WorldOptions.Instance.RefreshIntervalMs;
+
     public bool ShouldWalk
     {
         get
@@ -73,7 +78,7 @@ public sealed class Aisling : Creature
             if (WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
             {
                 Logger.LogWarning("{Name} is probably speed walking", Name);
-                
+
                 return false;
             }
 
@@ -81,17 +86,23 @@ public sealed class Aisling : Creature
         }
     }
 
+    public override StatSheet StatSheet => UserStatSheet;
+    public override CreatureType Type => CreatureType.Aisling;
+    protected override ILogger<Aisling> Logger { get; }
+
     public Aisling(
         string name,
         MapInstance mapInstance,
         IPoint point,
         IExchangeFactory exchangeFactory,
-        ILogger<Aisling> logger
+        ILogger<Aisling> logger,
+        ICloningService<Item> itemCloner
     )
         : this(name, mapInstance, point)
     {
         ExchangeFactory = exchangeFactory;
         Logger = logger;
+        ItemCloner = itemCloner;
     }
 
     //default user
@@ -126,14 +137,16 @@ public sealed class Aisling : Creature
         Titles = new TitleList();
         Options = new UserOptions();
         IgnoreList = new IgnoreList();
-        Legend = new Legend();
+        Legend = new Containers.Legend();
         Bank = new Bank();
         Equipment = new Equipment();
         Inventory = new Inventory();
         SkillBook = new SkillBook();
         SpellBook = new SpellBook();
         Effects = new EffectsBar(this);
-        ActiveObject = new ActiveObject();
+        ActiveObject = new InterlockedObject<object>();
+        ActiveDialog = new InterlockedObject<Dialog>();
+        ChantTimer = new ChantTimer(WorldOptions.Instance.MaxChantTimeBurdenMs);
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
         ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
@@ -145,6 +158,7 @@ public sealed class Aisling : Creature
         Client = null!;
         Logger = null!;
         ExchangeFactory = null!;
+        ItemCloner = null!;
     }
 
     /// <inheritdoc />
@@ -217,6 +231,53 @@ public sealed class Aisling : Creature
     /// <inheritdoc />
     public override bool CanUse(PanelObjectBase panelObject) => base.CanUse(panelObject) && ActionThrottle.TryIncrement();
 
+    public void Drop(IPoint point, byte slot, int? amount = null)
+    {
+        if (MapInstance.IsWall(point))
+            return;
+
+        if (!this.WithinRange(point, WorldOptions.Instance.DropRange))
+            return;
+
+        var item = Inventory[slot];
+
+        if ((item == null) || item.Template.AccountBound)
+            return;
+
+        if (amount.HasValue)
+        {
+            if (!Inventory.HasCount(item.DisplayName, amount.Value))
+                return;
+
+            if (Inventory.RemoveQuantity(item.DisplayName, amount.Value, out var items))
+                Drop(point, items);
+        } else
+        {
+            if (Inventory.TryGetRemove(slot, out var droppedItem))
+                Drop(point, droppedItem);
+        }
+    }
+
+    public void Equip(EquipmentType type, Item item)
+    {
+        var slot = item.Slot;
+
+        //try equip,
+        if (Equipment.TryEquip(type, item, out var returnedItem))
+        {
+            Inventory.Remove(slot);
+            item.Script.OnEquipped(this);
+
+            if (returnedItem != null)
+            {
+                Inventory.TryAddToNextSlot(returnedItem);
+                returnedItem.Script.OnUnEquipped(this);
+            }
+
+            LastEquipOrUnEquip = DateTime.UtcNow;
+        }
+    }
+
     public void GiveExp(long amount)
     {
         if (amount + UserStatSheet.TotalExp > uint.MaxValue)
@@ -243,12 +304,6 @@ public sealed class Aisling : Creature
         Client.SendAttributes(StatUpdateType.Full);
     }
 
-    public void GiveGold(int amount)
-    {
-        Gold += amount;
-        Client.SendAttributes(StatUpdateType.ExpGold);
-    }
-
     public void Initialize(
         string name,
         Bank bank,
@@ -256,7 +311,7 @@ public sealed class Aisling : Creature
         Inventory inventory,
         SkillBook skillBook,
         SpellBook spellBook,
-        Legend legend
+        Containers.Legend legend
     )
     {
         Name = name;
@@ -305,20 +360,25 @@ public sealed class Aisling : Creature
     public void PickupItem(GroundItem groundItem, byte destinationSlot)
     {
         var item = groundItem.Item;
+        var amount = item.Count;
 
-        if (Inventory.TryAdd(destinationSlot, item))
+        if (TryGiveItem(item, destinationSlot))
         {
-            Logger.LogDebug("{UserName} picked up {Item}", Name, item);
+            Logger.LogDebug("{UserName} picked up {Item}", Name, item.ToString(amount));
 
-            if (MapInstance.RemoveObject(groundItem))
-                item.Script.OnPickup(this);
+            MapInstance.RemoveObject(groundItem);
+            item.Script.OnPickup(this);
         }
     }
 
     public void PickupMoney(Money money)
     {
-        GiveGold(money.Amount);
-        MapInstance.RemoveObject(money);
+        if (TryGiveGold(money.Amount))
+        {
+            Logger.LogDebug("{PlayerName} picked up {Amount} gold", Name, money.Amount);
+
+            MapInstance.RemoveObject(money);
+        }
     }
 
     public void Refresh(bool forceRefresh = false)
@@ -359,11 +419,112 @@ public sealed class Aisling : Creature
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
 
+    public bool TryBuyItems(int totalCost, params Item[] items)
+    {
+        if (totalCost < 0)
+            throw new ArgumentOutOfRangeException(nameof(totalCost), "Cannot give negative gold.");
+
+        var @new = Gold - totalCost;
+
+        if (@new < 0)
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, $"You do not have enough gold, you need a total of {totalCost}");
+
+            return false;
+        }
+
+        if (!CanCarry(items))
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't carry that");
+
+            return false;
+        }
+
+        Gold = @new;
+
+        foreach (var item in items.FixStacks(ItemCloner))
+            Inventory.TryAddToNextSlot(item);
+
+        return true;
+    }
+
+    public bool TryGiveGold(int amount)
+    {
+        if (amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(amount), "Cannot give negative gold.");
+
+        var @new = Gold + amount;
+
+        if (@new > WorldOptions.Instance.MaxGoldHeld)
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You have too much gold.");
+
+            return false;
+        }
+
+        Gold = @new;
+
+        return true;
+    }
+
+    public bool TryGiveItem(Item item, byte slot)
+    {
+        if (!CanCarry(item))
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't carry that");
+
+            return false;
+        }
+
+        foreach (var stack in item.FixStacks(ItemCloner))
+            if (!Inventory.TryAddDirect(slot, stack))
+                Inventory.TryAdd(slot, stack);
+
+        return true;
+    }
+
+    public bool TryGiveItems(params Item[] items)
+    {
+        if (!CanCarry(items))
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't carry that");
+
+            return false;
+        }
+
+        foreach (var item in items.FixStacks(ItemCloner))
+            Inventory.TryAddToNextSlot(item);
+
+        return true;
+    }
+
+    public bool TrySellItems(int totalValue, params Item[] items)
+    {
+        if (totalValue < 0)
+            throw new ArgumentOutOfRangeException(nameof(totalValue), "Cannot give negative gold.");
+
+        var @new = Gold + totalValue;
+
+        if (@new > WorldOptions.Instance.MaxGoldHeld)
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You have too much gold.");
+
+            return false;
+        }
+
+        Gold = @new;
+
+        foreach (var item in items)
+            Inventory.Remove(item.Slot);
+
+        return true;
+    }
+
     private bool TryStartExchange(Aisling source, [MaybeNullWhen(false)] out Exchange exchange)
     {
         exchange = ExchangeFactory.CreateExchange(source, this);
 
-        if (!ActiveObject.TrySet(exchange))
+        if (!ActiveObject.SetIfNull(exchange))
         {
             source.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{Name} is busy right now");
             Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{source.Name} is trying to exchange with you");
@@ -373,7 +534,7 @@ public sealed class Aisling : Creature
             return false;
         }
 
-        if (!source.ActiveObject.TrySet(exchange))
+        if (!source.ActiveObject.SetIfNull(exchange))
         {
             ActiveObject.TryRemove(exchange);
             source.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You're already busy");
@@ -384,6 +545,26 @@ public sealed class Aisling : Creature
         }
 
         exchange.Activate();
+
+        return true;
+    }
+
+    public bool TryTakeGold(int amount)
+    {
+        if (amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(amount), "Cannot take negative gold.");
+
+        var @new = Gold - amount;
+
+        if (@new < 0)
+        {
+            Client.SendServerMessage(ServerMessageType.OrangeBar1, $"You do not have enough gold, you need a total of {amount}");
+
+            return false;
+        }
+
+        Gold = @new;
+        Client.SendAttributes(StatUpdateType.ExpGold);
 
         return true;
     }
@@ -422,6 +603,19 @@ public sealed class Aisling : Creature
         return TryUseSpell(spell, targetId, prompt);
     }
 
+    public void UnEquip(EquipmentSlot slot)
+    {
+        if (Inventory.IsFull)
+            return;
+
+        if (!Equipment.TryGetRemove((byte)slot, out var item))
+            return;
+
+        Inventory.TryAddToNextSlot(item);
+        item.Script.OnUnEquipped(this);
+        LastEquipOrUnEquip = DateTime.UtcNow;
+    }
+
     public override void Update(TimeSpan delta)
     {
         Equipment.Update(delta);
@@ -430,6 +624,7 @@ public sealed class Aisling : Creature
         SpellBook.Update(delta);
         ActionThrottle.Update(delta);
         WalkCounter.Update(delta);
+        ChantTimer.Update(delta);
         base.Update(delta);
     }
 
@@ -438,7 +633,7 @@ public sealed class Aisling : Creature
         //don't allow f5 walking
         if (!ShouldWalk)
             return;
-        
+
         Direction = direction;
         var startPoint = Point.From(this);
         var endPoint = PointExtensions.DirectionalOffset(this, direction);
@@ -495,9 +690,9 @@ public sealed class Aisling : Creature
             if (IsVisibleTo(aisling))
                 ShowTo(aisling);
         }
-        
+
         //handle approach
-        foreach(var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
+        foreach (var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
             if (visible is Creature creature)
                 Helpers.HandleApproach(creature, this);
 
@@ -532,46 +727,16 @@ public sealed class Aisling : Creature
 
         SetLocation(destinationPoint);
         Client.SendLocation();
-        
+
         var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                         .ToList();
-        
+
         foreach (var creature in creaturesBefore.Except(creaturesAfter))
             Helpers.HandleDeparture(creature, this);
-        
+
         foreach (var creature in creaturesAfter.Except(creaturesBefore))
             Helpers.HandleApproach(creature, this);
-        
+
         Display();
-    }
-
-    public void Equip(EquipmentType type, Item item)
-    {
-        var slot = item.Slot;
-        
-        //try equip,
-        if (Equipment.TryEquip(type, item, out var returnedItem))
-        {
-            Inventory.Remove(slot);
-            item.Script.OnEquipped(this);
-
-            if (returnedItem != null)
-                Inventory.TryAddToNextSlot(returnedItem);
-            
-            LastEquipOrUnEquip = DateTime.UtcNow;
-        }
-    }
-
-    public void UnEquip(EquipmentSlot slot)
-    {
-        if (Inventory.IsFull)
-            return;
-
-        if (!Equipment.TryGetRemove((byte)slot, out var item))
-            return;
-
-        Inventory.TryAddToNextSlot(item);
-        item.Script.OnUnEquipped(this);
-        LastEquipOrUnEquip = DateTime.UtcNow;
     }
 }

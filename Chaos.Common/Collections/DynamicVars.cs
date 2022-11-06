@@ -30,7 +30,7 @@ public class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
         JsonOptions = options;
         Vars = new ConcurrentDictionary<string, JsonElement>(collection, StringComparer.OrdinalIgnoreCase);
     }
-    
+
     public DynamicVars(JsonSerializerOptions options)
     {
         JsonOptions = options;
@@ -47,11 +47,11 @@ public class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
         return value.Deserialize(type, JsonOptions);
     }
 
-    public void Set(string key, JsonElement element) => Vars.TryAdd(key, element);
-
     /// <inheritdoc />
     public IEnumerator<KeyValuePair<string, JsonElement>> GetEnumerator() => Vars.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public void Set(string key, JsonElement element) => Vars.TryAdd(key, element);
 }

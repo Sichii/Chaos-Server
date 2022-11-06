@@ -43,6 +43,14 @@ public class SerializableUniqueId
 
         using var fileStream = File.OpenRead("UniqueId.json");
 
+        if (fileStream.Length == 0)
+        {
+            var obj = new SerializableUniqueId(0);
+            obj.Serialize();
+
+            return obj;
+        }
+
         return JsonSerializer.Deserialize<SerializableUniqueId>(fileStream)!;
     }
 
@@ -58,8 +66,8 @@ public class SerializableUniqueId
 
     private void Serialize()
     {
-        using var fileStream = File.Create("UniqueId.json");
-        JsonSerializer.Serialize(fileStream, this);
+        var json = JsonSerializer.Serialize(this);
+        File.WriteAllText("UniqueId.json", json);
     }
 
     public class SerializableUniqueIdConverter : JsonConverter<SerializableUniqueId>

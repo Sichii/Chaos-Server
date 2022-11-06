@@ -7,6 +7,8 @@ namespace Chaos.Templates;
 public sealed class ItemTemplate : PanelObjectTemplateBase
 {
     public required bool AccountBound { get; init; }
+
+    public required int BuyCost { get; init; }
     public required DisplayColor Color { get; init; }
     public required ItemSprite ItemSprite { get; init; } = null!;
     public required int? MaxDurability { get; init; }
@@ -20,8 +22,7 @@ public sealed class ItemTemplate : PanelObjectTemplateBase
     }
 
     public required DisplayColor? PantsColor { get; init; }
-
-    public required int Value { get; init; }
+    public required int SellValue { get; init; }
     public required byte Weight { get; init; } = 1;
     public bool Stackable => MaxStacks > 1;
 }
