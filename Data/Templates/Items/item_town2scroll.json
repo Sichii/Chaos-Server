@@ -2,7 +2,6 @@
   {
     "templateKey": "town2scroll",
     "accountBound": false,
-    "equipmentType": "notequipment",
     "gender": "Unisex",
     "maxStacks": 30,
     "value": 100,

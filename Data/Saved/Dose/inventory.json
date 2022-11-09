@@ -9,10 +9,19 @@
   },
   {
     "color": "Default",
-    "count": 53,
+    "count": 51,
     "scriptKeys": [],
     "slot": 2,
     "templateKey": "giftbox",
     "uniqueId": 24404
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 3,
+    "templateKey": "blouse",
+    "uniqueId": 125003
   }
 ]

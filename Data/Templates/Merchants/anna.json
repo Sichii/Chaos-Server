@@ -1,0 +1,7 @@
+{
+    "templateKey": "anna",
+    "sprite": 534,
+    "name": "Anna",
+    "scriptKeys": ["default"],
+    "dialogKey": "anna_initial"
+}

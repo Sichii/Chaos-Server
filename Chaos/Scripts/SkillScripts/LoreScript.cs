@@ -23,7 +23,7 @@ namespace Chaos.Scripts.SkillScripts
             {
                 if (aisling.Id == source.Id)
                 {
-                    aisling.Client.SendServerMessage(ServerMessageType.WoodenBoard, "Name: " + aisling.Inventory[1]?.DisplayName + "\nValue: " + aisling.Inventory[1]?.Template.Value + "\nArmor Class: " + aisling.Inventory[1]?.Template?.Modifiers?.Ac);
+                    aisling.Client.SendServerMessage(ServerMessageType.WoodenBoard, "Name: " + aisling.Inventory[1]?.DisplayName + "\nValue: " + aisling.Inventory[1]?.Template.SellValue + "\nArmor Class: " + aisling.Inventory[1]?.Template?.Modifiers?.Ac);
                 }
             }
         }

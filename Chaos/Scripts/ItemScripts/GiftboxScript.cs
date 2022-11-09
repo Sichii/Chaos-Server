@@ -1,5 +1,6 @@
 ﻿using Chaos.Common.Definitions;
 using Chaos.Containers;
+using Chaos.Objects.Legend;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.ItemScripts.Abstractions;
@@ -26,9 +27,9 @@ namespace Chaos.Scripts.ItemScripts
                 if (GoldAmount.HasValue)
                 {
                     //Give Gold Amount
-                    source.GiveGold(GoldAmount.Value);
+                    source.TryGiveGold(GoldAmount.Value);
                     //Give Legend Mark
-                    source.Legend.AddOrAccumulate(new Data.LegendMark("Opened a " + Subject.DisplayName + "!", "giftbox1", Common.Definitions.MarkIcon.Yay, Common.Definitions.MarkColor.White, 1, Time.GameTime.Now));
+                    source.Legend.AddOrAccumulate(new LegendMark("Opened a " + Subject.DisplayName + "!", "giftbox1", Common.Definitions.MarkIcon.Yay, Common.Definitions.MarkColor.White, 1, Time.GameTime.Now));
                     //Remove box from Inventory
                     source.Inventory.RemoveQuantity(Subject.DisplayName, 1);
                     //Display confirmation to user
