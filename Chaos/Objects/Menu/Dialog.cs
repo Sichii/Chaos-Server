@@ -69,10 +69,12 @@ public record Dialog : IScripted<IDialogScript>
 
     public void Close(Aisling source)
     {
-        var closeDialog = new Dialog(DialogTemplate.CloseDialogTemplate, SourceEntity);
-        source.Client.SendDialog(closeDialog);
-        Script.OnClose(source);
+        Type = MenuOrDialogType.CloseDialog;
+        Options.Clear();
+        NextDialogKey = null;
+        source.Client.SendDialog(this);
         source.ActiveDialog.TryRemove(this);
+        Script.OnClose(source);
     }
 
     public void Display(Aisling source)

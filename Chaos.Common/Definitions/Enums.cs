@@ -11,7 +11,7 @@ public enum MoveType
 public enum QuestFlag : ulong
 {
     None = 0,
-    MaribelRobes = 1
+    Arms = 1
     //add more quest flags here, double each time
 }
 
