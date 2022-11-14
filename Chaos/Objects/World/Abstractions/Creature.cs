@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
+using Chaos.Containers.Abstractions;
 using Chaos.Data;
-using Chaos.Effects.Abstractions;
 using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
@@ -10,18 +10,21 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
+using Chaos.Scripts.EffectScripts.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World.Abstractions;
 
-public abstract class Creature : NamedEntity, IEffected
+public abstract class Creature : NamedEntity, IAffected
 {
     public Direction Direction { get; set; }
     public IEffectsBar Effects { get; init; }
     public int GamePoints { get; set; }
     public int Gold { get; set; }
     public virtual bool IsDead { get; set; }
+    public DateTime LastAttack { get; set; }
+    public DateTime LastMove { get; set; }
     public Status Status { get; set; }
     protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
     public abstract int AssailIntervalMs { get; }
@@ -106,6 +109,14 @@ public abstract class Creature : NamedEntity, IEffected
 
         MapInstance.AddObject(money, point);
     }
+
+    public virtual bool IsFriendlyTo(Creature other) => other switch
+    {
+        Monster  => this is Monster,
+        Aisling  => this is Aisling or Merchant, //could also check if map is pvp enabled or something
+        Merchant => this is not Monster,
+        _        => false
+    };
 
     public virtual void OnApproached(Creature creature) { }
     public virtual void OnDeparture(Creature creature) { }
@@ -213,6 +224,7 @@ public abstract class Creature : NamedEntity, IEffected
             return false;
 
         skill.Use(this);
+        LastAttack = DateTime.UtcNow;
 
         return true;
     }

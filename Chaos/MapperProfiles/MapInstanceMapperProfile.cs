@@ -13,15 +13,13 @@ namespace Chaos.MapperProfiles;
 public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>,
                                                IMapperProfile<MapTemplate, MapTemplateSchema>
 {
-    private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public MapInstanceMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
+    public MapInstanceMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Mapper = mapper;
     }
 
     public MapInstance Map(MapInstanceSchema obj)
@@ -56,6 +54,11 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
     {
         Width = obj.Width,
         Height = obj.Height,
+        Bounds = new Rectangle(
+            0,
+            0,
+            obj.Width - 1,
+            obj.Height - 1),
         TemplateKey = obj.TemplateKey,
         WarpPoints = obj.WarpPoints,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),

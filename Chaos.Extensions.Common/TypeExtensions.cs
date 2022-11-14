@@ -37,17 +37,17 @@ public static class TypeExtensions
                 yield return @interface;
     }
 
-    /// <summary>
-    ///     Determines whether a type has a generic base type.
-    /// </summary>
-    /// <param name="genericBaseType">A generic type definition (non-interface). (The type of a generic without the type params specified)</param>
-    public static bool HasGenericBaseType(this Type type, Type genericBaseType)
+    public static bool HasBaseType(this Type type, Type baseType)
     {
         var current = type;
 
         while (current != null)
         {
-            if (current.IsGenericType && (current.GetGenericTypeDefinition() == genericBaseType))
+            if (baseType.IsGenericTypeDefinition)
+            {
+                if (current.IsGenericType && (current.GetGenericTypeDefinition() == baseType))
+                    return true;
+            } else if (current == baseType)
                 return true;
 
             current = current.BaseType;
@@ -57,9 +57,35 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    ///     Determines whether a type inherits from a generic interface
+    ///     Determines whether a type inherits from a interface
     /// </summary>
-    public static bool HasGenericInterface(this Type type, Type genericInterfaceType) =>
-        type.GetInterfaces()
-            .Any(i => i.IsGenericType && (i.GetGenericTypeDefinition() == genericInterfaceType));
+    public static bool HasInterface(this Type type, Type interfaceType)
+    {
+        foreach (var iType in type.GetInterfaces())
+            if (interfaceType.IsGenericTypeDefinition)
+            {
+                if (iType.IsGenericType && (iType.GetGenericTypeDefinition() == interfaceType))
+                    return true;
+            } else if (iType == interfaceType)
+                return true;
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Returns all constructable types that inherit from the specified type.
+    /// </summary>
+    public static IEnumerable<Type> LoadImplementations(this Type type)
+    {
+        var assemblyTypes = AppDomain.CurrentDomain
+                                     .GetAssemblies()
+                                     .Where(a => !a.IsDynamic)
+                                     .SelectMany(a => a.GetTypes())
+                                     .Where(asmType => !asmType.IsInterface && !asmType.IsAbstract);
+
+        if (type.IsGenericTypeDefinition)
+            return assemblyTypes.Where(asmType => type.IsInterface ? asmType.HasInterface(type) : asmType.HasBaseType(type));
+
+        return assemblyTypes.Where(asmType => asmType.IsAssignableTo(type));
+    }
 }

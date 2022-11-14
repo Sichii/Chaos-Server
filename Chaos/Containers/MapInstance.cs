@@ -190,6 +190,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public IEnumerable<T> GetEntitiesAtPoint<T>(IPoint point) where T: MapEntity => Objects.AtPoint<T>(point);
 
+    public IEnumerable<T> GetEntitiesAtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => Objects.AtPoints<T>(points);
+
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 13) where T: MapEntity =>
         Objects.WithinRange<T>(point, range);
 
@@ -226,6 +228,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public void PlaySound(byte sound, IPoint point)
     {
         foreach (var aisling in Objects.WithinRange<Aisling>(point))
+            aisling.Client.SendSound(sound, false);
+    }
+
+    public void PlaySound(byte sound, ICollection<IPoint> points)
+    {
+        var aislings = Objects.Values<Aisling>()
+                              .Where(aisling => points.Any(p => p.WithinRange(aisling)));
+
+        foreach (var aisling in aislings)
             aisling.Client.SendSound(sound, false);
     }
 

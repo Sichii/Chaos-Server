@@ -15,7 +15,7 @@ public sealed record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
         if (args.TargetPoint != null)
         {
             //writer.WriteBytes(new byte[4]); //dunno
-            writer.WriteUInt32(args.SourceId ?? 0);
+            writer.WriteUInt32(0);
             writer.WriteUInt16(args.TargetAnimation);
             writer.WriteUInt16(args.AnimationSpeed);
             writer.WritePoint16(args.TargetPoint);

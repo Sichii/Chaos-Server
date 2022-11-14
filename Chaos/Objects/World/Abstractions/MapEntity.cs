@@ -22,8 +22,7 @@ public abstract class MapEntity : WorldEntity, ILocation
 
     public void SetLocation(IPoint point)
     {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
         var oldPoint = Point.From(this);
 
@@ -31,17 +30,20 @@ public abstract class MapEntity : WorldEntity, ILocation
         Y = point.Y;
 
         if (oldPoint != this)
+        {
             MapInstance.MoveEntity(this, oldPoint);
+
+            if (this is Creature creature)
+                creature.LastMove = DateTime.UtcNow;
+        }
     }
 
     public void SetLocation(MapInstance mapInstance, IPoint point)
     {
         // ReSharper disable once JoinNullCheckWithUsage
-        if (mapInstance == null)
-            throw new ArgumentNullException(nameof(mapInstance));
+        ArgumentNullException.ThrowIfNull(mapInstance);
 
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
         X = point.X;
         Y = point.Y;

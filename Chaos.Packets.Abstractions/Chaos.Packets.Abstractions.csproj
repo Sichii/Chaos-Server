@@ -1,12 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj"/>
     </ItemGroup>
-
 </Project>

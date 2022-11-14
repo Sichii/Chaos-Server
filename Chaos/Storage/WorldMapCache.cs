@@ -1,6 +1,6 @@
 using System.Text.Json;
+using Chaos.Common.Utilities;
 using Chaos.Containers;
-using Chaos.Core.Utilities;
 using Chaos.Schemas.Content;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage;
 
-public class WorldMapCache : SimpleFileCacheBase<WorldMap, WorldMapSchema, WorldMapCacheOptions>
+public sealed class WorldMapCache : SimpleFileCacheBase<WorldMap, WorldMapSchema, WorldMapCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<WorldMap, string> KeySelector { get; } = wm => wm.WorldMapKey;

@@ -7,13 +7,6 @@ namespace Chaos.Scripts.DialogScripts;
 public class CompositeDialogScript : CompositeScriptBase<IDialogScript>, IDialogScript
 {
     /// <inheritdoc />
-    public virtual void OnClose(Aisling source)
-    {
-        foreach (var component in Components)
-            component.OnClose(source);
-    }
-
-    /// <inheritdoc />
     public virtual void OnDisplayed(Aisling source)
     {
         foreach (var component in Components)

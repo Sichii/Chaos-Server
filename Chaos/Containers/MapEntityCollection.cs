@@ -90,6 +90,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity =>
         Bounds.Contains(point) ? PointLookup[point.X, point.Y].OfType<T>() : Enumerable.Empty<T>();
 
+    public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity =>
+        points.SelectMany(AtPoint<T>);
+
     public void Clear()
     {
         EntityLookup.Clear();

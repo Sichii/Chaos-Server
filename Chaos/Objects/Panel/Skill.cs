@@ -35,7 +35,8 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
 
     public void Use(Creature source)
     {
-        Script.OnUse(source);
+        var context = new SkillContext(source);
+        Script.OnUse(context);
 
         if (Template.IsAssail)
         {

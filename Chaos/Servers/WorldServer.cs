@@ -7,9 +7,9 @@ using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
+using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
-using Chaos.Core.Identity;
 using Chaos.Cryptography;
 using Chaos.Data;
 using Chaos.Extensions;
@@ -181,7 +181,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<BeginChantArgs>(in clientPacket);
 
-        ValueTask InnerOnBeginChant(IWorldClient localClient, BeginChantArgs localArgs)
+        static ValueTask InnerOnBeginChant(IWorldClient localClient, BeginChantArgs localArgs)
         {
             if (localClient.Aisling.Status.HasFlag(Status.Dead))
             {
@@ -201,7 +201,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public ValueTask OnBoardRequest(IWorldClient client, in ClientPacket clientPacket)
     {
-        ValueTask InnerOnBoardRequest(IWorldClient localClient)
+        static ValueTask InnerOnBoardRequest(IWorldClient localClient)
         {
             //TODO: maybe implement board, but not sure if it's worth it
             localClient.SendBoard();
@@ -216,7 +216,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<DisplayChantArgs>(in clientPacket);
 
-        ValueTask InnerOnChant(IWorldClient localClient, DisplayChantArgs localArgs)
+        static ValueTask InnerOnChant(IWorldClient localClient, DisplayChantArgs localArgs)
         {
             localClient.Aisling.Chant(localArgs.ChantMessage);
 
@@ -230,7 +230,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ClickArgs>(in clientPacket);
 
-        ValueTask InnerOnClick(IWorldClient localClient, ClickArgs localArgs)
+        static ValueTask InnerOnClick(IWorldClient localClient, ClickArgs localArgs)
         {
             (var targetId, var targetPoint) = localArgs;
 
@@ -309,7 +309,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ClientWalkArgs>(in clientPacket);
 
-        ValueTask InnerOnClientWalk(IWorldClient localClient, ClientWalkArgs localArgs)
+        static ValueTask InnerOnClientWalk(IWorldClient localClient, ClientWalkArgs localArgs)
         {
             localClient.Aisling.Walk(localArgs.Direction);
 
@@ -602,7 +602,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<IgnoreArgs>(in clientPacket);
 
-        ValueTask InnerOnIgnore(IWorldClient localClient, IgnoreArgs localArgs)
+        static ValueTask InnerOnIgnore(IWorldClient localClient, IgnoreArgs localArgs)
         {
             (var ignoreType, var targetName) = localArgs;
 
@@ -636,7 +636,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ItemDropArgs>(in clientPacket);
 
-        ValueTask InnerOnItemDropped(IWorldClient localClient, ItemDropArgs localArgs)
+        static ValueTask InnerOnItemDropped(IWorldClient localClient, ItemDropArgs localArgs)
         {
             (var sourceSlot, var destinationPoint, var count) = localArgs;
 
@@ -679,7 +679,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public ValueTask OnMapDataRequest(IWorldClient client, in ClientPacket clientPacket)
     {
-        ValueTask InnerOnMapDataRequest(IWorldClient localClient)
+        static ValueTask InnerOnMapDataRequest(IWorldClient localClient)
         {
             localClient.SendMapData();
 
@@ -758,7 +758,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ProfileArgs>(in clientPacket);
 
-        ValueTask InnerOnProfile(IWorldClient localClient, ProfileArgs localArgs)
+        static ValueTask InnerOnProfile(IWorldClient localClient, ProfileArgs localArgs)
         {
             (var portraitData, var profileMessage) = localArgs;
             localClient.Aisling.Portrait = portraitData;
@@ -772,7 +772,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public ValueTask OnProfileRequest(IWorldClient client, in ClientPacket clientPacket)
     {
-        ValueTask InnerOnProfileRequest(IWorldClient localClient)
+        static ValueTask InnerOnProfileRequest(IWorldClient localClient)
         {
             localClient.SendSelfProfile();
 
@@ -833,7 +833,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<RaiseStatArgs>(in clientPacket);
 
-        ValueTask InnerOnRaiseStat(IWorldClient localClient, RaiseStatArgs localArgs)
+        static ValueTask InnerOnRaiseStat(IWorldClient localClient, RaiseStatArgs localArgs)
         {
             if (localClient.Aisling.UserStatSheet.UnspentPoints > 0)
                 if (localClient.Aisling.UserStatSheet.IncrementStat(localArgs.Stat))
@@ -852,7 +852,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public ValueTask OnRefreshRequest(IWorldClient client, in ClientPacket clientPacket)
     {
-        ValueTask InnerOnRefreshRequest(IWorldClient localClient)
+        static ValueTask InnerOnRefreshRequest(IWorldClient localClient)
         {
             localClient.Aisling.Refresh();
 
@@ -866,7 +866,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<SocialStatusArgs>(in clientPacket);
 
-        ValueTask InnerOnSocialStatus(IWorldClient localClient, SocialStatusArgs localArgs)
+        static ValueTask InnerOnSocialStatus(IWorldClient localClient, SocialStatusArgs localArgs)
         {
             localClient.Aisling.SocialStatus = localArgs.SocialStatus;
 
@@ -878,7 +878,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public ValueTask OnSpacebar(IWorldClient client, in ClientPacket clientPacket)
     {
-        ValueTask InnerOnSpacebar(IWorldClient localClient)
+        static ValueTask InnerOnSpacebar(IWorldClient localClient)
         {
             foreach (var skill in localClient.Aisling.SkillBook)
                 if (skill.Template.IsAssail)
@@ -894,7 +894,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<SwapSlotArgs>(in clientPacket);
 
-        ValueTask InnerOnSwapSlot(IWorldClient localClient, SwapSlotArgs localArgs)
+        static ValueTask InnerOnSwapSlot(IWorldClient localClient, SwapSlotArgs localArgs)
         {
             (var panelType, var slot1, var slot2) = localArgs;
 
@@ -926,7 +926,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public ValueTask OnToggleGroup(IWorldClient client, in ClientPacket clientPacket)
     {
-        ValueTask InnerOnToggleGroup(IWorldClient localClient)
+        static ValueTask InnerOnToggleGroup(IWorldClient localClient)
         {
             //don't need to send the updated option, because they arent currently looking at it
             localClient.Aisling.Options.Toggle(UserOption.Group);
@@ -946,7 +946,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<TurnArgs>(in clientPacket);
 
-        ValueTask InnerOnTurn(IWorldClient localClient, TurnArgs localArgs)
+        static ValueTask InnerOnTurn(IWorldClient localClient, TurnArgs localArgs)
         {
             localClient.Aisling.Turn(localArgs.Direction);
 
@@ -960,7 +960,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<UnequipArgs>(in clientPacket);
 
-        ValueTask InnerOnUnequip(IWorldClient localClient, UnequipArgs localArgs)
+        static ValueTask InnerOnUnequip(IWorldClient localClient, UnequipArgs localArgs)
         {
             localClient.Aisling.UnEquip(localArgs.EquipmentSlot);
 
@@ -974,7 +974,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<ItemUseArgs>(in clientPacket);
 
-        ValueTask InnerOnUseItem(IWorldClient localClient, ItemUseArgs localArgs)
+        static ValueTask InnerOnUseItem(IWorldClient localClient, ItemUseArgs localArgs)
         {
             if (localClient.Aisling.Inventory.TryGetObject(localArgs.SourceSlot, out var item))
             {
@@ -1000,7 +1000,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<UserOptionToggleArgs>(in clientPacket);
 
-        ValueTask InnerOnUsrOptionToggle(IWorldClient localClient, UserOptionToggleArgs localArgs)
+        static ValueTask InnerOnUsrOptionToggle(IWorldClient localClient, UserOptionToggleArgs localArgs)
         {
             if (localArgs.UserOption == UserOption.Request)
             {
@@ -1022,7 +1022,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<SkillUseArgs>(in clientPacket);
 
-        ValueTask InnerOnUseSkill(IWorldClient localClient, SkillUseArgs localArgs)
+        static ValueTask InnerOnUseSkill(IWorldClient localClient, SkillUseArgs localArgs)
         {
             localClient.Aisling.TryUseSkill(localArgs.SourceSlot);
 
@@ -1183,7 +1183,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         var args = PacketSerializer.Deserialize<WorldMapClickArgs>(in clientPacket);
 
-        ValueTask InnerOnWorldMapClick(IWorldClient localClient, WorldMapClickArgs localArgs)
+        static ValueTask InnerOnWorldMapClick(IWorldClient localClient, WorldMapClickArgs localArgs)
         {
             var worldMapTile = localClient.Aisling.MapInstance.GetEntitiesAtPoint<WorldMapTile>(localClient.Aisling)
                                           .FirstOrDefault();
@@ -1206,6 +1206,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     #region Connection / Handler
     public static async ValueTask ExecuteHandler<TArgs>(IWorldClient client, TArgs args, Func<IWorldClient, TArgs, ValueTask> action)
     {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
         IPolyDisposable disposable;
 
@@ -1221,6 +1222,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     public static async ValueTask ExecuteHandler(IWorldClient client, Func<IWorldClient, ValueTask> action)
     {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
         IPolyDisposable disposable;
 
@@ -1235,7 +1237,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
             while (mapInstance != client.Aisling!.MapInstance)
             {
                 disposable.Dispose();
-                mapInstance = client.Aisling!.MapInstance;
+                mapInstance = client.Aisling.MapInstance;
                 disposable = await mapInstance.Sync.WaitAsync();
             }
         }

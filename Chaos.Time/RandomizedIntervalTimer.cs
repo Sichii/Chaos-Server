@@ -1,5 +1,5 @@
-using Chaos.Core.Definitions;
-using Chaos.Core.Utilities;
+using Chaos.Common.Definitions;
+using Chaos.Common.Utilities;
 
 namespace Chaos.Time;
 
@@ -11,12 +11,20 @@ public class RandomizedIntervalTimer : IntervalTimer
 
     protected RandomizationType Type { get; set; }
 
-    public RandomizedIntervalTimer(TimeSpan interval, int maxRandomizationPct, RandomizationType type = RandomizationType.Balanced)
+    public RandomizedIntervalTimer(
+        TimeSpan interval,
+        int maxRandomizationPct,
+        RandomizationType type = RandomizationType.Balanced,
+        bool startAsElapsed = true
+    )
         : base(interval)
     {
         MaxRandomizationPct = maxRandomizationPct;
         Type = type;
         SetRandomizedInterval();
+
+        if (startAsElapsed)
+            Elapsed = RandomizedInterval;
     }
 
     /// <inheritdoc />

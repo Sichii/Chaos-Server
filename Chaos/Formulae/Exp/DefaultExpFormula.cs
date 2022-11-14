@@ -6,7 +6,7 @@ namespace Chaos.Formulae.Exp;
 public class DefaultExpFormula : IExpFormula
 {
     /// <inheritdoc />
-    public long Calculate(Monster monster, params Aisling[] aislings)
+    public virtual long Calculate(Monster monster, params Aisling[] aislings)
     {
         var groupSizeDeductions = GetGroupSizeDeductions(aislings);
         var partyLevelDifferenceDeductions = GetPartyLevelDifferenceDeductions(aislings);

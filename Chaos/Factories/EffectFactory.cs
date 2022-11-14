@@ -1,7 +1,7 @@
-using Chaos.Core.Utilities;
-using Chaos.Effects.Abstractions;
+using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Scripts.EffectScripts.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Factories;
@@ -10,31 +10,35 @@ public sealed class EffectFactory : IEffectFactory
 {
     private readonly ConcurrentDictionary<string, Type> EffectTypeCache;
     private readonly ILogger Logger;
+    private readonly IServiceProvider Provider;
 
-    public EffectFactory(ILogger<EffectFactory> logger)
+    public EffectFactory(ILogger<EffectFactory> logger, IServiceProvider provider)
     {
         EffectTypeCache = new ConcurrentDictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
+        Provider = provider;
 
         LoadEffectTypes();
     }
 
-    public IEffect CreateEffect(string effectName, Creature source, Creature target)
+    public IEffect Create(string effectKey)
     {
-        if (!EffectTypeCache.TryGetValue(effectName, out var effectType))
-            throw new KeyNotFoundException($"Effect key \"{effectName}\" was not found");
+        if (!EffectTypeCache.TryGetValue(effectKey, out var effectType))
+            throw new KeyNotFoundException($"Effect key \"{effectKey}\" was not found");
 
-        var instance = InstanceFactory.CreateInstance(effectType, source, target);
+        var instance = ActivatorUtilities.CreateInstance(Provider, effectType);
 
         if (instance is not IEffect effect)
-            throw new InvalidCastException($"Object obtained from key \"{effectName}\" is not a valid effect");
+            throw new InvalidCastException($"Object obtained from key \"{effectKey}\" is not a valid effect");
+
+        Logger.LogTrace("Created effect \"{EffectName}\"", effect.Name);
 
         return effect;
     }
 
     private void LoadEffectTypes()
     {
-        var types = TypeLoader.LoadImplementations<IEffect>();
+        var types = typeof(IEffect).LoadImplementations();
 
         foreach (var type in types)
         {

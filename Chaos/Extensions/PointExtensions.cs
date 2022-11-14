@@ -7,11 +7,9 @@ public static class PointExtensions
 {
     public static bool WithinRange(this IPoint point, IPoint other, int distance = 13)
     {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
-        if (other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         return point.DistanceFrom(other) <= distance;
     }

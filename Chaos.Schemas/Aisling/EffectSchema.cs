@@ -5,6 +5,6 @@ namespace Chaos.Schemas.Aisling;
 public sealed record EffectSchema
 {
     [JsonRequired]
-    public string Name { get; init; } = null!;
-    public int? RemainingSecs { get; init; }
+    public string EffectKey { get; init; } = null!;
+    public int RemainingSecs { get; init; }
 }

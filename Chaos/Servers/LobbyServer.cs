@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
-using Chaos.Core.Identity;
+using Chaos.Common.Identity;
 using Chaos.Factories.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Client;

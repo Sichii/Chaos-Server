@@ -4,6 +4,7 @@ using Chaos.Scripts.MonsterScripts.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
+// ReSharper disable once ClassCanBeSealed.Global
 public class MoveToTargetScript : MonsterScriptBase
 {
     /// <inheritdoc />
@@ -15,10 +16,19 @@ public class MoveToTargetScript : MonsterScriptBase
     {
         base.Update(delta);
 
-        if ((Target == null) || !ShouldMove || (Subject.DistanceFrom(Target) == 1))
+        if ((Target == null) || !ShouldMove)
             return;
 
-        Subject.Pathfind(Target);
+        var distance = Subject.DistanceFrom(Target);
+
+        if (distance != 1)
+            Subject.Pathfind(Target);
+        else
+        {
+            var direction = Target.DirectionalRelationTo(Subject);
+            Subject.Turn(direction);
+        }
+
         Subject.WanderTimer.Reset();
         Subject.SkillTimer.Reset();
     }

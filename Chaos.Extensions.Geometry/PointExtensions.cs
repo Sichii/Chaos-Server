@@ -16,6 +16,8 @@ public static class PointExtensions
             var edge1 = edgePair[0];
             var edge2 = edgePair[1];
 
+            yield return edge1;
+
             foreach (var pt in edge1.GetDirectPath(edge2))
                 yield return pt;
         }
@@ -23,8 +25,7 @@ public static class PointExtensions
 
     public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
     {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction));
@@ -42,11 +43,9 @@ public static class PointExtensions
 
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
     {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
-        if (other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         var direction = Direction.Invalid;
         var degree = 0;
@@ -84,11 +83,9 @@ public static class PointExtensions
 
     public static int DistanceFrom(this IPoint point, IPoint other)
     {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
-        if (other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
     }
@@ -130,12 +127,10 @@ public static class PointExtensions
 
         while (current != end)
         {
-            yield return current;
-
             current = current.OffsetTowards(end);
-        }
 
-        yield return Point.From(end);
+            yield return current;
+        }
     }
 
     /// <summary>
@@ -184,11 +179,9 @@ public static class PointExtensions
 
     public static Point OffsetTowards(this IPoint point, IPoint other)
     {
-        if (point == null)
-            throw new ArgumentNullException(nameof(point));
+        ArgumentNullException.ThrowIfNull(point);
 
-        if (other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         var direction = other.DirectionalRelationTo(point);
 
@@ -293,8 +286,7 @@ public static class PointExtensions
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
     {
-        if (points == null)
-            throw new ArgumentNullException(nameof(points));
+        ArgumentNullException.ThrowIfNull(points);
 
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction));

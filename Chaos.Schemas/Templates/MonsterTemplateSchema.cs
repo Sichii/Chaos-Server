@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Schemas.Aisling;
@@ -28,6 +29,8 @@ public sealed record MonsterTemplateSchema
     ///     A collection of names of monsters scripts to attach to this monster<br />TODO: scripts section
     /// </summary>
     public ICollection<string> ScriptKeys { get; init; } = Array.Empty<string>();
+    public IDictionary<string, DynamicVars> ScriptVars { get; init; } =
+        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
     /// <summary>
     ///     The number of milliseconds between usages of non-assail skills
     /// </summary>

@@ -10,6 +10,17 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 {
     private readonly ICloningService<Item> ItemCloner;
 
+    public override Item? this[string name]
+    {
+        get
+        {
+            using var @lock = Sync.Enter();
+
+            return Objects.FirstOrDefault(i => i is not null && i.DisplayName.EqualsI(name))
+                   ?? base[name];
+        }
+    }
+
     /// <summary>
     ///     Used for character creation
     /// </summary>
@@ -26,9 +37,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             Objects[item.Slot] = item;
     }
 
-    /// <summary>
-    ///     General use constructor
-    /// </summary>
+    /// <inheritdoc />
     public Inventory(ICloningService<Item> itemCloner, IEnumerable<Item>? items = null)
         : this(items) =>
         ItemCloner = itemCloner;
@@ -143,9 +152,6 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (!TryGetObject(slot, out var slotItem))
             return false;
 
-        if (slotItem == null)
-            return false;
-
         if (slotItem.Count < quantity)
             return false;
 
@@ -216,5 +222,20 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             return true;
 
         return base.TryAddToNextSlot(obj);
+    }
+
+    /// <inheritdoc />
+    public override bool TryGetObject(string name, [MaybeNullWhen(false)] out Item obj)
+    {
+        using var @lock = Sync.Enter();
+
+        var actualObjects = Objects.Where(obj => obj is not null)
+                                   .ToList();
+
+        obj = actualObjects.FirstOrDefault(obj => obj!.DisplayName.EqualsI(name))
+              ?? actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name))
+              ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
+
+        return obj != null;
     }
 }
