@@ -26,8 +26,7 @@ public sealed class Mapper : ITypeMapper
 
     public TResult Map<TResult>(object obj)
     {
-        if (obj == null)
-            throw new ArgumentNullException(nameof(obj));
+        ArgumentNullException.ThrowIfNull(obj);
 
         var mapper = ResolverCache.GetOrAdd((obj.GetType(), typeof(TResult)), ResolveMapper);
 
@@ -45,6 +44,20 @@ public sealed class Mapper : ITypeMapper
 
         foreach (var o in objs)
             yield return (TResult)mapper(o);
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<TResult> MapMany<T, TResult>(IEnumerable<T> obj)
+    {
+        var objs = obj.ToList();
+
+        if (!objs.Any())
+            yield break;
+
+        var mapper = ResolverCache.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);
+
+        foreach (var o in objs)
+            yield return (TResult)mapper(o!);
     }
 
     /// <summary>

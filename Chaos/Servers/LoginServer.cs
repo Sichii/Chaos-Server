@@ -1,8 +1,8 @@
 using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
+using Chaos.Common.Identity;
 using Chaos.Containers;
-using Chaos.Core.Identity;
 using Chaos.Cryptography;
 using Chaos.Data;
 using Chaos.Extensions.Common;

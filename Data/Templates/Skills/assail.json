@@ -21,13 +21,17 @@
         "requiredGold": 5000,
         "requiredLevel": 1
     },
-    "scriptKeys": ["statBasedDamage"],
+    "scriptKeys": ["damage"],
     "scriptVars": {
-        "statBasedDamage": {
-            "damage": 6,
+        "damage": {
             "bodyAnimation": "assail",
-            "stat": "str",
-            "statCoefficient": 0.333
+            "sound": 1,
+            "range": 1,
+            "shape": "front",
+            "filter": "hostileOnly",
+            "baseDamage": 3,
+            "damageStat": "str",
+            "damageStatMultiplier": 2
         }
     }
 }

@@ -229,6 +229,9 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     {
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
+        if (!Aisling.IsFriendlyTo(aisling))
+            args.NameTagStyle = NameTagStyle.Hostile;
+
         Send(args);
     }
 
@@ -461,8 +464,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         {
             case MetafileRequestType.DataByName:
             {
-                if (name == null)
-                    throw new ArgumentNullException(nameof(name));
+                ArgumentNullException.ThrowIfNull(name);
 
                 var metafile = metafileCache.Get(name);
 

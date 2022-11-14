@@ -1,3 +1,4 @@
+using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -28,6 +29,9 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     ///     A collection of names of monsters scripts to attach to this monster<br />TODO: scripts section
     /// </summary>
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+    public required IDictionary<string, DynamicVars> ScriptVars { get; init; } =
+        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
     /// <summary>
     ///     The number of milliseconds between usages of non-assail skills
     /// </summary>

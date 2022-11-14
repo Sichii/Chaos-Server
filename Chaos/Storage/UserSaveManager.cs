@@ -3,6 +3,7 @@ using Chaos.Common.Synchronization;
 using Chaos.Containers;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
+using Chaos.Scripts.EffectScripts.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
 using Chaos.TypeMapper.Abstractions;
@@ -54,6 +55,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         var aislingSchema = await DesierlizeAsync<AislingSchema>(directory, "aisling.json");
         var bankSchema = await DesierlizeAsync<BankSchema>(directory, "bank.json");
+        var effectsSchema = await DesierlizeAsync<EffectsBarSchema>(directory, "effects.json");
         var equipmentSchema = await DesierlizeAsync<EquipmentSchema>(directory, "equipment.json");
         var inventorySchema = await DesierlizeAsync<InventorySchema>(directory, "inventory.json");
         var skillsSchemas = await DesierlizeAsync<SkillBookSchema>(directory, "skills.json");
@@ -62,6 +64,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         var aisling = Mapper.Map<Aisling>(aislingSchema);
         var bank = Mapper.Map<Bank>(bankSchema);
+        var effects = Mapper.MapMany<EffectSchema, IEffect>(effectsSchema);
         var equipment = Mapper.Map<Equipment>(equipmentSchema);
         var inventory = Mapper.Map<Inventory>(inventorySchema);
         var skillBook = Mapper.Map<SkillBook>(skillsSchemas);
@@ -75,7 +78,8 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             inventory,
             skillBook,
             spellBook,
-            legend);
+            legend,
+            effects);
 
         Logger.LogTrace("Loaded aisling {Name}", name);
 
@@ -95,6 +99,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         var skillsSchemas = Mapper.MapMany<SkillSchema>(aisling.SkillBook).ToList();
         var spellsSchemas = Mapper.MapMany<SpellSchema>(aisling.SpellBook).ToList();
         var legendSchema = Mapper.MapMany<LegendMarkSchema>(aisling.Legend).ToList();
+        var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(aisling.Effects).ToList();
 
         var directory = Path.Combine(Options.Directory, aisling.Name.ToLower());
 
@@ -103,6 +108,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         await SerializeAsync(directory, "aisling.json", aislingSchema);
         await SerializeAsync(directory, "bank.json", bankSchema);
+        await SerializeAsync(directory, "effects.json", effectsSchemas);
         await SerializeAsync(directory, "equipment.json", equipmentSchema);
         await SerializeAsync(directory, "inventory.json", inventorySchema);
         await SerializeAsync(directory, "skills.json", skillsSchemas);

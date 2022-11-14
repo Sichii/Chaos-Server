@@ -5,4 +5,5 @@ public interface ITypeMapper
     TResult Map<T, TResult>(T obj);
     TResult Map<TResult>(object obj);
     IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> obj);
+    IEnumerable<TResult> MapMany<T, TResult>(IEnumerable<T> obj);
 }

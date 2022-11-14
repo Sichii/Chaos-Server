@@ -11,9 +11,6 @@ public abstract class DialogScriptBase : SubjectiveScriptBase<Dialog>, IDialogSc
         : base(subject) { }
 
     /// <inheritdoc />
-    public virtual void OnClose(Aisling source) { }
-
-    /// <inheritdoc />
     public virtual void OnDisplayed(Aisling source) { }
 
     /// <inheritdoc />

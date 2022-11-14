@@ -1,53 +1,62 @@
+using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
-using Chaos.Effects.Abstractions;
+using Chaos.Containers.Abstractions;
 using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripts.EffectScripts.Abstractions;
 
 namespace Chaos.Containers;
 
 public sealed class EffectsBar : IEffectsBar
 {
-    private readonly Creature Effected;
+    private readonly Creature Affected;
+    private readonly Aisling? AffectedAisling;
     private readonly Dictionary<string, IEffect> Effects;
     private readonly AutoReleasingMonitor Sync;
-    private readonly Aisling? User;
 
-    public EffectsBar(Creature effected, IEnumerable<IEffect>? effects = null)
+    public EffectsBar(Creature affected, IEnumerable<IEffect>? effects = null)
     {
-        Effected = effected;
-        User = Effected as Aisling;
+        Affected = affected;
+        AffectedAisling = Affected as Aisling;
         Sync = new AutoReleasingMonitor();
         effects ??= Enumerable.Empty<IEffect>();
 
         Effects = new Dictionary<string, IEffect>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var effect in effects)
-            Effects.TryAdd(effect.CommonIdentifier, effect);
+            Effects[effect.Name] = effect;
     }
 
-    public void Add(IEffect effect)
-    {
-        using var @lock = Sync.Enter();
-        Effects.TryAdd(effect.CommonIdentifier, effect);
-    }
-
-    public void Apply(IEffect effect)
+    public void Apply(Creature source, IEffect effect)
     {
         using var @lock = Sync.Enter();
 
-        if (Effects.TryAdd(effect.CommonIdentifier, effect))
-            effect.OnApplied();
-        else if (Effects.TryGetValue(effect.CommonIdentifier, out var existingEffect))
-            effect.OnFailedToApply($"{Effected.Name} is already effected by {existingEffect.Name}");
+        if (effect.ShouldApply(source, Affected))
+        {
+            Effects[effect.Name] = effect;
+            effect.OnApplied(Affected);
+            ResetDisplay();
+        }
     }
 
-    public void Dispel(string commonIdentifier)
+    /// <inheritdoc />
+    public bool Contains(string effectName)
     {
         using var @lock = Sync.Enter();
 
-        if (Effects.TryRemove(commonIdentifier, out var effect))
+        return Effects.ContainsKey(effectName);
+    }
+
+    public void Dispel(string effectName)
+    {
+        using var @lock = Sync.Enter();
+
+        if (Effects.TryRemove(effectName, out var effect))
+        {
             effect.OnDispelled();
+            ResetDisplay();
+        }
     }
 
     public IEnumerator<IEffect> GetEnumerator()
@@ -62,30 +71,61 @@ public sealed class EffectsBar : IEffectsBar
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public void Terminate(string commonIdentifier)
+    private void ResetDisplay()
+    {
+        //clear all effects
+        foreach (var effect in Effects.Values)
+            AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
+
+        //re-apply all effects sorted by ascending remaining duration
+        foreach (var effect in Effects.Values.OrderBy(e => e.Remaining))
+            AffectedAisling?.Client.SendEffect(effect.Color, effect.Icon);
+    }
+
+    public void SimpleAdd(IEffect effect)
+    {
+        using var @lock = Sync.Enter();
+        Effects[effect.Name] = effect;
+        effect.OnReApplied(Affected);
+    }
+
+    public void Terminate(string effectName)
     {
         using var @lock = Sync.Enter();
 
-        if (Effects.TryRemove(commonIdentifier, out var effect))
+        if (Effects.TryRemove(effectName, out var effect))
+        {
             effect.OnTerminated();
+            ResetDisplay();
+        }
+    }
+
+    /// <inheritdoc />
+    public bool TryGetEffect(string effectName, [MaybeNullWhen(false)] out IEffect effect)
+    {
+        using var @lock = Sync.Enter();
+
+        return Effects.TryGetValue(effectName, out effect);
     }
 
     public void Update(TimeSpan delta)
     {
         using var @lock = Sync.Enter();
+        var shouldResetDisplay = false;
 
         foreach (var effect in Effects.Values.ToList())
         {
             effect.Update(delta);
 
-            if (effect.Remaining.HasValue && (effect.Remaining <= TimeSpan.Zero))
+            if (effect.Remaining <= TimeSpan.Zero)
             {
-                Terminate(effect.CommonIdentifier);
-
-                continue;
+                Effects.Remove(effect.Name);
+                effect.OnTerminated();
+                shouldResetDisplay = true;
             }
-
-            effect.OnUpdated();
         }
+
+        if (shouldResetDisplay)
+            ResetDisplay();
     }
 }

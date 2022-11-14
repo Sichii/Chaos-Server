@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "fireBreath",
+    "uniqueId": 1
+  },
+  {
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "regrowth",
+    "uniqueId": 38146
+  }
+]

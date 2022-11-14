@@ -6,7 +6,7 @@ using Chaos.Geometry.JsonConverters;
 namespace Chaos.Geometry;
 
 [JsonConverter(typeof(RectangleConverter))]
-public class Rectangle : IRectangle, IEquatable<IRectangle>
+public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
 {
     private IReadOnlyList<IPoint>? _vertices;
     /// <summary>

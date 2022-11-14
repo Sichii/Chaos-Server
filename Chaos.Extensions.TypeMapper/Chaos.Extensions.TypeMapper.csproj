@@ -1,13 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
         <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj"/>
     </ItemGroup>
-
 </Project>

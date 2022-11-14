@@ -13,7 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Chaos.Core\Chaos.Core.csproj"/>
+        <ProjectReference Include="..\..\Chaos.Common\Chaos.Common.csproj"/>
+        <ProjectReference Include="..\..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\..\Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj"/>
         <ProjectReference Include="..\..\Chaos.Geometry\Chaos.Geometry.csproj"/>
     </ItemGroup>

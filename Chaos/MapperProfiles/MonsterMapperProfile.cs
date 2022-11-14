@@ -67,7 +67,8 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
             StatSheet = Mapper.Map<StatSheet>(obj.StatSheet),
             TemplateKey = obj.TemplateKey,
             Type = obj.Type,
-            WanderIntervalMs = obj.WanderIntervalMs
+            WanderIntervalMs = obj.WanderIntervalMs,
+            ScriptVars = obj.ScriptVars
         };
     }
 

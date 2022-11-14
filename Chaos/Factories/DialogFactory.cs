@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Factories;
 
-public class DialogFactory : IDialogFactory
+public sealed class DialogFactory : IDialogFactory
 {
     private readonly ILogger Logger;
     private readonly IScriptProvider ScriptProvider;

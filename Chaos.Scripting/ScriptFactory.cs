@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Chaos.Core.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Scripting.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,7 +66,8 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
 
     private void LoadScriptTypes()
     {
-        var types = TypeLoader.LoadImplementations<TScript>();
+        var scriptType = typeof(TScript);
+        var types = scriptType.LoadImplementations();
 
         foreach (var type in types)
         {

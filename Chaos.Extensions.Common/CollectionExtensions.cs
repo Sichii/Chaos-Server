@@ -8,8 +8,7 @@ public static class CollectionExtensions
     /// <exception cref="ArgumentNullException">collection is null</exception>
     public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
     {
-        if (collection == null)
-            throw new ArgumentNullException(nameof(collection));
+        ArgumentNullException.ThrowIfNull(collection);
 
         foreach (var item in items)
             collection.Add(item);

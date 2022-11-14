@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
+using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
-using Chaos.Core.Identity;
 using Chaos.Cryptography.Abstractions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Entities.Server;

@@ -9,7 +9,13 @@ public class IntervalTimer : IIntervalTimer
     protected TimeSpan Elapsed { get; set; }
     protected TimeSpan Interval { get; set; }
 
-    public IntervalTimer(TimeSpan interval) => Interval = interval;
+    public IntervalTimer(TimeSpan interval, bool startAsElapsed = true)
+    {
+        Interval = interval;
+
+        if (startAsElapsed)
+            Elapsed = interval;
+    }
 
     /// <inheritdoc />
     public virtual void Reset()

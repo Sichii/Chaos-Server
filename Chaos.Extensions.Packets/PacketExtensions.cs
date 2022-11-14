@@ -1,5 +1,5 @@
 using System.Text;
-using Chaos.Core.Utilities;
+using Chaos.Extensions.Common;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,9 +24,10 @@ public static class PacketExtensions
     {
         var ret = new Dictionary<Type, IClientPacketDeserializer>();
 
-        var deserializers = TypeLoader.LoadImplementations<IClientPacketDeserializer>()
-                                      .Select(asmType => (IClientPacketDeserializer)Activator.CreateInstance(asmType)!)
-                                      .ToArray();
+        var deserializers = typeof(IClientPacketDeserializer).LoadImplementations()
+                                                             .Select(
+                                                                 asmType => (IClientPacketDeserializer)Activator.CreateInstance(asmType)!)
+                                                             .ToArray();
 
         foreach (var deserializer in deserializers)
         {
@@ -48,9 +49,9 @@ public static class PacketExtensions
     {
         var ret = new Dictionary<Type, IServerPacketSerializer>();
 
-        var serializers = TypeLoader.LoadImplementations<IServerPacketSerializer>()
-                                    .Select(asmType => (IServerPacketSerializer)Activator.CreateInstance(asmType)!)
-                                    .ToArray();
+        var serializers = typeof(IServerPacketSerializer).LoadImplementations()
+                                                         .Select(asmType => (IServerPacketSerializer)Activator.CreateInstance(asmType)!)
+                                                         .ToArray();
 
         foreach (var serializer in serializers)
         {

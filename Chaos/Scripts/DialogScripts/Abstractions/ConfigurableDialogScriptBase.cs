@@ -11,9 +11,6 @@ public class ConfigurableDialogScriptBase : ConfigurableScriptBase<Dialog>, IDia
         : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
     /// <inheritdoc />
-    public virtual void OnClose(Aisling source) { }
-
-    /// <inheritdoc />
     public virtual void OnDisplayed(Aisling source) { }
 
     /// <inheritdoc />

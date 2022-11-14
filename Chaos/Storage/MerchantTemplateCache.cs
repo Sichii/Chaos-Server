@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Chaos.Core.Utilities;
+using Chaos.Common.Utilities;
 using Chaos.Schemas.Templates;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage;
 
-public class MerchantTemplateCache : SimpleFileCacheBase<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>
+public sealed class MerchantTemplateCache : SimpleFileCacheBase<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<MerchantTemplate, string> KeySelector { get; } = m => m.TemplateKey;

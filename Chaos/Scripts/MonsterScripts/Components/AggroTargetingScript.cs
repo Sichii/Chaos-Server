@@ -8,6 +8,7 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
+// ReSharper disable once ClassCanBeSealed.Global
 public class AggroTargetingScript : MonsterScriptBase
 {
     private readonly Dictionary<uint, DateTime> ApproachTime;

@@ -1,4 +1,4 @@
-using Chaos.Core.Resources;
+using Chaos.Resources;
 
 namespace Chaos.Data;
 
@@ -10,7 +10,7 @@ public readonly struct Tile : IEquatable<Tile>
     public ushort LeftForeground { get; }
     public ushort RightForeground { get; }
 
-    public static byte[] Sotp { get; } = Resources.sotp;
+    public static byte[] Sotp { get; } = ResourceManager.Sotp;
 
     public Tile(ushort background, ushort leftForeground, ushort rightForeground)
     {

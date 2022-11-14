@@ -25,6 +25,18 @@ public static class StringExtensions
     /// </summary>
     public static bool EqualsI(this string str1, string str2) => str1.Equals(str2, StringComparison.OrdinalIgnoreCase);
 
+    public static Type FindType(this string typeName, string baseType)
+    {
+        var possibleTypes = AppDomain.CurrentDomain
+                                     .GetAssemblies()
+                                     .Where(a => !a.IsDynamic)
+                                     .SelectMany(a => a.GetTypes())
+                                     .Where(asmType => !asmType.IsInterface && !asmType.IsAbstract)
+                                     .Where(asmType => asmType.Name.EqualsI(typeName));
+
+        return possibleTypes.Single(type => type.BaseType!.Name.EqualsI(baseType));
+    }
+
     /// <summary>
     ///     Capitolizes the first letter in a string
     /// </summary>
@@ -32,8 +44,7 @@ public static class StringExtensions
     /// <exception cref="ArgumentException">input is empty</exception>
     public static string FirstUpper(this string input)
     {
-        if (input == null)
-            throw new ArgumentNullException(nameof(input));
+        ArgumentNullException.ThrowIfNull(input);
 
         return input switch
         {
@@ -41,6 +52,10 @@ public static class StringExtensions
             _  => string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1))
         };
     }
+
+    public static string ReplaceI(this string str1, string old, string @new) => str1.Replace(old, @new, StringComparison.OrdinalIgnoreCase);
+
+    public static bool StartsWithI(this string str1, string str2) => str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
 
     public static bool StartWithI(this string str1, string str2) => str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
 }

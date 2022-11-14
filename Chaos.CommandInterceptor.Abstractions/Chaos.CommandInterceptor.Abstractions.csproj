@@ -1,10 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
     </ItemGroup>

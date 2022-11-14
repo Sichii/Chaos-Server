@@ -3,7 +3,7 @@ using Chaos.Common.Abstractions;
 
 namespace Chaos.Security.Options;
 
-public record ActiveDirectoryCredentialManagerOptions : IDirectoryBound
+public sealed record ActiveDirectoryCredentialManagerOptions : IDirectoryBound
 {
     public string Directory { get; set; } = null!;
     public string HashAlgorithmName { get; set; } = null!;

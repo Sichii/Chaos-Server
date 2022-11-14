@@ -1,12 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Cryptography.Abstractions\Chaos.Cryptography.Abstractions.csproj"/>
     </ItemGroup>
-
 </Project>

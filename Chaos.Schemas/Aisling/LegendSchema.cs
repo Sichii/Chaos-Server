@@ -5,7 +5,7 @@ using Chaos.Common.Converters;
 namespace Chaos.Schemas.Aisling;
 
 [JsonConverter(typeof(EnumerableConverter<LegendSchema, LegendMarkSchema>))]
-public class LegendSchema : IEnumerable<LegendMarkSchema>
+public sealed class LegendSchema : IEnumerable<LegendMarkSchema>
 {
     public ICollection<LegendMarkSchema> LegendMarks { get; init; }
 

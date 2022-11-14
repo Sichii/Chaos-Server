@@ -1,7 +1,6 @@
 using Chaos.Common.Definitions;
+using Chaos.Common.Utilities;
 using Chaos.Containers;
-using Chaos.Core.Definitions;
-using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;

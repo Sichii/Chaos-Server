@@ -14,14 +14,14 @@ public static class CommandInterceptorExtensions
         Func<T, string> idOrNameSelector
     )
     {
-        var config = new CommandInterceptorConfiguration<T>
+        var config = new CommandHandlerConfiguration<T>
         {
             Prefix = commandPrefix,
             AdminPredicate = isAdminPredicate,
             IdentifierSelector = idOrNameSelector
         };
 
-        services.AddSingleton<ICommandInterceptor<T>, CommandInterceptor<T>>(
-            p => ActivatorUtilities.CreateInstance<CommandInterceptor<T>>(p, config));
+        services.AddSingleton<ICommandInterceptor<T>, CommandHandler<T>>(
+            p => ActivatorUtilities.CreateInstance<CommandHandler<T>>(p, config));
     }
 }

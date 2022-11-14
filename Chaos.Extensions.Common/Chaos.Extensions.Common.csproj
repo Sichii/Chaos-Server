@@ -1,10 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
     </ItemGroup>
@@ -14,5 +8,4 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2"/>
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0"/>
     </ItemGroup>
-
 </Project>

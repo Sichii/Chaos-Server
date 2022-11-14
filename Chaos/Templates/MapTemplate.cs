@@ -1,4 +1,5 @@
 using Chaos.Data;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
 using Chaos.Scripting.Abstractions;
@@ -8,6 +9,7 @@ namespace Chaos.Templates;
 
 public sealed record MapTemplate : ITemplate, IScripted
 {
+    public IRectangle Bounds { get; init; } = null!;
     public ushort CheckSum { get; set; }
     public Dictionary<IPoint, DoorTemplate> Doors { get; set; } = new(PointEqualityComparer.Instance);
     public byte Height { get; set; }
@@ -35,5 +37,5 @@ public sealed record MapTemplate : ITemplate, IScripted
     public bool IsWall(IPoint point) =>
         !IsWithinMap(point) || (Doors.TryGetValue(point, out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
 
-    public bool IsWithinMap(IPoint point) => (point.X >= 0) && (point.Y >= 0) && (point.X < Width) && (point.Y < Height);
+    public bool IsWithinMap(IPoint point) => Bounds.Contains(point);
 }

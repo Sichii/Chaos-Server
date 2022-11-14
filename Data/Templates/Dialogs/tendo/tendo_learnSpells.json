@@ -5,7 +5,7 @@
     "scriptKeys": ["learnSpell"],
     "scriptVars": {
         "learnSpell": {
-            "spellTemplateKeys": ["firebreath"]
+            "spellTemplateKeys": ["firebreath", "regrowth"]
         }
     }
 }

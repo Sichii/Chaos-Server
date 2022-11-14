@@ -6,7 +6,7 @@ using Chaos.Geometry.JsonConverters;
 namespace Chaos.Geometry;
 
 [JsonConverter(typeof(PolygonConverter))]
-public class Polygon : IPolygon, IEquatable<IPolygon>
+public sealed class Polygon : IPolygon, IEquatable<IPolygon>
 {
     public IReadOnlyList<IPoint> Vertices { get; init; }
 

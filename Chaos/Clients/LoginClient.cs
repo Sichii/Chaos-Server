@@ -93,8 +93,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         {
             case MetafileRequestType.DataByName:
             {
-                if (name == null)
-                    throw new ArgumentNullException(nameof(name));
+                ArgumentNullException.ThrowIfNull(name);
 
                 var metafile = metafileCache.Get(name);
 

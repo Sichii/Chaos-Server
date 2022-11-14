@@ -54,6 +54,9 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             Slot = obj.Slot ?? 0
         };
 
+        if (!string.IsNullOrEmpty(obj.DisplayName))
+            item.DisplayName = obj.DisplayName;
+
         Logger.LogTrace("Deserialized item - Name: {ItemName}, UniqueId: {UniqueId}", item.Template.Name, item.UniqueId);
 
         return item;
@@ -88,7 +91,8 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             Color = obj.Color,
             Count = obj.Count,
             CurrentDurability = obj.CurrentDurability,
-            Slot = obj.Slot
+            Slot = obj.Slot,
+            DisplayName = obj.DisplayName != obj.Template.Name ? obj.DisplayName : null
         };
 
         Logger.LogTrace("Serialized item - TemplateKey: {TemplateKey}, UniqueId: {UniqueId}", ret.TemplateKey, ret.UniqueId);

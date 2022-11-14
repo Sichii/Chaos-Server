@@ -1,12 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Packets.Abstractions\Chaos.Packets.Abstractions.csproj"/>
     </ItemGroup>
-
 </Project>

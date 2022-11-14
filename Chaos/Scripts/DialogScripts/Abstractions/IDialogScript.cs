@@ -5,7 +5,6 @@ namespace Chaos.Scripts.DialogScripts.Abstractions;
 
 public interface IDialogScript : IScript
 {
-    void OnClose(Aisling source);
     void OnDisplayed(Aisling source);
     void OnDisplaying(Aisling source);
     void OnNext(Aisling source, byte? optionIndex = null);

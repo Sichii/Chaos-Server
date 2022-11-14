@@ -1,4 +1,4 @@
-using Chaos.Core.Utilities;
+using Chaos.Common.Utilities;
 using Chaos.Data;
 using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;

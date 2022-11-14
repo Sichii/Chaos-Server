@@ -19,13 +19,13 @@ public sealed record Animation
     /// <summary>
     ///     Returns a re-targeted animation based on a point. (Does not remove sourceAnimation)
     /// </summary>
-    public Animation GetPointAnimation(Point targetPoint, uint? sourceId = null) =>
+    public Animation GetPointAnimation(IPoint targetPoint, uint? sourceId = null) =>
         this with { TargetPoint = targetPoint, TargetId = null, SourceId = sourceId ?? SourceId };
 
     /// <summary>
     ///     Returns a re-target animation based on a point. Removes sourceAnimation.
     /// </summary>
-    public Animation GetPointEffectAnimation(Point targetPoint, uint? sourceId = null) =>
+    public Animation GetPointEffectAnimation(IPoint targetPoint, uint? sourceId = null) =>
         this with { TargetPoint = targetPoint, TargetId = null, SourceId = sourceId ?? SourceId, SourceAnimation = 0 };
 
     /// <summary>
