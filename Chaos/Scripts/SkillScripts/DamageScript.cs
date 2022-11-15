@@ -1,60 +1,56 @@
 using Chaos.Common.Definitions;
-using Chaos.Data;
-using Chaos.Extensions;
-using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
+using Chaos.Geometry.Abstractions;
+using Chaos.Objects;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts;
 
-public class DamageScript : ConfigurableSkillScriptBase
+public class DamageScript : BasicSkillScriptBase
 {
-    protected Animation? Animation { get; init; }
-    protected ushort AnimationSpeed { get; init; } = 100;
-    protected BodyAnimation? BodyAnimation { get; init; }
-    protected int Damage { get; init; }
-    protected byte? Sound { get; init; }
-    protected ushort? SourceAnimation { get; init; }
-    protected ushort? TargetAnimation { get; init; }
+    protected int? BaseDamage { get; init; }
+    protected Stat? DamageStat { get; init; }
+    protected decimal? DamageStatMultiplier { get; init; }
 
     /// <inheritdoc />
     public DamageScript(Skill subject)
-        : base(subject)
+        : base(subject) { }
+
+    protected virtual void ApplyDamage(SkillContext context, IEnumerable<Creature> targetEntities)
     {
-        if (SourceAnimation.HasValue || TargetAnimation.HasValue)
-            Animation = new Animation
-            {
-                AnimationSpeed = AnimationSpeed,
-                SourceAnimation = SourceAnimation ?? 0,
-                TargetAnimation = TargetAnimation ?? 0
-            };
+        foreach (var target in targetEntities)
+        {
+            var damage = CalculateDamage(context, target);
+            target.ApplyDamage(context.Source, damage);
+        }
+    }
+
+    protected virtual int CalculateDamage(SkillContext context, Creature target)
+    {
+        var damage = BaseDamage ?? 0;
+
+        if (DamageStat.HasValue)
+        {
+            var multiplier = DamageStatMultiplier ?? 1;
+
+            damage += Convert.ToInt32(context.Source.StatSheet.GetEffectiveStat(DamageStat.Value) * multiplier);
+        }
+
+        return DamageFormulae.Default.Calculate(context.Source, target, damage);
     }
 
     /// <inheritdoc />
-    public override void OnUse(Creature source)
+    public override void OnUse(SkillContext context)
     {
-        if (BodyAnimation.HasValue)
-            source.AnimateBody(BodyAnimation.Value);
+        ShowBodyAnimation(context);
 
-        var point = source.DirectionalOffset(source.Direction);
+        var affectedPoints = GetAffectedPoints(context).Cast<IPoint>().ToList();
+        var affectedEntities = GetAffectedEntities<Creature>(context, affectedPoints);
 
-        var target = source.MapInstance.GetEntitiesAtPoint<Creature>(point)
-                           .TopOrDefault();
-
-        if (target == null)
-            return;
-
-        var map = target.MapInstance;
-
-        if (Sound.HasValue)
-            map.PlaySound(Sound.Value, target);
-
-        if (Animation != null)
-            target.Animate(Animation, source.Id);
-
-        var damage = DamageFormulae.Default.Calculate(source, target, Damage);
-        target.ApplyDamage(source, damage);
+        ShowAnimation(context, affectedPoints);
+        PlaySound(context, affectedPoints);
+        ApplyDamage(context, affectedEntities);
     }
 }

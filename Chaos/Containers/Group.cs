@@ -226,13 +226,13 @@ public sealed class Group : IEnumerable<Aisling>
         return groupString;
     }
 
-    private record GroupInvite(string Sender, string Receiver)
+    private sealed record GroupInvite(string Sender, string Receiver)
     {
         private DateTime Creation = DateTime.UtcNow;
 
         public bool Expired => DateTime.UtcNow.Subtract(Creation).TotalMinutes > 1;
 
-        public virtual bool Equals(GroupInvite? other)
+        public bool Equals(GroupInvite? other)
         {
             if (ReferenceEquals(null, other))
                 return false;

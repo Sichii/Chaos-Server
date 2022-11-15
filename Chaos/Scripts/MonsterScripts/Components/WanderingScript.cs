@@ -3,6 +3,7 @@ using Chaos.Scripts.MonsterScripts.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
+// ReSharper disable once ClassCanBeSealed.Global
 public class WanderingScript : MonsterScriptBase
 {
     /// <inheritdoc />

@@ -1,4 +1,4 @@
-using Chaos.Core.Identity;
+using Chaos.Common.Identity;
 
 namespace Chaos.Objects.World.Abstractions;
 

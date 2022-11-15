@@ -77,7 +77,7 @@ public class BuyShopScript : ConfigurableDialogScriptBase
 
         return true;
     }
-
+    
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {

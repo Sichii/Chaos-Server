@@ -5,7 +5,7 @@ using Chaos.Common.Converters;
 namespace Chaos.Schemas.Aisling;
 
 [JsonConverter(typeof(EnumerableConverter<InventorySchema, ItemSchema>))]
-public class InventorySchema : IEnumerable<ItemSchema>
+public sealed class InventorySchema : IEnumerable<ItemSchema>
 {
     public ICollection<ItemSchema> Items { get; init; }
 

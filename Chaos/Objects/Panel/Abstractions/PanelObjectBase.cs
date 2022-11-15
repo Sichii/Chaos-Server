@@ -1,4 +1,4 @@
-using Chaos.Core.Identity;
+using Chaos.Common.Identity;
 using Chaos.Scripting.Abstractions;
 using Chaos.Templates.Abstractions;
 using Chaos.Time.Abstractions;

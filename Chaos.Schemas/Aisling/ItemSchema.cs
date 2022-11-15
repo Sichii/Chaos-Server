@@ -10,4 +10,5 @@ public sealed record ItemSchema : PanelObjectSchema
     [JsonRequired]
     public int Count { get; init; }
     public int? CurrentDurability { get; init; }
+    public string? DisplayName { get; init; }
 }

@@ -1,5 +1,5 @@
+using Chaos.Objects;
 using Chaos.Objects.World;
-using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
 
@@ -22,9 +22,9 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
     }
 
     /// <inheritdoc />
-    public void OnUse(Creature source)
+    public void OnUse(SkillContext context)
     {
         foreach (var component in Components)
-            component.OnUse(source);
+            component.OnUse(context);
     }
 }

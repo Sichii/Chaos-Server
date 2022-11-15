@@ -1,5 +1,6 @@
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
@@ -15,6 +16,7 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
+using Chaos.Scripts.EffectScripts.Abstractions;
 using Chaos.Servers.Options;
 using Chaos.Time;
 using Chaos.TypeMapper.Abstractions;
@@ -31,10 +33,10 @@ public sealed class Aisling : Creature
     public Bank Bank { get; private set; }
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
-    public ChantTimer ChantTimer { get; set; }
     public IWorldClient Client { get; set; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
+    public FlagCollection Flags { get; init; }
     public Gender Gender { get; set; }
     public Group? Group { get; set; }
     public string? GuildName { get; set; }
@@ -57,12 +59,12 @@ public sealed class Aisling : Creature
     public TitleList Titles { get; init; }
     public UserState UserState { get; set; }
     public UserStatSheet UserStatSheet { get; init; }
-    public ResettingCounter WalkCounter { get; set; }
     public ResettingCounter ActionThrottle { get; }
     public IInterlockedObject<Dialog> ActiveDialog { get; }
     public IInterlockedObject<object> ActiveObject { get; }
     /// <inheritdoc />
     public override int AssailIntervalMs { get; }
+    public ChantTimer ChantTimer { get; }
     public bool ShouldRefresh => DateTime.UtcNow.Subtract(LastRefresh).TotalMilliseconds > WorldOptions.Instance.RefreshIntervalMs;
 
     public bool ShouldWalk
@@ -88,6 +90,7 @@ public sealed class Aisling : Creature
 
     public override StatSheet StatSheet => UserStatSheet;
     public override CreatureType Type => CreatureType.Aisling;
+    public ResettingCounter WalkCounter { get; }
     protected override ILogger<Aisling> Logger { get; }
 
     public Aisling(
@@ -152,6 +155,7 @@ public sealed class Aisling : Creature
         ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
         WalkCounter = new ResettingCounter(10, new IntervalTimer(TimeSpan.FromSeconds(3)));
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
+        Flags = new FlagCollection();
 
         //this object is purely intended to be created and immediately serialized
         //these pieces should never come into play
@@ -311,7 +315,8 @@ public sealed class Aisling : Creature
         Inventory inventory,
         SkillBook skillBook,
         SpellBook spellBook,
-        Containers.Legend legend
+        Containers.Legend legend,
+        IEnumerable<IEffect> effects
     )
     {
         Name = name;
@@ -321,6 +326,9 @@ public sealed class Aisling : Creature
         SkillBook = skillBook;
         SpellBook = spellBook;
         Legend = legend;
+
+        foreach (var effect in effects)
+            Effects.SimpleAdd(effect);
     }
 
     public void LevelUp()

@@ -8,8 +8,7 @@ public static class LocationExtensions
 {
     public static Location DirectionalOffset(this ILocation location, Direction direction, int distance = 1)
     {
-        if (location == null)
-            throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction));
@@ -52,11 +51,9 @@ public static class LocationExtensions
 
     public static Location OffsetTowards(this ILocation location, ILocation other)
     {
-        if (location == null)
-            throw new ArgumentNullException(nameof(location));
+        ArgumentNullException.ThrowIfNull(location);
 
-        if (other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         EnsureSameMap(location, other);
 

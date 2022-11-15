@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Chaos.Core.Utilities;
+using Chaos.Common.Utilities;
 using Chaos.Schemas.Content;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage;
 
-public class DialogTemplateCache : SimpleFileCacheBase<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>
+public sealed class DialogTemplateCache : SimpleFileCacheBase<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<DialogTemplate, string> KeySelector { get; } = d => d.TemplateKey;

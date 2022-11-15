@@ -7,13 +7,31 @@ public enum MoveType
     Warp
 }
 
+public enum RandomizationType
+{
+    Balanced = 0,
+    Positive = 1,
+    Negative = 2
+}
+
 [Flags]
-public enum QuestFlag : ulong
+public enum QuestFlag1 : ulong
 {
     None = 0,
-    Arms = 1
     //add more quest flags here, double each time
 }
+
+/// <summary>
+///     A 2nd set of quest flags, for when <see cref="QuestFlag1" /> is filled up
+/// </summary>
+[Flags]
+public enum QuestFlag2 : ulong { }
+
+/// <summary>
+///     A 3rd set of quest flags, for when <see cref="QuestFlag2" /> is filled up
+/// </summary>
+[Flags]
+public enum QuestFlag3 : ulong { }
 
 [Flags]
 public enum Status : ulong

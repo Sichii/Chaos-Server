@@ -10,7 +10,7 @@ using Chaos.Templates;
 
 namespace Chaos.Objects.Menu;
 
-public record Dialog : IScripted<IDialogScript>
+public sealed record Dialog : IScripted<IDialogScript>
 {
     private readonly IDialogFactory DialogFactory;
     public List<Item> Items { get; set; }
@@ -114,9 +114,9 @@ public record Dialog : IScripted<IDialogScript>
         if (optionIndex is 0)
             optionIndex = null;
 
-        //for some reasonl some of these menus add a +1 to the pursuit id for no apparent reason
+        //for some reason some of these types add a +1 to the pursuit id when you respond
         //we're using the pursuit id as an option selector
-        //so for any menu type, option index should be null
+        //so for any non-menu type, option index should be null (because there are no options)
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (Type)
         {
@@ -182,7 +182,7 @@ public record Dialog : IScripted<IDialogScript>
     {
         var newType = MenuOrDialogType.MenuTextEntry;
 
-        if ((MenuArgs != null) && MenuArgs.Any())
+        if (MenuArgs.Any())
             newType = MenuOrDialogType.MenuTextEntryWithArgs;
 
         Type = newType;

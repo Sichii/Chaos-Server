@@ -1,13 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\Chaos.TypeMapper.Abstractions\Chaos.TypeMapper.Abstractions.csproj"/>
     </ItemGroup>
-
 </Project>

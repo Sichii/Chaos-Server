@@ -3,6 +3,7 @@
   "bodySprite": "Female",
   "direction": "Down",
   "effects": [],
+  "flags": {},
   "gender": "Female",
   "gold": 54983050,
   "hairColor": "Default",
@@ -17,7 +18,7 @@
     "baseClass": "Peasant",
     "maxWeight": 40,
     "toNextLevel": 100,
-    "currentHp": 97858,
+    "currentHp": 98478,
     "currentMp": 50000,
     "level": 1,
     "maximumHp": 100000,
@@ -39,6 +40,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 24,
-  "y": 27
+  "x": 25,
+  "y": 28
 }

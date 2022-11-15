@@ -2,7 +2,7 @@
     "templateKey": "fireBreath",
     "name": "Fire Breath",
     "panelSprite": 39,
-    "scriptKeys": ["cascade"],
+    "scriptKeys": ["cascadeDamage"],
     "spellType": "notarget",
     "castLines": 0,
     "description": "A powerful spell that deals damage in a long ranged code shape in the direction you are facing.",
@@ -28,16 +28,22 @@
         "requiredLevel": 5
     },
     "scriptVars": {
-        "cascade": {
-            "damage": 100,
-            "sound": 140,
+        "cascadeDamage": {
             "bodyAnimation": "handsup",
+            "sound": 140,
+            "animation": {
+                "targetAnimation": 138,
+                "animationSpeed": 100
+            },
+            "range": 10,
+            "shape": "frontalDiamond",
+            "filter": "hostileOnly",
+            "baseDamage": 50,
+            "damageStat": "int",
+            "damageStatMultiplier": 5,
             "minSoundDelayMs": 2000,
             "propagationDelayMs": 300,
-            "range": 10,
-            "shape": "diamond",
-            "stopAtWalls": true,
-            "targetAnimation": 138
+            "stopAtWalls": true
         }
     }
 }

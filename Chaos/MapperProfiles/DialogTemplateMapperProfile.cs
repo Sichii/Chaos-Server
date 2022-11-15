@@ -1,5 +1,4 @@
 using Chaos.Common.Collections;
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.Menu;
 using Chaos.Schemas.Content;
 using Chaos.Templates;
@@ -9,23 +8,9 @@ namespace Chaos.MapperProfiles;
 
 public class DialogTemplateMapperProfile : IMapperProfile<DialogTemplate, DialogTemplateSchema>
 {
-    private readonly IItemFactory ItemFactory;
     private readonly ITypeMapper Mapper;
-    private readonly ISkillFactory SkillFactory;
-    private readonly ISpellFactory SpellFactory;
 
-    public DialogTemplateMapperProfile(
-        ITypeMapper mapper,
-        IItemFactory itemFactory,
-        ISkillFactory skillFactory,
-        ISpellFactory spellFactory
-    )
-    {
-        Mapper = mapper;
-        ItemFactory = itemFactory;
-        SkillFactory = skillFactory;
-        SpellFactory = spellFactory;
-    }
+    public DialogTemplateMapperProfile(ITypeMapper mapper) => Mapper = mapper;
 
     /// <inheritdoc />
     public DialogTemplate Map(DialogTemplateSchema obj) => new()

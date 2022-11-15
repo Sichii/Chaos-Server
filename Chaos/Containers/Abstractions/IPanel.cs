@@ -6,6 +6,7 @@ namespace Chaos.Containers.Abstractions;
 public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
 {
     T? this[byte slot] { get; }
+    T? this[string name] { get; }
     int AvailableSlots { get; }
     bool IsFull { get; }
     PanelType PaneType { get; }

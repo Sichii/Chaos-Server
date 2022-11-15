@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Chaos.Core.Utilities;
+using Chaos.Common.Utilities;
 using Chaos.Data;
 using Chaos.Schemas.Data;
 using Chaos.Storage.Abstractions;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage;
 
-public class WorldMapNodeCache : SimpleFileCacheBase<WorldMapNode, WorldMapNodeSchema, WorldMapNodeCacheOptions>
+public sealed class WorldMapNodeCache : SimpleFileCacheBase<WorldMapNode, WorldMapNodeSchema, WorldMapNodeCacheOptions>
 {
     /// <inheritdoc />
     protected override Func<WorldMapNode, string> KeySelector { get; } = n => n.NodeKey;

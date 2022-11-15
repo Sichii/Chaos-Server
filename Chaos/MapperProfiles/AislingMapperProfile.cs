@@ -61,6 +61,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             BodySprite = obj.BodySprite,
             Direction = obj.Direction,
             FaceSprite = obj.FaceSprite,
+            Flags = obj.Flags,
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
@@ -89,6 +90,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             BodySprite = obj.BodySprite,
             Direction = obj.Direction,
             FaceSprite = obj.FaceSprite,
+            Flags = obj.Flags,
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
@@ -167,7 +169,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             var acc2 = obj.Equipment[EquipmentSlot.Accessory2];
             var acc3 = obj.Equipment[EquipmentSlot.Accessory3];
             var overcoat = obj.Equipment[EquipmentSlot.Overcoat];
-            var pantsColor = (byte)((overcoat?.Template?.PantsColor ?? armor?.Template.PantsColor) ?? 0);
+            var pantsColor = (byte)((overcoat?.Template.PantsColor ?? armor?.Template.PantsColor) ?? 0);
 
             return new DisplayAislingArgs
             {
@@ -189,7 +191,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 EntityType = EntityType.Aisling,
                 Gender = obj.Gender,
                 GroupBoxText = null,
-                HeadColor = overHelm?.Template.Color ?? helmet?.Template.Color ?? obj.HairColor,
+                HeadColor = overHelm?.Color ?? helmet?.Color ?? obj.HairColor,
                 HeadSprite = overHelm?.Template.ItemSprite.DisplaySprite
                              ?? helmet?.Template.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,

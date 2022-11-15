@@ -9,12 +9,13 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Objects.Panel;
 
+/// <inheritdoc cref="PanelObjectBase" />
 public sealed class Item : PanelObjectBase, IScripted<IItemScript>
 {
     public DisplayColor Color { get; set; }
     public int Count { get; set; }
     public int? CurrentDurability { get; set; }
-    public string DisplayName => Color == DisplayColor.Default ? Template.Name : $"{Color} {Template.Name}";
+    public string DisplayName { get; set; }
     public IItemScript Script { get; }
     public override ItemTemplate Template { get; }
 
@@ -28,6 +29,7 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
         : base(template, uniqueId, elapsedMs)
     {
         Template = template;
+        DisplayName = Template.Name;
         Color = template.Color;
         Count = 1;
         CurrentDurability = template.MaxDurability;

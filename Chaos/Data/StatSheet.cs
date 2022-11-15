@@ -1,7 +1,7 @@
 // ReSharper disable InconsistentNaming
 
 using Chaos.Common.Definitions;
-using Chaos.Core.Utilities;
+using Chaos.Common.Utilities;
 
 namespace Chaos.Data;
 
@@ -221,9 +221,13 @@ public record StatSheet : Attributes
         ref _currentHp,
         () => (int)Math.Clamp(EffectiveMaximumHp * pct / 100f, 0, EffectiveMaximumHp));
 
+    public void SetHp(int amount) => Interlocked.Exchange(ref _currentHp, amount);
+
     public void SetManaPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,
         () => (int)Math.Clamp(EffectiveMaximumMp * pct / 100f, 0, EffectiveMaximumMp));
+
+    public void SetMp(int amount) => Interlocked.Exchange(ref _currentMp, amount);
 
     public void SetOffenseElement(Element element) => _offenseElement = element;
 

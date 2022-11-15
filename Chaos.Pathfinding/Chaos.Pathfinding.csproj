@@ -1,12 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-
-
-    </PropertyGroup>
-
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Core\Chaos.Core.csproj"/>
+        <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj"/>
         <ProjectReference Include="..\Chaos.Pathfinding.Abstractions\Chaos.Pathfinding.Abstractions.csproj"/>
     </ItemGroup>
@@ -14,5 +8,4 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0"/>
     </ItemGroup>
-
 </Project>

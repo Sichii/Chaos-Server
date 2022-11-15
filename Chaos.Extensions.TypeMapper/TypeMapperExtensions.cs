@@ -1,4 +1,3 @@
-using Chaos.Core.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.TypeMapper;
 using Chaos.TypeMapper.Abstractions;
@@ -12,7 +11,7 @@ public static class TypeMapperExtensions
     public static void AddTypeMapper(this IServiceCollection services)
     {
         var genericInterfaceType = typeof(IMapperProfile<,>);
-        var typeMapperImplementations = TypeLoader.LoadImplementationsOfGeneric(genericInterfaceType);
+        var typeMapperImplementations = genericInterfaceType.LoadImplementations();
 
         foreach (var implType in typeMapperImplementations)
             foreach (var iFaceType in implType.ExtractGenericInterfaces(genericInterfaceType))

@@ -7,7 +7,7 @@ namespace Chaos.Containers.Abstractions;
 
 public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 {
-    public T? this[byte slot]
+    public virtual T? this[byte slot]
     {
         get
         {
@@ -17,6 +17,20 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
                 return Objects[slot];
 
             return default;
+        }
+    }
+
+    public virtual T? this[string name]
+    {
+        get
+        {
+            using var @lock = Sync.Enter();
+
+            var actualObjects = Objects.Where(obj => obj is not null)
+                                       .ToList();
+
+            return actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name))
+                   ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
         }
     }
 
@@ -199,6 +213,19 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         using var @lock = Sync.Enter();
 
         obj = Objects[slot];
+
+        return obj != null;
+    }
+
+    public virtual bool TryGetObject(string name, [MaybeNullWhen(false)] out T obj)
+    {
+        using var @lock = Sync.Enter();
+
+        var actualObjects = Objects.Where(obj => obj is not null)
+                                   .ToList();
+
+        obj = actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name))
+              ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
 
         return obj != null;
     }

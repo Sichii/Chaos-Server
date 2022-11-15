@@ -1,6 +1,6 @@
 using System.Text.Json;
+using Chaos.Common.Utilities;
 using Chaos.Containers;
-using Chaos.Core.Utilities;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Factories.Abstractions;
@@ -79,7 +79,7 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         if (mapInstanceSchema == null)
             return null;
 
-        var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema!);
+        var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema);
         var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
         var warps = Mapper.MapMany<Warp>(warpSchemas!);
 

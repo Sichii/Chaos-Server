@@ -8,6 +8,9 @@ public static class EnumerableExtensions
     public static bool ContainsI(this IEnumerable<string> enumerable, string str) =>
         enumerable.Contains(str, StringComparer.OrdinalIgnoreCase);
 
+    public static IEnumerable<TReturn> NotOfType<TReturn, TNot>(this IEnumerable<TReturn> enumerable) =>
+        enumerable.Where(obj => obj is not TNot);
+
     /// <summary>
     ///     Randomizes the order of the elements in a sequence
     /// </summary>
