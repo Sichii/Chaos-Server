@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "horse1-3",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 51,
+    "MaximumHp": 4520,
+    "MaximumMp": 1800,
+    "Ac": 44,
+    "Str": 42,
+    "Int": 32,
+    "Wis": 26,
+    "Con": 26,
+    "Dex": 26
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Red Horse",
+  "Sprite": 145,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1000,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

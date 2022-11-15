@@ -1,0 +1,35 @@
+{
+  "bodySprite": "Male",
+  "direction": "Down",
+  "effects": [],
+  "gender": "Male",
+  "hairStyle": 5,
+  "ignoreList": [],
+  "mapInstanceId": "town2",
+  "name": "qwe",
+  "statSheet": {
+    "maxWeight": 40,
+    "toNextLevel": 100,
+    "currentHp": 100,
+    "currentMp": 50,
+    "level": 1,
+    "atkSpeedPct": 1500,
+    "con": 1,
+    "dex": 1,
+    "int": 1,
+    "maximumHp": 100,
+    "maximumMp": 50,
+    "str": 1,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 15,
+  "y": 15
+}

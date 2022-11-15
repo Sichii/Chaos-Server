@@ -1,0 +1,18 @@
+{
+  "InstanceID": "town2_dar",
+  "Name": "Dar's Hut'",
+  "TemplateKey": "401",
+  "ScriptKeys": [],
+  "Warps": [
+    {
+      "source": "(14, 7)",
+      "destination": "town2:(10, 53)"
+    },
+    {
+      "source": "(14, 8)",
+      "destination": "town2:(10, 53)"
+    }
+  ],
+  "Music": 1,
+  "Flags": "none"
+}

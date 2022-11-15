@@ -1,0 +1,13 @@
+{
+  "key": "bat",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "eppe",
+            "dropChance": 10
+        },
+        {
+            "itemTemplateKey": "emerald_ring",
+            "dropChance": 10
+        }
+    ]
+}

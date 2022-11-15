@@ -1,0 +1,17 @@
+{
+  "templateKey": "clobber",
+  "name": "Clobber",
+  "panelSprite": 0,
+  "scriptKeys": [
+    "StatBasedDamage"
+  ],
+  "scriptVars": {
+    "StatBasedDamage": {
+        "damage": 10,
+        "statCoefficient": 1,
+        "bodyAnimation": "assail",
+        "stat": "str"
+    }
+  },
+  "isAssail": true
+}

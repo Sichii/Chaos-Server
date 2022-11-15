@@ -1,0 +1,34 @@
+[
+  {
+    "count": 1,
+    "currentDurability": 10000,
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "jupe",
+    "uniqueId": 12092
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 7,
+    "templateKey": "talos_ring",
+    "uniqueId": 8026
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 8,
+    "templateKey": "talos_ring",
+    "uniqueId": 8014
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 12,
+    "templateKey": "leather_greaves",
+    "uniqueId": 8917
+  }
+]

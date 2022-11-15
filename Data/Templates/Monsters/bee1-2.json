@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "bee1-2",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 26,
+    "MaximumHp": 650,
+    "MaximumMp": 300,
+    "Ac": 78,
+    "Str": 8,
+    "Int": 6,
+    "Wis": 6,
+    "Con": 6,
+    "Dex": 6
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Bee",
+  "Sprite": 271,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1400,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1400,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "stick",
+    "uniqueId": 4634
+  },
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "shirt1",
+    "uniqueId": 4492
+  }
+]

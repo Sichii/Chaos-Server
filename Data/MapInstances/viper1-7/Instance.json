@@ -1,0 +1,27 @@
+{
+    "InstanceID": "viper1-7",
+    "Name": "Wasteland",
+    "TemplateKey": "21007",
+    "ScriptKeys": [],
+    "minimumlevel": 9,
+    "warps": [
+        {
+            "source": "(0, 10)",
+            "destination": "viper1-6:(23, 12)"
+        },
+        {
+            "source": "(0, 9)",
+            "destination": "viper1-6:(23, 11)"
+        },
+        {
+            "source": "(13, 24,)",
+            "destination": "viper1-8:(10, 1)"
+        },
+        {
+            "source": "(14, 24,)",
+            "destination": "viper1-8:(11, 1)"
+        }
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

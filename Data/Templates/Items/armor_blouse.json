@@ -1,0 +1,23 @@
+{
+    "templateKey": "blouse",
+    "accountBound": false,
+    "baseClass": "Peasant",
+    "advClass": "None",
+    "displaySprite": 1,
+    "gender": "female",
+    "maxDurability": 1000,
+    "maxStacks": 1,
+    "modifiers": {
+        "str": 1
+    },
+    "value": 1000,
+    "weight": 1,
+    "name": "Blouse",
+    "panelSprite": 115,
+    "scriptKeys": [ "Equipment" ],
+    "scriptVars": {
+        "equipment": {
+            "equipmentType": "armor"
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "viper1-2",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 17,
+    "MaximumHp": 260,
+    "MaximumMp": 100,
+    "Ac": 88,
+    "Str": 4,
+    "Int": 3,
+    "Wis": 3,
+    "Con": 3,
+    "Dex": 3
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Viper 2",
+  "Sprite": 269,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1500,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

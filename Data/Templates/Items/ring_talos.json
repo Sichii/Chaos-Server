@@ -1,0 +1,23 @@
+{
+    "templateKey": "talos_ring",
+    "accountBound": false,
+    "baseClass": "Peasant",
+    "advClass": "None",
+    "displaySprite": 1,
+    "gender": "unisex",
+    "maxDurability": 5000,
+    "maxStacks": 1,
+    "modifiers": {
+        "atkspeedpct": 15
+    },
+    "value": 1000,
+    "weight": 1,
+    "name": "Talos Ring",
+    "panelSprite": 211,
+    "scriptKeys": [ "Equipment" ],
+    "scriptVars": {
+        "equipment": {
+            "equipmentType": "ring"
+        }
+    }
+}

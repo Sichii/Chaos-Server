@@ -1,0 +1,22 @@
+{
+  "InstanceID": "town2_combatarms",
+  "Name": "Fighter",
+  "TemplateKey": "301",
+  "ScriptKeys": [],
+  "Warps": [
+    {
+      "source": "(6, 14)",
+      "destination": "town2:(46, 40)"
+    },
+    {
+      "source": "(7, 14)",
+      "destination": "town2:(46, 40)"
+    },
+    {
+      "source": "(12, 0)",
+      "destination": "town2_faepriest:(7, 13)"
+    }
+  ],
+  "Music": 1,
+  "Flags": "none"
+}

@@ -1,0 +1,13 @@
+{
+  "key": "kardi",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "Talos_ring",
+            "dropChance": 10
+        },
+        {
+            "itemTemplateKey": "leather_greaves",
+            "dropChance": 10
+        }
+    ]
+}

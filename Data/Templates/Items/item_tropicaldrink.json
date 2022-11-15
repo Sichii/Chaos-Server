@@ -1,0 +1,23 @@
+
+  {
+    "templateKey": "tropicaldrink",
+    "accountBound": false,
+    "equipmentType": "notequipment",
+    "gender": "Unisex",
+    "maxStacks": 30,
+    "value": 0,
+    "weight": 1,
+    "name": "Tropical Drink",
+    "panelSprite": 3367,
+    "scriptKeys": ["DisplayEffect"],
+    "scriptVars": {
+        "displayeffect": {
+            "animation": {
+				"animationspeed": 100,
+				"targetanimation": 99
+			},
+			"bodyanimation": "handsup",
+			"sound": 2
+        }
+    }
+  }

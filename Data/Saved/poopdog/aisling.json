@@ -1,0 +1,43 @@
+{
+  "bodyColor": "White",
+  "bodySprite": "Female",
+  "direction": "Down",
+  "effects": [],
+  "gender": "Female",
+  "hairColor": "Default",
+  "hairStyle": 8,
+  "ignoreList": [],
+  "mapInstanceId": "Welcome",
+  "name": "poopdog",
+  "nation": 0,
+  "statSheet": {
+    "advClass": "None",
+    "baseClass": "Peasant",
+    "maxWeight": 40,
+    "toNextLevel": 100,
+    "currentHp": 100,
+    "currentMp": 50,
+    "level": 1,
+    "atkSpeedPct": 1500,
+    "con": 1,
+    "dex": 1,
+    "int": 1,
+    "maximumHp": 100,
+    "maximumMp": 50,
+    "str": 1,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "exchange": false,
+    "fastMove": false,
+    "group": true,
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 6,
+  "y": 9
+}

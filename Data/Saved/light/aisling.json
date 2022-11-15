@@ -1,0 +1,38 @@
+{
+  "bodySprite": "Male",
+  "direction": "Left",
+  "effects": [],
+  "gender": "Male",
+  "gold": 89,
+  "hairColor": "Black",
+  "hairStyle": 3,
+  "ignoreList": [],
+  "mapInstanceId": "crypt4",
+  "name": "Light",
+  "statSheet": {
+    "maxWeight": 51,
+    "toNextLevel": 20,
+    "totalExp": 2680,
+    "currentMp": 50,
+    "level": 3,
+    "ac": -3,
+    "atkSpeedPct": 1660,
+    "con": 2,
+    "dex": 1,
+    "int": 1,
+    "maximumHp": 892,
+    "maximumMp": 887,
+    "str": 17,
+    "wis": 1
+  },
+  "titles": [],
+  "userOptions": {
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 1,
+  "y": 22
+}

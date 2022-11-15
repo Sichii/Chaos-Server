@@ -1,0 +1,44 @@
+{
+    "InstanceID": "horse1-5",
+    "Name": "Lush Fields",
+    "TemplateKey": "21705",
+    "ScriptKeys": [],
+    "minimumlevel": 40,
+    "maximumlevel": 59,
+    "warps": [
+        {
+            "source": "(0, 12)",
+            "destination": "horse1-4:(23, 14)"
+        },
+        {
+            "source": "(0, 11)",
+            "destination": "horse1-4:(23, 13)"
+        },
+        {
+            "source": "(0, 10,)",
+            "destination": "horse1-4:(23, 12)"
+        },
+        {
+            "source": "(0, 9,)",
+            "destination": "horse1-4:(23, 11)"
+        },
+        {
+            "source": "(24, 12,)",
+            "destination": "horse1-6:(1, 12)"
+        },
+        {
+            "source": "(24, 11,)",
+            "destination": "horse1-6:(1, 11)"
+        },
+        {
+            "source": "(24, 10,)",
+            "destination": "horse1-6:(1, 10)"
+        },
+        {
+            "source": "(24, 9,)",
+            "destination": "horse1-6:(1, 9)"
+        }
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

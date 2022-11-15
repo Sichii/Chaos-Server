@@ -1,0 +1,18 @@
+
+  {
+    "templateKey": "hemloch",
+    "accountBound": false,
+    "equipmentType": "notequipment",
+    "gender": "Unisex",
+    "maxStacks": 30,
+    "value": 0,
+    "weight": 1,
+    "name": "Hemloch",
+    "panelSprite": 58,
+    "scriptKeys": ["ToxicPotion"],
+    "scriptVars": {
+        "toxicpotion": {
+            "dmgpercent": "99",
+        }
+    }
+  }

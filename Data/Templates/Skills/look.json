@@ -1,0 +1,7 @@
+{
+    "templateKey": "look",
+    "name": "Look",
+    "panelSprite": 8,
+    "isAssail": false,
+    "scriptKeys": [ "Look" ],
+}

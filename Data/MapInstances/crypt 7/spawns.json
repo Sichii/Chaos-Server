@@ -1,0 +1,29 @@
+[
+    {
+        "monsterTemplateKey": "crypt_marauder",
+        "lootTableKey": "marauder",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 7,
+        "minGoldDrop": 60,
+        "maxGoldDrop": 90,
+        "expReward": 2000,
+        "extraScriptKeys": []
+    },
+
+    {
+        "monsterTemplateKey": "Crypt_kardi",
+        "lootTableKey": "kardi",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 7,
+        "minGoldDrop": 50,
+        "maxGoldDrop": 70,
+        "expReward": 1400,
+        "extraScriptKeys": []
+    }
+]

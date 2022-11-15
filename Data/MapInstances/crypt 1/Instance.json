@@ -1,0 +1,30 @@
+{
+    "InstanceID": "crypt1",
+    "Name": "Crypt 1",
+    "TemplateKey": "20101",
+    "ScriptKeys": [],
+    "warps": [
+        {
+            "source": "(23, 5)",
+            "destination": "crypt2:(11, 1)"
+        },
+        {
+            "source": "(12, 29)",
+            "destination": "town2:(54, 24)"
+        },
+        {
+            "source": "(13, 29)",
+            "destination": "town2:(54, 24)"
+        },
+        {
+            "source": "(14, 29)",
+            "destination": "town2:(54, 24)"
+        },
+        {
+            "source": "(15, 29)",
+            "destination": "town2:(54, 24)"
+        },
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

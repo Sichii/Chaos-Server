@@ -1,0 +1,18 @@
+{
+  "InstanceID": "tutorial_room1",
+  "Name": "Inn 1",
+  "TemplateKey": "137",
+  "ScriptKeys": [],
+  "Warps": [
+    {
+      "source": "(7, 5)",
+      "destination": "tutorial_hallway:(1, 14)"
+    },
+    {
+      "source": "(7, 4)",
+      "destination": "tutorial_hallway:(1, 14)"
+    }
+  ],
+  "Music": 1,
+  "Flags": "none"
+}

@@ -74,6 +74,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         NextDialogKey = null;
         source.Client.SendDialog(this);
         source.ActiveDialog.TryRemove(this);
+        Script.OnClose(source);
     }
 
     public void Display(Aisling source)

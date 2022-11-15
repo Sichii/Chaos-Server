@@ -1,0 +1,23 @@
+{
+    "InstanceID": "wolf1-2",
+    "Name": "Ice Cave",
+    "TemplateKey": "21302",
+    "ScriptKeys": [],
+    "minimumlevel": 26,
+    "warps": [
+        {
+            "source": "(24, 14)",
+            "destination": "wolf1-1:(1, 12)"
+        },
+        {
+            "source": "(24, 13)",
+            "destination": "wolf1-1:(1, 11)"
+        },
+        {
+            "source": "(0, 9)",
+            "destination": "wolf1-3:(23, 12)"
+        }
+    ],
+    "Music": 1,
+    "Flags": "none"
+}

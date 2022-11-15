@@ -1,0 +1,6 @@
+{
+    "templateKey": "anna_receivearmor",
+    "text": "There you go! Now, go about your way.",
+    "type": "normal",
+    "scriptKeys": ["annagivearmor"],
+}

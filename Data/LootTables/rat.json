@@ -1,0 +1,9 @@
+{
+  "key": "rat",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "stick",
+            "dropChance": 10
+        }
+    ]
+}

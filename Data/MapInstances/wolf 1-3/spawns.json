@@ -1,0 +1,15 @@
+[
+    {
+        "monsterTemplateKey": "wolf1-1",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 25,
+        "maxPerSpawn": 15,
+        "aggroRange": 6,
+        "minGoldDrop": 0,
+        "maxGoldDrop": 0,
+        "expReward": 3240,
+        "extraScriptKeys": []
+    }
+]

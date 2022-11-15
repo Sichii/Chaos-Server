@@ -1,0 +1,17 @@
+
+  {
+    "templateKey": "giftbox",
+    "accountBound": false,
+    "gender": "Unisex",
+    "maxStacks": 5,
+    "value": 50000,
+    "weight": 1,
+    "name": "Gold Gift 1",
+    "panelSprite": 11978,
+    "scriptKeys": ["Giftbox"],
+    "scriptVars": {
+        "giftbox": {
+            "goldamount": 3000
+        }
+    }
+  }

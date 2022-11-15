@@ -1,0 +1,29 @@
+[
+    {
+        "monsterTemplateKey": "crypt_giantbat",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 20,
+        "maxPerSpawn": 12,
+        "aggroRange": 6,
+        "minGoldDrop": 30,
+        "maxGoldDrop": 40,
+        "expReward": 900,
+        "extraScriptKeys": []
+    },
+
+    {
+        "monsterTemplateKey": "Crypt_scorpion",
+        "lootTableKey": "scorpion",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 15,
+        "maxPerSpawn": 8,
+        "aggroRange": 6,
+        "minGoldDrop": 20,
+        "maxGoldDrop": 30,
+        "expReward": 600,
+        "extraScriptKeys": []
+    }
+]

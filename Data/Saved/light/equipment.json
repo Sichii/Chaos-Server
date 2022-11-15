@@ -1,0 +1,58 @@
+[
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "eppe",
+    "uniqueId": 16798
+  },
+  {
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "shirt1",
+    "uniqueId": 8213
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 6,
+    "templateKey": "jade_necklace",
+    "uniqueId": 16966
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 7,
+    "templateKey": "emerald_ring",
+    "uniqueId": 16748
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 8,
+    "templateKey": "emerald_ring",
+    "uniqueId": 16746
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 9,
+    "templateKey": "leather_gauntlet",
+    "uniqueId": 16953
+  },
+  {
+    "count": 1,
+    "currentDurability": 5000,
+    "scriptKeys": [],
+    "slot": 11,
+    "templateKey": "leather_belt",
+    "uniqueId": 17038
+  }
+]

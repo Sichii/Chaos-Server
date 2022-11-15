@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "crypt_giantbat",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 17,
+    "MaximumHp": 1100,
+    "MaximumMp": 400,
+    "Ac": 34,
+    "Str": 6,
+    "Int": 6,
+    "Wis": 6,
+    "Con": 4,
+    "Dex": 4
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Giant Bat",
+  "Sprite": 46,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1100,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

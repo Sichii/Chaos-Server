@@ -1,0 +1,15 @@
+[
+    {
+        "monsterTemplateKey": "grimlock1",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 25,
+        "maxPerSpawn": 15,
+        "aggroRange": 6,
+        "minGoldDrop": 10,
+        "maxGoldDrop": 20,
+        "expReward": 240,
+        "extraScriptKeys": []
+    }
+]

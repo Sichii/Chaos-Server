@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "horse_boss1-1",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 54,
+    "MaximumHp": 23520,
+    "MaximumMp": 11800,
+    "Ac": 44,
+    "Str": 50,
+    "Int": 34,
+    "Wis": 16,
+    "Con": 16,
+    "Dex": 16
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Purple Horse",
+  "Sprite": 866,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1200,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1200,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": ["assail"],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}

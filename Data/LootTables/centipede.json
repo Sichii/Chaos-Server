@@ -1,0 +1,13 @@
+{
+  "key": "centipede",
+    "lootDrops": [
+        {
+            "itemTemplateKey": "dirk",
+            "dropChance": 10
+        },
+        {
+            "itemTemplateKey": "jade_necklace",
+            "dropChance": 10
+        }
+    ]
+}

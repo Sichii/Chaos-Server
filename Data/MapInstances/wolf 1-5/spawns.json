@@ -1,0 +1,41 @@
+[
+    {
+        "monsterTemplateKey": "wolf1-2",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 15,
+        "maxPerSpawn": 10,
+        "aggroRange": 6,
+        "minGoldDrop": 0,
+        "maxGoldDrop": 0,
+        "expReward": 3950,
+        "extraScriptKeys": []
+    },
+    {
+        "monsterTemplateKey": "wolf1-3",
+        "lootTableKey": "blank",
+        "intervalSecs": 120,
+        "intervalVariancePct": 30,
+        "maxAmount": 15,
+        "maxPerSpawn": 10,
+        "aggroRange": 6,
+        "minGoldDrop": 0,
+        "maxGoldDrop": 0,
+        "expReward": 4650,
+        "extraScriptKeys": []
+    },
+    {
+        "monsterTemplateKey": "wolf_boss1-1",
+        "lootTableKey": "blank",
+        "intervalSecs": 1200,
+        "intervalVariancePct": 20,
+        "maxAmount": 1,
+        "maxPerSpawn": 1,
+        "aggroRange": 6,
+        "minGoldDrop": 3000,
+        "maxGoldDrop": 5000,
+        "expReward": 21950,
+        "extraScriptKeys": []
+    }
+]

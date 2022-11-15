@@ -1,0 +1,30 @@
+{
+  "TemplateKey": "crypt_Centipede",
+  "StatSheet": {
+    "Ability": 0,
+    "Level": 7,
+    "MaximumHp": 350,
+    "MaximumMp": 100,
+    "Ac": 48,
+    "Str": 3,
+    "Int": 1,
+    "Wis": 1,
+    "Con": 2,
+    "Dex": 1
+  },
+  "Type": "Normal",
+  "Direction": "Down",
+  "Name": "Crypt Centipede",
+  "Sprite": 52,
+  "WanderIntervalMs": 2000,
+  "MoveIntervalMs": 1300,
+  "SkillIntervalMs": 1500,
+  "SpellIntervalMs": 1500,
+  "AssailIntervalMs": 1500,
+  "CastIntervalMs": 10000,
+  "SpellTemplateKeys": [],
+  "SkillTemplateKeys": [ "assail" ],
+  "ScriptKeys": [
+    "commonMonster"
+  ]
+}
