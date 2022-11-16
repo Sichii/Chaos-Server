@@ -1,9 +1,7 @@
 {
-  "InstanceID": "Mileth",
-  "Name": "Mileth",
-  "TemplateKey": "500",
-  "ScriptKeys": [],
-  "WarpSchema": [],
-  "Music": 1,
-  "Flags": "none"
+    "flags": "None",
+    "instanceId": "mileth",
+    "music": 1,
+    "name": "Mileth",
+    "templateKey": "500"
 }

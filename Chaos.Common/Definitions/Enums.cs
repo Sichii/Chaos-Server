@@ -17,7 +17,7 @@ public enum RandomizationType
 [Flags]
 public enum QuestFlag1 : ulong
 {
-    None = 0,
+    None = 0
     //add more quest flags here, double each time
 }
 
