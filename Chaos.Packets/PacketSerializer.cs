@@ -30,8 +30,9 @@ public sealed class PacketSerializer : IPacketSerializer
             throw new InvalidOperationException($"No deserializer exists for type \"{type.FullName}\"");
 
         var reader = new SpanReader(Encoding, in packet.Buffer);
+        var typedDeserializer = (IClientPacketDeserializer<T>)deserializer;
 
-        return (T)deserializer.Deserialize(ref reader);
+        return typedDeserializer.Deserialize(ref reader);
     }
 
     public ServerPacket Serialize<T>(T obj) where T: ISendArgs

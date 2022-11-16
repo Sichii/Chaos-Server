@@ -40,6 +40,10 @@ public interface ICryptoClient
     /// </summary>
     EncryptionType GetClientEncryptionType(byte opCode);
 
+    /// <summary>
+    ///     Generates an md5 hash of the given string
+    /// </summary>
+    /// <param name="value">The string to hash</param>
     string GetMd5Hash(string value);
 
     /// <summary>

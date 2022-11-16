@@ -5,19 +5,18 @@ using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
-using Chaos.Servers.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Clients;
 
 public sealed class LobbyClient : SocketClientBase, ILobbyClient
 {
-    private readonly ILobbyServer Server;
+    private readonly ILobbyServer<ILobbyClient> Server;
 
     public LobbyClient(
         Socket socket,
         ICryptoClient cryptoClient,
-        ILobbyServer server,
+        ILobbyServer<ILobbyClient> server,
         IPacketSerializer packetSerializer,
         ILogger<LobbyClient> logger
     )

@@ -17,7 +17,6 @@ using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
 using Chaos.Security.Abstractions;
 using Chaos.Security.Exceptions;
-using Chaos.Servers.Abstractions;
 using Chaos.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -25,7 +24,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Servers;
 
-public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer
+public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginClient>
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
@@ -70,7 +69,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer
     public ValueTask OnClientRedirected(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(in packet);
-
+        
         var reserved = Options.ReservedRedirects
                               .FirstOrDefault(rr => (rr.Id == args.Id) && rr.Name.EqualsI(args.Name));
 

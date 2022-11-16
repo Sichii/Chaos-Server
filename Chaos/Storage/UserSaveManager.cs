@@ -106,19 +106,20 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
 
-        await SerializeAsync(directory, "aisling.json", aislingSchema);
-        await SerializeAsync(directory, "bank.json", bankSchema);
-        await SerializeAsync(directory, "effects.json", effectsSchemas);
-        await SerializeAsync(directory, "equipment.json", equipmentSchema);
-        await SerializeAsync(directory, "inventory.json", inventorySchema);
-        await SerializeAsync(directory, "skills.json", skillsSchemas);
-        await SerializeAsync(directory, "spells.json", spellsSchemas);
-        await SerializeAsync(directory, "legend.json", legendSchema);
+        await Task.WhenAll(
+            SerializeAsync(directory, "aisling.json", aislingSchema),
+            SerializeAsync(directory, "bank.json", bankSchema),
+            SerializeAsync(directory, "effects.json", effectsSchemas),
+            SerializeAsync(directory, "equipment.json", equipmentSchema),
+            SerializeAsync(directory, "inventory.json", inventorySchema),
+            SerializeAsync(directory, "skills.json", skillsSchemas),
+            SerializeAsync(directory, "spells.json", spellsSchemas),
+            SerializeAsync(directory, "legend.json", legendSchema));
 
         Logger.LogTrace("Saved aisling {Name}", aisling.Name);
     }
 
-    private async ValueTask SerializeAsync(string directory, string fileName, object value)
+    private async Task SerializeAsync(string directory, string fileName, object value)
     {
         var path = Path.Combine(directory, fileName);
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);

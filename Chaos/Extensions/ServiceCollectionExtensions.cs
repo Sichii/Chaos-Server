@@ -20,7 +20,6 @@ using Chaos.Scripts.MonsterScripts.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
 using Chaos.Scripts.SpellScripts.Abstractions;
 using Chaos.Servers;
-using Chaos.Servers.Abstractions;
 using Chaos.Servers.Options;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
@@ -43,7 +42,7 @@ public static class ServiceCollectionExtensions
                 .PostConfigure(LobbyOptions.PostConfigure)
                 .Validate<ILogger<LobbyOptions>>(LobbyOptions.Validate);
 
-        services.AddSingleton<ILobbyServer, IHostedService, LobbyServer>();
+        services.AddSingleton<ILobbyServer<ILobbyClient>, IHostedService, LobbyServer>();
     }
 
     public static void AddLoginserver(this IServiceCollection services)
@@ -53,7 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key)
                 .PostConfigure<ILogger<LoginOptions>>(LoginOptions.PostConfigure);
 
-        services.AddSingleton<ILoginServer, IHostedService, LoginServer>();
+        services.AddSingleton<ILoginServer<ILoginClient>, IHostedService, LoginServer>();
     }
 
     public static void AddScripting(this IServiceCollection services)
@@ -154,6 +153,6 @@ public static class ServiceCollectionExtensions
         services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key)
                 .PostConfigure(WorldOptions.PostConfigure);
 
-        services.AddSingleton<IWorldServer, IHostedService, WorldServer>();
+        services.AddSingleton<IWorldServer<IWorldClient>, IHostedService, WorldServer>();
     }
 }

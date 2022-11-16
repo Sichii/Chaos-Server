@@ -1,7 +1,7 @@
 namespace Chaos.Common.Abstractions;
 
 /// <summary>
-///     An object that is bound to a base directory
+///     Defines the pattern for an object that is bound to a base directory
 /// </summary>
 public interface IDirectoryBound
 {

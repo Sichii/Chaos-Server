@@ -7,8 +7,8 @@ public ref struct SpanReader
     private readonly Span<byte> Buffer;
     public Encoding Encoding { get; set; }
     public int Position { get; set; }
-    public bool EndOfSpan => Position >= Buffer.Length;
-    public int Remaining => Buffer.Length - Position;
+    public readonly bool EndOfSpan => Position >= Buffer.Length;
+    public readonly int Remaining => Buffer.Length - Position;
 
     public SpanReader(Encoding encoding, in Span<byte> buffer)
     {

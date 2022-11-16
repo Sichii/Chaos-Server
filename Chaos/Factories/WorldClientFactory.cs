@@ -1,9 +1,10 @@
 using System.Net.Sockets;
 using Chaos.Clients;
+using Chaos.Clients.Abstractions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Factories.Abstractions;
+using Chaos.Networking.Abstractions;
 using Chaos.Packets.Abstractions;
-using Chaos.Servers.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +21,7 @@ public sealed class WorldClientFactory : IClientFactory<WorldClient>
     {
         var typeMapper = ServiceProvider.GetRequiredService<ITypeMapper>();
         var crypto = ServiceProvider.GetRequiredService<ICryptoClient>();
-        var server = ServiceProvider.GetRequiredService<IWorldServer>();
+        var server = ServiceProvider.GetRequiredService<IWorldServer<IWorldClient>>();
         var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
         var logger = ServiceProvider.GetRequiredService<ILogger<WorldClient>>();
 

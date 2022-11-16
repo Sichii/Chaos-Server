@@ -24,22 +24,23 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Servers.Abstractions;
 using Chaos.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
+using Chaos.Time.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Servers;
 
-public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
+public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldClient>
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<IWorldClient> ClientFactory;
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
     private readonly ParallelOptions ParallelOptions;
     private readonly PeriodicTimer PeriodicTimer;
+    private readonly IIntervalTimer SaveTimer;
     private readonly ISaveManager<Aisling> UserSaveManager;
 
     public IEnumerable<Aisling> Aislings => Clients
@@ -66,6 +67,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
     {
         Options = options.Value;
         PeriodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000.0 / options.Value.UpdatesPerSecond));
+        SaveTimer = new IntervalTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins), false);
         ClientFactory = clientFactory;
         CacheProvider = cacheProvider;
         UserSaveManager = userSaveManager;
@@ -75,7 +77,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
         ParallelOptions = new ParallelOptions
         {
-            MaxDegreeOfParallelism = Environment.ProcessorCount
+            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2)
         };
 
         IndexHandlers();
@@ -94,8 +96,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
         Logger.LogInformation("Listening on {EndPoint}", endPoint);
 
         var deltaTime = new DeltaTime();
-        var saveInterval = new IntervalTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins));
-
+        
         while (true)
             try
             {
@@ -104,11 +105,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
                 await PeriodicTimer.WaitForNextTickAsync(stoppingToken);
                 var delta = deltaTime.ElapsedSpan;
-                saveInterval.Update(delta);
-
-                if (saveInterval.IntervalElapsed)
-                    await ParallelSaveAsync();
-
+                
                 await ParallelUpdateAsync(delta);
             } catch (Exception e)
             {
@@ -116,42 +113,31 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
             }
     }
 
-    private Task ParallelUpdateAsync(TimeSpan delta) => Parallel.ForEachAsync(
-        CacheProvider.GetCache<MapInstance>(),
-        ParallelOptions,
-        async (mapInstance, _) =>
-        {
-            try
-            {
-                await using var sync = await mapInstance.Sync.WaitAsync();
-                mapInstance.Update(delta);
-            } catch (Exception e)
-            {
-                Logger.LogCritical(e, "Failed to update map instance {MapInstance}", mapInstance.InstanceId);
-            }
-        });
-
-    //only needs to be async because it enters a semaphore
-    private Task ParallelSaveAsync() =>
-        Parallel.ForEachAsync(
-            Aislings,
+    private Task ParallelUpdateAsync(TimeSpan delta)
+    {
+        SaveTimer.Update(delta);
+        
+        return Parallel.ForEachAsync(
+            CacheProvider.GetCache<MapInstance>(),
             ParallelOptions,
-            async (user, _) =>
+            async (mapInstance, _) =>
             {
-                await user.Client.ReceiveSync.WaitAsync();
-
                 try
                 {
-                    await SaveUserAsync(user);
+                    await using var sync = await mapInstance.Sync.WaitAsync();
+                    mapInstance.Update(delta);
+
+                    if (SaveTimer.IntervalElapsed)
+                        await Task.WhenAll(
+                            mapInstance.GetEntities<Aisling>()
+                                       .Select(SaveUserAsync));
                 } catch (Exception e)
                 {
-                    Logger.LogCritical(e, "Failed to save user {User}", user.Name);
-                } finally
-                {
-                    user.Client.ReceiveSync.Release();
+                    Logger.LogCritical(e, "Failed to update map instance {MapInstance}", mapInstance.InstanceId);
                 }
             });
-
+    }
+    
     private async Task SaveUserAsync(Aisling aisling)
     {
         try
@@ -169,9 +155,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
                 AllowTrailingCommas = true
             };
 
-            jsonSerializerOptions.Converters.Add(new PointConverter());
-            jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            Logger.LogError(e, "Exception while saving user. {User}", JsonSerializer.Serialize(aisling));
+            Logger.LogCritical(e, "Exception while saving user. {User}", JsonSerializer.Serialize(aisling, jsonSerializerOptions));
         }
     }
     #endregion
@@ -1326,12 +1310,34 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer
 
     private async void OnDisconnect(object? sender, EventArgs e)
     {
-        var client = (IWorldClient)sender!;
-        Clients.TryRemove(client.Id, out _);
+        //we dont need to Task.Run this because it's async void
+        //when async void reaches async code, control returns to the caller and the method is not awaited
 
+        var client = (IWorldClient)sender!;
+        var aisling = client.Aisling;
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        client.Aisling.MapInstance?.RemoveObject(client.Aisling);
-        await SaveUserAsync(client.Aisling);
+        var mapInstance = aisling?.MapInstance;
+        IPolyDisposable disposable = new NoOpDisposable();
+
+        if (mapInstance != null)
+            disposable = await mapInstance.Sync.WaitAsync();
+
+        await using var sync = disposable;
+        
+        //remove client from client list
+        Clients.TryRemove(client.Id, out _);
+        
+        if (aisling != null)
+        {
+            //if the player has an exchange open, cancel it so items are returned
+            var activeExchange = aisling.ActiveObject.TryGet<Exchange>();
+            activeExchange?.Cancel(aisling);
+            
+            //remove aisling from map
+            mapInstance?.RemoveObject(client.Aisling);
+            //save aisling
+            await SaveUserAsync(client.Aisling);
+        }
     }
     #endregion
 }

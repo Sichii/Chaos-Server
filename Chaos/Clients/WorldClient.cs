@@ -16,7 +16,6 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
@@ -27,14 +26,14 @@ namespace Chaos.Clients;
 public sealed class WorldClient : SocketClientBase, IWorldClient
 {
     private readonly ITypeMapper Mapper;
-    private readonly IWorldServer Server;
+    private readonly IWorldServer<IWorldClient> Server;
     public Aisling Aisling { get; set; } = null!;
 
     public WorldClient(
         Socket socket,
         ITypeMapper mapper,
         ICryptoClient cryptoClient,
-        IWorldServer server,
+        IWorldServer<IWorldClient> server,
         IPacketSerializer packetSerializer,
         ILogger<WorldClient> logger
     )

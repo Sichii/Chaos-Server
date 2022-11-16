@@ -3,7 +3,7 @@ using System.Net;
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
-///     Represents a configuration object to set up redirects that will be added to the login notice
+///     Defines a configuration object to set up redirects that will be added to the login notice
 /// </summary>
 public interface IRedirectInfo
 {

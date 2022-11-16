@@ -7,7 +7,6 @@ using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
-using Chaos.Servers.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -15,12 +14,12 @@ namespace Chaos.Clients;
 
 public sealed class LoginClient : SocketClientBase, ILoginClient
 {
-    private readonly ILoginServer Server;
+    private readonly ILoginServer<ILoginClient> Server;
 
     public LoginClient(
         Socket socket,
         ICryptoClient cryptoClient,
-        ILoginServer server,
+        ILoginServer<ILoginClient> server,
         IPacketSerializer packetSerializer,
         ILogger<LoginClient> logger
     )

@@ -11,14 +11,13 @@ using Chaos.Objects;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Servers.Abstractions;
 using Chaos.Servers.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Servers;
 
-public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer
+public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyClient>
 {
     private readonly IClientFactory<ILobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
