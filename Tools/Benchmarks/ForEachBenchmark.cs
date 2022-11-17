@@ -9,45 +9,49 @@ public class ForEachBenchmark
     public int[] Array { get; set; } = null!;
     public List<int> Collection { get; set; } = null!;
     [Params(
-        1,
-        10,
         100,
-        1000,
-        10000)]
+        1_000,
+        10_000,
+        100_000)]
     public int CollectionSize { get; set; }
 
     [Benchmark]
-    public void ExplcitFastForEach()
+    public void ForEachSpan()
     {
-        foreach (var obj in CollectionsMarshal.AsSpan(Collection))
-        {
-            var newNum = obj + 5;
-        }
+        var num = 0;
+        
+        foreach (ref var obj in CollectionsMarshal.AsSpan(Collection))
+            num += obj;
     }
 
     [Benchmark]
-    public void NormalForEach()
+    public void ForSpan()
     {
+        var num = 0;
+        var span = Array.AsSpan();
+
+        for(var i = 0; i < span.Length; i++)
+            num += span[i];
+    }
+
+    [Benchmark]
+    public void ForEach()
+    {
+        var num = 0;
+        
         foreach (var obj in Collection)
-        {
-            var newNum = obj + 5;
-        }
+            num += obj;
     }
 
     [Benchmark(Baseline = true)]
-    public void NormalForEachArray()
+    public void ForArray()
     {
+        var num = 0;
+        
         for (var i = 0; i < Array.Length; i++)
-        {
-            var newNum = Array[i] + 5;
-        }
+            num += Array[i];
     }
-
-    private void PerformAction(int num)
-    {
-        var newNum = num + 5;
-    }
-
+    
     [GlobalSetup]
     public void Setup()
     {

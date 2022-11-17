@@ -18,6 +18,9 @@ public class MoveToTargetScript : MonsterScriptBase
 
         if ((Target == null) || !ShouldMove)
             return;
+        
+        if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
+            return;
 
         var distance = Subject.DistanceFrom(Target);
 

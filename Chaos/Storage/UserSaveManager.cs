@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Chaos.Common.Synchronization;
 using Chaos.Containers;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
@@ -14,7 +13,6 @@ namespace Chaos.Storage;
 
 public sealed class UserSaveManager : ISaveManager<Aisling>
 {
-    private static readonly AutoReleasingSemaphoreSlim Sync = new(1, 1);
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger Logger;
     private readonly ITypeMapper Mapper;
@@ -39,7 +37,17 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
     private async ValueTask<T> DesierlizeAsync<T>(string directory, string fileName)
     {
         var path = Path.Combine(directory, fileName);
-        await using var stream = File.OpenRead(path);
+
+        await using var stream = File.Open(
+            path,
+            new FileStreamOptions
+            {
+                Access = FileAccess.Read,
+                Mode = FileMode.Open,
+                Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
+                Share = FileShare.Read
+            });
+
         var ret = await JsonSerializer.DeserializeAsync<T>(stream, JsonSerializerOptions);
 
         return ret!;
@@ -47,8 +55,6 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
     public async Task<Aisling> LoadAsync(string name)
     {
-        await using var sync = await Sync.WaitAsync();
-
         Logger.LogTrace("Loading aisling {Name}", name);
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
@@ -88,8 +94,6 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
     public async Task SaveAsync(Aisling aisling)
     {
-        await using var sync = await Sync.WaitAsync();
-
         Logger.LogTrace("Saving aisling {Name}", aisling.Name);
 
         var aislingSchema = Mapper.Map<AislingSchema>(aisling);
@@ -122,7 +126,17 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
     private async Task SerializeAsync(string directory, string fileName, object value)
     {
         var path = Path.Combine(directory, fileName);
-        await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
+
+        await using var stream = File.Open(
+            path,
+            new FileStreamOptions
+            {
+                Access = FileAccess.ReadWrite,
+                Mode = FileMode.OpenOrCreate,
+                Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
+                Share = FileShare.None
+            });
+
         await JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptions);
     }
 }

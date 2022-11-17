@@ -8,5 +8,8 @@
         <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!--<ServerGarbageCollection>true</ServerGarbageCollection>
+        <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>-->
     </PropertyGroup>
 </Project>

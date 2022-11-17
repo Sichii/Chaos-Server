@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Chaos.Common.Synchronization;
 
 namespace Chaos.Common.Identity;
@@ -19,16 +18,15 @@ public static class ServerId
     static ServerId() => SerializableUniqueId = SerializableUniqueId.Deserialize();
 }
 
-[JsonConverter(typeof(SerializableUniqueIdConverter))]
-public class SerializableUniqueId
+public sealed class SerializableUniqueId
 {
-    private readonly AutoReleasingMonitor Sync;
+    private readonly FifoSemaphoreSlim Sync;
     private ulong CurrentId;
 
     private SerializableUniqueId(ulong currentId)
     {
-        Sync = new AutoReleasingMonitor();
         CurrentId = currentId;
+        Sync = new FifoSemaphoreSlim(1, 1);
     }
 
     public static SerializableUniqueId Deserialize()
@@ -36,7 +34,7 @@ public class SerializableUniqueId
         if (!File.Exists("UniqueId.json"))
         {
             var obj = new SerializableUniqueId(1);
-            obj.Serialize();
+            obj.Serialize(obj.CurrentId);
 
             return obj;
         }
@@ -46,55 +44,39 @@ public class SerializableUniqueId
         if (fileStream.Length == 0)
         {
             var obj = new SerializableUniqueId(1);
-            obj.Serialize();
+            obj.Serialize(obj.CurrentId);
 
             return obj;
         }
 
-        return JsonSerializer.Deserialize<SerializableUniqueId>(fileStream)!;
+        var num = JsonSerializer.Deserialize<ulong>(fileStream)!;
+
+        return new SerializableUniqueId(num);
     }
 
     public ulong NextId()
     {
-        using var @lock = Sync.Enter();
+        var num = Interlocked.Increment(ref CurrentId);
+        Serialize(num);
 
-        CurrentId++;
-        Serialize();
-
-        return CurrentId;
+        return num;
     }
 
-    private void Serialize()
+    private async void Serialize(ulong num)
     {
-        var json = JsonSerializer.Serialize(this);
-        File.WriteAllText("UniqueId.json", json);
-    }
+        await Sync.WaitAsync();
 
-    public class SerializableUniqueIdConverter : JsonConverter<SerializableUniqueId>
-    {
-        public override SerializableUniqueId? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        try
         {
-            var id = 0UL;
-
-            if (reader.TokenType == JsonTokenType.StartObject)
-                reader.Read();
-
-            if (reader.TokenType == JsonTokenType.PropertyName)
-                reader.Read();
-
-            if (reader.TokenType == JsonTokenType.Number)
-                id = reader.GetUInt64();
-
-            reader.Read();
-
-            return new SerializableUniqueId(id);
+            var json = JsonSerializer.Serialize(num);
+            await File.WriteAllTextAsync("UniqueId.json", json);
+        } catch
+        {
+            //ignored
         }
-
-        public override void Write(Utf8JsonWriter writer, SerializableUniqueId value, JsonSerializerOptions options)
+        finally
         {
-            writer.WriteStartObject();
-            writer.WriteNumber(nameof(CurrentId), value.CurrentId);
-            writer.WriteEndObject();
+            Sync.Release();
         }
     }
 }

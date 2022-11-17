@@ -112,7 +112,7 @@ public abstract class Creature : NamedEntity, IAffected
 
     public virtual bool IsFriendlyTo(Creature other) => other switch
     {
-        Monster  => this is Monster,
+        Monster  => false,
         Aisling  => this is Aisling or Merchant, //could also check if map is pvp enabled or something
         Merchant => this is not Monster,
         _        => false
@@ -362,4 +362,11 @@ public abstract class Creature : NamedEntity, IAffected
 
     public virtual bool WithinLevelRange(Creature other) =>
         LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);
+    
+    public virtual void ShowHealth(byte? sound = null)
+    {
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanSee(this))
+            aisling.Client.SendHealthBar(this, sound);
+    }
 }

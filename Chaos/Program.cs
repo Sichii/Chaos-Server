@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 Environment.SetEnvironmentVariable("DOTNET_ReadyToRun", "0");
+//Environment.SetEnvironmentVariable("DOTNET_GCHeapHardLimit", "0x1F400000");
 
 var services = new ServiceCollection();
 

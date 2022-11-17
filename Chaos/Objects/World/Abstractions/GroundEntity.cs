@@ -1,11 +1,13 @@
 using Chaos.Containers;
 using Chaos.Geometry.Abstractions;
+using Chaos.Time;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Objects.World.Abstractions;
 
 public abstract class GroundEntity : NamedEntity
 {
-    public TimeSpan TimeOnGround { get; set; }
+    private readonly IIntervalTimer GroundTimer;
 
     /// <inheritdoc />
     protected GroundEntity(
@@ -18,17 +20,18 @@ public abstract class GroundEntity : NamedEntity
             name,
             sprite,
             mapInstance,
-            point) { }
+            point) =>
+        GroundTimer = new IntervalTimer(TimeSpan.FromHours(1), false);
 
     /// <inheritdoc />
     public override void OnClicked(Aisling source) { }
 
     public override void Update(TimeSpan delta)
     {
-        TimeOnGround += delta;
-
+        GroundTimer.Update(delta);
+        
         //if the entity has been on the ground for over an hour, destroy it
-        if (TimeOnGround.TotalHours > 1)
+        if (GroundTimer.IntervalElapsed)
             MapInstance.RemoveObject(this);
     }
 }

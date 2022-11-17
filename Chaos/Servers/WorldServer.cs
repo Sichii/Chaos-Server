@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Chaos.Clients.Abstractions;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Abstractions;
@@ -15,7 +14,6 @@ using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
-using Chaos.Geometry.JsonConverters;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
@@ -42,6 +40,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     private readonly PeriodicTimer PeriodicTimer;
     private readonly IIntervalTimer SaveTimer;
     private readonly ISaveManager<Aisling> UserSaveManager;
+    private readonly DeltaMonitor DeltaMonitor;
+    private readonly DeltaTime DeltaTime;
 
     public IEnumerable<Aisling> Aislings => Clients
                                             .Select(kvp => kvp.Value.Aisling)
@@ -66,7 +66,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             logger)
     {
         Options = options.Value;
-        PeriodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000.0 / options.Value.UpdatesPerSecond));
+        var delta = 1000.0 / options.Value.UpdatesPerSecond;
+        PeriodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
+        DeltaTime = new DeltaTime();
+        DeltaMonitor = new DeltaMonitor(logger, TimeSpan.FromMinutes(1), delta);
         SaveTimer = new IntervalTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins), false);
         ClientFactory = clientFactory;
         CacheProvider = cacheProvider;
@@ -77,7 +80,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         ParallelOptions = new ParallelOptions
         {
-            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2)
+            MaxDegreeOfParallelism = Environment.ProcessorCount,
         };
 
         IndexHandlers();
@@ -94,48 +97,63 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         Socket.Listen(20);
         Socket.BeginAccept(OnConnection, Socket);
         Logger.LogInformation("Listening on {EndPoint}", endPoint);
-
-        var deltaTime = new DeltaTime();
         
         while (true)
+        {
+            if (stoppingToken.IsCancellationRequested)
+                return;
+
+            await PeriodicTimer.WaitForNextTickAsync(stoppingToken);
+            
             try
             {
-                if (stoppingToken.IsCancellationRequested)
-                    return;
+                DeltaTime.SetDelta();
 
-                await PeriodicTimer.WaitForNextTickAsync(stoppingToken);
-                var delta = deltaTime.ElapsedSpan;
-                
-                await ParallelUpdateAsync(delta);
+                var start = ValueStopwatch.GetTimestamp();
+                await ParallelUpdateAsync();
+                var end = ValueStopwatch.GetTimestamp();
+
+                var executionDelta = ValueStopwatch.GetElapsedTime(start, end);
+                DeltaMonitor.AddExecutionDelta(executionDelta);
+                DeltaMonitor.Update(DeltaTime.DeltaSpan);
             } catch (Exception e)
             {
                 Logger.LogError(e, "Server update loop had an unhandled exception");
             }
+        }
     }
 
-    private Task ParallelUpdateAsync(TimeSpan delta)
+    private Task ParallelUpdateAsync()
     {
-        SaveTimer.Update(delta);
-        
-        return Parallel.ForEachAsync(
-            CacheProvider.GetCache<MapInstance>(),
-            ParallelOptions,
-            async (mapInstance, _) =>
-            {
-                try
-                {
-                    await using var sync = await mapInstance.Sync.WaitAsync();
-                    mapInstance.Update(delta);
+        SaveTimer.Update(DeltaTime.DeltaSpan);
 
-                    if (SaveTimer.IntervalElapsed)
-                        await Task.WhenAll(
-                            mapInstance.GetEntities<Aisling>()
-                                       .Select(SaveUserAsync));
-                } catch (Exception e)
-                {
-                    Logger.LogCritical(e, "Failed to update map instance {MapInstance}", mapInstance.InstanceId);
-                }
-            });
+        /*
+        foreach (var map in CacheProvider.GetCache<MapInstance>())
+        {
+            await using var sync = await map.Sync.WaitAsync();
+            map.Update(delta);
+
+            if (SaveTimer.IntervalElapsed)
+                await Task.WhenAll(map.GetEntities<Aisling>().Select(SaveUserAsync));
+        }*/
+
+        return Parallel.ForEachAsync(CacheProvider.GetCache<MapInstance>(), ParallelOptions, UpdateMap);
+
+    }
+
+    private async ValueTask UpdateMap(MapInstance map, CancellationToken token)
+    {
+        try
+        {
+            await using var sync = await map.Sync.WaitAsync();
+            map.Update(DeltaTime.DeltaSpan);
+
+            if (SaveTimer.IntervalElapsed)
+                await Task.WhenAll(map.GetEntities<Aisling>().Select(SaveUserAsync));
+        } catch (Exception e)
+        {
+            Logger.LogCritical(e, "Failed to update map instance {MapInstance}", map.InstanceId);
+        }
     }
     
     private async Task SaveUserAsync(Aisling aisling)

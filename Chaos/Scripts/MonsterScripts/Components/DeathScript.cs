@@ -16,13 +16,14 @@ public class DeathScript : MonsterScriptBase
     {
         if (!Map.RemoveObject(Subject))
             return;
-
-        base.OnDeath();
-
+        
         var rewardTarget = Subject.AggroList
                                   .OrderByDescending(kvp => kvp.Value)
                                   .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
                                   .FirstOrDefault(a => a is not null);
+
+        if (Subject.LootTable != null)
+            Subject.Items.AddRange(Subject.LootTable.GenerateLoot());
 
         Subject.DropGold(Subject, Subject.Gold);
         Subject.Drop(Subject, Subject.Items);
@@ -35,7 +36,5 @@ public class DeathScript : MonsterScriptBase
             foreach (var member in grp)
                 member.GiveExp(exp);
         }
-
-        Map.RemoveObject(Subject);
     }
 }

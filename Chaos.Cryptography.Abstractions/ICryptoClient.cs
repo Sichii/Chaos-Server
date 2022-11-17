@@ -7,7 +7,13 @@ namespace Chaos.Cryptography.Abstractions;
 /// </summary>
 public interface ICryptoClient
 {
+    /// <summary>
+    ///     Encryption key
+    /// </summary>
     byte[] Key { get; }
+    /// <summary>
+    ///     The seed is used to generate key salts
+    /// </summary>
     byte Seed { get; }
 
     /// <summary>

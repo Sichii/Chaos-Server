@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -180,14 +181,12 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     /// <inheritdoc />
     public void Update(TimeSpan delta)
     {
-        foreach (var aisling in Aislings)
-            aisling.Update(delta);
+        var entities = EntityLookup.Values
+                                   .OfType<IDeltaUpdatable>()
+                                   .ToList();
 
-        foreach (var creature in Monsters)
-            creature.Update(delta);
-
-        foreach (var groundEntity in GroundEntities)
-            groundEntity.Update(delta);
+        foreach (ref var entity in CollectionsMarshal.AsSpan(entities))
+            entity.Update(delta);
     }
 
     public IEnumerable<T> Values<T>() where T: MapEntity

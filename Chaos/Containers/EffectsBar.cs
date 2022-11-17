@@ -110,9 +110,12 @@ public sealed class EffectsBar : IEffectsBar
 
     public void Update(TimeSpan delta)
     {
+        if(Effects.Count == 0)
+            return;
+        
         using var @lock = Sync.Enter();
         var shouldResetDisplay = false;
-
+        
         foreach (var effect in Effects.Values.ToList())
         {
             effect.Update(delta);

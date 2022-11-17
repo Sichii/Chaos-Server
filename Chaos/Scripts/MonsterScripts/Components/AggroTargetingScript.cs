@@ -65,10 +65,13 @@ public class AggroTargetingScript : MonsterScriptBase
             AggroList.Remove(Target.Id, out _);
             Target = null;
         }
-
+        
         if (!TargetUpdateTimer.IntervalElapsed)
             return;
-
+        
+        if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
+            return;
+        
         Target = null;
 
         //first try to get target via aggro list
@@ -90,7 +93,7 @@ public class AggroTargetingScript : MonsterScriptBase
             return;
 
         //if we failed to get a target via aggroList, grab the closest aisling within aggro range
-        Target ??= Map.GetEntitiesWithinRange<Aisling>(Subject, AggroRange)
+        Target ??= Map.GetEntitiesWithinRange<Creature>(Subject, AggroRange)
                       .ThatAreVisibleTo(Subject)
                       .Where(
                           obj => !obj.Equals(Subject)

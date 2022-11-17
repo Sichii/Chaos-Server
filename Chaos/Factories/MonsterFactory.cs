@@ -57,13 +57,13 @@ public sealed class MonsterFactory : IMonsterFactory
 
         foreach (var skillTemplateKey in monster.Template.SkillTemplateKeys)
         {
-            var skill = SkillFactory.Create(skillTemplateKey);
+            var skill = SkillFactory.CreateFaux(skillTemplateKey);
             monster.Skills.Add(skill);
         }
 
         foreach (var spellTemplateKey in monster.Template.SpellTemplateKeys)
         {
-            var spell = SpellFactory.Create(spellTemplateKey);
+            var spell = SpellFactory.CreateFaux(spellTemplateKey);
             monster.Spells.Add(spell);
         }
 

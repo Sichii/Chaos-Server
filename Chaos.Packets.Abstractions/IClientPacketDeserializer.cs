@@ -21,7 +21,7 @@ public interface IClientPacketDeserializer
 }
 
 /// <inheritdoc />
-/// <typeparam name="T">A type that inherits from <see cref="IReceiveArgs"/></typeparam>
+/// <typeparam name="T">A type that inherits from <see cref="Chaos.Packets.Abstractions.IReceiveArgs"/></typeparam>
 public interface IClientPacketDeserializer<out T> : IClientPacketDeserializer where T : IReceiveArgs
 {
     /// <summary>

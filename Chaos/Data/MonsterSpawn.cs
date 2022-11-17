@@ -27,11 +27,8 @@ public sealed class MonsterSpawn : IDeltaUpdatable
     public Rectangle? SpawnArea { get; set; }
     public required IIntervalTimer SpawnTimer { get; init; }
 
-    private void GenerateRewards(Monster monster)
+    private void GenerateGoldAndExp(Monster monster)
     {
-        if (LootTable != null)
-            monster.Items.AddRange(LootTable.GenerateLoot());
-
         monster.Gold = Random.Shared.Next(MinGoldDrop, MaxGoldDrop + 1);
         monster.Experience = ExpReward;
     }
@@ -73,8 +70,9 @@ public sealed class MonsterSpawn : IDeltaUpdatable
                 ExtraScriptKeys);
 
             monster.AggroRange = AggroRange;
+            monster.LootTable = LootTable;
 
-            GenerateRewards(monster);
+            GenerateGoldAndExp(monster);
             monsters.Add(monster);
         }
 

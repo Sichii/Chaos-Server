@@ -5,5 +5,8 @@ namespace Chaos.Common.Abstractions;
 /// </summary>
 public interface IStagingDirectory
 {
+    /// <summary>
+    ///     The path to the staging directory
+    /// </summary>
     string StagingDirectory { get; }
 }

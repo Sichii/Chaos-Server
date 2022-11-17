@@ -1,7 +1,7 @@
 {
   "bodyColor": "White",
   "bodySprite": "Female",
-  "direction": "Down",
+  "direction": "Right",
   "effects": [],
   "flags": {},
   "gender": "Female",
@@ -18,7 +18,7 @@
     "baseClass": "Peasant",
     "maxWeight": 40,
     "toNextLevel": 100,
-    "currentHp": 98478,
+    "currentHp": 98248,
     "currentMp": 50000,
     "level": 1,
     "maximumHp": 100000,
@@ -40,6 +40,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 25,
-  "y": 28
+  "x": 24,
+  "y": 26
 }

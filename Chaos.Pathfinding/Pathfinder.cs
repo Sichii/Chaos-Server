@@ -171,13 +171,13 @@ public sealed class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        ICollection<IPoint> unwalkablePoints
     )
     {
         //if we're standing on the end already
         //try to walk out from under it
         if (PointEqualityComparer.Instance.Equals(start, end))
-            return Wander(start, ignoreWalls, creatures);
+            return Wander(start, ignoreWalls, unwalkablePoints);
 
         if (start.DistanceFrom(end) == 1)
             return end.DirectionalRelationTo(start);
@@ -186,7 +186,7 @@ public sealed class Pathfinder : IPathfinder
             start,
             end,
             ignoreWalls,
-            creatures);
+            unwalkablePoints);
 
         //failed to find path
         //find a direction to walk(if any) via simple logic
@@ -195,7 +195,7 @@ public sealed class Pathfinder : IPathfinder
                 start,
                 end,
                 ignoreWalls,
-                creatures);
+                unwalkablePoints);
 
         return nextPoint.DirectionalRelationTo(start);
     }
@@ -226,9 +226,9 @@ public sealed class Pathfinder : IPathfinder
     }
 
     /// <inheritdoc />
-    public Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> creatures)
+    public Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> unwalkablePoints)
     {
-        var optimalPoint = GetFirstWalkablePoint(start.GetCardinalPoints().OrderBy(_ => Random.Shared.Next()), ignoreWalls, creatures);
+        var optimalPoint = GetFirstWalkablePoint(start.GetCardinalPoints().OrderBy(_ => Random.Shared.Next()), ignoreWalls, unwalkablePoints);
 
         if (!optimalPoint.HasValue)
             return Direction.Invalid;

@@ -18,6 +18,9 @@ public class WanderingScript : MonsterScriptBase
         if ((Target != null) || !ShouldWander)
             return;
 
+        if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
+            return;
+
         Subject.Wander();
         Subject.MoveTimer.Reset();
     }

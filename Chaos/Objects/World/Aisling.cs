@@ -170,10 +170,7 @@ public sealed class Aisling : Creature
     {
         StatSheet.SubtractHp(amount);
         Client.SendAttributes(StatUpdateType.Vitality);
-
-        foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                       .ThatCanSee(this))
-            obj.Client.SendHealthBar(this, hitSound);
+        ShowHealth(hitSound);
     }
 
     public void BeginObserving()

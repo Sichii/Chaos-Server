@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
@@ -10,21 +11,21 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     /// <inheritdoc />
     public void OnForgotten(Aisling aisling)
     {
-        foreach (var component in Components)
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnForgotten(aisling);
     }
 
     /// <inheritdoc />
     public void OnLearned(Aisling aisling)
     {
-        foreach (var component in Components)
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnLearned(aisling);
     }
 
     /// <inheritdoc />
     public void OnUse(SpellContext context)
     {
-        foreach (var component in Components)
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(context);
     }
 }

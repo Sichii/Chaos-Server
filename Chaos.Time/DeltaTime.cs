@@ -7,22 +7,15 @@ namespace Chaos.Time;
 /// </summary>
 public sealed class DeltaTime
 {
-    private readonly Stopwatch Stopwatch = Stopwatch.StartNew();
-    private long LastValue;
+    private long LastTimeStamp;
+    public TimeSpan DeltaSpan { get; private set; }
 
-    /// <summary>
-    ///     Gets the current time value in milliseconds.
-    /// </summary>
-    public long Elapsed
+    public DeltaTime() => SetDelta();
+    
+    public void SetDelta()
     {
-        get
-        {
-            var delta = Stopwatch.ElapsedMilliseconds - LastValue;
-            LastValue += delta;
-
-            return delta;
-        }
+        var currentTimeStamp = ValueStopwatch.GetTimestamp();
+        DeltaSpan = ValueStopwatch.GetElapsedTime(LastTimeStamp, currentTimeStamp);
+        LastTimeStamp = currentTimeStamp;
     }
-
-    public TimeSpan ElapsedSpan => TimeSpan.FromMilliseconds(Elapsed);
 }

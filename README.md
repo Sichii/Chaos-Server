@@ -40,14 +40,45 @@ General world options are also changed via Options:WorldOptions
 
 # Folder Structure
 
-📂Data ┣📂[LootTables](#loottables-folder)  ┃ ┗📜testAreaRats.json ┣📂[MapData](#mapdata-folder)  ┃ ┣📜lod3043.map ┃ ┣📜lod3044.map ┃
-┗📜lod5219.map ┣📂[MapInstances](#mapinstances-folder)  ┃ ┣📂testTown ┃ ┃ ┣📜instance.json ┃ ┃ ┗📜spawns.json ┃ ┣📂testRoom ┃ ┃
-┣📜instance.json ┃ ┃ ┗📜spawns.json ┃ ┗📂testArea ┃ ┣📜instance.json ┃ ┗📜spawns.json ┣📂[WorldMaps](#worldMaps-folder)  ┃
-┣📂[Nodes](#nodes-folder)  ┃ ┃ ┣📜testTown.json ┃ ┃ ┗📜testArea.json ┃ ┗📜field001.json ┣📂Metafiles (TODO)  ┣📂Saved ┃ ┗📂bonk ┃
-┣📜aisling.json ┃ ┣📜bank.json ┃ ┣📜equipment.json ┃ ┣📜inventory.json ┃ ┣📜legend.json ┃ ┣📜password.txt (hashed)  ┃ ┣📜skills.json ┃
-┗📜spells.json ┗📂[Templates](#templates-folder)  ┣📂[Items](#items-folder)  ┃ ┗📜stick.json ┣📂[Maps](#maps-folder)  ┃ ┣📜3043.json ┃
-┣📜3044.json ┃ ┗📜5219.json ┣📂[Monsters](#monsters-folder)  ┃ ┗📜common_rat.json ┣📂[Skills](#skills-folder)  ┃ ┗📜assail.json  
-┗📂[Spells](#spells-folder)  ┗📜fire_breath.json
+📂Data  
+ ┣📂[LootTables](#loottables-folder)  
+ ┃ ┗📜rat__stick_apple.json  
+ ┣📂[MapData](#mapdata-folder)  
+ ┃ ┣📜lod500.map  
+ ┃ ┗📜lod3006.map  
+ ┣📂[MapInstances](#mapinstances-folder)  
+ ┃ ┣📂test1  
+ ┃ ┃ ┣📜instance.json  
+ ┃ ┃ ┗📜spawns.json  
+ ┃ ┗📂test2  
+ ┃   ┣📜instance.json  
+ ┃   ┗📜spawns.json  
+ ┣📂[WorldMaps](#worldMap-folder)  
+ ┃ ┣📂[Nodes](#nodes-folder)  
+ ┃ ┃ ┗📜test2.json  
+ ┃ ┗📜field001.json  
+ ┣📂Metafiles (TODO)  
+ ┣📂Saved  
+ ┃ ┗📂bonk  
+ ┃   ┣📜aisling.json  
+ ┃   ┣📜bank.json  
+ ┃   ┣📜equipment.json  
+ ┃   ┣📜inventory.json  
+ ┃   ┣📜legend.json  
+ ┃   ┣📜password.txt (hashed)  
+ ┃   ┣📜skills.json  
+ ┃   ┗📜spells.json  
+ ┗📂[Templates](#templates-folder)  
+   ┣📂[Items](#items-folder)  
+   ┃ ┗📜stick.json  
+   ┣📂[Maps](#maps-folder)  
+   ┃ ┗📜500.json  
+   ┣📂[Monsters](#monsters-folder)  
+   ┃ ┗📜common_rat.json  
+   ┣📂[Skills](#skills-folder)  
+   ┃ ┗📜assail.json  
+   ┗📂[Spells](#spells-folder)  
+     ┗📜fire_breath.json
 
 # LootTables Folder
 
@@ -120,7 +151,7 @@ spawns.json contains a collection of spawn objects
 | ScriptKeys    |                                array{string}                                | A collection of script keys to load for this map (TODO: scripts section)                                                                                      |
 | TemplateKey   |                            string<br/>(0-32767)                             | A string representation of the map id. Ex. 500 for mileth                                                                                                     |
 | Warps         |                       array{[warp](#warp-properties)}                       | A collection of warps                                                                                                                                         |
-| WorldMapWarps |               array{[worldMapWarp](#warpMapWarp-properties)}                | A collection fo world map warps                                                                                                                               |
+| WorldMapWarps |               array{[worldMapWarp](#worldmapwarp-properties)}               | A collection fo world map warps                                                                                                                               |
 
 ### Warp Properties
 
