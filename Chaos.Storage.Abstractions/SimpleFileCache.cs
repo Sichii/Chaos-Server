@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace Chaos.Storage.Abstractions;
 
 public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class
-                                                                                  where TOptions: class, IFileCacheOptions
+                                                                                  where TOptions: class, ISimpleFileCacheOptions
 {
     protected ConcurrentDictionary<string, T> Cache { get; }
     protected JsonSerializerOptions JsonSerializerOptions { get; }

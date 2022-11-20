@@ -129,7 +129,7 @@ public record StatSheet : Attributes
 
     public byte EffectiveInt => (byte)Math.Clamp(Int + IntMod, byte.MinValue, byte.MaxValue);
 
-    public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistanceMod, sbyte.MinValue, sbyte.MaxValue);
+    public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistanceMod, byte.MinValue, byte.MaxValue);
 
     public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 0);
 
@@ -256,7 +256,7 @@ public record StatSheet : Attributes
 
     public void SubtractHealthPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,
-        () => (int)Math.Clamp(EffectiveMaximumMp * (HealthPercent - pct) / 100f, 0, EffectiveMaximumMp));
+        () => (int)Math.Clamp(EffectiveMaximumHp * (HealthPercent - pct) / 100f, 0, EffectiveMaximumHp));
 
     public void SubtractHp(int amount)
     {

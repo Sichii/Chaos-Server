@@ -2,7 +2,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Storage.Options;
 
-public sealed class MapTemplateCacheOptions : FileCacheOptionsBase
+public sealed class MapTemplateCacheOptions : SimpleFileCacheOptionsBase
 {
     public string MapDataDirectory { get; set; } = null!;
 

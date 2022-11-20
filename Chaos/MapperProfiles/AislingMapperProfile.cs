@@ -139,7 +139,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Int = obj.UserStatSheet.EffectiveInt,
         IsAdmin = obj.IsAdmin,
         Level = (byte)obj.UserStatSheet.Level,
-        MagicResistance = obj.UserStatSheet.EffectiveMagicResistance,
+        MagicResistance = (byte)(obj.UserStatSheet.EffectiveMagicResistance / 10),
         MailFlags = MailFlag.None, //TODO: mail system
         MaximumHp = obj.UserStatSheet.EffectiveMaximumHp,
         MaximumMp = obj.UserStatSheet.EffectiveMaximumMp,
