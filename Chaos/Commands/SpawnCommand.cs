@@ -27,30 +27,30 @@ public class SpawnCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGet<string>(0, out var entityType))
+        if (!args.TryGetNext<string>(out var entityType))
             return default;
 
         if ("monster".ContainsI(entityType))
         {
-            if (!args.TryGet<string>(1, out var monsterTemplateKey))
+            if (!args.TryGetNext<string>(out var monsterTemplateKey))
                 return default;
 
             var monster = MonsterFactory.Create(monsterTemplateKey, source.MapInstance, source);
 
-            if (args.TryGet<string>(2, out var lootTableKey))
+            if (args.TryGetNext<string>(out var lootTableKey))
             {
                 var lootTable = SimpleCache.Get<LootTable>(lootTableKey);
                 monster.Items.AddRange(lootTable.GenerateLoot());
             }
 
-            if (args.TryGet<int>(3, out var expAmount))
+            if (args.TryGetNext<int>(out var expAmount))
                 monster.Experience = expAmount;
 
-            if (args.TryGet<int>(4, out var goldAmount))
+            if (args.TryGetNext<int>(out var goldAmount))
                 monster.Gold = goldAmount;
 
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (args.TryGet<int>(5, out var aggroRange))
+            if (args.TryGetNext<int>(out var aggroRange))
                 monster.AggroRange = aggroRange;
             else
                 monster.AggroRange = 0;
@@ -58,12 +58,12 @@ public class SpawnCommand : ICommand<Aisling>
             source.MapInstance.AddObject(monster, source);
         } else if ("merchant".ContainsI(entityType))
         {
-            if (!args.TryGet<string>(1, out var merchantTemplateKey))
+            if (!args.TryGetNext<string>(out var merchantTemplateKey))
                 return default;
 
             var merchant = MerchantFactory.Create(merchantTemplateKey, source.MapInstance, source);
 
-            if (args.TryGet<Direction>(2, out var direction))
+            if (args.TryGetNext<Direction>(out var direction))
                 merchant.Direction = direction;
 
             source.MapInstance.AddObject(merchant, source);

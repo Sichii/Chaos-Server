@@ -7,5 +7,10 @@
     "weight": 1,
     "name": "Apple",
     "panelSprite": 40,
-    "scriptKeys": ["default"]
+    "scriptKeys": ["vitalityConsumable"],
+    "scriptVars": {
+        "vitalityConsumable": {
+            "healthAmount": 100
+        }
+    }
 }

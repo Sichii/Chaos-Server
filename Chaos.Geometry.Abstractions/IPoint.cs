@@ -5,7 +5,13 @@
 /// </summary>
 public interface IPoint
 {
+    /// <summary>
+    ///     The X coordinate
+    /// </summary>
     int X { get; }
+    /// <summary>
+    ///     The Y coordinate
+    /// </summary>
     int Y { get; }
 
     static string ToString(IPoint point) => $@"({point.X}, {point.Y})";

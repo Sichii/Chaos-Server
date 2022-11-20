@@ -195,17 +195,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 13) where T: MapEntity =>
         Objects.WithinRange<T>(point, range);
 
-    public bool IsWalkable(IPoint point, bool toWalkthroughCreature = false)
+    public bool IsWalkable(IPoint point, CreatureType creatureType)
     {
-        if (toWalkthroughCreature ? !IsWithinMap(point) : IsWall(point))
-            return false;
+        var creatures = Objects.AtPoint<Creature>(point)
+                               .ToList();
 
-        var objs = Objects.AtPoint<Creature>(point);
-
-        if (toWalkthroughCreature)
-            return objs.All(creature => creature.Type != CreatureType.WalkThrough);
-
-        return objs.All(creature => creature.Type == CreatureType.WalkThrough);
+        return creatureType switch
+        {
+            CreatureType.Normal      => !IsWarp(point) && !IsWall(point) && !creatures.Any(),
+            CreatureType.WalkThrough => !IsWarp(point) && creatures.All(c => c.Type != CreatureType.Aisling),
+            CreatureType.Merchant    => !IsWarp(point) && !IsWall(point) && !creatures.Any(),
+            CreatureType.WhiteSquare => !IsWarp(point) && !IsWall(point) && !creatures.Any(),
+            CreatureType.Aisling     => !IsWall(point) && creatures.All(c => c.Type == CreatureType.WalkThrough),
+            _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
+        };
     }
 
     public bool IsWall(IPoint point) => Template.IsWall(point);

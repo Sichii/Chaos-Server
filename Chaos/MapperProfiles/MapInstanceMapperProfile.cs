@@ -57,8 +57,8 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
         Bounds = new Rectangle(
             0,
             0,
-            obj.Width - 1,
-            obj.Height - 1),
+            obj.Width,
+            obj.Height),
         TemplateKey = obj.TemplateKey,
         WarpPoints = obj.WarpPoints,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),

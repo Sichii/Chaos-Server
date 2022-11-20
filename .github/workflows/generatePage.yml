@@ -3,13 +3,13 @@ name: Docs
 on:
     push:
         branches:
-            - testPages
+            - master
         paths:
             - docs/**
             - .github/workflows/docs.yml
     pull_request:
         branches:
-            - testPages
+            - master
         paths:
             - docs/**
             - .github/workflows/docs.yml

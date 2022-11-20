@@ -40,7 +40,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B-4052-4E73-B24D-03799847282A}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
@@ -100,6 +99,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Scripting", "Chaos.Scripting\Chaos.Scripting.csproj", "{8F53E199-9524-4F6E-B8D6-9719083FB7CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Scripting", "Chaos.Extensions.Scripting\Chaos.Extensions.Scripting.csproj", "{BF937891-1D8F-43A1-8F72-3C1BF445CD78}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{B72FF7E2-9186-4ADE-AC9B-8F9B3E7C55DD}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		docs\articles\ServerConfiguration.md = docs\articles\ServerConfiguration.md
+		docs\articles\toc.yml = docs\articles\toc.yml
+		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

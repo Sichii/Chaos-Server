@@ -4,6 +4,8 @@ namespace Chaos.Servers.Options;
 
 public record WorldOptions : ServerOptions, IWorldOptions
 {
+    /// <inheritdoc />
+    public override string HostName { get; set; } = "localhost";
     public int AislingAssailIntervalMs { get; init; }
     public required int DropRange { get; init; }
     public static IWorldOptions Instance { get; set; } = null!;
@@ -25,7 +27,7 @@ public record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public required bool ProhibitSpeedWalk { get; init; }
     public required int RefreshIntervalMs { get; init; }
-    public required int SaveIntervalMins { get; init; }
+    public required double SaveIntervalMins { get; init; }
     public required int TradeRange { get; init; }
     public required int UpdatesPerSecond { get; init; }
 

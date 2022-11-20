@@ -28,7 +28,7 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
     }
 
     /// <inheritdoc />
-    public TScript CreateScript(ICollection<string> scriptKeys, TScripted source)
+    public TScript CreateScript(ICollection<string> scriptKeys, TScripted subject)
     {
         var composite = (ICompositeScript<TScript>)Activator.CreateInstance(CompositeType)!;
 
@@ -39,7 +39,7 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             if (!ScriptTypeCache.TryGetValue(scriptKey, out var scriptType))
                 throw new InvalidOperationException($"Script type {scriptKey} not found");
 
-            var instance = ActivatorUtilities.CreateInstance(ServiceProvider, scriptType, source);
+            var instance = ActivatorUtilities.CreateInstance(ServiceProvider, scriptType, subject);
 
             if (instance is not TScript tScript)
                 throw new InvalidCastException($"Script obtained from key \"{scriptKey}\" is not of type {TypeName}");
@@ -49,7 +49,7 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             foreach (var scriptKey in scriptKeys)
                 if (ScriptTypeCache.TryGetValue(scriptKey, out var scriptType))
                 {
-                    var instance = ActivatorUtilities.CreateInstance(ServiceProvider, scriptType, source);
+                    var instance = ActivatorUtilities.CreateInstance(ServiceProvider, scriptType, subject);
 
                     if (instance is not TScript tScript)
                     {

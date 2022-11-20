@@ -21,10 +21,10 @@ public class LearnCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGet<string>(0, out var type))
+        if (!args.TryGetNext<string>(out var type))
             return default;
 
-        if (!args.TryGet<string>(1, out var name))
+        if (!args.TryGetNext<string>(out var name))
             return default;
 
         switch (type.ToLower())

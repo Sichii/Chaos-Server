@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Extensions.Common;
 
-public static class EnumExtensions
+public static class MenuOrDialogTypeExtensions
 {
     public static DialogType? ToDialogType(this MenuOrDialogType value) => value switch
     {

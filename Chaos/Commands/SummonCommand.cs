@@ -18,7 +18,7 @@ public class SummonCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGet<string>(0, out var name))
+        if (!args.TryGetNext<string>(out var name))
             return default;
 
         var mapCache = CacheProvider.GetCache<MapInstance>();

@@ -4,23 +4,65 @@
     "count": 1,
     "currentDurability": 1000,
     "scriptKeys": [],
-    "slot": 5,
+    "slot": 20,
+    "templateKey": "stick",
+    "uniqueId": 121806
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 25,
     "templateKey": "cuckArmor",
     "uniqueId": 290959
   },
   {
     "color": "Default",
-    "count": 5,
+    "count": 1,
     "scriptKeys": [],
-    "slot": 6,
-    "templateKey": "apple"
+    "slot": 29,
+    "templateKey": "teleport_trinket",
+    "uniqueId": 8265
   },
   {
     "color": "Default",
     "count": 1,
     "scriptKeys": [],
-    "slot": 7,
+    "slot": 30,
+    "templateKey": "teleport_trinket",
+    "uniqueId": 8267
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "scriptKeys": [],
+    "slot": 31,
     "templateKey": "teleport_trinket",
     "uniqueId": 139959
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "scriptKeys": [],
+    "slot": 32,
+    "templateKey": "teleport_trinket",
+    "uniqueId": 8264
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "scriptKeys": [],
+    "slot": 33,
+    "templateKey": "teleport_trinket",
+    "uniqueId": 8268
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "scriptKeys": [],
+    "slot": 34,
+    "templateKey": "teleport_trinket",
+    "uniqueId": 8266
   }
 ]

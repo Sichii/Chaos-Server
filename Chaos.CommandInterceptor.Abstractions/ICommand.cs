@@ -3,7 +3,7 @@ using Chaos.Common.Collections;
 namespace Chaos.CommandInterceptor.Abstractions;
 
 /// <summary>
-///     Defines a command that can be executed on an object
+///     Defines the pattern for a command that can be executed on an object
 /// </summary>
 /// <typeparam name="T">The type of the object that is the source of the command</typeparam>
 public interface ICommand<in T>

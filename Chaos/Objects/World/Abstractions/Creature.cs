@@ -265,7 +265,7 @@ public abstract class Creature : NamedEntity, IAffected
         var startPoint = Point.From(this);
         var endPoint = ((IPoint)this).DirectionalOffset(direction);
 
-        if (!MapInstance.IsWalkable(endPoint, Type == CreatureType.WalkThrough))
+        if (!MapInstance.IsWalkable(endPoint, Type))
             return;
 
         var visibleBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
@@ -339,7 +339,7 @@ public abstract class Creature : NamedEntity, IAffected
 
         foreach (var creature in creaturesAfter.Except(creaturesBefore))
             Helpers.HandleApproach(creature, this);
-
+        
         Display();
     }
 

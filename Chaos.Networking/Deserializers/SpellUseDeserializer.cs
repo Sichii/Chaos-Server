@@ -7,7 +7,7 @@ namespace Chaos.Networking.Deserializers;
 
 public sealed record SpellUseDeserializer : ClientPacketDeserializer<SpellUseArgs>
 {
-    public override ClientOpCode ClientOpCode => ClientOpCode.SpellUse;
+    public override ClientOpCode ClientOpCode => ClientOpCode.UseSpell;
 
     public override SpellUseArgs Deserialize(ref SpanReader reader)
     {

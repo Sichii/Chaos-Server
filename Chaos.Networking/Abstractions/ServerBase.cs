@@ -17,7 +17,6 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     public delegate ValueTask ClientHandler(T client, in ClientPacket packet);
 
     protected ClientHandler?[] ClientHandlers { get; }
-    protected IPEndPoint EndPoint { get; }
     protected ILogger Logger { get; }
     protected abstract ServerOptions Options { get; }
     protected IPacketSerializer PacketSerializer { get; }
@@ -36,10 +35,6 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         Logger = logger;
         PacketSerializer = packetSerializer;
         ClientHandlers = new ClientHandler?[byte.MaxValue];
-
-        var dnsEntry = Dns.GetHostAddresses(options.Value.HostName, AddressFamily.InterNetwork).First();
-        EndPoint = new IPEndPoint(dnsEntry, options.Value.Port);
-
         Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IndexHandlers();
     }

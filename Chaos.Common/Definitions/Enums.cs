@@ -46,7 +46,8 @@ public enum UserState : ulong
 {
     None = 0,
     IsChanting = 1,
-    Exchanging = 2
+    Exchanging = 2,
+    InWorldMap = 4
     //add more user states here, double each time
 }
 

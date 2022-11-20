@@ -26,12 +26,6 @@
         <None Update="appsettings.prod.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Remove="log.txt" />
-        <None Remove="index.md" />
-        <None Remove="docfx.json" />
-        <None Remove="articles\toc.yml" />
-        <None Remove="api\.gitignore" />
-        <None Remove=".gitignore" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj" />
@@ -54,11 +48,9 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4" />
+        <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\sotp.dat" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="articles" />
     </ItemGroup>
 </Project>

@@ -13,10 +13,17 @@ public interface IGridDetails
     int Height { get; }
     
     /// <summary>
-    ///     A collection of points in the grid that are walls
+    ///     A collection of points in the grid that represent walls
     /// </summary>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     ICollection<IPoint> Walls { get; }
     
+    /// <summary>
+    ///     A collection of points in the grid that should never be pathed over 
+    /// </summary>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
+    ICollection<IPoint> Blacklist { get; }
+
     /// <summary>
     ///     The width of the grid
     /// </summary>

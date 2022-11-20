@@ -161,35 +161,35 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredStats = requirements.RequiredStats;
 
-            if (requiredStats.Str < aisling.StatSheet.EffectiveStr)
+            if (requiredStats.Str > aisling.StatSheet.EffectiveStr)
             {
                 dialog.Reply(aisling, "Come back when you are stronger.");
 
                 return false;
             }
 
-            if (requiredStats.Int < aisling.StatSheet.EffectiveInt)
+            if (requiredStats.Int > aisling.StatSheet.EffectiveInt)
             {
                 dialog.Reply(aisling, "Come back when you are smarter.");
 
                 return false;
             }
 
-            if (requiredStats.Wis < aisling.StatSheet.EffectiveWis)
+            if (requiredStats.Wis > aisling.StatSheet.EffectiveWis)
             {
                 dialog.Reply(aisling, "Come back when you are wiser.");
 
                 return false;
             }
 
-            if (requiredStats.Con < aisling.StatSheet.EffectiveCon)
+            if (requiredStats.Con > aisling.StatSheet.EffectiveCon)
             {
                 dialog.Reply(aisling, "Come back when you are tougher.");
 
                 return false;
             }
 
-            if (requiredStats.Dex < aisling.StatSheet.EffectiveDex)
+            if (requiredStats.Dex > aisling.StatSheet.EffectiveDex)
             {
                 dialog.Reply(aisling, "Come back when you are more dexterous.");
 

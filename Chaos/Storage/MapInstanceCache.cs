@@ -82,10 +82,7 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema);
         var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
         var warps = Mapper.MapMany<Warp>(warpSchemas!);
-
-        mapInstance.Pathfinder = PathfindingService;
-        PathfindingService.RegisterGrid(mapInstance);
-
+        
         foreach (var monsterSpawn in monsterSpawns)
             mapInstance.AddSpawner(monsterSpawn);
 
@@ -115,6 +112,9 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
             merchant.Direction = merchantSpawn.Direction;
             mapInstance.SimpleAdd(merchant);
         }
+        
+        mapInstance.Pathfinder = PathfindingService;
+        PathfindingService.RegisterGrid(mapInstance);
 
         return mapInstance;
     }

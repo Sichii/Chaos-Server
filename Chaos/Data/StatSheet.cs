@@ -192,8 +192,15 @@ public record StatSheet : Attributes
         ref _currentMp,
         () => (int)Math.Clamp(_currentMp + amount, 0, EffectiveMaximumMp));
 
-    public int CalculateEffectiveAssailInterval(int baseAssailIntervalMs) =>
-        Convert.ToInt32(baseAssailIntervalMs / (1 + EffectiveAttackSpeedPct / 100.0f));
+    public int CalculateEffectiveAssailInterval(int baseAssailIntervalMs)
+    {
+        var modifier = EffectiveAttackSpeedPct / 100.0f;
+
+        if (modifier < 0)
+            return Convert.ToInt32(baseAssailIntervalMs * Math.Abs(modifier - 1));
+
+        return Convert.ToInt32(baseAssailIntervalMs / (1 + modifier));
+    }
 
     public int GetBaseStat(Stat stat) => stat switch
     {

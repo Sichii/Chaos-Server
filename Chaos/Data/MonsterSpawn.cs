@@ -39,7 +39,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
         do
             point = SpawnArea!.RandomPoint();
-        while (!MapInstance.IsWalkable(point, MonsterTemplate.Type == CreatureType.WalkThrough)
+        while (!MapInstance.IsWalkable(point, MonsterTemplate.Type)
                || blackList.Contains(point, PointEqualityComparer.Instance));
 
         return point;

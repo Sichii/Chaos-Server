@@ -17,5 +17,6 @@ public interface IWorldOptions
     bool ProhibitItemSwitchWalk { get; }
     bool ProhibitSpeedWalk { get; }
     int RefreshIntervalMs { get; }
+    double SaveIntervalMins { get; }
     int TradeRange { get; }
 }

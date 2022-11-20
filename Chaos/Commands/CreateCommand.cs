@@ -16,12 +16,12 @@ public class CreateCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGet<string>(0, out var itemTemplateKey))
+        if (!args.TryGetNext<string>(out var itemTemplateKey))
             return default;
 
         var amount = 1;
 
-        if (args.TryGet<int>(0, out var amountArg))
+        if (args.TryGetNext<int>(out var amountArg))
             amount = amountArg;
 
         var item = ItemFactory.Create(itemTemplateKey);

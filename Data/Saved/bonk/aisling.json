@@ -5,12 +5,12 @@
   "effects": [],
   "flags": {},
   "gender": "Female",
-  "gold": 54983050,
+  "gold": 54978050,
   "hairColor": "Default",
   "hairStyle": 6,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "testTown",
+  "mapInstanceId": "test2",
   "name": "bonk",
   "nation": 0,
   "statSheet": {
@@ -18,7 +18,7 @@
     "baseClass": "Peasant",
     "maxWeight": 40,
     "toNextLevel": 100,
-    "currentHp": 98248,
+    "currentHp": 705,
     "currentMp": 50000,
     "level": 1,
     "maximumHp": 100000,
@@ -40,6 +40,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 24,
-  "y": 26
+  "x": 49,
+  "y": 28
 }

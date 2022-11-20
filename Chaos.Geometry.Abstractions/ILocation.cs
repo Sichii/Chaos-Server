@@ -3,7 +3,6 @@
 /// <summary>
 ///     Defines a combination of a map id and a coordinate pair
 /// </summary>
-/// <implements><see cref="IPoint"/></implements>
 public interface ILocation : IPoint
 {
     /// <summary>

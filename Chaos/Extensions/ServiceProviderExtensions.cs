@@ -1,4 +1,5 @@
 using Chaos.Containers;
+using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;
@@ -14,7 +15,7 @@ namespace Chaos.Extensions;
 
 public static class ServiceProviderExtensions
 {
-    public static async Task ReloadDialogs(this IServiceProvider provider)
+    public static async Task ReloadDialogsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var dialogCache = cacheProvider.GetCache<DialogTemplate>();
@@ -22,7 +23,7 @@ public static class ServiceProviderExtensions
         await dialogCache.ReloadAsync();
     }
 
-    public static async Task ReloadItems(this IServiceProvider provider)
+    public static async Task ReloadItemsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -88,7 +89,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadMaps(this IServiceProvider provider)
+    public static async Task ReloadMapsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -116,7 +117,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadMerchants(this IServiceProvider provider)
+    public static async Task ReloadMerchantsAsync(this IServiceProvider provider)
     {
         var merchantFactory = provider.GetRequiredService<IMerchantFactory>();
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
@@ -147,7 +148,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadMonsters(this IServiceProvider provider)
+    public static async Task ReloadMonstersAsync(this IServiceProvider provider)
     {
         var monsterFactory = provider.GetRequiredService<IMonsterFactory>();
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
@@ -183,7 +184,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadSkills(this IServiceProvider provider)
+    public static async Task ReloadSkillsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -229,7 +230,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadSpells(this IServiceProvider provider)
+    public static async Task ReloadSpellsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -272,6 +273,30 @@ public static class ServiceProviderExtensions
 
                         break;
                 }
+        }
+    }
+
+    public static async Task ReloadWorldMapsAsync(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var worldMapNodeCache = cacheProvider.GetCache<WorldMapNode>();
+        var worldMapCache = cacheProvider.GetCache<WorldMap>();
+
+        await worldMapNodeCache.ReloadAsync();
+        await worldMapCache.ReloadAsync();
+    }
+
+    public static async IAsyncEnumerable<Aisling> GetAislingsAsync(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+
+        foreach (var mapInstance in mapCache)
+        {
+            await using var sync = await mapInstance.Sync.WaitAsync();
+
+            foreach (var aisling in mapInstance.GetEntities<Aisling>())
+                yield return aisling;
         }
     }
 }

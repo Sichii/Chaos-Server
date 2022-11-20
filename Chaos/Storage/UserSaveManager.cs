@@ -92,20 +92,20 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         return aisling;
     }
 
-    public async Task SaveAsync(Aisling aisling)
+    public async Task SaveAsync(Aisling obj)
     {
-        Logger.LogTrace("Saving aisling {Name}", aisling.Name);
+        Logger.LogTrace("Saving aisling {Name}", obj.Name);
 
-        var aislingSchema = Mapper.Map<AislingSchema>(aisling);
-        var bankSchema = Mapper.Map<BankSchema>(aisling.Bank);
-        var equipmentSchema = Mapper.MapMany<ItemSchema>(aisling.Equipment).ToList();
-        var inventorySchema = Mapper.MapMany<ItemSchema>(aisling.Inventory).ToList();
-        var skillsSchemas = Mapper.MapMany<SkillSchema>(aisling.SkillBook).ToList();
-        var spellsSchemas = Mapper.MapMany<SpellSchema>(aisling.SpellBook).ToList();
-        var legendSchema = Mapper.MapMany<LegendMarkSchema>(aisling.Legend).ToList();
-        var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(aisling.Effects).ToList();
+        var aislingSchema = Mapper.Map<AislingSchema>(obj);
+        var bankSchema = Mapper.Map<BankSchema>(obj.Bank);
+        var equipmentSchema = Mapper.MapMany<ItemSchema>(obj.Equipment).ToList();
+        var inventorySchema = Mapper.MapMany<ItemSchema>(obj.Inventory).ToList();
+        var skillsSchemas = Mapper.MapMany<SkillSchema>(obj.SkillBook).ToList();
+        var spellsSchemas = Mapper.MapMany<SpellSchema>(obj.SpellBook).ToList();
+        var legendSchema = Mapper.MapMany<LegendMarkSchema>(obj.Legend).ToList();
+        var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(obj.Effects).ToList();
 
-        var directory = Path.Combine(Options.Directory, aisling.Name.ToLower());
+        var directory = Path.Combine(Options.Directory, obj.Name.ToLower());
 
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
@@ -120,7 +120,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             SerializeAsync(directory, "spells.json", spellsSchemas),
             SerializeAsync(directory, "legend.json", legendSchema));
 
-        Logger.LogTrace("Saved aisling {Name}", aisling.Name);
+        Logger.LogTrace("Saved aisling {Name}", obj.Name);
     }
 
     private async Task SerializeAsync(string directory, string fileName, object value)
@@ -132,7 +132,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             new FileStreamOptions
             {
                 Access = FileAccess.ReadWrite,
-                Mode = FileMode.OpenOrCreate,
+                Mode = FileMode.Truncate,
                 Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
                 Share = FileShare.None
             });

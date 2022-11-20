@@ -10,11 +10,13 @@ public static class PathfindingServiceExtensions
 {
     public static void RegisterGrid(this IPathfindingService pathfindingService, MapInstance mapInstance)
     {
+        var blackList = new List<IPoint>();
+
+        blackList.AddRange(mapInstance.GetEntities<WarpTile>());
+        blackList.AddRange(mapInstance.GetEntities<WorldMapTile>());
+
         var walls = new List<IPoint>();
-
-        walls.AddRange(mapInstance.GetEntities<WarpTile>());
-        walls.AddRange(mapInstance.GetEntities<WorldMapTile>());
-
+        
         //tiles that are walls are added to pathfinder grid details
         for (var x = 0; x < mapInstance.Template.Width; x++)
             for (var y = 0; y < mapInstance.Template.Height; y++)
@@ -27,7 +29,8 @@ public static class PathfindingServiceExtensions
             {
                 Width = mapInstance.Template.Width,
                 Height = mapInstance.Template.Height,
-                Walls = walls
+                Walls = walls,
+                Blacklist = blackList
             });
     }
 }

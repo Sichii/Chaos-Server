@@ -2,41 +2,7 @@
 
 A configurable Dark Ages server emulator
 
-# Configuration (appsettings.json)
 
-You can configure the Login and Lobby servers via appsettings.json file  
-Here are a few quick tips, but there are more options available than are listed
-
-- It's recommended to keep the [staging data](#folder-structure) out of the repo, this base staging directory can be changed at Options:
-  ChaosOptions:StagingDirectory
-- Username/Password rules can be changed via Options:ActiveDirectoryCreentialManagerOptions
-- If you want to spin up multiple worlds, or offer redirects to other people's worlds, you can add additional servers via Options:
-  LobbyOptions:Servers
-- If you want to accept redirects from other people, you need to communicate a reserved redirect id, and configure it via Options:
-  LoginOptions:ReservedRedirects
-- Edit your login notice message via Options:LoginOptions:NoticeMessage
-- Edit your new character initial spawn point via Options:LoginOptions:StartingMapInstanceId and StartingPointStr
-
-General world options are also changed via Options:WorldOptions
-
-### World Options
-
-| Name                    |     Type/Values     | Description                                                                                                                   |
-|:------------------------|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------|
-| AislingAssailIntervalMs |       number        | The base assail interval for aislings<br/>This value is modified by the AtkSpeedPct attribute                                 |
-| DropRange               |  number<br/>0-255   | The tile range around an aisling that they can drop items                                                                     |
-| MaxActionsPerSecond     |       number        | The maximum number of assails/skills/spells combined that an aisling can use per second                                       |
-| MaxGoldHeld             |       number        | The maximum amount of gold an aisling can hold                                                                                |
-| MaximumAislingAc        | number<br/>-255-255 | The highest AC an aisling can have<br/>Higher AC = Takes more damage                                                          |
-| MaximumMonsterAc        | number<br/>-255-255 | The highest AC a monster can have<br/>Higher AC = Takes more damage                                                           |
-| MaxLevel                |  number<br/>0-255   | The aisling level cap                                                                                                         |
-| MinimumAislingAc        | number<br/>-255-255 | The lowest AC an aisling can have<br/>Lower AC = Takes less damage                                                            |
-| MinimumMonsterAc        | number<br/>-255-255 | The lowest AC a monster can have<br/>Lower AC = Takes less damage                                                             |
-| PickupRange             |  number<br/>0-255   | The tile range around an aisling that they can pick up items                                                                  |
-| RefreshIntervalMs       |       number        | The minimum number of milliseconds allowed between each refresh request                                                       |
-| SaveIntervalMins        |       number        | The number of minutes between aisling saves                                                                                   |
-| TradeRange              |  number<br/>0-255   | The tiles range around an aisling that they can engage a trade with another aisling                                           |
-| UpdatesPerSecond        |       number        | The number of server updates executed per second<br/>The server uses a time delta, so this number doesnt need to be very high |
 
 # Folder Structure
 

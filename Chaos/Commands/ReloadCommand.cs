@@ -16,18 +16,17 @@ public sealed class ReloadCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)
     {
-        var arg = args.FirstOrDefault();
-
-        if (arg == null)
+        if (!args.TryGetNext<string>(out var subCommand))
             return default;
 
-        switch (arg.ToLower())
+        // ReSharper disable once ConvertSwitchStatementToSwitchExpression
+        switch (subCommand.ToLower())
         {
             case "skills":
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadSkills();
+                        await ServiceProvider.ReloadSkillsAsync();
 
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Skills reloaded");
                     });
@@ -37,7 +36,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadSpells();
+                        await ServiceProvider.ReloadSpellsAsync();
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Spells reloaded");
                     });
 
@@ -46,7 +45,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadItems();
+                        await ServiceProvider.ReloadItemsAsync();
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Items reloaded");
                     });
 
@@ -55,7 +54,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadMonsters();
+                        await ServiceProvider.ReloadMonstersAsync();
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Monsters reloaded");
                     });
 
@@ -64,7 +63,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadMerchants();
+                        await ServiceProvider.ReloadMerchantsAsync();
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Merchants reloaded");
                     });
 
@@ -73,7 +72,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadMaps();
+                        await ServiceProvider.ReloadMapsAsync();
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Maps reloaded");
                     });
 
@@ -82,8 +81,17 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadDialogs();
+                        await ServiceProvider.ReloadDialogsAsync();
                         aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Dialogs reloaded");
+                    });
+
+                break;
+            case "worldmaps":
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await ServiceProvider.ReloadWorldMapsAsync();
+                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "WorldMaps reloaded");
                     });
 
                 break;

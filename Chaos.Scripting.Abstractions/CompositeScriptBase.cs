@@ -7,7 +7,6 @@ namespace Chaos.Scripting.Abstractions;
 ///     A script that is composed of multiple scripts
 /// </summary>
 /// <inheritdoc cref="Chaos.Scripting.Abstractions.ICompositeScript{T}"/>
-/// <implements><see cref="Chaos.Scripting.Abstractions.ICompositeScript{T}"/>, <see cref="IScript"/></implements>
 public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScript<TScript> where TScript: IScript
 {
     protected List<TScript> Components { get; }

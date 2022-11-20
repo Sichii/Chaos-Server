@@ -23,5 +23,6 @@ public class WorldMapTile : ReactorTile
 
         aisling.MapInstance.RemoveObject(creature);
         aisling.Client.SendWorldMap(WorldMap);
+        aisling.UserState |= UserState.InWorldMap;
     }
 }

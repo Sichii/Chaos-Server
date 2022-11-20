@@ -14,7 +14,7 @@ public class ClearCommand : ICommand<Aisling>
     {
         var map = source.MapInstance;
 
-        if (!args.TryGet<string>(0, out var clearType))
+        if (!args.TryGetNext<string>(out var clearType))
             clearType = "all";
 
         switch (clearType.ToLower())

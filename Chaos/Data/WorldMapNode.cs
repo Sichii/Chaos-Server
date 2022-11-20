@@ -1,3 +1,4 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.World;
@@ -16,5 +17,6 @@ public sealed record WorldMapNode : WorldMapNodeInfo
     {
         var destinationMap = SimpleCache.Get<MapInstance>(Destination.Map);
         destinationMap.AddObject(aisling, Destination);
+        aisling.UserState &= ~UserState.InWorldMap;
     }
 }

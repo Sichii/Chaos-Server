@@ -644,7 +644,7 @@ public sealed class Aisling : Creature
         var endPoint = PointExtensions.DirectionalOffset(this, direction);
 
         //admins can walk through creatures and walls
-        if (!IsAdmin && !MapInstance.IsWalkable(endPoint))
+        if (!IsAdmin && !MapInstance.IsWalkable(endPoint, Type))
         {
             Refresh(true);
 
@@ -731,7 +731,6 @@ public sealed class Aisling : Creature
                                          .ToList();
 
         SetLocation(destinationPoint);
-        Client.SendLocation();
 
         var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                         .ToList();
@@ -741,7 +740,7 @@ public sealed class Aisling : Creature
 
         foreach (var creature in creaturesAfter.Except(creaturesBefore))
             Helpers.HandleApproach(creature, this);
-
-        Display();
+        
+        Refresh(true);
     }
 }

@@ -5,7 +5,12 @@ namespace Chaos.Pathfinding;
 
 public sealed class GridDetails : IGridDetails
 {
+    /// <inheritdoc />
     public int Height { get; init; }
+    /// <inheritdoc />
     public ICollection<IPoint> Walls { get; init; } = Array.Empty<IPoint>();
+    /// <inheritdoc />
+    public ICollection<IPoint> Blacklist { get; init; } = Array.Empty<IPoint>();
+    /// <inheritdoc />
     public int Width { get; init; }
 }

@@ -7,7 +7,7 @@ namespace Chaos.Networking.Options;
 public record RedirectInfo : IRedirectInfo
 {
     public IPAddress Address { get; set; } = null!;
-    public string HostName { get; set; } = null!;
+    public virtual string HostName { get; set; } = null!;
     public int Port { get; set; }
 
     public void PopulateAddress() =>

@@ -313,6 +313,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnClientWalk(IWorldClient localClient, ClientWalkArgs localArgs)
         {
+            if (localClient.Aisling.UserState.HasFlag(UserState.InWorldMap))
+                return default;
+            
             localClient.Aisling.Walk(localArgs.Direction);
 
             return default;
@@ -1187,6 +1190,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnWorldMapClick(IWorldClient localClient, WorldMapClickArgs localArgs)
         {
+            if (!localClient.Aisling.UserState.HasFlag(UserState.InWorldMap))
+                return default;
+            
             var worldMapTile = localClient.Aisling.MapInstance.GetEntitiesAtPoint<WorldMapTile>(localClient.Aisling)
                                           .FirstOrDefault();
 
@@ -1272,14 +1278,14 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         //ClientHandlers[(byte)ClientOpCode.DisplayObjectRequest] =
         ClientHandlers[(byte)ClientOpCode.Ignore] = OnIgnore;
         ClientHandlers[(byte)ClientOpCode.PublicMessage] = OnPublicMessage;
-        ClientHandlers[(byte)ClientOpCode.SpellUse] = OnUseSpell;
+        ClientHandlers[(byte)ClientOpCode.UseSpell] = OnUseSpell;
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
         ClientHandlers[(byte)ClientOpCode.Turn] = OnTurn;
         ClientHandlers[(byte)ClientOpCode.SpaceBar] = OnSpacebar;
-        ClientHandlers[(byte)ClientOpCode.RequestWorldList] = OnWorldListRequest;
+        ClientHandlers[(byte)ClientOpCode.WorldListRequest] = OnWorldListRequest;
         ClientHandlers[(byte)ClientOpCode.Whisper] = OnWhisper;
         ClientHandlers[(byte)ClientOpCode.UserOptionToggle] = OnUserOptionToggle;
-        ClientHandlers[(byte)ClientOpCode.ItemUse] = OnUseItem;
+        ClientHandlers[(byte)ClientOpCode.UseItem] = OnUseItem;
         ClientHandlers[(byte)ClientOpCode.Emote] = OnEmote;
         ClientHandlers[(byte)ClientOpCode.GoldDrop] = OnGoldDropped;
         ClientHandlers[(byte)ClientOpCode.ItemDroppedOnCreature] = OnItemDroppedOnCreature;
@@ -1292,7 +1298,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ClientHandlers[(byte)ClientOpCode.PursuitRequest] = OnPursuitRequest;
         ClientHandlers[(byte)ClientOpCode.DialogResponse] = OnDialogResponse;
         ClientHandlers[(byte)ClientOpCode.BoardRequest] = OnBoardRequest;
-        ClientHandlers[(byte)ClientOpCode.SkillUse] = OnUseSkill;
+        ClientHandlers[(byte)ClientOpCode.UseSkill] = OnUseSkill;
         ClientHandlers[(byte)ClientOpCode.WorldMapClick] = OnWorldMapClick;
         ClientHandlers[(byte)ClientOpCode.Click] = OnClick;
         ClientHandlers[(byte)ClientOpCode.Unequip] = OnUnequip;

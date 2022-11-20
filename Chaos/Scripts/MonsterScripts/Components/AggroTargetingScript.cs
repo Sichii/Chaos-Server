@@ -93,7 +93,7 @@ public class AggroTargetingScript : MonsterScriptBase
             return;
 
         //if we failed to get a target via aggroList, grab the closest aisling within aggro range
-        Target ??= Map.GetEntitiesWithinRange<Creature>(Subject, AggroRange)
+        Target ??= Map.GetEntitiesWithinRange<Aisling>(Subject, AggroRange)
                       .ThatAreVisibleTo(Subject)
                       .Where(
                           obj => !obj.Equals(Subject)

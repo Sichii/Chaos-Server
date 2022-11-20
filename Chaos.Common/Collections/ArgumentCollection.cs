@@ -7,6 +7,7 @@ namespace Chaos.Common.Collections;
 public class ArgumentCollection : IEnumerable<string>
 {
     private readonly List<string> Arguments;
+    private int Index;
     public int Count => Arguments.Count;
 
     public ArgumentCollection(IList<string> arguments, string? delimiter = null)
@@ -59,10 +60,21 @@ public class ArgumentCollection : IEnumerable<string>
             var argument = Arguments[index];
             value = PrimitiveConverter.Convert<T>(argument);
 
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
             return value != null;
         } catch
         {
             return false;
         }
+    }
+
+    public bool TryGetNext<T>([MaybeNullWhen(false)] out T value)
+    {
+        var result = TryGet(Index, out value);
+        
+        if (result)
+            Index++;
+
+        return result;
     }
 }

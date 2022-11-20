@@ -7,7 +7,7 @@ namespace Chaos.Networking.Deserializers;
 
 public sealed record ItemUseDeserializer : ClientPacketDeserializer<ItemUseArgs>
 {
-    public override ClientOpCode ClientOpCode => ClientOpCode.ItemUse;
+    public override ClientOpCode ClientOpCode => ClientOpCode.UseItem;
 
     public override ItemUseArgs Deserialize(ref SpanReader reader)
     {

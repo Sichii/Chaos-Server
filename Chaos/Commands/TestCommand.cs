@@ -18,13 +18,13 @@ public class TestCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGet<string>(0, out var type))
+        if (!args.TryGetNext<string>(out var type))
             return default;
 
         switch (type.ToLower())
         {
             case "grounditems":
-                if (!args.TryGet<int>(1, out var amount))
+                if (!args.TryGetNext<int>(out var amount))
                     return default;
 
                 var items = new List<GroundItem>();

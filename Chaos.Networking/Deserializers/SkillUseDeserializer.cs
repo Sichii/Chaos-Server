@@ -7,7 +7,7 @@ namespace Chaos.Networking.Deserializers;
 
 public sealed record SkillUseDeserializer : ClientPacketDeserializer<SkillUseArgs>
 {
-    public override ClientOpCode ClientOpCode => ClientOpCode.SkillUse;
+    public override ClientOpCode ClientOpCode => ClientOpCode.UseSkill;
 
     public override SkillUseArgs Deserialize(ref SpanReader reader)
     {

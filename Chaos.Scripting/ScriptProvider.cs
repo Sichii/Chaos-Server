@@ -9,11 +9,11 @@ public sealed class ScriptProvider : IScriptProvider
 
     public ScriptProvider(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
-    public TScript CreateScript<TScript, TScripted>(ICollection<string> scriptKeys, TScripted source) where TScript: IScript
+    public TScript CreateScript<TScript, TScripted>(ICollection<string> scriptKeys, TScripted subject) where TScript: IScript
         where TScripted: IScripted
     {
         var factory = ServiceProvider.GetRequiredService<IScriptFactory<TScript, TScripted>>();
 
-        return factory.CreateScript(scriptKeys, source);
+        return factory.CreateScript(scriptKeys, subject);
     }
 }
