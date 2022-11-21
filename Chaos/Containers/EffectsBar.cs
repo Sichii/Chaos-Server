@@ -54,6 +54,7 @@ public sealed class EffectsBar : IEffectsBar
 
         if (Effects.TryRemove(effectName, out var effect))
         {
+            AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
             effect.OnDispelled();
             ResetDisplay();
         }
@@ -95,6 +96,7 @@ public sealed class EffectsBar : IEffectsBar
 
         if (Effects.TryRemove(effectName, out var effect))
         {
+            AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
             effect.OnTerminated();
             ResetDisplay();
         }

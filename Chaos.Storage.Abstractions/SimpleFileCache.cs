@@ -7,16 +7,52 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage.Abstractions;
 
+/// <summary>
+///     An <see cref="ISimpleCache{TResult}"/> that loads data from a file and caches it
+/// </summary>
+/// <typeparam name="T">The type of object stored in the cache</typeparam>
+/// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
+/// <typeparam name="TOptions">The type of the options object used to configure this cache</typeparam>
 public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class
                                                                                   where TOptions: class, ISimpleFileCacheOptions
 {
+    /// <summary>
+    ///     Stores cached objects
+    /// </summary>
     protected ConcurrentDictionary<string, T> Cache { get; }
+    
+    /// <summary>
+    ///     The options used for deserialization
+    /// </summary>
     protected JsonSerializerOptions JsonSerializerOptions { get; }
+    
+    /// <summary>
+    ///     A function that selects and returns the object's key
+    /// </summary>
     protected abstract Func<T, string> KeySelector { get; }
+    
+    /// <summary>
+    ///     An object used to write logs
+    /// </summary>
     protected ILogger Logger { get; }
+    
+    /// <summary>
+    ///     An object used to map the deserialized type to the return type, and any other required type conversions
+    /// </summary>
     protected ITypeMapper Mapper { get; }
+    
+    /// <summary>
+    ///     The options object used to configure this cache
+    /// </summary>
     protected TOptions Options { get; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="mapper">An object used to map the deserialized type to the return type, and any other required type conversions</param>
+    /// <param name="jsonSerializerOptions">The options used for deserialization</param>
+    /// <param name="options">The options object used to configure this cache</param>
+    /// <param name="logger">An object used to write logs</param>
     protected SimpleFileCacheBase(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -44,6 +80,10 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <summary>
+    ///     Loads the object from the specified path and returns it
+    /// </summary>
+    /// <param name="path">The path to the file to deserialize</param>
     protected virtual async Task<T?> LoadFromFileAsync(string path)
     {
         await using var stream = File.OpenRead(path);
@@ -55,6 +95,7 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
         return Mapper.Map<T>(schema);
     }
 
+    /// <inheritdoc />
     public virtual async Task ReloadAsync()
     {
         var searchPattern = Options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
@@ -76,6 +117,7 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
             {
                 var obj = await LoadFromFileAsync(path);
 
+                // ReSharper disable once CompareNonConstrainedGenericWithNull
                 if (obj == null)
                     return;
 
