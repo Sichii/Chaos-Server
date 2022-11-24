@@ -5,8 +5,17 @@ using Microsoft.Extensions.Options;
 // ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.DependencyInjection;
 
+/// <summary>
+///     <see cref="Chaos.Common"/> DI extensions
+/// </summary>
 public static class CommonExtensions
 {
+    /// <summary>
+    ///     Adds an option object based on a configuration section to the service collection
+    /// </summary>
+    /// <param name="services">The service collection to add the options object to</param>
+    /// <param name="subSection">If the section is not at the root level, supply the subsection here</param>
+    /// <typeparam name="T">The type of the options object</typeparam>
     public static OptionsBuilder<T> AddOptionsFromConfig<T>(this IServiceCollection services, string? subSection = null) where T: class
     {
         var typeName = typeof(T).Name;

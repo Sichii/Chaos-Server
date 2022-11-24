@@ -19,4 +19,7 @@ public abstract class SpellScriptBase : SubjectiveScriptBase<Spell>, ISpellScrip
 
     /// <inheritdoc />
     public virtual void OnUse(SpellContext context) { }
+
+    /// <inheritdoc />
+    public virtual bool CanUse(SpellContext context) => context.Source.IsAlive && context.Target.IsAlive;
 }

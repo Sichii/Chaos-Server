@@ -2,8 +2,16 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Extensions.Common;
 
+/// <summary>
+///     Provides extension methods for <see cref="MenuOrDialogType" />.
+/// </summary>
 public static class MenuOrDialogTypeExtensions
 {
+    /// <summary>
+    ///     Converts a <see cref="MenuOrDialogType"/> to a <see cref="DialogType"/>
+    /// </summary>
+    /// <param name="value">The value to convert</param>
+    /// <returns>An equivalent <see cref="DialogType"/> to the <see cref="MenuOrDialogType"/> if one exists, otherwise <c>null</c></returns>
     public static DialogType? ToDialogType(this MenuOrDialogType value) => value switch
     {
         MenuOrDialogType.Normal          => DialogType.Normal,
@@ -16,6 +24,11 @@ public static class MenuOrDialogTypeExtensions
         _                                => null
     };
 
+    /// <summary>
+    ///     Converts a <see cref="MenuOrDialogType"/> to a <see cref="MenuType"/>
+    /// </summary>
+    /// <param name="value">The value to convert</param>
+    /// <returns>An equivalent <see cref="MenuType"/> to the <see cref="MenuOrDialogType"/> if one exists, otherwise <c>null</c></returns>
     public static MenuType? ToMenuType(this MenuOrDialogType value) => value switch
     {
         MenuOrDialogType.Menu                  => MenuType.Menu,

@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Objects.World;
+using Chaos.Servers.Options;
 
 namespace Chaos.Containers;
 
@@ -43,6 +44,13 @@ public sealed class Group : IEnumerable<Aisling>
         if (!PendingInvites.TryGetValue(key, out var invite))
             return;
 
+        if(Members.Count == WorldOptions.Instance.MaxGroupSize)
+        {
+            receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "The group is full");
+
+            return;
+        }
+        
         PendingInvites.Remove(invite);
 
         //if the invite timed out
@@ -131,6 +139,13 @@ public sealed class Group : IEnumerable<Aisling>
 
             //receiver is already in a grp
             sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{receiver.Name} is already in a group");
+        }
+
+        if (Members.Count == WorldOptions.Instance.MaxGroupSize)
+        {
+            sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, "Your group is full");
+
+            return;
         }
 
         var invite = new GroupInvite(sender.Name, receiver.Name);

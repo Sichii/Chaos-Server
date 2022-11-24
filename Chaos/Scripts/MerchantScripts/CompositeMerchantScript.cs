@@ -6,54 +6,73 @@ using Chaos.Scripts.MerchantScripts.Abstractions;
 
 namespace Chaos.Scripts.MerchantScripts;
 
+/// <summary>
+///     DO NOT EDIT THIS SCRIPT
+/// </summary>
 public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMerchantScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnApproached(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnApproached(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnAttacked(Creature source, ref int damage)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnAttacked(source, ref damage);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnClicked(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnClicked(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDeparture(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnDeparture(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnGoldDroppedOn(Aisling source, int amount)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnGoldDroppedOn(source, amount);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnItemDroppedOn(source, slot, count);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public void OnPublicMessage(Creature source, string message) { }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void Update(TimeSpan delta)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))

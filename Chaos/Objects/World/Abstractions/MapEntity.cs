@@ -24,18 +24,24 @@ public abstract class MapEntity : WorldEntity, ILocation
     {
         ArgumentNullException.ThrowIfNull(point);
 
+        if (!MapInstance.IsWithinMap(point))
+        {
+            if (this is Aisling aisling)
+                aisling.Refresh(true);
+
+            throw new InvalidOperationException(
+                $"Attempted to set location outside of map bounds. (Map: {MapInstance.InstanceId}, Destination: {point})");
+        }
+
         var oldPoint = Point.From(this);
 
         X = point.X;
         Y = point.Y;
 
-        if (oldPoint != this)
-        {
-            MapInstance.MoveEntity(this, oldPoint);
+        MapInstance.MoveEntity(this, oldPoint);
 
-            if (this is Creature creature)
-                creature.LastMove = DateTime.UtcNow;
-        }
+        if (this is Creature creature)
+            creature.LastMove = DateTime.UtcNow;
     }
 
     public void SetLocation(MapInstance mapInstance, IPoint point)

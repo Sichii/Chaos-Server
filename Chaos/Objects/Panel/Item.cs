@@ -96,5 +96,12 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
 
     public string ToString(int amount) => $@"Id:{UniqueId} Name:{DisplayName} Count:{amount})";
 
-    public void Use(Aisling source) => Script.OnUse(source);
+    public void Use(Aisling source)
+    {
+        if (!Script.CanUse(source))
+            return;
+
+        Script.OnUse(source);
+        BeginCooldown(source);
+    }
 }

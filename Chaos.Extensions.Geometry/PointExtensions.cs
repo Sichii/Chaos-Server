@@ -4,14 +4,30 @@ using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Extensions.Geometry;
 
+/// <summary>
+///     Provides extension methods for <see cref="IPoint" />.
+/// </summary>
 public static class PointExtensions
 {
+    /// <summary>
+    ///     Lazily generates a sequence of points in a cone shape.
+    /// </summary>
+    /// <param name="point">The starting point of the cone</param>
+    /// <param name="direction">The direction the cone is facing</param>
+    /// <param name="maxDistance">The maximum distance the cone extends from the starting point</param>
+    /// <returns>An enumeration of points in the shape of a cone</returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <remarks>
+    ///     The <paramref name="maxDistance" /> is the maximum distance the cone extends from the starting point, however there will be points
+    ///     that are part of the cone that are farther than <paramref name="maxDistance" /> distance from the starting point. This is because the
+    ///     forward edges and the center of the cone both extend the same number of spaces in the given direction.
+    /// </remarks>
     public static IEnumerable<Point> ConalSearch(this IPoint point, Direction direction, int maxDistance)
     {
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction), "Direction cannot be invalid");
 
-        foreach (var edgePair in point.GetInterCardinalPoints(direction, maxDistance).Chunk(2))
+        foreach (var edgePair in point.GenerateIntercardinalPoints(direction, maxDistance).Chunk(2))
         {
             var edge1 = edgePair[0];
             var edge2 = edgePair[1];
@@ -23,6 +39,14 @@ public static class PointExtensions
         }
     }
 
+    /// <summary>
+    ///     Offsets an <see cref="IPoint" /> in the specified <see cref="Direction" /> by the specified <paramref name="distance" />
+    /// </summary>
+    /// <param name="point">The point to offset</param>
+    /// <param name="direction">The direction to offset to</param>
+    /// <param name="distance">The distance to offset by</param>
+    /// <returns>A new <see cref="Point" /> offset <paramref name="distance" /> number of tiles in <paramref name="direction" /></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -41,6 +65,12 @@ public static class PointExtensions
         };
     }
 
+    /// <summary>
+    ///     Determines the directional relationship between this <see cref="IPoint" /> and another <see cref="IPoint" />
+    /// </summary>
+    /// <param name="point">The <see cref="IPoint" /> whose relation to another to find</param>
+    /// <param name="other">The <see cref="IPoint" /> to find the relation to</param>
+    /// <returns>The <see cref="Direction" /> <paramref name="other" /> would need to face to be facing <paramref name="point" /> </returns>
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -81,6 +111,12 @@ public static class PointExtensions
         return direction;
     }
 
+    /// <summary>
+    ///     Determines the distances between this <see cref="IPoint" /> and another <see cref="IPoint" />
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="other">The <see cref="IPoint" /> to check distance against</param>
+    /// <returns>The distance between the two given points without moving diagonally</returns>
     public static int DistanceFrom(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -91,53 +127,71 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Retreives a list of points in a line from the user, with an option for distance and direction. Direction.All is
+    ///     Lazily generates an enumeration of points in a line from the user, with an option for distance and direction. Direction.All is
     ///     optional. Direction.Invalid direction returns empty list.
     /// </summary>
-    public static IEnumerable<Point> GetCardinalPoints(this IPoint start, int radius = 1, Direction direction = Direction.All)
+    /// <param name="start"></param>
+    /// <param name="radius">The max distance to generate points</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="radius" /> must be positive</exception>
+    /// <remarks>
+    ///     Assumes <see cref="Direction.Up" /> is equivalent to the cardinal direction "North", this method will generate points in all 4
+    ///     cardinal directions. Points will be generated 1 radius at a time, clock-wise.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// //generates points in a counter clockwise spiral around the start
+    /// //will generate the 4 points immediately around the start
+    /// var points = new Point(0, 0).GenerateCardinalPoints(1);
+    /// </code>
+    /// </example>
+    public static IEnumerable<Point> GenerateCardinalPoints(this IPoint start, int radius = 1)
     {
-        if (direction == Direction.Invalid)
-            yield break;
+        if (radius <= 0)
+            throw new ArgumentOutOfRangeException($"{nameof(radius)} must be positive");
 
         for (var i = 1; i <= radius; i++)
-            switch (direction)
-            {
-                case Direction.All:
-                    yield return start.DirectionalOffset(Direction.Up, i);
-                    yield return start.DirectionalOffset(Direction.Right, i);
-                    yield return start.DirectionalOffset(Direction.Down, i);
-                    yield return start.DirectionalOffset(Direction.Left, i);
-
-                    break;
-                default:
-                    yield return start.DirectionalOffset(direction, i);
-
-                    break;
-            }
-    }
-
-    /// <summary>
-    ///     Creates an enumerable list of points representing a path between two given points, and returns it.
-    /// </summary>
-    /// <param name="start">Starting point for the creation of the path.</param>
-    /// <param name="end">Ending point for the creation of the path.</param>
-    public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
-    {
-        var current = Point.From(start);
-
-        while (current != end)
         {
-            current = current.OffsetTowards(end);
-
-            yield return current;
+            yield return start.DirectionalOffset(Direction.Up, i);
+            yield return start.DirectionalOffset(Direction.Right, i);
+            yield return start.DirectionalOffset(Direction.Down, i);
+            yield return start.DirectionalOffset(Direction.Left, i);
         }
     }
 
     /// <summary>
-    ///     Retreives a list of diagonal points in relevance to the user, with an optional distance and direction.
-    ///     Direction.All is optional. Direction.Invalid direction returns empty list.
+    ///     Lazily generates an enumeration of diagonal points in relevance to the user, with an optional distance and direction.
+    ///     Direction.All is optional. Direction.Invalid direction returns an empty enumeration
     /// </summary>
-    public static IEnumerable<Point> GetInterCardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
+    /// <param name="start"></param>
+    /// <param name="direction">The general direction to generate points for. See remarks.</param>
+    /// <param name="radius">The range in which to generate points</param>
+    /// <remarks>
+    ///     Assuming <see cref="Direction.Up" /> is equivalent to the cardinal direction "North", this method will generate points in the
+    ///     inter-cardinal directions "North-East", "South-East", "South-West", and "North-West". Points will be generated 1 radius at a time,
+    ///     clock-wise. Optionally, you can choose a cardinal <see cref="Direction" /> to generate points for the 2 inter-cardinal directions that
+    ///     share the given cardinal direction.
+    /// </remarks>
+    /// <example>
+    ///     <code>
+    ///     //this call will generate points in the inter-cardinal directions "North-West" and "North-East"
+    ///     //4 points will be generated, 2 in each inter-cardinal direction
+    ///     //the points will be diagonal to the original point 
+    ///     var points = new Point(0, 0).GenerateInterCardinalPoints(Direction.Up, 2);
+    /// </code>
+    ///     <code>
+    ///     //this call will generate points in the inter-cardinal directions "South-West" and "South-East"
+    ///     //10 points will be generated, 5 in each inter-cardinal direction
+    ///     //the points will be diagonal to the original point 
+    ///     var points = new Point(0, 0).GenerateInterCardinalPoints(Direction.Down, 5);
+    /// </code>
+    ///     <code>
+    ///     //this call will generate points in all inter-cardinal directions
+    ///     //12 points will be generated, 3 in each inter-cardinal direction
+    ///     //the points will be diagonal to the original point 
+    ///     var points = new Point(0, 0).GenerateInterCardinalPoints(Direction.All, 3);
+    /// </code>
+    /// </example>
+    public static IEnumerable<Point> GenerateIntercardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
     {
         if (direction == Direction.Invalid)
             yield break;
@@ -177,6 +231,30 @@ public static class PointExtensions
             }
     }
 
+    /// <summary>
+    ///     Creates an enumerable list of points representing a path between two given points, and returns it.
+    /// </summary>
+    /// <param name="start">Starting point for the creation of the path</param>
+    /// <param name="end">Ending point for the creation of the path</param>
+    /// <remarks>Does not return the start point, only the points between the start and end, as well as the end point itself</remarks>
+    public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
+    {
+        var current = Point.From(start);
+
+        while (current != end)
+        {
+            current = current.OffsetTowards(end);
+
+            yield return current;
+        }
+    }
+
+    /// <summary>
+    ///     Offsets one <see cref="IPoint" /> towards another <see cref="IPoint" />
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="other">The point to offset towards</param>
+    /// <returns>A new <see cref="Point" /> that has been offset in the direction of <paramref name="other" /></returns>
     public static Point OffsetTowards(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -192,21 +270,18 @@ public static class PointExtensions
     ///     Lazily generates points between two points. <br />
     ///     https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
     /// </summary>
-    /// <param name="point">A point.</param>
-    /// <param name="other">Another point.</param>
-    /// <returns>
-    ///     <see cref="IEnumerable{T}" /> of <see cref="Point" /><br />
-    ///     An enumeration of points that a line drawn from <paramref name="point" /> to the <paramref name="other" /> would
-    ///     cross over.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">point</exception>
-    /// <exception cref="ArgumentNullException">other</exception>
-    public static IEnumerable<Point> RayTraceTo(this IPoint point, IPoint other)
+    /// <param name="start">The starting point</param>
+    /// <param name="end">The ending point</param>
+    /// <remarks>
+    ///     This will enumerate all points between <paramref name="start" /> and <paramref name="end" /> as if a line had been drawn perfectly
+    ///     between the two points. Any point the line crosses over will be returned. <br />
+    /// </remarks>
+    public static IEnumerable<Point> RayTraceTo(this IPoint start, IPoint end)
     {
-        var x0 = point.X;
-        var y0 = point.Y;
-        var x1 = other.X;
-        var y1 = other.Y;
+        var x0 = start.X;
+        var y0 = start.Y;
+        var x1 = end.X;
+        var y1 = end.Y;
         var dx = Math.Abs(x1 - x0);
         var dy = Math.Abs(y1 - y0);
         var x = x0;
@@ -234,6 +309,12 @@ public static class PointExtensions
         }
     }
 
+    /// <summary>
+    ///     Lazily generates points around a given point. The search expands outwards from the given point until it reaches the specified max distance
+    /// </summary>
+    /// <param name="point">The point to search around</param>
+    /// <param name="maxRadius">The maximum distance from the <paramref name="point"/> to search</param>
+    /// <remarks>The search starts from <see cref="Direction.Up"/> and searches clock-wise</remarks>
     public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
     {
         var currentPoint = Point.From(point);

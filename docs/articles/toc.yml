@@ -1,4 +1,6 @@
 - name: Server Configuration
   href: ServerConfiguration.md
+- name: Lobby Options
+  href: LobbyOptions.md
 - name: World Options
   href: WorldOptions.md

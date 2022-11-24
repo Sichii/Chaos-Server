@@ -13,7 +13,7 @@ public interface IInterlockedObject<T> where T: class
     /// <summary>
     ///     Sets the underlying object. Assignment is atomic.
     /// </summary>
-    void Set(T obj);
+    void Set(T? obj);
     
     /// <summary>
     ///     Sets the underlying object if the current value is null. Operation is atomic.

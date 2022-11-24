@@ -26,4 +26,7 @@ public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
 
     /// <inheritdoc />
     public virtual void OnUse(Aisling source) { }
+
+    /// <inheritdoc />
+    public virtual bool CanUse(Aisling source) => source.IsAlive;
 }

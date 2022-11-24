@@ -24,7 +24,7 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
 
         LoadScriptTypes();
 
-        CompositeType = ScriptTypeCache.FirstOrDefault(x => x.Key.StartWithI("composite"))!.Value;
+        CompositeType = ScriptTypeCache.FirstOrDefault(x => x.Key.StartsWithI("composite"))!.Value;
     }
 
     /// <inheritdoc />

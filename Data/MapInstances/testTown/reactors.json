@@ -1,0 +1,38 @@
+[
+  {
+    "source": "(3, 13)",
+    "shouldBlockPathfinding": true,
+    "scriptKeys": [
+      "warp"
+    ],
+    "scriptVars": {
+      "warp": {
+        "destination": "testTown:(17, 12)"
+      }
+    }
+  },
+  {
+    "source": "(4, 13)",
+    "shouldBlockPathfinding": true,
+    "scriptKeys": [
+      "warp"
+    ],
+    "scriptVars": {
+      "warp": {
+        "destination": "testTown:(18, 12)"
+      }
+    }
+  },
+  {
+    "source": "(0, 13)",
+    "shouldBlockPathfinding": true,
+    "scriptKeys": [
+      "showWorldMap"
+    ],
+    "scriptVars": {
+      "showWorldMap": {
+        "worldMapKey": "field001"
+      }
+    }
+  }
+]

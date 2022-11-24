@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Time;
 
+/// <summary>
+///     Monitors the execution time of a tight loop. Logs output so the used has better insight into how long execution is taking.
+/// </summary>
 public sealed class DeltaMonitor : IDeltaUpdatable
 {
     private readonly double MaxDelta;
@@ -20,6 +23,10 @@ public sealed class DeltaMonitor : IDeltaUpdatable
         FirstPrint = true;
     }
 
+    /// <summary>
+    ///     Adds a recorded <see cref="TimeSpan"/> that represents how much time execution took
+    /// </summary>
+    /// <param name="executionDelta">The amount of time the loop took to execute</param>
     public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);
 
     /// <inheritdoc />
@@ -37,10 +44,12 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     private void PrintStatistics(List<TimeSpan> deltas) => _ = Task.Run(
         () =>
         {
+            //the first set of statistic will be inaccurate because of JIT compilation, world loading, and other things
             if (FirstPrint)
             {
                 FirstPrint = false;
 
+                //so instead of printing the first set of statistic, print notes that give information about the monitor
                 Logger.LogInformation(
                     """
 Delta Monitor Notes: 
@@ -55,7 +64,10 @@ If the log message is ERROR, then you've done something seriously wrong
                 return;
             }
 
+            //sort the deltas from smallest to largest
             deltas.Sort();
+            
+            //gather various statistics about the deltas
             var average = deltas.Average(d => d.TotalMilliseconds);
             var max = deltas.Last().TotalMilliseconds;
             var count = deltas.Count;
@@ -63,6 +75,7 @@ If the log message is ERROR, then you've done something seriously wrong
             
             double median;
 
+            //median calculation
             if (count % 2 == 0)
             {
                 var first = deltas[count / 2];
@@ -71,11 +84,13 @@ If the log message is ERROR, then you've done something seriously wrong
             } else
                 median = deltas[count / 2].TotalMilliseconds;
 
+            //log output format
             const string FORMAT =
                 "Delta Monitor - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}, Max: {Max:N1}, Samples: {SampleCount}";
 
             var objs = new object[] { average, median, upperPct, max, deltas.Count };
 
+            //depending on how the loop is performing, log the output at different levels
             if ((average > MaxDelta) || (max > 250))
                 Logger.LogError(FORMAT, objs);
             else if ((upperPct > MaxDelta / 2) || (max > 100))

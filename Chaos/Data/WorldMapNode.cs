@@ -17,6 +17,7 @@ public sealed record WorldMapNode : WorldMapNodeInfo
     {
         var destinationMap = SimpleCache.Get<MapInstance>(Destination.Map);
         destinationMap.AddObject(aisling, Destination);
-        aisling.UserState &= ~UserState.InWorldMap;
+
+        aisling.ActiveObject.Set(null);
     }
 }

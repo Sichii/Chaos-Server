@@ -3,12 +3,25 @@ using Chaos.Common.Utilities;
 
 namespace Chaos.Time;
 
+/// <summary>
+///     A timers that utilizes a delta time value to increment elapsed time. Each time the interval elapses, a new interval is set with an
+///     amount of randomization as specified through configuration
+/// </summary>
 public class RandomizedIntervalTimer : IntervalTimer
 {
+    /// <summary>
+    ///     The percent of randomization to apply to the <see cref="IntervalTimer.Interval" /> each time it elapses
+    /// </summary>
     protected int MaxRandomizationPct { get; set; }
 
+    /// <summary>
+    ///     The randomized interval that will be used until it elapses
+    /// </summary>
     protected TimeSpan RandomizedInterval { get; set; }
 
+    /// <summary>
+    ///     The type of randomization to apply to the interval
+    /// </summary>
     protected RandomizationType Type { get; set; }
 
     public RandomizedIntervalTimer(
@@ -35,6 +48,10 @@ public class RandomizedIntervalTimer : IntervalTimer
         SetRandomizedInterval();
     }
 
+    /// <summary>
+    ///     Sets the <see cref="RandomizedInterval" /> based on the <see cref="IntervalTimer.Interval" />, <see cref="RandomizationType" />, and
+    ///     <see cref="MaxRandomizationPct" />
+    /// </summary>
     protected void SetRandomizedInterval()
     {
         var ticks = Interval.Ticks;
@@ -43,6 +60,7 @@ public class RandomizedIntervalTimer : IntervalTimer
         RandomizedInterval = new TimeSpan(randomizedTicks);
     }
 
+    /// <inheritdoc />
     public override void Update(TimeSpan delta)
     {
         IntervalElapsed = false;

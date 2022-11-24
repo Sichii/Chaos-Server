@@ -66,9 +66,7 @@ public sealed class Exchange
     public void Activate()
     {
         using var sync = Sync.Enter();
-
-        User1.UserState |= UserState.Exchanging;
-        User2.UserState |= UserState.Exchanging;
+        
         User1.Client.SendExchangeStart(User2);
         User2.Client.SendExchangeStart(User1);
 
@@ -198,11 +196,8 @@ public sealed class Exchange
     {
         IsActive = false;
 
-        if (User1.ActiveObject.TryRemove(this))
-            User1.UserState &= ~UserState.Exchanging;
-
-        if (User2.ActiveObject.TryRemove(this))
-            User2.UserState &= ~UserState.Exchanging;
+        User1.ActiveObject.TryRemove(this);
+        User2.ActiveObject.TryRemove(this);
     }
 
     private void Distribute(Aisling aisling, int gold, Inventory items)

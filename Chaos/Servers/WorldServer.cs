@@ -304,7 +304,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         client.SendUserId();
         aisling.MapInstance.AddObject(aisling, aisling);
         client.SendProfileRequest();
-        aisling.MapInstance.ActivateReactors(aisling, ReactorActivationType.Walk);
+        
+        foreach(var reactor in aisling.MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(aisling)))
+            reactor.OnWalkedOn(aisling);
     }
 
     public ValueTask OnClientWalk(IWorldClient client, in ClientPacket clientPacket)
@@ -313,7 +315,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnClientWalk(IWorldClient localClient, ClientWalkArgs localArgs)
         {
-            if (localClient.Aisling.UserState.HasFlag(UserState.InWorldMap))
+            //if player is in a world map, dont allow them to walk
+            if (localClient.Aisling.ActiveObject.TryGet<WorldMap>() != null)
                 return default;
             
             localClient.Aisling.Walk(localArgs.Direction);
@@ -474,28 +477,14 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             (var amount, var destinationPoint) = localArgs;
             var map = localClient.Aisling.MapInstance;
-
-            if (amount <= 0)
-                return default;
-
+            
             if (!localClient.Aisling.WithinRange(destinationPoint, Options.DropRange))
                 return default;
 
             if (map.IsWall(destinationPoint))
                 return default;
 
-            var currentGold = localClient.Aisling.Gold;
-
-            if (currentGold < amount)
-                return default;
-
-            currentGold -= amount;
-            localClient.Aisling.Gold = currentGold;
-
-            localClient.SendAttributes(StatUpdateType.ExpGold);
-
-            var money = new Money(amount, map, destinationPoint);
-            map.AddObject(money, destinationPoint);
+            localClient.Aisling.DropGold(destinationPoint, amount);
 
             return default;
         }
@@ -738,6 +727,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             var obj = map.GetEntitiesAtPoint<GroundEntity>(sourcePoint)
                          .TopOrDefault();
 
+            var reactor = map.GetEntitiesAtPoint<ReactorTile>(sourcePoint)
+                             .TopOrDefault();
+
             if (obj == null)
                 return default;
 
@@ -745,14 +737,16 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 case GroundItem groundItem:
                     localClient.Aisling.PickupItem(groundItem, destinationSlot);
+                    reactor?.OnItemPickedUpFrom(localClient.Aisling, groundItem);
 
                     break;
                 case Money money:
                     localClient.Aisling.PickupMoney(money);
+                    reactor?.OnGoldPickedUpFrom(localClient.Aisling, money);
 
                     break;
             }
-
+            
             return default;
         }
 
@@ -1190,16 +1184,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnWorldMapClick(IWorldClient localClient, WorldMapClickArgs localArgs)
         {
-            if (!localClient.Aisling.UserState.HasFlag(UserState.InWorldMap))
-                return default;
-            
-            var worldMapTile = localClient.Aisling.MapInstance.GetEntitiesAtPoint<WorldMapTile>(localClient.Aisling)
-                                          .FirstOrDefault();
+            var worldMap = localClient.Aisling.ActiveObject.TryGet<WorldMap>();
 
-            if (worldMapTile == null)
+            //if player is not in a world map, return
+            if (worldMap == null)
                 return default;
 
-            if (!worldMapTile.WorldMap.Nodes.TryGetValue(localArgs.UniqueId, out var node))
+            if (!worldMap.Nodes.TryGetValue(localArgs.UniqueId, out var node))
                 return default;
 
             node.OnClick(localClient.Aisling);

@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -56,7 +55,8 @@ public sealed class MonsterSpawn : IDeltaUpdatable
         var spawnAmount = Math.Min(MaxAmount - currentCount, MaxPerSpawn);
         var monsters = new List<Monster>();
 
-        var warps = MapInstance.GetEntities<WarpTile>()
+        var warps = MapInstance.GetEntities<ReactorTile>()
+                               .Where(rt => rt.ShouldBlockPathfinding)
                                .ToList<IPoint>();
 
         for (var i = 0; i < spawnAmount; i++)

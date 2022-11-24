@@ -5,34 +5,38 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.TypeMapper;
 
+/// <summary>
+///     Maps objects from one type to another by utilizing <see cref="IMapperProfile{T1,T2}"/> implementations
+/// </summary>
 public sealed class Mapper : ITypeMapper
 {
-    private static readonly ConcurrentDictionary<(Type From, Type To), Func<object, object>> ResolverCache;
+    private static readonly ConcurrentDictionary<(Type From, Type To), Func<object, object>> ResolverMap;
     private readonly IServiceProvider Provider;
 
-    static Mapper() => ResolverCache = new ConcurrentDictionary<(Type From, Type To), Func<object, object>>();
+    static Mapper() => ResolverMap = new ConcurrentDictionary<(Type From, Type To), Func<object, object>>();
 
     public Mapper(IServiceProvider provider) => Provider = provider;
 
+    /// <inheritdoc />
     public TResult Map<T, TResult>(T obj)
     {
         if (obj == null)
             throw new ArgumentNullException(nameof(obj));
 
-        var mapper = ResolverCache.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);
+        var mapper = ResolverMap.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);
 
         return (TResult)mapper(obj);
     }
-
+    /// <inheritdoc />
     public TResult Map<TResult>(object obj)
     {
         ArgumentNullException.ThrowIfNull(obj);
 
-        var mapper = ResolverCache.GetOrAdd((obj.GetType(), typeof(TResult)), ResolveMapper);
+        var mapper = ResolverMap.GetOrAdd((obj.GetType(), typeof(TResult)), ResolveMapper);
 
         return (TResult)mapper(obj);
     }
-
+    /// <inheritdoc />
     public IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> obj)
     {
         var objs = obj.ToList();
@@ -40,7 +44,7 @@ public sealed class Mapper : ITypeMapper
         if (!objs.Any())
             yield break;
 
-        var mapper = ResolverCache.GetOrAdd((objs.First().GetType(), typeof(TResult)), ResolveMapper);
+        var mapper = ResolverMap.GetOrAdd((objs.First().GetType(), typeof(TResult)), ResolveMapper);
 
         foreach (var o in objs)
             yield return (TResult)mapper(o);
@@ -54,14 +58,14 @@ public sealed class Mapper : ITypeMapper
         if (!objs.Any())
             yield break;
 
-        var mapper = ResolverCache.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);
+        var mapper = ResolverMap.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);
 
         foreach (var o in objs)
             yield return (TResult)mapper(o!);
     }
 
     /// <summary>
-    ///     Creates a function that maps one type to another, utilizing a typeMapper
+    ///     Creates a function that maps one type to another, utilizing an <see cref="IMapperProfile{T1,T2}"/>
     /// </summary>
     private Func<object, object> ResolveMapper((Type From, Type To) key)
     {

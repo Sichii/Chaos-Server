@@ -1,0 +1,26 @@
+[
+  {
+    "source": "(7, 16)",
+    "shouldBlockPathfinding": true,
+    "scriptKeys": [
+      "showWorldMap"
+    ],
+    "scriptVars": {
+      "showWorldMap": {
+        "worldMapKey": "field001"
+      }
+    }
+  },
+  {
+    "source": "(8, 16)",
+    "shouldBlockPathfinding": true,
+    "scriptKeys": [
+      "showWorldMap"
+    ],
+    "scriptVars": {
+      "showWorldMap": {
+        "worldMapKey": "field001"
+      }
+    }
+  }
+]

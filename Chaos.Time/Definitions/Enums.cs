@@ -1,1 +1,0 @@
-namespace Chaos.Time.Definitions;

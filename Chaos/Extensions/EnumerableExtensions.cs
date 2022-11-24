@@ -59,7 +59,7 @@ public static class EnumerableExtensions
         objs.Where(visibleEntity.IsVisibleTo);
 
     public static IEnumerable<T> ThatCollideWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature =>
-        objs.Where(c => !c.Equals(creature) && c.WillCollideWith(creature));
+        objs.Where(c => !c.Equals(creature) && creature.WillCollideWith(c));
 
     public static T? TopOrDefault<T>(this IEnumerable<T> objs) where T: WorldEntity => objs.MaxBy(o => o.Creation);
 

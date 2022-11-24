@@ -10,4 +10,5 @@ public interface ISpellScript : IScript
 
     void OnLearned(Aisling aisling);
     void OnUse(SpellContext context);
+    bool CanUse(SpellContext context);
 }

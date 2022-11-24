@@ -71,4 +71,7 @@ public readonly struct Point : IPoint, IEquatable<IPoint>
 
         return true;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => IPoint.ToString(this);
 }

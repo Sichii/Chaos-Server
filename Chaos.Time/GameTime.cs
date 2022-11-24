@@ -2,6 +2,9 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Time;
 
+/// <summary>
+///     A <see cref="DateTime"/> replacement that runs at 24x speed, to be used for in-game time measurement
+/// </summary>
 public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable<GameTime>
 {
     private readonly DateTime DateTime;
@@ -42,7 +45,7 @@ public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable
     /// <summary>
     ///     Starting date of the server.
     /// </summary>
-    private static DateTime Origin { get; } = new(2022, 4, 20);
+    private static DateTime Origin { get; } = new(2022, 11, 0);
     public static GameTime operator +(GameTime g, TimeSpan t) => new(g.DateTime + t);
     public static bool operator ==(GameTime d1, GameTime d2) => d1.DateTime.Ticks == d2.DateTime.Ticks;
     public static bool operator >(GameTime t1, GameTime t2) => t1.DateTime.Ticks > t2.DateTime.Ticks;

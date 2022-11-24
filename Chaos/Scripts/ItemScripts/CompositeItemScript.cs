@@ -7,40 +7,66 @@ using Chaos.Scripts.ItemScripts.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts;
 
+/// <summary>
+///     DO NOT EDIT THIS SCRIPT
+/// </summary>
 public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDropped(Creature source, MapInstance mapInstance)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnDropped(source, mapInstance);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnEquipped(Aisling aisling)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnEquipped(aisling);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnPickup(Aisling aisling)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnPickup(aisling);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnUnEquipped(Aisling aisling)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUnEquipped(aisling);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnUse(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(source);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public bool CanUse(Aisling source)
+    {
+        var canUse = true;
+
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            canUse &= component.CanUse(source);
+
+        return canUse;
     }
 }

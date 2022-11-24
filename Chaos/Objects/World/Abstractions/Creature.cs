@@ -91,10 +91,16 @@ public abstract class Creature : NamedEntity, IAffected
 
         MapInstance.AddObjects(groundItems);
 
+        var reactors = MapInstance.GetEntitiesAtPoint<ReactorTile>(point)
+                                  .ToList();
+
         foreach (var groundItem in groundItems)
         {
             groundItem.Item.Script.OnDropped(this, MapInstance);
             Logger.LogDebug("{Name} dropped {Item}", Name, groundItem);
+
+            foreach (var reactor in reactors)
+                reactor.OnItemDroppedOn(this, groundItem);
         }
     }
 
@@ -102,12 +108,17 @@ public abstract class Creature : NamedEntity, IAffected
 
     public virtual void DropGold(IPoint point, int amount)
     {
-        if (amount <= 0)
+        if ((amount <= 0) || (amount > Gold))
             return;
 
+        Gold -= amount;
+        
         var money = new Money(amount, MapInstance, point);
 
         MapInstance.AddObject(money, point);
+
+        foreach (var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(point))
+            reactor.OnGoldDroppedOn(this, money);
     }
 
     public virtual bool IsFriendlyTo(Creature other) => other switch
@@ -223,9 +234,10 @@ public abstract class Creature : NamedEntity, IAffected
         if (!CanUse(skill))
             return false;
 
-        skill.Use(this);
-        LastAttack = DateTime.UtcNow;
-
+        var context = new SkillContext(this);
+        
+        skill.Use(context);
+        
         return true;
     }
 
@@ -295,7 +307,8 @@ public abstract class Creature : NamedEntity, IAffected
         foreach (var aisling in visibleAfter.Intersect(visibleBefore).OfType<Aisling>())
             aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
 
-        MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
+        foreach(var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
+            reactor.OnWalkedOn(this);
     }
 
     public void Wander()
@@ -343,22 +356,7 @@ public abstract class Creature : NamedEntity, IAffected
         Display();
     }
 
-    public virtual bool WillCollideWith(Creature creature)
-    {
-        //merchants will collide with everything
-        if ((creature.Type == CreatureType.Merchant) || (Type == CreatureType.Merchant))
-            return true;
-
-        //walkthrough creatures only collide with eachother (and merchants)
-        if ((Type == CreatureType.WalkThrough) && (creature.Type == CreatureType.WalkThrough))
-            return true;
-
-        //normal monsters don't collide with walkthrough creatures
-        if ((Type == CreatureType.Normal) && (creature.Type != CreatureType.WalkThrough))
-            return true;
-
-        return false;
-    }
+    public virtual bool WillCollideWith(Creature other) => Type.WillCollideWith(other.Type);
 
     public virtual bool WithinLevelRange(Creature other) =>
         LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);

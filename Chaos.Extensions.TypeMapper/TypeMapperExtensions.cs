@@ -6,8 +6,20 @@ using Microsoft.Extensions.DependencyInjection;
 // ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.DependencyInjection;
 
+/// <summary>
+///     <see cref="Chaos.TypeMapper" /> DI extensions
+/// </summary>
 public static class TypeMapperExtensions
 {
+    /// <summary>
+    ///     Adds <see cref="Mapper" /> as an implementation of <see cref="ITypeMapper" />
+    /// </summary>
+    /// <param name="services">The service collection to add the service to</param>
+    /// <remarks>
+    ///     This extensions scans all loaded assemblies for types that inherit from <see cref="IMapperProfile{T1,T2}" />. All of these types
+    ///     are added to the service collection as singletons so that they can reference eachother through the <see cref="ITypeMapper" />, as well
+    ///     as any other services that may be required for conversion.
+    /// </remarks>
     public static void AddTypeMapper(this IServiceCollection services)
     {
         var genericInterfaceType = typeof(IMapperProfile<,>);

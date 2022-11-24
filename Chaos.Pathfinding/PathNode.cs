@@ -7,7 +7,7 @@ internal sealed class PathNode : IEquatable<IPoint>, IPoint
     public bool Closed { get; set; }
     public bool IsCreature { get; set; }
     public bool IsWall { get; set; }
-    public bool IsWarp { get; set; }
+    public bool IsWallToCreature { get; set; }
     public bool Open { get; set; }
     public PathNode? Parent { get; set; }
     public PathNode?[] Neighbors { get; }
@@ -47,7 +47,7 @@ internal sealed class PathNode : IEquatable<IPoint>, IPoint
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
 
-    public bool IsWalkable(bool ignoreWalls) => !IsCreature && !IsWarp && (ignoreWalls || !IsWall);
+    public bool IsWalkable(bool ignoreWalls) => !IsCreature && !IsWallToCreature && (ignoreWalls || !IsWall);
 
     public void Reset()
     {

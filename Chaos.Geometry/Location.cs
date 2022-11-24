@@ -65,4 +65,7 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
 
         return true;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => ILocation.ToString(this);
 }

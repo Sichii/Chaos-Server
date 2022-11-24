@@ -2,8 +2,15 @@ using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Extensions.Geometry;
 
+/// <summary>
+///     Provides extensions methods for <see cref="Direction"/>
+/// </summary>
 public static class DirectionExtensions
 {
+    /// <summary>
+    ///     Starting with the direction provided, enumerates all directions in clockwise order
+    /// </summary>
+    /// <param name="direction">The direction to start with</param>
     public static IEnumerable<Direction> AsEnumerable(this Direction direction)
     {
         if (direction == Direction.All)
@@ -23,7 +30,7 @@ public static class DirectionExtensions
     }
 
     /// <summary>
-    ///     Returns the Directions that would be to the sides of a given cardinal direction.
+    ///     Returns the <see cref="Direction" />s that would be to the sides of a given cardinal direction.
     /// </summary>
     public static (Direction side1, Direction side2) GetSideDirections(this Direction direction) => direction switch
     {
@@ -35,22 +42,15 @@ public static class DirectionExtensions
     };
 
     /// <summary>
-    ///     Returns the Direction Enum equivalent of the reverse of a given cardinal direction.
+    ///     Returns the <see cref="Direction" /> equivalent of the reverse of a given cardinal direction.
     /// </summary>
-    public static Direction Reverse(this Direction direction)
-    {
-        switch (direction)
+    public static Direction Reverse(this Direction direction) =>
+        direction switch
         {
-            case Direction.Up:
-                return Direction.Down;
-            case Direction.Right:
-                return Direction.Left;
-            case Direction.Down:
-                return Direction.Up;
-            case Direction.Left:
-                return Direction.Right;
-            default:
-                return Direction.Invalid;
-        }
-    }
+            Direction.Up    => Direction.Down,
+            Direction.Right => Direction.Left,
+            Direction.Down  => Direction.Up,
+            Direction.Left  => Direction.Right,
+            _               => Direction.Invalid
+        };
 }

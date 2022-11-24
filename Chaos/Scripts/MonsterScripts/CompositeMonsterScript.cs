@@ -7,65 +7,86 @@ using Chaos.Scripts.MonsterScripts.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts;
 
+/// <summary>
+///     DO NOT EDIT THIS SCRIPT
+/// </summary>
 public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMonsterScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnApproached(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnApproached(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnAttacked(Creature source, ref int damage)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnAttacked(source, ref damage);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnClicked(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnClicked(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDeath()
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnDeath();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDeparture(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnDeparture(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnGoldDroppedOn(Aisling source, int amount)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnGoldDroppedOn(source, amount);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnItemDroppedOn(Aisling source, Item item)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnItemDroppedOn(source, item);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnSpawn()
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnSpawn();
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void Update(TimeSpan delta)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))

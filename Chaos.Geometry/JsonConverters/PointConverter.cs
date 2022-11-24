@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 
@@ -19,5 +20,5 @@ public sealed class PointConverter : JsonConverter<Point>
     }
 
     public override void Write(Utf8JsonWriter writer, Point value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(value.ToString());
+        writer.WriteStringValue(IPoint.ToString(value));
 }

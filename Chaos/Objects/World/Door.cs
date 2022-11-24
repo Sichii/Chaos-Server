@@ -46,7 +46,7 @@ public sealed class Door : VisibleEntity
 
             IEnumerable<Door> GetSurroundingDoors(IPoint doorPoint)
             {
-                foreach (var cardinalPoint in doorPoint.GetCardinalPoints())
+                foreach (var cardinalPoint in doorPoint.GenerateCardinalPoints())
                     if (allDoors.TryGetValue(cardinalPoint, out var adjacentDoor))
                         yield return adjacentDoor;
             }

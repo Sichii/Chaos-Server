@@ -5,30 +5,41 @@ using Chaos.Scripts.DialogScripts.Abstractions;
 
 namespace Chaos.Scripts.DialogScripts;
 
+/// <summary>
+///     DO NOT EDIT THIS SCRIPT
+/// </summary>
 public class CompositeDialogScript : CompositeScriptBase<IDialogScript>, IDialogScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDisplayed(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnDisplayed(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDisplaying(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnDisplaying(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnNext(Aisling source, byte? optionIndex = null)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnNext(source, optionIndex);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnPrevious(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))

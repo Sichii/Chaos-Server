@@ -5,6 +5,8 @@ namespace Chaos.Servers.Options;
 
 public record LobbyOptions : ServerOptions
 {
+    /// <inheritdoc />
+    public override string HostName { get; set; } = string.Empty;
     public ServerInfo[] Servers { get; set; } = Array.Empty<ServerInfo>();
 
     public static void PostConfigure(LobbyOptions options)

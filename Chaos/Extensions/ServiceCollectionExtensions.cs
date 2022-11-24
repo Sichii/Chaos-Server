@@ -17,6 +17,7 @@ using Chaos.Scripts.ItemScripts.Abstractions;
 using Chaos.Scripts.MapScripts.Abstractions;
 using Chaos.Scripts.MerchantScripts.Abstractions;
 using Chaos.Scripts.MonsterScripts.Abstractions;
+using Chaos.Scripts.ReactorTileScripts.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
 using Chaos.Scripts.SpellScripts.Abstractions;
 using Chaos.Servers;
@@ -64,6 +65,7 @@ public static class ServiceCollectionExtensions
         services.AddScriptFactory<IMapScript, MapInstance>();
         services.AddScriptFactory<IMerchantScript, Merchant>();
         services.AddScriptFactory<IDialogScript, Dialog>();
+        services.AddScriptFactory<IReactorTileScript, ReactorTile>();
 
         services.AddTransient<IScriptProvider, ScriptProvider>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();
@@ -137,6 +139,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPanelObjectFactory<Item>, IItemFactory, ItemFactory>();
         services.AddTransient<IPanelObjectFactory<Skill>, ISkillFactory, SkillFactory>();
         services.AddTransient<IPanelObjectFactory<Spell>, ISpellFactory, SpellFactory>();
+        services.AddTransient<IReactorTileFactory, ReactorTileFactory>();
         services.AddTransient<IMonsterFactory, MonsterFactory>();
         services.AddTransient<IMerchantFactory, MerchantFactory>();
         services.AddTransient<IDialogFactory, DialogFactory>();

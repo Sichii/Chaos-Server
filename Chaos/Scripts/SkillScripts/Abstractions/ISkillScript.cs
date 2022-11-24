@@ -10,4 +10,5 @@ public interface ISkillScript : IScript
 
     void OnLearned(Aisling aisling);
     void OnUse(SkillContext context);
+    bool CanUse(SkillContext context);
 }

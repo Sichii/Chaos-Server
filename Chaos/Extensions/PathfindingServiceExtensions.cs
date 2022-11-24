@@ -10,11 +10,10 @@ public static class PathfindingServiceExtensions
 {
     public static void RegisterGrid(this IPathfindingService pathfindingService, MapInstance mapInstance)
     {
-        var blackList = new List<IPoint>();
-
-        blackList.AddRange(mapInstance.GetEntities<WarpTile>());
-        blackList.AddRange(mapInstance.GetEntities<WorldMapTile>());
-
+        var blackList = mapInstance.GetEntities<ReactorTile>()
+                                   .Where(rt => rt.ShouldBlockPathfinding)
+                                   .ToList<IPoint>();
+        
         var walls = new List<IPoint>();
         
         //tiles that are walls are added to pathfinder grid details

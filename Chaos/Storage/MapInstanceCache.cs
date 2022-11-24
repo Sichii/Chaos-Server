@@ -1,16 +1,12 @@
-using System.Diagnostics;
 using System.Text.Json;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions;
-using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
-using Chaos.Objects.World;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Content;
-using Chaos.Schemas.Data;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
 using Chaos.TypeMapper.Abstractions;
@@ -22,8 +18,8 @@ namespace Chaos.Storage;
 public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSchema, MapInstanceCacheOptions>
 {
     private readonly IMerchantFactory MerchantFactory;
+    private readonly IReactorTileFactory ReactorTileFactory;
     private readonly IPathfindingService PathfindingService;
-    private readonly ISimpleCache SimpleCache;
 
     /// <inheritdoc />
     protected override Func<MapInstance, string> KeySelector => m => m.InstanceId;
@@ -35,7 +31,7 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         IOptionsSnapshot<MapInstanceCacheOptions> options,
         ILogger<MapInstanceCache> logger,
         IMerchantFactory merchantFactory,
-        ISimpleCache simpleCache
+        IReactorTileFactory reactorTileFactory
     )
         : base(
             mapper,
@@ -45,7 +41,7 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
     {
         PathfindingService = pathfindingService;
         MerchantFactory = merchantFactory;
-        SimpleCache = simpleCache;
+        ReactorTileFactory = reactorTileFactory;
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
@@ -58,14 +54,12 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         var mapInstancePath = Path.Combine(directory, "instance.json");
         var monsterSpawnsPath = Path.Combine(directory, "monsters.json");
         var merchantSpawnsPath = Path.Combine(directory, "merchants.json");
-        var warpsPath = Path.Combine(directory, "warps.json");
-        var worldMapsPath = Path.Combine(directory, "worldMaps.json");
+        var reactorsPath = Path.Combine(directory, "reactors.json");
 
         await using var mapInstanceStream = File.OpenRead(mapInstancePath);
         await using var monsterSpawnsStream = File.OpenRead(monsterSpawnsPath);
         await using var merchantSpawnsStream = File.OpenRead(merchantSpawnsPath);
-        await using var warpsStream = File.OpenRead(warpsPath);
-        await using var worldMapsStream = File.OpenRead(worldMapsPath);
+        await using var reactorsStream = File.OpenRead(reactorsPath);
 
         var mapInstanceSchema = await JsonSerializer.DeserializeAsync<MapInstanceSchema>(mapInstanceStream, JsonSerializerOptions);
 
@@ -75,33 +69,28 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         var merchantSpawnSchemas =
             await JsonSerializer.DeserializeAsync<List<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
 
-        var warpSchemas = await JsonSerializer.DeserializeAsync<List<WarpSchema>>(warpsStream, JsonSerializerOptions);
-        var worldMapSchemas = await JsonSerializer.DeserializeAsync<List<WorldMapWarpSchema>>(worldMapsStream, JsonSerializerOptions);
+        var reactorsSchemas = await JsonSerializer.DeserializeAsync<List<ReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
 
         if (mapInstanceSchema == null)
             return null;
 
         var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema);
         var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
-        var warps = Mapper.MapMany<Warp>(warpSchemas!);
-        
+
+        foreach (var reactorSchema in reactorsSchemas!)
+        {
+            var reactor = ReactorTileFactory.Create(
+                mapInstance,
+                reactorSchema.Source,
+                reactorSchema.ShouldBlockPathfinding,
+                reactorSchema.ScriptKeys,
+                reactorSchema.ScriptVars);
+
+            mapInstance.SimpleAdd(reactor);
+        }
+
         foreach (var monsterSpawn in monsterSpawns)
             mapInstance.AddSpawner(monsterSpawn);
-
-        foreach (var warp in warps)
-        {
-            var warpTile = new WarpTile(mapInstance, SimpleCache, warp);
-
-            mapInstance.SimpleAdd(warpTile);
-        }
-
-        foreach (var worldMapSchema in worldMapSchemas!)
-        {
-            var worldMap = SimpleCache.Get<WorldMap>(worldMapSchema.WorldMapKey);
-            var worldMapTile = new WorldMapTile(mapInstance, worldMapSchema.Source, worldMap);
-
-            mapInstance.SimpleAdd(worldMapTile);
-        }
 
         foreach (var merchantSpawn in merchantSpawnSchemas!)
         {
@@ -114,7 +103,7 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
             merchant.Direction = merchantSpawn.Direction;
             mapInstance.SimpleAdd(merchant);
         }
-        
+
         mapInstance.Pathfinder = PathfindingService;
         PathfindingService.RegisterGrid(mapInstance);
 

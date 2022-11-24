@@ -2,6 +2,9 @@ using System.Runtime.CompilerServices;
 
 namespace Chaos.Extensions.Common;
 
+/// <summary>
+///     Provides extension methods for <see cref="Array" />.
+/// </summary>
 public static class ArrayExtensions
 {
     /// <summary>
@@ -29,9 +32,8 @@ public static class ArrayExtensions
     }
 
     /// <summary>
-    ///     Randomized the order of the elements in the array.
+    ///     Randomizes in-place the order of the elements in the list. This will be significantly faster than using linq's OrderBy.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static void Shuffle<T>(this IList<T> arr)
     {
         for (var i = arr.Count - 1; i > 0; i--)

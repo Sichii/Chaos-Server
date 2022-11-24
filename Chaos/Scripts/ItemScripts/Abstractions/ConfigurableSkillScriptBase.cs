@@ -26,4 +26,7 @@ public abstract class ConfigurableItemScriptBase : ConfigurableScriptBase<Item>,
 
     /// <inheritdoc />
     public virtual void OnUse(Aisling source) { }
+
+    /// <inheritdoc />
+    public virtual bool CanUse(Aisling source) => source.IsAlive;
 }

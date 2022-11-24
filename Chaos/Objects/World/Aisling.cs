@@ -259,6 +259,19 @@ public sealed class Aisling : Creature
         }
     }
 
+    /// <inheritdoc />
+    public override void DropGold(IPoint point, int amount)
+    {
+        if (!TryTakeGold(amount))
+            return;
+            
+        var money = new Money(amount, MapInstance, point);
+        MapInstance.AddObject(money, point);
+
+        foreach (var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(money))
+            reactor.OnGoldDroppedOn(this, money);
+    }
+
     public void Equip(EquipmentType type, Item item)
     {
         var slot = item.Slot;
@@ -419,7 +432,8 @@ public sealed class Aisling : Creature
         Client.SendDisplayAisling(this);
         Client.SendRefreshResponse();
 
-        MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
+        foreach(var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
+            reactor.OnWalkedOn(this);
     }
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
@@ -556,9 +570,13 @@ public sealed class Aisling : Creature
 
     public bool TryTakeGold(int amount)
     {
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount), "Cannot take negative gold.");
 
+        if (amount == 0)
+            return true;
+        
         var @new = Gold - amount;
 
         if (@new < 0)
@@ -719,7 +737,9 @@ public sealed class Aisling : Creature
                 aisling.Client.SendCreatureWalk(Id, startPoint, direction);
 
         Client.SendConfirmClientWalk(startPoint, direction);
-        MapInstance.ActivateReactors(this, ReactorActivationType.Walk);
+        
+        foreach(var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
+            reactor.OnWalkedOn(this);
     }
 
     /// <inheritdoc />

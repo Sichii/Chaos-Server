@@ -1,5 +1,8 @@
 namespace Chaos.Extensions.Common;
 
+/// <summary>
+///     Provides extension methods for <see cref="ICollection{T}" />
+/// </summary>
 public static class CollectionExtensions
 {
     /// <summary>

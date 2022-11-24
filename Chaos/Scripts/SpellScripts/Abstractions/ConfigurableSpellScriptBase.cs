@@ -19,4 +19,7 @@ public abstract class ConfigurableSpellScriptBase : ConfigurableScriptBase<Spell
 
     /// <inheritdoc />
     public virtual void OnUse(SpellContext context) { }
+
+    /// <inheritdoc />
+    public virtual bool CanUse(SpellContext context) => context.Source.IsAlive && context.Target.IsAlive;
 }

@@ -15,4 +15,5 @@ public interface IItemScript : IScript
     void OnUnEquipped(Aisling aisling);
 
     void OnUse(Aisling source);
+    bool CanUse(Aisling source);
 }

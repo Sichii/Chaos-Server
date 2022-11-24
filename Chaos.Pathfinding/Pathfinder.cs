@@ -37,7 +37,7 @@ public sealed class Pathfinder : IPathfinder
 
         //assign node neighbors
         foreach (var pathNode in PathNodes.Flatten())
-            foreach (var point in pathNode.GetCardinalPoints())
+            foreach (var point in pathNode.GenerateCardinalPoints())
                 if (WithinGrid(point))
                 {
                     var relation = (int)point.DirectionalRelationTo(pathNode);
@@ -100,7 +100,7 @@ public sealed class Pathfinder : IPathfinder
                 {
                     neighbor.Parent = node;
 
-                    break;
+                    return TracePath(endNode);
                 }
 
                 //don't re-add nodes we've already considered
@@ -130,7 +130,7 @@ public sealed class Pathfinder : IPathfinder
     {
         var directionBias = end.DirectionalRelationTo(start);
 
-        var points = start.GetCardinalPoints()
+        var points = start.GenerateCardinalPoints()
                           .Shuffle()
                           .WithDirectionBias(directionBias);
 
@@ -142,20 +142,13 @@ public sealed class Pathfinder : IPathfinder
         return optimalPoint.DirectionalRelationTo(start);
     }
 
-    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, ICollection<IPoint> creatures)
-    {
-        var unwalkable = creatures.ToList();
+    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, ICollection<IPoint> unwalkablePoints) =>
+        points.FirstOrDefault(
+            point => WithinGrid(point)
+                     && PathNodes[point.X, point.Y].IsWalkable(ignoreWalls)
+                     && !unwalkablePoints.Contains(point, PointEqualityComparer.Instance));
 
-        foreach (var point in points)
-            if (WithinGrid(point)
-                && PathNodes[point.X, point.Y].IsWalkable(ignoreWalls)
-                && !unwalkable.Contains(point, PointEqualityComparer.Instance))
-                return point;
-
-        return null;
-    }
-
-    private void InitializeSubGrid(IRectangle subGrid, ICollection<IPoint> creatures)
+    private void InitializeSubGrid(IRectangle subGrid, ICollection<IPoint> unwalkablePoints)
     {
         //un-close all the nodes in the sub grid
         //the sub grid is the path-searchable area
@@ -163,7 +156,7 @@ public sealed class Pathfinder : IPathfinder
             if (WithinGrid(point))
                 PathNodes[point.X, point.Y].Closed = false;
 
-        foreach (var creature in creatures)
+        foreach (var creature in unwalkablePoints)
             PathNodes[creature.X, creature.Y].IsCreature = true;
     }
 
@@ -188,6 +181,8 @@ public sealed class Pathfinder : IPathfinder
             ignoreWalls,
             unwalkablePoints);
 
+        
+        
         //failed to find path
         //find a direction to walk(if any) via simple logic
         if (nextPoint == null)
@@ -228,7 +223,7 @@ public sealed class Pathfinder : IPathfinder
     /// <inheritdoc />
     public Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> unwalkablePoints)
     {
-        var optimalPoint = GetFirstWalkablePoint(start.GetCardinalPoints().OrderBy(_ => Random.Shared.Next()), ignoreWalls, unwalkablePoints);
+        var optimalPoint = GetFirstWalkablePoint(start.GenerateCardinalPoints().Shuffle(), ignoreWalls, unwalkablePoints);
 
         if (!optimalPoint.HasValue)
             return Direction.Invalid;

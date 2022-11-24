@@ -106,7 +106,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\ServerConfiguration.md = docs\articles\ServerConfiguration.md
 		docs\articles\toc.yml = docs\articles\toc.yml
 		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
+		docs\articles\LobbyOptions.md = docs\articles\LobbyOptions.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactorTilePatch", "Patches\ReactorTilePatch\ReactorTilePatch.csproj", "{50317555-DF13-4812-96E2-4DB235A1F3ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,6 +287,10 @@ Global
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50317555-DF13-4812-96E2-4DB235A1F3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50317555-DF13-4812-96E2-4DB235A1F3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50317555-DF13-4812-96E2-4DB235A1F3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50317555-DF13-4812-96E2-4DB235A1F3ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -318,5 +327,6 @@ Global
 		{1A52C64E-8EB3-4351-9572-C9B6C76DD166} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{2AC78F4C-4ADD-4F35-9687-D00568D72DC9} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
+		{50317555-DF13-4812-96E2-4DB235A1F3ED} = {431395E2-5117-4988-A2E3-14F8FBA078E0}
 	EndGlobalSection
 EndGlobal

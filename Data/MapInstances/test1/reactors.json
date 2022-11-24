@@ -1,0 +1,14 @@
+[
+  {
+    "source": "(7, 5)",
+    "shouldBlockPathfinding": true,
+    "scriptKeys": [
+      "warp"
+    ],
+    "scriptVars": {
+      "warp": {
+        "destination": "test2:(51, 50)"
+      }
+    }
+  }
+]

@@ -33,21 +33,37 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         Script = scriptProvider.CreateScript<ISkillScript, Skill>(ScriptKeys, this);
     }
 
-    public void Use(Creature source)
+    public void Use(SkillContext context)
     {
-        var context = new SkillContext(source);
-        Script.OnUse(context);
-
-        if (Template.IsAssail)
-        {
-            var assailInterval = source.StatSheet.CalculateEffectiveAssailInterval(source.AssailIntervalMs);
-            Cooldown = TimeSpan.FromMilliseconds(assailInterval);
-        } else if (!Cooldown.HasValue)
+        if (!Script.CanUse(context))
             return;
 
-        Elapsed = TimeSpan.Zero;
+        Script.OnUse(context);
 
-        if (source is Aisling aisling && !Template.IsAssail)
-            aisling.Client.SendCooldown(this);
+        context.Source.LastAttack = DateTime.UtcNow;
+
+        //for assails, their cooldowns are re-calculated each time they are used
+        //the cooldown is based on the soruce's assail interval and atk speed
+        if (Template.IsAssail)
+        {
+            var assailInterval = context.Source.StatSheet.CalculateEffectiveAssailInterval(context.Source.AssailIntervalMs);
+            Cooldown = TimeSpan.FromMilliseconds(assailInterval);
+        }
+
+        BeginCooldown(context.Source);
+    }
+
+    /// <inheritdoc />
+    public override void BeginCooldown(Creature creature)
+    {
+        //don't send cooldowns for assails
+        if (Template.IsAssail)
+        {
+            Elapsed = TimeSpan.Zero;
+
+            return;
+        }
+
+        base.BeginCooldown(creature);
     }
 }

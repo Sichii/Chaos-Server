@@ -42,3 +42,12 @@ public interface ISimpleFileCacheOptions : IDirectoryBound
     /// </summary>
     SearchType SearchType { get; init; }
 }
+
+/* If i decide to use IMemoryCache
+public interface IFileCacheOptions : ISimpleFileCacheOptions
+{
+    /// <summary>
+    ///     The amount of time an entry in the cache will go unused before it is removed
+    /// </summary>
+    int ExpirationMins { get; init; }
+}*/

@@ -56,16 +56,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         Script = scriptProvider.CreateScript<IMapScript, MapInstance>(ScriptKeys, this);
     }
-
-    public void ActivateReactors(Creature creature, ReactorActivationType reactorActivationType)
-    {
-        var reactors = Objects.AtPoint<ReactorTile>(creature)
-                              .Where(reactor => reactor.ReactorActivationType == reactorActivationType);
-
-        foreach (var reactor in reactors)
-            reactor.Activate(creature);
-    }
-
+    
     public void AddObject(VisibleEntity visibleEntity, IPoint point)
     {
         visibleEntity.SetLocation(this, point);
@@ -173,8 +164,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Click(IPoint point, Aisling source)
     {
-        var obj = Objects.AtPoint<VisibleEntity>(point)
-                         .ThatAreVisibleTo(source)
+        var obj = Objects.AtPoint<ReactorTile>(point)
                          .TopOrDefault();
 
         obj?.OnClicked(source);
@@ -202,18 +192,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         return creatureType switch
         {
-            CreatureType.Normal      => !IsWarp(point) && !IsWall(point) && !creatures.Any(),
-            CreatureType.WalkThrough => !IsWarp(point) && creatures.All(c => c.Type != CreatureType.Aisling),
-            CreatureType.Merchant    => !IsWarp(point) && !IsWall(point) && !creatures.Any(),
-            CreatureType.WhiteSquare => !IsWarp(point) && !IsWall(point) && !creatures.Any(),
-            CreatureType.Aisling     => !IsWall(point) && creatures.All(c => c.Type == CreatureType.WalkThrough),
+            CreatureType.Normal      => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.WalkThrough => !IsWallToCreaturesOnly(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.Merchant    => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.WhiteSquare => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
             _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
     }
 
     public bool IsWall(IPoint point) => Template.IsWall(point);
 
-    public bool IsWarp(IPoint point) => Objects.AtPoint<WarpTile>(point).Any();
+    public bool IsWallToCreaturesOnly(IPoint point) => Objects.AtPoint<ReactorTile>(point).Any(rt => rt.ShouldBlockPathfinding);
 
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 

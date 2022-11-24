@@ -1,4 +1,6 @@
 using Chaos.Common.Identity;
+using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Templates.Abstractions;
 using Chaos.Time.Abstractions;
@@ -34,6 +36,17 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 
     public override string ToString() => $@"Id:{UniqueId} Name:{Template.Name})";
 
+    public virtual void BeginCooldown(Creature creature)
+    {
+        if (Cooldown is { Ticks: > 0 })
+        {
+            Elapsed = TimeSpan.Zero;
+
+            if (creature is Aisling aisling)
+                aisling.Client.SendCooldown(this);
+        }
+    }
+    
     public void Update(TimeSpan delta)
     {
         if (!Elapsed.HasValue)

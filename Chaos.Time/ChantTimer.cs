@@ -2,6 +2,9 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Time;
 
+/// <summary>
+///     Keeps track of when spell chants start and end, and validates whether or not a spell should be allowed to finish casting.
+/// </summary>
 public sealed class ChantTimer : IDeltaUpdatable
 {
     private readonly int MaxTimeBurdenMs;
@@ -12,6 +15,10 @@ public sealed class ChantTimer : IDeltaUpdatable
 
     public ChantTimer(int maxTimeBurdenMs) => MaxTimeBurdenMs = maxTimeBurdenMs;
 
+    /// <summary>
+    ///     Starts a chant with the given number of expected cast lines
+    /// </summary>
+    /// <param name="castLines">The number of cast lines received from the client. This value is not to be fully trusted.</param>
     public void Start(byte castLines)
     {
         ElapsedMs = 0;
@@ -36,6 +43,11 @@ public sealed class ChantTimer : IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Valides that a spell chant was valid and was completed in approximately the expected amount of time.
+    /// </summary>
+    /// <param name="castLines">The number of cast lines the spell should have had. This value is trustable.</param>
+    /// <returns><c>true</c> if the spell cast is valid and finished in approximately the expected amount of time, otherwise <c>false</c></returns>
     public bool Validate(byte castLines)
     {
         //if the cast lines of the spell being cast are more than the expected count, the chant is invalid

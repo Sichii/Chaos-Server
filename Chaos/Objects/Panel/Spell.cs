@@ -33,5 +33,12 @@ public sealed class Spell : PanelObjectBase, IScripted<ISpellScript>
         Script = scriptProvider.CreateScript<ISpellScript, Spell>(ScriptKeys, this);
     }
 
-    public void Use(SpellContext context) => Script.OnUse(context);
+    public void Use(SpellContext context)
+    {
+        if (!Script.CanUse(context))
+            return;
+        
+        Script.OnUse(context);
+        BeginCooldown(context.Source);
+    }
 }

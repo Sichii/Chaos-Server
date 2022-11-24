@@ -1,5 +1,8 @@
 namespace Chaos.Extensions.Common;
 
+/// <summary>
+///     Provides extension methods for <see cref="System.Type" />.
+/// </summary>
 public static class TypeExtensions
 {
     /// <summary>
@@ -37,6 +40,9 @@ public static class TypeExtensions
                 yield return @interface;
     }
 
+    /// <summary>
+    ///     Determines whether a type inherits from the specified base type
+    /// </summary>
     public static bool HasBaseType(this Type type, Type baseType)
     {
         var current = type;
@@ -57,7 +63,7 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    ///     Determines whether a type inherits from a interface
+    ///     Determines whether a type inherits from an interface
     /// </summary>
     public static bool HasInterface(this Type type, Type interfaceType)
     {

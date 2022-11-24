@@ -1,7 +1,7 @@
 # World Options
 
 World options are changed in "appsettings.json" via section "Options:WorldOptions".  
-This section is serialized into [IWorldOptions](<xref:Chaos.Servers.Options.IWorldOptions>)
+This section is serialized into [WorldOptions](<xref:Chaos.Servers.Options.WorldOptions>)
 
 ## World-Server Settings
 
@@ -9,8 +9,7 @@ This section is serialized into [IWorldOptions](<xref:Chaos.Servers.Options.IWor
 
 ### Port
 
-The port the server will listen on. Default is 4202, if this value is changed, the client will need to be edited to connect to a different
-port.
+The port the server will listen on. Default is 4202
 
 ### LoginRedirect
 
@@ -21,6 +20,10 @@ section.
 ## General Settings
 
 ---
+
+### MaxGroupSize
+
+The maximum number of players that can be in a group together. If a group reaches this size, invites and invite accepts will fail.
 
 ### SaveIntervalMins
 

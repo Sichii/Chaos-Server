@@ -10,7 +10,7 @@ public class InterlockedObject<T> : IInterlockedObject<T> where T: class
     public virtual T? Get() => Object;
 
     /// <inheritdoc />
-    public void Set(T obj) => Object = obj;
+    public void Set(T? obj) => Object = obj;
 
     /// <inheritdoc />
     public virtual bool SetIfNull(T obj) => Interlocked.CompareExchange(ref Object, obj, null) is null;
