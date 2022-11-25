@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
@@ -140,10 +141,32 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             client.SendLoginMessage(LoginMessageType.Confirm, string.Empty);
         } catch (UsernameCredentialException e)
         {
-            client.SendLoginMessage(LoginMessageType.ClearNameMessage, $"Failed to create character. Reason: Username-{e.Reason}");
+            var reasonMessage = e.Reason switch
+            {
+                UsernameCredentialException.ReasonType.InvalidFormat     => "Invalid format",
+                UsernameCredentialException.ReasonType.TooLong           => "Too long",
+                UsernameCredentialException.ReasonType.TooShort          => "Too short",
+                UsernameCredentialException.ReasonType.InvalidCharacters => "Invalid characters",
+                UsernameCredentialException.ReasonType.Reserved          => "Already exists",
+                UsernameCredentialException.ReasonType.NotAllowed        => "Bad phrase",
+                UsernameCredentialException.ReasonType.AlreadyExists     => "Already exists",
+                UsernameCredentialException.ReasonType.DoesntExist       => throw new UnreachableException("Shouldn't happen"),
+                UsernameCredentialException.ReasonType.Unknown           => "Unknown error",
+                _                                                        => "Unknown error"
+            };
+
+            client.SendLoginMessage(LoginMessageType.ClearNameMessage, $"Failed to create character. Username error: {reasonMessage}");
         } catch (PasswordCredentialException e)
         {
-            client.SendLoginMessage(LoginMessageType.ClearPswdMessage, $"Failed to create character. Reason: Password-{e.Reason}");
+            var reasonMessage = e.Reason switch
+            {
+                PasswordCredentialException.ReasonType.TooShort      => "Too short",
+                PasswordCredentialException.ReasonType.TooLong       => "Too long",
+                PasswordCredentialException.ReasonType.WrongPassword => throw new UnreachableException("Shouldn't happen"),
+                _                                                    => "Unknown error"
+            };
+
+            client.SendLoginMessage(LoginMessageType.ClearPswdMessage, $"Failed to create character. Password error: {reasonMessage}");
         }
     }
 

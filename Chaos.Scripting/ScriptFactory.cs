@@ -6,6 +6,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting;
 
+/// <summary>
+///     A factory object that generates <see cref="IScript" />s
+/// </summary>
+/// <typeparam name="TScript">A type of script</typeparam>
+/// <typeparam name="TScripted">A type of scripted object</typeparam>
+/// <remarks>
+///     This object requires that any given <see cref="IScript" /> type has an implemented <see cref="ICompositeScript{TScript}" /> type.
+///     This script factory will utilize that composite script to compose multiple scripts into one. The script returned by this factory will
+///     always be the <see cref="ICompositeScript{TScript}" /> implementation, and it will contain all of scripts generated from the keys that
+///     are supplied.
+/// </remarks>
 public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript
                                                                                            where TScripted: IScripted
 {
@@ -64,6 +75,9 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
         return (TScript)composite;
     }
 
+    /// <summary>
+    ///     Loads all script types that implement the type this factory is for
+    /// </summary>
     private void LoadScriptTypes()
     {
         var scriptType = typeof(TScript);

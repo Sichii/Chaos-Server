@@ -1,8 +1,9 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
+using Chaos.Schemas.Data;
 
-namespace Chaos.Schemas.Content;
+namespace Chaos.Schemas.Templates;
 
 public sealed record DialogTemplateSchema
 {

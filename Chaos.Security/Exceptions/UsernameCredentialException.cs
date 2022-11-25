@@ -1,6 +1,9 @@
 namespace Chaos.Security.Exceptions;
 
-public class UsernameCredentialException : Exception
+/// <summary>
+///     An exception thrown when a username is invalid
+/// </summary>
+public sealed class UsernameCredentialException : Exception
 {
     public enum ReasonType
     {
@@ -15,7 +18,14 @@ public class UsernameCredentialException : Exception
         Unknown = 255
     }
 
+    /// <summary>
+    ///     The captured named that is invalid
+    /// </summary>
     public string Name { get; set; }
+    
+    /// <summary>
+    ///     The reason why <see cref="Name"/> is invalid
+    /// </summary>
     public ReasonType Reason { get; set; }
 
     public UsernameCredentialException(string name, ReasonType reason)

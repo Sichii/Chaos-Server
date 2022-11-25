@@ -2,6 +2,7 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Factories.Abstractions;
 using Chaos.Schemas.Content;
+using Chaos.Schemas.Data;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.MapperProfiles;

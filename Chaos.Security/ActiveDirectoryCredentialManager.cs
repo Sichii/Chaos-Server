@@ -12,6 +12,9 @@ using PasswordReasonType = Chaos.Security.Exceptions.PasswordCredentialException
 
 namespace Chaos.Security;
 
+/// <summary>
+///     A <see cref="ICredentialManager"/> that uses a folder to represent a user
+/// </summary>
 public sealed class ActiveDirectoryCredentialManager : ICredentialManager
 {
     private readonly ILogger Logger;
@@ -31,6 +34,7 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
             Directory.CreateDirectory(Options.Directory);
     }
 
+    /// <inheritdoc />
     public async Task ChangePasswordAsync(string name, string oldPassword, string newPassword)
     {
         await using var sync = await Sync.WaitAsync();
@@ -50,6 +54,10 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         Logger.LogTrace("Changed password for {Name}", name);
     }
 
+    /// <summary>
+    ///     Computes a hash for the given password
+    /// </summary>
+    /// <param name="password">The password to hash</param>
     private string ComputeHash(string password)
     {
         #pragma warning disable SYSLIB0045
@@ -62,6 +70,13 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         return Convert.ToHexString(hash);
     }
 
+    /// <summary>
+    ///     Validates a username and password combination
+    /// </summary>
+    /// <param name="name">The name to validate</param>
+    /// <param name="password">The password to validate</param>
+    /// <returns><c>true</c> if the username exists, and the password specified matches the record, otherwise <c>false</c></returns>
+    /// <exception cref="UsernameCredentialException">Username doesn't exist</exception>
     private async Task<bool> InnerValidateCredentialsAsync(string name, string password)
     {
         var characterDir = Path.Combine(Options.Directory, name);
@@ -76,11 +91,13 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         return givenHash.EqualsI(actualHash);
     }
 
+    /// <inheritdoc />
     public async Task SaveNewCredentialsAsync(string name, string password)
     {
         await using var sync = await Sync.WaitAsync();
 
         ValidateUserNameRules(name);
+        Logger.LogTrace("Validated username rules for {Name}", name);
         ValidatePasswordRules(password);
         Logger.LogTrace("Validated password rules for {Name}", name);
 
@@ -97,6 +114,7 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         Logger.LogTrace("Saved new credentials for {Name}", name);
     }
 
+    /// <inheritdoc />
     public async Task<bool> ValidateCredentialsAsync(string name, string password)
     {
         await using var sync = await Sync.WaitAsync();
@@ -107,6 +125,11 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         return ret;
     }
 
+    /// <summary>
+    ///     Validates a password against the rules specified in the configuration
+    /// </summary>
+    /// <param name="password">The password to validate</param>
+    /// <exception cref="PasswordCredentialException">Invalid password</exception>
     private void ValidatePasswordRules(string password)
     {
         if (password.Length < Options.MinPasswordLength)
@@ -116,6 +139,11 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
             throw new PasswordCredentialException(PasswordReasonType.TooLong);
     }
 
+    /// <summary>
+    ///     Validates a username against the rules specified in the configuration
+    /// </summary>
+    /// <param name="name">The name to validate</param>
+    /// <exception cref="UsernameCredentialException">Invalid username</exception>
     private void ValidateUserNameRules(string name)
     {
         if (!Options.ValidCharactersRegex.IsMatch(name))
@@ -136,7 +164,5 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         foreach (var filtered in Options.PhraseFilter)
             if (name.ContainsI(filtered))
                 throw new UsernameCredentialException(name, NameReasonType.NotAllowed);
-
-        Logger.LogTrace("Validated username rules for {Name}", name);
     }
 }

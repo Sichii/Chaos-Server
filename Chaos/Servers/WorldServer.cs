@@ -1126,11 +1126,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 //if we expect the spell we're casting to be more than 0 lines
                 //it should have started a chant... so we check the chant timer for validation
                 if ((spell.CastLines > 0) && !localClient.Aisling.ChantTimer.Validate(spell.CastLines))
-                {
-                    localClient.SendCancelCasting();
-
                     return default;
-                }
 
                 //it's impossible to know what kind of spell is being used during deserialization
                 //there is no spell type specified in the packet, so we arent sure if the packet will
@@ -1165,8 +1161,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     case SpellType.Prompt2Nums:
                     case SpellType.Prompt3Nums:
                     case SpellType.Prompt4Nums:
-                        break;
-
                     case SpellType.NoTarget:
                         targetId = source.Id;
 

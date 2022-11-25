@@ -38,7 +38,7 @@ public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase
             context.TargetPoint,
             Range,
             context.Target.Direction,
-            includeSource: Subject.Template.SpellType == SpellType.Targeted);
+            includeSource: (Subject.Template.SpellType == SpellType.Targeted) || (Filter != TargetFilter.HostileOnly));
 
     /// <inheritdoc />
     public override void OnUse(SpellContext context)

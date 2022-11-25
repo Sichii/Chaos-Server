@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Chaos.Geometry;
 
-namespace Chaos.Schemas.Data;
+namespace Chaos.Schemas.Content;
 
 public sealed record WorldMapNodeSchema
 {

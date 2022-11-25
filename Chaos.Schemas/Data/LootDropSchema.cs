@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Chaos.Schemas.Content;
+namespace Chaos.Schemas.Data;
 
 public sealed record LootDropSchema
 {

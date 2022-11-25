@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Content;
 
