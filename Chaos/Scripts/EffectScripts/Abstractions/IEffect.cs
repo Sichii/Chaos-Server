@@ -7,12 +7,13 @@ namespace Chaos.Scripts.EffectScripts.Abstractions;
 public interface IEffect : IDeltaUpdatable
 {
     TimeSpan Remaining { get; set; }
-    EffectColor Color { get; }
+    EffectColor Color { get; set; }
+    Creature Subject { get; set; }
     byte Icon { get; }
     string Name { get; }
-    void OnApplied(Creature target);
+    void OnApplied();
     void OnDispelled();
-    void OnReApplied(Creature target);
+    void OnReApplied();
     void OnTerminated();
     bool ShouldApply(Creature source, Creature target);
 }

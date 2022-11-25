@@ -45,7 +45,7 @@ public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable
     /// <summary>
     ///     Starting date of the server.
     /// </summary>
-    private static DateTime Origin { get; } = new(2022, 11, 0);
+    private static DateTime Origin { get; } = new(2022, 11, 1);
     public static GameTime operator +(GameTime g, TimeSpan t) => new(g.DateTime + t);
     public static bool operator ==(GameTime d1, GameTime d2) => d1.DateTime.Ticks == d2.DateTime.Ticks;
     public static bool operator >(GameTime t1, GameTime t2) => t1.DateTime.Ticks > t2.DateTime.Ticks;

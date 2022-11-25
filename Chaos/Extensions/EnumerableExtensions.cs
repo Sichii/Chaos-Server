@@ -14,8 +14,9 @@ public static class EnumerableExtensions
     public static T? ClosestOrDefault<T>(this IEnumerable<T> objs, IPoint point) where T: MapEntity =>
         objs.MinBy(o => o.DistanceFrom(point));
 
-    public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, ICloningService<Item> itemCloner) =>
-        items.SelectMany(item => item.FixStacks(itemCloner));
+    public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, ICloningService<Item> itemCloner) => items
+        .GroupBy(i => i.DisplayName, (_, s) => s.ToSingleStack())
+        .SelectMany(i => i.FixStacks(itemCloner));
 
     public static (ICollection<Aisling> Aislings, ICollection<Door> Doors, ICollection<VisibleEntity> OtherVisibles) PartitionBySendType(
         this IEnumerable<VisibleEntity> visibleEntities

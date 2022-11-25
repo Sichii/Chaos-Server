@@ -31,7 +31,7 @@ public class AttackingScript : MonsterScriptBase
             attacked |= Subject.TryUseSkill(assail);
 
         if (ShouldUseSkill)
-            foreach (var skill in Skills.Where(skill => !skill.Template.IsAssail && skill.CanUse()))
+            foreach (var skill in Skills.Where(skill => !skill.Template.IsAssail))
                 if (Randomizer.RollChance(7) && Subject.TryUseSkill(skill))
                 {
                     attacked = true;

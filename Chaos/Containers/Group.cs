@@ -112,6 +112,20 @@ public sealed class Group : IEnumerable<Aisling>
         using var @lock = Sync.Enter();
         var fromLeader = Leader.Equals(sender);
 
+        if (!sender.Options.Group)
+        {
+            sender.Client.SendServerMessage(ServerMessageType.OrangeBar1, "You have elected not to join groups");
+
+            return;
+        }
+
+        if (!receiver.Options.Group)
+        {
+            sender.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{receiver.Name} refuses to join your group");
+
+            return;
+        }
+
         //if you invite yourself
         if (receiver.Equals(sender))
         {

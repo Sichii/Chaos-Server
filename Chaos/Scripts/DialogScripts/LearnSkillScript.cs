@@ -244,7 +244,7 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredItem = ItemFactory.CreateFaux(itemRequirement.ItemTemplateKey);
 
-            aisling.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired);
+            aisling.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired, out _);
         }
 
         if (requirements.RequiredGold.HasValue)

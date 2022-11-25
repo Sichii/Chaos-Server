@@ -4,18 +4,60 @@
     "count": 1,
     "currentDurability": 1000,
     "scriptKeys": [],
-    "slot": 20,
-    "templateKey": "stick",
-    "uniqueId": 121806
+    "slot": 1,
+    "templateKey": "cuckArmor",
+    "uniqueId": 8297
   },
   {
     "color": "Default",
     "count": 1,
     "currentDurability": 1000,
     "scriptKeys": [],
-    "slot": 25,
+    "slot": 2,
     "templateKey": "cuckArmor",
-    "uniqueId": 290959
+    "uniqueId": 8300
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 3,
+    "templateKey": "cuckArmor",
+    "uniqueId": 8299
+  },
+  {
+    "color": "Default",
+    "count": 100,
+    "scriptKeys": [],
+    "slot": 4,
+    "templateKey": "apple",
+    "uniqueId": 8316
+  },
+  {
+    "color": "Default",
+    "count": 100,
+    "scriptKeys": [],
+    "slot": 5,
+    "templateKey": "apple",
+    "uniqueId": 8313
+  },
+  {
+    "color": "Default",
+    "count": 10,
+    "scriptKeys": [],
+    "slot": 6,
+    "templateKey": "apple",
+    "uniqueId": 8337
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
+    "slot": 13,
+    "templateKey": "stick",
+    "uniqueId": 8282
   },
   {
     "color": "Default",
@@ -23,7 +65,7 @@
     "scriptKeys": [],
     "slot": 29,
     "templateKey": "teleport_trinket",
-    "uniqueId": 8265
+    "uniqueId": 8266
   },
   {
     "color": "Default",
@@ -31,7 +73,7 @@
     "scriptKeys": [],
     "slot": 30,
     "templateKey": "teleport_trinket",
-    "uniqueId": 8267
+    "uniqueId": 139959
   },
   {
     "color": "Default",
@@ -39,7 +81,7 @@
     "scriptKeys": [],
     "slot": 31,
     "templateKey": "teleport_trinket",
-    "uniqueId": 139959
+    "uniqueId": 8265
   },
   {
     "color": "Default",
@@ -63,6 +105,6 @@
     "scriptKeys": [],
     "slot": 34,
     "templateKey": "teleport_trinket",
-    "uniqueId": 8266
+    "uniqueId": 8267
   }
 ]

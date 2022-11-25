@@ -98,9 +98,6 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
 
     public void Use(Aisling source)
     {
-        if (!Script.CanUse(source))
-            return;
-
         Script.OnUse(source);
         BeginCooldown(source);
     }

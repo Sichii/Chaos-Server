@@ -117,7 +117,9 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     /// <inheritdoc />
     public void SendBoard()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.BulletinBoard, PacketSerializer.Encoding, new byte[1]);
+        var packet = ServerPacketEx.FromData(ServerOpCode.BulletinBoard, PacketSerializer.Encoding,
+            1,
+            0);
 
         Send(ref packet);
     }

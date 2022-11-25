@@ -1,0 +1,36 @@
+{
+    "templateKey": "poison",
+    "name": "Poison",
+    "panelSprite": 35,
+    "scriptKeys": ["applyEffect"],
+    "spellType": "targeted",
+    "castLines": 0,
+    "description": "Applies a poison effect to your target, and all hostiles around that target.",
+    "learningRequirements": {
+        "requiredStats": {
+            "str": 1,
+            "int": 2,
+            "wis": 2,
+            "con": 1,
+            "dex": 1
+        },
+        "itemRequirements": [
+            {
+                "itemTemplateKey": "apple",
+                "amountRequired": 10
+            }
+        ],
+        "requiredGold": 10000,
+        "requiredLevel": 10
+    },
+    "scriptVars": {
+        "applyEffect": {
+            "bodyAnimation": "handsup",
+            "sound": 8,
+            "range": 2,
+            "shape": "allaround",
+            "filter": "none",
+            "effectKey": "poison"
+        }
+    }
+}

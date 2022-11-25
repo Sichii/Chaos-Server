@@ -9,7 +9,6 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Panel.Abstractions;
 using Chaos.Scripts.EffectScripts.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
@@ -19,7 +18,7 @@ namespace Chaos.Objects.World.Abstractions;
 public abstract class Creature : NamedEntity, IAffected
 {
     public Direction Direction { get; set; }
-    public IEffectsBar Effects { get; init; }
+    public IEffectsBar Effects { get; set; }
     public int GamePoints { get; set; }
     public int Gold { get; set; }
     public virtual bool IsDead { get; set; }
@@ -77,8 +76,30 @@ public abstract class Creature : NamedEntity, IAffected
         byte? hitSound = 1
     );
 
-    public virtual bool CanUse(PanelObjectBase panelObject) => panelObject.CanUse();
+    public virtual bool CanUse(Skill skill, [MaybeNullWhen(false)] out SkillContext skillContext)
+    {
+        skillContext = null;
+        
+        if (!skill.CanUse())
+            return false;
 
+        skillContext = new SkillContext(this);
+
+        return skill.Script.CanUse(skillContext);
+    }
+    
+    public virtual bool CanUse(Spell spell, Creature target, string? prompt, [MaybeNullWhen(false)] out SpellContext spellContext)
+    {
+        spellContext = null;
+        
+        if (!spell.CanUse())
+            return false;
+
+        spellContext = new SpellContext(target, this, prompt);
+
+        return spell.Script.CanUse(spellContext);
+    }
+    
     public void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
     public virtual void Drop(IPoint point, IEnumerable<Item> items)
@@ -231,10 +252,8 @@ public abstract class Creature : NamedEntity, IAffected
 
     public virtual bool TryUseSkill(Skill skill)
     {
-        if (!CanUse(skill))
+        if (!CanUse(skill, out var context))
             return false;
-
-        var context = new SkillContext(this);
         
         skill.Use(context);
         
@@ -243,17 +262,19 @@ public abstract class Creature : NamedEntity, IAffected
 
     public virtual bool TryUseSpell(Spell spell, uint? targetId = null, string? prompt = null)
     {
-        if (!CanUse(spell))
-            return false;
-
-        Creature target;
+        Creature? target;
 
         if (!targetId.HasValue)
-            target = this;
-        else if (!MapInstance.TryGetObject(targetId.Value, out target!))
-            return false;
+        {
+            if (spell.Template.SpellType == SpellType.Targeted)
+                return false;
 
-        var context = new SpellContext(target, this, prompt);
+            target = this;
+        } else if (!MapInstance.TryGetObject(targetId.Value, out target))
+            return false;
+        
+        if (!CanUse(spell, target!, prompt, out var context))
+            return false;
 
         spell.Use(context);
 

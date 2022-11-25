@@ -23,5 +23,5 @@ public class DefaultDamageFormula : IDamageFormula
 
     /// <inheritdoc />
     public int Calculate(Creature? attacker, Creature attacked, long damage) =>
-        ApplyAcModifier(attacked.StatSheet.Ac, damage, attacked is Aisling);
+        ApplyAcModifier(attacked.StatSheet.EffectiveAc, damage, attacked is Aisling);
 }

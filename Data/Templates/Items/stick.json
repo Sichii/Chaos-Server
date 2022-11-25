@@ -5,7 +5,7 @@
     "maxStacks": 1,
     "buyCost": 1000,
     "sellValue": 500,
-    "weight": 10,
+    "weight": 1,
     "name": "Stick",
     "panelSprite": 86,
     "displaySprite": 1,

@@ -123,16 +123,19 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
 
     public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
-        if (source.Inventory.RemoveQuantity(slot, count, out var item))
+        if (source.Inventory.RemoveQuantity(slot, count, out var items))
         {
-            Logger.LogDebug(
-                "{UserName} dropped {Item} on monster {MonsterName}",
-                source.Name,
-                item,
-                Name);
-
-            Items.Add(item);
-            Script.OnItemDroppedOn(source, item);
+            foreach (var item in items)
+            {
+                Logger.LogDebug(
+                    "{UserName} dropped {Item} on monster {MonsterName}",
+                    source.Name,
+                    item,
+                    Name);
+                
+                Items.Add(item);
+                Script.OnItemDroppedOn(source, item);
+            }
         }
     }
 

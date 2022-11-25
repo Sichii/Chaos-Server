@@ -55,46 +55,8 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         return CountOf(name) >= quantity;
     }
-
-    public bool RemoveQuantity(string name, int quantity)
-    {
-        using var @lock = Sync.Enter();
-
-        if (quantity <= 0)
-            return false;
-
-        var items = this
-                    .Where(item => item.DisplayName.EqualsI(name))
-                    .ToList();
-
-        if (!items.Any())
-            return false;
-
-        var sum = items.Sum(item => item.Count);
-
-        if (sum < quantity)
-            return false;
-
-        foreach (var item in items)
-            if (quantity <= 0)
-                break;
-            else if (item.Count <= quantity)
-            {
-                Objects[item.Slot] = null;
-                BroadcastOnRemoved(item.Slot, item);
-                quantity -= item.Count;
-            } else
-            {
-                item.Count -= quantity;
-                BroadcastOnUpdated(item.Slot, item);
-
-                break;
-            }
-
-        return true;
-    }
-
-    public bool RemoveQuantity(string name, int quantity, [MaybeNullWhen(false)] out ICollection<Item> items)
+    
+    public bool RemoveQuantity(string name, int quantity, [MaybeNullWhen(false)] out List<Item> items)
     {
         using var @lock = Sync.Enter();
 
@@ -139,31 +101,50 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         return true;
     }
-
-    public bool RemoveQuantity(byte slot, int quantity, [MaybeNullWhen(false)] out Item item)
+    
+    public bool RemoveQuantity(byte slot, int quantity, [MaybeNullWhen(false)] out List<Item> items)
     {
         using var @lock = Sync.Enter();
 
-        item = null;
+        items = null;
 
         if (quantity <= 0)
             return false;
 
-        if (!TryGetObject(slot, out var slotItem))
+        var existingItem = Objects[slot];
+
+        if (existingItem == null)
             return false;
 
-        if (slotItem.Count < quantity)
+        if (!HasCount(existingItem.DisplayName, quantity))
             return false;
 
-        if (slotItem.Count == quantity)
-        {
-            item = slotItem;
+        var existingItems = Objects
+                            .Where(item => (item != null) && item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
+                            .Prepend(existingItem)
+                            .ToList();
+        
+        var ret = new List<Item>();
 
-            return Remove(slot);
-        }
+        foreach (var item in existingItems)
+            if (quantity <= 0)
+                break;
+            else if (item!.Count <= quantity)
+            {
+                Objects[item.Slot] = null;
+                BroadcastOnRemoved(item.Slot, item);
+                quantity -= item.Count;
+                ret.Add(item);
+            } else
+            {
+                var split = item.Split(quantity, ItemCloner);
+                BroadcastOnUpdated(item.Slot, item);
+                ret.Add(split);
 
-        item = slotItem.Split(quantity, ItemCloner);
-        Update(slot);
+                break;
+            }
+
+        items = ret;
 
         return true;
     }
@@ -172,15 +153,20 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     {
         using var @lock = Sync.Enter();
 
-        if (TryAddStackable(obj))
+        var completed = false;
+
+        if (!obj.Template.Stackable)
+            completed |= base.TryAdd(slot, obj);
+                
+        if (completed || TryAddStackable(obj, slot))
             return true;
 
-        return base.TryAdd(slot, obj);
+        return base.TryAddToNextSlot(obj);
     }
 
     public bool TryAddDirect(byte slot, Item obj) => base.TryAdd(slot, obj);
-
-    private bool TryAddStackable(Item obj)
+    
+    private bool TryAddStackable(Item obj, byte? preferredSlot = null)
     {
         if (!obj.Template.Stackable)
             return false;
@@ -190,8 +176,21 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         using var @lock = Sync.Enter();
 
-        foreach (var item in this)
-            if (item.Template.Name.Equals(obj.Template.Name, StringComparison.OrdinalIgnoreCase)
+        var items = Objects.Where(i => i != null)
+                           .ToList();
+
+        //if there is a preferred slot, consider that slot first when adding
+        if (preferredSlot.HasValue && (Objects[preferredSlot.Value] != null))
+        {
+            var preferredItem = Objects[preferredSlot.Value];
+
+            items = items.Where(i => i!.Slot != preferredSlot.Value)
+                         .Prepend(preferredItem)
+                         .ToList();
+        }
+        
+        foreach (var item in items)
+            if (item!.Template.Name.Equals(obj.Template.Name, StringComparison.OrdinalIgnoreCase)
                 && (item.Count < item.Template.MaxStacks))
             {
                 var incomingStacks = obj.Count;
@@ -237,5 +236,35 @@ public sealed class Inventory : PanelBase<Item>, IInventory
               ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
 
         return obj != null;
+    }
+
+    /// <inheritdoc />
+    public override bool TrySwap(byte slot1, byte slot2)
+    {
+        var item1 = Objects[slot1];
+        var item2 = Objects[slot2];
+
+        if ((item1 == null)
+            || (item2 == null)
+            || !item1.Template.Stackable
+            || !item2.Template.Stackable
+            || (item1.Count == item1.Template.MaxStacks)
+            || (item2.Count == item2.Template.MaxStacks)
+            || !item1.DisplayName.EqualsI(item2.DisplayName))
+            return base.TrySwap(slot1, slot2);
+        
+        using var @lock = Sync.Enter();
+
+        var missingStacks = item2.Template.MaxStacks - item2.Count;
+        var stacksToGive = Math.Min(missingStacks, item1.Count);
+        
+        Update(slot2, i => i.Count += stacksToGive);
+
+        if (stacksToGive == item1.Count)
+            Remove(slot1);
+        else
+            Update(slot1, i => i.Count -= stacksToGive);
+
+        return true;
     }
 }

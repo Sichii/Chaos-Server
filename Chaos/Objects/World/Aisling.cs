@@ -7,16 +7,15 @@ using Chaos.Containers;
 using Chaos.Containers.Abstractions;
 using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
 using Chaos.Formulae.LevelUp;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
-using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
-using Chaos.Scripts.EffectScripts.Abstractions;
 using Chaos.Servers.Options;
 using Chaos.Time;
 using Chaos.TypeMapper.Abstractions;
@@ -198,6 +197,12 @@ public sealed class Aisling : Creature
 
         foreach (var skill in SkillBook)
             skillBookObserver.OnAdded(skill);
+
+        foreach (var effect in Effects)
+        {
+            effect.Subject = this;
+            effect.OnReApplied();
+        }
     }
 
     public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));
@@ -206,7 +211,7 @@ public sealed class Aisling : Creature
     {
         var weightSum = 0;
         var slotSum = 0;
-
+        
         //group all separated stacks together by summing their counts
         foreach (var set in hypotheticalItems.GroupBy(
                      set => set.Item.DisplayName,
@@ -217,9 +222,24 @@ public sealed class Aisling : Creature
                          return (col.First().Item, Count: col.Sum(i => i.Count));
                      }))
         {
+            var weightlessAllowance = 0;
+
+            //for stackable items, we can fill the existing stacks in our inventory without adding any weight
+            if (set.Item.Template.Stackable)
+            {
+                var numUniqueStacks = Inventory.Count(i => i.DisplayName.EqualsI(set.Item.DisplayName));
+                var totalCount = Inventory.CountOf(set.Item.DisplayName);
+                var maxCount = set.Item.Template.MaxStacks * numUniqueStacks;
+
+                //so we calculate that value and subtract it from the count we're using to calculate how much this item will weigh
+                weightlessAllowance = maxCount - totalCount;
+            }
+                
             //separate each stack into it's most condensed possible form
             var maxStacks = set.Item.Template.MaxStacks;
-            var estimatedStacks = (int)Math.Ceiling(set.Count / (decimal)maxStacks);
+            //the number of stacks we will actually need to add to the inventory
+            var countActual = Math.Max(0, set.Count - weightlessAllowance);
+            var estimatedStacks = (int)Math.Ceiling(countActual / (decimal)maxStacks);
             weightSum += set.Item.Template.Weight * estimatedStacks;
             slotSum += estimatedStacks;
         }
@@ -230,7 +250,24 @@ public sealed class Aisling : Creature
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
 
     /// <inheritdoc />
-    public override bool CanUse(PanelObjectBase panelObject) => base.CanUse(panelObject) && ActionThrottle.TryIncrement();
+    public override bool CanUse(Skill skill, out SkillContext skillContext) =>
+        base.CanUse(skill, out skillContext!) && ActionThrottle.TryIncrement();
+
+    /// <inheritdoc />
+    public override bool CanUse(
+        Spell spell,
+        Creature target,
+        string? prompt,
+        out SpellContext spellContext
+    ) =>
+        base.CanUse(
+            spell,
+            target,
+            prompt,
+            out spellContext!)
+        && ActionThrottle.TryIncrement();
+
+    public bool CanUse(Item item) => item.CanUse() && item.Script.CanUse(this);
 
     public void Drop(IPoint point, byte slot, int? amount = null)
     {
@@ -250,8 +287,8 @@ public sealed class Aisling : Creature
             if (!Inventory.HasCount(item.DisplayName, amount.Value))
                 return;
 
-            if (Inventory.RemoveQuantity(item.DisplayName, amount.Value, out var items))
-                Drop(point, items);
+            if (Inventory.RemoveQuantity(item.Slot, amount.Value, out var items))
+                Drop(point, items.FixStacks(ItemCloner));
         } else
         {
             if (Inventory.TryGetRemove(slot, out var droppedItem))
@@ -326,7 +363,7 @@ public sealed class Aisling : Creature
         SkillBook skillBook,
         SpellBook spellBook,
         Containers.Legend legend,
-        IEnumerable<IEffect> effects
+        EffectsBar effects
     )
     {
         Name = name;
@@ -336,9 +373,7 @@ public sealed class Aisling : Creature
         SkillBook = skillBook;
         SpellBook = spellBook;
         Legend = legend;
-
-        foreach (var effect in effects)
-            Effects.SimpleAdd(effect);
+        Effects = effects;
     }
 
     public void LevelUp()
@@ -482,11 +517,13 @@ public sealed class Aisling : Creature
         }
 
         Gold = @new;
+        
+        Client.SendAttributes(StatUpdateType.ExpGold);
 
         return true;
     }
 
-    public bool TryGiveItem(Item item, byte slot)
+    public bool TryGiveItem(Item item, byte? slot = null)
     {
         if (!CanCarry(item))
         {
@@ -494,12 +531,27 @@ public sealed class Aisling : Creature
 
             return false;
         }
+        
+        //cancarry will allow adding stackable items even if we are at max weight, if the inventory contains enough incomplete stacks to store them
+        //if we're at max weight, the item is stackable, has weight, and the object is being added to a specific slot, and that slot is empty
+        //this will overweight the character...
+        /*
+        bool WillOverweight(Item localItem, byte localSlot)
+        {
+            var slotItem = Inventory[localSlot];
 
-        foreach (var stack in item.FixStacks(ItemCloner))
-            if (!Inventory.TryAddDirect(slot, stack))
-                Inventory.TryAdd(slot, stack);
+            if (slotItem != null)
+                return false;
 
-        return true;
+            return localItem.Template.Stackable
+                   && (localItem.Template.Weight > 0)
+                   && (UserStatSheet.CurrentWeight >= UserStatSheet.MaxWeight);
+        }*/
+        
+        if (slot.HasValue)
+            return Inventory.TryAdd(slot.Value, item);
+
+        return Inventory.TryAddToNextSlot(item);
     }
 
     public bool TryGiveItems(params Item[] items)
@@ -567,7 +619,7 @@ public sealed class Aisling : Creature
 
         return true;
     }
-
+    
     public bool TryTakeGold(int amount)
     {
         // ReSharper disable once ConvertIfStatementToSwitchStatement

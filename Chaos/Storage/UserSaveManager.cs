@@ -70,7 +70,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         var aisling = Mapper.Map<Aisling>(aislingSchema);
         var bank = Mapper.Map<Bank>(bankSchema);
-        var effects = Mapper.MapMany<EffectSchema, IEffect>(effectsSchema);
+        var effects = new EffectsBar(aisling, Mapper.MapMany<EffectSchema, IEffect>(effectsSchema));
         var equipment = Mapper.Map<Equipment>(equipmentSchema);
         var inventory = Mapper.Map<Inventory>(inventorySchema);
         var skillBook = Mapper.Map<SkillBook>(skillsSchemas);
@@ -132,10 +132,12 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             new FileStreamOptions
             {
                 Access = FileAccess.ReadWrite,
-                Mode = FileMode.Truncate,
+                Mode = FileMode.OpenOrCreate,
                 Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
                 Share = FileShare.None
             });
+
+        stream.SetLength(0);
 
         await JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptions);
     }

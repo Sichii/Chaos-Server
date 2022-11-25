@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Extensions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 
@@ -14,42 +15,22 @@ public abstract class EffectBase : IEffect
         set => Elapsed = Duration - value;
     }
 
-    protected Aisling? AislingSubject { get; set; }
+    protected Aisling? AislingSubject => Subject as Aisling;
     protected TimeSpan Elapsed { get; private set; }
-    protected Creature Subject { get; set; } = null!;
+    public Creature Subject { get; set; } = null!;
     public abstract byte Icon { get; }
     public abstract string Name { get; }
     protected abstract TimeSpan Duration { get; }
-
-    protected EffectColor GetColor()
-    {
-        var remaining = Remaining;
-
-        return remaining.TotalSeconds switch
-        {
-            >= 60 => EffectColor.White,
-            >= 30 => EffectColor.Red,
-            >= 15 => EffectColor.Orange,
-            >= 10 => EffectColor.Yellow,
-            >= 5  => EffectColor.Green,
-            > 0   => EffectColor.Blue,
-            _     => EffectColor.None
-        };
-    }
-
+    
     public static string GetEffectKey(Type type) => type.Name.Replace("effect", string.Empty, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />
-    public virtual void OnApplied(Creature target)
-    {
-        Subject = target;
-        AislingSubject = target as Aisling;
-    }
+    public virtual void OnApplied() { }
 
     public virtual void OnDispelled() { }
 
     /// <inheritdoc />
-    public virtual void OnReApplied(Creature target) => OnApplied(target);
+    public virtual void OnReApplied() => OnApplied();
 
     public virtual void OnTerminated() { }
 
@@ -60,7 +41,7 @@ public abstract class EffectBase : IEffect
     {
         Elapsed += delta;
 
-        var currentColor = GetColor();
+        var currentColor = this.GetColor();
 
         if (Color != currentColor)
         {

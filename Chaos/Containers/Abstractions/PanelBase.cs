@@ -173,7 +173,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         return true;
     }
 
-    public virtual bool TryAdd(byte slot, T obj)
+    public virtual bool TryAdd(byte slot, T obj) => InnerTryAdd(slot, obj);
+
+    private bool InnerTryAdd(byte slot, T obj)
     {
         if (!IsValidSlot(slot))
             return false;
@@ -198,7 +200,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
         for (byte i = 1; i < Length; i++)
             if ((Objects[i] == null) && IsValidSlot(i))
-                return TryAdd(i, obj);
+                return InnerTryAdd(i, obj);
 
         return false;
     }

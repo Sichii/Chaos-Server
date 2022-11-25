@@ -156,7 +156,7 @@ public sealed class Exchange
             return;
         }
 
-        if (!aisling.Inventory.RemoveQuantity(item.DisplayName, amount, out var removedItems))
+        if (!aisling.Inventory.RemoveQuantity(item.Slot, amount, out var removedItems))
             return;
 
         foreach (var removedItem in removedItems)

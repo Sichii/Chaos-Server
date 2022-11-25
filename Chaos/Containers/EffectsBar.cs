@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Containers.Abstractions;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
@@ -34,12 +35,15 @@ public sealed class EffectsBar : IEffectsBar
 
         if (effect.ShouldApply(source, Affected))
         {
+            //set color here because the bar will be fully reset anyway
+            effect.Subject = Affected;
+            effect.Color = effect.GetColor();
             Effects[effect.Name] = effect;
-            effect.OnApplied(Affected);
+            effect.OnApplied();
             ResetDisplay();
         }
     }
-
+    
     /// <inheritdoc />
     public bool Contains(string effectName)
     {
@@ -78,18 +82,13 @@ public sealed class EffectsBar : IEffectsBar
         foreach (var effect in Effects.Values)
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
 
+        var orderedEffects = Effects.Values.OrderBy(e => e.Remaining).ToList();
+        
         //re-apply all effects sorted by ascending remaining duration
-        foreach (var effect in Effects.Values.OrderBy(e => e.Remaining))
+        foreach (var effect in orderedEffects)
             AffectedAisling?.Client.SendEffect(effect.Color, effect.Icon);
     }
-
-    public void SimpleAdd(IEffect effect)
-    {
-        using var @lock = Sync.Enter();
-        Effects[effect.Name] = effect;
-        effect.OnReApplied(Affected);
-    }
-
+    
     public void Terminate(string effectName)
     {
         using var @lock = Sync.Enter();
