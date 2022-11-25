@@ -3,7 +3,7 @@
 namespace Chaos.Extensions.Cryptography;
 
 /// <summary>
-///     Provides extensions methods for <see cref="IReadOnlyList{T}"/>
+///     Provides extensions methods for <see cref="System.Collections.Generic.IReadOnlyList{T}"/>
 /// </summary>
 public static class ReadOnlyListExtensions
 {

@@ -4,7 +4,7 @@ using Chaos.Common.Abstractions;
 namespace Chaos.Security.Options;
 
 /// <summary>
-///     Configuration options for <see cref="ActiveDirectoryCredentialManager"/>
+///     Configuration options for <see cref="Chaos.Security.ActiveDirectoryCredentialManager"/>
 /// </summary>
 public sealed record ActiveDirectoryCredentialManagerOptions : IDirectoryBound
 {

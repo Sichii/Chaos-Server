@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace Chaos.Storage.Abstractions;
 
 /// <summary>
-///     An <see cref="ISimpleCache{TResult}"/> that loads data from a file and caches it
+///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}"/> that loads data from a file and caches it
 /// </summary>
 /// <typeparam name="T">The type of object stored in the cache</typeparam>
 /// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>

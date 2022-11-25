@@ -18,7 +18,7 @@ public readonly ref struct ValueStopwatch
     /// </summary>
     /// <param name="startTimestamp">The starting time stamp</param>
     /// <param name="endTimestamp">The ending time stamp</param>
-    /// <returns>A <see cref="TimeSpan"/> representing the amount of time between the two time stamps</returns>
+    /// <returns>A <see cref="System.TimeSpan"/> representing the amount of time between the two time stamps</returns>
     public static TimeSpan GetElapsedTime(long startTimestamp, long endTimestamp)
     {
         var timestampDelta = endTimestamp - startTimestamp;
@@ -36,7 +36,7 @@ public readonly ref struct ValueStopwatch
     public static long GetTimestamp() => Stopwatch.GetTimestamp();
 
     /// <summary>
-    ///     Creates and starts a new <see cref="ValueStopwatch"/> instance
+    ///     Creates and starts a new <see cref="Chaos.Time.ValueStopwatch"/> instance
     /// </summary>
     public static ValueStopwatch StartNew() => new(GetTimestamp());
 }

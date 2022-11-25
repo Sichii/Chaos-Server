@@ -41,7 +41,7 @@ public interface ISocketClient
     void BeginReceive();
     
     /// <summary>
-    ///     Disconnects the client from the server and calls the <see cref="OnDisconnected"/> event
+    ///     Disconnects the client from the server and calls the <see cref="Chaos.Networking.Abstractions.ISocketClient.OnDisconnected"/> event
     /// </summary>
     void Disconnect();
     
@@ -54,8 +54,8 @@ public interface ISocketClient
     ///     Serializes an object and sends it to the client
     /// </summary>
     /// <param name="obj">The object to be serialized and sent</param>
-    /// <typeparam name="T">The type must inherit <see cref="ISendArgs"/>
-    ///     and have a <see cref="IServerPacketSerializer{T}"/> created for it</typeparam>
+    /// <typeparam name="T">The type must inherit <see cref="Chaos.Packets.Abstractions.ISendArgs"/>
+    ///     and have a <see cref="Chaos.Packets.Abstractions.IServerPacketSerializer{T}"/> created for it</typeparam>
     void Send<T>(T obj) where T: ISendArgs;
     
     /// <summary>

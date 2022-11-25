@@ -11,7 +11,7 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class CryptographyExtensions
 {
     /// <summary>
-    ///     Adds an <see cref="ICryptoClient"/> implementation to the <see cref="IServiceCollection"/>
+    ///     Adds an <see cref="Chaos.Cryptography.Abstractions.ICryptoClient"/> implementation to the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection"/>
     /// </summary>
     /// <param name="serviceCollection">The service collection to add to</param>
     public static void AddCryptography(this IServiceCollection serviceCollection) =>

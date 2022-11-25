@@ -3,7 +3,7 @@ using Chaos.Common.Definitions;
 namespace Chaos.Time;
 
 /// <summary>
-///     A <see cref="DateTime"/> replacement that runs at 24x speed, to be used for in-game time measurement
+///     A <see cref="System.DateTime"/> replacement that runs at 24x speed, to be used for in-game time measurement
 /// </summary>
 public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable<GameTime>
 {

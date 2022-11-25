@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 namespace Chaos.Common.Synchronization;
 
 /// <summary>
-///     The same as <see cref="SemaphoreSlim" />, except with first-in-first-out (FIFO) behavior.
+///     The same as <see cref="System.Threading.SemaphoreSlim" />, except with first-in-first-out (FIFO) behavior.
 /// </summary>
-public class FifoSemaphoreSlim
+public sealed class FifoSemaphoreSlim
 {
     private readonly SemaphoreSlim Sync;
     private readonly ConcurrentQueue<TaskCompletionSource<bool>> TaskQueue = new();
@@ -27,7 +27,7 @@ public class FifoSemaphoreSlim
     }
 
     /// <summary>
-    ///     Releases the internal <see cref="SemaphoreSlim" /> once.
+    ///     Releases the internal <see cref="System.Threading.SemaphoreSlim" /> once.
     /// </summary>
     public void Release() => Sync.Release();
 

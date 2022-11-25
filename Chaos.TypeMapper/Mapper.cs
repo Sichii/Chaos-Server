@@ -6,7 +6,7 @@ using Chaos.TypeMapper.Abstractions;
 namespace Chaos.TypeMapper;
 
 /// <summary>
-///     Maps objects from one type to another by utilizing <see cref="IMapperProfile{T1,T2}"/> implementations
+///     Maps objects from one type to another by utilizing <see cref="Chaos.TypeMapper.Abstractions.IMapperProfile{T1,T2}"/> implementations
 /// </summary>
 public sealed class Mapper : ITypeMapper
 {
@@ -65,7 +65,7 @@ public sealed class Mapper : ITypeMapper
     }
 
     /// <summary>
-    ///     Creates a function that maps one type to another, utilizing an <see cref="IMapperProfile{T1,T2}"/>
+    ///     Creates a function that maps one type to another, utilizing an <see cref="Chaos.TypeMapper.Abstractions.IMapperProfile{T1,T2}"/>
     /// </summary>
     private Func<object, object> ResolveMapper((Type From, Type To) key)
     {

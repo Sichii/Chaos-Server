@@ -24,7 +24,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     }
 
     /// <summary>
-    ///     Adds a recorded <see cref="TimeSpan"/> that represents how much time execution took
+    ///     Adds a recorded <see cref="System.TimeSpan"/> that represents how much time execution took
     /// </summary>
     /// <param name="executionDelta">The amount of time the loop took to execute</param>
     public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);

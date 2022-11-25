@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Chaos.Extensions.Common;
 
 /// <summary>
-///     Provides extension methods for <see cref="Array" />.
+///     Provides extension methods for <see cref="System.Array" />.
 /// </summary>
 public static class ArrayExtensions
 {

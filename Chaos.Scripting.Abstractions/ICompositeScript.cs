@@ -3,7 +3,7 @@ namespace Chaos.Scripting.Abstractions;
 /// <summary>
 ///     Defines a pattern for a script that is composed of multiple scripts
 /// </summary>
-/// <typeparam name="TScript">A type that inherits from <see cref="IScript"/></typeparam>
+/// <typeparam name="TScript">A type that inherits from <see cref="Chaos.Scripting.Abstractions.IScript"/></typeparam>
 public interface ICompositeScript<TScript> : IEnumerable<TScript> where TScript: IScript
 {
     /// <summary>

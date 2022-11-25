@@ -22,13 +22,13 @@ public enum QuestFlag1 : ulong
 }
 
 /// <summary>
-///     A 2nd set of quest flags, for when <see cref="QuestFlag1" /> is filled up
+///     A 2nd set of quest flags, for when <see cref="Chaos.Common.Definitions.QuestFlag1" /> is filled up
 /// </summary>
 [Flags]
 public enum QuestFlag2 : ulong { }
 
 /// <summary>
-///     A 3rd set of quest flags, for when <see cref="QuestFlag2" /> is filled up
+///     A 3rd set of quest flags, for when <see cref="Chaos.Common.QuestFlag2" /> is filled up
 /// </summary>
 [Flags]
 public enum QuestFlag3 : ulong { }
@@ -183,7 +183,7 @@ public enum ServerMessageType : byte
     /// </summary>
     OrangeBar5 = 6,
     /// <summary>
-    ///     <see cref="UserOption" />s are sent via this text channel
+    ///     <see cref="Chaos.Common.Definitions.UserOption" />s are sent via this text channel
     /// </summary>
     UserOptions = 7,
     /// <summary>
@@ -859,7 +859,7 @@ public enum SpellType : byte
 
 /// <summary>
 ///     A byte representing the emote/body animation being sent.
-///     Used by <see cref="BodyAnimation" />
+///     Used by ServerOpCode.BodyAnimation
 /// </summary>
 public enum BodyAnimation : byte
 {

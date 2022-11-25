@@ -3,7 +3,7 @@ using Chaos.Common.Abstractions;
 namespace Chaos.Extensions.Common;
 
 /// <summary>
-///     Provides extension methods for <see cref="IInterlockedObject{T}" />.
+///     Provides extension methods for <see cref="Chaos.Common.Abstractions.IInterlockedObject{T}" />.
 /// </summary>
 public static class InterlockedObjectExtensions
 {

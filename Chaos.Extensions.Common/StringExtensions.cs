@@ -1,7 +1,7 @@
 namespace Chaos.Extensions.Common;
 
 /// <summary>
-///     Provides extensions methods for <see cref="string" />
+///     Provides extensions methods for <see cref="System.string" />
 /// </summary>
 public static class StringExtensions
 {

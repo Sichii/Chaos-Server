@@ -1,7 +1,7 @@
 namespace Chaos.Extensions.Common;
 
 /// <summary>
-///     Provides extension methods for <see cref="IEnumerable{T}"/>
+///     Provides extension methods for <see cref="System.Collections.Generic.IEnumerable{T}"/>
 /// </summary>
 public static class EnumerableExtensions
 {

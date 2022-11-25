@@ -1,7 +1,7 @@
 namespace Chaos.Extensions.Common;
 
 /// <summary>
-///     Provides extensions methods for <see cref="CancellationToken" />.
+///     Provides extensions methods for <see cref="System.Threading.CancellationToken"/>.
 /// </summary>
 public static class CancellationTokenExtensions
 {

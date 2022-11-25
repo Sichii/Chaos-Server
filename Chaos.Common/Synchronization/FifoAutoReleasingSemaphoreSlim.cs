@@ -5,7 +5,7 @@ namespace Chaos.Common.Synchronization;
 /// <summary>
 ///     An object that offers subscription-style non-blocking FIFO synchronization by abusing the using pattern.
 /// </summary>
-public class FifoAutoReleasingSemaphoreSlim
+public sealed class FifoAutoReleasingSemaphoreSlim
 {
     public FifoSemaphoreSlim Root { get; }
 
@@ -23,8 +23,8 @@ public class FifoAutoReleasingSemaphoreSlim
     }
 
     /// <summary>
-    ///     The same as <see cref="FifoSemaphoreSlim.WaitAsync()" />.
-    ///     Returns a disposable object that when disposed will release the internal <see cref="FifoSemaphoreSlim" />.
+    ///     The same as <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim.WaitAsync()" />.
+    ///     Returns a disposable object that when disposed will release the internal <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.
     /// </summary>
     public async ValueTask<IPolyDisposable> WaitAsync()
     {
@@ -33,7 +33,7 @@ public class FifoAutoReleasingSemaphoreSlim
         return new AutoReleasingSubscription(Root);
     }
 
-    private record AutoReleasingSubscription : IPolyDisposable
+    private sealed record AutoReleasingSubscription : IPolyDisposable
     {
         private readonly FifoSemaphoreSlim SemaphoreSlim;
         private int Disposed;

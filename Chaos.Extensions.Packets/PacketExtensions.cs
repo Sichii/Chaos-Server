@@ -13,13 +13,13 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class PacketExtensions
 {
     /// <summary>
-    ///     Adds <see cref="PacketSerializer" /> as a singleton implementation of <see cref="IPacketSerializer" /> to the service collction
+    ///     Adds <see cref="Chaos.Packets.PacketSerializer" /> as a singleton implementation of <see cref="Chaos.Packets.Abstractions.IPacketSerializer" /> to the service collction
     /// </summary>
     /// <param name="serviceCollection">The service collectionto add to</param>
     /// <remarks>
-    ///     This extension scans all loaded assemblies for types that implement of <see cref="IClientPacketDeserializer" /> or
-    ///     <see cref="IServerPacketSerializer" />. It initializes instances of all of these types through
-    ///     <see cref="Activator"/>.<see cref="Activator.CreateInstance(Type)" /> and uses the types and objects as parameters for the <see cref="PacketSerializer" />
+    ///     This extension scans all loaded assemblies for types that implement of <see cref="Chaos.Packets.Abstractions.IClientPacketDeserializer" /> or
+    ///     <see cref="Chaos.Packets.Abstractions.IServerPacketSerializer" />. It initializes instances of all of these types through
+    ///     <see cref="System.Activator"/>.<see cref="System.Activator.CreateInstance(Type)" /> and uses the types and objects as parameters for the <see cref="Chaos.Packets.PacketSerializer" />
     ///     constructor.
     /// </remarks>
     public static void AddPacketSerializer(this IServiceCollection serviceCollection) =>

@@ -12,10 +12,10 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class PathfindingExtensions
 {
     /// <summary>
-    ///     Adds <see cref="PathfindingService"/> as an implementation of <see cref="IPathfindingService"/> to the service collection
+    ///     Adds <see cref="Chaos.Pathfinding.PathfindingService"/> as an implementation of <see cref="IPathfindingService"/> to the service collection
     /// </summary>
     /// <param name="serviceCollection">The service collection to add to</param>
-    /// <remarks>Depends on <see cref="IMemoryCache"/></remarks>
+    /// <remarks>Depends on <see cref="Microsoft.Extensions.Caching.Memory.IMemoryCache"/></remarks>
     public static void AddPathfinding(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddMemoryCache();

@@ -9,7 +9,9 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Objects.Panel;
 
-/// <inheritdoc cref="PanelObjectBase" />
+/// <summary>
+///     An object that exists within the inventory. This itemcan also be dropped to create a <see cref="Chaos.Objects.World.GroundItem"/>
+/// </summary>
 public sealed class Item : PanelObjectBase, IScripted<IItemScript>
 {
     public DisplayColor Color { get; set; }

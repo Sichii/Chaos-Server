@@ -18,7 +18,7 @@ public enum SearchType
 }
 
 /// <summary>
-///     Defines the properties required to configure a <see cref="SimpleFileCacheBase{T,TSchema,TOptions}"/>
+///     Defines the properties required to configure a <see cref="Chaos.Storage.Abstractions.SimpleFileCacheBase{T,TSchema,TOptions}"/>
 /// </summary>
 public interface ISimpleFileCacheOptions : IDirectoryBound
 {

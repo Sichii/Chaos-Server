@@ -5,7 +5,7 @@ using Chaos.Geometry.Abstractions.Definitions;
 namespace Chaos.Extensions.Geometry;
 
 /// <summary>
-///     Provides extension methods for <see cref="IPoint" />.
+///     Provides extension methods for <see cref="Chaos.Geometry.Abstractions.IPoint" />.
 /// </summary>
 public static class PointExtensions
 {
@@ -40,12 +40,12 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Offsets an <see cref="IPoint" /> in the specified <see cref="Direction" /> by the specified <paramref name="distance" />
+    ///     Offsets an <see cref="Chaos.Geometry.Abstractions.IPoint" /> in the specified <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> by the specified <paramref name="distance" />
     /// </summary>
     /// <param name="point">The point to offset</param>
     /// <param name="direction">The direction to offset to</param>
     /// <param name="distance">The distance to offset by</param>
-    /// <returns>A new <see cref="Point" /> offset <paramref name="distance" /> number of tiles in <paramref name="direction" /></returns>
+    /// <returns>A new <see cref="Chaos.Geometry.Point" /> offset <paramref name="distance" /> number of tiles in <paramref name="direction" /></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
     {
@@ -66,11 +66,11 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Determines the directional relationship between this <see cref="IPoint" /> and another <see cref="IPoint" />
+    ///     Determines the directional relationship between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="point">The <see cref="IPoint" /> whose relation to another to find</param>
-    /// <param name="other">The <see cref="IPoint" /> to find the relation to</param>
-    /// <returns>The <see cref="Direction" /> <paramref name="other" /> would need to face to be facing <paramref name="point" /> </returns>
+    /// <param name="point">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> whose relation to another to find</param>
+    /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to find the relation to</param>
+    /// <returns>The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> <paramref name="other" /> would need to face to be facing <paramref name="point" /> </returns>
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -112,10 +112,10 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Determines the distances between this <see cref="IPoint" /> and another <see cref="IPoint" />
+    ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
     /// <param name="point"></param>
-    /// <param name="other">The <see cref="IPoint" /> to check distance against</param>
+    /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
     /// <returns>The distance between the two given points without moving diagonally</returns>
     public static int DistanceFrom(this IPoint point, IPoint other)
     {
@@ -134,7 +134,7 @@ public static class PointExtensions
     /// <param name="radius">The max distance to generate points</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="radius" /> must be positive</exception>
     /// <remarks>
-    ///     Assumes <see cref="Direction.Up" /> is equivalent to the cardinal direction "North", this method will generate points in all 4
+    ///     Assumes <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal direction "North", this method will generate points in all 4
     ///     cardinal directions. Points will be generated 1 radius at a time, clock-wise.
     /// </remarks>
     /// <example>
@@ -166,9 +166,9 @@ public static class PointExtensions
     /// <param name="direction">The general direction to generate points for. See remarks.</param>
     /// <param name="radius">The range in which to generate points</param>
     /// <remarks>
-    ///     Assuming <see cref="Direction.Up" /> is equivalent to the cardinal direction "North", this method will generate points in the
+    ///     Assuming <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal direction "North", this method will generate points in the
     ///     inter-cardinal directions "North-East", "South-East", "South-West", and "North-West". Points will be generated 1 radius at a time,
-    ///     clock-wise. Optionally, you can choose a cardinal <see cref="Direction" /> to generate points for the 2 inter-cardinal directions that
+    ///     clock-wise. Optionally, you can choose a cardinal <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to generate points for the 2 inter-cardinal directions that
     ///     share the given cardinal direction.
     /// </remarks>
     /// <example>
@@ -250,11 +250,11 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Offsets one <see cref="IPoint" /> towards another <see cref="IPoint" />
+    ///     Offsets one <see cref="Chaos.Geometry.Abstractions.IPoint" /> towards another <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
     /// <param name="point"></param>
     /// <param name="other">The point to offset towards</param>
-    /// <returns>A new <see cref="Point" /> that has been offset in the direction of <paramref name="other" /></returns>
+    /// <returns>A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" /></returns>
     public static Point OffsetTowards(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -314,7 +314,7 @@ public static class PointExtensions
     /// </summary>
     /// <param name="point">The point to search around</param>
     /// <param name="maxRadius">The maximum distance from the <paramref name="point"/> to search</param>
-    /// <remarks>The search starts from <see cref="Direction.Up"/> and searches clock-wise</remarks>
+    /// <remarks>The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up"/> and searches clock-wise</remarks>
     public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
     {
         var currentPoint = Point.From(point);

@@ -3,22 +3,22 @@ namespace Chaos.Common.Synchronization;
 /// <summary>
 ///     An object that offers subscription-style blocking synchronization by abusing the using pattern.
 /// </summary>
-public class AutoReleasingMonitor
+public sealed class AutoReleasingMonitor
 {
     private readonly object Root;
 
     /// <summary>
-    ///     The same as <see cref="Monitor.IsEntered(object)" />
+    ///     The same as <see cref="System.Threading.Monitor.IsEntered(object)" />
     /// </summary>
     public bool IsEntered => Monitor.IsEntered(Root);
 
-    public static IDisposable NoOpDisposable => new NoOpSubscription();
+    public static IDisposable NoOpDisposable => new NoOpDisposable();
 
     public AutoReleasingMonitor(object? root = null) => Root = root ?? new object();
 
     /// <summary>
-    ///     The same as <see cref="Monitor.Enter(object)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via <see cref="Monitor.Exit(object)" />
+    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />.
+    ///     Returns a disposable object that when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />
     /// </summary>
     public IDisposable Enter()
     {
@@ -28,8 +28,8 @@ public class AutoReleasingMonitor
     }
 
     /// <summary>
-    ///     The same as <see cref="Monitor.Enter(object)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via <see cref="Monitor.Exit(object)" />.
+    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />.
+    ///     Returns a disposable object that when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />.
     ///     Will first check if the current thread owns the lock in order to avoid an exception.
     /// </summary>
     public IDisposable EnterWithSafeExit()
@@ -40,17 +40,17 @@ public class AutoReleasingMonitor
     }
 
     /// <summary>
-    ///     The same as <see cref="Monitor.Exit(object)" />
+    ///     The same as <see cref="System.Threading.Monitor.Exit(object)" />
     /// </summary>
     public void Exit() => Monitor.Exit(Root);
 
     /// <summary>
-    ///     The same as <see cref="Monitor.TryEnter(object, TimeSpan)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via <see cref="Monitor.Exit(object)" />.
+    ///     The same as <see cref="System.Threading.Monitor.TryEnter(object, TimeSpan)" />.
+    ///     Returns a disposable object that when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />.
     /// </summary>
     /// <param name="timeoutMs"></param>
     /// <returns>
-    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="IDisposable" /> object that when disposed
+    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when disposed
     ///     will exit the lock
     /// </returns>
     public IDisposable? TryEnter(int timeoutMs)
@@ -61,12 +61,8 @@ public class AutoReleasingMonitor
         return default;
     }
 
-    private record NoOpSubscription : IDisposable
-    {
-        public void Dispose() { }
-    }
-
-    private record SafeAutoReleasingSubscription : IDisposable
+    
+    private sealed record SafeAutoReleasingSubscription : IDisposable
     {
         private readonly object Root;
         private int Disposed;
@@ -80,7 +76,7 @@ public class AutoReleasingMonitor
         }
     }
 
-    private record AutoReleasingSubscription : IDisposable
+    private sealed record AutoReleasingSubscription : IDisposable
     {
         private readonly object Root;
         private int Disposed;

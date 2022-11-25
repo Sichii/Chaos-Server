@@ -4,9 +4,9 @@ using Chaos.Common.Synchronization;
 namespace Chaos.Common.Collections.Synchronized;
 
 /// <summary>
-///     Wraps a <see cref="List{T}" />, entering a lock for each of it's methods. Enumeration will occur on a snapshot.
+///     Wraps a <see cref="System.Collections.Generic.List{T}" />, entering a lock for each of it's methods. Enumeration will occur on a snapshot.
 /// </summary>
-/// <inheritdoc cref="List{T}" />
+/// <inheritdoc cref="System.Collections.Generic.List{T}" />
 public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 {
     private readonly List<T> List;

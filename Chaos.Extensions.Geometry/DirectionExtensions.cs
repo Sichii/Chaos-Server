@@ -3,7 +3,7 @@ using Chaos.Geometry.Abstractions.Definitions;
 namespace Chaos.Extensions.Geometry;
 
 /// <summary>
-///     Provides extensions methods for <see cref="Direction"/>
+///     Provides extensions methods for <see cref="Chaos.Geometry.Abstractions.Definitions.Direction"/>
 /// </summary>
 public static class DirectionExtensions
 {
@@ -30,7 +30,7 @@ public static class DirectionExtensions
     }
 
     /// <summary>
-    ///     Returns the <see cref="Direction" />s that would be to the sides of a given cardinal direction.
+    ///     Returns the <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" />s that would be to the sides of a given cardinal direction.
     /// </summary>
     public static (Direction side1, Direction side2) GetSideDirections(this Direction direction) => direction switch
     {
@@ -42,7 +42,7 @@ public static class DirectionExtensions
     };
 
     /// <summary>
-    ///     Returns the <see cref="Direction" /> equivalent of the reverse of a given cardinal direction.
+    ///     Returns the <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> equivalent of the reverse of a given cardinal direction.
     /// </summary>
     public static Direction Reverse(this Direction direction) =>
         direction switch

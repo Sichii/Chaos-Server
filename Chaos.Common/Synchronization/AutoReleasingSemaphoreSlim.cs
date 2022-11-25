@@ -3,15 +3,15 @@ namespace Chaos.Common.Synchronization;
 /// <summary>
 ///     An object that offers subscription-style non-blocking synchronization by abusing the using pattern.
 /// </summary>
-public class AutoReleasingSemaphoreSlim
+public sealed class AutoReleasingSemaphoreSlim
 {
     private readonly SemaphoreSlim Root;
 
     public AutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new SemaphoreSlim(initialCount, maxCount);
 
     /// <summary>
-    ///     The same as <see cref="SemaphoreSlim.WaitAsync()" />.
-    ///     Returns a disposable object that when disposed will release the internal <see cref="SemaphoreSlim" />.
+    ///     The same as <see cref="System.Threading.SemaphoreSlim.WaitAsync()" />.
+    ///     Returns a disposable object that when disposed will release the internal <see cref="System.Threading.SemaphoreSlim" />.
     /// </summary>
     public async Task<IAsyncDisposable> WaitAsync()
     {
@@ -20,7 +20,7 @@ public class AutoReleasingSemaphoreSlim
         return new AutoReleasingSubscription(Root);
     }
 
-    private record AutoReleasingSubscription : IAsyncDisposable
+    private sealed record AutoReleasingSubscription : IAsyncDisposable
     {
         private readonly SemaphoreSlim SemaphoreSlim;
         private int Disposed;

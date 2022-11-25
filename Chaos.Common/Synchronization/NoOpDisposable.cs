@@ -2,7 +2,7 @@ using Chaos.Common.Abstractions;
 
 namespace Chaos.Common.Synchronization;
 
-public class NoOpDisposable : IPolyDisposable
+public sealed class NoOpDisposable : IPolyDisposable
 {
     /// <inheritdoc />
     public void Dispose() { }

@@ -4,12 +4,12 @@ using Chaos.Geometry.Abstractions;
 namespace Chaos.Extensions.Geometry;
 
 /// <summary>
-///     Provides extension methods for <see cref="IRectangle"/>
+///     Provides extension methods for <see cref="Chaos.Geometry.Abstractions.IRectangle"/>
 /// </summary>
 public static class RectangleExtensions
 {
     /// <summary>
-    ///     Determines whether the specified <see cref="IRectangle"/> contains another <see cref="IRectangle"/>
+    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle"/> contains another <see cref="Chaos.Geometry.Abstractions.IRectangle"/>
     /// </summary>
     /// <param name="rect">The possibly outer rectangle</param>
     /// <param name="other">The possible inner rectangle</param>
@@ -24,7 +24,7 @@ public static class RectangleExtensions
     }
 
     /// <summary>
-    ///     Determines whether the specified <see cref="IRectangle"/> contains an <see cref="IPoint"/>
+    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle"/> contains an <see cref="Chaos.Geometry.Abstractions.IPoint"/>
     /// </summary>
     /// <param name="rect">The rectangle to check</param>
     /// <param name="point">The point to check</param>
@@ -39,7 +39,7 @@ public static class RectangleExtensions
     }
 
     /// <summary>
-    ///     Determines whether the specified <see cref="IRectangle"/> intersects another <see cref="IRectangle"/>
+    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle"/> intersects another <see cref="Chaos.Geometry.Abstractions.IRectangle"/>
     /// </summary>
     /// <param name="rect">A rectangle</param>
     /// <param name="other">Another rectangle</param>
@@ -54,7 +54,7 @@ public static class RectangleExtensions
     }
 
     /// <summary>
-    ///     Lazily generates all points inside of the specified <see cref="IRectangle"/>
+    ///     Lazily generates all points inside of the specified <see cref="Chaos.Geometry.Abstractions.IRectangle"/>
     /// </summary>
     /// <param name="rect">The rectangle togenerate points for</param>
     public static IEnumerable<Point> Points(this IRectangle rect)
@@ -67,7 +67,7 @@ public static class RectangleExtensions
     }
 
     /// <summary>
-    ///     Generates a random point inside the <see cref="IRectangle"/>
+    ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle"/>
     /// </summary>
     /// <param name="rect">The rect to use as bounds</param>
     public static Point RandomPoint(this IRectangle rect) => new(

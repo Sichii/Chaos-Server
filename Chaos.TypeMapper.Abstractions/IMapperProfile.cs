@@ -1,7 +1,7 @@
 namespace Chaos.TypeMapper.Abstractions;
 
 /// <summary>
-///     Defines a pattern for a profile used by <see cref="ITypeMapper"/> that is used to map objects to and from eachother
+///     Defines a pattern for a profile used by <see cref="Chaos.TypeMapper.Abstractions.ITypeMapper"/> that is used to map objects to and from eachother
 /// </summary>
 /// <typeparam name="T1"></typeparam>
 /// <typeparam name="T2"></typeparam>

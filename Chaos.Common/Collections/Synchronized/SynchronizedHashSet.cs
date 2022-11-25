@@ -5,9 +5,9 @@ using Chaos.Common.Synchronization;
 namespace Chaos.Common.Collections.Synchronized;
 
 /// <summary>
-///     Wraps a <see cref="HashSet{T}" />, entering a lock for each of it's methods. Enumeration will occur on a snapshot.
+///     Wraps a <see cref="System.Collections.Generic.HashSet{T}" />, entering a lock for each of it's methods. Enumeration will occur on a snapshot.
 /// </summary>
-/// <inheritdoc cref="HashSet{T}" />
+/// <inheritdoc cref="System.Collections.Generic.HashSet{T}" />
 public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 {
     private readonly HashSet<T> Set;
