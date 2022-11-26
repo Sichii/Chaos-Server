@@ -28,7 +28,7 @@ public enum QuestFlag1 : ulong
 public enum QuestFlag2 : ulong { }
 
 /// <summary>
-///     A 3rd set of quest flags, for when <see cref="Chaos.Common.QuestFlag2" /> is filled up
+///     A 3rd set of quest flags, for when <see cref="Chaos.Common.Definitions.QuestFlag2" /> is filled up
 /// </summary>
 [Flags]
 public enum QuestFlag3 : ulong { }
