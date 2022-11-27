@@ -1,3 +1,4 @@
+using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
 using Chaos.Objects.Menu;
@@ -15,6 +16,7 @@ public class BuyShopScript : ConfigurableDialogScriptBase
     private readonly IItemFactory ItemFactory;
     private readonly ILogger<BuyShopScript> Logger;
     private int? Amount;
+    private ItemDetails? ItemDetails;
     private Item? ShopItem;
     private int? TotalBuyCost;
     protected HashSet<string> ItemTemplateKeys { get; init; } = null!;
@@ -40,7 +42,7 @@ public class BuyShopScript : ConfigurableDialogScriptBase
         foreach (var itemTemplateKey in ItemTemplateKeys)
         {
             var item = ItemFactory.CreateFaux(itemTemplateKey);
-            Subject.Items.Add(item);
+            Subject.Items.Add(ItemDetails.Default(item));
         }
     }
 
@@ -73,11 +75,11 @@ public class BuyShopScript : ConfigurableDialogScriptBase
 
         ShopItem!.Count = amount;
         Amount = amount;
-        TotalBuyCost = ShopItem!.Template.BuyCost * Amount;
+        TotalBuyCost = ItemDetails!.AmountOrPrice * Amount;
 
         return true;
     }
-    
+
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
@@ -87,7 +89,8 @@ public class BuyShopScript : ConfigurableDialogScriptBase
                 return;
 
             var itemName = Subject.MenuArgs.First();
-            ShopItem = Subject.Items.FirstOrDefault(i => i.DisplayName.EqualsI(itemName));
+            ItemDetails = Subject.Items.FirstOrDefault(details => details.Item.DisplayName.EqualsI(itemName));
+            ShopItem = ItemDetails?.Item;
 
             if (ShopItem == null)
                 return;

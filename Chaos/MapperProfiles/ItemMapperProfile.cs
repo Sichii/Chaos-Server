@@ -17,7 +17,8 @@ namespace Chaos.MapperProfiles;
 public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
                                         IMapperProfile<Item, ItemInfo>,
                                         IMapperProfile<ItemTemplate, ItemTemplateSchema>,
-                                        IMapperProfile<ItemRequirement, ItemRequirementSchema>
+                                        IMapperProfile<ItemRequirement, ItemRequirementSchema>,
+                                        IMapperProfile<ItemDetails, ItemInfo>
 {
     private readonly ILogger<ItemMapperProfile> Logger;
     private readonly ITypeMapper Mapper;
@@ -63,6 +64,28 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
     }
 
     public Item Map(ItemInfo obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public ItemInfo Map(ItemDetails obj)
+    {
+        var item = obj.Item;
+
+        return new ItemInfo
+        {
+            Color = item.Color,
+            Cost = obj.AmountOrPrice,
+            Count = item.Count < 0
+                ? throw new InvalidOperationException($"Item \"{item.DisplayName}\" has negative count of {item.Count}")
+                : Convert.ToUInt32(item.Count),
+            CurrentDurability = item.CurrentDurability ?? 0,
+            EntityType = EntityType.Item,
+            MaxDurability = item.Template.MaxDurability ?? 0,
+            Name = item.DisplayName,
+            Slot = item.Slot,
+            Sprite = item.Template.ItemSprite.OffsetPanelSprite,
+            Stackable = item.Template.Stackable
+        };
+    }
 
     ItemInfo IMapperProfile<Item, ItemInfo>.Map(Item obj) => new()
     {
@@ -132,4 +155,7 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
 
     /// <inheritdoc />
     public ItemRequirementSchema Map(ItemRequirement obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    ItemDetails IMapperProfile<ItemDetails, ItemInfo>.Map(ItemInfo obj) => throw new NotImplementedException();
 }

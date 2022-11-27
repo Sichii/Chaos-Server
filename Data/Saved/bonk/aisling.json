@@ -1,11 +1,11 @@
 {
   "bodyColor": "White",
   "bodySprite": "Female",
-  "direction": "Up",
+  "direction": "Down",
   "effects": [],
   "flags": {},
   "gender": "Female",
-  "gold": 7000,
+  "gold": 6500,
   "hairColor": "Default",
   "hairStyle": 6,
   "ignoreList": [],
@@ -40,6 +40,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 28,
-  "y": 14
+  "x": 25,
+  "y": 26
 }

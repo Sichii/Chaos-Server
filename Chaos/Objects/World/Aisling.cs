@@ -211,7 +211,7 @@ public sealed class Aisling : Creature
     {
         var weightSum = 0;
         var slotSum = 0;
-        
+
         //group all separated stacks together by summing their counts
         foreach (var set in hypotheticalItems.GroupBy(
                      set => set.Item.DisplayName,
@@ -234,7 +234,7 @@ public sealed class Aisling : Creature
                 //so we calculate that value and subtract it from the count we're using to calculate how much this item will weigh
                 weightlessAllowance = maxCount - totalCount;
             }
-                
+
             //separate each stack into it's most condensed possible form
             var maxStacks = set.Item.Template.MaxStacks;
             //the number of stacks we will actually need to add to the inventory
@@ -301,7 +301,7 @@ public sealed class Aisling : Creature
     {
         if (!TryTakeGold(amount))
             return;
-            
+
         var money = new Money(amount, MapInstance, point);
         MapInstance.AddObject(money, point);
 
@@ -344,7 +344,7 @@ public sealed class Aisling : Creature
         {
             if (UserStatSheet.Level >= WorldOptions.Instance.MaxLevel)
                 break;
-            
+
             var expToGive = Math.Min(amount, UserStatSheet.ToNextLevel);
             UserStatSheet.AddTotalExp(expToGive);
             UserStatSheet.AddTNL(-expToGive);
@@ -470,7 +470,7 @@ public sealed class Aisling : Creature
         Client.SendDisplayAisling(this);
         Client.SendRefreshResponse();
 
-        foreach(var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
+        foreach (var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
             reactor.OnWalkedOn(this);
     }
 
@@ -478,18 +478,6 @@ public sealed class Aisling : Creature
 
     public bool TryBuyItems(int totalCost, params Item[] items)
     {
-        if (totalCost < 0)
-            throw new ArgumentOutOfRangeException(nameof(totalCost), "Cannot give negative gold.");
-
-        var @new = Gold - totalCost;
-
-        if (@new < 0)
-        {
-            Client.SendServerMessage(ServerMessageType.OrangeBar1, $"You do not have enough gold, you need a total of {totalCost}");
-
-            return false;
-        }
-
         if (!CanCarry(items))
         {
             Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't carry that");
@@ -497,7 +485,8 @@ public sealed class Aisling : Creature
             return false;
         }
 
-        Gold = @new;
+        if (!TryTakeGold(totalCost))
+            return false;
 
         foreach (var item in items.FixStacks(ItemCloner))
             Inventory.TryAddToNextSlot(item);
@@ -520,7 +509,7 @@ public sealed class Aisling : Creature
         }
 
         Gold = @new;
-        
+
         Client.SendAttributes(StatUpdateType.ExpGold);
 
         return true;
@@ -534,7 +523,7 @@ public sealed class Aisling : Creature
 
             return false;
         }
-        
+
         //cancarry will allow adding stackable items even if we are at max weight, if the inventory contains enough incomplete stacks to store them
         //if we're at max weight, the item is stackable, has weight, and the object is being added to a specific slot, and that slot is empty
         //this will overweight the character...
@@ -550,7 +539,7 @@ public sealed class Aisling : Creature
                    && (localItem.Template.Weight > 0)
                    && (UserStatSheet.CurrentWeight >= UserStatSheet.MaxWeight);
         }*/
-        
+
         if (slot.HasValue)
             return Inventory.TryAdd(slot.Value, item);
 
@@ -622,7 +611,7 @@ public sealed class Aisling : Creature
 
         return true;
     }
-    
+
     public bool TryTakeGold(int amount)
     {
         // ReSharper disable once ConvertIfStatementToSwitchStatement
@@ -631,7 +620,7 @@ public sealed class Aisling : Creature
 
         if (amount == 0)
             return true;
-        
+
         var @new = Gold - amount;
 
         if (@new < 0)
@@ -792,8 +781,8 @@ public sealed class Aisling : Creature
                 aisling.Client.SendCreatureWalk(Id, startPoint, direction);
 
         Client.SendConfirmClientWalk(startPoint, direction);
-        
-        foreach(var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
+
+        foreach (var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
             reactor.OnWalkedOn(this);
     }
 
@@ -815,7 +804,7 @@ public sealed class Aisling : Creature
 
         foreach (var creature in creaturesAfter.Except(creaturesBefore))
             Helpers.HandleApproach(creature, this);
-        
+
         Refresh(true);
     }
 }

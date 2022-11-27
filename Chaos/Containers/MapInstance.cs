@@ -56,7 +56,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         Script = scriptProvider.CreateScript<IMapScript, MapInstance>(ScriptKeys, this);
     }
-    
+
     public void AddObject(VisibleEntity visibleEntity, IPoint point)
     {
         visibleEntity.SetLocation(this, point);
@@ -164,10 +164,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Click(IPoint point, Aisling source)
     {
-        var obj = Objects.AtPoint<ReactorTile>(point)
-                         .TopOrDefault();
+        var door = Objects.AtPoint<Door>(point)
+                          .TopOrDefault();
 
-        obj?.OnClicked(source);
+        if (door != null)
+            door.OnClicked(source);
+        else
+        {
+            var obj = Objects.AtPoint<ReactorTile>(point)
+                             .TopOrDefault();
+
+            obj?.OnClicked(source);
+        }
     }
 
     public void Destroy()
@@ -192,12 +200,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         return creatureType switch
         {
-            CreatureType.Normal      => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.Normal => !IsWallToCreaturesOnly(point)
+                                   && !IsWall(point)
+                                   && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
             CreatureType.WalkThrough => !IsWallToCreaturesOnly(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
-            CreatureType.Merchant    => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
-            CreatureType.WhiteSquare => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
-            CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
-            _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
+            CreatureType.Merchant => !IsWallToCreaturesOnly(point)
+                                     && !IsWall(point)
+                                     && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.WhiteSquare => !IsWallToCreaturesOnly(point)
+                                        && !IsWall(point)
+                                        && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.Aisling => !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            _                    => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
     }
 

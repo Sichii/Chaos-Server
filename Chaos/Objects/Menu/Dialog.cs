@@ -1,5 +1,6 @@
 using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
+using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;
@@ -13,7 +14,7 @@ namespace Chaos.Objects.Menu;
 public sealed record Dialog : IScripted<IDialogScript>
 {
     private readonly IDialogFactory DialogFactory;
-    public List<Item> Items { get; set; }
+    public List<ItemDetails> Items { get; set; }
     public ArgumentCollection MenuArgs { get; set; }
     public string? NextDialogKey { get; set; }
     public List<DialogOption> Options { get; set; }
@@ -38,7 +39,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         SourceEntity = sourceEntity;
         ScriptKeys = null!;
         Script = null!;
-        Items = new List<Item>();
+        Items = new List<ItemDetails>();
         NextDialogKey = template.NextDialogKey;
         Options = template.Options.ToList();
         PrevDialogKey = template.PrevDialogKey;
