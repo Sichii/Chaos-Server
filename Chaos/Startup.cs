@@ -63,7 +63,7 @@ public class Startup
                         o.Converters.Add(new JsonStringEnumConverter());
                     });
 
-        services.AddCommandInterceptorForType<Aisling>("/", a => a.IsAdmin, a => a.Name);
+        services.AddCommandInterceptorForType<Aisling>("/", a => a.IsAdmin);
         services.AddServerAuthentication();
         services.AddCryptography();
         services.AddPacketSerializer();

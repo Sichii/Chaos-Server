@@ -30,7 +30,7 @@ public sealed class SkillFactory : ISkillFactory
         var template = SimpleCache.Get<SkillTemplate>(templateKey);
         var skill = new Skill(template, ScriptProvider, extraScriptKeys);
 
-        Logger.LogTrace("Created skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
+        Logger.LogTrace("Created skill {Skill}", skill);
 
         return skill;
     }

@@ -71,10 +71,10 @@ public sealed class Exchange
         User2.Client.SendExchangeStart(User1);
 
         Logger.LogDebug(
-            "Starting exchange between {User1Name} and {User2Name} with exchange id {ExchangeId}",
-            User1.Name,
-            User2.Name,
-            ExchangeId);
+            "{Exchange} started for {User1} and {User2}",
+            this,
+            User1,
+            User2);
 
         IsActive = true;
     }
@@ -109,14 +109,13 @@ public sealed class Exchange
         else
         {
             aisling.Inventory.Remove(slot);
-            var amount = item.Count;
             userItems.TryAddToNextSlot(item);
 
             Logger.LogDebug(
-                "[Exchange: {ExchangeId}]: {UserName} added {Item}",
-                ExchangeId,
-                aisling.Name,
-                item.ToString(amount));
+                "{Player} added {Item} to {Exchange}",
+                aisling,
+                item,
+                this);
         }
     }
 
@@ -164,10 +163,10 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(removedItem);
 
             Logger.LogDebug(
-                "[Exchange: {ExchangeId}]: {UserName} added {Item}",
-                ExchangeId,
-                aisling.Name,
-                item);
+                "{Player} added {Item} to {Exchange}",
+                aisling,
+                removedItem,
+                this);
         }
     }
 
@@ -187,7 +186,7 @@ public sealed class Exchange
 
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
-        Logger.LogDebug("[Exchange: {ExchangeId}]: {UserName} canceled the trade", ExchangeId, aisling.Name);
+        Logger.LogDebug("{Exchange} was canceled by {Player}", this, aisling);
 
         Deactivate();
     }
@@ -205,22 +204,21 @@ public sealed class Exchange
         aisling.TryGiveGold(gold);
 
         Logger.LogDebug(
-            "[Exchange: {ExchangeId}]: {UserName} received {Gold} gold",
-            ExchangeId,
-            aisling.Name,
-            gold);
+            "{Exchange} distributed {Amount} gold to {Player}",
+            this,
+            gold,
+            aisling);
 
         foreach (var item in items)
         {
             items.Remove(item.Slot);
-            var amount = item.Count;
 
             if (aisling.Inventory.TryAddToNextSlot(item))
                 Logger.LogDebug(
-                    "[Exchange: {ExchangeId}]: {UserName} received {Item}",
-                    ExchangeId,
-                    aisling.Name,
-                    item.ToString(amount));
+                    "{Exchange} distributed {Item} to {Player}",
+                    this,
+                    item,
+                    aisling);
         }
     }
 
@@ -249,10 +247,10 @@ public sealed class Exchange
             SetUserGold(aisling, amount);
 
             Logger.LogDebug(
-                "[Exchange: {ExchangeId}]: {UserName} set his gold amount to {Gold}",
-                ExchangeId,
-                aisling.Name,
-                gold);
+                "{Player} set their gold amount to {Amount} for exchange {Exchange}",
+                aisling,
+                amount,
+                this);
         }
 
         aisling.Client.SendExchangeSetGold(false, amount);
@@ -274,4 +272,7 @@ public sealed class Exchange
         else
             User2Gold = amount;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"{{ Type: \"Exchange\", Id: {ExchangeId} }}";
 }

@@ -1,0 +1,6 @@
+{
+    "templateKey": "generic_withdrawGold",
+    "text": "You have {Amount} gold in the bank, how much would you like to withdraw?",
+    "type": "menuTextEntry",
+    "scriptKeys": ["withdrawGold"]
+}

@@ -18,7 +18,7 @@ public abstract class NamedEntity : VisibleEntity, IDeltaUpdatable
         Name = name;
 
     /// <inheritdoc />
-    public override string ToString() => $"Id:{Id} Sprite:{Sprite} Name:{Name} Loc:{ILocation.ToString(this)}";
+    public override string ToString() => $"{{ Type: \"{GetType().Name}\", Name: \"{Name}\", Loc: \"{ILocation.ToString(this)}\" }}";
 
     /// <inheritdoc />
     public abstract void Update(TimeSpan delta);

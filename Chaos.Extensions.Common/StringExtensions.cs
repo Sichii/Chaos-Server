@@ -1,3 +1,7 @@
+using System.Text.RegularExpressions;
+using Chaos.Extensions.Common.Definitions;
+using JetBrains.Annotations;
+
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -61,6 +65,56 @@ public static class StringExtensions
             "" => throw new ArgumentException($@"{nameof(input)} cannot be empty", nameof(input)),
             _  => string.Concat(new ReadOnlySpan<char>(char.ToUpper(input[0])), input.AsSpan(1))
         };
+    }
+
+    public static string Process([StructuredMessageTemplate] this string str1, params object[] parameters)
+    {
+        var index = 0;
+
+        return RegexCache.STRING_PROCESSING_REGEX.Replace(str1, Evaluate);
+
+        string Evaluate(Match match)
+        {
+            var value = match.Groups[0].ValueSpan;
+
+            if (value.SequenceEqual("{{"))
+                return "{";
+
+            if (value.SequenceEqual("}}"))
+                return "}";
+
+            var ret = parameters[index].ToString();
+            Interlocked.Increment(ref index);
+
+            return ret!;
+        }
+        /*
+        var replaceLhsDoubleBrackets = RegexCache.REPLACE_LHS_DOUBLE_BRACKET_REGEX.Replace(str1, CONSTANTS.LHS_PLACEHOLDER);
+
+        var replaceRhsDoubleBrackets =
+            RegexCache.REPLACE_RHS_DOUBLE_BRACKET_REGEX.Replace(replaceLhsDoubleBrackets, CONSTANTS.RHS_PLACEHOLDER);
+
+        var matches = RegexCache.REPLACE_POSITIONAL_ARGUMENTS_REGEX.Matches(replaceRhsDoubleBrackets);
+
+        if (matches.Count > parameters.Length)
+            throw new InvalidOperationException("Not enough parameters supplied");
+        
+        var index = 0;
+
+        var replaceParameters = RegexCache.REPLACE_POSITIONAL_ARGUMENTS_REGEX.Replace(replaceRhsDoubleBrackets, Evaluator);
+
+        var replacePlaceholders = RegexCache.REPLACE_LHS_PLACEHOLDER_REGEX.Replace(replaceParameters, "{");
+
+        return RegexCache.REPLACE_RHS_PLACEHOLDER_REGEX.Replace(replacePlaceholders, "}");
+
+        string Evaluator(Match match)
+        {
+            var ret = parameters[index].ToString();
+            Interlocked.Increment(ref index);
+
+            return ret!;
+        }
+        */
     }
 
     /// <summary>

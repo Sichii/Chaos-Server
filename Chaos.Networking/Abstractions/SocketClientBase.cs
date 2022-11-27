@@ -58,19 +58,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     }
 
     protected abstract ValueTask HandlePacketAsync(Span<byte> span);
-    /*
-    {
-        var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
-
-        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, ref packet);
-    }*/
 
     #region Actions
     public virtual void SendRedirect(IRedirect redirect)
@@ -194,7 +181,10 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         if (!Connected)
             return;
 
-        Logger.LogTrace("[Snd] {Packet}", packet.GetHexString());
+        //no way to pass the packet in because its a ref struct
+        //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
+        if (Logger.IsEnabled(LogLevel.Trace))
+            Logger.LogTrace("[Snd] {Packet}", packet.ToString());
 
         packet.ShouldEncrypt = CryptoClient.ShouldEncrypt((byte)packet.OpCode);
 

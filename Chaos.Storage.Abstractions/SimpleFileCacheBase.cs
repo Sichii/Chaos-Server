@@ -107,7 +107,7 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        var objName = typeof(T).Name;
+        var typeName = typeof(T).Name;
 
         await Parallel.ForEachAsync(
             sources,
@@ -122,9 +122,9 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
 
                 var key = KeySelector(obj);
                 Cache[key] = obj;
-                Logger.LogTrace("Loaded {ObjName} \"{Key}\"", objName, key);
+                Logger.LogTrace("Loaded {TypeName} \"{Key}\"", typeName, key);
             });
 
-        Logger.LogInformation("{Count} {ObjName}s loaded", Cache.Count, objName);
+        Logger.LogInformation("{Count} {TypeName}s loaded", Cache.Count, typeName);
     }
 }

@@ -11,6 +11,8 @@ public static class EnumerableExtensions
     public static bool ContainsI(this IEnumerable<string> enumerable, string str) =>
         enumerable.Contains(str, StringComparer.OrdinalIgnoreCase);
 
+    public static bool IsNullOrEmpty<T>(this IEnumerable<T>? enumerable) => (enumerable == null) || !enumerable.Any();
+
     public static IEnumerable<TReturn> NotOfType<TReturn, TNot>(this IEnumerable<TReturn> enumerable) =>
         enumerable.Where(obj => obj is not TNot);
 

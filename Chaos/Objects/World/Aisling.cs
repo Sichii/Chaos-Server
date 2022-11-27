@@ -78,7 +78,7 @@ public sealed class Aisling : Creature
 
             if (WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
             {
-                Logger.LogWarning("{Name} is probably speed walking", Name);
+                Logger.LogWarning("{Player} is probably speed walking", this);
 
                 return false;
             }
@@ -420,7 +420,7 @@ public sealed class Aisling : Creature
 
         if (TryGiveItem(item, destinationSlot))
         {
-            Logger.LogDebug("{UserName} picked up {Item}", Name, item.ToString(amount));
+            Logger.LogDebug("{Player} picked up {Item}", this, item);
 
             MapInstance.RemoveObject(groundItem);
             item.Script.OnPickup(this);
@@ -431,7 +431,7 @@ public sealed class Aisling : Creature
     {
         if (TryGiveGold(money.Amount))
         {
-            Logger.LogDebug("{PlayerName} picked up {Amount} gold", Name, money.Amount);
+            Logger.LogDebug("{Player} picked up {Amount} gold", this, money.Amount);
 
             MapInstance.RemoveObject(money);
         }
@@ -475,24 +475,6 @@ public sealed class Aisling : Creature
     }
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDisplayAisling(this);
-
-    public bool TryBuyItems(int totalCost, params Item[] items)
-    {
-        if (!CanCarry(items))
-        {
-            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You can't carry that");
-
-            return false;
-        }
-
-        if (!TryTakeGold(totalCost))
-            return false;
-
-        foreach (var item in items.FixStacks(ItemCloner))
-            Inventory.TryAddToNextSlot(item);
-
-        return true;
-    }
 
     public bool TryGiveGold(int amount)
     {
@@ -557,28 +539,6 @@ public sealed class Aisling : Creature
 
         foreach (var item in items.FixStacks(ItemCloner))
             Inventory.TryAddToNextSlot(item);
-
-        return true;
-    }
-
-    public bool TrySellItems(int totalValue, params Item[] items)
-    {
-        if (totalValue < 0)
-            throw new ArgumentOutOfRangeException(nameof(totalValue), "Cannot give negative gold.");
-
-        var @new = Gold + totalValue;
-
-        if (@new > WorldOptions.Instance.MaxGoldHeld)
-        {
-            Client.SendServerMessage(ServerMessageType.OrangeBar1, "You have too much gold.");
-
-            return false;
-        }
-
-        Gold = @new;
-
-        foreach (var item in items)
-            Inventory.Remove(item.Slot);
 
         return true;
     }

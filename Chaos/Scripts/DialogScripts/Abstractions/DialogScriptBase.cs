@@ -6,6 +6,8 @@ namespace Chaos.Scripts.DialogScripts.Abstractions;
 
 public abstract class DialogScriptBase : SubjectiveScriptBase<Dialog>, IDialogScript
 {
+    private readonly ConcurrentDictionary<Delegate, bool> RunOnceCache = new();
+
     /// <inheritdoc />
     protected DialogScriptBase(Dialog subject)
         : base(subject) { }
@@ -21,4 +23,12 @@ public abstract class DialogScriptBase : SubjectiveScriptBase<Dialog>, IDialogSc
 
     /// <inheritdoc />
     public virtual void OnPrevious(Aisling source) { }
+
+    protected void RunOnce(Action action)
+    {
+        if (RunOnceCache.TryAdd(action, true))
+            action();
+    }
+
+    protected T? RunOnce<T>(Func<T> func) => RunOnceCache.TryAdd(func, true) ? func() : default;
 }

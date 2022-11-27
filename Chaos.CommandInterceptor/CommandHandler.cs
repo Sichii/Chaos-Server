@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.CommandInterceptor;
 
-public class CommandHandler<T> : ICommandInterceptor<T>
+public sealed class CommandHandler<T> : ICommandInterceptor<T>
 {
     private readonly Dictionary<string, CommandDescriptor> Commands;
     private readonly CommandHandlerConfiguration<T> Configuration;
@@ -72,16 +72,14 @@ public class CommandHandler<T> : ICommandInterceptor<T>
 
         if (descriptor.Details.RequiresAdmin)
         {
-            var identifier = Configuration.IdentifierSelector(source);
-
             if (!Configuration.AdminPredicate(source))
             {
-                Logger.LogWarning("Non-Admin {Identifier} tried to execute admin command {CommandName}", identifier, commandName);
+                Logger.LogWarning("Non-Admin {Source} tried to execute admin command {CommandName}", source, commandName);
 
                 return default;
             }
 
-            Logger.LogInformation("Admin {Identifier} executed command {CommandName}", identifier, commandName);
+            Logger.LogInformation("Admin {Source} executed command {CommandName}", source, commandName);
         }
 
         var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);

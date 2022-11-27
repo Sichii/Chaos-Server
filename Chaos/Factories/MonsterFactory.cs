@@ -67,10 +67,7 @@ public sealed class MonsterFactory : IMonsterFactory
             monster.Spells.Add(spell);
         }
 
-        Logger.LogTrace(
-            "Created monster {MonsterName} at location {Location}",
-            monster.Name,
-            Location.From(monster));
+        Logger.LogTrace("Created monster {Monster}", monster);
 
         return monster;
     }

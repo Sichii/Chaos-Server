@@ -44,17 +44,38 @@ public class SellShopScript : ConfigurableDialogScriptBase
         if (option is not 1)
             return false;
 
-        if (!source.TrySellItems(TotalSellValue!.Value, PlayerItem!))
-            return false;
+        var result = ComplexActionHelper.SellItem(
+            source,
+            Slot!.Value,
+            Amount!.Value,
+            PlayerItem!.Template.SellValue);
 
-        Logger.LogDebug(
-            "{MerchantName} sold {AmountOfItemName} to {PlayerName} for {GoldAmount} gold",
-            Subject.SourceEntity,
-            PlayerItem!.ToAmountString(Amount!.Value),
-            source.Name,
-            TotalSellValue);
+        switch (result)
+        {
+            case ComplexActionHelper.SellItemResult.Success:
+                Logger.LogDebug(
+                    "{Player} sold {Item} to {Merchant} for {Amount} gold",
+                    source,
+                    PlayerItem!.ToAmountString(Amount!.Value),
+                    Subject.SourceEntity,
+                    Amount!.Value);
 
-        return true;
+                return true;
+            case ComplexActionHelper.SellItemResult.DontHaveThatMany:
+                Subject.Reply(source, "You don't have that many.");
+
+                return false;
+            case ComplexActionHelper.SellItemResult.TooMuchGold:
+                Subject.Reply(source, "You are carrying too much gold.");
+
+                return false;
+            case ComplexActionHelper.SellItemResult.BadInput:
+                Subject.Reply(source, DialogString.UnknownInput.Value);
+
+                return false;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private bool HandleTextInput(Aisling source, Dialog dialog, int? option = null)
@@ -80,10 +101,13 @@ public class SellShopScript : ConfigurableDialogScriptBase
     }
 
     /// <inheritdoc />
-    public override void OnDisplaying(Aisling source) =>
-        Subject.Slots ??= source.Inventory.Where(i => ItemTemplateKeys.ContainsI(i.Template.TemplateKey))
-                                .Select(i => i.Slot)
-                                .ToList();
+    public override void OnDisplaying(Aisling source)
+    {
+        if (Subject.Slots.IsNullOrEmpty())
+            Subject.Slots = source.Inventory.Where(i => ItemTemplateKeys.ContainsI(i.Template.TemplateKey))
+                                  .Select(i => i.Slot)
+                                  .ToList();
+    }
 
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)

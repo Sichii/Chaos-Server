@@ -30,7 +30,7 @@ public sealed class SpellFactory : ISpellFactory
         var template = SimpleCache.Get<SpellTemplate>(templateKey);
         var spell = new Spell(template, ScriptProvider, extraScriptKeys);
 
-        Logger.LogTrace("Created spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
+        Logger.LogTrace("Created spell {Spell}", spell);
 
         return spell;
     }

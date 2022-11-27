@@ -46,6 +46,9 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         base.BeginCooldown(creature);
     }
 
+    /// <inheritdoc />
+    public override string ToString() => $"{{ UId: {UniqueId}, Name: \"{Template.Name}\" }}";
+
     public void Use(SkillContext context)
     {
         if (!Script.CanUse(context))

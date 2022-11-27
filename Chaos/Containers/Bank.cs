@@ -77,6 +77,8 @@ public sealed class Bank : IEnumerable<Item>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    public bool HasCount(string itemName, int amount) => CountOf(itemName) >= amount;
+
     public bool RemoveGold(uint amount)
     {
         using var @lock = Sync.Enter();

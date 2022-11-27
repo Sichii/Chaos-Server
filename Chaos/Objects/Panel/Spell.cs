@@ -33,6 +33,9 @@ public sealed class Spell : PanelObjectBase, IScripted<ISpellScript>
         Script = scriptProvider.CreateScript<ISpellScript, Spell>(ScriptKeys, this);
     }
 
+    /// <inheritdoc />
+    public override string ToString() => $"{{ UId: {UniqueId}, Name: \"{Template.Name}\" }}";
+
     public void Use(SpellContext context)
     {
         if (!Script.CanUse(context))

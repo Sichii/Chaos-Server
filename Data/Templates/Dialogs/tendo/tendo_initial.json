@@ -20,20 +20,36 @@
             "optionText": "Test prev button"
         },
         {
-            "dialogKey": "tendo_learnSkills",
-            "optionText": "Learn Skills"
+            "dialogKey": "tendo_learnSkill",
+            "optionText": "Learn Skill"
         },
         {
-            "dialogKey": "tendo_learnSpells",
-            "optionText": "Learn Spells"
+            "dialogKey": "tendo_learnSpell",
+            "optionText": "Learn Spell"
         },
         {
-            "dialogKey": "generic_forgetSkills",
-            "optionText": "Forget Skills"
+            "dialogKey": "generic_forgetSkill",
+            "optionText": "Forget Skill"
         },
         {
-            "dialogKey": "generic_forgetSpells",
-            "optionText": "Forget Spells"
+            "dialogKey": "generic_forgetSpell",
+            "optionText": "Forget Spell"
+        },
+        {
+            "dialogKey": "generic_depositGold",
+            "optionText": "Deposit Gold"
+        },
+        {
+            "dialogKey": "generic_withdrawGold",
+            "optionText": "Withdraw Gold"
+        },
+        {
+            "dialogKey": "generic_depositItem",
+            "optionText": "Deposit Item"
+        },
+        {
+            "dialogKey": "generic_withdrawItem",
+            "optionText": "Withdraw Item"
         }
     ]
 }

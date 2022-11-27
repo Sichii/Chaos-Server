@@ -172,7 +172,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 AllowTrailingCommas = true
             };
 
-            Logger.LogCritical(e, "Exception while saving user. {User}", JsonSerializer.Serialize(aisling, jsonSerializerOptions));
+            Logger.LogCritical(e, "Exception while saving user. {Player}", JsonSerializer.Serialize(aisling, jsonSerializerOptions));
         }
     }
     #endregion

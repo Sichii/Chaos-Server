@@ -5,6 +5,7 @@ using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.DialogScripts.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
@@ -13,24 +14,31 @@ namespace Chaos.Scripts.DialogScripts;
 public class BuyShopScript : ConfigurableDialogScriptBase
 {
     private readonly InputCollector InputCollector;
+    private readonly ICloningService<Item> ItemCloner;
     private readonly IItemFactory ItemFactory;
     private readonly ILogger<BuyShopScript> Logger;
     private int? Amount;
     private ItemDetails? ItemDetails;
-    private Item? ShopItem;
     private int? TotalBuyCost;
     protected HashSet<string> ItemTemplateKeys { get; init; } = null!;
+    private Item? FauxItem => ItemDetails?.Item;
 
     /// <inheritdoc />
-    public BuyShopScript(Dialog subject, IItemFactory itemFactory, ILogger<BuyShopScript> logger)
+    public BuyShopScript(
+        Dialog subject,
+        IItemFactory itemFactory,
+        ILogger<BuyShopScript> logger,
+        ICloningService<Item> itemCloner
+    )
         : base(subject)
     {
         Logger = logger;
+        ItemCloner = itemCloner;
         ItemFactory = itemFactory;
-        var requestInputText = DialogString.From(() => $"How many {ShopItem!.DisplayName} would you like to buy?");
+        var requestInputText = DialogString.From(() => $"How many {FauxItem!.DisplayName} would you like to buy?");
 
         var requestOptionText = DialogString.From(
-            () => $"I can sell {ShopItem!.ToAmountString(Amount!.Value)} for {TotalBuyCost} gold. Is that okay?");
+            () => $"I can sell {FauxItem!.ToAmountString(Amount!.Value)} for {TotalBuyCost} gold. Is that okay?");
 
         InputCollector = new InputCollectorBuilder()
                          .RequestTextInput(requestInputText)
@@ -51,20 +59,43 @@ public class BuyShopScript : ConfigurableDialogScriptBase
         if (option is not 1)
             return false;
 
-        if (!aisling.TryBuyItems(TotalBuyCost!.Value, ShopItem!))
-            return false;
+        var result = ComplexActionHelper.BuyItem(
+            aisling,
+            FauxItem!,
+            ItemFactory,
+            ItemCloner,
+            Amount!.Value,
+            ItemDetails!.AmountOrPrice);
 
-        Logger.LogDebug(
-            "{PlayerName} bought {AmountOfItemName} from {MerchantName} for {GoldAmount} gold",
-            aisling.Name,
-            ShopItem!.ToAmountString(Amount!.Value),
-            Subject.SourceEntity,
-            TotalBuyCost);
+        switch (result)
+        {
+            case ComplexActionHelper.BuyItemResult.Success:
+                Logger.LogDebug(
+                    "{Player} bought {Item} from {Merchant} for {Amount} gold",
+                    aisling,
+                    FauxItem!.ToAmountString(Amount!.Value),
+                    Subject.SourceEntity,
+                    TotalBuyCost);
 
-        return true;
+                return true;
+            case ComplexActionHelper.BuyItemResult.CantCarry:
+                Subject.Reply(aisling, "You can't carry that many");
+
+                return false;
+            case ComplexActionHelper.BuyItemResult.NotEnoughGold:
+                Subject.Reply(aisling, $"You don't have enough gold, you need {TotalBuyCost}");
+
+                return false;
+            case ComplexActionHelper.BuyItemResult.BadInput:
+                Subject.Reply(aisling, DialogString.UnknownInput.Value);
+
+                return false;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
-    private bool HandleTextInput(Aisling aisling, Dialog dialog, int? option = null)
+    private bool HandleTextInput(Aisling aisling, Dialog dialog, int? optionIndex = null)
     {
         if (!Subject.MenuArgs.TryGet<int>(1, out var amount) || (amount <= 0))
         {
@@ -73,7 +104,7 @@ public class BuyShopScript : ConfigurableDialogScriptBase
             return false;
         }
 
-        ShopItem!.Count = amount;
+        FauxItem!.Count = amount;
         Amount = amount;
         TotalBuyCost = ItemDetails!.AmountOrPrice * Amount;
 
@@ -83,17 +114,23 @@ public class BuyShopScript : ConfigurableDialogScriptBase
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        if (ShopItem == null)
+        if (ItemDetails == null)
         {
-            if (!Subject.MenuArgs.Any())
-                return;
+            if (!Subject.MenuArgs.TryGet<string>(0, out var itemName))
+            {
+                Subject.Reply(source, DialogString.UnknownInput.Value);
 
-            var itemName = Subject.MenuArgs.First();
+                return;
+            }
+
             ItemDetails = Subject.Items.FirstOrDefault(details => details.Item.DisplayName.EqualsI(itemName));
-            ShopItem = ItemDetails?.Item;
 
-            if (ShopItem == null)
+            if (ItemDetails == null)
+            {
+                Subject.Reply(source, DialogString.UnknownInput.Value);
+
                 return;
+            }
         }
 
         InputCollector.Collect(source, Subject, optionIndex);

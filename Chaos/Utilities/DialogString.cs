@@ -1,3 +1,6 @@
+using Chaos.Extensions.Common;
+using JetBrains.Annotations;
+
 namespace Chaos.Utilities;
 
 public static class DialogString
@@ -8,4 +11,6 @@ public static class DialogString
     public static Lazy<string> Yes { get; } = new("Yes");
     public static Lazy<string> Constant(string constantString) => new(constantString);
     public static Lazy<string> From(Func<string> stringExpression) => new(stringExpression);
+
+    public static string Process([StructuredMessageTemplate] string str, params object[] objs) => str.Process(objs);
 }

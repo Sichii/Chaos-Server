@@ -1,0 +1,6 @@
+{
+    "templateKey": "generic_depositItem",
+    "text": "Which item would you like to deposit?",
+    "type": "showPlayerItems",
+    "scriptKeys": ["depositItem"]
+}

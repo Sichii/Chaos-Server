@@ -36,7 +36,10 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
         if (isEncrypted)
             CryptoClient.Decrypt(ref packet);
 
-        Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+        //no way to pass the packet in because its a ref struct
+        //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
+        if (Logger.IsEnabled(LogLevel.Trace))
+            Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);
     }

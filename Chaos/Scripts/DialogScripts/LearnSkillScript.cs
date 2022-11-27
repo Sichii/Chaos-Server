@@ -8,6 +8,7 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.DialogScripts.Abstractions;
 using Chaos.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripts.DialogScripts;
 
@@ -15,6 +16,7 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
 {
     private readonly InputCollector InputCollector;
     private readonly IItemFactory ItemFactory;
+    private readonly ILogger<LearnSkillScript> Logger;
     private readonly ISkillFactory SkillFactory;
     private readonly ISpellFactory SpellFactory;
     private Skill? SkillToLearn;
@@ -25,13 +27,15 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         Dialog subject,
         ISkillFactory skillFactory,
         IItemFactory itemFactory,
-        ISpellFactory spellFactory
+        ISpellFactory spellFactory,
+        ILogger<LearnSkillScript> logger
     )
         : base(subject)
     {
         SkillFactory = skillFactory;
         ItemFactory = itemFactory;
         SpellFactory = spellFactory;
+        Logger = logger;
 
         InputCollector = new InputCollectorBuilder()
                          .RequestOptionSelection(
@@ -66,37 +70,39 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         return builder.ToString();
     }
 
-    public bool HandleLearningConfirmation(Aisling aisling, Dialog dialog, int? option = null)
+    public bool HandleLearningConfirmation(Aisling source, Dialog dialog, int? option = null)
     {
         if (option is not 1)
         {
-            dialog.Reply(aisling, "Come back when you are ready.");
+            dialog.Reply(source, "Come back when you are ready.");
 
             return false;
         }
 
-        if (aisling.SkillBook.IsFull)
+        if (source.SkillBook.IsFull)
         {
-            dialog.Reply(aisling, "Come back when you have room to grow.");
+            dialog.Reply(source, "Come back when you have room to grow.");
 
             return false;
         }
 
-        if (!ValidateAndTakeRequirements(aisling, dialog))
+        if (!ValidateAndTakeRequirements(source, dialog))
             return false;
 
         var skill = SkillFactory.Create(SkillToLearn!.Template.TemplateKey);
-        aisling.SkillBook.TryAddToNextSlot(skill);
+        source.SkillBook.TryAddToNextSlot(skill);
+
+        Logger.LogDebug("{Player} learned skill {Skill}", source, skill);
 
         var animation = new Animation
         {
             AnimationSpeed = 50,
             TargetAnimation = 22,
-            TargetId = aisling.Id
+            TargetId = source.Id
         };
 
-        aisling.MapInstance.ShowAnimation(animation);
-        dialog.Reply(aisling, "something something secrets for evil idk");
+        source.MapInstance.ShowAnimation(animation);
+        dialog.Reply(source, "something something secrets for evil idk");
 
         return true;
     }
@@ -143,16 +149,16 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         InputCollector.Collect(source, Subject, optionIndex);
     }
 
-    public bool ValidateAndTakeRequirements(Aisling aisling, Dialog dialog)
+    public bool ValidateAndTakeRequirements(Aisling source, Dialog dialog)
     {
         var requirements = SkillToLearn!.Template.LearningRequirements;
 
         if (requirements == null)
             return true;
 
-        if (requirements.RequiredLevel.HasValue && (aisling.StatSheet.Level < requirements.RequiredLevel.Value))
+        if (requirements.RequiredLevel.HasValue && (source.StatSheet.Level < requirements.RequiredLevel.Value))
         {
-            dialog.Reply(aisling, "Come back when you are more experienced.");
+            dialog.Reply(source, "Come back when you are more experienced.");
 
             return false;
         }
@@ -161,37 +167,37 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredStats = requirements.RequiredStats;
 
-            if (requiredStats.Str > aisling.StatSheet.EffectiveStr)
+            if (requiredStats.Str > source.StatSheet.EffectiveStr)
             {
-                dialog.Reply(aisling, "Come back when you are stronger.");
+                dialog.Reply(source, "Come back when you are stronger.");
 
                 return false;
             }
 
-            if (requiredStats.Int > aisling.StatSheet.EffectiveInt)
+            if (requiredStats.Int > source.StatSheet.EffectiveInt)
             {
-                dialog.Reply(aisling, "Come back when you are smarter.");
+                dialog.Reply(source, "Come back when you are smarter.");
 
                 return false;
             }
 
-            if (requiredStats.Wis > aisling.StatSheet.EffectiveWis)
+            if (requiredStats.Wis > source.StatSheet.EffectiveWis)
             {
-                dialog.Reply(aisling, "Come back when you are wiser.");
+                dialog.Reply(source, "Come back when you are wiser.");
 
                 return false;
             }
 
-            if (requiredStats.Con > aisling.StatSheet.EffectiveCon)
+            if (requiredStats.Con > source.StatSheet.EffectiveCon)
             {
-                dialog.Reply(aisling, "Come back when you are tougher.");
+                dialog.Reply(source, "Come back when you are tougher.");
 
                 return false;
             }
 
-            if (requiredStats.Dex > aisling.StatSheet.EffectiveDex)
+            if (requiredStats.Dex > source.StatSheet.EffectiveDex)
             {
-                dialog.Reply(aisling, "Come back when you are more dexterous.");
+                dialog.Reply(source, "Come back when you are more dexterous.");
 
                 return false;
             }
@@ -201,9 +207,9 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredSkill = SkillFactory.CreateFaux(skillTemplateKey);
 
-            if (!aisling.SkillBook.Contains(requiredSkill))
+            if (!source.SkillBook.Contains(requiredSkill))
             {
-                dialog.Reply(aisling, "Come back when you are more skillful.");
+                dialog.Reply(source, "Come back when you are more skillful.");
 
                 return false;
             }
@@ -213,9 +219,9 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredSpell = SpellFactory.CreateFaux(spellTemplateKey);
 
-            if (!aisling.SpellBook.Contains(requiredSpell))
+            if (!source.SpellBook.Contains(requiredSpell))
             {
-                dialog.Reply(aisling, "Come back when you are more knowledgeable.");
+                dialog.Reply(source, "Come back when you are more knowledgeable.");
 
                 return false;
             }
@@ -225,17 +231,17 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredItem = ItemFactory.CreateFaux(itemRequirement.ItemTemplateKey);
 
-            if (!aisling.Inventory.HasCount(requiredItem.DisplayName, itemRequirement.AmountRequired))
+            if (!source.Inventory.HasCount(requiredItem.DisplayName, itemRequirement.AmountRequired))
             {
-                dialog.Reply(aisling, "Come back when you have what is required.");
+                dialog.Reply(source, "Come back when you have what is required.");
 
                 return false;
             }
         }
 
-        if (requirements.RequiredGold.HasValue && (aisling.Gold < requirements.RequiredGold.Value))
+        if (requirements.RequiredGold.HasValue && (source.Gold < requirements.RequiredGold.Value))
         {
-            dialog.Reply(aisling, "Come back when you are more wealthy.");
+            dialog.Reply(source, "Come back when you are more wealthy.");
 
             return false;
         }
@@ -244,11 +250,11 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         {
             var requiredItem = ItemFactory.CreateFaux(itemRequirement.ItemTemplateKey);
 
-            aisling.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired, out _);
+            source.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired, out _);
         }
 
         if (requirements.RequiredGold.HasValue)
-            aisling.TryTakeGold(requirements.RequiredGold.Value);
+            source.TryTakeGold(requirements.RequiredGold.Value);
 
         return true;
     }
