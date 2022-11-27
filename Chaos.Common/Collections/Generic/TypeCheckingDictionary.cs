@@ -4,7 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Chaos.Common.Collections.Generic;
 
 /// <summary>
-///     A wrapper class around a <see cref="System.Collections.Generic.Dictionary{TKey, TValue}" /> that makes it easier to store and retreive polymorphic objects
+///     A wrapper class around a <see cref="System.Collections.Generic.Dictionary{TKey, TValue}" /> that makes it easier to store and retreive
+///     polymorphic objects
 /// </summary>
 /// <inheritdoc cref="System.Collections.Generic.Dictionary{TKey, TValue}" />
 public class TypeCheckingDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey: notnull

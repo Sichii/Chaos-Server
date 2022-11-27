@@ -243,7 +243,7 @@ public class LearnSpellScript : ConfigurableDialogScriptBase
         foreach (var itemRequirement in requirements.ItemRequirements)
         {
             var requiredItem = ItemFactory.CreateFaux(itemRequirement.ItemTemplateKey);
-            
+
             aisling.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired, out _);
         }
 

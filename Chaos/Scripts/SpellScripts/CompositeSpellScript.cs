@@ -14,6 +14,19 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public bool CanUse(SpellContext context)
+    {
+        var canUse = true;
+
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            canUse &= component.CanUse(context);
+
+        return canUse;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public void OnForgotten(Aisling aisling)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
@@ -36,18 +49,5 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(context);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public bool CanUse(SpellContext context)
-    {
-        var canUse = true;
-
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            canUse &= component.CanUse(context);
-
-        return canUse;
     }
 }

@@ -5,11 +5,11 @@ namespace Chaos.Servers.Options;
 public sealed record WorldOptions : ServerOptions, IWorldOptions
 {
     /// <inheritdoc />
-    public override string HostName { get; set; } = string.Empty;
-    /// <inheritdoc />
     public required int AislingAssailIntervalMs { get; init; }
     /// <inheritdoc />
     public required int DropRange { get; init; }
+    /// <inheritdoc />
+    public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;
     public required RedirectInfo LoginRedirect { get; init; }
     /// <inheritdoc />

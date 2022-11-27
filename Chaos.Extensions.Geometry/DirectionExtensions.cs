@@ -3,7 +3,7 @@ using Chaos.Geometry.Abstractions.Definitions;
 namespace Chaos.Extensions.Geometry;
 
 /// <summary>
-///     Provides extensions methods for <see cref="Chaos.Geometry.Abstractions.Definitions.Direction"/>
+///     Provides extensions methods for <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" />
 /// </summary>
 public static class DirectionExtensions
 {

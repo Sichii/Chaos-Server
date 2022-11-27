@@ -29,7 +29,7 @@ public abstract class GroundEntity : NamedEntity
     public override void Update(TimeSpan delta)
     {
         GroundTimer.Update(delta);
-        
+
         //if the entity has been on the ground for over an hour, destroy it
         if (GroundTimer.IntervalElapsed)
             MapInstance.RemoveObject(this);

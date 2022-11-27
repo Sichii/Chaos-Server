@@ -45,7 +45,7 @@ public enum Status : ulong
 public enum UserState : ulong
 {
     None = 0,
-    IsChanting = 1,
+    IsChanting = 1
     //add more user states here, double each time
 }
 

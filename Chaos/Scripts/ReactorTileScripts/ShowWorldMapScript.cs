@@ -10,7 +10,7 @@ public class ShowWorldMapScript : ConfigurableReactorTileScriptBase
 {
     private readonly ISimpleCache SimpleCache;
     protected string WorldMapKey { get; init; } = null!;
-    
+
     /// <inheritdoc />
     public ShowWorldMapScript(ReactorTile subject, ISimpleCache simpleCache)
         : base(subject) =>
@@ -27,7 +27,7 @@ public class ShowWorldMapScript : ConfigurableReactorTileScriptBase
         //if we cant set the active object, return
         if (!aisling.ActiveObject.SetIfNull(worldMap))
             return;
-        
+
         aisling.MapInstance.RemoveObject(source);
         aisling.Client.SendWorldMap(worldMap);
     }

@@ -22,8 +22,8 @@ public interface IServerPacketSerializer
 }
 
 /// <inheritdoc />
-/// <typeparam name="T">A type that inherits from <see cref="Chaos.Packets.Abstractions.ISendArgs"/></typeparam>
-public interface IServerPacketSerializer<in T> : IServerPacketSerializer where T : ISendArgs
+/// <typeparam name="T">A type that inherits from <see cref="Chaos.Packets.Abstractions.ISendArgs" /></typeparam>
+public interface IServerPacketSerializer<in T> : IServerPacketSerializer where T: ISendArgs
 {
     /// <summary>
     ///     Serializes an object into a span of bytes

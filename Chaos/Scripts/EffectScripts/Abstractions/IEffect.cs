@@ -6,8 +6,8 @@ namespace Chaos.Scripts.EffectScripts.Abstractions;
 
 public interface IEffect : IDeltaUpdatable
 {
-    TimeSpan Remaining { get; set; }
     EffectColor Color { get; set; }
+    TimeSpan Remaining { get; set; }
     Creature Subject { get; set; }
     byte Icon { get; }
     string Name { get; }

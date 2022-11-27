@@ -12,14 +12,14 @@ public interface ICredentialManager
     /// <param name="oldPassword">The current password for the character</param>
     /// <param name="newPassword">The new password for the character</param>
     Task ChangePasswordAsync(string name, string oldPassword, string newPassword);
-    
+
     /// <summary>
     ///     Saves a new name and password combination
     /// </summary>
     /// <param name="name">The name of the character</param>
     /// <param name="password">The password for the character</param>
     Task SaveNewCredentialsAsync(string name, string password);
-    
+
     /// <summary>
     ///     Validates the specified name and password combination against existing credentials
     /// </summary>

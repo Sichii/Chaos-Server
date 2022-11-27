@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.World;

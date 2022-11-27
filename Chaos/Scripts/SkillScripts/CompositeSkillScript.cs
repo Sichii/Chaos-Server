@@ -14,6 +14,20 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public bool CanUse(SkillContext context)
+    {
+        var canUse = true;
+
+        //if any component can't be used, the skill can't be used
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            canUse &= component.CanUse(context);
+
+        return canUse;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public void OnForgotten(Aisling aisling)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
@@ -36,19 +50,5 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(context);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public bool CanUse(SkillContext context)
-    {
-        var canUse = true;
-
-        //if any component can't be used, the skill can't be used
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            canUse &= component.CanUse(context);
-
-        return canUse;
     }
 }

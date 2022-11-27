@@ -11,23 +11,23 @@ public abstract class ReactorTileScriptBase : SubjectiveScriptBase<ReactorTile>,
         : base(subject) { }
 
     /// <inheritdoc />
-    public virtual void Update(TimeSpan delta) { }
-
-    /// <inheritdoc />
-    public virtual void OnWalkedOn(Creature source) { }
+    public virtual void OnClicked(Aisling source) { }
 
     /// <inheritdoc />
     public virtual void OnGoldDroppedOn(Creature source, Money money) { }
 
     /// <inheritdoc />
-    public virtual void OnItemDroppedOn(Creature source, GroundItem groundItem) { }
+    public virtual void OnGoldPickedUpFrom(Aisling source, Money money) { }
 
     /// <inheritdoc />
-    public virtual void OnGoldPickedUpFrom(Aisling source, Money money) { }
+    public virtual void OnItemDroppedOn(Creature source, GroundItem groundItem) { }
 
     /// <inheritdoc />
     public virtual void OnItemPickedUpFrom(Aisling source, GroundItem groundItem) { }
 
     /// <inheritdoc />
-    public virtual void OnClicked(Aisling source) { }
+    public virtual void OnWalkedOn(Creature source) { }
+
+    /// <inheritdoc />
+    public virtual void Update(TimeSpan delta) { }
 }

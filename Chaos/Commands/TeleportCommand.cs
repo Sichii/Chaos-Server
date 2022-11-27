@@ -1,22 +1,21 @@
-using Chaos.Clients.Abstractions;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Extensions;
-using Chaos.Networking.Abstractions;
+using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Storage.Abstractions;
-using Chaos.Common.Definitions;
-using Chaos.Extensions.Common;
 
 namespace Chaos.Commands;
 
 [Command("tpto")]
 public sealed class TeleportCommand : ICommand<Aisling>
 {
-    private readonly IServiceProvider Provider;
     private readonly ISimpleCache Cache;
+    private readonly IServiceProvider Provider;
+
     public TeleportCommand(ISimpleCache cache, IServiceProvider provider)
     {
         Cache = cache;
@@ -43,16 +42,16 @@ public sealed class TeleportCommand : ICommand<Aisling>
 
                     return;
                 }
-                
+
                 aisling.TraverseMap(player.MapInstance, player);
 
                 break;
             case "map":
-                if(!args.TryGetNext<string>(out var mapInstanceId))
+                if (!args.TryGetNext<string>(out var mapInstanceId))
                     return;
 
                 var mapInstance = Cache.Get<MapInstance>(mapInstanceId);
-                
+
                 Point point;
 
                 if (args.TryGetNext<int>(out var xPos) && args.TryGetNext<int>(out var yPos))

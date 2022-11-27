@@ -16,8 +16,10 @@ public static class TypeMapperExtensions
     /// </summary>
     /// <param name="services">The service collection to add the service to</param>
     /// <remarks>
-    ///     This extensions scans all loaded assemblies for types that inherit from <see cref="Chaos.TypeMapper.Abstractions.IMapperProfile{T1,T2}" />. All of these types
-    ///     are added to the service collection as singletons so that they can reference eachother through the <see cref="Chaos.TypeMapper.Abstractions.ITypeMapper" />, as well
+    ///     This extensions scans all loaded assemblies for types that inherit from
+    ///     <see cref="Chaos.TypeMapper.Abstractions.IMapperProfile{T1,T2}" />. All of these types
+    ///     are added to the service collection as singletons so that they can reference eachother through the
+    ///     <see cref="Chaos.TypeMapper.Abstractions.ITypeMapper" />, as well
     ///     as any other services that may be required for conversion.
     /// </remarks>
     public static void AddTypeMapper(this IServiceCollection services)

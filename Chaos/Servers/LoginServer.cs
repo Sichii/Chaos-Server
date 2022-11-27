@@ -70,7 +70,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     public ValueTask OnClientRedirected(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(in packet);
-        
+
         var reserved = Options.ReservedRedirects
                               .FirstOrDefault(rr => (rr.Id == args.Id) && rr.Name.EqualsI(args.Name));
 

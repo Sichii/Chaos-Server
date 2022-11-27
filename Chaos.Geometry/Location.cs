@@ -47,6 +47,9 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
 
     public override int GetHashCode() => HashCode.Combine(X, Y, Map);
 
+    /// <inheritdoc />
+    public override string ToString() => ILocation.ToString(this);
+
     public static bool TryParse(string str, out Location location)
     {
         location = new Location();
@@ -65,7 +68,4 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
 
         return true;
     }
-
-    /// <inheritdoc />
-    public override string ToString() => ILocation.ToString(this);
 }

@@ -53,6 +53,9 @@ public readonly struct Point : IPoint, IEquatable<IPoint>
 
     public override int GetHashCode() => (X << 16) + Y;
 
+    /// <inheritdoc />
+    public override string ToString() => IPoint.ToString(this);
+
     public static bool TryParse(string str, out Point point)
     {
         point = new Point();
@@ -71,7 +74,4 @@ public readonly struct Point : IPoint, IEquatable<IPoint>
 
         return true;
     }
-
-    /// <inheritdoc />
-    public override string ToString() => IPoint.ToString(this);
 }

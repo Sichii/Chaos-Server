@@ -18,8 +18,8 @@ namespace Chaos.Storage;
 public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSchema, MapInstanceCacheOptions>
 {
     private readonly IMerchantFactory MerchantFactory;
-    private readonly IReactorTileFactory ReactorTileFactory;
     private readonly IPathfindingService PathfindingService;
+    private readonly IReactorTileFactory ReactorTileFactory;
 
     /// <inheritdoc />
     protected override Func<MapInstance, string> KeySelector => m => m.InstanceId;

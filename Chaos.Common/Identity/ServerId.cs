@@ -73,8 +73,7 @@ public sealed class SerializableUniqueId
         } catch
         {
             //ignored
-        }
-        finally
+        } finally
         {
             Sync.Release();
         }

@@ -7,15 +7,14 @@ namespace Chaos.Scripts.ReactorTileScripts.Abstractions;
 
 public interface IReactorTileScript : IScript, IDeltaUpdatable
 {
-    void OnWalkedOn(Creature source);
+    void OnClicked(Aisling source);
 
     void OnGoldDroppedOn(Creature source, Money money);
 
+    void OnGoldPickedUpFrom(Aisling source, Money money);
+
     void OnItemDroppedOn(Creature source, GroundItem groundItem);
 
-    void OnGoldPickedUpFrom(Aisling source, Money money);
-    
     void OnItemPickedUpFrom(Aisling source, GroundItem groundItem);
-
-    void OnClicked(Aisling source);
+    void OnWalkedOn(Creature source);
 }

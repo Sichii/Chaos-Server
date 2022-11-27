@@ -55,7 +55,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         return CountOf(name) >= quantity;
     }
-    
+
     public bool RemoveQuantity(string name, int quantity, [MaybeNullWhen(false)] out List<Item> items)
     {
         using var @lock = Sync.Enter();
@@ -101,7 +101,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         return true;
     }
-    
+
     public bool RemoveQuantity(byte slot, int quantity, [MaybeNullWhen(false)] out List<Item> items)
     {
         using var @lock = Sync.Enter();
@@ -123,7 +123,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
                             .Where(item => (item != null) && item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
                             .Prepend(existingItem)
                             .ToList();
-        
+
         var ret = new List<Item>();
 
         foreach (var item in existingItems)
@@ -157,7 +157,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         if (!obj.Template.Stackable)
             completed |= base.TryAdd(slot, obj);
-                
+
         if (completed || TryAddStackable(obj, slot))
             return true;
 
@@ -165,7 +165,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     }
 
     public bool TryAddDirect(byte slot, Item obj) => base.TryAdd(slot, obj);
-    
+
     private bool TryAddStackable(Item obj, byte? preferredSlot = null)
     {
         if (!obj.Template.Stackable)
@@ -188,7 +188,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
                          .Prepend(preferredItem)
                          .ToList();
         }
-        
+
         foreach (var item in items)
             if (item!.Template.Name.Equals(obj.Template.Name, StringComparison.OrdinalIgnoreCase)
                 && (item.Count < item.Template.MaxStacks))
@@ -252,12 +252,12 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             || (item2.Count == item2.Template.MaxStacks)
             || !item1.DisplayName.EqualsI(item2.DisplayName))
             return base.TrySwap(slot1, slot2);
-        
+
         using var @lock = Sync.Enter();
 
         var missingStacks = item2.Template.MaxStacks - item2.Count;
         var stacksToGive = Math.Min(missingStacks, item1.Count);
-        
+
         Update(slot2, i => i.Count += stacksToGive);
 
         if (stacksToGive == item1.Count)

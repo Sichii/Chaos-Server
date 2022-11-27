@@ -8,10 +8,13 @@ namespace Chaos.Extensions.Common;
 public static class MenuOrDialogTypeExtensions
 {
     /// <summary>
-    ///     Converts a <see cref="Chaos.Common.Definitions.MenuOrDialogType"/> to a <see cref="Chaos.Common.Definitions.DialogType"/>
+    ///     Converts a <see cref="Chaos.Common.Definitions.MenuOrDialogType" /> to a <see cref="Chaos.Common.Definitions.DialogType" />
     /// </summary>
     /// <param name="value">The value to convert</param>
-    /// <returns>An equivalent <see cref="Chaos.Common.Definitions.DialogType"/> to the <see cref="Chaos.Common.Definitions.MenuOrDialogType"/> if one exists, otherwise <c>null</c></returns>
+    /// <returns>
+    ///     An equivalent <see cref="Chaos.Common.Definitions.DialogType" /> to the <see cref="Chaos.Common.Definitions.MenuOrDialogType" />
+    ///     if one exists, otherwise <c>null</c>
+    /// </returns>
     public static DialogType? ToDialogType(this MenuOrDialogType value) => value switch
     {
         MenuOrDialogType.Normal          => DialogType.Normal,
@@ -25,10 +28,13 @@ public static class MenuOrDialogTypeExtensions
     };
 
     /// <summary>
-    ///     Converts a <see cref="Chaos.Common.Definitions.MenuOrDialogType"/> to a <see cref="Chaos.Common.Definitions.MenuType"/>
+    ///     Converts a <see cref="Chaos.Common.Definitions.MenuOrDialogType" /> to a <see cref="Chaos.Common.Definitions.MenuType" />
     /// </summary>
     /// <param name="value">The value to convert</param>
-    /// <returns>An equivalent <see cref="Chaos.Common.Definitions.MenuType"/> to the <see cref="Chaos.Common.Definitions.MenuOrDialogType"/> if one exists, otherwise <c>null</c></returns>
+    /// <returns>
+    ///     An equivalent <see cref="Chaos.Common.Definitions.MenuType" /> to the <see cref="Chaos.Common.Definitions.MenuOrDialogType" /> if
+    ///     one exists, otherwise <c>null</c>
+    /// </returns>
     public static MenuType? ToMenuType(this MenuOrDialogType value) => value switch
     {
         MenuOrDialogType.Menu                  => MenuType.Menu,

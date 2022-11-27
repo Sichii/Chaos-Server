@@ -44,13 +44,13 @@ public sealed class Group : IEnumerable<Aisling>
         if (!PendingInvites.TryGetValue(key, out var invite))
             return;
 
-        if(Members.Count == WorldOptions.Instance.MaxGroupSize)
+        if (Members.Count == WorldOptions.Instance.MaxGroupSize)
         {
             receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "The group is full");
 
             return;
         }
-        
+
         PendingInvites.Remove(invite);
 
         //if the invite timed out

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 namespace Chaos.Extensions.DependencyInjection;
 
 /// <summary>
-///     <see cref="Chaos.Common"/> DI extensions
+///     <see cref="Chaos.Common" /> DI extensions
 /// </summary>
 public static class CommonExtensions
 {

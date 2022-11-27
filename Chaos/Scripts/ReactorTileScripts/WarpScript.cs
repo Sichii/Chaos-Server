@@ -12,7 +12,7 @@ public class WarpScript : ConfigurableReactorTileScriptBase
 {
     private readonly ISimpleCache SimpleCache;
     protected Location Destination { get; init; }
-    
+
     /// <inheritdoc />
     public WarpScript(ReactorTile subject, ISimpleCache simpleCache)
         : base(subject) =>

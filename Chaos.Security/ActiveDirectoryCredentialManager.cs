@@ -13,7 +13,7 @@ using PasswordReasonType = Chaos.Security.Exceptions.PasswordCredentialException
 namespace Chaos.Security;
 
 /// <summary>
-///     A <see cref="Chaos.Security.Abstractions.ICredentialManager"/> that uses a folder to represent a user
+///     A <see cref="Chaos.Security.Abstractions.ICredentialManager" /> that uses a folder to represent a user
 /// </summary>
 public sealed class ActiveDirectoryCredentialManager : ICredentialManager
 {

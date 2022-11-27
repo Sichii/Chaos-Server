@@ -16,7 +16,7 @@ public class DeathScript : MonsterScriptBase
     {
         if (!Map.RemoveObject(Subject))
             return;
-        
+
         var rewardTarget = Subject.AggroList
                                   .OrderByDescending(kvp => kvp.Value)
                                   .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)

@@ -13,6 +13,9 @@ public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
         : base(subject) { }
 
     /// <inheritdoc />
+    public virtual bool CanUse(Aisling source) => source.IsAlive;
+
+    /// <inheritdoc />
     public virtual void OnDropped(Creature source, MapInstance mapInstance) { }
 
     /// <inheritdoc />
@@ -26,7 +29,4 @@ public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
 
     /// <inheritdoc />
     public virtual void OnUse(Aisling source) { }
-
-    /// <inheritdoc />
-    public virtual bool CanUse(Aisling source) => source.IsAlive;
 }

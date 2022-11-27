@@ -22,7 +22,7 @@ public class AdminMessageCommand : ICommand<Aisling>
 
         if (string.IsNullOrEmpty(message))
             return default;
-        
+
         _ = Task.Run(
             async () =>
             {

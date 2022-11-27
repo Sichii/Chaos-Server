@@ -14,19 +14,10 @@ public class CompositeReactorTileScript : CompositeScriptBase<IReactorTileScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void Update(TimeSpan delta)
+    public virtual void OnClicked(Aisling source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.Update(delta);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public virtual void OnWalkedOn(Creature source)
-    {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnWalkedOn(source);
+            component.OnClicked(source);
     }
 
     /// <summary>
@@ -41,19 +32,19 @@ public class CompositeReactorTileScript : CompositeScriptBase<IReactorTileScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnItemDroppedOn(Creature source, GroundItem groundItem)
+    public virtual void OnGoldPickedUpFrom(Aisling source, Money money)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnItemDroppedOn(source, groundItem);
+            component.OnGoldPickedUpFrom(source, money);
     }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnGoldPickedUpFrom(Aisling source, Money money)
+    public virtual void OnItemDroppedOn(Creature source, GroundItem groundItem)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnGoldPickedUpFrom(source, money);
+            component.OnItemDroppedOn(source, groundItem);
     }
 
     /// <summary>
@@ -68,9 +59,18 @@ public class CompositeReactorTileScript : CompositeScriptBase<IReactorTileScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnClicked(Aisling source)
+    public virtual void OnWalkedOn(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnClicked(source);
+            component.OnWalkedOn(source);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual void Update(TimeSpan delta)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.Update(delta);
     }
 }

@@ -12,6 +12,9 @@ public abstract class SkillScriptBase : SubjectiveScriptBase<Skill>, ISkillScrip
         : base(subject) { }
 
     /// <inheritdoc />
+    public virtual bool CanUse(SkillContext context) => context.Source.IsAlive;
+
+    /// <inheritdoc />
     public virtual void OnForgotten(Aisling aisling) { }
 
     /// <inheritdoc />
@@ -19,7 +22,4 @@ public abstract class SkillScriptBase : SubjectiveScriptBase<Skill>, ISkillScrip
 
     /// <inheritdoc />
     public virtual void OnUse(SkillContext context) { }
-
-    /// <inheritdoc />
-    public virtual bool CanUse(SkillContext context) => context.Source.IsAlive;
 }

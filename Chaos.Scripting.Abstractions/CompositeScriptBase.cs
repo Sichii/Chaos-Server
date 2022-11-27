@@ -1,12 +1,11 @@
 using System.Collections;
-using System.Runtime.InteropServices;
 
 namespace Chaos.Scripting.Abstractions;
 
 /// <summary>
 ///     A script that is composed of multiple scripts
 /// </summary>
-/// <inheritdoc cref="Chaos.Scripting.Abstractions.ICompositeScript{T}"/>
+/// <inheritdoc cref="Chaos.Scripting.Abstractions.ICompositeScript{T}" />
 public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScript<TScript> where TScript: IScript
 {
     protected List<TScript> Components { get; }
@@ -19,7 +18,6 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     public T? GetComponent<T>() where T: TScript
     {
         foreach (var component in Components)
-        {
             switch (component)
             {
                 case T typedScript:
@@ -29,7 +27,6 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
                 default:
                     continue;
             }
-        }
 
         return default;
     }

@@ -22,9 +22,9 @@ public sealed class UsernameCredentialException : Exception
     ///     The captured named that is invalid
     /// </summary>
     public string Name { get; set; }
-    
+
     /// <summary>
-    ///     The reason why <see cref="Name"/> is invalid
+    ///     The reason why <see cref="Name" /> is invalid
     /// </summary>
     public ReasonType Reason { get; set; }
 

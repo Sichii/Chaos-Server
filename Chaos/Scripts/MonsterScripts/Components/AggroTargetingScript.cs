@@ -65,13 +65,13 @@ public class AggroTargetingScript : MonsterScriptBase
             AggroList.Remove(Target.Id, out _);
             Target = null;
         }
-        
+
         if (!TargetUpdateTimer.IntervalElapsed)
             return;
-        
+
         if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
             return;
-        
+
         Target = null;
 
         //first try to get target via aggro list

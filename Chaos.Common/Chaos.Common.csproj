@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Common.Abstractions\Chaos.Common.Abstractions.csproj" />
+        <ProjectReference Include="..\Chaos.Common.Abstractions\Chaos.Common.Abstractions.csproj"/>
     </ItemGroup>
 </Project>

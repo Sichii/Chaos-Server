@@ -66,7 +66,7 @@ public sealed class Exchange
     public void Activate()
     {
         using var sync = Sync.Enter();
-        
+
         User1.Client.SendExchangeStart(User2);
         User2.Client.SendExchangeStart(User1);
 

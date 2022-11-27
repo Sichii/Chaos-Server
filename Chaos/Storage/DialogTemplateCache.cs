@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Chaos.Common.Utilities;
-using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;

@@ -61,7 +61,6 @@ public sealed class AutoReleasingMonitor
         return default;
     }
 
-    
     private sealed record SafeAutoReleasingSubscription : IDisposable
     {
         private readonly object Root;

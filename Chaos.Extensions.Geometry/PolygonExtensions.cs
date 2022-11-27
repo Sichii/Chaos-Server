@@ -8,7 +8,8 @@ namespace Chaos.Extensions.Geometry;
 public static class PolygonExtensions
 {
     /// <summary>
-    ///     Determines whether the given <see cref="Chaos.Geometry.Abstractions.IPolygon" /> contains the given <see cref="Chaos.Geometry.Abstractions.IPoint" />
+    ///     Determines whether the given <see cref="Chaos.Geometry.Abstractions.IPolygon" /> contains the given
+    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
     /// <param name="polygon">The polygon to check</param>
     /// <param name="point">The point to check</param>

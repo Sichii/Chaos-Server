@@ -15,13 +15,14 @@ public abstract class EffectBase : IEffect
         set => Elapsed = Duration - value;
     }
 
-    protected Aisling? AislingSubject => Subject as Aisling;
-    protected TimeSpan Elapsed { get; private set; }
     public Creature Subject { get; set; } = null!;
+    protected TimeSpan Elapsed { get; private set; }
     public abstract byte Icon { get; }
     public abstract string Name { get; }
+
+    protected Aisling? AislingSubject => Subject as Aisling;
     protected abstract TimeSpan Duration { get; }
-    
+
     public static string GetEffectKey(Type type) => type.Name.Replace("effect", string.Empty, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />

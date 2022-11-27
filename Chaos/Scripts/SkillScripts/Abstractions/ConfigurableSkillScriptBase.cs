@@ -12,6 +12,9 @@ public abstract class ConfigurableSkillScriptBase : ConfigurableScriptBase<Skill
         : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
     /// <inheritdoc />
+    public virtual bool CanUse(SkillContext context) => context.Source.IsAlive;
+
+    /// <inheritdoc />
     public virtual void OnForgotten(Aisling aisling) { }
 
     /// <inheritdoc />
@@ -19,7 +22,4 @@ public abstract class ConfigurableSkillScriptBase : ConfigurableScriptBase<Skill
 
     /// <inheritdoc />
     public virtual void OnUse(SkillContext context) { }
-
-    /// <inheritdoc />
-    public virtual bool CanUse(SkillContext context) => context.Source.IsAlive;
 }

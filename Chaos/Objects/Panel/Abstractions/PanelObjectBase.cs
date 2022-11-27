@@ -32,10 +32,6 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
             Elapsed = TimeSpan.FromMilliseconds(elapsedMs.Value);
     }
 
-    public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
-
-    public override string ToString() => $@"Id:{UniqueId} Name:{Template.Name})";
-
     public virtual void BeginCooldown(Creature creature)
     {
         if (Cooldown is { Ticks: > 0 })
@@ -46,7 +42,11 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
                 aisling.Client.SendCooldown(this);
         }
     }
-    
+
+    public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
+
+    public override string ToString() => $@"Id:{UniqueId} Name:{Template.Name})";
+
     public void Update(TimeSpan delta)
     {
         if (!Elapsed.HasValue)

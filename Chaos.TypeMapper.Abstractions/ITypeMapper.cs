@@ -12,21 +12,21 @@ public interface ITypeMapper
     /// <typeparam name="T">The type of the object to convert</typeparam>
     /// <typeparam name="TResult">The type to convert the object to</typeparam>
     TResult Map<T, TResult>(T obj);
-    
+
     /// <summary>
     ///     Maps the specified source object to a new instance of the destination type
     /// </summary>
     /// <param name="obj">The object to convert</param>
     /// <typeparam name="TResult">The type to convert the object to</typeparam>
     TResult Map<TResult>(object obj);
-    
+
     /// <summary>
     ///     Manys multiple source objects of the same type to new instances of the destination type
     /// </summary>
     /// <param name="obj">The objects to convert</param>
     /// <typeparam name="TResult">The type to convert the objects to</typeparam>
     IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> obj);
-    
+
     /// <summary>
     ///     Manys multiple source objects of the same type to new instances of the destination type
     /// </summary>

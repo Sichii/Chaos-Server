@@ -9,7 +9,7 @@ public interface IIntervalTimer : IDeltaUpdatable
     ///     Whether or not the timer has elapsed
     /// </summary>
     bool IntervalElapsed { get; }
-    
+
     /// <summary>
     ///     Resets the timer
     /// </summary>

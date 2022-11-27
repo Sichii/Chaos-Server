@@ -7,6 +7,7 @@ namespace Chaos.Scripts.ItemScripts.Abstractions;
 
 public interface IItemScript : IScript
 {
+    bool CanUse(Aisling source);
     void OnDropped(Creature source, MapInstance mapInstance);
 
     void OnEquipped(Aisling aisling);
@@ -15,5 +16,4 @@ public interface IItemScript : IScript
     void OnUnEquipped(Aisling aisling);
 
     void OnUse(Aisling source);
-    bool CanUse(Aisling source);
 }

@@ -71,7 +71,7 @@ public class ArgumentCollection : IEnumerable<string>
     public bool TryGetNext<T>([MaybeNullWhen(false)] out T value)
     {
         var result = TryGet(Index, out value);
-        
+
         if (result)
             Index++;
 

@@ -6,8 +6,10 @@ internal static partial class RegexCache
 {
     internal static readonly Regex COMMAND_SPLIT_REGEX = GenerateCommandSplitRegex();
 
-    [GeneratedRegex(""" 
+    [GeneratedRegex(
+        """ 
     "([^"]+)"|([^ ]+)
-    """, RegexOptions.Compiled)]
+    """,
+        RegexOptions.Compiled)]
     private static partial Regex GenerateCommandSplitRegex();
 }

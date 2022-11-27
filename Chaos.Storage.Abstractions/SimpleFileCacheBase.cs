@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace Chaos.Storage.Abstractions;
 
 /// <summary>
-///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}"/> that loads data from a file and caches it
+///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}" /> that loads data from a file and caches it
 /// </summary>
 /// <typeparam name="T">The type of object stored in the cache</typeparam>
 /// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
@@ -20,34 +20,33 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     ///     Stores cached objects
     /// </summary>
     protected ConcurrentDictionary<string, T> Cache { get; }
-    
+
     /// <summary>
     ///     The options used for deserialization
     /// </summary>
     protected JsonSerializerOptions JsonSerializerOptions { get; }
-    
+
     /// <summary>
     ///     A function that selects and returns the object's key
     /// </summary>
     protected abstract Func<T, string> KeySelector { get; }
-    
+
     /// <summary>
     ///     An object used to write logs
     /// </summary>
     protected ILogger Logger { get; }
-    
+
     /// <summary>
     ///     An object used to map the deserialized type to the return type, and any other required type conversions
     /// </summary>
     protected ITypeMapper Mapper { get; }
-    
+
     /// <summary>
     ///     The options object used to configure this cache
     /// </summary>
     protected TOptions Options { get; }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="mapper">An object used to map the deserialized type to the return type, and any other required type conversions</param>
     /// <param name="jsonSerializerOptions">The options used for deserialization</param>
@@ -102,10 +101,10 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
 
         var sources = Options.SearchType switch
         {
-            SearchType.Files       => Directory.EnumerateFiles(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
+            SearchType.Files => Directory.EnumerateFiles(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
             SearchType.Directories => Directory.EnumerateDirectories(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern)
                                                .Where(src => Directory.EnumerateFiles(src).Any()),
-            _                      => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException()
         };
 
         var objName = typeof(T).Name;

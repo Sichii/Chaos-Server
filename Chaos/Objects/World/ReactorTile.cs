@@ -10,14 +10,13 @@ namespace Chaos.Objects.World;
 public class ReactorTile : MapEntity, IScripted<IReactorTileScript>
 {
     /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; }
-    /// <inheritdoc />
     public IReactorTileScript Script { get; }
-    
-    public bool ShouldBlockPathfinding { get; }
-    
+    /// <inheritdoc />
+    public ISet<string> ScriptKeys { get; }
+
     public IDictionary<string, DynamicVars> ScriptVars { get; }
-        
+
+    public bool ShouldBlockPathfinding { get; }
 
     public ReactorTile(
         MapInstance mapInstance,
@@ -35,17 +34,17 @@ public class ReactorTile : MapEntity, IScripted<IReactorTileScript>
         Script = scriptProvider.CreateScript<IReactorTileScript, ReactorTile>(ScriptKeys, this);
     }
 
-    public void Update(TimeSpan elapsed) => Script.Update(elapsed);
-
-    public void OnWalkedOn(Creature source) => Script.OnWalkedOn(source);
+    public void OnClicked(Aisling source) => Script.OnClicked(source);
 
     public void OnGoldDroppedOn(Creature source, Money money) => Script.OnGoldDroppedOn(source, money);
 
-    public void OnItemDroppedOn(Creature source, GroundItem groundItem) => Script.OnItemDroppedOn(source, groundItem);
-
     public void OnGoldPickedUpFrom(Aisling source, Money money) => Script.OnGoldPickedUpFrom(source, money);
+
+    public void OnItemDroppedOn(Creature source, GroundItem groundItem) => Script.OnItemDroppedOn(source, groundItem);
 
     public void OnItemPickedUpFrom(Aisling source, GroundItem groundItem) => Script.OnItemPickedUpFrom(source, groundItem);
 
-    public void OnClicked(Aisling source) => Script.OnClicked(source);
+    public void OnWalkedOn(Creature source) => Script.OnWalkedOn(source);
+
+    public void Update(TimeSpan elapsed) => Script.Update(elapsed);
 }

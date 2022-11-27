@@ -13,9 +13,9 @@ public static class PathfindingServiceExtensions
         var blackList = mapInstance.GetEntities<ReactorTile>()
                                    .Where(rt => rt.ShouldBlockPathfinding)
                                    .ToList<IPoint>();
-        
+
         var walls = new List<IPoint>();
-        
+
         //tiles that are walls are added to pathfinder grid details
         for (var x = 0; x < mapInstance.Template.Width; x++)
             for (var y = 0; y < mapInstance.Template.Height; y++)

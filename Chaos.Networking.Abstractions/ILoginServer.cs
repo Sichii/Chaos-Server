@@ -13,39 +13,39 @@ public interface ILoginServer<in TClient> : IServer<TClient> where TClient: ISoc
     ///     or a world server
     /// </summary>
     ValueTask OnClientRedirected(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client requests to create a new character. This is the second step in the process and
     ///     will contain appearance details
     /// </summary>
     ValueTask OnCreateCharFinalize(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client requests to create a new character. This is the first step in the process and
     ///     will only contain a name and password
     /// </summary>
     ValueTask OnCreateCharRequest(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client requests the url of the homepage
     /// </summary>
     ValueTask OnHomepageRequest(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client provides credentials to log into the world
     /// </summary>
     ValueTask OnLogin(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client requests either a metafile hash, or a full copy of the metafiles
     /// </summary>
     ValueTask OnMetafileRequest(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client requests EULA details
     /// </summary>
     ValueTask OnNoticeRequest(TClient client, in ClientPacket packet);
-    
+
     /// <summary>
     ///     Occurs when a client requests to change a character's password
     /// </summary>

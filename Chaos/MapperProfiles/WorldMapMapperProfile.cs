@@ -2,7 +2,6 @@ using Chaos.Common.Identity;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Schemas.Content;
-using Chaos.Schemas.Data;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 

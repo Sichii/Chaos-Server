@@ -15,6 +15,19 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public bool CanUse(Aisling source)
+    {
+        var canUse = true;
+
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            canUse &= component.CanUse(source);
+
+        return canUse;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnDropped(Creature source, MapInstance mapInstance)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
@@ -55,18 +68,5 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(source);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public bool CanUse(Aisling source)
-    {
-        var canUse = true;
-
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            canUse &= component.CanUse(source);
-
-        return canUse;
     }
 }

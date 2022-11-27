@@ -12,7 +12,7 @@ public interface ISaveManager<T>
     /// <param name="key">A key that is unique to the object to be loaded</param>
     /// <returns>A task that returns the object</returns>
     Task<T> LoadAsync(string key);
-    
+
     /// <summary>
     ///     Saves an object
     /// </summary>

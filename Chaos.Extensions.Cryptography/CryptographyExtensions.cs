@@ -6,12 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Chaos.Extensions.DependencyInjection;
 
 /// <summary>
-///     <see cref="Chaos.Cryptography"/> DI extensions
+///     <see cref="Chaos.Cryptography" /> DI extensions
 /// </summary>
 public static class CryptographyExtensions
 {
     /// <summary>
-    ///     Adds an <see cref="Chaos.Cryptography.Abstractions.ICryptoClient"/> implementation to the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection"/>
+    ///     Adds an <see cref="Chaos.Cryptography.Abstractions.ICryptoClient" /> implementation to the
+    ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />
     /// </summary>
     /// <param name="serviceCollection">The service collection to add to</param>
     public static void AddCryptography(this IServiceCollection serviceCollection) =>

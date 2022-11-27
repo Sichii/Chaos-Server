@@ -29,7 +29,7 @@ public class TestCommand : ICommand<Aisling>
 
                 var items = new List<GroundItem>();
                 var map = source.MapInstance;
-                
+
                 for (var i = 0; i < amount; i++)
                 {
                     var item = ItemFactory.Create("stick");
@@ -38,9 +38,9 @@ public class TestCommand : ICommand<Aisling>
                 }
 
                 map.AddObjects(items);
-                
+
                 source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{amount} stick(s) spawned on the ground");
-                
+
                 break;
         }
 

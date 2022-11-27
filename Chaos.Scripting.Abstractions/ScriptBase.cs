@@ -1,6 +1,6 @@
 namespace Chaos.Scripting.Abstractions;
 
-/// <inheritdoc cref="Chaos.Scripting.Abstractions.IScript"/>
+/// <inheritdoc cref="Chaos.Scripting.Abstractions.IScript" />
 public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
 {
     /// <inheritdoc />
@@ -25,7 +25,7 @@ public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
 
     /// <inheritdoc />
     public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(ScriptKey);
-    
+
     /// <summary>
     ///     Generates a script key from a script type
     /// </summary>

@@ -8,6 +8,7 @@ public sealed record Animation
     public ushort SourceAnimation { get; init; }
     public uint? SourceId { get; init; }
     public ushort TargetAnimation { get; init; }
+
     public uint? TargetId { get; init; }
     public IPoint? TargetPoint { get; init; }
 

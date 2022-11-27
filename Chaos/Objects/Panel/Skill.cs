@@ -1,6 +1,5 @@
 using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
-using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
@@ -33,6 +32,20 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         Script = scriptProvider.CreateScript<ISkillScript, Skill>(ScriptKeys, this);
     }
 
+    /// <inheritdoc />
+    public override void BeginCooldown(Creature creature)
+    {
+        //don't send cooldowns for assails
+        if (Template.IsAssail)
+        {
+            Elapsed = TimeSpan.Zero;
+
+            return;
+        }
+
+        base.BeginCooldown(creature);
+    }
+
     public void Use(SkillContext context)
     {
         if (!Script.CanUse(context))
@@ -51,19 +64,5 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         }
 
         BeginCooldown(context.Source);
-    }
-
-    /// <inheritdoc />
-    public override void BeginCooldown(Creature creature)
-    {
-        //don't send cooldowns for assails
-        if (Template.IsAssail)
-        {
-            Elapsed = TimeSpan.Zero;
-
-            return;
-        }
-
-        base.BeginCooldown(creature);
     }
 }

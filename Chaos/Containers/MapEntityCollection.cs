@@ -225,7 +225,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         if (type == typeof(Merchant))
             return (IEnumerable<T>)Merchants;
 
-        if (type == (typeof(ReactorTile)))
+        if (type == typeof(ReactorTile))
             return (IEnumerable<T>)Reactors;
 
         if (type.IsAssignableTo(typeof(GroundEntity)))

@@ -3,7 +3,6 @@ using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Data;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel;
@@ -21,6 +20,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
 {
     public int AggroRange { get; set; }
     public int Experience { get; set; }
+    public LootTable? LootTable { get; set; }
     public Creature? Target { get; set; }
     public ConcurrentDictionary<uint, int> AggroList { get; }
     /// <inheritdoc />
@@ -40,7 +40,6 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
     public MonsterTemplate Template { get; }
     public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
-    public LootTable? LootTable { get; set; }
     protected override ILogger<Monster> Logger { get; }
 
     public Monster(
@@ -124,7 +123,6 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
     public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
-        {
             foreach (var item in items)
             {
                 Logger.LogDebug(
@@ -132,11 +130,10 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
                     source.Name,
                     item,
                     Name);
-                
+
                 Items.Add(item);
                 Script.OnItemDroppedOn(source, item);
             }
-        }
     }
 
     /// <inheritdoc />

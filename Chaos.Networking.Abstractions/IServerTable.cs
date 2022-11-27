@@ -10,12 +10,12 @@ public interface IServerTable
     ///     A checksum used to validate the contents of this object so that it doesn't need to be sent every time.
     /// </summary>
     uint CheckSum { get; }
-    
+
     /// <summary>
     ///     The raw data of this object.
     /// </summary>
     byte[] Data { get; }
-    
+
     /// <summary>
     ///     Contains information about all available login servers, keyed by their id.
     /// </summary>

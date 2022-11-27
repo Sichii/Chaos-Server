@@ -1,6 +1,5 @@
 using Chaos.Common.Definitions;
 using Chaos.Data;
-using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.EffectScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -13,6 +12,15 @@ public class PoisonEffect : AnimatingEffectBase
     public override byte Icon { get; } = 35;
     /// <inheritdoc />
     public override string Name { get; } = "Poison";
+
+    /// <inheritdoc />
+    protected override Animation Animation { get; } = new()
+    {
+        AnimationSpeed = 100,
+        TargetAnimation = 247
+    };
+    /// <inheritdoc />
+    protected override IIntervalTimer AnimationInterval { get; } = new IntervalTimer(TimeSpan.FromMilliseconds(1500));
     /// <inheritdoc />
     protected override TimeSpan Duration { get; } = TimeSpan.FromMinutes(1);
     /// <inheritdoc />
@@ -25,17 +33,8 @@ public class PoisonEffect : AnimatingEffectBase
 
         if (Subject.StatSheet.CurrentHp <= DAMAGE_PER_TICK)
             return;
-        
+
         Subject.StatSheet.SubtractHp(DAMAGE_PER_TICK);
         AislingSubject?.Client.SendAttributes(StatUpdateType.Vitality);
     }
-
-    /// <inheritdoc />
-    protected override Animation Animation { get; } = new()
-    {
-        AnimationSpeed = 100,
-        TargetAnimation = 247
-    };
-    /// <inheritdoc />
-    protected override IIntervalTimer AnimationInterval { get; } = new IntervalTimer(TimeSpan.FromMilliseconds(1500));
 }

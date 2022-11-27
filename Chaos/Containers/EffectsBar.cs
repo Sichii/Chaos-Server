@@ -43,7 +43,7 @@ public sealed class EffectsBar : IEffectsBar
             ResetDisplay();
         }
     }
-    
+
     /// <inheritdoc />
     public bool Contains(string effectName)
     {
@@ -83,12 +83,12 @@ public sealed class EffectsBar : IEffectsBar
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
 
         var orderedEffects = Effects.Values.OrderBy(e => e.Remaining).ToList();
-        
+
         //re-apply all effects sorted by ascending remaining duration
         foreach (var effect in orderedEffects)
             AffectedAisling?.Client.SendEffect(effect.Color, effect.Icon);
     }
-    
+
     public void Terminate(string effectName)
     {
         using var @lock = Sync.Enter();
@@ -111,12 +111,12 @@ public sealed class EffectsBar : IEffectsBar
 
     public void Update(TimeSpan delta)
     {
-        if(Effects.Count == 0)
+        if (Effects.Count == 0)
             return;
-        
+
         using var @lock = Sync.Enter();
         var shouldResetDisplay = false;
-        
+
         foreach (var effect in Effects.Values.ToList())
         {
             effect.Update(delta);

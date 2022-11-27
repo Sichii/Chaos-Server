@@ -181,8 +181,6 @@ public sealed class Pathfinder : IPathfinder
             ignoreWalls,
             unwalkablePoints);
 
-        
-        
         //failed to find path
         //find a direction to walk(if any) via simple logic
         if (nextPoint == null)

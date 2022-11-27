@@ -141,6 +141,25 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    private bool InnerTryAdd(byte slot, T obj)
+    {
+        if (!IsValidSlot(slot))
+            return false;
+
+        using var @lock = Sync.Enter();
+
+        var existing = Objects[slot];
+
+        if (existing != null)
+            return false;
+
+        Objects[slot] = obj;
+        obj.Slot = slot;
+        BroadcastOnAdded(obj);
+
+        return true;
+    }
+
     public virtual bool IsValidSlot(byte slot) => (slot > 0) && (slot < Length) && !InvalidSlots.Contains(slot);
 
     public bool Remove(string name)
@@ -174,25 +193,6 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
     }
 
     public virtual bool TryAdd(byte slot, T obj) => InnerTryAdd(slot, obj);
-
-    private bool InnerTryAdd(byte slot, T obj)
-    {
-        if (!IsValidSlot(slot))
-            return false;
-
-        using var @lock = Sync.Enter();
-
-        var existing = Objects[slot];
-
-        if (existing != null)
-            return false;
-
-        Objects[slot] = obj;
-        obj.Slot = slot;
-        BroadcastOnAdded(obj);
-
-        return true;
-    }
 
     public virtual bool TryAddToNextSlot(T obj)
     {
