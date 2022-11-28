@@ -58,7 +58,7 @@ public class StringProcessorBenchmarks
     public void ProcessLongString()
     {
         var str =
-            LongStringFormat.Process(
+            LongStringFormat.Inject(
                 1,
                 2,
                 4,
@@ -74,7 +74,7 @@ public class StringProcessorBenchmarks
     public void ProcessMediumString()
     {
         var str =
-            MediumStringFormat.Process(
+            MediumStringFormat.Inject(
                 1,
                 2,
                 4);
@@ -86,7 +86,7 @@ public class StringProcessorBenchmarks
     [Benchmark]
     public void ProcessShortString()
     {
-        var str = ShortString.Process(1, 2);
+        var str = ShortString.Inject(1, 2);
 
         if (!str.Equals(ShortStringValue))
             throw new InvalidOperationException($"{str} is not {ShortStringValue}");

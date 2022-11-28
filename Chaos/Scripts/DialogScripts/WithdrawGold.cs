@@ -16,7 +16,7 @@ public class WithdrawGold : DialogScriptBase
     public override void OnDisplaying(Aisling source) => RunOnce(
         () =>
         {
-            Subject.Text = DialogString.Process(Subject.Text, source.Bank.Gold);
+            Subject.Text = $"You have {source.Bank.Gold} banked, how much would you like to withdraw?";
         });
 
     public override void OnNext(Aisling source, byte? optionIndex = null)

@@ -17,7 +17,7 @@ public class DepositGoldScript : DialogScriptBase
     public override void OnDisplaying(Aisling source) => RunOnce(
         () =>
         {
-            Subject.Text = DialogString.Process(Subject.Text, source.Gold);
+            Subject.Text = $"You are holding {source.Gold} gold, how much would you like to deposit?";
         });
 
     public override void OnNext(Aisling source, byte? optionIndex = null)

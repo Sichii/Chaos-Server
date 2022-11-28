@@ -67,7 +67,7 @@ public static class StringExtensions
         };
     }
 
-    public static string Process([StructuredMessageTemplate] this string str1, params object[] parameters)
+    public static string Inject([StructuredMessageTemplate] this string str1, params object[] parameters)
     {
         var index = 0;
 

@@ -80,6 +80,7 @@ public sealed record UserStatSheet : StatSheet
 
     public static UserStatSheet NewCharacter => new()
     {
+        _ac = 100,
         _maxWeight = 40,
         _toNextLevel = 100,
         _str = 1,

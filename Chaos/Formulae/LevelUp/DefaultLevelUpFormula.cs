@@ -12,8 +12,12 @@ public class DefaultLevelUpFormula : ILevelUpFormula
     {
         var levelUpAttribs = new Attributes
         {
+            //each level, add (Level * 0.3) + 10 hp
             MaximumHp = Convert.ToInt32(aisling.UserStatSheet.Level * 0.3m) + 10,
-            MaximumMp = Convert.ToInt32(aisling.UserStatSheet.Level * 0.15m) + 5
+            //each level, add (Level * 0.15) + 5 mp
+            MaximumMp = Convert.ToInt32(aisling.UserStatSheet.Level * 0.15m) + 5,
+            //every 3 levels, subtract 1 ac
+            Ac = aisling.StatSheet.Level % 3 == 0 ? -1 : 0
         };
 
         return levelUpAttribs;

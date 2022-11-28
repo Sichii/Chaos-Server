@@ -9,7 +9,7 @@ public class StringProcessTests
     {
         const string str = "{{One}} is {One}";
 
-        var result = str.Process(1);
+        var result = str.Inject(1);
 
         result.Should().Be("{One} is 1");
     }

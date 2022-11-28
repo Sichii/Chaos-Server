@@ -156,7 +156,7 @@ public record StatSheet : Attributes
             _maximumHp = int.MaxValue,
             _maximumMp = int.MaxValue,
             _magicResistance = int.MaxValue,
-            _ac = int.MinValue,
+            _ac = -100,
             _atkSpeedPct = 500
         };
 

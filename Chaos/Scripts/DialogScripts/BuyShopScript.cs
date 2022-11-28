@@ -35,6 +35,7 @@ public class BuyShopScript : ConfigurableDialogScriptBase
         Logger = logger;
         ItemCloner = itemCloner;
         ItemFactory = itemFactory;
+
         var requestInputText = DialogString.From(() => $"How many {FauxItem!.DisplayName} would you like to buy?");
 
         var requestOptionText = DialogString.From(
