@@ -115,6 +115,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactorTilePatch", "Patches
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Common.Tests", "Tests\Chaos.Extensions.Common.Tests\Chaos.Extensions.Common.Tests.csproj", "{2E581A65-940E-4773-AF2C-B399DC710D9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Networking", "Chaos.Extensions.Networking\Chaos.Extensions.Networking.csproj", "{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -297,6 +299,10 @@ Global
 		{2E581A65-940E-4773-AF2C-B399DC710D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E581A65-940E-4773-AF2C-B399DC710D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E581A65-940E-4773-AF2C-B399DC710D9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -335,5 +341,6 @@ Global
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{50317555-DF13-4812-96E2-4DB235A1F3ED} = {431395E2-5117-4988-A2E3-14F8FBA078E0}
 		{2E581A65-940E-4773-AF2C-B399DC710D9A} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
+		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 	EndGlobalSection
 EndGlobal

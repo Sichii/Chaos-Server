@@ -43,13 +43,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     private readonly IIntervalTimer SaveTimer;
     private readonly ISaveManager<Aisling> UserSaveManager;
 
-    public IEnumerable<Aisling> Aislings => Clients
-                                            .Select(kvp => kvp.Value.Aisling)
-                                            .Where(user => user != null!);
-    public ConcurrentDictionary<uint, IWorldClient> Clients { get; }
+    public IEnumerable<Aisling> Aislings => ClientRegistry
+                                            .Select(c => c.Aisling)
+                                            .Where(player => player != null!);
     protected override WorldOptions Options { get; }
 
     public WorldServer(
+        IClientRegistry<IWorldClient> clientRegistry,
         IClientFactory<IWorldClient> clientFactory,
         ISimpleCacheProvider cacheProvider,
         ISaveManager<Aisling> userSaveManager,
@@ -62,6 +62,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         : base(
             redirectManager,
             packetSerializer,
+            clientRegistry,
             options,
             logger)
     {
@@ -75,8 +76,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         CacheProvider = cacheProvider;
         UserSaveManager = userSaveManager;
         CommandInterceptor = commandInterceptor;
-
-        Clients = new ConcurrentDictionary<uint, IWorldClient>();
 
         ParallelOptions = new ParallelOptions
         {
@@ -1382,7 +1381,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         var client = ClientFactory.CreateClient(clientSocket);
 
-        if (!Clients.TryAdd(client.Id, client))
+        if (!ClientRegistry.TryAdd(client))
         {
             Logger.LogError("Somehow two clients got the same id. (Id: {Id})", client.Id);
             client.Disconnect();
@@ -1411,7 +1410,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         await using var sync = disposable;
 
         //remove client from client list
-        Clients.TryRemove(client.Id, out _);
+        ClientRegistry.TryRemove(client.Id, out _);
 
         if (aisling != null)
         {

@@ -39,8 +39,8 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
         ExtraScriptKeys = new HashSet<string>(obj.ExtraScriptKeys, StringComparer.OrdinalIgnoreCase),
         SpawnArea = obj.SpawnArea!,
         SpawnTimer = obj.IntervalVariancePct.HasValue
-            ? new RandomizedIntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), obj.IntervalVariancePct.Value)
-            : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs))
+            ? new RandomizedIntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), obj.IntervalVariancePct.Value, startAsElapsed: false)
+            : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), false)
     };
 
     /// <inheritdoc />

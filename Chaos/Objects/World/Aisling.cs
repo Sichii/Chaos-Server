@@ -9,6 +9,7 @@ using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Factories.Abstractions;
+using Chaos.Formulae;
 using Chaos.Formulae.LevelUp;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -18,6 +19,7 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Observers;
 using Chaos.Servers.Options;
 using Chaos.Time;
+using Chaos.Time.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
@@ -91,6 +93,7 @@ public sealed class Aisling : Creature
     public override CreatureType Type => CreatureType.Aisling;
     public ResettingCounter WalkCounter { get; }
     protected override ILogger<Aisling> Logger { get; }
+    private IIntervalTimer RegenTimer { get; }
 
     public Aisling(
         string name,
@@ -155,6 +158,7 @@ public sealed class Aisling : Creature
         WalkCounter = new ResettingCounter(10, new IntervalTimer(TimeSpan.FromSeconds(3)));
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         Flags = new FlagCollection();
+        RegenTimer = new RegenTimer(this, RegenFormulae.Default);
 
         //this object is purely intended to be created and immediately serialized
         //these pieces should never come into play
@@ -416,7 +420,6 @@ public sealed class Aisling : Creature
     public void PickupItem(GroundItem groundItem, byte destinationSlot)
     {
         var item = groundItem.Item;
-        var amount = item.Count;
 
         if (TryGiveItem(item, destinationSlot))
         {
@@ -652,6 +655,8 @@ public sealed class Aisling : Creature
         ActionThrottle.Update(delta);
         WalkCounter.Update(delta);
         ChantTimer.Update(delta);
+        RegenTimer.Update(delta);
+
         base.Update(delta);
     }
 

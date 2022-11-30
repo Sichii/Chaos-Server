@@ -1,21 +1,7 @@
 using Chaos.Common.Abstractions;
+using Chaos.Storage.Abstractions.Definitions;
 
 namespace Chaos.Storage.Abstractions;
-
-/// <summary>
-///     The storage interface to look for
-/// </summary>
-public enum SearchType
-{
-    /// <summary>
-    ///     The search will return paths to files
-    /// </summary>
-    Files = 0,
-    /// <summary>
-    ///     The search will return directory paths
-    /// </summary>
-    Directories = 1
-}
 
 /// <summary>
 ///     Defines the properties required to configure a <see cref="Chaos.Storage.Abstractions.SimpleFileCacheBase{T,TSchema,TOptions}" />
@@ -42,12 +28,3 @@ public interface ISimpleFileCacheOptions : IDirectoryBound
     /// </summary>
     SearchType SearchType { get; init; }
 }
-
-/* If i decide to use IMemoryCache
-public interface IFileCacheOptions : ISimpleFileCacheOptions
-{
-    /// <summary>
-    ///     The amount of time an entry in the cache will go unused before it is removed
-    /// </summary>
-    int ExpirationMins { get; init; }
-}*/

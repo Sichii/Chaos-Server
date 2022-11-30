@@ -32,12 +32,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly ICredentialManager CredentialManager;
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
-    public ConcurrentDictionary<uint, ILoginClient> Clients { get; }
     public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
     protected override LoginOptions Options { get; }
 
     public LoginServer(
         ISaveManager<Aisling> userSaveManager,
+        IClientRegistry<ILoginClient> clientRegistry,
         IClientFactory<ILoginClient> clientFactory,
         ICredentialManager credentialManager,
         ISimpleCacheProvider cacheProvider,
@@ -49,6 +49,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         : base(
             redirectManager,
             packetSerializer,
+            clientRegistry,
             options,
             logger)
     {
@@ -60,7 +61,6 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         CredentialManager = credentialManager;
         CacheProvider = cacheProvider;
         Notice = new Notice(options.Value.NoticeMessage);
-        Clients = new ConcurrentDictionary<uint, ILoginClient>();
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
 
         IndexHandlers();
@@ -296,7 +296,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         var client = ClientFactory.CreateClient(clientSocket);
 
-        if (!Clients.TryAdd(client.Id, client))
+        if (!ClientRegistry.TryAdd(client))
         {
             Logger.LogError("Somehow two clients got the same id. (Id: {Id})", client.Id);
             client.Disconnect();
@@ -313,7 +313,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private void OnDisconnect(object? sender, EventArgs e)
     {
         var client = (ILoginClient)sender!;
-        Clients.TryRemove(client.Id, out _);
+        ClientRegistry.TryRemove(client.Id, out _);
     }
     #endregion
 }

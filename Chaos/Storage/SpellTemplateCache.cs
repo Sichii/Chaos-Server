@@ -5,6 +5,7 @@ using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -27,4 +28,23 @@ public sealed class SpellTemplateCache : SimpleFileCacheBase<SpellTemplate, Spel
             jsonSerializerOptions,
             options,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
+}
+
+public sealed class
+    ExpiringSpellTemplateCache : ExpiringFileCacheBase<SpellTemplate, SpellTemplateSchema, ExpiringSpellTemplateCacheOptions>
+{
+    /// <inheritdoc />
+    public ExpiringSpellTemplateCache(
+        IMemoryCache cache,
+        ITypeMapper mapper,
+        IOptions<JsonSerializerOptions> jsonSerializerOptions,
+        IOptionsSnapshot<ExpiringSpellTemplateCacheOptions> options,
+        ILogger<ExpiringSpellTemplateCache> logger
+    )
+        : base(
+            cache,
+            mapper,
+            jsonSerializerOptions,
+            options,
+            logger) { }
 }

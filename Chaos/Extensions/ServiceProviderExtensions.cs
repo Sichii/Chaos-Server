@@ -15,20 +15,6 @@ namespace Chaos.Extensions;
 
 public static class ServiceProviderExtensions
 {
-    public static async IAsyncEnumerable<Aisling> GetAislingsAsync(this IServiceProvider provider)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-
-        foreach (var mapInstance in mapCache)
-        {
-            await using var sync = await mapInstance.Sync.WaitAsync();
-
-            foreach (var aisling in mapInstance.GetEntities<Aisling>())
-                yield return aisling;
-        }
-    }
-
     public static async Task ReloadDialogsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
@@ -115,8 +101,11 @@ public static class ServiceProviderExtensions
         {
             var newMap = mapCache.Get(oldMap.InstanceId);
 
+            await using var oldSync = await oldMap.Sync.WaitAsync();
             await using var newSync = await newMap.Sync.WaitAsync();
-            await using var sync = await oldMap.Sync.WaitAsync();
+
+            foreach (var monster in newMap.GetEntities<Monster>())
+                newMap.RemoveObject(monster);
 
             foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
                 newMap.SimpleAdd(groundEntity);

@@ -21,10 +21,10 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 {
     private readonly IClientFactory<ILobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
-    public ConcurrentDictionary<uint, ILobbyClient> Clients { get; }
     protected override LobbyOptions Options { get; }
 
     public LobbyServer(
+        IClientRegistry<ILobbyClient> clientRegistry,
         IClientFactory<ILobbyClient> clientFactory,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
@@ -34,6 +34,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         : base(
             redirectManager,
             packetSerializer,
+            clientRegistry,
             options,
             logger)
     {
@@ -41,7 +42,6 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
         ClientFactory = clientFactory;
         ServerTable = new ServerTable(options.Value.Servers);
-        Clients = new ConcurrentDictionary<uint, ILobbyClient>();
         Options = opts;
 
         IndexHandlers();
@@ -128,7 +128,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
         var client = ClientFactory.CreateClient(clientSocket);
 
-        if (!Clients.TryAdd(client.Id, client))
+        if (!ClientRegistry.TryAdd(client))
         {
             Logger.LogError("Somehow, two clients got the same id? (ID: {Id})", client.Id);
             client.Disconnect();
@@ -145,7 +145,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     private void OnDisconnect(object? sender, EventArgs e)
     {
         var client = (ILobbyClient)sender!;
-        Clients.TryRemove(client.Id, out _);
+        ClientRegistry.TryRemove(client.Id, out _);
     }
     #endregion
 }

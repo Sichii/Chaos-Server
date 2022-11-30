@@ -5,6 +5,7 @@ using Chaos.Schemas.Content;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
 using Chaos.TypeMapper.Abstractions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -28,4 +29,22 @@ public sealed class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSch
             options,
             logger) =>
         AsyncHelpers.RunSync(ReloadAsync);
+}
+
+public sealed class ExpiringLootTableCache : ExpiringFileCacheBase<LootTable, LootTableSchema, ExpiringLootTableCacheOptions>
+{
+    /// <inheritdoc />
+    public ExpiringLootTableCache(
+        IMemoryCache cache,
+        ITypeMapper mapper,
+        IOptions<JsonSerializerOptions> jsonSerializerOptions,
+        IOptionsSnapshot<ExpiringLootTableCacheOptions> options,
+        ILogger<ExpiringLootTableCache> logger
+    )
+        : base(
+            cache,
+            mapper,
+            jsonSerializerOptions,
+            options,
+            logger) { }
 }

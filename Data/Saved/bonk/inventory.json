@@ -4,24 +4,6 @@
     "count": 1,
     "currentDurability": 1000,
     "scriptKeys": [],
-    "slot": 1,
-    "templateKey": "cuckArmor",
-    "uniqueId": 8297
-  },
-  {
-    "color": "Default",
-    "count": 1,
-    "currentDurability": 1000,
-    "scriptKeys": [],
-    "slot": 2,
-    "templateKey": "cuckArmor",
-    "uniqueId": 8300
-  },
-  {
-    "color": "Default",
-    "count": 1,
-    "currentDurability": 1000,
-    "scriptKeys": [],
     "slot": 3,
     "templateKey": "cuckArmor",
     "uniqueId": 8299

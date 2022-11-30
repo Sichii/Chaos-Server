@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System.Text.Json;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
@@ -10,6 +11,7 @@ using Chaos.Schemas.Content;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Options;
 using Chaos.TypeMapper.Abstractions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -90,7 +92,104 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         }
 
         foreach (var monsterSpawn in monsterSpawns)
+        {
             mapInstance.AddSpawner(monsterSpawn);
+            monsterSpawn.FullSpawn();
+        }
+
+        foreach (var merchantSpawn in merchantSpawnSchemas!)
+        {
+            var merchant = MerchantFactory.Create(
+                merchantSpawn.MerchantTemplateKey,
+                mapInstance,
+                merchantSpawn.SpawnPoint,
+                merchantSpawn.ExtraScriptKeys);
+
+            merchant.Direction = merchantSpawn.Direction;
+            mapInstance.SimpleAdd(merchant);
+        }
+
+        mapInstance.Pathfinder = PathfindingService;
+        PathfindingService.RegisterGrid(mapInstance);
+
+        return mapInstance;
+    }
+}
+
+public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance, MapInstanceSchema, ExpiringMapInstanceCacheOptions>
+{
+    private readonly IMerchantFactory MerchantFactory;
+    private readonly IPathfindingService PathfindingService;
+    private readonly IReactorTileFactory ReactorTileFactory;
+
+    /// <inheritdoc />
+    public ExpiringMapInstanceCache(
+        IMemoryCache cache,
+        ITypeMapper mapper,
+        IMerchantFactory merchantFactory,
+        IPathfindingService pathfindingService,
+        IReactorTileFactory reactorTileFactory,
+        IOptions<JsonSerializerOptions> jsonSerializerOptions,
+        IOptionsSnapshot<ExpiringMapInstanceCacheOptions> options,
+        ILogger<ExpiringMapInstanceCache> logger
+    )
+        : base(
+            cache,
+            mapper,
+            jsonSerializerOptions,
+            options,
+            logger)
+    {
+        MerchantFactory = merchantFactory;
+        PathfindingService = pathfindingService;
+        ReactorTileFactory = reactorTileFactory;
+    }
+
+    protected override MapInstance LoadFromFile(string directory)
+    {
+        var mapInstancePath = Path.Combine(directory, "instance.json");
+        var monsterSpawnsPath = Path.Combine(directory, "monsters.json");
+        var merchantSpawnsPath = Path.Combine(directory, "merchants.json");
+        var reactorsPath = Path.Combine(directory, "reactors.json");
+
+        using var mapInstanceStream = File.OpenRead(mapInstancePath);
+        using var monsterSpawnsStream = File.OpenRead(monsterSpawnsPath);
+        using var merchantSpawnsStream = File.OpenRead(merchantSpawnsPath);
+        using var reactorsStream = File.OpenRead(reactorsPath);
+
+        var mapInstanceSchema = JsonSerializer.Deserialize<MapInstanceSchema>(mapInstanceStream, JsonSerializerOptions);
+
+        var monsterSpawnSchemas =
+            JsonSerializer.Deserialize<List<MonsterSpawnSchema>>(monsterSpawnsStream, JsonSerializerOptions);
+
+        var merchantSpawnSchemas =
+            JsonSerializer.Deserialize<List<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
+
+        var reactorsSchemas = JsonSerializer.Deserialize<List<ReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
+
+        if (mapInstanceSchema == null)
+            throw new SerializationException($"Failed to serialize {nameof(MapInstanceSchema)} from directory \"{directory}\"");
+
+        var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema);
+        var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
+
+        foreach (var reactorSchema in reactorsSchemas!)
+        {
+            var reactor = ReactorTileFactory.Create(
+                mapInstance,
+                reactorSchema.Source,
+                reactorSchema.ShouldBlockPathfinding,
+                reactorSchema.ScriptKeys,
+                reactorSchema.ScriptVars);
+
+            mapInstance.SimpleAdd(reactor);
+        }
+
+        foreach (var monsterSpawn in monsterSpawns)
+        {
+            mapInstance.AddSpawner(monsterSpawn);
+            monsterSpawn.FullSpawn();
+        }
 
         foreach (var merchantSpawn in merchantSpawnSchemas!)
         {

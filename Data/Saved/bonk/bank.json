@@ -1,4 +1,14 @@
 {
   "gold": 500,
-  "items": []
+  "items": [
+    {
+      "color": "Default",
+      "count": 2,
+      "currentDurability": 1000,
+      "scriptKeys": [],
+      "slot": 2,
+      "templateKey": "cuckArmor",
+      "uniqueId": 8300
+    }
+  ]
 }

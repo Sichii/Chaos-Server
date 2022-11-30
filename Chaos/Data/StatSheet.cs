@@ -177,8 +177,8 @@ public record StatSheet : Attributes
     }
 
     public void AddHealthPct(int pct) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => (int)Math.Clamp(EffectiveMaximumMp * (pct + HealthPercent) / 100f, 0, EffectiveMaximumMp));
+        ref _currentHp,
+        () => (int)Math.Clamp(EffectiveMaximumHp * (pct + HealthPercent) / 100f, 0, EffectiveMaximumHp));
 
     public void AddHp(int amount) => InterlockedEx.SetValue(
         ref _currentHp,

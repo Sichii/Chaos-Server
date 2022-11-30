@@ -38,6 +38,7 @@ public static class ServiceCollectionExtensions
     public static void AddLobbyServer(this IServiceCollection services)
     {
         services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();
+        services.AddSingleton<IClientRegistry<ILobbyClient>, ClientRegistry<ILobbyClient>>();
 
         services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key)
                 .PostConfigure(LobbyOptions.PostConfigure)
@@ -49,6 +50,7 @@ public static class ServiceCollectionExtensions
     public static void AddLoginserver(this IServiceCollection services)
     {
         services.AddTransient<IClientFactory<ILoginClient>, LoginClientFactory>();
+        services.AddSingleton<IClientRegistry<ILoginClient>, ClientRegistry<ILoginClient>>();
 
         services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key)
                 .PostConfigure<ILogger<LoginOptions>>(LoginOptions.PostConfigure);
@@ -95,6 +97,8 @@ public static class ServiceCollectionExtensions
     public static void AddStorage(this IServiceCollection services)
     {
         services.AddDirectoryBoundOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key);
+
+        /*
         services.AddDirectoryBoundOptionsFromConfig<ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<SpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
@@ -107,7 +111,24 @@ public static class ServiceCollectionExtensions
         services.AddDirectoryBoundOptionsFromConfig<WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<MerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<DialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        */
 
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringSkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringSpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringMapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringMapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringMetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringMonsterTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringLootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringWorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringWorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringMerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringDialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
+
+        /*
         services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
         services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
         services.AddSingleton<ISimpleCache<SpellTemplate>, SpellTemplateCache>();
@@ -120,7 +141,20 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache<WorldMap>, WorldMapCache>();
         services.AddSingleton<ISimpleCache<MerchantTemplate>, MerchantTemplateCache>();
         services.AddSingleton<ISimpleCache<DialogTemplate>, DialogTemplateCache>();
-        services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
+        */
+
+        services.AddSingleton<ISimpleCache<ItemTemplate>, ExpiringItemTemplateCache>();
+        services.AddSingleton<ISimpleCache<SkillTemplate>, ExpiringSkillTemplateCache>();
+        services.AddSingleton<ISimpleCache<SpellTemplate>, ExpiringSpellTemplateCache>();
+        services.AddSingleton<ISimpleCache<MapTemplate>, ExpiringMapTemplateCache>();
+        services.AddSingleton<ISimpleCache<MapInstance>, ExpiringMapInstanceCache>();
+        services.AddSingleton<ISimpleCache<Metafile>, ExpiringMetafileCache>();
+        services.AddSingleton<ISimpleCache<MonsterTemplate>, ExpiringMonsterTemplateCache>();
+        services.AddSingleton<ISimpleCache<LootTable>, ExpiringLootTableCache>();
+        services.AddSingleton<ISimpleCache<WorldMapNode>, ExpiringWorldMapNodeCache>();
+        services.AddSingleton<ISimpleCache<WorldMap>, ExpiringWorldMapCache>();
+        services.AddSingleton<ISimpleCache<MerchantTemplate>, ExpiringMerchantTemplateCache>();
+        services.AddSingleton<ISimpleCache<DialogTemplate>, ExpiringDialogTemplateCache>();
 
         services.AddSingleton<ISimpleCache, SimpleCache>();
         services.AddSingleton<ISimpleCacheProvider, SimpleCache>();
@@ -152,6 +186,7 @@ public static class ServiceCollectionExtensions
     public static void AddWorldServer(this IServiceCollection services)
     {
         services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
+        services.AddSingleton<IClientRegistry<IWorldClient>, ClientRegistry<IWorldClient>>();
 
         services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key)
                 .PostConfigure(WorldOptions.PostConfigure);

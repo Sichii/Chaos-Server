@@ -1,3 +1,5 @@
+using Chaos.Storage.Abstractions.Definitions;
+
 namespace Chaos.Storage.Abstractions;
 
 public abstract class SimpleFileCacheOptionsBase : ISimpleFileCacheOptions

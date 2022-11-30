@@ -1,10 +1,11 @@
+using Chaos.Clients.Abstractions;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Networking.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Storage.Abstractions;
 
@@ -14,33 +15,37 @@ namespace Chaos.Commands;
 public sealed class TeleportCommand : ICommand<Aisling>
 {
     private readonly ISimpleCache Cache;
-    private readonly IServiceProvider Provider;
+    private readonly IClientRegistry<IWorldClient> ClientRegistry;
 
-    public TeleportCommand(ISimpleCache cache, IServiceProvider provider)
+    public TeleportCommand(ISimpleCache cache, IClientRegistry<IWorldClient> clientRegistry)
     {
         Cache = cache;
-        Provider = provider;
+        ClientRegistry = clientRegistry;
     }
 
     /// <inheritdoc />
-    public async ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)
+    public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)
     {
         if (!args.TryGetNext<string>(out var type))
-            return;
+            return default;
 
         switch (type.ToLower())
         {
             case "player":
                 if (!args.TryGetNext<string>(out var playerName))
-                    return;
+                    return default;
 
-                var player = await Provider.GetAislingsAsync().FirstOrDefaultAsync(a => a.Name.EqualsI(playerName));
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                var player = ClientRegistry
+                             .Select(c => c.Aisling)
+                             .Where(a => a != null)
+                             .FirstOrDefault(a => a.Name.EqualsI(playerName));
 
                 if (player == null)
                 {
                     aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{playerName} is not online");
 
-                    return;
+                    return default;
                 }
 
                 aisling.TraverseMap(player.MapInstance, player);
@@ -48,7 +53,7 @@ public sealed class TeleportCommand : ICommand<Aisling>
                 break;
             case "map":
                 if (!args.TryGetNext<string>(out var mapInstanceId))
-                    return;
+                    return default;
 
                 var mapInstance = Cache.Get<MapInstance>(mapInstanceId);
 
@@ -61,7 +66,9 @@ public sealed class TeleportCommand : ICommand<Aisling>
 
                 aisling.TraverseMap(mapInstance, point);
 
-                return;
+                return default;
         }
+
+        return default;
     }
 }

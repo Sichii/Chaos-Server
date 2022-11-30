@@ -2,4 +2,6 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Storage.Options;
 
-public class DialogTemplateCacheOptions : SimpleFileCacheOptionsBase { }
+public sealed class DialogTemplateCacheOptions : SimpleFileCacheOptionsBase { }
+
+public sealed class ExpiringDialogTemplateCacheOptions : ExpiringFileCacheOptionsBase { }

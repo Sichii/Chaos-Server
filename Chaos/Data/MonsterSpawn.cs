@@ -26,6 +26,20 @@ public sealed class MonsterSpawn : IDeltaUpdatable
     public Rectangle? SpawnArea { get; set; }
     public required IIntervalTimer SpawnTimer { get; init; }
 
+    public void FullSpawn()
+    {
+        while (true)
+        {
+            var currentCount = MapInstance.GetEntities<Monster>()
+                                          .Count(obj => obj.Template.TemplateKey.EqualsI(MonsterTemplate.TemplateKey));
+
+            if (currentCount >= MaxAmount)
+                break;
+
+            SpawnMonsters();
+        }
+    }
+
     private void GenerateGoldAndExp(Monster monster)
     {
         monster.Gold = Random.Shared.Next(MinGoldDrop, MaxGoldDrop + 1);

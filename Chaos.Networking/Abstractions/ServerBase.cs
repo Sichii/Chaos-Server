@@ -17,6 +17,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     public delegate ValueTask ClientHandler(T client, in ClientPacket packet);
 
     protected ClientHandler?[] ClientHandlers { get; }
+    protected IClientRegistry<T> ClientRegistry { get; }
     protected ILogger Logger { get; }
     protected abstract ServerOptions Options { get; }
     protected IPacketSerializer PacketSerializer { get; }
@@ -27,12 +28,14 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     protected ServerBase(
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
+        IClientRegistry<T> clientRegistry,
         IOptionsSnapshot<ServerOptions> options,
         ILogger<ServerBase<T>> logger
     )
     {
         RedirectManager = redirectManager;
         Logger = logger;
+        ClientRegistry = clientRegistry;
         PacketSerializer = packetSerializer;
         ClientHandlers = new ClientHandler?[byte.MaxValue];
         Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

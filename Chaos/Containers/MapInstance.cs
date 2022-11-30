@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Data;
@@ -17,7 +18,7 @@ namespace Chaos.Containers;
 
 public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
-    private readonly ICollection<MonsterSpawn> MonsterSpawns;
+    private readonly List<MonsterSpawn> MonsterSpawns;
     private readonly MapEntityCollection Objects;
     public MapFlags Flags { get; set; }
     public string InstanceId { get; init; }
@@ -289,7 +290,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     {
         Objects.Update(delta);
 
-        foreach (var spawn in MonsterSpawns)
+        foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
             spawn.Update(delta);
     }
 }
