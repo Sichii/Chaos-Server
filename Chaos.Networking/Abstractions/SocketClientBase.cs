@@ -132,13 +132,15 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             Count += count;
             var offset = 0;
 
-            var endPosition = Count;
-
             //if there's less than 4 bytes in the buffer
             //there isnt enough data to make a packet
             while (Count > 3)
             {
                 var packetLength = (Buffer[offset + 1] << 8) + Buffer[offset + 2] + 3;
+
+                //if we havent received the whole packet yet, break
+                if (Count < packetLength)
+                    break;
 
                 try
                 {
@@ -155,7 +157,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             //if we received the first few bytes of a new packet, they wont be at the beginning of the buffer
             //copy those couple bytes to the beginning of the buffer
             if (Count > 0)
-                MemoryBuffer.Slice(endPosition - Count, Count).CopyTo(MemoryBuffer);
+                MemoryBuffer.Slice(offset, Count).CopyTo(MemoryBuffer);
 
             e.SetBuffer(MemoryBuffer[Count..]);
             Socket.ReceiveAndForget(e, ReceiveEventHandler);

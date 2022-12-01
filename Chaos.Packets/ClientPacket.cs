@@ -23,7 +23,7 @@ public ref struct ClientPacket
         Buffer = span[^resultLength..];
     }
 
-    public string GetAsciiString(bool replaceNewline = true)
+    public readonly string GetAsciiString(bool replaceNewline = true)
     {
         var str = Encoding.ASCII.GetString(Buffer);
 
@@ -38,7 +38,7 @@ public ref struct ClientPacket
 
     public byte[] ToArray() => ToSpan().ToArray();
 
-    public Memory<byte> ToMemory()
+    public readonly Memory<byte> ToMemory()
     {
         //the length of the packet after the length portion of the header plus the packet tail (determined by encryption type)
         var resultLength = Buffer.Length + (IsEncrypted ? 5 : 4) - 3;
