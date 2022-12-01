@@ -1,7 +1,7 @@
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.ItemScripts.Abstractions;
+using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts;
 

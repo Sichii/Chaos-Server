@@ -2,11 +2,11 @@ using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Extensions.Common;
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.DialogScripts.Abstractions;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Menu;

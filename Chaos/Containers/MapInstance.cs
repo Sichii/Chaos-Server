@@ -216,7 +216,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         };
     }
 
-    public bool IsWall(IPoint point) => Template.IsWall(point);
+    public bool IsWall(IPoint point)
+    {
+        if (Template.IsWall(point))
+            return true;
+
+        var door = GetEntitiesAtPoint<Door>(point).FirstOrDefault();
+
+        return door?.Closed ?? false;
+    }
 
     public bool IsWallToCreaturesOnly(IPoint point) => Objects.AtPoint<ReactorTile>(point).Any(rt => rt.ShouldBlockPathfinding);
 

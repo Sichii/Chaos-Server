@@ -3,8 +3,8 @@ using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Extensions.Geometry;
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.World;
+using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Commands;
 

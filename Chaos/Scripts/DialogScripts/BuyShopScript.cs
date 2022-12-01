@@ -1,10 +1,10 @@
 using Chaos.Data;
 using Chaos.Extensions.Common;
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.DialogScripts.Abstractions;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;

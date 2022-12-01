@@ -1,7 +1,7 @@
 using Chaos.Extensions.Common;
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Utilities;

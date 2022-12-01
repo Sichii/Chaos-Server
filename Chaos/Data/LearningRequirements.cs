@@ -1,7 +1,7 @@
 using System.Text;
 using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
-using Chaos.Factories.Abstractions;
+using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Data;
 

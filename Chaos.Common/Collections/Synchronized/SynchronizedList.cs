@@ -10,10 +10,10 @@ namespace Chaos.Common.Collections.Synchronized;
 /// <inheritdoc cref="System.Collections.Generic.List{T}" />
 public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 {
-    private readonly List<T> List;
-    private readonly AutoReleasingMonitor Sync;
+    protected readonly List<T> List;
+    protected readonly AutoReleasingMonitor Sync;
 
-    public T this[int index]
+    public virtual T this[int index]
     {
         get
         {
@@ -28,7 +28,7 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
         }
     }
 
-    public int Count
+    public virtual int Count
     {
         get
         {
@@ -38,7 +38,7 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
         }
     }
 
-    public bool IsReadOnly => false;
+    public virtual bool IsReadOnly => false;
 
     public SynchronizedList(IEnumerable<T>? items = null)
     {
@@ -47,32 +47,32 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
         List = new List<T>(items);
     }
 
-    public void Add(T item)
+    public virtual void Add(T item)
     {
         using var @lock = Sync.Enter();
         List.Add(item);
     }
 
-    public void Clear()
+    public virtual void Clear()
     {
         using var @lock = Sync.Enter();
         List.Clear();
     }
 
-    public bool Contains(T item)
+    public virtual bool Contains(T item)
     {
         using var @lock = Sync.Enter();
 
         return List.Contains(item);
     }
 
-    public void CopyTo(T[] array, int arrayIndex)
+    public virtual void CopyTo(T[] array, int arrayIndex)
     {
         using var @lock = Sync.Enter();
         List.CopyTo(array, arrayIndex);
     }
 
-    public IEnumerator<T> GetEnumerator()
+    public virtual IEnumerator<T> GetEnumerator()
     {
         List<T> snapshot;
 
@@ -85,27 +85,27 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public int IndexOf(T item)
+    public virtual int IndexOf(T item)
     {
         using var @lock = Sync.Enter();
 
         return List.IndexOf(item);
     }
 
-    public void Insert(int index, T item)
+    public virtual void Insert(int index, T item)
     {
         using var @lock = Sync.Enter();
         List.Insert(index, item);
     }
 
-    public bool Remove(T item)
+    public virtual bool Remove(T item)
     {
         using var @lock = Sync.Enter();
 
         return List.Remove(item);
     }
 
-    public void RemoveAt(int index)
+    public virtual void RemoveAt(int index)
     {
         using var @lock = Sync.Enter();
         List.RemoveAt(index);

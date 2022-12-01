@@ -144,7 +144,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
                 try
                 {
-                    await HandlePacketAsync(MemoryBuffer.Span.Slice(offset, packetLength)).ConfigureAwait(false);
+                    await HandlePacketAsync(MemoryBuffer.Span.Slice(offset, packetLength));
                 } catch (Exception ex)
                 {
                     Logger.LogError(ex, "Exception while handling a packet");

@@ -34,8 +34,7 @@ public sealed record MapTemplate : ITemplate, IScripted
         }
     }
 
-    public bool IsWall(IPoint point) =>
-        !IsWithinMap(point) || (Doors.TryGetValue(point, out var door) ? door.Closed : Tiles[point.X, point.Y].IsWall);
+    public bool IsWall(IPoint point) => !IsWithinMap(point) || Tiles[point.X, point.Y].IsWall;
 
     public bool IsWithinMap(IPoint point) => Bounds.Contains(point);
 }

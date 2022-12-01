@@ -12,6 +12,9 @@ public sealed class DefaultRegenFormula : IRegenFormula
     /// <inheritdoc />
     public void Regenerate(Aisling aisling)
     {
+        if (!aisling.IsAlive)
+            return;
+
         aisling.StatSheet.AddHealthPct(10);
         aisling.StatSheet.AddManaPct(5);
         aisling.Client.SendAttributes(StatUpdateType.Vitality);

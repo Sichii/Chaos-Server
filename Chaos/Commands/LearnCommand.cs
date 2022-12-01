@@ -1,8 +1,8 @@
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
-using Chaos.Factories.Abstractions;
 using Chaos.Objects.World;
+using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Commands;
 

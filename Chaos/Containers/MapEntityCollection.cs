@@ -231,7 +231,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         if (type.IsAssignableTo(typeof(GroundEntity)))
             return GroundEntities.OfType<T>();
 
-        return Enumerable.Empty<T>();
+        return EntityLookup.Values.OfType<T>();
     }
 
     public IEnumerable<T> WithinRange<T>(IPoint point, int range = 13) where T: MapEntity

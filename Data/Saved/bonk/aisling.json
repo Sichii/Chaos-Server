@@ -10,7 +10,7 @@
   "hairStyle": 6,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "testTown",
+  "mapInstanceId": "mileth",
   "name": "bonk",
   "nation": 0,
   "statSheet": {
@@ -33,13 +33,13 @@
   "userOptions": {
     "exchange": false,
     "fastMove": false,
-    "group": false,
+    "group": true,
     "guildChat": true,
     "magic": true,
     "shout": true,
     "whisper": true,
     "wisdom": true
   },
-  "x": 25,
-  "y": 27
+  "x": 42,
+  "y": 62
 }
