@@ -172,7 +172,7 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _dexMod, other.Dex);
         Interlocked.Add(ref _magicResistanceMod, other.MagicResistance);
         Interlocked.Add(ref _maximumHpMod, other.MaximumHp);
-        Interlocked.Add(ref _maximumMpMod, other.MaximumHp);
+        Interlocked.Add(ref _maximumMpMod, other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPctMod, other.AtkSpeedPct);
     }
 
@@ -250,7 +250,7 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _dexMod, -other.Dex);
         Interlocked.Add(ref _magicResistanceMod, -other.MagicResistance);
         Interlocked.Add(ref _maximumHpMod, -other.MaximumHp);
-        Interlocked.Add(ref _maximumMpMod, -other.MaximumHp);
+        Interlocked.Add(ref _maximumMpMod, -other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPctMod, -other.AtkSpeedPct);
     }
 

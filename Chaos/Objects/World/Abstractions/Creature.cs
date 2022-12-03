@@ -259,7 +259,19 @@ public abstract class Creature : NamedEntity, IAffected
             async () =>
             {
                 await using var sync = await destinationMap.Sync.WaitAsync();
-                destinationMap.AddObject(this, destinationPoint);
+
+                try
+                {
+                    destinationMap.AddObject(this, destinationPoint);
+                } catch (Exception e)
+                {
+                    Logger.LogCritical(
+                        e,
+                        "Exception thrown while {Creature} attempted to traverse from map {FromMap} to {ToMap}",
+                        this,
+                        currentMap,
+                        destinationMap);
+                }
             });
     }
 

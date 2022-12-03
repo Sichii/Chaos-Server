@@ -37,7 +37,6 @@ public class CascadeDamageScript : DamageScript
     public override void OnUse(SpellContext context)
     {
         var direction = context.Source.Direction;
-        var sourcePoint = Point.From(context.Source);
 
         ShowBodyAnimation(context);
 
@@ -55,23 +54,29 @@ public class CascadeDamageScript : DamageScript
                     //get points for this stage
                     var pointsForStage = SelectPointsForStage(
                             allPossiblePoints,
-                            sourcePoint,
+                            context.SourcePoint,
                             direction,
                             i)
                         .ToList();
 
                     await using (_ = await context.Map.Sync.WaitAsync())
                     {
-                        ShowAnimation(context, pointsForStage);
-
-                        var affectedEntitiesForStage = GetAffectedEntities<Creature>(context, pointsForStage);
-                        ApplyDamage(context, affectedEntitiesForStage);
-
-                        if (Sound.HasValue && (elapsedMs >= MinSoundDelayMs))
+                        try
                         {
-                            PlaySound(context, pointsForStage);
+                            ShowAnimation(context, pointsForStage);
 
-                            elapsedMs = 0;
+                            var affectedEntitiesForStage = GetAffectedEntities<Creature>(context, pointsForStage);
+                            ApplyDamage(context, affectedEntitiesForStage);
+
+                            if (Sound.HasValue && (elapsedMs >= MinSoundDelayMs))
+                            {
+                                PlaySound(context, pointsForStage);
+
+                                elapsedMs = 0;
+                            }
+                        } catch
+                        {
+                            //ignored
                         }
                     }
 

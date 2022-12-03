@@ -292,6 +292,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Objects.Add(mapEntity.Id, mapEntity);
     }
 
+    /// <inheritdoc />
+    public override string ToString() =>
+        $"{{ Type: \"{nameof(MapInstance)}\", InstanceId: \"{InstanceId}\", TemplateId: {Template.MapId} }}";
+
     public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
 
     public void Update(TimeSpan delta)

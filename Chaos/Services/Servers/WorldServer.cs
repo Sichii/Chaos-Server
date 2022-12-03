@@ -145,16 +145,17 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     private async ValueTask UpdateMap(MapInstance map, CancellationToken token)
     {
+        await using var sync = await map.Sync.WaitAsync();
+
         try
         {
-            await using var sync = await map.Sync.WaitAsync();
             map.Update(DeltaTime.DeltaSpan);
 
             if (SaveTimer.IntervalElapsed)
                 await Task.WhenAll(map.GetEntities<Aisling>().Select(SaveUserAsync));
         } catch (Exception e)
         {
-            Logger.LogCritical(e, "Failed to update map instance {MapInstance}", map.InstanceId);
+            Logger.LogCritical(e, "Failed to update map instance {MapInstance}", map);
         }
     }
 
@@ -374,15 +375,21 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         await using var sync = await aisling.MapInstance.Sync.WaitAsync();
 
-        aisling.BeginObserving();
-        client.SendAttributes(StatUpdateType.Full);
-        client.SendLightLevel(LightLevel.Lightest);
-        client.SendUserId();
-        aisling.MapInstance.AddObject(aisling, aisling);
-        client.SendProfileRequest();
+        try
+        {
+            aisling.BeginObserving();
+            client.SendAttributes(StatUpdateType.Full);
+            client.SendLightLevel(LightLevel.Lightest);
+            client.SendUserId();
+            aisling.MapInstance.AddObject(aisling, aisling);
+            client.SendProfileRequest();
 
-        foreach (var reactor in aisling.MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(aisling)))
-            reactor.OnWalkedOn(aisling);
+            foreach (var reactor in aisling.MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(aisling)))
+                reactor.OnWalkedOn(aisling);
+        } catch (Exception e)
+        {
+            Logger.LogCritical(e, "{Player} failed to load", aisling);
+        }
     }
 
     public ValueTask OnClientWalk(IWorldClient client, in ClientPacket clientPacket)
@@ -1254,23 +1261,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     #endregion
 
     #region Connection / Handler
-    public static async ValueTask ExecuteHandler<TArgs>(IWorldClient client, TArgs args, Func<IWorldClient, TArgs, ValueTask> action)
-    {
-        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        var mapInstance = client.Aisling?.MapInstance;
-        IPolyDisposable disposable;
-
-        if (mapInstance == null)
-            disposable = new NoOpDisposable();
-        else
-            disposable = await mapInstance.Sync.WaitAsync();
-
-        await using var sync = disposable;
-
-        await action(client, args);
-    }
-
-    public static async ValueTask ExecuteHandler(IWorldClient client, Func<IWorldClient, ValueTask> action)
+    public async ValueTask ExecuteHandler<TArgs>(IWorldClient client, TArgs args, Func<IWorldClient, TArgs, ValueTask> action)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
@@ -1294,7 +1285,50 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         await using var sync = disposable;
 
-        await action(client);
+        try
+        {
+            await action(client, args);
+        } catch (Exception e)
+        {
+            Logger.LogError(
+                e,
+                "Failed to execute inner handler with args {@Args} for client {@Client}",
+                args,
+                client);
+        }
+    }
+
+    public async ValueTask ExecuteHandler(IWorldClient client, Func<IWorldClient, ValueTask> action)
+    {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        var mapInstance = client.Aisling?.MapInstance;
+        IPolyDisposable disposable;
+
+        if (mapInstance == null)
+            disposable = new NoOpDisposable();
+        else
+        {
+            //await entrancy into the map synchronization
+            disposable = await mapInstance.Sync.WaitAsync();
+
+            //if for some reason we changed maps while waiting entrancy, we need to recheck
+            while (mapInstance != client.Aisling!.MapInstance)
+            {
+                disposable.Dispose();
+                mapInstance = client.Aisling.MapInstance;
+                disposable = await mapInstance.Sync.WaitAsync();
+            }
+        }
+
+        await using var sync = disposable;
+
+        try
+        {
+            await action(client);
+        } catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to execute inner handler for client {@Client}", client);
+        }
     }
 
     public override ValueTask HandlePacketAsync(IWorldClient client, in ClientPacket packet)
@@ -1383,26 +1417,28 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         var aisling = client.Aisling;
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = aisling?.MapInstance;
-        IPolyDisposable disposable = new NoOpDisposable();
 
-        if (mapInstance != null)
-            disposable = await mapInstance.Sync.WaitAsync();
+        await using var sync = mapInstance == null ? new NoOpDisposable() : await mapInstance.Sync.WaitAsync();
 
-        await using var sync = disposable;
-
-        //remove client from client list
-        ClientRegistry.TryRemove(client.Id, out _);
-
-        if (aisling != null)
+        try
         {
-            //if the player has an exchange open, cancel it so items are returned
-            var activeExchange = aisling.ActiveObject.TryGet<Exchange>();
-            activeExchange?.Cancel(aisling);
+            //remove client from client list
+            ClientRegistry.TryRemove(client.Id, out _);
 
-            //remove aisling from map
-            mapInstance?.RemoveObject(client.Aisling);
-            //save aisling
-            await SaveUserAsync(client.Aisling);
+            if (aisling != null)
+            {
+                //if the player has an exchange open, cancel it so items are returned
+                var activeExchange = aisling.ActiveObject.TryGet<Exchange>();
+                activeExchange?.Cancel(aisling);
+
+                //remove aisling from map
+                mapInstance?.RemoveObject(client.Aisling);
+                //save aisling
+                await SaveUserAsync(client.Aisling);
+            }
+        } catch (Exception ex)
+        {
+            Logger.LogError(ex, "Exception thrown while {@Client} was trying to disconnect", client);
         }
     }
     #endregion

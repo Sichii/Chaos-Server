@@ -10,7 +10,7 @@
   "hairStyle": 6,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "mileth",
+  "mapInstanceId": "test1",
   "name": "bonk",
   "nation": 0,
   "statSheet": {
@@ -18,7 +18,7 @@
     "baseClass": "Peasant",
     "maxWeight": 40,
     "toNextLevel": 100,
-    "currentHp": 100000,
+    "currentHp": 99955,
     "currentMp": 50000,
     "level": 1,
     "maximumHp": 100000,
@@ -33,13 +33,13 @@
   "userOptions": {
     "exchange": false,
     "fastMove": false,
-    "group": true,
+    "group": false,
     "guildChat": true,
     "magic": true,
     "shout": true,
     "whisper": true,
     "wisdom": true
   },
-  "x": 42,
-  "y": 62
+  "x": 6,
+  "y": 14
 }

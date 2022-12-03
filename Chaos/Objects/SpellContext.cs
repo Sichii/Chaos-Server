@@ -1,5 +1,4 @@
 ﻿using Chaos.Containers;
-using Chaos.Geometry.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 
@@ -9,7 +8,7 @@ public sealed record SpellContext(Creature Target, Creature Source, string? Prom
 {
     public MapInstance Map { get; } = Target.MapInstance;
     public Aisling? SourceAisling { get; } = Source as Aisling;
-    public IPoint SourcePoint { get; } = Point.From(Source);
+    public Point SourcePoint { get; } = Point.From(Source);
     public Aisling? TargetAisling { get; } = Target as Aisling;
-    public IPoint TargetPoint { get; } = Point.From(Target);
+    public Point TargetPoint { get; } = Point.From(Target);
 }
