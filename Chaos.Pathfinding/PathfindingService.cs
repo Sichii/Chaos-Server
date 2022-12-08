@@ -40,7 +40,7 @@ public sealed class PathfindingService : IPathfindingService
         ICollection<IPoint> unwalkablePoints
     )
     {
-        var pathFinder = MemoryCache.GetOrCreate(key, CreatePathfinder);
+        var pathFinder = MemoryCache.GetOrCreate(key.ToLowerInvariant(), CreatePathfinder);
 
         return pathFinder!.Pathfind(
             start,
@@ -49,7 +49,7 @@ public sealed class PathfindingService : IPathfindingService
             unwalkablePoints);
     }
 
-    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key] = gridDetails;
+    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key.ToLowerInvariant()] = gridDetails;
 
     /// <inheritdoc />
     public Direction Wander(
@@ -59,7 +59,7 @@ public sealed class PathfindingService : IPathfindingService
         ICollection<IPoint> unwalkablePoints
     )
     {
-        var pathFinder = MemoryCache.GetOrCreate(key, CreatePathfinder);
+        var pathFinder = MemoryCache.GetOrCreate(key.ToLowerInvariant(), CreatePathfinder);
 
         return pathFinder!.Wander(start, ignoreWalls, unwalkablePoints);
     }

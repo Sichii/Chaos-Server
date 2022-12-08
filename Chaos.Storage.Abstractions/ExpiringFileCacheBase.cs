@@ -35,7 +35,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
         Cache = cache;
         Mapper = mapper;
         JsonSerializerOptions = jsonSerializerOptions.Value;
-        KeyPrefix = $"{typeof(T)}-";
+        KeyPrefix = $"{typeof(T).Name}-".ToLowerInvariant();
         LocalLookup = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
 
@@ -87,7 +87,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
     }
 
     /// <inheritdoc />
-    public T Get(string key) => Cache.GetOrCreate(KeyPrefix + key, CreateFromEntry);
+    public T Get(string key) => Cache.GetOrCreate(KeyPrefix + key.ToLowerInvariant(), CreateFromEntry);
 
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator() => LocalLookup.Values.GetEnumerator();
