@@ -14,14 +14,14 @@ namespace Chaos.Services.Storage;
 public sealed class UserSaveManager : ISaveManager<Aisling>
 {
     private readonly JsonSerializerOptions JsonSerializerOptions;
-    private readonly ILogger Logger;
+    private readonly ILogger<UserSaveManager> Logger;
     private readonly ITypeMapper Mapper;
     private readonly UserSaveManagerOptions Options;
 
     public UserSaveManager(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<UserSaveManagerOptions> options,
+        IOptions<UserSaveManagerOptions> options,
         ILogger<UserSaveManager> logger
     )
     {

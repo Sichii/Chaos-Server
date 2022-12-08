@@ -11,7 +11,7 @@ using Chaos.Schemas.Templates;
 
 const string FILENAME = "Master_Maplist.txt";
 const string DIRECTORY = "templates";
-var regex = new Regex(@"(\d+)\|(.+)\|(\d+)\|(\d+)", RegexOptions.Compiled);
+var regex = MyRegex();
 var lines = await File.ReadAllLinesAsync(FILENAME);
 var hashSet = new SynchronizedHashSet<short>();
 
@@ -49,7 +49,6 @@ async ValueTask ParseLineToFileAsync(string line, CancellationToken _)
         if (!hashSet.Add(mapIdNum))
             return;
 
-        var mapName = match.Groups[2].Value;
         var width = match.Groups[3].Value;
         var widthNum = byte.Parse(width);
         var height = match.Groups[4].Value;
@@ -69,4 +68,10 @@ async ValueTask ParseLineToFileAsync(string line, CancellationToken _)
         await using var stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
         await JsonSerializer.SerializeAsync(stream, template, options);
     }
+}
+
+internal partial class Program
+{
+    [GeneratedRegex("""(\d+)\|(.+)\|(\d+)\|(\d+)""", RegexOptions.Compiled)]
+    private static partial Regex MyRegex();
 }

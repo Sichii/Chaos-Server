@@ -9,7 +9,7 @@ namespace Chaos.Services.Factories;
 
 public sealed class DialogFactory : IDialogFactory
 {
-    private readonly ILogger Logger;
+    private readonly ILogger<DialogFactory> Logger;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 

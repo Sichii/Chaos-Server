@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSchema, LootTableCacheOptions>
+public sealed class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSchema>
 {
     /// <inheritdoc />
     protected override Func<LootTable, string> KeySelector => l => l.Key;
@@ -20,25 +20,25 @@ public sealed class LootTableCache : SimpleFileCacheBase<LootTable, LootTableSch
     public LootTableCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<LootTableCacheOptions> options,
+        IOptions<LootTableCacheOptions> options,
         ILogger<LootTableCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) =>
         AsyncHelpers.RunSync(ReloadAsync);
 }
 
-public sealed class ExpiringLootTableCache : ExpiringFileCacheBase<LootTable, LootTableSchema, ExpiringLootTableCacheOptions>
+public sealed class ExpiringLootTableCache : ExpiringFileCacheBase<LootTable, LootTableSchema>
 {
     /// <inheritdoc />
     public ExpiringLootTableCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringLootTableCacheOptions> options,
+        IOptions<ExpiringLootTableCacheOptions> options,
         ILogger<ExpiringLootTableCache> logger
     )
         : base(

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class SpellTemplateCache : SimpleFileCacheBase<SpellTemplate, SpellTemplateSchema, SpellTemplateCacheOptions>
+public sealed class SpellTemplateCache : SimpleFileCacheBase<SpellTemplate, SpellTemplateSchema>
 {
     /// <inheritdoc />
     protected override Func<SpellTemplate, string> KeySelector => t => t.TemplateKey;
@@ -20,25 +20,25 @@ public sealed class SpellTemplateCache : SimpleFileCacheBase<SpellTemplate, Spel
     public SpellTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<SpellTemplateCacheOptions> options,
+        IOptions<SpellTemplateCacheOptions> options,
         ILogger<SpellTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
 public sealed class
-    ExpiringSpellTemplateCache : ExpiringFileCacheBase<SpellTemplate, SpellTemplateSchema, ExpiringSpellTemplateCacheOptions>
+    ExpiringSpellTemplateCache : ExpiringFileCacheBase<SpellTemplate, SpellTemplateSchema>
 {
     /// <inheritdoc />
     public ExpiringSpellTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringSpellTemplateCacheOptions> options,
+        IOptions<ExpiringSpellTemplateCacheOptions> options,
         ILogger<ExpiringSpellTemplateCache> logger
     )
         : base(

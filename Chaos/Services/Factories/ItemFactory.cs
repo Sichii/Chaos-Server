@@ -9,7 +9,7 @@ namespace Chaos.Services.Factories;
 
 public sealed class ItemFactory : IItemFactory
 {
-    private readonly ILogger Logger;
+    private readonly ILogger<ItemFactory> Logger;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 

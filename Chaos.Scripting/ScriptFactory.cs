@@ -23,7 +23,7 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
                                                                                            where TScripted: IScripted
 {
     private readonly Type CompositeType;
-    private readonly ILogger Logger;
+    private readonly ILogger<ScriptFactory<TScript, TScripted>> Logger;
     private readonly ConcurrentDictionary<string, Type> ScriptTypeCache;
     private readonly IServiceProvider ServiceProvider;
     private readonly string TypeName;

@@ -9,6 +9,7 @@ using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts.Abstractions;
 
+[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase
 {
     protected Animation? Animation { get; init; }
@@ -46,6 +47,7 @@ public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase
         ShowBodyAnimation(context);
 
         var affectedPoints = GetAffectedPoints(context).Cast<IPoint>().ToList();
+        // ReSharper disable once UnusedVariable
         var affectedEntities = GetAffectedEntities<Creature>(context, affectedPoints);
 
         ShowAnimation(context, affectedPoints);

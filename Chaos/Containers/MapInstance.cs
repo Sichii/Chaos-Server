@@ -63,6 +63,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         visibleEntity.SetLocation(this, point);
         Objects.Add(visibleEntity.Id, visibleEntity);
 
+        if (visibleEntity is Creature c)
+            Script.OnEntered(c);
+
         if (visibleEntity is Aisling aisling)
         {
             (var aislings, var doors, var otherVisibles) = Objects.WithinRange<VisibleEntity>(point)
@@ -125,6 +128,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         foreach (var visibleObj in visibleObjects)
         {
+            if (visibleObj is Creature creature)
+                Script.OnEntered(creature);
+
             visibleObj.MapInstance = this;
             Objects.Add(visibleObj.Id, visibleObj);
         }
@@ -267,8 +273,12 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 aisling.Client.SendRemoveObject(visibleObject.Id);
 
         if (mapEntity is Creature creature)
+        {
+            Script.OnExited(creature);
+
             foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
                 Helpers.HandleDeparture(creature, nearbyCreature);
+        }
 
         return true;
     }

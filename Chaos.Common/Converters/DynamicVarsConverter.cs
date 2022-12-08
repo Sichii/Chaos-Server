@@ -4,7 +4,7 @@ using Chaos.Common.Collections;
 
 namespace Chaos.Common.Converters;
 
-public class DynamicVarsConverter : JsonConverter<DynamicVars>
+public sealed class DynamicVarsConverter : JsonConverter<DynamicVars>
 {
     /// <inheritdoc />
     public override DynamicVars Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

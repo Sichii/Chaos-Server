@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema, MetafileCacheOptions>
+public sealed class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema>
 {
     /// <inheritdoc />
     protected override Func<Metafile, string> KeySelector => m => m.Name;
@@ -20,24 +20,24 @@ public sealed class MetafileCache : SimpleFileCacheBase<Metafile, MetafileSchema
     public MetafileCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<MetafileCacheOptions> options,
+        IOptions<MetafileCacheOptions> options,
         ILogger<MetafileCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
-public sealed class ExpiringMetafileCache : ExpiringFileCacheBase<Metafile, MetafileSchema, ExpiringMetafileCacheOptions>
+public sealed class ExpiringMetafileCache : ExpiringFileCacheBase<Metafile, MetafileSchema>
 {
     /// <inheritdoc />
     public ExpiringMetafileCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringMetafileCacheOptions> options,
+        IOptions<ExpiringMetafileCacheOptions> options,
         ILogger<ExpiringMetafileCache> logger
     )
         : base(

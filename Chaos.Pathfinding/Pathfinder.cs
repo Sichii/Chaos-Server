@@ -49,7 +49,7 @@ public sealed class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        IEnumerable<IPoint> creatures
     )
     {
         using var @lock = Sync.Enter();
@@ -148,7 +148,7 @@ public sealed class Pathfinder : IPathfinder
                      && PathNodes[point.X, point.Y].IsWalkable(ignoreWalls)
                      && !unwalkablePoints.Contains(point, PointEqualityComparer.Instance));
 
-    private void InitializeSubGrid(IRectangle subGrid, ICollection<IPoint> unwalkablePoints)
+    private void InitializeSubGrid(IRectangle subGrid, IEnumerable<IPoint> unwalkablePoints)
     {
         //un-close all the nodes in the sub grid
         //the sub grid is the path-searchable area
@@ -193,7 +193,7 @@ public sealed class Pathfinder : IPathfinder
         return nextPoint.DirectionalRelationTo(start);
     }
 
-    private void ResetSubGrid(IRectangle subGrid, ICollection<IPoint> creatures)
+    private void ResetSubGrid(IRectangle subGrid, IEnumerable<IPoint> creatures)
     {
         foreach (var point in subGrid.Points())
             if (WithinGrid(point))

@@ -9,7 +9,7 @@ namespace Chaos.Services.Factories;
 public sealed class EffectFactory : IEffectFactory
 {
     private readonly ConcurrentDictionary<string, Type> EffectTypeCache;
-    private readonly ILogger Logger;
+    private readonly ILogger<EffectFactory> Logger;
     private readonly IServiceProvider Provider;
 
     public EffectFactory(ILogger<EffectFactory> logger, IServiceProvider provider)

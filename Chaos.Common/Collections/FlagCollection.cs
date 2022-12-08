@@ -16,8 +16,8 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
 
     public void AddFlag(Type flagType, Enum flagValue)
     {
-        if (Flags.ContainsKey(flagType))
-            Flags[flagType] = (Enum)Enum.ToObject(flagType, Convert.ToUInt64(Flags[flagType]) | Convert.ToUInt64(flagValue));
+        if (Flags.TryGetValue(flagType, out var value))
+            Flags[flagType] = (Enum)Enum.ToObject(flagType, Convert.ToUInt64(value) | Convert.ToUInt64(flagValue));
         else
             Flags.TryAdd(flagType, flagValue);
     }
@@ -32,8 +32,8 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
     {
         var flagType = typeof(T);
 
-        if (Flags.ContainsKey(flagType))
-            return Convert.ToUInt64(Flags[flagType]);
+        if (Flags.TryGetValue(flagType, out var value))
+            return Convert.ToUInt64(value);
 
         return 0;
     }
@@ -42,8 +42,8 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
     {
         var flagType = typeof(T);
 
-        if (Flags.ContainsKey(flagType))
-            return (Convert.ToUInt64(Flags[flagType]) & Convert.ToUInt64(flag)) != 0;
+        if (Flags.TryGetValue(flagType, out var value))
+            return (Convert.ToUInt64(value) & Convert.ToUInt64(flag)) != 0;
 
         return false;
     }
@@ -52,7 +52,7 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
 
     public void RemoveFlag(Type flagType, Enum flagValue)
     {
-        if (Flags.ContainsKey(flagType))
-            Flags[flagType] = (Enum)Enum.ToObject(flagType, Convert.ToUInt64(Flags[flagType]) & ~Convert.ToUInt64(flagValue));
+        if (Flags.TryGetValue(flagType, out var value))
+            Flags[flagType] = (Enum)Enum.ToObject(flagType, Convert.ToUInt64(value) & ~Convert.ToUInt64(flagValue));
     }
 }

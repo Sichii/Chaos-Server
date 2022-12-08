@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Chaos.Geometry;
+using ReactorTilePatch;
 
 Console.WriteLine("Please enter the absolute path to the staging directory");
 
@@ -13,10 +13,11 @@ var options = new JsonSerializerOptions
     IgnoreReadOnlyProperties = true,
     IgnoreReadOnlyFields = true,
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    AllowTrailingCommas = true,
+    AllowTrailingCommas = true
 };
 
 var mapInstanceDirectory = Path.Combine(Console.ReadLine()!, "MapInstances");
+
 var subDirectories = Directory.EnumerateDirectories(mapInstanceDirectory, "", SearchOption.AllDirectories)
                               .Where(path => Directory.EnumerateFiles(path).Any());
 
@@ -31,7 +32,7 @@ foreach (var dir in subDirectories)
 
     if (!File.Exists(worldMapTilesPath))
         continue;
-    
+
     try
     {
         await using var warpTilesStream = File.OpenRead(warpTilesPath);
@@ -50,61 +51,6 @@ foreach (var dir in subDirectories)
     } finally
     {
         File.Delete(warpTilesPath);
-        File.Delete(worldMapTilesPath);        
+        File.Delete(worldMapTilesPath);
     }
-}
-
-public class WarpTile
-{
-    public Point Source { get; set; }
-    public Location Destination { get; set; }
-}
-
-public class WorldMapTile
-{
-    public Point Source { get; set; }
-    public string WorldMapKey { get; set; } = null!;
-}
-
-// ReSharper disable once ClassCanBeSealed.Global
-public class ReactorTile
-{
-    public required Point Source { get; set; }
-    public required bool ShouldBlockPathfinding { get; set; }
-    public required List<string> ScriptKeys { get; set; }
-    public required Dictionary<string, Dictionary<string, string>> ScriptVars { get; set; }
-
-    public static ReactorTile FromWarp(WarpTile warpTile) => new()
-    {
-        Source = warpTile.Source,
-        ScriptKeys = new List<string> { "warp" },
-        ShouldBlockPathfinding = true,
-        ScriptVars = new Dictionary<string, Dictionary<string, string>>()
-        {
-            {
-                "warp",
-                new Dictionary<string, string>()
-                {
-                    { "destination", warpTile.Destination.ToString() }
-                }
-            }
-        }
-    };
-    
-    public static ReactorTile FromWorldMap(WorldMapTile worldMapTile) => new()
-    {
-        Source = worldMapTile.Source,
-        ScriptKeys = new List<string> { "showWorldMap" },
-        ShouldBlockPathfinding = true,
-        ScriptVars = new Dictionary<string, Dictionary<string, string>>()
-        {
-            {
-                "showWorldMap",
-                new Dictionary<string, string>()
-                {
-                    { "worldMapKey", worldMapTile.WorldMapKey }
-                }
-            }
-        }
-    };
 }

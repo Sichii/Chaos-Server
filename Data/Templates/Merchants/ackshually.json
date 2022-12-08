@@ -1,0 +1,7 @@
+{
+    "templateKey": "ackshually",
+    "sprite": 76,
+    "name": "ackshually",
+    "scriptKeys": ["default"],
+    "dialogKey": "ackshually_initial"
+}

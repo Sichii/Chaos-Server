@@ -2,14 +2,14 @@ using FluentAssertions;
 
 namespace Chaos.Extensions.Common.Tests;
 
-public class StringProcessTests
+public sealed class StringProcessTests
 {
     [Fact]
     public void Test1()
     {
-        const string str = "{{One}} is {One}";
+        const string STR = "{{One}} is {One}";
 
-        var result = str.Inject(1);
+        var result = STR.Inject(1);
 
         result.Should().Be("{One} is 1");
     }

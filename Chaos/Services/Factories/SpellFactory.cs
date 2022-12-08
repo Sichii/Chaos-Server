@@ -9,7 +9,7 @@ namespace Chaos.Services.Factories;
 
 public sealed class SpellFactory : ISpellFactory
 {
-    private readonly ILogger Logger;
+    private readonly ILogger<SpellFactory> Logger;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 

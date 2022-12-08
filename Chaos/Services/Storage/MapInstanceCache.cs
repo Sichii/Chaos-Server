@@ -17,7 +17,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSchema, MapInstanceCacheOptions>
+public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInstanceSchema>
 {
     private readonly IMerchantFactory MerchantFactory;
     private readonly IPathfindingService PathfindingService;
@@ -30,15 +30,15 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
         ITypeMapper mapper,
         IPathfindingService pathfindingService,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<MapInstanceCacheOptions> options,
+        IOptions<MapInstanceCacheOptions> options,
         ILogger<MapInstanceCache> logger,
         IMerchantFactory merchantFactory,
         IReactorTileFactory reactorTileFactory
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger)
     {
         PathfindingService = pathfindingService;
@@ -116,7 +116,7 @@ public sealed class MapInstanceCache : SimpleFileCacheBase<MapInstance, MapInsta
     }
 }
 
-public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance, MapInstanceSchema, ExpiringMapInstanceCacheOptions>
+public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance, MapInstanceSchema>
 {
     private readonly IMerchantFactory MerchantFactory;
     private readonly IPathfindingService PathfindingService;
@@ -130,7 +130,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         IPathfindingService pathfindingService,
         IReactorTileFactory reactorTileFactory,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringMapInstanceCacheOptions> options,
+        IOptions<ExpiringMapInstanceCacheOptions> options,
         ILogger<ExpiringMapInstanceCache> logger
     )
         : base(

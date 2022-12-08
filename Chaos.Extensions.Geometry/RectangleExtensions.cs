@@ -41,6 +41,30 @@ public static class RectangleExtensions
     }
 
     /// <summary>
+    ///     Lazily generates points along the outline of the rectangle. The points will be in the order the vertices are listed.
+    /// </summary>
+    public static IEnumerable<Point> GetOutline(this IRectangle rect)
+    {
+        var vertices = rect.Vertices;
+        var start = vertices[0];
+        var current = start;
+
+        for (var i = 1; i < vertices.Count; i++)
+        {
+            var next = vertices[i];
+
+            //skip the last point so the vertices are not included twice
+            foreach (var point in current.GetDirectPath(next).SkipLast(1))
+                yield return point;
+
+            current = next;
+        }
+
+        foreach (var point in current.GetDirectPath(start).SkipLast(1))
+            yield return point;
+    }
+
+    /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects another
     ///     <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>

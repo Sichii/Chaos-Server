@@ -36,7 +36,6 @@ public class Startup
         services.AddLogging(
             logging =>
             {
-                logging.ClearProviders();
                 logging.AddConfiguration(Configuration.GetSection(ConfigKeys.Logging.Key));
 
                 logging.AddNLog(

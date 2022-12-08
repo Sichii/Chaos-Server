@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Chaos.Common.Identity;
 
-public class IdGenerator<T> where T: INumber<T>
+public sealed class IdGenerator<T> where T: INumber<T>
 {
     private T CurrentId = default!;
 

@@ -27,7 +27,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     public event EventHandler? OnDisconnected;
     public uint Id { get; }
     public FifoSemaphoreSlim ReceiveSync { get; }
-    protected ILogger Logger { get; }
+    protected ILogger<SocketClientBase> Logger { get; }
     protected IPacketSerializer PacketSerializer { get; }
 
     protected SocketClientBase(

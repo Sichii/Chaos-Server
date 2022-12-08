@@ -7,7 +7,7 @@ using Chaos.Scripts.ReactorTileScripts.Abstractions;
 
 namespace Chaos.Objects.World;
 
-public class ReactorTile : MapEntity, IScripted<IReactorTileScript>
+public sealed class ReactorTile : MapEntity, IScripted<IReactorTileScript>
 {
     /// <inheritdoc />
     public IReactorTileScript Script { get; }
@@ -23,6 +23,7 @@ public class ReactorTile : MapEntity, IScripted<IReactorTileScript>
         IPoint point,
         bool shouldBlockPathfinding,
         IScriptProvider scriptProvider,
+        // ReSharper disable once ParameterTypeCanBeEnumerable.Local
         ICollection<string> scriptKeys,
         IDictionary<string, DynamicVars> scriptVars
     )

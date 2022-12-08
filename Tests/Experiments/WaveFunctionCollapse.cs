@@ -12,7 +12,7 @@ using ChaosTile = Chaos.Data.Tile;
 
 namespace Experiments;
 
-public class WaveFunctionCollapse
+public sealed class WaveFunctionCollapse
 {
     public static IEnumerable<T> AsEnumerable<T>(ITopoArray<T> arr)
     {
@@ -44,14 +44,14 @@ public class WaveFunctionCollapse
 
         var simpleCacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = simpleCacheProvider.GetCache<MapTemplate>();
-        var oHeight = 100;
-        var oWidth = 100;
-        var directory = "output";
+        const int O_HEIGHT = 100;
+        const int O_WIDTH = 100;
+        const string DIRECTORY = "output";
 
-        if (Directory.Exists(directory))
-            Directory.Delete(directory, true);
+        if (Directory.Exists(DIRECTORY))
+            Directory.Delete(DIRECTORY, true);
 
-        Directory.CreateDirectory(directory);
+        Directory.CreateDirectory(DIRECTORY);
 
         var backgroundSample = new List<ChaosTile>
         {
@@ -103,7 +103,7 @@ public class WaveFunctionCollapse
         foreach (var emptyTile in emptyForegroundTiles.DistinctBy(t => t.Value))
             model.MultiplyFrequency(emptyTile, 1);
 
-        var outputTopology = new GridTopology(oWidth, oHeight, false);
+        var outputTopology = new GridTopology(O_WIDTH, O_HEIGHT, false);
 
         var options = new TilePropagatorOptions
         {
@@ -120,7 +120,7 @@ public class WaveFunctionCollapse
             if (result != Resolution.Decided)
                 throw new InvalidOperationException();
 
-            var path = Path.Combine(directory, $"generated{i}.map");
+            var path = Path.Combine(DIRECTORY, $"generated{i}.map");
             WriteMap(propagator, tileLookup, path);
 
             propagator.Clear();

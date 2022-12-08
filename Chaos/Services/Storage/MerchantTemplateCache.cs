@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class MerchantTemplateCache : SimpleFileCacheBase<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>
+public sealed class MerchantTemplateCache : SimpleFileCacheBase<MerchantTemplate, MerchantTemplateSchema>
 {
     /// <inheritdoc />
     protected override Func<MerchantTemplate, string> KeySelector { get; } = m => m.TemplateKey;
@@ -20,25 +20,25 @@ public sealed class MerchantTemplateCache : SimpleFileCacheBase<MerchantTemplate
     public MerchantTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<MerchantTemplateCacheOptions> options,
+        IOptions<MerchantTemplateCacheOptions> options,
         ILogger<MerchantTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
 public sealed class
-    ExpiringMerchantTemplateCache : ExpiringFileCacheBase<MerchantTemplate, MerchantTemplateSchema, ExpiringMerchantTemplateCacheOptions>
+    ExpiringMerchantTemplateCache : ExpiringFileCacheBase<MerchantTemplate, MerchantTemplateSchema>
 {
     /// <inheritdoc />
     public ExpiringMerchantTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringMerchantTemplateCacheOptions> options,
+        IOptions<ExpiringMerchantTemplateCacheOptions> options,
         ILogger<ExpiringMerchantTemplateCache> logger
     )
         : base(

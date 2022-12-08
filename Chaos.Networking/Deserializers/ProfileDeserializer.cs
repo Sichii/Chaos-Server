@@ -11,6 +11,7 @@ public sealed record ProfileDeserializer : ClientPacketDeserializer<ProfileArgs>
 
     public override ProfileArgs Deserialize(ref SpanReader reader)
     {
+        // ReSharper disable once UnusedVariable
         var totalLength = reader.ReadUInt16();
         var portraitLength = reader.ReadUInt16();
         var portraitData = reader.ReadBytes(portraitLength);

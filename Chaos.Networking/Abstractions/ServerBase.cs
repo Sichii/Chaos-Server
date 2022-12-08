@@ -18,8 +18,8 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
 
     protected ClientHandler?[] ClientHandlers { get; }
     protected IClientRegistry<T> ClientRegistry { get; }
-    protected ILogger Logger { get; }
-    protected abstract ServerOptions Options { get; }
+    protected ILogger<ServerBase<T>> Logger { get; }
+    protected ServerOptions Options { get; }
     protected IPacketSerializer PacketSerializer { get; }
     protected IRedirectManager RedirectManager { get; }
     protected Socket Socket { get; }
@@ -29,10 +29,11 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IClientRegistry<T> clientRegistry,
-        IOptionsSnapshot<ServerOptions> options,
+        IOptions<ServerOptions> options,
         ILogger<ServerBase<T>> logger
     )
     {
+        Options = options.Value;
         RedirectManager = redirectManager;
         Logger = logger;
         ClientRegistry = clientRegistry;

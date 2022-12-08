@@ -10,6 +10,7 @@ public sealed record GroupRequestDeserializer : ClientPacketDeserializer<GroupRe
 {
     public override ClientOpCode ClientOpCode => ClientOpCode.GroupRequest;
 
+    [SuppressMessage("ReSharper", "UnusedVariable")]
     public override GroupRequestArgs Deserialize(ref SpanReader reader)
     {
         var groupRequestType = (GroupRequestType)reader.ReadByte();

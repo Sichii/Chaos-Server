@@ -20,19 +20,25 @@ public sealed record DisplayVisibleObjectSerializer : ServerPacketSerializer<Dis
             writer.WriteUInt32(obj.Id);
             writer.WriteUInt16(obj.Sprite);
 
-            if (obj is CreatureInfo creature)
+            switch (obj)
             {
-                writer.WriteBytes(new byte[4]); //dunno
-                writer.WriteByte((byte)creature.Direction);
-                writer.WriteByte(0); //dunno
-                writer.WriteByte((byte)creature.CreatureType);
+                case CreatureInfo creature:
+                {
+                    writer.WriteBytes(new byte[4]); //dunno
+                    writer.WriteByte((byte)creature.Direction);
+                    writer.WriteByte(0); //dunno
+                    writer.WriteByte((byte)creature.CreatureType);
 
-                if (creature.CreatureType == CreatureType.Merchant)
-                    writer.WriteString8(creature.Name);
-            } else if (obj is GroundItemInfo groundItem)
-            {
-                writer.WriteByte((byte)groundItem.Color);
-                writer.WriteBytes(new byte[2]);
+                    if (creature.CreatureType == CreatureType.Merchant)
+                        writer.WriteString8(creature.Name);
+
+                    break;
+                }
+                case GroundItemInfo groundItem:
+                    writer.WriteByte((byte)groundItem.Color);
+                    writer.WriteBytes(new byte[2]);
+
+                    break;
             }
         }
     }

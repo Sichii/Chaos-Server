@@ -24,14 +24,25 @@ public sealed record DialogResponseDeserializer : ClientPacketDeserializer<Dialo
         {
             dialogArgsType = (DialogArgsType)reader.ReadByte();
 
-            if (dialogArgsType == DialogArgsType.MenuResponse)
-                option = reader.ReadByte();
-            else if (dialogArgsType == DialogArgsType.TextResponse)
+            switch (dialogArgsType)
             {
-                args = reader.ReadArgs8().ToArray();
+                case DialogArgsType.MenuResponse:
+                    option = reader.ReadByte();
 
-                if (args.Length == 0)
-                    args = null;
+                    break;
+                case DialogArgsType.TextResponse:
+                {
+                    args = reader.ReadArgs8().ToArray();
+
+                    if (args.Length == 0)
+                        args = null;
+
+                    break;
+                }
+                case DialogArgsType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

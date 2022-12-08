@@ -5,8 +5,8 @@ namespace Chaos.IO.Memory;
 public ref struct SpanReader
 {
     private readonly Span<byte> Buffer;
-    public Encoding Encoding { get; set; }
     public int Position { get; set; }
+    public Encoding Encoding { get; }
     public readonly bool EndOfSpan => Position >= Buffer.Length;
     public readonly int Remaining => Buffer.Length - Position;
 

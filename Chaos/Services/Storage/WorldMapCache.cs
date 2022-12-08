@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class WorldMapCache : SimpleFileCacheBase<WorldMap, WorldMapSchema, WorldMapCacheOptions>
+public sealed class WorldMapCache : SimpleFileCacheBase<WorldMap, WorldMapSchema>
 {
     /// <inheritdoc />
     protected override Func<WorldMap, string> KeySelector { get; } = wm => wm.WorldMapKey;
@@ -20,24 +20,24 @@ public sealed class WorldMapCache : SimpleFileCacheBase<WorldMap, WorldMapSchema
     public WorldMapCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<WorldMapCacheOptions> options,
+        IOptions<WorldMapCacheOptions> options,
         ILogger<WorldMapCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
-public sealed class ExpiringWorldMapCache : ExpiringFileCacheBase<WorldMap, WorldMapSchema, ExpiringWorldMapCacheOptions>
+public sealed class ExpiringWorldMapCache : ExpiringFileCacheBase<WorldMap, WorldMapSchema>
 {
     /// <inheritdoc />
     public ExpiringWorldMapCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringWorldMapCacheOptions> options,
+        IOptions<ExpiringWorldMapCacheOptions> options,
         ILogger<ExpiringWorldMapCache> logger
     )
         : base(

@@ -17,12 +17,12 @@ namespace Chaos.Security;
 /// </summary>
 public sealed class ActiveDirectoryCredentialManager : ICredentialManager
 {
-    private readonly ILogger Logger;
+    private readonly ILogger<ActiveDirectoryCredentialManager> Logger;
     private readonly ActiveDirectoryCredentialManagerOptions Options;
     private readonly AutoReleasingSemaphoreSlim Sync;
 
     public ActiveDirectoryCredentialManager(
-        IOptionsSnapshot<ActiveDirectoryCredentialManagerOptions> options,
+        IOptions<ActiveDirectoryCredentialManagerOptions> options,
         ILogger<ActiveDirectoryCredentialManager> logger
     )
     {

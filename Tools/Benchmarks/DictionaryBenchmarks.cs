@@ -5,6 +5,7 @@ using Bogus;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+// ReSharper disable once ClassCanBeSealed.Global
 public class DictionaryBenchmarks
 {
     private readonly ConcurrentDictionary<string, string> ConcurrentDictionary = new(StringComparer.OrdinalIgnoreCase);
@@ -16,35 +17,41 @@ public class DictionaryBenchmarks
         100,
         500,
         1000)]
+    // ReSharper disable once UnassignedField.Global
     public int NumRecords;
 
     [Benchmark]
     public void ConcurrentSelectBenchmark()
     {
+        // ReSharper disable once UnusedVariable
         var result = ConcurrentDictionary.Select(kvp => kvp.Value).ToList();
     }
 
     [Benchmark]
     public void ConcurrentValuesBenchmark()
     {
+        // ReSharper disable once UnusedVariable
         var result = ConcurrentDictionary.Values.ToList();
     }
 
     [Benchmark(Baseline = true)]
     public void ListBenchmark()
     {
+        // ReSharper disable once UnusedVariable
         var result = ValuesList.ToList();
     }
 
     [Benchmark]
     public void NormalSelectBenchmark()
     {
+        // ReSharper disable once UnusedVariable
         var result = NormalDictionary.Select(kvp => kvp.Value).ToList();
     }
 
     [Benchmark]
     public void NormalValuesBenchmark()
     {
+        // ReSharper disable once UnusedVariable
         var result = NormalDictionary.Values.ToList();
     }
 

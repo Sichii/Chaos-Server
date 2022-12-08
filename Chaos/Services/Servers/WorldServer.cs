@@ -40,6 +40,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     private readonly DeltaMonitor DeltaMonitor;
     private readonly DeltaTime DeltaTime;
     private readonly IGroupService GroupService;
+    private readonly IMerchantFactory MerchantFactory;
     private readonly ParallelOptions ParallelOptions;
     private readonly PeriodicTimer PeriodicTimer;
     private readonly IIntervalTimer SaveTimer;
@@ -48,7 +49,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     public IEnumerable<Aisling> Aislings => ClientRegistry
                                             .Select(c => c.Aisling)
                                             .Where(player => player != null!);
-    protected override WorldOptions Options { get; }
+    private new WorldOptions Options { get; }
 
     public WorldServer(
         IClientRegistry<IWorldClient> clientRegistry,
@@ -59,7 +60,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         IPacketSerializer packetSerializer,
         ICommandInterceptor<Aisling> commandInterceptor,
         IGroupService groupService,
-        IOptionsSnapshot<WorldOptions> options,
+        IMerchantFactory merchantFactory,
+        IOptions<WorldOptions> options,
         ILogger<WorldServer> logger
     )
         : base(
@@ -80,6 +82,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         UserSaveManager = userSaveManager;
         CommandInterceptor = commandInterceptor;
         GroupService = groupService;
+        MerchantFactory = merchantFactory;
 
         ParallelOptions = new ParallelOptions
         {
@@ -309,13 +312,26 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     {
         var args = PacketSerializer.Deserialize<ClickArgs>(in clientPacket);
 
-        static ValueTask InnerOnClick(IWorldClient localClient, ClickArgs localArgs)
+        ValueTask InnerOnClick(IWorldClient localClient, ClickArgs localArgs)
         {
             (var targetId, var targetPoint) = localArgs;
 
             if (targetId.HasValue)
+            {
+                if (targetId == uint.MaxValue)
+                {
+                    var f1Merchant = MerchantFactory.Create(
+                        Options.F1MerchantTemplateKey,
+                        localClient.Aisling.MapInstance,
+                        Point.From(localClient.Aisling));
+
+                    f1Merchant.OnClicked(localClient.Aisling);
+
+                    return default;
+                }
+
                 localClient.Aisling.MapInstance.Click(targetId.Value, localClient.Aisling);
-            else if (targetPoint is not null)
+            } else if (targetPoint is not null)
                 localClient.Aisling.MapInstance.Click(targetPoint, localClient.Aisling);
 
             return default;
@@ -1292,7 +1308,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             Logger.LogError(
                 e,
-                "Failed to execute inner handler with args {@Args} for client {@Client}",
+                "Failed to execute inner handler with args {@Args} for client {Client}",
                 args,
                 client);
         }
@@ -1327,7 +1343,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             await action(client);
         } catch (Exception e)
         {
-            Logger.LogError(e, "Failed to execute inner handler for client {@Client}", client);
+            Logger.LogError(e, "Failed to execute inner handler for client {Client}", client);
         }
     }
 
@@ -1438,7 +1454,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             }
         } catch (Exception ex)
         {
-            Logger.LogError(ex, "Exception thrown while {@Client} was trying to disconnect", client);
+            Logger.LogError(ex, "Exception thrown while {Client} was trying to disconnect", client);
         }
     }
     #endregion

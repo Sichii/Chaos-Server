@@ -35,15 +35,6 @@
   {
     "color": "Default",
     "count": 1,
-    "currentDurability": 1000,
-    "scriptKeys": [],
-    "slot": 13,
-    "templateKey": "stick",
-    "uniqueId": 8282
-  },
-  {
-    "color": "Default",
-    "count": 1,
     "scriptKeys": [],
     "slot": 29,
     "templateKey": "teleport_trinket",

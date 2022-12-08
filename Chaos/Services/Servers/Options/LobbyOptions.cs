@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Servers.Options;
 
-public record LobbyOptions : ServerOptions
+public sealed record LobbyOptions : ServerOptions
 {
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;

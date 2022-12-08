@@ -2,9 +2,9 @@ using Xunit;
 
 namespace Experiments;
 
-public class RefStructExperiments
+public sealed class RefStructExperiments
 {
-    public ref TestRefStruct DoThingsByRef(ref TestRefStruct trs)
+    public static ref TestRefStruct DoThingsByRef(ref TestRefStruct trs)
     {
         trs.SomeProperty = 10;
         trs.SomeField = 5;

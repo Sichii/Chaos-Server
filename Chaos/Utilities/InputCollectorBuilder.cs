@@ -27,8 +27,8 @@ public class InputCollectorBuilder
     public abstract class InputRequestBase
     {
         private readonly InputCollectorBuilder Builder;
-        protected Lazy<string> DialogText { get; init; }
-        protected MenuOrDialogType Type { get; init; }
+        protected Lazy<string> DialogText { get; }
+        protected MenuOrDialogType Type { get; }
 
         protected InputRequestBase(InputCollectorBuilder builder, MenuOrDialogType type, Lazy<string> dialogText)
         {
@@ -52,7 +52,7 @@ public class InputCollectorBuilder
     // ReSharper disable once ClassCanBeSealed.Global
     public class OptionRequest : InputRequestBase
     {
-        protected List<Lazy<string>> Options { get; init; }
+        protected List<Lazy<string>> Options { get; }
 
         public OptionRequest(InputCollectorBuilder builder, Lazy<string> dialogText, List<Lazy<string>> options)
             : base(builder, MenuOrDialogType.Menu, dialogText) =>

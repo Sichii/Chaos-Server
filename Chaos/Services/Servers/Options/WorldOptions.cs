@@ -8,6 +8,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public required int AislingAssailIntervalMs { get; init; }
     /// <inheritdoc />
     public required int DropRange { get; init; }
+
+    /// <inheritdoc />
+    public required string F1MerchantTemplateKey { get; init; }
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;

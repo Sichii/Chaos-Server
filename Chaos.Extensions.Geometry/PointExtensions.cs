@@ -32,8 +32,6 @@ public static class PointExtensions
             var edge1 = edgePair[0];
             var edge2 = edgePair[1];
 
-            yield return edge1;
-
             foreach (var pt in edge1.GetDirectPath(edge2))
                 yield return pt;
         }
@@ -251,6 +249,8 @@ public static class PointExtensions
     public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
     {
         var current = Point.From(start);
+
+        yield return current;
 
         while (current != end)
         {

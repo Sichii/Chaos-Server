@@ -81,7 +81,7 @@ public static class AsyncHelpers
         return ret;
     }
 
-    private class ExclusiveSynchronizationContext : SynchronizationContext
+    private sealed class ExclusiveSynchronizationContext : SynchronizationContext
     {
         private readonly Queue<Tuple<SendOrPostCallback, object>?> Items = new();
         private readonly AutoResetEvent WorkItemsWaiting = new(false);

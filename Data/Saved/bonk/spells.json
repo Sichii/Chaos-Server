@@ -1,20 +1,8 @@
 [
   {
     "scriptKeys": [],
-    "slot": 1,
-    "templateKey": "fireBreath",
-    "uniqueId": 1
-  },
-  {
-    "scriptKeys": [],
     "slot": 2,
     "templateKey": "regrowth",
     "uniqueId": 38146
-  },
-  {
-    "scriptKeys": [],
-    "slot": 3,
-    "templateKey": "poison",
-    "uniqueId": 8295
   }
 ]

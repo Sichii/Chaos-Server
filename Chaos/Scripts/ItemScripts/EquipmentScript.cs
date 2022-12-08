@@ -8,7 +8,7 @@ namespace Chaos.Scripts.ItemScripts;
 public class EquipmentScript : ConfigurableItemScriptBase
 {
     protected AdvClass AdvClass { get; init; } = AdvClass.None;
-    protected BaseClass BaseClass { get; init; } = BaseClass.Peasant;
+    protected BaseClass BaseClass { get; init; } = BaseClass.Any;
     protected EquipmentType EquipmentType { get; init; }
     protected Gender Gender { get; init; } = Gender.Unisex;
     protected int? MinLevel { get; init; }
@@ -28,7 +28,9 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
-        if ((BaseClass != BaseClass.Peasant) && (BaseClass != source.UserStatSheet.BaseClass))
+        if ((source.UserStatSheet.BaseClass != BaseClass.Diacht)
+            && (BaseClass != BaseClass.Any)
+            && (BaseClass != source.UserStatSheet.BaseClass))
         {
             source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{Subject.DisplayName} does not seem to fit you");
 

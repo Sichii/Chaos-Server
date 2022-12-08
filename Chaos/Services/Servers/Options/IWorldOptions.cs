@@ -18,6 +18,10 @@ public interface IWorldOptions
     /// </summary>
     int DropRange { get; }
     /// <summary>
+    ///     This is the template key of the merchant to display when a player presses F1. This is generally some kind of help npc
+    /// </summary>
+    string F1MerchantTemplateKey { get; }
+    /// <summary>
     ///     It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could become a huge
     ///     burden on the server. This value is used to control the maximum number of actions a player can take in a second. An action is defined
     ///     as using any spell, skill, or item. This includes equipping items.<br />

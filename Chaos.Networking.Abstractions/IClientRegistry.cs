@@ -27,5 +27,6 @@ public interface IClientRegistry<T> : IEnumerable<T> where T: ISocketClient
     /// <param name="id">The id of the client</param>
     /// <param name="client">If successful, the client that was removed</param>
     /// <returns><c>true</c> if a client with the id was found and removed, otherwise <c>false</c></returns>
+    // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
     bool TryRemove(uint id, [MaybeNullWhen(false)] out T client);
 }

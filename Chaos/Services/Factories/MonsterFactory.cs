@@ -11,7 +11,7 @@ namespace Chaos.Services.Factories;
 
 public sealed class MonsterFactory : IMonsterFactory
 {
-    private readonly ILogger Logger;
+    private readonly ILogger<MonsterFactory> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;

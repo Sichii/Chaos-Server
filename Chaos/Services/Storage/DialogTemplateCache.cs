@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class DialogTemplateCache : SimpleFileCacheBase<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>
+public sealed class DialogTemplateCache : SimpleFileCacheBase<DialogTemplate, DialogTemplateSchema>
 {
     /// <inheritdoc />
     protected override Func<DialogTemplate, string> KeySelector { get; } = d => d.TemplateKey;
@@ -20,25 +20,25 @@ public sealed class DialogTemplateCache : SimpleFileCacheBase<DialogTemplate, Di
     public DialogTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<DialogTemplateCacheOptions> options,
+        IOptions<DialogTemplateCacheOptions> options,
         ILogger<DialogTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
 public sealed class
-    ExpiringDialogTemplateCache : ExpiringFileCacheBase<DialogTemplate, DialogTemplateSchema, ExpiringDialogTemplateCacheOptions>
+    ExpiringDialogTemplateCache : ExpiringFileCacheBase<DialogTemplate, DialogTemplateSchema>
 {
     /// <inheritdoc />
     public ExpiringDialogTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringDialogTemplateCacheOptions> options,
+        IOptions<ExpiringDialogTemplateCacheOptions> options,
         ILogger<ExpiringDialogTemplateCache> logger
     )
         : base(

@@ -26,7 +26,7 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
         writer.WriteByte((byte)args.SocialStatus);
         writer.WriteString8(args.Name);
         writer.WriteByte((byte)args.Nation);
-        writer.WriteString8(args.Titles?.FirstOrDefault() ?? string.Empty);
+        writer.WriteString8(args.Titles.FirstOrDefault() ?? string.Empty);
         writer.WriteBoolean(args.GroupOpen);
         writer.WriteString8(args.GuildTitle ?? string.Empty);
         writer.WriteString8(args.AdvClass?.ToString() ?? args.BaseClass.ToString());
@@ -41,12 +41,12 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
             writer.WriteString8(mark.Text);
         }
 
-        var remaining = args.Portrait?.Length ?? 0;
+        var remaining = args.Portrait.Length;
         remaining += args.ProfileText?.Length ?? 0;
         remaining += 4;
 
         writer.WriteUInt16((ushort)remaining);
-        writer.WriteData16(args.Portrait ?? Array.Empty<byte>()); //2 + length
+        writer.WriteData16(args.Portrait); //2 + length
         writer.WriteString16(args.ProfileText ?? string.Empty); //2 + length
     }
 }

@@ -37,7 +37,7 @@ public sealed class PacketSerializer : IPacketSerializer
 
     public ServerPacket Serialize<T>(T obj) where T: ISendArgs
     {
-        if (obj == null)
+        if (obj is null)
             throw new ArgumentNullException(nameof(obj));
 
         var type = typeof(T);

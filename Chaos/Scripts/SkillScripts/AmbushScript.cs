@@ -38,7 +38,7 @@ public class AmbushScript : SkillScriptBase
             return;
 
         //if any point on the path to the creature is a wall, return
-        if (context.Source.GetDirectPath(targetCreature).Any(pt => context.Map.IsWall(pt)))
+        if (context.Source.GetDirectPath(targetCreature).Skip(1).Any(pt => context.Map.IsWall(pt)))
             return;
 
         //get the direction that vectors behind the target relative to the source

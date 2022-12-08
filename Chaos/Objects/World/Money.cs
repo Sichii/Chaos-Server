@@ -7,7 +7,7 @@ namespace Chaos.Objects.World;
 
 public sealed class Money : GroundEntity
 {
-    public int Amount { get; init; }
+    public int Amount { get; }
 
     public Money(int amount, MapInstance mapInstance, IPoint point)
         : base(

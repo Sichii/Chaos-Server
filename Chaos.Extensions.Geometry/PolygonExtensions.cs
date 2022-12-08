@@ -1,3 +1,4 @@
+using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Extensions.Geometry;
@@ -58,5 +59,30 @@ public static class PolygonExtensions
         }
 
         return inside;
+    }
+
+    /// <summary>
+    ///     Lazily generates points along the outline of any kind of polygon. The vertices may be in clockwise or counter-clockwise order, but they
+    ///     must be in one of those orders
+    /// </summary>
+    public static IEnumerable<Point> GetOutline(this IPolygon polygon)
+    {
+        var vertices = polygon.Vertices;
+        var start = vertices[0];
+        var current = start;
+
+        for (var i = 1; i < vertices.Count; i++)
+        {
+            var next = vertices[i];
+
+            //skip the last point so the vertices are not included twice
+            foreach (var point in current.RayTraceTo(next).SkipLast(1))
+                yield return point;
+
+            current = next;
+        }
+
+        foreach (var point in current.RayTraceTo(start).SkipLast(1))
+            yield return point;
     }
 }

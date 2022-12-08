@@ -21,14 +21,14 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 {
     private readonly IClientFactory<ILobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
-    protected override LobbyOptions Options { get; }
+    private new LobbyOptions Options { get; }
 
     public LobbyServer(
         IClientRegistry<ILobbyClient> clientRegistry,
         IClientFactory<ILobbyClient> clientFactory,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
-        IOptionsSnapshot<LobbyOptions> options,
+        IOptions<LobbyOptions> options,
         ILogger<LobbyServer> logger
     )
         : base(
@@ -38,11 +38,9 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
             options,
             logger)
     {
-        var opts = options.Value;
-
+        Options = options.Value;
         ClientFactory = clientFactory;
-        ServerTable = new ServerTable(options.Value.Servers);
-        Options = opts;
+        ServerTable = new ServerTable(Options.Servers);
 
         IndexHandlers();
     }

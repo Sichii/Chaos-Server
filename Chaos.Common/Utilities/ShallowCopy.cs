@@ -59,17 +59,19 @@ public static class ShallowCopy<T>
     }
 
     private static IEnumerable<FieldInfo> GetRecursiveFields(Type type) => !type.IsInterface
-        ? type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(f => !f.IsInitOnly && !f.IsLiteral)
+        ? type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+              .Where(f => f is { IsInitOnly: false, IsLiteral: false })
         : new[] { type }.Concat(type.GetInterfaces())
                         .SelectMany(i => i.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-                        .Where(f => !f.IsInitOnly && !f.IsLiteral)
+                        .Where(f => f is { IsInitOnly: false, IsLiteral: false })
                         .DistinctBy(p => p.Name);
 
     private static IEnumerable<PropertyInfo> GetRecursiveProperties(Type type) => !type.IsInterface
-        ? type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(p => p.CanRead && p.CanWrite)
+        ? type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+              .Where(p => p is { CanRead: true, CanWrite: true })
         : new[] { type }.Concat(type.GetInterfaces())
                         .SelectMany(i => i.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-                        .Where(p => p.CanRead && p.CanWrite)
+                        .Where(p => p is { CanRead: true, CanWrite: true })
                         .DistinctBy(p => p.Name);
 
     /// <summary>
@@ -83,10 +85,10 @@ public static class ShallowCopy<T>
     /// <exception cref="ArgumentNullException">targetObj</exception>
     public static void Merge(T fromObj, T targetObj)
     {
-        if (fromObj == null)
+        if (fromObj is null)
             throw new ArgumentNullException(nameof(fromObj));
 
-        if (targetObj == null)
+        if (targetObj is null)
             throw new ArgumentNullException(nameof(targetObj));
 
         AssignmentDelegate(fromObj, targetObj);

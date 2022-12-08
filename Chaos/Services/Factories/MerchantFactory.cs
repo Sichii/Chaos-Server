@@ -11,7 +11,7 @@ namespace Chaos.Services.Factories;
 
 public sealed class MerchantFactory : IMerchantFactory
 {
-    private readonly ILogger Logger;
+    private readonly ILogger<MerchantFactory> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;

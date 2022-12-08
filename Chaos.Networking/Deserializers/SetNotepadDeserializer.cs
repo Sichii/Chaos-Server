@@ -7,7 +7,7 @@ namespace Chaos.Networking.Deserializers;
 
 public sealed record SetNotepadDeserializer : ClientPacketDeserializer<SetNotepadArgs>
 {
-    public override ClientOpCode ClientOpCode { get; } = ClientOpCode.SetNotepad;
+    public override ClientOpCode ClientOpCode => ClientOpCode.SetNotepad;
 
     public override SetNotepadArgs Deserialize(ref SpanReader reader)
     {

@@ -102,8 +102,6 @@ public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
                     writer.WriteUInt16(spell.Sprite);
                     writer.WriteByte(0); //color
                     writer.WriteString8(spell.Name);
-                    writer.WriteBytes(new byte[4]); //dunno
-                    writer.WriteByte(2);
                 }
 
                 break;

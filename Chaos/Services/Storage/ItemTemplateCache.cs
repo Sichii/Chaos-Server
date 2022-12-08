@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class ItemTemplateCache : SimpleFileCacheBase<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>
+public sealed class ItemTemplateCache : SimpleFileCacheBase<ItemTemplate, ItemTemplateSchema>
 {
     /// <inheritdoc />
     protected override Func<ItemTemplate, string> KeySelector { get; } = t => t.TemplateKey;
@@ -20,24 +20,24 @@ public sealed class ItemTemplateCache : SimpleFileCacheBase<ItemTemplate, ItemTe
     public ItemTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ItemTemplateCacheOptions> options,
+        IOptions<ItemTemplateCacheOptions> options,
         ILogger<ItemTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
-public sealed class ExpiringItemTemplateCache : ExpiringFileCacheBase<ItemTemplate, ItemTemplateSchema, ExpiringItemTemplateCacheOptions>
+public sealed class ExpiringItemTemplateCache : ExpiringFileCacheBase<ItemTemplate, ItemTemplateSchema>
 {
     /// <inheritdoc />
     public ExpiringItemTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringItemTemplateCacheOptions> options,
+        IOptions<ExpiringItemTemplateCacheOptions> options,
         ILogger<ExpiringItemTemplateCache> logger
     )
         : base(

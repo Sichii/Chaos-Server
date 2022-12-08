@@ -4,7 +4,6 @@ using System.Text.Json;
 using Chaos.Storage.Abstractions.Definitions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage.Abstractions;
 
@@ -13,9 +12,7 @@ namespace Chaos.Storage.Abstractions;
 /// </summary>
 /// <typeparam name="T">The type of object stored in the cache</typeparam>
 /// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
-/// <typeparam name="TOptions">The type of the options object used to configure this cache</typeparam>
-public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class
-                                                                                  where TOptions: class, ISimpleFileCacheOptions
+public abstract class SimpleFileCacheBase<T, TSchema> : ISimpleCache<T> where TSchema: class
 {
     /// <summary>
     ///     Stores cached objects
@@ -35,7 +32,7 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     /// <summary>
     ///     An object used to write logs
     /// </summary>
-    protected ILogger Logger { get; }
+    protected virtual ILogger<SimpleFileCacheBase<T, TSchema>> Logger { get; }
 
     /// <summary>
     ///     An object used to map the deserialized type to the return type, and any other required type conversions
@@ -45,7 +42,7 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     /// <summary>
     ///     The options object used to configure this cache
     /// </summary>
-    protected TOptions Options { get; }
+    protected ISimpleFileCacheOptions Options { get; }
 
     /// <summary>
     /// </summary>
@@ -55,14 +52,14 @@ public abstract class SimpleFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T
     /// <param name="logger">An object used to write logs</param>
     protected SimpleFileCacheBase(
         ITypeMapper mapper,
-        IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<TOptions> options,
-        ILogger logger
+        JsonSerializerOptions jsonSerializerOptions,
+        ISimpleFileCacheOptions options,
+        ILogger<SimpleFileCacheBase<T, TSchema>> logger
     )
     {
         Mapper = mapper;
-        JsonSerializerOptions = jsonSerializerOptions.Value;
-        Options = options.Value;
+        JsonSerializerOptions = jsonSerializerOptions;
+        Options = options;
         Logger = logger;
         Cache = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 

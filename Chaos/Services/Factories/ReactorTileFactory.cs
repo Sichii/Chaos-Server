@@ -7,7 +7,7 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Services.Factories;
 
-public class ReactorTileFactory : IReactorTileFactory
+public sealed class ReactorTileFactory : IReactorTileFactory
 {
     private readonly IScriptProvider ScriptProvider;
     public ReactorTileFactory(IScriptProvider scriptProvider) => ScriptProvider = scriptProvider;

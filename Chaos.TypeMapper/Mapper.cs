@@ -20,7 +20,7 @@ public sealed class Mapper : ITypeMapper
     /// <inheritdoc />
     public TResult Map<T, TResult>(T obj)
     {
-        if (obj == null)
+        if (obj is null)
             throw new ArgumentNullException(nameof(obj));
 
         var mapper = ResolverMap.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);

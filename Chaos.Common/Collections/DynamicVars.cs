@@ -7,7 +7,7 @@ using Chaos.Common.Converters;
 namespace Chaos.Common.Collections;
 
 [JsonConverter(typeof(DynamicVarsConverter))]
-public class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
+public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
 {
     private readonly JsonSerializerOptions JsonOptions;
     private readonly ConcurrentDictionary<string, JsonElement> Vars;

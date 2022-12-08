@@ -4,6 +4,7 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts.Abstractions;
 
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
 public interface ISpellScript : IScript
 {
     bool CanUse(SpellContext context);

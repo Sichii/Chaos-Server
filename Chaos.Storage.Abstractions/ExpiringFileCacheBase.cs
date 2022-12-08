@@ -12,29 +12,28 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage.Abstractions;
 
-public abstract class ExpiringFileCacheBase<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class
-                                                                                    where TOptions: class, IExpiringFileCacheOptions
+public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where TSchema: class
 {
     protected SynchronizedHashSet<string> Paths { get; set; }
     protected IMemoryCache Cache { get; }
     protected JsonSerializerOptions JsonSerializerOptions { get; }
     protected string KeyPrefix { get; }
     protected ConcurrentDictionary<string, T> LocalLookup { get; }
-    protected ILogger Logger { get; }
+    protected virtual ILogger<ExpiringFileCacheBase<T, TSchema>> Logger { get; }
     protected ITypeMapper Mapper { get; }
-    protected TOptions Options { get; }
+    protected IExpiringFileCacheOptions Options { get; }
 
     protected ExpiringFileCacheBase(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<TOptions> options,
-        ILogger logger
+        IOptions<IExpiringFileCacheOptions> options,
+        ILogger<ExpiringFileCacheBase<T, TSchema>> logger
     )
     {
+        Options = options.Value;
         Cache = cache;
         Mapper = mapper;
-        Options = options.Value;
         JsonSerializerOptions = jsonSerializerOptions.Value;
         KeyPrefix = $"{typeof(T)}-";
         LocalLookup = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);

@@ -147,6 +147,7 @@ public sealed class GroupService : IGroupService
         }
     }
 
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter", Justification = "Only aislings can invite or be invited")]
     private void SendInvite(Aisling sender, Aisling receiver)
     {
         if (receiver.IgnoreList.Contains(sender.Name))

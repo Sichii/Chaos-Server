@@ -33,7 +33,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
     public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
-    protected override LoginOptions Options { get; }
+    private new LoginOptions Options { get; }
 
     public LoginServer(
         ISaveManager<Aisling> userSaveManager,
@@ -43,7 +43,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         ISimpleCacheProvider cacheProvider,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
-        IOptionsSnapshot<LoginOptions> options,
+        IOptions<LoginOptions> options,
         ILogger<LoginServer> logger
     )
         : base(
@@ -53,9 +53,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             options,
             logger)
     {
-        var opts = options.Value;
-
-        Options = opts;
+        Options = options.Value;
         UserSaveManager = userSaveManager;
         ClientFactory = clientFactory;
         CredentialManager = credentialManager;

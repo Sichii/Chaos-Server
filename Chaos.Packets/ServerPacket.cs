@@ -7,9 +7,9 @@ namespace Chaos.Packets;
 public ref struct ServerPacket
 {
     public Span<byte> Buffer;
-    public ServerOpCode OpCode { get; set; }
     public byte Sequence { get; set; }
     public bool ShouldEncrypt { get; set; }
+    public ServerOpCode OpCode { get; }
     public byte Signature { get; }
 
     public ServerPacket()

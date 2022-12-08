@@ -7,11 +7,13 @@ namespace Chaos.Time;
 ///     A timers that utilizes a delta time value to increment elapsed time. Each time the interval elapses, a new interval is set with an
 ///     amount of randomization as specified through configuration
 /// </summary>
+// ReSharper disable once ClassCanBeSealed.Global
 public class RandomizedIntervalTimer : IntervalTimer
 {
     /// <summary>
     ///     The percent of randomization to apply to the <see cref="IntervalTimer.Interval" /> each time it elapses
     /// </summary>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     protected int MaxRandomizationPct { get; set; }
 
     /// <summary>
@@ -22,6 +24,7 @@ public class RandomizedIntervalTimer : IntervalTimer
     /// <summary>
     ///     The type of randomization to apply to the interval
     /// </summary>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     protected RandomizationType Type { get; set; }
 
     public RandomizedIntervalTimer(

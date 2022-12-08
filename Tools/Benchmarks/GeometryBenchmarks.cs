@@ -5,6 +5,7 @@ using Chaos.Geometry;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+// ReSharper disable once ClassCanBeSealed.Global
 public class GeometryBenchmarks
 {
     public Point CenterPoint = new(50, 50);
@@ -13,6 +14,7 @@ public class GeometryBenchmarks
         6,
         9,
         13)]
+    // ReSharper disable once UnassignedField.Global
     public int Range;
 
     [Benchmark(Baseline = true)]
@@ -20,6 +22,7 @@ public class GeometryBenchmarks
     {
         var rect = new Rectangle(CenterPoint, Range * 2 + 1, Range * 2 + 1);
 
+        // ReSharper disable once UnusedVariable
         var points = rect.Points()
                          .Where(p => p.DistanceFrom(CenterPoint) <= Range)
                          .ToList();
@@ -28,6 +31,7 @@ public class GeometryBenchmarks
     [Benchmark]
     public void SpiralSearch()
     {
+        // ReSharper disable once UnusedVariable
         var points = CenterPoint.SpiralSearch(Range)
                                 .ToList();
     }

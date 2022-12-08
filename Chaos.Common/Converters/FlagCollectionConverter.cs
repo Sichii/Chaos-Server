@@ -4,10 +4,10 @@ using Chaos.Common.Collections;
 
 namespace Chaos.Common.Converters;
 
-public class FlagCollectionConverter : JsonConverter<FlagCollection>
+public sealed class FlagCollectionConverter : JsonConverter<FlagCollection>
 {
     /// <inheritdoc />
-    public override FlagCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override FlagCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var serializedDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(ref reader, options);
 
@@ -17,14 +17,14 @@ public class FlagCollectionConverter : JsonConverter<FlagCollection>
                                      .GetAssemblies()
                                      .Where(a => !a.IsDynamic)
                                      .SelectMany(a => a.GetTypes())
-                                     .Where(asmType => asmType.IsEnum && !asmType.IsInterface && !asmType.IsAbstract)
+                                     .Where(asmType => asmType.IsEnum && asmType is { IsInterface: false, IsAbstract: false })
                                      .ToList();
 
         foreach (var kvp in serializedDictionary!)
         {
             var flagType = possibleTypes.Single(type => type.Name.Equals(kvp.Key));
-            var flagValue = (Enum)Enum.Parse(flagType!, kvp.Value);
-            flagCollection.AddFlag(flagType!, flagValue);
+            var flagValue = (Enum)Enum.Parse(flagType, kvp.Value);
+            flagCollection.AddFlag(flagType, flagValue);
         }
 
         return flagCollection;

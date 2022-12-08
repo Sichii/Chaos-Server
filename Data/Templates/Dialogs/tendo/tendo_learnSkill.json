@@ -1,5 +1,5 @@
 {
-    "templateKey": "tendo_learnSkills",
+    "templateKey": "tendo_learnSkill",
     "text": "What would you like to learn today?",
     "type": "showSkills",
     "scriptKeys": ["learnSkill"],

@@ -4,6 +4,7 @@ using Chaos.Extensions.Common;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+// ReSharper disable once ClassCanBeSealed.Global
 public class ShuffleBenchmark
 {
     public int[] Array { get; } = Enumerable.Range(0, 100).Select(_ => Random.Shared.Next()).ToArray();
@@ -29,6 +30,7 @@ public class ShuffleBenchmark
     [Benchmark]
     public void ToListShuffle()
     {
+        // ReSharper disable once UnusedVariable
         var list = Array.AsEnumerable().Shuffle();
     }
 }

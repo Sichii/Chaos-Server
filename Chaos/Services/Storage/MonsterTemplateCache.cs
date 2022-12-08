@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>
+public sealed class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, MonsterTemplateSchema>
 {
     /// <inheritdoc />
     protected override Func<MonsterTemplate, string> KeySelector => t => t.TemplateKey;
@@ -20,25 +20,25 @@ public sealed class MonsterTemplateCache : SimpleFileCacheBase<MonsterTemplate, 
     public MonsterTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<MonsterTemplateCacheOptions> options,
+        IOptions<MonsterTemplateCacheOptions> options,
         ILogger<MonsterTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
 public sealed class
-    ExpiringMonsterTemplateCache : ExpiringFileCacheBase<MonsterTemplate, MonsterTemplateSchema, ExpiringMonsterTemplateCacheOptions>
+    ExpiringMonsterTemplateCache : ExpiringFileCacheBase<MonsterTemplate, MonsterTemplateSchema>
 {
     /// <inheritdoc />
     public ExpiringMonsterTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringMonsterTemplateCacheOptions> options,
+        IOptions<ExpiringMonsterTemplateCacheOptions> options,
         ILogger<ExpiringMonsterTemplateCache> logger
     )
         : base(

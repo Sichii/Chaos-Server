@@ -31,12 +31,12 @@ public static class AoeShapeExtensions
 
                 var endPoint = sourcePoint.DirectionalOffset(direction.Value, range);
 
-                points = sourcePoint.GetDirectPath(endPoint);
+                points = sourcePoint.GetDirectPath(endPoint).Skip(1);
 
                 break;
             }
             case AoeShape.AllAround:
-                points = sourcePoint.SpiralSearch(range);
+                points = sourcePoint.SpiralSearch(range).Skip(1);
 
                 break;
             case AoeShape.FrontalCone:

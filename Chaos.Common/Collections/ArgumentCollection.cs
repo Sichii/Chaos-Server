@@ -4,7 +4,7 @@ using Chaos.Common.Converters;
 
 namespace Chaos.Common.Collections;
 
-public class ArgumentCollection : IEnumerable<string>
+public sealed class ArgumentCollection : IEnumerable<string>
 {
     private readonly List<string> Arguments;
     private int Index;

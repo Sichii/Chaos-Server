@@ -4,7 +4,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking.Options;
 
-public record Redirect : IRedirect
+public sealed record Redirect : IRedirect
 {
     public IPEndPoint EndPoint { get; }
     public uint Id { get; }

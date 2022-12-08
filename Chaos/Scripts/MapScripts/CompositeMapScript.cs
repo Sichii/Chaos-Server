@@ -22,9 +22,9 @@ public class CompositeMapScript : CompositeScriptBase<IMapScript>, IMapScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnExiting(Creature creature)
+    public virtual void OnExited(Creature creature)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnExiting(creature);
+            component.OnExited(creature);
     }
 }

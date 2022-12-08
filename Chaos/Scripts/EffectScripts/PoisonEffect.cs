@@ -9,9 +9,9 @@ namespace Chaos.Scripts.EffectScripts;
 public class PoisonEffect : AnimatingEffectBase
 {
     /// <inheritdoc />
-    public override byte Icon { get; } = 35;
+    public override byte Icon => 35;
     /// <inheritdoc />
-    public override string Name { get; } = "Poison";
+    public override string Name => "Poison";
 
     /// <inheritdoc />
     protected override Animation Animation { get; } = new()

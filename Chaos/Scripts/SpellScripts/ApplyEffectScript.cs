@@ -7,6 +7,7 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts;
 
+[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 public class ApplyEffectScript : BasicSpellScriptBase
 {
     private readonly IEffectFactory EffectFactory;

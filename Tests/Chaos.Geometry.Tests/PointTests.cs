@@ -4,12 +4,12 @@ using Xunit;
 
 namespace Chaos.Geometry.Tests;
 
-public class PointTests
+public sealed class PointTests
 {
     [Fact]
     public void SpiralSearchTest()
     {
-        void RunTest(int range)
+        static void RunTest(int range)
         {
             var point = new Point(50, 50);
 

@@ -87,7 +87,7 @@ public static class TypeExtensions
                                      .GetAssemblies()
                                      .Where(a => !a.IsDynamic)
                                      .SelectMany(a => a.GetTypes())
-                                     .Where(asmType => !asmType.IsInterface && !asmType.IsAbstract);
+                                     .Where(asmType => asmType is { IsInterface: false, IsAbstract: false });
 
         if (type.IsGenericTypeDefinition)
             return assemblyTypes.Where(asmType => type.IsInterface ? asmType.HasInterface(type) : asmType.HasBaseType(type));

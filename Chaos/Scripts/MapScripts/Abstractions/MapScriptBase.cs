@@ -14,5 +14,5 @@ public abstract class MapScriptBase : SubjectiveScriptBase<MapInstance>, IMapScr
     public virtual void OnEntered(Creature creature) { }
 
     /// <inheritdoc />
-    public virtual void OnExiting(Creature creature) { }
+    public virtual void OnExited(Creature creature) { }
 }

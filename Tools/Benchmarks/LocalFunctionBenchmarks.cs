@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+// ReSharper disable once ClassCanBeSealed.Global
 public class LocalFunctionBenchmarks
 {
     private const int NUM1 = 5;
@@ -14,6 +15,7 @@ public class LocalFunctionBenchmarks
     [Benchmark]
     public int AddLocal()
     {
+        // ReSharper disable once LocalFunctionCanBeMadeStatic
         int InternalAddLocal() => NUM1 + NUM2;
 
         return InternalAddLocal();
@@ -22,6 +24,7 @@ public class LocalFunctionBenchmarks
     [Benchmark]
     public int AddLocalNoScope()
     {
+        // ReSharper disable once LocalFunctionCanBeMadeStatic
         int InternalAddLocalNoSope(int num1, int num2) => num1 + num2;
 
         return InternalAddLocalNoSope(NUM1, NUM2);

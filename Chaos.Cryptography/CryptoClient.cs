@@ -13,7 +13,7 @@ public sealed class CryptoClient : ICryptoClient
     private IReadOnlyList<byte> Salts => Tables.SALT_TABLE[Seed];
 
     public CryptoClient()
-        : this(0, Encoding.ASCII.GetBytes("UrkcnItnI"), string.Empty) { }
+        : this(0, "UrkcnItnI"u8.ToArray(), string.Empty) { }
 
     public CryptoClient(byte seed, byte[] key, string keySaltSeed)
     {
@@ -44,9 +44,7 @@ public sealed class CryptoClient : ICryptoClient
 
     #region Utility
     public string GetMd5Hash(string value) =>
-        BitConverter.ToString(
-                        MD5.Create()
-                           .ComputeHash(Encoding.ASCII.GetBytes(value)))
+        BitConverter.ToString(MD5.HashData(Encoding.ASCII.GetBytes(value)))
                     .Replace("-", string.Empty)
                     .ToLower();
     #endregion

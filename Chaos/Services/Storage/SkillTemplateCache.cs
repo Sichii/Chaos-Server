@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class SkillTemplateCache : SimpleFileCacheBase<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>
+public sealed class SkillTemplateCache : SimpleFileCacheBase<SkillTemplate, SkillTemplateSchema>
 {
     /// <inheritdoc />
     protected override Func<SkillTemplate, string> KeySelector => t => t.TemplateKey;
@@ -20,25 +20,25 @@ public sealed class SkillTemplateCache : SimpleFileCacheBase<SkillTemplate, Skil
     public SkillTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<SkillTemplateCacheOptions> options,
+        IOptions<SkillTemplateCacheOptions> options,
         ILogger<SkillTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger) => AsyncHelpers.RunSync(ReloadAsync);
 }
 
 public sealed class
-    ExpiringSkillTemplateCache : ExpiringFileCacheBase<SkillTemplate, SkillTemplateSchema, ExpiringSkillTemplateCacheOptions>
+    ExpiringSkillTemplateCache : ExpiringFileCacheBase<SkillTemplate, SkillTemplateSchema>
 {
     /// <inheritdoc />
     public ExpiringSkillTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringSkillTemplateCacheOptions> options,
+        IOptions<ExpiringSkillTemplateCacheOptions> options,
         ILogger<ExpiringSkillTemplateCache> logger
     )
         : base(

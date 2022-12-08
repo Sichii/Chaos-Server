@@ -15,25 +15,28 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSchema, MapTemplateCacheOptions>
+public sealed class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTemplateSchema>
 {
     private readonly string NeedsMapDataDir;
 
     /// <inheritdoc />
     protected override Func<MapTemplate, string> KeySelector => t => t.TemplateKey;
+    private new MapTemplateCacheOptions Options { get; }
 
     public MapTemplateCache(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<MapTemplateCacheOptions> options,
+        IOptions<MapTemplateCacheOptions> options,
         ILogger<MapTemplateCache> logger
     )
         : base(
             mapper,
-            jsonSerializerOptions,
-            options,
+            jsonSerializerOptions.Value,
+            options.Value,
             logger)
     {
+        Options = options.Value;
+
         NeedsMapDataDir = Path.Combine(Options.Directory, "NeedsMapData");
 
         if (!Directory.Exists(NeedsMapDataDir))
@@ -108,16 +111,17 @@ public sealed class MapTemplateCache : SimpleFileCacheBase<MapTemplate, MapTempl
     }
 }
 
-public sealed class ExpiringMapTemplateCache : ExpiringFileCacheBase<MapTemplate, MapTemplateSchema, ExpiringMapTemplateCacheOptions>
+public sealed class ExpiringMapTemplateCache : ExpiringFileCacheBase<MapTemplate, MapTemplateSchema>
 {
     private readonly string NeedsMapDataDir;
+    private new ExpiringMapTemplateCacheOptions Options { get; }
 
     /// <inheritdoc />
     public ExpiringMapTemplateCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptionsSnapshot<ExpiringMapTemplateCacheOptions> options,
+        IOptions<ExpiringMapTemplateCacheOptions> options,
         ILogger<ExpiringMapTemplateCache> logger
     )
         : base(
@@ -127,6 +131,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCacheBase<MapTemplate
             options,
             logger)
     {
+        Options = options.Value;
         NeedsMapDataDir = Path.Combine(Options.Directory, "NeedsMapData");
 
         if (!Directory.Exists(NeedsMapDataDir))
@@ -141,7 +146,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCacheBase<MapTemplate
         if (schema == null)
             throw new SerializationException($"Failed to serialize {nameof(MapTemplateSchema)} from path \"{path}\"");
 
-        var mapTemplate = Mapper.Map<MapTemplate>(schema!);
+        var mapTemplate = Mapper.Map<MapTemplate>(schema);
 
         LoadMapData(mapTemplate);
 

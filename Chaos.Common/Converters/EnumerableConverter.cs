@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace Chaos.Common.Converters;
 
-public class EnumerableConverter<T, TObj> : JsonConverter<T> where T: IEnumerable<TObj>
+public sealed class EnumerableConverter<T, TObj> : JsonConverter<T> where T: IEnumerable<TObj>
 {
     /// <inheritdoc />
-    public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var list = JsonSerializer.Deserialize<List<TObj>>(ref reader, options);
 

@@ -7,19 +7,14 @@ namespace Chaos.Utilities;
 
 public static class Helpers
 {
-    public static EntityType? GetEntityType(object obj)
-    {
-        if (obj is Monster or Merchant)
-            return EntityType.Creature;
-
-        if (obj is GroundItem or Item)
-            return EntityType.Item;
-
-        if (obj is Aisling)
-            return EntityType.Aisling;
-
-        return null;
-    }
+    public static EntityType? GetEntityType(object obj) =>
+        obj switch
+        {
+            Monster or Merchant => EntityType.Creature,
+            GroundItem or Item  => EntityType.Item,
+            Aisling             => EntityType.Aisling,
+            _                   => null
+        };
 
     public static void HandleApproach(Creature creature1, Creature creature2)
     {

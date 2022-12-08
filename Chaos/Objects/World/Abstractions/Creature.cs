@@ -163,7 +163,7 @@ public abstract class Creature : NamedEntity, IAffected
 
     public abstract void OnItemDroppedOn(Aisling source, byte slot, byte count);
 
-    public void Pathfind(IPoint target)
+    public void Pathfind(IPoint target, ICollection<IPoint>? unwalkablePoints = null)
     {
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
                                      .Where(door => door.Closed);
@@ -172,6 +172,7 @@ public abstract class Creature : NamedEntity, IAffected
                                          .ThatCollideWith(this);
 
         var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
+                                                .Concat(unwalkablePoints ?? Array.Empty<IPoint>())
                                                 .ToList();
 
         var direction = MapInstance.Pathfinder.Pathfind(
@@ -361,7 +362,7 @@ public abstract class Creature : NamedEntity, IAffected
             reactor.OnWalkedOn(this);
     }
 
-    public void Wander()
+    public void Wander(ICollection<IPoint>? unwalkablePoints = null)
     {
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
                                      .Where(door => door.Closed);
@@ -370,6 +371,7 @@ public abstract class Creature : NamedEntity, IAffected
                                          .ThatCollideWith(this);
 
         var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
+                                                .Concat(unwalkablePoints ?? Array.Empty<IPoint>())
                                                 .ToList();
 
         var direction = MapInstance.Pathfinder.Wander(

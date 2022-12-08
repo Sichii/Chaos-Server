@@ -77,11 +77,13 @@ public static class StringExtensions
         {
             var value = match.Groups[0].ValueSpan;
 
-            if (value.SequenceEqual("{{"))
-                return "{";
-
-            if (value.SequenceEqual("}}"))
-                return "}";
+            switch (value)
+            {
+                case "{{":
+                    return "{";
+                case "}}":
+                    return "}";
+            }
 
             var ret = parameters[index].ToString();
             Interlocked.Increment(ref index);
