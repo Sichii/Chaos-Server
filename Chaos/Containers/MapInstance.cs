@@ -314,5 +314,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
             spawn.Update(delta);
+
+        Script.Update(delta);
     }
 }

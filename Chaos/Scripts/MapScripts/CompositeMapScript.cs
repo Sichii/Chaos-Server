@@ -27,4 +27,11 @@ public class CompositeMapScript : CompositeScriptBase<IMapScript>, IMapScript
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnExited(creature);
     }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.Update(delta);
+    }
 }

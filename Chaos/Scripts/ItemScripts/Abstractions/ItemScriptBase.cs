@@ -29,4 +29,7 @@ public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
 
     /// <inheritdoc />
     public virtual void OnUse(Aisling source) { }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta) { }
 }

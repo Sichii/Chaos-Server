@@ -50,4 +50,11 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(context);
     }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.Update(delta);
+    }
 }

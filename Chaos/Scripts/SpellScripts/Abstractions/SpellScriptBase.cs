@@ -22,4 +22,7 @@ public abstract class SpellScriptBase : SubjectiveScriptBase<Spell>, ISpellScrip
 
     /// <inheritdoc />
     public virtual void OnUse(SpellContext context) { }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta) { }
 }

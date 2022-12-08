@@ -47,7 +47,7 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 
     public override string ToString() => $@"Id:{UniqueId} Name:{Template.Name})";
 
-    public void Update(TimeSpan delta)
+    public virtual void Update(TimeSpan delta)
     {
         if (!Elapsed.HasValue)
             return;

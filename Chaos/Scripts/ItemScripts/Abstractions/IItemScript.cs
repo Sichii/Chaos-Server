@@ -2,10 +2,11 @@ using Chaos.Containers;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripts.ItemScripts.Abstractions;
 
-public interface IItemScript : IScript
+public interface IItemScript : IScript, IDeltaUpdatable
 {
     bool CanUse(Aisling source);
     void OnDropped(Creature source, MapInstance mapInstance);

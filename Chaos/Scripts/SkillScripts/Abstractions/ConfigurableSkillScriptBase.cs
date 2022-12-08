@@ -22,4 +22,7 @@ public abstract class ConfigurableSkillScriptBase : ConfigurableScriptBase<Skill
 
     /// <inheritdoc />
     public virtual void OnUse(SkillContext context) { }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta) { }
 }

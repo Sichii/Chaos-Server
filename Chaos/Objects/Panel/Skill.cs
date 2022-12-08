@@ -49,6 +49,13 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
     /// <inheritdoc />
     public override string ToString() => $"{{ UId: {UniqueId}, Name: \"{Template.Name}\" }}";
 
+    /// <inheritdoc />
+    public override void Update(TimeSpan delta)
+    {
+        base.Update(delta);
+        Script.Update(delta);
+    }
+
     public void Use(SkillContext context)
     {
         if (!Script.CanUse(context))

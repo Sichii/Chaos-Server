@@ -69,4 +69,11 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(source);
     }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.Update(delta);
+    }
 }

@@ -98,6 +98,13 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
 
     public string ToString(int amount) => $"{{ UId: {UniqueId}, Name: \"{DisplayName}\", Count: {amount} }}";
 
+    /// <inheritdoc />
+    public override void Update(TimeSpan delta)
+    {
+        base.Update(delta);
+        Script.Update(delta);
+    }
+
     public void Use(Aisling source)
     {
         Script.OnUse(source);

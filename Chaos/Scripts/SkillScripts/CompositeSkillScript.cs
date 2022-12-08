@@ -51,4 +51,11 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(context);
     }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.Update(delta);
+    }
 }

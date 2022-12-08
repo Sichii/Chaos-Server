@@ -22,4 +22,7 @@ public abstract class SkillScriptBase : SubjectiveScriptBase<Skill>, ISkillScrip
 
     /// <inheritdoc />
     public virtual void OnUse(SkillContext context) { }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta) { }
 }
