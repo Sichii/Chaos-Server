@@ -31,5 +31,5 @@ public abstract class ConfigurableItemScriptBase : ConfigurableScriptBase<Item>,
     public virtual void OnUse(Aisling source) { }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta) { }
+    public virtual void Update(TimeSpan delta) { }
 }

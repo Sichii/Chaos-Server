@@ -68,7 +68,7 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public void OnPublicMessage(Creature source, string message) { }
+    public virtual void OnPublicMessage(Creature source, string message) { }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT

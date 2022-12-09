@@ -17,5 +17,5 @@ public abstract class MapScriptBase : SubjectiveScriptBase<MapInstance>, IMapScr
     public virtual void OnExited(Creature creature) { }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta) { }
+    public virtual void Update(TimeSpan delta) { }
 }

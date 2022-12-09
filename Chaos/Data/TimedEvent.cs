@@ -1,15 +1,44 @@
+using Chaos.Common.Identity;
+
 namespace Chaos.Data;
 
-public sealed class TimedEvent
+public sealed class TimedEvent : IEquatable<TimedEvent>
 {
-    public enum TimedEventId { }
+    public enum TimedEventId
+    {
+        Fountain
+    }
 
-    public required TimeSpan Duration { get; init; }
+    public bool Completed => DateTime.UtcNow - Start > Duration;
+    public TimeSpan Duration { get; }
+    public TimedEventId EventId { get; }
+    public DateTime Start { get; }
 
-    public required TimedEventId EventId { get; init; }
-    public required string Name { get; init; }
-    public required int Qualifier { get; init; }
+    public ulong UniqueId { get; }
 
-    public bool Elapsed => DateTime.UtcNow - Start > Duration;
-    public DateTime Start { get; } = DateTime.UtcNow;
+    public TimedEvent(TimedEventId eventId, TimeSpan duration, int qualifier = 1)
+    {
+        UniqueId = ServerId.NextId;
+        EventId = eventId;
+        Duration = duration;
+        Start = DateTime.UtcNow;
+    }
+
+    /// <inheritdoc />
+    public bool Equals(TimedEvent? other)
+    {
+        if (ReferenceEquals(null, other))
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return UniqueId == other.UniqueId;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is TimedEvent other && Equals(other));
+
+    /// <inheritdoc />
+    public override int GetHashCode() => UniqueId.GetHashCode();
 }

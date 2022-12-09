@@ -16,7 +16,7 @@ public sealed class FifoSemaphoreSlim
 
     /// <summary>
     ///     Attempts to enter the semaphore. Sets the result on the next tcs in the queue,
-    ///     freeing the awaiter of the tcs task to do work inside the semaphore waitAsync
+    ///     freeing the awaiter of the awaiter of the tcs task to do work while the semaphore is held by the caller
     /// </summary>
     private async void AcquireAndPop()
     {
@@ -41,5 +41,27 @@ public sealed class FifoSemaphoreSlim
         AcquireAndPop();
 
         return tcs.Task;
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="timeout"></param>
+    /// <returns>
+    ///     A task that will complete with a result of true if the current thread successfully entered the SemaphoreSlim, otherwise with a
+    ///     result of false
+    /// </returns>
+    public async Task<bool> WaitAsync(TimeSpan timeout)
+    {
+        var waiter = WaitAsync();
+
+        var ret = await Task.WhenAny(waiter, Task.Delay(timeout)) == waiter;
+
+        //if we fail to acquire sync in the time alotted, we will return false
+        //however, the waiter is still waiting, and will eventually enter the sync
+        //if we dont Release() here like this, it will never release
+        if (!ret)
+            _ = waiter.ContinueWith(_ => Release());
+
+        return ret;
     }
 }

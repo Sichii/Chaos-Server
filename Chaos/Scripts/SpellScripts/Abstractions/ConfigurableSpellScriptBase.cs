@@ -24,5 +24,5 @@ public abstract class ConfigurableSpellScriptBase : ConfigurableScriptBase<Spell
     public virtual void OnUse(SpellContext context) { }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta) { }
+    public virtual void Update(TimeSpan delta) { }
 }

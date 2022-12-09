@@ -75,6 +75,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
             };
 
         var ret = LoadFromFile(loadPath);
+
         LocalLookup[key] = ret;
 
         Logger.LogTrace(
@@ -149,5 +150,13 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
         object value,
         EvictionReason reason,
         object state
-    ) => LocalLookup.TryRemove(key.ToString()!, out _);
+    )
+    {
+        //if we reload the cache, the localLookup values will automatically be replaced
+        //but we dont want them to be remove by this callback
+        if (reason == EvictionReason.Replaced)
+            return;
+
+        LocalLookup.TryRemove(key.ToString()!, out _);
+    }
 }

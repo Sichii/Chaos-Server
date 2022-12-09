@@ -29,7 +29,7 @@ public abstract class ConfigurableMerchantScriptBase : ConfigurableScriptBase<Me
     public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count) { }
 
     /// <inheritdoc />
-    public void OnPublicMessage(Creature source, string message) { }
+    public virtual void OnPublicMessage(Creature source, string message) { }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta) { }

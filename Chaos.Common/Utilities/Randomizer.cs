@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 
 namespace Chaos.Common.Utilities;
 
@@ -7,6 +9,42 @@ namespace Chaos.Common.Utilities;
 /// </summary>
 public static class Randomizer
 {
+    public static T PickRandom<T>(this ICollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
+
+    public static T PickRandom<T>(this IEnumerable<T> objs, IEnumerable<decimal> weights)
+    {
+        var localObjs = objs.ToArray();
+        var localWeights = weights.ToArray();
+
+        if (localObjs.Length != localWeights.Length)
+            throw new ArgumentException($"{nameof(objs)} and {nameof(weights)} must have the same count");
+
+        if (localObjs.Length == 0)
+            throw new ArgumentException("Arguments must contains more than 0 elements");
+
+        Array.Sort(localWeights, localObjs);
+
+        var accumulator = 0m;
+
+        foreach (ref var weight in localWeights.AsSpan())
+        {
+            accumulator += weight;
+            weight = accumulator;
+        }
+
+        var rand = Random.Shared.Next(accumulator);
+
+        for (var i = 0; i < localWeights.Length; i++)
+        {
+            var weight = localWeights[i];
+
+            if (rand < weight)
+                return localObjs[i];
+        }
+
+        throw new UnreachableException("The loop that picks a random number should be exhaustive");
+    }
+
     /// <summary>
     ///     Randomly determins if a roll is successful or not.
     /// </summary>

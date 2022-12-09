@@ -96,7 +96,6 @@ public sealed record UserStatSheet : StatSheet
         _master = false,
         _baseClass = BaseClass.Peasant,
         _advClass = AdvClass.None,
-        _atkSpeedPct = 1500
     };
 
     public void AddTNA(long amount) => Interlocked.Add(ref _toNextAbility, amount);

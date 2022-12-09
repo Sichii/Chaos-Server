@@ -1,4 +1,4 @@
-namespace Chaos.Utilities;
+namespace Chaos.Common.Utilities;
 
 public static class MathEx
 {

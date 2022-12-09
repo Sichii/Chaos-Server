@@ -33,6 +33,14 @@ public sealed class FifoAutoReleasingSemaphoreSlim
         return new AutoReleasingSubscription(Root);
     }
 
+    public async ValueTask<IPolyDisposable?> WaitAsync(TimeSpan timeout)
+    {
+        if (await Root.WaitAsync(timeout))
+            return new AutoReleasingSubscription(Root);
+
+        return null;
+    }
+
     private sealed record AutoReleasingSubscription : IPolyDisposable
     {
         private readonly FifoSemaphoreSlim SemaphoreSlim;

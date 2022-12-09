@@ -31,5 +31,5 @@ public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
     public virtual void OnUse(Aisling source) { }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta) { }
+    public virtual void Update(TimeSpan delta) { }
 }

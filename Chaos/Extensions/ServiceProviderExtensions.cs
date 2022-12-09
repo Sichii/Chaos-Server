@@ -1,3 +1,4 @@
+using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions.Common;
@@ -101,8 +102,11 @@ public static class ServiceProviderExtensions
         {
             var newMap = mapCache.Get(oldMap.InstanceId);
 
-            await using var oldSync = await oldMap.Sync.WaitAsync();
-            await using var newSync = await newMap.Sync.WaitAsync();
+            await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                TimeSpan.FromMilliseconds(250),
+                TimeSpan.FromMilliseconds(3),
+                oldMap.Sync,
+                newMap.Sync);
 
             foreach (var monster in newMap.GetEntities<Monster>())
                 newMap.RemoveObject(monster);
@@ -114,7 +118,7 @@ public static class ServiceProviderExtensions
                 newMap.SimpleAdd(monster);
 
             foreach (var aisling in oldMap.GetEntities<Aisling>())
-                newMap.AddObject(aisling, aisling);
+                newMap.SimpleAdd(aisling);
 
             oldMap.Destroy();
         }

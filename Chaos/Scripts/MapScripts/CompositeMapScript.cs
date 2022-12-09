@@ -29,7 +29,7 @@ public class CompositeMapScript : CompositeScriptBase<IMapScript>, IMapScript
     }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta)
+    public virtual void Update(TimeSpan delta)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.Update(delta);

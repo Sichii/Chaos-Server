@@ -15,7 +15,7 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public bool CanUse(Aisling source)
+    public virtual bool CanUse(Aisling source)
     {
         var canUse = true;
 
@@ -71,7 +71,7 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta)
+    public virtual void Update(TimeSpan delta)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.Update(delta);
