@@ -2,7 +2,6 @@ using Chaos.Clients.Abstractions;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
-using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
@@ -43,12 +42,12 @@ public sealed class TeleportCommand : ICommand<Aisling>
 
                 if (player == null)
                 {
-                    aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{playerName} is not online");
+                    aisling.SendOrangeBarMessage($"{playerName} is not online");
 
                     return default;
                 }
 
-                aisling.TraverseMap(player.MapInstance, player);
+                aisling.TraverseMap(player.MapInstance, player, true);
 
                 break;
             case "map":
@@ -64,7 +63,7 @@ public sealed class TeleportCommand : ICommand<Aisling>
                 else
                     point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
 
-                aisling.TraverseMap(mapInstance, point);
+                aisling.TraverseMap(mapInstance, point, true);
 
                 return default;
         }

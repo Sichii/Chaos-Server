@@ -397,7 +397,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             client.SendAttributes(StatUpdateType.Full);
             client.SendLightLevel(LightLevel.Lightest);
             client.SendUserId();
-            aisling.MapInstance.AddObject(aisling, aisling);
+            aisling.MapInstance.AddAislingDirect(aisling, aisling);
             client.SendProfileRequest();
 
             foreach (var reactor in aisling.MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(aisling)))
@@ -629,7 +629,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (target == null)
             {
-                localClient.SendServerMessage(ServerMessageType.ActiveMessage, $"{targetName} is nowhere to be found");
+                localClient.Aisling.SendActiveMessage($"{targetName} is nowhere to be found");
 
                 return default;
             }
@@ -1197,7 +1197,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (targetUser == null)
             {
-                localClient.SendServerMessage(ServerMessageType.ActiveMessage, $"{targetName} is not online");
+                localClient.Aisling.SendActiveMessage($"{targetName} is not online");
 
                 return default;
             }
@@ -1221,9 +1221,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (targetUser.IgnoreList.ContainsI(localClient.Aisling.Name))
             {
                 Logger.LogInformation(
-                    "Message sent by {FromName} was ignored by {TargetName} (Message: \"{Message}\")",
-                    localClient.Aisling.Name,
-                    targetUser.Name,
+                    "Message sent by {From} was ignored by {Target} (Message: \"{Message}\")",
+                    localClient.Aisling,
+                    targetUser,
                     message);
 
                 localClient.SendServerMessage(ServerMessageType.Whisper, $"[{targetUser.Name}] > {message}");

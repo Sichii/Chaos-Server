@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Containers.Abstractions;
 using Chaos.Data;
@@ -123,8 +124,8 @@ public abstract class Creature : NamedEntity, IAffected
 
         foreach (var groundItem in groundItems)
         {
-            groundItem.Item.Script.OnDropped(this, MapInstance);
             Logger.LogDebug("{Creature} dropped {Item}", this, groundItem);
+            groundItem.Item.Script.OnDropped(this, MapInstance);
 
             foreach (var reactor in reactors)
                 reactor.OnItemDroppedOn(this, groundItem);
@@ -241,29 +242,45 @@ public abstract class Creature : NamedEntity, IAffected
             }
     }
 
-    public void TraverseMap(MapInstance destinationMap, IPoint destinationPoint)
-    {
-        var currentMap = MapInstance;
-
-        if (!currentMap.RemoveObject(this))
-            return;
-
-        //set the creature's location and point
-        //but at this point they are not technically on the map yet
-        //this is so that if a player executes a handler, that handler will enter the new map's synchronization instead of the old one
-        //and if they do any movement or anything, it will on the new map
-        SetLocation(destinationMap, destinationPoint);
-
+    public void TraverseMap(
+        MapInstance destinationMap,
+        IPoint destinationPoint,
+        bool ignoreSharding = false,
+        bool fromWolrdMap = false
+    ) =>
         //run a task that will await entrancy into the destination map
         //once synchronized, the creature will be added to the map
         Task.Run(
             async () =>
             {
-                await using var sync = await destinationMap.Sync.WaitAsync();
+                var currentMap = MapInstance;
+
+                var aisling = this as Aisling;
+
+                if (aisling is not null)
+                    await aisling.Client.ReceiveSync.WaitAsync();
+
+                await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                    TimeSpan.FromMilliseconds(500),
+                    TimeSpan.FromMilliseconds(3),
+                    currentMap.Sync,
+                    destinationMap.Sync);
 
                 try
                 {
-                    destinationMap.AddObject(this, destinationPoint);
+                    if (!fromWolrdMap && !currentMap.RemoveObject(this))
+                        return;
+
+                    //set the creature's location and point
+                    //but at this point they are not technically on the map yet
+                    //this is so that if a player executes a handler, that handler will enter the new map's synchronization instead of the old one
+                    //and if they do any movement or anything, it will on the new map
+                    SetLocation(destinationMap, destinationPoint);
+
+                    if (aisling is not null && ignoreSharding)
+                        destinationMap.AddAislingDirect(aisling, destinationPoint);
+                    else
+                        destinationMap.AddObject(this, destinationPoint);
                 } catch (Exception e)
                 {
                     Logger.LogCritical(
@@ -272,9 +289,11 @@ public abstract class Creature : NamedEntity, IAffected
                         this,
                         currentMap,
                         destinationMap);
+                } finally
+                {
+                    aisling?.Client.ReceiveSync.Release();
                 }
             });
-    }
 
     public virtual bool TryUseSkill(Skill skill)
     {

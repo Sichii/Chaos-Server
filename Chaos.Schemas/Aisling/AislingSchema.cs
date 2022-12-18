@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
+using Chaos.Geometry;
 using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Schemas.Aisling;
@@ -15,6 +16,7 @@ public sealed record AislingSchema
     public Direction Direction { get; init; }
     public ICollection<EffectSchema> Effects { get; init; } = Array.Empty<EffectSchema>();
     public int FaceSprite { get; init; }
+    public Location? FallbackLocation { get; init; }
     [JsonRequired]
     public FlagCollection Flags { get; init; } = null!;
     public int GamePoints { get; init; }

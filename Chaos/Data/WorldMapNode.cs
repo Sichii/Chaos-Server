@@ -15,7 +15,8 @@ public sealed record WorldMapNode : WorldMapNodeInfo
     public void OnClick(Aisling aisling)
     {
         var destinationMap = SimpleCache.Get<MapInstance>(Destination.Map);
-        destinationMap.AddObject(aisling, Destination);
+        aisling.TraverseMap(destinationMap, Destination, fromWolrdMap: true);
+        //destinationMap.AddObject(aisling, Destination);
 
         aisling.ActiveObject.Set(null);
     }

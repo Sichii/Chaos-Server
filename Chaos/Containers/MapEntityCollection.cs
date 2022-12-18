@@ -107,13 +107,15 @@ public sealed class MapEntityCollection : IDeltaUpdatable
             lookup.Clear();
     }
 
+    public bool ContainsKey(uint id) => EntityLookup.ContainsKey(id);
+
     public void MoveEntity(MapEntity mapEntity, IPoint oldPoint)
     {
         var fromEntities = PointLookup[oldPoint.X, oldPoint.Y];
         var toEntities = PointLookup[mapEntity.X, mapEntity.Y];
 
-        fromEntities.Remove(mapEntity);
-        toEntities.Add(mapEntity);
+        if (fromEntities.Remove(mapEntity))
+            toEntities.Add(mapEntity);
     }
 
     public bool Remove(uint id)

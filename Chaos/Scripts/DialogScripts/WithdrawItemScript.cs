@@ -114,6 +114,7 @@ public class WithdrawItemScript : DialogScriptBase
         if (source.Bank.CountOf(Item!.DisplayName) == 1)
         {
             var result = ComplexActionHelper.WithdrawItem(source, Item.DisplayName, 1);
+            Amount = 1;
             HandleWithdrawItemResult(source, result);
 
             return;

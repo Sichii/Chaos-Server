@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Objects.World;
 
@@ -28,8 +27,8 @@ public sealed class Group : IEnumerable<Aisling>
             sender, receiver
         };
 
-        sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You form a group with {receiver.Name}");
-        receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You form a group with {sender.Name}");
+        sender.SendActiveMessage($"You form a group with {receiver.Name}");
+        receiver.SendActiveMessage($"You form a group with {sender.Name}");
 
         Sync = new AutoReleasingMonitor();
     }
@@ -40,13 +39,13 @@ public sealed class Group : IEnumerable<Aisling>
 
         foreach (var member in this)
         {
-            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{aisling.Name} has joined the group");
+            member.SendActiveMessage($"{aisling.Name} has joined the group");
             member.Client.SendSelfProfile();
         }
 
         Members.Add(aisling);
 
-        aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have joined {Leader.Name}'s group");
+        aisling.SendActiveMessage($"You have joined {Leader.Name}'s group");
         aisling.Group = this;
         aisling.Client.SendSelfProfile();
     }
@@ -58,7 +57,7 @@ public sealed class Group : IEnumerable<Aisling>
         foreach (var member in this)
         {
             member.Group = null;
-            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, "The group has been disbanded");
+            member.SendActiveMessage("The group has been disbanded");
             member.Client.SendSelfProfile();
         }
 
@@ -93,10 +92,10 @@ public sealed class Group : IEnumerable<Aisling>
         if (!Remove(aisling))
             return;
 
-        aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You have been kicked from the group by {Leader.Name}");
+        aisling.SendActiveMessage($"You have been kicked from the group by {Leader.Name}");
 
         foreach (var member in Members)
-            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{aisling.Name} has been kicked from the group");
+            member.SendActiveMessage($"{aisling.Name} has been kicked from the group");
     }
 
     public void Leave(Aisling aisling)
@@ -115,11 +114,11 @@ public sealed class Group : IEnumerable<Aisling>
         if (!Remove(aisling))
             return;
 
-        aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You have left the group");
+        aisling.SendActiveMessage("You have left the group");
 
         foreach (var member in Members)
         {
-            member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{aisling.Name} has left the group");
+            member.SendActiveMessage($"{aisling.Name} has left the group");
             member.Client.SendSelfProfile();
         }
 
@@ -128,7 +127,7 @@ public sealed class Group : IEnumerable<Aisling>
             var newLeader = Leader;
 
             foreach (var member in Members)
-                member.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{newLeader.Name} is now the group leader");
+                member.SendActiveMessage($"{newLeader.Name} is now the group leader");
         }
     }
 

@@ -106,6 +106,7 @@ public class DepositItemScript : DialogScriptBase
         if (source.Inventory.CountOf(Item.DisplayName) == 1)
         {
             var result = ComplexActionHelper.DepositItem(source, Item.Slot, 1);
+            Amount = 1;
             HandleDepositItemResult(source, result);
         } else
             InputCollector.Collect(source, Subject, optionIndex);

@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Objects.World;
@@ -91,15 +90,15 @@ public sealed class Exchange
 
         if (item.Template.AccountBound)
         {
-            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
+            aisling.SendActiveMessage($"{item.DisplayName} is account bound");
 
             return;
         }
 
         if (!otherUser.CanCarry(userItems.Prepend(item).ToArray()))
         {
-            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
-            otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");
+            aisling.SendActiveMessage($"{otherUser.Name} is unable to carry that");
+            otherUser.SendActiveMessage("You are unable to carry more");
 
             return;
         }
@@ -131,14 +130,14 @@ public sealed class Exchange
 
         if (item.Template.AccountBound)
         {
-            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{item.DisplayName} is account bound");
+            aisling.SendActiveMessage($"{item.DisplayName} is account bound");
 
             return;
         }
 
         if (!aisling.Inventory.HasCount(item.DisplayName, amount))
         {
-            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"You don't have {amount} of {item.DisplayName}");
+            aisling.SendActiveMessage($"You don't have {amount} of {item.DisplayName}");
 
             return;
         }
@@ -149,8 +148,8 @@ public sealed class Exchange
 
         if (!otherUser.CanCarry(hypotheticalItems))
         {
-            aisling.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{otherUser.Name} is unable to carry that");
-            otherUser.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are unable to carry more");
+            aisling.SendActiveMessage($"{otherUser.Name} is unable to carry that");
+            otherUser.SendActiveMessage("You are unable to carry more");
 
             return;
         }

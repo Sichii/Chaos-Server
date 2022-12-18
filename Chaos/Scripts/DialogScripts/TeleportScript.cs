@@ -55,7 +55,7 @@ public class TeleportScript : DialogScriptBase
         else
             point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
 
-        source.TraverseMap(mapInstance, point);
+        source.TraverseMap(mapInstance, point, true);
         Subject.Close(source);
     }
 }

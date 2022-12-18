@@ -20,6 +20,7 @@ public sealed class EquipmentObserver : Abstractions.IObserver<Item>
             Aisling.UserStatSheet.AddBonus(obj.Template.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
+        obj.Script.OnEquipped(Aisling);
     }
 
     public void OnRemoved(byte slot, Item obj)
@@ -34,6 +35,7 @@ public sealed class EquipmentObserver : Abstractions.IObserver<Item>
             Aisling.UserStatSheet.SubtractBonus(obj.Template.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
+        obj.Script.OnUnEquipped(Aisling);
     }
 
     public void OnUpdated(byte originalSlot, Item obj)

@@ -1,7 +1,6 @@
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
-using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Extensions.Common;
 using Chaos.Objects.World;
@@ -27,9 +26,9 @@ public class SummonCommand : ICommand<Aisling>
                               .FirstOrDefault(aisling => aisling.Name.EqualsI(name));
 
         if (aisling == null)
-            source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{name} is not online");
+            source.SendOrangeBarMessage($"{name} is not online");
         else
-            aisling.TraverseMap(source.MapInstance, source);
+            aisling.TraverseMap(source.MapInstance, source, true);
 
         return default;
     }

@@ -35,7 +35,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
         Cache = cache;
         Mapper = mapper;
         JsonSerializerOptions = jsonSerializerOptions.Value;
-        KeyPrefix = $"{typeof(T).Name}-".ToLowerInvariant();
+        KeyPrefix = $"{typeof(T).Name}___".ToLowerInvariant();
         LocalLookup = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
 
@@ -44,6 +44,8 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
 
         Paths = LoadPaths();
     }
+
+    protected virtual string ConstructKeyForType(string key) => KeyPrefix + key.ToLowerInvariant();
 
     /// <summary>
     ///     Searches the configured directory for an object matching the configured parameters that correlates to the provided key
@@ -56,45 +58,66 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
     protected virtual T CreateFromEntry(ICacheEntry entry)
     {
         var key = entry.Key.ToString();
-        var keyActual = key!.Replace(KeyPrefix, string.Empty);
+        var keyActual = DeconstructKeyForType(key!);
 
         Logger.LogTrace("Creating new {TypeName} entry with key \"{Key}\"", typeof(T), key);
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
 
-        var loadPath = Paths.FirstOrDefault(path => Path.GetFileNameWithoutExtension(path).EqualsI(keyActual));
+        var path = GetPathForKey(keyActual);
 
-        if (string.IsNullOrEmpty(loadPath))
-            throw Options.SearchType switch
-            {
-                SearchType.Files => new FileNotFoundException($"Path lookup for key {keyActual} failed for type {typeof(T).Name}"),
-                SearchType.Directories => new DirectoryNotFoundException(
-                    $"Path lookup for key {keyActual} failed for type {typeof(T).Name}"),
-                _ => new ArgumentOutOfRangeException()
-            };
+        var ret = LoadFromFile(path);
 
-        var ret = LoadFromFile(loadPath);
-
-        LocalLookup[key] = ret;
+        LocalLookup[key!] = ret;
 
         Logger.LogTrace(
             "Created new {TypeName} entry with key \"{Key}\" from path \"{Path}\"",
             typeof(T),
             key,
-            loadPath);
+            path);
 
         return ret;
     }
 
+    protected virtual string DeconstructKeyForType(string key) => key.Replace(KeyPrefix, string.Empty, StringComparison.OrdinalIgnoreCase);
+
     /// <inheritdoc />
-    public T Get(string key) => Cache.GetOrCreate(KeyPrefix + key.ToLowerInvariant(), CreateFromEntry);
+    public virtual T Get(string key)
+    {
+        key = ConstructKeyForType(key);
+
+        try
+        {
+            return Cache.GetOrCreate(key, CreateFromEntry);
+        } catch
+        {
+            Cache.Remove(key);
+
+            throw;
+        }
+    }
 
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator() => LocalLookup.Values.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    protected virtual string GetPathForKey(string key)
+    {
+        var loadPath = Paths.FirstOrDefault(path => Path.GetFileNameWithoutExtension(path).EqualsI(key));
+
+        if (string.IsNullOrEmpty(loadPath))
+            throw Options.SearchType switch
+            {
+                SearchType.Files       => new FileNotFoundException($"Path lookup for key {key} failed for type {typeof(T).Name}"),
+                SearchType.Directories => new DirectoryNotFoundException($"Path lookup for key {key} failed for type {typeof(T).Name}"),
+                _                      => new ArgumentOutOfRangeException()
+            };
+
+        return loadPath;
+    }
 
     /// <summary>
     ///     Loads the object from the specified path and returns it
@@ -129,7 +152,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
     }
 
     /// <inheritdoc />
-    public Task ReloadAsync()
+    public virtual Task ReloadAsync()
     {
         Paths = LoadPaths();
 
@@ -145,7 +168,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
         return Task.CompletedTask;
     }
 
-    private void RemoveValueCallback(
+    protected virtual void RemoveValueCallback(
         object key,
         object value,
         EvictionReason reason,

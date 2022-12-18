@@ -97,7 +97,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
                 return;
 
         LastClicked[source.Id] = now;
-        source.Client.SendServerMessage(ServerMessageType.OrangeBar1, Name);
+        source.SendOrangeBarMessage(Name);
         Script.OnClicked(source);
     }
 

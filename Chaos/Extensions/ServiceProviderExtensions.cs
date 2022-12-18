@@ -60,7 +60,7 @@ public static class ServiceProviderExtensions
                         foreach (var item in inventoryItems)
                         {
                             aisling.Inventory.Remove(item.Slot);
-                            aisling.Inventory.TryAdd(item.Slot, item);
+                            aisling.Inventory.TryAddDirect(item.Slot, item);
                         }
 
                         var equipmentSchemas = mapper.MapMany<ItemSchema>(aisling.Equipment);
@@ -94,19 +94,26 @@ public static class ServiceProviderExtensions
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
-        var oldMaps = mapCache.ToList();
+        var oldMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
+
+        //locks ALL maps
+        await using var oldSync = await ComplexSynchronizationHelper.WaitAsync(
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromMilliseconds(5),
+            oldMaps.Values.Select(m => m.Sync).ToArray());
 
         await mapCache.ReloadAsync();
 
-        foreach (var oldMap in oldMaps)
+        var newMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
+
+        await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromMilliseconds(5),
+            newMaps.Values.Select(m => m.Sync).ToArray());
+
+        foreach (var oldMap in oldMaps.Values)
         {
             var newMap = mapCache.Get(oldMap.InstanceId);
-
-            await using var sync = await ComplexSynchronizationHelper.WaitAsync(
-                TimeSpan.FromMilliseconds(250),
-                TimeSpan.FromMilliseconds(3),
-                oldMap.Sync,
-                newMap.Sync);
 
             foreach (var monster in newMap.GetEntities<Monster>())
                 newMap.RemoveObject(monster);
@@ -121,6 +128,8 @@ public static class ServiceProviderExtensions
                 newMap.SimpleAdd(aisling);
 
             oldMap.Destroy();
+
+            newMap.BaseInstanceId = oldMap.BaseInstanceId;
         }
     }
 

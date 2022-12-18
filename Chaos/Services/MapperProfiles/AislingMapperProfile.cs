@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Geometry.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
@@ -47,12 +48,37 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
 
     public Aisling Map(AislingSchema obj)
     {
-        var mapInstance = SimpleCache.Get<MapInstance>(obj.MapInstanceId);
+        MapInstance mapInstance;
+        IPoint point = new Point(obj.X, obj.Y);
+
+        try
+        {
+            mapInstance = SimpleCache.Get<MapInstance>(obj.MapInstanceId);
+        } catch (Exception e)
+        {
+            if (obj.FallbackLocation.HasValue)
+                try
+                {
+                    mapInstance = SimpleCache.Get<MapInstance>(obj.FallbackLocation.Value.Map);
+                    point = obj.FallbackLocation.Value;
+                } catch (Exception ex)
+                {
+                    throw new KeyNotFoundException(
+                        $"Unable to find {nameof(obj.MapInstanceId)} of \"{obj.MapInstanceId}\" or {nameof(obj.FallbackLocation)
+                        } of \"{obj.FallbackLocation.Value.Map}\"",
+                        e);
+                }
+            else
+                throw new KeyNotFoundException(
+                    $"Unable to find {nameof(obj.MapInstanceId)} of \"{obj.MapInstanceId}\", and no {nameof(obj.FallbackLocation)
+                    } was specified",
+                    e);
+        }
 
         var aisling = new Aisling(
             obj.Name,
             mapInstance,
-            new Point(obj.X, obj.Y),
+            point,
             ExchangeFactory,
             LoggerFactory.CreateLogger<Aisling>(),
             ItemCloner)
@@ -86,6 +112,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         var ret = new AislingSchema
         {
             MapInstanceId = obj.MapInstance.InstanceId,
+            FallbackLocation = obj.MapInstance.ShardingOptions?.ExitLocation,
             BodyColor = obj.BodyColor,
             BodySprite = obj.BodySprite,
             Direction = obj.Direction,

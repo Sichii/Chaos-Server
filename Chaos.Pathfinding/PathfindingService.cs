@@ -8,6 +8,7 @@ namespace Chaos.Pathfinding;
 
 public sealed class PathfindingService : IPathfindingService
 {
+    private const string KEY_PREFIX = $"{nameof(PathfindingService)}___";
     private readonly ConcurrentDictionary<string, IGridDetails> GridDetails;
     private readonly IMemoryCache MemoryCache;
 
@@ -17,20 +18,26 @@ public sealed class PathfindingService : IPathfindingService
         MemoryCache = memoryCache;
     }
 
+    private string ConstructKey(string key) => $"{KEY_PREFIX}{key}".ToLowerInvariant();
+
     private IPathfinder CreatePathfinder(ICacheEntry cacheEntry)
     {
-        cacheEntry.SetSlidingExpiration(TimeSpan.FromMinutes(5));
+        cacheEntry.SetSlidingExpiration(TimeSpan.FromMinutes(60));
 
         var key = cacheEntry.Key.ToString();
 
         if (string.IsNullOrEmpty(key))
             throw new InvalidOperationException("Key cannot be null or empty");
 
-        if (!GridDetails.TryGetValue(key, out var gridDetails))
-            throw new KeyNotFoundException($"{key} not found for pathfinder grid details");
+        var keyActual = DeconstructKey(key!);
+
+        if (!GridDetails.TryGetValue(keyActual, out var gridDetails))
+            throw new KeyNotFoundException($"{keyActual} not found for pathfinder grid details");
 
         return new Pathfinder(gridDetails);
     }
+
+    private string DeconstructKey(string key) => key.Replace(KEY_PREFIX, string.Empty, StringComparison.OrdinalIgnoreCase);
 
     public Direction Pathfind(
         string key,
@@ -40,7 +47,9 @@ public sealed class PathfindingService : IPathfindingService
         ICollection<IPoint> unwalkablePoints
     )
     {
-        var pathFinder = MemoryCache.GetOrCreate(key.ToLowerInvariant(), CreatePathfinder);
+        var lookupKey = ConstructKey(key);
+
+        var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
         return pathFinder!.Pathfind(
             start,
@@ -59,7 +68,9 @@ public sealed class PathfindingService : IPathfindingService
         ICollection<IPoint> unwalkablePoints
     )
     {
-        var pathFinder = MemoryCache.GetOrCreate(key.ToLowerInvariant(), CreatePathfinder);
+        var lookupKey = ConstructKey(key);
+
+        var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
         return pathFinder!.Wander(start, ignoreWalls, unwalkablePoints);
     }

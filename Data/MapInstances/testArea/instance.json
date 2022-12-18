@@ -3,5 +3,10 @@
     "instanceId": "testArea",
     "music": 1,
     "name": "Test Area",
-    "templateKey": "5219"
+    "templateKey": "5219",
+    "shardingOptions": {
+        "shardingType": "absolutePlayerLimit",
+        "limit": 1,
+        "exitLocation": "testTown:(1, 13)"
+    }
 }

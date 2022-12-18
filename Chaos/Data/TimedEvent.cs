@@ -16,7 +16,20 @@ public sealed class TimedEvent : IEquatable<TimedEvent>
 
     public ulong UniqueId { get; }
 
-    public TimedEvent(TimedEventId eventId, TimeSpan duration, int qualifier = 1)
+    public TimedEvent(
+        ulong uniqueId,
+        TimedEventId eventId,
+        TimeSpan duration,
+        DateTime start
+    )
+    {
+        UniqueId = uniqueId;
+        EventId = eventId;
+        Duration = duration;
+        Start = start;
+    }
+
+    public TimedEvent(TimedEventId eventId, TimeSpan duration)
     {
         UniqueId = ServerId.NextId;
         EventId = eventId;

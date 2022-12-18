@@ -20,10 +20,17 @@ public class EquipmentScript : ConfigurableItemScriptBase
 
     public override void OnUse(Aisling source)
     {
+        if (!source.IsAlive)
+        {
+            source.SendOrangeBarMessage("You can't do that");
+
+            return;
+        }
+
         //gender check
         if ((Gender != source.Gender) && (Gender != Gender.Unisex))
         {
-            source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{Subject.DisplayName} does not seem to fit you");
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
             return;
         }
@@ -32,23 +39,21 @@ public class EquipmentScript : ConfigurableItemScriptBase
             && (BaseClass != BaseClass.Any)
             && (BaseClass != source.UserStatSheet.BaseClass))
         {
-            source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{Subject.DisplayName} does not seem to fit you");
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
             return;
         }
 
         if ((AdvClass != AdvClass.None) && (AdvClass != source.UserStatSheet.AdvClass))
         {
-            source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{Subject.DisplayName} does not seem to fit you");
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
             return;
         }
 
         if (MinLevel.HasValue && (MinLevel.Value > source.UserStatSheet.Level))
         {
-            source.Client.SendServerMessage(
-                ServerMessageType.OrangeBar1,
-                $"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
 
             return;
         }
@@ -57,9 +62,7 @@ public class EquipmentScript : ConfigurableItemScriptBase
             && StatAmountRequired.HasValue
             && (source.StatSheet.GetBaseStat(StatRequired.Value) < StatAmountRequired.Value))
         {
-            source.Client.SendServerMessage(
-                ServerMessageType.OrangeBar1,
-                $"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
 
             return;
         }

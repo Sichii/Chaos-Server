@@ -3,12 +3,12 @@ using Chaos.Data;
 
 namespace Chaos.Containers;
 
-public class TimedEventCollection : IEnumerable<TimedEvent>
+public sealed class TimedEventCollection : IEnumerable<TimedEvent>
 {
     private readonly Dictionary<TimedEvent.TimedEventId, HashSet<TimedEvent>> Events;
     private readonly AutoReleasingMonitor Sync;
 
-    public TimedEventCollection(IEnumerable<TimedEvent>? events)
+    public TimedEventCollection(IEnumerable<TimedEvent>? events = null)
     {
         events ??= Array.Empty<TimedEvent>();
         Events = new Dictionary<TimedEvent.TimedEventId, HashSet<TimedEvent>>();

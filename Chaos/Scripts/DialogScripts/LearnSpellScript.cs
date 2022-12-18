@@ -120,7 +120,7 @@ public class LearnSpellScript : ConfigurableDialogScriptBase
                 var requiredClass = spell.Template.LearningRequirements?.RequiredClass;
 
                 //if this spell is not available to the player's class, skip it
-                if (requiredClass.HasValue && (source.UserStatSheet.BaseClass != requiredClass.Value))
+                if (requiredClass.HasValue && !requiredClass.Value.ContainsClass(source.UserStatSheet.BaseClass))
                     continue;
 
                 //if the player already knows this spell, skip it

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
+using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Aisling;
 
@@ -16,7 +17,7 @@ public sealed record MapInstanceSchema
     ///     A unique id specific to this map instance<br />Best practice is to match the folder name
     /// </summary>
     [JsonRequired]
-    public string InstanceId { get; init; } = null!;
+    public string InstanceId { get; set; } = null!;
 
     /// <summary>
     ///     Default null<br />If specified, sets the minimum level needed to enter this map via warp tile
@@ -44,6 +45,12 @@ public sealed record MapInstanceSchema
     ///     A collection of script keys to load for this map (TODO: scripts section)
     /// </summary>
     public ICollection<string> ScriptKeys { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    ///     Default null<br />
+    ///     If specified, these options will be used to determine how this instance will shard itself
+    /// </summary>
+    public ShardingOptionsSchema? ShardingOptions { get; init; }
 
     /// <summary>
     ///     A string representation of the map id. Ex. 500 for mileth

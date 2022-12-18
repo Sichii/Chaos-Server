@@ -66,7 +66,7 @@ public record Attributes : Stats
         Interlocked.Add(ref _dex, other.Dex);
         Interlocked.Add(ref _magicResistance, other.MagicResistance);
         Interlocked.Add(ref _maximumHp, other.MaximumHp);
-        Interlocked.Add(ref _maximumMp, other.MaximumHp);
+        Interlocked.Add(ref _maximumMp, other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPct, other.AtkSpeedPct);
     }
 
@@ -82,7 +82,7 @@ public record Attributes : Stats
         Interlocked.Add(ref _dex, -other.Dex);
         Interlocked.Add(ref _magicResistance, -other.MagicResistance);
         Interlocked.Add(ref _maximumHp, -other.MaximumHp);
-        Interlocked.Add(ref _maximumMp, -other.MaximumHp);
+        Interlocked.Add(ref _maximumMp, -other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPct, -other.AtkSpeedPct);
     }
 }

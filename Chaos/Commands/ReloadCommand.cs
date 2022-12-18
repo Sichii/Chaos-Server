@@ -1,17 +1,23 @@
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
-using Chaos.Common.Definitions;
 using Chaos.Extensions;
 using Chaos.Objects.World;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Commands;
 
 [Command("reload")]
 public sealed class ReloadCommand : ICommand<Aisling>
 {
+    private readonly ILogger<ReloadCommand> Logger;
     private readonly IServiceProvider ServiceProvider;
-    public ReloadCommand(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
+
+    public ReloadCommand(IServiceProvider serviceProvider, ILogger<ReloadCommand> logger)
+    {
+        ServiceProvider = serviceProvider;
+        Logger = logger;
+    }
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)
@@ -28,7 +34,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         await ServiceProvider.ReloadSkillsAsync();
 
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Skills reloaded");
+                        aisling.SendOrangeBarMessage("Skills reloaded");
                     });
 
                 break;
@@ -37,7 +43,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     async () =>
                     {
                         await ServiceProvider.ReloadSpellsAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Spells reloaded");
+                        aisling.SendOrangeBarMessage("Spells reloaded");
                     });
 
                 break;
@@ -46,7 +52,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     async () =>
                     {
                         await ServiceProvider.ReloadItemsAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Items reloaded");
+                        aisling.SendOrangeBarMessage("Items reloaded");
                     });
 
                 break;
@@ -55,7 +61,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     async () =>
                     {
                         await ServiceProvider.ReloadMonstersAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Monsters reloaded");
+                        aisling.SendOrangeBarMessage("Monsters reloaded");
                     });
 
                 break;
@@ -64,7 +70,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     async () =>
                     {
                         await ServiceProvider.ReloadMerchantsAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Merchants reloaded");
+                        aisling.SendOrangeBarMessage("Merchants reloaded");
                     });
 
                 break;
@@ -72,8 +78,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadMapsAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Maps reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadMapsAsync();
+                            aisling.SendOrangeBarMessage("Maps reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload maps");
+                            Logger.LogError(e, "Failed to reload maps");
+                        }
                     });
 
                 break;
@@ -82,7 +95,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     async () =>
                     {
                         await ServiceProvider.ReloadDialogsAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "Dialogs reloaded");
+                        aisling.SendOrangeBarMessage("Dialogs reloaded");
                     });
 
                 break;
@@ -91,7 +104,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     async () =>
                     {
                         await ServiceProvider.ReloadWorldMapsAsync();
-                        aisling.Client.SendServerMessage(ServerMessageType.OrangeBar1, "WorldMaps reloaded");
+                        aisling.SendOrangeBarMessage("WorldMaps reloaded");
                     });
 
                 break;

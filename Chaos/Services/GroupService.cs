@@ -41,7 +41,7 @@ public sealed class GroupService : IGroupService
                         ServerMessageType.ActiveMessage,
                         $"{receiver.Name} tried to accept your invite, but it was expired");
 
-                    receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "Failed to join group, invite was expired");
+                    receiver.SendActiveMessage("Failed to join group, invite was expired");
 
                     return;
                 }
@@ -52,7 +52,7 @@ public sealed class GroupService : IGroupService
                 sender.Group = group;
                 receiver.Group = group;
             } else
-                receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are already in a group");
+                receiver.SendActiveMessage("You are already in a group");
         } else
         {
             if (receiver.Group == null)
@@ -68,14 +68,14 @@ public sealed class GroupService : IGroupService
                         ServerMessageType.ActiveMessage,
                         $"{receiver.Name} tried to accept your invite, but it was expired");
 
-                    receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "Failed to join group, invite was expired");
+                    receiver.SendActiveMessage("Failed to join group, invite was expired");
 
                     return;
                 }
 
                 if (sender.Group.Count >= WorldOptions.Instance.MaxGroupSize)
                 {
-                    receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "The group is full");
+                    receiver.SendActiveMessage("The group is full");
 
                     return;
                 }
@@ -83,7 +83,7 @@ public sealed class GroupService : IGroupService
                 PendingInvites.Remove(invite);
                 sender.Group.Add(receiver);
             } else
-                receiver.Client.SendServerMessage(ServerMessageType.ActiveMessage, "You are already in a group");
+                receiver.SendActiveMessage("You are already in a group");
         }
     }
 
@@ -94,14 +94,14 @@ public sealed class GroupService : IGroupService
 
         if (!sender.Options.Group)
         {
-            sender.Client.SendServerMessage(ServerMessageType.OrangeBar1, "You have elected not to join groups");
+            sender.SendOrangeBarMessage("You have elected not to join groups");
 
             return;
         }
 
         if (!receiver.Options.Group)
         {
-            sender.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{receiver.Name} refuses to join your group");
+            sender.SendOrangeBarMessage($"{receiver.Name} refuses to join your group");
 
             return;
         }
@@ -127,13 +127,13 @@ public sealed class GroupService : IGroupService
             if (receiver.Group == null)
                 SendInvite(sender, receiver);
             else
-                sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{receiver.Name} is already in a group");
+                sender.SendActiveMessage($"{receiver.Name} is already in a group");
         } else
         {
             if (receiver.Group == null)
             {
                 if (sender.Group.Count >= WorldOptions.Instance.MaxGroupSize)
-                    sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, "Your group is full");
+                    sender.SendActiveMessage("Your group is full");
                 else
                     SendInvite(sender, receiver);
             } else if (sender.Group == receiver.Group)
@@ -141,9 +141,9 @@ public sealed class GroupService : IGroupService
                 if (sender.Group.Leader.Equals(sender))
                     sender.Group.Kick(receiver);
                 else
-                    sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{receiver.Name} is already in your group");
+                    sender.SendActiveMessage($"{receiver.Name} is already in your group");
             } else
-                sender.Client.SendServerMessage(ServerMessageType.ActiveMessage, $"{receiver.Name} is already in a group");
+                sender.SendActiveMessage($"{receiver.Name} is already in a group");
         }
     }
 

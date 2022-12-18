@@ -67,6 +67,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         var skillsSchemas = await DesierlizeAsync<SkillBookSchema>(directory, "skills.json");
         var spellsSchemas = await DesierlizeAsync<SpellBookSchema>(directory, "spells.json");
         var legendSchema = await DesierlizeAsync<LegendSchema>(directory, "legend.json");
+        var timedEventsSchema = await DesierlizeAsync<TimedEventCollectionSchema>(directory, "timedEvents.json");
 
         var aisling = Mapper.Map<Aisling>(aislingSchema);
         var bank = Mapper.Map<Bank>(bankSchema);
@@ -76,6 +77,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         var skillBook = Mapper.Map<SkillBook>(skillsSchemas);
         var spellBook = Mapper.Map<SpellBook>(spellsSchemas);
         var legend = Mapper.Map<Legend>(legendSchema);
+        var timedEvents = Mapper.Map<TimedEventCollection>(timedEventsSchema);
 
         aisling.Initialize(
             name,
@@ -85,7 +87,8 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             skillBook,
             spellBook,
             legend,
-            effects);
+            effects,
+            timedEvents);
 
         Logger.LogTrace("Loaded aisling {Name}", name);
 
@@ -100,10 +103,11 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         var bankSchema = Mapper.Map<BankSchema>(obj.Bank);
         var equipmentSchema = Mapper.MapMany<ItemSchema>(obj.Equipment).ToList();
         var inventorySchema = Mapper.MapMany<ItemSchema>(obj.Inventory).ToList();
+        var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(obj.Effects).ToList();
         var skillsSchemas = Mapper.MapMany<SkillSchema>(obj.SkillBook).ToList();
         var spellsSchemas = Mapper.MapMany<SpellSchema>(obj.SpellBook).ToList();
         var legendSchema = Mapper.MapMany<LegendMarkSchema>(obj.Legend).ToList();
-        var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(obj.Effects).ToList();
+        var timedEventsSchemas = Mapper.Map<TimedEventCollectionSchema>(obj.TimedEvents);
 
         var directory = Path.Combine(Options.Directory, obj.Name.ToLower());
 
@@ -118,7 +122,8 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             SerializeAsync(directory, "inventory.json", inventorySchema),
             SerializeAsync(directory, "skills.json", skillsSchemas),
             SerializeAsync(directory, "spells.json", spellsSchemas),
-            SerializeAsync(directory, "legend.json", legendSchema));
+            SerializeAsync(directory, "legend.json", legendSchema),
+            SerializeAsync(directory, "timedEvents.json", timedEventsSchemas));
 
         Logger.LogTrace("Saved aisling {Name}", obj.Name);
     }

@@ -1,7 +1,6 @@
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Collections;
-using Chaos.Common.Definitions;
 using Chaos.Extensions.Geometry;
 using Chaos.Objects.World;
 using Chaos.Services.Factories.Abstractions;
@@ -39,7 +38,7 @@ public class TestCommand : ICommand<Aisling>
 
                 map.AddObjects(items);
 
-                source.Client.SendServerMessage(ServerMessageType.OrangeBar1, $"{amount} stick(s) spawned on the ground");
+                source.SendOrangeBarMessage($"{amount} stick(s) spawned on the ground");
 
                 break;
         }

@@ -2,10 +2,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chaos.Common.Abstractions;
+using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Objects.World;
+using Chaos.Services.Storage;
+using Chaos.Services.Storage.Abstractions;
+using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -71,6 +75,9 @@ public class Startup
         services.AddScripting();
         services.AddWorldFactories();
         services.AddTypeMapper();
+
+        services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(
+            p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
     }
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]

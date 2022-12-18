@@ -1,3 +1,4 @@
+using Chaos.Common.Collections;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Schemas.Content;
@@ -68,7 +69,7 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
             TemplateKey = obj.TemplateKey,
             Type = obj.Type,
             WanderIntervalMs = obj.WanderIntervalMs,
-            ScriptVars = obj.ScriptVars
+            ScriptVars = new Dictionary<string, DynamicVars>(obj.ScriptVars, StringComparer.OrdinalIgnoreCase)
         };
     }
 

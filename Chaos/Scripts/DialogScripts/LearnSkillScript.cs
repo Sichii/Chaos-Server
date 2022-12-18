@@ -120,7 +120,7 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
                 var requiredClass = skill.Template.LearningRequirements?.RequiredClass;
 
                 //if this skill is not available to the player's class, skip it
-                if (requiredClass.HasValue && (source.UserStatSheet.BaseClass != requiredClass.Value))
+                if (requiredClass.HasValue && !requiredClass.Value.ContainsClass(source.UserStatSheet.BaseClass))
                     continue;
 
                 //if the player already knows this skill, skip it
