@@ -1,9 +1,9 @@
 using Chaos.Common.Definitions;
-using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripts.RuntimeScripts;
 using Chaos.Scripts.SpellScripts.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts;
@@ -21,10 +21,11 @@ public class DamageScript : BasicSpellScriptBase
     protected virtual void ApplyDamage(SpellContext context, IEnumerable<Creature> targetEntities)
     {
         foreach (var target in targetEntities)
-        {
-            var damage = CalculateDamage(context, target);
-            target.ApplyDamage(context.Source, damage);
-        }
+            ApplyDamageScripts.Default.ApplyDamage(
+                context.Source,
+                context.Target,
+                this,
+                CalculateDamage(context, target));
     }
 
     protected virtual int CalculateDamage(SpellContext context, Creature target)
@@ -38,7 +39,7 @@ public class DamageScript : BasicSpellScriptBase
             damage += Convert.ToInt32(context.Source.StatSheet.GetEffectiveStat(DamageStat.Value) * multiplier);
         }
 
-        return DamageFormulae.Default.Calculate(context.Source, target, damage);
+        return damage;
     }
 
     /// <inheritdoc />

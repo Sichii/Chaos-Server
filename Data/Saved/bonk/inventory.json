@@ -4,6 +4,15 @@
     "count": 1,
     "currentDurability": 1000,
     "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "stick",
+    "uniqueId": 212
+  },
+  {
+    "color": "Default",
+    "count": 1,
+    "currentDurability": 1000,
+    "scriptKeys": [],
     "slot": 3,
     "templateKey": "cuckArmor",
     "uniqueId": 8299

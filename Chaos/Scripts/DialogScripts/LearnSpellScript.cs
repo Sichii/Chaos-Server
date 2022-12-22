@@ -167,35 +167,35 @@ public class LearnSpellScript : ConfigurableDialogScriptBase
         {
             var requiredStats = requirements.RequiredStats;
 
-            if (requiredStats.Str < source.StatSheet.EffectiveStr)
+            if (requiredStats.Str > source.StatSheet.EffectiveStr)
             {
                 dialog.Reply(source, "Come back when you are stronger.");
 
                 return false;
             }
 
-            if (requiredStats.Int < source.StatSheet.EffectiveInt)
+            if (requiredStats.Int > source.StatSheet.EffectiveInt)
             {
                 dialog.Reply(source, "Come back when you are smarter.");
 
                 return false;
             }
 
-            if (requiredStats.Wis < source.StatSheet.EffectiveWis)
+            if (requiredStats.Wis > source.StatSheet.EffectiveWis)
             {
                 dialog.Reply(source, "Come back when you are wiser.");
 
                 return false;
             }
 
-            if (requiredStats.Con < source.StatSheet.EffectiveCon)
+            if (requiredStats.Con > source.StatSheet.EffectiveCon)
             {
                 dialog.Reply(source, "Come back when you are tougher.");
 
                 return false;
             }
 
-            if (requiredStats.Dex < source.StatSheet.EffectiveDex)
+            if (requiredStats.Dex > source.StatSheet.EffectiveDex)
             {
                 dialog.Reply(source, "Come back when you are more dexterous.");
 
@@ -250,7 +250,7 @@ public class LearnSpellScript : ConfigurableDialogScriptBase
         {
             var requiredItem = ItemFactory.CreateFaux(itemRequirement.ItemTemplateKey);
 
-            source.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired, out _);
+            source.Inventory.RemoveQuantity(requiredItem.DisplayName, itemRequirement.AmountRequired);
         }
 
         if (requirements.RequiredGold.HasValue)

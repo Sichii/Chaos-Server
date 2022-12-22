@@ -2,8 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Chaos.Schemas.Aisling;
 
-public class TimedEventSchema
+public sealed class TimedEventSchema
 {
+    public bool AutoConsume { get; init; }
     public TimeSpan Duration { get; init; }
     [JsonRequired]
     public string EventId { get; init; } = null!;

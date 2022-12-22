@@ -5,5 +5,5 @@ namespace Chaos.Formulae;
 
 public static class LevelUpFormulae
 {
-    public static readonly ILevelUpFormula Default = new DefaultLevelUpFormula();
+    public static ILevelUpFormula Default { get; } = new DefaultLevelUpFormula();
 }

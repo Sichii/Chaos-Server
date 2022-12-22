@@ -10,6 +10,7 @@ public class DefaultScript : CompositeMonsterScript
     private static readonly ICollection<string> ScriptKeys = new[]
     {
         GetScriptKey(typeof(AggroTargetingScript)),
+        GetScriptKey(typeof(ContributionScript)),
         GetScriptKey(typeof(CastingScript)),
         GetScriptKey(typeof(AttackingScript)),
         GetScriptKey(typeof(MoveToTargetScript)),

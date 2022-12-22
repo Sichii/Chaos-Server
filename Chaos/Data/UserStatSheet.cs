@@ -154,9 +154,11 @@ public sealed record UserStatSheet : StatSheet
         return true;
     }
 
-    public void RecalculateMaxWeight() => _maxWeight = 40 + _level + _str;
-
     public void SetAdvClass(AdvClass advClass) => _advClass = advClass;
 
     public void SetBaseClass(BaseClass baseClass) => _baseClass = baseClass;
+
+    public void SetIsMaster(bool isMaster) => _master = isMaster;
+
+    public void SetMaxWeight(int maxWeight) => _maxWeight = maxWeight;
 }

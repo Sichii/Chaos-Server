@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Converters;
 
 namespace Chaos.Common.Collections;
 
 [JsonConverter(typeof(DynamicVarsConverter))]
-public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
+public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>, IScriptVars
 {
     private readonly JsonSerializerOptions JsonOptions;
     private readonly ConcurrentDictionary<string, JsonElement> Vars;

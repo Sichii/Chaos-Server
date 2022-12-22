@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Networking.Entities.Server;
@@ -140,7 +140,9 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
         PanelSprite = obj.PanelSprite,
         PantsColor = obj.PantsColor,
-        ScriptVars = new Dictionary<string, DynamicVars>(obj.ScriptVars, StringComparer.OrdinalIgnoreCase),
+        ScriptVars = new Dictionary<string, IScriptVars>(
+            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+            StringComparer.OrdinalIgnoreCase),
         Description = obj.Description
     };
 

@@ -149,6 +149,83 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         return true;
     }
 
+    public bool RemoveQuantity(string name, int quantity)
+    {
+        using var @lock = Sync.Enter();
+
+        if (quantity <= 0)
+            return false;
+
+        var existingItems = this
+                            .Where(item => item.DisplayName.EqualsI(name))
+                            .ToList();
+
+        if (!existingItems.Any())
+            return false;
+
+        var sum = existingItems.Sum(item => item.Count);
+
+        if (sum < quantity)
+            return false;
+
+        foreach (var item in existingItems)
+            if (quantity <= 0)
+                break;
+            else if (item.Count <= quantity)
+            {
+                Objects[item.Slot] = null;
+                BroadcastOnRemoved(item.Slot, item);
+                quantity -= item.Count;
+            } else
+            {
+                item.Count -= quantity;
+                BroadcastOnUpdated(item.Slot, item);
+
+                break;
+            }
+
+        return true;
+    }
+
+    public bool RemoveQuantity(byte slot, int quantity)
+    {
+        using var @lock = Sync.Enter();
+
+        if (quantity <= 0)
+            return false;
+
+        var existingItem = Objects[slot];
+
+        if (existingItem == null)
+            return false;
+
+        if (!HasCount(existingItem.DisplayName, quantity))
+            return false;
+
+        var existingItems = Objects
+                            .Where(item => (item != null) && item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
+                            .Prepend(existingItem)
+                            .ToList();
+
+        foreach (var item in existingItems)
+            if (quantity <= 0)
+                break;
+            else if (item!.Count <= quantity)
+            {
+                Objects[item.Slot] = null;
+                BroadcastOnRemoved(item.Slot, item);
+                quantity -= item.Count;
+            } else
+            {
+                item.Count -= quantity;
+                BroadcastOnUpdated(item.Slot, item);
+
+                break;
+            }
+
+        return true;
+    }
+
     public override bool TryAdd(byte slot, Item obj)
     {
         using var @lock = Sync.Enter();

@@ -9,7 +9,7 @@ namespace Chaos.Formulae.Damage;
 
 public class DefaultDamageFormula : IDamageFormula
 {
-    private readonly ImmutableArray<ImmutableArray<decimal>> ElementalModifierLookup = new[]
+    protected virtual ImmutableArray<ImmutableArray<decimal>> ElementalModifierLookup { get; } = new[]
     {
         // @formatter:off
         //mostly lifted from http://da-wizard.com/elements.html
@@ -28,28 +28,28 @@ public class DefaultDamageFormula : IDamageFormula
         // @formatter:on
     }.ToImmutableArray();
 
-    protected virtual int ApplyAcModifier(int ac, int damage, bool toAisling)
-    {
-        var minimum = toAisling ? WorldOptions.Instance.MinimumAislingAc : WorldOptions.Instance.MinimumMonsterAc;
-        var maximum = toAisling ? WorldOptions.Instance.MaximumAislingAc : WorldOptions.Instance.MaximumMonsterAc;
+    protected virtual void ApplyAcModifier(ref int damage, int defenderAc) => damage = Convert.ToInt32(damage * (1 + defenderAc / 100.0m));
 
-        if (ac == 0)
-            return Convert.ToInt32(damage);
-
-        ac = Math.Clamp(ac, minimum, maximum);
-        var mod = 1 + ac / 100.0m;
-
-        return Convert.ToInt32(damage * mod);
-    }
-
-    protected virtual int ApplyElementalModifier(int damage, Element attackElement, Element defenseElement) =>
-        Convert.ToInt32(damage * ElementalModifierLookup[(int)attackElement][(int)defenseElement]);
+    protected virtual void ApplyElementalModifier(ref int damage, Element attackElement, Element defenseElement) =>
+        damage = Convert.ToInt32(damage * ElementalModifierLookup[(int)attackElement][(int)defenseElement]);
 
     /// <inheritdoc />
-    public int Calculate(Creature attacker, Creature attacked, int damage)
+    public int Calculate(Creature attacker, Creature defender, int damage)
     {
-        var withAc = ApplyAcModifier(attacked.StatSheet.EffectiveAc, damage, attacked is Aisling);
+        var defenderAc = GetDefenderAc(defender);
 
-        return ApplyElementalModifier(withAc, attacker.StatSheet.OffenseElement, attacked.StatSheet.DefenseElement);
+        ApplyAcModifier(ref damage, defenderAc);
+        ApplyElementalModifier(ref damage, attacker.StatSheet.OffenseElement, defender.StatSheet.DefenseElement);
+
+        return damage;
     }
+
+    protected virtual int GetDefenderAc(Creature defender) => defender switch
+    {
+        Aisling aisling => Math.Clamp(
+            aisling.UserStatSheet.Ac,
+            WorldOptions.Instance.MinimumAislingAc,
+            WorldOptions.Instance.MaximumAislingAc),
+        _ => Math.Clamp(defender.StatSheet.Ac, WorldOptions.Instance.MinimumMonsterAc, WorldOptions.Instance.MaximumMonsterAc)
+    };
 }

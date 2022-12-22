@@ -9,24 +9,28 @@ public sealed class TimedEvent : IEquatable<TimedEvent>
         Fountain
     }
 
-    public bool Completed => DateTime.UtcNow - Start > Duration;
+    public bool AutoConsume { get; }
+
+    public bool Completed => Remaining <= TimeSpan.Zero;
     public TimeSpan Duration { get; }
     public TimedEventId EventId { get; }
+    public TimeSpan Remaining => Start + Duration - DateTime.UtcNow;
     public DateTime Start { get; }
-
     public ulong UniqueId { get; }
 
     public TimedEvent(
         ulong uniqueId,
         TimedEventId eventId,
         TimeSpan duration,
-        DateTime start
+        DateTime start,
+        bool autoConsume
     )
     {
         UniqueId = uniqueId;
         EventId = eventId;
         Duration = duration;
         Start = start;
+        AutoConsume = autoConsume;
     }
 
     public TimedEvent(TimedEventId eventId, TimeSpan duration)

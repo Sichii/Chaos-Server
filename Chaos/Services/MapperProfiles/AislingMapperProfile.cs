@@ -66,7 +66,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                     throw new KeyNotFoundException(
                         $"Unable to find {nameof(obj.MapInstanceId)} of \"{obj.MapInstanceId}\" or {nameof(obj.FallbackLocation)
                         } of \"{obj.FallbackLocation.Value.Map}\"",
-                        e);
+                        ex);
                 }
             else
                 throw new KeyNotFoundException(

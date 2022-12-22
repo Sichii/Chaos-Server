@@ -24,10 +24,10 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnAttacked(Creature source, ref int damage)
+    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride = null)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnAttacked(source, ref damage);
+            component.OnAttacked(source, damage);
     }
 
     /// <summary>

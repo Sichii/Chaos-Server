@@ -13,6 +13,7 @@ using Chaos.Cryptography;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Formulae;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
@@ -400,7 +401,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             aisling.MapInstance.AddAislingDirect(aisling, aisling);
             client.SendProfileRequest();
 
-            foreach (var reactor in aisling.MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(aisling)))
+            foreach (var reactor in aisling.MapInstance.GetDistinctReactorsAtPoint(aisling).ToList())
                 reactor.OnWalkedOn(aisling);
         } catch (Exception e)
         {
@@ -583,7 +584,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (map.IsWall(destinationPoint))
                 return default;
 
-            localClient.Aisling.DropGold(destinationPoint, amount);
+            localClient.Aisling.TryDropGold(destinationPoint, amount, out _);
 
             return default;
         }
@@ -714,7 +715,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             (var sourceSlot, var destinationPoint, var count) = localArgs;
 
-            localClient.Aisling.Drop(destinationPoint, sourceSlot, count);
+            localClient.Aisling.TryDrop(
+                destinationPoint,
+                sourceSlot,
+                out _,
+                count);
 
             return default;
         }
@@ -807,8 +812,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             var obj = map.GetEntitiesAtPoint<GroundEntity>(sourcePoint)
                          .TopOrDefault();
 
-            var reactor = map.GetEntitiesAtPoint<ReactorTile>(sourcePoint)
-                             .TopOrDefault();
+            var reactors = map.GetDistinctReactorsAtPoint(sourcePoint)
+                              .ToList();
 
             if (obj == null)
                 return default;
@@ -817,12 +822,16 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 case GroundItem groundItem:
                     localClient.Aisling.PickupItem(groundItem, destinationSlot);
-                    reactor?.OnItemPickedUpFrom(localClient.Aisling, groundItem);
+
+                    foreach (var reactor in reactors)
+                        reactor.OnItemPickedUpFrom(localClient.Aisling, groundItem);
 
                     break;
                 case Money money:
                     localClient.Aisling.PickupMoney(money);
-                    reactor?.OnGoldPickedUpFrom(localClient.Aisling, money);
+
+                    foreach (var reactor in reactors)
+                        reactor.OnGoldPickedUpFrom(localClient.Aisling, money);
 
                     break;
             }
@@ -918,7 +927,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 if (localClient.Aisling.UserStatSheet.IncrementStat(localArgs.Stat))
                 {
                     if (localArgs.Stat == Stat.STR)
-                        localClient.Aisling.UserStatSheet.RecalculateMaxWeight();
+                        localClient.Aisling.UserStatSheet.SetMaxWeight(LevelUpFormulae.Default.CalculateMaxWeight(localClient.Aisling));
 
                     localClient.SendAttributes(StatUpdateType.Full);
                 }

@@ -1,20 +1,46 @@
-using Chaos.Common.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Containers;
 using Chaos.Geometry.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.ReactorTileScripts.Abstractions;
+using Chaos.Templates;
 
 namespace Chaos.Objects.World;
 
-public sealed class ReactorTile : MapEntity, IScripted<IReactorTileScript>
+public sealed class TemplatedReactorTile : ReactorTile
 {
+    public ReactorTileTemplate Template { get; }
+
+    /// <inheritdoc />
+    public TemplatedReactorTile(
+        ReactorTileTemplate template,
+        MapInstance mapInstance,
+        IPoint point,
+        IScriptProvider scriptProvider,
+        ICollection<string>? extraScriptKeys,
+        Creature? owner
+    )
+        : base(
+            mapInstance,
+            point,
+            template.ShouldBlockPathfinding,
+            scriptProvider,
+            template.ScriptKeys.Union(extraScriptKeys ??= Array.Empty<string>()).ToList(),
+            template.ScriptVars,
+            owner) =>
+        Template = template;
+}
+
+public class ReactorTile : MapEntity, IScripted<IReactorTileScript>
+{
+    public Creature? Owner { get; }
     /// <inheritdoc />
     public IReactorTileScript Script { get; }
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
 
-    public IDictionary<string, DynamicVars> ScriptVars { get; }
+    public IDictionary<string, IScriptVars> ScriptVars { get; }
 
     public bool ShouldBlockPathfinding { get; }
 
@@ -25,12 +51,14 @@ public sealed class ReactorTile : MapEntity, IScripted<IReactorTileScript>
         IScriptProvider scriptProvider,
         // ReSharper disable once ParameterTypeCanBeEnumerable.Local
         ICollection<string> scriptKeys,
-        IDictionary<string, DynamicVars> scriptVars
+        IDictionary<string, IScriptVars> scriptVars,
+        Creature? owner = null
     )
         : base(mapInstance, point)
     {
+        Owner = owner;
         ShouldBlockPathfinding = shouldBlockPathfinding;
-        ScriptVars = new Dictionary<string, DynamicVars>(scriptVars, StringComparer.OrdinalIgnoreCase);
+        ScriptVars = new Dictionary<string, IScriptVars>(scriptVars, StringComparer.OrdinalIgnoreCase);
         ScriptKeys = new HashSet<string>(scriptKeys, StringComparer.OrdinalIgnoreCase);
         Script = scriptProvider.CreateScript<IReactorTileScript, ReactorTile>(ScriptKeys, this);
     }

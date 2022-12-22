@@ -23,10 +23,10 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnAttacked(Creature source, ref int damage)
+    public virtual void OnAttacked(Creature source, int damage)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnAttacked(source, ref damage);
+            component.OnAttacked(source, damage);
     }
 
     /// <summary>

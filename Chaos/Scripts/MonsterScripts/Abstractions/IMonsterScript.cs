@@ -9,7 +9,7 @@ namespace Chaos.Scripts.MonsterScripts.Abstractions;
 public interface IMonsterScript : IScript, IDeltaUpdatable
 {
     void OnApproached(Creature source);
-    void OnAttacked(Creature source, ref int damage);
+    void OnAttacked(Creature source, int damage, int? aggroOverride = null);
     void OnClicked(Aisling source);
     void OnDeath();
     void OnDeparture(Creature source);

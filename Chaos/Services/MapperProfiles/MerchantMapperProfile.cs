@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Schemas.Templates;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
@@ -13,7 +13,9 @@ public class MerchantMapperProfile : IMapperProfile<MerchantTemplate, MerchantTe
         DialogKey = obj.DialogKey,
         Name = obj.Name,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-        ScriptVars = new Dictionary<string, DynamicVars>(obj.ScriptVars, StringComparer.OrdinalIgnoreCase),
+        ScriptVars = new Dictionary<string, IScriptVars>(
+            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+            StringComparer.OrdinalIgnoreCase),
         Sprite = obj.Sprite,
         TemplateKey = obj.TemplateKey
     };

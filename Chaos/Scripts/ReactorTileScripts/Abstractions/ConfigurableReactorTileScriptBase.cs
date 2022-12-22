@@ -1,3 +1,4 @@
+using Chaos.Containers;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -6,8 +7,12 @@ namespace Chaos.Scripts.ReactorTileScripts.Abstractions;
 
 public class ConfigurableReactorTileScriptBase : ConfigurableScriptBase<ReactorTile>, IReactorTileScript
 {
+    protected MapInstance Map => Subject.MapInstance;
+    protected Point Point { get; }
+
     protected ConfigurableReactorTileScriptBase(ReactorTile subject)
-        : base(subject, scriptKey => subject.ScriptVars[scriptKey]) { }
+        : base(subject, scriptKey => subject.ScriptVars[scriptKey]) =>
+        Point = Point.From(Subject);
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

@@ -1,32 +1,40 @@
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 
-namespace Chaos.Formulae.Exp;
+namespace Chaos.Formulae.Experience;
 
-public class DefaultExpFormula : IExpFormula
+public class DefaultExperienceFormula : IExperienceFormula
 {
     /// <inheritdoc />
-    public virtual long Calculate(Monster monster, params Aisling[] aislings)
+    public long Calculate(Creature killedCreature, params Aisling[] aislings)
     {
-        var groupSizeDeductions = GetGroupSizeDeductions(aislings);
-        var partyLevelDifferenceDeductions = GetPartyLevelDifferenceDeductions(aislings);
-        var monsterLevelDeductions = GetMonsterLevelDifferenceDeductions(aislings, monster);
+        switch (killedCreature)
+        {
+            case Aisling:
+                return 0;
+            case Monster monster:
+                var groupSizeDeductions = GetGroupSizeDeductions(aislings);
+                var partyLevelDifferenceDeductions = GetPartyLevelDifferenceDeductions(aislings);
+                var monsterLevelDeductions = GetMonsterLevelDifferenceDeductions(aislings, monster);
 
-        var groupMultiplier = Math.Max(0, 1 - (groupSizeDeductions + partyLevelDifferenceDeductions));
-        var monsterLevelMultiplier = Math.Max(0, 1 - monsterLevelDeductions);
-        var exp = Convert.ToInt64(monster.Experience * groupMultiplier * monsterLevelMultiplier);
+                var groupMultiplier = Math.Max(0, 1 - (groupSizeDeductions + partyLevelDifferenceDeductions));
+                var monsterLevelMultiplier = Math.Max(0, 1 - monsterLevelDeductions);
 
-        return exp;
+                return Convert.ToInt64(monster.Experience * groupMultiplier * monsterLevelMultiplier);
+        }
+
+        return 0;
     }
 
     protected virtual decimal GetGroupSizeDeductions(ICollection<Aisling> group) => group.Count switch
     {
         1 => 0,
         2 => 0,
-        3 => 10,
-        4 => 20,
-        5 => 30,
-        6 => 50,
+        3 => 0.10m,
+        4 => 0.20m,
+        5 => 0.30m,
+        6 => 0.50m,
         _ => throw new ArgumentOutOfRangeException(nameof(group.Count), "Group size is too large.")
     };
 

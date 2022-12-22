@@ -8,7 +8,7 @@ namespace Chaos.Scripts.MerchantScripts.Abstractions;
 public interface IMerchantScript : IScript, IDeltaUpdatable
 {
     void OnApproached(Creature source);
-    void OnAttacked(Creature source, ref int damage);
+    void OnAttacked(Creature source, int damage);
     void OnClicked(Aisling source);
     void OnDeparture(Creature source);
     void OnGoldDroppedOn(Aisling source, int amount);

@@ -1,0 +1,20 @@
+{
+    "templateKey": "needle_trap",
+    "scriptKeys": ["trap"],
+    "scriptVars": {
+        "trap": {
+            "animation": {
+                "animationSpeed": 25,
+                "targetAnimation": 42
+            },
+            "filter": "hostileOnly",
+            "sound": 1,
+            "damage": 500,
+            "maxTriggers": 1,
+            "durationSecs": 300,
+            "range": 0,
+            "shape": "none"
+        }
+    },
+    "shouldBlockPathfinding": false
+}

@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
 using System.Text.Json;
+using Chaos.Common.Abstractions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions;
@@ -21,6 +22,7 @@ namespace Chaos.Services.Storage;
 public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance, MapInstanceSchema>, IShardGenerator
 {
     private readonly IMerchantFactory MerchantFactory;
+    private readonly IMonsterFactory MonsterFactory;
     private readonly IPathfindingService PathfindingService;
     // ReSharper disable once NotAccessedField.Local
     private readonly Task PersistUsedMapsTask;
@@ -32,6 +34,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         IMemoryCache cache,
         ITypeMapper mapper,
         IMerchantFactory merchantFactory,
+        IMonsterFactory monsterFactory,
         IPathfindingService pathfindingService,
         IReactorTileFactory reactorTileFactory,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
@@ -46,6 +49,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
             logger)
     {
         MerchantFactory = merchantFactory;
+        MonsterFactory = monsterFactory;
         PathfindingService = pathfindingService;
         ReactorTileFactory = reactorTileFactory;
         PersistUsedMapsTimer = new PeriodicTimer(TimeSpan.FromMinutes(5));
@@ -135,7 +139,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         var merchantSpawnSchemas =
             JsonSerializer.Deserialize<List<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
 
-        var reactorsSchemas = JsonSerializer.Deserialize<List<ReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
+        var reactorsSchemas = JsonSerializer.Deserialize<List<StaticReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
 
         if (mapInstanceSchema == null)
             throw new SerializationException($"Failed to serialize {nameof(MapInstanceSchema)} from directory \"{directory}\"");
@@ -151,24 +155,23 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema);
         mapInstance.BaseInstanceId = baseInstanceId;
 
-        var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
-
         foreach (var reactorSchema in reactorsSchemas!)
         {
+            var owner = string.IsNullOrEmpty(reactorSchema.OwnerMonsterTemplateKey)
+                ? null
+                : MonsterFactory.Create(reactorSchema.OwnerMonsterTemplateKey, mapInstance, reactorSchema.Source);
+
             var reactor = ReactorTileFactory.Create(
                 mapInstance,
                 reactorSchema.Source,
                 reactorSchema.ShouldBlockPathfinding,
                 reactorSchema.ScriptKeys,
-                reactorSchema.ScriptVars);
+                new ConcurrentDictionary<string, IScriptVars>(
+                    reactorSchema.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+                    StringComparer.OrdinalIgnoreCase),
+                owner);
 
             mapInstance.SimpleAdd(reactor);
-        }
-
-        foreach (var monsterSpawn in monsterSpawns)
-        {
-            mapInstance.AddSpawner(monsterSpawn);
-            monsterSpawn.FullSpawn();
         }
 
         foreach (var merchantSpawn in merchantSpawnSchemas!)
@@ -181,6 +184,14 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
 
             merchant.Direction = merchantSpawn.Direction;
             mapInstance.SimpleAdd(merchant);
+        }
+
+        var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
+
+        foreach (var monsterSpawn in monsterSpawns)
+        {
+            mapInstance.AddSpawner(monsterSpawn);
+            monsterSpawn.FullSpawn();
         }
 
         mapInstance.Pathfinder = PathfindingService;

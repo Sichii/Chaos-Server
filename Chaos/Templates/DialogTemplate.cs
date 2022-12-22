@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Objects.Menu;
 using Chaos.Templates.Abstractions;
@@ -11,8 +11,8 @@ public sealed record DialogTemplate : ITemplate
     public required ICollection<DialogOption> Options { get; init; }
     public required string? PrevDialogKey { get; init; }
     public required ICollection<string> ScriptKeys { get; init; }
-    public required IDictionary<string, DynamicVars> ScriptVars { get; init; } =
-        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
+    public required IDictionary<string, IScriptVars> ScriptVars { get; init; } =
+        new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
     public required string TemplateKey { get; init; }
     public required string Text { get; init; }
     public required ushort? TextBoxLength { get; init; }
@@ -28,6 +28,6 @@ public sealed record DialogTemplate : ITemplate
         TextBoxLength = null,
         Text = string.Empty,
         Type = MenuOrDialogType.CloseDialog,
-        ScriptVars = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase)
+        ScriptVars = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase)
     };
 }

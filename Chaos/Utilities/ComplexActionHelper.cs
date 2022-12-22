@@ -203,7 +203,7 @@ public static class ComplexActionHelper
         if (!source.TryGiveGold(totalValue))
             return SellItemResult.TooMuchGold;
 
-        source.Inventory.RemoveQuantity(slot, amount, out _);
+        source.Inventory.RemoveQuantity(slot, amount);
 
         return SellItemResult.Success;
     }
@@ -237,7 +237,7 @@ public static class ComplexActionHelper
         if (!source.TryGiveGold(totalValue))
             return SellItemResult.TooMuchGold;
 
-        source.Inventory.RemoveQuantity(itemName, amount, out _);
+        source.Inventory.RemoveQuantity(itemName, amount);
 
         return SellItemResult.Success;
     }

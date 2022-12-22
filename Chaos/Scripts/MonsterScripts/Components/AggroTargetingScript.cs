@@ -34,15 +34,17 @@ public class AggroTargetingScript : MonsterScriptBase
     }
 
     /// <inheritdoc />
-    public override void OnAttacked(Creature source, ref int damage)
+    public override void OnAttacked(Creature source, int damage, int? aggroOverride = null)
     {
-        base.OnAttacked(source, ref damage);
-        var localDamage = damage;
-
-        if ((damage <= 0) || source.Equals(Subject))
+        if (source.Equals(Subject))
             return;
 
-        AggroList.AddOrUpdate(source.Id, _ => localDamage, (_, currentAggro) => currentAggro + localDamage);
+        var aggro = aggroOverride ?? damage;
+
+        if (aggro == 0)
+            return;
+
+        AggroList.AddOrUpdate(source.Id, _ => aggro, (_, currentAggro) => currentAggro + aggro);
     }
 
     /// <inheritdoc />

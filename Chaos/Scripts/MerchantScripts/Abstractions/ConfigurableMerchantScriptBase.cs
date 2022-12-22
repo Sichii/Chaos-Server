@@ -14,7 +14,7 @@ public abstract class ConfigurableMerchantScriptBase : ConfigurableScriptBase<Me
     public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />
-    public virtual void OnAttacked(Creature source, ref int damage) { }
+    public virtual void OnAttacked(Creature source, int damage) { }
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

@@ -11,6 +11,8 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Time;
+using Chaos.Time.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
@@ -29,9 +31,10 @@ public abstract class Creature : NamedEntity, IAffected
     protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
     public abstract int AssailIntervalMs { get; }
     public virtual bool IsAlive => StatSheet.CurrentHp > 0;
+    public abstract ILogger Logger { get; }
+    public IIntervalTimer RegenTimer { get; }
     public abstract StatSheet StatSheet { get; }
     public abstract CreatureType Type { get; }
-    protected abstract ILogger Logger { get; }
 
     protected Creature(
         string name,
@@ -48,6 +51,7 @@ public abstract class Creature : NamedEntity, IAffected
         Direction = Direction.Down;
         Effects = new EffectsBar(this);
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
+        RegenTimer = new RegenTimer(this);
     }
 
     /// <inheritdoc />
@@ -70,12 +74,6 @@ public abstract class Creature : NamedEntity, IAffected
                 speed,
                 sound);
     }
-
-    public abstract void ApplyDamage(
-        Creature source,
-        int amount,
-        byte? hitSound = 1
-    );
 
     public virtual bool CanUse(Skill skill, [MaybeNullWhen(false)] out SkillContext skillContext)
     {
@@ -108,46 +106,6 @@ public abstract class Creature : NamedEntity, IAffected
     }
 
     public void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
-
-    public virtual void Drop(IPoint point, IEnumerable<Item> items)
-    {
-        var groundItems = items.Select(i => new GroundItem(i, MapInstance, point))
-                               .ToList();
-
-        if (!groundItems.Any())
-            return;
-
-        MapInstance.AddObjects(groundItems);
-
-        var reactors = MapInstance.GetEntitiesAtPoint<ReactorTile>(point)
-                                  .ToList();
-
-        foreach (var groundItem in groundItems)
-        {
-            Logger.LogDebug("{Creature} dropped {Item}", this, groundItem);
-            groundItem.Item.Script.OnDropped(this, MapInstance);
-
-            foreach (var reactor in reactors)
-                reactor.OnItemDroppedOn(this, groundItem);
-        }
-    }
-
-    public virtual void Drop(IPoint point, params Item[] items) => Drop(point, items.AsEnumerable());
-
-    public virtual void DropGold(IPoint point, int amount)
-    {
-        if ((amount <= 0) || (amount > Gold))
-            return;
-
-        Gold -= amount;
-
-        var money = new Money(amount, MapInstance, point);
-
-        MapInstance.AddObject(money, point);
-
-        foreach (var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(point))
-            reactor.OnGoldDroppedOn(this, money);
-    }
 
     public virtual bool IsFriendlyTo(Creature other) => other switch
     {
@@ -260,14 +218,14 @@ public abstract class Creature : NamedEntity, IAffected
                 if (aisling is not null)
                     await aisling.Client.ReceiveSync.WaitAsync();
 
-                await using var sync = await ComplexSynchronizationHelper.WaitAsync(
-                    TimeSpan.FromMilliseconds(500),
-                    TimeSpan.FromMilliseconds(3),
-                    currentMap.Sync,
-                    destinationMap.Sync);
-
                 try
                 {
+                    await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                        TimeSpan.FromMilliseconds(500),
+                        TimeSpan.FromMilliseconds(3),
+                        currentMap.Sync,
+                        destinationMap.Sync);
+
                     if (!fromWolrdMap && !currentMap.RemoveObject(this))
                         return;
 
@@ -294,6 +252,53 @@ public abstract class Creature : NamedEntity, IAffected
                     aisling?.Client.ReceiveSync.Release();
                 }
             });
+
+    public virtual bool TryDrop(IPoint point, IEnumerable<Item> items, [MaybeNullWhen(false)] out GroundItem[] groundItems)
+    {
+        groundItems = items.Select(i => new GroundItem(i, MapInstance, point))
+                           .ToArray();
+
+        if (!groundItems.Any())
+            return false;
+
+        MapInstance.AddObjects(groundItems);
+
+        var reactors = MapInstance.GetDistinctReactorsAtPoint(point)
+                                  .ToList();
+
+        foreach (var groundItem in groundItems)
+        {
+            Logger.LogDebug("{Creature} dropped {Item}", this, groundItem);
+            groundItem.Item.Script.OnDropped(this, MapInstance);
+
+            foreach (var reactor in reactors)
+                reactor.OnItemDroppedOn(this, groundItem);
+        }
+
+        return true;
+    }
+
+    public virtual bool TryDrop(IPoint point, [MaybeNullWhen(false)] out GroundItem[] groundItems, params Item[] items) =>
+        TryDrop(point, items.AsEnumerable(), out groundItems);
+
+    public virtual bool TryDropGold(IPoint point, int amount, [MaybeNullWhen(false)] out Money money)
+    {
+        money = null;
+
+        if ((amount <= 0) || (amount > Gold))
+            return false;
+
+        Gold -= amount;
+
+        money = new Money(amount, MapInstance, point);
+
+        MapInstance.AddObject(money, point);
+
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(point).ToList())
+            reactor.OnGoldDroppedOn(this, money);
+
+        return true;
+    }
 
     public virtual bool TryUseSkill(Skill skill)
     {
@@ -339,7 +344,11 @@ public abstract class Creature : NamedEntity, IAffected
             aisling.Client.SendCreatureTurn(Id, direction);
     }
 
-    public override void Update(TimeSpan delta) => Effects.Update(delta);
+    public override void Update(TimeSpan delta)
+    {
+        Effects.Update(delta);
+        RegenTimer.Update(delta);
+    }
 
     public virtual void Walk(Direction direction)
     {
@@ -377,7 +386,7 @@ public abstract class Creature : NamedEntity, IAffected
         foreach (var aisling in visibleAfter.Intersect(visibleBefore).OfType<Aisling>())
             aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
 
-        foreach (var reactor in MapInstance.GetEntitiesAtPoint<ReactorTile>(Point.From(this)))
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this).ToList())
             reactor.OnWalkedOn(this);
     }
 

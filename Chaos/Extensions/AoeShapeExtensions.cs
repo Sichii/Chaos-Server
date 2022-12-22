@@ -62,6 +62,6 @@ public static class AoeShapeExtensions
         if (includeSource)
             points = points.Prepend(sourcePoint);
 
-        return points;
+        return points.Distinct();
     }
 }

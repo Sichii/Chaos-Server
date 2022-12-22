@@ -16,6 +16,7 @@ public sealed class Merchant : Creature, IScripted<IMerchantScript>
     /// <inheritdoc />
     public override int AssailIntervalMs => 500;
     public override bool IsAlive => true;
+    public override ILogger<Merchant> Logger { get; }
     /// <inheritdoc />
     public IMerchantScript Script { get; }
     /// <inheritdoc />
@@ -24,7 +25,6 @@ public sealed class Merchant : Creature, IScripted<IMerchantScript>
     public MerchantTemplate Template { get; }
 
     public override CreatureType Type { get; }
-    protected override ILogger<Merchant> Logger { get; }
 
     public Merchant(
         MerchantTemplate template,
@@ -50,12 +50,6 @@ public sealed class Merchant : Creature, IScripted<IMerchantScript>
         ScriptKeys.AddRange(extraScriptKeys);
         Script = scriptProvider.CreateScript<IMerchantScript, Merchant>(ScriptKeys, this);
     }
-
-    public override void ApplyDamage(
-        Creature source,
-        int amount,
-        byte? hitSound = 1
-    ) => Script.OnAttacked(source, ref amount);
 
     /// <inheritdoc />
     public override void OnApproached(Creature creature) => Script.OnApproached(creature);

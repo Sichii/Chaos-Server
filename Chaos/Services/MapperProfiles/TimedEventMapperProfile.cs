@@ -22,7 +22,8 @@ public class TimedEventMapperProfile : IMapperProfile<TimedEvent, TimedEventSche
             obj.UniqueId,
             eventId,
             obj.Duration,
-            obj.Start);
+            obj.Start,
+            obj.AutoConsume);
     }
 
     /// <inheritdoc />
@@ -31,7 +32,8 @@ public class TimedEventMapperProfile : IMapperProfile<TimedEvent, TimedEventSche
         UniqueId = obj.UniqueId,
         EventId = obj.EventId.ToString(),
         Duration = obj.Duration,
-        Start = obj.Start
+        Start = obj.Start,
+        AutoConsume = obj.AutoConsume
     };
 
     /// <inheritdoc />

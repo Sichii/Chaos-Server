@@ -1,22 +1,40 @@
-using Chaos.Common.Definitions;
+using Chaos.Common.Utilities;
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Formulae.Regen;
 
 public sealed class DefaultRegenFormula : IRegenFormula
 {
     /// <inheritdoc />
-    public int CalculateIntervalSecs(Aisling aisling) => 6;
+    public int CalculateHealthRegen(Creature creature)
+    {
+        var percentToRegenerate = creature switch
+        {
+            Aisling  => 10,
+            Monster  => 3,
+            Merchant => 100,
+            _        => throw new ArgumentOutOfRangeException(nameof(creature), creature, null)
+        };
+
+        return MathEx.GetPercentOf<int>((int)creature.StatSheet.EffectiveMaximumHp, percentToRegenerate);
+    }
 
     /// <inheritdoc />
-    public void Regenerate(Aisling aisling)
-    {
-        if (!aisling.IsAlive)
-            return;
+    public int CalculateIntervalSecs(Creature creature) => 6;
 
-        aisling.StatSheet.AddHealthPct(10);
-        aisling.StatSheet.AddManaPct(5);
-        aisling.Client.SendAttributes(StatUpdateType.Vitality);
+    /// <inheritdoc />
+    public int CalculateManaRegen(Creature creature)
+    {
+        var percentToRegenerate = creature switch
+        {
+            Aisling  => 5,
+            Monster  => 1.5m,
+            Merchant => 100,
+            _        => throw new ArgumentOutOfRangeException(nameof(creature), creature, null)
+        };
+
+        return MathEx.GetPercentOf<int>((int)creature.StatSheet.EffectiveMaximumMp, percentToRegenerate);
     }
 }

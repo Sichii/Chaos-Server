@@ -8,6 +8,8 @@ namespace Chaos.Objects.World.Abstractions;
 public abstract class GroundEntity : NamedEntity
 {
     private readonly IIntervalTimer GroundTimer;
+    private IIntervalTimer? LockTimer;
+    protected HashSet<string>? Owners;
 
     /// <inheritdoc />
     protected GroundEntity(
@@ -23,12 +25,30 @@ public abstract class GroundEntity : NamedEntity
             point) =>
         GroundTimer = new IntervalTimer(TimeSpan.FromHours(1), false);
 
+    public virtual bool CanPickUp(Aisling source) => true;
+
+    public void LockToCreatures(int seconds, params Aisling[] aislings)
+    {
+        if (seconds <= 0)
+            return;
+
+        LockTimer = new IntervalTimer(TimeSpan.FromSeconds(seconds), false);
+        Owners = aislings.Select(aisling => aisling.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
     /// <inheritdoc />
     public override void OnClicked(Aisling source) { }
 
     public override void Update(TimeSpan delta)
     {
         GroundTimer.Update(delta);
+        LockTimer?.Update(delta);
+
+        if (LockTimer is { IntervalElapsed: true })
+        {
+            LockTimer = null;
+            Owners = null;
+        }
 
         //if the entity has been on the ground for over an hour, destroy it
         if (GroundTimer.IntervalElapsed)

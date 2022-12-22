@@ -32,7 +32,7 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
     public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />
-    public virtual void OnAttacked(Creature source, ref int damage) { }
+    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride = null) { }
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

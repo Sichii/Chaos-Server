@@ -2,7 +2,7 @@ using Chaos.Formulae.Abstractions;
 
 namespace Chaos.Formulae.LevelRange;
 
-public class LevelRangeFormula : ILevelRangeFormula
+public class DefaultLevelRangeFormula : ILevelRangeFormula
 {
     /// <inheritdoc />
     public virtual int GetLowerBound(int level) => (int)Math.Ceiling(Math.Max(0, level * 5m - 15) / 6);

@@ -169,6 +169,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         MonsterSpawns.Clear();
     }
 
+    public IEnumerable<ReactorTile> GetDistinctReactorsAtPoint(IPoint point)
+    {
+        //get reactors in order of oldest to newest
+        var reactors = GetEntitiesAtPoint<ReactorTile>(point).OrderBy(entity => entity.Creation);
+        var distinctTemplateKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        //returns all static reactor tiles, and only unique templated reactor tiles
+        return reactors.Where(
+            reactor => reactor is not TemplatedReactorTile templatedReactorTile
+                       || distinctTemplateKeys.Add(templatedReactorTile.Template.TemplateKey));
+    }
+
     public IEnumerable<T> GetEntities<T>() where T: MapEntity => Objects.Values<T>();
 
     public IEnumerable<T> GetEntitiesAtPoint<T>(IPoint point) where T: MapEntity => Objects.AtPoint<T>(point);
@@ -301,7 +313,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 break;
             case ShardingType.AbsolutePlayerLimit:
             {
-                var aislings = Objects.Values<Aisling>().ToList();
+                var aislings = Objects.Values<Aisling>()
+                                      .Where(aisling => !aisling.IsAdmin)
+                                      .ToList();
+
                 var amountOverLimit = aislings.Count - limit;
 
                 //if we're not over the limit, do nothing
@@ -348,7 +363,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             }
             case ShardingType.AbsoluteGroupLimit:
             {
-                var aislings = Objects.Values<Aisling>().ToList();
+                var aislings = Objects.Values<Aisling>()
+                                      .Where(aisling => !aisling.IsAdmin)
+                                      .ToList();
 
                 //number of unique groups in the zone
                 var groups = aislings.GroupBy(a => a.Group)

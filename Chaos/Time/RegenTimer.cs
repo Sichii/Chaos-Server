@@ -1,20 +1,23 @@
-using Chaos.Formulae.Abstractions;
-using Chaos.Objects.World;
+using Chaos.Formulae;
+using Chaos.Objects.World.Abstractions;
+using Chaos.Scripts.RuntimeScripts;
 
 namespace Chaos.Time;
 
 public sealed class RegenTimer : IntervalTimer
 {
-    private readonly Aisling Aisling;
-    private readonly IRegenFormula RegenFormula;
+    private readonly Creature Creature;
 
     /// <inheritdoc />
-    public RegenTimer(Aisling aisling, IRegenFormula regenFormula)
-        : base(TimeSpan.FromSeconds(regenFormula.CalculateIntervalSecs(aisling)), false)
-    {
-        Aisling = aisling;
-        RegenFormula = regenFormula;
-    }
+    public RegenTimer(Creature creature)
+        : base(CalculateInterval(creature), false) =>
+        Creature = creature;
+
+    private TimeSpan CalculateInterval() =>
+        TimeSpan.FromSeconds(RegenFormulae.Default.CalculateIntervalSecs(Creature));
+
+    private static TimeSpan CalculateInterval(Creature creature) =>
+        TimeSpan.FromSeconds(RegenFormulae.Default.CalculateIntervalSecs(creature));
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)
@@ -23,8 +26,8 @@ public sealed class RegenTimer : IntervalTimer
 
         if (IntervalElapsed)
         {
-            RegenFormula.Regenerate(Aisling);
-            Interval = TimeSpan.FromSeconds(RegenFormula.CalculateIntervalSecs(Aisling));
+            NaturalRegenerationScripts.Default.Regenerate(Creature);
+            Interval = CalculateInterval();
         }
     }
 }

@@ -1,11 +1,14 @@
 using Chaos.Common.Synchronization;
 using Chaos.Data;
+using Chaos.Time;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Containers;
 
-public sealed class TimedEventCollection : IEnumerable<TimedEvent>
+public sealed class TimedEventCollection : IEnumerable<TimedEvent>, IDeltaUpdatable
 {
     private readonly Dictionary<TimedEvent.TimedEventId, HashSet<TimedEvent>> Events;
+    private readonly IIntervalTimer Interval;
     private readonly AutoReleasingMonitor Sync;
 
     public TimedEventCollection(IEnumerable<TimedEvent>? events = null)
@@ -13,6 +16,7 @@ public sealed class TimedEventCollection : IEnumerable<TimedEvent>
         events ??= Array.Empty<TimedEvent>();
         Events = new Dictionary<TimedEvent.TimedEventId, HashSet<TimedEvent>>();
         Sync = new AutoReleasingMonitor();
+        Interval = new IntervalTimer(TimeSpan.FromSeconds(1));
 
         foreach (var timedEvent in events)
             InnerAddEvent(timedEvent);
@@ -67,5 +71,38 @@ public sealed class TimedEventCollection : IEnumerable<TimedEvent>
             eventList.Remove(timedEvent);
 
         return timedEvent != null;
+    }
+
+    public bool TryGetNearestToCompletion(TimedEvent.TimedEventId eventId, [MaybeNullWhen(false)] out TimedEvent timedEvent)
+    {
+        timedEvent = null;
+
+        if (!Events.TryGetValue(eventId, out var events) || !events.Any())
+            return false;
+
+        timedEvent = events.MinBy(e => e.Remaining);
+
+        return timedEvent != null;
+    }
+
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        Interval.Update(delta);
+
+        if (Interval.IntervalElapsed)
+        {
+            using var sync = Sync.Enter();
+
+            foreach (var kvp in Events)
+            {
+                var timedEvents = kvp.Value.Where(timedEvent => timedEvent.AutoConsume)
+                                     .ToList();
+
+                foreach (var timer in timedEvents)
+                    if (timer.Completed)
+                        kvp.Value.Remove(timer);
+            }
+        }
     }
 }

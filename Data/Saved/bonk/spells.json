@@ -1,6 +1,12 @@
 [
   {
     "scriptKeys": [],
+    "slot": 1,
+    "templateKey": "needle_trap",
+    "uniqueId": 206
+  },
+  {
+    "scriptKeys": [],
     "slot": 2,
     "templateKey": "regrowth",
     "uniqueId": 38146

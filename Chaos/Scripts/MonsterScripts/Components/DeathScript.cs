@@ -1,6 +1,6 @@
-using Chaos.Formulae;
 using Chaos.Objects.World;
 using Chaos.Scripts.MonsterScripts.Abstractions;
+using Chaos.Scripts.RuntimeScripts;
 
 namespace Chaos.Scripts.MonsterScripts.Components;
 
@@ -17,24 +17,44 @@ public class DeathScript : MonsterScriptBase
         if (!Map.RemoveObject(Subject))
             return;
 
-        var rewardTarget = Subject.AggroList
+        //this code will set the reward target to the person at the top of the aggro list
+        //var rewardTarget = Subject.AggroList
+        //                          .OrderByDescending(kvp => kvp.Value)
+        //                          .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
+        //                          .FirstOrDefault(a => a is not null);
+
+        //get the highest contributor
+        //if there are no contributor, try getting the highest aggro
+        var rewardTarget = Subject.Contribution
                                   .OrderByDescending(kvp => kvp.Value)
                                   .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
-                                  .FirstOrDefault(a => a is not null);
+                                  .FirstOrDefault(a => a is not null)
+                           ?? Subject.AggroList
+                                     .OrderByDescending(kvp => kvp.Value)
+                                     .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
+                                     .FirstOrDefault(a => a is not null);
+
+        Aisling[]? rewardTargets = null;
+
+        if (rewardTarget != null)
+            rewardTargets = rewardTarget.Group?.ToArray() ?? new[] { rewardTarget };
 
         if (Subject.LootTable != null)
             Subject.Items.AddRange(Subject.LootTable.GenerateLoot());
 
-        Subject.DropGold(Subject, Subject.Gold);
-        Subject.Drop(Subject, Subject.Items);
+        var droppedGold = Subject.TryDropGold(Subject, Subject.Gold, out var money);
+        var droppedITems = Subject.TryDrop(Subject, Subject.Items, out var groundItems);
 
-        if (rewardTarget is not null)
+        if (rewardTargets is not null)
         {
-            var grp = rewardTarget.Group?.ToArray() ?? new[] { rewardTarget };
-            var exp = ExpFormulae.Default.Calculate(Subject, grp);
+            if (droppedGold)
+                money!.LockToCreatures(30, rewardTargets);
 
-            foreach (var member in grp)
-                member.GiveExp(exp);
+            if (droppedITems)
+                foreach (var groundItem in groundItems!)
+                    groundItem.LockToCreatures(30, rewardTargets);
+
+            ExperienceDistributionScripts.Default.DistributeExperience(Subject, rewardTargets);
         }
     }
 }

@@ -125,6 +125,7 @@ public static class ServiceCollectionExtensions
         services.AddDirectoryBoundOptionsFromConfig<ExpiringWorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<ExpiringMerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddDirectoryBoundOptionsFromConfig<ExpiringDialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddDirectoryBoundOptionsFromConfig<ExpiringReactorTileTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
 
         services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
 
@@ -155,6 +156,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache<WorldMap>, ExpiringWorldMapCache>();
         services.AddSingleton<ISimpleCache<MerchantTemplate>, ExpiringMerchantTemplateCache>();
         services.AddSingleton<ISimpleCache<DialogTemplate>, ExpiringDialogTemplateCache>();
+        services.AddSingleton<ISimpleCache<ReactorTileTemplate>, ExpiringReactorTileTemplateCache>();
 
         services.AddSingleton<ISimpleCache, SimpleCache>();
         services.AddSingleton<ISimpleCacheProvider, SimpleCache>();

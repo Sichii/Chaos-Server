@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Data;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
@@ -86,7 +86,9 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
         PanelSprite = obj.PanelSprite,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
         Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
-        ScriptVars = new Dictionary<string, DynamicVars>(obj.ScriptVars, StringComparer.OrdinalIgnoreCase),
+        ScriptVars = new Dictionary<string, IScriptVars>(
+            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+            StringComparer.OrdinalIgnoreCase),
         Description = obj.Description,
         LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements)
     };

@@ -25,7 +25,9 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
     public ConcurrentDictionary<uint, int> AggroList { get; }
     /// <inheritdoc />
     public override int AssailIntervalMs => Template.AssailIntervalMs;
+    public ConcurrentDictionary<uint, int> Contribution { get; }
     public List<Item> Items { get; }
+    public override ILogger<Monster> Logger { get; }
     public IIntervalTimer MoveTimer { get; }
 
     /// <inheritdoc />
@@ -40,7 +42,6 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
     public MonsterTemplate Template { get; }
     public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
-    protected override ILogger<Monster> Logger { get; }
 
     public Monster(
         MonsterTemplate template,
@@ -68,6 +69,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
         Type = template.Type;
         Direction = template.Direction;
         AggroList = new ConcurrentDictionary<uint, int>();
+        Contribution = new ConcurrentDictionary<uint, int>();
         WanderTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.WanderIntervalMs), 10, RandomizationType.Positive);
         MoveTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.MoveIntervalMs), 10, RandomizationType.Positive);
         SkillTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.SkillIntervalMs), 50);
@@ -75,14 +77,6 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
         ScriptKeys.AddRange(extraScriptKeys);
         Script = scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, this);
-    }
-
-    /// <inheritdoc />
-    public override void ApplyDamage(Creature source, int amount, byte? hitSound = 1)
-    {
-        Script.OnAttacked(source, ref amount);
-        StatSheet.SubtractHp(amount);
-        ShowHealth(hitSound);
     }
 
     /// <inheritdoc />

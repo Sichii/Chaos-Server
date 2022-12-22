@@ -13,7 +13,7 @@ public class BasicSkillScriptBase : ConfigurableSkillScriptBase
 {
     protected Animation? Animation { get; init; }
     protected BodyAnimation? BodyAnimation { get; init; }
-    protected TargetFilter Filter { get; init; }
+    protected TargetFilter? Filter { get; init; }
     protected int Range { get; init; }
     protected AoeShape Shape { get; init; }
     protected byte? Sound { get; init; }
@@ -26,11 +26,10 @@ public class BasicSkillScriptBase : ConfigurableSkillScriptBase
     {
         var entities = context.Map.GetEntitiesAtPoints<T>(affectedPoints);
 
-        foreach (var entity in entities)
-            if (entity is not Creature c)
-                yield return entity;
-            else if (Filter.IsValidTarget(context.Source, c))
-                yield return entity;
+        if (!Filter.HasValue)
+            return entities;
+
+        return entities.Where(entity => entity is not Creature creature || Filter.Value.IsValidTarget(context.Source, creature));
     }
 
     protected virtual IEnumerable<Point> GetAffectedPoints(SkillContext context) =>

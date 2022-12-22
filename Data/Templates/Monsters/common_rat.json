@@ -2,7 +2,7 @@
     "TemplateKey": "common_rat",
     "StatSheet": {
         "Ability": 0,
-        "Level": 20,
+        "Level": 1,
         "MaximumHp": 100,
         "MaximumMp": 100,
         "Ac": 50,

@@ -32,6 +32,6 @@ public class SetVitalityConsumable : ConfigurableItemScriptBase
             source.UserStatSheet.SetManaPct(SetManaPercent.Value);
 
         source.Client.SendAttributes(StatUpdateType.Vitality);
-        source.Inventory.RemoveQuantity(Subject.Slot, 1, out _);
+        source.Inventory.RemoveQuantity(Subject.Slot, 1);
     }
 }
