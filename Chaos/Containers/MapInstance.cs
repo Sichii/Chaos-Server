@@ -187,7 +187,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public IEnumerable<T> GetEntitiesAtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => Objects.AtPoints<T>(points);
 
-    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 13) where T: MapEntity =>
+    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 12) where T: MapEntity =>
         Objects.WithinRange<T>(point, range);
 
     private void HandleSharding(Aisling aisling, IPoint point)

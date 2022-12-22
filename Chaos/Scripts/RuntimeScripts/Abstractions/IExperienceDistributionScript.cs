@@ -6,4 +6,6 @@ namespace Chaos.Scripts.RuntimeScripts.Abstractions;
 public interface IExperienceDistributionScript
 {
     void DistributeExperience(Creature killedCreature, params Aisling[] aislings);
+
+    void GiveExp(Aisling aisling, long amount);
 }

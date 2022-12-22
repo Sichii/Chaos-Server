@@ -236,7 +236,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         return EntityLookup.Values.OfType<T>();
     }
 
-    public IEnumerable<T> WithinRange<T>(IPoint point, int range = 13) where T: MapEntity
+    public IEnumerable<T> WithinRange<T>(IPoint point, int range = 12) where T: MapEntity
     {
         var area = Math.Ceiling(Math.Pow(range * 2 + 1, 2) / 2);
         var avgEntitiesPerTile = Math.Max(0.33, EntityLookup.Count / (float)WalkableArea);

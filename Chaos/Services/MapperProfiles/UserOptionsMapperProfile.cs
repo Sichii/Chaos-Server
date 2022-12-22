@@ -10,7 +10,7 @@ public sealed class UserOptionsMapperProfile : IMapperProfile<UserOptions, UserO
     {
         Exchange = obj.Exchange,
         FastMove = obj.FastMove,
-        Group = obj.FastMove,
+        Group = obj.Group,
         GuildChat = obj.GuildChat,
         Magic = obj.GuildChat,
         Shout = obj.Shout,

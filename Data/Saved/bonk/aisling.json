@@ -1,9 +1,8 @@
 {
   "bodyColor": "White",
   "bodySprite": "Female",
-  "direction": "Left",
+  "direction": "Right",
   "effects": [],
-  "fallbackLocation": "testTown:(1, 13)",
   "flags": {},
   "gender": "Female",
   "gold": 6028,
@@ -11,7 +10,7 @@
   "hairStyle": 6,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "testarea___5fead7ed-f712-43ce-b5ac-679506f9d5a4",
+  "mapInstanceId": "mileth",
   "name": "bonk",
   "nation": 0,
   "statSheet": {
@@ -21,7 +20,7 @@
     "toNextLevel": 1350,
     "totalExp": 1350,
     "unspentPoints": 4,
-    "currentHp": 100010,
+    "currentHp": 100022,
     "currentMp": 50010,
     "level": 3,
     "ac": -1,
@@ -37,13 +36,13 @@
   "userOptions": {
     "exchange": false,
     "fastMove": false,
-    "group": false,
+    "group": true,
     "guildChat": true,
     "magic": true,
     "shout": true,
     "whisper": true,
     "wisdom": true
   },
-  "x": 12,
-  "y": 7
+  "x": 30,
+  "y": 61
 }

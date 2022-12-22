@@ -8,6 +8,7 @@ using Chaos.Containers.Abstractions;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Objects.Menu;
@@ -718,8 +719,16 @@ public sealed class Aisling : Creature
             if (visible is Creature creature)
                 Helpers.HandleApproach(creature, this);
 
+        //send all doors that arent nearby
+        //this will result in sending doors multiple times but we have to do this because
+        //the client ignores doors greater than 12 spaces away
+        //if a client viewport is offset due to walking issues, it could ignore doors we send specifically at a 12 space distance
+        var doors = objsAfterWalk.Doors.Where(door => door.DistanceFrom(this) >= 10);
+        //objsAfterWalk.Doors.Except(objsBeforeWalk.Doors, PointEqualityComparer.Instance)
+        //             .Cast<Door>();
+
         //send any doors that came into view
-        Client.SendDoors(objsAfterWalk.Doors.Except(objsBeforeWalk.Doors));
+        Client.SendDoors(doors);
 
         //send any other visible objs that came into view that we're able to see
         Client.SendVisibleObjects(

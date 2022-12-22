@@ -14,7 +14,7 @@ public interface IWorldOptions
     ///     This is the maximum distance from a player that they can drop items or gold on the ground. <br />
     ///     A value of -1 would effectively disable dropping items <br />
     ///     A value of 0 would only allow players to drop items directly beneath them  <br />
-    ///     A value of 13 would allow players to drop items anywhere in their viewport
+    ///     A value of 12 would allow players to drop items anywhere in their viewport
     /// </summary>
     int DropRange { get; }
     /// <summary>
@@ -85,7 +85,7 @@ public interface IWorldOptions
     ///     This is the maximum distance from a player that they pick up items or money from the ground.<br />
     ///     A value of -1 would effectively disable picking up items<br />
     ///     A value of 0 would only allow players to pick up items from directly beneath them<br />
-    ///     A value of 13 would allow players to pick up items from anywhere in their viewport<br />
+    ///     A value of 12 would allow players to pick up items from anywhere in their viewport<br />
     /// </summary>
     int PickupRange { get; }
     /// <summary>
@@ -117,7 +117,7 @@ public interface IWorldOptions
     ///     This is the maximum distance from a player that they can initiate a trade with another player<br />
     ///     A value of -1 would effectively disable trading<br />
     ///     A value of 0 would only allow players to only trade with players on the same tile, which is generally impossible<br />
-    ///     A value of 13 would allow players to trade with anyone in their viewport<br />
+    ///     A value of 12 would allow players to trade with anyone in their viewport<br />
     /// </summary>
     int TradeRange { get; }
     /// <summary>

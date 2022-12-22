@@ -15,7 +15,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
     public DefaultExperienceDistributionScript(IExperienceFormula experienceFormula) => ExperienceFormula = experienceFormula;
 
     /// <inheritdoc />
-    public void DistributeExperience(Creature killedCreature, params Aisling[] aislings)
+    public virtual void DistributeExperience(Creature killedCreature, params Aisling[] aislings)
     {
         var exp = ExperienceFormula.Calculate(killedCreature, aislings);
 
@@ -23,7 +23,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
             GiveExp(aisling, exp);
     }
 
-    protected virtual void GiveExp(Aisling aisling, long amount)
+    public virtual void GiveExp(Aisling aisling, long amount)
     {
         if (amount + aisling.UserStatSheet.TotalExp > uint.MaxValue)
             amount = uint.MaxValue - aisling.UserStatSheet.TotalExp;

@@ -29,8 +29,8 @@ public class DefaultApplyDamageScript : ScriptBase, IApplyDamageScript
                 aisling.Client.SendAttributes(StatUpdateType.Vitality);
                 aisling.ShowHealth();
 
-                //if(!aisling.IsAlive)
-                //ondeathscript  
+                if (!aisling.IsAlive)
+                    PlayerDeathScripts.Default.OnDeath(aisling);
 
                 break;
             case Monster monster:

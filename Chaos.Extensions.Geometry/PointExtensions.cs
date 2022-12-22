@@ -1,6 +1,7 @@
 ﻿using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Geometry.EqualityComparers;
 
 namespace Chaos.Extensions.Geometry;
 
@@ -130,6 +131,33 @@ public static class PointExtensions
         ArgumentNullException.ThrowIfNull(other);
 
         return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
+    }
+
+    public static IEnumerable<T> FloodFill<T>(this IEnumerable<T> points, T start) where T: IPoint
+    {
+        var allPoints = points.Cast<IPoint>().ToHashSet(PointEqualityComparer.Instance);
+
+        static IEnumerable<IPoint> GetNeighbors(IPoint point, HashSet<IPoint> localAllPoints)
+        {
+            foreach (var cardinalPoint in point.GenerateCardinalPoints())
+                if (localAllPoints.TryGetValue(cardinalPoint, out var adjacentDoor))
+                    yield return adjacentDoor;
+        }
+
+        var shape = new HashSet<IPoint>(PointEqualityComparer.Instance);
+        var discoveryQueue = new Stack<IPoint>();
+        discoveryQueue.Push(start);
+
+        yield return start;
+
+        while (discoveryQueue.TryPop(out var popped))
+            foreach (var neighbor in GetNeighbors(popped, allPoints))
+                if (shape.Add(neighbor))
+                {
+                    yield return (T)neighbor;
+
+                    discoveryQueue.Push(neighbor);
+                }
     }
 
     /// <summary>

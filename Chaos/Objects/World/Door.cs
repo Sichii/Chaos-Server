@@ -2,7 +2,6 @@ using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.EqualityComparers;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Templates;
 
@@ -35,52 +34,28 @@ public sealed class Door : VisibleEntity
             mapInstance,
             doorTemplate.Point) { }
 
+    public IEnumerable<Door> GetCluster() => MapInstance.GetEntitiesWithinRange<Door>(this)
+                                                        .FloodFill(this);
+
     public override void HideFrom(Aisling aisling) { }
 
     public override void OnClicked(Aisling source)
     {
         if (ShouldRegisterClick)
         {
-            var allDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
-                                      .ToDictionary(d => d, PointEqualityComparer.Instance);
+            var doorCluster = GetCluster().ToList();
 
-            IEnumerable<Door> GetSurroundingDoors(IPoint doorPoint)
-            {
-                foreach (var cardinalPoint in doorPoint.GenerateCardinalPoints())
-                    if (allDoors.TryGetValue(cardinalPoint, out var adjacentDoor))
-                        yield return adjacentDoor;
-            }
-
-            var allTouchingDoors = new HashSet<Door> { this };
-            var pendingDiscovery = new Stack<Door>();
-            pendingDiscovery.Push(this);
-
-            //floodfill to find all touching doors
-            while (pendingDiscovery.Any())
-            {
-                var popped = pendingDiscovery.Pop();
-
-                foreach (var innerDoor in GetSurroundingDoors(popped))
-                    if (allTouchingDoors.Add(innerDoor))
-                        pendingDiscovery.Push(innerDoor);
-            }
-
-            foreach (var door in allTouchingDoors)
+            foreach (var door in doorCluster)
             {
                 door.Closed = !door.Closed;
                 door.LastClick = DateTime.UtcNow;
             }
 
-            foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 20)
+            foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 15)
                                                .ThatCanSee(this))
-            {
-                var doorsInRange = allTouchingDoors
-                    .ThatAreWithinRange(aisling);
-
-                aisling.Client.SendDoors(doorsInRange);
-            }
+                aisling.Client.SendDoors(doorCluster);
         }
     }
 
-    public override void ShowTo(Aisling aisling) => aisling.Client.SendDoors(this);
+    public override void ShowTo(Aisling aisling) => aisling.Client.SendDoors(GetCluster());
 }

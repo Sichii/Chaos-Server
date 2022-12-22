@@ -5,7 +5,7 @@ namespace Chaos.Extensions;
 
 public static class PointExtensions
 {
-    public static bool WithinRange(this IPoint point, IPoint other, int distance = 13)
+    public static bool WithinRange(this IPoint point, IPoint other, int distance = 12)
     {
         ArgumentNullException.ThrowIfNull(point);
 
