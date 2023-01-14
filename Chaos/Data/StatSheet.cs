@@ -61,6 +61,18 @@ public record StatSheet : Attributes
         init => _dmgMod = value;
     }
 
+    public int FlatSkillDamageMod
+    {
+        get => _flatSkillDamageMod;
+        init => _flatSkillDamageMod = value;
+    }
+
+    public int FlatSpellDamageMod
+    {
+        get => _flatSpellDamageMod;
+        init => _flatSpellDamageMod = value;
+    }
+
     public int HitMod
     {
         get => _hitMod;
@@ -103,6 +115,18 @@ public record StatSheet : Attributes
         init => _offenseElement = value;
     }
 
+    public int SkillDamagePctMod
+    {
+        get => _skillDamagePctMod;
+        init => _skillDamagePctMod = value;
+    }
+
+    public int SpellDamagePctMod
+    {
+        get => _spellDamagePctMod;
+        init => _spellDamagePctMod = value;
+    }
+
     public int StrMod
     {
         get => _strMod;
@@ -125,6 +149,10 @@ public record StatSheet : Attributes
 
     public byte EffectiveDmg => (byte)Math.Clamp(Dmg + DmgMod, byte.MinValue, byte.MaxValue);
 
+    public int EffectiveFlatSkillDamage => FlatSkillDamage + FlatSkillDamageMod;
+
+    public int EffectiveFlatSpellDamage => FlatSpellDamage + FlatSpellDamageMod;
+
     public byte EffectiveHit => (byte)Math.Clamp(Hit + HitMod, byte.MinValue, byte.MaxValue);
 
     public byte EffectiveInt => (byte)Math.Clamp(Int + IntMod, byte.MinValue, byte.MaxValue);
@@ -134,6 +162,10 @@ public record StatSheet : Attributes
     public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 0);
 
     public uint EffectiveMaximumMp => (uint)Math.Max(MaximumMp + MaximumMpMod, 0);
+
+    public int EffectiveSkillDamagePct => SkillDamagePct + SkillDamagePctMod;
+
+    public int EffectiveSpellDamagePct => SpellDamagePct + SpellDamagePctMod;
 
     public byte EffectiveStr => (byte)Math.Clamp(Str + StrMod, byte.MinValue, byte.MaxValue);
 
@@ -174,6 +206,10 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _maximumHpMod, other.MaximumHp);
         Interlocked.Add(ref _maximumMpMod, other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPctMod, other.AtkSpeedPct);
+        Interlocked.Add(ref _flatSkillDamageMod, other.FlatSkillDamage);
+        Interlocked.Add(ref _flatSpellDamageMod, other.FlatSpellDamage);
+        Interlocked.Add(ref _skillDamagePctMod, other.SkillDamagePct);
+        Interlocked.Add(ref _spellDamagePctMod, other.SpellDamagePct);
     }
 
     public void AddHealthPct(int pct) => InterlockedEx.SetValue(
@@ -296,5 +332,9 @@ public record StatSheet : Attributes
     protected int _dmgMod;
     protected int _hitMod;
     protected int _atkSpeedPctMod;
+    protected int _flatSpellDamageMod;
+    protected int _flatSkillDamageMod;
+    protected int _spellDamagePctMod;
+    protected int _skillDamagePctMod;
     #endregion
 }

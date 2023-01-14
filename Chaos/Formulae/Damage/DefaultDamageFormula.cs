@@ -3,6 +3,9 @@ using Chaos.Common.Definitions;
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
+using Chaos.Scripts.SkillScripts.Abstractions;
+using Chaos.Scripts.SpellScripts.Abstractions;
 using Chaos.Services.Servers.Options;
 
 namespace Chaos.Formulae.Damage;
@@ -33,9 +36,37 @@ public class DefaultDamageFormula : IDamageFormula
     protected virtual void ApplyElementalModifier(ref int damage, Element attackElement, Element defenseElement) =>
         damage = Convert.ToInt32(damage * ElementalModifierLookup[(int)attackElement][(int)defenseElement]);
 
-    /// <inheritdoc />
-    public int Calculate(Creature attacker, Creature defender, int damage)
+    protected virtual void ApplySkillSpellModifier(ref int damage, IScript source, Creature attacker)
     {
+        switch (source)
+        {
+            case ISkillScript:
+            {
+                var addedFromPct = damage * (attacker.StatSheet.EffectiveSkillDamagePct / 100);
+                damage += attacker.StatSheet.EffectiveFlatSkillDamage + addedFromPct;
+
+                break;
+            }
+            case ISpellScript:
+            {
+                var addedFromPct = damage * (attacker.StatSheet.EffectiveSpellDamagePct / 100);
+                damage += attacker.StatSheet.EffectiveFlatSpellDamage + addedFromPct;
+
+                break;
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public int Calculate(
+        Creature attacker,
+        Creature defender,
+        IScript source,
+        int damage
+    )
+    {
+        ApplySkillSpellModifier(ref damage, source, attacker);
+
         var defenderAc = GetDefenderAc(defender);
 
         ApplyAcModifier(ref damage, defenderAc);

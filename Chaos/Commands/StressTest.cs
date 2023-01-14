@@ -7,12 +7,12 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Commands;
 
-[Command("test")]
-public class TestCommand : ICommand<Aisling>
+[Command("stressTest")]
+public class StressTest : ICommand<Aisling>
 {
     private readonly IItemFactory ItemFactory;
 
-    public TestCommand(IItemFactory itemFactory) => ItemFactory = itemFactory;
+    public StressTest(IItemFactory itemFactory) => ItemFactory = itemFactory;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

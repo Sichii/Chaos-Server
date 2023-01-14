@@ -10,7 +10,9 @@ public sealed class ResettingCounter : IDeltaUpdatable
     private readonly int MaxCount;
     private readonly IIntervalTimer Timer;
     private int Counter;
-    
+
+    public bool CanIncrement => Counter < MaxCount;
+
     public ResettingCounter(int maxPerSecond, IIntervalTimer timer)
     {
         Timer = timer;

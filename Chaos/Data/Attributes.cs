@@ -7,10 +7,14 @@ public record Attributes : Stats
     protected int _ac;
     protected int _atkSpeedPct;
     protected int _dmg;
+    protected int _flatSkillDamage;
+    protected int _flatSpellDamage;
     protected int _hit;
     protected int _magicResistance;
     protected int _maximumHp;
     protected int _maximumMp;
+    protected int _skillDamagePct;
+    protected int _spellDamagePct;
 
     public int Ac
     {
@@ -28,6 +32,18 @@ public record Attributes : Stats
     {
         get => _dmg;
         init => _dmg = value;
+    }
+
+    public int FlatSkillDamage
+    {
+        get => _flatSkillDamage;
+        set => _flatSkillDamage = value;
+    }
+
+    public int FlatSpellDamage
+    {
+        get => _flatSpellDamage;
+        set => _flatSpellDamage = value;
     }
 
     public int Hit
@@ -54,6 +70,18 @@ public record Attributes : Stats
         init => _maximumMp = value;
     }
 
+    public int SkillDamagePct
+    {
+        get => _skillDamagePct;
+        set => _skillDamagePct = value;
+    }
+
+    public int SpellDamagePct
+    {
+        get => _spellDamagePct;
+        set => _spellDamagePct = value;
+    }
+
     public virtual void Add(Attributes other)
     {
         Interlocked.Add(ref _ac, other.Ac);
@@ -68,6 +96,10 @@ public record Attributes : Stats
         Interlocked.Add(ref _maximumHp, other.MaximumHp);
         Interlocked.Add(ref _maximumMp, other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPct, other.AtkSpeedPct);
+        Interlocked.Add(ref _skillDamagePct, other.SkillDamagePct);
+        Interlocked.Add(ref _spellDamagePct, other.SpellDamagePct);
+        Interlocked.Add(ref _flatSkillDamage, other.FlatSkillDamage);
+        Interlocked.Add(ref _flatSpellDamage, other.FlatSpellDamage);
     }
 
     public virtual void Subtract(Attributes other)
@@ -84,5 +116,9 @@ public record Attributes : Stats
         Interlocked.Add(ref _maximumHp, -other.MaximumHp);
         Interlocked.Add(ref _maximumMp, -other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPct, -other.AtkSpeedPct);
+        Interlocked.Add(ref _skillDamagePct, -other.SkillDamagePct);
+        Interlocked.Add(ref _spellDamagePct, -other.SpellDamagePct);
+        Interlocked.Add(ref _flatSkillDamage, -other.FlatSkillDamage);
+        Interlocked.Add(ref _flatSpellDamage, -other.FlatSpellDamage);
     }
 }

@@ -79,7 +79,7 @@ public sealed class Aisling : Creature
             if (WorldOptions.Instance.ProhibitItemSwitchWalk && (DateTime.UtcNow.Subtract(LastEquipOrUnEquip).TotalMilliseconds < 150))
                 return false;
 
-            if (WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
+            if ((Sprite == 0) && WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
             {
                 Logger.LogWarning("{Player} is probably speed walking", this);
 
@@ -89,6 +89,9 @@ public sealed class Aisling : Creature
             return true;
         }
     }
+
+    public ResettingCounter SkillThrottle { get; }
+    public ResettingCounter SpellThrottle { get; }
 
     public override StatSheet StatSheet => UserStatSheet;
     public override CreatureType Type => CreatureType.Aisling;
@@ -154,6 +157,8 @@ public sealed class Aisling : Creature
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
         ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
+        SpellThrottle = new ResettingCounter(WorldOptions.Instance.MaxSpellsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
+        SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
         WalkCounter = new ResettingCounter(10, new IntervalTimer(TimeSpan.FromSeconds(3)));
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         Flags = new FlagCollection();
@@ -253,24 +258,41 @@ public sealed class Aisling : Creature
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
 
     /// <inheritdoc />
-    public override bool CanUse(Skill skill, out ActivationContext skillContext) =>
-        base.CanUse(skill, out skillContext!) && ActionThrottle.TryIncrement();
+    public override bool CanUse(Skill skill, [MaybeNullWhen(false)] out ActivationContext skillContext)
+    {
+        skillContext = null;
+
+        if (!skill.Template.IsAssail && (!ActionThrottle.CanIncrement || !SkillThrottle.CanIncrement))
+            return false;
+
+        return base.CanUse(skill, out skillContext!);
+    }
 
     /// <inheritdoc />
     public override bool CanUse(
         Spell spell,
         Creature target,
         string? prompt,
+        [MaybeNullWhen(false)]
         out SpellContext spellContext
-    ) =>
-        base.CanUse(
+    )
+    {
+        spellContext = null;
+
+        if (!ActionThrottle.CanIncrement)
+            return false;
+
+        if (!SpellThrottle.CanIncrement)
+            return false;
+
+        return base.CanUse(
             spell,
             target,
             prompt,
-            out spellContext!)
-        && ActionThrottle.TryIncrement();
+            out spellContext!);
+    }
 
-    public bool CanUse(Item item) => item.CanUse() && item.Script.CanUse(this);
+    public bool CanUse(Item item) => ActionThrottle.CanIncrement && item.CanUse() && item.Script.CanUse(this);
 
     public void Equip(EquipmentType type, Item item)
     {
@@ -617,12 +639,63 @@ public sealed class Aisling : Creature
         return true;
     }
 
+    public override bool TryUseSkill(Skill skill)
+    {
+        if (!CanUse(skill, out var context))
+            return false;
+
+        if (!skill.Template.IsAssail)
+        {
+            if (!ActionThrottle.TryIncrement())
+                return false;
+
+            if (!SkillThrottle.TryIncrement())
+                return false;
+        }
+
+        skill.Use(context);
+
+        return true;
+    }
+
     public bool TryUseSkill(byte slot)
     {
         if (!SkillBook.TryGetObject(slot, out var skill))
             return false;
 
         return TryUseSkill(skill);
+    }
+
+    /// <inheritdoc />
+    public override bool TryUseSpell(Spell spell, uint? targetId = null, string? prompt = null)
+    {
+        Creature? target;
+
+        if (!targetId.HasValue)
+        {
+            if (spell.Template.SpellType == SpellType.Targeted)
+                return false;
+
+            target = this;
+        } else if (!MapInstance.TryGetObject(targetId.Value, out target))
+            return false;
+
+        if (!CanUse(
+                spell,
+                target!,
+                prompt,
+                out var context))
+            return false;
+
+        if (!ActionThrottle.TryIncrement())
+            return false;
+
+        if (!SpellThrottle.TryIncrement())
+            return false;
+
+        spell.Use(context);
+
+        return true;
     }
 
     public bool TryUseSpell(byte slot, uint? targetId = null, string? prompt = null)
@@ -652,6 +725,8 @@ public sealed class Aisling : Creature
         SkillBook.Update(delta);
         SpellBook.Update(delta);
         ActionThrottle.Update(delta);
+        SpellThrottle.Update(delta);
+        SkillThrottle.Update(delta);
         WalkCounter.Update(delta);
         ChantTimer.Update(delta);
         RegenTimer.Update(delta);

@@ -22,7 +22,11 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
         MagicResistance = obj.MagicResistance,
         MaximumHp = obj.MaximumHp,
         MaximumMp = obj.MaximumMp,
-        AtkSpeedPct = obj.AtkSpeedPct
+        AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct
     };
 
     public AttributesSchema Map(Attributes obj) => new()
@@ -38,7 +42,11 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
         MaximumMp = obj.MaximumMp,
         Str = obj.Str,
         Wis = obj.Wis,
-        AtkSpeedPct = obj.AtkSpeedPct
+        AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSkillDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct
     };
 
     /// <inheritdoc />
@@ -64,6 +72,10 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
     public UserStatSheet Map(UserStatSheetSchema obj) => new()
     {
         AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct,
         Ac = obj.Ac,
         Dmg = obj.Dmg,
         Hit = obj.Hit,
@@ -92,6 +104,10 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
     public UserStatSheetSchema Map(UserStatSheet obj) => new()
     {
         AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct,
         Ability = obj.Ability,
         Ac = obj.Ac,
         AdvClass = obj.AdvClass,
@@ -120,6 +136,10 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
     public StatSheet Map(StatSheetSchema obj) => new()
     {
         AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct,
         Ac = obj.Ac,
         Dmg = obj.Dmg,
         Hit = obj.Hit,
@@ -140,6 +160,10 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
     public StatSheetSchema Map(StatSheet obj) => new()
     {
         AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct,
         Ability = obj.Ability,
         Ac = obj.Ac,
         Con = obj.Con,

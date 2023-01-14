@@ -28,11 +28,21 @@ public class DefaultApplyDamageScript : ScriptBase, IApplyDamageScript
         int damage
     )
     {
-        damage = DamageFormula.Calculate(attacker, defender, damage);
+        damage = DamageFormula.Calculate(
+            attacker,
+            defender,
+            source,
+            damage);
+
+        if (damage <= 0)
+            return;
 
         switch (defender)
         {
             case Aisling aisling:
+                //chi blocker shit
+                //return if block
+
                 aisling.StatSheet.SubtractHp(damage);
                 aisling.Client.SendAttributes(StatUpdateType.Vitality);
                 aisling.ShowHealth();

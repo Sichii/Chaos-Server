@@ -70,6 +70,14 @@ public interface IWorldOptions
     /// </summary>
     int MaxLevel { get; }
     /// <summary>
+    ///     The maximum number of skills a player can use in a second
+    /// </summary>
+    int MaxSkillsPerSecond { get; }
+    /// <summary>
+    ///     The maximum number of spells a player can use in a second
+    /// </summary>
+    int MaxSpellsPerSecond { get; }
+    /// <summary>
     ///     This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage formula, lower AC =
     ///     less damage taken. <br />
     ///     With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.

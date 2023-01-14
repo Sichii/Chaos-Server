@@ -77,7 +77,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         source.ActiveDialog.TryRemove(this);
     }
 
-    public void Display(Aisling source)
+    public void Display(Aisling source, bool activateScripts = true)
     {
         source.ActiveDialog.Set(this);
 
@@ -90,9 +90,13 @@ public sealed record Dialog : IScripted<IDialogScript>
             _                                 => null
         };*/
 
-        Script.OnDisplaying(source);
+        if (activateScripts)
+            Script.OnDisplaying(source);
+
         source.Client.SendDialog(this);
-        Script.OnDisplayed(source);
+
+        if (activateScripts)
+            Script.OnDisplayed(source);
     }
 
     public int? GetOptionIndex(string optionText)
@@ -109,7 +113,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         return option?.OptionText;
     }
 
-    public bool HasOption(DialogOption option) => GetOptionIndex(option.OptionText) == null;
+    public bool HasOption(DialogOption option) => GetOptionIndex(option.OptionText) != null;
 
     public void Next(Aisling source, byte? optionIndex = null)
     {
@@ -195,7 +199,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         NextDialogKey = null;
         Options = new List<DialogOption>();
 
-        Display(source);
+        Display(source, false);
     }
 
     public void RequestAmount(Aisling source, string dialogText)
