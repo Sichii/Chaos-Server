@@ -1,11 +1,14 @@
 using Chaos;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Scripts.FunctionalScripts.Abstractions;
 using Chaos.Services;
 using Chaos.Services.Abstractions;
+using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 Environment.SetEnvironmentVariable("DOTNET_ReadyToRun", "0");
 //Environment.SetEnvironmentVariable("DOTNET_GCHeapHardLimit", "0x1F400000");
@@ -32,6 +35,11 @@ services.AddLoginserver();
 services.AddWorldServer();
 
 await using var provider = services.BuildServiceProvider();
+
+//initialize objects with a lot of cross-cutting concerns
+//this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
+_ = provider.GetRequiredService<IOptions<WorldOptions>>();
+_ = provider.GetRequiredService<IScriptRegistry>();
 
 var ctx = new CancellationTokenSource();
 var hostedServices = provider.GetServices<IHostedService>();

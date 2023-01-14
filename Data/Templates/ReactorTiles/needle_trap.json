@@ -9,11 +9,14 @@
             },
             "filter": "hostileOnly",
             "sound": 1,
-            "damage": 500,
+            "baseDamage": 500,
             "maxTriggers": 1,
             "durationSecs": 300,
             "range": 0,
-            "shape": "none"
+            "shape": "none",
+            "mustHaveTargets": true,
+            "animatePoints": true,
+            "includeSourcePoint": true
         }
     },
     "shouldBlockPathfinding": false

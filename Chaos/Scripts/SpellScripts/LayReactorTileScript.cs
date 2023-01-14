@@ -1,6 +1,6 @@
-using Chaos.Geometry.Abstractions;
-using Chaos.Objects;
+using Chaos.Data;
 using Chaos.Objects.Panel;
+using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.SpellScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 
@@ -8,8 +8,11 @@ namespace Chaos.Scripts.SpellScripts;
 
 public class LayReactorTileScript : BasicSpellScriptBase
 {
-    private readonly IReactorTileFactory ReactorTileFactory;
+    protected IReactorTileFactory ReactorTileFactory { get; set; }
+
+    #region ScriptVars
     protected string ReactorTileTemplateKey { get; init; } = null!;
+    #endregion
 
     /// <inheritdoc />
     public LayReactorTileScript(Spell subject, IReactorTileFactory reactorTileFactory)
@@ -19,23 +22,17 @@ public class LayReactorTileScript : BasicSpellScriptBase
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
     {
-        ShowBodyAnimation(context);
+        var targets = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
 
-        var affectedPoints = GetAffectedPoints(context).Cast<IPoint>().ToList();
-
-        foreach (var point in affectedPoints)
+        foreach (var point in targets.TargetPoints)
         {
             var trap = ReactorTileFactory.Create(
                 ReactorTileTemplateKey,
                 context.Map,
                 point,
-                owner: context.Source);
+                owner: context.Target);
 
             context.Map.SimpleAdd(trap);
         }
-
-        ShowAnimation(context, affectedPoints);
-        PlaySound(context, affectedPoints);
-        context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
     }
 }

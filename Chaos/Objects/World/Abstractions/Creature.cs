@@ -11,6 +11,7 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripts.FunctionalScripts.NaturalRegeneration;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.Utilities;
@@ -30,6 +31,7 @@ public abstract class Creature : NamedEntity, IAffected
     public Status Status { get; set; }
     protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
     public abstract int AssailIntervalMs { get; }
+    public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
     public virtual bool IsAlive => StatSheet.CurrentHp > 0;
     public abstract ILogger Logger { get; }
     public IIntervalTimer RegenTimer { get; }
@@ -51,7 +53,7 @@ public abstract class Creature : NamedEntity, IAffected
         Direction = Direction.Down;
         Effects = new EffectsBar(this);
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
-        RegenTimer = new RegenTimer(this);
+        RegenTimer = new RegenTimer(this, DefaultNaturalRegenerationScript.Create());
     }
 
     /// <inheritdoc />
@@ -75,14 +77,14 @@ public abstract class Creature : NamedEntity, IAffected
                 sound);
     }
 
-    public virtual bool CanUse(Skill skill, [MaybeNullWhen(false)] out SkillContext skillContext)
+    public virtual bool CanUse(Skill skill, [MaybeNullWhen(false)] out ActivationContext skillContext)
     {
         skillContext = null;
 
         if (!skill.CanUse())
             return false;
 
-        skillContext = new SkillContext(this);
+        skillContext = new ActivationContext(this, this);
 
         return skill.Script.CanUse(skillContext);
     }

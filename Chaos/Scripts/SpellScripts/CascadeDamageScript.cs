@@ -1,115 +1,83 @@
+using Chaos.Common.Definitions;
+using Chaos.Data;
 using Chaos.Definitions;
-using Chaos.Extensions.Geometry;
-using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Abstractions.Definitions;
-using Chaos.Objects;
 using Chaos.Objects.Panel;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Scripts.Components;
+using Chaos.Scripts.FunctionalScripts.Abstractions;
+using Chaos.Scripts.FunctionalScripts.ApplyDamage;
+using Chaos.Scripts.SpellScripts.Abstractions;
+using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripts.SpellScripts;
 
-public class CascadeDamageScript : DamageScript
+public class CascadeDamageScript : ConfigurableSpellScriptBase
 {
-    protected int MinSoundDelayMs { get; init; }
-    protected int PropagationDelayMs { get; init; }
-    protected bool StopAtWalls { get; init; }
+    protected IApplyDamageScript ApplyDamageScript { get; }
+
+    protected CascadeAbilityComponent CascadeAbilityComponent { get; }
+    protected CascadeAbilityComponent.CascadeAbilityComponentOptions CascadeAbilityComponentOptions { get; }
+    protected DamageComponent DamageComponent { get; }
+    protected DamageComponent.DamageComponentOptions DamageComponentOptions { get; }
+
+    protected IEffectFactory EffectFactory { get; }
 
     /// <inheritdoc />
-    public CascadeDamageScript(Spell subject)
-        : base(subject) { }
-
-    /// <inheritdoc />
-    protected override IEnumerable<Point> GetAffectedPoints(SpellContext context)
+    public CascadeDamageScript(Spell subject, IEffectFactory effectFactory)
+        : base(subject)
     {
-        var affectedPoints = base.GetAffectedPoints(context)
-                                 .ToList();
+        EffectFactory = effectFactory;
+        CascadeAbilityComponent = new CascadeAbilityComponent();
 
-        // ReSharper disable once InvertIf
-        if (StopAtWalls)
-            foreach (var point in affectedPoints.ToList())
-                if (context.Map.IsWall(point) || context.Source.RayTraceTo(point).Any(pt => context.Map.IsWall(pt)))
-                    affectedPoints.Remove(point);
+        ApplyDamageScript = DefaultApplyDamageScript.Create();
+        DamageComponent = new DamageComponent();
 
-        return affectedPoints;
-    }
-
-    /// <inheritdoc />
-    public override void OnUse(SpellContext context)
-    {
-        var direction = context.Source.Direction;
-
-        ShowBodyAnimation(context);
-
-        var allPossiblePoints = GetAffectedPoints(context)
-                                .Cast<IPoint>()
-                                .ToList();
-
-        var elapsedMs = MinSoundDelayMs;
-
-        _ = Task.Run(
-            async () =>
-            {
-                for (var i = 1; i <= Range; i++)
-                {
-                    //get points for this stage
-                    var pointsForStage = SelectPointsForStage(
-                            allPossiblePoints,
-                            context.SourcePoint,
-                            direction,
-                            i)
-                        .ToList();
-
-                    // ReSharper disable once RemoveRedundantBraces
-                    await using (_ = await context.Map.Sync.WaitAsync())
-                    {
-                        try
-                        {
-                            ShowAnimation(context, pointsForStage);
-
-                            var affectedEntitiesForStage = GetAffectedEntities<Creature>(context, pointsForStage);
-                            ApplyDamage(context, affectedEntitiesForStage);
-
-                            if (Sound.HasValue && (elapsedMs >= MinSoundDelayMs))
-                            {
-                                PlaySound(context, pointsForStage);
-
-                                elapsedMs = 0;
-                            }
-                        } catch
-                        {
-                            //ignored
-                        }
-                    }
-
-                    await Task.Delay(PropagationDelayMs);
-                    elapsedMs += PropagationDelayMs;
-                }
-            });
-    }
-
-    private IEnumerable<IPoint> SelectPointsForStage(
-        IEnumerable<IPoint> allPossiblePoints,
-        Point sourcePoint,
-        Direction aoeDirection,
-        int range
-    )
-    {
-        switch (Shape)
+        DamageComponentOptions = new DamageComponent.DamageComponentOptions
         {
-            case AoeShape.None:
-                return Enumerable.Empty<IPoint>();
-            case AoeShape.AllAround:
-            case AoeShape.Front:
-            case AoeShape.FrontalDiamond:
-                return allPossiblePoints.Where(pt => pt.DistanceFrom(sourcePoint) == range);
+            ApplyDamageScript = ApplyDamageScript,
+            SourceScript = this,
+            BaseDamage = BaseDamage,
+            DamageMultiplier = DamageMultiplier,
+            DamageStat = DamageStat
+        };
 
-            case AoeShape.FrontalCone:
-                var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
-                var nextOffset = sourcePoint.DirectionalOffset(aoeDirection, range);
-
-                return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        CascadeAbilityComponentOptions = new CascadeAbilityComponent.CascadeAbilityComponentOptions
+        {
+            Shape = Shape,
+            Range = Range,
+            Sound = Sound,
+            Filter = Filter,
+            Animation = Animation,
+            BodyAnimation = BodyAnimation,
+            AnimatePoints = AnimatePoints,
+            IncludeSourcePoint = IncludeSourcePoint,
+            DamageComponentOptions = DamageComponentOptions,
+            PropagationIntervalMs = PropagationIntervalMs,
+            SoundIntervalMs = SoundIntervalMs,
+            StopAtWalls = StopAtWalls,
+            EffectKey = EffectKey
+        };
     }
+
+    /// <inheritdoc />
+    public override void OnUse(SpellContext context) =>
+        CascadeAbilityComponent.Activate(context, CascadeAbilityComponentOptions, EffectFactory);
+
+    #region ScriptVars
+    protected AoeShape Shape { get; init; }
+    protected int Range { get; init; }
+    protected TargetFilter? Filter { get; init; }
+    protected BodyAnimation? BodyAnimation { get; init; }
+    protected Animation? Animation { get; init; }
+    protected byte? Sound { get; init; }
+    protected bool AnimatePoints { get; init; } = true;
+    protected bool MustHaveTargets { get; init; }
+    protected bool IncludeSourcePoint { get; init; } = true;
+    protected int SoundIntervalMs { get; init; }
+    protected int PropagationIntervalMs { get; init; }
+    protected bool StopAtWalls { get; init; }
+    protected int? BaseDamage { get; init; }
+    protected Stat? DamageStat { get; init; }
+    protected decimal? DamageMultiplier { get; init; }
+    protected string? EffectKey { get; init; }
+    #endregion
 }

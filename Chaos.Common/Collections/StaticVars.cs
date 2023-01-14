@@ -11,7 +11,16 @@ public sealed class StaticVars : IScriptVars
         Vars = new ConcurrentDictionary<string, object>(objs, StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />
-    public T? Get<T>(string key) => (T?)Get(typeof(T), key);
+    public bool ContainsKey(string key) => Vars.ContainsKey(key);
+
+    /// <inheritdoc />
+    public T? Get<T>(string key)
+    {
+        if (Get(typeof(T), key) is T t)
+            return t;
+
+        return default;
+    }
 
     /// <inheritdoc />
     public object? Get(Type type, string key)
@@ -23,5 +32,19 @@ public sealed class StaticVars : IScriptVars
             return Convert.ChangeType(value, type);
 
         return value;
+    }
+
+    public T GetRequired<T>(string key)
+    {
+        if (!Vars.TryGetValue(key, out var value))
+            throw new KeyNotFoundException($"Required key \"{key}\" was not found while populating script variables");
+
+        return value switch
+        {
+            IConvertible => (T)Convert.ChangeType(value, typeof(T)),
+            T t          => t,
+            _ => throw new NullReferenceException(
+                $"Required key \"{key}\" was found, but resulted in a default value while populating script variables")
+        };
     }
 }

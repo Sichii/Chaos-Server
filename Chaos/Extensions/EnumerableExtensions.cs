@@ -73,6 +73,6 @@ public static class EnumerableExtensions
                 return item1;
             });
 
-    public static IEnumerable<T> WithFilter<T>(this IEnumerable<T> objs, Creature source, TargetFilter filter) where T: Creature =>
-        objs.Where(o => filter.IsValidTarget(source, o));
+    public static IEnumerable<T> WithFilter<T>(this IEnumerable<T> objs, Creature source, TargetFilter filter) where T: MapEntity =>
+        objs.Where(o => o is not Creature creature || filter.IsValidTarget(source, creature));
 }

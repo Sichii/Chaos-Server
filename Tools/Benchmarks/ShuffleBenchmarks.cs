@@ -19,7 +19,7 @@ public class ShuffleBenchmark
     [Benchmark]
     public void RandomShuffle()
     {
-        RandomizedIndexes.Shuffle();
+        RandomizedIndexes.ShuffleInPlace();
 
         for (var i = 0; i < RandomizedIndexes.Length; i++)
         {

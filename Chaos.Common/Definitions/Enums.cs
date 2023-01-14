@@ -15,25 +15,6 @@ public enum RandomizationType
 }
 
 [Flags]
-public enum QuestFlag1 : ulong
-{
-    None = 0
-    //add more quest flags here, double each time
-}
-
-/// <summary>
-///     A 2nd set of quest flags, for when <see cref="Chaos.Common.Definitions.QuestFlag1" /> is filled up
-/// </summary>
-[Flags]
-public enum QuestFlag2 : ulong { }
-
-/// <summary>
-///     A 3rd set of quest flags, for when <see cref="Chaos.Common.Definitions.QuestFlag2" /> is filled up
-/// </summary>
-[Flags]
-public enum QuestFlag3 : ulong { }
-
-[Flags]
 public enum Status : ulong
 {
     None = 0,

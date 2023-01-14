@@ -73,6 +73,7 @@ public class Startup
         services.AddPathfinding();
         services.AddStorage();
         services.AddScripting();
+        services.AddFunctionalScriptRegistry();
         services.AddWorldFactories();
         services.AddTypeMapper();
 

@@ -1,5 +1,4 @@
-using Chaos.Geometry.Abstractions;
-using Chaos.Objects;
+using Chaos.Data;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.SpellScripts.Abstractions;
@@ -10,8 +9,8 @@ namespace Chaos.Scripts.SpellScripts;
 [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 public class ApplyEffectScript : BasicSpellScriptBase
 {
-    private readonly IEffectFactory EffectFactory;
     protected string EffectKey { get; init; } = null!;
+    protected IEffectFactory EffectFactory { get; }
 
     /// <inheritdoc />
     public ApplyEffectScript(Spell subject, IEffectFactory effectFactory)
@@ -21,18 +20,14 @@ public class ApplyEffectScript : BasicSpellScriptBase
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
     {
-        ShowBodyAnimation(context);
+        var targets = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
 
-        var affectedPoints = GetAffectedPoints(context).Cast<IPoint>().ToList();
-        var affectedEntities = GetAffectedEntities<Creature>(context, affectedPoints);
-
-        ShowAnimation(context, affectedPoints);
-        PlaySound(context, affectedPoints);
-
-        foreach (var entity in affectedEntities)
+        foreach (var target in targets.TargetEntities)
         {
             var effect = EffectFactory.Create(EffectKey);
-            entity.Effects.Apply(context.Source, effect);
+            target.Effects.Apply(context.Source, effect);
         }
+
+        context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
     }
 }

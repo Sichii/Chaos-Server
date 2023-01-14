@@ -501,7 +501,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             CreatureType.Normal => !IsWallToCreaturesOnly(point)
                                    && !IsWall(point)
                                    && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
-            CreatureType.WalkThrough => !IsWallToCreaturesOnly(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+            CreatureType.WalkThrough => !IsWallToCreaturesOnly(point)
+                                        && IsWithinMap(point)
+                                        && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
             CreatureType.Merchant => !IsWallToCreaturesOnly(point)
                                      && !IsWall(point)
                                      && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
@@ -544,7 +546,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             aisling.Client.SendSound(sound, false);
     }
 
-    public void PlaySound(byte sound, ICollection<IPoint> points)
+    public void PlaySound(byte sound, IReadOnlyCollection<IPoint> points)
     {
         var aislings = Objects.Values<Aisling>()
                               .Where(aisling => points.Any(p => p.WithinRange(aisling)));

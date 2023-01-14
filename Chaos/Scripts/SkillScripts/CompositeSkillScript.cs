@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Chaos.Objects;
+using Chaos.Data;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.SkillScripts.Abstractions;
@@ -14,7 +14,7 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public bool CanUse(SkillContext context)
+    public bool CanUse(ActivationContext context)
     {
         var canUse = true;
 
@@ -46,7 +46,7 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public void OnUse(SkillContext context)
+    public void OnUse(ActivationContext context)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnUse(context);

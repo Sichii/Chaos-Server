@@ -1,3 +1,4 @@
+using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Scripting.Abstractions;

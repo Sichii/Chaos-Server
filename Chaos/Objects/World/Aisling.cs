@@ -33,6 +33,7 @@ public sealed class Aisling : Creature
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
     public IWorldClient Client { get; set; }
+    public EnumCollection Enums { get; init; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
     public FlagCollection Flags { get; init; }
@@ -156,6 +157,7 @@ public sealed class Aisling : Creature
         WalkCounter = new ResettingCounter(10, new IntervalTimer(TimeSpan.FromSeconds(3)));
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         Flags = new FlagCollection();
+        Enums = new EnumCollection();
         TimedEvents = new TimedEventCollection();
 
         //this object is purely intended to be created and immediately serialized
@@ -225,6 +227,13 @@ public sealed class Aisling : Creature
                 var totalCount = Inventory.CountOf(set.Item.DisplayName);
                 var maxCount = set.Item.Template.MaxStacks * numUniqueStacks;
 
+                //if we have any stacks of this item, we can fill them up without adding any weight
+                //if we don't have any stacks of this item, we can fill one stack without adding any weight
+                var allowedCount = numUniqueStacks == 0 ? set.Item.Template.MaxStacks : set.Item.Template.MaxStacks - totalCount;
+
+                if (set.Count > allowedCount)
+                    return false;
+
                 //so we calculate that value and subtract it from the count we're using to calculate how much this item will weigh
                 weightlessAllowance = maxCount - totalCount;
             }
@@ -244,7 +253,7 @@ public sealed class Aisling : Creature
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
 
     /// <inheritdoc />
-    public override bool CanUse(Skill skill, out SkillContext skillContext) =>
+    public override bool CanUse(Skill skill, out ActivationContext skillContext) =>
         base.CanUse(skill, out skillContext!) && ActionThrottle.TryIncrement();
 
     /// <inheritdoc />
@@ -364,7 +373,7 @@ public sealed class Aisling : Creature
         {
             Logger.LogDebug("{Player} picked up {Gold}", this, money);
 
-            MapInstance.RemoveObject(this);
+            MapInstance.RemoveObject(money);
         }
     }
 

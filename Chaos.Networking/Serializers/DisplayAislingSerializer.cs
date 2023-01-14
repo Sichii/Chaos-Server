@@ -1,3 +1,4 @@
+using Chaos.Common.Definitions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Definitions;
 using Chaos.Networking.Entities.Server;
@@ -26,7 +27,7 @@ public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAi
         } else if (args.IsDead)
         {
             writer.WriteUInt16(args.HeadSprite);
-            writer.WriteByte((byte)args.BodySprite);
+            writer.WriteByte((byte)(args.Gender == Gender.Male ? BodySprite.MaleGhost : BodySprite.FemaleGhost));
             writer.WriteBytes(new byte[25]);
             writer.WriteBoolean(args.IsHidden);
             writer.WriteByte(args.FaceSprite);

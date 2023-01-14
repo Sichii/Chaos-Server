@@ -5,7 +5,8 @@ using Chaos.Common.Collections;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Objects.World;
-using Chaos.Scripts.RuntimeScripts;
+using Chaos.Scripts.FunctionalScripts.Abstractions;
+using Chaos.Scripts.FunctionalScripts.ExperienceDistribution;
 
 namespace Chaos.Commands;
 
@@ -13,8 +14,13 @@ namespace Chaos.Commands;
 public class GiveExpCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;
+    private readonly IExperienceDistributionScript ExperienceDistributionScript;
 
-    public GiveExpCommand(IClientRegistry<IWorldClient> clientRegistry) => ClientRegistry = clientRegistry;
+    public GiveExpCommand(IClientRegistry<IWorldClient> clientRegistry)
+    {
+        ClientRegistry = clientRegistry;
+        ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
+    }
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
@@ -22,7 +28,7 @@ public class GiveExpCommand : ICommand<Aisling>
         if (args.TryGetNext<int>(out var amount))
         {
             source.SendOrangeBarMessage($"You gave yourself {amount} exp");
-            ExperienceDistributionScripts.Default.GiveExp(source, amount);
+            ExperienceDistributionScript.GiveExp(source, amount);
 
             return default;
         }
@@ -39,7 +45,7 @@ public class GiveExpCommand : ICommand<Aisling>
             }
 
             source.SendOrangeBarMessage($"You gave {target.Name} {amount} exp");
-            ExperienceDistributionScripts.Default.GiveExp(target, amount);
+            ExperienceDistributionScript.GiveExp(target, amount);
         }
 
         return default;

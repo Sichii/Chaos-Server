@@ -18,7 +18,7 @@ public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where 
     /// <summary>
     ///     The variables that will be loaded into the script
     /// </summary>
-    private readonly IScriptVars ScriptVars;
+    protected IScriptVars ScriptVars { get; }
 
     protected ConfigurableScriptBase(T subject, IScriptVars scriptVars)
         : base(subject)

@@ -9,7 +9,10 @@ namespace Chaos.Scripts.ReactorTileScripts;
 public class ShowWorldMapScript : ConfigurableReactorTileScriptBase
 {
     private readonly ISimpleCache SimpleCache;
+
+    #region ScriptVars
     protected string WorldMapKey { get; init; } = null!;
+    #endregion
 
     /// <inheritdoc />
     public ShowWorldMapScript(ReactorTile subject, ISimpleCache simpleCache)

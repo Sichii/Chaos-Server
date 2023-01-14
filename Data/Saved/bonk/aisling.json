@@ -1,24 +1,25 @@
 {
   "bodyColor": "White",
   "bodySprite": "Female",
-  "direction": "Right",
+  "direction": "Up",
   "effects": [],
   "flags": {},
+  "enums": {},
   "gender": "Female",
   "gold": 6028,
   "hairColor": "Default",
   "hairStyle": 6,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "mileth",
+  "mapInstanceId": "testTown",
   "name": "bonk",
   "nation": 0,
   "statSheet": {
     "advClass": "None",
     "baseClass": "Peasant",
     "maxWeight": 42,
-    "toNextLevel": 1350,
-    "totalExp": 1350,
+    "toNextLevel": 650,
+    "totalExp": 2050,
     "unspentPoints": 4,
     "currentHp": 100022,
     "currentMp": 50010,
@@ -43,6 +44,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 30,
-  "y": 61
+  "x": 25,
+  "y": 28
 }

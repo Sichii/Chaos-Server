@@ -23,7 +23,7 @@ public interface IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> unwalkablePoints
     );
 
     /// <summary>
@@ -48,6 +48,6 @@ public interface IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
-        ICollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> unwalkablePoints
     );
 }

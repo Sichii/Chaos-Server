@@ -1,57 +1,47 @@
 using Chaos.Common.Definitions;
-using Chaos.Geometry.Abstractions;
-using Chaos.Objects;
+using Chaos.Data;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.RuntimeScripts;
+using Chaos.Scripts.Components;
+using Chaos.Scripts.FunctionalScripts.Abstractions;
+using Chaos.Scripts.FunctionalScripts.ApplyDamage;
 using Chaos.Scripts.SkillScripts.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts;
 
 public class DamageScript : BasicSkillScriptBase
 {
-    protected int? BaseDamage { get; init; }
-    protected Stat? DamageStat { get; init; }
-    protected decimal? DamageStatMultiplier { get; init; }
+    protected IApplyDamageScript ApplyDamageScript { get; }
+    protected DamageComponent DamageComponent { get; }
+    protected DamageComponent.DamageComponentOptions DamageComponentOptions { get; }
 
     /// <inheritdoc />
     public DamageScript(Skill subject)
-        : base(subject) { }
-
-    protected virtual void ApplyDamage(SkillContext context, IEnumerable<Creature> targetEntities)
+        : base(subject)
     {
-        foreach (var target in targetEntities)
-            ApplyDamageScripts.Default.ApplyDamage(
-                context.Source,
-                target,
-                this,
-                CalculateDamage(context, target));
-    }
+        ApplyDamageScript = DefaultApplyDamageScript.Create();
+        DamageComponent = new DamageComponent();
 
-    protected virtual int CalculateDamage(SkillContext context, Creature target)
-    {
-        var damage = BaseDamage ?? 0;
-
-        if (DamageStat.HasValue)
+        DamageComponentOptions = new DamageComponent.DamageComponentOptions
         {
-            var multiplier = DamageStatMultiplier ?? 1;
-
-            damage += Convert.ToInt32(context.Source.StatSheet.GetEffectiveStat(DamageStat.Value) * multiplier);
-        }
-
-        return damage;
+            ApplyDamageScript = ApplyDamageScript,
+            SourceScript = this,
+            BaseDamage = BaseDamage,
+            DamageMultiplier = DamageMultiplier,
+            DamageStat = DamageStat
+        };
     }
 
     /// <inheritdoc />
-    public override void OnUse(SkillContext context)
+    public override void OnUse(ActivationContext context)
     {
-        ShowBodyAnimation(context);
-
-        var affectedPoints = GetAffectedPoints(context).Cast<IPoint>().ToList();
-        var affectedEntities = GetAffectedEntities<Creature>(context, affectedPoints);
-
-        ShowAnimation(context, affectedPoints);
-        PlaySound(context, affectedPoints);
-        ApplyDamage(context, affectedEntities);
+        var targets = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
+        DamageComponent.ApplyDamage(context, targets.TargetEntities, DamageComponentOptions);
     }
+
+    #region ScriptVars
+    protected int? BaseDamage { get; init; }
+    protected Stat? DamageStat { get; init; }
+    protected decimal? DamageMultiplier { get; init; }
+    #endregion
 }

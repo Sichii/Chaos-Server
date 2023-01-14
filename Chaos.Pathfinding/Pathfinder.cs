@@ -84,7 +84,7 @@ public sealed class Pathfinder : IPathfinder
             if (node.Closed)
                 continue;
 
-            NeighborIndexes.Shuffle();
+            NeighborIndexes.ShuffleInPlace();
 
             //for each undiscovered walkable neighbor, set it's parent and add it to the queue
             for (var i = 0; i < 4; i++)
@@ -125,7 +125,7 @@ public sealed class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> creatures
+        IReadOnlyCollection<IPoint> creatures
     )
     {
         var directionBias = end.DirectionalRelationTo(start);
@@ -142,11 +142,21 @@ public sealed class Pathfinder : IPathfinder
         return optimalPoint.DirectionalRelationTo(start);
     }
 
-    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, ICollection<IPoint> unwalkablePoints) =>
+    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, IReadOnlyCollection<IPoint> unwalkablePoints) =>
         points.FirstOrDefault(
             point => WithinGrid(point)
                      && PathNodes[point.X, point.Y].IsWalkable(ignoreWalls)
                      && !unwalkablePoints.Contains(point, PointEqualityComparer.Instance));
+
+    private IEnumerable<IPoint> GetParentChain(PathNode pathNode)
+    {
+        while (pathNode.Parent != null)
+        {
+            yield return pathNode;
+
+            pathNode = pathNode.Parent;
+        }
+    }
 
     private void InitializeSubGrid(IRectangle subGrid, IEnumerable<IPoint> unwalkablePoints)
     {
@@ -164,7 +174,7 @@ public sealed class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> unwalkablePoints
     )
     {
         //if we're standing on the end already
@@ -203,23 +213,10 @@ public sealed class Pathfinder : IPathfinder
             PathNodes[creature.X, creature.Y].IsCreature = false;
     }
 
-    private IEnumerable<IPoint> TracePath(PathNode pathNode)
-    {
-        IEnumerable<IPoint> InnerGetPath()
-        {
-            while (pathNode.Parent != null)
-            {
-                yield return pathNode;
-
-                pathNode = pathNode.Parent;
-            }
-        }
-
-        return InnerGetPath().Reverse();
-    }
+    private IEnumerable<IPoint> TracePath(PathNode pathNode) => GetParentChain(pathNode).Reverse();
 
     /// <inheritdoc />
-    public Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> unwalkablePoints)
+    public Direction Wander(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> unwalkablePoints)
     {
         var optimalPoint = GetFirstWalkablePoint(start.GenerateCardinalPoints().Shuffle(), ignoreWalls, unwalkablePoints);
 

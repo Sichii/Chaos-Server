@@ -10,7 +10,10 @@ namespace Chaos.Scripts.ReactorTileScripts;
 public class WarpScript : ConfigurableReactorTileScriptBase
 {
     private readonly ISimpleCache SimpleCache;
+
+    #region ScriptVars
     protected Location Destination { get; init; }
+    #endregion
 
     /// <inheritdoc />
     public WarpScript(ReactorTile subject, ISimpleCache simpleCache)

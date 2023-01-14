@@ -10,5 +10,11 @@
     "slot": 2,
     "templateKey": "regrowth",
     "uniqueId": 38146
+  },
+  {
+    "scriptKeys": [],
+    "slot": 3,
+    "templateKey": "fireBreath",
+    "uniqueId": 218
   }
 ]

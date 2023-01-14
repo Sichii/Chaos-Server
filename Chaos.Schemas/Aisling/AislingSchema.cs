@@ -15,6 +15,8 @@ public sealed record AislingSchema
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public Direction Direction { get; init; }
     public ICollection<EffectSchema> Effects { get; init; } = Array.Empty<EffectSchema>();
+    [JsonRequired]
+    public EnumCollection Enums { get; init; } = null!;
     public int FaceSprite { get; init; }
     public Location? FallbackLocation { get; init; }
     [JsonRequired]
@@ -30,6 +32,7 @@ public sealed record AislingSchema
     public int HairStyle { get; init; }
     public ICollection<string> IgnoreList { get; init; } = Array.Empty<string>();
     public bool IsAdmin { get; init; }
+    public bool IsDead { get; init; }
     [JsonRequired]
     public string MapInstanceId { get; init; } = null!;
     [JsonRequired]

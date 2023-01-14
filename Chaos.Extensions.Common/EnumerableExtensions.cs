@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -16,14 +18,42 @@ public static class EnumerableExtensions
     public static IEnumerable<TReturn> NotOfType<TReturn, TNot>(this IEnumerable<TReturn> enumerable) =>
         enumerable.Where(obj => obj is not TNot);
 
+    public static IEnumerable<TReturn> SafeCast<TReturn, T>(this IEnumerable<T> enumerable)
+    {
+        if (enumerable is IEnumerable<TReturn> casted)
+            return casted;
+
+        return enumerable.OfType<TReturn>();
+    }
+
     /// <summary>
     ///     Randomizes the order of the elements in a sequence
     /// </summary>
     public static List<T> Shuffle<T>(this IEnumerable<T> objects)
     {
         var list = objects.ToList();
-        list.Shuffle();
+        list.ShuffleInPlace();
 
         return list;
+    }
+
+    public static List<TReturn> ToListCast<TReturn>(this IEnumerable enumerable)
+    {
+        if (enumerable is ICollection collection)
+        {
+            var count = collection.Count;
+            var newList = new List<TReturn>(count);
+            var index = 0;
+
+            foreach (var item in collection.Cast<TReturn>())
+            {
+                newList[index] = item;
+                index++;
+            }
+
+            return newList;
+        }
+
+        return enumerable.Cast<TReturn>().ToList();
     }
 }

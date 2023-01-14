@@ -1,3 +1,4 @@
+using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
@@ -56,7 +57,7 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         Script.Update(delta);
     }
 
-    public void Use(SkillContext context)
+    public void Use(ActivationContext context)
     {
         if (!Script.CanUse(context))
             return;

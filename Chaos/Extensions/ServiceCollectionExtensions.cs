@@ -1,6 +1,7 @@
 using Chaos.Clients.Abstractions;
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
@@ -10,6 +11,8 @@ using Chaos.Objects.World;
 using Chaos.Scripting;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.DialogScripts.Abstractions;
+using Chaos.Scripts.FunctionalScripts;
+using Chaos.Scripts.FunctionalScripts.Abstractions;
 using Chaos.Scripts.ItemScripts.Abstractions;
 using Chaos.Scripts.MapScripts.Abstractions;
 using Chaos.Scripts.MerchantScripts.Abstractions;
@@ -35,6 +38,20 @@ namespace Chaos.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static void AddFunctionalScriptRegistry(this IServiceCollection services) =>
+        services.AddSingleton<IScriptRegistry, FunctionalScriptRegistry>(
+            p =>
+            {
+                var registry = new FunctionalScriptRegistry(p);
+
+                var scriptTypes = typeof(IFunctionalScript).LoadImplementations();
+
+                foreach (var type in scriptTypes)
+                    registry.Register(ScriptBase.GetScriptKey(type), type);
+
+                return registry;
+            });
+
     public static void AddLobbyServer(this IServiceCollection services)
     {
         services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();

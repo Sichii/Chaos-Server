@@ -88,6 +88,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Direction = obj.Direction,
             FaceSprite = obj.FaceSprite,
             Flags = obj.Flags,
+            Enums = obj.Enums,
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
@@ -100,8 +101,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Titles = new TitleList(obj.Titles),
             Options = Mapper.Map<UserOptions>(obj.UserOptions),
             UserStatSheet = Mapper.Map<UserStatSheet>(obj.StatSheet),
-            IsAdmin = obj.IsAdmin
-            //TODO: Effects
+            IsAdmin = obj.IsAdmin,
+            IsDead = obj.IsDead
         };
 
         return aisling;
@@ -118,6 +119,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Direction = obj.Direction,
             FaceSprite = obj.FaceSprite,
             Flags = obj.Flags,
+            Enums = obj.Enums,
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
@@ -130,6 +132,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             X = obj.X,
             Y = obj.Y,
             IsAdmin = obj.IsAdmin,
+            IsDead = obj.IsDead,
             StatSheet = Mapper.Map<UserStatSheetSchema>(obj.StatSheet),
             Titles = obj.Titles.ToList(),
             UserOptions = Mapper.Map<UserOptionsSchema>(obj.Options),

@@ -29,7 +29,7 @@ public sealed class PathfindingService : IPathfindingService
         if (string.IsNullOrEmpty(key))
             throw new InvalidOperationException("Key cannot be null or empty");
 
-        var keyActual = DeconstructKey(key!);
+        var keyActual = DeconstructKey(key);
 
         if (!GridDetails.TryGetValue(keyActual, out var gridDetails))
             throw new KeyNotFoundException($"{keyActual} not found for pathfinder grid details");
@@ -44,7 +44,7 @@ public sealed class PathfindingService : IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> unwalkablePoints
     )
     {
         var lookupKey = ConstructKey(key);
@@ -65,7 +65,7 @@ public sealed class PathfindingService : IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
-        ICollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> unwalkablePoints
     )
     {
         var lookupKey = ConstructKey(key);

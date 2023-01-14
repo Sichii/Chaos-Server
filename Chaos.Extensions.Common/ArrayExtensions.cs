@@ -32,7 +32,7 @@ public static class ArrayExtensions
     /// <summary>
     ///     Randomizes in-place the order of the elements in the list. This will be significantly faster than using linq's OrderBy.
     /// </summary>
-    public static void Shuffle<T>(this IList<T> arr)
+    public static void ShuffleInPlace<T>(this IList<T> arr)
     {
         for (var i = arr.Count - 1; i > 0; i--)
         {

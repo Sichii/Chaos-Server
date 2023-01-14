@@ -18,6 +18,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly HashSet<GroundEntity> GroundEntities;
     private readonly HashSet<Merchant> Merchants;
     private readonly HashSet<Monster> Monsters;
+    private readonly HashSet<MapEntity> Other;
     private readonly HashSet<MapEntity>[,] PointLookup;
     private readonly HashSet<ReactorTile> Reactors;
     private readonly int WalkableArea;
@@ -32,6 +33,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         GroundEntities = new HashSet<GroundEntity>(WorldEntity.IdComparer);
         Reactors = new HashSet<ReactorTile>(WorldEntity.IdComparer);
         Doors = new HashSet<Door>(WorldEntity.IdComparer);
+        Other = new HashSet<MapEntity>(WorldEntity.IdComparer);
 
         Bounds = new Rectangle(
             0,
@@ -78,7 +80,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
                 break;
             default:
-                throw new InvalidOperationException("Unknown entity type");
+                Other.Add(entity);
+
+                break;
         }
     }
 
@@ -153,7 +157,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
                 break;
             default:
-                throw new InvalidOperationException("Unknown entity type");
+                Other.Remove(entity);
+
+                break;
         }
 
         return true;
@@ -232,6 +238,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
         if (type.IsAssignableTo(typeof(GroundEntity)))
             return GroundEntities.OfType<T>();
+
+        if (type.IsAssignableTo(typeof(MapEntity)))
+            return Other.OfType<T>();
 
         return EntityLookup.Values.OfType<T>();
     }

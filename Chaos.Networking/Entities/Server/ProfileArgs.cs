@@ -5,7 +5,7 @@ namespace Chaos.Networking.Entities.Server;
 
 public sealed record ProfileArgs : ISendArgs
 {
-    public AdvClass? AdvClass { get; set; }
+    public AdvClass AdvClass { get; set; }
     public BaseClass BaseClass { get; set; }
     public Dictionary<EquipmentSlot, ItemInfo?> Equipment { get; set; } = new();
     public bool GroupOpen { get; set; }

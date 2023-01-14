@@ -9,7 +9,7 @@ namespace Chaos.Common.Utilities;
 /// </summary>
 public static class Randomizer
 {
-    public static T PickRandom<T>(this ICollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
+    public static T PickRandom<T>(this IReadOnlyCollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
 
     public static T PickRandom<T>(this IEnumerable<T> objs, IEnumerable<decimal> weights)
     {

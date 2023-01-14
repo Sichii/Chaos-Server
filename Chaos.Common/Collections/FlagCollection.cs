@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 using Chaos.Common.Converters;
+using Chaos.Extensions.Common;
 
 namespace Chaos.Common.Collections;
 
@@ -42,8 +43,15 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
     {
         var flagType = typeof(T);
 
+        if (!flagType.IsFlagEnum())
+            throw new InvalidOperationException($"Enum of type {flagType.FullName} is not a flag enum.");
+
         if (Flags.TryGetValue(flagType, out var value))
-            return (Convert.ToUInt64(value) & Convert.ToUInt64(flag)) != 0;
+        {
+            var flagValue = Convert.ToUInt64(flag);
+
+            return (Convert.ToUInt64(value) & flagValue) == flagValue;
+        }
 
         return false;
     }

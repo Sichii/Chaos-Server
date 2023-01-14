@@ -20,7 +20,7 @@ public interface IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        ICollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> unwalkablePoints
     );
 
     /// <summary>
@@ -30,5 +30,5 @@ public interface IPathfinder
     /// <param name="ignoreWalls">Whether or not to ignore walls</param>
     /// <param name="unwalkablePoints">A collection of points to avoid</param>
     /// <returns>The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk</returns>
-    Direction Wander(IPoint start, bool ignoreWalls, ICollection<IPoint> unwalkablePoints);
+    Direction Wander(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> unwalkablePoints);
 }

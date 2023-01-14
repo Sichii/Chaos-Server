@@ -13,19 +13,6 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     private readonly JsonSerializerOptions JsonOptions;
     private readonly ConcurrentDictionary<string, JsonElement> Vars;
 
-    /*
-    static DynamicVars() =>
-        JsonOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
-            PropertyNameCaseInsensitive = true,
-            IgnoreReadOnlyProperties = true,
-            IgnoreReadOnlyFields = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            AllowTrailingCommas = true
-        };*/
-
     public DynamicVars(IDictionary<string, JsonElement> collection, JsonSerializerOptions options)
     {
         JsonOptions = options;
@@ -37,6 +24,9 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
         JsonOptions = options;
         Vars = new ConcurrentDictionary<string, JsonElement>(StringComparer.OrdinalIgnoreCase);
     }
+
+    /// <inheritdoc />
+    public bool ContainsKey(string key) => Vars.ContainsKey(key);
 
     public T? Get<T>(string key) => Vars.TryGetValue(key, out var value) ? value.Deserialize<T>(JsonOptions) : default;
 
@@ -53,6 +43,13 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public T GetRequired<T>(string key) =>
+        (Vars.TryGetValue(key, out var value)
+            ? value.Deserialize<T>(JsonOptions)
+            : throw new KeyNotFoundException($"Required key \"{key}\" was not found while populating script variables"))
+        ?? throw new NullReferenceException(
+            $"Required key \"{key}\" was found, but resulted in a default value while populating script variables");
 
     public void Set(string key, JsonElement element) => Vars.TryAdd(key, element);
 }

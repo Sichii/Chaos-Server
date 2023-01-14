@@ -64,4 +64,33 @@ public static class AoeShapeExtensions
 
         return points.Distinct();
     }
+
+    public static IEnumerable<IPoint> ResolvePointsForRange(
+        this AoeShape shape,
+        IPoint source,
+        Direction aoeDirection,
+        int range,
+        IEnumerable<IPoint> allPossiblePoints
+    )
+    {
+        {
+            switch (shape)
+            {
+                case AoeShape.None:
+                    return Enumerable.Empty<IPoint>();
+                case AoeShape.AllAround:
+                case AoeShape.Front:
+                case AoeShape.FrontalDiamond:
+                    return allPossiblePoints.Where(pt => pt.DistanceFrom(source) == range);
+
+                case AoeShape.FrontalCone:
+                    var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
+                    var nextOffset = source.DirectionalOffset(aoeDirection, range);
+
+                    return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
 }
