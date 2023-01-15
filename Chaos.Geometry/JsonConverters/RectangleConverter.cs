@@ -47,7 +47,7 @@ public sealed class RectangleConverter : JsonConverter<Rectangle>
         }
 
         //reader endObj
-        reader.Read();
+        //reader.Read();
 
         return new Rectangle(
             left,
