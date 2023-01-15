@@ -39,7 +39,7 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         //don't send cooldowns for assails
         if (Template.IsAssail)
         {
-            Elapsed = TimeSpan.Zero;
+            Elapsed ??= TimeSpan.Zero;
 
             return;
         }

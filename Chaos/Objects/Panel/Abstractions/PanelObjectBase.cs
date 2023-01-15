@@ -36,7 +36,7 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
     {
         if (Cooldown is { Ticks: > 0 })
         {
-            Elapsed = TimeSpan.Zero;
+            Elapsed ??= TimeSpan.Zero;
 
             if (creature is Aisling aisling)
                 aisling.Client.SendCooldown(this);

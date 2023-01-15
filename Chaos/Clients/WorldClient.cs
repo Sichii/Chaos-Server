@@ -179,11 +179,16 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         if (!panelObjectBase.Cooldown.HasValue)
             return;
 
+        if (!panelObjectBase.Elapsed.HasValue)
+            return;
+
+        var remaining = panelObjectBase.Cooldown.Value.TotalSeconds - panelObjectBase.Elapsed.Value.TotalSeconds;
+
         var args = new CooldownArgs
         {
             IsSkill = panelObjectBase is Skill,
             Slot = panelObjectBase.Slot,
-            CooldownSecs = Convert.ToUInt32(panelObjectBase.Cooldown.Value.TotalSeconds)
+            CooldownSecs = Convert.ToUInt32(remaining)
         };
 
         Send(args);
