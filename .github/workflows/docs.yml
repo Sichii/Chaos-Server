@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - master
+            - singulinkfx-update
     pull_request:
         branches:
             - master
