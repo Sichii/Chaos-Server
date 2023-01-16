@@ -19,7 +19,7 @@ jobs:
               with:
                   dotnet-version: 7.x
 
-            - run: dotnet tool install -g docfx --version 2.59.0
+            - run: dotnet tool install -g docfx --version 2.59.4
             - run: docfx docs/docfx.json
 
             - name: Deploy
