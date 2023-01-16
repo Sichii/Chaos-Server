@@ -8,9 +8,7 @@
                     "exclude": ["**/Tests/**", "**/Tools/**"]
                 }
             ],
-            "dest": "api",
-            "disableGitFeatures": false,
-            "disableDefaultFilter": false
+            "dest": "api"
         }
     ],
     "build": {
@@ -55,13 +53,13 @@
         "template": [
             "default",
             "templates/singulinkfx",
-            "plugins/memberpage.2.59.4/content"
+            "plugins/memberpage.2.59.4/content",
+            "plugins/memberpage-extras"
         ],
         "postProcessors": [],
         "markdownEngineName": "markdig",
         "noLangKeyword": false,
         "keepFileLink": false,
-        "cleanupCacheHistory": false,
         "disableGitFeatures": false
     }
 }
