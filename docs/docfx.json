@@ -8,9 +8,7 @@
                     "exclude": ["**/Tests/**", "**/Tools/**"]
                 }
             ],
-            "dest": "api",
-            "disableGitFeatures": false,
-            "disableDefaultFilter": false
+            "dest": "api"
         }
     ],
     "build": {
@@ -62,7 +60,6 @@
         "markdownEngineName": "markdig",
         "noLangKeyword": false,
         "keepFileLink": false,
-        "cleanupCacheHistory": false,
         "disableGitFeatures": false
     }
 }
