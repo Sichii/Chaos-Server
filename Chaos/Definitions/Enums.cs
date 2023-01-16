@@ -9,11 +9,14 @@ public enum AoeShape
     FrontalDiamond
 }
 
+[Flags]
 public enum TargetFilter
 {
     None,
-    FriendlyOnly,
-    HostileOnly
+    FriendlyOnly = 1,
+    HostileOnly = 1 << 1,
+    AliveOnly = 1 << 2,
+    DeadOnly = 1 << 3
 }
 
 [Flags]

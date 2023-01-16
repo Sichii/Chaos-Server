@@ -111,9 +111,17 @@ public abstract class Creature : NamedEntity, IAffected
 
     public virtual bool IsFriendlyTo(Creature other) => other switch
     {
-        Monster  => false,
-        Aisling  => this is Aisling or Merchant, //could also check if map is pvp enabled or something
+        Monster  => other is Monster,
+        Aisling  => this is not Monster, //could also check if map is pvp enabled or something
         Merchant => this is not Monster,
+        _        => false
+    };
+
+    public virtual bool IsHostileTo(Creature other) => other switch
+    {
+        Monster  => true,
+        Aisling  => this is Monster,
+        Merchant => this is Monster,
         _        => false
     };
 

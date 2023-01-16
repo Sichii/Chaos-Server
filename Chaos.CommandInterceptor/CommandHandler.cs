@@ -8,6 +8,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.CommandInterceptor;
 
+/// <summary>
+///     A service used to handle the detection and execution of commands execute by an object of a given type
+/// </summary>
+/// <typeparam name="T">The type of the object executing commands</typeparam>
 public sealed class CommandHandler<T> : ICommandInterceptor<T>
 {
     private readonly Dictionary<string, CommandDescriptor> Commands;

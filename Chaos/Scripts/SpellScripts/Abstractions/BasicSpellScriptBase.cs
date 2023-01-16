@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Definitions;
+using Chaos.Extensions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripts.Components;
@@ -31,6 +32,9 @@ public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase
             IncludeSourcePoint = IncludeSourcePoint
         };
     }
+
+    /// <inheritdoc />
+    public override bool CanUse(SpellContext context) => (Filter ?? TargetFilter.None).IsValidTarget(context.Source, context.Target);
 
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
