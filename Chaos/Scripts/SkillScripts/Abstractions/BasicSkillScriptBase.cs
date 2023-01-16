@@ -44,6 +44,6 @@ public abstract class BasicSkillScriptBase : ConfigurableSkillScriptBase
     protected byte? Sound { get; init; }
     protected bool AnimatePoints { get; init; } = true;
     protected bool MustHaveTargets { get; init; } = false;
-    protected bool IncludeSourcePoint { get; init; } = true;
+    protected bool IncludeSourcePoint { get; init; } = false;
     #endregion
 }

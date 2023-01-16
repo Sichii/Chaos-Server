@@ -12,6 +12,12 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage.Abstractions;
 
+/// <summary>
+///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}" /> that loads data from a file and caches it. The data has a
+///     configurable expiration.
+/// </summary>
+/// <typeparam name="T">The type of object stored in the cache</typeparam>
+/// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
 public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where TSchema: class
 {
     protected SynchronizedHashSet<string> Paths { get; set; }
@@ -136,6 +142,11 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
         return Mapper.Map<T>(schema);
     }
 
+    /// <summary>
+    ///     Loads all potential paths from the configured directory
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     protected SynchronizedHashSet<string> LoadPaths()
     {
         var searchPattern = Options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;

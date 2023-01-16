@@ -12,6 +12,7 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
 
     protected CompositeScriptBase() => Components = new List<TScript>();
 
+    /// <inheritdoc />
     public void Add(TScript script) => Components.Add(script);
 
     /// <inheritdoc />
@@ -46,5 +47,6 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <inheritdoc />
     public void Remove(TScript script) => Components.Remove(script);
 }

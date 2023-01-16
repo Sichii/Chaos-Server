@@ -288,6 +288,10 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _maximumHpMod, -other.MaximumHp);
         Interlocked.Add(ref _maximumMpMod, -other.MaximumMp);
         Interlocked.Add(ref _atkSpeedPctMod, -other.AtkSpeedPct);
+        Interlocked.Add(ref _flatSkillDamageMod, -other.FlatSkillDamage);
+        Interlocked.Add(ref _flatSpellDamageMod, -other.FlatSpellDamage);
+        Interlocked.Add(ref _skillDamagePctMod, -other.SkillDamagePct);
+        Interlocked.Add(ref _spellDamagePctMod, -other.SpellDamagePct);
     }
 
     public void SubtractHealthPct(int pct) => InterlockedEx.SetValue(

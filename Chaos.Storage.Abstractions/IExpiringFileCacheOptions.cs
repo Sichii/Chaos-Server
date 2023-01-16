@@ -1,5 +1,8 @@
 namespace Chaos.Storage.Abstractions;
 
+/// <summary>
+///     Defines the properties required to configure a <see cref="Chaos.Storage.Abstractions.ExpiringFileCacheBase{T,TSchema}" />
+/// </summary>
 public interface IExpiringFileCacheOptions : ISimpleFileCacheOptions
 {
     /// <summary>

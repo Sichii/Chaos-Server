@@ -102,7 +102,7 @@ public abstract class Creature : NamedEntity, IAffected
         if (!spell.CanUse())
             return false;
 
-        spellContext = new SpellContext(target, this, prompt);
+        spellContext = new SpellContext(this, target, prompt);
 
         return spell.Script.CanUse(spellContext);
     }

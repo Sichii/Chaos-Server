@@ -133,6 +133,13 @@ public static class PointExtensions
         return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
     }
 
+    /// <summary>
+    ///     Flood fills in a given point set starting at a given point
+    /// </summary>
+    /// <param name="points">All possible points</param>
+    /// <param name="start">The starting point</param>
+    /// <typeparam name="T">An inheritor of IPoint</typeparam>
+    /// <returns>A sequence of all touching points contained within the given sequence starting with the given start point</returns>
     public static IEnumerable<T> FloodFill<T>(this IEnumerable<T> points, T start) where T: IPoint
     {
         var allPoints = points.Cast<IPoint>().ToHashSet(PointEqualityComparer.Instance);

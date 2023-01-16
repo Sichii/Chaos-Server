@@ -31,7 +31,13 @@ public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where 
     protected ConfigurableScriptBase(T subject, Func<string, IScriptVars> scriptVarsFactory)
         : base(subject)
     {
-        ScriptVars = scriptVarsFactory(ScriptKey);
+        try
+        {
+            ScriptVars = scriptVarsFactory(ScriptKey);
+        } catch
+        {
+            //ignored
+        }
 
         if (ScriptVars == null)
             throw new InvalidOperationException($"ScriptVars for script \"{GetType().FullName}\" were not found, and are required");
