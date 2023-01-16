@@ -53,7 +53,7 @@
         "template": [
             "default",
             "templates/singulinkfx",
-            "plugins/memberpage.2.59.0/content",
+            "plugins/memberpage.2.59.4/content",
             "plugins/memberpage-extras"
         ],
         "postProcessors": [],
