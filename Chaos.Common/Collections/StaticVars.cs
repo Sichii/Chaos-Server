@@ -3,6 +3,8 @@ using Chaos.Common.Abstractions;
 
 namespace Chaos.Common.Collections;
 
+/// <summary>
+/// </summary>
 public sealed class StaticVars : IScriptVars
 {
     private readonly ConcurrentDictionary<string, object> Vars;

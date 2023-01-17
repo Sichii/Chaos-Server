@@ -53,6 +53,9 @@ public static class EnumerableExtensions
     public static IEnumerable<T> ThatAreVisibleTo<T>(this IEnumerable<T> objs, Creature creature) where T: VisibleEntity =>
         objs.Where(obj => obj.IsVisibleTo(creature));
 
+    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, ILocation point, int range = 12) where T: MapEntity
+        => objs.Where(o => o.WithinRange(point, range));
+
     public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, IPoint point, int range = 12) where T: MapEntity
         => objs.Where(o => o.WithinRange(point, range));
 

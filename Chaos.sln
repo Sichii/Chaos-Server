@@ -103,10 +103,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{B72FF7E2-9186-4ADE-AC9B-8F9B3E7C55DD}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
-		docs\articles\ServerConfiguration.md = docs\articles\ServerConfiguration.md
 		docs\articles\toc.yml = docs\articles\toc.yml
 		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
 		docs\articles\LobbyOptions.md = docs\articles\LobbyOptions.md
+		docs\articles\LoginOptions.md = docs\articles\LoginOptions.md
+		docs\articles\Scripts.md = docs\articles\Scripts.md
+		docs\articles\Formulae.md = docs\articles\Formulae.md
+		docs\articles\FunctionalScripts.md = docs\articles\FunctionalScripts.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"

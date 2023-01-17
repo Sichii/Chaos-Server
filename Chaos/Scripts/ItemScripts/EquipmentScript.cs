@@ -7,14 +7,6 @@ namespace Chaos.Scripts.ItemScripts;
 
 public class EquipmentScript : ConfigurableItemScriptBase
 {
-    protected AdvClass AdvClass { get; init; } = AdvClass.None;
-    protected BaseClass BaseClass { get; init; } = BaseClass.Any;
-    protected EquipmentType EquipmentType { get; init; }
-    protected Gender Gender { get; init; } = Gender.Unisex;
-    protected int? MinLevel { get; init; }
-    protected int? StatAmountRequired { get; init; }
-    protected Stat? StatRequired { get; init; }
-
     public EquipmentScript(Item subject)
         : base(subject) { }
 
@@ -69,4 +61,14 @@ public class EquipmentScript : ConfigurableItemScriptBase
 
         source.Equip(EquipmentType, Subject);
     }
+
+    #region ScriptVars
+    protected AdvClass AdvClass { get; init; } = AdvClass.None;
+    protected BaseClass BaseClass { get; init; } = BaseClass.Any;
+    protected EquipmentType EquipmentType { get; init; }
+    protected Gender Gender { get; init; } = Gender.Unisex;
+    protected int? MinLevel { get; init; }
+    protected int? StatAmountRequired { get; init; }
+    protected Stat? StatRequired { get; init; }
+    #endregion
 }

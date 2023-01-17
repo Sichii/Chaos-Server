@@ -704,13 +704,14 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     public void SendWorldList(IEnumerable<Aisling> aislings)
     {
         var worldList = new List<WorldListMemberInfo>();
+        var orderedAislings = aislings.OrderBy(aisling => aisling.StatSheet.MaximumMp * 2 + aisling.StatSheet.MaximumHp);
 
         var args = new WorldListArgs
         {
             WorldList = worldList
         };
 
-        foreach (var aisling in aislings)
+        foreach (var aisling in orderedAislings)
         {
             var arg = Mapper.Map<WorldListMemberInfo>(aisling);
 

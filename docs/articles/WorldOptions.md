@@ -198,35 +198,33 @@ by the server, such as for refreshing a player's position if they walk into a wa
 ## Example WorldOptions
 
 ```json
-{
-  "WorldOptions": {
-    "Port": 4202,
-    "LoginRedirect": {
-      "HostName": "localhost",
-      "Port": 4201
-    },
-    "RefreshIntervalMs": 1000,
-    "TradeRange": 4,
-    "DropRange": 4,
-    "PickupRange": 4,
-    "UpdatesPerSecond": 30,
-    "SaveIntervalMins": 5,
-    "MaxGroupSize": 6,
-    "MaxGoldHeld": 500000000,
-    "MinimumMonsterAc": -99,
-    "MaximumMonsterAc": 100,
-    "MinimumAislingAc": -90,
-    "MaximumAislingAc": 100,
-    "MaxLevel": 99,
-    "MaxActionsPerSecond": 10,
-    "MaxSkillsPerSecond": 5,
-    "MaxSpellsPerSecond": 3,
-    "AislingAssailIntervalMs": 1500,
-    "ProhibitF5Walk": true,
-    "ProhibitItemSwitchWalk": true,
-    "ProhibitSpeedWalk": true,
-    "MaxChantTimeBurdenMs": 1500,
-    "F1MerchantTemplateKey": "Help"
-  }
+"WorldOptions": {
+  "Port": 4202,
+  "LoginRedirect": {
+    "HostName": "localhost",
+    "Port": 4201
+  },
+  "RefreshIntervalMs": 1000,
+  "TradeRange": 4,
+  "DropRange": 4,
+  "PickupRange": 4,
+  "UpdatesPerSecond": 30,
+  "SaveIntervalMins": 5,
+  "MaxGroupSize": 6,
+  "MaxGoldHeld": 500000000,
+  "MinimumMonsterAc": -99,
+  "MaximumMonsterAc": 100,
+  "MinimumAislingAc": -90,
+  "MaximumAislingAc": 100,
+  "MaxLevel": 99,
+  "MaxActionsPerSecond": 10,
+  "MaxSkillsPerSecond": 5,
+  "MaxSpellsPerSecond": 3,
+  "AislingAssailIntervalMs": 1500,
+  "ProhibitF5Walk": true,
+  "ProhibitItemSwitchWalk": true,
+  "ProhibitSpeedWalk": true,
+  "MaxChantTimeBurdenMs": 1500,
+  "F1MerchantTemplateKey": "Help"
 }
 ```

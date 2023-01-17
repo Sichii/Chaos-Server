@@ -1,6 +1,12 @@
-- name: Server Configuration
-  href: ServerConfiguration.md
 - name: Lobby Options
   href: LobbyOptions.md
+- name: Login Options
+  href: LoginOptions.md
 - name: World Options
   href: WorldOptions.md
+- name: Formulae
+  href: Formulae.md
+- name: Scripts
+  href: Scripts.md
+- name: Functional Scripts
+  href: FunctionalScripts.md

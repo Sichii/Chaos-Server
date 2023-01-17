@@ -7,11 +7,6 @@ namespace Chaos.Scripts.ItemScripts;
 
 public class SetVitalityConsumable : ConfigurableItemScriptBase
 {
-    protected int? SetHealthAmount { get; init; }
-    protected int? SetHealthPercent { get; init; }
-    protected int? SetManaAmount { get; init; }
-    protected int? SetManaPercent { get; init; }
-
     /// <inheritdoc />
     public SetVitalityConsumable(Item subject)
         : base(subject) { }
@@ -34,4 +29,11 @@ public class SetVitalityConsumable : ConfigurableItemScriptBase
         source.Client.SendAttributes(StatUpdateType.Vitality);
         source.Inventory.RemoveQuantity(Subject.Slot, 1);
     }
+
+    #region ScriptVars
+    protected int? SetHealthAmount { get; init; }
+    protected int? SetHealthPercent { get; init; }
+    protected int? SetManaAmount { get; init; }
+    protected int? SetManaPercent { get; init; }
+    #endregion
 }
