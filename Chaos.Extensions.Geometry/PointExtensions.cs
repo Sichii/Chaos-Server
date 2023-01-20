@@ -151,7 +151,11 @@ public static class PointExtensions
                     yield return adjacentDoor;
         }
 
-        var shape = new HashSet<IPoint>(PointEqualityComparer.Instance);
+        var shape = new HashSet<IPoint>(PointEqualityComparer.Instance)
+        {
+            start
+        };
+
         var discoveryQueue = new Stack<IPoint>();
         discoveryQueue.Push(start);
 
