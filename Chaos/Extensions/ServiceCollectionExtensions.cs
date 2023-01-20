@@ -10,6 +10,7 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripts.AislingScripts.Abstractions;
 using Chaos.Scripts.DialogScripts.Abstractions;
 using Chaos.Scripts.FunctionalScripts;
 using Chaos.Scripts.FunctionalScripts.Abstractions;
@@ -80,11 +81,15 @@ public static class ServiceCollectionExtensions
         services.AddScriptFactory<IItemScript, Item>();
         services.AddScriptFactory<ISkillScript, Skill>();
         services.AddScriptFactory<ISpellScript, Spell>();
+
         services.AddScriptFactory<IMonsterScript, Monster>();
-        services.AddScriptFactory<IMapScript, MapInstance>();
         services.AddScriptFactory<IMerchantScript, Merchant>();
-        services.AddScriptFactory<IDialogScript, Dialog>();
+        services.AddScriptFactory<IAislingScript, Aisling>();
+
+        services.AddScriptFactory<IMapScript, MapInstance>();
         services.AddScriptFactory<IReactorTileScript, ReactorTile>();
+
+        services.AddScriptFactory<IDialogScript, Dialog>();
 
         services.AddTransient<IScriptProvider, ScriptProvider>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();

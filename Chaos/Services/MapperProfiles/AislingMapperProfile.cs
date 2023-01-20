@@ -6,6 +6,7 @@ using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
+using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
@@ -27,6 +28,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
     private readonly ILogger<AislingMapperProfile> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
+    private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
     public AislingMapperProfile(
@@ -35,12 +37,14 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         IExchangeFactory exchangeFactory,
         ILoggerFactory loggerFactory,
         ILogger<AislingMapperProfile> logger,
-        ICloningService<Item> itemCloner
+        ICloningService<Item> itemCloner,
+        IScriptProvider scriptProvider
     )
     {
         Mapper = mapper;
         Logger = logger;
         ItemCloner = itemCloner;
+        ScriptProvider = scriptProvider;
         ExchangeFactory = exchangeFactory;
         SimpleCache = simpleCache;
         LoggerFactory = loggerFactory;
@@ -80,6 +84,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             mapInstance,
             point,
             ExchangeFactory,
+            ScriptProvider,
             LoggerFactory.CreateLogger<Aisling>(),
             ItemCloner)
         {

@@ -3,14 +3,14 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.MerchantScripts.Abstractions;
+using Chaos.Scripts.AislingScripts.Abstractions;
 
-namespace Chaos.Scripts.MerchantScripts;
+namespace Chaos.Scripts.AislingScripts;
 
 /// <summary>
 ///     DO NOT EDIT THIS SCRIPT
 /// </summary>
-public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMerchantScript
+public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAislingScript
 {
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
@@ -30,21 +30,17 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual bool CanUseItem(Item item) => Components.All(component => component.CanUseItem(item));
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanUseSkill(Skill skill) => Components.All(component => component.CanUseSkill(skill));
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
     public virtual bool CanUseSpell(Spell spell) => Components.All(component => component.CanUseSpell(spell));
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public virtual void OnApproached(Creature source)
-    {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnApproached(source);
-    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
@@ -67,10 +63,10 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnDeparture(Creature source)
+    public virtual void OnDeath(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnDeparture(source);
+            component.OnDeath(source);
     }
 
     /// <summary>
@@ -85,27 +81,9 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count)
+    public virtual void OnItemDroppedOn(Aisling source, Item item)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnItemDroppedOn(source, slot, count);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public virtual void OnPublicMessage(Creature source, string message)
-    {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnPublicMessage(source, message);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public virtual void Update(TimeSpan delta)
-    {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.Update(delta);
+            component.OnItemDroppedOn(source, item);
     }
 }

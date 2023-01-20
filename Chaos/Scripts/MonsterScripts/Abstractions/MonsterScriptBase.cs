@@ -21,7 +21,7 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
     protected virtual bool ShouldUseSkill => Subject.SkillTimer.IntervalElapsed;
     protected virtual bool ShouldUseSpell => Subject.SpellTimer.IntervalElapsed;
     protected virtual bool ShouldWander => Subject.WanderTimer.IntervalElapsed;
-    protected virtual ICollection<Skill> Skills => Subject.Skills;
+    protected virtual IList<Skill> Skills => Subject.Skills;
     protected virtual IList<Spell> Spells => Subject.Spells;
 
     /// <inheritdoc />
@@ -29,10 +29,28 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
         : base(subject) { }
 
     /// <inheritdoc />
+    public virtual bool CanMove() => true;
+
+    /// <inheritdoc />
+    public virtual bool CanTalk() => true;
+
+    /// <inheritdoc />
+    public virtual bool CanTurn() => true;
+
+    /// <inheritdoc />
+    public virtual bool CanUseSkill(Skill skill) => true;
+
+    /// <inheritdoc />
+    public virtual bool CanUseSpell(Spell spell) => true;
+
+    /// <inheritdoc />
     public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />
-    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride = null) { }
+    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride) { }
+
+    /// <inheritdoc />
+    public void OnAttacked(Creature attacker, int damage) => OnAttacked(attacker, damage, null);
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

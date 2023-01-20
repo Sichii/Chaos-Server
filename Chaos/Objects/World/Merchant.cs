@@ -18,9 +18,9 @@ public sealed class Merchant : Creature, IScripted<IMerchantScript>
     public override bool IsAlive => true;
     public override ILogger<Merchant> Logger { get; }
     /// <inheritdoc />
-    public IMerchantScript Script { get; }
+    public override IMerchantScript Script { get; }
     /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; }
+    public override ISet<string> ScriptKeys { get; }
     public override StatSheet StatSheet { get; }
     public MerchantTemplate Template { get; }
 

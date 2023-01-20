@@ -2,14 +2,15 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripts.Abstractions;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripts.MonsterScripts.Abstractions;
 
-public interface IMonsterScript : IScript, IDeltaUpdatable
+public interface IMonsterScript : ICreatureScript, IScript, IDeltaUpdatable
 {
     void OnApproached(Creature source);
-    void OnAttacked(Creature source, int damage, int? aggroOverride = null);
+    void OnAttacked(Creature source, int damage, int? aggroOverride);
     void OnClicked(Aisling source);
     void OnDeath();
     void OnDeparture(Creature source);

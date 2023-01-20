@@ -7,7 +7,6 @@ namespace Chaos.Scripts.FunctionalScripts.Abstractions;
 public interface IApplyDamageScript : IFunctionalScript
 {
     IDamageFormula DamageFormula { get; set; }
-    IPlayerDeathScript PlayerDeathScript { get; set; }
 
     void ApplyDamage(
         Creature attacker,

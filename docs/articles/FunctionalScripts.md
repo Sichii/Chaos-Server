@@ -12,9 +12,8 @@ an example.
 [!code-csharp[](../../Chaos/Scripts/FunctionalScripts/ApplyDamage/DefaultApplyDamageScript.cs)]
 
 In this class, you can see that this script is used to apply damage to a target, and uses
-the [DefaultDamageFormula](<xref:Chaos.Formulae.Damage.DefaultDamageFormula>) to calculate the damage before it applies it. It also uses
-another functional script, the [DefaultPlayerDeathScript](<xref:Chaos.Scripts.FunctionalScripts.PlayerDeath.DefaultPlayerDeathScript>). Both
-the formula and functional script are stored by their interface, and are thus swappable with other implementations of those classes.
+the [DefaultDamageFormula](<xref:Chaos.Formulae.Damage.DefaultDamageFormula>) to calculate the damage before it applies it. The formula is
+stored by it's interface, making it swappable with other implementations of that interface.
 
 Anything that deals damage should do it through this script, rather than do it directly. This creates a single place where changes and logic
 can be made for how damage is applies.

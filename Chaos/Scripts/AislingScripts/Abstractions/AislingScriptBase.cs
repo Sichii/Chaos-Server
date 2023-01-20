@@ -1,18 +1,21 @@
 using Chaos.Containers;
+using Chaos.Containers.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 
-namespace Chaos.Scripts.MerchantScripts.Abstractions;
+namespace Chaos.Scripts.AislingScripts.Abstractions;
 
-public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerchantScript
+public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislingScript
 {
-    protected virtual string? InitialDialogKey => Subject.Template.DialogKey;
+    protected virtual IInventory Items => Subject.Inventory;
     protected virtual MapInstance Map => Subject.MapInstance;
+    protected virtual IPanel<Skill> Skills => Subject.SkillBook;
+    protected virtual IPanel<Spell> Spells => Subject.SpellBook;
 
     /// <inheritdoc />
-    protected MerchantScriptBase(Merchant subject)
+    protected AislingScriptBase(Aisling subject)
         : base(subject) { }
 
     /// <inheritdoc />
@@ -25,13 +28,13 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
     public virtual bool CanTurn() => true;
 
     /// <inheritdoc />
+    public virtual bool CanUseItem(Item item) => true;
+
+    /// <inheritdoc />
     public virtual bool CanUseSkill(Skill skill) => true;
 
     /// <inheritdoc />
     public virtual bool CanUseSpell(Spell spell) => true;
-
-    /// <inheritdoc />
-    public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />
     public virtual void OnAttacked(Creature source, int damage) { }
@@ -40,17 +43,11 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
     public virtual void OnClicked(Aisling source) { }
 
     /// <inheritdoc />
-    public virtual void OnDeparture(Creature source) { }
+    public virtual void OnDeath(Creature source) { }
 
     /// <inheritdoc />
     public virtual void OnGoldDroppedOn(Aisling source, int amount) { }
 
     /// <inheritdoc />
-    public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count) { }
-
-    /// <inheritdoc />
-    public virtual void OnPublicMessage(Creature source, string message) { }
-
-    /// <inheritdoc />
-    public virtual void Update(TimeSpan delta) { }
+    public virtual void OnItemDroppedOn(Aisling source, Item item) { }
 }

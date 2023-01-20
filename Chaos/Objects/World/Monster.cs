@@ -31,9 +31,9 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
     public IIntervalTimer MoveTimer { get; }
 
     /// <inheritdoc />
-    public IMonsterScript Script { get; }
+    public override IMonsterScript Script { get; }
     /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; }
+    public override ISet<string> ScriptKeys { get; }
     public List<Skill> Skills { get; }
     public IIntervalTimer SkillTimer { get; }
     public List<Spell> Spells { get; }

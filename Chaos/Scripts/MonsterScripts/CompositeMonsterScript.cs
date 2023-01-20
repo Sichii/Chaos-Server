@@ -15,6 +15,31 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual bool CanMove() => Components.All(component => component.CanMove());
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanTalk() => Components.All(component => component.CanTalk());
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanTurn() => Components.All(component => component.CanTurn());
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanUseSkill(Skill skill) => Components.All(component => component.CanUseSkill(skill));
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanUseSpell(Spell spell) => Components.All(component => component.CanUseSpell(spell));
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnApproached(Creature source)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
@@ -24,11 +49,14 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride = null)
+    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnAttacked(source, damage);
     }
+
+    /// <inheritdoc />
+    public void OnAttacked(Creature attacker, int damage) => OnAttacked(attacker, damage, null);
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
