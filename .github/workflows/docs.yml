@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - master
-            - singulinkfx-update
     pull_request:
         branches:
             - master
@@ -12,6 +11,7 @@ on:
 
 jobs:
     generate-docs:
+        if: github.repository == 'Sichii/Chaos-Server'
         runs-on: windows-latest
 
         steps:
