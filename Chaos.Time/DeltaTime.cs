@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Chaos.Time;
 
 /// <summary>
@@ -7,20 +9,17 @@ public sealed class DeltaTime
 {
     private long LastTimeStamp;
 
-    /// <summary>
-    ///     The most recent delta value calculated by <see cref="SetDelta"/>
-    /// </summary>
-    public TimeSpan DeltaSpan { get; private set; }
-
-    public DeltaTime() => SetDelta();
-
-    /// <summary>
-    ///     Calculates the time delta between now and the last time this method was called
-    /// </summary>
-    public void SetDelta()
+    public TimeSpan GetDelta
     {
-        var currentTimeStamp = ValueStopwatch.GetTimestamp();
-        DeltaSpan = ValueStopwatch.GetElapsedTime(LastTimeStamp, currentTimeStamp);
-        LastTimeStamp = currentTimeStamp;
+        get
+        {
+            var current = Stopwatch.GetTimestamp();
+            var delta = Stopwatch.GetElapsedTime(LastTimeStamp, current);
+            LastTimeStamp = current;
+
+            return delta;
+        }
     }
+
+    public DeltaTime() => LastTimeStamp = Stopwatch.GetTimestamp();
 }

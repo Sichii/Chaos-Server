@@ -27,11 +27,13 @@ public readonly ref struct ValueStopwatch
         return new TimeSpan(ticks);
     }
 
+    public static TimeSpan GetElapsedTime(long startTimestamp) => GetElapsedTime(startTimestamp, GetTimestamp());
+
     /// <summary>
     ///     Gets the elapsed time since the stopwatch was started
     /// </summary>
     public TimeSpan GetElapsedTime() => GetElapsedTime(StartTimeStamp, GetTimestamp());
-    
+
     /// <inheritdoc cref="System.Diagnostics.Stopwatch.GetTimestamp"/>
     public static long GetTimestamp() => Stopwatch.GetTimestamp();
 

@@ -7,7 +7,7 @@ namespace Chaos.Schemas.Aisling;
 [JsonConverter(typeof(EnumerableConverter<TimedEventCollectionSchema, TimedEventSchema>))]
 public sealed class TimedEventCollectionSchema : IEnumerable<TimedEventSchema>
 {
-    public ICollection<TimedEventSchema> Items { get; init; }
+    public ICollection<TimedEventSchema> Items { get; set; }
 
     public TimedEventCollectionSchema(IEnumerable<TimedEventSchema> items) => Items = items.ToList();
 

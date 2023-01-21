@@ -17,14 +17,14 @@ public sealed record ShardingOptionsSchema
     ///     from
     /// </remarks>
     [JsonRequired]
-    public Location ExitLocation { get; init; }
+    public Location ExitLocation { get; set; }
 
     /// <summary>
     ///     The number of players or groups allowed per instance (based on Shardingtype)
     /// </summary>
-    public int Limit { get; init; }
+    public int Limit { get; set; }
     /// <summary>
     ///     The conditions that lead to new shards of this instance being created
     /// </summary>
-    public ShardingType ShardingType { get; init; } = ShardingType.None;
+    public ShardingType ShardingType { get; set; } = ShardingType.None;
 }

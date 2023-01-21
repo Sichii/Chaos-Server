@@ -7,7 +7,7 @@ namespace Chaos.Schemas.Aisling;
 [JsonConverter(typeof(EnumerableConverter<SpellBookSchema, SpellSchema>))]
 public class SpellBookSchema : IEnumerable<SpellSchema>
 {
-    public ICollection<SpellSchema> Spells { get; init; }
+    public ICollection<SpellSchema> Spells { get; set; }
 
     public SpellBookSchema(IEnumerable<SpellSchema> spells) => Spells = spells.ToList();
 

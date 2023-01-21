@@ -4,13 +4,13 @@ namespace Chaos.Data;
 
 public sealed record Animation
 {
-    public ushort AnimationSpeed { get; init; }
-    public ushort SourceAnimation { get; init; }
-    public uint? SourceId { get; init; }
-    public ushort TargetAnimation { get; init; }
+    public ushort AnimationSpeed { get; set; }
+    public ushort SourceAnimation { get; set; }
+    public uint? SourceId { get; set; }
+    public ushort TargetAnimation { get; set; }
 
-    public uint? TargetId { get; init; }
-    public IPoint? TargetPoint { get; init; }
+    public uint? TargetId { get; set; }
+    public IPoint? TargetPoint { get; set; }
 
     /// <summary>
     ///     Static constructor for no animation.
@@ -47,7 +47,8 @@ public sealed record Animation
     {
         if (TargetPoint == null)
             return
-                $"SOURCE_ID: {SourceId} | SOURCE_ANIMATION: {SourceAnimation} | TARGET_ID: {TargetId} | TARGET_ANIMATION: {TargetAnimation}";
+                $"SOURCE_ID: {SourceId} | SOURCE_ANIMATION: {SourceAnimation} | TARGET_ID: {TargetId} | TARGET_ANIMATION: {TargetAnimation
+                }";
 
         return $"TARGET_POINT: {TargetPoint} | TARGET_ANIMATION: {TargetAnimation}";
     }

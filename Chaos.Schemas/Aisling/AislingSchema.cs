@@ -9,41 +9,41 @@ namespace Chaos.Schemas.Aisling;
 public sealed record AislingSchema
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public BodyColor BodyColor { get; init; }
+    public BodyColor BodyColor { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public BodySprite BodySprite { get; init; }
+    public BodySprite BodySprite { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public Direction Direction { get; init; }
-    public ICollection<EffectSchema> Effects { get; init; } = Array.Empty<EffectSchema>();
+    public Direction Direction { get; set; }
+    public ICollection<EffectSchema> Effects { get; set; } = Array.Empty<EffectSchema>();
     [JsonRequired]
-    public EnumCollection Enums { get; init; } = null!;
-    public int FaceSprite { get; init; }
-    public Location? FallbackLocation { get; init; }
+    public EnumCollection Enums { get; set; } = null!;
+    public int FaceSprite { get; set; }
+    public Location? FallbackLocation { get; set; }
     [JsonRequired]
-    public FlagCollection Flags { get; init; } = null!;
-    public int GamePoints { get; init; }
+    public FlagCollection Flags { get; set; } = null!;
+    public int GamePoints { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public Gender Gender { get; init; }
-    public int Gold { get; init; }
-    public string? GuildName { get; init; }
-    public string? GuildTitle { get; init; }
+    public Gender Gender { get; set; }
+    public int Gold { get; set; }
+    public string? GuildName { get; set; }
+    public string? GuildTitle { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public DisplayColor HairColor { get; init; }
-    public int HairStyle { get; init; }
-    public ICollection<string> IgnoreList { get; init; } = Array.Empty<string>();
-    public bool IsAdmin { get; init; }
-    public bool IsDead { get; init; }
+    public DisplayColor HairColor { get; set; }
+    public int HairStyle { get; set; }
+    public ICollection<string> IgnoreList { get; set; } = Array.Empty<string>();
+    public bool IsAdmin { get; set; }
+    public bool IsDead { get; set; }
     [JsonRequired]
-    public string MapInstanceId { get; init; } = null!;
+    public string MapInstanceId { get; set; } = null!;
     [JsonRequired]
-    public string Name { get; init; } = null!;
+    public string Name { get; set; } = null!;
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public Nation Nation { get; init; }
+    public Nation Nation { get; set; }
     [JsonRequired]
-    public UserStatSheetSchema StatSheet { get; init; } = null!;
-    public ICollection<string> Titles { get; init; } = Array.Empty<string>();
+    public UserStatSheetSchema StatSheet { get; set; } = null!;
+    public ICollection<string> Titles { get; set; } = Array.Empty<string>();
     [JsonRequired]
-    public UserOptionsSchema UserOptions { get; init; } = null!;
-    public int X { get; init; }
-    public int Y { get; init; }
+    public UserOptionsSchema UserOptions { get; set; } = null!;
+    public int X { get; set; }
+    public int Y { get; set; }
 }

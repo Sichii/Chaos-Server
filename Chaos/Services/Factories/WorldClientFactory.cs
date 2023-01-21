@@ -8,6 +8,7 @@ using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Factories;
 
@@ -19,6 +20,7 @@ public sealed class WorldClientFactory : IClientFactory<WorldClient>
 
     public WorldClient CreateClient(Socket socket)
     {
+        var chaosOptions = ServiceProvider.GetRequiredService<IOptions<ChaosOptions>>();
         var typeMapper = ServiceProvider.GetRequiredService<ITypeMapper>();
         var crypto = ServiceProvider.GetRequiredService<ICryptoClient>();
         var server = ServiceProvider.GetRequiredService<IWorldServer<IWorldClient>>();
@@ -27,6 +29,7 @@ public sealed class WorldClientFactory : IClientFactory<WorldClient>
 
         return new WorldClient(
             socket,
+            chaosOptions,
             typeMapper,
             crypto,
             server,

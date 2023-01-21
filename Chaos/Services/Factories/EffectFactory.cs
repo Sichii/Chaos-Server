@@ -31,7 +31,7 @@ public sealed class EffectFactory : IEffectFactory
         if (instance is not IEffect effect)
             throw new InvalidCastException($"Object obtained from key \"{effectKey}\" is not a valid effect");
 
-        Logger.LogTrace("Created effect \"{EffectName}\"", effect.Name);
+        Logger.LogDebug("Created effect \"{EffectName}\"", effect.Name);
 
         return effect;
     }

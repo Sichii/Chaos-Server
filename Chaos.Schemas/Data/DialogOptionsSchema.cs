@@ -5,7 +5,7 @@ namespace Chaos.Schemas.Data;
 public sealed record DialogOptionSchema
 {
     [JsonRequired]
-    public string DialogKey { get; init; } = null!;
+    public string DialogKey { get; set; } = null!;
     [JsonRequired]
-    public string OptionText { get; init; } = null!;
+    public string OptionText { get; set; } = null!;
 }

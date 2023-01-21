@@ -110,7 +110,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
 
         LocalLookup[entryKey!] = ret;
 
-        Logger.LogTrace(
+        Logger.LogDebug(
             "Created new {TypeName} entry with key \"{Key}\" from path \"{Path}\"",
             nameof(MapInstance),
             loadInstanceId,
@@ -134,12 +134,12 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         var mapInstanceSchema = JsonSerializer.Deserialize<MapInstanceSchema>(mapInstanceStream, JsonSerializerOptions);
 
         var monsterSpawnSchemas =
-            JsonSerializer.Deserialize<List<MonsterSpawnSchema>>(monsterSpawnsStream, JsonSerializerOptions);
+            JsonSerializer.Deserialize<IEnumerable<MonsterSpawnSchema>>(monsterSpawnsStream, JsonSerializerOptions);
 
         var merchantSpawnSchemas =
-            JsonSerializer.Deserialize<List<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
+            JsonSerializer.Deserialize<IEnumerable<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
 
-        var reactorsSchemas = JsonSerializer.Deserialize<List<StaticReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
+        var reactorsSchemas = JsonSerializer.Deserialize<IEnumerable<StaticReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
 
         if (mapInstanceSchema == null)
             throw new SerializationException($"Failed to serialize {nameof(MapInstanceSchema)} from directory \"{directory}\"");
@@ -196,6 +196,8 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
 
         mapInstance.Pathfinder = PathfindingService;
         PathfindingService.RegisterGrid(mapInstance);
+
+        mapInstance.StartAsync();
 
         return mapInstance;
     }

@@ -5,14 +5,14 @@ namespace Chaos.Schemas.Aisling;
 
 public sealed record LegendMarkSchema
 {
-    public long Added { get; init; }
+    public long Added { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public MarkColor Color { get; init; }
-    public int Count { get; init; }
+    public MarkColor Color { get; set; }
+    public int Count { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public MarkIcon Icon { get; init; }
+    public MarkIcon Icon { get; set; }
     [JsonRequired]
-    public string Key { get; init; } = null!;
+    public string Key { get; set; } = null!;
     [JsonRequired]
-    public string Text { get; init; } = null!;
+    public string Text { get; set; } = null!;
 }

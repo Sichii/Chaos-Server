@@ -7,17 +7,17 @@ namespace Chaos.Schemas.Templates;
 
 public sealed record DialogTemplateSchema
 {
-    public string? NextDialogKey { get; init; }
-    public ICollection<DialogOptionSchema> Options { get; init; } = Array.Empty<DialogOptionSchema>();
-    public string? PrevDialogKey { get; init; }
-    public ICollection<string> ScriptKeys { get; init; } = Array.Empty<string>();
-    public IDictionary<string, DynamicVars> ScriptVars { get; init; } =
+    public string? NextDialogKey { get; set; }
+    public ICollection<DialogOptionSchema> Options { get; set; } = Array.Empty<DialogOptionSchema>();
+    public string? PrevDialogKey { get; set; }
+    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
         new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
     [JsonRequired]
-    public string TemplateKey { get; init; } = null!;
+    public string TemplateKey { get; set; } = null!;
     [JsonRequired]
-    public string Text { get; init; } = null!;
-    public ushort? TextBoxLength { get; init; }
+    public string Text { get; set; } = null!;
+    public ushort? TextBoxLength { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public MenuOrDialogType Type { get; init; }
+    public MenuOrDialogType Type { get; set; }
 }

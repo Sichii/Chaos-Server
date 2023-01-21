@@ -8,14 +8,18 @@ using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
 public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>,
                                                IMapperProfile<MapTemplate, MapTemplateSchema>
 {
+    private readonly ISaveManager<Aisling> AislingSaveManager;
+    private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
+    private readonly CancellationTokenSource ServerCtx;
     private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
 
@@ -23,13 +27,19 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
         ITypeMapper mapper,
-        IShardGenerator shardGenerator
+        IShardGenerator shardGenerator,
+        ISaveManager<Aisling> aislingSaveManager,
+        CancellationTokenSource serverCtx,
+        ILoggerFactory loggerFactory
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
         Mapper = mapper;
         ShardGenerator = shardGenerator;
+        AislingSaveManager = aislingSaveManager;
+        ServerCtx = serverCtx;
+        LoggerFactory = loggerFactory;
     }
 
     public MapInstance Map(MapInstanceSchema obj)
@@ -43,6 +53,9 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
             ScriptProvider,
             obj.Name,
             obj.InstanceId,
+            AislingSaveManager,
+            ServerCtx,
+            LoggerFactory.CreateLogger<MapInstance>(),
             obj.ScriptKeys)
         {
             Flags = obj.Flags,

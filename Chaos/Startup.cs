@@ -1,15 +1,18 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Chaos.Common.Abstractions;
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Objects.World;
+using Chaos.Serialization;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -51,19 +54,24 @@ public class Startup
             });
 
         services.AddOptions<JsonSerializerOptions>()
-                .Configure(
-                    o =>
+                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
+                    (options, logger) =>
                     {
-                        o.WriteIndented = true;
-                        o.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-                        o.NumberHandling = JsonNumberHandling.AllowReadingFromString;
-                        o.PropertyNameCaseInsensitive = true;
-                        o.IgnoreReadOnlyProperties = true;
-                        o.IgnoreReadOnlyFields = true;
-                        o.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                        o.AllowTrailingCommas = true;
-                        o.Converters.Add(new PointConverter());
-                        o.Converters.Add(new JsonStringEnumConverter());
+                        var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+
+                        options.WriteIndented = true;
+                        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                        options.NumberHandling = JsonNumberHandling.AllowReadingFromString;
+                        options.PropertyNameCaseInsensitive = true;
+                        options.IgnoreReadOnlyProperties = true;
+                        options.IgnoreReadOnlyFields = true;
+                        options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                        options.AllowTrailingCommas = true;
+                        options.Converters.Add(new PointConverter());
+                        options.Converters.Add(new LocationConverter());
+                        options.Converters.Add(new JsonStringEnumConverter());
+
+                        options.TypeInfoResolver = JsonTypeInfoResolver.Combine(SerializationContext.Default, defaultResolver);
                     });
 
         services.AddCommandInterceptorForType<Aisling>("/", a => a.IsAdmin);

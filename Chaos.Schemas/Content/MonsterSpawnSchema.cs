@@ -9,62 +9,62 @@ public sealed record MonsterSpawnSchema
     ///     Defaults to 0<br />If specified, monsters created by this spawn will be aggressive and attack enemies if they come within the specified
     ///     distance
     /// </summary>
-    public int AggroRange { get; init; } = -1;
+    public int AggroRange { get; set; } = -1;
 
     /// <summary>
     ///     The amount of exp monsters created by this spawn will reward when killed
     /// </summary>
-    public int ExpReward { get; init; }
+    public int ExpReward { get; set; }
 
     /// <summary>
     ///     A collection of extra monster script keys to add to the monsters created by this spawn
     /// </summary>
-    public ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
+    public ICollection<string> ExtraScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
     ///     A number of seconds between each trigger of this spawn
     /// </summary>
-    public int IntervalSecs { get; init; }
+    public int IntervalSecs { get; set; }
 
     /// <summary>
     ///     Defaults to 0<br />If specified, will randomize the interval by the percentage specified<br />Ex. With an interval of 60, and a
     ///     Variance of 50, the spawn interval would var from 45-75secs
     /// </summary>
-    public int? IntervalVariancePct { get; init; }
+    public int? IntervalVariancePct { get; set; }
 
     /// <summary>
     ///     Default is to not have a loot table. If specified, the unique id for the loot table used to determine monster drops from this spawn
     /// </summary>
-    public string? LootTableKey { get; init; }
+    public string? LootTableKey { get; set; }
 
     /// <summary>
     ///     The maximum number of monsters that can be on the map from this spawn
     /// </summary>
-    public int MaxAmount { get; init; }
+    public int MaxAmount { get; set; }
 
     /// <summary>
     ///     Maximum amount of gold for monsters created by this spawn to drop
     /// </summary>
-    public int MaxGoldDrop { get; init; }
+    public int MaxGoldDrop { get; set; }
 
     /// <summary>
     ///     The maximum number of monsters to create per interval of this spawn
     /// </summary>
-    public int MaxPerSpawn { get; init; }
+    public int MaxPerSpawn { get; set; }
 
     /// <summary>
     ///     Minimum amount of gold for monsters created by this spawn to drop
     /// </summary>
-    public int MinGoldDrop { get; init; }
+    public int MinGoldDrop { get; set; }
 
     /// <summary>
     ///     The unique id for the template of the monster to spawn
     /// </summary>
     [JsonRequired]
-    public string MonsterTemplateKey { get; init; } = null!;
+    public string MonsterTemplateKey { get; set; } = null!;
 
     /// <summary>
     ///     Defaults to spawn on entire map<br />If specified, monsters will only spawn within the specified bounds
     /// </summary>
-    public Rectangle? SpawnArea { get; init; }
+    public Rectangle? SpawnArea { get; set; }
 }

@@ -77,7 +77,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
 
         LocalLookup[key!] = ret;
 
-        Logger.LogTrace(
+        Logger.LogDebug(
             "Created new {TypeName} entry with key \"{Key}\" from path \"{Path}\"",
             typeof(T),
             key,

@@ -20,6 +20,7 @@ using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Chaos.Clients;
 
@@ -31,6 +32,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public WorldClient(
         Socket socket,
+        IOptions<ChaosOptions> chaosOptions,
         ITypeMapper mapper,
         ICryptoClient cryptoClient,
         IWorldServer<IWorldClient> server,
@@ -43,6 +45,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             packetSerializer,
             logger)
     {
+        LogRawPackets = chaosOptions.Value.LogRawPackets;
         Mapper = mapper;
         Server = server;
     }
@@ -57,9 +60,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         if (isEncrypted)
             CryptoClient.Decrypt(ref packet);
 
-        //no way to pass the packet in because its a ref struct
-        //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
-        if (Logger.IsEnabled(LogLevel.Trace))
+        if (LogRawPackets)
             Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);
@@ -738,5 +739,6 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     }
 
     /// <inheritdoc />
+    // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
     public override string ToString() => $"{{ Cid: {Id}, Aisling: {Aisling?.ToString() ?? "N/A"} }}";
 }

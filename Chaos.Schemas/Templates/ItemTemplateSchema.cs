@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Templates.Abstractions;
 
 namespace Chaos.Schemas.Templates;
 
@@ -9,49 +10,49 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     /// <summary>
     ///     If the item is account bound, it cannot be traded or dropped
     /// </summary>
-    public bool AccountBound { get; init; }
+    public bool AccountBound { get; set; }
 
     /// <summary>
     ///     The amount of gold it costs to buy this item from a merchant
     /// </summary>
-    public int BuyCost { get; init; }
+    public int BuyCost { get; set; }
 
     /// <summary>
     ///     Defaults to None(lavender)<br />If the item is dyeable, this is the dye color
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public DisplayColor Color { get; init; }
+    public DisplayColor Color { get; set; }
 
     /// <summary>
     ///     Default null<br />If specified, this is the sprite value used to display the item on the character when equipped
     /// </summary>
-    public ushort? DisplaySprite { get; init; }
+    public ushort? DisplaySprite { get; set; }
 
     /// <summary>
     ///     Defaults to null<br />If specified, the base max durability of the item
     /// </summary>
-    public int? MaxDurability { get; init; }
+    public int? MaxDurability { get; set; }
     /// <summary>
     ///     The maximum number of this item that can be in a stack. If set to 1, the item will not be stackable
     /// </summary>
-    public int MaxStacks { get; init; } = 1;
+    public int MaxStacks { get; set; } = 1;
     /// <summary>
     ///     Defaults to null<br />If specified, these are the stats this item grants when equipped
     /// </summary>
-    public AttributesSchema? Modifiers { get; init; }
+    public AttributesSchema? Modifiers { get; set; }
 
     /// <summary>
     ///     Default null<br />If specified, this armor will have pants, and they will be this color
     /// </summary>
-    public DisplayColor? PantsColor { get; init; }
+    public DisplayColor? PantsColor { get; set; }
 
     /// <summary>
     ///     The amount of gold given for selling this item to a merchant
     /// </summary>
-    public int SellValue { get; init; }
+    public int SellValue { get; set; }
 
     /// <summary>
     ///     The weight of the item in the inventory, or equipped
     /// </summary>
-    public byte Weight { get; init; }
+    public byte Weight { get; set; }
 }

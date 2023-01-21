@@ -5,7 +5,7 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.ReactorTileScripts.Abstractions;
 
-public class ConfigurableReactorTileScriptBase : ConfigurableScriptBase<ReactorTile>, IReactorTileScript
+public abstract class ConfigurableReactorTileScriptBase : ConfigurableScriptBase<ReactorTile>, IReactorTileScript
 {
     protected MapInstance Map => Subject.MapInstance;
     protected Point Point { get; }

@@ -5,7 +5,7 @@ namespace Chaos.Schemas.Content;
 
 public sealed record StaticReactorTileSchema : ReactorTileSchema
 {
-    public string? OwnerMonsterTemplateKey { get; init; }
+    public string? OwnerMonsterTemplateKey { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public Point Source { get; init; }
+    public Point Source { get; set; }
 }

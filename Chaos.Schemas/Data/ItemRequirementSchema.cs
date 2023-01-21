@@ -4,7 +4,7 @@ namespace Chaos.Schemas.Data;
 
 public sealed record ItemRequirementSchema
 {
-    public int AmountRequired { get; init; } = 1;
+    public int AmountRequired { get; set; } = 1;
     [JsonRequired]
-    public string ItemTemplateKey { get; init; } = null!;
+    public string ItemTemplateKey { get; set; } = null!;
 }

@@ -48,8 +48,6 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
             Slot = obj.Slot ?? 0
         };
 
-        Logger.LogTrace("Deserialized spell - Name: {SpellName}, UniqueId: {UniqueId}", spell.Template.Name, spell.UniqueId);
-
         return spell;
     }
 
@@ -75,8 +73,6 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
             TemplateKey = obj.Template.TemplateKey,
             Slot = obj.Slot
         };
-
-        Logger.LogTrace("Serialized spell - TemplateKey: {TemplateKey}, UniqueId: {UniqueId}", ret.TemplateKey, ret.UniqueId);
 
         return ret;
     }

@@ -6,6 +6,7 @@ using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Chaos.Clients;
 
@@ -15,6 +16,7 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
 
     public LobbyClient(
         Socket socket,
+        IOptions<ChaosOptions> chaosOptions,
         ICryptoClient cryptoClient,
         ILobbyServer<ILobbyClient> server,
         IPacketSerializer packetSerializer,
@@ -24,7 +26,11 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
             socket,
             cryptoClient,
             packetSerializer,
-            logger) => Server = server;
+            logger)
+    {
+        LogRawPackets = chaosOptions.Value.LogRawPackets;
+        Server = server;
+    }
 
     /// <inheritdoc />
     protected override ValueTask HandlePacketAsync(Span<byte> span)
@@ -36,9 +42,7 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
         if (isEncrypted)
             CryptoClient.Decrypt(ref packet);
 
-        //no way to pass the packet in because its a ref struct
-        //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
-        if (Logger.IsEnabled(LogLevel.Trace))
+        if (LogRawPackets)
             Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);

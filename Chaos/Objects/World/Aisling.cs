@@ -21,6 +21,7 @@ using Chaos.Scripts.AislingScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Time;
+using Chaos.Time.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
@@ -70,6 +71,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
     public override int AssailIntervalMs { get; }
     public ChantTimer ChantTimer { get; }
     public override ILogger<Aisling> Logger { get; }
+    public IIntervalTimer SaveTimer { get; }
     /// <inheritdoc />
     public override IAislingScript Script { get; }
     /// <inheritdoc />
@@ -118,6 +120,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
         ExchangeFactory = exchangeFactory;
         Logger = logger;
         ItemCloner = itemCloner;
+        SaveTimer = new IntervalTimer(TimeSpan.FromMinutes(WorldOptions.Instance.SaveIntervalMins), false);
         ScriptKeys = new HashSet<string> { ScriptBase.GetScriptKey(typeof(DefaultAislingScript)) };
         Script = scriptProvider.CreateScript<IAislingScript, Aisling>(ScriptKeys, this);
     }
@@ -183,6 +186,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
         ExchangeFactory = null!;
         ItemCloner = null!;
         Script = null!;
+        SaveTimer = null!;
     }
 
     public void BeginObserving()
@@ -749,6 +753,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
         ChantTimer.Update(delta);
         RegenTimer.Update(delta);
         TimedEvents.Update(delta);
+        SaveTimer.Update(delta);
 
         base.Update(delta);
     }

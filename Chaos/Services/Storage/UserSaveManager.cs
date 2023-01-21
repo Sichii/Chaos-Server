@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using Chaos.Containers;
 using Chaos.Objects.World;
@@ -34,7 +35,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             Directory.CreateDirectory(Options.Directory);
     }
 
-    private async ValueTask<T> DesierlizeAsync<T>(string directory, string fileName)
+    private async ValueTask<T> DeserializeAsync<T>(string directory, string fileName)
     {
         var path = Path.Combine(directory, fileName);
 
@@ -59,15 +60,15 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
 
-        var aislingSchema = await DesierlizeAsync<AislingSchema>(directory, "aisling.json");
-        var bankSchema = await DesierlizeAsync<BankSchema>(directory, "bank.json");
-        var effectsSchema = await DesierlizeAsync<EffectsBarSchema>(directory, "effects.json");
-        var equipmentSchema = await DesierlizeAsync<EquipmentSchema>(directory, "equipment.json");
-        var inventorySchema = await DesierlizeAsync<InventorySchema>(directory, "inventory.json");
-        var skillsSchemas = await DesierlizeAsync<SkillBookSchema>(directory, "skills.json");
-        var spellsSchemas = await DesierlizeAsync<SpellBookSchema>(directory, "spells.json");
-        var legendSchema = await DesierlizeAsync<LegendSchema>(directory, "legend.json");
-        var timedEventsSchema = await DesierlizeAsync<TimedEventCollectionSchema>(directory, "timedEvents.json");
+        var aislingSchema = await DeserializeAsync<AislingSchema>(directory, "aisling.json");
+        var bankSchema = await DeserializeAsync<BankSchema>(directory, "bank.json");
+        var effectsSchema = await DeserializeAsync<EffectsBarSchema>(directory, "effects.json");
+        var equipmentSchema = await DeserializeAsync<EquipmentSchema>(directory, "equipment.json");
+        var inventorySchema = await DeserializeAsync<InventorySchema>(directory, "inventory.json");
+        var skillsSchemas = await DeserializeAsync<SkillBookSchema>(directory, "skills.json");
+        var spellsSchemas = await DeserializeAsync<SpellBookSchema>(directory, "spells.json");
+        var legendSchema = await DeserializeAsync<LegendSchema>(directory, "legend.json");
+        var timedEventsSchema = await DeserializeAsync<TimedEventCollectionSchema>(directory, "timedEvents.json");
 
         var aisling = Mapper.Map<Aisling>(aislingSchema);
         var bank = Mapper.Map<Bank>(bankSchema);
@@ -90,7 +91,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             effects,
             timedEvents);
 
-        Logger.LogTrace("Loaded aisling {Name}", name);
+        Logger.LogDebug("Loaded aisling {Name}", name);
 
         return aisling;
     }
@@ -98,39 +99,51 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
     public async Task SaveAsync(Aisling obj)
     {
         Logger.LogTrace("Saving aisling {Name}", obj.Name);
+        var start = Stopwatch.GetTimestamp();
 
-        var aislingSchema = Mapper.Map<AislingSchema>(obj);
-        var bankSchema = Mapper.Map<BankSchema>(obj.Bank);
-        var equipmentSchema = Mapper.MapMany<ItemSchema>(obj.Equipment).ToList();
-        var inventorySchema = Mapper.MapMany<ItemSchema>(obj.Inventory).ToList();
-        var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(obj.Effects).ToList();
-        var skillsSchemas = Mapper.MapMany<SkillSchema>(obj.SkillBook).ToList();
-        var spellsSchemas = Mapper.MapMany<SpellSchema>(obj.SpellBook).ToList();
-        var legendSchema = Mapper.MapMany<LegendMarkSchema>(obj.Legend).ToList();
-        var timedEventsSchemas = Mapper.Map<TimedEventCollectionSchema>(obj.TimedEvents);
+        try
+        {
+            var aislingSchema = Mapper.Map<AislingSchema>(obj);
+            var bankSchema = Mapper.Map<BankSchema>(obj.Bank);
+            var equipmentSchema = Mapper.MapMany<ItemSchema>(obj.Equipment).ToList();
+            var inventorySchema = Mapper.MapMany<ItemSchema>(obj.Inventory).ToList();
+            var effectsSchemas = Mapper.MapMany<IEffect, EffectSchema>(obj.Effects).ToList();
+            var skillsSchemas = Mapper.MapMany<SkillSchema>(obj.SkillBook).ToList();
+            var spellsSchemas = Mapper.MapMany<SpellSchema>(obj.SpellBook).ToList();
+            var legendSchema = Mapper.MapMany<LegendMarkSchema>(obj.Legend).ToList();
+            var timedEventsSchemas = Mapper.Map<TimedEventCollectionSchema>(obj.TimedEvents);
 
-        var directory = Path.Combine(Options.Directory, obj.Name.ToLower());
+            var directory = Path.Combine(Options.Directory, obj.Name.ToLower());
 
-        if (!Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
 
-        await Task.WhenAll(
-            SerializeAsync(directory, "aisling.json", aislingSchema),
-            SerializeAsync(directory, "bank.json", bankSchema),
-            SerializeAsync(directory, "effects.json", effectsSchemas),
-            SerializeAsync(directory, "equipment.json", equipmentSchema),
-            SerializeAsync(directory, "inventory.json", inventorySchema),
-            SerializeAsync(directory, "skills.json", skillsSchemas),
-            SerializeAsync(directory, "spells.json", spellsSchemas),
-            SerializeAsync(directory, "legend.json", legendSchema),
-            SerializeAsync(directory, "timedEvents.json", timedEventsSchemas));
+            await Task.WhenAll(
+                SerializeAsync(directory, "aisling.json", aislingSchema),
+                SerializeAsync(directory, "bank.json", bankSchema),
+                SerializeAsync(directory, "effects.json", effectsSchemas),
+                SerializeAsync(directory, "equipment.json", equipmentSchema),
+                SerializeAsync(directory, "inventory.json", inventorySchema),
+                SerializeAsync(directory, "skills.json", skillsSchemas),
+                SerializeAsync(directory, "spells.json", spellsSchemas),
+                SerializeAsync(directory, "legend.json", legendSchema),
+                SerializeAsync(directory, "timedEvents.json", timedEventsSchemas));
 
-        Logger.LogTrace("Saved aisling {Name}", obj.Name);
+            Logger.LogDebug("Saved aisling {Aisling} in {Elapsed}", obj, Stopwatch.GetElapsedTime(start));
+        } catch (Exception e)
+        {
+            Logger.LogError(
+                e,
+                "Failed to save aisling {Aisling} in {Elapsed}",
+                obj,
+                Stopwatch.GetElapsedTime(start));
+        }
     }
 
     private async Task SerializeAsync(string directory, string fileName, object value)
     {
         var path = Path.Combine(directory, fileName);
+        var start = Stopwatch.GetTimestamp();
 
         await using var stream = File.Open(
             path,
@@ -145,5 +158,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         stream.SetLength(0);
 
         await JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptions);
+
+        Logger.LogTrace("Serialized \"{FileName}\" in {Elapsed}", fileName, Stopwatch.GetElapsedTime(start));
     }
 }

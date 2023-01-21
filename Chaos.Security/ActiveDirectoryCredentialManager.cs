@@ -51,7 +51,7 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         var passwordPath = Path.Combine(Options.Directory, name, "password.txt");
 
         await File.WriteAllTextAsync(passwordPath, newHash);
-        Logger.LogTrace("Changed password for {Name}", name);
+        Logger.LogDebug("Changed password for {Name}", name);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
 
         var passwordPath = Path.Combine(characterDir, "password.txt");
         await File.WriteAllTextAsync(passwordPath, hash);
-        Logger.LogTrace("Saved new credentials for {Name}", name);
+        Logger.LogDebug("Saved new credentials for {Name}", name);
     }
 
     /// <inheritdoc />
@@ -120,7 +120,7 @@ public sealed class ActiveDirectoryCredentialManager : ICredentialManager
         await using var sync = await Sync.WaitAsync();
 
         var ret = await InnerValidateCredentialsAsync(name, password);
-        Logger.LogTrace("Validated credentials for {Name}", name);
+        Logger.LogDebug("Validated credentials for {Name}", name);
 
         return ret;
     }

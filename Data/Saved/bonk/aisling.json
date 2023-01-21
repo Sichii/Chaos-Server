@@ -1,7 +1,7 @@
 {
   "bodyColor": "White",
   "bodySprite": "Female",
-  "direction": "Left",
+  "direction": "Right",
   "effects": [],
   "enums": {},
   "flags": {},
@@ -11,7 +11,7 @@
   "hairStyle": 6,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "testTown",
+  "mapInstanceId": "test3",
   "name": "bonk",
   "nation": 0,
   "statSheet": {
@@ -44,6 +44,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 28,
-  "y": 26
+  "x": 52,
+  "y": 50
 }

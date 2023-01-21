@@ -48,8 +48,6 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
             Slot = obj.Slot ?? 0
         };
 
-        Logger.LogTrace("Deserialized skill - Name: {SkillName}, UniqueId: {UniqueId}", skill.Template.Name, skill.UniqueId);
-
         return skill;
     }
 
@@ -72,8 +70,6 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
             TemplateKey = obj.Template.TemplateKey,
             Slot = obj.Slot
         };
-
-        Logger.LogTrace("Serialized skill - TemplateKey: {TemplateKey}, UniqueId: {UniqueId}", ret.TemplateKey, ret.UniqueId);
 
         return ret;
     }

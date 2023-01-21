@@ -27,6 +27,10 @@ var configuration = new ConfigurationBuilder()
                     .Build();
 
 var startup = new Startup(configuration);
+var serverCtx = new CancellationTokenSource();
+
+services.AddSingleton(serverCtx);
+
 startup.ConfigureServices(services);
 
 services.AddSingleton<IGroupService, GroupService>();
@@ -41,12 +45,11 @@ await using var provider = services.BuildServiceProvider();
 _ = provider.GetRequiredService<IOptions<WorldOptions>>();
 _ = provider.GetRequiredService<IScriptRegistry>();
 
-var ctx = new CancellationTokenSource();
 var hostedServices = provider.GetServices<IHostedService>();
 
 var startFuncs = hostedServices
                  .Select<IHostedService, Func<CancellationToken, Task>>(s => s.StartAsync)
                  .ToArray();
 
-await ctx.Token.WhenAllWithCancellation(startFuncs);
-await ctx.Token.WaitTillCanceled();
+await serverCtx.Token.WhenAllWithCancellation(startFuncs);
+await serverCtx.Token.WaitTillCanceled();

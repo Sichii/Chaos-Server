@@ -106,6 +106,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         GroundEntities.Clear();
         Reactors.Clear();
         Doors.Clear();
+        Other.Clear();
 
         foreach (var lookup in PointLookup.Flatten())
             lookup.Clear();

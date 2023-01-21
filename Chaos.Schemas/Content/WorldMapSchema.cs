@@ -5,8 +5,8 @@ namespace Chaos.Schemas.Content;
 public class WorldMapSchema
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public byte FieldIndex { get; init; }
-    public ICollection<string> NodeKeys { get; init; } = Array.Empty<string>();
+    public byte FieldIndex { get; set; }
+    public ICollection<string> NodeKeys { get; set; } = Array.Empty<string>();
     [JsonRequired]
-    public string WorldMapKey { get; init; } = null!;
+    public string WorldMapKey { get; set; } = null!;
 }

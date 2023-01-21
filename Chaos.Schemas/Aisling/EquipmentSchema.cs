@@ -7,7 +7,7 @@ namespace Chaos.Schemas.Aisling;
 [JsonConverter(typeof(EnumerableConverter<EquipmentSchema, ItemSchema>))]
 public sealed class EquipmentSchema : IEnumerable<ItemSchema>
 {
-    public ICollection<ItemSchema> Items { get; init; }
+    public ICollection<ItemSchema> Items { get; set; }
 
     public EquipmentSchema(IEnumerable<ItemSchema> items) => Items = items.ToList();
 

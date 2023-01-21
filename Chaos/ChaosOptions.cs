@@ -4,5 +4,6 @@ namespace Chaos;
 
 public sealed class ChaosOptions : IStagingDirectory
 {
+    public bool LogRawPackets { get; init; }
     public string StagingDirectory { get; init; } = null!;
 }

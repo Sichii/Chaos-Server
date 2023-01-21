@@ -4,10 +4,10 @@ namespace Chaos.Schemas.Aisling;
 
 public sealed class TimedEventSchema
 {
-    public bool AutoConsume { get; init; }
-    public TimeSpan Duration { get; init; }
+    public bool AutoConsume { get; set; }
+    public TimeSpan Duration { get; set; }
     [JsonRequired]
-    public string EventId { get; init; } = null!;
-    public DateTime Start { get; init; }
-    public ulong UniqueId { get; init; }
+    public string EventId { get; set; } = null!;
+    public DateTime Start { get; set; }
+    public ulong UniqueId { get; set; }
 }

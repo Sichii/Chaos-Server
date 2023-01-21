@@ -23,7 +23,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     private int Sequence;
     public bool Connected { get; set; }
     public ICryptoClient CryptoClient { get; set; }
-
+    public bool LogRawPackets { get; set; }
     public event EventHandler? OnDisconnected;
     public uint Id { get; }
     public FifoSemaphoreSlim ReceiveSync { get; }
@@ -185,7 +185,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         //no way to pass the packet in because its a ref struct
         //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
-        if (Logger.IsEnabled(LogLevel.Trace))
+        if (LogRawPackets)
             Logger.LogTrace("[Snd] {Packet}", packet.ToString());
 
         packet.ShouldEncrypt = CryptoClient.ShouldEncrypt((byte)packet.OpCode);

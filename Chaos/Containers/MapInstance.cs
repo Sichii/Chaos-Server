@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
@@ -10,20 +11,28 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.MapScripts.Abstractions;
+using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Containers;
 
 public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
+    private readonly DeltaMonitor DeltaMonitor;
+    private readonly DeltaTime DeltaTime;
+    private readonly PeriodicTimer DeltaTimer;
     private readonly IIntervalTimer HandleShardLimitersTimer;
+    private readonly ILogger<MapInstance> Logger;
     private readonly List<MonsterSpawn> MonsterSpawns;
     private readonly MapEntityCollection Objects;
+    private readonly ISaveManager<Aisling> SaveManager;
+    private readonly CancellationToken ServerShutdownToken;
     private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
     public string? BaseInstanceId { get; set; }
@@ -39,6 +48,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public ConcurrentDictionary<string, MapInstance> Shards { get; set; }
     public MapTemplate Template { get; set; }
     public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
+    public CancellationTokenSource MapInstanceCtx { get; }
     /// <inheritdoc />
     public IMapScript Script { get; }
     /// <inheritdoc />
@@ -52,14 +62,21 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         IScriptProvider scriptProvider,
         string name,
         string instanceId,
+        ISaveManager<Aisling> saveManager,
+        CancellationTokenSource serverCtx,
+        ILogger<MapInstance> logger,
         ICollection<string>? extraScriptKeys = null
     )
     {
         Name = name;
         InstanceId = instanceId;
+        SaveManager = saveManager;
+        Logger = logger;
+        ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
         var walkableArea = template.Height * template.Width - template.Tiles.Flatten().Count(t => t.IsWall);
         Objects = new MapEntityCollection(template.Width, template.Height, walkableArea);
+        MapInstanceCtx = CancellationTokenSource.CreateLinkedTokenSource(ServerShutdownToken);
         MonsterSpawns = new List<MonsterSpawn>();
         Sync = new FifoAutoReleasingSemaphoreSlim(1, 1);
         Template = template;
@@ -68,6 +85,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         ShardLimiterTimers = new ConcurrentDictionary<Aisling, IIntervalTimer>();
         ShardGenerator = shardGenerator;
         HandleShardLimitersTimer = new IntervalTimer(TimeSpan.FromSeconds(10));
+        var delta = 1000.0 / WorldOptions.Instance.UpdatesPerSecond;
+        DeltaTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
+        DeltaTime = new DeltaTime();
+        DeltaMonitor = new DeltaMonitor(logger, TimeSpan.FromMinutes(5), Math.Min(delta * 10, 500));
 
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
@@ -164,6 +185,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Destroy()
     {
+        Stop();
         Shards.Remove(InstanceId, out _);
         Objects.Clear();
         MonsterSpawns.Clear();
@@ -595,6 +617,29 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Objects.Add(mapEntity.Id, mapEntity);
     }
 
+    public async void StartAsync()
+    {
+        var linkedCancellationToken = MapInstanceCtx.Token;
+
+        while (true)
+        {
+            if (linkedCancellationToken.IsCancellationRequested)
+                return;
+
+            try
+            {
+                await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
+            } catch (TaskCanceledException)
+            {
+                return;
+            }
+
+            await UpdateMapAsync(DeltaTime.GetDelta);
+        }
+    }
+
+    public void Stop() => MapInstanceCtx.Cancel();
+
     /// <inheritdoc />
     public override string ToString() =>
         $"{{ Type: \"{nameof(MapInstance)}\", InstanceId: \"{InstanceId}\", TemplateId: {Template.MapId} }}";
@@ -603,18 +648,43 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Update(TimeSpan delta)
     {
-        Objects.Update(delta);
+        try
+        {
+            Objects.Update(delta);
 
-        foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
-            spawn.Update(delta);
+            foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
+                spawn.Update(delta);
 
-        Script.Update(delta);
-        HandleShardLimitersTimer.Update(delta);
+            Script.Update(delta);
+            HandleShardLimitersTimer.Update(delta);
 
-        foreach (var timer in ShardLimiterTimers.Values)
-            timer.Update(delta);
+            foreach (var timer in ShardLimiterTimers.Values)
+                timer.Update(delta);
 
-        if (HandleShardLimitersTimer.IntervalElapsed)
-            HandleShardLimiters();
+            if (HandleShardLimitersTimer.IntervalElapsed)
+                HandleShardLimiters();
+        } catch (Exception e)
+        {
+            Logger.LogCritical(e, "Failed to update map instance \"{MapInstance}\"", this);
+        }
+    }
+
+    public async Task UpdateMapAsync(TimeSpan delta)
+    {
+        await using var sync = await Sync.WaitAsync();
+
+        DeltaMonitor.Update(delta);
+
+        var start = Stopwatch.GetTimestamp();
+
+        Update(delta);
+
+        var aislingsToSave = Objects.Values<Aisling>()
+                                    .Where(aisling => aisling.SaveTimer.IntervalElapsed);
+
+        await Task.WhenAll(aislingsToSave.Select(SaveManager.SaveAsync));
+
+        var elapsed = Stopwatch.GetElapsedTime(start);
+        DeltaMonitor.AddExecutionDelta(elapsed);
     }
 }

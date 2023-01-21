@@ -8,7 +8,7 @@ public sealed class EnumerableConverter<T, TObj> : JsonConverter<T> where T: IEn
     /// <inheritdoc />
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var list = JsonSerializer.Deserialize<List<TObj>>(ref reader, options);
+        var list = JsonSerializer.Deserialize<ICollection<TObj>>(ref reader, options);
 
         return (T)Activator.CreateInstance(typeof(T), list!)!;
     }

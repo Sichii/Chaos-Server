@@ -7,7 +7,7 @@ namespace Chaos.Schemas.Aisling;
 [JsonConverter(typeof(EnumerableConverter<LegendSchema, LegendMarkSchema>))]
 public sealed class LegendSchema : IEnumerable<LegendMarkSchema>
 {
-    public ICollection<LegendMarkSchema> LegendMarks { get; init; }
+    public ICollection<LegendMarkSchema> LegendMarks { get; set; }
 
     public LegendSchema(IEnumerable<LegendMarkSchema> marks) => LegendMarks = marks.ToList();
 

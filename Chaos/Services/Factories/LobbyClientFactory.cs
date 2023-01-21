@@ -7,6 +7,7 @@ using Chaos.Packets.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Factories;
 
@@ -18,6 +19,7 @@ public sealed class LobbyClientFactory : IClientFactory<LobbyClient>
 
     public LobbyClient CreateClient(Socket socket)
     {
+        var chaosOptions = ServiceProvider.GetRequiredService<IOptions<ChaosOptions>>();
         var crypto = ServiceProvider.GetRequiredService<ICryptoClient>();
         var server = ServiceProvider.GetRequiredService<ILobbyServer<ILobbyClient>>();
         var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
@@ -25,6 +27,7 @@ public sealed class LobbyClientFactory : IClientFactory<LobbyClient>
 
         return new LobbyClient(
             socket,
+            chaosOptions,
             crypto,
             server,
             serializer,

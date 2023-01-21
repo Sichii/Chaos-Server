@@ -7,9 +7,9 @@ namespace Chaos.Schemas.Content;
 public sealed record MerchantSpawnSchema
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public Direction Direction { get; init; }
-    public ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
+    public Direction Direction { get; set; }
+    public ICollection<string> ExtraScriptKeys { get; set; } = Array.Empty<string>();
     [JsonRequired]
-    public string MerchantTemplateKey { get; init; } = null!;
-    public Point SpawnPoint { get; init; }
+    public string MerchantTemplateKey { get; set; } = null!;
+    public Point SpawnPoint { get; set; }
 }

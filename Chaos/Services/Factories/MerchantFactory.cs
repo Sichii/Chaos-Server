@@ -49,7 +49,7 @@ public sealed class MerchantFactory : IMerchantFactory
             ScriptProvider,
             extraScriptKeys);
 
-        Logger.LogTrace("Created merchant {Merchant}", merchant);
+        Logger.LogDebug("Created merchant {Merchant}", merchant);
 
         return merchant;
     }

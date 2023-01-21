@@ -4,10 +4,10 @@ using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripts.DialogScripts.Abstractions;
 
-public class ConfigurableDialogScriptBase : ConfigurableScriptBase<Dialog>, IDialogScript
+public abstract class ConfigurableDialogScriptBase : ConfigurableScriptBase<Dialog>, IDialogScript
 {
     /// <inheritdoc />
-    public ConfigurableDialogScriptBase(Dialog subject)
+    protected ConfigurableDialogScriptBase(Dialog subject)
         : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
     /// <inheritdoc />

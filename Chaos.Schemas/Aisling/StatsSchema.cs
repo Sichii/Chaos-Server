@@ -2,9 +2,9 @@ namespace Chaos.Schemas.Aisling;
 
 public record StatsSchema
 {
-    public int Con { get; init; }
-    public int Dex { get; init; }
-    public int Int { get; init; }
-    public int Str { get; init; }
-    public int Wis { get; init; }
+    public int Con { get; set; }
+    public int Dex { get; set; }
+    public int Int { get; set; }
+    public int Str { get; set; }
+    public int Wis { get; set; }
 }

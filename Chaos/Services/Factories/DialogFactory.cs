@@ -32,7 +32,7 @@ public sealed class DialogFactory : IDialogFactory
             this,
             extraScriptKeys);
 
-        Logger.LogTrace("Created dialog {DialogKey} for {Source}", templateKey, source);
+        Logger.LogDebug("Created dialog {DialogKey} for {Source}", templateKey, source);
 
         return dialog;
     }

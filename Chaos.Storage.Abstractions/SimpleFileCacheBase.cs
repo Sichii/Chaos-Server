@@ -123,6 +123,6 @@ public abstract class SimpleFileCacheBase<T, TSchema> : ISimpleCache<T> where TS
                 Logger.LogTrace("Loaded {TypeName} \"{Key}\"", typeName, key);
             });
 
-        Logger.LogInformation("{Count} {TypeName}s loaded", Cache.Count, typeName);
+        Logger.LogDebug("{Count} {TypeName}s loaded", Cache.Count, typeName);
     }
 }

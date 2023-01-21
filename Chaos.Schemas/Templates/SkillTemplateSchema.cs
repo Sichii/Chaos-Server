@@ -1,4 +1,5 @@
 using Chaos.Schemas.Data;
+using Chaos.Schemas.Templates.Abstractions;
 
 namespace Chaos.Schemas.Templates;
 
@@ -8,10 +9,10 @@ public sealed record SkillTemplateSchema : PanelObjectTemplateSchema
     ///     Whether or not the skill is an assail and should be used when spacebar is pressed<br />Assail cooldowns are handled by AssailIntervalMs
     ///     and AtkSpeedPct
     /// </summary>
-    public bool IsAssail { get; init; }
+    public bool IsAssail { get; set; }
 
     /// <summary>
     ///     Defaults to null<br />If set, these are the requirements for the skill to be learned
     /// </summary>
-    public LearningRequirementsSchema? LearningRequirements { get; init; }
+    public LearningRequirementsSchema? LearningRequirements { get; set; }
 }

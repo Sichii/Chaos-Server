@@ -7,7 +7,7 @@ namespace Chaos.Schemas.Aisling;
 [JsonConverter(typeof(EnumerableConverter<SkillBookSchema, SkillSchema>))]
 public class SkillBookSchema : IEnumerable<SkillSchema>
 {
-    public ICollection<SkillSchema> Skills { get; init; }
+    public ICollection<SkillSchema> Skills { get; set; }
 
     public SkillBookSchema(IEnumerable<SkillSchema> skills) => Skills = skills.ToList();
 

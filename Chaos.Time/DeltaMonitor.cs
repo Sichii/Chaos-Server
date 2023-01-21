@@ -11,8 +11,8 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     private readonly ILogger Logger;
     private readonly double MaxDelta;
     private readonly IIntervalTimer Timer;
+    private bool BeginLogging;
     private List<TimeSpan> ExecutionDeltas;
-    private bool FirstPrint;
 
     public DeltaMonitor(ILogger logger, TimeSpan logInterval, double maxDelta)
     {
@@ -20,7 +20,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
         MaxDelta = maxDelta;
         ExecutionDeltas = new List<TimeSpan>();
         Timer = new IntervalTimer(logInterval, false);
-        FirstPrint = true;
+        BeginLogging = false;
     }
 
     /// <summary>
@@ -29,25 +29,14 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     /// <param name="executionDelta">The amount of time the loop took to execute</param>
     public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);
 
-    private void PrintStatistics(List<TimeSpan> deltas) => _ = Task.Run(
-        () =>
+    private void CheckStatistics(List<TimeSpan> deltas) => _ = Task.Run(
+        async () =>
         {
-            //the first set of statistic will be inaccurate because of JIT compilation, world loading, and other things
-            if (FirstPrint)
-            {
-                FirstPrint = false;
+            await Task.Yield();
 
-                //so instead of printing the first set of statistic, print notes that give information about the monitor
-                Logger.LogInformation(
-                    """
-Delta Monitor Notes: 
-This message is shown in place of the first statistics message, because the first set of statistics are not accurate
-Server may run slow at first as the JIT recompiles things
-Max deltas can generally be ignored, if they go too high the message will show up as a WARN or ERROR
-If the log message is INFO, then it's fine
-If the log message is WARN, you may have something to worry about
-If the log message is ERROR, then you've done something seriously wrong
-""");
+            if (!BeginLogging)
+            {
+                BeginLogging = true;
 
                 return;
             }
@@ -94,7 +83,7 @@ If the log message is ERROR, then you've done something seriously wrong
                     max,
                     deltas.Count);
             else
-                Logger.LogInformation(
+                Logger.LogTrace(
                     FORMAT,
                     average,
                     median,
@@ -110,7 +99,7 @@ If the log message is ERROR, then you've done something seriously wrong
 
         if (Timer.IntervalElapsed)
         {
-            PrintStatistics(ExecutionDeltas);
+            CheckStatistics(ExecutionDeltas);
             ExecutionDeltas = new List<TimeSpan>(ExecutionDeltas.Count);
         }
     }
