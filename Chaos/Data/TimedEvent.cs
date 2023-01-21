@@ -33,12 +33,13 @@ public sealed class TimedEvent : IEquatable<TimedEvent>
         AutoConsume = autoConsume;
     }
 
-    public TimedEvent(TimedEventId eventId, TimeSpan duration)
+    public TimedEvent(TimedEventId eventId, TimeSpan duration, bool autoConsume = false)
     {
         UniqueId = ServerId.NextId;
         EventId = eventId;
         Duration = duration;
         Start = DateTime.UtcNow;
+        AutoConsume = autoConsume;
     }
 
     /// <inheritdoc />

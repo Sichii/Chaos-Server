@@ -10,12 +10,19 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 {
     private readonly ILogger Logger;
     private readonly double MaxDelta;
+    private readonly string Name;
     private readonly IIntervalTimer Timer;
     private bool BeginLogging;
     private List<TimeSpan> ExecutionDeltas;
 
-    public DeltaMonitor(ILogger logger, TimeSpan logInterval, double maxDelta)
+    public DeltaMonitor(
+        string name,
+        ILogger logger,
+        TimeSpan logInterval,
+        double maxDelta
+    )
     {
+        Name = name;
         Logger = logger;
         MaxDelta = maxDelta;
         ExecutionDeltas = new List<TimeSpan>();
@@ -63,12 +70,13 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 
             //log output format
             const string FORMAT =
-                "Delta Monitor - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}, Max: {Max:N1}, Samples: {SampleCount}";
+                "Delta Monitor [{Name}] - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}, Max: {Max:N1}, Samples: {SampleCount}";
 
             //depending on how the loop is performing, log the output at different levels
             if ((average > MaxDelta) || (max > 250))
                 Logger.LogError(
                     FORMAT,
+                    Name,
                     average,
                     median,
                     upperPct,
@@ -77,6 +85,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
             else if ((upperPct > MaxDelta / 2) || (max > 100))
                 Logger.LogWarning(
                     FORMAT,
+                    Name,
                     average,
                     median,
                     upperPct,
@@ -85,6 +94,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
             else
                 Logger.LogTrace(
                     FORMAT,
+                    Name,
                     average,
                     median,
                     upperPct,

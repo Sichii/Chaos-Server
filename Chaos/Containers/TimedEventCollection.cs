@@ -22,11 +22,11 @@ public sealed class TimedEventCollection : IEnumerable<TimedEvent>, IDeltaUpdata
             InnerAddEvent(timedEvent);
     }
 
-    public void AddEvent(TimedEvent.TimedEventId eventId, TimeSpan duration)
+    public void AddEvent(TimedEvent.TimedEventId eventId, TimeSpan duration, bool autoConsume = false)
     {
         using var sync = Sync.Enter();
 
-        var timedEvent = new TimedEvent(eventId, duration);
+        var timedEvent = new TimedEvent(eventId, duration, autoConsume);
 
         InnerAddEvent(timedEvent);
     }

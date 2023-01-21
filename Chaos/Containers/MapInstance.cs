@@ -88,7 +88,12 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         var delta = 1000.0 / WorldOptions.Instance.UpdatesPerSecond;
         DeltaTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
         DeltaTime = new DeltaTime();
-        DeltaMonitor = new DeltaMonitor(logger, TimeSpan.FromMinutes(5), Math.Min(delta * 10, 500));
+
+        DeltaMonitor = new DeltaMonitor(
+            InstanceId,
+            logger,
+            TimeSpan.FromMinutes(1),
+            Math.Min(delta * 10, 500));
 
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
