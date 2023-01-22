@@ -17,15 +17,19 @@ public static class AbstractCommonExtensions
     /// </summary>
     /// <param name="services">The service collection to add the options object to</param>
     /// <param name="subSection">If the section is not at the root level, supply the subsection here</param>
+    /// <param name="optionsSection">If the options section is not the same as the class name, supply the name of that section here</param>
     /// <typeparam name="T">The type of the options object</typeparam>
-    public static OptionsBuilder<T> AddDirectoryBoundOptionsFromConfig<T>(this IServiceCollection services, string? subSection = null)
+    public static OptionsBuilder<T> AddDirectoryBoundOptionsFromConfig<T>(
+        this IServiceCollection services,
+        string? subSection = null,
+        string? optionsSection = null
+    )
         where T: class, IDirectoryBound
     {
-        var typeName = typeof(T).Name;
-        var path = typeName;
+        var path = optionsSection ?? typeof(T).Name;
 
         if (!string.IsNullOrWhiteSpace(subSection))
-            path = $"{subSection}:{typeName}";
+            path = $"{subSection}:{path}";
 
         return services.AddOptions<T>()
                        .Configure<IConfiguration, IStagingDirectory>(

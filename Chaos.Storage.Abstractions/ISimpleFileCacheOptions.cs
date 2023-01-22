@@ -4,7 +4,7 @@ using Chaos.Storage.Abstractions.Definitions;
 namespace Chaos.Storage.Abstractions;
 
 /// <summary>
-///     Defines the properties required to configure a <see cref="Chaos.Storage.Abstractions.SimpleFileCacheBase{T,TSchema}" />
+///     Defines the properties required to configure a simple cache
 /// </summary>
 public interface ISimpleFileCacheOptions : IDirectoryBound
 {

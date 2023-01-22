@@ -4,13 +4,14 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Extensions.Common;
+using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Chaos.Storage.Abstractions;
+namespace Chaos.Storage;
 
 /// <summary>
 ///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}" /> that loads data from a file and caches it. The data has a
@@ -18,23 +19,24 @@ namespace Chaos.Storage.Abstractions;
 /// </summary>
 /// <typeparam name="T">The type of object stored in the cache</typeparam>
 /// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
-public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where TSchema: class
+/// <typeparam name="TOptions"></typeparam>
+public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class where TOptions: class, IExpiringFileCacheOptions
 {
     protected SynchronizedHashSet<string> Paths { get; set; }
     protected IMemoryCache Cache { get; }
     protected JsonSerializerOptions JsonSerializerOptions { get; }
     protected string KeyPrefix { get; }
     protected ConcurrentDictionary<string, T> LocalLookup { get; }
-    protected virtual ILogger<ExpiringFileCacheBase<T, TSchema>> Logger { get; }
+    protected virtual ILogger<ExpiringFileCache<T, TSchema, TOptions>> Logger { get; }
     protected ITypeMapper Mapper { get; }
-    protected IExpiringFileCacheOptions Options { get; }
+    protected TOptions Options { get; }
 
-    protected ExpiringFileCacheBase(
+    public ExpiringFileCache(
         IMemoryCache cache,
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptions<IExpiringFileCacheOptions> options,
-        ILogger<ExpiringFileCacheBase<T, TSchema>> logger
+        IOptions<TOptions> options,
+        ILogger<ExpiringFileCache<T, TSchema, TOptions>> logger
     )
     {
         Options = options.Value;
@@ -95,7 +97,7 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
 
         try
         {
-            return Cache.GetOrCreate(key, CreateFromEntry);
+            return Cache.GetOrCreate(key, CreateFromEntry)!;
         } catch
         {
             Cache.Remove(key);
@@ -181,9 +183,9 @@ public abstract class ExpiringFileCacheBase<T, TSchema> : ISimpleCache<T> where 
 
     protected virtual void RemoveValueCallback(
         object key,
-        object value,
+        object? value,
         EvictionReason reason,
-        object state
+        object? state
     )
     {
         //if we reload the cache, the localLookup values will automatically be replaced

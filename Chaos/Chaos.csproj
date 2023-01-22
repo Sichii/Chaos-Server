@@ -43,12 +43,13 @@
         <ProjectReference Include="..\Chaos.Scripting\Chaos.Scripting.csproj"/>
         <ProjectReference Include="..\Chaos.Security\Chaos.Security.csproj"/>
         <ProjectReference Include="..\Chaos.Storage.Abstractions\Chaos.Storage.Abstractions.csproj"/>
+        <ProjectReference Include="..\Chaos.Storage\Chaos.Storage.csproj"/>
         <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj"/>
         <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4"/>
-        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
+        <PackageReference Include="NLog.Web.AspNetCore"/>
+        <PackageReference Include="System.Linq.Async"/>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\sotp.dat"/>

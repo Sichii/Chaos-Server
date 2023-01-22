@@ -1,7 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class WorldMapCacheOptions : SimpleFileCacheOptionsBase { }
-
-public sealed class ExpiringWorldMapCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class WorldMapCacheOptions : ExpiringFileCacheOptions { }

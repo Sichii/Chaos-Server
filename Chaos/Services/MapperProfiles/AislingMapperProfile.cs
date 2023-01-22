@@ -206,6 +206,17 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             var overcoat = obj.Equipment[EquipmentSlot.Overcoat];
             var pantsColor = (byte)((overcoat?.Template.PantsColor ?? armor?.Template.PantsColor) ?? 0);
 
+            DisplayColor headColor;
+
+            //use overhelm color if it is dyeable or if it is not default
+            if ((overHelm != null) && (overHelm.Template.IsDyeable || (overHelm.Color != DisplayColor.Default)))
+                headColor = overHelm.Color;
+            //use helmet color if it is dyeable or if it is not default
+            else if ((helmet != null) && (helmet.Template.IsDyeable || (helmet.Color != DisplayColor.Default)))
+                headColor = helmet.Color;
+            else
+                headColor = obj.HairColor;
+
             return new DisplayAislingArgs
             {
                 AccessoryColor1 = acc1?.Color ?? DisplayColor.Default,
@@ -226,7 +237,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 EntityType = EntityType.Aisling,
                 Gender = obj.Gender,
                 GroupBoxText = null,
-                HeadColor = overHelm?.Color ?? helmet?.Color ?? obj.HairColor,
+                HeadColor = headColor,
                 HeadSprite = overHelm?.Template.ItemSprite.DisplaySprite
                              ?? helmet?.Template.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,

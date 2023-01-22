@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\Chaos.Extensions.Common.Abstractions\Chaos.Extensions.Common.Abstractions.csproj"/>
+        <ProjectReference Include="..\Chaos.Storage.Abstractions\Chaos.Storage.Abstractions.csproj"/>
+    </ItemGroup>
+</Project>

@@ -1,7 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class MonsterTemplateCacheOptions : SimpleFileCacheOptionsBase { }
-
-public sealed class ExpiringMonsterTemplateCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class MonsterTemplateCacheOptions : ExpiringFileCacheOptions { }

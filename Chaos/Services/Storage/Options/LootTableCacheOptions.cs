@@ -1,7 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class LootTableCacheOptions : SimpleFileCacheOptionsBase { }
-
-public sealed class ExpiringLootTableCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class LootTableCacheOptions : ExpiringFileCacheOptions { }

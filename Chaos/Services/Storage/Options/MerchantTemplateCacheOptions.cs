@@ -1,7 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class MerchantTemplateCacheOptions : SimpleFileCacheOptionsBase { }
-
-public sealed class ExpiringMerchantTemplateCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class MerchantTemplateCacheOptions : ExpiringFileCacheOptions { }

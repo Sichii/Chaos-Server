@@ -11,7 +11,7 @@ using Chaos.Schemas.Content;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance, MapInstanceSchema>, IShardGenerator
+public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, MapInstanceSchema, MapInstanceCacheOptions>, IShardGenerator
 {
     private readonly IMerchantFactory MerchantFactory;
     private readonly IMonsterFactory MonsterFactory;
@@ -38,7 +38,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         IPathfindingService pathfindingService,
         IReactorTileFactory reactorTileFactory,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
-        IOptions<ExpiringMapInstanceCacheOptions> options,
+        IOptions<MapInstanceCacheOptions> options,
         ILogger<ExpiringMapInstanceCache> logger
     )
         : base(
@@ -101,7 +101,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
         Logger.LogTrace("Creating new {TypeName} entry with key \"{Key}\"", nameof(MapInstance), loadInstanceId);
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
-        entry.RegisterPostEvictionCallback(RemoveValueCallback!);
+        entry.RegisterPostEvictionCallback(RemoveValueCallback);
 
         var path = GetPathForKey(loadInstanceIdActual);
 
@@ -205,9 +205,9 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
     /// <inheritdoc />
     protected override void RemoveValueCallback(
         object key,
-        object value,
+        object? value,
         EvictionReason reason,
-        object state
+        object? state
     )
     {
         base.RemoveValueCallback(
@@ -218,7 +218,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCacheBase<MapInstance
 
         if (reason != EvictionReason.Replaced)
         {
-            var mapInstance = (MapInstance)value;
+            var mapInstance = (MapInstance)value!;
             mapInstance.Destroy();
         }
     }

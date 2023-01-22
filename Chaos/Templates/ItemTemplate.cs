@@ -10,6 +10,7 @@ public sealed class ItemTemplate : PanelObjectTemplateBase
 
     public required int BuyCost { get; init; }
     public required DisplayColor Color { get; init; }
+    public required bool IsDyeable { get; init; }
     public required ItemSprite ItemSprite { get; init; } = null!;
     public required int? MaxDurability { get; init; }
     public required int MaxStacks { get; init; } = 1;

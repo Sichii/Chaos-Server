@@ -3,11 +3,14 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.DependencyInjection;
+using Chaos.Extensions.Storage;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
+using Chaos.Schemas.Content;
+using Chaos.Schemas.Templates;
 using Chaos.Scripting;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.AislingScripts.Abstractions;
@@ -119,69 +122,29 @@ public static class ServiceCollectionExtensions
     public static void AddStorage(this IServiceCollection services)
     {
         services.AddDirectoryBoundOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key);
-
-        /*
-        services.AddDirectoryBoundOptionsFromConfig<ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<SpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<MetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<MonsterTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<LootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<WorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<MerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<DialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        */
-
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringSkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringSpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringMapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringMapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringMetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringMonsterTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringLootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringWorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringWorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringMerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringDialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddDirectoryBoundOptionsFromConfig<ExpiringReactorTileTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-
         services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
 
-        /*
-        services.AddSingleton<ISimpleCache<ItemTemplate>, ItemTemplateCache>();
-        services.AddSingleton<ISimpleCache<SkillTemplate>, SkillTemplateCache>();
-        services.AddSingleton<ISimpleCache<SpellTemplate>, SpellTemplateCache>();
-        services.AddSingleton<ISimpleCache<MapTemplate>, MapTemplateCache>();
-        services.AddSingleton<ISimpleCache<MapInstance>, MapInstanceCache>();
-        services.AddSingleton<ISimpleCache<Metafile>, MetafileCache>();
-        services.AddSingleton<ISimpleCache<MonsterTemplate>, MonsterTemplateCache>();
-        services.AddSingleton<ISimpleCache<LootTable>, LootTableCache>();
-        services.AddSingleton<ISimpleCache<WorldMapNode>, WorldMapNodeCache>();
-        services.AddSingleton<ISimpleCache<WorldMap>, WorldMapCache>();
-        services.AddSingleton<ISimpleCache<MerchantTemplate>, MerchantTemplateCache>();
-        services.AddSingleton<ISimpleCache<DialogTemplate>, DialogTemplateCache>();
-        */
+        services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<SpellTemplate, SpellTemplateSchema, SpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
 
-        services.AddSingleton<ISimpleCache<ItemTemplate>, ExpiringItemTemplateCache>();
-        services.AddSingleton<ISimpleCache<SkillTemplate>, ExpiringSkillTemplateCache>();
-        services.AddSingleton<ISimpleCache<SpellTemplate>, ExpiringSpellTemplateCache>();
-        services.AddSingleton<ISimpleCache<MapTemplate>, ExpiringMapTemplateCache>();
-        services.AddSingleton<ISimpleCache<MapInstance>, ExpiringMapInstanceCache>();
-        services.AddSingleton<ISimpleCache<Metafile>, ExpiringMetafileCache>();
-        services.AddSingleton<ISimpleCache<MonsterTemplate>, ExpiringMonsterTemplateCache>();
-        services.AddSingleton<ISimpleCache<LootTable>, ExpiringLootTableCache>();
-        services.AddSingleton<ISimpleCache<WorldMapNode>, ExpiringWorldMapNodeCache>();
-        services.AddSingleton<ISimpleCache<WorldMap>, ExpiringWorldMapCache>();
-        services.AddSingleton<ISimpleCache<MerchantTemplate>, ExpiringMerchantTemplateCache>();
-        services.AddSingleton<ISimpleCache<DialogTemplate>, ExpiringDialogTemplateCache>();
-        services.AddSingleton<ISimpleCache<ReactorTileTemplate>, ExpiringReactorTileTemplateCache>();
+        services.AddExpiringCache<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
 
-        services.AddSingleton<ISimpleCache, SimpleCache>();
-        services.AddSingleton<ISimpleCacheProvider, SimpleCache>();
+        services.AddExpiringCache<LootTable, LootTableSchema, LootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<Metafile, MetafileSchema, MetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddExpiringCache<WorldMap, WorldMapSchema, WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<WorldMapNode, WorldMapNodeSchema, WorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddExpiringCache<ReactorTileTemplate, ReactorTileTemplateSchema, ReactorTileTemplateCacheOptions>(
+            Startup.ConfigKeys.Options.Key);
+
+        services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddSingleton<ISimpleCache, ISimpleCacheProvider, SimpleCache>();
     }
 
     public static void AddTransient<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2

@@ -49,11 +49,13 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             obj.UniqueId,
             obj.ElapsedMs)
         {
-            Color = obj.Color,
             Count = obj.Count,
             CurrentDurability = obj.CurrentDurability,
             Slot = obj.Slot ?? 0
         };
+
+        if (template.IsDyeable)
+            item.Color = obj.Color;
 
         if (!string.IsNullOrEmpty(obj.DisplayName))
             item.DisplayName = obj.DisplayName;
@@ -139,7 +141,8 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         ScriptVars = new Dictionary<string, IScriptVars>(
             obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
             StringComparer.OrdinalIgnoreCase),
-        Description = obj.Description
+        Description = obj.Description,
+        IsDyeable = obj.IsDyeable
     };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();

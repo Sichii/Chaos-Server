@@ -8,6 +8,7 @@
         <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <!--<GenerateDocumentationFile>true</GenerateDocumentationFile>-->
         <!--<ServerGarbageCollection>true</ServerGarbageCollection>
         <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>-->

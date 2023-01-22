@@ -40,6 +40,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B-4052-4E73-B24D-03799847282A}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
@@ -117,6 +118,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Common.Tests", "Tests\Chaos.Extensions.Common.Tests\Chaos.Extensions.Common.Tests.csproj", "{2E581A65-940E-4773-AF2C-B399DC710D9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Networking", "Chaos.Extensions.Networking\Chaos.Extensions.Networking.csproj", "{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Storage", "Chaos.Storage\Chaos.Storage.csproj", "{776DB858-7973-4458-A923-49C31CC934C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -300,6 +303,10 @@ Global
 		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{776DB858-7973-4458-A923-49C31CC934C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{776DB858-7973-4458-A923-49C31CC934C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{776DB858-7973-4458-A923-49C31CC934C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{776DB858-7973-4458-A923-49C31CC934C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

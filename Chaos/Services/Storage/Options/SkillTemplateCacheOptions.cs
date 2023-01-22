@@ -1,7 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class SkillTemplateCacheOptions : SimpleFileCacheOptionsBase { }
-
-public sealed class ExpiringSkillTemplateCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class SkillTemplateCacheOptions : ExpiringFileCacheOptions { }

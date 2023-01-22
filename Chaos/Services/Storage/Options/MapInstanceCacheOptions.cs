@@ -1,7 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class MapInstanceCacheOptions : SimpleFileCacheOptionsBase { }
-
-public sealed class ExpiringMapInstanceCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class MapInstanceCacheOptions : ExpiringFileCacheOptions { }

@@ -4,7 +4,7 @@
         <ProjectReference Include="..\Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+        <PackageReference Include="JetBrains.Annotations"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
     </ItemGroup>
 </Project>

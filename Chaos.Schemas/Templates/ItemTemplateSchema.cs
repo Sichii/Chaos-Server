@@ -29,6 +29,11 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     public ushort? DisplaySprite { get; set; }
 
     /// <summary>
+    ///     Whether or not the item can be dyed
+    /// </summary>
+    public bool IsDyeable { get; set; }
+
+    /// <summary>
     ///     Defaults to null<br />If specified, the base max durability of the item
     /// </summary>
     public int? MaxDurability { get; set; }

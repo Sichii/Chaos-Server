@@ -1,5 +1,5 @@
-using Chaos.Storage.Abstractions;
+using Chaos.Storage;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class ExpiringReactorTileTemplateCacheOptions : ExpiringFileCacheOptionsBase { }
+public sealed class ReactorTileTemplateCacheOptions : ExpiringFileCacheOptions { }
