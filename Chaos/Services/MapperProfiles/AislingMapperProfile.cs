@@ -107,7 +107,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Options = Mapper.Map<UserOptions>(obj.UserOptions),
             UserStatSheet = Mapper.Map<UserStatSheet>(obj.StatSheet),
             IsAdmin = obj.IsAdmin,
-            IsDead = obj.IsDead
+            IsDead = obj.IsDead,
+            Counters = new ConcurrentDictionary<string, int>(obj.Counters, StringComparer.OrdinalIgnoreCase)
         };
 
         return aisling;
@@ -142,8 +143,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Titles = obj.Titles.ToList(),
             UserOptions = Mapper.Map<UserOptionsSchema>(obj.Options),
             IgnoreList = obj.IgnoreList.ToList(),
-
-            Effects = Array.Empty<EffectSchema>()
+            Effects = Array.Empty<EffectSchema>(),
+            Counters = obj.Counters
         };
 
         Logger.LogTrace("Successfully mapped {Name} to schema", ret.Name);

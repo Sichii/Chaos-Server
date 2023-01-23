@@ -69,7 +69,7 @@ If this reactor was created through a script, you must specify the owner in the 
             ApplyDamageScript = ApplyDamageScript,
             SourceScript = this,
             BaseDamage = BaseDamage,
-            DamageMultiplier = DamageMultiplier,
+            DamageStatMultiplier = DamageStatMultiplier,
             DamageStat = DamageStat
         };
     }
@@ -125,7 +125,7 @@ If this reactor was created through a script, you must specify the owner in the 
     protected bool IncludeSourcePoint { get; init; } = true;
     protected int? BaseDamage { get; init; }
     protected Stat? DamageStat { get; init; }
-    protected decimal? DamageMultiplier { get; init; }
+    protected decimal? DamageStatMultiplier { get; init; }
     protected int DurationSecs { get; init; }
     protected int MaxTriggers { get; init; }
     protected string? EffectKey { get; init; }

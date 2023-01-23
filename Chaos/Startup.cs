@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
@@ -23,7 +24,32 @@ namespace Chaos;
 
 public class Startup
 {
+    private static readonly SerializationContext JsonContext;
+    private static readonly JsonSerializerOptions JsonSerializerOptions;
+    private static bool IsInitialized;
+
     public IConfiguration Configuration { get; set; }
+
+    static Startup()
+    {
+        JsonSerializerOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            PropertyNameCaseInsensitive = true,
+            IgnoreReadOnlyProperties = true,
+            IgnoreReadOnlyFields = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            AllowTrailingCommas = true
+        };
+
+        JsonSerializerOptions.Converters.Add(new PointConverter());
+        JsonSerializerOptions.Converters.Add(new LocationConverter());
+        JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+        JsonContext = new SerializationContext(JsonSerializerOptions);
+    }
 
     public Startup(IConfiguration configuration) => Configuration = configuration;
 
@@ -57,21 +83,16 @@ public class Startup
                 .Configure<ILogger<WarningJsonTypeInfoResolver>>(
                     (options, logger) =>
                     {
-                        var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+                        if (!IsInitialized)
+                        {
+                            IsInitialized = true;
+                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+                            var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
 
-                        options.WriteIndented = true;
-                        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-                        options.NumberHandling = JsonNumberHandling.AllowReadingFromString;
-                        options.PropertyNameCaseInsensitive = true;
-                        options.IgnoreReadOnlyProperties = true;
-                        options.IgnoreReadOnlyFields = true;
-                        options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                        options.AllowTrailingCommas = true;
-                        options.Converters.Add(new PointConverter());
-                        options.Converters.Add(new LocationConverter());
-                        options.Converters.Add(new JsonStringEnumConverter());
+                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
+                        }
 
-                        options.TypeInfoResolver = JsonTypeInfoResolver.Combine(SerializationContext.Default, defaultResolver);
+                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
                     });
 
         services.AddCommandInterceptorForType<Aisling>("/", a => a.IsAdmin);

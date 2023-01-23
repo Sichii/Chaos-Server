@@ -37,6 +37,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
     public IWorldClient Client { get; set; }
+    public ConcurrentDictionary<string, int> Counters { get; init; }
     public EnumCollection Enums { get; init; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
@@ -178,6 +179,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
         Enums = new EnumCollection();
         TimedEvents = new TimedEventCollection();
         ScriptKeys = new HashSet<string>();
+        Counters = new ConcurrentDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
         //this object is purely intended to be created and immediately serialized
         //these pieces should never come into play

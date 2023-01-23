@@ -69,7 +69,9 @@ public sealed class SerializableUniqueId
         try
         {
             var json = JsonSerializer.Serialize(num);
-            await File.WriteAllTextAsync("UniqueId.json", json);
+
+            // ReSharper disable once MethodHasAsyncOverload
+            File.WriteAllText("UniqueId.json", json);
         } catch
         {
             //ignored

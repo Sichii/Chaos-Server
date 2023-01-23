@@ -30,6 +30,9 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
 
+        if (template.IsAssail && !Cooldown.HasValue)
+            Cooldown = TimeSpan.Zero;
+
         Script = scriptProvider.CreateScript<ISkillScript, Skill>(ScriptKeys, this);
     }
 

@@ -50,7 +50,7 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
     }
 
     /// <inheritdoc />
-    public ValueTask HandleCommandAsync(T source, string commandStr)
+    public async ValueTask HandleCommandAsync(T source, string commandStr)
     {
         var command = commandStr[1..];
 
@@ -66,29 +66,38 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
                                      .ToArray();
 
         if (commandParts.Length == 0)
-            return default;
+            return;
 
         var commandName = commandParts[0];
         var commandArgs = commandParts[1..];
 
         if (!Commands.TryGetValue(commandName, out var descriptor))
-            return default;
+            return;
 
-        if (descriptor.Details.RequiresAdmin)
+        if (descriptor.Details.RequiresAdmin && !Configuration.AdminPredicate(source))
         {
-            if (!Configuration.AdminPredicate(source))
-            {
-                Logger.LogWarning("Non-Admin {Source} tried to execute admin command {CommandName}", source, commandName);
+            Logger.LogWarning("Non-Admin {Source} tried to execute admin command {CommandName}", source, commandName);
 
-                return default;
-            }
-
-            Logger.LogInformation("Admin {Source} executed command {CommandName}", source, commandName);
+            return;
         }
 
-        var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
+        try
+        {
+            var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
 
-        return commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
+            Logger.LogTrace("Successfully created command {CommandName}", commandName);
+
+            await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
+
+            Logger.LogInformation("{Source} executed command {CommandName}", source, commandName);
+        } catch (Exception e)
+        {
+            Logger.LogError(
+                e,
+                "{Source} failed to execute command {CommandName}",
+                source,
+                commandName);
+        }
     }
 
     /// <inheritdoc />

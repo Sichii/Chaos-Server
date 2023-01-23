@@ -12,6 +12,7 @@ public sealed record AislingSchema
     public BodyColor BodyColor { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public BodySprite BodySprite { get; set; }
+    public IDictionary<string, int> Counters { get; set; } = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public Direction Direction { get; set; }
     public ICollection<EffectSchema> Effects { get; set; } = Array.Empty<EffectSchema>();
