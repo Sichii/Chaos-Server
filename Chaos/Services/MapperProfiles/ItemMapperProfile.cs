@@ -89,7 +89,7 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             MaxDurability = item.Template.MaxDurability ?? 0,
             Name = item.DisplayName,
             Slot = item.Slot,
-            Sprite = item.Template.ItemSprite.OffsetPanelSprite,
+            Sprite = item.ItemSprite.OffsetPanelSprite,
             Stackable = item.Template.Stackable
         };
     }
@@ -106,7 +106,7 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         MaxDurability = obj.Template.MaxDurability ?? 0,
         Name = obj.DisplayName,
         Slot = obj.Slot,
-        Sprite = obj.Template.ItemSprite.OffsetPanelSprite,
+        Sprite = obj.ItemSprite.OffsetPanelSprite,
         Stackable = obj.Template.Stackable
     };
 

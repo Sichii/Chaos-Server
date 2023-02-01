@@ -298,7 +298,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             ExchangeResponseType = ExchangeResponseType.AddItem,
             RightSide = rightSide,
             ExchangeIndex = index,
-            ItemSprite = item.Template.ItemSprite.OffsetPanelSprite,
+            ItemSprite = item.ItemSprite.OffsetPanelSprite,
             ItemColor = item.Color,
             ItemName = item.DisplayName
         };

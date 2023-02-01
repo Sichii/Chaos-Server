@@ -223,15 +223,15 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 AccessoryColor1 = acc1?.Color ?? DisplayColor.Default,
                 AccessoryColor2 = acc2?.Color ?? DisplayColor.Default,
                 AccessoryColor3 = acc3?.Color ?? DisplayColor.Default,
-                AccessorySprite1 = acc1?.Template.ItemSprite.DisplaySprite ?? 0,
-                AccessorySprite2 = acc2?.Template.ItemSprite.DisplaySprite ?? 0,
-                AccessorySprite3 = acc3?.Template.ItemSprite.DisplaySprite ?? 0,
-                ArmorSprite1 = armor?.Template.ItemSprite.DisplaySprite ?? 0, //TODO: figure this out again cuz i deleted it
-                ArmorSprite2 = armor?.Template.ItemSprite.DisplaySprite ?? 0,
+                AccessorySprite1 = acc1?.ItemSprite.DisplaySprite ?? 0,
+                AccessorySprite2 = acc2?.ItemSprite.DisplaySprite ?? 0,
+                AccessorySprite3 = acc3?.ItemSprite.DisplaySprite ?? 0,
+                ArmorSprite1 = armor?.ItemSprite.DisplaySprite ?? 0, //TODO: figure this out again cuz i deleted it
+                ArmorSprite2 = armor?.ItemSprite.DisplaySprite ?? 0,
                 BodyColor = obj.BodyColor,
                 BodySprite = obj.BodySprite + pantsColor,
                 BootsColor = boots?.Color ?? DisplayColor.Default,
-                BootsSprite = (byte)(boots?.Template.ItemSprite.DisplaySprite ?? 0),
+                BootsSprite = (byte)(boots?.ItemSprite.DisplaySprite ?? 0),
                 CreatureType = obj.Type,
                 Direction = obj.Direction,
                 FaceSprite = (byte)obj.FaceSprite,
@@ -239,8 +239,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 Gender = obj.Gender,
                 GroupBoxText = null,
                 HeadColor = headColor,
-                HeadSprite = overHelm?.Template.ItemSprite.DisplaySprite
-                             ?? helmet?.Template.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
+                HeadSprite = overHelm?.ItemSprite.DisplaySprite
+                             ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,
                 IsDead = obj.IsDead,
                 IsHidden = false, //TODO: invisibility
@@ -249,13 +249,13 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
                 OvercoatColor = overcoat?.Color ?? DisplayColor.Default,
-                OvercoatSprite = overcoat?.Template.ItemSprite.DisplaySprite ?? 0,
+                OvercoatSprite = overcoat?.ItemSprite.DisplaySprite ?? 0,
                 X = obj.X,
                 Y = obj.Y,
                 RestPosition = RestPosition.None, //TODO: if we add rest positions in later,
-                ShieldSprite = (byte)(shield?.Template.ItemSprite.DisplaySprite ?? 0),
+                ShieldSprite = (byte)(shield?.ItemSprite.DisplaySprite ?? 0),
                 Sprite = obj.Sprite,
-                WeaponSprite = weapon?.Template.ItemSprite.DisplaySprite ?? 0
+                WeaponSprite = weapon?.ItemSprite.DisplaySprite ?? 0
             };
         }
     }

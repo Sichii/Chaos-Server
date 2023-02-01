@@ -34,7 +34,7 @@ public class DialogMapperProfile : IMapperProfile<Dialog, DialogArgs>, IMapperPr
         {
             case Item item:
                 name = item.DisplayName;
-                sprite = item.Template.ItemSprite.OffsetPanelSprite;
+                sprite = item.ItemSprite.OffsetPanelSprite;
                 color = item.Color;
                 sourceId = item.Id;
 
@@ -82,7 +82,7 @@ public class DialogMapperProfile : IMapperProfile<Dialog, DialogArgs>, IMapperPr
         {
             case Item item:
                 name = item.DisplayName;
-                sprite = item.Template.ItemSprite.OffsetPanelSprite;
+                sprite = item.ItemSprite.OffsetPanelSprite;
                 color = item.Color;
                 sourceId = item.Id;
 

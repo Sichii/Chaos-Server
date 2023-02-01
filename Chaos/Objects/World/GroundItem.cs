@@ -14,7 +14,7 @@ public sealed class GroundItem : GroundEntity
     public GroundItem(Item item, MapInstance mapInstance, IPoint point)
         : base(
             item.DisplayName,
-            item.Template.ItemSprite.OffsetPanelSprite,
+            item.ItemSprite.OffsetPanelSprite,
             mapInstance,
             point) =>
         Item = item;
