@@ -3,7 +3,7 @@ using Chaos.Extensions.Cryptography;
 using Chaos.IO.Compression;
 using Chaos.Networking.Abstractions;
 
-namespace Chaos.Objects;
+namespace Chaos.Networking.Entities;
 
 public sealed record Notice : INotice
 {
@@ -14,7 +14,7 @@ public sealed record Notice : INotice
     {
         var encoding = Encoding.GetEncoding(949);
         var buffer = encoding.GetBytes(noticeMessage);
-        CheckSum = buffer.Generate32();
+        CheckSum = Crc.Generate32(buffer);
 
         ZLIB.Compress(ref buffer);
         Data = buffer;

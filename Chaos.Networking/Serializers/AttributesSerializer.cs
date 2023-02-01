@@ -21,7 +21,7 @@ public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArg
 
         if (args.StatUpdateType.HasFlag(StatUpdateType.Primary))
         {
-            writer.WriteBytes(new byte[3]); //dunno
+            writer.WriteBytes(1, 0, 0); //dunno
             writer.WriteByte(args.Level);
             writer.WriteByte(args.Ability);
             writer.WriteUInt32(args.MaximumHp);
@@ -35,7 +35,7 @@ public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArg
             writer.WriteByte(args.UnspentPoints);
             writer.WriteInt16(args.MaxWeight);
             writer.WriteInt16(args.CurrentWeight);
-            writer.WriteBytes(new byte[4]); //dunno
+            writer.WriteBytes(new byte[4]); //dunno  42 00 88 2E
         }
 
         if (args.StatUpdateType.HasFlag(StatUpdateType.Vitality))

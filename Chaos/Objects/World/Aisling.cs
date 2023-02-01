@@ -170,10 +170,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
         ChantTimer = new ChantTimer(WorldOptions.Instance.MaxChantTimeBurdenMs);
         Portrait = Array.Empty<byte>();
         ProfileText = string.Empty;
-        ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
-        SpellThrottle = new ResettingCounter(WorldOptions.Instance.MaxSpellsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
-        SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond, new IntervalTimer(TimeSpan.FromSeconds(1)));
-        WalkCounter = new ResettingCounter(10, new IntervalTimer(TimeSpan.FromSeconds(3)));
+        ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond);
+        SpellThrottle = new ResettingCounter(WorldOptions.Instance.MaxSpellsPerSecond);
+        SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond);
+        WalkCounter = new ResettingCounter(3, 5);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         Flags = new FlagCollection();
         Enums = new EnumCollection();
@@ -266,7 +266,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
             //the number of stacks we will actually need to add to the inventory
             var countActual = Math.Max(0, set.Count - weightlessAllowance);
             var estimatedStacks = (int)Math.Ceiling(countActual / (decimal)maxStacks);
-            weightSum += set.Item.Template.Weight * estimatedStacks;
+            weightSum += set.Item.Weight * estimatedStacks;
             slotSum += estimatedStacks;
         }
 
@@ -753,7 +753,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
         SkillThrottle.Update(delta);
         WalkCounter.Update(delta);
         ChantTimer.Update(delta);
-        RegenTimer.Update(delta);
         TimedEvents.Update(delta);
         SaveTimer.Update(delta);
 

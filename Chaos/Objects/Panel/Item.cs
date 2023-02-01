@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
@@ -18,6 +19,10 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
     public int Count { get; set; }
     public int? CurrentDurability { get; set; }
     public string DisplayName { get; set; }
+    public ItemSprite ItemSprite { get; set; }
+    public int Level { get; set; }
+    public Attributes? Modifiers { get; set; }
+    public int Weight { get; set; }
     public IItemScript Script { get; }
     public override ItemTemplate Template { get; }
 
@@ -35,6 +40,10 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
         Color = template.Color;
         Count = 1;
         CurrentDurability = template.MaxDurability;
+        Modifiers = template.Modifiers;
+        Weight = template.Weight;
+        Level = template.Level;
+        ItemSprite = template.ItemSprite;
         //default slot is 0
 
         if (extraScriptKeys != null)

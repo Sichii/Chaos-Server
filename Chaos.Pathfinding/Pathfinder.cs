@@ -56,9 +56,10 @@ public sealed class Pathfinder : IPathfinder
 
         //the only points the truly matter are the ones around the target
         //imagine a monster is pathing to you...
-        //if it paths outside of your view, it will no longer aggro you
-        var subGrid = new Rectangle(end, 27, 27); //CalculateSubGrid(start, end);
         var creatureCollection = creatures.ToList();
+
+        var subGrid = start.SpiralSearch(12)
+                           .ToListCast<IPoint>();
 
         InitializeSubGrid(subGrid, creatureCollection);
 
@@ -158,11 +159,11 @@ public sealed class Pathfinder : IPathfinder
         }
     }
 
-    private void InitializeSubGrid(IRectangle subGrid, IEnumerable<IPoint> unwalkablePoints)
+    private void InitializeSubGrid(IEnumerable<IPoint> subGrid, IEnumerable<IPoint> unwalkablePoints)
     {
         //un-close all the nodes in the sub grid
         //the sub grid is the path-searchable area
-        foreach (var point in subGrid.Points())
+        foreach (var point in subGrid)
             if (WithinGrid(point))
                 PathNodes[point.X, point.Y].Closed = false;
 
@@ -203,9 +204,9 @@ public sealed class Pathfinder : IPathfinder
         return nextPoint.DirectionalRelationTo(start);
     }
 
-    private void ResetSubGrid(IRectangle subGrid, IEnumerable<IPoint> creatures)
+    private void ResetSubGrid(IEnumerable<IPoint> subGrid, IEnumerable<IPoint> creatures)
     {
-        foreach (var point in subGrid.Points())
+        foreach (var point in subGrid)
             if (WithinGrid(point))
                 PathNodes[point.X, point.Y].Reset();
 

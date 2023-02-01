@@ -1,4 +1,8 @@
+using System.Buffers.Binary;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
+using Chaos.IO.Definitions;
 
 namespace Chaos.IO.Memory;
 
@@ -8,23 +12,31 @@ public ref struct SpanWriter
     private Span<byte> Buffer;
     public int Position { get; set; }
     public Encoding Encoding { get; }
+    public Endianness Endianness { get; }
     public readonly bool EndOfSpan => Position >= Buffer.Length;
     public readonly int Remaining => Buffer.Length - Position;
 
-    public SpanWriter(Encoding encoding, ref Span<byte> buffer)
+    public SpanWriter(Encoding encoding, ref Span<byte> buffer, Endianness endianness = Endianness.BigEndian)
     {
         Buffer = buffer;
         Encoding = encoding;
         Position = 0;
         AutoGrow = false;
+        Endianness = endianness;
     }
 
-    public SpanWriter(Encoding encoding, int initialBufferSize = 50, bool autoGrow = true)
+    public SpanWriter(
+        Encoding encoding,
+        int initialBufferSize = 50,
+        bool autoGrow = true,
+        Endianness endianness = Endianness.BigEndian
+    )
     {
         Buffer = new Span<byte>(new byte[initialBufferSize]);
         Encoding = encoding;
         Position = 0;
         AutoGrow = autoGrow;
+        Endianness = endianness;
     }
 
     public void Flush() => Buffer = Buffer[..Position];
@@ -53,27 +65,68 @@ public ref struct SpanWriter
         return Buffer;
     }
 
-    public void WriteBoolean(bool value) => WriteByte((byte)(value ? 1 : 0));
+    public void Write<T>(T num) where T: struct, INumber<T>
+    {
+        switch (num)
+        {
+            case byte @byte:
+                WriteByte(@byte);
+
+                break;
+            case sbyte @sbyte:
+                WriteSByte(@sbyte);
+
+                break;
+            case ushort @ushort:
+                WriteUInt16(@ushort);
+
+                break;
+            case short @short:
+                WriteInt16(@short);
+
+                break;
+            case uint @uint:
+                WriteUInt32(@uint);
+
+                break;
+            case int @int:
+                WriteInt32(@int);
+
+                break;
+        }
+    }
+
+    public void Write(bool @bool) => WriteBoolean(@bool);
+
+    public void WriteBoolean(bool value)
+    {
+        GrowIfNeeded(sizeof(bool));
+
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+
+        Position++;
+    }
 
     public void WriteByte(byte value)
     {
         GrowIfNeeded(1);
-        Buffer[Position++] = value;
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+        Position++;
     }
 
     public void WriteBytes(params byte[] buffer)
     {
         GrowIfNeeded(buffer.Length);
 
-        for (var i = 0; i < buffer.Length; i++)
-            Buffer[Position++] = buffer[i];
+        buffer.CopyTo(Buffer[Position..]);
+        Position += buffer.Length;
     }
 
-    public void WriteData(byte[] buffer, bool terminate = false)
+    public void WriteData(byte[] buffer, bool lineFeed = false)
     {
         WriteBytes(buffer);
 
-        if (terminate)
+        if (lineFeed)
             WriteByte(10);
     }
 
@@ -89,62 +142,33 @@ public ref struct SpanWriter
         WriteData(value);
     }
 
-    public void WriteInt16(short value) => WriteBytes((byte)(value >> 8), (byte)value);
-
-    public void WriteInt32(int value) => WriteBytes(
-        (byte)(value >> 24),
-        (byte)(value >> 16),
-        (byte)(value >> 8),
-        (byte)value);
-
-    public void WriteObjects(params object[] objects)
+    public void WriteInt16(short value)
     {
-        for (var i = 0; i < objects.Length; i++)
-            switch (objects[i])
-            {
-                case byte @byte:
-                    WriteByte(@byte);
+        GrowIfNeeded(sizeof(short));
 
-                    break;
-                case bool @bool:
-                    WriteBoolean(@bool);
+        if (Endianness == Endianness.BigEndian)
+            value = BinaryPrimitives.ReverseEndianness(value);
 
-                    break;
-                case char @char:
-                    WriteByte((byte)@char);
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+        Position += sizeof(short);
+    }
 
-                    break;
-                case sbyte @sbyte:
-                    WriteSByte(@sbyte);
+    public void WriteInt32(int value)
+    {
+        GrowIfNeeded(sizeof(int));
 
-                    break;
-                case ushort @ushort:
-                    WriteUInt16(@ushort);
+        if (Endianness == Endianness.BigEndian)
+            value = BinaryPrimitives.ReverseEndianness(value);
 
-                    break;
-                case short @short:
-                    WriteInt16(@short);
-
-                    break;
-                case uint @uint:
-                    WriteUInt32(@uint);
-
-                    break;
-                case int @int:
-                    WriteInt32(@int);
-
-                    break;
-                case string @string:
-                    WriteString8(@string);
-
-                    break;
-            }
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+        Position += sizeof(int);
     }
 
     public void WritePoint16(ushort x, ushort y)
     {
         WriteUInt16(x);
         WriteUInt16(y);
+        //TODO: 00 0B 00 0B 00
     }
 
     public void WritePoint8(byte x, byte y)
@@ -153,9 +177,16 @@ public ref struct SpanWriter
         WriteByte(y);
     }
 
-    public void WriteSByte(sbyte value) => WriteByte((byte)value);
+    public void WriteSByte(sbyte value)
+    {
+        GrowIfNeeded(sizeof(sbyte));
 
-    public void WriteString(string value, bool terminate = false)
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+
+        Position++;
+    }
+
+    public void WriteString(string value, bool lineFeed = false, bool terminate = false)
     {
         var length = value.Length;
         GrowIfNeeded(length);
@@ -164,8 +195,10 @@ public ref struct SpanWriter
         Encoding.GetBytes(strBuffer, Buffer[Position..]);
         Position += length;
 
-        if (terminate)
-            WriteByte(10);
+        if (lineFeed)
+            WriteByte(10); // LF
+        else if (terminate)
+            WriteByte(0); // \0
     }
 
     public void WriteString16(string value)
@@ -180,12 +213,25 @@ public ref struct SpanWriter
         WriteString(value);
     }
 
-    public void WriteUInt16(ushort value) => WriteBytes((byte)(value >> 8), (byte)value);
+    public void WriteUInt16(ushort value)
+    {
+        GrowIfNeeded(sizeof(ushort));
 
-    public void WriteUInt32(uint value) =>
-        WriteBytes(
-            (byte)(value >> 24),
-            (byte)(value >> 16),
-            (byte)(value >> 8),
-            (byte)value);
+        if (Endianness == Endianness.BigEndian)
+            value = BinaryPrimitives.ReverseEndianness(value);
+
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+        Position += sizeof(ushort);
+    }
+
+    public void WriteUInt32(uint value)
+    {
+        GrowIfNeeded(sizeof(uint));
+
+        if (Endianness == Endianness.BigEndian)
+            value = BinaryPrimitives.ReverseEndianness(value);
+
+        MemoryMarshal.Write(Buffer[Position..], ref value);
+        Position += sizeof(uint);
+    }
 }

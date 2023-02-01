@@ -34,7 +34,7 @@ public class AggroTargetingScript : MonsterScriptBase
     }
 
     /// <inheritdoc />
-    public override void OnAttacked(Creature source, int damage, int? aggroOverride = null)
+    public override void OnAttacked(Creature source, int damage, int? aggroOverride)
     {
         if (source.Equals(Subject))
             return;
@@ -71,10 +71,10 @@ public class AggroTargetingScript : MonsterScriptBase
         if (!TargetUpdateTimer.IntervalElapsed)
             return;
 
+        Target = null;
+
         if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
             return;
-
-        Target = null;
 
         //first try to get target via aggro list
         //if something is already aggro, ignore aggro range

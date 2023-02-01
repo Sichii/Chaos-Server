@@ -13,14 +13,14 @@ public sealed class InventoryObserver : Abstractions.IObserver<Item>
     public void OnAdded(Item obj)
     {
         Aisling.Client.SendAddItemToPane(obj);
-        Aisling.UserStatSheet.AddWeight(obj.Template.Weight);
+        Aisling.UserStatSheet.AddWeight(obj.Weight);
         Aisling.Client.SendAttributes(StatUpdateType.Primary);
     }
 
     public void OnRemoved(byte slot, Item obj)
     {
         Aisling.Client.SendRemoveItemFromPane(slot);
-        Aisling.UserStatSheet.AddWeight(-obj.Template.Weight);
+        Aisling.UserStatSheet.AddWeight(-obj.Weight);
         Aisling.Client.SendAttributes(StatUpdateType.Primary);
     }
 

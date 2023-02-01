@@ -69,54 +69,9 @@ public static class StringExtensions
 
     public static string Inject([StructuredMessageTemplate] this string str1, params object[] parameters)
     {
-        var index = 0;
+        var formatter = new StringFormatter(parameters);
 
-        return RegexCache.STRING_PROCESSING_REGEX.Replace(str1, Evaluate);
-
-        string Evaluate(Match match)
-        {
-            var value = match.Groups[0].ValueSpan;
-
-            switch (value)
-            {
-                case "{{":
-                    return "{";
-                case "}}":
-                    return "}";
-            }
-
-            var ret = parameters[index].ToString();
-            Interlocked.Increment(ref index);
-
-            return ret!;
-        }
-        /*
-        var replaceLhsDoubleBrackets = RegexCache.REPLACE_LHS_DOUBLE_BRACKET_REGEX.Replace(str1, CONSTANTS.LHS_PLACEHOLDER);
-
-        var replaceRhsDoubleBrackets =
-            RegexCache.REPLACE_RHS_DOUBLE_BRACKET_REGEX.Replace(replaceLhsDoubleBrackets, CONSTANTS.RHS_PLACEHOLDER);
-
-        var matches = RegexCache.REPLACE_POSITIONAL_ARGUMENTS_REGEX.Matches(replaceRhsDoubleBrackets);
-
-        if (matches.Count > parameters.Length)
-            throw new InvalidOperationException("Not enough parameters supplied");
-        
-        var index = 0;
-
-        var replaceParameters = RegexCache.REPLACE_POSITIONAL_ARGUMENTS_REGEX.Replace(replaceRhsDoubleBrackets, Evaluator);
-
-        var replacePlaceholders = RegexCache.REPLACE_LHS_PLACEHOLDER_REGEX.Replace(replaceParameters, "{");
-
-        return RegexCache.REPLACE_RHS_PLACEHOLDER_REGEX.Replace(replacePlaceholders, "}");
-
-        string Evaluator(Match match)
-        {
-            var ret = parameters[index].ToString();
-            Interlocked.Increment(ref index);
-
-            return ret!;
-        }
-        */
+        return RegexCache.STRING_PROCESSING_REGEX.Replace(str1, formatter.Evaluate);
     }
 
     /// <summary>
@@ -141,4 +96,20 @@ public static class StringExtensions
     /// <param name="str2">The string to compare</param>
     /// <returns><c>true</c> if this instance begins with value; otherwise, <c>false</c></returns>
     public static bool StartsWithI(this string str1, string str2) => str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
+
+    internal sealed class StringFormatter
+    {
+        private readonly object[] Parameters;
+        private int Index;
+
+        internal StringFormatter(object[] parameters) => Parameters = parameters;
+
+        internal string Evaluate(Match match) =>
+            match.Groups[0].ValueSpan switch
+            {
+                "{{" => "{",
+                "}}" => "}",
+                _    => Parameters[Index++].ToString()!
+            };
+    }
 }

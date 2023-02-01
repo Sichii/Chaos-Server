@@ -259,7 +259,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                     //but at this point they are not technically on the map yet
                     //this is so that if a player executes a handler, that handler will enter the new map's synchronization instead of the old one
                     //and if they do any movement or anything, it will on the new map
-                    SetLocation(destinationMap, destinationPoint);
+                    SetLocationFaux(destinationMap, destinationPoint);
 
                     if (aisling is not null && ignoreSharding)
                         destinationMap.AddAislingDirect(aisling, destinationPoint);

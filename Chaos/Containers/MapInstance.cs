@@ -458,7 +458,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     private void InnerAddObject(VisibleEntity visibleEntity, IPoint point)
     {
         Objects.Add(visibleEntity.Id, visibleEntity);
-        visibleEntity.SetLocation(this, point);
+        visibleEntity.MapInstance = this;
+        visibleEntity.SetLocation(point);
 
         if (visibleEntity is Creature c)
             Script.OnEntered(c);

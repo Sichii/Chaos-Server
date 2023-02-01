@@ -1,6 +1,6 @@
 using Chaos.Common.Definitions;
 
-namespace Chaos.Networking.Extensions;
+namespace Chaos.Extensions.Common;
 
 public static class EnumExtensions
 {

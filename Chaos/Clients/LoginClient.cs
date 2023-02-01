@@ -2,12 +2,11 @@ using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
-using Chaos.Data;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
-using Chaos.Storage.Abstractions;
+using Chaos.Services.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -88,7 +87,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         Send(args);
     }
 
-    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<Metafile> metafileCache, string? name = null)
+    public void SendMetafile(MetafileRequestType metafileRequestType, IMetaDataCache metaDataCache, string? name = null)
     {
         var args = new MetafileArgs
         {
@@ -101,7 +100,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
             {
                 ArgumentNullException.ThrowIfNull(name);
 
-                var metafile = metafileCache.Get(name);
+                var metafile = metaDataCache.GetMetafile(name);
 
                 args.MetafileData = new MetafileInfo
                 {
@@ -114,7 +113,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
             }
             case MetafileRequestType.AllCheckSums:
             {
-                args.Info = metafileCache.Select(
+                args.Info = metaDataCache.Select(
                                              metafile => new MetafileInfo
                                              {
                                                  Name = metafile.Name,

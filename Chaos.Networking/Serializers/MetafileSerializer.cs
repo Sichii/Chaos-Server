@@ -12,17 +12,17 @@ public sealed record MetafileSerializer : ServerPacketSerializer<MetafileArgs>
 
     public override void Serialize(ref SpanWriter writer, MetafileArgs args)
     {
+        writer.WriteByte((byte)args.MetafileRequestType);
+
         switch (args.MetafileRequestType)
         {
             case MetafileRequestType.DataByName:
-                writer.WriteByte((byte)args.MetafileRequestType);
                 writer.WriteString8(args.MetafileData!.Name);
                 writer.WriteUInt32(args.MetafileData!.CheckSum);
                 writer.WriteData16(args.MetafileData!.Data);
 
                 break;
             case MetafileRequestType.AllCheckSums:
-                writer.WriteByte((byte)args.MetafileRequestType);
                 writer.WriteUInt16((byte)args.Info!.Count);
 
                 foreach (var info in args.Info!)

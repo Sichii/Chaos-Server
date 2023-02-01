@@ -1,7 +1,7 @@
 {
     "templateKey": "tendo",
     "sprite": 205,
-    "name": "tendo",
+    "name": "Tendo",
     "scriptKeys": ["default"],
     "dialogKey": "tendo_initial"
 }

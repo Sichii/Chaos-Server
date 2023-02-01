@@ -39,11 +39,11 @@ public sealed record SelfProfileSerializer : ServerPacketSerializer<SelfProfileA
             classTitle = args.AdvClass.ToString();
 
         writer.WriteByte((byte)args.BaseClass);
-        writer.WriteBoolean(args.AdvClass.HasValue);
+        writer.WriteBoolean(args.AdvClass.HasValue && (args.AdvClass != AdvClass.None));
         writer.WriteBoolean(args.IsMaster);
         writer.WriteString8(classTitle!);
         writer.WriteString8(args.GuildName ?? string.Empty);
-        writer.WriteByte((byte)Math.Min(255, args.LegendMarks.Count));
+        writer.WriteByte((byte)Math.Min(byte.MaxValue, args.LegendMarks.Count));
 
         foreach (var mark in args.LegendMarks.Take(byte.MaxValue))
         {

@@ -91,6 +91,23 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     protected virtual string DeconstructKeyForType(string key) => key.Replace(KeyPrefix, string.Empty, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />
+    public void ForceLoad()
+    {
+        Logger.LogDebug("Force loading {TypeName} cache", typeof(T).Name);
+
+        var pathEndings = Paths.Select(Path.GetFileNameWithoutExtension);
+
+        foreach (var pathEnding in pathEndings)
+            try
+            {
+                Get(pathEnding!);
+            } catch
+            {
+                //ignored
+            }
+    }
+
+    /// <inheritdoc />
     public virtual T Get(string key)
     {
         key = ConstructKeyForType(key);

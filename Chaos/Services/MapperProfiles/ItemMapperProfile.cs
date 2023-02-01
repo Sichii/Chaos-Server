@@ -54,8 +54,15 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             Slot = obj.Slot ?? 0
         };
 
+        if (template.IsModifiable && (obj.Modifiers != null))
+            item.Modifiers = Mapper.Map<Attributes>(obj.Modifiers);
+
         if (template.IsDyeable)
             item.Color = obj.Color;
+
+        // ReSharper disable once MergeIntoPattern
+        if (obj.PanelSprite.HasValue && obj.DisplaySprite.HasValue)
+            item.ItemSprite = new ItemSprite(obj.PanelSprite.Value, obj.DisplaySprite.Value);
 
         if (!string.IsNullOrEmpty(obj.DisplayName))
             item.DisplayName = obj.DisplayName;
@@ -115,7 +122,11 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             Count = obj.Count,
             CurrentDurability = obj.CurrentDurability,
             Slot = obj.Slot,
-            DisplayName = obj.DisplayName != obj.Template.Name ? obj.DisplayName : null
+            DisplayName = obj.DisplayName != obj.Template.Name ? obj.DisplayName : null,
+            Modifiers = obj.Template.IsModifiable && (obj.Modifiers != null) ? Mapper.Map<AttributesSchema>(obj.Modifiers) : null,
+            Weight = obj.Weight == obj.Template.Weight ? null : obj.Weight,
+            PanelSprite = obj.ItemSprite.PanelSprite == obj.Template.ItemSprite.PanelSprite ? null : obj.ItemSprite.PanelSprite,
+            DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite
         };
 
         return ret;
@@ -142,7 +153,15 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
             StringComparer.OrdinalIgnoreCase),
         Description = obj.Description,
-        IsDyeable = obj.IsDyeable
+        IsDyeable = obj.IsDyeable,
+        IsModifiable = obj.IsModifiable,
+        Level = obj.Level,
+        Class = obj.Class,
+        RequiresMaster = obj.RequiresMaster,
+        AdvClass = obj.AdvClass,
+        Category = obj.Category,
+        EquipmentType = obj.EquipmentType,
+        Gender = obj.Gender
     };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();

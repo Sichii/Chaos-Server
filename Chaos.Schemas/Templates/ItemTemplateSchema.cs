@@ -16,6 +16,11 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     ///     The amount of gold it costs to buy this item from a merchant
     /// </summary>
     public int BuyCost { get; set; }
+    /// <summary>
+    ///     The category of the object, used for bank or shop sorting
+    /// </summary>
+    [JsonRequired]
+    public string Category { get; set; } = null!;
 
     /// <summary>
     ///     Defaults to None(lavender)<br />If the item is dyeable, this is the dye color
@@ -29,9 +34,24 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     public ushort? DisplaySprite { get; set; }
 
     /// <summary>
+    ///     The type of equipment this item is
+    /// </summary>
+    public EquipmentType EquipmentType { get; set; } = EquipmentType.NotEquipment;
+
+    /// <summary>
+    ///     The gender required to use this item
+    /// </summary>
+    public Gender Gender { get; set; } = Gender.Unisex;
+
+    /// <summary>
     ///     Whether or not the item can be dyed
     /// </summary>
     public bool IsDyeable { get; set; }
+
+    /// <summary>
+    ///     Whether or not an instance of the item can be modified
+    /// </summary>
+    public bool IsModifiable { get; set; }
 
     /// <summary>
     ///     Defaults to null<br />If specified, the base max durability of the item

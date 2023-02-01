@@ -86,7 +86,11 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
             obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
             StringComparer.OrdinalIgnoreCase),
         Description = obj.Description,
-        LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements)
+        LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements),
+        Level = obj.Level,
+        Class = obj.Class,
+        AdvClass = obj.AdvClass,
+        RequiresMaster = obj.RequiresMaster
     };
 
     public SkillTemplateSchema Map(SkillTemplate obj) => throw new NotImplementedException();

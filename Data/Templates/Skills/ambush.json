@@ -4,6 +4,8 @@
     "panelSprite": 1,
     "isAssail": false,
     "description": "Teleports the user behind the target, or around the target is behind is occupied.",
+    "class": "monk",
+    "level": 10,
     "learningRequirements": {
         "requiredStats": {
             "str": 1,

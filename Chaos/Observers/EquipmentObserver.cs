@@ -14,10 +14,10 @@ public sealed class EquipmentObserver : Abstractions.IObserver<Item>
     {
         Aisling.Client.SendEquipment(obj);
         Aisling.Display();
-        Aisling.UserStatSheet.AddWeight(obj.Template.Weight);
+        Aisling.UserStatSheet.AddWeight(obj.Weight);
 
-        if (obj.Template.Modifiers != null)
-            Aisling.UserStatSheet.AddBonus(obj.Template.Modifiers);
+        if (obj.Modifiers != null)
+            Aisling.UserStatSheet.AddBonus(obj.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
         obj.Script.OnEquipped(Aisling);
@@ -29,10 +29,10 @@ public sealed class EquipmentObserver : Abstractions.IObserver<Item>
         Aisling.Display();
         Aisling.Client.SendSelfProfile();
 
-        Aisling.UserStatSheet.AddWeight(-obj.Template.Weight);
+        Aisling.UserStatSheet.AddWeight(-obj.Weight);
 
-        if (obj.Template.Modifiers != null)
-            Aisling.UserStatSheet.SubtractBonus(obj.Template.Modifiers);
+        if (obj.Modifiers != null)
+            Aisling.UserStatSheet.SubtractBonus(obj.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
         obj.Script.OnUnEquipped(Aisling);

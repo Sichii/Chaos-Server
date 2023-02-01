@@ -1,4 +1,7 @@
+using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 using System.Text;
+using Chaos.IO.Definitions;
 
 namespace Chaos.IO.Memory;
 
@@ -7,14 +10,16 @@ public ref struct SpanReader
     private readonly Span<byte> Buffer;
     public int Position { get; set; }
     public Encoding Encoding { get; }
+    public Endianness Endianness { get; }
     public readonly bool EndOfSpan => Position >= Buffer.Length;
     public readonly int Remaining => Buffer.Length - Position;
 
-    public SpanReader(Encoding encoding, in Span<byte> buffer)
+    public SpanReader(Encoding encoding, in Span<byte> buffer, Endianness endianness = Endianness.BigEndian)
     {
         Buffer = buffer;
         Encoding = encoding;
         Position = 0;
+        Endianness = endianness;
     }
 
     public List<string> ReadArgs()
@@ -37,14 +42,20 @@ public ref struct SpanReader
         return args;
     }
 
-    public bool ReadBoolean() => ReadByte() != 0;
+    public bool ReadBoolean()
+    {
+        var ret = MemoryMarshal.Read<bool>(Buffer[Position..]);
+        Position++;
+
+        return ret;
+    }
 
     public byte ReadByte()
     {
-        if (Remaining < 1)
-            throw new EndOfStreamException();
+        var ret = MemoryMarshal.Read<byte>(Buffer[Position..]);
+        Position++;
 
-        return Buffer[Position++];
+        return ret;
     }
 
     public byte[] ReadBytes(int length)
@@ -53,9 +64,7 @@ public ref struct SpanReader
             throw new EndOfStreamException();
 
         var start = Position;
-        var end = Position + length;
-
-        Position = end;
+        var end = Position += length;
 
         return Buffer[start..end].ToArray();
     }
@@ -76,19 +85,41 @@ public ref struct SpanReader
         return ReadBytes(lengthPrefix);
     }
 
-    public short ReadInt16() => (short)((ReadByte() << 8) | ReadByte());
+    public short ReadInt16()
+    {
+        var ret = MemoryMarshal.Read<short>(Buffer[Position..]);
 
-    public int ReadInt32() =>
-        (ReadByte() << 24)
-        | (ReadByte() << 16)
-        | (ReadByte() << 8)
-        | ReadByte();
+        if (Endianness == Endianness.BigEndian)
+            ret = BinaryPrimitives.ReverseEndianness(ret);
+
+        Position += sizeof(short);
+
+        return ret;
+    }
+
+    public int ReadInt32()
+    {
+        var ret = MemoryMarshal.Read<int>(Buffer[Position..]);
+
+        if (Endianness == Endianness.BigEndian)
+            ret = BinaryPrimitives.ReverseEndianness(ret);
+
+        Position += sizeof(int);
+
+        return ret;
+    }
 
     public (ushort X, ushort Y) ReadPoint16() => (ReadUInt16(), ReadUInt16());
 
     public (byte X, byte Y) ReadPoint8() => (ReadByte(), ReadByte());
 
-    public sbyte ReadSByte() => (sbyte)ReadByte();
+    public sbyte ReadSByte()
+    {
+        var ret = MemoryMarshal.Read<sbyte>(Buffer[Position..]);
+        Position++;
+
+        return ret;
+    }
 
     public string ReadString()
     {
@@ -138,11 +169,27 @@ public ref struct SpanReader
         return ret;
     }
 
-    public ushort ReadUInt16() => (ushort)((ReadByte() << 8) | ReadByte());
+    public ushort ReadUInt16()
+    {
+        var ret = MemoryMarshal.Read<ushort>(Buffer[Position..]);
 
-    public uint ReadUInt32() =>
-        (uint)((ReadByte() << 24)
-               | (ReadByte() << 16)
-               | (ReadByte() << 8)
-               | ReadByte());
+        if (Endianness == Endianness.BigEndian)
+            ret = BinaryPrimitives.ReverseEndianness(ret);
+
+        Position += sizeof(ushort);
+
+        return ret;
+    }
+
+    public uint ReadUInt32()
+    {
+        var ret = MemoryMarshal.Read<uint>(Buffer[Position..]);
+
+        if (Endianness == Endianness.BigEndian)
+            ret = BinaryPrimitives.ReverseEndianness(ret);
+
+        Position += sizeof(uint);
+
+        return ret;
+    }
 }

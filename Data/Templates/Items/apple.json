@@ -7,6 +7,7 @@
     "weight": 1,
     "name": "Apple",
     "panelSprite": 40,
+    "category": "food",
     "scriptKeys": ["vitalityConsumable"],
     "scriptVars": {
         "vitalityConsumable": {

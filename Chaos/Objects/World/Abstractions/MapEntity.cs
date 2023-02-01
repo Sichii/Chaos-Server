@@ -12,7 +12,12 @@ public abstract class MapEntity : WorldEntity, ILocation
 
     string ILocation.Map => MapInstance.InstanceId;
 
-    protected MapEntity(MapInstance mapInstance, IPoint point) => SetLocation(mapInstance, point);
+    protected MapEntity(MapInstance mapInstance, IPoint point)
+    {
+        MapInstance = mapInstance;
+        X = point.X;
+        Y = point.Y;
+    }
 
     public virtual void Animate(Animation animation, uint? sourceId = null)
     {
@@ -44,7 +49,7 @@ public abstract class MapEntity : WorldEntity, ILocation
             creature.LastMove = DateTime.UtcNow;
     }
 
-    public void SetLocation(MapInstance mapInstance, IPoint point)
+    public void SetLocationFaux(MapInstance mapInstance, IPoint point)
     {
         // ReSharper disable once JoinNullCheckWithUsage
         ArgumentNullException.ThrowIfNull(mapInstance);

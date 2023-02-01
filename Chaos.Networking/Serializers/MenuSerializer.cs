@@ -21,7 +21,7 @@ public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
         writer.WriteByte(0); //dunno
         writer.WriteUInt16(args.Sprite);
         writer.WriteByte((byte)args.Color);
-        writer.WriteByte(5); //dunno
+        writer.WriteByte(0); //illustration frame index, but none of the current images have multiple frames
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 

@@ -6,6 +6,8 @@
     "spellType": "targeted",
     "castLines": 0,
     "description": "Applies a regenerative effect to your target, and all friendlies around that target.",
+    "level": 10,
+    "class": "priest",
     "learningRequirements": {
         "requiredStats": {
             "str": 1,
@@ -20,8 +22,7 @@
                 "amountRequired": 10
             }
         ],
-        "requiredGold": 10000,
-        "requiredLevel": 10
+        "requiredGold": 10000
     },
     "scriptVars": {
         "applyEffect": {

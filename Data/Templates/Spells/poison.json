@@ -6,6 +6,8 @@
     "spellType": "targeted",
     "castLines": 0,
     "description": "Applies a poison effect to your target, and all hostiles around that target.",
+    "level": 10,
+    "class": "wizard",
     "learningRequirements": {
         "requiredStats": {
             "str": 1,
@@ -20,8 +22,7 @@
                 "amountRequired": 10
             }
         ],
-        "requiredGold": 10000,
-        "requiredLevel": 10
+        "requiredGold": 10000
     },
     "scriptVars": {
         "applyEffect": {

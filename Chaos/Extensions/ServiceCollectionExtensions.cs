@@ -30,6 +30,9 @@ using Chaos.Services.MapperProfiles;
 using Chaos.Services.Servers;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
+using Chaos.Services.Storage.Abstractions;
+using Chaos.Services.Storage.Metadata;
+using Chaos.Services.Storage.Metadata.Mutators;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -132,7 +135,6 @@ public static class ServiceCollectionExtensions
         services.AddExpiringCache<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
 
         services.AddExpiringCache<LootTable, LootTableSchema, LootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCache<Metafile, MetafileSchema, MetafileCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCache<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
 
         services.AddExpiringCache<WorldMap, WorldMapSchema, WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
@@ -143,6 +145,15 @@ public static class ServiceCollectionExtensions
 
         services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddDirectoryBoundOptionsFromConfig<MetaDataCacheOptions>(Startup.ConfigKeys.Options.Key)
+                .Configure(
+                    o =>
+                    {
+                        o.PrefixMutators.Add(new EnchantmentMetaNodeMutator());
+                    });
+
+        services.AddSingleton<IMetaDataCache, MetaDataCache>();
 
         services.AddSingleton<ISimpleCache, ISimpleCacheProvider, SimpleCache>();
     }

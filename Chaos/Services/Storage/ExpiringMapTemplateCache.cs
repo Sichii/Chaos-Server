@@ -91,6 +91,6 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
                     };
             }
 
-        mapTemplate.CheckSum = data.Generate16();
+        mapTemplate.CheckSum = Crc.Generate16(data);
     }
 }

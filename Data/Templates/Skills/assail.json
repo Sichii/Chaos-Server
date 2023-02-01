@@ -4,6 +4,7 @@
     "panelSprite": 1,
     "isAssail": true,
     "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
+    "level": 1,
     "learningRequirements": {
         "requiredStats": {
             "str": 2,
@@ -18,8 +19,7 @@
                 "amountRequired": 20
             }
         ],
-        "requiredGold": 5000,
-        "requiredLevel": 1
+        "requiredGold": 5000
     },
     "scriptKeys": ["damage"],
     "scriptVars": {

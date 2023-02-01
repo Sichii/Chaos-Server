@@ -16,6 +16,7 @@ public sealed record UserIdSerializer : ServerPacketSerializer<UserIdArgs>
         writer.WriteByte(0); //dunno
         writer.WriteByte((byte)args.BaseClass);
         writer.WriteByte(0); //dunno
-        writer.WriteByte((byte)args.Gender);
+        writer.WriteByte(0); //dunno
+        writer.WriteByte(0); //dunno
     }
 }

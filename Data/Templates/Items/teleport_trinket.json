@@ -7,6 +7,7 @@
     "weight": 1,
     "name": "Teleport Trinket",
     "panelSprite": 895,
+    "category": "trinket",
     "scriptKeys": ["openDialog"],
     "scriptVars": {
         "openDialog": {

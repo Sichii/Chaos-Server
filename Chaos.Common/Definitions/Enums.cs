@@ -309,13 +309,24 @@ public enum MarkIcon : byte
 /// </summary>
 public enum MarkColor : byte
 {
-    White = 32,
+    Invisible = 0,
+    Cyan = 1,
+    BrightRed = 2,
+    GrayTan = 3,
+    BrightGray = 4,
+    Gray = 5,
+    OffWhite = 13,
+    DarkGray = 14,
+    White = 16,
+    BrightBrightGray = 17,
+    GrayGreen = 20,
+    LightPink = 32,
     LightOrange = 50,
     LightYellow = 64,
     Yellow = 68,
     LightGreen = 75,
     Blue = 88,
-    LightPink = 96,
+    LightPurple = 96,
     DarkPurple = 100,
     Pink = 105,
     Darkgreen = 125,
@@ -523,18 +534,25 @@ public enum MailFlag : byte
 }
 
 /// <summary>
-///     A byte representing the nation displayed in the player's profile.
+///     A byte representing the nation emblem displayed in the player's profile.
 ///     Used by ServerOpCode.Profile and ServerOpCode.SelfProfile
 /// </summary>
 public enum Nation : byte
 {
-    None = 1,
-    Suomi = 2,
-    Loures = 3,
-    Mileth = 4,
-    Tagor = 5,
-    Rucesion = 6,
-    Noes = 7
+    Exile,
+    Suomi,
+    Ellas,
+    Loures,
+    Mileth,
+    Tagor,
+    Rucesion,
+    Noes,
+    Illuminati,
+    Piet,
+    Atlantis,
+    Abel,
+    Undine,
+    Purgatory
 }
 
 /// <summary>
@@ -586,7 +604,6 @@ public enum BaseClass : byte
     Wizard = 3,
     Priest = 4,
     Monk = 5,
-    Any = 6,
     Diacht = 255
 }
 
@@ -912,6 +929,23 @@ public enum ClickType : byte
 {
     TargetId = 1,
     TargetPoint = 3
+}
+
+public enum LevelCircle : byte
+{
+    One = 1,
+    Two = 2,
+    Three = 3,
+    Four = 4,
+    Five = 5,
+    /// <summary>
+    ///     Master
+    /// </summary>
+    Six = 6,
+    /// <summary>
+    ///     Medenia path
+    /// </summary>
+    Seven = 7
 }
 
 /// <summary>

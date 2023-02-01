@@ -117,10 +117,15 @@ public class LearnSpellScript : ConfigurableDialogScriptBase
             foreach (var spellTemplateKey in SpellTemplateKeys)
             {
                 var spell = SpellFactory.CreateFaux(spellTemplateKey);
-                var requiredClass = spell.Template.LearningRequirements?.RequiredClass;
+                var requiredBaseClass = spell.Template.Class;
+                var requiredAdvClass = spell.Template.AdvClass;
 
-                //if this spell is not available to the player's class, skip it
-                if (requiredClass.HasValue && !requiredClass.Value.ContainsClass(source.UserStatSheet.BaseClass))
+                //if this skill is not available to the player's class, skip it
+                if (requiredBaseClass.HasValue && !requiredBaseClass.Value.ContainsClass(source.UserStatSheet.BaseClass))
+                    continue;
+
+                //if this skill is not available to the player's adv class, skip it
+                if (requiredAdvClass.HasValue && (requiredAdvClass.Value != source.UserStatSheet.AdvClass))
                     continue;
 
                 //if the player already knows this spell, skip it
@@ -151,14 +156,38 @@ public class LearnSpellScript : ConfigurableDialogScriptBase
 
     public bool ValidateAndTakeRequirements(Aisling source, Dialog dialog)
     {
-        var requirements = SpellToLearn!.Template.LearningRequirements;
+        var template = SpellToLearn!.Template;
+        var requirements = template.LearningRequirements;
 
         if (requirements == null)
             return true;
 
-        if (requirements.RequiredLevel.HasValue && (source.StatSheet.Level < requirements.RequiredLevel.Value))
+        if (template.Class.HasValue && !template.Class.Value.ContainsClass(source.UserStatSheet.BaseClass))
+        {
+            dialog.Reply(source, "Heh, nice try kid...");
+            Logger.LogWarning("{Player} tried to learn spell {Spell} but is not the correct class", source, template.Name);
+
+            return false;
+        }
+
+        if (template.AdvClass.HasValue && (template.AdvClass.Value != source.UserStatSheet.AdvClass))
+        {
+            dialog.Reply(source, "Heh, nice try kid...");
+            Logger.LogWarning("{Player} tried to learn spell {Spell} but is not the correct adv class", source, template.Name);
+
+            return false;
+        }
+
+        if (source.StatSheet.Level < template.Level)
         {
             dialog.Reply(source, "Come back when you are more experienced.");
+
+            return false;
+        }
+
+        if (template.RequiresMaster && !source.UserStatSheet.Master)
+        {
+            dialog.Reply(source, "Come back when you have mastered your art.");
 
             return false;
         }

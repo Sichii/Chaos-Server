@@ -16,7 +16,7 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Storage.Abstractions;
+using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
@@ -465,7 +465,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(ref packet);
     }
 
-    public void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<Metafile> metafileCache, string? name = null)
+    public void SendMetafile(MetafileRequestType metafileRequestType, IMetaDataCache metaDataCache, string? name = null)
     {
         var args = new MetafileArgs
         {
@@ -478,7 +478,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             {
                 ArgumentNullException.ThrowIfNull(name);
 
-                var metafile = metafileCache.Get(name);
+                var metafile = metaDataCache.GetMetafile(name);
 
                 args.MetafileData = new MetafileInfo
                 {
@@ -491,7 +491,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             }
             case MetafileRequestType.AllCheckSums:
             {
-                args.Info = metafileCache.Select(
+                args.Info = metaDataCache.Select(
                                              metafile => new MetafileInfo
                                              {
                                                  Name = metafile.Name,

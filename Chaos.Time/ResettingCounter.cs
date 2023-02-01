@@ -13,10 +13,16 @@ public sealed class ResettingCounter : IDeltaUpdatable
 
     public bool CanIncrement => Counter < MaxCount;
 
-    public ResettingCounter(int maxPerSecond, IIntervalTimer timer)
+    public ResettingCounter(int maxCount, IIntervalTimer timer)
     {
         Timer = timer;
-        MaxCount = maxPerSecond;
+        MaxCount = maxCount;
+    }
+
+    public ResettingCounter(int maxPerSecond, int updateIntervalSecs = 1)
+    {
+        Timer = new IntervalTimer(TimeSpan.FromSeconds(5));
+        MaxCount = maxPerSecond * updateIntervalSecs;
     }
 
     /// <summary>

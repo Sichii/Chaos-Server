@@ -1,5 +1,6 @@
 <Project>
     <ItemGroup>
+        <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.4"/>
         <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0"/>

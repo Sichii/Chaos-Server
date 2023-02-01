@@ -12,12 +12,12 @@
     "modifiers": {
         "con": 1
     },
+    "gender": "male",
+    "equipmentType": "armor",
+    "category": "m armor",
     "pantsColor": "black",
     "scriptKeys": ["Equipment"],
     "scriptVars": {
-        "equipment": {
-            "equipmentType": "armor",
-            "gender": "male"
-        }
+        "equipment": {}
     }
 }

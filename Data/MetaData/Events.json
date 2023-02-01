@@ -1,0 +1,22 @@
+[
+    {
+        "circle": "one",
+        "title": "I like apples",
+        "summary": "I like apples, go get me some",
+        "rewards": "literally nothing",
+        "prerequisiteEventId": "0",
+        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "id": "Apples1",
+        "result": "i ate some apples"
+    },
+    {
+        "circle": "one",
+        "title": "I like oranges",
+        "summary": "I like oranges too, go get me some",
+        "rewards": "literally nothing still",
+        "prerequisiteEventId": "Apples1",
+        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "id": "Oranges1",
+        "result": "i ate some apples and oranges"
+    }
+]

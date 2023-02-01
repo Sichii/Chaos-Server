@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "added": 1,
+    "color": "White",
+    "count": 1,
+    "icon": "Victory",
+    "key": "B",
+    "text": "Aisling - Deoch 178, Summer"
+  },
+  {
+    "added": 2,
+    "color": "White",
+    "count": 1,
+    "icon": "Victory",
+    "key": "RogA",
+    "text": "Rogue by oath of Keefe - Deoch 193, Fall"
+  }
+]

@@ -1,5 +1,5 @@
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
-using Chaos.Extensions.Geometry;
 using Chaos.Objects.World;
 using Chaos.Scripts.MonsterScripts.Abstractions;
 
@@ -17,7 +17,7 @@ public class CastingScript : MonsterScriptBase
     {
         base.Update(delta);
 
-        if (Target is not { IsAlive: true } || !ShouldUseSpell || !Target.OnSameMapAs(Subject))
+        if (Target is not { IsAlive: true } || !ShouldUseSpell || !Target.WithinRange(Subject))
             return;
 
         Spells.ShuffleInPlace();

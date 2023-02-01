@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripts.ItemScripts.Abstractions;
@@ -12,6 +13,8 @@ public class EquipmentScript : ConfigurableItemScriptBase
 
     public override void OnUse(Aisling source)
     {
+        var template = Subject.Template;
+
         if (!source.IsAlive)
         {
             source.SendOrangeBarMessage("You can't do that");
@@ -19,31 +22,36 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
+        if (template.EquipmentType == EquipmentType.NotEquipment)
+        {
+            source.SendOrangeBarMessage("You can't equip that");
+
+            return;
+        }
+
         //gender check
-        if ((Gender != source.Gender) && (Gender != Gender.Unisex))
+        if (!template.Gender.HasFlag(source.Gender))
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
             return;
         }
 
-        if ((source.UserStatSheet.BaseClass != BaseClass.Diacht)
-            && (BaseClass != BaseClass.Any)
-            && (BaseClass != source.UserStatSheet.BaseClass))
+        if (template.Class.HasValue && !template.Class.Value.ContainsClass(source.UserStatSheet.BaseClass))
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
             return;
         }
 
-        if ((AdvClass != AdvClass.None) && (AdvClass != source.UserStatSheet.AdvClass))
+        if (template.AdvClass.HasValue && (template.AdvClass.Value != source.UserStatSheet.AdvClass))
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
             return;
         }
 
-        if (MinLevel.HasValue && (MinLevel.Value > source.UserStatSheet.Level))
+        if (template.Level > source.UserStatSheet.Level)
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
 
@@ -59,15 +67,10 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
-        source.Equip(EquipmentType, Subject);
+        source.Equip(template.EquipmentType, Subject);
     }
 
     #region ScriptVars
-    protected AdvClass AdvClass { get; init; } = AdvClass.None;
-    protected BaseClass BaseClass { get; init; } = BaseClass.Any;
-    protected EquipmentType EquipmentType { get; init; }
-    protected Gender Gender { get; init; } = Gender.Unisex;
-    protected int? MinLevel { get; init; }
     protected int? StatAmountRequired { get; init; }
     protected Stat? StatRequired { get; init; }
     #endregion

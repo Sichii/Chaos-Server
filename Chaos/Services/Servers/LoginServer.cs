@@ -5,12 +5,11 @@ using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Containers;
 using Chaos.Cryptography;
-using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
-using Chaos.Objects;
 using Chaos.Objects.World;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
@@ -19,6 +18,7 @@ using Chaos.Security.Abstractions;
 using Chaos.Security.Exceptions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -30,6 +30,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
     private readonly ICredentialManager CredentialManager;
+    private readonly IMetaDataCache MetaDataCache;
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
     public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
@@ -44,7 +45,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptions<LoginOptions> options,
-        ILogger<LoginServer> logger
+        ILogger<LoginServer> logger,
+        IMetaDataCache metaDataCache
     )
         : base(
             redirectManager,
@@ -58,6 +60,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         ClientFactory = clientFactory;
         CredentialManager = credentialManager;
         CacheProvider = cacheProvider;
+        MetaDataCache = metaDataCache;
         Notice = new Notice(options.Value.NoticeMessage);
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
 
@@ -225,7 +228,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         (var metafileRequestType, var name) = PacketSerializer.Deserialize<MetafileRequestArgs>(in packet);
 
-        client.SendMetafile(metafileRequestType, CacheProvider.GetCache<Metafile>(), name);
+        client.SendMetafile(metafileRequestType, MetaDataCache, name);
 
         return default;
     }

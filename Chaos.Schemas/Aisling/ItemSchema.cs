@@ -12,4 +12,8 @@ public sealed record ItemSchema : PanelObjectSchema
     public int Count { get; set; }
     public int? CurrentDurability { get; set; }
     public string? DisplayName { get; set; }
+    public ushort? DisplaySprite { get; set; }
+    public AttributesSchema? Modifiers { get; set; }
+    public ushort? PanelSprite { get; set; }
+    public int? Weight { get; set; }
 }

@@ -9,7 +9,7 @@ using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
-using Chaos.Storage.Abstractions;
+using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Clients.Abstractions;
 
@@ -57,7 +57,7 @@ public interface IWorldClient : ISocketClient
     void SendMapData();
     void SendMapInfo();
     void SendMapLoadComplete();
-    void SendMetafile(MetafileRequestType metafileRequestType, ISimpleCache<Metafile> metafile, string? name = null);
+    void SendMetafile(MetafileRequestType metafileRequestType, IMetaDataCache metaData, string? name = null);
 
     void SendNotepad(
         byte identifier,

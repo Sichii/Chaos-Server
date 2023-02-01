@@ -4,7 +4,7 @@ using Chaos.Templates.Abstractions;
 
 namespace Chaos.Templates;
 
-public sealed class SpellTemplate : PanelObjectTemplateBase
+public sealed record SpellTemplate : PanelObjectTemplateBase
 {
     public required byte CastLines { get; init; }
     public required LearningRequirements? LearningRequirements { get; init; }

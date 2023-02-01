@@ -10,7 +10,6 @@ using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
 using Chaos.Cryptography;
-using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Formulae;
@@ -25,6 +24,7 @@ using Chaos.Packets.Abstractions.Definitions;
 using Chaos.Services.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -34,11 +34,11 @@ namespace Chaos.Services.Servers;
 public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldClient>
 {
     private readonly ISaveManager<Aisling> AislingSaveManager;
-    private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<IWorldClient> ClientFactory;
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
     private readonly IGroupService GroupService;
     private readonly IMerchantFactory MerchantFactory;
+    private readonly IMetaDataCache MetaDataCache;
 
     public IEnumerable<Aisling> Aislings => ClientRegistry
                                             .Select(c => c.Aisling)
@@ -48,7 +48,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     public WorldServer(
         IClientRegistry<IWorldClient> clientRegistry,
         IClientFactory<IWorldClient> clientFactory,
-        ISimpleCacheProvider cacheProvider,
         ISaveManager<Aisling> aislingSaveManager,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
@@ -56,7 +55,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         IGroupService groupService,
         IMerchantFactory merchantFactory,
         IOptions<WorldOptions> options,
-        ILogger<WorldServer> logger
+        ILogger<WorldServer> logger,
+        IMetaDataCache metaDataCache
     )
         : base(
             redirectManager,
@@ -67,11 +67,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     {
         Options = options.Value;
         ClientFactory = clientFactory;
-        CacheProvider = cacheProvider;
         AislingSaveManager = aislingSaveManager;
         CommandInterceptor = commandInterceptor;
         GroupService = groupService;
         MerchantFactory = merchantFactory;
+        MetaDataCache = metaDataCache;
 
         IndexHandlers();
     }
@@ -703,16 +703,15 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ValueTask InnerOnMetafileRequest(IWorldClient localClient, MetafileRequestArgs localArgs)
         {
             (var metafileRequestType, var name) = localArgs;
-            var metafileCache = CacheProvider.GetCache<Metafile>();
 
             switch (metafileRequestType)
             {
                 case MetafileRequestType.DataByName:
-                    localClient.SendMetafile(MetafileRequestType.DataByName, metafileCache, name);
+                    localClient.SendMetafile(MetafileRequestType.DataByName, MetaDataCache, name);
 
                     break;
                 case MetafileRequestType.AllCheckSums:
-                    localClient.SendMetafile(MetafileRequestType.AllCheckSums, metafileCache);
+                    localClient.SendMetafile(MetafileRequestType.AllCheckSums, MetaDataCache);
 
                     break;
                 default:

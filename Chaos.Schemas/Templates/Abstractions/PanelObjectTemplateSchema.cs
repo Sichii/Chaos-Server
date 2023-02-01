@@ -1,10 +1,20 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Collections;
+using Chaos.Common.Definitions;
 
 namespace Chaos.Schemas.Templates.Abstractions;
 
 public abstract record PanelObjectTemplateSchema
 {
+    /// <summary>
+    ///     The advanced class required to use this object
+    /// </summary>
+    public AdvClass? AdvClass { get; set; }
+
+    /// <summary>
+    ///     The class required to use this object
+    /// </summary>
+    public BaseClass? Class { get; set; }
     /// <summary>
     ///     Defaults to null<br />If specified, any on-use effect of this object will use this cooldown
     /// </summary>
@@ -13,7 +23,12 @@ public abstract record PanelObjectTemplateSchema
     /// <summary>
     ///     A brief description of this entity
     /// </summary>
-    public string? Description { get; set; } = null!;
+    public string? Description { get; set; }
+
+    /// <summary>
+    ///     The level required to use this object
+    /// </summary>
+    public int Level { get; set; }
     /// <summary>
     ///     The base name of the object
     /// </summary>
@@ -23,6 +38,12 @@ public abstract record PanelObjectTemplateSchema
     ///     The sprite id used to display the object in it's respective panel, minus the offset
     /// </summary>
     public ushort PanelSprite { get; set; }
+
+    /// <summary>
+    ///     Whether or not this object required you to be a master
+    /// </summary>
+    public bool RequiresMaster { get; set; }
+
     /// <summary>
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>

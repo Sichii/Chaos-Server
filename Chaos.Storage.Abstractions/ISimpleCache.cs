@@ -6,6 +6,8 @@ namespace Chaos.Storage.Abstractions;
 /// <typeparam name="TResult"></typeparam>
 public interface ISimpleCache<out TResult> : IEnumerable<TResult>
 {
+    void ForceLoad();
+
     /// <summary>
     ///     Gets an object from the cache
     /// </summary>

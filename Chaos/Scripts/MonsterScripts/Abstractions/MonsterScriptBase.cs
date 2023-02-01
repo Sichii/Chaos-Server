@@ -50,7 +50,7 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
     public virtual void OnAttacked(Creature source, int damage, int? aggroOverride) { }
 
     /// <inheritdoc />
-    public void OnAttacked(Creature attacker, int damage) => OnAttacked(attacker, damage, null);
+    public virtual void OnAttacked(Creature attacker, int damage) => OnAttacked(attacker, damage, null);
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

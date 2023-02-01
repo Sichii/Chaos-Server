@@ -1,5 +1,4 @@
 using System.Text;
-using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Services.Factories.Abstractions;
 
@@ -23,19 +22,10 @@ public sealed record LearningRequirements
     public required ICollection<string> PrerequisiteSpellTemplateKeys { get; init; } = Array.Empty<string>();
 
     /// <summary>
-    ///     The class required to learn this ability
-    /// </summary>
-    public required BaseClass? RequiredClass { get; init; }
-
-    /// <summary>
     ///     The amount of gold required to learn this ability
     /// </summary>
     public required int? RequiredGold { get; init; }
 
-    /// <summary>
-    ///     The level required to learn this ability
-    /// </summary>
-    public required int? RequiredLevel { get; init; }
     /// <summary>
     ///     The attributes required to learn this skill
     /// </summary>
@@ -49,12 +39,10 @@ public sealed record LearningRequirements
     {
         var builder = new StringBuilder();
 
-        if (RequiredLevel.HasValue)
-            builder.AppendLine($"Required Level: Level {RequiredLevel}");
-
         if (RequiredStats != null)
             builder.AppendLine(
-                $"Required Attributes: STR: {RequiredStats.Str}, INT: {RequiredStats.Int}, WIS: {RequiredStats.Wis}, CON: {RequiredStats.Con}, DEX: {RequiredStats.Dex}");
+                $"Required Attributes: STR: {RequiredStats.Str}, INT: {RequiredStats.Int}, WIS: {RequiredStats.Wis}, CON: {RequiredStats.Con
+                }, DEX: {RequiredStats.Dex}");
 
         if (RequiredGold.HasValue)
             builder.AppendLine($"Required Gold: {RequiredGold} gold");

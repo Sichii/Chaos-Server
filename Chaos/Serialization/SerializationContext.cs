@@ -8,6 +8,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
+using Chaos.Schemas.MetaData;
 using Chaos.Schemas.Templates;
 
 // ReSharper disable ArrangeAttributes
@@ -58,6 +59,8 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(UserStatSheetSchema))]
 [JsonSerializable(typeof(EnumCollection))]
 [JsonSerializable(typeof(FlagCollection))]
+[JsonSerializable(typeof(EventMetaSchema))]
+[JsonSerializable(typeof(MundaneIllustrationMetaSchema))]
 [JsonSerializable(typeof(List<ItemSchema>))]
 [JsonSerializable(typeof(List<SkillSchema>))]
 [JsonSerializable(typeof(List<SpellSchema>))]
@@ -67,6 +70,8 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(List<MonsterSpawnSchema>))]
 [JsonSerializable(typeof(List<MerchantSpawnSchema>))]
 [JsonSerializable(typeof(List<StaticReactorTileSchema>))]
+[JsonSerializable(typeof(List<EventMetaSchema>))]
+[JsonSerializable(typeof(List<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(ICollection<ItemSchema>))]
 [JsonSerializable(typeof(ICollection<SkillSchema>))]
 [JsonSerializable(typeof(ICollection<SpellSchema>))]
@@ -76,6 +81,8 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(ICollection<MonsterSpawnSchema>))]
 [JsonSerializable(typeof(ICollection<MerchantSpawnSchema>))]
 [JsonSerializable(typeof(ICollection<StaticReactorTileSchema>))]
+[JsonSerializable(typeof(ICollection<EventMetaSchema>))]
+[JsonSerializable(typeof(ICollection<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(IEnumerable<ItemSchema>))]
 [JsonSerializable(typeof(IEnumerable<SkillSchema>))]
 [JsonSerializable(typeof(IEnumerable<SpellSchema>))]
@@ -85,8 +92,11 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(IEnumerable<MonsterSpawnSchema>))]
 [JsonSerializable(typeof(IEnumerable<MerchantSpawnSchema>))]
 [JsonSerializable(typeof(IEnumerable<StaticReactorTileSchema>))]
+[JsonSerializable(typeof(IEnumerable<EventMetaSchema>))]
+[JsonSerializable(typeof(IEnumerable<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(Dictionary<string, JsonElement>))]
+[JsonSerializable(typeof(HashSet<string>))]
 [JsonSerializable(typeof(Animation))]
 [JsonSerializable(typeof(IPoint))]
 [JsonSerializable(typeof(ILocation))]
@@ -100,6 +110,7 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(AoeShape?))]
 [JsonSerializable(typeof(TargetFilter?))]
 [JsonSerializable(typeof(EquipmentType?))]
+[JsonSerializable(typeof(LevelCircle))]
 [JsonSerializable(typeof(byte))]
 [JsonSerializable(typeof(sbyte))]
 [JsonSerializable(typeof(short))]
