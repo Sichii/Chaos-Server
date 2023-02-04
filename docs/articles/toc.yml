@@ -4,9 +4,27 @@
   href: LoginOptions.md
 - name: World Options
   href: WorldOptions.md
+- name: Caching and Serialization
+  href: CachingAndSerialization.md
+- name: Maps
+  href: Maps.md
+- name: Items
+  href: Items.md
+- name: Skills
+  href: Skills.md
+- name: Spells
+  href: Spells.md
+- name: Merchants
+  href: Merchants.md
+- name: Monsters
+  href: Monsters.md
+- name: Loot Tables
+  href: LootTables.md
 - name: Formulae
   href: Formulae.md
 - name: Scripts
   href: Scripts.md
 - name: Functional Scripts
   href: FunctionalScripts.md
+- name: Meta Data
+  href: MetaData.md

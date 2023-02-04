@@ -2,7 +2,7 @@
   "bodyColor": "White",
   "bodySprite": "Male",
   "counters": {},
-  "direction": "Right",
+  "direction": "Down",
   "effects": [],
   "enums": {},
   "flags": {},
@@ -11,9 +11,10 @@
   "hairColor": "Tan",
   "hairStyle": 6,
   "ignoreList": [],
+  "isAdmin": true,
   "mapInstanceId": "testTown",
   "name": "bonk",
-  "nation": "Unknown",
+  "nation": "Illuminati",
   "statSheet": {
     "advClass": "None",
     "baseClass": "Rogue",
@@ -42,6 +43,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 24,
-  "y": 26
+  "x": 23,
+  "y": 27
 }

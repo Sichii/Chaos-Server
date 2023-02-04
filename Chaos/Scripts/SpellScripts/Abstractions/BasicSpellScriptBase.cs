@@ -8,30 +8,14 @@ using Chaos.Scripts.Components;
 
 namespace Chaos.Scripts.SpellScripts.Abstractions;
 
-public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase
+public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase, AbilityComponent.IAbilityComponentOptions
 {
     protected AbilityComponent AbilityComponent { get; }
-    protected AbilityComponent.AbilityComponentOptions AbilityComponentOptions { get; }
 
     /// <inheritdoc />
     protected BasicSpellScriptBase(Spell subject)
-        : base(subject)
-    {
+        : base(subject) =>
         AbilityComponent = new AbilityComponent();
-
-        AbilityComponentOptions = new AbilityComponent.AbilityComponentOptions
-        {
-            Shape = Shape,
-            Range = Range,
-            Filter = Filter,
-            BodyAnimation = BodyAnimation,
-            Animation = Animation,
-            Sound = Sound,
-            AnimatePoints = AnimatePoints,
-            MustHaveTargets = MustHaveTargets,
-            IncludeSourcePoint = IncludeSourcePoint
-        };
-    }
 
     /// <inheritdoc />
     public override bool CanUse(SpellContext context) => (Filter ?? TargetFilter.None).IsValidTarget(context.Source, context.Target);
@@ -39,20 +23,20 @@ public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
     {
-        _ = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
+        _ = AbilityComponent.Activate<Creature>(context, this);
 
         context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
     }
 
     #region ScriptVars
-    protected AoeShape Shape { get; init; }
-    protected int Range { get; init; }
-    protected TargetFilter? Filter { get; init; }
-    protected BodyAnimation? BodyAnimation { get; init; }
-    protected Animation? Animation { get; init; }
-    protected byte? Sound { get; init; }
-    protected bool AnimatePoints { get; init; } = true;
-    protected bool MustHaveTargets { get; init; } = false;
-    protected bool IncludeSourcePoint { get; init; } = true;
+    public AoeShape Shape { get; init; }
+    public int Range { get; init; }
+    public TargetFilter? Filter { get; init; }
+    public BodyAnimation? BodyAnimation { get; init; }
+    public Animation? Animation { get; init; }
+    public byte? Sound { get; init; }
+    public bool AnimatePoints { get; init; } = true;
+    public bool MustHaveTargets { get; init; } = false;
+    public bool IncludeSourcePoint { get; init; } = true;
     #endregion
 }

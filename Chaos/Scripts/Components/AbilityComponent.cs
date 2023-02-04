@@ -12,7 +12,7 @@ public class AbilityComponent
 {
     public virtual (IReadOnlyCollection<IPoint> TargetPoints, IReadOnlyCollection<T> TargetEntities) Activate<T>(
         ActivationContext context,
-        AbilityComponentOptions options
+        IAbilityComponentOptions options
     ) where T: MapEntity
     {
         var targetPoints = options.Shape.ResolvePoints(
@@ -48,16 +48,16 @@ public class AbilityComponent
     }
 
     // ReSharper disable once ClassCanBeSealed.Global
-    public class AbilityComponentOptions
+    public interface IAbilityComponentOptions
     {
-        public bool AnimatePoints { get; init; }
-        public Animation? Animation { get; init; }
-        public BodyAnimation? BodyAnimation { get; init; }
-        public TargetFilter? Filter { get; init; }
-        public bool IncludeSourcePoint { get; init; }
-        public bool MustHaveTargets { get; init; }
-        public required int Range { get; init; }
-        public required AoeShape Shape { get; init; }
-        public byte? Sound { get; init; }
+        bool AnimatePoints { get; init; }
+        Animation? Animation { get; init; }
+        BodyAnimation? BodyAnimation { get; init; }
+        TargetFilter? Filter { get; init; }
+        bool IncludeSourcePoint { get; init; }
+        bool MustHaveTargets { get; init; }
+        int Range { get; init; }
+        AoeShape Shape { get; init; }
+        byte? Sound { get; init; }
     }
 }

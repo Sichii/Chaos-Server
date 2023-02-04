@@ -1,7 +1,7 @@
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Objects.World;
-using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Storage.Abstractions;

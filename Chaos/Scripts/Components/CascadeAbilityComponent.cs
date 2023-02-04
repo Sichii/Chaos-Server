@@ -14,7 +14,7 @@ namespace Chaos.Scripts.Components;
 
 public class CascadeAbilityComponent
 {
-    public virtual void Activate(ActivationContext context, CascadeAbilityComponentOptions options, IEffectFactory effectFactory)
+    public virtual void Activate(ActivationContext context, ICascadeAbilityComponentOptions options, IEffectFactory effectFactory)
     {
         if (options.BodyAnimation.HasValue)
             context.Source.AnimateBody(options.BodyAnimation.Value);
@@ -40,26 +40,25 @@ public class CascadeAbilityComponent
         context.Map.SimpleAdd(proxyEntity);
     }
 
-    public class CascadeProxyOptions
+    public interface ICascadeProxyOptions : DamageComponent.IDamageComponentOptions
     {
-        public bool AnimatePoints { get; init; }
-        public Animation? Animation { get; init; }
-        public DamageComponent.DamageComponentOptions? DamageComponentOptions { get; init; }
-        public string? EffectKey { get; init; }
-        public TargetFilter? Filter { get; init; }
-        public required int PropagationIntervalMs { get; init; }
-        public required int Range { get; init; }
-        public required AoeShape Shape { get; init; }
-        public byte? Sound { get; init; }
-        public required int SoundIntervalMs { get; init; }
+        bool AnimatePoints { get; init; }
+        Animation? Animation { get; init; }
+        string? EffectKey { get; init; }
+        TargetFilter? Filter { get; init; }
+        int PropagationIntervalMs { get; init; }
+        int Range { get; init; }
+        AoeShape Shape { get; init; }
+        byte? Sound { get; init; }
+        int SoundIntervalMs { get; init; }
     }
 
     // ReSharper disable once ClassCanBeSealed.Global
-    public class CascadeAbilityComponentOptions : CascadeProxyOptions
+    public interface ICascadeAbilityComponentOptions : ICascadeProxyOptions
     {
-        public BodyAnimation? BodyAnimation { get; init; }
-        public bool IncludeSourcePoint { get; init; }
-        public bool StopAtWalls { get; init; }
+        BodyAnimation? BodyAnimation { get; init; }
+        bool IncludeSourcePoint { get; init; }
+        bool StopAtWalls { get; init; }
     }
 
     public sealed class CascadingProxy : ProxyEntity.IProxy
@@ -72,13 +71,13 @@ public class CascadeAbilityComponent
         public DamageComponent? DamageComponent { get; }
         public Direction Direction { get; }
         public IEffectFactory EffectFactory { get; }
-        public CascadeProxyOptions Options { get; }
+        public ICascadeProxyOptions Options { get; }
         public IIntervalTimer PropagationTimer { get; }
         public IIntervalTimer SoundTimer { get; }
 
         public CascadingProxy(
             ActivationContext context,
-            CascadeProxyOptions options,
+            ICascadeProxyOptions options,
             IReadOnlyCollection<IPoint> allPoints,
             IEffectFactory effectFactory
         )
@@ -90,10 +89,8 @@ public class CascadeAbilityComponent
             EffectFactory = effectFactory;
             PropagationTimer = new IntervalTimer(TimeSpan.FromMilliseconds(options.PropagationIntervalMs));
             SoundTimer = new IntervalTimer(TimeSpan.FromMilliseconds(options.SoundIntervalMs));
+            DamageComponent = new DamageComponent();
             Stage = 0;
-
-            if (options.DamageComponentOptions is not null)
-                DamageComponent = new DamageComponent();
         }
 
         /// <inheritdoc />
@@ -137,7 +134,7 @@ public class CascadeAbilityComponent
                             entity.Animate(Options.Animation, Context.Source.Id);
                 }
 
-                DamageComponent?.ApplyDamage(Context, targetEntities, Options.DamageComponentOptions!);
+                DamageComponent?.ApplyDamage(Context, targetEntities, Options);
 
                 if (!string.IsNullOrEmpty(Options.EffectKey))
                     foreach (var entity in targetEntities)

@@ -21,7 +21,7 @@ public sealed class ResettingCounter : IDeltaUpdatable
 
     public ResettingCounter(int maxPerSecond, int updateIntervalSecs = 1)
     {
-        Timer = new IntervalTimer(TimeSpan.FromSeconds(5));
+        Timer = new IntervalTimer(TimeSpan.FromSeconds(updateIntervalSecs));
         MaxCount = maxPerSecond * updateIntervalSecs;
     }
 

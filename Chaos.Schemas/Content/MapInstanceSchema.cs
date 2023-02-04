@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 using Chaos.Schemas.Data;
 
-namespace Chaos.Schemas.Aisling;
+namespace Chaos.Schemas.Content;
 
 public sealed record MapInstanceSchema
 {
@@ -14,7 +14,7 @@ public sealed record MapInstanceSchema
     public MapFlags Flags { get; set; }
 
     /// <summary>
-    ///     A unique id specific to this map instance<br />Best practice is to match the folder name
+    ///     A unique id specific to this map instance<br />This must match the name of the folder containing this file
     /// </summary>
     [JsonRequired]
     public string InstanceId { get; set; } = null!;
@@ -42,7 +42,7 @@ public sealed record MapInstanceSchema
     public string Name { get; set; } = null!;
 
     /// <summary>
-    ///     A collection of script keys to load for this map (TODO: scripts section)
+    ///     A collection of script keys for scripts to load for this map (TODO: scripts section)
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 

@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Common.Utilities;
 using Chaos.Data;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -11,11 +12,16 @@ namespace Chaos.Scripts.Components;
 /// </summary>
 public class DamageComponent
 {
-    public virtual void ApplyDamage(ActivationContext context, IReadOnlyCollection<Creature> targetEntities, DamageComponentOptions options)
+    public virtual void ApplyDamage(
+        ActivationContext context,
+        IReadOnlyCollection<Creature> targetEntities,
+        IDamageComponentOptions options
+    )
     {
         var damage = CalculateDamage(
             context,
             options.BaseDamage,
+            options.PctHpDamage,
             options.DamageStat,
             options.DamageStatMultiplier);
 
@@ -33,11 +39,14 @@ public class DamageComponent
     protected virtual int CalculateDamage(
         ActivationContext context,
         int? baseDamage = null,
+        decimal? pctHpDamage = null,
         Stat? damageStat = null,
         decimal? damageStatMultiplier = null
     )
     {
         var finalDamage = baseDamage ?? 0;
+
+        finalDamage += MathEx.GetPercentOf<int>((int)context.Target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
 
         if (!damageStat.HasValue)
             return finalDamage;
@@ -55,12 +64,13 @@ public class DamageComponent
     }
 
     // ReSharper disable once ClassCanBeSealed.Global
-    public class DamageComponentOptions
+    public interface IDamageComponentOptions
     {
-        public required IApplyDamageScript ApplyDamageScript { get; init; }
-        public int? BaseDamage { get; init; }
-        public Stat? DamageStat { get; init; }
-        public decimal? DamageStatMultiplier { get; init; }
-        public required IScript SourceScript { get; init; }
+        IApplyDamageScript ApplyDamageScript { get; init; }
+        int? BaseDamage { get; init; }
+        Stat? DamageStat { get; init; }
+        decimal? DamageStatMultiplier { get; init; }
+        decimal? PctHpDamage { get; init; }
+        IScript SourceScript { get; init; }
     }
 }

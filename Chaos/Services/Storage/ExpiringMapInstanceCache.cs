@@ -6,7 +6,6 @@ using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Objects.World;
 using Chaos.Pathfinding.Abstractions;
-using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Content;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Storage.Abstractions;
@@ -139,7 +138,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var merchantSpawnSchemas =
             JsonSerializer.Deserialize<IEnumerable<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
 
-        var reactorsSchemas = JsonSerializer.Deserialize<IEnumerable<StaticReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
+        var reactorsSchemas = JsonSerializer.Deserialize<IEnumerable<ReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
 
         if (mapInstanceSchema == null)
             throw new SerializationException($"Failed to serialize {nameof(MapInstanceSchema)} from directory \"{directory}\"");

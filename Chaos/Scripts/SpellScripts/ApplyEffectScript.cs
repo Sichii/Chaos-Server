@@ -20,7 +20,7 @@ public class ApplyEffectScript : BasicSpellScriptBase
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
     {
-        var targets = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
+        var targets = AbilityComponent.Activate<Creature>(context, this);
 
         foreach (var target in targets.TargetEntities)
         {

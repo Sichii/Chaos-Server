@@ -6,6 +6,10 @@ namespace Chaos.Data;
 
 public sealed record UserStatSheet : StatSheet
 {
+    public delegate void ReferentialAction(UserStatSheetRef statSheetRef);
+
+    public delegate T ReferentialFunc<out T>(UserStatSheetRef statSheetRef);
+
     private AdvClass _advClass;
     private BaseClass _baseClass;
     // ReSharper disable once UnassignedField.Global
@@ -98,17 +102,83 @@ public sealed record UserStatSheet : StatSheet
         _advClass = AdvClass.None,
     };
 
-    public void AddTNA(long amount) => Interlocked.Add(ref _toNextAbility, amount);
+    public long AddTna(long amount)
+    {
+        var ret = Interlocked.Add(ref _toNextAbility, amount);
 
-    public void AddTNL(long amount) => Interlocked.Add(ref _toNextLevel, amount);
+        if (_toNextAbility > uint.MaxValue)
+        {
+            _toNextAbility = uint.MaxValue;
 
-    public void AddTotalAbility(long amount) => Interlocked.Add(ref _totalAbility, amount);
+            return uint.MaxValue;
+        }
 
-    public void AddTotalExp(long amount) => Interlocked.Add(ref _totalExp, amount);
+        return ret;
+    }
 
-    public void AddWeight(int amount) => Interlocked.Add(ref _currentWeight, amount);
+    public long AddTnl(long amount)
+    {
+        var ret = Interlocked.Add(ref _toNextLevel, amount);
 
-    public void GivePoints(int amount) => Interlocked.Add(ref _unspentPoints, amount);
+        if (_toNextLevel > uint.MaxValue)
+        {
+            _toNextLevel = uint.MaxValue;
+
+            return uint.MaxValue;
+        }
+
+        return ret;
+    }
+
+    public long AddTotalAbility(long amount)
+    {
+        var ret = Interlocked.Add(ref _totalAbility, amount);
+
+        if (_totalAbility > uint.MaxValue)
+        {
+            _totalAbility = uint.MaxValue;
+
+            return uint.MaxValue;
+        }
+
+        return ret;
+    }
+
+    public long AddTotalExp(long amount)
+    {
+        var ret = Interlocked.Add(ref _totalExp, amount);
+
+        if (_totalExp > uint.MaxValue)
+        {
+            _totalExp = uint.MaxValue;
+
+            return uint.MaxValue;
+        }
+
+        return ret;
+    }
+
+    public int AddWeight(int amount) => Interlocked.Add(ref _currentWeight, amount);
+
+    public void Assert(ReferentialAction action) => action(
+        new UserStatSheetRef(
+            ref _currentWeight,
+            ref _totalExp,
+            ref _totalAbility,
+            ref _toNextLevel,
+            ref _toNextAbility,
+            ref _unspentPoints));
+
+    public T Assert<T>(ReferentialFunc<T> func) => func(
+        new UserStatSheetRef(
+            ref _currentWeight,
+            ref _totalExp,
+            ref _totalAbility,
+            ref _toNextLevel,
+            ref _toNextAbility,
+            ref _unspentPoints));
+
+    public int GivePoints(int amount) => Interlocked.Add(ref _unspentPoints, amount);
 
     public void IncrementLevel() => Interlocked.Increment(ref _level);
 
@@ -161,4 +231,87 @@ public sealed record UserStatSheet : StatSheet
     public void SetIsMaster(bool isMaster) => _master = isMaster;
 
     public void SetMaxWeight(int maxWeight) => _maxWeight = maxWeight;
+
+    public long TakeTna(long amount)
+    {
+        var ret = Interlocked.Add(ref _toNextAbility, -amount);
+
+        if (_toNextAbility < 0)
+        {
+            _toNextAbility = 0;
+
+            return 0;
+        }
+
+        return ret;
+    }
+
+    public long TakeTnl(long amount)
+    {
+        var ret = Interlocked.Add(ref _toNextLevel, -amount);
+
+        if (_toNextLevel < 0)
+        {
+            _toNextLevel = 0;
+
+            return 0;
+        }
+
+        return ret;
+    }
+
+    public long TakeTotalAbility(long amount)
+    {
+        var ret = Interlocked.Add(ref _totalAbility, -amount);
+
+        if (_totalAbility < 0)
+        {
+            _totalAbility = 0;
+
+            return 0;
+        }
+
+        return ret;
+    }
+
+    public long TakeTotalExp(long amount)
+    {
+        var ret = Interlocked.Add(ref _totalExp, -amount);
+
+        if (_totalExp < 0)
+        {
+            _totalExp = 0;
+
+            return 0;
+        }
+
+        return ret;
+    }
+
+    public ref struct UserStatSheetRef
+    {
+        public ref int CurrentWeight;
+        public ref long ToNextAbility;
+        public ref long ToNextLevel;
+        public ref long TotalAbility;
+        public ref long TotalExp;
+        public ref int UnspentPoints;
+
+        public UserStatSheetRef(
+            ref int currentWeight,
+            ref long totalExp,
+            ref long totalAbility,
+            ref long toNextLevel,
+            ref long toNextAbility,
+            ref int unspentPoints
+        )
+        {
+            CurrentWeight = ref currentWeight;
+            TotalExp = ref totalExp;
+            TotalAbility = ref totalAbility;
+            ToNextLevel = ref toNextLevel;
+            ToNextAbility = ref toNextAbility;
+            UnspentPoints = ref unspentPoints;
+        }
+    }
 }

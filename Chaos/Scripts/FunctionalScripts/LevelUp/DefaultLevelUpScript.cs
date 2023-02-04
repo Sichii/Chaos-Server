@@ -29,7 +29,7 @@ public class DefaultLevelUpScript : ScriptBase, ILevelUpScript
         if (aisling.UserStatSheet.Level < WorldOptions.Instance.MaxLevel)
         {
             var newTnl = LevelUpFormula.CalculateTnl(aisling);
-            aisling.UserStatSheet.AddTNL(newTnl);
+            aisling.UserStatSheet.AddTnl(newTnl);
         }
 
         var levelUpAttribs = LevelUpFormula.CalculateAttributesIncrease(aisling);

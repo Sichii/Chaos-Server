@@ -1,7 +1,7 @@
 using Chaos.Networking.Metadata.ItemMetadata;
 using Chaos.Services.Storage.Abstractions;
 
-namespace Chaos.Services.Storage.Metadata.Mutators;
+namespace Chaos.Services.Storage.Mutators;
 
 public sealed class EnchantmentMetaNodeMutator : IMetaNodeMutator<ItemMetaNode>
 {

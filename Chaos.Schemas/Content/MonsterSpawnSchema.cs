@@ -22,18 +22,19 @@ public sealed record MonsterSpawnSchema
     public ICollection<string> ExtraScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A number of seconds between each trigger of this spawn
+    ///     The number of seconds between each trigger of this spawn
     /// </summary>
     public int IntervalSecs { get; set; }
 
     /// <summary>
     ///     Defaults to 0<br />If specified, will randomize the interval by the percentage specified<br />Ex. With an interval of 60, and a
-    ///     Variance of 50, the spawn interval would var from 45-75secs
+    ///     Variance of 50, the spawn interval would vary from 45-75secs
     /// </summary>
     public int? IntervalVariancePct { get; set; }
 
     /// <summary>
-    ///     Default is to not have a loot table. If specified, the unique id for the loot table used to determine monster drops from this spawn
+    ///     Default is to not have a loot table.<br />
+    ///     If specified, the unique id for the loot table used to determine monster drops from this spawn
     /// </summary>
     public string? LootTableKey { get; set; }
 

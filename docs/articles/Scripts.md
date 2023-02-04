@@ -14,7 +14,8 @@ the [ConfigurableItemScriptBase](<xref:Chaos.Scripts.ItemScripts.Abstractions.Co
 Base scripts are just empty scripts with no functionality. They have empty virtual implementations of all of the possible events that could
 occur for that object. These events are intended to be overridden and have functionality added.
 > [!TIP]
-> Base scripts are intended for use when no external configuration is necessary. The script should generally do something specific
+> Base scripts are intended for use when no external configuration is necessary. A script inheriting from a BaseScript should generally do
+> something specific
 
 ### Configurable Scripts
 
@@ -25,12 +26,12 @@ automatically if it can find that variable within the source json the entity was
 the `scriptVars` property from whatever entity is the subject of that script.
 
 For example, here is a script that is used for consumable items that give back health or mana.  
-[!code-csharp[](../../Chaos/Scripts/ItemScripts/VitalityConsumableScript.cs?highlight=33-38)]  
+[!code-csharp[](../../Chaos/Scripts/ItemScripts/VitalityConsumableScript.cs)]  
 Note the `scriptVars` region. These properties don't appear to be set anywhere, but they are automatically populated by the script's base
 implementation from the item's json.
 
 Here is a json for an `apple` item, note the `scriptVars` property  
-[!code-json[](../../Data/Templates/Items/apple.json?highlight=11-15)]
+[!code-json[](../../Data/Templates/Items/apple.json)]
 
 Here the `scriptKeys` collection contains the `vitalityConsumable` script key, signaling that the `VitalityConsumableScript` should be
 attached to this entity.

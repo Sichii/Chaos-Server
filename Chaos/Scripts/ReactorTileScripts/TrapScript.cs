@@ -5,6 +5,7 @@ using Chaos.Extensions;
 using Chaos.Formulae;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.Components;
 using Chaos.Scripts.FunctionalScripts.Abstractions;
 using Chaos.Scripts.FunctionalScripts.ApplyDamage;
@@ -15,17 +16,18 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripts.ReactorTileScripts;
 
-public class TrapScript : ConfigurableReactorTileScriptBase
+public class TrapScript : ConfigurableReactorTileScriptBase,
+                          AbilityComponent.IAbilityComponentOptions,
+                          DamageComponent.IDamageComponentOptions,
+                          ManaDrainComponent.IManaDrainComponentOptions
 {
-    protected IApplyDamageScript ApplyDamageScript { get; set; }
     protected IEffectFactory EffectFactory { get; set; }
     protected Creature Owner { get; set; }
     protected IIntervalTimer Timer { get; set; }
     protected int TriggerCount { get; set; }
     protected AbilityComponent AbilityComponent { get; }
-    protected AbilityComponent.AbilityComponentOptions AbilityComponentOptions { get; }
     protected DamageComponent DamageComponent { get; }
-    protected DamageComponent.DamageComponentOptions DamageComponentOptions { get; }
+    protected ManaDrainComponent ManaDrainComponent { get; }
 
     /// <inheritdoc />
     public TrapScript(ReactorTile subject, IEffectFactory effectFactory)
@@ -46,32 +48,11 @@ If this reactor was created through a script, you must specify the owner in the 
         Timer = new IntervalTimer(TimeSpan.FromSeconds(DurationSecs), false);
         ApplyDamageScript = DefaultApplyDamageScript.Create();
         ApplyDamageScript.DamageFormula = DamageFormulae.PureDamage;
+        SourceScript = this;
 
         AbilityComponent = new AbilityComponent();
-
-        AbilityComponentOptions = new AbilityComponent.AbilityComponentOptions
-        {
-            Shape = Shape,
-            Range = Range,
-            Filter = Filter,
-            BodyAnimation = null,
-            Animation = Animation,
-            Sound = Sound,
-            AnimatePoints = AnimatePoints,
-            MustHaveTargets = MustHaveTargets,
-            IncludeSourcePoint = IncludeSourcePoint
-        };
-
         DamageComponent = new DamageComponent();
-
-        DamageComponentOptions = new DamageComponent.DamageComponentOptions
-        {
-            ApplyDamageScript = ApplyDamageScript,
-            SourceScript = this,
-            BaseDamage = BaseDamage,
-            DamageStatMultiplier = DamageStatMultiplier,
-            DamageStat = DamageStat
-        };
+        ManaDrainComponent = new ManaDrainComponent();
     }
 
     /// <inheritdoc />
@@ -83,12 +64,13 @@ If this reactor was created through a script, you must specify the owner in the 
 
         var context = new ActivationContext(Owner, source);
 
-        var targets = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
+        var targets = AbilityComponent.Activate<Creature>(context, this);
 
         if (MustHaveTargets && !targets.TargetEntities.Any())
             return;
 
-        DamageComponent.ApplyDamage(context, targets.TargetEntities, DamageComponentOptions);
+        DamageComponent.ApplyDamage(context, targets.TargetEntities, this);
+        ManaDrainComponent.ApplyManaDrain(targets.TargetEntities, this);
 
         if (!string.IsNullOrEmpty(EffectKey))
             foreach (var entity in targets.TargetEntities)
@@ -115,19 +97,25 @@ If this reactor was created through a script, you must specify the owner in the 
     }
 
     #region ScriptVars
-    protected AoeShape Shape { get; init; }
-    protected int Range { get; init; }
-    protected TargetFilter? Filter { get; init; }
-    protected Animation? Animation { get; init; }
-    protected byte? Sound { get; init; }
-    protected bool AnimatePoints { get; init; }
-    protected bool MustHaveTargets { get; init; } = true;
-    protected bool IncludeSourcePoint { get; init; } = true;
-    protected int? BaseDamage { get; init; }
-    protected Stat? DamageStat { get; init; }
-    protected decimal? DamageStatMultiplier { get; init; }
-    protected int DurationSecs { get; init; }
-    protected int MaxTriggers { get; init; }
-    protected string? EffectKey { get; init; }
+    public IApplyDamageScript ApplyDamageScript { get; init; }
+    public AoeShape Shape { get; init; }
+    public BodyAnimation? BodyAnimation { get; init; }
+    public int Range { get; init; }
+    public TargetFilter? Filter { get; init; }
+    public Animation? Animation { get; init; }
+    public byte? Sound { get; init; }
+    public bool AnimatePoints { get; init; }
+    public bool MustHaveTargets { get; init; } = true;
+    public bool IncludeSourcePoint { get; init; } = true;
+    public int? BaseDamage { get; init; }
+    public Stat? DamageStat { get; init; }
+    public decimal? DamageStatMultiplier { get; init; }
+    public decimal? PctHpDamage { get; init; }
+    public IScript SourceScript { get; init; }
+    public int DurationSecs { get; init; }
+    public int MaxTriggers { get; init; }
+    public string? EffectKey { get; init; }
+    public int? ManaDrain { get; init; }
+    public decimal PctManaDrain { get; init; }
     #endregion
 }

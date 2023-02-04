@@ -7,6 +7,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.FunctionalScripts.Abstractions;
 using Chaos.Scripts.FunctionalScripts.LevelUp;
 using Chaos.Services.Servers.Options;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripts.FunctionalScripts.ExperienceDistribution;
 
@@ -14,14 +15,16 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
 {
     public IExperienceFormula ExperienceFormula { get; set; }
     public ILevelUpScript LevelUpScript { get; set; }
+    public ILogger<DefaultExperienceDistributionScript> Logger { get; set; }
 
     /// <inheritdoc />
     public static string Key { get; } = GetScriptKey(typeof(DefaultExperienceDistributionScript));
 
-    public DefaultExperienceDistributionScript()
+    public DefaultExperienceDistributionScript(ILogger<DefaultExperienceDistributionScript> logger)
     {
         ExperienceFormula = ExperienceFormulae.Default;
         LevelUpScript = DefaultLevelUpScript.Create();
+        Logger = logger;
     }
 
     /// <inheritdoc />
@@ -38,6 +41,9 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
 
     public virtual void GiveExp(Aisling aisling, long amount)
     {
+        if (amount < 0)
+            Logger.LogError("Tried to give negative amount ({Amount}) experience to {Aisling}", amount, aisling);
+
         if (amount + aisling.UserStatSheet.TotalExp > uint.MaxValue)
             amount = uint.MaxValue - aisling.UserStatSheet.TotalExp;
 
@@ -47,12 +53,13 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
             return;
 
         aisling.SendActiveMessage($"You have gained {amount} experience!");
+        Logger.LogTrace("{Aisling} has gained {Amount} experience", aisling, amount);
 
         while (amount > 0)
         {
             var expToGive = Math.Min(amount, aisling.UserStatSheet.ToNextLevel);
             aisling.UserStatSheet.AddTotalExp(expToGive);
-            aisling.UserStatSheet.AddTNL(-expToGive);
+            aisling.UserStatSheet.TakeTnl(expToGive);
 
             amount -= expToGive;
 
@@ -63,6 +70,47 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
                 break;
         }
 
-        aisling.Client.SendAttributes(StatUpdateType.Full);
+        aisling.Client.SendAttributes(StatUpdateType.ExpGold);
+
+        if (aisling.UserStatSheet.TotalExp == uint.MaxValue)
+            aisling.SendActiveMessage("You cannot gain any more experience");
+    }
+
+    public virtual bool TryTakeExp(Aisling aisling, long amount)
+    {
+        if (amount < 0)
+        {
+            Logger.LogError("Tried to take negative amount ({Amount}) experience from {Aisling}", amount, aisling);
+
+            return false;
+        }
+
+        if (aisling.UserStatSheet.TotalExp < amount)
+            return false;
+
+        var success = aisling.UserStatSheet.Assert(
+            statRef =>
+            {
+                //try to take the exp
+                var rst = Interlocked.Add(ref statRef.TotalExp, -amount);
+
+                //if this results in less than 0 exp
+                if (rst < 0)
+                {
+                    //put it back, return false
+                    Interlocked.Add(ref statRef.TotalExp, amount);
+
+                    return false;
+                }
+
+                return true;
+            });
+
+        if (success)
+            Logger.LogTrace("{Aisling} has lost {Amount} experience", aisling, amount);
+
+        aisling.Client.SendAttributes(StatUpdateType.ExpGold);
+
+        return success;
     }
 }

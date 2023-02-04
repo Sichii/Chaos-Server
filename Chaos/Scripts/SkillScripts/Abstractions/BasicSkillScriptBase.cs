@@ -7,43 +7,27 @@ using Chaos.Scripts.Components;
 
 namespace Chaos.Scripts.SkillScripts.Abstractions;
 
-public abstract class BasicSkillScriptBase : ConfigurableSkillScriptBase
+public abstract class BasicSkillScriptBase : ConfigurableSkillScriptBase, AbilityComponent.IAbilityComponentOptions
 {
     protected AbilityComponent AbilityComponent { get; }
-    protected AbilityComponent.AbilityComponentOptions AbilityComponentOptions { get; }
 
     /// <inheritdoc />
     protected BasicSkillScriptBase(Skill subject)
-        : base(subject)
-    {
+        : base(subject) =>
         AbilityComponent = new AbilityComponent();
 
-        AbilityComponentOptions = new AbilityComponent.AbilityComponentOptions
-        {
-            Shape = Shape,
-            Range = Range,
-            Filter = Filter,
-            BodyAnimation = BodyAnimation,
-            Animation = Animation,
-            Sound = Sound,
-            AnimatePoints = AnimatePoints,
-            MustHaveTargets = MustHaveTargets,
-            IncludeSourcePoint = IncludeSourcePoint
-        };
-    }
-
     /// <inheritdoc />
-    public override void OnUse(ActivationContext context) => _ = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
+    public override void OnUse(ActivationContext context) => _ = AbilityComponent.Activate<Creature>(context, this);
 
     #region ScriptVars
-    protected AoeShape Shape { get; init; }
-    protected int Range { get; init; }
-    protected TargetFilter? Filter { get; init; }
-    protected BodyAnimation? BodyAnimation { get; init; }
-    protected Animation? Animation { get; init; }
-    protected byte? Sound { get; init; }
-    protected bool AnimatePoints { get; init; } = true;
-    protected bool MustHaveTargets { get; init; } = false;
-    protected bool IncludeSourcePoint { get; init; } = false;
+    public AoeShape Shape { get; init; }
+    public int Range { get; init; }
+    public TargetFilter? Filter { get; init; }
+    public BodyAnimation? BodyAnimation { get; init; }
+    public Animation? Animation { get; init; }
+    public byte? Sound { get; init; }
+    public bool AnimatePoints { get; init; } = true;
+    public bool MustHaveTargets { get; init; } = false;
+    public bool IncludeSourcePoint { get; init; } = false;
     #endregion
 }

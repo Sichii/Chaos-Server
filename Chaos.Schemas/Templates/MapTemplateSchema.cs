@@ -15,8 +15,8 @@ public sealed record MapTemplateSchema
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
     /// <summary>
-    ///     A unique id specific to this map template<br />Best practice is to match the name of the file, and use the numeric id the map this
-    ///     template is for
+    ///     A unique id specific to this map template<br />
+    ///     This must match the name of the folder containing this file
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; set; } = null!;

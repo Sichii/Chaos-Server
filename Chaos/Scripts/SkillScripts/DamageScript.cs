@@ -2,6 +2,7 @@ using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripts.Components;
 using Chaos.Scripts.FunctionalScripts.Abstractions;
 using Chaos.Scripts.FunctionalScripts.ApplyDamage;
@@ -9,11 +10,9 @@ using Chaos.Scripts.SkillScripts.Abstractions;
 
 namespace Chaos.Scripts.SkillScripts;
 
-public class DamageScript : BasicSkillScriptBase
+public class DamageScript : BasicSkillScriptBase, DamageComponent.IDamageComponentOptions
 {
-    protected IApplyDamageScript ApplyDamageScript { get; }
     protected DamageComponent DamageComponent { get; }
-    protected DamageComponent.DamageComponentOptions DamageComponentOptions { get; }
 
     /// <inheritdoc />
     public DamageScript(Skill subject)
@@ -21,27 +20,22 @@ public class DamageScript : BasicSkillScriptBase
     {
         ApplyDamageScript = DefaultApplyDamageScript.Create();
         DamageComponent = new DamageComponent();
-
-        DamageComponentOptions = new DamageComponent.DamageComponentOptions
-        {
-            ApplyDamageScript = ApplyDamageScript,
-            SourceScript = this,
-            BaseDamage = BaseDamage,
-            DamageStatMultiplier = DamageStatMultiplier,
-            DamageStat = DamageStat
-        };
+        SourceScript = this;
     }
 
     /// <inheritdoc />
     public override void OnUse(ActivationContext context)
     {
-        var targets = AbilityComponent.Activate<Creature>(context, AbilityComponentOptions);
-        DamageComponent.ApplyDamage(context, targets.TargetEntities, DamageComponentOptions);
+        var targets = AbilityComponent.Activate<Creature>(context, this);
+        DamageComponent.ApplyDamage(context, targets.TargetEntities, this);
     }
 
     #region ScriptVars
-    protected int? BaseDamage { get; init; }
-    protected Stat? DamageStat { get; init; }
-    protected decimal? DamageStatMultiplier { get; init; }
+    public IApplyDamageScript ApplyDamageScript { get; init; }
+    public int? BaseDamage { get; init; }
+    public Stat? DamageStat { get; init; }
+    public decimal? DamageStatMultiplier { get; init; }
+    public decimal? PctHpDamage { get; init; }
+    public IScript SourceScript { get; init; }
     #endregion
 }

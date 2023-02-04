@@ -1,7 +1,7 @@
 # Login Options
 
 Login options are changed in `appsettings.json` via section `Options:LoginOptions`.  
-This section is serialized into [LoginOptions](<xref:Chaos.Servers.Options.LoginOptions>)
+This section is serialized into [LoginOptions](<xref:Chaos.Services.Servers.Options.LoginOptions>)
 
 ## Login-Server Settings
 

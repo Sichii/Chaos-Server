@@ -1,4 +1,4 @@
-[
+  [
   {
     "source": "(3, 13)",
     "shouldBlockPathfinding": true,

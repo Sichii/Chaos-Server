@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj" />
-        <ProjectReference Include="..\Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj" />
+        <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations"/>

@@ -51,7 +51,7 @@ public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where 
     private void PopulateVars()
     {
         var props = GetType()
-                    .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                     .Where(prop => prop.CanWrite);
 
         foreach (var prop in props)
