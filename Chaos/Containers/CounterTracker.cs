@@ -54,4 +54,6 @@ public class CounterTracker : IEnumerable<KeyValuePair<string, int>>
                 return true;
         }
     }
+
+    public bool TryGetValue(string key, out int value) => Counters.TryGetValue(key, out value);
 }

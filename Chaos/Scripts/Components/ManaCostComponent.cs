@@ -6,13 +6,17 @@ namespace Chaos.Scripts.Components;
 
 public class ManaCostComponent
 {
-    public void ApplyManaCost(ActivationContext context, IManaCostComponentOptions options)
+    public bool TryApplyManaCost(ActivationContext context, IManaCostComponentOptions options)
     {
         var cost = options.ManaCost ?? 0;
         cost += MathEx.GetPercentOf<int>((int)context.Source.StatSheet.EffectiveMaximumMp, options.PctManaCost);
 
-        context.Source.StatSheet.SubtractMp(cost);
+        if (!context.Source.StatSheet.TrySubtractMp(cost))
+            return false;
+
         context.SourceAisling?.Client.SendAttributes(StatUpdateType.Vitality);
+
+        return true;
     }
 
     public interface IManaCostComponentOptions

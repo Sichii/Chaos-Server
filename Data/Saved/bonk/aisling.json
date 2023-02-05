@@ -11,10 +11,9 @@
   "hairColor": "Tan",
   "hairStyle": 6,
   "ignoreList": [],
-  "isAdmin": true,
   "mapInstanceId": "testTown",
   "name": "bonk",
-  "nation": "Illuminati",
+  "nation": "Tagor",
   "statSheet": {
     "advClass": "None",
     "baseClass": "Rogue",

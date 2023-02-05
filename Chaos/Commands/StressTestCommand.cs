@@ -8,11 +8,11 @@ using Chaos.Services.Factories.Abstractions;
 namespace Chaos.Commands;
 
 [Command("stressTest")]
-public class StressTest : ICommand<Aisling>
+public class StressTestCommand : ICommand<Aisling>
 {
     private readonly IItemFactory ItemFactory;
 
-    public StressTest(IItemFactory itemFactory) => ItemFactory = itemFactory;
+    public StressTestCommand(IItemFactory itemFactory) => ItemFactory = itemFactory;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

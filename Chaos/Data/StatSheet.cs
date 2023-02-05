@@ -314,6 +314,64 @@ public record StatSheet : Attributes
             _currentMp = 0;
     }
 
+    public bool TrySubtractHealthPct(int pct)
+    {
+        if (InterlockedEx.SetValue(
+                ref _currentHp,
+                () => (int)Math.Clamp(EffectiveMaximumHp * (HealthPercent - pct) / 100f, 0, EffectiveMaximumHp))
+            < 0)
+        {
+            InterlockedEx.SetValue(
+                ref _currentHp,
+                () => (int)Math.Clamp(EffectiveMaximumHp * (HealthPercent + pct) / 100f, 0, EffectiveMaximumHp));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TrySubtractHp(int amount)
+    {
+        if (Interlocked.Add(ref _currentHp, -amount) < 0)
+        {
+            Interlocked.Add(ref _currentHp, amount);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TrySubtractManaPct(int pct)
+    {
+        if (InterlockedEx.SetValue(
+                ref _currentMp,
+                () => (int)Math.Clamp(EffectiveMaximumMp * (ManaPercent - pct) / 100f, 0, EffectiveMaximumMp))
+            < 0)
+        {
+            InterlockedEx.SetValue(
+                ref _currentMp,
+                () => (int)Math.Clamp(EffectiveMaximumMp * (ManaPercent + pct) / 100f, 0, EffectiveMaximumMp));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TrySubtractMp(int amount)
+    {
+        if (Interlocked.Add(ref _currentMp, -amount) < 0)
+        {
+            Interlocked.Add(ref _currentMp, amount);
+
+            return false;
+        }
+
+        return true;
+    }
+
     #region SharedAttributes
     protected int _ability;
     protected int _currentHp;

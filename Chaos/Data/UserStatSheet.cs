@@ -167,7 +167,8 @@ public sealed record UserStatSheet : StatSheet
             ref _totalAbility,
             ref _toNextLevel,
             ref _toNextAbility,
-            ref _unspentPoints));
+            ref _unspentPoints,
+            ref _level));
 
     public T Assert<T>(ReferentialFunc<T> func) => func(
         new UserStatSheetRef(
@@ -176,7 +177,8 @@ public sealed record UserStatSheet : StatSheet
             ref _totalAbility,
             ref _toNextLevel,
             ref _toNextAbility,
-            ref _unspentPoints));
+            ref _unspentPoints,
+            ref _level));
 
     public int GivePoints(int amount) => Interlocked.Add(ref _unspentPoints, amount);
 
@@ -232,7 +234,7 @@ public sealed record UserStatSheet : StatSheet
 
     public void SetMaxWeight(int maxWeight) => _maxWeight = maxWeight;
 
-    public long TakeTna(long amount)
+    public long SubtractTna(long amount)
     {
         var ret = Interlocked.Add(ref _toNextAbility, -amount);
 
@@ -246,7 +248,7 @@ public sealed record UserStatSheet : StatSheet
         return ret;
     }
 
-    public long TakeTnl(long amount)
+    public long SubtractTnl(long amount)
     {
         var ret = Interlocked.Add(ref _toNextLevel, -amount);
 
@@ -260,7 +262,7 @@ public sealed record UserStatSheet : StatSheet
         return ret;
     }
 
-    public long TakeTotalAbility(long amount)
+    public long SubtractTotalAbility(long amount)
     {
         var ret = Interlocked.Add(ref _totalAbility, -amount);
 
@@ -274,7 +276,7 @@ public sealed record UserStatSheet : StatSheet
         return ret;
     }
 
-    public long TakeTotalExp(long amount)
+    public long SubtractTotalExp(long amount)
     {
         var ret = Interlocked.Add(ref _totalExp, -amount);
 
@@ -288,9 +290,34 @@ public sealed record UserStatSheet : StatSheet
         return ret;
     }
 
+    public bool TrySubtractTotalAbility(long amount)
+    {
+        if (Interlocked.Add(ref _totalAbility, -amount) < 0)
+        {
+            Interlocked.Add(ref _totalAbility, amount);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TrySubtractTotalExp(long amount)
+    {
+        if (Interlocked.Add(ref _totalExp, -amount) < 0)
+        {
+            Interlocked.Add(ref _totalExp, amount);
+
+            return false;
+        }
+
+        return true;
+    }
+
     public ref struct UserStatSheetRef
     {
         public ref int CurrentWeight;
+        public ref int Level;
         public ref long ToNextAbility;
         public ref long ToNextLevel;
         public ref long TotalAbility;
@@ -303,7 +330,8 @@ public sealed record UserStatSheet : StatSheet
             ref long totalAbility,
             ref long toNextLevel,
             ref long toNextAbility,
-            ref int unspentPoints
+            ref int unspentPoints,
+            ref int level
         )
         {
             CurrentWeight = ref currentWeight;
@@ -312,6 +340,7 @@ public sealed record UserStatSheet : StatSheet
             ToNextLevel = ref toNextLevel;
             ToNextAbility = ref toNextAbility;
             UnspentPoints = ref unspentPoints;
+            Level = ref level;
         }
     }
 }

@@ -146,11 +146,5 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
         SkillTimer.Update(delta);
         SpellTimer.Update(delta);
         Script.Update(delta);
-
-        if (!IsAlive && !IsDead)
-        {
-            IsDead = true;
-            Script.OnDeath();
-        }
     }
 }

@@ -933,17 +933,32 @@ public enum ClickType : byte
 
 public enum LevelCircle : byte
 {
+    /// <summary>
+    ///     Levels 1-10
+    /// </summary>
     One = 1,
+    /// <summary>
+    ///     Levels 11-40
+    /// </summary>
     Two = 2,
+    /// <summary>
+    ///     Levels 41-70
+    /// </summary>
     Three = 3,
+    /// <summary>
+    ///     Levels 71-98
+    /// </summary>
     Four = 4,
+    /// <summary>
+    ///     Levels 99+
+    /// </summary>
     Five = 5,
     /// <summary>
     ///     Master
     /// </summary>
     Six = 6,
     /// <summary>
-    ///     Medenia path
+    ///     Advanced Class
     /// </summary>
     Seven = 7
 }

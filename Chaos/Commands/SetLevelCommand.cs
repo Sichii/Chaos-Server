@@ -6,16 +6,21 @@ using Chaos.Objects.World;
 
 namespace Chaos.Commands;
 
-[Command("setclass")]
-public class SetClassCommand : ICommand<Aisling>
+[Command("setlevel")]
+public class SetLevelCommand : ICommand<Aisling>
 {
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGetNext<BaseClass>(out var @class))
+        if (!args.TryGetNext(out int level))
             return default;
 
-        source.UserStatSheet.SetBaseClass(@class);
+        source.UserStatSheet.Assert(
+            statref =>
+            {
+                statref.Level = level;
+            });
+
         source.Client.SendAttributes(StatUpdateType.Full);
 
         return default;

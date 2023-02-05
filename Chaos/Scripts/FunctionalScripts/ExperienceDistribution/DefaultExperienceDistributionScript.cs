@@ -59,7 +59,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         {
             var expToGive = Math.Min(amount, aisling.UserStatSheet.ToNextLevel);
             aisling.UserStatSheet.AddTotalExp(expToGive);
-            aisling.UserStatSheet.TakeTnl(expToGive);
+            aisling.UserStatSheet.SubtractTnl(expToGive);
 
             amount -= expToGive;
 
@@ -88,29 +88,13 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         if (aisling.UserStatSheet.TotalExp < amount)
             return false;
 
-        var success = aisling.UserStatSheet.Assert(
-            statRef =>
-            {
-                //try to take the exp
-                var rst = Interlocked.Add(ref statRef.TotalExp, -amount);
+        if (!aisling.UserStatSheet.TrySubtractTotalExp(amount))
+            return false;
 
-                //if this results in less than 0 exp
-                if (rst < 0)
-                {
-                    //put it back, return false
-                    Interlocked.Add(ref statRef.TotalExp, amount);
-
-                    return false;
-                }
-
-                return true;
-            });
-
-        if (success)
-            Logger.LogTrace("{Aisling} has lost {Amount} experience", aisling, amount);
+        Logger.LogTrace("{Aisling} has lost {Amount} experience", aisling, amount);
 
         aisling.Client.SendAttributes(StatUpdateType.ExpGold);
 
-        return success;
+        return true;
     }
 }
