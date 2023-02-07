@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using Chaos.Clients.Abstractions;
@@ -77,20 +76,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     }
 
     #region Server Loop
-    /// <inheritdoc />
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        await Task.Yield();
-
-        var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
-        Socket.Bind(endPoint);
-        Socket.Listen(20);
-        Socket.BeginAccept(OnConnection, Socket);
-        Logger.LogInformation("Listening on {EndPoint}", endPoint);
-
-        await stoppingToken.WaitTillCanceled();
-    }
-
     private async Task SaveUserAsync(Aisling aisling)
     {
         try
@@ -1347,6 +1332,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var client = ClientFactory.CreateClient(clientSocket);
+        client.OnDisconnected += OnDisconnect;
 
         if (!ClientRegistry.TryAdd(client))
         {
@@ -1356,7 +1342,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             return;
         }
 
-        client.OnDisconnected += OnDisconnect;
         client.BeginReceive();
     }
 

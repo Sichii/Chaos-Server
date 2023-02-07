@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using Chaos.Common.Collections.Synchronized;
+using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
@@ -30,6 +31,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     protected virtual ILogger<ExpiringFileCache<T, TSchema, TOptions>> Logger { get; }
     protected ITypeMapper Mapper { get; }
     protected TOptions Options { get; }
+    protected AutoReleasingMonitor Sync { get; }
 
     public ExpiringFileCache(
         IMemoryCache cache,
@@ -46,6 +48,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         KeyPrefix = $"{typeof(T).Name}___".ToLowerInvariant();
         LocalLookup = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
+        Sync = new AutoReleasingMonitor();
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
@@ -95,6 +98,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     {
         Logger.LogDebug("Force loading {TypeName} cache", typeof(T).Name);
 
+        using var @lock = Sync.Enter();
+
         var pathEndings = Paths.Select(Path.GetFileNameWithoutExtension);
 
         foreach (var pathEnding in pathEndings)
@@ -111,6 +116,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     public virtual T Get(string key)
     {
         key = ConstructKeyForType(key);
+
+        using var @lock = Sync.Enter();
 
         try
         {
@@ -184,6 +191,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     public virtual Task ReloadAsync()
     {
+        using var @lock = Sync.Enter();
+
         Paths = LoadPaths();
 
         foreach (var key in LocalLookup.Keys)

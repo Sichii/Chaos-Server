@@ -84,7 +84,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Shards = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
         ShardLimiterTimers = new ConcurrentDictionary<Aisling, IIntervalTimer>();
         ShardGenerator = shardGenerator;
-        HandleShardLimitersTimer = new IntervalTimer(TimeSpan.FromSeconds(10));
+        HandleShardLimitersTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
         var delta = 1000.0 / WorldOptions.Instance.UpdatesPerSecond;
         DeltaTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
         DeltaTime = new DeltaTime();
@@ -371,7 +371,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 //create a timer and send an initial warning
                 foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
                 {
-                    ShardLimiterTimers.TryAdd(newAisling, new ShardExitTimer(newAisling, TimeSpan.FromSeconds(15)));
+                    ShardLimiterTimers.TryAdd(
+                        newAisling,
+                        new PeriodicMessageTimer(
+                            TimeSpan.FromSeconds(15),
+                            TimeSpan.FromSeconds(5),
+                            TimeSpan.FromSeconds(5),
+                            TimeSpan.FromSeconds(1),
+                            "You will be removed from the map in {Time}",
+                            message => newAisling.SendActiveMessage(message)));
+
                     newAisling.SendActiveMessage("The map has reached it's player limit");
                     newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
                 }
@@ -433,7 +442,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 //create a timer and send an initial warning
                 foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
                 {
-                    ShardLimiterTimers.TryAdd(newAisling, new ShardExitTimer(newAisling, TimeSpan.FromSeconds(15)));
+                    ShardLimiterTimers.TryAdd(
+                        newAisling,
+                        new PeriodicMessageTimer(
+                            TimeSpan.FromSeconds(15),
+                            TimeSpan.FromSeconds(5),
+                            TimeSpan.FromSeconds(5),
+                            TimeSpan.FromSeconds(1),
+                            "You will be removed from the map in {Time}",
+                            message => newAisling.SendActiveMessage(message)));
+
                     newAisling.SendActiveMessage("The map has reached it's group limit");
                     newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
                 }

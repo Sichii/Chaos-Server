@@ -1,6 +1,7 @@
 using Chaos.Clients.Abstractions;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Collections;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
@@ -27,12 +28,20 @@ public class ReviveCommand : ICommand<Aisling>
             return;
 
         var aisling = client.Aisling;
+        IPolyDisposable? @lock = null;
 
-        await using var @lock = await aisling.MapInstance.Sync.WaitAsync();
+        if (!source.MapInstance.Equals(aisling.MapInstance))
+            @lock = await aisling.MapInstance.Sync.WaitAsync();
 
-        aisling.IsDead = false;
-        aisling.StatSheet.SetHealthPct(100);
-        aisling.StatSheet.SetManaPct(100);
-        aisling.Refresh(true);
+        try
+        {
+            aisling.IsDead = false;
+            aisling.StatSheet.SetHealthPct(100);
+            aisling.StatSheet.SetManaPct(100);
+            aisling.Refresh(true);
+        } finally
+        {
+            @lock?.Dispose();
+        }
     }
 }

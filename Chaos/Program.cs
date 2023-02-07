@@ -8,6 +8,7 @@ using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 Environment.SetEnvironmentVariable("DOTNET_ReadyToRun", "0");
@@ -44,6 +45,7 @@ await using var provider = services.BuildServiceProvider();
 //this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
 _ = provider.GetRequiredService<IOptions<WorldOptions>>();
 _ = provider.GetRequiredService<IScriptRegistry>();
+var logger = provider.GetRequiredService<ILogger<Program>>();
 
 var hostedServices = provider.GetServices<IHostedService>();
 
@@ -53,3 +55,8 @@ var startFuncs = hostedServices
 
 await serverCtx.Token.WhenAllWithCancellation(startFuncs);
 await serverCtx.Token.WaitTillCanceled();
+
+logger.LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+
+//wait for everything to shut down
+await Task.Delay(5);

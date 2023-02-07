@@ -1,10 +1,11 @@
 using Chaos.Common.Definitions;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripts.EffectScripts.Abstractions;
 
-public interface IEffect : IDeltaUpdatable
+public interface IEffect : IDeltaUpdatable, IScript
 {
     EffectColor Color { get; set; }
     TimeSpan Remaining { get; set; }

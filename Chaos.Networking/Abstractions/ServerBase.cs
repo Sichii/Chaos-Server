@@ -54,6 +54,19 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         Logger.LogInformation("Listening on {EndPoint}", endPoint);
 
         await stoppingToken.WaitTillCanceled();
+
+        Socket.Shutdown(SocketShutdown.Receive);
+
+        await Parallel.ForEachAsync(
+            ClientRegistry,
+            (client, _) =>
+            {
+                client.Disconnect();
+
+                return default;
+            });
+
+        await Socket.DisconnectAsync(false, stoppingToken);
     }
 
     protected abstract void OnConnection(IAsyncResult ar);

@@ -84,15 +84,20 @@ Event metadata appears in the character's profile under the `Events` tab. It is 
 about those events. These events can be in one of 3 states, unavailable, available, or completed. Here are the requirements for an event to
 be in each state:
 
-- Unavailable (gray with a crossed out circle)
-  - The criteria for available are not met
-- Available (blue with an exclamation mark)
-  - The character must be at a level within the designated Circle
-  - The character must be one of the classes the quest is available to
-  - If the character is a master, all events before circle 6 will be unvavailable
-  - If the character has an Advanced Class, all events before circle 7 will be unavailable
-- Completed (green check mark)
-  - The character must have a legend mark with a key equal to the id of the event
+### Unavailable (gray with a crossed out circle)
+
+* The criteria for available are not met
+* If the character is a master, all events before circle 6 will be unvavailable
+* If the character has an Advanced Class, all events before circle 7 will be unavailable
+
+### Available (blue with an exclamation mark)
+
+* The character must be at a level within the designated Circle
+* The character must be one of the classes the quest is available to
+
+### Completed (green check mark)
+
+* The character must have a legend mark with a key equal to the id of the event
 
 Since no objects directly correlate to events, the metadata must be specified directly
 through [EventMetaSchema](<xref:Chaos.Schemas.MetaData.EventMetaSchema>).

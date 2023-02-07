@@ -1,3 +1,5 @@
+using Chaos.Extensions.Common;
+
 namespace Chaos.Scripting.Abstractions;
 
 /// <inheritdoc cref="Chaos.Scripting.Abstractions.IScript" />
@@ -31,5 +33,5 @@ public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
     /// </summary>
     /// <param name="type">A type object</param>
     /// <returns>The name of the type without "Script" in it</returns>
-    public static string GetScriptKey(Type type) => type.Name.Replace("Script", string.Empty, StringComparison.OrdinalIgnoreCase);
+    public static string GetScriptKey(Type type) => type.Name.ReplaceI("Script", string.Empty);
 }
