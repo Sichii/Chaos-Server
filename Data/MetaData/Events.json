@@ -1,51 +1,50 @@
 [
     {
-        "circle": "one",
+        "pageOverride": 2,
         "title": "I like apples",
         "summary": "I like apples, go get me some",
         "rewards": "literally nothing",
         "prerequisiteEventId": "",
         "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "qualifyingCircles": ["one", "two", "three"],
         "id": "Apples1",
         "result": "i ate some apples"
     },
     {
-        "circle": "two",
         "title": "I like oranges",
         "summary": "I like oranges too, go get me some",
         "rewards": "literally nothing still",
-        "prerequisiteEventId": "",
+        "prerequisiteEventId": "Apples1",
         "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "qualifyingCircles": ["three", "four", "five"],
         "id": "Oranges1",
         "result": "i ate some apples and oranges"
     },
     {
-        "circle": "three",
         "title": "I like carrots",
         "summary": "I like carrots, go get me some",
         "rewards": "literally nothing still",
-        "prerequisiteEventId": "",
         "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "qualifyingCircles": ["four", "five", "six", "seven"],
         "id": "Carrots1",
         "result": "i ate some carrots"
     },
     {
-        "circle": "four",
         "title": "I like melons",
         "summary": "I like melons, go get me some",
         "rewards": "literally nothing still",
-        "prerequisiteEventId": "",
         "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "qualifyingCircles": ["one", "two", "three", "four"],
         "id": "Melons1",
         "result": "i ate some melons"
     },
     {
-        "circle": "five",
+        "pageOverride": 6,
         "title": "I like pie",
         "summary": "I like pie, go get me some",
         "rewards": "literally nothing still",
-        "prerequisiteEventId": "",
         "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
+        "qualifyingCircles": ["five", "six", "seven"],
         "id": "Pie1",
         "result": "i ate some pie"
     }

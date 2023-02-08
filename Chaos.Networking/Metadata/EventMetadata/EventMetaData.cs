@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using System.Text;
-using Chaos.Common.Definitions;
 using Chaos.Extensions.Cryptography;
 using Chaos.IO.Compression;
 using Chaos.IO.Memory;
@@ -11,7 +10,7 @@ namespace Chaos.Networking.Metadata.EventMetadata;
 public sealed class EventMetaData : MetaDataBase<EventMetaNode>
 {
     /// <inheritdoc />
-    public EventMetaData(LevelCircle page)
+    public EventMetaData(int page)
         : base($"SEvent{(byte)page}") { }
 
     /// <inheritdoc />

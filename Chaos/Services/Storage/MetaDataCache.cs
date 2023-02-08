@@ -145,9 +145,9 @@ public class MetaDataCache : IMetaDataCache
                 Con = (byte)(reqs.RequiredStats?.Con ?? 0),
                 Dex = (byte)(reqs.RequiredStats?.Dex ?? 0),
                 PreReq1Name = objs.ElementAtOrDefault(0)?.Name,
-                PreReq1Level = 0,
+                //PreReq1Level = 0,
                 PreReq2Name = objs.ElementAtOrDefault(1)?.Name,
-                PreReq2Level = 0,
+                //PreReq2Level = 0,
                 Description = template.Description
             };
 
@@ -169,12 +169,24 @@ public class MetaDataCache : IMetaDataCache
 
         foreach (var eventMeta in eventMetas)
         {
-            var classStr = string.Join("", eventMeta.QualifyingClasses.Select(c => (int)c));
+            string? classStr = null;
+            string? circlesStr = null;
+            var page = eventMeta.PageOverride;
 
-            var node = new EventMetaNode(eventMeta.Title, eventMeta.Circle)
+            if (eventMeta.QualifyingClasses is { Count: > 0 })
+                classStr = string.Join("", eventMeta.QualifyingClasses.Select(c => (int)c));
+
+            if (eventMeta.QualifyingCircles is { Count: > 0 })
+            {
+                circlesStr = string.Join("", eventMeta.QualifyingCircles!.Select(c => (int)c));
+                page ??= (int)eventMeta.QualifyingCircles!.Min();
+            }
+
+            var node = new EventMetaNode(eventMeta.Title, page ?? 1)
             {
                 Id = eventMeta.Id,
                 QualifyingClasses = classStr,
+                QualifyingCircles = circlesStr,
                 Rewards = eventMeta.Rewards,
                 PrerequisiteEventId = eventMeta.PrerequisiteEventId,
                 Summary = eventMeta.Summary,

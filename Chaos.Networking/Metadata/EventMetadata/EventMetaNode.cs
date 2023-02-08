@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Metadata.Abstractions;
 
@@ -31,22 +30,22 @@ namespace Chaos.Networking.Metadata.EventMetadata;
 public sealed record EventMetaNode : MetaNodeBase
 {
     public string? Id { get; init; }
+    public int Page { get; init; }
     public string? PrerequisiteEventId { get; init; }
+    public string? QualifyingCircles { get; init; }
     public string? QualifyingClasses { get; init; }
     public string? Result { get; init; }
     public string? Rewards { get; init; }
-    public int Sequence { get; set; } = 1;
     public string? Summary { get; init; }
-    public LevelCircle Circle { get; }
 
     /// <inheritdoc />
-    public EventMetaNode(string name, LevelCircle circle)
-        : base(name) => Circle = circle;
+    public EventMetaNode(string name, int page)
+        : base(name) => Page = page;
 
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer)
     {
-        var prefix = $"{(byte)Sequence,2:D2}";
+        var prefix = $"{Page,2:D2}";
 
         var start = new MetaNode($"{prefix}_start");
         var title = new MetaNode($"{prefix}_title");
@@ -56,8 +55,8 @@ public sealed record EventMetaNode : MetaNodeBase
         id.Properties.Add(Id ?? string.Empty);
 
         var qual = new MetaNode($"{prefix}_qual");
-        qual.Properties.Add(((int)Circle).ToString());
-        qual.Properties.Add(QualifyingClasses ?? string.Empty);
+        qual.Properties.Add(QualifyingCircles ?? "1234567");
+        qual.Properties.Add(QualifyingClasses ?? "012345");
 
         var sum = new MetaNode($"{prefix}_sum");
         sum.Properties.Add(Summary ?? string.Empty);

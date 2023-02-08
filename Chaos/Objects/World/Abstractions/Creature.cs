@@ -201,7 +201,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 break;
             case PublicMessageType.Shout:
                 entitiesWithinRange = MapInstance.GetEntities<Creature>();
-                sendMessage = $"{Name}: {message}";
+                sendMessage = $"{Name}!: {message}";
 
                 break;
             case PublicMessageType.Chant:
@@ -215,7 +215,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         foreach (var creature in entitiesWithinRange)
             switch (creature)
             {
-                case Aisling aisling when IsVisibleTo(aisling):
+                case Aisling aisling when IsVisibleTo(aisling) && !aisling.IgnoreList.Contains(Name):
                     aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
 
                     break;

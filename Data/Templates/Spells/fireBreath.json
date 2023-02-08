@@ -26,7 +26,8 @@
                 "amountRequired": 5
             }
         ],
-        "requiredGold": 10000
+        "requiredGold": 10000,
+        "prerequisitespelltemplatekeys": ["poison"]
     },
     "scriptVars": {
         "cascadeDamage": {

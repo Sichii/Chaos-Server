@@ -104,6 +104,20 @@ through [EventMetaSchema](<xref:Chaos.Schemas.MetaData.EventMetaSchema>).
 
 This file is located at `StagingDir/MetaData/Events.json` by default
 
+### EventMetaSchema Properties
+
+| Type                                                                       | Name                | Description                                                                                                                                                                     |
+|----------------------------------------------------------------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| string                                                                     | Id                  | A unique id specific to this event. In order for the event to show up as completed, a legend mark with a key equal to this Id must be given                                     |
+| string                                                                     | Title               | The title of the event                                                                                                                                                          |
+| int?                                                                       | PageOverride        | Default null<br />If set, this is the page that the event will show up on(starting at index of 1). If null, the page will be determined by the event's lowest qualifying circle |
+| ICollection\<[LevelCircle](<xref:Chaos.Common.Definitions.LevelCircle>)\>? | QualifyingCircles   | Default null<br />if set, these are the circles this quest is available to. If null, the event will be available to all circles                                                 |
+| ICollection\<[Baseclass](<xref:Chaos.Common.Definitions.Baseclass>)\>?     | QualifyingClasses   | Default null<br />If set, these are the classes this event is available to.<br />If null, the event will be available to all classes                                            |
+| string?                                                                    | PrerequisiteEventId | The id of the event that must be completed before this event can be completed. This event will only show up blue(available) if the previous event was completed                 |
+| string                                                                     | Summary             | A brief summary of the event                                                                                                                                                    |
+| string?                                                                    | Rewards             | Default null.<br />The rewards given when the event is completed                                                                                                                |
+| string                                                                     | Result              | When the event is completed, the event will be marked green(completed) and show this text in place of it's summary                                                              |
+
 ### Example json
 
 [!code-json[](../../Data/MetaData/Events.json)]

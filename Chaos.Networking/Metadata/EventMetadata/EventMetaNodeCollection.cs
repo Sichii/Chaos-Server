@@ -6,18 +6,14 @@ public sealed class EventMetaNodeCollection : MetaNodeCollection<EventMetaNode>
 {
     public IEnumerable<EventMetaData> Split()
     {
-        var nodes = Nodes.GroupBy(node => node.Circle);
+        var nodes = Nodes.GroupBy(node => node.Page);
 
         foreach (var nodeGroup in nodes)
         {
             var eventMetafile = new EventMetaData(nodeGroup.Key);
-            var index = 1;
 
             foreach (var node in nodeGroup)
-            {
-                node.Sequence = index++;
                 eventMetafile.AddNode(node);
-            }
 
             eventMetafile.Compress();
 

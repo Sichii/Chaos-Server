@@ -65,7 +65,7 @@ public sealed record AbilityMetaNode : MetaNodeBase
     /// <summary>
     ///     The level of the first pre-requisite ability needed to learn this ability
     /// </summary>
-    public byte PreReq1Level { get; init; }
+    public byte? PreReq1Level { get; init; }
     /// <summary>
     ///     The name of the first pre-requisite ability needed to learn this ability
     /// </summary>
@@ -73,7 +73,7 @@ public sealed record AbilityMetaNode : MetaNodeBase
     /// <summary>
     ///     The level of the second pre-requisite ability needed to learn this ability
     /// </summary>
-    public byte PreReq2Level { get; init; }
+    public byte? PreReq2Level { get; init; }
     /// <summary>
     ///     The name of the second pre-requisite ability needed to learn this ability
     /// </summary>
@@ -113,8 +113,8 @@ public sealed record AbilityMetaNode : MetaNodeBase
         writer.WriteString16($"{Level}/{Convert.ToByte(RequiresMaster)}/{Ability}");
         writer.WriteString16($"{IconId}/0/0");
         writer.WriteString16($"{Str}/{Int}/{Wis}/{Dex}/{Con}");
-        writer.WriteString16($"{PreReq1Name ?? "0"}/{PreReq1Level}");
-        writer.WriteString16($"{PreReq2Name ?? "0"}/{PreReq2Level}");
+        writer.WriteString16($"{PreReq1Name ?? "0"}/{PreReq1Level?.ToString() ?? string.Empty}");
+        writer.WriteString16($"{PreReq2Name ?? "0"}/{PreReq2Level?.ToString() ?? string.Empty}");
         writer.WriteString16(Description ?? string.Empty);
     }
 }

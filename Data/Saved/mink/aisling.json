@@ -2,7 +2,7 @@
   "bodyColor": "White",
   "bodySprite": "Female",
   "counters": {},
-  "direction": "Right",
+  "direction": "Down",
   "effects": [],
   "enums": {},
   "flags": {},
@@ -16,13 +16,13 @@
   "nation": "Exile",
   "statSheet": {
     "advClass": "None",
-    "baseClass": "Rogue",
+    "baseClass": "Wizard",
     "maxWeight": 56,
     "totalExp": 1710900,
     "unspentPoints": 58,
     "currentHp": 530,
     "currentMp": 264,
-    "level": 150,
+    "level": 50,
     "ac": 90,
     "maximumHp": 530,
     "maximumMp": 264,
@@ -43,6 +43,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 8,
-  "y": 13
+  "x": 20,
+  "y": 16
 }

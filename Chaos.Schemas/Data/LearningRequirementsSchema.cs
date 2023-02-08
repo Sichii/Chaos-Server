@@ -37,5 +37,5 @@ public sealed record LearningRequirementsSchema
     /// <summary>
     ///     The attributes required to learn this skill
     /// </summary>
-    public StatsSchema? RequiredStats { get; set; } = null!;
+    public StatsSchema? RequiredStats { get; set; }
 }

@@ -1111,10 +1111,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ValueTask InnerOnWhisper(IWorldClient localClient, WhisperArgs localArgs)
         {
             (var targetName, var message) = localArgs;
-            var targetUser = Aislings.FirstOrDefault(user => user.Name.EqualsI(targetName));
 
             if (message.Length > 100)
                 return default;
+
+            var targetUser = Aislings.FirstOrDefault(player => player.Name.EqualsI(targetName));
 
             if (targetUser == null)
             {
