@@ -1,6 +1,6 @@
 namespace Chaos.Containers;
 
-public class CounterTracker : IEnumerable<KeyValuePair<string, int>>
+public sealed class CounterTracker : IEnumerable<KeyValuePair<string, int>>
 {
     private readonly ConcurrentDictionary<string, int> Counters;
 
@@ -12,6 +12,12 @@ public class CounterTracker : IEnumerable<KeyValuePair<string, int>>
     public void AddOrIncrement(string key) => Counters.AddOrUpdate(key, 1, (_, count) => count + 1);
 
     public void AddOrIncrement(string key, int value) => Counters.AddOrUpdate(key, value, (_, count) => count + value);
+
+    public bool ContainsKey(string key) => Counters.ContainsKey(key);
+
+    public bool CounterGreaterThanOrEqualTo(string key, int value) => Counters.TryGetValue(key, out var count) && (count >= value);
+
+    public bool CounterLessThanOrEqualTo(string key, int value) => Counters.TryGetValue(key, out var count) && (count <= value);
 
     /// <inheritdoc />
     public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => Counters.GetEnumerator();
