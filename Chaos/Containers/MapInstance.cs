@@ -653,7 +653,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             try
             {
                 await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
-            } catch (TaskCanceledException)
+            } catch (OperationCanceledException)
             {
                 return;
             }

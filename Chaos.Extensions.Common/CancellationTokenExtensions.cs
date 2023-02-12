@@ -13,7 +13,7 @@ public static class CancellationTokenExtensions
         try
         {
             await Task.Delay(-1, cancellationToken);
-        } catch (TaskCanceledException)
+        } catch (OperationCanceledException)
         {
             //ignored
         }
