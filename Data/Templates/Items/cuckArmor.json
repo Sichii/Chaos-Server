@@ -16,8 +16,12 @@
     "equipmentType": "armor",
     "category": "m armor",
     "pantsColor": "black",
-    "scriptKeys": ["Equipment"],
+    "scriptKeys": ["Equipment", "setelement"],
     "scriptVars": {
-        "equipment": {}
+        "equipment": {},
+        "setelement": {
+            "offenseElement": "nature",
+            "defenseElement": "nature"
+        }
     }
 }

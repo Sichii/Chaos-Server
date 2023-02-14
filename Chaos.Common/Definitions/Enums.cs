@@ -519,7 +519,7 @@ public enum Element : byte
     Darkness = 6,
     Wood = 7,
     Metal = 8,
-    Nature = 9
+    Undead = 9
 }
 
 /// <summary>

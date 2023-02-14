@@ -11,6 +11,7 @@
   "hairColor": "Tan",
   "hairStyle": 6,
   "ignoreList": [],
+  "isAdmin": true,
   "mapInstanceId": "testTown",
   "name": "bonk",
   "nation": "Tagor",
