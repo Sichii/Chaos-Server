@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
@@ -30,6 +31,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
     private readonly ICredentialManager CredentialManager;
+    private readonly IIpManager IpManager;
     private readonly IMetaDataCache MetaDataCache;
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
@@ -46,7 +48,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         IPacketSerializer packetSerializer,
         IOptions<LoginOptions> options,
         ILogger<LoginServer> logger,
-        IMetaDataCache metaDataCache
+        IMetaDataCache metaDataCache,
+        IIpManager ipManager
     )
         : base(
             redirectManager,
@@ -61,6 +64,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         CredentialManager = credentialManager;
         CacheProvider = cacheProvider;
         MetaDataCache = metaDataCache;
+        IpManager = ipManager;
         Notice = new Notice(options.Value.NoticeMessage);
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
 
@@ -77,17 +81,17 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         if (reserved != null)
         {
-            Logger.LogDebug("Received external redirect. ({Redirect})", reserved);
+            Logger.LogDebug("Received external {@Redirect}", reserved);
             client.CryptoClient = new CryptoClient(args.Seed, args.Key, string.Empty);
             client.SendLoginNotice(false, Notice);
         } else if (RedirectManager.TryGetRemove(args.Id, out var redirect))
         {
-            Logger.LogDebug("Received internal redirect. ({Redirect}", redirect);
+            Logger.LogDebug("Received internal {@Redirect}", redirect);
             client.CryptoClient = new CryptoClient(args.Seed, args.Key, args.Name);
             client.SendLoginNotice(false, Notice);
         } else
         {
-            Logger.LogWarning("A client tried to redirect with invalid id. ({Args})", args);
+            Logger.LogWarning("{@Client} tried to redirect with invalid {@Args}", client, args);
             client.Disconnect();
         }
 
@@ -119,7 +123,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 Options.StartingPoint);
 
             await UserSaveManager.SaveAsync(user);
-            Logger.LogDebug("New character created ({Name})", user.Name);
+            Logger.LogDebug("New character created with name \"{Name}\" by {@Client}", user.Name, client);
             client.SendLoginMessage(LoginMessageType.Confirm);
         } else
             client.SendLoginMessage(LoginMessageType.ClearNameMessage, "Unable to create character, bad request.");
@@ -214,10 +218,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             client.CryptoClient.Seed,
             name);
 
-        Logger.LogDebug(
-            "Redirecting login client to world server at {ServerAddress}:{ServerPort}",
-            Options.WorldRedirect.Address,
-            Options.WorldRedirect.Port);
+        Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.WorldRedirect);
 
         RedirectManager.Add(redirect);
         client.SendLoginMessage(LoginMessageType.Confirm);
@@ -288,14 +289,39 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         ClientHandlers[(byte)ClientOpCode.PasswordChange] = OnPasswordChange;
     }
 
-    protected override void OnConnection(IAsyncResult ar)
+    protected override async void OnConnection(IAsyncResult ar)
     {
         var serverSocket = (Socket)ar.AsyncState!;
         var clientSocket = serverSocket.EndAccept(ar);
 
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
+        var ip = clientSocket.RemoteEndPoint as IPEndPoint;
+        Logger.LogDebug("Incoming connection from {Ip}", ip);
+
+        try
+        {
+            await FinalizeConnectionAsync(clientSocket);
+        } catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to finalize connection");
+        }
+    }
+
+    private async Task FinalizeConnectionAsync(Socket clientSocket)
+    {
+        var ipAddress = ((IPEndPoint)clientSocket.RemoteEndPoint!).Address;
+
+        if (!await IpManager.ShouldAllowAsync(ipAddress))
+        {
+            Logger.LogDebug("Rejected connection from {IpAddress}", ipAddress);
+
+            return;
+        }
+
         var client = ClientFactory.CreateClient(clientSocket);
+
+        Logger.LogDebug("Connection established with {@Client}", client);
 
         if (!ClientRegistry.TryAdd(client))
         {

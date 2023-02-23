@@ -8,9 +8,9 @@
     "name": "Teleport Trinket",
     "panelSprite": 895,
     "category": "trinket",
-    "scriptKeys": ["openDialog"],
+    "scriptKeys": ["showDialog"],
     "scriptVars": {
-        "openDialog": {
+        "showDialog": {
             "dialogKey": "generic_teleport"
         }
     }

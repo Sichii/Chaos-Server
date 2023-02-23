@@ -42,14 +42,4 @@ public sealed record Animation
     {
         TargetPoint = null, TargetId = targetId, SourceId = sourceId ?? SourceId, SourceAnimation = 0
     };
-
-    public override string ToString()
-    {
-        if (TargetPoint == null)
-            return
-                $"SOURCE_ID: {SourceId} | SOURCE_ANIMATION: {SourceAnimation} | TARGET_ID: {TargetId} | TARGET_ANIMATION: {TargetAnimation
-                }";
-
-        return $"TARGET_POINT: {TargetPoint} | TARGET_ANIMATION: {TargetAnimation}";
-    }
 }

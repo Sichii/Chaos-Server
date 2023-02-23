@@ -1,4 +1,5 @@
 using Chaos.Definitions;
+using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Extensions;
@@ -23,6 +24,12 @@ public static class TargetFilterExtensions
 
         if (filter.HasFlag(TargetFilter.DeadOnly))
             isValid &= target.IsDead;
+
+        if (filter.HasFlag(TargetFilter.AislingsOnly))
+            isValid &= target is Aisling;
+
+        if (filter.HasFlag(TargetFilter.MonstersOnly))
+            isValid &= target is Monster;
 
         return isValid;
     }

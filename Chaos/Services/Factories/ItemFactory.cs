@@ -30,7 +30,7 @@ public sealed class ItemFactory : IItemFactory
         var template = SimpleCache.Get<ItemTemplate>(templateKey);
         var item = new Item(template, ScriptProvider, extraScriptKeys);
 
-        Logger.LogDebug("Created item {Item}", item);
+        Logger.LogDebug("Created {@Item}", item);
 
         return item;
     }

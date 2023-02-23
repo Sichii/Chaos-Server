@@ -4,7 +4,7 @@ using Chaos.Networking.Metadata.Abstractions;
 
 namespace Chaos.Networking.Metadata.ItemMetadata;
 
-public sealed record ItemMetaNode : MetaNodeBase
+public sealed record ItemMetaNode(string Name) : MetaNodeBase(Name)
 {
     /// <summary>
     ///     The category of the item, used for bank sorting
@@ -28,9 +28,6 @@ public sealed record ItemMetaNode : MetaNodeBase
     public int Weight { get; set; }
 
     public int Length => 20 + Name.Length + Category.Length + Description.Length;
-
-    public ItemMetaNode(string name)
-        : base(name) { }
 
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer)

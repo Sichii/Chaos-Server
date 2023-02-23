@@ -4,8 +4,8 @@ using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.SkillScripts.Abstractions;
-using Chaos.Scripts.SpellScripts.Abstractions;
+using Chaos.Scripting.SkillScripts.Abstractions;
+using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Services.Servers.Options;
 
 namespace Chaos.Formulae.Damage;

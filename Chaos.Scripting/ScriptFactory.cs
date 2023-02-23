@@ -90,8 +90,8 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             var scriptKey = ScriptBase.GetScriptKey(type);
             ScriptTypeCache[scriptKey] = type;
 
-            Logger.LogDebug(
-                "Loaded {TScriptName} with key {ScriptKey} for type {Type}",
+            Logger.LogTrace(
+                "Loaded {ScriptType} with key \"{ScriptKey}\" for type \"{Type}\"",
                 TypeName,
                 scriptKey,
                 type.Name);

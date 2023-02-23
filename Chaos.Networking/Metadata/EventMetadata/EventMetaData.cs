@@ -27,8 +27,6 @@ public sealed class EventMetaData : MetaDataBase<EventMetaNode>
         writer.Flush();
         var buffer = writer.ToSpan();
 
-        File.WriteAllBytes($"meta\\{Name}.dat", buffer.ToArray());
-
         CheckSum = Crc.Generate32(buffer);
 
         ZLIB.Compress(ref buffer);

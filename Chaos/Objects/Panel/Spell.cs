@@ -2,7 +2,7 @@ using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.SpellScripts.Abstractions;
+using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -33,9 +33,6 @@ public sealed class Spell : PanelObjectBase, IScripted<ISpellScript>
 
         Script = scriptProvider.CreateScript<ISpellScript, Spell>(ScriptKeys, this);
     }
-
-    /// <inheritdoc />
-    public override string ToString() => $"{{ UId: {UniqueId}, Name: \"{Template.Name}\" }}";
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

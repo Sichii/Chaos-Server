@@ -5,8 +5,8 @@ using Chaos.Common.Collections;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Objects.World;
-using Chaos.Scripts.FunctionalScripts.Abstractions;
-using Chaos.Scripts.FunctionalScripts.ExperienceDistribution;
+using Chaos.Scripting.FunctionalScripts.Abstractions;
+using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 
 namespace Chaos.Commands;
 

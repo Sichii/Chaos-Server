@@ -61,8 +61,5 @@ public abstract class MapEntity : WorldEntity, ILocation
         MapInstance = mapInstance;
     }
 
-    /// <inheritdoc />
-    public override string ToString() => $"{{ Id: {Id}, Loc: \"{ILocation.ToString(this)}\" }}";
-
     public virtual void WarpTo(IPoint destinationPoint) => SetLocation(destinationPoint);
 }

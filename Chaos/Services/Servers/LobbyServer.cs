@@ -71,12 +71,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
                     RedirectManager.Add(redirect);
 
-                    Logger.LogDebug(
-                        "Redirecting lobby client to server {ServerName} with id {ServerId} at {ServerAddress}:{ServerPort}",
-                        serverInfo.Name,
-                        serverInfo.Id,
-                        serverInfo.Address,
-                        serverInfo.Port);
+                    Logger.LogDebug("Redirecting {@Client} to {@Server}", client, serverInfo);
 
                     client.SendRedirect(redirect);
                 } else
@@ -119,12 +114,13 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         var serverSocket = (Socket)ar.AsyncState!;
         var clientSocket = serverSocket.EndAccept(ar);
 
+        serverSocket.BeginAccept(OnConnection, serverSocket);
+
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
         Logger.LogDebug("Incoming connection from {Ip}", ip);
 
-        serverSocket.BeginAccept(OnConnection, serverSocket);
-
         var client = ClientFactory.CreateClient(clientSocket);
+        Logger.LogDebug("Connection established with {@Client}", client);
 
         if (!ClientRegistry.TryAdd(client))
         {

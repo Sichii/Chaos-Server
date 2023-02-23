@@ -32,7 +32,4 @@ public sealed class Money : GroundEntity
     }
 
     public override void OnClicked(Aisling source) { }
-
-    /// <inheritdoc />
-    public override string ToString() => $"{{ Id: {Id}, Gold: {Amount}, Loc: \"{ILocation.ToString(this)}\" }}";
 }

@@ -20,8 +20,8 @@
     "scriptVars": {
         "equipment": {},
         "setelement": {
-            "offenseElement": "nature",
-            "defenseElement": "nature"
+            "offenseElement": "undead",
+            "defenseElement": "undead"
         }
     }
 }

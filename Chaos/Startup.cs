@@ -1,14 +1,24 @@
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Chaos.Clients;
+using Chaos.CommandInterceptor;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.JsonConverters;
+using Chaos.Networking.Abstractions;
+using Chaos.Networking.Options;
+using Chaos.Objects.Menu;
+using Chaos.Objects.Panel;
 using Chaos.Objects.World;
+using Chaos.Objects.World.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Serialization;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
@@ -18,6 +28,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
 using NLog.Extensions.Logging;
 
 namespace Chaos;
@@ -79,6 +90,8 @@ public class Startup
                     });
             });
 
+        RegisterStructuredLoggingTransformations();
+
         services.AddOptions<JsonSerializerOptions>()
                 .Configure<ILogger<WarningJsonTypeInfoResolver>>(
                     (options, logger) =>
@@ -110,6 +123,204 @@ public class Startup
             p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
     }
 
+    protected void RegisterStructuredLoggingTransformations() =>
+        LogManager.Setup()
+                  .SetupSerialization(
+                      builder =>
+                      {
+                          builder.RegisterObjectTransformation<SocketClientBase>(
+                              client => new
+                              {
+                                  IpAddress = ((IPEndPoint)client.Socket.RemoteEndPoint!).Address
+                              });
+
+                          builder.RegisterObjectTransformation<WorldClient>(
+                              client => new
+                              {
+                                  IpAddress = ((IPEndPoint)client.Socket.RemoteEndPoint!).Address,
+                                  Aisling = client.Aisling != null!
+                                      ? new
+                                      {
+                                          Type = client.Aisling.GetType().Name,
+                                          Id = client.Aisling.Id,
+                                          Location = ILocation.ToString(client.Aisling),
+                                          Name = client.Aisling.Name
+                                      }
+                                      : null
+                              });
+
+                          builder.RegisterObjectTransformation<WorldEntity>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Creation = obj.Creation
+                              });
+
+                          builder.RegisterObjectTransformation<MapEntity>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Creation = obj.Creation,
+                                  Location = ILocation.ToString(obj)
+                              });
+
+                          builder.RegisterObjectTransformation<VisibleEntity>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Creation = obj.Creation,
+                                  Location = ILocation.ToString(obj),
+                                  Sprite = obj.Sprite
+                              });
+
+                          builder.RegisterObjectTransformation<NamedEntity>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Creation = obj.Creation,
+                                  Location = ILocation.ToString(obj),
+                                  Name = obj.Name
+                              });
+
+                          builder.RegisterObjectTransformation<Creature>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Location = ILocation.ToString(obj),
+                                  Name = obj.Name
+                              });
+
+                          builder.RegisterObjectTransformation<Aisling>(
+                              obj => new
+                              {
+                                  IpAddress = obj.Client != null! ? ((IPEndPoint)obj.Client.Socket.RemoteEndPoint!).Address : null,
+                                  Aisling = new
+                                  {
+                                      Type = obj.GetType().Name,
+                                      Id = obj.Id,
+                                      Location = ILocation.ToString(obj),
+                                      Name = obj.Name
+                                  }
+                              });
+
+                          builder.RegisterObjectTransformation<Monster>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Location = ILocation.ToString(obj),
+                                  Name = obj.Name,
+                                  TemplateKey = obj.Template.TemplateKey
+                              });
+
+                          builder.RegisterObjectTransformation<Merchant>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Location = ILocation.ToString(obj),
+                                  Name = obj.Name,
+                                  TemplateKey = obj.Template.TemplateKey
+                              });
+
+                          builder.RegisterObjectTransformation<GroundItem>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Creation = obj.Creation,
+                                  Location = ILocation.ToString(obj),
+                                  Item = obj.Item
+                              });
+
+                          builder.RegisterObjectTransformation<Money>(
+                              obj => new
+                              {
+                                  Type = obj.GetType().Name,
+                                  Id = obj.Id,
+                                  Creation = obj.Creation,
+                                  Location = ILocation.ToString(obj),
+                                  Amount = obj.Amount
+                              });
+
+                          builder.RegisterObjectTransformation<Item>(
+                              item => new
+                              {
+                                  Uid = item.UniqueId,
+                                  Name = item.DisplayName,
+                                  TemplateKey = item.Template.TemplateKey,
+                                  Count = item.Count
+                              });
+
+                          builder.RegisterObjectTransformation<Spell>(
+                              spell => new
+                              {
+                                  Uid = spell.UniqueId,
+                                  Name = spell.Template.Name,
+                                  TemplateKey = spell.Template.TemplateKey
+                              });
+
+                          builder.RegisterObjectTransformation<Skill>(
+                              skill => new
+                              {
+                                  Uid = skill.UniqueId,
+                                  Name = skill.Template.Name,
+                                  TemplateKey = skill.Template.TemplateKey
+                              });
+
+                          builder.RegisterObjectTransformation<Exchange>(
+                              exchange => new
+                              {
+                                  Id = exchange.ExchangeId,
+                                  User1 = exchange.User1,
+                                  User2 = exchange.User2
+                              });
+
+                          builder.RegisterObjectTransformation<MapInstance>(
+                              map => new
+                              {
+                                  InstanceId = map.InstanceId,
+                                  TemplateKey = map.Template.TemplateKey,
+                                  Name = map.Name
+                              });
+
+                          builder.RegisterObjectTransformation<CommandDescriptor>(
+                              obj => new
+                              {
+                                  ExecutedByType = obj.Type.FullName,
+                                  RequiresAdmin = obj.Details.RequiresAdmin,
+                                  CommandName = obj.Details.CommandName
+                              });
+
+                          builder.RegisterObjectTransformation<Dialog>(
+                              dialog => new
+                              {
+                                  TemplateKey = dialog.Template.TemplateKey,
+                                  Type = dialog.Template.Type
+                              });
+
+                          builder.RegisterObjectTransformation<IEffect>(
+                              effect => new
+                              {
+                                  EffectKey = effect.ScriptKey,
+                                  Name = effect.Name
+                              });
+
+                          builder.RegisterObjectTransformation<Redirect>(
+                              obj => new
+                              {
+                                  Id = obj.Id,
+                                  Name = obj.Name,
+                                  Type = obj.Type,
+                                  Address = obj.EndPoint
+                              });
+                      });
+
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
     public static class ConfigKeys
     {
@@ -121,6 +332,7 @@ public class Startup
         public static class Logging
         {
             public static string Key => "Logging";
+            public static string UseSeq => $"{Key}:UseSeq";
 
             public static class NLog
             {

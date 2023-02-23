@@ -5,4 +5,7 @@
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Security.Abstractions\Chaos.Security.Abstractions.csproj"/>
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Linq.Async"/>
+    </ItemGroup>
 </Project>

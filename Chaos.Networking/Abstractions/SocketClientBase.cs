@@ -17,7 +17,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 {
     private readonly byte[] Buffer;
     private readonly Memory<byte> MemoryBuffer;
-    private readonly Socket Socket;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
     private int Sequence;
@@ -27,6 +26,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     public event EventHandler? OnDisconnected;
     public uint Id { get; }
     public FifoSemaphoreSlim ReceiveSync { get; }
+    public Socket Socket { get; }
     protected ILogger<SocketClientBase> Logger { get; }
     protected IPacketSerializer PacketSerializer { get; }
 
@@ -147,7 +147,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                     await HandlePacketAsync(MemoryBuffer.Span.Slice(offset, packetLength));
                 } catch (Exception ex)
                 {
-                    Logger.LogError(ex, "Exception while handling a packet");
+                    Logger.LogError(ex, "Exception while handling a packet for {@Client}", this);
                 }
 
                 Count -= packetLength;

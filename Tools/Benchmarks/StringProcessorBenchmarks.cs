@@ -1,6 +1,8 @@
 using BenchmarkDotNet.Attributes;
 using Chaos.Extensions.Common;
 
+// ReSharper disable All
+
 namespace Benchmarks;
 
 [MemoryDiagnoser]

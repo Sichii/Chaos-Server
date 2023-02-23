@@ -76,7 +76,7 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
 
         if (descriptor.Details.RequiresAdmin && !Configuration.AdminPredicate(source))
         {
-            Logger.LogWarning("Non-Admin {Source} tried to execute admin command {CommandName}", source, commandName);
+            Logger.LogWarning("Non-Admin {@Source} tried to execute admin command {CommandName}", source, commandName);
 
             return;
         }
@@ -89,14 +89,14 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
 
             await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
 
-            Logger.LogInformation("{Source} executed command {CommandName}", source, commandName);
+            Logger.LogInformation("{@Source} executed command {CommandName}", source, commandName);
         } catch (Exception e)
         {
             Logger.LogError(
                 e,
-                "{Source} failed to execute command {CommandName}",
+                "{@Source} failed to execute command {@Command}",
                 source,
-                commandName);
+                descriptor);
         }
     }
 

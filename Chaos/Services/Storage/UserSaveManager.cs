@@ -3,7 +3,7 @@ using System.Text.Json;
 using Chaos.Containers;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -91,14 +91,14 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             effects,
             timedEvents);
 
-        Logger.LogDebug("Loaded aisling {Name}", name);
+        Logger.LogDebug("Loaded {@Player}", aisling);
 
         return aisling;
     }
 
     public async Task SaveAsync(Aisling obj)
     {
-        Logger.LogTrace("Saving aisling {Name}", obj.Name);
+        Logger.LogTrace("Saving {@Player}", obj);
         var start = Stopwatch.GetTimestamp();
 
         try
@@ -129,12 +129,12 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
                 SerializeAsync(directory, "legend.json", legendSchema),
                 SerializeAsync(directory, "timedEvents.json", timedEventsSchemas));
 
-            Logger.LogDebug("Saved aisling {Aisling} in {Elapsed}", obj, Stopwatch.GetElapsedTime(start));
+            Logger.LogDebug("Saved {@Player} in {Elapsed}", obj, Stopwatch.GetElapsedTime(start));
         } catch (Exception e)
         {
             Logger.LogError(
                 e,
-                "Failed to save aisling {Aisling} in {Elapsed}",
+                "Failed to save aisling {@Player} in {Elapsed}",
                 obj,
                 Stopwatch.GetElapsedTime(start));
         }

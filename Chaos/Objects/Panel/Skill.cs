@@ -3,7 +3,7 @@ using Chaos.Extensions.Common;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.SkillScripts.Abstractions;
+using Chaos.Scripting.SkillScripts.Abstractions;
 using Chaos.Templates;
 
 namespace Chaos.Objects.Panel;
@@ -49,9 +49,6 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
 
         base.BeginCooldown(creature);
     }
-
-    /// <inheritdoc />
-    public override string ToString() => $"{{ UId: {UniqueId}, Name: \"{Template.Name}\" }}";
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

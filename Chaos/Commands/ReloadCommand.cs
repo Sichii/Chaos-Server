@@ -32,9 +32,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadSkillsAsync();
-
-                        aisling.SendOrangeBarMessage("Skills reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadSkillsAsync();
+                            aisling.SendOrangeBarMessage("Skills reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload skills");
+                            Logger.LogError(e, "Failed to reload skills");
+                        }
                     });
 
                 break;
@@ -42,8 +48,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadSpellsAsync();
-                        aisling.SendOrangeBarMessage("Spells reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadSpellsAsync();
+                            aisling.SendOrangeBarMessage("Spells reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload spells");
+                            Logger.LogError(e, "Failed to reload spells");
+                        }
                     });
 
                 break;
@@ -51,8 +64,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadItemsAsync();
-                        aisling.SendOrangeBarMessage("Items reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadItemsAsync();
+                            aisling.SendOrangeBarMessage("Items reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload items");
+                            Logger.LogError(e, "Failed to reload items");
+                        }
                     });
 
                 break;
@@ -60,8 +80,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadMonstersAsync();
-                        aisling.SendOrangeBarMessage("Monsters reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadMonstersAsync();
+                            aisling.SendOrangeBarMessage("Monsters reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload monsters");
+                            Logger.LogError(e, "Failed to reload monsters");
+                        }
                     });
 
                 break;
@@ -69,8 +96,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadMerchantsAsync();
-                        aisling.SendOrangeBarMessage("Merchants reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadMerchantsAsync();
+                            aisling.SendOrangeBarMessage("Merchants reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload merchants");
+                            Logger.LogError(e, "Failed to reload merchants");
+                        }
                     });
 
                 break;
@@ -94,8 +128,15 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadDialogsAsync();
-                        aisling.SendOrangeBarMessage("Dialogs reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadDialogsAsync();
+                            aisling.SendOrangeBarMessage("Dialogs reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload dialogs");
+                            Logger.LogError(e, "Failed to reload dialogs");
+                        }
                     });
 
                 break;
@@ -103,8 +144,31 @@ public sealed class ReloadCommand : ICommand<Aisling>
                 _ = Task.Run(
                     async () =>
                     {
-                        await ServiceProvider.ReloadWorldMapsAsync();
-                        aisling.SendOrangeBarMessage("WorldMaps reloaded");
+                        try
+                        {
+                            await ServiceProvider.ReloadWorldMapsAsync();
+                            aisling.SendOrangeBarMessage("WorldMaps reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload worldmaps");
+                            Logger.LogError(e, "Failed to reload worldmaps");
+                        }
+                    });
+
+                break;
+            case "loottables":
+                _ = Task.Run(
+                    async () =>
+                    {
+                        try
+                        {
+                            await ServiceProvider.ReloadLootTablesAsync();
+                            aisling.SendOrangeBarMessage("LootTables reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload loottables");
+                            Logger.LogError(e, "Failed to reload loottables");
+                        }
                     });
 
                 break;

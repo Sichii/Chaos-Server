@@ -1,5 +1,5 @@
 using Chaos.Schemas.Aisling;
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 

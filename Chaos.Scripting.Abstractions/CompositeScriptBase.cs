@@ -16,14 +16,14 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     public void Add(TScript script) => Components.Add(script);
 
     /// <inheritdoc />
-    public T? GetComponent<T>() where T: TScript
+    public T? GetComponent<T>()
     {
         foreach (var component in Components)
             switch (component)
             {
-                case T typedScript:
-                    return typedScript;
-                case ICompositeScript<T> composite:
+                case T obj:
+                    return obj;
+                case ICompositeScript composite:
                     return composite.GetComponent<T>();
                 default:
                     continue;

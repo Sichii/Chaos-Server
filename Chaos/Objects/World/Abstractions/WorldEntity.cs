@@ -37,9 +37,6 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    /// <inheritdoc />
-    public override string ToString() => $"{{ Id: {Id} }}";
-
     private sealed class IdEqualityComparer : IEqualityComparer<WorldEntity>
     {
         public bool Equals(WorldEntity? x, WorldEntity? y)

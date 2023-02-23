@@ -23,7 +23,6 @@ public static class CommonExtensions
         string? optionsSection = null
     ) where T: class
     {
-        ;
         var path = optionsSection ?? typeof(T).Name;
 
         if (!string.IsNullOrWhiteSpace(subSection))

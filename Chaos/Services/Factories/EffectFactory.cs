@@ -1,5 +1,5 @@
 using Chaos.Extensions.Common;
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -31,7 +31,7 @@ public sealed class EffectFactory : IEffectFactory
         if (instance is not IEffect effect)
             throw new InvalidCastException($"Object obtained from key \"{effectKey}\" is not a valid effect");
 
-        Logger.LogDebug("Created effect \"{EffectName}\"", effect.Name);
+        Logger.LogDebug("Created {@Effect}", effect);
 
         return effect;
     }
@@ -44,7 +44,7 @@ public sealed class EffectFactory : IEffectFactory
         {
             var effectKey = EffectBase.GetEffectKey(type);
             EffectTypeCache.TryAdd(effectKey, type);
-            Logger.LogTrace("Loaded effect type with key {EffectKey} for type {Type}", effectKey, type.Name);
+            Logger.LogTrace("Loaded effect type with key \"{EffectKey}\" for type \"{Type}\"", effectKey, type.Name);
         }
 
         Logger.LogInformation("{Count} effects loaded", EffectTypeCache.Count);

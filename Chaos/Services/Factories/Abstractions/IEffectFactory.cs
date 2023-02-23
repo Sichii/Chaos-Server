@@ -1,4 +1,4 @@
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Services.Factories.Abstractions;
 

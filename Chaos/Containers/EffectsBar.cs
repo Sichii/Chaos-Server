@@ -5,7 +5,7 @@ using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Containers;
 

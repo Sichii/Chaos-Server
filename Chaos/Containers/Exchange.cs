@@ -8,18 +8,18 @@ namespace Chaos.Containers;
 
 public sealed class Exchange
 {
-    private readonly ulong ExchangeId;
     private readonly ILogger Logger;
     private readonly AutoReleasingMonitor Sync;
-    private readonly Aisling User1;
     private readonly Inventory User1Items;
-    private readonly Aisling User2;
     private readonly Inventory User2Items;
     private bool IsActive;
     private bool User1Accept;
     private int User1Gold;
     private bool User2Accept;
     private int User2Gold;
+    public ulong ExchangeId { get; }
+    public Aisling User1 { get; }
+    public Aisling User2 { get; }
 
     public Exchange(Aisling sender, Aisling receiver, ILogger logger)
     {
@@ -69,11 +69,7 @@ public sealed class Exchange
         User1.Client.SendExchangeStart(User2);
         User2.Client.SendExchangeStart(User1);
 
-        Logger.LogDebug(
-            "{Exchange} started for {User1} and {User2}",
-            this,
-            User1,
-            User2);
+        Logger.LogDebug("{@Exchange} activated", this);
 
         IsActive = true;
     }
@@ -111,7 +107,7 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(item);
 
             Logger.LogDebug(
-                "{Player} added {Item} to {Exchange}",
+                "{@Player} added {@Item} to {@Exchange}",
                 aisling,
                 item,
                 this);
@@ -162,7 +158,7 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(removedItem);
 
             Logger.LogDebug(
-                "{Player} added {Item} to {Exchange}",
+                "{@Player} added {@Item} to {@Exchange}",
                 aisling,
                 removedItem,
                 this);
@@ -185,7 +181,7 @@ public sealed class Exchange
 
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
-        Logger.LogDebug("{Exchange} was canceled by {Player}", this, aisling);
+        Logger.LogDebug("{@Exchange} was canceled by {@Player}", this, aisling);
 
         Deactivate();
     }
@@ -203,7 +199,7 @@ public sealed class Exchange
         aisling.TryGiveGold(gold);
 
         Logger.LogDebug(
-            "{Exchange} distributed {Amount} gold to {Player}",
+            "{@Exchange} distributed {Amount} gold to {@Player}",
             this,
             gold,
             aisling);
@@ -214,7 +210,7 @@ public sealed class Exchange
 
             if (aisling.Inventory.TryAddToNextSlot(item))
                 Logger.LogDebug(
-                    "{Exchange} distributed {Item} to {Player}",
+                    "{@Exchange} distributed {@Item} to {@Player}",
                     this,
                     item,
                     aisling);
@@ -246,7 +242,7 @@ public sealed class Exchange
             SetUserGold(aisling, amount);
 
             Logger.LogDebug(
-                "{Player} set their gold amount to {Amount} for exchange {Exchange}",
+                "{@Player} set their gold amount to {GoldAmount} for {@Exchange}",
                 aisling,
                 amount,
                 this);
@@ -271,7 +267,4 @@ public sealed class Exchange
         else
             User2Gold = amount;
     }
-
-    /// <inheritdoc />
-    public override string ToString() => $"{{ Type: \"Exchange\", Id: {ExchangeId} }}";
 }

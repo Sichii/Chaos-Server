@@ -58,8 +58,6 @@ public sealed class AbilityMetaData : MetaDataBase<AbilityMetaNode>
         writer.Flush();
         var buffer = writer.ToSpan();
 
-        File.WriteAllBytes($"meta/{Name}.dat", buffer.ToArray());
-
         CheckSum = Crc.Generate32(buffer);
         ZLIB.Compress(ref buffer);
         Data = buffer.ToArray();

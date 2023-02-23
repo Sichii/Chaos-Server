@@ -2,11 +2,12 @@
   "bodyColor": "White",
   "bodySprite": "Female",
   "counters": {},
-  "direction": "Down",
+  "direction": "Up",
   "effects": [],
   "enums": {},
   "flags": {},
   "gender": "Female",
+  "gold": 500000,
   "hairColor": "Default",
   "hairStyle": 8,
   "ignoreList": [],
@@ -44,5 +45,5 @@
     "wisdom": true
   },
   "x": 20,
-  "y": 16
+  "y": 15
 }

@@ -90,6 +90,40 @@ public static class ServiceProviderExtensions
         }
     }
 
+    public static async Task ReloadLootTablesAsync(this IServiceProvider provider)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var lootTableCache = cacheProvider.GetCache<LootTable>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+
+        await lootTableCache.ReloadAsync();
+
+        foreach (var mapInstance in mapCache)
+        {
+            await using var sync = await mapInstance.Sync.WaitAsync();
+
+            foreach (var monsterSpawn in mapInstance.MonsterSpawns)
+            {
+                if (monsterSpawn.LootTable?.Key == null)
+                    continue;
+
+                var lootTableKey = monsterSpawn.LootTable.Key;
+                var newLootTable = lootTableCache.Get(lootTableKey);
+                monsterSpawn.LootTable = newLootTable;
+            }
+
+            foreach (var monster in mapInstance.GetEntities<Monster>())
+            {
+                if (monster.LootTable == null)
+                    continue;
+
+                var lootTableKey = monster.LootTable.Key;
+                var newLootTable = lootTableCache.Get(lootTableKey);
+                monster.LootTable = newLootTable;
+            }
+        }
+    }
+
     public static async Task ReloadMapsAsync(this IServiceProvider provider)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
@@ -191,6 +225,7 @@ public static class ServiceProviderExtensions
                 newMonster.Gold = monster.Gold;
                 newMonster.Experience = monster.Experience;
                 newMonster.AggroRange = monster.AggroRange;
+                newMonster.LootTable = monster.LootTable;
 
                 monster.MapInstance.RemoveObject(monster);
                 monstersToAdd.Add(newMonster);

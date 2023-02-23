@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using Chaos.Clients.Abstractions;
@@ -93,7 +94,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 AllowTrailingCommas = true
             };
 
-            Logger.LogCritical(e, "Exception while saving user. {Player}", JsonSerializer.Serialize(aisling, jsonSerializerOptions));
+            Logger.LogCritical(e, "Exception while saving user. \"{@Player}\"", JsonSerializer.Serialize(aisling, jsonSerializerOptions));
         }
     }
     #endregion
@@ -262,27 +263,33 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             if (!RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
-                Logger.LogWarning("A client tried to redirect to the world with an invalid id. ({Args})", localArgs);
+                Logger.LogWarning("{@Client} tried to redirect to the world with invalid {Args}", client, localArgs);
                 localClient.Disconnect();
 
                 return default;
             }
 
+            //keep this case sensitive
             if (localArgs.Name != redirect.Name)
             {
-                Logger.LogCritical("A client tried to impersonate a redirect (Args: {Args}, Redirect: {Redirect})", localArgs, redirect);
+                Logger.LogCritical(
+                    "{@Client} tried to impersonate a {@Redirect} with {@Args}",
+                    localClient,
+                    redirect,
+                    localArgs);
+
                 localClient.Disconnect();
 
                 return default;
             }
 
-            Logger.LogDebug("Received redirect to world. ({Redirect})", redirect);
+            Logger.LogDebug("Received world {@Redirect}", redirect);
             var existingUser = Aislings.FirstOrDefault(user => user.Name.EqualsI(redirect.Name));
 
             //double logon, disconnect both clients
             if (existingUser != null)
             {
-                Logger.LogDebug("Duplicate login detected for {Name}, disconnecting both users", redirect.Name);
+                Logger.LogDebug("Duplicate login detected for {Name}, disconnecting both players", redirect.Name);
                 existingUser.Client.Disconnect();
                 localClient.Disconnect();
 
@@ -314,11 +321,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             aisling.MapInstance.AddAislingDirect(aisling, aisling);
             client.SendProfileRequest();
 
+            Logger.LogDebug("World redirect finalized for {@Client}", client);
+
             foreach (var reactor in aisling.MapInstance.GetDistinctReactorsAtPoint(aisling).ToList())
                 reactor.OnWalkedOn(aisling);
         } catch (Exception e)
         {
-            Logger.LogCritical(e, "{Player} failed to load", aisling);
+            Logger.LogCritical(e, "{@Player} failed to load", aisling);
         }
     }
 
@@ -350,7 +359,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (dialog == null)
             {
-                Logger.LogWarning("No active dialog found for {UserName}", localClient.Aisling.Name);
+                Logger.LogWarning("No active dialog found for {@Client}", localClient);
 
                 return default;
             }
@@ -416,7 +425,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             switch (localArgs.ExchangeRequestType)
             {
                 case ExchangeRequestType.StartExchange:
-                    Logger.LogError("Someone attempted to directly start an exchange ({UserName})", localClient.Aisling.Name);
+                    Logger.LogError(
+                        "{@Client} attempted to directly start an exchange. This should not be possible unless packeting",
+                        localClient);
 
                     break;
                 case ExchangeRequestType.AddItem:
@@ -468,10 +479,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
                 RedirectManager.Add(redirect);
 
-                Logger.LogDebug(
-                    "Redirecting world client to login server at {ServerAddress}:{ServerPort}",
-                    Options.LoginRedirect.Address,
-                    Options.LoginRedirect.Port);
+                Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.LoginRedirect);
 
                 localClient.SendRedirect(redirect);
             }
@@ -554,8 +562,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 case GroupRequestType.FormalInvite:
                     Logger.LogWarning(
-                        "{Player} attempted to send a formal invite to the server. This type of group request is something only the server should send",
-                        localAisling);
+                        "{@Client} attempted to send a formal invite to the server. This type of group request is something only the server should send",
+                        localClient);
 
                     return default;
                 case GroupRequestType.TryInvite:
@@ -813,7 +821,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (dialog == null)
             {
-                Logger.LogWarning("No active dialog found for {UserName}", localClient.Aisling.Name);
+                Logger.LogWarning("No active dialog found for {@Client}", localClient);
 
                 return default;
             }
@@ -976,19 +984,16 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnUseItem(IWorldClient localClient, ItemUseArgs localArgs)
         {
-            if (localClient.Aisling.Inventory.TryGetObject(localArgs.SourceSlot, out var item))
+            var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
+
+            if (exchange != null)
             {
-                var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
+                exchange.AddItem(localClient.Aisling, localArgs.SourceSlot);
 
-                if (exchange != null)
-                {
-                    exchange.AddItem(localClient.Aisling, item.Slot);
-
-                    return default;
-                }
-
-                item.Script.OnUse(localClient.Aisling);
+                return default;
             }
+
+            localClient.Aisling.TryUseItem(localArgs.SourceSlot);
 
             return default;
         }
@@ -1230,7 +1235,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             Logger.LogError(
                 e,
-                "Failed to execute inner handler with args {@Args} for client {Client}",
+                "Failed to execute inner handler with args {@Args} for {@Client}",
                 args,
                 client);
         }
@@ -1265,7 +1270,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             await action(client);
         } catch (Exception e)
         {
-            Logger.LogError(e, "Failed to execute inner handler for client {Client}", client);
+            Logger.LogError(e, "Failed to execute inner handler for {@Client}", client);
         }
     }
 
@@ -1332,8 +1337,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
+        var ip = clientSocket.RemoteEndPoint as IPEndPoint;
+        Logger.LogDebug("Incoming connection from {Ip}", ip);
+
         var client = ClientFactory.CreateClient(clientSocket);
         client.OnDisconnected += OnDisconnect;
+
+        Logger.LogDebug("Connection established with {@Client}", client);
 
         if (!ClientRegistry.TryAdd(client))
         {
@@ -1377,7 +1387,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             }
         } catch (Exception ex)
         {
-            Logger.LogError(ex, "Exception thrown while {Client} was trying to disconnect", client);
+            Logger.LogError(ex, "Exception thrown while {@Client} was trying to disconnect", client);
         }
     }
     #endregion

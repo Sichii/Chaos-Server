@@ -23,7 +23,7 @@ public sealed class ItemCloningService : ICloningService<Item>
         schema.UniqueId = ServerId.NextId;
         var cloned = Mapper.Map<Item>(schema);
 
-        Logger.LogDebug("Cloned item {Item} with new Uid: {NewUniqueId}", obj, cloned.UniqueId);
+        Logger.LogDebug("Cloned {@OriginItem} into {@ClonedItem}", obj, cloned);
 
         return cloned;
     }

@@ -13,18 +13,18 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class SecurityExtensions
 {
     /// <summary>
-    ///     Adds <see cref="Chaos.Security.ActiveDirectoryCredentialManager" /> as an implementation of
+    ///     Adds <see cref="SimpleCredentialManager" /> as an implementation of
     ///     <see cref="Chaos.Security.Abstractions.ICredentialManager" /> utilizing
-    ///     <see cref="Chaos.Security.Options.ActiveDirectoryCredentialManagerOptions" /> for configuration
+    ///     <see cref="SimpleCredentialManagerOptions" /> for configuration
     /// </summary>
     /// <param name="services">The service collection to add the service to</param>
     /// <param name="subSection">
-    ///     The section where the <see cref="Chaos.Security.Options.ActiveDirectoryCredentialManagerOptions" /> can be located
+    ///     The section where the <see cref="SimpleCredentialManagerOptions" /> can be located
     ///     in the config
     /// </param>
     public static void AddSecurity(this IServiceCollection services, string subSection)
     {
-        services.AddDirectoryBoundOptionsFromConfig<ActiveDirectoryCredentialManagerOptions>(subSection)
+        services.AddDirectoryBoundOptionsFromConfig<SimpleCredentialManagerOptions>(subSection)
                 .PostConfigure(
                     o =>
                     {
@@ -32,6 +32,9 @@ public static class SecurityExtensions
                         o.ValidFormatRegex = new Regex(o.ValidFormatPattern, RegexOptions.Compiled);
                     });
 
-        services.AddSingleton<ICredentialManager, ActiveDirectoryCredentialManager>();
+        services.AddDirectoryBoundOptionsFromConfig<IpManagerOptions>(subSection);
+
+        services.AddSingleton<ICredentialManager, SimpleCredentialManager>();
+        services.AddSingleton<IIpManager, IpManager>();
     }
 }

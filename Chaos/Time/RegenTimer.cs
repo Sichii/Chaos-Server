@@ -1,5 +1,5 @@
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.FunctionalScripts.Abstractions;
+using Chaos.Scripting.FunctionalScripts.Abstractions;
 
 namespace Chaos.Time;
 

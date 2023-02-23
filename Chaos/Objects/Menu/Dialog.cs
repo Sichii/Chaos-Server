@@ -5,7 +5,7 @@ using Chaos.Extensions.Common;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.DialogScripts.Abstractions;
+using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Templates;
 

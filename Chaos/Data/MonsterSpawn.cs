@@ -15,7 +15,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
     public required int AggroRange { get; init; }
     public required int ExpReward { get; init; }
     public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
-    public required LootTable? LootTable { get; init; }
+    public required LootTable? LootTable { get; set; }
     public MapInstance MapInstance { get; set; } = null!;
     public required int MaxAmount { get; init; }
     public required int MaxGoldDrop { get; init; }

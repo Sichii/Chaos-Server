@@ -1,5 +1,5 @@
 using Chaos.Objects.World.Abstractions;
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Containers.Abstractions;

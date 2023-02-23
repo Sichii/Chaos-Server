@@ -5,8 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DeBroglie"/>
+        <PackageReference Include="Microsoft.ML.AutoML"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="TensorFlow.NET"/>
         <PackageReference Include="xunit"/>
         <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

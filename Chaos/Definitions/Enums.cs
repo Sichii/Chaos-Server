@@ -16,7 +16,9 @@ public enum TargetFilter
     FriendlyOnly = 1,
     HostileOnly = 1 << 1,
     AliveOnly = 1 << 2,
-    DeadOnly = 1 << 3
+    DeadOnly = 1 << 3,
+    AislingsOnly = 1 << 4,
+    MonstersOnly = 1 << 5
 }
 
 [Flags]

@@ -30,13 +30,13 @@ namespace Chaos.Networking.Metadata.EventMetadata;
 public sealed record EventMetaNode : MetaNodeBase
 {
     public string? Id { get; init; }
-    public int Page { get; init; }
     public string? PrerequisiteEventId { get; init; }
     public string? QualifyingCircles { get; init; }
     public string? QualifyingClasses { get; init; }
     public string? Result { get; init; }
     public string? Rewards { get; init; }
     public string? Summary { get; init; }
+    public int Page { get; }
 
     /// <inheritdoc />
     public EventMetaNode(string name, int page)

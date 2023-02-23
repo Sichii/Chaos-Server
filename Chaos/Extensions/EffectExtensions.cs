@@ -1,5 +1,5 @@
 using Chaos.Common.Definitions;
-using Chaos.Scripts.EffectScripts.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Extensions;
 

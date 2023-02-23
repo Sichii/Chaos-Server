@@ -737,8 +737,4 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
         Send(args);
     }
-
-    /// <inheritdoc />
-    // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-    public override string ToString() => $"{{ Cid: {Id}, Aisling: {Aisling?.ToString() ?? "N/A"} }}";
 }

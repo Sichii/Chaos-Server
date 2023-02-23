@@ -35,6 +35,4 @@ public sealed record Redirect : IRedirect
 
         EndPoint = new IPEndPoint(address, serverInfo.Port);
     }
-
-    public override string ToString() => $"Id: {Id}, Name: {Name}, Type: {Type}";
 }

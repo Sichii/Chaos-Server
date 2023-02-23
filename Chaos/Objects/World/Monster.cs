@@ -8,7 +8,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.MonsterScripts.Abstractions;
+using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Templates;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -107,7 +107,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
             Script.OnGoldDroppedOn(source, amount);
 
             Logger.LogDebug(
-                "{Player} dropped {Amount} gold on {Monster}",
+                "{@Player} dropped {Amount} gold on {@Monster}",
                 source,
                 amount,
                 this);
@@ -120,7 +120,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
             foreach (var item in items)
             {
                 Logger.LogDebug(
-                    "{Player} dropped {Item} on monster {Monster}",
+                    "{@Player} dropped {@Item} on monster {@Monster}",
                     source,
                     item,
                     this);

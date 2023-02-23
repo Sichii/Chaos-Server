@@ -147,8 +147,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Counters = new Dictionary<string, int>(obj.Counters, StringComparer.OrdinalIgnoreCase)
         };
 
-        Logger.LogTrace("Successfully mapped {Name} to schema", ret.Name);
-
         return ret;
     }
 

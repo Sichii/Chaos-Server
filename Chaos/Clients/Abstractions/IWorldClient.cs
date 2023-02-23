@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
@@ -16,6 +17,7 @@ namespace Chaos.Clients.Abstractions;
 public interface IWorldClient : ISocketClient
 {
     Aisling Aisling { get; set; }
+    Socket Socket { get; }
     void SendAddItemToPane(Item item);
     void SendAddSkillToPane(Skill skill);
     void SendAddSpellToPane(Spell spell);

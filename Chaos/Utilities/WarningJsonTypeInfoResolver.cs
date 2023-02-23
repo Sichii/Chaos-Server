@@ -14,7 +14,7 @@ public class WarningJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
         Logger.LogWarning(
-            "Used reflection to get type info for {Type}. Add this type to {SerializationContext}",
+            "Used reflection to get type info for {Type}. Add this type to the {SerializationContext}",
             type.FullName,
             typeof(SerializationContext).FullName);
 

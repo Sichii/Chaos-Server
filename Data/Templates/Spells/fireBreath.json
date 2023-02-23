@@ -5,7 +5,7 @@
     "scriptKeys": ["cascadeDamage"],
     "spellType": "notarget",
     "castLines": 0,
-    "description": "A powerful spell that deals damage in a long ranged code shape in the direction you are facing.",
+    "description": "A powerful spell that deals damage in a long ranged cone shape in the direction you are facing.",
     "level": 5,
     "class": "wizard",
     "learningRequirements": {

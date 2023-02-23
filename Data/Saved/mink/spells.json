@@ -4,5 +4,11 @@
     "slot": 1,
     "templateKey": "regrowth",
     "uniqueId": 100272
+  },
+  {
+    "scriptKeys": [],
+    "slot": 2,
+    "templateKey": "not_so_bad_curse",
+    "uniqueId": 2
   }
 ]

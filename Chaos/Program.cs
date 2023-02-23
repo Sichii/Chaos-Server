@@ -1,7 +1,7 @@
 using Chaos;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
-using Chaos.Scripts.FunctionalScripts.Abstractions;
+using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Services;
 using Chaos.Services.Abstractions;
 using Chaos.Services.Servers.Options;
@@ -16,7 +16,8 @@ Environment.SetEnvironmentVariable("DOTNET_ReadyToRun", "0");
 
 var services = new ServiceCollection();
 
-var configuration = new ConfigurationBuilder()
+// @formatter:off
+var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")
                     #if DEBUG
@@ -25,7 +26,20 @@ var configuration = new ConfigurationBuilder()
                     //.AddJsonFile("appsettings.prod.json")
                     .AddJsonFile("appsettings.local.json")
                     #endif
-                    .Build();
+                    ;
+
+var initialConfiguration = builder.Build();
+
+
+if(initialConfiguration.GetValue<bool>(Startup.ConfigKeys.Logging.UseSeq))
+    #if DEBUG
+    builder.AddJsonFile("appsettings.seq.local.json");
+    #else
+    builder.AddjsonFile("appsettings.seq.prod.json");
+    #endif
+
+var configuration = builder.Build();
+// @formatter:on
 
 var startup = new Startup(configuration);
 var serverCtx = new CancellationTokenSource();

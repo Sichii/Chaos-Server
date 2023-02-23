@@ -45,8 +45,6 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 
     public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
 
-    public override string ToString() => $@"Id:{UniqueId} Name:{Template.Name})";
-
     public virtual void Update(TimeSpan delta)
     {
         if (!Elapsed.HasValue)

@@ -10,7 +10,7 @@ using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripts.MapScripts.Abstractions;
+using Chaos.Scripting.MapScripts.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
@@ -29,7 +29,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     private readonly PeriodicTimer DeltaTimer;
     private readonly IIntervalTimer HandleShardLimitersTimer;
     private readonly ILogger<MapInstance> Logger;
-    private readonly List<MonsterSpawn> MonsterSpawns;
     private readonly MapEntityCollection Objects;
     private readonly ISaveManager<Aisling> SaveManager;
     private readonly CancellationToken ServerShutdownToken;
@@ -49,6 +48,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public MapTemplate Template { get; set; }
     public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
     public CancellationTokenSource MapInstanceCtx { get; }
+    public List<MonsterSpawn> MonsterSpawns { get; }
     /// <inheritdoc />
     public IMapScript Script { get; }
     /// <inheritdoc />
@@ -664,10 +664,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Stop() => MapInstanceCtx.Cancel();
 
-    /// <inheritdoc />
-    public override string ToString() =>
-        $"{{ Type: \"{nameof(MapInstance)}\", InstanceId: \"{InstanceId}\", TemplateId: {Template.MapId} }}";
-
     public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
 
     public void Update(TimeSpan delta)
@@ -689,7 +685,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 HandleShardLimiters();
         } catch (Exception e)
         {
-            Logger.LogCritical(e, "Failed to update map instance \"{MapInstance}\"", this);
+            Logger.LogCritical(e, "Failed to update {@MapInstance}", this);
         }
     }
 
