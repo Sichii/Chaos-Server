@@ -7,7 +7,7 @@
   "enums": {},
   "flags": {},
   "gender": "Female",
-  "gold": 500000,
+  "gold": 499995,
   "hairColor": "Default",
   "hairStyle": 8,
   "ignoreList": [],
@@ -45,5 +45,5 @@
     "wisdom": true
   },
   "x": 20,
-  "y": 15
+  "y": 14
 }

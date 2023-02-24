@@ -30,7 +30,6 @@ var builder = new ConfigurationBuilder()
 
 var initialConfiguration = builder.Build();
 
-
 if(initialConfiguration.GetValue<bool>(Startup.ConfigKeys.Logging.UseSeq))
     #if DEBUG
     builder.AddJsonFile("appsettings.seq.local.json");
