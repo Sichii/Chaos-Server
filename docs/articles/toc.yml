@@ -1,5 +1,7 @@
 - name: Logging
   href: Logging.md
+- name: Access Control
+  href: AccessControl.md
 - name: Lobby Options
   href: LobbyOptions.md
 - name: Login Options

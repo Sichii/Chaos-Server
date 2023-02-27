@@ -121,6 +121,8 @@ If this reactor was created through a script, you must specify the owner in the 
     public decimal? DamageStatMultiplier { get; init; }
     public decimal? PctHpDamage { get; init; }
     public IScript SourceScript { get; init; }
+    /// <inheritdoc />
+    public Element? Element { get; init; }
     public int? DurationSecs { get; init; }
     public int? MaxTriggers { get; init; }
     public string? EffectKey { get; init; }

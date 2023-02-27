@@ -1,3 +1,4 @@
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Services.Factories.Abstractions;
 
@@ -9,7 +10,7 @@ public class ShowDialogComponent
 
     public ShowDialogComponent(IDialogFactory dialogFactory) => DialogFactory = dialogFactory;
 
-    public virtual void ShowDialog(Aisling aisling, object source, IShowDialogComponentOptions options)
+    public virtual void ShowDialog(Aisling aisling, IDialogSourceEntity source, IShowDialogComponentOptions options)
     {
         var dialog = DialogFactory.Create(options.DialogKey, source);
         dialog.Display(aisling);

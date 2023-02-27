@@ -1,3 +1,4 @@
+using Chaos.Common.Definitions;
 using Chaos.Formulae.Abstractions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -12,7 +13,8 @@ public interface IApplyDamageScript : IFunctionalScript
         Creature attacker,
         Creature defender,
         IScript source,
-        int damage
+        int damage,
+        Element? elementOverride = null
     );
 
     static virtual IApplyDamageScript Create() => null!;

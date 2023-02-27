@@ -1,9 +1,11 @@
+using Chaos.Security.Abstractions;
+
 namespace Chaos.Security.Definitions;
 
 /// <summary>
-///     The mode in which that the <see cref="Chaos.Security.Abstractions.IIpManager" /> operates
+///     The mode in which that the <see cref="IAccessManager" /> operates
 /// </summary>
-public enum IpManagerMode
+public enum IpAccessMode
 {
     /// <summary>
     ///     Allows all connections except those that are blacklisted

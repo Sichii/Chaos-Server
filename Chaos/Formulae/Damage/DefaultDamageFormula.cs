@@ -62,7 +62,8 @@ public class DefaultDamageFormula : IDamageFormula
         Creature attacker,
         Creature defender,
         IScript source,
-        int damage
+        int damage,
+        Element? elementOverride = null
     )
     {
         ApplySkillSpellModifier(ref damage, source, attacker);
@@ -70,7 +71,7 @@ public class DefaultDamageFormula : IDamageFormula
         var defenderAc = GetDefenderAc(defender);
 
         ApplyAcModifier(ref damage, defenderAc);
-        ApplyElementalModifier(ref damage, attacker.StatSheet.OffenseElement, defender.StatSheet.DefenseElement);
+        ApplyElementalModifier(ref damage, elementOverride ?? attacker.StatSheet.OffenseElement, defender.StatSheet.DefenseElement);
 
         return damage;
     }

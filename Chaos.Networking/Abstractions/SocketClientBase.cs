@@ -26,6 +26,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     public event EventHandler? OnDisconnected;
     public uint Id { get; }
     public FifoSemaphoreSlim ReceiveSync { get; }
+    /// <inheritdoc />
+    public IPAddress? RemoteIp { get; }
     public Socket Socket { get; }
     protected ILogger<SocketClientBase> Logger { get; }
     protected IPacketSerializer PacketSerializer { get; }
@@ -40,6 +42,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Id = ClientId.NextId;
         ReceiveSync = new FifoSemaphoreSlim(1, 1);
         Socket = socket;
+        RemoteIp = (socket.RemoteEndPoint as IPEndPoint)?.Address;
         CryptoClient = cryptoClient;
         Buffer = new byte[short.MaxValue];
         MemoryBuffer = new Memory<byte>(Buffer);

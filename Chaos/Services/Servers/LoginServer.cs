@@ -28,10 +28,10 @@ namespace Chaos.Services.Servers;
 
 public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginClient>
 {
+    private readonly IAccessManager AccessManager;
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientFactory<ILoginClient> ClientFactory;
     private readonly ICredentialManager CredentialManager;
-    private readonly IIpManager IpManager;
     private readonly IMetaDataCache MetaDataCache;
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
@@ -49,7 +49,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         IOptions<LoginOptions> options,
         ILogger<LoginServer> logger,
         IMetaDataCache metaDataCache,
-        IIpManager ipManager
+        IAccessManager accessManager
     )
         : base(
             redirectManager,
@@ -64,7 +64,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         CredentialManager = credentialManager;
         CacheProvider = cacheProvider;
         MetaDataCache = metaDataCache;
-        IpManager = ipManager;
+        AccessManager = accessManager;
         Notice = new Notice(options.Value.NoticeMessage);
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
 
@@ -312,7 +312,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         var ipAddress = ((IPEndPoint)clientSocket.RemoteEndPoint!).Address;
 
-        if (!await IpManager.ShouldAllowAsync(ipAddress))
+        if (!await AccessManager.ShouldAllowAsync(ipAddress))
         {
             Logger.LogDebug("Rejected connection from {IpAddress}", ipAddress);
 

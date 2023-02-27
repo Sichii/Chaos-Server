@@ -1,3 +1,4 @@
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Menu;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
@@ -21,7 +22,7 @@ public sealed class DialogFactory : IDialogFactory
     }
 
     /// <inheritdoc />
-    public Dialog Create(string templateKey, object source, ICollection<string>? extraScriptKeys = null)
+    public Dialog Create(string templateKey, IDialogSourceEntity source, ICollection<string>? extraScriptKeys = null)
     {
         var template = SimpleCache.Get<DialogTemplate>(templateKey);
 

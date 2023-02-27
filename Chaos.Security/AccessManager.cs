@@ -6,13 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Security;
 
-public sealed class IpManager : IIpManager
+public sealed class AccessManager : IAccessManager
 {
     private readonly string BlacklistPath;
-    private readonly IpManagerOptions Options;
+    private readonly AccessManagerOptions Options;
     private readonly string WhitelistPath;
 
-    public IpManager(IOptionsSnapshot<IpManagerOptions> options)
+    public AccessManager(IOptionsSnapshot<AccessManagerOptions> options)
     {
         Options = options.Value;
         BlacklistPath = Path.Combine(Options.Directory, "blacklist.txt");
@@ -43,8 +43,8 @@ public sealed class IpManager : IIpManager
     /// <inheritdoc />
     public async Task<bool> ShouldAllowAsync(IPAddress ipAddress) => Options.Mode switch
     {
-        IpManagerMode.Blacklist => !await IsBlacklisted(ipAddress),
-        IpManagerMode.Whitelist => await IsWhitelisted(ipAddress),
-        _                       => throw new ArgumentOutOfRangeException()
+        IpAccessMode.Blacklist => !await IsBlacklisted(ipAddress),
+        IpAccessMode.Whitelist => await IsWhitelisted(ipAddress),
+        _                      => throw new ArgumentOutOfRangeException()
     };
 }

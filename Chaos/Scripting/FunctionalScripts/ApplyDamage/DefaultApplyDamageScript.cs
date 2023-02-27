@@ -19,14 +19,16 @@ public class DefaultApplyDamageScript : ScriptBase, IApplyDamageScript
         Creature attacker,
         Creature defender,
         IScript source,
-        int damage
+        int damage,
+        Element? elementOverride = null
     )
     {
         damage = DamageFormula.Calculate(
             attacker,
             defender,
             source,
-            damage);
+            damage,
+            elementOverride);
 
         if (damage <= 0)
             return;

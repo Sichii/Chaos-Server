@@ -11,6 +11,7 @@ using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
@@ -29,7 +30,7 @@ using PointExtensions = Chaos.Extensions.Geometry.PointExtensions;
 
 namespace Chaos.Objects.World;
 
-public sealed class Aisling : Creature, IScripted<IAislingScript>
+public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSourceEntity
 {
     private readonly IExchangeFactory ExchangeFactory;
     private readonly ICloningService<Item> ItemCloner;
@@ -106,6 +107,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>
     public override StatSheet StatSheet => UserStatSheet;
     public override CreatureType Type => CreatureType.Aisling;
     public ResettingCounter WalkCounter { get; }
+
+    /// <inheritdoc />
+    DisplayColor IDialogSourceEntity.Color => DisplayColor.Default;
+
+    /// <inheritdoc />
+    EntityType IDialogSourceEntity.EntityType => EntityType.Aisling;
 
     public Aisling(
         string name,

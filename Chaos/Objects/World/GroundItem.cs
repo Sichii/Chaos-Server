@@ -1,15 +1,23 @@
+using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Geometry.Abstractions;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Objects.World;
 
-public sealed class GroundItem : GroundEntity
+public sealed class GroundItem : GroundEntity, IDialogSourceEntity
 {
     public Item Item { get; set; }
+
+    /// <inheritdoc />
+    DisplayColor IDialogSourceEntity.Color => Item.Color;
+
+    /// <inheritdoc />
+    EntityType IDialogSourceEntity.EntityType => EntityType.Item;
 
     public GroundItem(Item item, MapInstance mapInstance, IPoint point)
         : base(

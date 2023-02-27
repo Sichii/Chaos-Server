@@ -1,9 +1,8 @@
-using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using Chaos.Clients;
+using Chaos.Clients.Abstractions;
 using Chaos.CommandInterceptor;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Utilities;
@@ -128,20 +127,20 @@ public class Startup
                   .SetupSerialization(
                       builder =>
                       {
-                          builder.RegisterObjectTransformation<SocketClientBase>(
+                          builder.RegisterObjectTransformation<ISocketClient>(
                               client => new
                               {
-                                  IpAddress = ((IPEndPoint)client.Socket.RemoteEndPoint!).Address
+                                  IpAddress = client.RemoteIp
                               });
 
-                          builder.RegisterObjectTransformation<WorldClient>(
+                          builder.RegisterObjectTransformation<IWorldClient>(
                               client => new
                               {
-                                  IpAddress = ((IPEndPoint)client.Socket.RemoteEndPoint!).Address,
+                                  IpAddress = client.RemoteIp,
                                   Aisling = client.Aisling != null!
                                       ? new
                                       {
-                                          Type = client.Aisling.GetType().Name,
+                                          Type = nameof(Aisling),
                                           Id = client.Aisling.Id,
                                           Location = ILocation.ToString(client.Aisling),
                                           Name = client.Aisling.Name
@@ -198,10 +197,11 @@ public class Startup
                           builder.RegisterObjectTransformation<Aisling>(
                               obj => new
                               {
-                                  IpAddress = obj.Client != null! ? ((IPEndPoint)obj.Client.Socket.RemoteEndPoint!).Address : null,
+                                  // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                                  IpAddress = obj.Client?.RemoteIp,
                                   Aisling = new
                                   {
-                                      Type = obj.GetType().Name,
+                                      Type = nameof(Aisling),
                                       Id = obj.Id,
                                       Location = ILocation.ToString(obj),
                                       Name = obj.Name
@@ -211,7 +211,7 @@ public class Startup
                           builder.RegisterObjectTransformation<Monster>(
                               obj => new
                               {
-                                  Type = obj.GetType().Name,
+                                  Type = nameof(Monster),
                                   Id = obj.Id,
                                   Location = ILocation.ToString(obj),
                                   Name = obj.Name,
@@ -221,7 +221,7 @@ public class Startup
                           builder.RegisterObjectTransformation<Merchant>(
                               obj => new
                               {
-                                  Type = obj.GetType().Name,
+                                  Type = nameof(Merchant),
                                   Id = obj.Id,
                                   Location = ILocation.ToString(obj),
                                   Name = obj.Name,
@@ -231,7 +231,7 @@ public class Startup
                           builder.RegisterObjectTransformation<GroundItem>(
                               obj => new
                               {
-                                  Type = obj.GetType().Name,
+                                  Type = nameof(GroundItem),
                                   Id = obj.Id,
                                   Creation = obj.Creation,
                                   Location = ILocation.ToString(obj),
@@ -241,7 +241,7 @@ public class Startup
                           builder.RegisterObjectTransformation<Money>(
                               obj => new
                               {
-                                  Type = obj.GetType().Name,
+                                  Type = nameof(Money),
                                   Id = obj.Id,
                                   Creation = obj.Creation,
                                   Location = ILocation.ToString(obj),

@@ -38,5 +38,6 @@ public class DamageScript : BasicSpellScriptBase, DamageComponent.IDamageCompone
     public decimal? DamageStatMultiplier { get; init; }
     public decimal? PctHpDamage { get; init; }
     public IScript SourceScript { get; init; }
+    public Element? Element { get; init; }
     #endregion
 }

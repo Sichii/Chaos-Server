@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using Chaos.Common.Synchronization;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Packets;
@@ -34,6 +36,15 @@ public interface ISocketClient
     ///     A semaphoreslim that obeys FIFO rules
     /// </summary>
     FifoSemaphoreSlim ReceiveSync { get; }
+
+    /// <summary>
+    ///     The remote endpoint of the client
+    /// </summary>
+    IPAddress? RemoteIp { get; }
+    /// <summary>
+    ///     The socket that the client is connected to
+    /// </summary>
+    Socket Socket { get; }
 
     /// <summary>
     ///     Begins an operation that receives data from the socket

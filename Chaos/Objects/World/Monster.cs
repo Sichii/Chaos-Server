@@ -5,6 +5,7 @@ using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -16,7 +17,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Objects.World;
 
-public sealed class Monster : Creature, IScripted<IMonsterScript>
+public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSourceEntity
 {
     public int AggroRange { get; set; }
     public int Experience { get; set; }
@@ -42,6 +43,12 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>
     public MonsterTemplate Template { get; }
     public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
+
+    /// <inheritdoc />
+    DisplayColor IDialogSourceEntity.Color => DisplayColor.Default;
+
+    /// <inheritdoc />
+    EntityType IDialogSourceEntity.EntityType => EntityType.Creature;
 
     public Monster(
         MonsterTemplate template,

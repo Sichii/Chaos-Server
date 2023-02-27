@@ -1,21 +1,9 @@
-using Chaos.Common.Definitions;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Utilities;
 
 public static class Helpers
 {
-    public static EntityType? GetEntityType(object obj) =>
-        obj switch
-        {
-            Monster or Merchant => EntityType.Creature,
-            GroundItem or Item  => EntityType.Item,
-            Aisling             => EntityType.Aisling,
-            _                   => null
-        };
-
     public static void HandleApproach(Creature creature1, Creature creature2)
     {
         if (creature1.Equals(creature2))

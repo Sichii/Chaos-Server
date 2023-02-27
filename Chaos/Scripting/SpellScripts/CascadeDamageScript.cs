@@ -53,6 +53,7 @@ public class CascadeDamageScript : ConfigurableSpellScriptBase, CascadeAbilityCo
     public decimal? DamageStatMultiplier { get; init; }
     public decimal? PctHpDamage { get; init; }
     public IScript SourceScript { get; init; }
+    public Element? Element { get; init; }
     public string? EffectKey { get; init; }
     #endregion
 }

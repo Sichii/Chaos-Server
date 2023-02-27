@@ -33,7 +33,8 @@ public class DamageComponent
                 context.Source,
                 target,
                 options.SourceScript,
-                damage);
+                damage,
+                options.Element);
     }
 
     protected virtual int CalculateDamage(
@@ -70,6 +71,7 @@ public class DamageComponent
         int? BaseDamage { get; init; }
         Stat? DamageStat { get; init; }
         decimal? DamageStatMultiplier { get; init; }
+        Element? Element { get; init; }
         decimal? PctHpDamage { get; init; }
         IScript SourceScript { get; init; }
     }

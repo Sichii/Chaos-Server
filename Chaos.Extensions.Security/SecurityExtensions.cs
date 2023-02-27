@@ -32,9 +32,9 @@ public static class SecurityExtensions
                         o.ValidFormatRegex = new Regex(o.ValidFormatPattern, RegexOptions.Compiled);
                     });
 
-        services.AddDirectoryBoundOptionsFromConfig<IpManagerOptions>(subSection);
+        services.AddDirectoryBoundOptionsFromConfig<AccessManagerOptions>(subSection);
 
         services.AddSingleton<ICredentialManager, SimpleCredentialManager>();
-        services.AddSingleton<IIpManager, IpManager>();
+        services.AddSingleton<IAccessManager, AccessManager>();
     }
 }

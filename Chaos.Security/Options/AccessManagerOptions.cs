@@ -3,7 +3,7 @@ using Chaos.Security.Definitions;
 
 namespace Chaos.Security.Options;
 
-public class IpManagerOptions : IDirectoryBound
+public sealed class AccessManagerOptions : IDirectoryBound
 {
     /// <summary>
     ///     The relative directory where the IP manager will store its files
@@ -12,7 +12,7 @@ public class IpManagerOptions : IDirectoryBound
     /// <summary>
     ///     The mode in which that the ip manager operates
     /// </summary>
-    public IpManagerMode Mode { get; set; }
+    public IpAccessMode Mode { get; set; }
 
     /// <inheritdoc />
     public void UseBaseDirectory(string baseDirectory) => Directory = Path.Combine(baseDirectory, Directory);

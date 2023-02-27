@@ -9,9 +9,9 @@ public sealed class CounterTracker : IEnumerable<KeyValuePair<string, int>>
             enumerable ?? Array.Empty<KeyValuePair<string, int>>(),
             StringComparer.OrdinalIgnoreCase);
 
-    public void AddOrIncrement(string key) => Counters.AddOrUpdate(key, 1, (_, count) => count + 1);
+    public int AddOrIncrement(string key) => Counters.AddOrUpdate(key, 1, (_, count) => count + 1);
 
-    public void AddOrIncrement(string key, int value) => Counters.AddOrUpdate(key, value, (_, count) => count + value);
+    public int AddOrIncrement(string key, int value) => Counters.AddOrUpdate(key, value, (_, count) => count + value);
 
     public bool ContainsKey(string key) => Counters.ContainsKey(key);
 

@@ -2,6 +2,7 @@ using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Extensions.Common;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
@@ -21,7 +22,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     public string? PrevDialogKey { get; set; }
     public List<Skill> Skills { get; set; }
     public List<byte>? Slots { get; set; }
-    public object SourceEntity { get; set; }
+    public IDialogSourceEntity SourceEntity { get; set; }
     public List<Spell> Spells { get; set; }
     public DialogTemplate Template { get; set; }
     public string Text { get; set; }
@@ -32,7 +33,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
 
-    private Dialog(DialogTemplate template, object sourceEntity)
+    private Dialog(DialogTemplate template, IDialogSourceEntity sourceEntity)
     {
         DialogFactory = null!;
         Template = template;
@@ -54,7 +55,7 @@ public sealed record Dialog : IScripted<IDialogScript>
 
     public Dialog(
         DialogTemplate template,
-        object sourceEntity,
+        IDialogSourceEntity sourceEntity,
         IScriptProvider scriptProvider,
         IDialogFactory dialogFactory,
         ICollection<string>? extraScriptKeys = null

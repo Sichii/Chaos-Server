@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Extensions.Common;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Panel.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
@@ -13,7 +14,7 @@ namespace Chaos.Objects.Panel;
 /// <summary>
 ///     An object that exists within the inventory. This itemcan also be dropped to create a <see cref="Chaos.Objects.World.GroundItem" />
 /// </summary>
-public sealed class Item : PanelObjectBase, IScripted<IItemScript>
+public sealed class Item : PanelObjectBase, IScripted<IItemScript>, IDialogSourceEntity
 {
     public DisplayColor Color { get; set; }
     public int Count { get; set; }
@@ -25,6 +26,14 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>
     public int Weight { get; set; }
     public IItemScript Script { get; }
     public override ItemTemplate Template { get; }
+    /// <inheritdoc />
+    EntityType IDialogSourceEntity.EntityType => EntityType.Item;
+
+    /// <inheritdoc />
+    string IDialogSourceEntity.Name => DisplayName;
+
+    /// <inheritdoc />
+    ushort IDialogSourceEntity.Sprite => ItemSprite.OffsetPanelSprite;
 
     public Item(
         ItemTemplate template,

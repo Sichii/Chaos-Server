@@ -1,3 +1,4 @@
+using Chaos.Common.Definitions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 
@@ -9,6 +10,7 @@ public interface IDamageFormula
         Creature attacker,
         Creature defender,
         IScript source,
-        int damage
+        int damage,
+        Element? elementOverride = null
     );
 }
