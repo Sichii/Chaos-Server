@@ -29,7 +29,7 @@ public static class CommandInterceptorExtensions
             AdminPredicate = isAdminPredicate
         };
 
-        services.AddSingleton<ICommandInterceptor<T>, CommandHandler<T>>(
-            p => ActivatorUtilities.CreateInstance<CommandHandler<T>>(p, config));
+        services.AddSingleton(config);
+        services.AddSingleton<ICommandInterceptor<T>, CommandHandler<T>>();
     }
 }

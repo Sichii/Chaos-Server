@@ -37,7 +37,8 @@ public sealed class ArgumentCollection : IEnumerable<string>
             if (!match.Success)
                 continue;
 
-            Arguments.Add(match.Groups[1].Value);
+            var grp = match.Groups[1].Value;
+            Arguments.Add(!string.IsNullOrEmpty(grp) ? grp : match.Groups[2].Value);
         }
     }
 
