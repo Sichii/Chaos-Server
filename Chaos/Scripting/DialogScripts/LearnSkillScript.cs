@@ -121,7 +121,7 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
                 var requiredAdvClass = skill.Template.AdvClass;
 
                 //if this skill is not available to the player's class, skip it
-                if (requiredBaseClass.HasValue && !requiredBaseClass.Value.ContainsClass(source.UserStatSheet.BaseClass))
+                if (requiredBaseClass.HasValue && !source.HasClass(requiredBaseClass.Value))
                     continue;
 
                 //if this skill is not available to the player's adv class, skip it
@@ -162,7 +162,7 @@ public class LearnSkillScript : ConfigurableDialogScriptBase
         if (requirements == null)
             return true;
 
-        if (template.Class.HasValue && !template.Class.Value.ContainsClass(source.UserStatSheet.BaseClass))
+        if (template.Class.HasValue && !source.HasClass(template.Class.Value))
         {
             dialog.Reply(source, "Heh, nice try kid...");
             Logger.LogWarning("{@Client} tried to learn {@Skill} but is not the correct class", source.Client, template.Name);

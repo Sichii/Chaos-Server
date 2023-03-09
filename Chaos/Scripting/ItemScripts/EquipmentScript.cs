@@ -1,5 +1,4 @@
 using Chaos.Common.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.ItemScripts.Abstractions;
@@ -37,7 +36,7 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
-        if (template.Class.HasValue && !template.Class.Value.ContainsClass(source.UserStatSheet.BaseClass))
+        if (template.Class.HasValue && !source.HasClass(template.Class.Value))
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 

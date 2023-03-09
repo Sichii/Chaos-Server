@@ -1,12 +1,17 @@
+using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
 using Chaos.Collections.Time;
 
 namespace Chaos.Schemas.Aisling;
 
-public class TrackersSchema
+public sealed class TrackersSchema
 {
-    public CounterCollection Counters { get; set; }
-    public EnumCollection Enums { get; set; }
-    public FlagCollection Flags { get; set; }
-    public TimedEventCollection TimedEvents { get; set; }
+    [JsonRequired]
+    public CounterCollection Counters { get; set; } = null!;
+    [JsonRequired]
+    public EnumCollection Enums { get; set; } = null!;
+    [JsonRequired]
+    public FlagCollection Flags { get; set; } = null!;
+    [JsonRequired]
+    public TimedEventCollection TimedEvents { get; set; } = null!;
 }
