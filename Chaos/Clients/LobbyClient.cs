@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Cryptography.Abstractions;
+using Chaos.Extensions.Networking;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
@@ -17,14 +18,14 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
     public LobbyClient(
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,
-        ICryptoClient cryptoClient,
+        ICrypto crypto,
         ILobbyServer<ILobbyClient> server,
         IPacketSerializer packetSerializer,
         ILogger<LobbyClient> logger
     )
         : base(
             socket,
-            cryptoClient,
+            crypto,
             packetSerializer,
             logger)
     {
@@ -36,11 +37,11 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
         var packet = new ClientPacket(ref span, isEncrypted);
 
         if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
+            Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
             Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
@@ -52,8 +53,8 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
     {
         var args = new ConnectionInfoArgs
         {
-            Key = CryptoClient.Key,
-            Seed = CryptoClient.Seed,
+            Key = Crypto.Key,
+            Seed = Crypto.Seed,
             TableCheckSum = serverTableCheckSum
         };
 

@@ -1,7 +1,8 @@
 using Chaos.Geometry.Abstractions;
 using Chaos.IO.Memory;
 
-namespace Chaos.Networking.Extensions;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Extensions.Networking;
 
 internal static class SpanWriterExtensions
 {

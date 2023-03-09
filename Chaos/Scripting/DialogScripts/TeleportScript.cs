@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Collections.Common;
 using Chaos.Containers;
 using Chaos.Objects.Menu;
 using Chaos.Objects.World;
@@ -20,16 +20,16 @@ public class TeleportScript : DialogScriptBase
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        if (!Subject.MenuArgs.TryGet<string>(0, out var locationString))
+        if (!Subject.MenuArgs.TryGetNext<string>(out var locationString))
         {
             Subject.Reply(source, DialogString.UnknownInput.Value);
 
             return;
         }
 
-        var args = new ArgumentCollection(locationString, " ");
+        var args = new ArgumentCollection(locationString);
 
-        if (!args.TryGet<string>(0, out var mapInstanceId))
+        if (!args.TryGetNext<string>(out var mapInstanceId))
         {
             Subject.Reply(source, DialogString.UnknownInput.Value);
 

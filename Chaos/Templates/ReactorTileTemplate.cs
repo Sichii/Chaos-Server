@@ -12,7 +12,7 @@ public sealed class ReactorTileTemplate : ITemplate, IScripted
     public required IDictionary<string, IScriptVars> ScriptVars { get; init; } =
         new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
 
-    public bool ShouldBlockPathfinding { get; init; } = false;
+    public required bool ShouldBlockPathfinding { get; init; }
     /// <inheritdoc />
     public required string TemplateKey { get; init; }
 }

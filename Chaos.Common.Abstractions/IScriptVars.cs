@@ -5,17 +5,6 @@ namespace Chaos.Common.Abstractions;
 /// </summary>
 public interface IScriptVars
 {
-    /*
-     * public abstract bool ContainsKey(string key)
-in class IScriptVars
-Determines whether the Dictionary<TKey,TValue> contains the specified key.
-Params:
-key – The key to locate in the Dictionary<TKey,TValue>.
-Returns:
-true if the Dictionary<TKey,TValue> contains an element with the specified key; otherwise, false.
-Exceptions:
-ArgumentNullException – key is null.
-     */
     /// <summary>
     ///     Determines whether the IScriptVars contains the specified key.
     /// </summary>

@@ -9,6 +9,7 @@ namespace Chaos.IO.Memory;
 public ref struct SpanWriter
 {
     private readonly bool AutoGrow;
+    private readonly bool IsLittleEndian;
     private Span<byte> Buffer;
     public int Position { get; set; }
     public Encoding Encoding { get; }
@@ -37,6 +38,7 @@ public ref struct SpanWriter
         Position = 0;
         AutoGrow = autoGrow;
         Endianness = endianness;
+        IsLittleEndian = Endianness == Endianness.LittleEndian;
     }
 
     public void Flush() => Buffer = Buffer[..Position];
@@ -146,7 +148,7 @@ public ref struct SpanWriter
     {
         GrowIfNeeded(sizeof(short));
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             value = BinaryPrimitives.ReverseEndianness(value);
 
         MemoryMarshal.Write(Buffer[Position..], ref value);
@@ -157,7 +159,7 @@ public ref struct SpanWriter
     {
         GrowIfNeeded(sizeof(int));
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             value = BinaryPrimitives.ReverseEndianness(value);
 
         MemoryMarshal.Write(Buffer[Position..], ref value);
@@ -217,7 +219,7 @@ public ref struct SpanWriter
     {
         GrowIfNeeded(sizeof(ushort));
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             value = BinaryPrimitives.ReverseEndianness(value);
 
         MemoryMarshal.Write(Buffer[Position..], ref value);
@@ -228,7 +230,7 @@ public ref struct SpanWriter
     {
         GrowIfNeeded(sizeof(uint));
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             value = BinaryPrimitives.ReverseEndianness(value);
 
         MemoryMarshal.Write(Buffer[Position..], ref value);

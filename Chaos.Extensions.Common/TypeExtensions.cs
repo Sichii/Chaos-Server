@@ -1,3 +1,6 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -65,6 +68,7 @@ public static class TypeExtensions
     /// <summary>
     ///     Determines whether a type inherits from an interface
     /// </summary>
+    /// <returns><c>true</c> if the type implements the interface, otherwise <c>false</c></returns>
     public static bool HasInterface(this Type type, Type interfaceType)
     {
         foreach (var iType in type.GetInterfaces())
@@ -77,6 +81,13 @@ public static class TypeExtensions
 
         return false;
     }
+
+    /// <summary>
+    ///     Determines if a type is a compiler generated type.
+    /// </summary>
+    /// <returns><c>true</c> if the type is compiler generated, otherwise <c>false</c></returns>
+    public static bool IsCompilerGenerated(this Type type) =>
+        type.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
 
     /// <summary>
     ///     Returns all constructable types that inherit from the specified type.

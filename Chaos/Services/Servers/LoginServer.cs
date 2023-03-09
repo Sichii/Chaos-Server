@@ -30,7 +30,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 {
     private readonly IAccessManager AccessManager;
     private readonly ISimpleCacheProvider CacheProvider;
-    private readonly IClientFactory<ILoginClient> ClientFactory;
+    private readonly IClientProvider ClientProvider;
     private readonly ICredentialManager CredentialManager;
     private readonly IMetaDataCache MetaDataCache;
     private readonly Notice Notice;
@@ -41,7 +41,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     public LoginServer(
         ISaveManager<Aisling> userSaveManager,
         IClientRegistry<ILoginClient> clientRegistry,
-        IClientFactory<ILoginClient> clientFactory,
+        IClientProvider clientProvider,
         ICredentialManager credentialManager,
         ISimpleCacheProvider cacheProvider,
         IRedirectManager redirectManager,
@@ -60,7 +60,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         Options = options.Value;
         UserSaveManager = userSaveManager;
-        ClientFactory = clientFactory;
+        ClientProvider = clientProvider;
         CredentialManager = credentialManager;
         CacheProvider = cacheProvider;
         MetaDataCache = metaDataCache;
@@ -82,12 +82,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         if (reserved != null)
         {
             Logger.LogDebug("Received external {@Redirect}", reserved);
-            client.CryptoClient = new CryptoClient(args.Seed, args.Key, string.Empty);
+            client.Crypto = new Crypto(args.Seed, args.Key, string.Empty);
             client.SendLoginNotice(false, Notice);
         } else if (RedirectManager.TryGetRemove(args.Id, out var redirect))
         {
             Logger.LogDebug("Received internal {@Redirect}", redirect);
-            client.CryptoClient = new CryptoClient(args.Seed, args.Key, args.Name);
+            client.Crypto = new Crypto(args.Seed, args.Key, args.Name);
             client.SendLoginNotice(false, Notice);
         } else
         {
@@ -214,8 +214,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             ClientId.NextId,
             Options.WorldRedirect,
             ServerType.World,
-            client.CryptoClient.Key,
-            client.CryptoClient.Seed,
+            client.Crypto.Key,
+            client.Crypto.Seed,
             name);
 
         Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.WorldRedirect);
@@ -319,7 +319,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             return;
         }
 
-        var client = ClientFactory.CreateClient(clientSocket);
+        var client = ClientProvider.CreateClient<ILoginClient>(clientSocket);
 
         Logger.LogDebug("Connection established with {@Client}", client);
 

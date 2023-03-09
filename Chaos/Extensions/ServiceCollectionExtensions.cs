@@ -124,7 +124,7 @@ public static class ServiceCollectionExtensions
     public static void AddStorage(this IServiceCollection services)
     {
         services.AddDirectoryBoundOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddTransient<ISaveManager<Aisling>, UserSaveManager>();
+        services.AddSingleton<ISaveManager<Aisling>, UserSaveManager>();
 
         services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCache<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
@@ -176,8 +176,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IDialogFactory, DialogFactory>();
         services.AddSingleton<IEffectFactory, EffectFactory>();
         services.AddTransient<IExchangeFactory, ExchangeFactory>();
-
-        services.AddTransient<IPanelObjectFactoryProvider, PanelObjectFactoryProvider>();
+        services.AddTransient<IClientProvider, ClientProvider>();
     }
 
     public static void AddWorldServer(this IServiceCollection services)

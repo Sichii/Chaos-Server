@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
+using Chaos.Extensions.Networking;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
@@ -19,14 +20,14 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
     public LoginClient(
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,
-        ICryptoClient cryptoClient,
+        ICrypto crypto,
         ILoginServer<ILoginClient> server,
         IPacketSerializer packetSerializer,
         ILogger<LoginClient> logger
     )
         : base(
             socket,
-            cryptoClient,
+            crypto,
             packetSerializer,
             logger)
     {
@@ -38,11 +39,11 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
         var packet = new ClientPacket(ref span, isEncrypted);
 
         if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
+            Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
             Logger.LogTrace("[Rcv] {Packet}", packet.ToString());

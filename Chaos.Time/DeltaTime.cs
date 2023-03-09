@@ -9,6 +9,9 @@ public sealed class DeltaTime
 {
     private long LastTimeStamp;
 
+    /// <summary>
+    ///     Gets the time elapsed since the last call to <see cref="GetDelta" />
+    /// </summary>
     public TimeSpan GetDelta
     {
         get

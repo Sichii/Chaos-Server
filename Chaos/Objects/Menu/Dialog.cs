@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Extensions.Common;

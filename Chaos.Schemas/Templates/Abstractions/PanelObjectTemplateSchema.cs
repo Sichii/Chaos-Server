@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Chaos.Common.Collections;
+using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
 
 namespace Chaos.Schemas.Templates.Abstractions;

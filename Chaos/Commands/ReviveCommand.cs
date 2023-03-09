@@ -1,8 +1,8 @@
 using Chaos.Clients.Abstractions;
+using Chaos.Collections.Common;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Collections;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Objects.World;

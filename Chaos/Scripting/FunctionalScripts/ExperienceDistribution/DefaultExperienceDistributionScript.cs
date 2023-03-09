@@ -47,9 +47,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         if (amount + aisling.UserStatSheet.TotalExp > uint.MaxValue)
             amount = uint.MaxValue - aisling.UserStatSheet.TotalExp;
 
-        //if you're at max level, you don't gain exp
-        //feel free to put a message here if you want
-        if ((amount <= 0) || (aisling.UserStatSheet.Level >= WorldOptions.Instance.MaxLevel))
+        if (amount <= 0)
             return;
 
         aisling.SendActiveMessage($"You have gained {amount} experience!");
@@ -57,17 +55,21 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
 
         while (amount > 0)
         {
-            var expToGive = Math.Min(amount, aisling.UserStatSheet.ToNextLevel);
-            aisling.UserStatSheet.AddTotalExp(expToGive);
-            aisling.UserStatSheet.SubtractTnl(expToGive);
-
-            amount -= expToGive;
-
-            if (aisling.UserStatSheet.ToNextLevel <= 0)
-                LevelUpScript.LevelUp(aisling);
-
             if (aisling.UserStatSheet.Level >= WorldOptions.Instance.MaxLevel)
-                break;
+            {
+                aisling.UserStatSheet.AddTotalExp(amount);
+                amount = 0;
+            } else
+            {
+                var expToGive = Math.Min(amount, aisling.UserStatSheet.ToNextLevel);
+                aisling.UserStatSheet.AddTotalExp(expToGive);
+                aisling.UserStatSheet.SubtractTnl(expToGive);
+
+                amount -= expToGive;
+
+                if (aisling.UserStatSheet.ToNextLevel <= 0)
+                    LevelUpScript.LevelUp(aisling);
+            }
         }
 
         aisling.Client.SendAttributes(StatUpdateType.ExpGold);

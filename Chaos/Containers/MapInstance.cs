@@ -487,9 +487,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             (var aislings, var doors, var otherVisibles) = Objects.WithinRange<VisibleEntity>(point)
                                                                   .PartitionBySendType();
 
-            foreach (var otherCreature in otherVisibles.OfType<Creature>())
-                Helpers.HandleApproach(aisling, otherCreature);
-
             aisling.Client.SendMapChangePending();
             aisling.Client.SendMapInfo();
             aisling.Client.SendLocation();
@@ -512,6 +509,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             aisling.Client.SendSound(Music, true);
             aisling.Client.SendMapLoadComplete();
             aisling.Client.SendDisplayAisling(aisling);
+
+            foreach (var otherCreature in otherVisibles.OfType<Creature>())
+                Helpers.HandleApproach(aisling, otherCreature);
         } else
         {
             //fast path for non creatures
@@ -529,10 +529,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (nearbyCreature.Equals(creature))
                     continue;
 
-                Helpers.HandleApproach(creature, nearbyCreature);
-
                 if (nearbyCreature is Aisling nearbyAisling && creature.IsVisibleTo(nearbyCreature))
                     nearbyAisling.Client.SendVisibleObjects(visibleEntity);
+
+                Helpers.HandleApproach(creature, nearbyCreature);
             }
         }
     }

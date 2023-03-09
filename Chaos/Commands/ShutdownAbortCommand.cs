@@ -1,6 +1,6 @@
+using Chaos.Collections.Common;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
-using Chaos.Common.Collections;
 using Chaos.Objects.World;
 using Chaos.Utilities;
 

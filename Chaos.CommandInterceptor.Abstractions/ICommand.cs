@@ -1,4 +1,4 @@
-using Chaos.Common.Collections;
+using Chaos.Collections.Common;
 
 namespace Chaos.CommandInterceptor.Abstractions;
 

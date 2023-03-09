@@ -8,6 +8,7 @@ namespace Chaos.Geometry;
 [JsonConverter(typeof(PolygonConverter))]
 public sealed class Polygon : IPolygon, IEquatable<IPolygon>
 {
+    /// <inheritdoc />
     public IReadOnlyList<IPoint> Vertices { get; init; }
 
     public Polygon(IEnumerable<IPoint> vertices) => Vertices = vertices.ToList();

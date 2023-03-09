@@ -1,10 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Chaos.Common.Collections;
+using Chaos.Collections.Common;
+using Chaos.Collections.Time;
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Definitions;
-using Chaos.Geometry.Abstractions;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
@@ -52,20 +52,23 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(SpellSchema))]
 [JsonSerializable(typeof(StatSheetSchema))]
 [JsonSerializable(typeof(StatsSchema))]
-[JsonSerializable(typeof(TimedEventCollectionSchema))]
-[JsonSerializable(typeof(TimedEventSchema))]
 [JsonSerializable(typeof(UserOptionsSchema))]
 [JsonSerializable(typeof(UserStatSheetSchema))]
+[JsonSerializable(typeof(TrackersSchema))]
 [JsonSerializable(typeof(EnumCollection))]
 [JsonSerializable(typeof(FlagCollection))]
+[JsonSerializable(typeof(CounterCollection))]
+[JsonSerializable(typeof(TimedEventCollection))]
 [JsonSerializable(typeof(EventMetaSchema))]
 [JsonSerializable(typeof(MundaneIllustrationMetaSchema))]
+[JsonSerializable(typeof(Animation))]
+[JsonSerializable(typeof(TimedEventCollection.Event))]
+//collections
 [JsonSerializable(typeof(List<ItemSchema>))]
 [JsonSerializable(typeof(List<SkillSchema>))]
 [JsonSerializable(typeof(List<SpellSchema>))]
 [JsonSerializable(typeof(List<EffectSchema>))]
 [JsonSerializable(typeof(List<LegendMarkSchema>))]
-[JsonSerializable(typeof(List<TimedEventSchema>))]
 [JsonSerializable(typeof(List<MonsterSpawnSchema>))]
 [JsonSerializable(typeof(List<MerchantSpawnSchema>))]
 [JsonSerializable(typeof(List<ReactorTileSchema>))]
@@ -76,7 +79,6 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(ICollection<SpellSchema>))]
 [JsonSerializable(typeof(ICollection<EffectSchema>))]
 [JsonSerializable(typeof(ICollection<LegendMarkSchema>))]
-[JsonSerializable(typeof(ICollection<TimedEventSchema>))]
 [JsonSerializable(typeof(ICollection<MonsterSpawnSchema>))]
 [JsonSerializable(typeof(ICollection<MerchantSpawnSchema>))]
 [JsonSerializable(typeof(ICollection<ReactorTileSchema>))]
@@ -87,7 +89,6 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(IEnumerable<SpellSchema>))]
 [JsonSerializable(typeof(IEnumerable<EffectSchema>))]
 [JsonSerializable(typeof(IEnumerable<LegendMarkSchema>))]
-[JsonSerializable(typeof(IEnumerable<TimedEventSchema>))]
 [JsonSerializable(typeof(IEnumerable<MonsterSpawnSchema>))]
 [JsonSerializable(typeof(IEnumerable<MerchantSpawnSchema>))]
 [JsonSerializable(typeof(IEnumerable<ReactorTileSchema>))]
@@ -95,10 +96,10 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(IEnumerable<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(Dictionary<string, JsonElement>))]
+[JsonSerializable(typeof(Dictionary<string, int>))]
+[JsonSerializable(typeof(Dictionary<string, TimedEventCollection.Event>))]
 [JsonSerializable(typeof(HashSet<string>))]
-[JsonSerializable(typeof(Animation))]
-[JsonSerializable(typeof(IPoint))]
-[JsonSerializable(typeof(ILocation))]
+//enums
 [JsonSerializable(typeof(Stat))]
 [JsonSerializable(typeof(BodyAnimation))]
 [JsonSerializable(typeof(AoeShape))]
@@ -110,6 +111,7 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(TargetFilter?))]
 [JsonSerializable(typeof(EquipmentType?))]
 [JsonSerializable(typeof(LevelCircle))]
+//numerics
 [JsonSerializable(typeof(byte))]
 [JsonSerializable(typeof(sbyte))]
 [JsonSerializable(typeof(short))]
@@ -131,5 +133,7 @@ namespace Chaos.Serialization;
 [JsonSerializable(typeof(ulong?))]
 [JsonSerializable(typeof(decimal?))]
 [JsonSerializable(typeof(float?))]
-[JsonSerializable(typeof(double?))]
+[JsonSerializable(typeof(double?))] //other primitives
+[JsonSerializable(typeof(DateTime))]
+[JsonSerializable(typeof(TimeSpan))]
 public partial class SerializationContext : JsonSerializerContext { }

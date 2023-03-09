@@ -92,8 +92,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             BodySprite = obj.BodySprite,
             Direction = obj.Direction,
             FaceSprite = obj.FaceSprite,
-            Flags = obj.Flags,
-            Enums = obj.Enums,
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
@@ -108,7 +106,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             UserStatSheet = Mapper.Map<UserStatSheet>(obj.StatSheet),
             IsAdmin = obj.IsAdmin,
             IsDead = obj.IsDead,
-            Counters = new CounterTracker(obj.Counters)
         };
 
         return aisling;
@@ -124,8 +121,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             BodySprite = obj.BodySprite,
             Direction = obj.Direction,
             FaceSprite = obj.FaceSprite,
-            Flags = obj.Flags,
-            Enums = obj.Enums,
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
@@ -144,7 +139,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             UserOptions = Mapper.Map<UserOptionsSchema>(obj.Options),
             IgnoreList = obj.IgnoreList.ToList(),
             Effects = Array.Empty<EffectSchema>(),
-            Counters = new Dictionary<string, int>(obj.Counters, StringComparer.OrdinalIgnoreCase)
         };
 
         return ret;

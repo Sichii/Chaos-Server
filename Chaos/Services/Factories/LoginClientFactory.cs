@@ -5,7 +5,6 @@ using Chaos.Cryptography.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Factories.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -13,24 +12,36 @@ namespace Chaos.Services.Factories;
 
 public sealed class LoginClientFactory : IClientFactory<LoginClient>
 {
-    private readonly IServiceProvider ServiceProvider;
+    private readonly IOptions<ChaosOptions> ChaosOptions;
+    private readonly ILogger<LoginClient> ClientLogger;
+    private readonly ICryptoFactory CryptoFactory;
+    // ReSharper disable once NotAccessedField.Local
+    private readonly ILogger<LoginClientFactory> Logger;
+    private readonly ILoginServer<ILoginClient> LoginServer;
+    private readonly IPacketSerializer PacketSerializer;
 
-    public LoginClientFactory(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
-
-    public LoginClient CreateClient(Socket socket)
+    public LoginClientFactory(
+        IOptions<ChaosOptions> chaosOptions,
+        ICryptoFactory cryptoFactory,
+        ILoginServer<ILoginClient> loginServer,
+        IPacketSerializer packetSerializer,
+        ILoggerFactory loggerFactory
+    )
     {
-        var chaosOptions = ServiceProvider.GetRequiredService<IOptions<ChaosOptions>>();
-        var crypto = ServiceProvider.GetRequiredService<ICryptoClient>();
-        var server = ServiceProvider.GetRequiredService<ILoginServer<ILoginClient>>();
-        var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
-        var logger = ServiceProvider.GetRequiredService<ILogger<LoginClient>>();
-
-        return new LoginClient(
-            socket,
-            chaosOptions,
-            crypto,
-            server,
-            serializer,
-            logger);
+        ChaosOptions = chaosOptions;
+        CryptoFactory = cryptoFactory;
+        LoginServer = loginServer;
+        PacketSerializer = packetSerializer;
+        ClientLogger = loggerFactory.CreateLogger<LoginClient>();
+        Logger = loggerFactory.CreateLogger<LoginClientFactory>();
     }
+
+    public LoginClient CreateClient(Socket socket) =>
+        new(
+            socket,
+            ChaosOptions,
+            CryptoFactory.Create(),
+            LoginServer,
+            PacketSerializer,
+            ClientLogger);
 }

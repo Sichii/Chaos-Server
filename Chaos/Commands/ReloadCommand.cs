@@ -1,6 +1,6 @@
+using Chaos.Collections.Common;
 using Chaos.CommandInterceptor;
 using Chaos.CommandInterceptor.Abstractions;
-using Chaos.Common.Collections;
 using Chaos.Extensions;
 using Chaos.Objects.World;
 using Microsoft.Extensions.Logging;

@@ -8,6 +8,7 @@ namespace Chaos.IO.Memory;
 public ref struct SpanReader
 {
     private readonly Span<byte> Buffer;
+    private readonly bool IsLittleEndian;
     public int Position { get; set; }
     public Encoding Encoding { get; }
     public Endianness Endianness { get; }
@@ -20,6 +21,7 @@ public ref struct SpanReader
         Encoding = encoding;
         Position = 0;
         Endianness = endianness;
+        IsLittleEndian = Endianness == Endianness.LittleEndian;
     }
 
     public List<string> ReadArgs()
@@ -89,7 +91,7 @@ public ref struct SpanReader
     {
         var ret = MemoryMarshal.Read<short>(Buffer[Position..]);
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             ret = BinaryPrimitives.ReverseEndianness(ret);
 
         Position += sizeof(short);
@@ -101,7 +103,7 @@ public ref struct SpanReader
     {
         var ret = MemoryMarshal.Read<int>(Buffer[Position..]);
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             ret = BinaryPrimitives.ReverseEndianness(ret);
 
         Position += sizeof(int);
@@ -173,7 +175,7 @@ public ref struct SpanReader
     {
         var ret = MemoryMarshal.Read<ushort>(Buffer[Position..]);
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             ret = BinaryPrimitives.ReverseEndianness(ret);
 
         Position += sizeof(ushort);
@@ -185,7 +187,7 @@ public ref struct SpanReader
     {
         var ret = MemoryMarshal.Read<uint>(Buffer[Position..]);
 
-        if (Endianness == Endianness.BigEndian)
+        if (!IsLittleEndian && BitConverter.IsLittleEndian)
             ret = BinaryPrimitives.ReverseEndianness(ret);
 
         Position += sizeof(uint);

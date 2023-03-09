@@ -19,13 +19,13 @@ namespace Chaos.Services.Servers;
 
 public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyClient>
 {
-    private readonly IClientFactory<ILobbyClient> ClientFactory;
+    private readonly IClientProvider ClientProvider;
     private readonly ServerTable ServerTable;
     private new LobbyOptions Options { get; }
 
     public LobbyServer(
         IClientRegistry<ILobbyClient> clientRegistry,
-        IClientFactory<ILobbyClient> clientFactory,
+        IClientProvider clientProvider,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptions<LobbyOptions> options,
@@ -39,7 +39,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
             logger)
     {
         Options = options.Value;
-        ClientFactory = clientFactory;
+        ClientProvider = clientProvider;
         ServerTable = new ServerTable(Options.Servers);
 
         IndexHandlers();
@@ -66,8 +66,8 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
                         ClientId.NextId,
                         serverInfo,
                         ServerType.Login,
-                        client.CryptoClient.Key,
-                        client.CryptoClient.Seed);
+                        client.Crypto.Key,
+                        client.Crypto.Seed);
 
                     RedirectManager.Add(redirect);
 
@@ -119,7 +119,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
         Logger.LogDebug("Incoming connection from {Ip}", ip);
 
-        var client = ClientFactory.CreateClient(clientSocket);
+        var client = ClientProvider.CreateClient<ILobbyClient>(clientSocket);
         Logger.LogDebug("Connection established with {@Client}", client);
 
         if (!ClientRegistry.TryAdd(client))

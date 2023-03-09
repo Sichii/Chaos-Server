@@ -36,16 +36,18 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     /// <param name="executionDelta">The amount of time the loop took to execute</param>
     public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);
 
+    /// <summary>
+    ///     Analyzes the recorded deltas and logs the results
+    /// </summary>
+    /// <param name="deltas"></param>
     private void CheckStatistics(List<TimeSpan> deltas) => _ = Task.Run(
-        async () =>
+        () =>
         {
-            await Task.Yield();
-
             if (!BeginLogging)
             {
                 BeginLogging = true;
 
-                return;
+                return Task.CompletedTask;
             }
 
             //sort the deltas from smallest to largest
@@ -70,7 +72,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 
             //log output format
             const string FORMAT =
-                "Delta Monitor [{Name}] - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}, Max: {Max:N1}, Samples: {SampleCount}";
+                "Delta Monitor [{Name}] - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}ms, Max: {Max:N1}ms, Samples: {SampleCount}";
 
             //depending on how the loop is performing, log the output at different levels
             if ((average > MaxDelta) || (max > 250))
@@ -100,6 +102,8 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                     upperPct,
                     max,
                     deltas.Count);
+
+            return Task.CompletedTask;
         });
 
     /// <inheritdoc />

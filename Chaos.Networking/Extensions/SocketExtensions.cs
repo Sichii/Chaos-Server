@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 
-namespace Chaos.Networking.Extensions;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Extensions.Networking;
 
 internal static class SocketExtensions
 {

@@ -6,7 +6,6 @@ using Chaos.Networking.Abstractions;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,26 +13,40 @@ namespace Chaos.Services.Factories;
 
 public sealed class WorldClientFactory : IClientFactory<WorldClient>
 {
-    private readonly IServiceProvider ServiceProvider;
+    private readonly IOptions<ChaosOptions> ChaosOptions;
+    private readonly ILogger<WorldClient> ClientLogger;
+    private readonly ICryptoFactory CryptoFactory;
+    // ReSharper disable once NotAccessedField.Local
+    private readonly ILogger<WorldClientFactory> Logger;
+    private readonly IPacketSerializer PacketSerializer;
+    private readonly ITypeMapper TypeMapper;
+    private readonly IWorldServer<IWorldClient> WorldServer;
 
-    public WorldClientFactory(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
-
-    public WorldClient CreateClient(Socket socket)
+    public WorldClientFactory(
+        IOptions<ChaosOptions> chaosOptions,
+        ICryptoFactory cryptoFactory,
+        ITypeMapper typeMapper,
+        IWorldServer<IWorldClient> worldServer,
+        IPacketSerializer packetSerializer,
+        ILoggerFactory loggerFactory
+    )
     {
-        var chaosOptions = ServiceProvider.GetRequiredService<IOptions<ChaosOptions>>();
-        var typeMapper = ServiceProvider.GetRequiredService<ITypeMapper>();
-        var crypto = ServiceProvider.GetRequiredService<ICryptoClient>();
-        var server = ServiceProvider.GetRequiredService<IWorldServer<IWorldClient>>();
-        var serializer = ServiceProvider.GetRequiredService<IPacketSerializer>();
-        var logger = ServiceProvider.GetRequiredService<ILogger<WorldClient>>();
-
-        return new WorldClient(
-            socket,
-            chaosOptions,
-            typeMapper,
-            crypto,
-            server,
-            serializer,
-            logger);
+        ChaosOptions = chaosOptions;
+        CryptoFactory = cryptoFactory;
+        TypeMapper = typeMapper;
+        WorldServer = worldServer;
+        PacketSerializer = packetSerializer;
+        ClientLogger = loggerFactory.CreateLogger<WorldClient>();
+        Logger = loggerFactory.CreateLogger<WorldClientFactory>();
     }
+
+    public WorldClient CreateClient(Socket socket) =>
+        new(
+            socket,
+            ChaosOptions,
+            TypeMapper,
+            CryptoFactory.Create(),
+            WorldServer,
+            PacketSerializer,
+            ClientLogger);
 }

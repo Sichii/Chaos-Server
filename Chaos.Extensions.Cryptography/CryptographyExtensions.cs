@@ -11,10 +11,9 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class CryptographyExtensions
 {
     /// <summary>
-    ///     Adds an <see cref="Chaos.Cryptography.Abstractions.ICryptoClient" /> implementation to the
+    ///     Adds an <see cref="ICrypto" /> implementation to the
     ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />
     /// </summary>
-    /// <param name="serviceCollection">The service collection to add to</param>
-    public static void AddCryptography(this IServiceCollection serviceCollection) =>
-        serviceCollection.AddTransient<ICryptoClient, CryptoClient>();
+    /// <param name="services">The service collection to add to</param>
+    public static void AddCryptography(this IServiceCollection services) => services.AddTransient<ICryptoFactory, CryptoFactory>();
 }

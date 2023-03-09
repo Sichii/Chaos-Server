@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -12,16 +11,11 @@ public sealed record AislingSchema
     public BodyColor BodyColor { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public BodySprite BodySprite { get; set; }
-    public IDictionary<string, int> Counters { get; set; } = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public Direction Direction { get; set; }
     public ICollection<EffectSchema> Effects { get; set; } = Array.Empty<EffectSchema>();
-    [JsonRequired]
-    public EnumCollection Enums { get; set; } = null!;
     public int FaceSprite { get; set; }
     public Location? FallbackLocation { get; set; }
-    [JsonRequired]
-    public FlagCollection Flags { get; set; } = null!;
     public int GamePoints { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public Gender Gender { get; set; }

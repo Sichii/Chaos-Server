@@ -2,8 +2,8 @@ namespace Chaos.Templates;
 
 public sealed class DoorTemplate
 {
-    public bool Closed { get; init; }
-    public bool OpenRight { get; init; }
-    public Point Point { get; init; }
-    public ushort Sprite { get; init; }
+    public required bool Closed { get; init; }
+    public required bool OpenRight { get; init; }
+    public required Point Point { get; init; }
+    public required ushort Sprite { get; init; }
 }

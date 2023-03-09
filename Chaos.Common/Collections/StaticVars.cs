@@ -1,7 +1,8 @@
 using System.Collections.Concurrent;
 using Chaos.Common.Abstractions;
 
-namespace Chaos.Common.Collections;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Collections.Common;
 
 /// <summary>
 /// </summary>

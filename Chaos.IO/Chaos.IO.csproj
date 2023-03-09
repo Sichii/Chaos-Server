@@ -2,4 +2,7 @@
     <ItemGroup>
         <PackageReference Include="zlib.net-mutliplatform"/>
     </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+    </ItemGroup>
 </Project>

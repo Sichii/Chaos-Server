@@ -5,7 +5,8 @@ using System.Text.Json.Serialization;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Converters;
 
-namespace Chaos.Common.Collections;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Collections.Common;
 
 /// <summary>
 ///     An object used to dynamically retreive variables of uncertain types

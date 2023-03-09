@@ -29,7 +29,7 @@ public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
         writer.WriteUInt16(args.DialogId);
         writer.WriteBoolean(args.HasPreviousButton);
         writer.WriteBoolean(args.HasNextButton);
-        writer.WriteByte(5); //dunno
+        writer.WriteByte(0); //illustration frame index, but none of the current images have multiple frames
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 

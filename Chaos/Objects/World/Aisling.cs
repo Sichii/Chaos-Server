@@ -1,6 +1,7 @@
 using Chaos.Clients.Abstractions;
+using Chaos.Collections.Common;
+using Chaos.Collections.Time;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
@@ -38,11 +39,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
     public IWorldClient Client { get; set; }
-    public CounterTracker Counters { get; init; }
-    public EnumCollection Enums { get; init; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
-    public FlagCollection Flags { get; init; }
     public Gender Gender { get; set; }
     public Group? Group { get; set; }
     public string? GuildName { get; set; }
@@ -62,8 +60,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public IPanel<Skill> SkillBook { get; private set; }
     public SocialStatus SocialStatus { get; set; }
     public IPanel<Spell> SpellBook { get; private set; }
-    public TimedEventCollection TimedEvents { get; private set; }
     public TitleList Titles { get; init; }
+    public Trackers Trackers { get; private set; }
     public UserState UserState { get; set; }
     public UserStatSheet UserStatSheet { get; init; }
     public ResettingCounter ActionThrottle { get; }
@@ -182,11 +180,16 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond);
         WalkCounter = new ResettingCounter(3, 5);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
-        Flags = new FlagCollection();
-        Enums = new EnumCollection();
-        TimedEvents = new TimedEventCollection();
+
+        Trackers = new Trackers
+        {
+            Flags = new FlagCollection(),
+            Enums = new EnumCollection(),
+            TimedEvents = new TimedEventCollection(),
+            Counters = new CounterCollection()
+        };
+
         ScriptKeys = new HashSet<string>();
-        Counters = new CounterTracker();
 
         //this object is purely intended to be created and immediately serialized
         //these pieces should never come into play
@@ -253,12 +256,16 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             //for stackable items, we can fill the existing stacks in our inventory without adding any weight
             if (set.Item.Template.Stackable)
             {
+                //the number of existing stacks in our inventory
                 var numUniqueStacks = Inventory.Count(i => i.DisplayName.EqualsI(set.Item.DisplayName));
+                //the total count in all stacks of this item
                 var totalCount = Inventory.CountOf(set.Item.DisplayName);
+                //the maximum number of items we can have in all stacks of this item
                 var maxCount = set.Item.Template.MaxStacks * numUniqueStacks;
 
                 //if we have any stacks of this item, we can fill them up without adding any weight
                 //if we don't have any stacks of this item, we can fill one stack without adding any weight
+                //this prevents someone from having multiple stacks of an item, but does not interfere with existing multiple stacks
                 var allowedCount = numUniqueStacks == 0 ? set.Item.Template.MaxStacks : set.Item.Template.MaxStacks - totalCount;
 
                 if (set.Count > allowedCount)
@@ -350,7 +357,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellBook spellBook,
         Containers.Legend legend,
         EffectsBar effects,
-        TimedEventCollection timedEvents
+        Trackers trackers
     )
     {
         Name = name;
@@ -361,7 +368,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellBook = spellBook;
         Legend = legend;
         Effects = effects;
-        TimedEvents = timedEvents;
+        Trackers = trackers;
     }
 
     public override void OnClicked(Aisling source)
@@ -761,7 +768,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SkillThrottle.Update(delta);
         WalkCounter.Update(delta);
         ChantTimer.Update(delta);
-        TimedEvents.Update(delta);
+        Trackers.Update(delta);
         SaveTimer.Update(delta);
 
         base.Update(delta);

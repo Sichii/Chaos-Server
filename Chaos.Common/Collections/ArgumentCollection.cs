@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 using Chaos.Common.Converters;
+using Chaos.Common.Definitions;
 
-namespace Chaos.Common.Collections;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Collections.Common;
 
 /// <summary>
 ///     A collection that stores string arguments and makes them more accessible
@@ -17,7 +20,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </summary>
     public int Count => Arguments.Count;
 
-    public ArgumentCollection(IList<string> arguments, string? delimiter = null)
+    public ArgumentCollection(IEnumerable<string> arguments, string? delimiter = null)
     {
         if (!string.IsNullOrEmpty(delimiter))
             arguments = arguments.SelectMany(str => str.Split(delimiter)).ToList();
@@ -25,8 +28,20 @@ public sealed class ArgumentCollection : IEnumerable<string>
         Arguments = arguments.ToList();
     }
 
-    public ArgumentCollection(string arguments, string? delimiter = null) => Arguments =
-        !string.IsNullOrEmpty(delimiter) ? arguments.Split(delimiter).ToList() : new List<string> { arguments };
+    public ArgumentCollection(string argumentStr)
+    {
+        Arguments = new List<string>();
+
+        foreach (var match in RegexCache.COMMAND_SPLIT_REGEX.Matches(argumentStr).OfType<Match>())
+        {
+            if (!match.Success)
+                continue;
+
+            Arguments.Add(match.Groups[1].Value);
+        }
+    }
+
+    public ArgumentCollection(string argumentStr, string delimiter) => Arguments = argumentStr.Split(delimiter).ToList();
 
     public ArgumentCollection() => Arguments = new List<string>();
 
@@ -44,18 +59,11 @@ public sealed class ArgumentCollection : IEnumerable<string>
     }
 
     /// <summary>
-    ///     Adds a sequence of strings or arguments to the end of the collection. Strings will be split by the given delimiter if one is provided.
-    /// </summary>
-    /// <param name="arguments">A sequence of string arguments</param>
-    /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
-    public void Add(string? delimiter = null, params string[] arguments) => Add(arguments, delimiter);
-
-    /// <summary>
     ///     Adds a string or argument to the end of the collection. The string will be split by the given delimiter if one is provided.
     /// </summary>
     /// <param name="argument">A string or argument</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
-    public void Add(string argument, string? delimiter = null) => Add(delimiter, arguments: argument);
+    public void Add(string argument, string? delimiter = null) => Add(new[] { argument }, delimiter);
 
     /// <inheritdoc />
     public IEnumerator<string> GetEnumerator() => Arguments.GetEnumerator();

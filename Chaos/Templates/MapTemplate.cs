@@ -9,16 +9,16 @@ namespace Chaos.Templates;
 
 public sealed record MapTemplate : ITemplate, IScripted
 {
-    public IRectangle Bounds { get; init; } = null!;
+    public required IRectangle Bounds { get; init; } = null!;
     public ushort CheckSum { get; set; }
     public Dictionary<IPoint, DoorTemplate> Doors { get; set; } = new(PointEqualityComparer.Instance);
-    public byte Height { get; set; }
+    public required byte Height { get; set; }
     /// <inheritdoc />
-    public ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    public string TemplateKey { get; init; } = null!;
-    public Tile[,] Tiles { get; set; } = new Tile[0, 0];
-    public Point[] WarpPoints { get; set; } = Array.Empty<Point>();
-    public byte Width { get; set; }
+    public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    public required string TemplateKey { get; init; } = null!;
+    public required Tile[,] Tiles { get; set; } = new Tile[0, 0];
+    public required Point[] WarpPoints { get; set; } = Array.Empty<Point>();
+    public required byte Width { get; set; }
     public short MapId => short.Parse(TemplateKey);
 
     public IEnumerable<byte> GetRowData(byte row)

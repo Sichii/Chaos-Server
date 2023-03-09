@@ -1,11 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using Chaos.Extensions.Common;
 using Chaos.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Utilities;
 
-public class WarningJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
+public sealed class WarningJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
 {
     private readonly ILogger<WarningJsonTypeInfoResolver> Logger;
     public WarningJsonTypeInfoResolver(ILogger<WarningJsonTypeInfoResolver> logger) => Logger = logger;
@@ -13,10 +14,13 @@ public class WarningJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
     /// <inheritdoc />
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
-        Logger.LogWarning(
-            "Used reflection to get type info for {Type}. Add this type to the {SerializationContext}",
-            type.FullName,
-            typeof(SerializationContext).FullName);
+        if (type.IsCompilerGenerated())
+            Logger.LogTrace("Used reflection to get type info for compiler generated type \"{Type}\"", type.FullName);
+        else
+            Logger.LogWarning(
+                "Used reflection to get type info for type \"{Type}\". Add this type to the {SerializationContext}",
+                type.FullName,
+                typeof(SerializationContext).FullName);
 
         return base.GetTypeInfo(type, options);
     }

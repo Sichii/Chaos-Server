@@ -3,9 +3,9 @@ using System.Net.Sockets;
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Cryptography.Abstractions;
+using Chaos.Extensions.Networking;
 using Chaos.IO.Memory;
 using Chaos.Networking.Entities.Server;
-using Chaos.Networking.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -21,7 +21,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     private int Count;
     private int Sequence;
     public bool Connected { get; set; }
-    public ICryptoClient CryptoClient { get; set; }
+    public ICrypto Crypto { get; set; }
     public bool LogRawPackets { get; set; }
     public event EventHandler? OnDisconnected;
     public uint Id { get; }
@@ -34,7 +34,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
     protected SocketClientBase(
         Socket socket,
-        ICryptoClient cryptoClient,
+        ICrypto crypto,
         IPacketSerializer packetSerializer,
         ILogger<SocketClientBase> logger
     )
@@ -43,7 +43,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         ReceiveSync = new FifoSemaphoreSlim(1, 1);
         Socket = socket;
         RemoteIp = (socket.RemoteEndPoint as IPEndPoint)?.Address;
-        CryptoClient = cryptoClient;
+        Crypto = crypto;
         Buffer = new byte[short.MaxValue];
         MemoryBuffer = new Memory<byte>(Buffer);
         Logger = logger;
@@ -191,13 +191,13 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         if (LogRawPackets)
             Logger.LogTrace("[Snd] {Packet}", packet.ToString());
 
-        packet.ShouldEncrypt = CryptoClient.ShouldEncrypt((byte)packet.OpCode);
+        packet.ShouldEncrypt = Crypto.ShouldEncrypt((byte)packet.OpCode);
 
         if (packet.ShouldEncrypt)
         {
             packet.Sequence = (byte)Interlocked.Increment(ref Sequence);
 
-            CryptoClient.Encrypt(ref packet);
+            Crypto.Encrypt(ref packet);
         }
 
         var args = DequeueArgs(packet.ToMemory());

@@ -8,6 +8,5 @@ global using System.Collections.Concurrent;
 global using System.Diagnostics.CodeAnalysis;
 global using Chaos.Geometry;
 global using Chaos.Networking;
-global using Chaos.Networking.Extensions;
 
 // Chaos usings

@@ -5,6 +5,7 @@ using Chaos.Containers;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
@@ -34,14 +35,14 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,
         ITypeMapper mapper,
-        ICryptoClient cryptoClient,
+        ICrypto crypto,
         IWorldServer<IWorldClient> server,
         IPacketSerializer packetSerializer,
         ILogger<WorldClient> logger
     )
         : base(
             socket,
-            cryptoClient,
+            crypto,
             packetSerializer,
             logger)
     {
@@ -54,11 +55,11 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var isEncrypted = CryptoClient.ShouldBeEncrypted(opCode);
+        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
         var packet = new ClientPacket(ref span, isEncrypted);
 
         if (isEncrypted)
-            CryptoClient.Decrypt(ref packet);
+            Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
             Logger.LogTrace("[Rcv] {Packet}", packet.ToString());

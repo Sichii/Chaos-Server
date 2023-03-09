@@ -6,6 +6,9 @@ namespace Chaos.Scripting.Abstractions;
 /// <typeparam name="T">The <see cref="Chaos.Scripting.Abstractions.IScripted" /> object this script is attached to</typeparam>
 public abstract class SubjectiveScriptBase<T> : ScriptBase where T: IScripted
 {
+    /// <summary>
+    ///     The object this script is attached to
+    /// </summary>
     public T Subject { get; }
 
     protected SubjectiveScriptBase(T subject) => Subject = subject;

@@ -7,7 +7,7 @@
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0"/>
-      <PackageVersion Include="Microsoft.Extensions.Options" Version="7.0.1"/>
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="7.0.1"/>
         <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0"/>
         <PackageVersion Include="Microsoft.ML.AutoML" Version="0.20.1"/>
         <PackageVersion Include="NLog.Targets.Seq" Version="2.1.0"/>

@@ -1,7 +1,6 @@
 using System.Reflection;
+using Chaos.Collections.Common;
 using Chaos.CommandInterceptor.Abstractions;
-using Chaos.CommandInterceptor.Definitions;
-using Chaos.Common.Collections;
 using Chaos.Extensions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -50,35 +49,25 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
     }
 
     /// <inheritdoc />
-    public async ValueTask HandleCommandAsync(T source, string commandStr)
+    public ValueTask HandleCommandAsync(T source, string commandStr)
     {
         var command = commandStr[1..];
+        var commandParts = new ArgumentCollection(command);
 
-        var commandParts = RegexCache.COMMAND_SPLIT_REGEX.Matches(command)
-                                     .Select(
-                                         match =>
-                                         {
-                                             if (!string.IsNullOrWhiteSpace(match.Groups[1].Value))
-                                                 return match.Groups[1].Value;
+        if (commandParts.Count == 0)
+            return default;
 
-                                             return match.Groups[2].Value;
-                                         })
-                                     .ToArray();
-
-        if (commandParts.Length == 0)
-            return;
-
-        var commandName = commandParts[0];
-        var commandArgs = commandParts[1..];
+        if (!commandParts.TryGetNext<string>(out var commandName))
+            return default;
 
         if (!Commands.TryGetValue(commandName, out var descriptor))
-            return;
+            return default;
 
         if (descriptor.Details.RequiresAdmin && !Configuration.AdminPredicate(source))
         {
             Logger.LogWarning("Non-Admin {@Source} tried to execute admin command {CommandName}", source, commandName);
 
-            return;
+            return default;
         }
 
         try
@@ -87,9 +76,16 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
 
             Logger.LogTrace("Successfully created command {CommandName}", commandName);
 
-            await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
+            var commandArgs = new ArgumentCollection(commandParts.Skip(1));
 
-            Logger.LogInformation("{@Source} executed command {CommandName}", source, commandName);
+            async ValueTask InnerExecute()
+            {
+                await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
+
+                Logger.LogInformation("{@Source} executed command {CommandName}", source, commandName);
+            }
+
+            return InnerExecute();
         } catch (Exception e)
         {
             Logger.LogError(
@@ -98,6 +94,8 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
                 source,
                 descriptor);
         }
+
+        return default;
     }
 
     /// <inheritdoc />

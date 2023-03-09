@@ -23,7 +23,7 @@ namespace Chaos.Objects.World.Abstractions;
 public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScript>
 {
     public Direction Direction { get; set; }
-    public IEffectsBar Effects { get; set; }
+    public IEffectsBar Effects { get; protected set; }
     public int GamePoints { get; set; }
     public int Gold { get; set; }
     public virtual bool IsDead { get; set; }

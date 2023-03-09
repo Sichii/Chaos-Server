@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
-using Chaos.Common.Collections;
+using Chaos.Collections.Common;
 using Chaos.Geometry;
 
 namespace Chaos.Schemas.Content;
 
-public record ReactorTileSchema
+public sealed record ReactorTileSchema
 {
     /// <summary>
     ///     If this reactor does damage, it is required to have an owner, otherwise this property can be ignored. The owning monster can be a basic

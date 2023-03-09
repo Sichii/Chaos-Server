@@ -3,17 +3,8 @@
     "color": "Default",
     "count": 1,
     "scriptKeys": [],
-    "slot": 1,
+    "slot": 35,
     "templateKey": "teleport_trinket",
-    "uniqueId": 100271
-  },
-  {
-    "color": "Default",
-    "count": 1,
-    "currentDurability": 1000,
-    "scriptKeys": [],
-    "slot": 2,
-    "templateKey": "cuckArmor",
-    "uniqueId": 100273
+    "uniqueId": 100274
   }
 ]

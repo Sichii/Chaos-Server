@@ -5,7 +5,8 @@ using System.Text.Json.Serialization;
 using Chaos.Common.Converters;
 using Chaos.Extensions.Common;
 
-namespace Chaos.Common.Collections;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Collections.Common;
 
 /// <summary>
 ///     A serializable collection of enums

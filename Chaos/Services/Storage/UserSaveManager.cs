@@ -1,6 +1,10 @@
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Text.Json;
+using Chaos.Common.Collections.Synchronized;
+using Chaos.Common.Utilities;
 using Chaos.Containers;
+using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.EffectScripts.Abstractions;
@@ -12,17 +16,26 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
+/// <summary>
+///     Manages save files for Aislings
+/// </summary>
 public sealed class UserSaveManager : ISaveManager<Aisling>
 {
+    // ReSharper disable once NotAccessedField.Local
+    private readonly Task BackupTask;
+    private readonly PeriodicTimer BackupTimer;
     private readonly JsonSerializerOptions JsonSerializerOptions;
+    private readonly SynchronizedHashSet<string> LockedFiles;
     private readonly ILogger<UserSaveManager> Logger;
     private readonly ITypeMapper Mapper;
     private readonly UserSaveManagerOptions Options;
+    private readonly CancellationTokenSource ServerCtx;
 
     public UserSaveManager(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptions<UserSaveManagerOptions> options,
+        CancellationTokenSource serverCtx,
         ILogger<UserSaveManager> logger
     )
     {
@@ -30,29 +43,118 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         Mapper = mapper;
         Logger = logger;
         JsonSerializerOptions = jsonSerializerOptions.Value;
+        ServerCtx = serverCtx;
+        BackupTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.BackupIntervalMins));
+        LockedFiles = new SynchronizedHashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
+
+        if (!Directory.Exists(Options.BackupDirectory))
+            Directory.CreateDirectory(Options.BackupDirectory);
+
+        BackupTask = BackupLoop();
     }
 
-    private async ValueTask<T> DeserializeAsync<T>(string directory, string fileName)
+    private async Task BackupLoop()
     {
-        var path = Path.Combine(directory, fileName);
+        var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount / 4 };
+        var token = ServerCtx.Token;
 
-        await using var stream = File.Open(
-            path,
-            new FileStreamOptions
+        while (true)
+            try
             {
-                Access = FileAccess.Read,
-                Mode = FileMode.Open,
-                Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                Share = FileShare.Read
-            });
+                await BackupTimer.WaitForNextTickAsync(token);
+                var start = Stopwatch.GetTimestamp();
 
-        var ret = await JsonSerializer.DeserializeAsync<T>(stream, JsonSerializerOptions);
+                Logger.LogTrace("Performing backup");
 
-        return ret!;
+                await Parallel.ForEachAsync(
+                    Directory.EnumerateDirectories(Options.Directory),
+                    options,
+                    TakeBackupAsync);
+
+                Parallel.ForEach(Directory.EnumerateDirectories(Options.BackupDirectory), options, HandleBackupRetention);
+
+                Logger.LogDebug("Backup completed, took {Elapsed}", Stopwatch.GetElapsedTime(start).ToReadableString(true));
+            } catch (OperationCanceledException)
+            {
+                //ignore
+                return;
+            }
     }
+
+    private void HandleBackupRetention(string directory)
+    {
+        var directoryInfo = new DirectoryInfo(directory);
+
+        if (!directoryInfo.Exists)
+        {
+            Logger.LogError("Failed to handle backup retention for \"{Directory}\" because it doesn't exist", directory);
+
+            return;
+        }
+
+        var deleteTime = DateTime.UtcNow.AddDays(-Options.BackupRetentionDays);
+
+        foreach (var fileInfo in directoryInfo.EnumerateFiles())
+            if (fileInfo.CreationTimeUtc < deleteTime)
+                try
+                {
+                    Logger.LogTrace("Deleting backup \"{Backup}\"", fileInfo.FullName);
+                    fileInfo.Delete();
+                } catch
+                {
+                    //ignored
+                }
+    }
+
+    private Task InnerSaveAsync(string directory, Aisling aisling) => Task.WhenAll(
+        MapAndSerializeAsync(
+            directory,
+            "aisling.json",
+            Mapper.Map<AislingSchema>,
+            aisling),
+        MapAndSerializeAsync(
+            directory,
+            "bank.json",
+            Mapper.Map<BankSchema>,
+            aisling.Bank),
+        MapAndSerializeAsync(
+            directory,
+            "trackers.json",
+            Mapper.Map<TrackersSchema>,
+            aisling.Trackers),
+        MapAndSerializeAsync(
+            directory,
+            "legend.json",
+            Mapper.MapMany<LegendMarkSchema>,
+            aisling.Legend),
+        MapAndSerializeAsync(
+            directory,
+            "inventory.json",
+            Mapper.MapMany<ItemSchema>,
+            aisling.Inventory),
+        MapAndSerializeAsync(
+            directory,
+            "skills.json",
+            Mapper.MapMany<SkillSchema>,
+            aisling.SkillBook),
+        MapAndSerializeAsync(
+            directory,
+            "spells.json",
+            Mapper.MapMany<SpellSchema>,
+            aisling.SpellBook),
+        MapAndSerializeAsync(
+            directory,
+            "equipment.json",
+            Mapper.MapMany<ItemSchema>,
+            aisling.Equipment),
+        MapAndSerializeAsync(
+            directory,
+            "effects.json",
+            Mapper.MapMany<IEffect, EffectSchema>,
+            aisling.Effects));
 
     public async Task<Aisling> LoadAsync(string name)
     {
@@ -60,25 +162,49 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
 
-        var aislingSchema = await DeserializeAsync<AislingSchema>(directory, "aisling.json");
-        var bankSchema = await DeserializeAsync<BankSchema>(directory, "bank.json");
-        var effectsSchema = await DeserializeAsync<EffectsBarSchema>(directory, "effects.json");
-        var equipmentSchema = await DeserializeAsync<EquipmentSchema>(directory, "equipment.json");
-        var inventorySchema = await DeserializeAsync<InventorySchema>(directory, "inventory.json");
-        var skillsSchemas = await DeserializeAsync<SkillBookSchema>(directory, "skills.json");
-        var spellsSchemas = await DeserializeAsync<SpellBookSchema>(directory, "spells.json");
-        var legendSchema = await DeserializeAsync<LegendSchema>(directory, "legend.json");
-        var timedEventsSchema = await DeserializeAsync<TimedEventCollectionSchema>(directory, "timedEvents.json");
+        var aislingSchema = await JsonSerializerEx.DeserializeAsync<AislingSchema>(
+            Path.Combine(directory, "aisling.json"),
+            JsonSerializerOptions);
 
-        var aisling = Mapper.Map<Aisling>(aislingSchema);
-        var bank = Mapper.Map<Bank>(bankSchema);
-        var effects = new EffectsBar(aisling, Mapper.MapMany<EffectSchema, IEffect>(effectsSchema));
-        var equipment = Mapper.Map<Equipment>(equipmentSchema);
-        var inventory = Mapper.Map<Inventory>(inventorySchema);
-        var skillBook = Mapper.Map<SkillBook>(skillsSchemas);
-        var spellBook = Mapper.Map<SpellBook>(spellsSchemas);
-        var legend = Mapper.Map<Legend>(legendSchema);
-        var timedEvents = Mapper.Map<TimedEventCollection>(timedEventsSchema);
+        var bankSchema = await JsonSerializerEx.DeserializeAsync<BankSchema>(Path.Combine(directory, "bank.json"), JsonSerializerOptions);
+
+        var effectsSchema = await JsonSerializerEx.DeserializeAsync<EffectsBarSchema>(
+            Path.Combine(directory, "effects.json"),
+            JsonSerializerOptions);
+
+        var equipmentSchema = await JsonSerializerEx.DeserializeAsync<EquipmentSchema>(
+            Path.Combine(directory, "equipment.json"),
+            JsonSerializerOptions);
+
+        var inventorySchema = await JsonSerializerEx.DeserializeAsync<InventorySchema>(
+            Path.Combine(directory, "inventory.json"),
+            JsonSerializerOptions);
+
+        var skillsSchemas = await JsonSerializerEx.DeserializeAsync<SkillBookSchema>(
+            Path.Combine(directory, "skills.json"),
+            JsonSerializerOptions);
+
+        var spellsSchemas = await JsonSerializerEx.DeserializeAsync<SpellBookSchema>(
+            Path.Combine(directory, "spells.json"),
+            JsonSerializerOptions);
+
+        var legendSchema = await JsonSerializerEx.DeserializeAsync<LegendSchema>(
+            Path.Combine(directory, "legend.json"),
+            JsonSerializerOptions);
+
+        var trackersSchema = await JsonSerializerEx.DeserializeAsync<TrackersSchema>(
+            Path.Combine(directory, "trackers.json"),
+            JsonSerializerOptions);
+
+        var aisling = Mapper.Map<Aisling>(aislingSchema!);
+        var bank = Mapper.Map<Bank>(bankSchema!);
+        var effects = new EffectsBar(aisling, Mapper.MapMany<EffectSchema, IEffect>(effectsSchema!));
+        var equipment = Mapper.Map<Equipment>(equipmentSchema!);
+        var inventory = Mapper.Map<Inventory>(inventorySchema!);
+        var skillBook = Mapper.Map<SkillBook>(skillsSchemas!);
+        var spellBook = Mapper.Map<SpellBook>(spellsSchemas!);
+        var legend = Mapper.Map<Legend>(legendSchema!);
+        var trackers = Mapper.Map<Trackers>(trackersSchema!);
 
         aisling.Initialize(
             name,
@@ -89,11 +215,38 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             spellBook,
             legend,
             effects,
-            timedEvents);
+            trackers);
 
         Logger.LogDebug("Loaded {@Player}", aisling);
 
         return aisling;
+    }
+
+    private Task MapAndSerializeAsync<T, TSchema>(
+        string directory,
+        string fileName,
+        Func<T, TSchema> mapper,
+        T obj
+    )
+    {
+        var schema = mapper(obj)!;
+        var path = Path.Combine(directory, fileName);
+
+        return JsonSerializerEx.SerializeAsync(path, schema, JsonSerializerOptions);
+    }
+
+    private async Task SafeExecuteDirectoryActionAsync(string directory, Func<Task> action)
+    {
+        while (!LockedFiles.Add(directory))
+            await Task.Delay(1);
+
+        try
+        {
+            await action();
+        } finally
+        {
+            LockedFiles.Remove(directory);
+        }
     }
 
     public async Task SaveAsync(Aisling obj)
@@ -103,6 +256,17 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         try
         {
+            var directory = Path.Combine(Options.Directory, obj.Name.ToLower());
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            await SafeExecuteDirectoryActionAsync(directory, () => InnerSaveAsync(directory, obj));
+
+            Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            Logger.LogDebug("Saved {@Player}, took {Elapsed}", obj, Stopwatch.GetElapsedTime(start).ToReadableString(true));
+
+            /*
             var aislingSchema = Mapper.Map<AislingSchema>(obj);
             var bankSchema = Mapper.Map<BankSchema>(obj.Bank);
             var equipmentSchema = Mapper.MapMany<ItemSchema>(obj.Equipment).ToList();
@@ -111,25 +275,32 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             var skillsSchemas = Mapper.MapMany<SkillSchema>(obj.SkillBook).ToList();
             var spellsSchemas = Mapper.MapMany<SpellSchema>(obj.SpellBook).ToList();
             var legendSchema = Mapper.MapMany<LegendMarkSchema>(obj.Legend).ToList();
-            var timedEventsSchemas = Mapper.Map<TimedEventCollectionSchema>(obj.TimedEvents);
+            var trackersSchema = Mapper.Map<TrackersSchema>(obj.Trackers);
 
             var directory = Path.Combine(Options.Directory, obj.Name.ToLower());
 
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            await Task.WhenAll(
-                SerializeAsync(directory, "aisling.json", aislingSchema),
-                SerializeAsync(directory, "bank.json", bankSchema),
-                SerializeAsync(directory, "effects.json", effectsSchemas),
-                SerializeAsync(directory, "equipment.json", equipmentSchema),
-                SerializeAsync(directory, "inventory.json", inventorySchema),
-                SerializeAsync(directory, "skills.json", skillsSchemas),
-                SerializeAsync(directory, "spells.json", spellsSchemas),
-                SerializeAsync(directory, "legend.json", legendSchema),
-                SerializeAsync(directory, "timedEvents.json", timedEventsSchemas));
+            await SafeExecuteDirectoryActionAsync(
+                directory,
+                async () =>
+                {
+                    await Task.WhenAll(
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "aisling.json"), aislingSchema, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "bank.json"), bankSchema, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "trackers.json"), trackersSchema, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "legend.json"), legendSchema, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "inventory.json"), inventorySchema, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "skills.json"), skillsSchemas, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "spells.json"), spellsSchemas, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "equipment.json"), equipmentSchema, JsonSerializerOptions),
+                        JsonSerializerEx.SerializeAsync(Path.Combine(directory, "effects.json"), effectsSchemas, JsonSerializerOptions));
 
-            Logger.LogDebug("Saved {@Player} in {Elapsed}", obj, Stopwatch.GetElapsedTime(start));
+                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+                    Logger.LogDebug("Saved {@Player} in {Elapsed}", obj, Stopwatch.GetElapsedTime(start));
+                });
+                */
         } catch (Exception e)
         {
             Logger.LogError(
@@ -140,25 +311,46 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         }
     }
 
-    private async Task SerializeAsync(string directory, string fileName, object value)
+    private async ValueTask TakeBackupAsync(string saveDirectory, CancellationToken token)
     {
-        var path = Path.Combine(directory, fileName);
-        var start = Stopwatch.GetTimestamp();
+        try
+        {
+            var directoryInfo = new DirectoryInfo(saveDirectory);
 
-        await using var stream = File.Open(
-            path,
-            new FileStreamOptions
+            if (!directoryInfo.Exists)
             {
-                Access = FileAccess.ReadWrite,
-                Mode = FileMode.OpenOrCreate,
-                Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                Share = FileShare.None
-            });
+                Logger.LogError("Failed to take backup for path \"{SaveDir}\" because it doesn't exist", saveDirectory);
 
-        stream.SetLength(0);
+                return;
+            }
 
-        await JsonSerializer.SerializeAsync(stream, value, JsonSerializerOptions);
+            //don't take backups of things that haven't been modified
+            if (directoryInfo.LastWriteTimeUtc < DateTime.UtcNow.AddMinutes(-Options.BackupIntervalMins))
+                return;
 
-        Logger.LogTrace("Serialized \"{FileName}\" in {Elapsed}", fileName, Stopwatch.GetElapsedTime(start));
+            var directoryName = Path.GetFileName(saveDirectory);
+            var backupDirectory = Path.Combine(Options.BackupDirectory, directoryName);
+
+            if (!Directory.Exists(backupDirectory))
+                Directory.CreateDirectory(backupDirectory);
+
+            var backupPath = Path.Combine(backupDirectory, $"{DateTime.UtcNow:yyyy-MM-dd_HH-mm-ss}.zip");
+
+            if (token.IsCancellationRequested)
+                return;
+
+            await SafeExecuteDirectoryActionAsync(
+                saveDirectory,
+                () =>
+                {
+                    Logger.LogTrace("Backing up directory \"{SaveDir}\"", saveDirectory);
+                    ZipFile.CreateFromDirectory(saveDirectory, backupPath);
+
+                    return Task.CompletedTask;
+                });
+        } catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to take backup for path \"{SaveDir}\"", saveDirectory);
+        }
     }
 }

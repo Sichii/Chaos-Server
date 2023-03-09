@@ -15,7 +15,7 @@ public interface ISocketClient
     /// <summary>
     ///     Handles encryption and decryption of packets
     /// </summary>
-    ICryptoClient CryptoClient { get; set; }
+    ICrypto Crypto { get; set; }
 
     /// <summary>
     ///     An event that is called when a client disconnects
