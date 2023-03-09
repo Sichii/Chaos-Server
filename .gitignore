@@ -245,4 +245,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 PATH.txt
+Data/Saved/
 Data/SavedBackups/
