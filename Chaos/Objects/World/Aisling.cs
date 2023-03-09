@@ -348,6 +348,19 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
     }
 
+    /// <summary>
+    ///     Determines whether or not an aisling's class counts as being a certain class
+    /// </summary>
+    /// <param name="class">The other baseClass</param>
+    /// <returns><c>true</c> if the aisling's class contains <paramref name="class" />, otherwise <c>false</c></returns>
+    public bool HasClass(BaseClass @class) => @class is BaseClass.Peasant
+                                              || UserStatSheet.BaseClass switch
+                                              {
+                                                  //Diacht "is" all classes
+                                                  BaseClass.Diacht => true,
+                                                  _                => UserStatSheet.BaseClass == @class
+                                              };
+
     public void Initialize(
         string name,
         Bank bank,
