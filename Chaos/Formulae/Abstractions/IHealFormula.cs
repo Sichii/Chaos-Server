@@ -1,16 +1,14 @@
-using Chaos.Common.Definitions;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Formulae.Abstractions;
 
-public interface IDamageFormula
+public interface IHealFormula
 {
     int Calculate(
         Creature source,
         Creature target,
         IScript script,
-        int damage,
-        Element? elementOverride = null
+        int healing
     );
 }

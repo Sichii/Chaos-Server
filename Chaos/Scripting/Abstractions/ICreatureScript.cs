@@ -15,5 +15,6 @@ public interface ICreatureScript : IScript
 
     bool CanUseSpell(Spell spell);
 
-    void OnAttacked(Creature attacker, int damage);
+    void OnAttacked(Creature source, int damage);
+    void OnHealed(Creature source, int healing);
 }

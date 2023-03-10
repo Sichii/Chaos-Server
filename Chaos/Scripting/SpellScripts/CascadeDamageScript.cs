@@ -25,7 +25,7 @@ public class CascadeDamageScript : ConfigurableSpellScriptBase, CascadeAbilityCo
         EffectFactory = effectFactory;
         CascadeAbilityComponent = new CascadeAbilityComponent();
 
-        ApplyDamageScript = DefaultApplyDamageScript.Create();
+        ApplyDamageScript = ApplyAttackDamageScript.Create();
         DamageComponent = new DamageComponent();
         SourceScript = this;
     }

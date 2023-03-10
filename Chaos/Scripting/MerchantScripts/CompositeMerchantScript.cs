@@ -85,6 +85,15 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual void OnHealed(Creature source, int healing)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.OnHealed(source, healing);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))

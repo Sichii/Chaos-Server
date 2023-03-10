@@ -81,6 +81,15 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual void OnHealed(Creature source, int healing)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.OnHealed(source, healing);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnItemDroppedOn(Aisling source, Item item)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))

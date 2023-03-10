@@ -9,9 +9,9 @@ public class PureDamageFormula : IDamageFormula
 {
     /// <inheritdoc />
     public virtual int Calculate(
-        Creature? attacker,
-        Creature defender,
-        IScript source,
+        Creature? source,
+        Creature target,
+        IScript script,
         int damage,
         Element? elementOverride = null
     ) => Convert.ToInt32(damage);

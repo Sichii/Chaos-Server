@@ -8,54 +8,54 @@ using Chaos.Scripting.FunctionalScripts.Abstractions;
 
 namespace Chaos.Scripting.FunctionalScripts.ApplyDamage;
 
-public class DefaultApplyDamageScript : ScriptBase, IApplyDamageScript
+public class ApplyAttackDamageScript : ScriptBase, IApplyDamageScript
 {
     public IDamageFormula DamageFormula { get; set; }
-    public static string Key { get; } = GetScriptKey(typeof(DefaultApplyDamageScript));
+    public static string Key { get; } = GetScriptKey(typeof(ApplyAttackDamageScript));
 
-    public DefaultApplyDamageScript() => DamageFormula = DamageFormulae.Default;
+    public ApplyAttackDamageScript() => DamageFormula = DamageFormulae.Default;
 
     public virtual void ApplyDamage(
-        Creature attacker,
-        Creature defender,
-        IScript source,
+        Creature source,
+        Creature target,
+        IScript script,
         int damage,
         Element? elementOverride = null
     )
     {
         damage = DamageFormula.Calculate(
-            attacker,
-            defender,
             source,
+            target,
+            script,
             damage,
             elementOverride);
 
         if (damage <= 0)
             return;
 
-        switch (defender)
+        switch (target)
         {
             case Aisling aisling:
                 aisling.StatSheet.SubtractHp(damage);
                 aisling.Client.SendAttributes(StatUpdateType.Vitality);
                 aisling.ShowHealth();
-                aisling.Script.OnAttacked(attacker, damage);
+                aisling.Script.OnAttacked(source, damage);
 
                 if (!aisling.IsAlive)
-                    aisling.Script.OnDeath(attacker);
+                    aisling.Script.OnDeath(source);
 
                 break;
             case Monster monster:
                 monster.StatSheet.SubtractHp(damage);
                 monster.ShowHealth();
-                monster.Script.OnAttacked(attacker, damage);
+                monster.Script.OnAttacked(source, damage);
 
                 if (!monster.IsAlive)
                     monster.Script.OnDeath();
 
                 break;
             case Merchant merchant:
-                merchant.Script.OnAttacked(attacker, damage);
+                merchant.Script.OnAttacked(source, damage);
 
                 break;
         }

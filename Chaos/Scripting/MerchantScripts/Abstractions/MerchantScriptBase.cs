@@ -46,6 +46,9 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
     public virtual void OnGoldDroppedOn(Aisling source, int amount) { }
 
     /// <inheritdoc />
+    public virtual void OnHealed(Creature source, int healing) { }
+
+    /// <inheritdoc />
     public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count) { }
 
     /// <inheritdoc />

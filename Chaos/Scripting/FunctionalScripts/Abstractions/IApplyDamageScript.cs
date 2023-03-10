@@ -10,12 +10,12 @@ public interface IApplyDamageScript : IFunctionalScript
     IDamageFormula DamageFormula { get; set; }
 
     void ApplyDamage(
-        Creature attacker,
-        Creature defender,
-        IScript source,
+        Creature source,
+        Creature target,
+        IScript script,
         int damage,
         Element? elementOverride = null
     );
 
-    static virtual IApplyDamageScript Create() => null!;
+    static virtual IApplyDamageScript Create() => throw new NotImplementedException("Override this method in your implementation");
 }

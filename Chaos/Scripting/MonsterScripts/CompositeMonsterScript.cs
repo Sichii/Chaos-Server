@@ -55,8 +55,10 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
             component.OnAttacked(source, damage);
     }
 
-    /// <inheritdoc />
-    public void OnAttacked(Creature attacker, int damage) => OnAttacked(attacker, damage, null);
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
@@ -92,6 +94,15 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnGoldDroppedOn(source, amount);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual void OnHealed(Creature source, int healing)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.OnHealed(source, healing);
     }
 
     /// <summary>

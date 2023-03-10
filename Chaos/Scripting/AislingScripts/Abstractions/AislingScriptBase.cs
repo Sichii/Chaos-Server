@@ -49,5 +49,8 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
     public virtual void OnGoldDroppedOn(Aisling source, int amount) { }
 
     /// <inheritdoc />
+    public virtual void OnHealed(Creature source, int healing) { }
+
+    /// <inheritdoc />
     public virtual void OnItemDroppedOn(Aisling source, Item item) { }
 }

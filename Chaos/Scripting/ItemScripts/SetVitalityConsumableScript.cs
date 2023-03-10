@@ -15,10 +15,16 @@ public class SetVitalityConsumable : ConfigurableItemScriptBase
     public override void OnUse(Aisling source)
     {
         if (SetHealthAmount.HasValue)
-            source.UserStatSheet.SetHp(SetHealthAmount.Value);
+            if (SetHealthAmount == 0)
+                throw new InvalidOperationException("Cannot set health to 0, use a death script instead");
+            else
+                source.UserStatSheet.SetHp(SetHealthAmount.Value);
 
         if (SetHealthPercent.HasValue)
-            source.UserStatSheet.SetHealthPct(SetHealthPercent.Value);
+            if (SetHealthPercent == 0)
+                throw new InvalidOperationException("Cannot set health to 0, use a death script instead");
+            else
+                source.UserStatSheet.SetHealthPct(SetHealthPercent.Value);
 
         if (SetManaAmount.HasValue)
             source.UserStatSheet.SetMp(SetManaAmount.Value);

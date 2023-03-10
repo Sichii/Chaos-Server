@@ -42,6 +42,9 @@ public abstract class ConfigurableMerchantScriptBase : ConfigurableScriptBase<Me
     public virtual void OnGoldDroppedOn(Aisling source, int amount) { }
 
     /// <inheritdoc />
+    public virtual void OnHealed(Creature source, int healing) { }
+
+    /// <inheritdoc />
     public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count) { }
 
     /// <inheritdoc />

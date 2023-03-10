@@ -1,0 +1,43 @@
+{
+    "templateKey": "healies",
+    "name": "healies",
+    "panelSprite": 146,
+    "scriptKeys": ["heal"],
+    "spellType": "targeted",
+    "castLines": 0,
+    "description": "Applies a small heal effect to your target, and all friendlies around that target.",
+    "level": 10,
+    "class": "priest",
+    "learningRequirements": {
+        "requiredStats": {
+            "str": 1,
+            "int": 1,
+            "wis": 2,
+            "con": 1,
+            "dex": 1
+        },
+        "itemRequirements": [
+            {
+                "itemTemplateKey": "apple",
+                "amountRequired": 10
+            }
+        ],
+        "requiredGold": 10000
+    },
+    "scriptVars": {
+        "heal": {
+            "animation": {
+                "targetAnimation": 4,
+                "animationSpeed": 100
+            },
+            "bodyAnimation": "priestCast",
+            "sound": 8,
+            "range": 2,
+            "shape": "allaround",
+            "filter": "friendlyOnly, aliveOnly",
+            "baseHeal": 500,
+            "healStat": "wis",
+            "healStatMultiplier": 25
+        }
+    }
+}
