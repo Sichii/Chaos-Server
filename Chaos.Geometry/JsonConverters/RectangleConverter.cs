@@ -3,8 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace Chaos.Geometry.JsonConverters;
 
+/// <inheritdoc />
 public sealed class RectangleConverter : JsonConverter<Rectangle>
 {
+    /// <inheritdoc />
     public override Rectangle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
@@ -56,6 +58,7 @@ public sealed class RectangleConverter : JsonConverter<Rectangle>
             height);
     }
 
+    /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, Rectangle value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();

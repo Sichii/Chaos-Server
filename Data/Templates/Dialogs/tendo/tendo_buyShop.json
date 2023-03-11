@@ -1,11 +1,17 @@
 {
-    "templateKey": "tendo_buyShop",
-    "text": "What would you like to buy?",
-    "type": "showItems",
-    "scriptKeys": ["buyShop"],
-    "scriptVars": {
-        "buyShop": {
-            "itemTemplateKeys": ["teleport_trinket", "apple"]
-        }
+  "options": [],
+  "scriptKeys": [
+    "buyShop"
+  ],
+  "scriptVars": {
+    "buyShop": {
+      "itemTemplateKeys": [
+        "teleport_trinket",
+        "apple"
+      ]
     }
+  },
+  "templateKey": "tendo_buyShop",
+  "text": "What would you like to buy?",
+  "type": "ShowItems"
 }

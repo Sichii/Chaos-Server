@@ -8,5 +8,5 @@ public interface IStagingDirectory
     /// <summary>
     ///     The path to the staging directory
     /// </summary>
-    string StagingDirectory { get; }
+    string StagingDirectory { get; set; }
 }

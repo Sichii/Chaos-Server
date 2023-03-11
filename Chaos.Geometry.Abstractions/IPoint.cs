@@ -14,5 +14,6 @@ public interface IPoint
     /// </summary>
     int Y { get; }
 
+    /// <inheritdoc cref="Object.ToString" />
     static string ToString(IPoint point) => $@"({point.X}, {point.Y})";
 }

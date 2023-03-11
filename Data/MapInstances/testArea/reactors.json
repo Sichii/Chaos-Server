@@ -1,7 +1,5 @@
 [
   {
-    "source": "(7, 16)",
-    "shouldBlockPathfinding": true,
     "scriptKeys": [
       "showWorldMap"
     ],
@@ -9,11 +7,11 @@
       "showWorldMap": {
         "worldMapKey": "field001"
       }
-    }
+    },
+    "shouldBlockPathfinding": true,
+    "source": "(7, 16)"
   },
   {
-    "source": "(8, 16)",
-    "shouldBlockPathfinding": true,
     "scriptKeys": [
       "showWorldMap"
     ],
@@ -21,6 +19,8 @@
       "showWorldMap": {
         "worldMapKey": "field001"
       }
-    }
+    },
+    "shouldBlockPathfinding": true,
+    "source": "(8, 16)"
   }
 ]

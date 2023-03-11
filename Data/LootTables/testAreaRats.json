@@ -1,9 +1,9 @@
 {
-    "Key": "testAreaRats",
-    "LootDrops": [
-        {
-            "ItemTemplateKey": "stick",
-            "DropChance": 25
-        }
-    ]
+  "key": "testAreaRats",
+  "lootDrops": [
+    {
+      "dropChance": 25,
+      "itemTemplateKey": "stick"
+    }
+  ]
 }

@@ -1,6 +1,10 @@
 {
-    "templateKey": "generic_teleport",
-    "text": "What map would you like to teleport to?\nYou can specify just a map instanceId, or an instanceId and X, Y coordinates\nEx. testTown 50 50",
-    "type": "menuTextEntry",
-    "scriptKeys": ["teleport"]
+  "options": [],
+  "scriptKeys": [
+    "teleport"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_teleport",
+  "text": "What map would you like to teleport to?\nYou can specify just a map instanceId, or an instanceId and X, Y coordinates\nEx. testTown 50 50",
+  "type": "MenuTextEntry"
 }

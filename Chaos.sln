@@ -1,39 +1,45 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos", "Chaos\Chaos.csproj", "{032C0163-368F-4D73-9542-C265BE0F94DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos", "Chaos\Chaos.csproj", "{032C0163-368F-4D73-9542-C265BE0F94DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Networking", "Chaos.Networking\Chaos.Networking.csproj", "{934803CE-21CE-4A09-9D93-EECB6D4DC77E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Networking", "Chaos.Networking\Chaos.Networking.csproj", "{934803CE-21CE-4A09-9D93-EECB6D4DC77E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Cryptography", "Chaos.Cryptography\Chaos.Cryptography.csproj", "{44C0DAB4-A136-4BEE-B587-23EE691B0AD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Cryptography", "Chaos.Cryptography\Chaos.Cryptography.csproj", "{44C0DAB4-A136-4BEE-B587-23EE691B0AD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Packets", "Chaos.Packets\Chaos.Packets.csproj", "{0FB831B3-5628-4656-B6E4-50BBFE76BE13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Packets", "Chaos.Packets\Chaos.Packets.csproj", "{0FB831B3-5628-4656-B6E4-50BBFE76BE13}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{698D32AB-9BC9-4B0A-B5DD-19D98C0358DB}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\Directory.Build.props = Tools\Directory.Build.props
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Tools\Benchmarks\Benchmarks.csproj", "{CAF46A23-C840-4278-BEF3-A65C4D51806C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Tools\Benchmarks\Benchmarks.csproj", "{CAF46A23-C840-4278-BEF3-A65C4D51806C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapTemplateGenerator", "Tools\MapTemplateGenerator\MapTemplateGenerator.csproj", "{73869C61-CE28-4934-9A03-C33B6CACE5F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapTemplateGenerator", "Tools\MapTemplateGenerator\MapTemplateGenerator.csproj", "{73869C61-CE28-4934-9A03-C33B6CACE5F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FB65EF42-92F0-49AF-B22C-72B1725098DA}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Directory.Build.props = Tests\Directory.Build.props
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Experiments", "Tests\Experiments\Experiments.csproj", "{E2E4C420-1801-4CF8-B5E2-1AFDF9B845CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Experiments", "Tests\Experiments\Experiments.csproj", "{E2E4C420-1801-4CF8-B5E2-1AFDF9B845CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Tests", "Tests\Chaos.Tests\Chaos.Tests.csproj", "{02766DC1-4AA3-4454-B373-B717B46D5EFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Tests", "Tests\Chaos.Tests\Chaos.Tests.csproj", "{02766DC1-4AA3-4454-B373-B717B46D5EFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Geometry", "Chaos.Geometry\Chaos.Geometry.csproj", "{C676580E-11F0-4CB4-AEC3-6E6A7115B179}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Geometry", "Chaos.Geometry\Chaos.Geometry.csproj", "{C676580E-11F0-4CB4-AEC3-6E6A7115B179}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.IO", "Chaos.IO\Chaos.IO.csproj", "{9C0CE93D-BD0C-4301-B799-9EF42EF23307}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.IO", "Chaos.IO\Chaos.IO.csproj", "{9C0CE93D-BD0C-4301-B799-9EF42EF23307}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Time", "Chaos.Time\Chaos.Time.csproj", "{60C2C6D3-C22F-46D1-BC8F-722B926BD6A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Time", "Chaos.Time\Chaos.Time.csproj", "{60C2C6D3-C22F-46D1-BC8F-722B926BD6A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Pathfinding", "Chaos.Pathfinding\Chaos.Pathfinding.csproj", "{4EFE455B-61DB-43EF-9842-C6852AB7917C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Pathfinding", "Chaos.Pathfinding\Chaos.Pathfinding.csproj", "{4EFE455B-61DB-43EF-9842-C6852AB7917C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Schemas", "Chaos.Schemas\Chaos.Schemas.csproj", "{1340C673-C65F-4343-A2CA-DDF3414BEA71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Schemas", "Chaos.Schemas\Chaos.Schemas.csproj", "{1340C673-C65F-4343-A2CA-DDF3414BEA71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Common", "Chaos.Common\Chaos.Common.csproj", "{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Common", "Chaos.Common\Chaos.Common.csproj", "{7454ED69-AB6C-4CF7-B3DE-3DB2D86EDD63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B-4052-4E73-B24D-03799847282A}"
 	ProjectSection(SolutionItems) = preProject
@@ -41,93 +47,95 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Time.Abstractions", "Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj", "{7C53AEA4-A80D-4E85-BFC2-4E9AEE52B916}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Time.Abstractions", "Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj", "{7C53AEA4-A80D-4E85-BFC2-4E9AEE52B916}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Geometry.Abstractions", "Chaos.Geometry.Abstractions\Chaos.Geometry.Abstractions.csproj", "{5CE22844-B1C4-40D8-957C-47F16EC41F33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Geometry.Abstractions", "Chaos.Geometry.Abstractions\Chaos.Geometry.Abstractions.csproj", "{5CE22844-B1C4-40D8-957C-47F16EC41F33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Geometry", "Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj", "{0437584B-E0E4-4687-AAB3-293DA550C4A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Geometry", "Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj", "{0437584B-E0E4-4687-AAB3-293DA550C4A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Packets.Abstractions", "Chaos.Packets.Abstractions\Chaos.Packets.Abstractions.csproj", "{D3E68D2A-7B67-4978-95DF-6C59567CDCC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Packets.Abstractions", "Chaos.Packets.Abstractions\Chaos.Packets.Abstractions.csproj", "{D3E68D2A-7B67-4978-95DF-6C59567CDCC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Packets", "Chaos.Extensions.Packets\Chaos.Extensions.Packets.csproj", "{0E743A84-4318-48F2-85C0-54F5B1C7482D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Packets", "Chaos.Extensions.Packets\Chaos.Extensions.Packets.csproj", "{0E743A84-4318-48F2-85C0-54F5B1C7482D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Networking.Abstractions", "Chaos.Networking.Abstractions\Chaos.Networking.Abstractions.csproj", "{600422BE-93B4-4A95-9209-B9050246E853}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Networking.Abstractions", "Chaos.Networking.Abstractions\Chaos.Networking.Abstractions.csproj", "{600422BE-93B4-4A95-9209-B9050246E853}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Cryptography.Abstractions", "Chaos.Cryptography.Abstractions\Chaos.Cryptography.Abstractions.csproj", "{AF87B294-35A5-40A9-A744-20B4C05536AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Cryptography.Abstractions", "Chaos.Cryptography.Abstractions\Chaos.Cryptography.Abstractions.csproj", "{AF87B294-35A5-40A9-A744-20B4C05536AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Cryptography", "Chaos.Extensions.Cryptography\Chaos.Extensions.Cryptography.csproj", "{8D8D4A60-2E3F-45F8-BD10-323EFC9B8251}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Cryptography", "Chaos.Extensions.Cryptography\Chaos.Extensions.Cryptography.csproj", "{8D8D4A60-2E3F-45F8-BD10-323EFC9B8251}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abstractions", "Abstractions", "{735CA129-8393-4DEA-B172-394D213DFF1A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{EE543D52-C935-41FF-9441-14E3AC8DCA71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Pathfinding.Abstractions", "Chaos.Pathfinding.Abstractions\Chaos.Pathfinding.Abstractions.csproj", "{4F077543-C831-4801-8728-ADB656E1DE23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Pathfinding.Abstractions", "Chaos.Pathfinding.Abstractions\Chaos.Pathfinding.Abstractions.csproj", "{4F077543-C831-4801-8728-ADB656E1DE23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Pathfinding", "Chaos.Extensions.Pathfinding\Chaos.Extensions.Pathfinding.csproj", "{9BA92473-9F66-4E6C-9E33-2083231D4BA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Pathfinding", "Chaos.Extensions.Pathfinding\Chaos.Extensions.Pathfinding.csproj", "{9BA92473-9F66-4E6C-9E33-2083231D4BA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Common", "Chaos.Extensions.Common\Chaos.Extensions.Common.csproj", "{8D12D37D-D2CD-4114-9A81-96CDE48BD3E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Common", "Chaos.Extensions.Common\Chaos.Extensions.Common.csproj", "{8D12D37D-D2CD-4114-9A81-96CDE48BD3E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.TypeMapper.Abstractions", "Chaos.TypeMapper.Abstractions\Chaos.TypeMapper.Abstractions.csproj", "{23C25EA5-97D5-4DD5-8658-E8F183E9DE8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.TypeMapper.Abstractions", "Chaos.TypeMapper.Abstractions\Chaos.TypeMapper.Abstractions.csproj", "{23C25EA5-97D5-4DD5-8658-E8F183E9DE8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.TypeMapper", "Chaos.TypeMapper\Chaos.TypeMapper.csproj", "{E58B0EFC-59A6-42D2-9D0B-50B50B51762B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.TypeMapper", "Chaos.TypeMapper\Chaos.TypeMapper.csproj", "{E58B0EFC-59A6-42D2-9D0B-50B50B51762B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.TypeMapper", "Chaos.Extensions.TypeMapper\Chaos.Extensions.TypeMapper.csproj", "{FB27BB14-5EFB-4801-A668-813D6587BA84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.TypeMapper", "Chaos.Extensions.TypeMapper\Chaos.Extensions.TypeMapper.csproj", "{FB27BB14-5EFB-4801-A668-813D6587BA84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Security.Abstractions", "Chaos.Security.Abstractions\Chaos.Security.Abstractions.csproj", "{815FFBF7-9FBC-4CE0-9F1C-9E0E71C4B033}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Security.Abstractions", "Chaos.Security.Abstractions\Chaos.Security.Abstractions.csproj", "{815FFBF7-9FBC-4CE0-9F1C-9E0E71C4B033}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Security", "Chaos.Security\Chaos.Security.csproj", "{2E57C938-D8A1-4DC7-822F-CEE83E323272}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Security", "Chaos.Security\Chaos.Security.csproj", "{2E57C938-D8A1-4DC7-822F-CEE83E323272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Common.Abstractions", "Chaos.Common.Abstractions\Chaos.Common.Abstractions.csproj", "{9F750CB5-5083-4A8E-862A-DA376DE28976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Common.Abstractions", "Chaos.Common.Abstractions\Chaos.Common.Abstractions.csproj", "{9F750CB5-5083-4A8E-862A-DA376DE28976}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Common.Abstractions", "Chaos.Extensions.Common.Abstractions\Chaos.Extensions.Common.Abstractions.csproj", "{048865C3-8115-4059-87F7-D411A59CD1FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Common.Abstractions", "Chaos.Extensions.Common.Abstractions\Chaos.Extensions.Common.Abstractions.csproj", "{048865C3-8115-4059-87F7-D411A59CD1FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Security", "Chaos.Extensions.Security\Chaos.Extensions.Security.csproj", "{5AD442F0-45AA-4808-90DB-601F209B6EE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Security", "Chaos.Extensions.Security\Chaos.Extensions.Security.csproj", "{5AD442F0-45AA-4808-90DB-601F209B6EE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.CommandInterceptor.Abstractions", "Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj", "{8AD1CD5C-1383-42F2-9645-CB0E15458F65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.CommandInterceptor.Abstractions", "Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj", "{8AD1CD5C-1383-42F2-9645-CB0E15458F65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.CommandInterceptor", "Chaos.CommandInterceptor\Chaos.CommandInterceptor.csproj", "{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.CommandInterceptor", "Chaos.CommandInterceptor\Chaos.CommandInterceptor.csproj", "{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.CommandInterceptor", "Chaos.Extensions.CommandInterceptor\Chaos.Extensions.CommandInterceptor.csproj", "{6225495F-DF3A-409E-9238-BEECF342605B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.CommandInterceptor", "Chaos.Extensions.CommandInterceptor\Chaos.Extensions.CommandInterceptor.csproj", "{6225495F-DF3A-409E-9238-BEECF342605B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Storage.Abstractions", "Chaos.Storage.Abstractions\Chaos.Storage.Abstractions.csproj", "{1A52C64E-8EB3-4351-9572-C9B6C76DD166}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage.Abstractions", "Chaos.Storage.Abstractions\Chaos.Storage.Abstractions.csproj", "{1A52C64E-8EB3-4351-9572-C9B6C76DD166}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Scripting.Abstractions", "Chaos.Scripting.Abstractions\Chaos.Scripting.Abstractions.csproj", "{2AC78F4C-4ADD-4F35-9687-D00568D72DC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Scripting.Abstractions", "Chaos.Scripting.Abstractions\Chaos.Scripting.Abstractions.csproj", "{2AC78F4C-4ADD-4F35-9687-D00568D72DC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Scripting", "Chaos.Scripting\Chaos.Scripting.csproj", "{8F53E199-9524-4F6E-B8D6-9719083FB7CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Scripting", "Chaos.Scripting\Chaos.Scripting.csproj", "{8F53E199-9524-4F6E-B8D6-9719083FB7CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Scripting", "Chaos.Extensions.Scripting\Chaos.Extensions.Scripting.csproj", "{BF937891-1D8F-43A1-8F72-3C1BF445CD78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Scripting", "Chaos.Extensions.Scripting\Chaos.Extensions.Scripting.csproj", "{BF937891-1D8F-43A1-8F72-3C1BF445CD78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{B72FF7E2-9186-4ADE-AC9B-8F9B3E7C55DD}"
 	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-		docs\articles\toc.yml = docs\articles\toc.yml
-		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
-		docs\articles\LobbyOptions.md = docs\articles\LobbyOptions.md
-		docs\articles\LoginOptions.md = docs\articles\LoginOptions.md
-		docs\articles\Scripts.md = docs\articles\Scripts.md
+		docs\articles\AccessControl.md = docs\articles\AccessControl.md
+		docs\articles\CachingAndSerialization.md = docs\articles\CachingAndSerialization.md
 		docs\articles\Formulae.md = docs\articles\Formulae.md
 		docs\articles\FunctionalScripts.md = docs\articles\FunctionalScripts.md
-		docs\articles\MetaData.md = docs\articles\MetaData.md
 		docs\articles\Items.md = docs\articles\Items.md
+		docs\articles\LobbyOptions.md = docs\articles\LobbyOptions.md
+		docs\articles\Logging.md = docs\articles\Logging.md
+		docs\articles\LoginOptions.md = docs\articles\LoginOptions.md
 		docs\articles\Maps.md = docs\articles\Maps.md
+		docs\articles\Merchants.md = docs\articles\Merchants.md
+		docs\articles\MetaData.md = docs\articles\MetaData.md
 		docs\articles\Monsters.md = docs\articles\Monsters.md
+		README.md = README.md
+		docs\articles\Scripts.md = docs\articles\Scripts.md
 		docs\articles\Skills.md = docs\articles\Skills.md
 		docs\articles\Spells.md = docs\articles\Spells.md
-		docs\articles\CachingAndSerialization.md = docs\articles\CachingAndSerialization.md
-		docs\articles\Merchants.md = docs\articles\Merchants.md
-		docs\articles\Logging.md = docs\articles\Logging.md
-		docs\articles\AccessControl.md = docs\articles\AccessControl.md
+		docs\articles\toc.yml = docs\articles\toc.yml
+		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Networking", "Chaos.Extensions.Networking\Chaos.Extensions.Networking.csproj", "{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Networking", "Chaos.Extensions.Networking\Chaos.Extensions.Networking.csproj", "{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Storage", "Chaos.Storage\Chaos.Storage.csproj", "{776DB858-7973-4458-A923-49C31CC934C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage", "Chaos.Storage\Chaos.Storage.csproj", "{776DB858-7973-4458-A923-49C31CC934C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveFunctionCollapse", "Tools\WaveFunctionCollapse\WaveFunctionCollapse.csproj", "{D8A5DC97-9A70-4533-81CC-9B74D19A3401}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveFunctionCollapse", "Tools\WaveFunctionCollapse\WaveFunctionCollapse.csproj", "{D8A5DC97-9A70-4533-81CC-9B74D19A3401}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkEditTool", "Tools\BulkEditTool\BulkEditTool.csproj", "{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -311,12 +319,13 @@ Global
 		{D8A5DC97-9A70-4533-81CC-9B74D19A3401}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8A5DC97-9A70-4533-81CC-9B74D19A3401}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8A5DC97-9A70-4533-81CC-9B74D19A3401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CAF46A23-C840-4278-BEF3-A65C4D51806C} = {698D32AB-9BC9-4B0A-B5DD-19D98C0358DB}
@@ -324,14 +333,14 @@ Global
 		{E2E4C420-1801-4CF8-B5E2-1AFDF9B845CA} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{02766DC1-4AA3-4454-B373-B717B46D5EFC} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{E48BCA88-A7A6-469B-B34D-BD0411A04153} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
-		{AF87B294-35A5-40A9-A744-20B4C05536AB} = {735CA129-8393-4DEA-B172-394D213DFF1A}
-		{5CE22844-B1C4-40D8-957C-47F16EC41F33} = {735CA129-8393-4DEA-B172-394D213DFF1A}
-		{600422BE-93B4-4A95-9209-B9050246E853} = {735CA129-8393-4DEA-B172-394D213DFF1A}
-		{D3E68D2A-7B67-4978-95DF-6C59567CDCC1} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{7C53AEA4-A80D-4E85-BFC2-4E9AEE52B916} = {735CA129-8393-4DEA-B172-394D213DFF1A}
-		{8D8D4A60-2E3F-45F8-BD10-323EFC9B8251} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
+		{5CE22844-B1C4-40D8-957C-47F16EC41F33} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{0437584B-E0E4-4687-AAB3-293DA550C4A9} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
+		{D3E68D2A-7B67-4978-95DF-6C59567CDCC1} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{0E743A84-4318-48F2-85C0-54F5B1C7482D} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
+		{600422BE-93B4-4A95-9209-B9050246E853} = {735CA129-8393-4DEA-B172-394D213DFF1A}
+		{AF87B294-35A5-40A9-A744-20B4C05536AB} = {735CA129-8393-4DEA-B172-394D213DFF1A}
+		{8D8D4A60-2E3F-45F8-BD10-323EFC9B8251} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{4F077543-C831-4801-8728-ADB656E1DE23} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{9BA92473-9F66-4E6C-9E33-2083231D4BA5} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{8D12D37D-D2CD-4114-9A81-96CDE48BD3E1} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
@@ -348,5 +357,9 @@ Global
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{D8A5DC97-9A70-4533-81CC-9B74D19A3401} = {698D32AB-9BC9-4B0A-B5DD-19D98C0358DB}
+		{4DA779B2-3CE1-40CC-B884-E6A46C4BD291} = {698D32AB-9BC9-4B0A-B5DD-19D98C0358DB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}
 	EndGlobalSection
 EndGlobal

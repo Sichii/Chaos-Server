@@ -1,7 +1,8 @@
 [
-    {
-        "merchantTemplateKey": "tendo",
-        "spawnPoint": "(25, 25)",
-        "direction": "right"
-    }
+  {
+    "direction": "Right",
+    "extraScriptKeys": [],
+    "merchantTemplateKey": "tendo",
+    "spawnPoint": "(25, 25)"
+  }
 ]

@@ -2,10 +2,15 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.EqualityComparers;
 
+/// <inheritdoc />
 public sealed class LocationEqualityComparer : IEqualityComparer<ILocation>
 {
+    /// <summary>
+    ///     The singleton instance of this comparer
+    /// </summary>
     public static IEqualityComparer<ILocation> Instance { get; } = new LocationEqualityComparer();
 
+    /// <inheritdoc />
     public bool Equals(ILocation? x, ILocation? y)
     {
         if (ReferenceEquals(x, y))
@@ -20,6 +25,7 @@ public sealed class LocationEqualityComparer : IEqualityComparer<ILocation>
         return string.Equals(x.Map, y.Map, StringComparison.OrdinalIgnoreCase) && PointEqualityComparer.Instance.Equals(x, y);
     }
 
+    /// <inheritdoc />
     public int GetHashCode(ILocation obj)
     {
         var hashCode = new HashCode();

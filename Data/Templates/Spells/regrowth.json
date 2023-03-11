@@ -1,37 +1,40 @@
 {
-    "templateKey": "regrowth",
-    "name": "Regrowth",
-    "panelSprite": 146,
-    "scriptKeys": ["applyEffect"],
-    "spellType": "targeted",
-    "castLines": 0,
-    "description": "Applies a regenerative effect to your target, and all friendlies around that target.",
-    "level": 10,
-    "class": "priest",
-    "learningRequirements": {
-        "requiredStats": {
-            "str": 1,
-            "int": 1,
-            "wis": 2,
-            "con": 1,
-            "dex": 1
-        },
-        "itemRequirements": [
-            {
-                "itemTemplateKey": "apple",
-                "amountRequired": 10
-            }
-        ],
-        "requiredGold": 10000
-    },
-    "scriptVars": {
-        "applyEffect": {
-            "bodyAnimation": "handsup",
-            "sound": 8,
-            "range": 2,
-            "shape": "allaround",
-            "filter": "friendlyOnly",
-            "effectKey": "regeneration"
-        }
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 15,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [],
+    "requiredGold": 10000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 1,
+      "str": 1,
+      "wis": 2
     }
+  },
+  "spellType": "Targeted",
+  "class": "Priest",
+  "description": "Applies a regenerative effect to your target, and all friendlies around that target.",
+  "level": 10,
+  "name": "Regrowth",
+  "panelSprite": 146,
+  "scriptKeys": [
+    "applyEffect"
+  ],
+  "scriptVars": {
+    "applyEffect": {
+      "bodyAnimation": "handsup",
+      "effectKey": "regeneration",
+      "range": 2,
+      "filter": "friendlyOnly",
+      "shape": "allaround",
+      "sound": 8
+    }
+  },
+  "templateKey": "regrowth"
 }

@@ -706,7 +706,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     public void SendWorldList(IEnumerable<Aisling> aislings)
     {
         var worldList = new List<WorldListMemberInfo>();
-        var orderedAislings = aislings.OrderBy(aisling => aisling.StatSheet.MaximumMp * 2 + aisling.StatSheet.MaximumHp);
+        var orderedAislings = aislings.OrderByDescending(aisling => aisling.StatSheet.MaximumMp * 2 + aisling.StatSheet.MaximumHp);
 
         var args = new WorldListArgs
         {

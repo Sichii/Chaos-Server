@@ -197,11 +197,22 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
 
         foreach (var key in LocalLookup.Keys)
         {
-            if (!Cache.TryGetValue(key, out _))
-                continue;
+            try
+            {
+                if (!Cache.TryGetValue(key, out _))
+                    continue;
 
-            using var entry = Cache.CreateEntry(key);
-            entry.Value = CreateFromEntry(entry);
+                using var entry = Cache.CreateEntry(key);
+                entry.Value = CreateFromEntry(entry);
+            } catch (Exception e)
+            {
+                Logger.LogError(
+                    e,
+                    "Failed to reload {TypeName} with key \"{Key}\"",
+                    typeof(T).Name,
+                    key);
+                //otherwise ignored
+            }
         }
 
         return Task.CompletedTask;

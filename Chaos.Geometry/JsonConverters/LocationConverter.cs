@@ -4,8 +4,10 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 
+/// <inheritdoc />
 public sealed class LocationConverter : JsonConverter<Location>
 {
+    /// <inheritdoc />
     public override Location Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var str = reader.GetString();
@@ -19,6 +21,7 @@ public sealed class LocationConverter : JsonConverter<Location>
         throw new InvalidOperationException($"Invalid string format for location. \"{str}\"");
     }
 
+    /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, Location value, JsonSerializerOptions options) =>
         writer.WriteStringValue(ILocation.ToString(value));
 }

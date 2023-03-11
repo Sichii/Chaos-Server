@@ -1,11 +1,13 @@
 {
-    "templateKey": "ackshually",
-    "sprite": 76,
-    "name": "ackshually",
-    "scriptKeys": ["showdialog"],
-    "scriptVars": {
-        "showDialog": {
-            "dialogKey": "ackshually_initial"
-        }
+  "name": "ackshually",
+  "scriptKeys": [
+    "showdialog"
+  ],
+  "scriptVars": {
+    "showDialog": {
+      "dialogKey": "ackshually_initial"
     }
+  },
+  "sprite": 76,
+  "templateKey": "ackshually"
 }

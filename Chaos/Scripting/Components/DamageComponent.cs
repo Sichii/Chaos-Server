@@ -25,7 +25,7 @@ public class DamageComponent
             options.DamageStat,
             options.DamageStatMultiplier);
 
-        if (damage == 0)
+        if (damage <= 0)
             return;
 
         foreach (var target in targetEntities)

@@ -1,23 +1,24 @@
 {
-    "templateKey": "needle_trap",
-    "scriptKeys": ["trap"],
-    "scriptVars": {
-        "trap": {
-            "animation": {
-                "animationSpeed": 25,
-                "targetAnimation": 42
-            },
-            "filter": "hostileOnly",
-            "sound": 1,
-            "baseDamage": 500,
-            "maxTriggers": 1,
-            "durationSecs": 300,
-            "range": 0,
-            "shape": "none",
-            "mustHaveTargets": true,
-            "animatePoints": true,
-            "includeSourcePoint": true
-        }
-    },
-    "shouldBlockPathfinding": false
+  "scriptKeys": [
+    "trap"
+  ],
+  "scriptVars": {
+    "trap": {
+      "filter": "hostileOnly",
+      "animatePoints": true,
+      "baseDamage": 500,
+      "shape": "none",
+      "mustHaveTargets": true,
+      "range": 0,
+      "animation": {
+        "animationSpeed": 25,
+        "targetAnimation": 42
+      },
+      "includeSourcePoint": true,
+      "sound": 1,
+      "durationSecs": 300,
+      "maxTriggers": 1
+    }
+  },
+  "templateKey": "needle_trap"
 }

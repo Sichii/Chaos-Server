@@ -162,7 +162,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         UserStatSheet = new UserStatSheet();
         Titles = new TitleList();
         Options = new UserOptions();
-        IgnoreList = new IgnoreList();
+
+        IgnoreList = new IgnoreList
+        {
+            string.Empty
+        };
+
         Legend = new Containers.Legend();
         Bank = new Bank();
         Equipment = new Equipment();

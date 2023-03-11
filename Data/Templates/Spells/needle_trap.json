@@ -1,39 +1,42 @@
 {
-    "templateKey": "needle_trap",
-    "name": "Needle Trap",
-    "panelSprite": 39,
-    "scriptKeys": ["layReactorTile"],
-    "spellType": "notarget",
-    "castLines": 0,
-    "description": "Lays a trap on the ground which when stepped on by an enemy will deal a small amount of pure damage.",
-    "level": 5,
-    "class": "rogue",
-    "learningRequirements": {
-        "requiredStats": {
-            "str": 1,
-            "int": 2,
-            "wis": 1,
-            "con": 1,
-            "dex": 2
-        },
-        "itemRequirements": [
-            {
-                "itemTemplateKey": "apple",
-                "amountRequired": 10
-            },
-            {
-                "itemTemplateKey": "stick",
-                "amountRequired": 5
-            }
-        ],
-        "requiredGold": 10000
-    },
-    "scriptVars": {
-        "layReactorTile": {
-            "range": 0,
-            "shape": "none",
-            "reactorTileTemplateKey": "needle_trap",
-            "includeSourcePoint": true
-        }
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 15,
+        "itemTemplateKey": "apple"
+      },
+      {
+        "amountRequired": 5,
+        "itemTemplateKey": "stick"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [],
+    "requiredGold": 10000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 2,
+      "int": 2,
+      "str": 1,
+      "wis": 1
     }
+  },
+  "spellType": "NoTarget",
+  "class": "Rogue",
+  "description": "Lays a trap on the ground which when stepped on by an enemy will deal a small amount of pure damage.",
+  "level": 5,
+  "name": "Needle Trap",
+  "panelSprite": 39,
+  "scriptKeys": [
+    "layReactorTile"
+  ],
+  "scriptVars": {
+    "layReactorTile": {
+      "includeSourcePoint": true,
+      "range": 0,
+      "shape": "none",
+      "reactorTileTemplateKey": "needle_trap"
+    }
+  },
+  "templateKey": "needle_trap"
 }

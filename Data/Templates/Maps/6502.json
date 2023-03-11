@@ -1,6 +1,7 @@
 {
   "height": 15,
+  "scriptKeys": [],
   "templateKey": "6502",
-  "warpPointGroups": [],
+  "warpPoints": [],
   "width": 30
 }

@@ -1,23 +1,27 @@
 {
-    "templateKey": "stick",
-    "accountBound": false,
-    "maxDurability": 1000,
-    "maxStacks": 1,
-    "buyCost": 1000,
-    "sellValue": 500,
-    "weight": 1,
-    "name": "Stick",
-    "panelSprite": 86,
-    "displaySprite": 1,
-    "category": "1h wep",
-    "equipmentType": "weapon",
-    "modifiers": {
-        "atkspeedPct": 100,
-        "str": 1
-    },
-    "pantsColor": "black",
-    "scriptKeys": ["Equipment"],
-    "scriptVars": {
-        "equipment": {}
-    }
+  "buyCost": 1000,
+  "category": "1h wep",
+  "color": "Default",
+  "displaySprite": 1,
+  "equipmentType": "Weapon",
+  "gender": "Unisex",
+  "maxDurability": 1000,
+  "maxStacks": 1,
+  "modifiers": {
+    "atkSpeedPct": 100,
+    "str": 1
+  },
+  "pantsColor": "Black",
+  "sellValue": 500,
+  "weight": 1,
+  "description": "Definitely not a stick",
+  "name": "Stick",
+  "panelSprite": 86,
+  "scriptKeys": [
+    "Equipment"
+  ],
+  "scriptVars": {
+    "equipment": {}
+  },
+  "templateKey": "stick"
 }

@@ -1,17 +1,22 @@
 {
-    "templateKey": "teleport_trinket",
-    "accountBound": true,
-    "maxStacks": 1,
-    "buyCost": 1000,
-    "sellValue": 500,
-    "weight": 1,
-    "name": "Teleport Trinket",
-    "panelSprite": 895,
-    "category": "trinket",
-    "scriptKeys": ["showDialog"],
-    "scriptVars": {
-        "showDialog": {
-            "dialogKey": "generic_teleport"
-        }
+  "accountBound": true,
+  "buyCost": 1000,
+  "category": "trinket",
+  "color": "Default",
+  "gender": "Unisex",
+  "maxStacks": 1,
+  "sellValue": 500,
+  "weight": 1,
+  "description": "Definitely not a stick",
+  "name": "Teleport Trinket",
+  "panelSprite": 895,
+  "scriptKeys": [
+    "showDialog"
+  ],
+  "scriptVars": {
+    "showDialog": {
+      "dialogKey": "generic_teleport"
     }
+  },
+  "templateKey": "teleport_trinket"
 }

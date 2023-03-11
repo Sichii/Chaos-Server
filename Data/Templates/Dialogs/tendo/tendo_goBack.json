@@ -1,6 +1,9 @@
 {
-    "templateKey": "tendo_goBack",
-    "text": "Go back scrub",
-    "prevDialogKey": "tendo_initial",
-    "type": "normal"
+  "options": [],
+  "prevDialogKey": "tendo_initial",
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "tendo_goBack",
+  "text": "Go back scrub",
+  "type": "Normal"
 }

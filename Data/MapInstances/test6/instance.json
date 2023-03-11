@@ -1,7 +1,8 @@
 {
-    "flags": "None",
-    "instanceId": "test6",
-    "music": 1,
-    "name": "Test6",
-    "templateKey": "5007"
+  "flags": "None",
+  "instanceId": "test6",
+  "music": 1,
+  "name": "Test6",
+  "scriptKeys": [],
+  "templateKey": "5007"
 }

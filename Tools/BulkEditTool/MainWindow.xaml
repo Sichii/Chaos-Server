@@ -1,0 +1,67 @@
+﻿<Window x:Class="BulkEditTool.MainWindow"
+        x:Name="Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
+        mc:Ignorable="d"
+        Title="Bulk Edit Tool" Height="450" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <DockPanel Name="MasterDockPanel" VerticalAlignment="Stretch" Background="#303030" LastChildFill="True">
+        <Button
+            Height="Auto"
+            FontSize="16"
+            Width="35"
+            Content="➤"
+            FontWeight="ExtraBold"
+            DockPanel.Dock="Top, Left"
+            Click="OnRunClicked"
+            Background="#FF627FF5"
+            Foreground="#FF00CF13" />
+        <StackPanel DockPanel.Dock="Bottom, Left">
+            <Label Content="Output"
+                   Background="#303030"
+                   Foreground="White"
+                   FontWeight="ExtraBold" />
+            <TextBlock Name="Output"
+                       Padding="5"
+                       Margin="0"
+                       TextWrapping="Wrap"
+                       MinHeight="100"
+                       Background="#404040"
+                       Foreground="White"
+                       HorizontalAlignment="Stretch" />
+        </StackPanel>
+
+        <ItemsControl
+            Name="Items"
+            Background="#303030"
+            Foreground="White"
+            DockPanel.Dock="Top, Left"
+            VerticalAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Margin="0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <editor:RoslynCodeEditor Name="CodeEditor"
+                                             Loaded="OnItemLoaded"
+                                             FontFamily="Consolas"
+                                             Margin="0"
+                                             Padding="5"
+                                             ContextActionsIcon="{StaticResource Bulb}"
+                                             IsReadOnly="False"
+                                             HorizontalScrollBarVisibility="Auto"
+                                             VerticalScrollBarVisibility="Auto"
+                                             ShowLineNumbers="True"
+                                             Background="#303030"
+                                             Foreground="White"
+                                             IsBraceCompletionEnabled="True"
+                                             LineNumbersForeground="DarkGray" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+</Window>

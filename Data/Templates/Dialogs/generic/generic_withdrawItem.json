@@ -1,6 +1,10 @@
 {
-    "templateKey": "generic_withdrawItem",
-    "text": "Which item would you like to withdraw?",
-    "type": "showItems",
-    "scriptKeys": ["withdrawItem"]
+  "options": [],
+  "scriptKeys": [
+    "withdrawItem"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_withdrawItem",
+  "text": "Which item would you like to withdraw?",
+  "type": "ShowItems"
 }

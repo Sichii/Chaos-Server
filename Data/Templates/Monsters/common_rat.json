@@ -1,28 +1,31 @@
 {
-    "TemplateKey": "common_rat",
-    "StatSheet": {
-        "Ability": 0,
-        "Level": 1,
-        "MaximumHp": 100,
-        "MaximumMp": 100,
-        "Ac": 50,
-        "Str": 1,
-        "Int": 1,
-        "Wis": 1,
-        "Con": 2,
-        "Dex": 1,
-        "MagicResistance": 0
-    },
-    "Type": "Normal",
-    "Direction": "Down",
-    "Name": "Common Rat",
-    "Sprite": 7,
-    "WanderIntervalMs": 2000,
-    "MoveIntervalMs": 1500,
-    "SkillIntervalMs": 1500,
-    "SpellIntervalMs": 10000,
-    "AssailIntervalMs": 1500,
-    "SpellTemplateKeys": [],
-    "SkillTemplateKeys": ["Assail"],
-    "ScriptKeys": ["default"]
+  "assailIntervalMs": 1500,
+  "direction": "Down",
+  "moveIntervalMs": 1500,
+  "name": "Common Rat",
+  "scriptKeys": [
+    "default"
+  ],
+  "scriptVars": {},
+  "skillIntervalMs": 1500,
+  "skillTemplateKeys": [
+    "Assail"
+  ],
+  "spellIntervalMs": 10000,
+  "spellTemplateKeys": [],
+  "sprite": 7,
+  "statSheet": {
+    "level": 1,
+    "ac": 50,
+    "maximumHp": 100,
+    "maximumMp": 100,
+    "con": 2,
+    "dex": 1,
+    "int": 1,
+    "str": 1,
+    "wis": 1
+  },
+  "templateKey": "common_rat",
+  "type": "Normal",
+  "wanderIntervalMs": 2000
 }

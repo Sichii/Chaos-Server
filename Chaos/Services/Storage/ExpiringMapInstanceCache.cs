@@ -235,8 +235,15 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
             var mapInstance = (MapInstance)value!;
             var instanceId = DeconstructKeyForType(DeconstructShardKey(key));
 
-            using var entry = Cache.CreateEntry(key);
-            entry.Value = mapInstance.IsShard ? InnerCreateFromEntry(entry, instanceId) : InnerCreateFromEntry(entry);
+            try
+            {
+                using var entry = Cache.CreateEntry(key);
+                entry.Value = mapInstance.IsShard ? InnerCreateFromEntry(entry, instanceId) : InnerCreateFromEntry(entry);
+            } catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to reload MapInstance with key \"{Key}\"", key);
+                //otherwise ignored
+            }
         }
 
         ReconstructShardLookups();

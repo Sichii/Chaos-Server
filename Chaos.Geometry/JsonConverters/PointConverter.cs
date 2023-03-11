@@ -4,8 +4,10 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 
+/// <inheritdoc />
 public sealed class PointConverter : JsonConverter<Point>
 {
+    /// <inheritdoc />
     public override Point Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var str = reader.GetString();
@@ -19,6 +21,7 @@ public sealed class PointConverter : JsonConverter<Point>
         throw new InvalidOperationException($"Invalid string format for point. \"{str}\"");
     }
 
+    /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, Point value, JsonSerializerOptions options) =>
         writer.WriteStringValue(IPoint.ToString(value));
 }

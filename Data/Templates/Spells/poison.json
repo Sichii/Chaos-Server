@@ -1,37 +1,40 @@
 {
-    "templateKey": "poison",
-    "name": "Poison",
-    "panelSprite": 35,
-    "scriptKeys": ["applyEffect"],
-    "spellType": "targeted",
-    "castLines": 0,
-    "description": "Applies a poison effect to your target, and all hostiles around that target.",
-    "level": 10,
-    "class": "wizard",
-    "learningRequirements": {
-        "requiredStats": {
-            "str": 1,
-            "int": 2,
-            "wis": 2,
-            "con": 1,
-            "dex": 1
-        },
-        "itemRequirements": [
-            {
-                "itemTemplateKey": "apple",
-                "amountRequired": 10
-            }
-        ],
-        "requiredGold": 10000
-    },
-    "scriptVars": {
-        "applyEffect": {
-            "bodyAnimation": "handsup",
-            "sound": 8,
-            "range": 2,
-            "shape": "allaround",
-            "filter": "none",
-            "effectKey": "poison"
-        }
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 15,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [],
+    "requiredGold": 10000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 2,
+      "str": 1,
+      "wis": 2
     }
+  },
+  "spellType": "Targeted",
+  "class": "Wizard",
+  "description": "Applies a poison effect to your target, and all hostiles around that target.",
+  "level": 10,
+  "name": "Poison",
+  "panelSprite": 35,
+  "scriptKeys": [
+    "applyEffect"
+  ],
+  "scriptVars": {
+    "applyEffect": {
+      "bodyAnimation": "handsup",
+      "effectKey": "poison",
+      "range": 2,
+      "filter": "none",
+      "shape": "allaround",
+      "sound": 8
+    }
+  },
+  "templateKey": "poison"
 }

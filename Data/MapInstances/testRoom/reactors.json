@@ -1,7 +1,5 @@
 [
   {
-    "source": "(3, 13)",
-    "shouldBlockPathfinding": true,
     "scriptKeys": [
       "warp"
     ],
@@ -9,11 +7,11 @@
       "warp": {
         "destination": "testTown:(17, 12)"
       }
-    }
+    },
+    "shouldBlockPathfinding": true,
+    "source": "(3, 13)"
   },
   {
-    "source": "(4, 13)",
-    "shouldBlockPathfinding": true,
     "scriptKeys": [
       "warp"
     ],
@@ -21,6 +19,8 @@
       "warp": {
         "destination": "testTown:(18, 12)"
       }
-    }
+    },
+    "shouldBlockPathfinding": true,
+    "source": "(4, 13)"
   }
 ]

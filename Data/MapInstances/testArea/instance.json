@@ -1,12 +1,13 @@
 {
-    "flags": "None",
-    "instanceId": "testArea",
-    "music": 1,
-    "name": "Test Area",
-    "templateKey": "5219",
-    "shardingOptions": {
-        "shardingType": "absolutePlayerLimit",
-        "limit": 1,
-        "exitLocation": "testTown:(1, 13)"
-    }
+  "flags": "None",
+  "instanceId": "testArea",
+  "music": 1,
+  "name": "Test Area",
+  "scriptKeys": [],
+  "shardingOptions": {
+    "exitLocation": "testTown:(1, 13)",
+    "limit": 1,
+    "shardingType": "AbsolutePlayerLimit"
+  },
+  "templateKey": "5219"
 }

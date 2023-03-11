@@ -1,37 +1,41 @@
 {
-    "templateKey": "assail",
-    "name": "Assail",
-    "panelSprite": 1,
-    "isAssail": true,
-    "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
-    "level": 1,
-    "learningRequirements": {
-        "requiredStats": {
-            "str": 2,
-            "int": 1,
-            "wis": 1,
-            "con": 1,
-            "dex": 1
-        },
-        "itemRequirements": [
-            {
-                "itemTemplateKey": "apple",
-                "amountRequired": 20
-            }
-        ],
-        "requiredGold": 5000
-    },
-    "scriptKeys": ["damage"],
-    "scriptVars": {
-        "damage": {
-            "bodyAnimation": "assail",
-            "sound": 1,
-            "range": 1,
-            "shape": "front",
-            "filter": "hostileOnly",
-            "baseDamage": 3,
-            "damageStat": "str",
-            "damageStatMultiplier": 2
-        }
+  "isAssail": true,
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 20,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [],
+    "requiredGold": 5000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 1,
+      "str": 2,
+      "wis": 1
     }
+  },
+  "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
+  "level": 1,
+  "name": "Assail",
+  "panelSprite": 1,
+  "scriptKeys": [
+    "damage"
+  ],
+  "scriptVars": {
+    "damage": {
+      "bodyAnimation": "assail",
+      "range": 1,
+      "damageStatMultiplier": 2,
+      "filter": "hostileOnly",
+      "damageStat": "str",
+      "shape": "front",
+      "baseDamage": 3,
+      "sound": 1
+    }
+  },
+  "templateKey": "assail"
 }

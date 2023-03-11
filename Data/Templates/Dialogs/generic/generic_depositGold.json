@@ -1,6 +1,10 @@
 {
-    "templateKey": "generic_depositGold",
-    "text": "You are holding {Amount} gold, how much would you like to deposit?",
-    "type": "menuTextEntry",
-    "scriptKeys": ["depositGold"]
+  "options": [],
+  "scriptKeys": [
+    "depositGold"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_depositGold",
+  "text": "You are holding {Amount} gold, how much would you like to deposit?",
+  "type": "MenuTextEntry"
 }

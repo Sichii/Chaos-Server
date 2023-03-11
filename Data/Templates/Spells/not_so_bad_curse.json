@@ -1,34 +1,37 @@
 {
-    "templateKey": "not_so_bad_curse",
-    "name": "Not So Bad Curse",
-    "panelSprite": 5,
-    "scriptKeys": ["applyEffect"],
-    "spellType": "targeted",
-    "castLines": 0,
-    "description": "Applies a minor curse effect to your target that does absolutely nothing.",
-    "level": 10,
-    "class": "priest",
-    "learningRequirements": {
-        "requiredStats": {
-            "str": 1,
-            "int": 1,
-            "wis": 2,
-            "con": 1,
-            "dex": 1
-        },
-        "itemRequirements": [
-            {
-                "itemTemplateKey": "apple",
-                "amountRequired": 11
-            }
-        ],
-        "requiredGold": 69
-    },
-    "scriptVars": {
-        "applyEffect": {
-            "bodyAnimation": "priestcast",
-            "filter": "aliveonly",
-            "effectKey": "notsobadcurse"
-        }
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 16,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [],
+    "requiredGold": 69,
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 1,
+      "str": 1,
+      "wis": 2
     }
+  },
+  "spellType": "Targeted",
+  "class": "Priest",
+  "description": "Applies a minor curse effect to your target that does absolutely nothing.",
+  "level": 10,
+  "name": "Not So Bad Curse",
+  "panelSprite": 5,
+  "scriptKeys": [
+    "applyEffect"
+  ],
+  "scriptVars": {
+    "applyEffect": {
+      "bodyAnimation": "priestcast",
+      "effectKey": "notsobadcurse",
+      "filter": "aliveonly"
+    }
+  },
+  "templateKey": "not_so_bad_curse"
 }

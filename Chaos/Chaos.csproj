@@ -10,6 +10,7 @@
         <Description>A private server for Dark Ages</Description>
         <Copyright>Copyright © 2022</Copyright>
         <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <OutputPath>bin\$(Configuration)\</OutputPath>
     </PropertyGroup>
     <PropertyGroup>

@@ -11,12 +11,13 @@ using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Extensions;
 
 public static class ServiceProviderExtensions
 {
-    public static async Task ReloadDialogsAsync(this IServiceProvider provider)
+    public static async Task ReloadDialogsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var dialogCache = cacheProvider.GetCache<DialogTemplate>();
@@ -24,7 +25,7 @@ public static class ServiceProviderExtensions
         await dialogCache.ReloadAsync();
     }
 
-    public static async Task ReloadItemsAsync(this IServiceProvider provider)
+    public static async Task ReloadItemsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -90,7 +91,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadLootTablesAsync(this IServiceProvider provider)
+    public static async Task ReloadLootTablesAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var lootTableCache = cacheProvider.GetCache<LootTable>();
@@ -124,7 +125,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadMapsAsync(this IServiceProvider provider)
+    public static async Task ReloadMapsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -141,33 +142,42 @@ public static class ServiceProviderExtensions
         var newMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
 
         await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
-            TimeSpan.FromSeconds(1),
-            TimeSpan.FromMilliseconds(5),
+            TimeSpan.FromSeconds(5),
+            TimeSpan.FromMilliseconds(10),
             newMaps.Values.Select(m => m.Sync).ToArray());
 
         foreach (var oldMap in oldMaps.Values)
         {
-            var newMap = mapCache.Get(oldMap.InstanceId);
+            try
+            {
+                var newMap = mapCache.Get(oldMap.InstanceId);
 
-            foreach (var monster in newMap.GetEntities<Monster>())
-                newMap.RemoveObject(monster);
+                foreach (var monster in newMap.GetEntities<Monster>())
+                    newMap.RemoveObject(monster);
 
-            foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
-                newMap.SimpleAdd(groundEntity);
+                foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
+                    newMap.SimpleAdd(groundEntity);
 
-            foreach (var monster in oldMap.GetEntities<Monster>())
-                newMap.SimpleAdd(monster);
+                foreach (var monster in oldMap.GetEntities<Monster>())
+                    newMap.SimpleAdd(monster);
 
-            foreach (var aisling in oldMap.GetEntities<Aisling>())
-                newMap.SimpleAdd(aisling);
+                foreach (var aisling in oldMap.GetEntities<Aisling>())
+                    newMap.SimpleAdd(aisling);
 
-            oldMap.Destroy();
+                oldMap.Destroy();
 
-            newMap.BaseInstanceId = oldMap.BaseInstanceId;
+                newMap.BaseInstanceId = oldMap.BaseInstanceId;
+            } catch (Exception e)
+            {
+                logger.LogError(
+                    e,
+                    "Failed to migrate map \"{MapId}\" during reload",
+                    oldMap.InstanceId);
+            }
         }
     }
 
-    public static async Task ReloadMerchantsAsync(this IServiceProvider provider)
+    public static async Task ReloadMerchantsAsync(this IServiceProvider provider, ILogger logger)
     {
         var merchantFactory = provider.GetRequiredService<IMerchantFactory>();
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
@@ -184,21 +194,31 @@ public static class ServiceProviderExtensions
 
             foreach (var merchant in mapInstance.GetEntities<Merchant>().ToList())
             {
-                var newMerchant = merchantFactory.Create(
-                    merchant.Template.TemplateKey,
-                    merchant.MapInstance,
-                    merchant,
-                    merchant.ScriptKeys);
+                try
+                {
+                    var newMerchant = merchantFactory.Create(
+                        merchant.Template.TemplateKey,
+                        merchant.MapInstance,
+                        merchant,
+                        merchant.ScriptKeys);
 
-                merchant.MapInstance.RemoveObject(merchant);
-                merchantsToAdd.Add(newMerchant);
+                    merchant.MapInstance.RemoveObject(merchant);
+                    merchantsToAdd.Add(newMerchant);
+                } catch (Exception e)
+                {
+                    logger.LogError(
+                        e,
+                        "Failed to migrate merchant \"{MerchantId}\" on map \"{MapId}\" during reload",
+                        merchant.Template.TemplateKey,
+                        mapInstance.InstanceId);
+                }
             }
 
             mapInstance.AddObjects(merchantsToAdd);
         }
     }
 
-    public static async Task ReloadMonstersAsync(this IServiceProvider provider)
+    public static async Task ReloadMonstersAsync(this IServiceProvider provider, ILogger logger)
     {
         var monsterFactory = provider.GetRequiredService<IMonsterFactory>();
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
@@ -215,27 +235,37 @@ public static class ServiceProviderExtensions
 
             foreach (var monster in mapInstance.GetEntities<Monster>().ToList())
             {
-                var newMonster = monsterFactory.Create(
-                    monster.Template.TemplateKey,
-                    monster.MapInstance,
-                    monster,
-                    monster.ScriptKeys);
+                try
+                {
+                    var newMonster = monsterFactory.Create(
+                        monster.Template.TemplateKey,
+                        monster.MapInstance,
+                        monster,
+                        monster.ScriptKeys);
 
-                newMonster.Items.AddRange(monster.Items);
-                newMonster.Gold = monster.Gold;
-                newMonster.Experience = monster.Experience;
-                newMonster.AggroRange = monster.AggroRange;
-                newMonster.LootTable = monster.LootTable;
+                    newMonster.Items.AddRange(monster.Items);
+                    newMonster.Gold = monster.Gold;
+                    newMonster.Experience = monster.Experience;
+                    newMonster.AggroRange = monster.AggroRange;
+                    newMonster.LootTable = monster.LootTable;
 
-                monster.MapInstance.RemoveObject(monster);
-                monstersToAdd.Add(newMonster);
+                    monster.MapInstance.RemoveObject(monster);
+                    monstersToAdd.Add(newMonster);
+                } catch (Exception e)
+                {
+                    logger.LogError(
+                        e,
+                        "Failed to migrate monster \"{MonsterId}\" on map \"{MapId}\" during reload",
+                        monster.Template.TemplateKey,
+                        mapInstance.InstanceId);
+                }
             }
 
             mapInstance.AddObjects(monstersToAdd);
         }
     }
 
-    public static async Task ReloadSkillsAsync(this IServiceProvider provider)
+    public static async Task ReloadSkillsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -281,7 +311,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadSpellsAsync(this IServiceProvider provider)
+    public static async Task ReloadSpellsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
@@ -327,7 +357,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task ReloadWorldMapsAsync(this IServiceProvider provider)
+    public static async Task ReloadWorldMapsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var worldMapNodeCache = cacheProvider.GetCache<WorldMapNode>();

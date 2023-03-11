@@ -1,5 +1,8 @@
 namespace Chaos.Geometry.Abstractions.Definitions;
 
+/// <summary>
+///     Defines the possible directions an object can face, and their networking byte values
+/// </summary>
 public enum Direction : byte
 {
     /// <summary>

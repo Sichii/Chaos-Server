@@ -1,11 +1,17 @@
 {
-    "templateKey": "tendo_learnSpell",
-    "text": "What would you like to learn today?",
-    "type": "showSpells",
-    "scriptKeys": ["learnSpell"],
-    "scriptVars": {
-        "learnSpell": {
-            "spellTemplateKeys": ["firebreath", "regrowth"]
-        }
+  "options": [],
+  "scriptKeys": [
+    "learnSpell"
+  ],
+  "scriptVars": {
+    "learnSpell": {
+      "spellTemplateKeys": [
+        "firebreath",
+        "regrowth"
+      ]
     }
+  },
+  "templateKey": "tendo_learnSpell",
+  "text": "What would you like to learn today?",
+  "type": "ShowSpells"
 }

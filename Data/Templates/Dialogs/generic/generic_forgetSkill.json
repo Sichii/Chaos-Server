@@ -1,6 +1,10 @@
 {
-    "templateKey": "generic_forgetSkill",
-    "text": "What skill would you like to forget?",
-    "type": "showPlayerSkills",
-    "scriptKeys": ["forgetSkill"]
+  "options": [],
+  "scriptKeys": [
+    "forgetSkill"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_forgetSkill",
+  "text": "What skill would you like to forget?",
+  "type": "ShowPlayerSkills"
 }

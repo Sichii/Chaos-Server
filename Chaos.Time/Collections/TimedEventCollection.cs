@@ -66,6 +66,23 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
+    ///     Attempts to retreive an active event
+    /// </summary>
+    /// <param name="eventId">The id of the event to check if is active</param>
+    /// <param name="event">If an event with the given id was found and is not completed, this will be that event</param>
+    /// <returns><c>true</c> if an event was found with the given ID and that event was not completed, otherwise <c>false</c></returns>
+    /// <remarks>Use this when you are checking for an event that has AutoConsume=true</remarks>
+    public bool HasActiveEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
+    {
+        using var sync = Sync.Enter();
+
+        if (!Events.TryGetValue(eventId, out @event))
+            return false;
+
+        return !@event.Completed;
+    }
+
+    /// <summary>
     ///     Attempts to consume an event
     /// </summary>
     /// <param name="eventId">The id of the event to consume</param>
@@ -118,6 +135,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         /// <summary>
         ///     Whether or not the event should be automatically removed from the collection when it has expired
         /// </summary>
+        [JsonInclude]
         public bool AutoConsume { get; }
 
         /// <summary>
@@ -128,11 +146,13 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         /// <summary>
         ///     The duration of the event
         /// </summary>
+        [JsonInclude]
         public TimeSpan Duration { get; }
 
         /// <summary>
         ///     The ID of the event
         /// </summary>
+        [JsonInclude]
         public string EventId { get; }
 
         /// <summary>
@@ -143,8 +163,10 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         /// <summary>
         ///     The start time of the event
         /// </summary>
+        [JsonInclude]
         public DateTime Start { get; }
 
+        [JsonConstructor]
         public Event(
             string eventId,
             TimeSpan duration,

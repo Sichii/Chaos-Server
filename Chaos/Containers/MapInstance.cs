@@ -190,6 +190,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Destroy()
     {
+        Logger.LogInformation("Shutting down map instance {@MapInstance}", this);
         Stop();
         Shards.Remove(InstanceId, out _);
         Objects.Clear();

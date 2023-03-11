@@ -1,54 +1,58 @@
 {
-    "templateKey": "fireBreath",
-    "name": "Fire Breath",
-    "panelSprite": 39,
-    "scriptKeys": ["cascadeDamage"],
-    "spellType": "notarget",
-    "castLines": 0,
-    "description": "A powerful spell that deals damage in a long ranged cone shape in the direction you are facing.",
-    "level": 5,
-    "class": "wizard",
-    "learningRequirements": {
-        "requiredStats": {
-            "str": 1,
-            "int": 2,
-            "wis": 1,
-            "con": 1,
-            "dex": 1
-        },
-        "itemRequirements": [
-            {
-                "itemTemplateKey": "apple",
-                "amountRequired": 10
-            },
-            {
-                "itemTemplateKey": "stick",
-                "amountRequired": 5
-            }
-        ],
-        "requiredGold": 10000,
-        "prerequisitespelltemplatekeys": ["poison"]
-    },
-    "scriptVars": {
-        "cascadeDamage": {
-            "bodyAnimation": "handsup",
-            "sound": 140,
-            "animation": {
-                "targetAnimation": 138,
-                "animationSpeed": 100
-            },
-            "range": 10,
-            "shape": "frontalDiamond",
-            "filter": "hostileOnly",
-            "baseDamage": 50,
-            "damageStat": "int",
-            "damageStatMultiplier": 5,
-            "soundIntervalMs": 2000,
-            "propagationIntervalMs": 300,
-            "stopAtWalls": true,
-            "animatePoints": true,
-            "mustHaveTargets": false,
-            "includeSourcePoints": false
-        }
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 15,
+        "itemTemplateKey": "apple"
+      },
+      {
+        "amountRequired": 5,
+        "itemTemplateKey": "stick"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [
+      "poison"
+    ],
+    "requiredGold": 10000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 2,
+      "str": 1,
+      "wis": 1
     }
+  },
+  "spellType": "NoTarget",
+  "class": "Wizard",
+  "description": "A powerful spell that deals damage in a long ranged cone shape in the direction you are facing.",
+  "level": 5,
+  "name": "Fire Breath",
+  "panelSprite": 39,
+  "scriptKeys": [
+    "cascadeDamage"
+  ],
+  "scriptVars": {
+    "cascadeDamage": {
+      "filter": "hostileOnly",
+      "soundIntervalMs": 2000,
+      "animatePoints": true,
+      "baseDamage": 50,
+      "damageStatMultiplier": 5,
+      "stopAtWalls": true,
+      "propagationIntervalMs": 300,
+      "shape": "frontalDiamond",
+      "damageStat": "int",
+      "range": 10,
+      "mustHaveTargets": false,
+      "animation": {
+        "targetAnimation": 138,
+        "animationSpeed": 100
+      },
+      "bodyAnimation": "handsup",
+      "sound": 140,
+      "includeSourcePoints": false
+    }
+  },
+  "templateKey": "fireBreath"
 }

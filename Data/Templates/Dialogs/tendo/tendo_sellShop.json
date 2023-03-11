@@ -1,11 +1,16 @@
 {
-    "templateKey": "tendo_sellShop",
-    "text": "What would you like to sell?",
-    "type": "showPlayerItems",
-    "scriptKeys": ["sellShop"],
-    "scriptVars": {
-        "sellShop": {
-            "itemTemplateKeys": ["apple"]
-        }
+  "options": [],
+  "scriptKeys": [
+    "sellShop"
+  ],
+  "scriptVars": {
+    "sellShop": {
+      "itemTemplateKeys": [
+        "apple"
+      ]
     }
+  },
+  "templateKey": "tendo_sellShop",
+  "text": "What would you like to sell?",
+  "type": "ShowPlayerItems"
 }

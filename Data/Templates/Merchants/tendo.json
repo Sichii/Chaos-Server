@@ -1,11 +1,13 @@
 {
-    "templateKey": "tendo",
-    "sprite": 205,
-    "name": "Tendo",
-    "scriptKeys": ["showdialog"],
-    "scriptVars": {
-        "showdialog": {
-            "dialogKey": "tendo_initial"
-        }
+  "name": "Tendo",
+  "scriptKeys": [
+    "showdialog"
+  ],
+  "scriptVars": {
+    "showdialog": {
+      "dialogKey": "tendo_initial"
     }
+  },
+  "sprite": 205,
+  "templateKey": "tendo"
 }

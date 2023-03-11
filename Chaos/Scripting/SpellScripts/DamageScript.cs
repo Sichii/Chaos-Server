@@ -29,8 +29,8 @@ public class DamageScript : BasicSpellScriptBase, DamageComponent.IDamageCompone
     public override void OnUse(SpellContext context)
     {
         var targets = AbilityComponent.Activate<Creature>(context, this);
-        DamageComponent.ApplyDamage(context, targets.TargetEntities, this);
         context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
+        DamageComponent.ApplyDamage(context, targets.TargetEntities, this);
     }
 
     #region ScriptVars

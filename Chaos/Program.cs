@@ -23,8 +23,8 @@ var builder = new ConfigurationBuilder()
                     #if DEBUG
                     .AddJsonFile("appsettings.local.json")
                     #else
-                    //.AddJsonFile("appsettings.prod.json")
-                    .AddJsonFile("appsettings.local.json")
+                    .AddJsonFile("appsettings.prod.json")
+                    //.AddJsonFile("appsettings.local.json")
                     #endif
                     ;
 
@@ -34,18 +34,16 @@ if(initialConfiguration.GetValue<bool>(Startup.ConfigKeys.Logging.UseSeq))
     #if DEBUG
     builder.AddJsonFile("appsettings.seq.local.json");
     #else
-    builder.AddjsonFile("appsettings.seq.prod.json");
+    builder.AddJsonFile("appsettings.seq.prod.json");
     #endif
 
 var configuration = builder.Build();
 // @formatter:on
 
 var startup = new Startup(configuration);
-var serverCtx = new CancellationTokenSource();
-
-services.AddSingleton(serverCtx);
 
 startup.ConfigureServices(services);
+var serverCtx = startup.ServerCtx;
 
 services.AddSingleton<IGroupService, GroupService>();
 services.AddLobbyServer();

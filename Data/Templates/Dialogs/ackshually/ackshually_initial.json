@@ -1,11 +1,13 @@
 {
-    "templateKey": "ackshually_initial",
-    "text": "Uhmmm ackshually it's actually",
-    "type": "menu",
-    "options": [
-        {
-            "dialogKey": "ackshually_ok",
-            "optionText": "Ok..."
-        }
-    ]
+  "options": [
+    {
+      "dialogKey": "ackshually_ok",
+      "optionText": "Ok..."
+    }
+  ],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "ackshually_initial",
+  "text": "Uhmmm ackshually it\u0027s actually",
+  "type": "Menu"
 }

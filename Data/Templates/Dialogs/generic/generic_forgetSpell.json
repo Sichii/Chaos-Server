@@ -1,6 +1,10 @@
 {
-    "templateKey": "generic_forgetSpell",
-    "text": "What spell would you like to forget?",
-    "type": "showPlayerSpells",
-    "scriptKeys": ["forgetSpell"]
+  "options": [],
+  "scriptKeys": [
+    "forgetSpell"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_forgetSpell",
+  "text": "What spell would you like to forget?",
+  "type": "ShowPlayerSpells"
 }

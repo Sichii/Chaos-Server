@@ -263,23 +263,25 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         var obj2 = Objects[slot2];
 
         if (obj1 != null)
+        {
+            BroadcastOnRemoved(slot1, obj1);
             obj1.Slot = slot2;
+        }
 
         if (obj2 != null)
+        {
+            BroadcastOnRemoved(slot2, obj2);
             obj2.Slot = slot1;
+        }
 
         Objects[slot1] = obj2;
         Objects[slot2] = obj1;
 
         if (obj1 != null)
-            BroadcastOnUpdated(slot1, obj1);
-        else if (obj2 != null)
-            BroadcastOnRemoved(slot2, obj2);
+            BroadcastOnAdded(obj1);
 
         if (obj2 != null)
-            BroadcastOnUpdated(slot2, obj2);
-        else if (obj1 != null)
-            BroadcastOnRemoved(slot1, obj1);
+            BroadcastOnAdded(obj2);
 
         return true;
     }

@@ -1,7 +1,5 @@
 [
   {
-    "source": "(7, 5)",
-    "shouldBlockPathfinding": true,
     "scriptKeys": [
       "warp"
     ],
@@ -9,6 +7,8 @@
       "warp": {
         "destination": "test2:(51, 50)"
       }
-    }
+    },
+    "shouldBlockPathfinding": true,
+    "source": "(7, 5)"
   }
 ]

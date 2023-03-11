@@ -34,7 +34,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadSkillsAsync();
+                            await ServiceProvider.ReloadSkillsAsync(Logger);
                             aisling.SendOrangeBarMessage("Skills reloaded");
                         } catch (Exception e)
                         {
@@ -50,7 +50,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadSpellsAsync();
+                            await ServiceProvider.ReloadSpellsAsync(Logger);
                             aisling.SendOrangeBarMessage("Spells reloaded");
                         } catch (Exception e)
                         {
@@ -66,7 +66,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadItemsAsync();
+                            await ServiceProvider.ReloadItemsAsync(Logger);
                             aisling.SendOrangeBarMessage("Items reloaded");
                         } catch (Exception e)
                         {
@@ -82,7 +82,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadMonstersAsync();
+                            await ServiceProvider.ReloadMonstersAsync(Logger);
                             aisling.SendOrangeBarMessage("Monsters reloaded");
                         } catch (Exception e)
                         {
@@ -98,7 +98,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadMerchantsAsync();
+                            await ServiceProvider.ReloadMerchantsAsync(Logger);
                             aisling.SendOrangeBarMessage("Merchants reloaded");
                         } catch (Exception e)
                         {
@@ -114,7 +114,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadMapsAsync();
+                            await ServiceProvider.ReloadMapsAsync(Logger);
                             aisling.SendOrangeBarMessage("Maps reloaded");
                         } catch (Exception e)
                         {
@@ -130,7 +130,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadDialogsAsync();
+                            await ServiceProvider.ReloadDialogsAsync(Logger);
                             aisling.SendOrangeBarMessage("Dialogs reloaded");
                         } catch (Exception e)
                         {
@@ -146,7 +146,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadWorldMapsAsync();
+                            await ServiceProvider.ReloadWorldMapsAsync(Logger);
                             aisling.SendOrangeBarMessage("WorldMaps reloaded");
                         } catch (Exception e)
                         {
@@ -162,7 +162,7 @@ public sealed class ReloadCommand : ICommand<Aisling>
                     {
                         try
                         {
-                            await ServiceProvider.ReloadLootTablesAsync();
+                            await ServiceProvider.ReloadLootTablesAsync(Logger);
                             aisling.SendOrangeBarMessage("LootTables reloaded");
                         } catch (Exception e)
                         {

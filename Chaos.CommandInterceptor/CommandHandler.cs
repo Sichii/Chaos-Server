@@ -82,7 +82,11 @@ public sealed class CommandHandler<T> : ICommandInterceptor<T>
             {
                 await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
 
-                Logger.LogInformation("{@Source} executed command {CommandName}", source, commandName);
+                Logger.LogInformation(
+                    "{@Source} executed command \"{CommandName}\" with arguments \"{Args}\"",
+                    source,
+                    commandName,
+                    commandArgs.ToString());
             }
 
             return InnerExecute();

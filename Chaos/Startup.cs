@@ -39,6 +39,7 @@ public class Startup
     private static bool IsInitialized;
 
     public IConfiguration Configuration { get; set; }
+    public CancellationTokenSource ServerCtx { get; }
 
     static Startup()
     {
@@ -61,10 +62,15 @@ public class Startup
         JsonContext = new SerializationContext(JsonSerializerOptions);
     }
 
-    public Startup(IConfiguration configuration) => Configuration = configuration;
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+        ServerCtx = new CancellationTokenSource();
+    }
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton(ServerCtx);
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
 

@@ -4,8 +4,10 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Geometry.JsonConverters;
 
+/// <inheritdoc />
 public sealed class PolygonConverter : JsonConverter<Polygon>
 {
+    /// <inheritdoc />
     public override Polygon Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartArray)
@@ -32,6 +34,7 @@ public sealed class PolygonConverter : JsonConverter<Polygon>
         return new Polygon(vertices);
     }
 
+    /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, Polygon value, JsonSerializerOptions options)
     {
         writer.WriteStartArray();

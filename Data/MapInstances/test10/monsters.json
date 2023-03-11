@@ -1,14 +1,15 @@
 [
-    {
-        "LootTableKey": "testAreaRats",
-        "IntervalSecs": 30,
-        "IntervalVariancePct": 50,
-        "MaxPerSpawn": 200,
-        "MaxAmount": 300,
-        "AggroRange": 13,
-        "MinGoldDrop": 10,
-        "MaxGoldDrop": 30,
-        "ExpReward": 50,
-        "MonsterTemplateKey": "common_rat"
-    }
+  {
+    "aggroRange": 13,
+    "expReward": 50,
+    "extraScriptKeys": [],
+    "intervalSecs": 30,
+    "intervalVariancePct": 50,
+    "lootTableKey": "testAreaRats",
+    "maxAmount": 300,
+    "maxGoldDrop": 30,
+    "maxPerSpawn": 200,
+    "minGoldDrop": 10,
+    "monsterTemplateKey": "common_rat"
+  }
 ]
