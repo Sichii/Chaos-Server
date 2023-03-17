@@ -23,8 +23,8 @@
   "scriptVars": {
     "equipment": {},
     "setelement": {
-      "defenseElement": "undead",
-      "offenseElement": "undead"
+      "offenseElement": "undead",
+      "defenseElement": "undead"
     }
   },
   "templateKey": "cuckArmor"

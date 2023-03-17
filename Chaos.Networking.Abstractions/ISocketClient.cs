@@ -40,7 +40,7 @@ public interface ISocketClient
     /// <summary>
     ///     The remote endpoint of the client
     /// </summary>
-    IPAddress? RemoteIp { get; }
+    IPAddress RemoteIp { get; }
     /// <summary>
     ///     The socket that the client is connected to
     /// </summary>

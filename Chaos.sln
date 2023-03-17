@@ -91,11 +91,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Common.Abs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Security", "Chaos.Extensions.Security\Chaos.Extensions.Security.csproj", "{5AD442F0-45AA-4808-90DB-601F209B6EE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.CommandInterceptor.Abstractions", "Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj", "{8AD1CD5C-1383-42F2-9645-CB0E15458F65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Messaging.Abstractions", "Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj", "{8AD1CD5C-1383-42F2-9645-CB0E15458F65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.CommandInterceptor", "Chaos.CommandInterceptor\Chaos.CommandInterceptor.csproj", "{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.CommandInterceptor", "Chaos.Extensions.CommandInterceptor\Chaos.Extensions.CommandInterceptor.csproj", "{6225495F-DF3A-409E-9238-BEECF342605B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Messaging", "Chaos.Messaging\Chaos.Messaging.csproj", "{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage.Abstractions", "Chaos.Storage.Abstractions\Chaos.Storage.Abstractions.csproj", "{1A52C64E-8EB3-4351-9572-C9B6C76DD166}"
 EndProject
@@ -287,10 +285,6 @@ Global
 		{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF0DDDB5-FDC8-4E05-AE00-F6469632D2E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6225495F-DF3A-409E-9238-BEECF342605B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6225495F-DF3A-409E-9238-BEECF342605B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6225495F-DF3A-409E-9238-BEECF342605B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6225495F-DF3A-409E-9238-BEECF342605B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A52C64E-8EB3-4351-9572-C9B6C76DD166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A52C64E-8EB3-4351-9572-C9B6C76DD166}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A52C64E-8EB3-4351-9572-C9B6C76DD166}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -351,7 +345,6 @@ Global
 		{048865C3-8115-4059-87F7-D411A59CD1FD} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{5AD442F0-45AA-4808-90DB-601F209B6EE3} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{8AD1CD5C-1383-42F2-9645-CB0E15458F65} = {735CA129-8393-4DEA-B172-394D213DFF1A}
-		{6225495F-DF3A-409E-9238-BEECF342605B} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}
 		{1A52C64E-8EB3-4351-9572-C9B6C76DD166} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{2AC78F4C-4ADD-4F35-9687-D00568D72DC9} = {735CA129-8393-4DEA-B172-394D213DFF1A}
 		{BF937891-1D8F-43A1-8F72-3C1BF445CD78} = {EE543D52-C935-41FF-9441-14E3AC8DCA71}

@@ -35,11 +35,10 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.CommandInterceptor.Abstractions\Chaos.CommandInterceptor.Abstractions.csproj"/>
-        <ProjectReference Include="..\Chaos.CommandInterceptor\Chaos.CommandInterceptor.csproj"/>
+        <ProjectReference Include="..\Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj"/>
+        <ProjectReference Include="..\Chaos.Messaging\Chaos.Messaging.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Scripting\Chaos.Extensions.Scripting.csproj"/>
         <ProjectReference Include="..\Chaos.Schemas\Chaos.Schemas.csproj"/>
-        <ProjectReference Include="..\Chaos.Extensions.CommandInterceptor\Chaos.Extensions.CommandInterceptor.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Cryptography\Chaos.Extensions.Cryptography.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Packets\Chaos.Extensions.Packets.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Pathfinding\Chaos.Extensions.Pathfinding.csproj"/>

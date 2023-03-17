@@ -4,6 +4,7 @@ using Chaos.Common.Abstractions;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Schemas.Content;
@@ -106,6 +107,15 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
 
         //we use entry.Key.ToString()
         var ret = InnerLoadFromFile(path, shardId);
+
+        if (!ret.InstanceId.EqualsI(loadInstanceIdActual))
+        {
+            var endOfPath = Path.GetFileName(path);
+
+            throw new InvalidOperationException(
+                $"File/Directory \"{endOfPath}\" does not match the instance id \"{loadInstanceIdActual}\" of the serialized {
+                    nameof(MapInstance)}");
+        }
 
         LocalLookup[entryKey!] = ret;
 

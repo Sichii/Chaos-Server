@@ -2,6 +2,7 @@ using Chaos.Clients.Abstractions;
 using Chaos.Collections.Common;
 using Chaos.Collections.Time;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
@@ -12,6 +13,7 @@ using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Messaging.Abstractions;
 using Chaos.Objects.Abstractions;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
@@ -31,13 +33,14 @@ using PointExtensions = Chaos.Extensions.Geometry.PointExtensions;
 
 namespace Chaos.Objects.World;
 
-public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSourceEntity
+public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSourceEntity, ICommandSubject, IChannelSubscriber
 {
     private readonly IExchangeFactory ExchangeFactory;
     private readonly ICloningService<Item> ItemCloner;
     public Bank Bank { get; private set; }
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
+    public SynchronizedHashSet<ChannelSettings> ChannelSettings { get; init; }
     public IWorldClient Client { get; set; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
@@ -149,6 +152,13 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         HairStyle = hairStyle;
         HairColor = hairColor;
         UserStatSheet = UserStatSheet.NewCharacter;
+
+        Titles = new TitleList
+        {
+            string.Empty
+        };
+
+        ChannelSettings.AddRange(WorldOptions.Instance.DefaultChannels.Select(x => new ChannelSettings(x.ChannelName)));
     }
 
     private Aisling(string name, MapInstance mapInstance, IPoint point)
@@ -162,12 +172,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         UserStatSheet = new UserStatSheet();
         Titles = new TitleList();
         Options = new UserOptions();
-
-        IgnoreList = new IgnoreList
-        {
-            string.Empty
-        };
-
+        IgnoreList = new IgnoreList();
         Legend = new Containers.Legend();
         Bank = new Bank();
         Equipment = new Equipment();
@@ -185,6 +190,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond);
         WalkCounter = new ResettingCounter(3, 5);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
+        ChannelSettings = new SynchronizedHashSet<ChannelSettings>();
 
         Trackers = new Trackers
         {
@@ -389,6 +395,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Trackers = trackers;
     }
 
+    /// <inheritdoc />
+    public bool IsIgnoring(string name) => IgnoreList.Contains(name);
+
     public override void OnClicked(Aisling source)
     {
         if (source.Equals(this))
@@ -414,45 +423,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             exchange.AddItem(source, slot);
         else
             exchange.AddStackableItem(this, slot, count);
-    }
-
-    public void PickupItem(GroundItem groundItem, byte destinationSlot)
-    {
-        if (!groundItem.CanPickUp(this))
-        {
-            SendActiveMessage("You can't pick that up right now");
-
-            return;
-        }
-
-        var item = groundItem.Item;
-
-        if (TryGiveItem(item, destinationSlot))
-        {
-            Logger.LogDebug("{@Player} picked up {@Item}", this, groundItem);
-            MapInstance.RemoveObject(groundItem);
-            item.Script.OnPickup(this);
-
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem).ToList())
-                reactor.OnItemPickedUpFrom(this, groundItem);
-        }
-    }
-
-    public void PickupMoney(Money money)
-    {
-        if (!money.CanPickUp(this))
-        {
-            SendActiveMessage("You can't pick that up right now");
-
-            return;
-        }
-
-        if (TryGiveGold(money.Amount))
-        {
-            Logger.LogDebug("{@Player} picked up {@Money}", this, money);
-
-            MapInstance.RemoveObject(money);
-        }
     }
 
     public void Refresh(bool forceRefresh = false)
@@ -623,6 +593,51 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             Inventory.TryAddToNextSlot(item);
 
         return true;
+    }
+
+    public bool TryPickupItem(GroundItem groundItem, byte destinationSlot)
+    {
+        if (!groundItem.CanPickUp(this))
+        {
+            SendActiveMessage("You can't pick that up right now");
+
+            return false;
+        }
+
+        var item = groundItem.Item;
+
+        if (TryGiveItem(item, destinationSlot))
+        {
+            Logger.LogDebug("{@Player} picked up {@Item}", this, groundItem);
+            MapInstance.RemoveObject(groundItem);
+            item.Script.OnPickup(this);
+
+            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem).ToList())
+                reactor.OnItemPickedUpFrom(this, groundItem);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryPickupMoney(Money money)
+    {
+        if (!money.CanPickUp(this))
+        {
+            SendActiveMessage("You can't pick that up right now");
+
+            return false;
+        }
+
+        if (TryGiveGold(money.Amount))
+        {
+            Logger.LogDebug("{@Player} picked up {@Money}", this, money);
+
+            return MapInstance.RemoveObject(money);
+        }
+
+        return false;
     }
 
     private bool TryStartExchange(Aisling source, [MaybeNullWhen(false)] out Exchange exchange)

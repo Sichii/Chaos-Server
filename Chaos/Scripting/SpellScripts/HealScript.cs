@@ -28,8 +28,8 @@ public class HealScript : BasicSpellScriptBase, HealComponent.IHealComponentOpti
     public override void OnUse(SpellContext context)
     {
         var targets = AbilityComponent.Activate<Creature>(context, this);
-        HealComponent.ApplyHeal(context, targets.TargetEntities, this);
         context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
+        HealComponent.ApplyHeal(context, targets.TargetEntities, this);
     }
 
     #region ScriptVars

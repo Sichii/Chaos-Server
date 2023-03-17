@@ -1,10 +1,9 @@
-using Chaos.Extensions.DependencyInjection;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable once CheckNamespace
-namespace Chaos.Extensions.Storage;
+namespace Chaos.Extensions.DependencyInjection;
 
 public static class StorageExtensions
 {

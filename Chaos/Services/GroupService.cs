@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Containers;
+using Chaos.Messaging.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Services.Abstractions;
 using Chaos.Services.Servers.Options;
@@ -10,13 +11,15 @@ namespace Chaos.Services;
 
 public sealed class GroupService : IGroupService
 {
+    private readonly IChannelService ChannelService;
     private readonly ILogger<GroupService> Logger;
     private readonly HashSet<GroupInvite> PendingInvites;
     private readonly AutoReleasingMonitor Sync;
 
-    public GroupService(ILogger<GroupService> logger)
+    public GroupService(ILogger<GroupService> logger, IChannelService channelService)
     {
         Logger = logger;
+        ChannelService = channelService;
         PendingInvites = new HashSet<GroupInvite>();
         Sync = new AutoReleasingMonitor();
     }
@@ -48,7 +51,7 @@ public sealed class GroupService : IGroupService
 
                 PendingInvites.Remove(invite);
 
-                var group = new Group(sender, receiver);
+                var group = new Group(sender, receiver, ChannelService);
                 sender.Group = group;
                 receiver.Group = group;
             } else

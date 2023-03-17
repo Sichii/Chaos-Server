@@ -3,6 +3,7 @@ using Chaos.Security;
 using Chaos.Security.Abstractions;
 using Chaos.Security.Options;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.DependencyInjection;
@@ -13,18 +14,16 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class SecurityExtensions
 {
     /// <summary>
-    ///     Adds <see cref="SimpleCredentialManager" /> as an implementation of
-    ///     <see cref="Chaos.Security.Abstractions.ICredentialManager" /> utilizing
-    ///     <see cref="SimpleCredentialManagerOptions" /> for configuration
+    ///     Adds the <see cref="IAccessManager" /> to the service collection
     /// </summary>
     /// <param name="services">The service collection to add the service to</param>
     /// <param name="subSection">
-    ///     The section where the <see cref="SimpleCredentialManagerOptions" /> can be located
+    ///     The section where the <see cref="AccessManagerOptions" /> can be located
     ///     in the config
     /// </param>
     public static void AddSecurity(this IServiceCollection services, string subSection)
     {
-        services.AddDirectoryBoundOptionsFromConfig<SimpleCredentialManagerOptions>(subSection)
+        services.AddDirectoryBoundOptionsFromConfig<AccessManagerOptions>(subSection)
                 .PostConfigure(
                     o =>
                     {
@@ -32,9 +31,6 @@ public static class SecurityExtensions
                         o.ValidFormatRegex = new Regex(o.ValidFormatPattern, RegexOptions.Compiled);
                     });
 
-        services.AddDirectoryBoundOptionsFromConfig<AccessManagerOptions>(subSection);
-
-        services.AddSingleton<ICredentialManager, SimpleCredentialManager>();
-        services.AddSingleton<IAccessManager, AccessManager>();
+        services.AddSingleton<IAccessManager, IHostedService, AccessManager>();
     }
 }

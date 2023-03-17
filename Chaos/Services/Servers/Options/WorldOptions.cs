@@ -1,3 +1,5 @@
+using Chaos.Common.Definitions;
+using Chaos.Data;
 using Chaos.Networking.Options;
 
 namespace Chaos.Services.Servers.Options;
@@ -7,10 +9,16 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public required int AislingAssailIntervalMs { get; init; }
     /// <inheritdoc />
+    public required ChannelSettings[] DefaultChannels { get; set; } = Array.Empty<ChannelSettings>();
+    /// <inheritdoc />
     public required int DropRange { get; init; }
 
     /// <inheritdoc />
     public required string F1MerchantTemplateKey { get; init; }
+    /// <inheritdoc />
+    public required string GroupChatName { get; init; }
+    /// <inheritdoc />
+    public MessageColor GroupMessageColor { get; init; }
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;

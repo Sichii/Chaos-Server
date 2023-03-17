@@ -50,6 +50,26 @@ collection and JIT recompilation/OSR.
 
 This is the template key of the merchant to display when a player presses F1. This is generally some kind of help npc
 
+## Channel Settings
+
+---
+
+A channel is a membership of players that can send message to eachother. Think global and trade chat in other games, but also group and
+guild chat in Dark Ages. These settings represent the parts of those systems that are configurable.
+
+### DefaultChannels
+
+This is a collection of channel names that new characters will join by default. These channels are also registered with the channel service
+during startup.
+
+| Name         | Type                                                               | Description                                  |
+|--------------|--------------------------------------------------------------------|----------------------------------------------|
+| Name         | string                                                             | The name of the channel                      |
+| MessageColor | [MessageColor](<xref:Chaos.Common.Definitions.Enums.MessageColor>) | The color of messages sent from this channel |
+
+> [!NOTE]
+> Default channel names should also be added to ChannelServiceOptions.ReservedChannelNames
+
 ## Aisling Settings
 
 ---
@@ -209,14 +229,14 @@ by the server, such as for refreshing a player's position if they walk into a wa
   "DropRange": 4,
   "PickupRange": 4,
   "UpdatesPerSecond": 30,
-  "SaveIntervalMins": 5,
+  "SaveIntervalMins": 1,
   "MaxGroupSize": 6,
   "MaxGoldHeld": 500000000,
   "MinimumMonsterAc": -99,
   "MaximumMonsterAc": 100,
   "MinimumAislingAc": -90,
   "MaximumAislingAc": 100,
-  "MaxLevel": 99,
+  "MaxLevel": 30,
   "MaxActionsPerSecond": 10,
   "MaxSkillsPerSecond": 5,
   "MaxSpellsPerSecond": 3,
@@ -225,6 +245,18 @@ by the server, such as for refreshing a player's position if they walk into a wa
   "ProhibitItemSwitchWalk": true,
   "ProhibitSpeedWalk": true,
   "MaxChantTimeBurdenMs": 1500,
-  "F1MerchantTemplateKey": "Help"
+  "F1MerchantTemplateKey": "ackshually",
+  "GroupChatName": "!!",
+  "GroupMessageColor": "default",
+  "DefaultChannels": [
+    {
+      "channelName": "!global",
+      "messageColor": "yellow",
+    },
+    {
+      "channelName": "!trade",
+      "messageColor": "gainsboro",
+    }
+  ],
 }
 ```

@@ -3,14 +3,16 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Chaos.Clients.Abstractions;
-using Chaos.CommandInterceptor;
+using Chaos.Commands.Options;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.JsonConverters;
+using Chaos.Messaging;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Options;
 using Chaos.Objects.Menu;
@@ -18,7 +20,7 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
-using Chaos.Serialization;
+using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
@@ -68,6 +70,23 @@ public class Startup
         ServerCtx = new CancellationTokenSource();
     }
 
+    public void AddJsonSerializerOptions(IServiceCollection services) =>
+        services.AddOptions<JsonSerializerOptions>()
+                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
+                    (options, logger) =>
+                    {
+                        if (!IsInitialized)
+                        {
+                            IsInitialized = true;
+                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+                            var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
+
+                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
+                        }
+
+                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
+                    });
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton(ServerCtx);
@@ -96,24 +115,22 @@ public class Startup
             });
 
         RegisterStructuredLoggingTransformations();
+        AddJsonSerializerOptions(services);
 
-        services.AddOptions<JsonSerializerOptions>()
-                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
-                    (options, logger) =>
-                    {
-                        if (!IsInitialized)
-                        {
-                            IsInitialized = true;
-                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
-                            var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
+        services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
 
-                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
-                        }
+        services.AddChannelService(
+            ConfigKeys.Options.Key,
+            cs =>
+            {
+                foreach (var defaultChannel in WorldOptions.Instance.DefaultChannels)
+                    cs.RegisterChannel(
+                        null,
+                        defaultChannel.ChannelName,
+                        defaultChannel.MessageColor ?? MessageColor.Gainsboro,
+                        true);
+            });
 
-                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
-                    });
-
-        services.AddCommandInterceptorForType<Aisling>("/", a => a.IsAdmin);
         services.AddServerAuthentication();
         services.AddCryptography();
         services.AddPacketSerializer();
@@ -128,7 +145,7 @@ public class Startup
             p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
     }
 
-    protected void RegisterStructuredLoggingTransformations() =>
+    public void RegisterStructuredLoggingTransformations() =>
         LogManager.Setup()
                   .SetupSerialization(
                       builder =>

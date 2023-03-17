@@ -236,23 +236,90 @@ public enum PublicMessageType : byte
 /// </summary>
 public enum MessageColor : byte
 {
+    /// <summary>
+    ///     The default color, keep the existing color
+    /// </summary>
+    Default = 0,
+    /// <summary>
+    ///     "{=a"
+    /// </summary>
+    Gray = 97,
+    /// <summary>
+    ///     "{=b"
+    /// </summary>
     Red = 98,
+    /// <summary>
+    ///     "{=c" This color does not work in public chat
+    /// </summary>
     Yellow = 99,
+    /// <summary>
+    ///     "{=d"
+    /// </summary>
     DarkGreen = 100,
+    /// <summary>
+    ///     "{=e" This color does not work in public chat
+    /// </summary>
     Silver = 101,
-    DarkBlue = 102,
-    White = 103,
-    LighterGray = 104,
-    LightGray = 105,
-    Gray = 106,
-    DarkGray = 107,
-    DarkerGray = 108,
-    Black = 109,
+    /// <summary>
+    ///     "{=f"
+    /// </summary>
+    Blue = 102,
+    /// <summary>
+    ///     "{=g"
+    /// </summary>
+    Gainsboro = 103,
+    /// <summary>
+    ///     "{=i"
+    /// </summary>
+    SpanishGray = 105,
+    /// <summary>
+    ///     "{=j"
+    /// </summary>
+    Nickel = 106,
+    /// <summary>
+    ///     "{=k"
+    /// </summary>
+    Slate = 107,
+    /// <summary>
+    ///     "{=l"
+    /// </summary>
+    Charcoal = 108,
+    /// <summary>
+    ///     "{=m"
+    /// </summary>
+    DirtyBlack = 109,
+    /// <summary>
+    ///     "{=n"
+    /// </summary>
+    Black = 110,
+    /// <summary>
+    ///     "{=o"
+    /// </summary>
     HotPink = 111,
-    DarkPurple = 112,
+    /// <summary>
+    ///     "{=p"
+    /// </summary>
+    Purple = 112,
+    /// <summary>
+    ///     "{=q"
+    /// </summary>
     NeonGreen = 113,
+    /// <summary>
+    ///     "{=s"
+    /// </summary>
     Orange = 115,
-    Brown = 116
+    /// <summary>
+    ///     "{=t"
+    /// </summary>
+    Brown = 116,
+    /// <summary>
+    ///     "{=u"
+    /// </summary>
+    White = 117,
+    /// <summary>
+    ///     "{=x"
+    /// </summary>
+    Invisible = 120
 }
 #endregion
 

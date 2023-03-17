@@ -27,14 +27,14 @@
   ],
   "scriptVars": {
     "damage": {
+      "shape": "front",
       "bodyAnimation": "assail",
-      "range": 1,
+      "sound": 1,
+      "baseDamage": 3,
+      "damageStat": "str",
       "damageStatMultiplier": 2,
       "filter": "hostileOnly",
-      "damageStat": "str",
-      "shape": "front",
-      "baseDamage": 3,
-      "sound": 1
+      "range": 1
     }
   },
   "templateKey": "assail"

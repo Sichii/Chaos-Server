@@ -24,6 +24,8 @@ public class LayReactorTileScript : BasicSpellScriptBase
     {
         var targets = AbilityComponent.Activate<Creature>(context, this);
 
+        context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
+
         foreach (var point in targets.TargetPoints)
         {
             var trap = ReactorTileFactory.Create(

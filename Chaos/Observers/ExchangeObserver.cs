@@ -22,7 +22,7 @@ public sealed class ExchangeObserver : Abstractions.IObserver<Item>
 
     public void OnRemoved(byte slot, Item obj)
     {
-        //nothing
+        //nothing, this is impossible atm
     }
 
     public void OnUpdated(byte originalSlot, Item obj)

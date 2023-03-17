@@ -34,24 +34,24 @@
   ],
   "scriptVars": {
     "cascadeDamage": {
-      "filter": "hostileOnly",
-      "soundIntervalMs": 2000,
+      "sound": 140,
       "animatePoints": true,
-      "baseDamage": 50,
-      "damageStatMultiplier": 5,
-      "stopAtWalls": true,
-      "propagationIntervalMs": 300,
+      "soundIntervalMs": 2000,
       "shape": "frontalDiamond",
+      "damageStatMultiplier": 5,
+      "propagationIntervalMs": 300,
       "damageStat": "int",
-      "range": 10,
-      "mustHaveTargets": false,
+      "includeSourcePoints": false,
       "animation": {
         "targetAnimation": 138,
         "animationSpeed": 100
       },
       "bodyAnimation": "handsup",
-      "sound": 140,
-      "includeSourcePoints": false
+      "stopAtWalls": true,
+      "range": 10,
+      "filter": "hostileOnly",
+      "mustHaveTargets": false,
+      "baseDamage": 50
     }
   },
   "templateKey": "fireBreath"

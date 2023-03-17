@@ -1,3 +1,6 @@
+using Chaos.Common.Definitions;
+using Chaos.Data;
+
 namespace Chaos.Services.Servers.Options;
 
 public interface IWorldOptions
@@ -10,6 +13,12 @@ public interface IWorldOptions
     ///     A good starting value is 1500
     /// </summary>
     int AislingAssailIntervalMs { get; }
+
+    /// <summary>
+    ///     This is a collection of channel names that new characters will join by default. These channels are also registered with the channel
+    ///     service during startup.
+    /// </summary>
+    ChannelSettings[] DefaultChannels { get; }
     /// <summary>
     ///     This is the maximum distance from a player that they can drop items or gold on the ground. <br />
     ///     A value of -1 would effectively disable dropping items <br />
@@ -21,6 +30,16 @@ public interface IWorldOptions
     ///     This is the template key of the merchant to display when a player presses F1. This is generally some kind of help npc
     /// </summary>
     string F1MerchantTemplateKey { get; }
+
+    /// <summary>
+    ///     When whispering a target name in the client, this is the name that will redirect to group chat
+    /// </summary>
+    string GroupChatName { get; }
+
+    /// <summary>
+    ///     The default message color used for group chat
+    /// </summary>
+    MessageColor GroupMessageColor { get; }
     /// <summary>
     ///     It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could become a huge
     ///     burden on the server. This value is used to control the maximum number of actions a player can take in a second. An action is defined
@@ -128,6 +147,7 @@ public interface IWorldOptions
     ///     A value of 12 would allow players to trade with anyone in their viewport<br />
     /// </summary>
     int TradeRange { get; }
+
     /// <summary>
     ///     This is the number of times per second that the server will update the game state. .NET isn't great for this kind of workload due
     ///     garbage collection and JIT recompilation/OSR. <br />

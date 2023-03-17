@@ -1,1 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk"/>
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
+            <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.2\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+</Project>

@@ -54,7 +54,7 @@ await using var provider = services.BuildServiceProvider();
 
 //initialize objects with a lot of cross-cutting concerns
 //this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
-_ = provider.GetRequiredService<IOptions<WorldOptions>>();
+_ = provider.GetRequiredService<IOptions<WorldOptions>>().Value;
 _ = provider.GetRequiredService<IScriptRegistry>();
 var logger = provider.GetRequiredService<ILogger<Program>>();
 

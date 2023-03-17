@@ -1,12 +1,17 @@
+using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
+using Chaos.Messaging.Abstractions;
 using Chaos.Objects.World;
+using Chaos.Services.Servers.Options;
 
 namespace Chaos.Containers;
 
 public sealed class Group : IEnumerable<Aisling>
 {
+    private readonly IChannelService ChannelService;
     private readonly List<Aisling> Members;
     private readonly AutoReleasingMonitor Sync;
+    public string ChannelName { get; }
 
     public int Count => Members.Count;
 
@@ -20,12 +25,27 @@ public sealed class Group : IEnumerable<Aisling>
         }
     }
 
-    public Group(Aisling sender, Aisling receiver)
+    public Group(Aisling sender, Aisling receiver, IChannelService channelService)
     {
+        ChannelName = $"!group-{Guid.NewGuid()}";
+        ChannelService = channelService;
+
         Members = new List<Aisling>
         {
             sender, receiver
         };
+
+        //create a group chat channel and add both members to it
+        ChannelService.RegisterChannel(
+            null,
+            ChannelName,
+            WorldOptions.Instance.GroupMessageColor,
+            true,
+            "!group",
+            ServerMessageType.GroupChat);
+
+        ChannelService.JoinChannel(sender, ChannelName);
+        ChannelService.JoinChannel(receiver, ChannelName);
 
         sender.SendActiveMessage($"You form a group with {receiver.Name}");
         receiver.SendActiveMessage($"You form a group with {sender.Name}");
@@ -45,6 +65,7 @@ public sealed class Group : IEnumerable<Aisling>
 
         Members.Add(aisling);
 
+        ChannelService.JoinChannel(aisling, ChannelName);
         aisling.SendActiveMessage($"You have joined {Leader.Name}'s group");
         aisling.Group = this;
         aisling.Client.SendSelfProfile();
@@ -57,10 +78,12 @@ public sealed class Group : IEnumerable<Aisling>
         foreach (var member in this)
         {
             member.Group = null;
+            ChannelService.LeaveChannel(member, ChannelName);
             member.SendActiveMessage("The group has been disbanded");
             member.Client.SendSelfProfile();
         }
 
+        ChannelService.UnregisterChannel(ChannelName);
         Members.Clear();
     }
 
@@ -140,6 +163,7 @@ public sealed class Group : IEnumerable<Aisling>
 
         aisling.Group = null;
         aisling.Client.SendSelfProfile();
+        ChannelService.LeaveChannel(aisling, ChannelName);
 
         return true;
     }

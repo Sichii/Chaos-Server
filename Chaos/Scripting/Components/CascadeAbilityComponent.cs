@@ -101,8 +101,6 @@ public class CascadeAbilityComponent
             if (!SoundTimer.IntervalElapsed)
                 SoundTimer.Update(delta);
 
-            SoundTimer.Update(delta);
-
             if (PropagationTimer.IntervalElapsed)
             {
                 Stage++;
@@ -122,6 +120,7 @@ public class CascadeAbilityComponent
                                           .ToList();
 
                 var targetEntities = Context.Map.GetEntitiesAtPoints<Creature>(targetPoints)
+                                            .WithFilter(Context.Source, Options.Filter ?? TargetFilter.None)
                                             .ToList();
 
                 if (Options.Animation != null)
@@ -144,7 +143,10 @@ public class CascadeAbilityComponent
                     }
 
                 if (Options.Sound.HasValue && SoundTimer.IntervalElapsed)
+                {
                     Context.Map.PlaySound(Options.Sound.Value, targetPoints);
+                    SoundTimer.Update(delta);
+                }
             }
         }
     }

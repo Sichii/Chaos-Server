@@ -1,3 +1,4 @@
+using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
@@ -106,6 +107,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             UserStatSheet = Mapper.Map<UserStatSheet>(obj.StatSheet),
             IsAdmin = obj.IsAdmin,
             IsDead = obj.IsDead,
+            ChannelSettings = new SynchronizedHashSet<ChannelSettings>(Mapper.MapMany<ChannelSettings>(obj.ChannelSettings))
         };
 
         return aisling;
@@ -139,6 +141,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             UserOptions = Mapper.Map<UserOptionsSchema>(obj.Options),
             IgnoreList = obj.IgnoreList.ToList(),
             Effects = Array.Empty<EffectSchema>(),
+            ChannelSettings = Mapper.MapMany<ChannelSettingsSchema>(obj.ChannelSettings).ToList()
         };
 
         return ret;

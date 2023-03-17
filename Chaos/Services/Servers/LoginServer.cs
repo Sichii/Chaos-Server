@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Clients.Abstractions;
@@ -16,7 +15,6 @@ using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
 using Chaos.Security.Abstractions;
-using Chaos.Security.Exceptions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
@@ -31,7 +29,6 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly IAccessManager AccessManager;
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IClientProvider ClientProvider;
-    private readonly ICredentialManager CredentialManager;
     private readonly IMetaDataCache MetaDataCache;
     private readonly Notice Notice;
     private readonly ISaveManager<Aisling> UserSaveManager;
@@ -42,7 +39,6 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         ISaveManager<Aisling> userSaveManager,
         IClientRegistry<ILoginClient> clientRegistry,
         IClientProvider clientProvider,
-        ICredentialManager credentialManager,
         ISimpleCacheProvider cacheProvider,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
@@ -61,7 +57,6 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         Options = options.Value;
         UserSaveManager = userSaveManager;
         ClientProvider = clientProvider;
-        CredentialManager = credentialManager;
         CacheProvider = cacheProvider;
         MetaDataCache = metaDataCache;
         AccessManager = accessManager;
@@ -138,40 +133,21 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
     public async ValueTask OnCreateCharRequestAsync(ILoginClient client, CreateCharRequestArgs args)
     {
-        try
-        {
-            await CredentialManager.SaveNewCredentialsAsync(args.Name, args.Password);
+        var result = await AccessManager.SaveNewCredentialsAsync(client.RemoteIp, args.Name, args.Password);
 
+        if (result.Success)
+        {
             CreateCharRequests.AddOrUpdate(client.Id, args, (_, _) => args);
             client.SendLoginMessage(LoginMessageType.Confirm, string.Empty);
-        } catch (UsernameCredentialException e)
+        } else
         {
-            var reasonMessage = e.Reason switch
-            {
-                UsernameCredentialException.ReasonType.InvalidFormat     => "Invalid format",
-                UsernameCredentialException.ReasonType.TooLong           => "Too long",
-                UsernameCredentialException.ReasonType.TooShort          => "Too short",
-                UsernameCredentialException.ReasonType.InvalidCharacters => "Invalid characters",
-                UsernameCredentialException.ReasonType.Reserved          => "Already exists",
-                UsernameCredentialException.ReasonType.NotAllowed        => "Bad phrase",
-                UsernameCredentialException.ReasonType.AlreadyExists     => "Already exists",
-                UsernameCredentialException.ReasonType.DoesntExist       => throw new UnreachableException("Shouldn't happen"),
-                UsernameCredentialException.ReasonType.Unknown           => "Unknown error",
-                _                                                        => "Unknown error"
-            };
+            Logger.LogDebug(
+                "Failed to create character with name \"{Name}\" by {@Client} for reason \"{Reason}\"",
+                args.Name,
+                client,
+                result.FailureMessage);
 
-            client.SendLoginMessage(LoginMessageType.ClearNameMessage, $"Failed to create character. Username error: {reasonMessage}");
-        } catch (PasswordCredentialException e)
-        {
-            var reasonMessage = e.Reason switch
-            {
-                PasswordCredentialException.ReasonType.TooShort      => "Too short",
-                PasswordCredentialException.ReasonType.TooLong       => "Too long",
-                PasswordCredentialException.ReasonType.WrongPassword => throw new UnreachableException("Shouldn't happen"),
-                _                                                    => "Unknown error"
-            };
-
-            client.SendLoginMessage(LoginMessageType.ClearPswdMessage, $"Failed to create character. Password error: {reasonMessage}");
+            client.SendLoginMessage(GetLoginMessageType(result.Code), result.FailureMessage);
         }
     }
 
@@ -193,22 +169,17 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         (var name, var password) = args;
 
-        try
-        {
-            if (!await CredentialManager.ValidateCredentialsAsync(name, password))
-            {
-                client.SendLoginMessage(
-                    LoginMessageType.WrongPassword,
-                    $"Login failed. Reason: Password-{PasswordCredentialException.ReasonType.WrongPassword}");
+        var result = await AccessManager.ValidateCredentialsAsync(client.RemoteIp, name, password);
 
-                return;
-            }
-        } catch (UsernameCredentialException e)
+        if (!result.Success)
         {
-            client.SendLoginMessage(LoginMessageType.ClearNameMessage, $"Login failed. Reason: Username-{e.Reason}");
+            Logger.LogDebug("Failed to validate credentials for {@Client} for reason \"{Reason}\"", client, result.FailureMessage);
+            client.SendLoginMessage(LoginMessageType.WrongPassword, result.FailureMessage);
 
             return;
         }
+
+        Logger.LogDebug("Validated credentials for {@Client}", client);
 
         var redirect = new Redirect(
             ClientId.NextId,
@@ -250,17 +221,28 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
     public async ValueTask OnPasswordChangeAsync(ILoginClient client, PasswordChangeArgs args)
     {
-        try
+        (var name, var currentPassword, var newPassword) = args;
+
+        var result = await AccessManager.ChangePasswordAsync(
+            client.RemoteIp,
+            name,
+            currentPassword,
+            newPassword);
+
+        if (!result.Success)
         {
-            (var name, var currentPassword, var newPassword) = args;
-            await CredentialManager.ChangePasswordAsync(name, currentPassword, newPassword);
-        } catch (UsernameCredentialException e)
-        {
-            client.SendLoginMessage(LoginMessageType.ClearNameMessage, $"Failed to change password. Reason: Username-{e.Reason}");
-        } catch (PasswordCredentialException e)
-        {
-            client.SendLoginMessage(LoginMessageType.ClearPswdMessage, $"Failed to change password. Reason: Password-{e.Reason}");
+            Logger.LogInformation(
+                "Failed to change password for {@Client} for username \"{UserName}\" for reason \"{Reason}\"",
+                client,
+                name,
+                result.FailureMessage);
+
+            client.SendLoginMessage(GetLoginMessageType(result.Code), result.FailureMessage);
+
+            return;
         }
+
+        Logger.LogInformation("Changed password for {@Client} for username \"{UserName}\"", client, name);
     }
     #endregion
 
@@ -342,5 +324,18 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         var client = (ILoginClient)sender!;
         ClientRegistry.TryRemove(client.Id, out _);
     }
+
+    private LoginMessageType GetLoginMessageType(CredentialValidationResult.FailureCode code) => code switch
+    {
+        CredentialValidationResult.FailureCode.InvalidUsername    => LoginMessageType.ClearNameMessage,
+        CredentialValidationResult.FailureCode.InvalidPassword    => LoginMessageType.ClearPswdMessage,
+        CredentialValidationResult.FailureCode.PasswordTooLong    => LoginMessageType.ClearPswdMessage,
+        CredentialValidationResult.FailureCode.PasswordTooShort   => LoginMessageType.ClearPswdMessage,
+        CredentialValidationResult.FailureCode.UsernameTooLong    => LoginMessageType.ClearNameMessage,
+        CredentialValidationResult.FailureCode.UsernameTooShort   => LoginMessageType.ClearNameMessage,
+        CredentialValidationResult.FailureCode.UsernameNotAllowed => LoginMessageType.ClearNameMessage,
+        CredentialValidationResult.FailureCode.TooManyAttempts    => LoginMessageType.ClearPswdMessage,
+        _                                                         => throw new ArgumentOutOfRangeException()
+    };
     #endregion
 }

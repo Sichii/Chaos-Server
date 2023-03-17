@@ -78,13 +78,13 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         Observers = new List<Observers.Abstractions.IObserver<T>>();
     }
 
-    public void AddObserver(Observers.Abstractions.IObserver<T> observer)
+    public virtual void AddObserver(Observers.Abstractions.IObserver<T> observer)
     {
         using var @lock = Sync.Enter();
         Observers.Add(observer);
     }
 
-    protected void BroadcastOnAdded(T obj)
+    protected virtual void BroadcastOnAdded(T obj)
     {
         foreach (var observer in Observers)
             try
@@ -96,7 +96,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
             }
     }
 
-    protected void BroadcastOnRemoved(byte slot, T obj)
+    protected virtual void BroadcastOnRemoved(byte slot, T obj)
     {
         foreach (var observer in Observers)
             try
@@ -108,7 +108,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
             }
     }
 
-    protected void BroadcastOnUpdated(byte originalSlot, T obj)
+    protected virtual void BroadcastOnUpdated(byte originalSlot, T obj)
     {
         foreach (var observer in Observers)
             try
@@ -125,6 +125,23 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
         using var @lock = Sync.Enter();
 
         return Objects.Any(o => (o != null) && o.Template.Name.EqualsI(obj.Template.Name));
+    }
+
+    public virtual bool Contains(byte slot)
+    {
+        if (!IsValidSlot(slot))
+            return false;
+
+        using var @lock = Sync.Enter();
+
+        return Objects[slot] != null;
+    }
+
+    public virtual bool Contains(string name)
+    {
+        using var @lock = Sync.Enter();
+
+        return Objects.Any(obj => obj is not null && (obj.Template.Name.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name)));
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -162,11 +179,12 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
     public virtual bool IsValidSlot(byte slot) => (slot > 0) && (slot < Length) && !InvalidSlots.Contains(slot);
 
-    public bool Remove(string name)
+    public virtual bool Remove(string name)
     {
         using var @lock = Sync.Enter();
 
-        var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
+        var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name))
+                  ?? this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(name));
 
         if (obj == null)
             return false;
@@ -248,6 +266,27 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelObjectBase
 
         Objects[slot] = default;
         BroadcastOnRemoved(slot, obj);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public virtual bool TryGetRemove(string name, [MaybeNullWhen(false)] out T obj)
+    {
+        obj = default;
+
+        using var @lock = Sync.Enter();
+
+        var actualObjects = Objects.Where(obj => obj is not null)
+                                   .ToList();
+
+        obj = actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name));
+
+        if (obj == null)
+            return false;
+
+        Objects[obj.Slot] = default;
+        BroadcastOnRemoved(obj.Slot, obj);
 
         return true;
     }

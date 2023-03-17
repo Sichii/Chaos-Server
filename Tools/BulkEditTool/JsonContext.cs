@@ -2,8 +2,11 @@ using System.IO;
 using BulkEditTool.Model.Tables;
 using Chaos;
 using Chaos.Common.Abstractions;
+using Chaos.Extensions;
+using Chaos.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace BulkEditTool;
 
@@ -33,14 +36,22 @@ public class JsonContext
                             #if DEBUG
                             .AddJsonFile("appsettings.local.json")
                             #else
-                            //.AddJsonFile("appsettings.prod.json")
-                            .AddJsonFile("appsettings.local.json")
+                            .AddJsonFile("appsettings.prod.json")
+                            //.AddJsonFile("appsettings.local.json")
                             #endif
                             ;
         // @formatter:on
         var configuration = builder.Build();
         var startup = new Startup(configuration);
-        startup.ConfigureServices(services);
+        services.AddSingleton(startup.Configuration);
+        services.AddLogging();
+
+        startup.AddJsonSerializerOptions(services);
+
+        services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddSingleton<IStagingDirectory>(sp => sp.GetRequiredService<IOptions<ChaosOptions>>().Value);
+
+        services.AddStorage();
 
         Services = services.BuildServiceProvider();
 

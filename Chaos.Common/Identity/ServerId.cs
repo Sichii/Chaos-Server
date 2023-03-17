@@ -65,6 +65,7 @@ public sealed class SerializableUniqueId
     private async void Serialize(ulong num)
     {
         await Sync.WaitAsync();
+        await Task.Yield();
 
         try
         {

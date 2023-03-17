@@ -4,13 +4,13 @@ using System.Text.Json;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
-using Chaos.Extensions.Common;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -19,23 +19,19 @@ namespace Chaos.Services.Storage;
 /// <summary>
 ///     Manages save files for Aislings
 /// </summary>
-public sealed class UserSaveManager : ISaveManager<Aisling>
+public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
 {
-    // ReSharper disable once NotAccessedField.Local
-    private readonly Task BackupTask;
     private readonly PeriodicTimer BackupTimer;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly SynchronizedHashSet<string> LockedFiles;
     private readonly ILogger<UserSaveManager> Logger;
     private readonly ITypeMapper Mapper;
     private readonly UserSaveManagerOptions Options;
-    private readonly CancellationTokenSource ServerCtx;
 
     public UserSaveManager(
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptions<UserSaveManagerOptions> options,
-        CancellationTokenSource serverCtx,
         ILogger<UserSaveManager> logger
     )
     {
@@ -43,7 +39,6 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
         Mapper = mapper;
         Logger = logger;
         JsonSerializerOptions = jsonSerializerOptions.Value;
-        ServerCtx = serverCtx;
         BackupTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.BackupIntervalMins));
         LockedFiles = new SynchronizedHashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
 
@@ -52,19 +47,17 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
         if (!Directory.Exists(Options.BackupDirectory))
             Directory.CreateDirectory(Options.BackupDirectory);
-
-        BackupTask = BackupLoop();
     }
 
-    private async Task BackupLoop()
+    /// <inheritdoc />
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount / 4 };
-        var token = ServerCtx.Token;
 
-        while (true)
+        while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await BackupTimer.WaitForNextTickAsync(token);
+                await BackupTimer.WaitForNextTickAsync(stoppingToken);
                 var start = Stopwatch.GetTimestamp();
 
                 Logger.LogTrace("Performing backup");
@@ -76,7 +69,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
 
                 Parallel.ForEach(Directory.EnumerateDirectories(Options.BackupDirectory), options, HandleBackupRetention);
 
-                Logger.LogDebug("Backup completed, took {Elapsed}", Stopwatch.GetElapsedTime(start).ToReadableString(true));
+                Logger.LogDebug("Backup completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
             } catch (OperationCanceledException)
             {
                 //ignore
@@ -264,7 +257,7 @@ public sealed class UserSaveManager : ISaveManager<Aisling>
             await SafeExecuteDirectoryActionAsync(directory, () => InnerSaveAsync(directory, obj));
 
             Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
-            Logger.LogDebug("Saved {@Player}, took {Elapsed}", obj, Stopwatch.GetElapsedTime(start).ToReadableString(true));
+            Logger.LogDebug("Saved {@Player}, took {@Elapsed}", obj, Stopwatch.GetElapsedTime(start));
 
             /*
             var aislingSchema = Mapper.Map<AislingSchema>(obj);

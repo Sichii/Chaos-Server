@@ -16,7 +16,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         {
             using var @lock = Sync.Enter();
 
-            return Objects.FirstOrDefault(i => i is not null && i.DisplayName.EqualsI(name))
+            return Objects.FirstOrDefault(i => i is not null && (i.DisplayName.EqualsI(name) || i.Template.TemplateKey.EqualsI(name)))
                    ?? base[name];
         }
     }
@@ -42,11 +42,20 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         : this(items) =>
         ItemCloner = itemCloner;
 
+    /// <inheritdoc />
+    public override bool Contains(string name)
+    {
+        using var @lock = Sync.Enter();
+
+        return Objects.Any(obj => obj is not null && (obj.DisplayName.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name)));
+    }
+
     public int CountOf(string name)
     {
         using var @lock = Sync.Enter();
 
-        return this.Where(item => item.DisplayName.EqualsI(name)).Sum(item => item.Count);
+        return this.Where(item => item.DisplayName.EqualsI(name) || item.Template.TemplateKey.EqualsI(name))
+                   .Sum(item => item.Count);
     }
 
     public bool HasCount(string name, int quantity)
@@ -54,6 +63,20 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         using var @lock = Sync.Enter();
 
         return CountOf(name) >= quantity;
+    }
+
+    /// <inheritdoc />
+    public override bool Remove(string name)
+    {
+        using var @lock = Sync.Enter();
+
+        var obj = this.FirstOrDefault(obj => obj.DisplayName.EqualsI(name))
+                  ?? this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(name));
+
+        if (obj == null)
+            return false;
+
+        return Remove(obj.Slot);
     }
 
     public bool RemoveQuantity(string name, int quantity, [MaybeNullWhen(false)] out List<Item> items)
@@ -66,7 +89,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             return false;
 
         var existingItems = this
-                            .Where(item => item.DisplayName.EqualsI(name))
+                            .Where(item => item.DisplayName.EqualsI(name) || item.Template.TemplateKey.EqualsI(name))
                             .ToList();
 
         if (!existingItems.Any())
@@ -157,7 +180,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             return false;
 
         var existingItems = this
-                            .Where(item => item.DisplayName.EqualsI(name))
+                            .Where(item => item.DisplayName.EqualsI(name) || item.Template.TemplateKey.EqualsI(name))
                             .ToList();
 
         if (!existingItems.Any())
@@ -267,7 +290,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         }
 
         foreach (var item in items)
-            if (item!.Template.Name.Equals(obj.Template.Name, StringComparison.OrdinalIgnoreCase)
+            if (item!.DisplayName.Equals(obj.DisplayName, StringComparison.OrdinalIgnoreCase)
                 && (item.Count < item.Template.MaxStacks))
             {
                 var incomingStacks = obj.Count;
@@ -309,10 +332,30 @@ public sealed class Inventory : PanelBase<Item>, IInventory
                                    .ToList();
 
         obj = actualObjects.FirstOrDefault(obj => obj!.DisplayName.EqualsI(name))
-              ?? actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name))
               ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
 
         return obj != null;
+    }
+
+    /// <inheritdoc />
+    public override bool TryGetRemove(string name, [MaybeNullWhen(false)] out Item obj)
+    {
+        obj = default;
+
+        using var @lock = Sync.Enter();
+
+        var actualObjects = Objects.Where(obj => obj is not null)
+                                   .ToList();
+
+        obj = actualObjects.FirstOrDefault(obj => obj!.DisplayName.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name));
+
+        if (obj == null)
+            return false;
+
+        Objects[obj.Slot] = default;
+        BroadcastOnRemoved(obj.Slot, obj);
+
+        return true;
     }
 
     /// <inheritdoc />
