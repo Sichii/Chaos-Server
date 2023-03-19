@@ -16,6 +16,9 @@ public sealed class EnumCollection : IEnumerable<KeyValuePair<Type, Enum>>
 {
     private readonly ConcurrentDictionary<Type, Enum> Enums;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EnumCollection" /> class
+    /// </summary>
     public EnumCollection() => Enums = new ConcurrentDictionary<Type, Enum>();
 
     /// <inheritdoc />

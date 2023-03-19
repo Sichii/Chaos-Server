@@ -9,7 +9,7 @@ using Chaos.Common.Converters;
 namespace Chaos.Collections.Common;
 
 /// <summary>
-///     An object used to dynamically retreive variables of uncertain types
+/// Represents a collection of dynamic variables with JSON elements as values.
 /// </summary>
 [JsonConverter(typeof(DynamicVarsConverter))]
 public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>, IScriptVars
@@ -17,12 +17,21 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     private readonly JsonSerializerOptions JsonOptions;
     private readonly ConcurrentDictionary<string, JsonElement> Vars;
 
+    /// <summary>
+    ///     Initializes a new instance of the DynamicVars class with an optional initial set of key-value pairs.
+    /// </summary>
+    /// <param name="collection">A collection of key-value pairs to initially populate the collection with</param>
+    /// <param name="options">The options to use when deserializing jsonElements</param>
     public DynamicVars(IDictionary<string, JsonElement> collection, JsonSerializerOptions options)
     {
         JsonOptions = options;
         Vars = new ConcurrentDictionary<string, JsonElement>(collection, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    ///     Initializes a new instance of the DynamicVars class
+    /// </summary>
+    /// <param name="options">The options to use when deserializing jsonElements</param>
     public DynamicVars(JsonSerializerOptions options)
     {
         JsonOptions = options;

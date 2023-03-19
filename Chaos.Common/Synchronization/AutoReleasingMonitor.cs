@@ -12,8 +12,15 @@ public sealed class AutoReleasingMonitor
     /// </summary>
     public bool IsEntered => Monitor.IsEntered(Root);
 
+    /// <summary>
+    ///     A disposable object that does nothing when disposed.
+    /// </summary>
     public static IDisposable NoOpDisposable => new NoOpDisposable();
 
+    /// <summary>
+    ///     Creates a new instance of <see cref="AutoReleasingMonitor" />.
+    /// </summary>
+    /// <param name="root">An optional existing object whose root to lock</param>
     public AutoReleasingMonitor(object? root = null) => Root = root ?? new object();
 
     /// <summary>

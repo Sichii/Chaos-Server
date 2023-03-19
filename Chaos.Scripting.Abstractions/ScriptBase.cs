@@ -8,6 +8,9 @@ public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
     /// <inheritdoc />
     public string ScriptKey { get; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ScriptBase" /> class.
+    /// </summary>
     protected ScriptBase() => ScriptKey = GetScriptKey(GetType());
 
     /// <inheritdoc />

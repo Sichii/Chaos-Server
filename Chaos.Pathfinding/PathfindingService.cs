@@ -6,12 +6,19 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Chaos.Pathfinding;
 
+/// <summary>
+///     Provides a service for pathfinding
+/// </summary>
 public sealed class PathfindingService : IPathfindingService
 {
     private const string KEY_PREFIX = $"{nameof(PathfindingService)}___";
     private readonly ConcurrentDictionary<string, IGridDetails> GridDetails;
     private readonly IMemoryCache MemoryCache;
 
+    /// <summary>
+    ///     Creates a new instance of <see cref="PathfindingService" />
+    /// </summary>
+    /// <param name="memoryCache">A cache to store pathfinding grids in</param>
     public PathfindingService(IMemoryCache memoryCache)
     {
         GridDetails = new ConcurrentDictionary<string, IGridDetails>(StringComparer.OrdinalIgnoreCase);
@@ -39,15 +46,24 @@ public sealed class PathfindingService : IPathfindingService
 
     private string DeconstructKey(string key) => key.Replace(KEY_PREFIX, string.Empty, StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>
+    ///     Finds a path between two points
+    /// </summary>
+    /// <param name="gridKey">The key of the grid to find a path on</param>
+    /// <param name="start">The starting point</param>
+    /// <param name="end">The ending point</param>
+    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
+    /// <param name="unwalkablePoints">A collection of extra unwalkable points such as creatures</param>
+    /// <returns></returns>
     public Direction Pathfind(
-        string key,
+        string gridKey,
         IPoint start,
         IPoint end,
         bool ignoreWalls,
         IReadOnlyCollection<IPoint> unwalkablePoints
     )
     {
-        var lookupKey = ConstructKey(key);
+        var lookupKey = ConstructKey(gridKey);
 
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
@@ -58,7 +74,12 @@ public sealed class PathfindingService : IPathfindingService
             unwalkablePoints);
     }
 
-    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key.ToLowerInvariant()] = gridDetails;
+    /// <summary>
+    ///     Registers a grid to be used for pathfinding
+    /// </summary>
+    /// <param name="key">The key used to look up the grid</param>
+    /// <param name="gridDetails">Details used to pathfind on the grid</param>
+    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key] = gridDetails;
 
     /// <inheritdoc />
     public Direction Wander(

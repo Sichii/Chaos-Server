@@ -14,7 +14,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     private readonly HashSet<T> Set;
     private readonly AutoReleasingMonitor Sync;
 
-    /// <inheritdoc cref="ISet{T}.Count" />
+    /// <inheritdoc cref="ICollection{T}.Count" />
     public int Count
     {
         get
@@ -58,7 +58,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
         Set.Clear();
     }
 
-    /// <inheritdoc cref="ISet{T}.Contains" />
+    /// <inheritdoc cref="IReadOnlySet{T}.Contains" />
     public bool Contains(T item)
     {
         using var @lock = Sync.Enter();
@@ -80,7 +80,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
         Set.ExceptWith(other);
     }
 
-    /// <inheritdoc cref="ISet{T}.GetEnumerator" />
+    /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
     public IEnumerator<T> GetEnumerator()
     {
         List<T> snapshot;

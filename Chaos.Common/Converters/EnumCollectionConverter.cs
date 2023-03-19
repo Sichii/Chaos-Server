@@ -4,6 +4,9 @@ using Chaos.Collections.Common;
 
 namespace Chaos.Common.Converters;
 
+/// <summary>
+///     A converter for <see cref="EnumCollection" />
+/// </summary>
 public sealed class EnumCollectionConverter : JsonConverter<EnumCollection>
 {
     /// <inheritdoc />

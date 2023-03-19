@@ -16,6 +16,9 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
 {
     private readonly ConcurrentDictionary<Type, Enum> Flags;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="FlagCollection" /> class
+    /// </summary>
     public FlagCollection() => Flags = new ConcurrentDictionary<Type, Enum>();
 
     /// <summary>

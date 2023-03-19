@@ -2,8 +2,15 @@ using Chaos.Common.Abstractions;
 
 namespace Chaos.Common.Synchronization;
 
+/// <summary>
+///     A threadsafe object wrapper
+/// </summary>
+/// <typeparam name="T">The type of the object to wrap</typeparam>
 public class InterlockedObject<T> : IInterlockedObject<T> where T: class
 {
+    /// <summary>
+    ///     The object to be accessed in a threadsafe manner
+    /// </summary>
     protected T? Object;
 
     /// <inheritdoc />

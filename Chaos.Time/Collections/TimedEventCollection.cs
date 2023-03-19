@@ -19,6 +19,10 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     private readonly IIntervalTimer Interval;
     private readonly AutoReleasingMonitor Sync;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="TimedEventCollection" /> class
+    /// </summary>
+    /// <param name="events">Optional initial events to populate the collection with</param>
     public TimedEventCollection(IEnumerable<Event>? events = null)
     {
         events ??= Array.Empty<Event>();
@@ -166,6 +170,13 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         [JsonInclude]
         public DateTime Start { get; }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TimedEventCollection.Event" /> class
+        /// </summary>
+        /// <param name="eventId">The unique id of the event</param>
+        /// <param name="duration">The duration of the event</param>
+        /// <param name="start">When the event started</param>
+        /// <param name="autoConsume">Whether or not the event should automatically be removed when it expires</param>
         [JsonConstructor]
         public Event(
             string eventId,
@@ -180,6 +191,12 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
             AutoConsume = autoConsume;
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TimedEventCollection.Event" /> class
+        /// </summary>
+        /// <param name="eventId">The unique id of the event</param>
+        /// <param name="duration">The duration of the event</param>
+        /// <param name="autoConsume">Whether or not the event should automatically be removed when it expires</param>
         public Event(string eventId, TimeSpan duration, bool autoConsume = false)
         {
             EventId = eventId;

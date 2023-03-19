@@ -15,6 +15,10 @@ public sealed class Mapper : ITypeMapper
 
     static Mapper() => ResolverMap = new ConcurrentDictionary<(Type From, Type To), Func<object, object>>();
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Mapper" /> class.
+    /// </summary>
+    /// <param name="provider">The service provider used by the application</param>
     public Mapper(IServiceProvider provider) => Provider = provider;
 
     /// <inheritdoc />

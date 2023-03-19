@@ -8,8 +8,14 @@ namespace Chaos.Scripting.Abstractions;
 /// <inheritdoc cref="Chaos.Scripting.Abstractions.ICompositeScript{T}" />
 public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScript<TScript> where TScript: IScript
 {
+    /// <summary>
+    ///     The components of this script
+    /// </summary>
     protected List<TScript> Components { get; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="CompositeScriptBase{TScript}" /> class.
+    /// </summary>
     protected CompositeScriptBase() => Components = new List<TScript>();
 
     /// <inheritdoc />
@@ -32,6 +38,7 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
         return default;
     }
 
+    /// <inheritdoc />
     public IEnumerator<TScript> GetEnumerator()
     {
         foreach (var component in Components)

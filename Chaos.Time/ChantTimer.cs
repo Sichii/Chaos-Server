@@ -13,6 +13,10 @@ public sealed class ChantTimer : IDeltaUpdatable
     private int RemainingChantTimeMs;
     private int TimeBurdenMs;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ChantTimer" /> class
+    /// </summary>
+    /// <param name="maxTimeBurdenMs">The maximum number of milliseconds the spell can be late before being canceled</param>
     public ChantTimer(int maxTimeBurdenMs) => MaxTimeBurdenMs = maxTimeBurdenMs;
 
     /// <summary>

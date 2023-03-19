@@ -3,6 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace Chaos.Common.Converters;
 
+/// <summary>
+///     A converter for <see cref="IEnumerable{T}" />
+/// </summary>
+/// <typeparam name="T">The type implementing <see cref="IEnumerable{T}" /></typeparam>
+/// <typeparam name="TObj">The type of object in the sequence</typeparam>
 public sealed class EnumerableConverter<T, TObj> : JsonConverter<T> where T: IEnumerable<TObj>
 {
     /// <inheritdoc />

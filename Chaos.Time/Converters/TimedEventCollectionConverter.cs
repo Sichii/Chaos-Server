@@ -4,6 +4,9 @@ using Chaos.Collections.Time;
 
 namespace Chaos.Time.Converters;
 
+/// <summary>
+///     A converter for <see cref="TimedEventCollection" />
+/// </summary>
 public sealed class TimedEventCollectionConverter : JsonConverter<TimedEventCollection>
 {
     /// <inheritdoc />

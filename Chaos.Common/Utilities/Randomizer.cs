@@ -9,8 +9,25 @@ namespace Chaos.Common.Utilities;
 /// </summary>
 public static class Randomizer
 {
+    /// <summary>
+    ///     Picks a random element from the specified collection.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+    /// <param name="objs">The collection to pick a random element from.</param>
+    /// <returns>A random element from the specified collection.</returns>
     public static T PickRandom<T>(this IReadOnlyCollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
 
+    /// <summary>
+    ///     Picks a random element from the specified collection, using the provided weights.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+    /// <param name="objs">The collection to pick a random element from.</param>
+    /// <param name="weights">The weights associated with each element in the collection.</param>
+    /// <returns>A random element from the specified collection, selected based on the provided weights.</returns>
+    /// <exception cref="ArgumentException">
+    ///     Thrown when the count of elements in <paramref name="objs" /> and <paramref name="weights" /> is not
+    ///     equal or when both collections are empty.
+    /// </exception>
     public static T PickRandom<T>(this IEnumerable<T> objs, IEnumerable<decimal> weights)
     {
         var localObjs = objs.ToArray();
@@ -55,6 +72,13 @@ public static class Randomizer
     /// </summary>
     public static int RollDouble(int maxPer) => RollSingle(maxPer) + RollSingle(maxPer);
 
+    /// <summary>
+    ///     Generates a random number within the specified range, applying the given randomization type.
+    /// </summary>
+    /// <param name="baseValue">The base value of the range.</param>
+    /// <param name="variancePct">The percentage of variance allowed.</param>
+    /// <param name="randomizationType">The type of randomization to apply.</param>
+    /// <returns>A random number within the specified range, according to the randomization type.</returns>
     public static int RollRange(int baseValue, int variancePct, RandomizationType randomizationType)
     {
         var randomPct = Random.Shared.Next(0, variancePct);
@@ -91,6 +115,13 @@ public static class Randomizer
         return baseValue + amountToAdd;
     }
 
+    /// <summary>
+    ///     Generates a random number within the specified range, applying the given randomization type.
+    /// </summary>
+    /// <param name="baseValue">The base value of the range.</param>
+    /// <param name="variancePct">The percentage of variance allowed.</param>
+    /// <param name="randomizationType">The type of randomization to apply.</param>
+    /// <returns>A random number within the specified range, according to the randomization type.</returns>
     public static long RollRange(long baseValue, int variancePct, RandomizationType randomizationType)
     {
         var randomPct = Random.Shared.Next(0, variancePct);

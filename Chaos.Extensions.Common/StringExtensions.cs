@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace Chaos.Extensions.Common;
 
 /// <summary>
-///     Provides extensions methods for <see cref="System.string" />
+///     Provides extensions methods for <see cref="System.String" />
 /// </summary>
 public static class StringExtensions
 {
@@ -67,6 +67,12 @@ public static class StringExtensions
         };
     }
 
+    /// <summary>
+    ///     Injects the parameters into the string, replacing the placeholders with the parameters
+    /// </summary>
+    /// <param name="str1">The string in which to replace placeholders with parameters</param>
+    /// <param name="parameters">The parameters to inject into the string</param>
+    /// <returns>A string where the placeholders are replaced with the given parameters</returns>
     public static string Inject([StructuredMessageTemplate] this string str1, params object[] parameters)
     {
         var formatter = new StringFormatter(parameters);

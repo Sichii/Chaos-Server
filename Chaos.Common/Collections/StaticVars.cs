@@ -10,6 +10,10 @@ public sealed class StaticVars : IScriptVars
 {
     private readonly ConcurrentDictionary<string, object> Vars;
 
+    /// <summary>
+    ///     Initializes a new instance of the StaticVars class with an optional initial set of key-value pairs.
+    /// </summary>
+    /// <param name="objs"></param>
     public StaticVars(IDictionary<string, object> objs) =>
         Vars = new ConcurrentDictionary<string, object>(objs, StringComparer.OrdinalIgnoreCase);
 
@@ -37,6 +41,7 @@ public sealed class StaticVars : IScriptVars
         return value;
     }
 
+    /// <inheritdoc />
     public T GetRequired<T>(string key)
     {
         if (!Vars.TryGetValue(key, out var value))

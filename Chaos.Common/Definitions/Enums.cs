@@ -1,3 +1,4 @@
+#pragma warning disable CS1591
 namespace Chaos.Common.Definitions;
 
 #region Custom Stuff

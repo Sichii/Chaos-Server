@@ -27,6 +27,13 @@ public class RandomizedIntervalTimer : IntervalTimer
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     protected RandomizationType Type { get; set; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="RandomizedIntervalTimer" /> class
+    /// </summary>
+    /// <param name="interval">The base interval to use and randomize</param>
+    /// <param name="maxRandomizationPct">The percent to randomize the base interval by</param>
+    /// <param name="type">The type of randomization to use</param>
+    /// <param name="startAsElapsed">Whether or not to create the timer in an elapsed state</param>
     public RandomizedIntervalTimer(
         TimeSpan interval,
         int maxRandomizationPct,

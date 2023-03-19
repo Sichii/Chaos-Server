@@ -4,7 +4,7 @@ using Chaos.Common.Synchronization;
 namespace Chaos.Common.Identity;
 
 /// <summary>
-///     A utility for generating unique ids in a thread safe manner. These ids will persist through application restarts.
+///     A static utility for generating unique ids in a threadsafe manner
 /// </summary>
 public static class ServerId
 {
@@ -18,6 +18,9 @@ public static class ServerId
     static ServerId() => SerializableUniqueId = SerializableUniqueId.Deserialize();
 }
 
+/// <summary>
+///     A class for generating unique ids in a thread safe manner. These ids will persist through application restarts.
+/// </summary>
 public sealed class SerializableUniqueId
 {
     private readonly FifoSemaphoreSlim Sync;
@@ -29,6 +32,9 @@ public sealed class SerializableUniqueId
         Sync = new FifoSemaphoreSlim(1, 1);
     }
 
+    /// <summary>
+    ///     Deserializes the current id from disk. If the file does not exist, it will be created.
+    /// </summary>
     public static SerializableUniqueId Deserialize()
     {
         if (!File.Exists("UniqueId.json"))
@@ -54,6 +60,10 @@ public sealed class SerializableUniqueId
         return new SerializableUniqueId(num);
     }
 
+    /// <summary>
+    ///     Generates the next id in the sequence. This is thread safe.
+    /// </summary>
+    /// <returns></returns>
     public ulong NextId()
     {
         var num = Interlocked.Increment(ref CurrentId);

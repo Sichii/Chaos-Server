@@ -1,7 +1,7 @@
 namespace Chaos.Messaging;
 
 /// <summary>
-///     Used to mark command objects that can be built and executed by the <see cref="CommandInterceptor" />.
+///     Used to mark command objects that can be built and executed by the <see cref="Chaos.Messaging.CommandInterceptor{T, TOptions}" />.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class CommandAttribute : Attribute

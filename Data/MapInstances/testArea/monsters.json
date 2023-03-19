@@ -1,6 +1,6 @@
 [
   {
-    "aggroRange": 4,
+    "aggroRange": 6,
     "expReward": 50,
     "extraScriptKeys": [],
     "intervalSecs": 30,

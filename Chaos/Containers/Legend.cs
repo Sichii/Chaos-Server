@@ -17,6 +17,7 @@ public sealed class Legend : IEnumerable<LegendMark>
     {
         if (Marks.TryGetValue(mark.Key, out var existingMark))
         {
+            existingMark.Text = mark.Text;
             existingMark.Count++;
             existingMark.Added = GameTime.Now;
 

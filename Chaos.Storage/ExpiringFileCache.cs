@@ -23,16 +23,51 @@ namespace Chaos.Storage;
 /// <typeparam name="TOptions"></typeparam>
 public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class where TOptions: class, IExpiringFileCacheOptions
 {
+    /// <summary>
+    ///     The set of paths that are used for loading data.
+    /// </summary>
     protected SynchronizedHashSet<string> Paths { get; set; }
+    /// <summary>
+    ///     The memory cache used to store the data.
+    /// </summary>
     protected IMemoryCache Cache { get; }
+    /// <summary>
+    ///     The JSON serializer options used for deserializing data.
+    /// </summary>
     protected JsonSerializerOptions JsonSerializerOptions { get; }
+    /// <summary>
+    ///     The prefix used for cache keys.
+    /// </summary>
     protected string KeyPrefix { get; }
+    /// <summary>
+    ///     Many different types of objects are stored in the memory cache, this lookup is used to store the data for this specific type
+    /// </summary>
     protected ConcurrentDictionary<string, T> LocalLookup { get; }
+    /// <summary>
+    ///     The logger instance for logging events in this cache.
+    /// </summary>
     protected virtual ILogger<ExpiringFileCache<T, TSchema, TOptions>> Logger { get; }
+    /// <summary>
+    ///     The type mapper used to map between TSchema and T objects.
+    /// </summary>
     protected ITypeMapper Mapper { get; }
+    /// <summary>
+    ///     The options used for configuring this cache.
+    /// </summary>
     protected TOptions Options { get; }
+    /// <summary>
+    ///     The synchronization monitor used to manage concurrent access to the cache.
+    /// </summary>
     protected AutoReleasingMonitor Sync { get; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ExpiringFileCache{T, TSchema, TOptions}" /> class.
+    /// </summary>
+    /// <param name="cache">The memory cache instance used to store the data.</param>
+    /// <param name="mapper">The type mapper used to map between TSchema and T objects.</param>
+    /// <param name="jsonSerializerOptions">The JSON serializer options used for deserializing data.</param>
+    /// <param name="options">The options used for configuring this cache.</param>
+    /// <param name="logger">The logger instance for logging events in this cache.</param>
     public ExpiringFileCache(
         IMemoryCache cache,
         ITypeMapper mapper,
@@ -56,6 +91,11 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         Paths = LoadPaths();
     }
 
+    /// <summary>
+    ///     Constructs a cache key for the specified object type.
+    /// </summary>
+    /// <param name="key">The key to be used for the cache entry.</param>
+    /// <returns>A constructed cache key.</returns>
     protected virtual string ConstructKeyForType(string key) => KeyPrefix + key.ToLowerInvariant();
 
     /// <summary>
@@ -91,6 +131,10 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         return ret;
     }
 
+    /// <summary>
+    ///     Deconstructs a cache key for the specified object type.
+    /// </summary>
+    /// <param name="key">The key to deconstruct</param>
     protected virtual string DeconstructKeyForType(string key) => key.Replace(KeyPrefix, string.Empty, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />
@@ -136,6 +180,12 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <summary>
+    ///     Loads the paths for the configured directory and returns it
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     protected virtual string GetPathForKey(string key)
     {
         var loadPath = Paths.FirstOrDefault(path => Path.GetFileNameWithoutExtension(path).EqualsI(key));
@@ -218,6 +268,13 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Callback for when an entry is removed from the cache
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <param name="reason"></param>
+    /// <param name="state"></param>
     protected virtual void RemoveValueCallback(
         object key,
         object? value,

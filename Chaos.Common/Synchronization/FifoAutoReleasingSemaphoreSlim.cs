@@ -7,10 +7,18 @@ namespace Chaos.Common.Synchronization;
 /// </summary>
 public sealed class FifoAutoReleasingSemaphoreSlim
 {
-    public FifoSemaphoreSlim Root { get; }
+    private readonly FifoSemaphoreSlim Root;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="FifoAutoReleasingSemaphoreSlim" /> class.
+    /// </summary>
+    /// <param name="initialCount">The initial count of the semaphore</param>
+    /// <param name="maxCount">The max count of the semaphore</param>
     public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new FifoSemaphoreSlim(initialCount, maxCount);
 
+    /// <summary>
+    ///     Releases the internal <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.
+    /// </summary>
     public void Release()
     {
         try
@@ -33,6 +41,14 @@ public sealed class FifoAutoReleasingSemaphoreSlim
         return new AutoReleasingSubscription(Root);
     }
 
+    /// <summary>
+    ///     Asynchronously waits to enter the semaphore with a timeout.
+    /// </summary>
+    /// <param name="timeout">The amount of time to wait before giving up</param>
+    /// <returns>
+    ///     If we enter the semaphore before the timeout elapses, this returns a disposable object that when disposed will release the
+    ///     semaphore, otherwise null
+    /// </returns>
     public async ValueTask<IPolyDisposable?> WaitAsync(TimeSpan timeout)
     {
         if (await Root.WaitAsync(timeout))

@@ -4,6 +4,9 @@ using Chaos.Collections.Common;
 
 namespace Chaos.Common.Converters;
 
+/// <summary>
+///     A converter for <see cref="CounterCollection" />
+/// </summary>
 public sealed class CounterCollectionConverter : JsonConverter<CounterCollection>
 {
     /// <inheritdoc />

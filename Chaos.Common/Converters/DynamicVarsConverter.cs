@@ -4,6 +4,9 @@ using Chaos.Collections.Common;
 
 namespace Chaos.Common.Converters;
 
+/// <summary>
+///     A converter for <see cref="DynamicVars" />
+/// </summary>
 public sealed class DynamicVarsConverter : JsonConverter<DynamicVars>
 {
     /// <inheritdoc />

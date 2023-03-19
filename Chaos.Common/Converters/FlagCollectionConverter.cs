@@ -4,6 +4,9 @@ using Chaos.Collections.Common;
 
 namespace Chaos.Common.Converters;
 
+/// <summary>
+///     A converter for <see cref="FlagCollection" />
+/// </summary>
 public sealed class FlagCollectionConverter : JsonConverter<FlagCollection>
 {
     /// <inheritdoc />

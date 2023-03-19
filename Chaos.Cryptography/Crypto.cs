@@ -5,23 +5,38 @@ using Chaos.Cryptography.Abstractions.Definitions;
 
 namespace Chaos.Cryptography;
 
+/// <summary>
+///     Provides encryption and decryption for spans using opcodes
+/// </summary>
 public sealed class Crypto : ICrypto
 {
     private readonly IReadOnlyList<byte> KeySalts;
+    /// <inheritdoc />
     public byte[] Key { get; }
+    /// <inheritdoc />
     public byte Seed { get; }
     private IReadOnlyList<byte> Salts => Tables.SALT_TABLE[Seed];
 
+    /// <summary>
+    ///     Creates a new instance of the Crypto class
+    /// </summary>
     public Crypto()
         : this(0, "UrkcnItnI"u8.ToArray(), string.Empty) { }
 
-    public Crypto(byte seed, byte[] key, string keySaltSeed)
+    /// <summary>
+    ///     Creates a new instance of the Crypto class
+    /// </summary>
+    /// <param name="seed">The seed used to salt to key</param>
+    /// <param name="key">The encryption key</param>
+    /// <param name="keySaltSeed">The seed used to generate key salts</param>
+    public Crypto(byte seed, byte[] key, string? keySaltSeed = null)
     {
         Seed = seed;
         Key = key;
         KeySalts = string.IsNullOrEmpty(keySaltSeed) ? new byte[1024] : GenerateKeySalts(keySaltSeed);
     }
 
+    /// <inheritdoc />
     public byte[] GenerateKey(ushort a, byte b)
     {
         var key = new byte[9];
@@ -32,6 +47,7 @@ public sealed class Crypto : ICrypto
         return key;
     }
 
+    /// <inheritdoc />
     public byte[] GenerateKeySalts(string seed)
     {
         var saltTable = GetMd5Hash(GetMd5Hash(seed));
@@ -43,6 +59,7 @@ public sealed class Crypto : ICrypto
     }
 
     #region Utility
+    /// <inheritdoc />
     public string GetMd5Hash(string value) =>
         BitConverter.ToString(MD5.HashData(Encoding.ASCII.GetBytes(value)))
                     .Replace("-", string.Empty)

@@ -3,6 +3,7 @@ using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;
 
+/// <inheritdoc />
 public sealed class GridDetails : IGridDetails
 {
     /// <inheritdoc />

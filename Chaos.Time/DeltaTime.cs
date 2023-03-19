@@ -24,5 +24,8 @@ public sealed class DeltaTime
         }
     }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="DeltaTime" /> class
+    /// </summary>
     public DeltaTime() => LastTimeStamp = Stopwatch.GetTimestamp();
 }

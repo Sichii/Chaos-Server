@@ -11,14 +11,30 @@ public sealed class ResettingCounter : IDeltaUpdatable
     private readonly IIntervalTimer Timer;
     private int Counter;
 
+    /// <summary>
+    ///     Gets whether or not the counter can be incremented
+    /// </summary>
     public bool CanIncrement => Counter < MaxCount;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ResettingCounter" /> class
+    /// </summary>
+    /// <param name="maxCount">The maximum value of the counter</param>
+    /// <param name="timer">The timer to use internally to determine when to reset the counter</param>
     public ResettingCounter(int maxCount, IIntervalTimer timer)
     {
         Timer = timer;
         MaxCount = maxCount;
     }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ResettingCounter" /> class
+    /// </summary>
+    /// <param name="maxPerSecond">
+    ///     The max acceptable increments per second. Note that this is not necessarily enforced per second, but instead
+    ///     calculates a max value for the number of seconds in each interval
+    /// </param>
+    /// <param name="updateIntervalSecs">The number of seconds that must elapse before resetting the counter</param>
     public ResettingCounter(int maxPerSecond, int updateIntervalSecs = 1)
     {
         Timer = new IntervalTimer(TimeSpan.FromSeconds(updateIntervalSecs));

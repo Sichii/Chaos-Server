@@ -9,6 +9,9 @@ using Chaos.Pathfinding.Abstractions;
 
 namespace Chaos.Pathfinding;
 
+/// <summary>
+///     Provides a pathfinding implementation
+/// </summary>
 public sealed class Pathfinder : IPathfinder
 {
     private readonly int Height;
@@ -18,6 +21,10 @@ public sealed class Pathfinder : IPathfinder
     private readonly AutoReleasingMonitor Sync;
     private readonly int Width;
 
+    /// <summary>
+    ///     Creates a new instance of <see cref="Pathfinder" />
+    /// </summary>
+    /// <param name="gridDetails">Details of a pathfinding grid</param>
     public Pathfinder(IGridDetails gridDetails)
     {
         Width = gridDetails.Width;
@@ -171,6 +178,14 @@ public sealed class Pathfinder : IPathfinder
             PathNodes[creature.X, creature.Y].IsCreature = true;
     }
 
+    /// <summary>
+    ///     Finds a path from start to end, returning the next direction to walk to get there
+    /// </summary>
+    /// <param name="start">The starting point</param>
+    /// <param name="end">Where to find a path to</param>
+    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
+    /// <param name="unwalkablePoints">A collection of extra unwalkable points such as creatures</param>
+    /// <returns></returns>
     public Direction Pathfind(
         IPoint start,
         IPoint end,

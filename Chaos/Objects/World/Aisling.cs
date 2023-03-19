@@ -874,7 +874,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         //handle approach
-        foreach (var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
+        foreach (var visible in objsAfterWalk.OtherVisibles.Except(objsBeforeWalk.OtherVisibles))
             if (visible is Creature creature)
                 Helpers.HandleApproach(creature, this);
 

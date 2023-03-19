@@ -15,6 +15,13 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     private bool BeginLogging;
     private List<TimeSpan> ExecutionDeltas;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="DeltaMonitor" /> class
+    /// </summary>
+    /// <param name="name">The name of this instance</param>
+    /// <param name="logger">An object to log with</param>
+    /// <param name="logInterval">How often to log</param>
+    /// <param name="maxDelta">The maximum acceptable delta allowed before logging an error</param>
     public DeltaMonitor(
         string name,
         ILogger logger,

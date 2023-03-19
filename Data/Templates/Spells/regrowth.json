@@ -28,12 +28,12 @@
   ],
   "scriptVars": {
     "applyEffect": {
-      "shape": "allaround",
-      "bodyAnimation": "handsup",
-      "sound": 8,
       "effectKey": "regeneration",
+      "range": 2,
+      "bodyAnimation": "handsup",
+      "shape": "allaround",
       "filter": "friendlyOnly",
-      "range": 2
+      "sound": 8
     }
   },
   "templateKey": "regrowth"

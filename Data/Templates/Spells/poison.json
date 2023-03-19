@@ -28,12 +28,12 @@
   ],
   "scriptVars": {
     "applyEffect": {
-      "shape": "allaround",
-      "bodyAnimation": "handsup",
-      "sound": 8,
       "effectKey": "poison",
+      "range": 2,
+      "bodyAnimation": "handsup",
+      "shape": "allaround",
       "filter": "none",
-      "range": 2
+      "sound": 8
     }
   },
   "templateKey": "poison"

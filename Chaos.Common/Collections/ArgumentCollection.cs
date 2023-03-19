@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Text.RegularExpressions;
 using Chaos.Common.Converters;
 using Chaos.Common.Definitions;
@@ -20,6 +21,12 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </summary>
     public int Count => Arguments.Count;
 
+    /// <summary>
+    ///     Creates an <see cref="ArgumentCollection" /> from a sequence of strings. Strings will be split by the given delimiter if one is
+    ///     provided.
+    /// </summary>
+    /// <param name="arguments">A sequence of argument strings</param>
+    /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
     public ArgumentCollection(IEnumerable<string> arguments, string? delimiter = null)
     {
         if (!string.IsNullOrEmpty(delimiter))
@@ -28,6 +35,11 @@ public sealed class ArgumentCollection : IEnumerable<string>
         Arguments = arguments.ToList();
     }
 
+    /// <summary>
+    ///     Creates an <see cref="ArgumentCollection" /> from a string. String will be parsed for arguments using the " " as a delimiter, but
+    ///     keeping double quoted strings intact.
+    /// </summary>
+    /// <param name="argumentStr">A string containing arguments</param>
     public ArgumentCollection(string argumentStr)
     {
         Arguments = new List<string>();
@@ -42,8 +54,16 @@ public sealed class ArgumentCollection : IEnumerable<string>
         }
     }
 
+    /// <summary>
+    ///     Creates an <see cref="ArgumentCollection" /> from a string. String will be parsed for arguments using the given delimiter.
+    /// </summary>
+    /// <param name="argumentStr">A string containing arguments</param>
+    /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
     public ArgumentCollection(string argumentStr, string delimiter) => Arguments = argumentStr.Split(delimiter).ToList();
 
+    /// <summary>
+    ///     Creates an empty <see cref="ArgumentCollection" />
+    /// </summary>
     public ArgumentCollection() => Arguments = new List<string>();
 
     /// <summary>
@@ -62,9 +82,26 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// <summary>
     ///     Adds a string or argument to the end of the collection. The string will be split by the given delimiter if one is provided.
     /// </summary>
-    /// <param name="argument">A string or argument</param>
+    /// <param name="argument">A string containing arguments</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
-    public void Add(string argument, string? delimiter = null) => Add(new[] { argument }, delimiter);
+    public void Add(string argument, string? delimiter) => Add(new[] { argument }, delimiter);
+
+    /// <summary>
+    ///     Adds a string or argument to the end of the collection. The string will be parsed for arguments using the " " as a delimiter, but
+    ///     keeping double quoted strings intact.
+    /// </summary>
+    /// <param name="argument">A string containing arguments</param>
+    public void Add(string argument)
+    {
+        foreach (var match in RegexCache.COMMAND_SPLIT_REGEX.Matches(argument).OfType<Match>())
+        {
+            if (!match.Success)
+                continue;
+
+            var grp = match.Groups[1].Value;
+            Arguments.Add(!string.IsNullOrEmpty(grp) ? grp : match.Groups[2].Value);
+        }
+    }
 
     /// <inheritdoc />
     public IEnumerator<string> GetEnumerator() => Arguments.GetEnumerator();
@@ -73,7 +110,20 @@ public sealed class ArgumentCollection : IEnumerable<string>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public override string ToString() => string.Join(" ", Arguments);
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+
+        foreach (var arg in Arguments)
+        {
+            sb.Append('"');
+            sb.Append(arg);
+            sb.Append('"');
+            sb.Append(' ');
+        }
+
+        return sb.ToString();
+    }
 
     /// <summary>
     ///     Attempts to retreive the argument at the given index and convert it to the specified type
@@ -92,7 +142,11 @@ public sealed class ArgumentCollection : IEnumerable<string>
                 return false;
 
             var argument = Arguments[index];
-            value = PrimitiveConverter.Convert<T>(argument);
+
+            if (typeof(T) == typeof(ArgumentCollection))
+                value = (T)(object)new ArgumentCollection(argument);
+            else
+                value = PrimitiveConverter.Convert<T>(argument);
 
             // ReSharper disable once CompareNonConstrainedGenericWithNull
             return value != null;

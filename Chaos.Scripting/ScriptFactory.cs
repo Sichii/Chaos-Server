@@ -28,6 +28,11 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
     private readonly IServiceProvider ServiceProvider;
     private readonly string TypeName;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ScriptFactory{TScript, TScripted}" /> class.
+    /// </summary>
+    /// <param name="logger">The logger instance to use for this class</param>
+    /// <param name="serviceProvider">The application si container</param>
     public ScriptFactory(ILogger<ScriptFactory<TScript, TScripted>> logger, IServiceProvider serviceProvider)
     {
         ScriptTypeCache = new ConcurrentDictionary<string, Type>(StringComparer.OrdinalIgnoreCase);

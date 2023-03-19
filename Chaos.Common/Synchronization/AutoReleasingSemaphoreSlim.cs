@@ -7,6 +7,11 @@ public sealed class AutoReleasingSemaphoreSlim
 {
     private readonly SemaphoreSlim Root;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="AutoReleasingSemaphoreSlim" /> class.
+    /// </summary>
+    /// <param name="initialCount">The initial count of the semaphore</param>
+    /// <param name="maxCount">The max count of the semaphore</param>
     public AutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new SemaphoreSlim(initialCount, maxCount);
 
     /// <summary>

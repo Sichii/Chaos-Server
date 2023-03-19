@@ -2,8 +2,17 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Extensions.Common;
 
+/// <summary>
+///     Provides extension methods for <see cref="System.Enum" />
+/// </summary>
 public static class EnumExtensions
 {
+    /// <summary>
+    ///     Converts an <see cref="EquipmentType" /> to one or more <see cref="EquipmentSlot" />s
+    /// </summary>
+    /// <param name="type">An <see cref="EquipmentType" /> value</param>
+    /// <returns>One or more <see cref="EquipmentSlot" />s associated with the given <see cref="EquipmentType" /></returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the given <see cref="EquipmentType" /> is not defined</exception>
     public static IEnumerable<EquipmentSlot> ToEquipmentSlots(this EquipmentType type)
     {
         switch (type)

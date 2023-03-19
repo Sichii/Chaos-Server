@@ -17,6 +17,10 @@ public sealed class ScriptProvider : IScriptProvider
 {
     private readonly IServiceProvider ServiceProvider;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ScriptProvider" /> class.
+    /// </summary>
+    /// <param name="serviceProvider">The application si container</param>
     public ScriptProvider(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
     /// <inheritdoc />

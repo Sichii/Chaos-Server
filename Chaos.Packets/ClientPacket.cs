@@ -4,14 +4,37 @@ using Chaos.Packets.Definitions;
 
 namespace Chaos.Packets;
 
+/// <summary>
+///     Represents a packet received from a client.
+/// </summary>
 public ref struct ClientPacket
 {
+    /// <summary>
+    ///     The buffer containing the packet data
+    /// </summary>
     public Span<byte> Buffer;
+    /// <summary>
+    ///     Whether or not the packet is encrypted
+    /// </summary>
     public bool IsEncrypted { get; }
+    /// <summary>
+    ///     A value used to identify the type of packet and it's purpose
+    /// </summary>
     public ClientOpCode OpCode { get; }
+    /// <summary>
+    ///     A value used to ensure packets are processed in the correct order
+    /// </summary>
     public byte Sequence { get; }
+    /// <summary>
+    ///     A value used to identify the start of a packet's payload
+    /// </summary>
     public byte Signature { get; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ClientPacket" /> struct with the specified buffer and encryption status.
+    /// </summary>
+    /// <param name="span">The buffer containing the packet data.</param>
+    /// <param name="isEncrypted"><c>true</c> if the packet is encrypted; otherwise, <c>false</c></param>
     public ClientPacket(ref Span<byte> span, bool isEncrypted)
     {
         Signature = span[0];
@@ -23,6 +46,11 @@ public ref struct ClientPacket
         Buffer = span[^resultLength..];
     }
 
+    /// <summary>
+    ///     Returns the packet data as an ASCII string.
+    /// </summary>
+    /// <param name="replaceNewline">Whether to replace newline characters with spaces. Default is true.</param>
+    /// <returns>The packet data as an ASCII string.</returns>
     public readonly string GetAsciiString(bool replaceNewline = true)
     {
         var str = Encoding.ASCII.GetString(Buffer);
@@ -34,10 +62,22 @@ public ref struct ClientPacket
         return str;
     }
 
+    /// <summary>
+    ///     Returns the packet data as a hexadecimal string.
+    /// </summary>
+    /// <returns>The packet data as a hexadecimal string.</returns>
     public string GetHexString() => $"{OpCode}: {RegexCache.DOUBLE_BYTE_REGEX.Replace(Convert.ToHexString(Buffer), "$1 ")}";
 
+    /// <summary>
+    ///     Converts the packet data to a byte array.
+    /// </summary>
+    /// <returns>The packet data as a byte array.</returns>
     public byte[] ToArray() => ToSpan().ToArray();
 
+    /// <summary>
+    ///     Converts the packet data to a <see cref="Memory{T}" /> instance.
+    /// </summary>
+    /// <returns>The packet data as a <see cref="Memory{T}" /> instance.</returns>
     public readonly Memory<byte> ToMemory()
     {
         //the length of the packet after the length portion of the header plus the packet tail (determined by encryption type)
@@ -57,6 +97,10 @@ public ref struct ClientPacket
         return memory;
     }
 
+    /// <summary>
+    ///     Converts the packet data to a <see cref="Span{T}" /> instance.
+    /// </summary>
+    /// <returns>The packet data as a <see cref="Span{T}" /> instance.</returns>
     public Span<byte> ToSpan()
     {
         //the length of the packet after the length portion of the header plus the packet tail (determined by encryption type)
@@ -77,5 +121,9 @@ public ref struct ClientPacket
         return resultBuffer;
     }
 
+    /// <summary>
+    ///     Returns a string representation of the packet data as a hexadecimal string.
+    /// </summary>
+    /// <returns>A string representation of the packet data as a hexadecimal string.</returns>
     public override string ToString() => GetHexString();
 }

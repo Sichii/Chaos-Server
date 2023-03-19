@@ -11,5 +11,9 @@ public abstract class SubjectiveScriptBase<T> : ScriptBase where T: IScripted
     /// </summary>
     public T Subject { get; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="SubjectiveScriptBase{T}" /> class.
+    /// </summary>
+    /// <param name="subject">The subject of this script. The object the script is attached to</param>
     protected SubjectiveScriptBase(T subject) => Subject = subject;
 }

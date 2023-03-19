@@ -14,12 +14,17 @@ public class IntervalTimer : IIntervalTimer
     ///     The amount of time that has elapsed since this timer crossed it's <see cref="Interval"/>
     /// </summary>
     protected TimeSpan Elapsed { get; set; }
-    
+
     /// <summary>
     ///     The amount of time that must accumulate to set <see cref="IntervalElapsed"/> to true
     /// </summary>
     protected TimeSpan Interval { get; set; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="IntervalTimer" /> class
+    /// </summary>
+    /// <param name="interval">The interval between setting <see cref="IntervalElapsed" /> to true</param>
+    /// <param name="startAsElapsed">Whether or not to create the timer in an elapsed state</param>
     public IntervalTimer(TimeSpan interval, bool startAsElapsed = true)
     {
         Interval = interval;
@@ -27,7 +32,7 @@ public class IntervalTimer : IIntervalTimer
         if (startAsElapsed)
             Elapsed = interval;
     }
-    
+
     /// <summary>
     ///     Resets the timer, setting the elapsed time to 0
     /// </summary>

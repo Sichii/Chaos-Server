@@ -11,7 +11,7 @@ public interface IPathfindingService
     /// <summary>
     ///     Finds a path from the start to the end with options to ignorewalls or path around certain creatures
     /// </summary>
-    /// <param name="key">The key of the grid to perform pathfinding on</param>
+    /// <param name="gridKey">The key of the grid to perform pathfinding on</param>
     /// <param name="start">The point to start pathfinding from</param>
     /// <param name="end">The point to pathfind to</param>
     /// <param name="ignoreWalls">Whether or not to ignore walls</param>
@@ -19,7 +19,7 @@ public interface IPathfindingService
     /// <returns>The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk to move to the next point in the path</returns>
     /// <returns></returns>
     Direction Pathfind(
-        string key,
+        string gridKey,
         IPoint start,
         IPoint end,
         bool ignoreWalls,

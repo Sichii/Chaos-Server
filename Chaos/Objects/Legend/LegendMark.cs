@@ -14,6 +14,7 @@ public sealed record LegendMark(
 {
     public GameTime Added { get; set; } = Added;
     public int Count { get; set; } = Count;
+    public string Text { get; set; } = Text;
 
     public bool Equals(LegendMark? other)
     {

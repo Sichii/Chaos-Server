@@ -28,8 +28,8 @@
   ],
   "scriptVars": {
     "applyEffect": {
-      "bodyAnimation": "priestcast",
       "effectKey": "notsobadcurse",
+      "bodyAnimation": "priestcast",
       "filter": "aliveonly"
     }
   },

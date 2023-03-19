@@ -6,6 +6,10 @@
 public interface IRectangle : IPolygon
 {
     /// <summary>
+    ///     The area of the rectangle
+    /// </summary>
+    int Area { get; }
+    /// <summary>
     ///     The highest Y valye of the rectangle
     /// </summary>
     int Bottom { get; }

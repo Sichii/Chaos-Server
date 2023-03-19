@@ -2,6 +2,9 @@ using System.Text.Json;
 
 namespace Chaos.Common.Utilities;
 
+/// <summary>
+///     A static utility for serializing and deserializing objects
+/// </summary>
 public static class JsonSerializerEx
 {
     /// <summary>

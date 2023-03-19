@@ -32,10 +32,10 @@
   ],
   "scriptVars": {
     "layReactorTile": {
-      "includeSourcePoint": true,
-      "shape": "none",
       "reactorTileTemplateKey": "needle_trap",
-      "range": 0
+      "range": 0,
+      "includeSourcePoint": true,
+      "shape": "none"
     }
   },
   "templateKey": "needle_trap"

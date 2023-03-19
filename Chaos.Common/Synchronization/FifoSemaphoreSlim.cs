@@ -10,8 +10,17 @@ public sealed class FifoSemaphoreSlim
     private readonly SemaphoreSlim Sync;
     private readonly ConcurrentQueue<TaskCompletionSource<bool>> TaskQueue = new();
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="FifoSemaphoreSlim" /> class.
+    /// </summary>
+    /// <param name="initialCount">The initial count of the semaphore</param>
     public FifoSemaphoreSlim(int initialCount) => Sync = new SemaphoreSlim(initialCount);
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="FifoSemaphoreSlim" /> class.
+    /// </summary>
+    /// <param name="initialCount">The initial count of the semaphore</param>
+    /// <param name="maxCount">The max count of the semaphore</param>
     public FifoSemaphoreSlim(int initialCount, int maxCount) => Sync = new SemaphoreSlim(initialCount, maxCount);
 
     /// <summary>
