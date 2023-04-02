@@ -34,6 +34,6 @@ the [ITypeMapper](<xref:Chaos.TypeMapper.Abstractions.ITypeMapper>) service.
 
 ## Serialization
 
-By default, Chaos uses `System.Text.Json` for serialization (See [SerializationContext](<xref:Chaos.Serialization.SerializationContext>)).
+By default, Chaos uses `System.Text.Json` for serialization (See [SerializationContext](<xref:Chaos.SerializationContext>)).
 If there is a need to use some other medium of storage and serialization, you can can create your
 own [ISimpleCache](<xref:Chaos.Storage.Abstractions.ISimpleCache`1>) implementations that do not serialize from json.

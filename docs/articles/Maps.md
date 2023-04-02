@@ -172,7 +172,7 @@ type.
 | bool                                                                              | ShouldBlockPathfinding  | Whether or not this reactor should block monster pathfinding. If this is set to false, monsters and merchants will be able to step on this reactor                                            |
 | string?                                                                           | OwnerMonsterTemplateKey | If this reactor does damage, it is required to have an owner, otherwise this property can be ignored. The owning monster can be a basic monster with no stats or scripts                      |
 | ICollection\<string\>                                                             | ScriptKeys              | A collection of names of scripts to attach to this object by default                                                                                                                          |
-| IDictionary\<string, [DynamicVars](<xref:Chaos.Common.Collections.DynamicVars>)\> | ScriptVars              | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
+| IDictionary\<string, [DynamicVars](<xref:Chaos.Collections.Common.DynamicVars>)\> | ScriptVars              | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
 
 ### Example reactors.json
 

@@ -17,18 +17,18 @@ to a non-schema type.
 
 ### DialogTemplateSchema
 
-| Type                                                                                | Name          | Description                                                                                                                                                                                   |
-|-------------------------------------------------------------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| string                                                                              | TemplateKey   | A unique id specific to this dialog template<br />This must match the name of the folder containing this file                                                                                 |
-| ICollection\<string\>                                                               | ScriptKeys    | A collection of names of map scripts to attach to this map by default                                                                                                                         |
-| IDictionary\<string, [DynamicVars](<xref:Chaos.Collections.Common.DynamicVars>)\>   | ScriptVars    | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
-| [ChaosDialogType](<xref:Chaos.Common.Definitions.ChaosDialogType>)                  | Type          | The type of dialog this is                                                                                                                                                                    |
-| string?                                                                             | NextDialogKey | The template key of the dialog that should be displayed after this one<br />If specified and the Type is Normal, the dialog will have a next button                                           |
-| string?                                                                             | PrevDialogKey | If specified and the Type is Normal, the dialog will have a previous button that will take them to the dialog with this template key                                                          |
-| ICollection\<[DialogOptionsSchema](<xref:Chaos.Schemas.Data.DialogOptionsSchema>)\> | Options       | A collection of options that can be selected from this dialog                                                                                                                                 |
-| string                                                                              | Text          | The text displayed on the template. This can be a string format with injectable parameters, but those parameters must be injected by a script                                                 |
-| ushort?                                                                             | TextBoxLength | When the Type is DialogTextEntry, this will limit the length of the input text box                                                                                                            |
-| bool                                                                                | Contextual    | Whether or not this dialog requires context passed to it from the previous dialog                                                                                                             |
+| Type                                                                              | Name          | Description                                                                                                                                                                                   |
+|-----------------------------------------------------------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| string                                                                            | TemplateKey   | A unique id specific to this dialog template<br />This must match the name of the folder containing this file                                                                                 |
+| ICollection\<string\>                                                             | ScriptKeys    | A collection of names of map scripts to attach to this map by default                                                                                                                         |
+| IDictionary\<string, [DynamicVars](<xref:Chaos.Collections.Common.DynamicVars>)\> | ScriptVars    | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
+| [ChaosDialogType](<xref:Chaos.Common.Definitions.ChaosDialogType>)                | Type          | The type of dialog this is                                                                                                                                                                    |
+| string?                                                                           | NextDialogKey | The template key of the dialog that should be displayed after this one<br />If specified and the Type is Normal, the dialog will have a next button                                           |
+| string?                                                                           | PrevDialogKey | If specified and the Type is Normal, the dialog will have a previous button that will take them to the dialog with this template key                                                          |
+| ICollection\<[DialogOptionSchema](<xref:Chaos.Schemas.Data.DialogOptionSchema>)\> | Options       | A collection of options that can be selected from this dialog                                                                                                                                 |
+| string                                                                            | Text          | The text displayed on the template. This can be a string format with injectable parameters, but those parameters must be injected by a script                                                 |
+| ushort?                                                                           | TextBoxLength | When the Type is DialogTextEntry, this will limit the length of the input text box                                                                                                            |
+| bool                                                                              | Contextual    | Whether or not this dialog requires context passed to it from the previous dialog                                                                                                             |
 
 ### Example Dialog Template Json
 
@@ -52,7 +52,7 @@ dialog template to true. This will cause any dialog leading to a contextual dial
 
 ### Dialog.MenuArgs
 
-MenuArgs is an [ArgumentCollection](<xref:Chaos.Common.Collections.ArgumentCollection>). This is used when specifying a dialog type of
+MenuArgs is an [ArgumentCollection](<xref:Chaos.Collections.Common.ArgumentCollection>). This is used when specifying a dialog type of
 MenuTextEntry, MenuTextEntryWithArgs, and DialogTextEntry. When the user types in input and clicks ok, MenuArgs will be populated with what
 they typed in. The ArgumentCollection facilitates easier conversion of the input to the desired type. For example, if you want the user to
 type in a number, ArgumentCollection can perform that conversion for you.

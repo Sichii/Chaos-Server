@@ -2,12 +2,12 @@
 
 The server runs on scripts. Skills, Spells, Items, Dialogs, Monsters, Merchants, MapInstances, ReactorTiles, etc.. are all scripted objects.
 To control
-how these objects respond to input, a script must be written. Scripts can be found under `Chaos.Scripts`. There are a number of
+how these objects respond to input, a script must be written. Scripts can be found under `Chaos.Scripting`. There are a number of
 default scripts created as examples, but writing your own scripts is the only way to truly customize the server.
 
 There are 2 main types of scripts for most entities. `Base Scripts` and `Configurable Scripts`. Let's take item scripts as an example. There
-are 2 base types you can choose to use, the [ItemScriptBase](<xref:Chaos.Scripts.ItemScripts.Abstractions.ItemScriptBase>) and
-the [ConfigurableItemScriptBase](<xref:Chaos.Scripts.ItemScripts.Abstractions.ConfigurableItemScriptBase>).
+are 2 base types you can choose to use, the [ItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.ItemScriptBase>) and
+the [ConfigurableItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.ConfigurableItemScriptBase>).
 
 ### Base Scripts
 
@@ -26,7 +26,7 @@ automatically if it can find that variable within the source json the entity was
 the `scriptVars` property from whatever entity is the subject of that script.
 
 For example, here is a script that is used for consumable items that give back health or mana.  
-[!code-csharp[](../../Chaos/Scripts/ItemScripts/VitalityConsumableScript.cs)]  
+[!code-csharp[](../../Chaos/Scripting/ItemScripts/VitalityConsumableScript.cs)]  
 Note the `scriptVars` region. These properties don't appear to be set anywhere, but they are automatically populated by the script's base
 implementation from the item's json.
 

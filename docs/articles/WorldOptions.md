@@ -62,10 +62,10 @@ guild chat in Dark Ages. These settings represent the parts of those systems tha
 This is a collection of channel names that new characters will join by default. These channels are also registered with the channel service
 during startup.
 
-| Name         | Type                                                               | Description                                  |
-|--------------|--------------------------------------------------------------------|----------------------------------------------|
-| Name         | string                                                             | The name of the channel                      |
-| MessageColor | [MessageColor](<xref:Chaos.Common.Definitions.Enums.MessageColor>) | The color of messages sent from this channel |
+| Name         | Type                                                         | Description                                  |
+|--------------|--------------------------------------------------------------|----------------------------------------------|
+| Name         | string                                                       | The name of the channel                      |
+| MessageColor | [MessageColor](<xref:Chaos.Common.Definitions.MessageColor>) | The color of messages sent from this channel |
 
 > [!NOTE]
 > Default channel names should also be added to `ChannelServiceOptions:ReservedChannelNames`

@@ -8,7 +8,8 @@
                     "exclude": ["**/Tests/**", "**/Tools/**"]
                 }
             ],
-            "dest": "api"
+            "dest": "api",
+            "memberLayout": "separatePages"
         }
     ],
     "build": {
@@ -50,12 +51,7 @@
         },
         "globalMetadataFiles": [],
         "fileMetadataFiles": [],
-        "template": [
-            "default",
-            "templates/singulinkfx",
-            "plugins/memberpage.2.59.4/content",
-            "plugins/memberpage-extras"
-        ],
+        "template": ["default", "templates/singulinkfx"],
         "postProcessors": [],
         "markdownEngineName": "markdig",
         "noLangKeyword": false,
