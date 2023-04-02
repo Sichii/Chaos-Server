@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["forgetSkill"],
+    "templateKey": "generic_forgetskill_initial",
+    "text": "What skill would you like to forget?",
+    "type": "ShowPlayerSkills",
+    "nextdialogkey": "generic_forgetskill_confirmation"
+}

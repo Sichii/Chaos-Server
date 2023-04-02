@@ -3,6 +3,9 @@ using Chaos.Geometry;
 
 namespace Chaos.Schemas.Templates;
 
+/// <summary>
+///     Represents the serializable schema for a map template
+/// </summary>
 public sealed record MapTemplateSchema
 {
     /// <summary>

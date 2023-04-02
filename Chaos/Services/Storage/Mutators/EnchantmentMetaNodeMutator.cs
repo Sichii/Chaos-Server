@@ -1,4 +1,4 @@
-using Chaos.Networking.Metadata.ItemMetadata;
+using Chaos.MetaData.ItemMetadata;
 using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Mutators;

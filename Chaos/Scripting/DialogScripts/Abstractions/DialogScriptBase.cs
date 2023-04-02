@@ -6,8 +6,6 @@ namespace Chaos.Scripting.DialogScripts.Abstractions;
 
 public abstract class DialogScriptBase : SubjectiveScriptBase<Dialog>, IDialogScript
 {
-    private readonly ConcurrentDictionary<Delegate, bool> RunOnceCache = new();
-
     /// <inheritdoc />
     protected DialogScriptBase(Dialog subject)
         : base(subject) { }
@@ -24,11 +22,14 @@ public abstract class DialogScriptBase : SubjectiveScriptBase<Dialog>, IDialogSc
     /// <inheritdoc />
     public virtual void OnPrevious(Aisling source) { }
 
-    protected void RunOnce(Action action)
-    {
-        if (RunOnceCache.TryAdd(action, true))
-            action();
-    }
+    public virtual bool TryFetchArg<T>(int index, [MaybeNullWhen(false)] out T input) => Subject.MenuArgs.TryGet(index, out input);
 
-    protected T? RunOnce<T>(Func<T> func) => RunOnceCache.TryAdd(func, true) ? func() : default;
+    public virtual bool TryFetchArgs<T>([MaybeNullWhen(false)] out T input) => Subject.MenuArgs.TryGet(0, out input);
+
+    public virtual bool TryFetchArgs<T1, T2>([MaybeNullWhen(false)] out T1 input1, [MaybeNullWhen(false)] out T2 input2)
+    {
+        input2 = default;
+
+        return Subject.MenuArgs.TryGet(0, out input1) && Subject.MenuArgs.TryGet(1, out input2);
+    }
 }

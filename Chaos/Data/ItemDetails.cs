@@ -4,12 +4,18 @@ namespace Chaos.Data;
 
 public sealed class ItemDetails
 {
-    public required int AmountOrPrice { get; init; }
     public required Item Item { get; init; }
+    public required int Price { get; init; }
 
-    public static ItemDetails Default(Item item) => new()
+    public static ItemDetails BuyWithGold(Item item) => new()
     {
         Item = item,
-        AmountOrPrice = item.Template.BuyCost
+        Price = item.Template.BuyCost
+    };
+
+    public static ItemDetails WithdrawItem(Item item) => new()
+    {
+        Item = item,
+        Price = item.Count
     };
 }

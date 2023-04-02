@@ -20,16 +20,14 @@ public class TeleportScript : DialogScriptBase
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        if (!Subject.MenuArgs.TryGetNext<string>(out var locationString))
+        if (!TryFetchArgs<ArgumentCollection>(out var locationArgs))
         {
             Subject.Reply(source, DialogString.UnknownInput.Value);
 
             return;
         }
 
-        var args = new ArgumentCollection(locationString);
-
-        if (!args.TryGetNext<string>(out var mapInstanceId))
+        if (!locationArgs.TryGetNext<string>(out var mapInstanceId))
         {
             Subject.Reply(source, DialogString.UnknownInput.Value);
 
@@ -48,12 +46,15 @@ public class TeleportScript : DialogScriptBase
             return;
         }
 
-        Point point;
+        var point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
 
-        if (args.TryGet<int>(1, out var xPos) && args.TryGet<int>(2, out var yPos))
-            point = new Point(xPos, yPos);
-        else
-            point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
+        if (locationArgs.TryGetNext<int>(out var xPos) && locationArgs.TryGetNext<int>(out var yPos))
+        {
+            var possiblePoint = new Point(xPos, yPos);
+
+            if (mapInstance.IsWithinMap(possiblePoint))
+                point = possiblePoint;
+        }
 
         source.TraverseMap(mapInstance, point, true);
     }

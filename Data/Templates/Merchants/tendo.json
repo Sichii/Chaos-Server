@@ -1,13 +1,26 @@
 {
-  "name": "Tendo",
-  "scriptKeys": [
-    "showdialog"
-  ],
-  "scriptVars": {
-    "showdialog": {
-      "dialogKey": "tendo_initial"
-    }
-  },
-  "sprite": 205,
-  "templateKey": "tendo"
+    "name": "Tendo",
+    "scriptKeys": ["showdialog"],
+    "scriptVars": {
+        "showdialog": {
+            "dialogKey": "tendo_initial"
+        }
+    },
+    "sprite": 205,
+    "templateKey": "tendo",
+    "itemsForSale": [
+        {
+            "itemTemplateKey": "teleport_trinket",
+            "stock": 5
+        },
+        {
+            "itemTemplateKey": "apple",
+            "stock": 100
+        }
+    ],
+    "itemsToBuy": ["apple"],
+    "skillstoteach": ["assail", "ambush"],
+    "spellstoteach": ["firebreath", "healies", "regrowth", "needle_trap"],
+    "restockIntervalHours": 1,
+    "restockPercent": 100
 }

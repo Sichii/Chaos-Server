@@ -10,28 +10,27 @@ public class DepositGoldScript : DialogScriptBase
 {
     private readonly ILogger<DepositGoldScript> Logger;
 
+    /// <inheritdoc />
     public DepositGoldScript(Dialog subject, ILogger<DepositGoldScript> logger)
-        : base(subject) => Logger = logger;
+        : base(subject) =>
+        Logger = logger;
 
     /// <inheritdoc />
-    public override void OnDisplaying(Aisling source) => RunOnce(
-        () =>
-        {
-            Subject.Text = $"You are holding {source.Gold} gold, how much would you like to deposit?";
-        });
+    public override void OnDisplaying(Aisling source) => Subject.InjectTextParameters(source.Gold);
 
+    /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        if (!Subject.MenuArgs.TryGet<int>(0, out var amount))
+        if (!TryFetchArgs<int>(out var amount) || (amount <= 0))
         {
-            Subject.Reply(source, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
             return;
         }
 
-        var result = ComplexActionHelper.DepositGold(source, amount);
+        var depositResult = ComplexActionHelper.DepositGold(source, amount);
 
-        switch (result)
+        switch (depositResult)
         {
             case ComplexActionHelper.DepositGoldResult.Success:
                 Logger.LogDebug(
@@ -40,15 +39,13 @@ public class DepositGoldScript : DialogScriptBase
                     amount,
                     Subject.SourceEntity);
 
-                Subject.NextDialogKey = Subject.Template.TemplateKey;
-
                 break;
             case ComplexActionHelper.DepositGoldResult.NotEnoughGold:
-                Subject.Reply(source, "You don't have enough gold.");
+                Subject.Reply(source, "You don't have enough gold.", "generic_depositgold_initial");
 
                 break;
             case ComplexActionHelper.DepositGoldResult.BadInput:
-                Subject.Reply(source, DialogString.UnknownInput.Value);
+                Subject.ReplyToUnknownInput(source);
 
                 break;
             default:

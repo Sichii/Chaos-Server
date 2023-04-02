@@ -43,6 +43,16 @@ public class IntervalTimer : IIntervalTimer
     }
 
     /// <inheritdoc />
+    public virtual void SetOrigin(DateTime origin)
+    {
+        var timerOrigin = origin.Date;
+        var addedTime = origin - timerOrigin;
+        var remainder = new TimeSpan(addedTime.Ticks % Interval.Ticks);
+
+        Elapsed = remainder;
+    }
+
+    /// <inheritdoc />
     public virtual void Update(TimeSpan delta)
     {
         IntervalElapsed = false;

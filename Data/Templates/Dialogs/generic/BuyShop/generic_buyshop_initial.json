@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["buyShop"],
+    "templateKey": "generic_buyshop_initial",
+    "text": "What would you like to buy?",
+    "type": "ShowItems",
+    "nextDialogKey": "generic_buyshop_amountrequest"
+}

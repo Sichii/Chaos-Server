@@ -13,25 +13,50 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Networking.Abstractions;
 
+/// <summary>
+///     Provides the ability to send and receive packets to and from a client over a socket
+/// </summary>
 public abstract class SocketClientBase : ISocketClient, IDisposable
 {
-    private readonly byte[] Buffer;
     private readonly Memory<byte> MemoryBuffer;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
     private int Sequence;
+    /// <inheritdoc />
     public bool Connected { get; set; }
+    /// <inheritdoc />
     public ICrypto Crypto { get; set; }
+    /// <summary>
+    ///     Whether or not to log raw packet data to Trace
+    /// </summary>
     public bool LogRawPackets { get; set; }
+    /// <inheritdoc />
     public event EventHandler? OnDisconnected;
+    /// <inheritdoc />
     public uint Id { get; }
+    /// <inheritdoc />
     public FifoSemaphoreSlim ReceiveSync { get; }
     /// <inheritdoc />
     public IPAddress RemoteIp { get; }
+    /// <inheritdoc />
     public Socket Socket { get; }
+    /// <summary>
+    ///     The logger for logging client-related events
+    /// </summary>
     protected ILogger<SocketClientBase> Logger { get; }
+    /// <summary>
+    ///     The packet serializer for serializing and deserializing packets
+    /// </summary>
     protected IPacketSerializer PacketSerializer { get; }
+    private Span<byte> Buffer => MemoryBuffer.Span;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="SocketClientBase" /> class.
+    /// </summary>
+    /// <param name="socket"></param>
+    /// <param name="crypto"></param>
+    /// <param name="packetSerializer"></param>
+    /// <param name="logger"></param>
     protected SocketClientBase(
         Socket socket,
         ICrypto crypto,
@@ -44,8 +69,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Socket = socket;
         RemoteIp = (socket.RemoteEndPoint as IPEndPoint)?.Address!;
         Crypto = crypto;
-        Buffer = new byte[short.MaxValue];
-        MemoryBuffer = new Memory<byte>(Buffer);
+        var buffer = new byte[ushort.MaxValue];
+        MemoryBuffer = new Memory<byte>(buffer);
         Logger = logger;
         PacketSerializer = packetSerializer;
 
@@ -54,15 +79,22 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Connected = false;
     }
 
+    /// <inheritdoc />
     public virtual void Dispose()
     {
         GC.SuppressFinalize(this);
         Socket.Dispose();
     }
 
+    /// <summary>
+    ///     Asynchronously handles a span buffer as a packet
+    /// </summary>
+    /// <param name="span"></param>
+    /// <returns></returns>
     protected abstract ValueTask HandlePacketAsync(Span<byte> span);
 
     #region Actions
+    /// <inheritdoc />
     public virtual void SendRedirect(IRedirect redirect)
     {
         var args = new RedirectArgs(redirect);
@@ -70,8 +102,10 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Send(args);
     }
 
+    /// <inheritdoc />
     public virtual void SetSequence(byte newSequence) => Sequence = newSequence;
 
+    /// <inheritdoc />
     public virtual void SendHeartBeat(byte first, byte second)
     {
         var args = new HeartBeatResponseArgs
@@ -83,6 +117,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Send(args);
     }
 
+    /// <inheritdoc />
     public virtual void SendAcceptConnection()
     {
         var packet = new ServerPacket(ServerOpCode.AcceptConnection);
@@ -97,6 +132,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     #endregion
 
     #region Networking
+    /// <inheritdoc />
     public virtual async void BeginReceive()
     {
         Connected = true;
@@ -108,6 +144,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Socket.ReceiveAndForget(args, ReceiveEventHandler);
     }
 
+    /// <inheritdoc />
     public virtual bool IsLoopback()
     {
         if (Socket.RemoteEndPoint is IPEndPoint ipEndPoint)
@@ -150,7 +187,11 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                     await HandlePacketAsync(MemoryBuffer.Span.Slice(offset, packetLength));
                 } catch (Exception ex)
                 {
-                    Logger.LogError(ex, "Exception while handling a packet for {@Client}", this);
+                    Logger.LogError(
+                        ex,
+                        "Exception while handling a packet for {@ClientType} {@Client}",
+                        GetType().Name,
+                        this);
                 }
 
                 Count -= packetLength;
@@ -175,12 +216,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         }
     }
 
+    /// <inheritdoc />
     public virtual void Send<T>(T obj) where T: ISendArgs
     {
         var packet = PacketSerializer.Serialize(obj);
         Send(ref packet);
     }
 
+    /// <inheritdoc />
     public virtual void Send(ref ServerPacket packet)
     {
         if (!Connected)
@@ -204,6 +247,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Socket.SendAndForget(args, ReuseSocketAsyncEventArgs);
     }
 
+    /// <inheritdoc />
     public virtual void Disconnect()
     {
         if (!Connected)

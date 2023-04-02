@@ -71,7 +71,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         Spells = new List<Spell>();
         Template = template;
         Logger = logger;
-        StatSheet = ShallowCopy<StatSheet>.Clone(template.StatSheet);
+        StatSheet = ShallowCopy<StatSheet>.Create(template.StatSheet);
         Items = new List<Item>();
         Type = template.Type;
         Direction = template.Direction;
@@ -85,6 +85,9 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         ScriptKeys.AddRange(extraScriptKeys);
         Script = scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, this);
     }
+
+    /// <inheritdoc />
+    void IDialogSourceEntity.Activate(Aisling source) => Script.OnClicked(source);
 
     /// <inheritdoc />
     public override void OnApproached(Creature creature) => Script.OnApproached(creature);

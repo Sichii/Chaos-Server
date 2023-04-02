@@ -19,4 +19,11 @@ public static class TypeExtensions
     /// </summary>
     /// <returns><c>true</c> if the provided type is an enum and has the <see cref="FlagsAttribute" /> attribute, otherwise <c>false</c></returns>
     public static bool IsFlagEnum(this Type type) => type.IsEnum && type.GetCustomAttributes(typeof(FlagsAttribute), false).Any();
+
+    /// <summary>
+    ///     Determines if a type is a primitive type.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static bool IsPrimitive(this Type type) => (type == typeof(string)) || (type.IsValueType & type.IsPrimitive);
 }

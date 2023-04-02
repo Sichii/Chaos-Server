@@ -32,7 +32,7 @@ public class StressTestCommand : ICommand<Aisling>
                 for (var i = 0; i < amount; i++)
                 {
                     var item = ItemFactory.Create("stick");
-                    var point = map.Template.Bounds.RandomPoint();
+                    var point = map.Template.Bounds.GetRandomPoint();
                     items.Add(new GroundItem(item, map, point));
                 }
 

@@ -23,7 +23,7 @@ public class GeometryBenchmarks
         var rect = new Rectangle(CenterPoint, Range * 2 + 1, Range * 2 + 1);
 
         // ReSharper disable once UnusedVariable
-        var points = rect.Points()
+        var points = rect.GetPoints()
                          .Where(p => p.DistanceFrom(CenterPoint) <= Range)
                          .ToList();
     }

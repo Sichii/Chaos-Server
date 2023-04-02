@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["deposititem"],
+    "templateKey": "generic_deposititem_initial",
+    "text": "What would you like to deposit?",
+    "type": "ShowPlayerItems",
+    "nextDialogKey": "generic_deposititem_amountrequest"
+}

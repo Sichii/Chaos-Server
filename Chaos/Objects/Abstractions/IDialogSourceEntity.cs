@@ -1,4 +1,5 @@
 using Chaos.Common.Definitions;
+using Chaos.Objects.World;
 
 namespace Chaos.Objects.Abstractions;
 
@@ -9,4 +10,6 @@ public interface IDialogSourceEntity
     uint Id { get; }
     string Name { get; }
     ushort Sprite { get; }
+
+    void Activate(Aisling source);
 }

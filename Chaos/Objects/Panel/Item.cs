@@ -61,6 +61,9 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>, IDialogSourc
         Script = scriptProvider.CreateScript<IItemScript, Item>(ScriptKeys, this);
     }
 
+    /// <inheritdoc />
+    void IDialogSourceEntity.Activate(Aisling source) => Script.OnUse(source);
+
     public IEnumerable<Item> FixStacks(ICloningService<Item> itemCloner)
     {
         if (Count <= Template.MaxStacks)

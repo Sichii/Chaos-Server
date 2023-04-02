@@ -1,5 +1,4 @@
 ﻿using Chaos.Data;
-using Chaos.Extensions.Common;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
@@ -11,116 +10,106 @@ namespace Chaos.Scripting.DialogScripts;
 
 public class WithdrawItemScript : DialogScriptBase
 {
-    private readonly InputCollector InputCollector;
     private readonly ILogger<WithdrawItemScript> Logger;
-    private int? Amount;
-    private Item? Item;
 
     /// <inheritdoc />
     public WithdrawItemScript(Dialog subject, ILogger<WithdrawItemScript> logger)
-        : base(subject)
-    {
+        : base(subject) =>
         Logger = logger;
 
-        var requestInputText = DialogString.From(() => $"How many {Item!.DisplayName} would you like to withdraw?");
+    /// <inheritdoc />
+    public override void OnDisplaying(Aisling source)
+    {
+        switch (Subject.Template.TemplateKey.ToLower())
+        {
+            case "generic_withdrawitem_initial":
+            {
+                OnDisplayingInitial(source);
 
-        InputCollector = new InputCollectorBuilder()
-                         .RequestTextInput(requestInputText)
-                         .HandleInput(HandleTextInput)
-                         .Build();
+                break;
+            }
+            case "generic_withdrawitem_amountrequest":
+            {
+                OnDisplayingAmountRequest(source);
+
+                break;
+            }
+        }
     }
 
-    private bool HandleTextInput(Aisling source, Dialog dialog, int? optionIndex = null)
+    private void OnDisplayingAmountRequest(Aisling source)
     {
-        if (!Subject.MenuArgs.TryGet<int>(1, out var amount))
+        if (!TryFetchArgs<string>(out var itemName) || !TryGetItem(source, itemName, out var item))
         {
-            dialog.Reply(source, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
-            return false;
+            return;
         }
 
-        Amount = amount;
-
-        var result = ComplexActionHelper.WithdrawItem(source, Item!.DisplayName, amount);
-
-        return HandleWithdrawItemResult(source, result);
+        Subject.InjectTextParameters(item.DisplayName, item.Count);
     }
 
-    private bool HandleWithdrawItemResult(Aisling source, ComplexActionHelper.WithdrawItemResult result)
+    private void OnDisplayingInitial(Aisling source) => Subject.Items.AddRange(source.Bank.Select(ItemDetails.WithdrawItem));
+
+    /// <inheritdoc />
+    public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        switch (result)
+        switch (Subject.Template.TemplateKey.ToLower())
+        {
+            case "generic_withdrawitem_amountrequest":
+            {
+                OnNextAmountRequest(source);
+
+                break;
+            }
+        }
+    }
+
+    private void OnNextAmountRequest(Aisling source)
+    {
+        if (!TryFetchArgs<string, int>(out var itemName, out var amount)
+            || (amount <= 0)
+            || !TryGetItem(source, itemName, out var item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        var withdrawResult = ComplexActionHelper.WithdrawItem(source, item.DisplayName, amount);
+
+        switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawItemResult.Success:
                 Logger.LogDebug(
                     "{@Player} withdrew {ItemCount} {@Item} from the bank using entity {@Entity}",
                     source,
-                    Amount!.Value,
-                    Item,
+                    amount,
+                    item,
                     Subject.SourceEntity);
 
-                Subject.NextDialogKey = Subject.Template.TemplateKey;
-
-                return true;
+                return;
             case ComplexActionHelper.WithdrawItemResult.CantCarry:
                 Subject.Reply(source, "You can't carry that");
 
-                return false;
+                return;
             case ComplexActionHelper.WithdrawItemResult.DontHaveThatMany:
                 Subject.Reply(source, "You don't have that many");
 
-                return false;
+                return;
             case ComplexActionHelper.WithdrawItemResult.BadInput:
                 Subject.Reply(source, DialogString.UnknownInput.Value);
 
-                return false;
+                return;
             default:
-                throw new ArgumentOutOfRangeException(nameof(result), result, null);
+                throw new ArgumentOutOfRangeException(nameof(withdrawResult), withdrawResult, null);
         }
     }
 
-    public override void OnDisplaying(Aisling source)
+    private bool TryGetItem(Aisling source, string itemName, [MaybeNullWhen(false)] out Item item)
     {
-        if (!Subject.Items.Any())
-            Subject.Items.AddRange(
-                source.Bank.Select(
-                    x => new ItemDetails
-                    {
-                        Item = x,
-                        AmountOrPrice = x.Count
-                    }));
-    }
+        item = source.Bank.FirstOrDefault(obj => obj.DisplayName.Equals(itemName, StringComparison.OrdinalIgnoreCase));
 
-    /// <inheritdoc />
-    public override void OnNext(Aisling source, byte? optionIndex = null)
-    {
-        if (Item == null)
-        {
-            if (!Subject.MenuArgs.TryGet<string>(0, out var itemName))
-            {
-                Subject.Reply(source, DialogString.UnknownInput.Value);
-
-                return;
-            }
-
-            Item = Subject.Items.Select(i => i.Item).FirstOrDefault(i => i.DisplayName.EqualsI(itemName));
-
-            if (Item == null)
-            {
-                Subject.Reply(source, DialogString.UnknownInput.Value);
-
-                return;
-            }
-        }
-
-        if (source.Bank.CountOf(Item!.DisplayName) == 1)
-        {
-            var result = ComplexActionHelper.WithdrawItem(source, Item.DisplayName, 1);
-            Amount = 1;
-            HandleWithdrawItemResult(source, result);
-
-            return;
-        }
-
-        InputCollector.Collect(source, Subject, optionIndex);
+        return item != null;
     }
 }

@@ -1,0 +1,17 @@
+{
+    "scriptKeys": ["forgetskill"],
+    "templateKey": "generic_forgetskill_confirmation",
+    "text": "Are you sure you want to forget {SkillName}?",
+    "type": "menuWithArgs",
+    "options": [
+        {
+            "dialogkey": "generic_forgetskill_accepted",
+            "optiontext": "Yes, I'm sure"
+        },
+        {
+            "dialogkey": "generic_forgetskill_initial",
+            "optiontext": "No, wait!"
+        }
+    ],
+    "contextual": true
+}

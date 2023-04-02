@@ -108,7 +108,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         //we use entry.Key.ToString()
         var ret = InnerLoadFromFile(path, shardId);
 
-        if (!ret.InstanceId.EqualsI(loadInstanceIdActual))
+        if (!ret.LoadedFromInstanceId.EqualsI(loadInstanceIdActual))
         {
             var endOfPath = Path.GetFileName(path);
 

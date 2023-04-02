@@ -1,63 +1,61 @@
 using Chaos.Objects.Menu;
-using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
-using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts;
 
 public class ForgetSpellScript : DialogScriptBase
 {
-    private readonly InputCollector InputCollector;
     private readonly ILogger<ForgetSpellScript> Logger;
-    private Spell? SpellToForget;
 
     /// <inheritdoc />
     public ForgetSpellScript(Dialog subject, ILogger<ForgetSpellScript> logger)
-        : base(subject)
-    {
+        : base(subject) =>
         Logger = logger;
-        var requestOptionText = DialogString.From(() => $"Are you sure you want to forget {SpellToForget!.Template.Name}?");
-
-        InputCollector = new InputCollectorBuilder()
-                         .RequestOptionSelection(requestOptionText, DialogString.Yes, DialogString.No)
-                         .HandleInput(ForgetSpell)
-                         .Build();
-    }
-
-    private bool ForgetSpell(Aisling source, Dialog dialog, int? option = null)
-    {
-        if (option is 1)
-        {
-            source.SpellBook.Remove(SpellToForget!.Slot);
-
-            Logger.LogDebug("{@Player} forgot {@Spell}", source, SpellToForget);
-
-            dialog.Reply(source, "The path of learning is endless, come back at any time.");
-
-            return true;
-        }
-
-        dialog.NextDialogKey = dialog.Template.TemplateKey;
-
-        return false;
-    }
 
     /// <inheritdoc />
-    public override void OnNext(Aisling source, byte? optionIndex = null)
+    public override void OnDisplaying(Aisling source)
     {
-        if (SpellToForget == null)
+        switch (Subject.Template.TemplateKey.ToLower())
         {
-            if (!Subject.MenuArgs.TryGet<byte>(0, out var slot))
-                return;
+            case "generic_forgetspell_confirmation":
+            {
+                OnDisplayingConfirmation(source);
 
-            SpellToForget = source.SpellBook[slot];
+                break;
+            }
+            case "generic_forgetspell_accepted":
+            {
+                OnDisplayingAccepted(source);
 
-            if (SpellToForget == null)
-                return;
+                break;
+            }
+        }
+    }
+
+    private void OnDisplayingAccepted(Aisling source)
+    {
+        if (!TryFetchArgs<byte>(out var slot) || !source.SpellBook.TryGetObject(slot, out var spell))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
         }
 
-        InputCollector.Collect(source, Subject, optionIndex);
+        source.SpellBook.Remove(slot);
+        Logger.LogDebug("{@Player} forgot {@Spell}", source, spell);
+    }
+
+    private void OnDisplayingConfirmation(Aisling source)
+    {
+        if (!TryFetchArgs<byte>(out var slot) || !source.SpellBook.TryGetObject(slot, out var spell))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        Subject.InjectTextParameters(spell.Template.Name);
     }
 }

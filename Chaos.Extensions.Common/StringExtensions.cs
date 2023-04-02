@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-using Chaos.Extensions.Common.Definitions;
 using JetBrains.Annotations;
 
 namespace Chaos.Extensions.Common;
@@ -75,9 +73,75 @@ public static class StringExtensions
     /// <returns>A string where the placeholders are replaced with the given parameters</returns>
     public static string Inject([StructuredMessageTemplate] this string str1, params object[] parameters)
     {
-        var formatter = new StringFormatter(parameters);
+        var paramStrs = new string[parameters.Length];
+        var paramsTotalLength = 0;
 
-        return RegexCache.STRING_PROCESSING_REGEX.Replace(str1, formatter.Evaluate);
+        //convert all parameters to strings and aggregate the length of the parameters
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var paramStr = parameters[i].ToString() ?? string.Empty;
+            paramsTotalLength += paramStr.Length;
+            paramStrs[i] = paramStr;
+        }
+
+        //initialize indexes, allocate result span of max possible length
+        var paramIndex = 0;
+        var strIndex = 0;
+        var resIndex = 0;
+        var strSpan = str1.AsSpan();
+        Span<char> result = stackalloc char[strSpan.Length + paramsTotalLength];
+        var startPhIndex = -1;
+
+        while (strIndex < strSpan.Length)
+        {
+            var nextIndex = strIndex + 1;
+
+            switch (strSpan[strIndex])
+            {
+                //handle double curly braces
+                case '{' when (nextIndex < strSpan.Length) && (strSpan[nextIndex] == '{'):
+                    result[resIndex++] = '{';
+                    strIndex += 2;
+
+                    break;
+                //handle start of placeholder
+                case '{':
+                    startPhIndex = strIndex;
+                    strIndex += 1;
+
+                    break;
+                //handle double curly braces
+                case '}' when (nextIndex < strSpan.Length) && (strSpan[nextIndex] == '}'):
+                    result[resIndex++] = '}';
+                    strIndex += 2;
+
+                    break;
+                //handle end of placeholder
+                case '}' when startPhIndex >= 0:
+                    if (paramIndex >= paramStrs.Length)
+                        throw new ArgumentException(
+                            "The number of parameters is less than the number of placeholders in the string",
+                            nameof(parameters));
+
+                    var parameterValue = paramStrs[paramIndex++];
+                    parameterValue.AsSpan().CopyTo(result[resIndex..]);
+                    resIndex += parameterValue.Length;
+                    strIndex += 1;
+                    startPhIndex = -1;
+
+                    break;
+                //handle normal character
+                default:
+                    if (startPhIndex < 0)
+                        result[resIndex++] = strSpan[strIndex];
+
+                    strIndex++;
+
+                    break;
+            }
+        }
+
+        return result[..resIndex].ToString();
     }
 
     /// <summary>
@@ -102,20 +166,4 @@ public static class StringExtensions
     /// <param name="str2">The string to compare</param>
     /// <returns><c>true</c> if this instance begins with value; otherwise, <c>false</c></returns>
     public static bool StartsWithI(this string str1, string str2) => str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
-
-    internal sealed class StringFormatter
-    {
-        private readonly object[] Parameters;
-        private int Index;
-
-        internal StringFormatter(object[] parameters) => Parameters = parameters;
-
-        internal string Evaluate(Match match) =>
-            match.Groups[0].ValueSpan switch
-            {
-                "{{" => "{",
-                "}}" => "}",
-                _    => Parameters[Index++].ToString()!
-            };
-    }
 }

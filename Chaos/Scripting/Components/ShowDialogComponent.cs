@@ -12,6 +12,7 @@ public class ShowDialogComponent
 
     public virtual void ShowDialog(Aisling aisling, IDialogSourceEntity source, IShowDialogComponentOptions options)
     {
+        aisling.DialogHistory.Clear();
         var dialog = DialogFactory.Create(options.DialogKey, source);
         dialog.Display(aisling);
     }

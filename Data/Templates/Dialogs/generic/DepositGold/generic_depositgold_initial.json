@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["depositGold"],
+    "templateKey": "generic_depositGold_initial",
+    "text": "You are holding {Amount} gold, how much would you like to deposit?",
+    "type": "menuTextEntry",
+    "nextDialogKey": "top"
+}

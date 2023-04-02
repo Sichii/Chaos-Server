@@ -3,6 +3,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Microsoft.Extensions.Logging;
@@ -11,22 +12,34 @@ namespace Chaos.Services.Factories;
 
 public sealed class MerchantFactory : IMerchantFactory
 {
+    private readonly IItemFactory ItemFactory;
     private readonly ILogger<MerchantFactory> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
+    private readonly ISkillFactory SkillFactory;
+    private readonly ISpellFactory SpellFactory;
+    private readonly IStockService StockService;
 
     public MerchantFactory(
         ILogger<MerchantFactory> logger,
         ILoggerFactory loggerFactory,
         IScriptProvider scriptProvider,
-        ISimpleCache simpleCache
+        ISimpleCache simpleCache,
+        IItemFactory itemFactory,
+        ISkillFactory skillFactory,
+        ISpellFactory spellFactory,
+        IStockService stockService
     )
     {
         Logger = logger;
         LoggerFactory = loggerFactory;
         ScriptProvider = scriptProvider;
         SimpleCache = simpleCache;
+        ItemFactory = itemFactory;
+        SkillFactory = skillFactory;
+        SpellFactory = spellFactory;
+        StockService = stockService;
     }
 
     /// <inheritdoc />
@@ -46,6 +59,10 @@ public sealed class MerchantFactory : IMerchantFactory
             mapInstance,
             point,
             logger,
+            SkillFactory,
+            SpellFactory,
+            ItemFactory,
+            StockService,
             ScriptProvider,
             extraScriptKeys);
 

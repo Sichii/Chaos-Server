@@ -11,8 +11,8 @@ public class StringProcessorBenchmarks
 {
     private const string LONG_STRING_FORMAT = MEDIUM_STRING_FORMAT + "  " + MEDIUM_STRING_FORMAT;
     private const string LONG_STRING_VALUE = MEDIUM_STRING_VALUE + "  " + MEDIUM_STRING_VALUE;
-    private const string MEDIUM_STRING_FORMAT = "One is {0}, {{Two}} is {1}, {{{{Three}}}} is {{NotThree}}, {2} is {{{{Four}}}}, {{Tip}}";
-    private const string MEDIUM_STRING_VALUE = "One is 1, {Two} is 2, {{Three}} is {NotThree}, 4 is {{Four}}, {Tip}";
+    private const string MEDIUM_STRING_FORMAT = "One is {0}, {{Two}} is {1}, {{{{Three}}}} is {{Three}}, {2} is {{{{Four}}}}, {{Tip}}";
+    private const string MEDIUM_STRING_VALUE = "One is 1, {Two} is 2, {{Three}} is {Three}, 4 is {{Four}}, {Tip}";
     private const string SHORT_STRING = "One is {One}, {{Two}} is {Two}";
     private const string SHORT_STRING_FORMAT = "One is {0}, {{Two}} is {1}";
     private const string SHORT_STRING_VALUE = "One is 1, {Two} is 2";
@@ -56,7 +56,7 @@ public class StringProcessorBenchmarks
     }
 
     [Benchmark]
-    public void ProcessLongString()
+    public void Inject2LongString()
     {
         var str =
             LONG_STRING_FORMAT.Inject(
@@ -72,7 +72,7 @@ public class StringProcessorBenchmarks
     }
 
     [Benchmark]
-    public void ProcessMediumString()
+    public void Inject2MediumString()
     {
         var str =
             MEDIUM_STRING_FORMAT.Inject(
@@ -85,7 +85,7 @@ public class StringProcessorBenchmarks
     }
 
     [Benchmark]
-    public void ProcessShortString()
+    public void Inject2ShortString()
     {
         var str = SHORT_STRING.Inject(1, 2);
 

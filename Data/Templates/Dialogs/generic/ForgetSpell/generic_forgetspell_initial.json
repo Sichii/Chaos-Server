@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["forgetspell"],
+    "templateKey": "generic_forgetspell_initial",
+    "text": "What spell would you like to forget?",
+    "type": "ShowPlayerSpells",
+    "nextdialogkey": "generic_forgetspell_confirmation"
+}

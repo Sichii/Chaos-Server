@@ -49,7 +49,7 @@ public sealed class AccessManagerOptions : IDirectoryBound
     /// </summary>
     public int MinUsernameLength { get; set; }
     /// <summary>
-    ///     The mode in which that the ip manager operates
+    ///     The mode in which that the access manager operates
     /// </summary>
     public IpAccessMode Mode { get; set; }
 

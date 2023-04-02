@@ -24,7 +24,7 @@ public class AmbushScript : SkillScriptBase
 
         foreach (var point in points)
         {
-            if (context.Map.IsWall(point))
+            if (context.Map.IsWall(point) || context.Map.IsBlockingReactor(point))
                 return;
 
             var entity = context.Map.GetEntitiesAtPoint<Creature>(point)
@@ -41,8 +41,8 @@ public class AmbushScript : SkillScriptBase
                     //get the point in that direction
                     var destinationPoint = entity.DirectionalOffset(direction);
 
-                    //if that point is not talkable, continue
-                    if (!context.Map.IsWalkable(destinationPoint, context.Source.Type))
+                    //if that point is not walkable or is a reactor, continue
+                    if (!context.Map.IsWalkable(destinationPoint, context.Source.Type) || context.Map.IsBlockingReactor(destinationPoint))
                         continue;
 
                     //if it is walkable, warp to that point and turn to face the target

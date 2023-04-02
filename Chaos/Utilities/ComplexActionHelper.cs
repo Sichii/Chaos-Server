@@ -1,4 +1,5 @@
 using Chaos.Extensions.Common;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Services.Factories.Abstractions;
@@ -8,12 +9,20 @@ namespace Chaos.Utilities;
 
 public static class ComplexActionHelper
 {
+    public enum AddManyItemsResult
+    {
+        Success,
+        CantCarry,
+        BadInput
+    }
+
     public enum BuyItemResult
     {
         Success,
         CantCarry,
         NotEnoughGold,
-        BadInput
+        BadInput,
+        NotEnoughStock
     }
 
     public enum DepositGoldResult
@@ -28,6 +37,25 @@ public static class ComplexActionHelper
         Success,
         DontHaveThatMany,
         NotEnoughGold,
+        BadInput
+    }
+
+    public enum LearnSkillResult
+    {
+        Success,
+        NoRoom
+    }
+
+    public enum LearnSpellResult
+    {
+        Success,
+        NoRoom
+    }
+
+    public enum RemoveManyItemsResult
+    {
+        Success,
+        DontHaveThatMany,
         BadInput
     }
 
@@ -57,6 +85,7 @@ public static class ComplexActionHelper
 
     public static BuyItemResult BuyItem(
         Aisling source,
+        IBuyShopSource? shop,
         Item fauxItem,
         IItemFactory itemFactory,
         ICloningService<Item> itemCloner,
@@ -75,13 +104,25 @@ public static class ComplexActionHelper
         if (costPerItem < 0)
             return BuyItemResult.BadInput;
 
+        //fail fast
+        if ((shop != null) && (shop.GetStock(fauxItem.Template.TemplateKey) < amount))
+            return BuyItemResult.NotEnoughStock;
+
         if (!source.CanCarry((fauxItem, amount)))
             return BuyItemResult.CantCarry;
 
         var totalCost = costPerItem * amount;
 
+        if ((shop != null) && !shop.TryDecrementStock(fauxItem.Template.TemplateKey, amount))
+            return BuyItemResult.NotEnoughStock;
+
         if (!source.TryTakeGold(totalCost))
+        {
+            //add the stock back if we fail to take the gold
+            shop?.TryDecrementStock(fauxItem.Template.TemplateKey, -amount);
+
             return BuyItemResult.NotEnoughGold;
+        }
 
         var stackedItem = itemFactory.Create(fauxItem.Template.TemplateKey, fauxItem.ScriptKeys);
         stackedItem.Count = amount;
@@ -174,6 +215,58 @@ public static class ComplexActionHelper
 
         return DepositItemResult.Success;
     }
+
+    public static LearnSkillResult LearnSkill(Aisling source, Skill skill)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(skill);
+
+        if (source.SkillBook.AvailableSlots == 0)
+            return LearnSkillResult.NoRoom;
+
+        if (source.SkillBook.TryAddToNextSlot(skill))
+            return LearnSkillResult.Success;
+
+        return LearnSkillResult.NoRoom;
+    }
+
+    public static LearnSpellResult LearnSpell(Aisling source, Spell spell)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(spell);
+
+        if (source.SpellBook.AvailableSlots == 0)
+            return LearnSpellResult.NoRoom;
+
+        if (source.SpellBook.TryAddToNextSlot(spell))
+            return LearnSpellResult.Success;
+
+        return LearnSpellResult.NoRoom;
+    }
+
+    public static RemoveManyItemsResult RemoveManyItems(Aisling source, params (string ItemNameOrTemplateKey, int Amount)[] items)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(items);
+
+        if (items.Length == 0)
+            return RemoveManyItemsResult.Success;
+
+        var groupedItems = items.GroupBy(item => item.ItemNameOrTemplateKey)
+                                .Select(group => (ItemNameOrTemplateKey: group.Key, Amount: group.Sum(item => item.Amount)))
+                                .ToList();
+
+        if (groupedItems.Any(item => !source.Inventory.HasCount(item.ItemNameOrTemplateKey, item.Amount)))
+            return RemoveManyItemsResult.DontHaveThatMany;
+
+        foreach (var item in groupedItems)
+            source.Inventory.RemoveQuantity(item.ItemNameOrTemplateKey, item.Amount);
+
+        return RemoveManyItemsResult.Success;
+    }
+
+    public static RemoveManyItemsResult RemoveManyItems(Aisling source, params Item[] items) =>
+        RemoveManyItems(source, items.Select(item => (item.DisplayName, item.Count)).ToArray());
 
     public static SellItemResult SellItem(
         Aisling source,

@@ -5,6 +5,9 @@ using Chaos.Schemas.Templates.Abstractions;
 
 namespace Chaos.Schemas.Templates;
 
+/// <summary>
+///     Represents the serializable schema for an item template
+/// </summary>
 public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
 {
     /// <summary>

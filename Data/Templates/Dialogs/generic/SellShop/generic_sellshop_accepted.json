@@ -1,0 +1,8 @@
+{
+    "scriptKeys": ["sellShop"],
+    "templateKey": "generic_sellshop_accepted",
+    "text": "skip",
+    "type": "normal",
+    "nextDialogKey": "generic_sellshop_initial",
+    "contextual": true
+}

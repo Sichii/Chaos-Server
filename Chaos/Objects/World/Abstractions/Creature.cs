@@ -119,7 +119,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         return spell.Script.CanUse(spellContext);
     }
 
-    public void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
+    public virtual void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
     public virtual bool IsFriendlyTo(Creature other) => other switch
     {
@@ -169,12 +169,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Walk(direction);
     }
 
-    public void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
+    public virtual void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
 
     public bool ShouldRegisterClick(uint fromId) =>
         !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);
 
-    public void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
+    public virtual void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
 
     public virtual void ShowHealth(byte? sound = null)
     {
@@ -183,7 +183,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             aisling.Client.SendHealthBar(this, sound);
     }
 
-    public void ShowPublicMessage(PublicMessageType publicMessageType, string message)
+    public virtual void ShowPublicMessage(PublicMessageType publicMessageType, string message)
     {
         if (!Script.CanTalk())
             return;

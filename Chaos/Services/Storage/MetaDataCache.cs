@@ -1,11 +1,11 @@
 using System.Text.Json;
 using Chaos.Common.Definitions;
-using Chaos.Networking.Metadata.Abstractions;
-using Chaos.Networking.Metadata.ClassMetaData;
-using Chaos.Networking.Metadata.EventMetadata;
-using Chaos.Networking.Metadata.ItemMetadata;
-using Chaos.Networking.Metadata.MundaneMetadata;
-using Chaos.Networking.Metadata.NationMetaData;
+using Chaos.MetaData.Abstractions;
+using Chaos.MetaData.ClassMetaData;
+using Chaos.MetaData.EventMetadata;
+using Chaos.MetaData.ItemMetadata;
+using Chaos.MetaData.MundaneMetadata;
+using Chaos.MetaData.NationMetaData;
 using Chaos.Schemas.MetaData;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;

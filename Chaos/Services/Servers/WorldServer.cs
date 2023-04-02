@@ -21,8 +21,8 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Services.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
@@ -370,6 +370,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (dialog == null)
             {
+                localClient.Aisling.DialogHistory.Clear();
                 Logger.LogWarning("No active dialog found for {@Client}", localClient);
 
                 return default;
@@ -388,7 +389,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
                     break;
                 case DialogResult.Close:
-                    //we dont actually need to send them a close if they alrdy closed it
+                    localClient.Aisling.DialogHistory.Clear();
+
                     break;
                 case DialogResult.Next:
                     dialog.Next(localClient.Aisling, localArgs.Option);
@@ -834,7 +836,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            if (localArgs.Args != null)
+            //get args if the type is not a "menuWithArgs", this type should not have any new args
+            if (dialog.Type is not ChaosDialogType.MenuWithArgs && (localArgs.Args != null))
                 dialog.MenuArgs = new ArgumentCollection(localArgs.Args);
 
             dialog.Next(localClient.Aisling, (byte)localArgs.PursuitId);
@@ -1177,24 +1180,24 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             localClient.SendServerMessage(ServerMessageType.Whisper, $"[{targetUser.Name}]> {message}");
 
-            Logger.LogTrace(
-                "{@FromPlayer} sent whisper {@Message} to {@TargetPlayer}",
-                localClient.Aisling,
-                targetUser,
-                message);
-
             //if someone is being ignored, they shouldnt know it
             //let them waste their time typing for no reason
             if (targetUser.IgnoreList.ContainsI(localClient.Aisling.Name))
             {
-                Logger.LogInformation(
-                    "Message sent by {@FromPlayer} was ignored by {@TargetPlayer} (Message: {@Message})",
+                Logger.LogWarning(
+                    "{@FromPlayer} sent whisper {@Message} to {@TargetPlayer}, but they are being ignored",
                     localClient.Aisling,
-                    targetUser,
-                    message);
+                    message,
+                    targetUser);
 
                 return default;
             }
+
+            Logger.LogTrace(
+                "{@FromPlayer} sent whisper {@Message} to {@TargetPlayer}",
+                localClient.Aisling,
+                message,
+                targetUser);
 
             targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $"[{localClient.Aisling.Name}]: {message}");
 
@@ -1272,8 +1275,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             Logger.LogError(
                 e,
-                "Failed to execute inner handler with args {@Args} for {@Client}",
+                "Failed to execute inner handler with {@ArgsType} {@Args} for {@ClientType} {@Client}",
+                args!.GetType().Name,
                 args,
+                client.GetType().Name,
                 client);
         }
     }
@@ -1386,6 +1391,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             Logger.LogError("Somehow two clients got the same id. (Id: {Id})", client.Id);
             client.Disconnect();
+            clientSocket.Disconnect(false);
 
             return;
         }
@@ -1416,8 +1422,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 var activeExchange = aisling.ActiveObject.TryGet<Exchange>();
                 activeExchange?.Cancel(aisling);
 
-                //remove aisling from map
-                mapInstance?.RemoveObject(client.Aisling);
+                //leave the group if in one
                 aisling.Group?.Leave(aisling);
 
                 //leave chat channels
@@ -1426,6 +1431,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
                 //save aisling
                 await SaveUserAsync(client.Aisling);
+
+                //remove aisling from map
+                mapInstance?.RemoveObject(client.Aisling);
             }
         } catch (Exception ex)
         {

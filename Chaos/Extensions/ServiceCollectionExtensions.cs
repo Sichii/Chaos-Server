@@ -26,6 +26,8 @@ using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Services.Factories;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.MapperProfiles;
+using Chaos.Services.Other;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
@@ -165,6 +167,8 @@ public static class ServiceCollectionExtensions
 
     public static void AddWorldServer(this IServiceCollection services)
     {
+        services.AddSingleton<IGroupService, GroupService>();
+
         services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
         services.AddSingleton<IClientRegistry<IWorldClient>, ClientRegistry<IWorldClient>>();
 

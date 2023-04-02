@@ -1,7 +1,7 @@
 - name: Logging
   href: Logging.md
-- name: Access Control
-  href: AccessControl.md
+- name: Access Manager
+  href: AccessManager.md
 - name: Lobby Options
   href: LobbyOptions.md
 - name: Login Options
@@ -20,6 +20,8 @@
   href: Spells.md
 - name: Merchants
   href: Merchants.md
+- name: Dialogs
+  href: Dialogs.md
 - name: Monsters
   href: Monsters.md
 - name: Loot Tables

@@ -42,15 +42,16 @@ public static class PolygonExtensions
     public static bool Contains(this IPolygon polygon, IPoint point)
     {
         var inside = false;
-        var count = polygon.Vertices.Count;
+        var vertices = polygon.Vertices;
+        var count = vertices.Count;
 
         for (int i = 0,
                  j = count - 1;
              i < count;
              j = i++)
         {
-            var iVertex = polygon.Vertices[i];
-            var jVertex = polygon.Vertices[j];
+            var iVertex = vertices[i];
+            var jVertex = vertices[j];
 
             //long form version of pnpoly, allowing for fast fails
             if ((((iVertex.Y < point.Y) && (jVertex.Y >= point.Y)) || ((jVertex.Y < point.Y) && (iVertex.Y >= point.Y)))
@@ -68,21 +69,15 @@ public static class PolygonExtensions
     public static IEnumerable<Point> GetOutline(this IPolygon polygon)
     {
         var vertices = polygon.Vertices;
-        var start = vertices[0];
-        var current = start;
 
-        for (var i = 1; i < vertices.Count; i++)
+        for (var i = 0; i < vertices.Count - 1; i++)
         {
-            var next = vertices[i];
+            var current = vertices[i];
+            var next = vertices[i + 1];
 
             //skip the last point so the vertices are not included twice
             foreach (var point in current.RayTraceTo(next).SkipLast(1))
                 yield return point;
-
-            current = next;
         }
-
-        foreach (var point in current.RayTraceTo(start).SkipLast(1))
-            yield return point;
     }
 }

@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["learnspell"],
+    "templateKey": "generic_learnspell_accepted",
+    "text": "Something something use it for evil idk",
+    "type": "normal",
+    "contextual": true
+}

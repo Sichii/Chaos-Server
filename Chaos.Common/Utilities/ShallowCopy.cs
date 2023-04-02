@@ -37,7 +37,7 @@ public static class ShallowCopy<T>
     ///     Attempts to create a fresh instance of the object type,
     ///     and then shallow mergees all properties from the original object into the new one.
     /// </summary>
-    public static T Clone(T fromObj)
+    public static T Create(T fromObj)
     {
         var instance = Activator.CreateInstance<T>();
         Merge(fromObj, instance);
@@ -49,7 +49,7 @@ public static class ShallowCopy<T>
     ///     Attempts to create a fresh instance of the object type,
     ///     and then shallow mergees all properties from the original object into the new one.
     /// </summary>
-    public static T Clone(T fromObj, params object[] cTorArgs)
+    public static T Create(T fromObj, params object[] cTorArgs)
     {
         var instance = (T)Activator.CreateInstance(typeof(T), cTorArgs)!;
 

@@ -1,3 +1,4 @@
+using Chaos.Collections.Common;
 using Chaos.Common.Abstractions;
 using Chaos.Schemas.Templates;
 using Chaos.Templates;
@@ -17,7 +18,15 @@ public class MerchantMapperProfile : IMapperProfile<MerchantTemplate, MerchantTe
             obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
             StringComparer.OrdinalIgnoreCase),
         Sprite = obj.Sprite,
-        TemplateKey = obj.TemplateKey
+        TemplateKey = obj.TemplateKey,
+        ItemsForSale = new CounterCollection(
+            obj.ItemsForSale.Select(details => new KeyValuePair<string, int>(details.ItemTemplateKey, details.Stock))),
+        ItemsToBuy = obj.ItemsToBuy.ToList(),
+        DefaultStock = obj.ItemsForSale.ToDictionary(details => details.ItemTemplateKey, details => details.Stock),
+        SkillsToTeach = obj.SkillsToTeach.ToList(),
+        SpellsToTeach = obj.SpellsToTeach.ToList(),
+        RestockIntervalHours = obj.RestockIntervalHours,
+        RestockPercent = obj.RestockPercent
     };
 
     /// <inheritdoc />

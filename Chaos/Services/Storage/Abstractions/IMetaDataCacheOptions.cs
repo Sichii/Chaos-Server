@@ -1,5 +1,5 @@
 using Chaos.Common.Abstractions;
-using Chaos.Networking.Metadata.ItemMetadata;
+using Chaos.MetaData.ItemMetadata;
 
 namespace Chaos.Services.Storage.Abstractions;
 

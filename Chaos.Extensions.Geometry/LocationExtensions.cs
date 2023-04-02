@@ -31,9 +31,9 @@ public static class LocationExtensions
         return direction switch
         {
             Direction.Up    => new Location(location.Map, location.X, location.Y - distance),
-            Direction.Right => new Location(location.Map, location.X + 1, location.Y),
-            Direction.Down  => new Location(location.Map, location.X, location.Y + 1),
-            Direction.Left  => new Location(location.Map, location.X - 1, location.Y),
+            Direction.Right => new Location(location.Map, location.X + distance, location.Y),
+            Direction.Down  => new Location(location.Map, location.X, location.Y + distance),
+            Direction.Left  => new Location(location.Map, location.X - distance, location.Y),
             _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
     }

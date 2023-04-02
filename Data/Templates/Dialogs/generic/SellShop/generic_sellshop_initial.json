@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["sellShop"],
+    "templateKey": "generic_sellshop_initial",
+    "text": "What would you like to sell?",
+    "type": "ShowPlayerItems",
+    "nextDialogKey": "generic_sellshop_amountrequest"
+}

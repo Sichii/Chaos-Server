@@ -6,8 +6,7 @@ using Chaos.Schemas.Templates.Abstractions;
 namespace Chaos.Schemas.Templates;
 
 /// <summary>
-///     This object is the intermediary between a serialized and deserialized SpellTemplate. It defines the form that this object
-///     should be saved in, and loaded from.
+///     Represents the serializable schema for a spell template
 /// </summary>
 public sealed record SpellTemplateSchema : PanelObjectTemplateSchema
 {

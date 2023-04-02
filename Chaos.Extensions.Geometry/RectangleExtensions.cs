@@ -21,7 +21,7 @@ public static class RectangleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return (rect.Bottom >= other.Bottom) && (rect.Left >= other.Left) && (rect.Right <= other.Right) && (rect.Top <= other.Top);
+        return (rect.Bottom >= other.Bottom) && (rect.Left <= other.Left) && (rect.Right >= other.Right) && (rect.Top <= other.Top);
     }
 
     /// <summary>
@@ -46,23 +46,38 @@ public static class RectangleExtensions
     public static IEnumerable<Point> GetOutline(this IRectangle rect)
     {
         var vertices = rect.Vertices;
-        var start = vertices[0];
-        var current = start;
 
-        for (var i = 1; i < vertices.Count; i++)
+        for (var i = 0; i < vertices.Count - 1; i++)
         {
-            var next = vertices[i];
+            var current = vertices[i];
+            var next = vertices[i + 1];
 
             //skip the last point so the vertices are not included twice
             foreach (var point in current.GetDirectPath(next).SkipLast(1))
                 yield return point;
-
-            current = next;
         }
-
-        foreach (var point in current.GetDirectPath(start).SkipLast(1))
-            yield return point;
     }
+
+    /// <summary>
+    ///     Lazily generates all points inside of the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" />
+    /// </summary>
+    /// <param name="rect">The rectangle togenerate points for</param>
+    public static IEnumerable<Point> GetPoints(this IRectangle rect)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        for (var x = rect.Left; x <= rect.Right; x++)
+            for (var y = rect.Top; y <= rect.Bottom; y++)
+                yield return new Point(x, y);
+    }
+
+    /// <summary>
+    ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
+    /// </summary>
+    /// <param name="rect">The rect to use as bounds</param>
+    public static Point GetRandomPoint(this IRectangle rect) => new(
+        rect.Left + Random.Shared.Next(rect.Width),
+        rect.Top + Random.Shared.Next(rect.Height));
 
     /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects another
@@ -79,25 +94,4 @@ public static class RectangleExtensions
 
         return !((rect.Bottom >= other.Top) || (rect.Left >= other.Right) || (rect.Right <= other.Left) || (rect.Top <= other.Bottom));
     }
-
-    /// <summary>
-    ///     Lazily generates all points inside of the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" />
-    /// </summary>
-    /// <param name="rect">The rectangle togenerate points for</param>
-    public static IEnumerable<Point> Points(this IRectangle rect)
-    {
-        ArgumentNullException.ThrowIfNull(rect);
-
-        for (var x = rect.Left; x <= rect.Right; x++)
-            for (var y = rect.Top; y <= rect.Bottom; y++)
-                yield return new Point(x, y);
-    }
-
-    /// <summary>
-    ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
-    /// </summary>
-    /// <param name="rect">The rect to use as bounds</param>
-    public static Point RandomPoint(this IRectangle rect) => new(
-        rect.Left + Random.Shared.Next(rect.Width),
-        rect.Top + Random.Shared.Next(rect.Height));
 }

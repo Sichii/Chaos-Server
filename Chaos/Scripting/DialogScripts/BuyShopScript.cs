@@ -1,5 +1,5 @@
 using Chaos.Data;
-using Chaos.Extensions.Common;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
@@ -11,130 +11,162 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts;
 
-public class BuyShopScript : ConfigurableDialogScriptBase
+public class BuyShopScript : DialogScriptBase
 {
-    private readonly InputCollector InputCollector;
+    private readonly IBuyShopSource BuyShopSource;
     private readonly ICloningService<Item> ItemCloner;
     private readonly IItemFactory ItemFactory;
     private readonly ILogger<BuyShopScript> Logger;
-    private int? Amount;
-    private ItemDetails? ItemDetails;
-    private int? TotalBuyCost;
-    protected HashSet<string> ItemTemplateKeys { get; init; } = null!;
-    private Item? FauxItem => ItemDetails?.Item;
 
     /// <inheritdoc />
     public BuyShopScript(
         Dialog subject,
         IItemFactory itemFactory,
-        ILogger<BuyShopScript> logger,
-        ICloningService<Item> itemCloner
+        ICloningService<Item> itemCloner,
+        ILogger<BuyShopScript> logger
     )
         : base(subject)
     {
-        Logger = logger;
-        ItemCloner = itemCloner;
         ItemFactory = itemFactory;
+        ItemCloner = itemCloner;
+        Logger = logger;
+        BuyShopSource = (IBuyShopSource)subject.SourceEntity;
+    }
 
-        var requestInputText = DialogString.From(() => $"How many {FauxItem!.DisplayName} would you like to buy?");
-
-        var requestOptionText = DialogString.From(
-            () => $"I can sell {FauxItem!.ToAmountString(Amount!.Value)} for {TotalBuyCost} gold. Is that okay?");
-
-        InputCollector = new InputCollectorBuilder()
-                         .RequestTextInput(requestInputText)
-                         .HandleInput(HandleTextInput)
-                         .RequestOptionSelection(requestOptionText, DialogString.Yes, DialogString.No)
-                         .HandleInput(HandleOption)
-                         .Build();
-
-        foreach (var itemTemplateKey in ItemTemplateKeys)
+    /// <inheritdoc />
+    public override void OnDisplaying(Aisling source)
+    {
+        switch (Subject.Template.TemplateKey.ToLower())
         {
-            var item = ItemFactory.CreateFaux(itemTemplateKey);
-            Subject.Items.Add(ItemDetails.Default(item));
+            case "generic_buyshop_initial":
+            {
+                OnDisplayingInitial(source);
+
+                break;
+            }
+            case "generic_buyshop_amountrequest":
+            {
+                OnDisplayingAmountRequest(source);
+
+                break;
+            }
+            case "generic_buyshop_confirmation":
+            {
+                OnDisplayingConfirmation(source);
+
+                break;
+            }
+            case "generic_buyshop_accepted":
+            {
+                OnDisplayingAccepted(source);
+
+                break;
+            }
         }
     }
 
-    private bool HandleOption(Aisling aisling, Dialog dialog, int? option = null)
+    protected virtual void OnDisplayingAccepted(Aisling source)
     {
-        if (option is not 1)
-            return false;
+        if (!TryFetchArgs<string, int>(out var itemName, out var amount)
+            || (amount <= 0)
+            || !BuyShopSource.TryGetItem(itemName, out var item))
+        {
+            Subject.ReplyToUnknownInput(source);
 
-        var result = ComplexActionHelper.BuyItem(
-            aisling,
-            FauxItem!,
+            return;
+        }
+
+        var totalCost = item.Template.BuyCost * amount;
+
+        var buyItemResult = ComplexActionHelper.BuyItem(
+            source,
+            BuyShopSource,
+            item,
             ItemFactory,
             ItemCloner,
-            Amount!.Value,
-            ItemDetails!.AmountOrPrice);
+            amount,
+            item.Template.BuyCost);
 
-        switch (result)
+        switch (buyItemResult)
         {
             case ComplexActionHelper.BuyItemResult.Success:
                 Logger.LogDebug(
                     "{@Player} bought {ItemCount} {@Item} from {@Merchant} for {GoldAmount} gold",
-                    aisling,
-                    Amount!.Value,
-                    FauxItem,
+                    source,
+                    amount,
+                    item,
                     Subject.SourceEntity,
-                    TotalBuyCost);
+                    totalCost);
 
-                return true;
+                break;
             case ComplexActionHelper.BuyItemResult.CantCarry:
-                Subject.Reply(aisling, "You can't carry that many");
+                Subject.Reply(source, "You can't carry that many", "generic_buyshop_initial");
 
-                return false;
+                break;
             case ComplexActionHelper.BuyItemResult.NotEnoughGold:
-                Subject.Reply(aisling, $"You don't have enough gold, you need {TotalBuyCost}");
+                Subject.Reply(source, $"You don't have enough gold, you need {totalCost} gold", "generic_buyshop_initial");
 
-                return false;
+                break;
+            case ComplexActionHelper.BuyItemResult.NotEnoughStock:
+                var availableStock = BuyShopSource.GetStock(item.Template.TemplateKey);
+
+                Subject.Reply(
+                    source,
+                    $"Sorry, we only have {availableStock} {item.DisplayName}s in stock",
+                    "generic_buyshop_initial");
+
+                break;
             case ComplexActionHelper.BuyItemResult.BadInput:
-                Subject.Reply(aisling, DialogString.UnknownInput.Value);
+                Subject.ReplyToUnknownInput(source);
 
-                return false;
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    private bool HandleTextInput(Aisling aisling, Dialog dialog, int? optionIndex = null)
+    protected virtual void OnDisplayingAmountRequest(Aisling source)
     {
-        if (!Subject.MenuArgs.TryGet<int>(1, out var amount) || (amount <= 0))
+        if (!TryFetchArgs<string>(out var itemName) || !BuyShopSource.TryGetItem(itemName, out var item))
         {
-            dialog.Reply(aisling, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
-            return false;
+            return;
         }
 
-        FauxItem!.Count = amount;
-        Amount = amount;
-        TotalBuyCost = ItemDetails!.AmountOrPrice * Amount;
-
-        return true;
+        Subject.InjectTextParameters(item.DisplayName, item.Template.BuyCost);
     }
 
-    /// <inheritdoc />
-    public override void OnNext(Aisling source, byte? optionIndex = null)
+    protected virtual void OnDisplayingConfirmation(Aisling source)
     {
-        if (ItemDetails == null)
+        if (!TryFetchArgs<string, int>(out var itemName, out var amount)
+            || (amount <= 0)
+            || !BuyShopSource.TryGetItem(itemName, out var item))
         {
-            if (!Subject.MenuArgs.TryGet<string>(0, out var itemName))
-            {
-                Subject.Reply(source, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
-                return;
-            }
-
-            ItemDetails = Subject.Items.FirstOrDefault(details => details.Item.DisplayName.EqualsI(itemName));
-
-            if (ItemDetails == null)
-            {
-                Subject.Reply(source, DialogString.UnknownInput.Value);
-
-                return;
-            }
+            return;
         }
 
-        InputCollector.Collect(source, Subject, optionIndex);
+        var availableStock = BuyShopSource.GetStock(item.Template.TemplateKey);
+
+        if (availableStock < amount)
+        {
+            Subject.Reply(
+                source,
+                $"Sorry, we only have {availableStock} {item.DisplayName}s in stock",
+                "generic_buyshop_initial");
+
+            return;
+        }
+
+        Subject.InjectTextParameters(amount, item.DisplayName, item.Template.BuyCost * amount);
+    }
+
+    protected virtual void OnDisplayingInitial(Aisling source)
+    {
+        foreach (var item in BuyShopSource.ItemsForSale)
+            if (BuyShopSource.HasStock(item.Template.TemplateKey))
+                Subject.Items.Add(ItemDetails.BuyWithGold(item));
     }
 }

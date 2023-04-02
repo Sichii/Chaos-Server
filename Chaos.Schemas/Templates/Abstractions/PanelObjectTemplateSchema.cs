@@ -4,6 +4,9 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Schemas.Templates.Abstractions;
 
+/// <summary>
+///     Represents the serializable schema for a panel object template
+/// </summary>
 public abstract record PanelObjectTemplateSchema
 {
     /// <summary>
@@ -55,7 +58,7 @@ public abstract record PanelObjectTemplateSchema
     public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
         new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
     /// <summary>
-    ///     A unique id specific to this template. Best practice is to match the file name
+    ///     A unique id specific to this template. This must match the file name
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; set; } = null!;

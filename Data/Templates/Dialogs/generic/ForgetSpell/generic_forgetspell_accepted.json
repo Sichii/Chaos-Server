@@ -1,0 +1,8 @@
+{
+    "scriptKeys": ["forgetspell"],
+    "templateKey": "generic_forgetspell_accepted",
+    "text": "The path to learning is endless, come back at any time...",
+    "type": "menuWithArgs",
+    "nextdialogkey": "generic_forgetspell_initial",
+    "contextual": true
+}

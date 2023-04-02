@@ -6,6 +6,9 @@ using Chaos.Schemas.Aisling;
 
 namespace Chaos.Schemas.Templates;
 
+/// <summary>
+///     Represents the serializable schema for a monster template
+/// </summary>
 public sealed record MonsterTemplateSchema
 {
     /// <summary>
@@ -29,6 +32,11 @@ public sealed record MonsterTemplateSchema
     ///     A collection of names of monsters scripts to attach to this monster<br />TODO: scripts section
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of
+    ///     that entry is a dictionary of propertyName-Value pairs
+    /// </summary>
     public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
         new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
     /// <summary>

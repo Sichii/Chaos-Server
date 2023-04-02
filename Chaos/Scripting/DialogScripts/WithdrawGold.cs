@@ -6,31 +6,31 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts;
 
-public class WithdrawGold : DialogScriptBase
+public class WithdrawGoldScript : DialogScriptBase
 {
-    private readonly ILogger<WithdrawGold> Logger;
+    private readonly ILogger<WithdrawGoldScript> Logger;
 
-    public WithdrawGold(Dialog subject, ILogger<WithdrawGold> logger)
-        : base(subject) => Logger = logger;
+    /// <inheritdoc />
+    public WithdrawGoldScript(Dialog subject, ILogger<WithdrawGoldScript> logger)
+        : base(subject) =>
+        Logger = logger;
 
-    public override void OnDisplaying(Aisling source) => RunOnce(
-        () =>
-        {
-            Subject.Text = $"You have {source.Bank.Gold} banked, how much would you like to withdraw?";
-        });
+    /// <inheritdoc />
+    public override void OnDisplaying(Aisling source) => Subject.InjectTextParameters(source.Bank.Gold);
 
+    /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        if (!Subject.MenuArgs.TryGet<int>(0, out var amount))
+        if (!TryFetchArgs<int>(out var amount) || (amount <= 0))
         {
-            Subject.Reply(source, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
             return;
         }
 
-        var result = ComplexActionHelper.WithdrawGold(source, amount);
+        var withdrawResult = ComplexActionHelper.WithdrawGold(source, amount);
 
-        switch (result)
+        switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawGoldResult.Success:
                 Logger.LogDebug(
@@ -39,19 +39,17 @@ public class WithdrawGold : DialogScriptBase
                     amount,
                     Subject.SourceEntity);
 
-                Subject.NextDialogKey = Subject.Template.TemplateKey;
-
                 break;
             case ComplexActionHelper.WithdrawGoldResult.TooMuchGold:
-                Subject.Reply(source, "You are carrying too much gold.");
+                Subject.Reply(source, "You are carrying too much gold.", "generic_withdrawgold_initial");
 
                 break;
             case ComplexActionHelper.WithdrawGoldResult.NotEnoughGold:
-                Subject.Reply(source, "You don't have that much.");
+                Subject.Reply(source, "You don't have that much.", "generic_withdrawgold_initial");
 
                 break;
             case ComplexActionHelper.WithdrawGoldResult.BadInput:
-                Subject.Reply(source, DialogString.UnknownInput.Value);
+                Subject.ReplyToUnknownInput(source);
 
                 break;
             default:

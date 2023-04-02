@@ -1,0 +1,8 @@
+{
+    "templateKey": "generic_buyshop_accepted",
+    "text": "skip",
+    "type": "normal",
+    "nextDialogKey": "generic_buyshop_initial",
+    "scriptKeys": ["buyshop"],
+    "contextual": true
+}

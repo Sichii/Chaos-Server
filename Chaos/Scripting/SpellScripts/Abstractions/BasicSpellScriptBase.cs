@@ -1,7 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Definitions;
-using Chaos.Extensions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Components;
@@ -18,7 +17,7 @@ public abstract class BasicSpellScriptBase : ConfigurableSpellScriptBase, Abilit
         AbilityComponent = new AbilityComponent();
 
     /// <inheritdoc />
-    public override bool CanUse(SpellContext context) => (Filter ?? TargetFilter.None).IsValidTarget(context.Source, context.Target);
+    public override bool CanUse(SpellContext context) => context.Target.IsAlive;
 
     /// <inheritdoc />
     public override void OnUse(SpellContext context)

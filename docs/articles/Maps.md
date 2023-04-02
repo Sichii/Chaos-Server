@@ -1,9 +1,7 @@
 # Maps
 
-One of the first things you're going to want to do is add maps to your server. There are a few things you should know about maps first
-though. Chaos implement a map instance system. What map an object is on is determined by that maps MapInstanceId. This allow multiple maps
-with the same exact map id / tile data, or even the same names to coexist at the same time. Chaos also has an automatic map sharding system
-that will be explained later.
+Chaos uses a map instancing system. What map an object is on is determined by that map's MapInstanceId. This allow multiple maps
+with the same MapId/Name to coexist at the same time. Chaos also has an automatic map sharding system that will be explained later.
 
 ## Map Templates
 

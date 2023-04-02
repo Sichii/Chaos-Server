@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -20,6 +21,8 @@ using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
+using Chaos.Services.Other;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
@@ -27,6 +30,7 @@ using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog;
@@ -54,7 +58,8 @@ public class Startup
             IgnoreReadOnlyProperties = true,
             IgnoreReadOnlyFields = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            AllowTrailingCommas = true
+            AllowTrailingCommas = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
         JsonSerializerOptions.Converters.Add(new PointConverter());
@@ -140,6 +145,8 @@ public class Startup
         services.AddFunctionalScriptRegistry();
         services.AddWorldFactories();
         services.AddTypeMapper();
+
+        services.AddSingleton<IStockService, IHostedService, StockService>();
 
         services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(
             p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());

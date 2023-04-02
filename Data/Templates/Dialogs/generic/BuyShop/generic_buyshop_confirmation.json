@@ -1,0 +1,17 @@
+{
+    "scriptKeys": ["buyshop"],
+    "templateKey": "generic_buyshop_confirmation",
+    "text": "You want to buy {Amount} {ItemName}s? That will be {Cost} gold, does that sound fair?",
+    "type": "menuWithArgs",
+    "options": [
+        {
+            "dialogKey": "generic_buyshop_accepted",
+            "optionText": "Yes"
+        },
+        {
+            "dialogKey": "generic_buyshop_declined",
+            "optionText": "No"
+        }
+    ],
+    "contextual": true
+}

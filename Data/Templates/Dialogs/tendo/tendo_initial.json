@@ -1,57 +1,51 @@
 {
-  "options": [
-    {
-      "dialogKey": "tendo_buyShop",
-      "optionText": "Buy"
-    },
-    {
-      "dialogKey": "tendo_sellShop",
-      "optionText": "Sell"
-    },
-    {
-      "dialogKey": "generic_teleport",
-      "optionText": "Teleport"
-    },
-    {
-      "dialogKey": "tendo_goBack",
-      "optionText": "Test prev button"
-    },
-    {
-      "dialogKey": "tendo_learnSkill",
-      "optionText": "Learn Skill"
-    },
-    {
-      "dialogKey": "tendo_learnSpell",
-      "optionText": "Learn Spell"
-    },
-    {
-      "dialogKey": "generic_forgetSkill",
-      "optionText": "Forget Skill"
-    },
-    {
-      "dialogKey": "generic_forgetSpell",
-      "optionText": "Forget Spell"
-    },
-    {
-      "dialogKey": "generic_depositGold",
-      "optionText": "Deposit Gold"
-    },
-    {
-      "dialogKey": "generic_withdrawGold",
-      "optionText": "Withdraw Gold"
-    },
-    {
-      "dialogKey": "generic_depositItem",
-      "optionText": "Deposit Item"
-    },
-    {
-      "dialogKey": "generic_withdrawItem",
-      "optionText": "Withdraw Item"
-    }
-  ],
-  "scriptKeys": [],
-  "scriptVars": {},
-  "templateKey": "tendo_initial",
-  "text": "just a basic bitch dialog",
-  "type": "Menu"
+    "options": [
+        {
+            "dialogKey": "generic_buyShop_initial",
+            "optionText": "Buy"
+        },
+        {
+            "dialogKey": "generic_sellshop_initial",
+            "optionText": "Sell"
+        },
+        {
+            "dialogKey": "generic_depositgold_initial",
+            "optiontext": "Deposit Gold"
+        },
+        {
+            "dialogKey": "generic_withdrawgold_initial",
+            "optiontext": "Withdraw Gold"
+        },
+        {
+            "dialogKey": "generic_deposititem_initial",
+            "optiontext": "Deposit Items"
+        },
+        {
+            "dialogkey": "generic_withdrawitem_initial",
+            "optiontext": "Withdraw Items"
+        },
+        {
+            "dialogkey": "generic_learnskill_initial",
+            "optiontext": "Learn Skill"
+        },
+        {
+            "dialogkey": "generic_learnspell_initial",
+            "optiontext": "Learn Spell"
+        },
+        {
+            "dialogkey": "generic_forgetskill_initial",
+            "optiontext": "Forget Skill"
+        },
+        {
+            "dialogkey": "generic_forgetspell_initial",
+            "optiontext": "Forget Spell"
+        },
+        {
+            "dialogKey": "generic_teleport",
+            "optionText": "Teleport"
+        }
+    ],
+    "templateKey": "tendo_initial",
+    "text": "just a basic bitch dialog",
+    "type": "menu"
 }

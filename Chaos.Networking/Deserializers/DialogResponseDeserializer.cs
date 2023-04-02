@@ -18,7 +18,7 @@ public sealed record DialogResponseDeserializer : ClientPacketDeserializer<Dialo
         var dialogId = reader.ReadUInt16();
         var dialogArgsType = default(DialogArgsType);
         var option = default(byte?);
-        var args = default(string[]?);
+        var args = default(List<string>?);
 
         if (!reader.EndOfSpan)
         {
@@ -32,9 +32,9 @@ public sealed record DialogResponseDeserializer : ClientPacketDeserializer<Dialo
                     break;
                 case DialogArgsType.TextResponse:
                 {
-                    args = reader.ReadArgs8().ToArray();
+                    args = reader.ReadArgs8();
 
-                    if (args.Length == 0)
+                    if (!args.Any())
                         args = null;
 
                     break;

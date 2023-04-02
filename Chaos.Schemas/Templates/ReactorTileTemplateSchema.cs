@@ -4,7 +4,7 @@ using Chaos.Collections.Common;
 namespace Chaos.Schemas.Templates;
 
 /// <summary>
-///     The schema of a template for a reactor tile that can be dynamically placed in the world
+///     Represents the serializable schema for a reactor tile template
 /// </summary>
 public sealed class ReactorTileTemplateSchema
 {

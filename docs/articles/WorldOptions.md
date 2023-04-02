@@ -68,7 +68,16 @@ during startup.
 | MessageColor | [MessageColor](<xref:Chaos.Common.Definitions.Enums.MessageColor>) | The color of messages sent from this channel |
 
 > [!NOTE]
-> Default channel names should also be added to ChannelServiceOptions.ReservedChannelNames
+> Default channel names should also be added to `ChannelServiceOptions:ReservedChannelNames`
+
+### GroupChatName
+
+An alternative string that can be typed into the client to speak to the group chat. In Dark Ages this was "!!"
+
+### GroupMessageColor
+
+The color the message will be for the group chat. In Dark Ages this chat was sent over a specific channel, and that channel had it's own
+color. To keep that color, specify "Default" as the color, so as not to use any color.
 
 ## Aisling Settings
 

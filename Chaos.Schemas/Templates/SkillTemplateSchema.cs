@@ -3,6 +3,9 @@ using Chaos.Schemas.Templates.Abstractions;
 
 namespace Chaos.Schemas.Templates;
 
+/// <summary>
+///     Represents the serializable schema for a skill template
+/// </summary>
 public sealed record SkillTemplateSchema : PanelObjectTemplateSchema
 {
     /// <summary>

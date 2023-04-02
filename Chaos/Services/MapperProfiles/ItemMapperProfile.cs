@@ -80,7 +80,7 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         return new ItemInfo
         {
             Color = item.Color,
-            Cost = obj.AmountOrPrice,
+            Cost = obj.Price,
             Count = item.Count < 0
                 ? throw new InvalidOperationException($"Item \"{item.DisplayName}\" has negative count of {item.Count}")
                 : Convert.ToUInt32(item.Count),

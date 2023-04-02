@@ -1,0 +1,17 @@
+{
+    "scriptKeys": ["learnskill"],
+    "templateKey": "generic_learnskill_showrequirements",
+    "text": "{Description}\n\nEnsure you have what is required.\n\n{Requirements}\n\nDo you wish to learn this skill?",
+    "type": "menuWithArgs",
+    "options": [
+        {
+            "dialogKey": "generic_learnskill_accepted",
+            "optionText": "Yes"
+        },
+        {
+            "dialogKey": "generic_learnskill_initial",
+            "optionText": "No"
+        }
+    ],
+    "contextual": true
+}

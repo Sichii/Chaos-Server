@@ -1,6 +1,5 @@
-using Chaos.Extensions.Common;
+using Chaos.Objects.Abstractions;
 using Chaos.Objects.Menu;
-using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
@@ -8,128 +7,132 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts;
 
-public class SellShopScript : ConfigurableDialogScriptBase
+public class SellShopScript : DialogScriptBase
 {
-    private readonly InputCollector InputCollector;
     private readonly ILogger<SellShopScript> Logger;
-    private int? Amount;
-    private Item? PlayerItem;
-    private byte? Slot;
-    private int? TotalAvailable;
-    private int? TotalSellValue;
-    protected List<string> ItemTemplateKeys { get; init; } = null!;
+    private readonly ISellShopSource SellShopSource;
 
     /// <inheritdoc />
     public SellShopScript(Dialog subject, ILogger<SellShopScript> logger)
         : base(subject)
     {
         Logger = logger;
-
-        var requestInputText =
-            DialogString.From(() => $"How many {PlayerItem!.DisplayName} would you like to sell? You have {TotalAvailable}.");
-
-        var requestOptionText = DialogString.From(
-            () => $"I can buy {PlayerItem!.ToAmountString(Amount!.Value)} for {TotalSellValue} gold. Is that okay?");
-
-        InputCollector = new InputCollectorBuilder()
-                         .RequestTextInput(requestInputText)
-                         .HandleInput(HandleTextInput)
-                         .RequestOptionSelection(requestOptionText, DialogString.Yes, DialogString.No)
-                         .HandleInput(HandleOptionSelection)
-                         .Build();
-    }
-
-    private bool HandleOptionSelection(Aisling source, Dialog dialog, int? option = null)
-    {
-        if (option is not 1)
-            return false;
-
-        var result = ComplexActionHelper.SellItem(
-            source,
-            Slot!.Value,
-            Amount!.Value,
-            PlayerItem!.Template.SellValue);
-
-        switch (result)
-        {
-            case ComplexActionHelper.SellItemResult.Success:
-                Logger.LogDebug(
-                    "{@Player} sold {ItemCount} {@Item} to {@Merchant} for {GoldAmount} gold",
-                    source,
-                    Amount!.Value,
-                    PlayerItem,
-                    Subject.SourceEntity,
-                    Amount!.Value);
-
-                return true;
-            case ComplexActionHelper.SellItemResult.DontHaveThatMany:
-                Subject.Reply(source, "You don't have that many.");
-
-                return false;
-            case ComplexActionHelper.SellItemResult.TooMuchGold:
-                Subject.Reply(source, "You are carrying too much gold.");
-
-                return false;
-            case ComplexActionHelper.SellItemResult.BadInput:
-                Subject.Reply(source, DialogString.UnknownInput.Value);
-
-                return false;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
-    private bool HandleTextInput(Aisling source, Dialog dialog, int? option = null)
-    {
-        if (!Subject.MenuArgs.TryGet<int>(1, out var amount) || (amount <= 0))
-        {
-            dialog.Reply(source, DialogString.UnknownInput.Value);
-
-            return false;
-        }
-
-        if (amount > TotalAvailable)
-        {
-            dialog.Reply(source, "You don't have that many to sell.");
-
-            return false;
-        }
-
-        Amount = amount;
-        TotalSellValue = PlayerItem!.Template.SellValue * amount;
-
-        return true;
+        SellShopSource = (ISellShopSource)subject.SourceEntity;
     }
 
     /// <inheritdoc />
     public override void OnDisplaying(Aisling source)
     {
-        if (Subject.Slots.IsNullOrEmpty())
-            Subject.Slots = source.Inventory.Where(i => ItemTemplateKeys.ContainsI(i.Template.TemplateKey))
-                                  .Select(i => i.Slot)
-                                  .ToList();
+        switch (Subject.Template.TemplateKey.ToLower())
+        {
+            case "generic_sellshop_initial":
+            {
+                OnDisplayingInitial(source);
+
+                break;
+            }
+            case "generic_sellshop_amountrequest":
+            {
+                OnDisplayingAmountRequest(source);
+
+                break;
+            }
+            case "generic_sellshop_confirmation":
+            {
+                OnDisplayingConfirmation(source);
+
+                break;
+            }
+            case "generic_sellshop_accepted":
+            {
+                OnDisplayingAccepted(source);
+
+                break;
+            }
+        }
     }
 
-    /// <inheritdoc />
-    public override void OnNext(Aisling source, byte? optionIndex = null)
+    private void OnDisplayingAccepted(Aisling source)
     {
-        if (PlayerItem == null)
+        if (!TryFetchArgs<byte, int>(out var slot, out var amount)
+            || (amount <= 0)
+            || !source.Inventory.TryGetObject(slot, out var item)
+            || !SellShopSource.IsBuying(item))
         {
-            if (!Subject.MenuArgs.Any())
-                return;
+            Subject.ReplyToUnknownInput(source);
 
-            if (!byte.TryParse(Subject.MenuArgs.First(), out var invSlot))
-                return;
-
-            Slot = invSlot;
-            PlayerItem = source.Inventory[invSlot];
-
-            if (PlayerItem == null)
-                return;
-
-            TotalAvailable = source.Inventory.CountOf(PlayerItem.DisplayName);
+            return;
         }
 
-        InputCollector.Collect(source, Subject, optionIndex);
+        var totalSellValue = amount * item.Template.SellValue;
+
+        var sellItemResult = ComplexActionHelper.SellItem(
+            source,
+            slot,
+            amount,
+            item.Template.SellValue);
+
+        switch (sellItemResult)
+        {
+            case ComplexActionHelper.SellItemResult.Success:
+                Logger.LogDebug(
+                    "{@Player} sold {ItemCount} {@Item} to {@Merchant} for {GoldAmount} gold",
+                    source,
+                    amount,
+                    item,
+                    Subject.SourceEntity,
+                    totalSellValue);
+
+                return;
+            case ComplexActionHelper.SellItemResult.DontHaveThatMany:
+                Subject.Reply(source, "You don't have that many.", "generic_sellshop_initial");
+
+                return;
+            case ComplexActionHelper.SellItemResult.TooMuchGold:
+                Subject.Reply(source, "You are carrying too much gold.", "generic_sellshop_initial");
+
+                return;
+            case ComplexActionHelper.SellItemResult.BadInput:
+                Subject.ReplyToUnknownInput(source);
+
+                return;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
+
+    private void OnDisplayingAmountRequest(Aisling source)
+    {
+        if (!TryFetchArgs<byte>(out var slot) || !source.Inventory.TryGetObject(slot, out var item) || !SellShopSource.IsBuying(item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        var total = source.Inventory.CountOf(item.DisplayName);
+
+        Subject.InjectTextParameters(item.DisplayName, total);
+    }
+
+    private void OnDisplayingConfirmation(Aisling source)
+    {
+        if (!TryFetchArgs<byte, int>(out var slot, out var amount)
+            || (amount <= 0)
+            || !source.Inventory.TryGetObject(slot, out var item)
+            || !SellShopSource.IsBuying(item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        Subject.InjectTextParameters(amount, item.DisplayName, amount * item.Template.SellValue);
+    }
+
+    private void OnDisplayingInitial(Aisling source) =>
+        Subject.Slots = source.Inventory
+                              .Where(item => SellShopSource.ItemsToBuy.Contains(item.Template.TemplateKey))
+                              .Select(item => item.Slot)
+                              .ToList();
 }

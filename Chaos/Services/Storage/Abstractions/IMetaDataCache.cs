@@ -1,4 +1,4 @@
-using Chaos.Networking.Metadata.Abstractions;
+using Chaos.MetaData.Abstractions;
 
 namespace Chaos.Services.Storage.Abstractions;
 

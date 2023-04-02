@@ -14,5 +14,5 @@ public sealed record DialogResponseArgs(
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global", Justification = "Not needed / Not trusted")]
     DialogArgsType DialogArgsType,
     byte? Option,
-    params string[]? Args
+    List<string>? Args
 ) : IReceiveArgs;

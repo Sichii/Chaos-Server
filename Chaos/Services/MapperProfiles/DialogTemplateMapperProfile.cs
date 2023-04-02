@@ -26,7 +26,8 @@ public class DialogTemplateMapperProfile : IMapperProfile<DialogTemplate, Dialog
             StringComparer.OrdinalIgnoreCase),
         Text = obj.Text,
         TextBoxLength = obj.TextBoxLength,
-        Type = obj.Type
+        Type = obj.Type,
+        Contextual = obj.Contextual
     };
 
     /// <inheritdoc />

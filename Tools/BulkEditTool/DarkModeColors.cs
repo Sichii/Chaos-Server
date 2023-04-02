@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Windows.Media;
-using Chaos.Extensions.Common;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis.Classification;
 using RoslynPad.Editor;
@@ -27,8 +26,6 @@ internal sealed class DarkModeColors : IClassificationHighlightColors
 
     internal DarkModeColors()
     {
-        ArrayExtensions.ShuffleInPlace(new[] { 5 });
-
         DefaultBrush = GetHighlightingColor("#FF86DBFD");
         StringBrush = GetHighlightingColor("#FFD59C74");
         KeywordBrush = GetHighlightingColor("#FF569CD6");

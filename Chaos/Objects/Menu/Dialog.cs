@@ -1,20 +1,24 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
+using Chaos.Common.Utilities;
 using Chaos.Data;
 using Chaos.Extensions.Common;
 using Chaos.Objects.Abstractions;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripting.DialogScripts;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Templates;
+using Chaos.Utilities;
 
 namespace Chaos.Objects.Menu;
 
 public sealed record Dialog : IScripted<IDialogScript>
 {
     private readonly IDialogFactory DialogFactory;
+    public object? Context { get; set; }
     public List<ItemDetails> Items { get; set; }
     public ArgumentCollection MenuArgs { get; set; }
     public string? NextDialogKey { get; set; }
@@ -25,9 +29,10 @@ public sealed record Dialog : IScripted<IDialogScript>
     public IDialogSourceEntity SourceEntity { get; set; }
     public List<Spell> Spells { get; set; }
     public DialogTemplate Template { get; set; }
-    public string Text { get; set; }
+    public string Text { get; private set; }
     public ushort? TextBoxLength { get; set; }
-    public MenuOrDialogType Type { get; set; }
+    public ChaosDialogType Type { get; set; }
+    public bool Contextual { get; }
     /// <inheritdoc />
     public IDialogScript Script { get; }
     /// <inheritdoc />
@@ -51,6 +56,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         TextBoxLength = template.TextBoxLength;
         Type = template.Type;
         MenuArgs = new ArgumentCollection();
+        Contextual = template.Contextual;
     }
 
     public Dialog(
@@ -69,35 +75,64 @@ public sealed record Dialog : IScripted<IDialogScript>
         Script = scriptProvider.CreateScript<IDialogScript, Dialog>(ScriptKeys, this);
     }
 
+    public Dialog(
+        IDialogSourceEntity sourceEntity,
+        IDialogFactory dialogFactory,
+        ChaosDialogType type,
+        string text
+    )
+    {
+        Text = text;
+        Type = type;
+        SourceEntity = sourceEntity;
+        Template = null!;
+        DialogFactory = dialogFactory;
+        TextBoxLength = null;
+        NextDialogKey = null;
+        PrevDialogKey = null;
+        Script = new CompositeDialogScript();
+        Options = new List<DialogOption>();
+        ScriptKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        Skills = new List<Skill>();
+        Spells = new List<Spell>();
+        Items = new List<ItemDetails>();
+        MenuArgs = new ArgumentCollection();
+    }
+
     public void Close(Aisling source)
     {
-        Type = MenuOrDialogType.CloseDialog;
+        Type = ChaosDialogType.CloseDialog;
         Options.Clear();
         NextDialogKey = null;
         source.Client.SendDialog(this);
         source.ActiveDialog.TryRemove(this);
+        source.DialogHistory.Clear();
     }
 
-    public void Display(Aisling source, bool activateScripts = true)
+    public void Display(Aisling source)
     {
         source.ActiveDialog.Set(this);
 
-        //TODO: REMOVE AFTER TESTING, this should be handled by a script or maybe we can accept some info about what items an npc sells, or what items a dialog can sell
-        /*Slots = Type switch
-        {
-            MenuOrDialogType.ShowPlayerItems  => source.Inventory.Select(i => i.Slot).ToList(),
-            MenuOrDialogType.ShowPlayerSkills => source.SkillBook.Select(s => s.Slot).ToList(),
-            MenuOrDialogType.ShowPlayerSpells => source.SpellBook.Select(s => s.Slot).ToList(),
-            _                                 => null
-        };*/
+        Script.OnDisplaying(source);
 
-        if (activateScripts)
-            Script.OnDisplaying(source);
+        //if a different dialog was displayed while this one was being displayed
+        if (source.ActiveDialog.Get() != this)
+            return;
 
-        source.Client.SendDialog(this);
+        if (!Text.EqualsI("skip"))
+            source.Client.SendDialog(this);
 
-        if (activateScripts)
-            Script.OnDisplayed(source);
+        Script.OnDisplayed(source);
+
+        //if a different dialog was displayed while this one was being displayed
+        if (source.ActiveDialog.Get() != this)
+            return;
+
+        if (Text.EqualsI("skip"))
+            if (!string.IsNullOrEmpty(NextDialogKey))
+                Next(source);
+            else
+                Close(source);
     }
 
     public int? GetOptionIndex(string optionText)
@@ -116,6 +151,8 @@ public sealed record Dialog : IScripted<IDialogScript>
 
     public bool HasOption(DialogOption option) => GetOptionIndex(option.OptionText) != null;
 
+    public void InjectTextParameters(params object[] parameters) => Text = Text.Inject(parameters);
+
     public void Next(Aisling source, byte? optionIndex = null)
     {
         if (optionIndex is 0)
@@ -127,130 +164,100 @@ public sealed record Dialog : IScripted<IDialogScript>
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (Type)
         {
-            case MenuOrDialogType.ShowItems:
-            case MenuOrDialogType.ShowPlayerItems:
-            case MenuOrDialogType.ShowSpells:
-            case MenuOrDialogType.ShowSkills:
-            case MenuOrDialogType.ShowPlayerSpells:
-            case MenuOrDialogType.ShowPlayerSkills:
-            case MenuOrDialogType.Normal:
-            case MenuOrDialogType.DialogTextEntry:
-            case MenuOrDialogType.Speak:
-            case MenuOrDialogType.CreatureMenu:
-            case MenuOrDialogType.Protected:
-            case MenuOrDialogType.CloseDialog:
+            case ChaosDialogType.ShowItems:
+            case ChaosDialogType.ShowPlayerItems:
+            case ChaosDialogType.ShowSpells:
+            case ChaosDialogType.ShowSkills:
+            case ChaosDialogType.ShowPlayerSpells:
+            case ChaosDialogType.ShowPlayerSkills:
+            case ChaosDialogType.Normal:
+            case ChaosDialogType.DialogTextEntry:
+            case ChaosDialogType.Speak:
+            case ChaosDialogType.CreatureMenu:
+            case ChaosDialogType.Protected:
+            case ChaosDialogType.CloseDialog:
                 optionIndex = null;
 
                 break;
         }
 
+        source.DialogHistory.Push(this);
         Script.OnNext(source, optionIndex);
-        Dialog? nextDialog = null;
+        var nextDialogKey = optionIndex.HasValue ? Options.ElementAtOrDefault(optionIndex.Value - 1)?.DialogKey : NextDialogKey;
 
-        if (!optionIndex.HasValue)
+        if (!string.IsNullOrEmpty(nextDialogKey))
         {
-            if (!string.IsNullOrEmpty(NextDialogKey))
+            if (nextDialogKey.EqualsI("close"))
             {
-                if (NextDialogKey.EqualsI("close"))
-                {
-                    Close(source);
+                Close(source);
 
-                    return;
-                }
-
-                nextDialog = DialogFactory.Create(NextDialogKey, SourceEntity);
+                return;
             }
-        } else
-        {
-            var option = Options.ElementAtOrDefault(optionIndex.Value - 1);
 
-            if (option != null)
+            if (nextDialogKey.EqualsI("top"))
             {
-                if (option.DialogKey.EqualsI("close"))
-                {
-                    Close(source);
+                SourceEntity.Activate(source);
 
-                    return;
-                }
-
-                nextDialog = DialogFactory.Create(option.DialogKey, SourceEntity);
+                return;
             }
+
+            var nextDialog = DialogFactory.Create(nextDialogKey, SourceEntity);
+
+            if (nextDialog.Contextual)
+            {
+                nextDialog.MenuArgs = new ArgumentCollection(MenuArgs);
+                nextDialog.Context = DeepClone.Create(Context);
+            }
+
+            nextDialog.Display(source);
         }
-
-        nextDialog?.Display(source);
     }
 
     public void Previous(Aisling source)
     {
-        Script.OnPrevious(source);
-
         if (!string.IsNullOrEmpty(PrevDialogKey))
         {
-            var prevDialog = DialogFactory.Create(PrevDialogKey, SourceEntity);
+            var prevDialog = source.DialogHistory.PopUntil(d => d.Template.TemplateKey.EqualsI(PrevDialogKey));
+            source.DialogHistory.TryPeek(out var prevPrevDialog);
+
+            //if PreviousDialogKey references something that didn't happen, close the dialog
+            if (prevDialog is null)
+            {
+                Close(source);
+
+                throw new InvalidOperationException(
+                    $"Attempted to from dialogKey \"{Template.TemplateKey}\" to dialogKey \"{PrevDialogKey
+                    }\" but no dialog with that key was found in the history.");
+            }
+
+            var newPrevDialog = DialogFactory.Create(PrevDialogKey, SourceEntity);
+
+            //if the dialog is contextual, copy the context and menu args from the previous dialog
+            if (newPrevDialog.Contextual)
+            {
+                newPrevDialog.MenuArgs = new ArgumentCollection(prevPrevDialog?.MenuArgs);
+                newPrevDialog.Context = DeepClone.Create(prevPrevDialog?.Context);
+            }
+
+            Script.OnPrevious(source);
             prevDialog.Display(source);
         } else
             Close(source);
     }
 
-    public void Reply(Aisling source, string dialogText)
+    public void Reply(Aisling source, string dialogText, string? nextDialogKey = null)
     {
-        Type = MenuOrDialogType.Normal;
-        Text = dialogText;
-        PrevDialogKey = Template.TemplateKey;
-        NextDialogKey = null;
-        Options = new List<DialogOption>();
-
-        Display(source, false);
-    }
-
-    public void RequestAmount(Aisling source, string dialogText)
-    {
-        var newType = MenuOrDialogType.MenuTextEntry;
-
-        if (MenuArgs.Any())
-            newType = MenuOrDialogType.MenuTextEntryWithArgs;
-
-        Type = newType;
-        Text = dialogText;
-        PrevDialogKey = Template.TemplateKey;
-        NextDialogKey = null;
-        Options = new List<DialogOption>();
-
-        Display(source);
-    }
-
-    public void RequestConfirmation(
-        Aisling source,
-        string dialogText,
-        string? option1Text = null,
-        string? option2Text = null
-    )
-    {
-        var newType = MenuOrDialogType.Menu;
-
-        if (MenuArgs.Any())
-            newType = MenuOrDialogType.MenuWithArgs;
-
-        Type = newType;
-        Text = dialogText;
-        PrevDialogKey = Template.TemplateKey;
-
-        Options = new List<DialogOption>
+        var newDialog = new Dialog(
+            SourceEntity,
+            DialogFactory,
+            ChaosDialogType.Normal,
+            dialogText)
         {
-            new()
-            {
-                DialogKey = Template.TemplateKey,
-                OptionText = option1Text ?? "Yes"
-            },
-            new()
-            {
-                DialogKey = Template.TemplateKey,
-                OptionText = option2Text ?? "No"
-            }
+            NextDialogKey = nextDialogKey
         };
 
-        NextDialogKey = null;
-
-        Display(source);
+        newDialog.Display(source);
     }
+
+    public void ReplyToUnknownInput(Aisling source) => Reply(source, DialogString.UnknownInput.Value);
 }

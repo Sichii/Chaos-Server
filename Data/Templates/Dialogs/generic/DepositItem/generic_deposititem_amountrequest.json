@@ -1,0 +1,8 @@
+{
+    "scriptKeys": ["deposititem"],
+    "templateKey": "generic_deposititem_amountrequest",
+    "text": "How many {ItemName} would you like to deposit? You have {Amount} of them.",
+    "type": "menuTextEntryWithArgs",
+    "nextDialogKey": "generic_deposititem_initial",
+    "contextual": true
+}

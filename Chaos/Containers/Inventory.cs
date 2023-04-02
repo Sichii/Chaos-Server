@@ -50,6 +50,9 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         return Objects.Any(obj => obj is not null && (obj.DisplayName.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name)));
     }
 
+    /// <inheritdoc />
+    public override bool Contains(Item obj) => Contains(obj.DisplayName);
+
     public int CountOf(string name)
     {
         using var @lock = Sync.Enter();

@@ -12,7 +12,7 @@ public abstract class ConfigurableSpellScriptBase : ConfigurableScriptBase<Spell
         : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
     /// <inheritdoc />
-    public virtual bool CanUse(SpellContext context) => context.Source.IsAlive && context.Target.IsAlive;
+    public virtual bool CanUse(SpellContext context) => context.Target.IsAlive;
 
     /// <inheritdoc />
     public virtual void OnForgotten(Aisling aisling) { }

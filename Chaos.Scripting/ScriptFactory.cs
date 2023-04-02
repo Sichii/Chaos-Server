@@ -96,10 +96,10 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             ScriptTypeCache[scriptKey] = type;
 
             Logger.LogTrace(
-                "Loaded {ScriptType} with key \"{ScriptKey}\" for type \"{Type}\"",
+                "Cached {TypeName} type {@Type} with key {@ScriptKey}",
                 TypeName,
-                scriptKey,
-                type.Name);
+                type.Name,
+                scriptKey);
         }
 
         Logger.LogInformation("{Count} {TScriptName}s loaded", ScriptTypeCache.Count, TypeName);

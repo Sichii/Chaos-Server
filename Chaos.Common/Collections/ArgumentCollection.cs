@@ -27,8 +27,10 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </summary>
     /// <param name="arguments">A sequence of argument strings</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
-    public ArgumentCollection(IEnumerable<string> arguments, string? delimiter = null)
+    public ArgumentCollection(IEnumerable<string>? arguments, string? delimiter = null)
     {
+        arguments ??= Enumerable.Empty<string>();
+
         if (!string.IsNullOrEmpty(delimiter))
             arguments = arguments.SelectMany(str => str.Split(delimiter)).ToList();
 

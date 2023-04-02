@@ -28,6 +28,9 @@ public sealed class GroundItem : GroundEntity, IDialogSourceEntity
         Item = item;
 
     /// <inheritdoc />
+    void IDialogSourceEntity.Activate(Aisling source) => Item.Script.OnUse(source);
+
+    /// <inheritdoc />
     public override void Animate(Animation animation, uint? sourceId = null)
     {
         var targetedAnimation = animation.GetTargetedAnimation(Id, sourceId);

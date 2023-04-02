@@ -57,6 +57,13 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
+        if (template.RequiresMaster && !source.UserStatSheet.Master)
+        {
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
+
+            return;
+        }
+
         if (StatRequired.HasValue
             && StatAmountRequired.HasValue
             && (source.StatSheet.GetBaseStat(StatRequired.Value) < StatAmountRequired.Value))

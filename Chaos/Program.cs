@@ -2,8 +2,6 @@ using Chaos;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
-using Chaos.Services;
-using Chaos.Services.Abstractions;
 using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +43,6 @@ var startup = new Startup(configuration);
 startup.ConfigureServices(services);
 var serverCtx = startup.ServerCtx;
 
-services.AddSingleton<IGroupService, GroupService>();
 services.AddLobbyServer();
 services.AddLoginserver();
 services.AddWorldServer();

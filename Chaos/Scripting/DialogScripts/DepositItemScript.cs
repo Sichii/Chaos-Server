@@ -1,6 +1,4 @@
-﻿using Chaos.Extensions.Common;
-using Chaos.Objects.Menu;
-using Chaos.Objects.Panel;
+﻿using Chaos.Objects.Menu;
 using Chaos.Objects.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
@@ -11,105 +9,101 @@ namespace Chaos.Scripting.DialogScripts;
 public class DepositItemScript : DialogScriptBase
 {
     private readonly ILogger<DepositItemScript> Logger;
-    private int? Amount { get; set; }
-    private Item? Item { get; set; }
-    public InputCollector InputCollector { get; }
 
+    /// <inheritdoc />
     public DepositItemScript(Dialog subject, ILogger<DepositItemScript> logger)
-        : base(subject)
-    {
+        : base(subject) =>
         Logger = logger;
-        var requestInputText = DialogString.From(() => $"How many {Item!.DisplayName} would you like to deposit?");
 
-        InputCollector = new InputCollectorBuilder()
-                         .RequestTextInput(requestInputText)
-                         .HandleInput(HandleInputText)
-                         .Build();
+    /// <inheritdoc />
+    public override void OnDisplaying(Aisling source)
+    {
+        switch (Subject.Template.TemplateKey.ToLower())
+        {
+            case "generic_deposititem_initial":
+            {
+                OnDisplayingInitial(source);
+
+                break;
+            }
+            case "generic_deposititem_amountrequest":
+            {
+                OnDisplayingAmountRequest(source);
+
+                break;
+            }
+        }
     }
 
-    private bool HandleDepositItemResult(Aisling source, ComplexActionHelper.DepositItemResult result)
+    private void OnDisplayingAmountRequest(Aisling source)
     {
-        switch (result)
+        if (!TryFetchArgs<byte>(out var slot) || !source.Inventory.TryGetObject(slot, out var item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        var total = source.Inventory.CountOf(item.DisplayName);
+
+        Subject.InjectTextParameters(item.DisplayName, total);
+    }
+
+    private void OnDisplayingInitial(Aisling source) => Subject.Slots = source.Inventory.Select(obj => obj.Slot).ToList();
+
+    /// <inheritdoc />
+    public override void OnNext(Aisling source, byte? optionIndex = null)
+    {
+        switch (Subject.Template.TemplateKey.ToLower())
+        {
+            case "generic_deposititem_amountrequest":
+            {
+                OnNextAmountRequest(source);
+
+                break;
+            }
+        }
+    }
+
+    private void OnNextAmountRequest(Aisling source)
+    {
+        if (!TryFetchArgs<byte, int>(out var slot, out var amount)
+            || (amount <= 0)
+            || !source.Inventory.TryGetObject(slot, out var item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        var depositItemResult = ComplexActionHelper.DepositItem(source, slot, amount);
+
+        switch (depositItemResult)
         {
             case ComplexActionHelper.DepositItemResult.Success:
                 Logger.LogDebug(
                     "{@Player} deposited {ItemCount} {@Item} in the bank using {@Entity}",
                     source,
-                    Amount!.Value,
-                    Item,
+                    amount,
+                    item,
                     Subject.SourceEntity);
 
-                Subject.NextDialogKey = Subject.Template.TemplateKey;
-
-                return true;
+                return;
             case ComplexActionHelper.DepositItemResult.DontHaveThatMany:
-                Subject.Reply(source, "You don't have that many");
+                Subject.Reply(source, "You don't have that many", "generic_deposititem_initial");
 
-                return false;
+                return;
             case ComplexActionHelper.DepositItemResult.NotEnoughGold:
                 //Subject.Reply(source, $"You don't have enough gold, you need {}");
                 //this script doesnt currently take into account deposit fees
 
-                return false;
+                return;
             case ComplexActionHelper.DepositItemResult.BadInput:
                 Subject.Reply(source, DialogString.UnknownInput.Value);
 
-                return false;
+                return;
             default:
-                throw new ArgumentOutOfRangeException(nameof(result), result, null);
+                throw new ArgumentOutOfRangeException(nameof(depositItemResult), depositItemResult, null);
         }
-    }
-
-    private bool HandleInputText(Aisling source, Dialog dialog, int? option)
-    {
-        if (!Subject.MenuArgs.TryGet<int>(1, out var amount))
-        {
-            Subject.Reply(source, DialogString.UnknownInput.Value);
-
-            return false;
-        }
-
-        Amount = amount;
-        var result = ComplexActionHelper.DepositItem(source, Item!.Slot, Amount.Value);
-
-        return HandleDepositItemResult(source, result);
-    }
-
-    public override void OnDisplaying(Aisling source)
-    {
-        if (Subject.Slots.IsNullOrEmpty())
-            Subject.Slots = source.Inventory.Select(x => x.Slot).ToList();
-    }
-
-    public override void OnNext(Aisling source, byte? optionIndex = null)
-    {
-        if (Item == null)
-        {
-            if (!Subject.MenuArgs.TryGet<byte>(0, out var slot))
-            {
-                Subject.Reply(source, DialogString.UnknownInput.Value);
-
-                return;
-            }
-
-            var item = source.Inventory[slot];
-
-            if (item == null)
-            {
-                Subject.Reply(source, DialogString.UnknownInput.Value);
-
-                return;
-            }
-
-            Item = item;
-        }
-
-        if (source.Inventory.CountOf(Item.DisplayName) == 1)
-        {
-            var result = ComplexActionHelper.DepositItem(source, Item.Slot, 1);
-            Amount = 1;
-            HandleDepositItemResult(source, result);
-        } else
-            InputCollector.Collect(source, Subject, optionIndex);
     }
 }
