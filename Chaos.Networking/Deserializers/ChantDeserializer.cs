@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="DisplayChantArgs" />
+/// </summary>
 public sealed record ChantDeserializer : ClientPacketDeserializer<DisplayChantArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.Chant;
 
+    /// <inheritdoc />
     public override DisplayChantArgs Deserialize(ref SpanReader reader)
     {
         var chantMessage = reader.ReadString8();

@@ -4,6 +4,9 @@ using Chaos.Geometry;
 
 namespace Chaos.Schemas.Data;
 
+/// <summary>
+///     Represents the serializable schema of the sharding options of a map instance
+/// </summary>
 public sealed record ShardingOptionsSchema
 {
     /// <summary>

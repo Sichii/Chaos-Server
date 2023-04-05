@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="PickupArgs" />
+/// </summary>
 public sealed record PickupDeserializer : ClientPacketDeserializer<PickupArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.Pickup;
 
+    /// <inheritdoc />
     public override PickupArgs Deserialize(ref SpanReader reader)
     {
         var destinationSlot = reader.ReadByte();

@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="CreateCharFinalizeArgs" />
+/// </summary>
 public sealed record CharacterCreationFinalizeDeserializer : ClientPacketDeserializer<CreateCharFinalizeArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.CreateCharFinalize;
 
+    /// <inheritdoc />
     public override CreateCharFinalizeArgs Deserialize(ref SpanReader reader)
     {
         var hairStyle = reader.ReadByte();

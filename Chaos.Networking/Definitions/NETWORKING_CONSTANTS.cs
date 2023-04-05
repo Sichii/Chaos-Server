@@ -3,11 +3,23 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Networking.Definitions;
 
+/// <summary>
+///     Represents the constants used by the networking layer
+/// </summary>
 public static class NETWORKING_CONSTANTS
 {
+    /// <summary>
+    ///     The offset value for a creature's sprite
+    /// </summary>
     public const int CREATURE_SPRITE_OFFSET = 16384;
+    /// <summary>
+    ///     The offset value for an item's sprite
+    /// </summary>
     public const int ITEM_SPRITE_OFFSET = 32768;
 
+    /// <summary>
+    ///     The order in which equipment slots are sent to the client
+    /// </summary>
     public static readonly ImmutableArray<EquipmentSlot> PROFILE_EQUIPMENTSLOT_ORDER = ImmutableArray.Create(
         EquipmentSlot.Weapon,
         EquipmentSlot.Armor,

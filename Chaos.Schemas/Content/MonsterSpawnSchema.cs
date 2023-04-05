@@ -3,6 +3,9 @@ using Chaos.Geometry;
 
 namespace Chaos.Schemas.Content;
 
+/// <summary>
+///     Represents the serializable schema of a monster spawn
+/// </summary>
 public sealed record MonsterSpawnSchema
 {
     /// <summary>

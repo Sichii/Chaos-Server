@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="SwapSlotArgs" />
+/// </summary>
 public sealed record SwapSlotDeserializer : ClientPacketDeserializer<SwapSlotArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.SwapSlot;
 
+    /// <inheritdoc />
     public override SwapSlotArgs Deserialize(ref SpanReader reader)
     {
         var panelType = (PanelType)reader.ReadByte();

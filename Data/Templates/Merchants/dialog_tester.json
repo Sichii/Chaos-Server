@@ -1,13 +1,13 @@
 {
-    "name": "Tendo",
+    "name": "Dialog Tester",
     "scriptKeys": ["showdialog"],
     "scriptVars": {
         "showdialog": {
-            "dialogKey": "tendo_initial"
+            "dialogKey": "dialog_tester_initial"
         }
     },
     "sprite": 205,
-    "templateKey": "tendo",
+    "templateKey": "dialog_tester",
     "itemsForSale": [
         {
             "itemTemplateKey": "teleport_trinket",

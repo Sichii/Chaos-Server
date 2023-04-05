@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="DialogResponseArgs" />
+/// </summary>
 public sealed record DialogResponseDeserializer : ClientPacketDeserializer<DialogResponseArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.DialogResponse;
 
+    /// <inheritdoc />
     public override DialogResponseArgs Deserialize(ref SpanReader reader)
     {
         var worldObjectType = (EntityType)reader.ReadByte();

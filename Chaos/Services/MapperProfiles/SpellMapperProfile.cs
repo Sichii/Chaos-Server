@@ -65,11 +65,13 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
 
     public SpellSchema Map(Spell obj)
     {
+        var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
         var ret = new SpellSchema
         {
             UniqueId = obj.UniqueId,
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
-            ScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase),
+            ScriptKeys = extraScriptKeys.Any() ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
             Slot = obj.Slot
         };

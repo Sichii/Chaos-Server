@@ -3,6 +3,9 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Schemas.MetaData;
 
+/// <summary>
+///     Represents the serializable schema of the details of an event as part of the event meta data
+/// </summary>
 public sealed record EventMetaSchema
 {
     /// <summary>
@@ -20,7 +23,7 @@ public sealed record EventMetaSchema
     ///     Default null<br />The id of the event that must be completed before this event can be completed. This event will only show up blue(available) if the
     ///     previous event was completed
     /// </summary>
-    public string? PrerequisiteEventId { get; set; } = null!;
+    public string? PrerequisiteEventId { get; set; }
 
     /// <summary>
     ///     Default null<br />if set, these are the circles this quest is available to.<br />If null, the event will be available to all circles
@@ -41,7 +44,7 @@ public sealed record EventMetaSchema
     /// <summary>
     ///     Default null.<br />The rewards given when the event is completed
     /// </summary>
-    public string? Rewards { get; set; } = null!;
+    public string? Rewards { get; set; }
 
     /// <summary>
     ///     A brief summary of the event

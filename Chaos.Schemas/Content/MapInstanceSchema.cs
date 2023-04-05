@@ -4,6 +4,9 @@ using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Content;
 
+/// <summary>
+///     Represents the serializable schema of a map instance
+/// </summary>
 public sealed record MapInstanceSchema
 {
     /// <summary>

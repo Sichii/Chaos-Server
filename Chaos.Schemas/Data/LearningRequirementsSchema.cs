@@ -3,6 +3,9 @@ using Chaos.Schemas.Aisling;
 
 namespace Chaos.Schemas.Data;
 
+/// <summary>
+///     Represents the serializable schema of the requirements of an ability
+/// </summary>
 public sealed record LearningRequirementsSchema
 {
     /// <summary>

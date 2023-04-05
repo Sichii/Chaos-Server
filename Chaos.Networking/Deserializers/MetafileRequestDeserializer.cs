@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="MetafileRequestArgs" />
+/// </summary>
 public sealed record MetafileRequestDeserializer : ClientPacketDeserializer<MetafileRequestArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.MetafileRequest;
 
+    /// <inheritdoc />
     public override MetafileRequestArgs Deserialize(ref SpanReader reader)
     {
         var metafileRequestType = (MetafileRequestType)reader.ReadByte();

@@ -2,10 +2,17 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking;
 
+/// <summary>
+///     A registry that facilitates discovery of clients
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public sealed class ClientRegistry<T> : IClientRegistry<T> where T: ISocketClient
 {
     private readonly ConcurrentDictionary<uint, T> Clients;
 
+    /// <summary>
+    ///     Creates a new instance of <see cref="ClientRegistry{T}" />
+    /// </summary>
     public ClientRegistry() => Clients = new ConcurrentDictionary<uint, T>();
 
     /// <inheritdoc />

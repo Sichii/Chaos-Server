@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="WhisperArgs" />
+/// </summary>
 public sealed record WhisperDeserializer : ClientPacketDeserializer<WhisperArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.Whisper;
 
+    /// <inheritdoc />
     public override WhisperArgs Deserialize(ref SpanReader reader)
     {
         var targetName = reader.ReadString8();

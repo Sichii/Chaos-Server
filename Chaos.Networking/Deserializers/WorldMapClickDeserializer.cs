@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="WorldMapClickArgs" />
+/// </summary>
 public sealed record WorldMapClickDeserializer : ClientPacketDeserializer<WorldMapClickArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.WorldMapClick;
 
+    /// <inheritdoc />
     public override WorldMapClickArgs Deserialize(ref SpanReader reader)
     {
         var nodeCheckSum = reader.ReadUInt16();

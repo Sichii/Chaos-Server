@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="ItemDropArgs" />
+/// </summary>
 public sealed record ItemDropDeserializer : ClientPacketDeserializer<ItemDropArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.ItemDrop;
 
+    /// <inheritdoc />
     public override ItemDropArgs Deserialize(ref SpanReader reader)
     {
         var sourceSlot = reader.ReadByte();

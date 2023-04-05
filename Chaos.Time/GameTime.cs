@@ -63,7 +63,14 @@ public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable
     /// <summary>
     ///     Starting date of the server.
     /// </summary>
-    private static DateTime Origin { get; } = new(2022, 11, 1);
+    private static DateTime Origin { get; } = new(
+        2022,
+        11,
+        1,
+        0,
+        0,
+        0,
+        DateTimeKind.Utc);
 
     /// <summary>
     ///     Adds a TimeSpan to a GameTime, returning a new GameTime.
@@ -163,7 +170,7 @@ public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable
     /// <summary>
     ///     Converts a GameTime object to DateTime.
     /// </summary>
-    public DateTime ToDateTime() => new(DateTime.Ticks / 24 + Origin.Ticks);
+    public DateTime ToDateTime() => new(DateTime.Ticks / 24 + Origin.Ticks, DateTimeKind.Utc);
 
     /// <summary>
     ///     Custom method that will print the current time like DateTime does.

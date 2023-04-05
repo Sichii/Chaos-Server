@@ -20,7 +20,7 @@ public class DialogMapperProfile : IMapperProfile<Dialog, DialogArgs>, IMapperPr
     MenuArgs IMapperProfile<Dialog, MenuArgs>.Map(Dialog obj) =>
         new()
         {
-            Args = obj.MenuArgs.FirstOrDefault(),
+            Args = obj.MenuArgs.LastOrDefault(),
             EntityType = obj.SourceEntity.EntityType,
             Items = Mapper.MapMany<ItemInfo>(obj.Items).ToList(),
             MenuType = obj.Type.ToMenuType()!.Value,

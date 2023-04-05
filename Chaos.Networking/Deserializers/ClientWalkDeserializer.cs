@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="ClientWalkArgs" />
+/// </summary>
 public sealed record ClientWalkDeserializer : ClientPacketDeserializer<ClientWalkArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.ClientWalk;
 
+    /// <inheritdoc />
     public override ClientWalkArgs Deserialize(ref SpanReader reader)
     {
         var direction = (Direction)reader.ReadByte();

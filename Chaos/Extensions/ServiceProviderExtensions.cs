@@ -147,7 +147,6 @@ public static class ServiceProviderExtensions
             newMaps.Values.Select(m => m.Sync).ToArray());
 
         foreach (var oldMap in oldMaps.Values)
-        {
             try
             {
                 var newMap = mapCache.Get(oldMap.InstanceId);
@@ -174,7 +173,6 @@ public static class ServiceProviderExtensions
                     "Failed to migrate map \"{MapId}\" during reload",
                     oldMap.InstanceId);
             }
-        }
     }
 
     public static async Task ReloadMerchantsAsync(this IServiceProvider provider, ILogger logger)
@@ -193,14 +191,17 @@ public static class ServiceProviderExtensions
             var merchantsToAdd = new List<Merchant>();
 
             foreach (var merchant in mapInstance.GetEntities<Merchant>().ToList())
-            {
                 try
                 {
+                    var extraScriptKeys = merchant.ScriptKeys.Except(merchant.Template.ScriptKeys);
+
                     var newMerchant = merchantFactory.Create(
                         merchant.Template.TemplateKey,
                         merchant.MapInstance,
                         merchant,
-                        merchant.ScriptKeys);
+                        merchant.Template.ScriptKeys.Concat(extraScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase));
+
+                    newMerchant.Direction = merchant.Direction;
 
                     merchant.MapInstance.RemoveObject(merchant);
                     merchantsToAdd.Add(newMerchant);
@@ -212,7 +213,6 @@ public static class ServiceProviderExtensions
                         merchant.Template.TemplateKey,
                         mapInstance.InstanceId);
                 }
-            }
 
             mapInstance.AddObjects(merchantsToAdd);
         }
@@ -234,7 +234,6 @@ public static class ServiceProviderExtensions
             var monstersToAdd = new List<Monster>();
 
             foreach (var monster in mapInstance.GetEntities<Monster>().ToList())
-            {
                 try
                 {
                     var newMonster = monsterFactory.Create(
@@ -259,7 +258,6 @@ public static class ServiceProviderExtensions
                         monster.Template.TemplateKey,
                         mapInstance.InstanceId);
                 }
-            }
 
             mapInstance.AddObjects(monstersToAdd);
         }

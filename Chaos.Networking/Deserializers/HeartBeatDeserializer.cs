@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="HeartBeatArgs" />
+/// </summary>
 public sealed record HeartBeatDeserializer : ClientPacketDeserializer<HeartBeatArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.HeartBeat;
 
+    /// <inheritdoc />
     public override HeartBeatArgs Deserialize(ref SpanReader reader)
     {
         var first = reader.ReadByte();

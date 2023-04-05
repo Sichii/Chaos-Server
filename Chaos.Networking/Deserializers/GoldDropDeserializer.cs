@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="GoldDropArgs" />
+/// </summary>
 public sealed record GoldDropDeserializer : ClientPacketDeserializer<GoldDropArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.GoldDrop;
 
+    /// <inheritdoc />
     public override GoldDropArgs Deserialize(ref SpanReader reader)
     {
         var amount = reader.ReadInt32();

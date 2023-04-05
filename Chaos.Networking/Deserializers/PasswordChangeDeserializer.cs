@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="PasswordChangeArgs" />
+/// </summary>
 public sealed record PasswordChangeDeserializer : ClientPacketDeserializer<PasswordChangeArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.PasswordChange;
 
+    /// <inheritdoc />
     public override PasswordChangeArgs Deserialize(ref SpanReader reader)
     {
         var name = reader.ReadString8();

@@ -57,8 +57,8 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         if (template.IsModifiable && (obj.Modifiers != null))
             item.Modifiers = Mapper.Map<Attributes>(obj.Modifiers);
 
-        if (template.IsDyeable)
-            item.Color = obj.Color;
+        if (obj.Color.HasValue)
+            item.Color = obj.Color.Value;
 
         // ReSharper disable once MergeIntoPattern
         if (obj.PanelSprite.HasValue && obj.DisplaySprite.HasValue)
@@ -112,17 +112,19 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
 
     public ItemSchema Map(Item obj)
     {
+        var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
         var ret = new ItemSchema
         {
             UniqueId = obj.UniqueId,
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
-            ScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase),
+            ScriptKeys = extraScriptKeys.Any() ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
-            Color = obj.Color,
+            Color = obj.Template.Color == obj.Color ? null : obj.Color,
             Count = obj.Count,
             CurrentDurability = obj.CurrentDurability,
             Slot = obj.Slot,
-            DisplayName = obj.DisplayName != obj.Template.Name ? obj.DisplayName : null,
+            DisplayName = obj.DisplayName == obj.Template.Name ? null : obj.DisplayName,
             Modifiers = obj.Template.IsModifiable && (obj.Modifiers != null) ? Mapper.Map<AttributesSchema>(obj.Modifiers) : null,
             Weight = obj.Weight == obj.Template.Weight ? null : obj.Weight,
             PanelSprite = obj.ItemSprite.PanelSprite == obj.Template.ItemSprite.PanelSprite ? null : obj.ItemSprite.PanelSprite,

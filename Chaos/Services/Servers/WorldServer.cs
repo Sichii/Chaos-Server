@@ -307,7 +307,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public async ValueTask OnClientRedirectedAsync(IWorldClient client, ClientRedirectedArgs args, IRedirect redirect)
     {
-        client.Crypto = new Crypto(args.Seed, args.Key, args.Name);
+        client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
         var aisling = await AislingSaveManager.LoadAsync(redirect.Name);
 
         client.Aisling = aisling;
@@ -380,7 +380,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             var dialogResult = (DialogResult)localArgs.DialogId;
 
             if (localArgs.Args != null)
-                dialog.MenuArgs = new ArgumentCollection(localArgs.Args);
+                dialog.MenuArgs = new ArgumentCollection(dialog.MenuArgs.Append(localArgs.Args.Last()));
 
             switch (dialogResult)
             {
@@ -838,7 +838,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             //get args if the type is not a "menuWithArgs", this type should not have any new args
             if (dialog.Type is not ChaosDialogType.MenuWithArgs && (localArgs.Args != null))
-                dialog.MenuArgs = new ArgumentCollection(localArgs.Args);
+                dialog.MenuArgs = new ArgumentCollection(dialog.MenuArgs.Append(localArgs.Args.Last()));
 
             dialog.Next(localClient.Aisling, (byte)localArgs.PursuitId);
 

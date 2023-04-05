@@ -3,11 +3,16 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
+/// <summary>
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.PursuitRequest" /> packet <br />
+/// </summary>
+/// <param name="EntityType">The type of the entity from which the dialog was generated</param>
+/// <param name="EntityId">The id of the entity from which the dialog was generated</param>
+/// <param name="PursuitId">The id of the pursuit selected by the client</param>
+/// <param name="Args">If specified, any lingering arguments that were passed into the dialog, and any input from the player in a text box</param>
 public sealed record PursuitRequestArgs(
-    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global", Justification = "Not needed / Not trusted")]
     EntityType EntityType,
-    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global", Justification = "Not needed / Not trusted")]
-    uint ObjectId,
+    uint EntityId,
     ushort PursuitId,
     params string[]? Args
 ) : IReceiveArgs;

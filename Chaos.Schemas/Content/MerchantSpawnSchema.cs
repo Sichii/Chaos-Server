@@ -4,6 +4,9 @@ using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Schemas.Content;
 
+/// <summary>
+///     Represents the serializable schema of a merchant spawn
+/// </summary>
 public sealed record MerchantSpawnSchema
 {
     /// <summary>

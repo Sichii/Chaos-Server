@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="PursuitRequestArgs" />
+/// </summary>
 public sealed record PursuitRequestDeserializer : ClientPacketDeserializer<PursuitRequestArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.PursuitRequest;
 
+    /// <inheritdoc />
     public override PursuitRequestArgs Deserialize(ref SpanReader reader)
     {
         var gameObjectType = (EntityType)reader.ReadByte();

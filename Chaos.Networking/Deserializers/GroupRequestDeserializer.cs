@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="GroupRequestArgs" />
+/// </summary>
 public sealed record GroupRequestDeserializer : ClientPacketDeserializer<GroupRequestArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.GroupRequest;
 
+    /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]
     public override GroupRequestArgs Deserialize(ref SpanReader reader)
     {

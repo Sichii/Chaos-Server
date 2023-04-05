@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="ProfileArgs" />
+/// </summary>
 public sealed record ProfileDeserializer : ClientPacketDeserializer<ProfileArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.Profile;
 
+    /// <inheritdoc />
     public override ProfileArgs Deserialize(ref SpanReader reader)
     {
         // ReSharper disable once UnusedVariable

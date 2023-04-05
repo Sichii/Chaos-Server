@@ -24,19 +24,24 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
     {
         var aisling = await JsonSerializerEx.DeserializeAsync<AislingSchema>(Path.Combine(path, "aisling.json"), JsonSerializerOptions);
         var bank = await JsonSerializerEx.DeserializeAsync<BankSchema>(Path.Combine(path, "bank.json"), JsonSerializerOptions);
-        var effects = await JsonSerializerEx.DeserializeAsync<EffectsBarSchema>(Path.Combine(path, "effects.json"), JsonSerializerOptions);
 
-        var equipment = await JsonSerializerEx.DeserializeAsync<EquipmentSchema>(
+        var effects =
+            await JsonSerializerEx.DeserializeAsync<List<EffectSchema>>(Path.Combine(path, "effects.json"), JsonSerializerOptions);
+
+        var equipment = await JsonSerializerEx.DeserializeAsync<List<ItemSchema>>(
             Path.Combine(path, "equipment.json"),
             JsonSerializerOptions);
 
-        var inventory = await JsonSerializerEx.DeserializeAsync<InventorySchema>(
+        var inventory = await JsonSerializerEx.DeserializeAsync<List<ItemSchema>>(
             Path.Combine(path, "inventory.json"),
             JsonSerializerOptions);
 
-        var legend = await JsonSerializerEx.DeserializeAsync<LegendSchema>(Path.Combine(path, "legend.json"), JsonSerializerOptions);
-        var skills = await JsonSerializerEx.DeserializeAsync<SkillBookSchema>(Path.Combine(path, "skills.json"), JsonSerializerOptions);
-        var spells = await JsonSerializerEx.DeserializeAsync<SpellBookSchema>(Path.Combine(path, "spells.json"), JsonSerializerOptions);
+        var legend = await JsonSerializerEx.DeserializeAsync<List<LegendMarkSchema>>(
+            Path.Combine(path, "legend.json"),
+            JsonSerializerOptions);
+
+        var skills = await JsonSerializerEx.DeserializeAsync<List<SkillSchema>>(Path.Combine(path, "skills.json"), JsonSerializerOptions);
+        var spells = await JsonSerializerEx.DeserializeAsync<List<SpellSchema>>(Path.Combine(path, "spells.json"), JsonSerializerOptions);
         var trackers = await JsonSerializerEx.DeserializeAsync<TrackersSchema>(Path.Combine(path, "trackers.json"), JsonSerializerOptions);
 
         if ((aisling == null)
@@ -83,12 +88,12 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
     {
         public required AislingSchema Aisling { get; init; }
         public required BankSchema Bank { get; init; }
-        public required EffectsBarSchema Effects { get; init; }
-        public required EquipmentSchema Equipment { get; init; }
-        public required InventorySchema Inventory { get; init; }
-        public required LegendSchema Legend { get; init; }
-        public required SkillBookSchema Skills { get; init; }
-        public required SpellBookSchema Spells { get; init; }
+        public required ICollection<EffectSchema> Effects { get; init; }
+        public required ICollection<ItemSchema> Equipment { get; init; }
+        public required ICollection<ItemSchema> Inventory { get; init; }
+        public required ICollection<LegendMarkSchema> Legend { get; init; }
+        public required ICollection<SkillSchema> Skills { get; init; }
+        public required ICollection<SpellSchema> Spells { get; init; }
         public required TrackersSchema Trackers { get; init; }
     }
 }

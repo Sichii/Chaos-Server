@@ -4,6 +4,8 @@ using System.Text.Json;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Utilities;
 using Chaos.Containers;
+using Chaos.Objects.Legend;
+using Chaos.Objects.Panel;
 using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.EffectScripts.Abstractions;
@@ -161,27 +163,27 @@ public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
 
         var bankSchema = await JsonSerializerEx.DeserializeAsync<BankSchema>(Path.Combine(directory, "bank.json"), JsonSerializerOptions);
 
-        var effectsSchema = await JsonSerializerEx.DeserializeAsync<EffectsBarSchema>(
+        var effectsSchema = await JsonSerializerEx.DeserializeAsync<IEnumerable<EffectSchema>>(
             Path.Combine(directory, "effects.json"),
             JsonSerializerOptions);
 
-        var equipmentSchema = await JsonSerializerEx.DeserializeAsync<EquipmentSchema>(
+        var equipmentSchema = await JsonSerializerEx.DeserializeAsync<IEnumerable<ItemSchema>>(
             Path.Combine(directory, "equipment.json"),
             JsonSerializerOptions);
 
-        var inventorySchema = await JsonSerializerEx.DeserializeAsync<InventorySchema>(
+        var inventorySchema = await JsonSerializerEx.DeserializeAsync<IEnumerable<ItemSchema>>(
             Path.Combine(directory, "inventory.json"),
             JsonSerializerOptions);
 
-        var skillsSchemas = await JsonSerializerEx.DeserializeAsync<SkillBookSchema>(
+        var skillsSchemas = await JsonSerializerEx.DeserializeAsync<IEnumerable<SkillSchema>>(
             Path.Combine(directory, "skills.json"),
             JsonSerializerOptions);
 
-        var spellsSchemas = await JsonSerializerEx.DeserializeAsync<SpellBookSchema>(
+        var spellsSchemas = await JsonSerializerEx.DeserializeAsync<IEnumerable<SpellSchema>>(
             Path.Combine(directory, "spells.json"),
             JsonSerializerOptions);
 
-        var legendSchema = await JsonSerializerEx.DeserializeAsync<LegendSchema>(
+        var legendSchema = await JsonSerializerEx.DeserializeAsync<IEnumerable<LegendMarkSchema>>(
             Path.Combine(directory, "legend.json"),
             JsonSerializerOptions);
 
@@ -192,11 +194,11 @@ public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
         var aisling = Mapper.Map<Aisling>(aislingSchema!);
         var bank = Mapper.Map<Bank>(bankSchema!);
         var effects = new EffectsBar(aisling, Mapper.MapMany<EffectSchema, IEffect>(effectsSchema!));
-        var equipment = Mapper.Map<Equipment>(equipmentSchema!);
-        var inventory = Mapper.Map<Inventory>(inventorySchema!);
-        var skillBook = Mapper.Map<SkillBook>(skillsSchemas!);
-        var spellBook = Mapper.Map<SpellBook>(spellsSchemas!);
-        var legend = Mapper.Map<Legend>(legendSchema!);
+        var equipment = new Equipment(Mapper.MapMany<Item>(equipmentSchema!));
+        var inventory = new Inventory(Mapper.MapMany<Item>(inventorySchema!));
+        var skillBook = new SkillBook(Mapper.MapMany<Skill>(skillsSchemas!));
+        var spellBook = new SpellBook(Mapper.MapMany<Spell>(spellsSchemas!));
+        var legend = new Legend(Mapper.MapMany<LegendMark>(legendSchema!));
         var trackers = Mapper.Map<Trackers>(trackersSchema!);
 
         aisling.Initialize(

@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="SpellUseArgs" />
+/// </summary>
 public sealed record SpellUseDeserializer : ClientPacketDeserializer<SpellUseArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.UseSpell;
 
+    /// <inheritdoc />
     public override SpellUseArgs Deserialize(ref SpanReader reader)
     {
         var sourceSlot = reader.ReadByte();

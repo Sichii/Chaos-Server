@@ -1,5 +1,9 @@
+#pragma warning disable CS1591
 namespace Chaos.Schemas.Aisling;
 
+/// <summary>
+///     Represents the serializable schema of an object's attributes
+/// </summary>
 public record AttributesSchema : StatsSchema
 {
     public int Ac { get; set; }

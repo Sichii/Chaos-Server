@@ -45,7 +45,7 @@
             "optionText": "Teleport"
         }
     ],
-    "templateKey": "tendo_initial",
+    "templateKey": "dialog_tester_initial",
     "text": "just a basic bitch dialog",
     "type": "menu"
 }

@@ -4,6 +4,9 @@ using Chaos.Geometry;
 
 namespace Chaos.Schemas.Content;
 
+/// <summary>
+///     Represents the serializable schema of a reactor tile
+/// </summary>
 public sealed record ReactorTileSchema
 {
     /// <summary>

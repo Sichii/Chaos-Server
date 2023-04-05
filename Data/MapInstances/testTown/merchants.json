@@ -1,8 +1,12 @@
 [
-  {
-    "direction": "Right",
-    "extraScriptKeys": [],
-    "merchantTemplateKey": "tendo",
-    "spawnPoint": "(25, 25)"
-  }
+    {
+        "direction": "Right",
+        "merchantTemplateKey": "dialog_tester",
+        "spawnPoint": "(25, 25)"
+    },
+    {
+        "direction": "right",
+        "merchantTemplateKey": "tester_2",
+        "spawnpoint": "(25, 24)"
+    }
 ]

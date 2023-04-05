@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="ClientRedirectedArgs" />
+/// </summary>
 public sealed record ClientRedirectedDeserializer : ClientPacketDeserializer<ClientRedirectedArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.ClientRedirected;
 
+    /// <inheritdoc />
     public override ClientRedirectedArgs Deserialize(ref SpanReader reader)
     {
         var seed = reader.ReadByte();

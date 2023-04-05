@@ -7,10 +7,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Deserializers;
 
+/// <summary>
+///     Deserializes a buffer into <see cref="ClickArgs" />
+/// </summary>
 public sealed record ClickDeserializer : ClientPacketDeserializer<ClickArgs>
 {
+    /// <inheritdoc />
     public override ClientOpCode ClientOpCode => ClientOpCode.Click;
 
+    /// <inheritdoc />
     public override ClickArgs Deserialize(ref SpanReader reader)
     {
         var clickType = (ClickType)reader.ReadByte();

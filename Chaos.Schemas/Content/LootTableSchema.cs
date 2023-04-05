@@ -3,6 +3,9 @@ using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Content;
 
+/// <summary>
+///     Represents the serializable schema of a loot table
+/// </summary>
 public sealed record LootTableSchema
 {
     /// <summary>

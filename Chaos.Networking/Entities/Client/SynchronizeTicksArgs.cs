@@ -2,5 +2,9 @@ using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
-[SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Global", Justification = "We don't respond to this packet atm")]
+/// <summary>
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SynchronizeTicks" /> packet <br />
+/// </summary>
+/// <param name="ServerTicks">The ticks the client thinks the server is using</param>
+/// <param name="ClientTicks">The ticks the client is using</param>
 public sealed record SynchronizeTicksArgs(uint ServerTicks, uint ClientTicks) : IReceiveArgs;

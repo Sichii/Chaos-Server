@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Chaos.Schemas.Data;
 
+/// <summary>
+///     Represents the serializable schema of a loot drop as part of a loot table
+/// </summary>
 public sealed record LootDropSchema
 {
     /// <summary>

@@ -62,11 +62,13 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
 
     public SkillSchema Map(Skill obj)
     {
+        var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
         var ret = new SkillSchema
         {
             UniqueId = obj.UniqueId,
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
-            ScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase),
+            ScriptKeys = extraScriptKeys.Any() ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
             Slot = obj.Slot
         };
