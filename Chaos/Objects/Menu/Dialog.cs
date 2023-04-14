@@ -183,6 +183,11 @@ public sealed record Dialog : IScripted<IDialogScript>
 
         source.DialogHistory.Push(this);
         Script.OnNext(source, optionIndex);
+
+        //if a different dialog was displayed, do not continue this dialog
+        if (source.ActiveDialog.Get() != this)
+            return;
+
         var nextDialogKey = optionIndex.HasValue ? Options.ElementAtOrDefault(optionIndex.Value - 1)?.DialogKey : NextDialogKey;
 
         if (!string.IsNullOrEmpty(nextDialogKey))

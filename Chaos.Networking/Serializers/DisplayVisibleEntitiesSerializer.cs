@@ -6,11 +6,16 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public sealed record DisplayVisibleObjectSerializer : ServerPacketSerializer<DisplayVisibleObjectArgs>
+/// <summary>
+///     Serializes a <see cref="DisplayVisibleEntitiesArgs" /> into a buffer
+/// </summary>
+public sealed record DisplayVisibleEntitiesSerializer : ServerPacketSerializer<DisplayVisibleEntitiesArgs>
 {
-    public override ServerOpCode ServerOpCode => ServerOpCode.DisplayVisibleObject;
+    /// <inheritdoc />
+    public override ServerOpCode ServerOpCode => ServerOpCode.DisplayVisibleEntities;
 
-    public override void Serialize(ref SpanWriter writer, DisplayVisibleObjectArgs args)
+    /// <inheritdoc />
+    public override void Serialize(ref SpanWriter writer, DisplayVisibleEntitiesArgs args)
     {
         writer.WriteUInt16((ushort)args.VisibleObjects.Count);
 

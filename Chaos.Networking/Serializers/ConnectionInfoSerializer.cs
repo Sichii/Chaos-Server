@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="ConnectionInfoArgs" /> into a buffer
+/// </summary>
 public sealed record ConnectionInfoSerializer : ServerPacketSerializer<ConnectionInfoArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.ConnectionInfo;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, ConnectionInfoArgs args)
     {
         writer.WriteByte(0);

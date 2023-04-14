@@ -3,9 +3,9 @@ using System.Net;
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
-///     Defines a configuration object to set up redirects that will be added to the login notice
+///     Defines a configuration object thats contains connection information for a server
 /// </summary>
-public interface IRedirectInfo
+public interface IConnectionInfo
 {
     /// <summary>
     ///     The ip address to redirect to

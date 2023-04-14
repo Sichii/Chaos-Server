@@ -1,4 +1,4 @@
-using Chaos;
+/*using Chaos;
 using Chaos.Data;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -9,10 +9,10 @@ using Xunit;
 
 namespace Experiments;
 
-public class AIMapGenerator
+public sealed class AIMapGenerator
 {
     [Fact]
-    public async Task AIStuff()
+    public Task AiStuff()
     {
         var configuration = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
@@ -49,6 +49,8 @@ public class AIMapGenerator
         var context = new MLContext();
         var data = context.Data.LoadFromEnumerable(modelInputs);
 
+        return Task.CompletedTask;
+
         /*
         // Define the training pipeline
         var pipeline = context.Transforms.Conversion.MapValueToKey("Label")
@@ -66,12 +68,13 @@ public class AIMapGenerator
         // Save the model to a file
         using (var fileStream = new FileStream("tile_cnn.zip", FileMode.Create, FileAccess.Write, FileShare.Write))
             mlContext.Model.Save(model, data.Schema, fileStream);
-        */
+        #1#
     }
 
-    public class ModelInput
+    public sealed class ModelInput
     {
-        public string[] Labels { get; set; }
-        public Tile[,] Tiles { get; set; }
+        public required string[] Labels { get; set; }
+        public required Tile[,] Tiles { get; set; }
     }
-}
+}*/
+

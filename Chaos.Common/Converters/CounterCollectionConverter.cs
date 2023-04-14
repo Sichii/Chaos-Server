@@ -10,7 +10,7 @@ namespace Chaos.Common.Converters;
 public sealed class CounterCollectionConverter : JsonConverter<CounterCollection>
 {
     /// <inheritdoc />
-    public override CounterCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override CounterCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var serializedDictionary = JsonSerializer.Deserialize<Dictionary<string, int>>(ref reader, options);
 

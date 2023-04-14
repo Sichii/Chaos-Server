@@ -220,6 +220,8 @@ public record StatSheet : Attributes
         ref _currentHp,
         () => (int)Math.Clamp(_currentHp + amount, 0, EffectiveMaximumHp));
 
+    public void AddLevel(int amount = 1) => Interlocked.Add(ref _level, amount);
+
     public void AddManaPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,
         () => (int)Math.Clamp(EffectiveMaximumMp * (pct + ManaPercent) / 100f, 0, EffectiveMaximumMp));
@@ -266,6 +268,8 @@ public record StatSheet : Attributes
 
     public void SetHp(int amount) => Interlocked.Exchange(ref _currentHp, amount);
 
+    public void SetLevel(int level) => Interlocked.Exchange(ref _level, level);
+
     public void SetManaPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,
         () => (int)Math.Clamp(EffectiveMaximumMp * pct / 100f, 0, EffectiveMaximumMp));
@@ -303,6 +307,8 @@ public record StatSheet : Attributes
         if (Interlocked.Add(ref _currentHp, -amount) < 0)
             _currentHp = 0;
     }
+
+    public void SubtractLevel(int amount) => Interlocked.Add(ref _level, -amount);
 
     public void SubtractManaPct(int pct) => InterlockedEx.SetValue(
         ref _currentMp,

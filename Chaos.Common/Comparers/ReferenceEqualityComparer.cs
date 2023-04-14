@@ -1,7 +1,7 @@
 namespace Chaos.Common.Comparers;
 
 /// <inheritdoc />
-public class ReferenceEqualityComparer : EqualityComparer<object>
+public sealed class ReferenceEqualityComparer : EqualityComparer<object>
 {
     /// <inheritdoc />
     public override bool Equals(object? x, object? y) => ReferenceEquals(x, y);

@@ -6,15 +6,20 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="SelfProfileArgs" /> into a buffer
+/// </summary>
 public sealed record SelfProfileSerializer : ServerPacketSerializer<SelfProfileArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.SelfProfile;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, SelfProfileArgs args)
     {
         writer.WriteByte((byte)args.Nation);
         writer.WriteString8(args.GuildTitle ?? string.Empty);
-        writer.WriteString8(args.Titles.FirstOrDefault() ?? string.Empty);
+        writer.WriteString8(args.Title ?? string.Empty);
 
         var str = args.GroupString;
 

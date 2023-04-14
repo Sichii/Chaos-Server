@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="WorldMapArgs" /> into a buffer
+/// </summary>
 public sealed record WorldMapSerializer : ServerPacketSerializer<WorldMapArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.WorldMap;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, WorldMapArgs args)
     {
         writer.WriteString8(args.FieldName);

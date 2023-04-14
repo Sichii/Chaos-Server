@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="DoorArgs" /> into a buffer
+/// </summary>
 public sealed record DoorSerializer : ServerPacketSerializer<DoorArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Door;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, DoorArgs args)
     {
         writer.WriteByte((byte)args.Doors.Count);

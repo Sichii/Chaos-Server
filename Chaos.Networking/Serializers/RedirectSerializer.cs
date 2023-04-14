@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="RedirectArgs" /> into a buffer
+/// </summary>
 public sealed record RedirectSerializer : ServerPacketSerializer<RedirectArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Redirect;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, RedirectArgs args)
     {
         writer.WriteBytes(args.Redirect.EndPoint.Address.GetAddressBytes().Reverse().ToArray());

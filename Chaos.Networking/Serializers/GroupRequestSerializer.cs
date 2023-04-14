@@ -5,11 +5,16 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
-public sealed record GroupRequestSerializer : ServerPacketSerializer<GroupInviteArgs>
+/// <summary>
+///     Serializes a <see cref="GroupRequestArgs" /> into a buffer
+/// </summary>
+public sealed record GroupRequestSerializer : ServerPacketSerializer<GroupRequestArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.GroupRequest;
 
-    public override void Serialize(ref SpanWriter writer, GroupInviteArgs args)
+    /// <inheritdoc />
+    public override void Serialize(ref SpanWriter writer, GroupRequestArgs args)
     {
         writer.WriteByte((byte)args.GroupRequestType);
         writer.WriteString8(args.SourceName);

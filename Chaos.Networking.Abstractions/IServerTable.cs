@@ -19,5 +19,5 @@ public interface IServerTable
     /// <summary>
     ///     Contains information about all available login servers, keyed by their id.
     /// </summary>
-    Dictionary<byte, IServerInfo> Servers { get; }
+    Dictionary<byte, ILoginServerInfo> Servers { get; }
 }

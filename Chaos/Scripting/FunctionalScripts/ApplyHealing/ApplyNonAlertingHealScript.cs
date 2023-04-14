@@ -30,7 +30,7 @@ public class ApplyNonAlertingHealScript : ScriptBase, IApplyHealScript
             script,
             healing);
 
-        if (healing >= 0)
+        if (healing <= 0)
             return;
 
         switch (target)

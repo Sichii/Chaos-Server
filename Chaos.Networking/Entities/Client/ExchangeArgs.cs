@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Exchange" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Exchange" /> packet
 /// </summary>
 /// <param name="ExchangeRequestType">The type of action being requested</param>
 /// <param name="OtherPlayerId">The id of the player on the other side of the exchange</param>

@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="AnimationArgs" /> into a buffer
+/// </summary>
 public sealed record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Animation;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, AnimationArgs args)
     {
         if (args.TargetPoint != null)

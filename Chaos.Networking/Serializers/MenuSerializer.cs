@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="MenuArgs" /> into a buffer
+/// </summary>
 public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Menu;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, MenuArgs args)
     {
         writer.WriteByte((byte)args.MenuType);

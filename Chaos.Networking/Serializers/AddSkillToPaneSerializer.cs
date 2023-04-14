@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="AddSkillToPaneArgs" /> into a buffer
+/// </summary>
 public sealed record AddSkillToPaneSerializer : ServerPacketSerializer<AddSkillToPaneArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.AddSkillToPane;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, AddSkillToPaneArgs args)
     {
         writer.WriteByte(args.Skill.Slot);

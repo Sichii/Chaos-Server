@@ -8,7 +8,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -16,7 +15,6 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
                                          IMapperProfile<Spell, SpellInfo>,
                                          IMapperProfile<SpellTemplate, SpellTemplateSchema>
 {
-    private readonly ILogger<SpellMapperProfile> Logger;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
@@ -24,13 +22,11 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
     public SpellMapperProfile(
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
-        ILogger<SpellMapperProfile> logger,
         ITypeMapper mapper
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Logger = logger;
         Mapper = mapper;
     }
 

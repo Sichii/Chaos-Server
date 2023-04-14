@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.UseSpell" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.UseSpell" /> packet
 /// </summary>
 /// <param name="SourceSlot">The slot of the spell the client is trying to use</param>
 /// <param name="ArgsData">

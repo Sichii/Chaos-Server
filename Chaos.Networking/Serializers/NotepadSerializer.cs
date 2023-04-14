@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="NotepadArgs" /> into a buffer
+/// </summary>
 public sealed record NotepadSerializer : ServerPacketSerializer<NotepadArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Notepad;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, NotepadArgs args)
     {
         writer.WriteByte(args.Slot);

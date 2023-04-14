@@ -15,11 +15,7 @@ public class SetLevelCommand : ICommand<Aisling>
         if (!args.TryGetNext(out int level))
             return default;
 
-        source.UserStatSheet.Assert(
-            statref =>
-            {
-                statref.Level = level;
-            });
+        source.UserStatSheet.SetLevel(level);
 
         source.Client.SendAttributes(StatUpdateType.Full);
 

@@ -7,10 +7,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="DisplayAislingArgs" /> into a buffer
+/// </summary>
 public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAislingArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.DisplayAisling;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, DisplayAislingArgs args)
     {
         writer.WritePoint16((ushort)args.X, (ushort)args.Y);

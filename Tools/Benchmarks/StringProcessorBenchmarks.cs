@@ -24,9 +24,6 @@ public class StringProcessorBenchmarks
             LONG_STRING_FORMAT,
             1,
             2,
-            4,
-            1,
-            2,
             4);
 
         if (!str.Equals(LONG_STRING_VALUE))

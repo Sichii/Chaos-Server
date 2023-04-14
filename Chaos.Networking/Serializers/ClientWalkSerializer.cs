@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="ConfirmClientWalkArgs" /> into a buffer
+/// </summary>
 public sealed record ConfirmClientWalkSerializer : ServerPacketSerializer<ConfirmClientWalkArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.ConfirmClientWalk;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, ConfirmClientWalkArgs args)
     {
         writer.WriteBytes((byte)args.Direction);

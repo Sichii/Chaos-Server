@@ -27,6 +27,7 @@ public sealed class TemplatedReactorTile : ReactorTile
             point,
             template.ShouldBlockPathfinding,
             scriptProvider,
+            // ReSharper disable once RedundantAssignment
             template.ScriptKeys.Union(extraScriptKeys ??= Array.Empty<string>()).ToList(),
             template.ScriptVars,
             owner) =>

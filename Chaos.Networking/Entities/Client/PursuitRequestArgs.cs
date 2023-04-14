@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.PursuitRequest" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.PursuitRequest" /> packet
 /// </summary>
 /// <param name="EntityType">The type of the entity from which the dialog was generated</param>
 /// <param name="EntityId">The id of the entity from which the dialog was generated</param>

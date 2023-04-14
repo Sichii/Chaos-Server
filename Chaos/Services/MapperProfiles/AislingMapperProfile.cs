@@ -26,7 +26,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
 {
     private readonly IExchangeFactory ExchangeFactory;
     private readonly ICloningService<Item> ItemCloner;
-    private readonly ILogger<AislingMapperProfile> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
@@ -37,13 +36,11 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         ITypeMapper mapper,
         IExchangeFactory exchangeFactory,
         ILoggerFactory loggerFactory,
-        ILogger<AislingMapperProfile> logger,
         ICloningService<Item> itemCloner,
         IScriptProvider scriptProvider
     )
     {
         Mapper = mapper;
-        Logger = logger;
         ItemCloner = itemCloner;
         ScriptProvider = scriptProvider;
         ExchangeFactory = exchangeFactory;
@@ -227,10 +224,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 BodySprite = obj.BodySprite + pantsColor,
                 BootsColor = boots?.Color ?? DisplayColor.Default,
                 BootsSprite = (byte)(boots?.ItemSprite.DisplaySprite ?? 0),
-                CreatureType = obj.Type,
                 Direction = obj.Direction,
                 FaceSprite = (byte)obj.FaceSprite,
-                EntityType = EntityType.Aisling,
                 Gender = obj.Gender,
                 GroupBoxText = null,
                 HeadColor = headColor,
@@ -239,7 +234,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 Id = obj.Id,
                 IsDead = obj.IsDead,
                 IsHidden = false, //TODO: invisibility
-                IsMaster = obj.UserStatSheet.Master,
                 LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
@@ -295,7 +289,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         ProfileText = obj.ProfileText,
         SocialStatus = obj.SocialStatus,
         SpouseName = null, //TODO: when we implement marraige i guess
-        Titles = obj.Titles.ToList()
+        Title = obj.Titles.FirstOrDefault()
     };
 
     ProfileArgs IMapperProfile<Aisling, ProfileArgs>.Map(Aisling obj) => new()
@@ -313,6 +307,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Portrait = obj.Portrait,
         ProfileText = obj.ProfileText,
         SocialStatus = obj.SocialStatus,
-        Titles = obj.Titles.ToList()
+        Title = obj.Titles.FirstOrDefault()
     };
 }

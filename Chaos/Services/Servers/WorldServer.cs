@@ -352,6 +352,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (localClient.Aisling.ActiveObject.TryGet<WorldMap>() != null)
                 return default;
 
+            //TODO: should i refresh the client if the points don't match up? seems like it might get obnoxious
+
             localClient.Aisling.Walk(localArgs.Direction);
 
             return default;
@@ -485,14 +487,14 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 var redirect = new Redirect(
                     ClientId.NextId,
-                    Options.LoginRedirect,
+                    Options.LoginConnection,
                     ServerType.Login,
                     localClient.Crypto.Key,
                     localClient.Crypto.Seed);
 
                 RedirectManager.Add(redirect);
 
-                Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.LoginRedirect);
+                Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.LoginConnection);
 
                 localClient.SendRedirect(redirect);
             }

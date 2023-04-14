@@ -57,6 +57,7 @@
     <ItemGroup>
         <PackageReference Include="NLog.Targets.Seq"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
+        <PackageReference Include="System.Configuration.ConfigurationManager"/>
         <PackageReference Include="System.Linq.Async"/>
     </ItemGroup>
     <ItemGroup>

@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SwapSlot" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SwapSlot" /> packet
 /// </summary>
 /// <param name="PanelType">The panel of which objects are being swapped on</param>
 /// <param name="Slot1">The source slot</param>

@@ -9,9 +9,6 @@ namespace Chaos.Services.MapperProfiles;
 public sealed class LegendMapperProfile : IMapperProfile<LegendMark, LegendMarkSchema>,
                                           IMapperProfile<LegendMark, LegendMarkInfo>
 {
-    private readonly ITypeMapper Mapper;
-    public LegendMapperProfile(ITypeMapper mapper) => Mapper = mapper;
-
     public LegendMark Map(LegendMarkSchema obj) => new(
         obj.Text,
         obj.Key,

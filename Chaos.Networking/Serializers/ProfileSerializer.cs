@@ -7,10 +7,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="ProfileArgs" /> into a buffer
+/// </summary>
 public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Profile;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, ProfileArgs args)
     {
         writer.WriteUInt32(args.Id);
@@ -26,7 +31,7 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
         writer.WriteByte((byte)args.SocialStatus);
         writer.WriteString8(args.Name);
         writer.WriteByte((byte)args.Nation);
-        writer.WriteString8(args.Titles.FirstOrDefault() ?? string.Empty);
+        writer.WriteString8(args.Title ?? string.Empty);
         writer.WriteBoolean(args.GroupOpen);
         writer.WriteString8(args.GuildTitle ?? string.Empty);
         writer.WriteString8(args.AdvClass != AdvClass.None ? args.AdvClass.ToString() : args.BaseClass.ToString());

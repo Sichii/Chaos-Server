@@ -1,5 +1,4 @@
 using Chaos.Common.Abstractions;
-using Chaos.Common.Definitions;
 using Chaos.Data;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
@@ -10,7 +9,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -20,7 +18,6 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
                                         IMapperProfile<ItemRequirement, ItemRequirementSchema>,
                                         IMapperProfile<ItemDetails, ItemInfo>
 {
-    private readonly ILogger<ItemMapperProfile> Logger;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
@@ -28,13 +25,11 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
     public ItemMapperProfile(
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
-        ILogger<ItemMapperProfile> logger,
         ITypeMapper mapper
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Logger = logger;
         Mapper = mapper;
     }
 
@@ -85,7 +80,6 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
                 ? throw new InvalidOperationException($"Item \"{item.DisplayName}\" has negative count of {item.Count}")
                 : Convert.ToUInt32(item.Count),
             CurrentDurability = item.CurrentDurability ?? 0,
-            EntityType = EntityType.Item,
             MaxDurability = item.Template.MaxDurability ?? 0,
             Name = item.DisplayName,
             Slot = item.Slot,
@@ -102,7 +96,6 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             ? throw new InvalidOperationException($"Item \"{obj.DisplayName}\" has negative count of {obj.Count}")
             : Convert.ToUInt32(obj.Count),
         CurrentDurability = obj.CurrentDurability ?? 0,
-        EntityType = EntityType.Item,
         MaxDurability = obj.Template.MaxDurability ?? 0,
         Name = obj.DisplayName,
         Slot = obj.Slot,

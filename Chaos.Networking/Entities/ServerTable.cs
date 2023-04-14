@@ -6,13 +6,21 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking.Entities;
 
+/// <inheritdoc />
 public sealed class ServerTable : IServerTable
 {
+    /// <inheritdoc />
     public uint CheckSum { get; }
+    /// <inheritdoc />
     public byte[] Data { get; }
-    public Dictionary<byte, IServerInfo> Servers { get; }
+    /// <inheritdoc />
+    public Dictionary<byte, ILoginServerInfo> Servers { get; }
 
-    public ServerTable(ICollection<IServerInfo> servers)
+    /// <summary>
+    ///     Creates a new <see cref="ServerTable" /> instance
+    /// </summary>
+    /// <param name="servers">A collection of server information used to create the server table</param>
+    public ServerTable(ICollection<ILoginServerInfo> servers)
     {
         Servers = servers.ToDictionary(info => info.Id);
 

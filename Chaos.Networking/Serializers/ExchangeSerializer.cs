@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="ExchangeArgs" /> into a buffer
+/// </summary>
 public sealed record ExchangeSerializer : ServerPacketSerializer<ExchangeArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Exchange;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, ExchangeArgs args)
     {
         writer.WriteByte((byte)args.ExchangeResponseType);

@@ -3,7 +3,7 @@ namespace Chaos.Networking.Abstractions;
 /// <summary>
 ///     Defines a configuration object that is used to describe a login server
 /// </summary>
-public interface IServerInfo : IRedirectInfo
+public interface ILoginServerInfo : IConnectionInfo
 {
     /// <summary>
     ///     A brief description of the server. Must be less than 18 characters.

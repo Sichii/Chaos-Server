@@ -306,7 +306,7 @@ public enum ServerOpCode : byte
     ///     OpCode used to send a client all non-aisling objects in it's viewport<br />
     ///     Hex value: 0x07
     /// </summary>
-    DisplayVisibleObject = 7,
+    DisplayVisibleEntities = 7,
     /// <summary>
     ///     OpCode used to send a client it's attributes<br />
     ///     Hex value: 0x08
@@ -531,7 +531,7 @@ public enum ServerOpCode : byte
     ///     OpCode used to send a client the EULA / login notice<br />
     ///     Hex value: 0x60
     /// </summary>
-    LoginNotification = 96,
+    LoginNotice = 96,
     /// <summary>
     ///     OpCode used to send a client a group request<br />
     ///     Hex value: 0x63

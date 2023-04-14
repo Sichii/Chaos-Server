@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="AttributesArgs" /> into a buffer
+/// </summary>
 public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Attributes;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, AttributesArgs args)
     {
         var updateType = args.StatUpdateType;

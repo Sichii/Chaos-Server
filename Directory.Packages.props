@@ -19,6 +19,7 @@
         <PackageVersion Include="JetBrains.Annotations" Version="2022.3.1"/>
         <PackageVersion Include="RoslynPad.Editor.Avalonia" Version="4.4.0"/>
         <PackageVersion Include="RoslynPad.Editor.Windows" Version="4.4.0"/>
+        <PackageVersion Include="System.Configuration.ConfigurationManager" Version="4.4.0"/>
         <PackageVersion Include="System.Linq.Async" Version="6.0.1"/>
         <PackageVersion Include="zlib.net-mutliplatform" Version="1.0.6"/>
         <PackageVersion Include="BenchmarkDotNet" Version="0.13.5"/>

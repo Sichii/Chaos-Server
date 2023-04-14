@@ -5,10 +5,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="MapInfoArgs" /> into a buffer
+/// </summary>
 public sealed record MapInfoSerializer : ServerPacketSerializer<MapInfoArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.MapInfo;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, MapInfoArgs args)
     {
         writer.WriteInt16(args.MapId);

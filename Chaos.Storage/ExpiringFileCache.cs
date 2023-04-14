@@ -193,8 +193,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         if (string.IsNullOrEmpty(loadPath))
             throw Options.SearchType switch
             {
-                SearchType.Files       => new FileNotFoundException($"Path lookup for key {key} failed for type {typeof(T).Name}"),
-                SearchType.Directories => new DirectoryNotFoundException($"Path lookup for key {key} failed for type {typeof(T).Name}"),
+                SearchType.Files       => new FileNotFoundException($"Path lookup for key \"{key}\" failed for type {typeof(T).Name}"),
+                SearchType.Directories => new DirectoryNotFoundException($"Path lookup for key \"{key}\" failed for type {typeof(T).Name}"),
                 _                      => new ArgumentOutOfRangeException()
             };
 
@@ -246,7 +246,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         Paths = LoadPaths();
 
         foreach (var key in LocalLookup.Keys)
-        {
             try
             {
                 if (!Cache.TryGetValue(key, out _))
@@ -263,7 +262,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
                     key);
                 //otherwise ignored
             }
-        }
 
         return Task.CompletedTask;
     }

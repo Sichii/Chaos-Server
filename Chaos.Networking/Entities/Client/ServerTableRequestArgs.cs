@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ServerTableRequest" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ServerTableRequest" /> packet
 /// </summary>
 /// <param name="ServerTableRequestType">The type of request</param>
 /// <param name="ServerId">

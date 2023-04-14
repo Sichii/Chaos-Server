@@ -497,6 +497,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         IPoint point,
         byte slot,
         [MaybeNullWhen(false)]
+        // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
         out GroundItem[] groundItems,
         int? amount = null
     )

@@ -75,15 +75,15 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
 
     public void SendLoginNotice(bool full, INotice notice)
     {
-        var args = new NoticeRequestArgs
+        var args = new LoginNoticeArgs
         {
             IsFullResponse = full
         };
 
         if (full)
-            args.Notification = notice.Data;
+            args.Data = notice.Data;
         else
-            args.NotificationCheckSum = notice.CheckSum;
+            args.CheckSum = notice.CheckSum;
 
         Send(args);
     }

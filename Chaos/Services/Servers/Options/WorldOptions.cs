@@ -22,7 +22,7 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;
-    public required RedirectInfo LoginRedirect { get; init; }
+    public required ConnectionInfo LoginConnection { get; init; }
     /// <inheritdoc />
     public required int MaxActionsPerSecond { get; init; }
     /// <inheritdoc />
@@ -61,10 +61,4 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public required int TradeRange { get; init; }
     /// <inheritdoc />
     public required int UpdatesPerSecond { get; init; }
-
-    public static void PostConfigure(WorldOptions options)
-    {
-        Instance = options;
-        options.LoginRedirect.PopulateAddress();
-    }
 }

@@ -24,6 +24,7 @@ namespace Chaos.Services.Storage;
 public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
 {
     private readonly PeriodicTimer BackupTimer;
+    private readonly ICloningService<Item> ItemCloningService;
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly SynchronizedHashSet<string> LockedFiles;
     private readonly ILogger<UserSaveManager> Logger;
@@ -34,12 +35,14 @@ public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
         ITypeMapper mapper,
         IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptions<UserSaveManagerOptions> options,
-        ILogger<UserSaveManager> logger
+        ILogger<UserSaveManager> logger,
+        ICloningService<Item> itemCloningService
     )
     {
         Options = options.Value;
         Mapper = mapper;
         Logger = logger;
+        ItemCloningService = itemCloningService;
         JsonSerializerOptions = jsonSerializerOptions.Value;
         BackupTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.BackupIntervalMins));
         LockedFiles = new SynchronizedHashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
@@ -54,7 +57,8 @@ public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount / 4 };
+        var dop = Math.Max(1, Environment.ProcessorCount / 4);
+        var options = new ParallelOptions { MaxDegreeOfParallelism = dop };
 
         while (!stoppingToken.IsCancellationRequested)
             try
@@ -195,7 +199,7 @@ public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
         var bank = Mapper.Map<Bank>(bankSchema!);
         var effects = new EffectsBar(aisling, Mapper.MapMany<EffectSchema, IEffect>(effectsSchema!));
         var equipment = new Equipment(Mapper.MapMany<Item>(equipmentSchema!));
-        var inventory = new Inventory(Mapper.MapMany<Item>(inventorySchema!));
+        var inventory = new Inventory(ItemCloningService, Mapper.MapMany<Item>(inventorySchema!));
         var skillBook = new SkillBook(Mapper.MapMany<Skill>(skillsSchemas!));
         var spellBook = new SpellBook(Mapper.MapMany<Spell>(spellsSchemas!));
         var legend = new Legend(Mapper.MapMany<LegendMark>(legendSchema!));

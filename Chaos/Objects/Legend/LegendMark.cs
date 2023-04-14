@@ -27,7 +27,7 @@ public sealed record LegendMark(
         return string.Equals(Text, other.Text, StringComparison.OrdinalIgnoreCase);
     }
 
-    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Text);
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Key);
 
     public override string ToString() => Count > 1 ? $@"{Text} ({Count}) - {Added.ToString()}" : $@"{Text} - {Added.ToString()}";
 }

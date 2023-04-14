@@ -142,8 +142,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         {
             SourceId = id,
             BodyAnimation = bodyAnimation,
-            Sound = sound ?? byte.MaxValue,
-            Speed = speed
+            Sound = sound,
+            AnimationSpeed = speed
         };
 
         Send(args);
@@ -360,7 +360,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendGroupRequest(GroupRequestType groupRequestType, string fromName)
     {
-        var args = new GroupInviteArgs
+        var args = new GroupRequestArgs
         {
             GroupRequestType = groupRequestType,
             SourceName = fromName
@@ -375,7 +375,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         {
             SourceId = creature.Id,
             HealthPercent = (byte)Math.Clamp(creature.StatSheet.HealthPercent, 0, 100),
-            Sound = sound ?? byte.MaxValue
+            Sound = sound
         };
 
         Send(args);
@@ -652,8 +652,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     {
         foreach (var chunk in objects.OrderBy(o => o.Creation).Chunk(5000))
         {
-            var args = new DisplayVisibleObjectArgs();
-            var visibleArgs = new List<VisibleObjectInfo>();
+            var args = new DisplayVisibleEntitiesArgs();
+            var visibleArgs = new List<VisibleEntityInfo>();
             args.VisibleObjects = visibleArgs;
 
             foreach (var obj in chunk)

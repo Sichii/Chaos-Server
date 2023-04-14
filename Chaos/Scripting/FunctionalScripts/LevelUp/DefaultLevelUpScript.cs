@@ -23,7 +23,7 @@ public class DefaultLevelUpScript : ScriptBase, ILevelUpScript
     /// <inheritdoc />
     public virtual void LevelUp(Aisling aisling)
     {
-        aisling.UserStatSheet.IncrementLevel();
+        aisling.UserStatSheet.AddLevel();
         aisling.UserStatSheet.GivePoints(2);
 
         if (aisling.UserStatSheet.Level < WorldOptions.Instance.MaxLevel)

@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="DialogArgs" /> into a buffer
+/// </summary>
 public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Dialog;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, DialogArgs args)
     {
         writer.WriteByte((byte)args.DialogType);

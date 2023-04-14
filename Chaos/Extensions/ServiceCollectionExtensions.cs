@@ -1,4 +1,5 @@
 using Chaos.Clients.Abstractions;
+using Chaos.Configuration;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions.Common;
@@ -39,7 +40,6 @@ using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Extensions;
 
@@ -64,9 +64,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();
         services.AddSingleton<IClientRegistry<ILobbyClient>, ClientRegistry<ILobbyClient>>();
 
-        services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key)
-                .PostConfigure(LobbyOptions.PostConfigure)
-                .Validate<ILogger<LobbyOptions>>(LobbyOptions.Validate);
+        services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key);
+        services.ConfigureOptions<LobbyOptionsConfigurer>();
 
         services.AddSingleton<ILobbyServer<ILobbyClient>, IHostedService, LobbyServer>();
     }
@@ -76,8 +75,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IClientFactory<ILoginClient>, LoginClientFactory>();
         services.AddSingleton<IClientRegistry<ILoginClient>, ClientRegistry<ILoginClient>>();
 
-        services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key)
-                .PostConfigure<ILogger<LoginOptions>>(LoginOptions.PostConfigure);
+        services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key);
+        services.ConfigureOptions<LoginOptionsConfigurer>();
 
         services.AddSingleton<ILoginServer<ILoginClient>, IHostedService, LoginServer>();
     }
@@ -172,8 +171,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
         services.AddSingleton<IClientRegistry<IWorldClient>, ClientRegistry<IWorldClient>>();
 
-        services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key)
-                .PostConfigure(WorldOptions.PostConfigure);
+        services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key);
+        services.ConfigureOptions<WorldOptionsConfigurer>();
 
         services.AddSingleton<IWorldServer<IWorldClient>, IHostedService, WorldServer>();
     }

@@ -6,10 +6,6 @@ namespace Chaos.Data;
 
 public sealed record UserStatSheet : StatSheet
 {
-    public delegate void ReferentialAction(UserStatSheetRef statSheetRef);
-
-    public delegate T ReferentialFunc<out T>(UserStatSheetRef statSheetRef);
-
     private AdvClass _advClass;
     private BaseClass _baseClass;
     // ReSharper disable once UnassignedField.Global
@@ -99,7 +95,7 @@ public sealed record UserStatSheet : StatSheet
         _level = 1,
         _master = false,
         _baseClass = BaseClass.Peasant,
-        _advClass = AdvClass.None,
+        _advClass = AdvClass.None
     };
 
     public long AddTna(long amount)
@@ -160,29 +156,7 @@ public sealed record UserStatSheet : StatSheet
 
     public int AddWeight(int amount) => Interlocked.Add(ref _currentWeight, amount);
 
-    public void Assert(ReferentialAction action) => action(
-        new UserStatSheetRef(
-            ref _currentWeight,
-            ref _totalExp,
-            ref _totalAbility,
-            ref _toNextLevel,
-            ref _toNextAbility,
-            ref _unspentPoints,
-            ref _level));
-
-    public T Assert<T>(ReferentialFunc<T> func) => func(
-        new UserStatSheetRef(
-            ref _currentWeight,
-            ref _totalExp,
-            ref _totalAbility,
-            ref _toNextLevel,
-            ref _toNextAbility,
-            ref _unspentPoints,
-            ref _level));
-
     public int GivePoints(int amount) => Interlocked.Add(ref _unspentPoints, amount);
-
-    public void IncrementLevel() => Interlocked.Increment(ref _level);
 
     public bool IncrementStat(Stat stat)
     {

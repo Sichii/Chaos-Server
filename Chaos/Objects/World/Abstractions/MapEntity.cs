@@ -6,7 +6,7 @@ namespace Chaos.Objects.World.Abstractions;
 
 public abstract class MapEntity : WorldEntity, ILocation
 {
-    public MapInstance MapInstance { get; set; } = null!;
+    public MapInstance MapInstance { get; set; }
     public int X { get; private set; }
     public int Y { get; private set; }
 

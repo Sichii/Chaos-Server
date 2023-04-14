@@ -1,15 +1,17 @@
 using System.Net;
-using System.Net.Sockets;
 using Chaos.Networking.Abstractions;
 
 namespace Chaos.Networking.Options;
 
-public record RedirectInfo : IRedirectInfo
+/// <summary>
+///     Represents the information needed to connect to a server
+/// </summary>
+public record ConnectionInfo : IConnectionInfo
 {
+    /// <inheritdoc />
     public IPAddress Address { get; set; } = null!;
+    /// <inheritdoc />
     public virtual string HostName { get; set; } = null!;
+    /// <inheritdoc />
     public int Port { get; set; }
-
-    public void PopulateAddress() =>
-        Address = Dns.GetHostAddresses(HostName).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)!;
 }

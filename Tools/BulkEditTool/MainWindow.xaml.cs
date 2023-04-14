@@ -24,7 +24,7 @@ public partial class MainWindow : Window
     private readonly ObservableCollection<DocumentViewModel> DocViewModel;
     private readonly RoslynHost RoslynHost;
     private RoslynCodeEditor? Editor;
-    public string ScriptOutput => DocViewModel?.FirstOrDefault()?.Result ?? string.Empty;
+    public string ScriptOutput => DocViewModel.FirstOrDefault()?.Result ?? string.Empty;
 
     public MainWindow()
     {

@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddItemToPane" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddItemToPane" /> packet
 /// </summary>
 public sealed record AddItemToPaneArgs : ISendArgs
 {

@@ -4,7 +4,7 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.MetafileRequest" /> packet <br />
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.MetafileRequest" /> packet
 /// </summary>
 /// <param name="MetafileRequestType">The type of request the client is making</param>
 /// <param name="Name">

@@ -6,10 +6,15 @@ using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Serializers;
 
+/// <summary>
+///     Serializes a <see cref="MetafileArgs" /> into a buffer
+/// </summary>
 public sealed record MetafileSerializer : ServerPacketSerializer<MetafileArgs>
 {
+    /// <inheritdoc />
     public override ServerOpCode ServerOpCode => ServerOpCode.Metafile;
 
+    /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, MetafileArgs args)
     {
         writer.WriteByte((byte)args.MetafileRequestType);

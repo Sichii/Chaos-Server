@@ -5,7 +5,6 @@
         "summary": "I like apples, go get me some",
         "rewards": "literally nothing",
         "prerequisiteEventId": "",
-        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
         "qualifyingCircles": ["one", "two", "three"],
         "id": "Apples1",
         "result": "i ate some apples"
@@ -15,7 +14,6 @@
         "summary": "I like oranges too, go get me some",
         "rewards": "literally nothing still",
         "prerequisiteEventId": "Apples1",
-        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
         "qualifyingCircles": ["three", "four", "five"],
         "id": "Oranges1",
         "result": "i ate some apples and oranges"
@@ -24,7 +22,6 @@
         "title": "I like carrots",
         "summary": "I like carrots, go get me some",
         "rewards": "literally nothing still",
-        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
         "qualifyingCircles": ["four", "five", "six", "seven"],
         "id": "Carrots1",
         "result": "i ate some carrots"
@@ -33,7 +30,6 @@
         "title": "I like melons",
         "summary": "I like melons, go get me some",
         "rewards": "literally nothing still",
-        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
         "qualifyingCircles": ["one", "two", "three", "four"],
         "id": "Melons1",
         "result": "i ate some melons"
@@ -43,7 +39,6 @@
         "title": "I like pie",
         "summary": "I like pie, go get me some",
         "rewards": "literally nothing still",
-        "qualifyingClasses": ["warrior", "priest", "wizard", "monk", "rogue"],
         "qualifyingCircles": ["five", "six", "seven"],
         "id": "Pie1",
         "result": "i ate some pie"

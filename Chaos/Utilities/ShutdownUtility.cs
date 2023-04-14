@@ -34,8 +34,8 @@ public static class ShutdownUtility
             clientRegistry,
             messageFormat,
             mins,
-            CancellationTokenSource.Token,
-            serverCancellationTokenSource);
+            serverCancellationTokenSource,
+            CancellationTokenSource.Token);
     }
 
     private static void SendPeriodicMessages(IEnumerable<IWorldClient> clients, string message)
@@ -48,8 +48,8 @@ public static class ShutdownUtility
         IClientRegistry<IWorldClient> clients,
         string messageFormat,
         int mins,
-        CancellationToken cancellationToken,
-        CancellationTokenSource serverCancellationTokenSource
+        CancellationTokenSource serverCancellationTokenSource,
+        CancellationToken cancellationToken
     )
     {
         var deltaTime = new DeltaTime();

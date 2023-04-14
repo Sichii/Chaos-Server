@@ -54,7 +54,6 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         Logger.LogTrace("{@Player} has gained {ExpAmount} experience", aisling, amount);
 
         while (amount > 0)
-        {
             if (aisling.UserStatSheet.Level >= WorldOptions.Instance.MaxLevel)
             {
                 aisling.UserStatSheet.AddTotalExp(amount);
@@ -70,7 +69,6 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
                 if (aisling.UserStatSheet.ToNextLevel <= 0)
                     LevelUpScript.LevelUp(aisling);
             }
-        }
 
         aisling.Client.SendAttributes(StatUpdateType.ExpGold);
 

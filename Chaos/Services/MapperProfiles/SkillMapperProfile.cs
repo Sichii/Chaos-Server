@@ -8,7 +8,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -16,7 +15,6 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
                                          IMapperProfile<Skill, SkillInfo>,
                                          IMapperProfile<SkillTemplate, SkillTemplateSchema>
 {
-    private readonly ILogger<SkillMapperProfile> Logger;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
@@ -24,13 +22,11 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
     public SkillMapperProfile(
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
-        ILogger<SkillMapperProfile> logger,
         ITypeMapper mapper
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Logger = logger;
         Mapper = mapper;
     }
 
