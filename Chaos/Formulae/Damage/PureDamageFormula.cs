@@ -14,5 +14,5 @@ public class PureDamageFormula : IDamageFormula
         IScript script,
         int damage,
         Element? elementOverride = null
-    ) => Convert.ToInt32(damage);
+    ) => damage;
 }

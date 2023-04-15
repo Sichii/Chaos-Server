@@ -95,4 +95,11 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
             component.OnItemDroppedOn(source, item);
     }
+
+    /// <inheritdoc />
+    public virtual void Update(TimeSpan delta)
+    {
+        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
+            component.Update(delta);
+    }
 }

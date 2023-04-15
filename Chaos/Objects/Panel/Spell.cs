@@ -43,9 +43,6 @@ public sealed class Spell : PanelObjectBase, IScripted<ISpellScript>
 
     public void Use(SpellContext context)
     {
-        if (!Script.CanUse(context))
-            return;
-
         Script.OnUse(context);
         BeginCooldown(context.Source);
     }

@@ -1,9 +1,10 @@
 using Chaos.Objects.Panel;
 using Chaos.Objects.World.Abstractions;
+using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripting.Abstractions;
 
-public interface ICreatureScript : IScript
+public interface ICreatureScript : IScript, IDeltaUpdatable
 {
     bool CanMove();
 

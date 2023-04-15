@@ -148,7 +148,7 @@ public sealed class StockService : BackgroundService, IStockService
                 stock.Select(x => new KeyValuePair<string, ItemStock>(x.ItemTemplateKey, new ItemStock(x.MaxStock))),
                 StringComparer.OrdinalIgnoreCase);
 
-            RestockInterval = restockInterval / 60;
+            RestockInterval = restockInterval;
             RestockPercent = restockPercent;
             RestockTimer = new IntervalTimer(RestockInterval, false);
             RestockTimer.SetOrigin(DateTime.UtcNow.Date);

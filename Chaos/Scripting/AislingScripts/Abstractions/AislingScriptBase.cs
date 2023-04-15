@@ -53,4 +53,7 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
 
     /// <inheritdoc />
     public virtual void OnItemDroppedOn(Aisling source, Item item) { }
+
+    /// <inheritdoc />
+    public virtual void Update(TimeSpan delta) { }
 }

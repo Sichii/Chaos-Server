@@ -20,16 +20,3 @@ public enum TargetFilter
     AislingsOnly = 1 << 4,
     MonstersOnly = 1 << 5
 }
-
-[Flags]
-public enum QuestFlag1 : ulong
-{
-    None = 0
-    //add more quest flags here, double each time
-}
-
-[Flags]
-public enum QuestFlag2 : ulong { }
-
-[Flags]
-public enum QuestFlag3 : ulong { }

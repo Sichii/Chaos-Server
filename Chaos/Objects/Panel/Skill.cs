@@ -59,9 +59,6 @@ public sealed class Skill : PanelObjectBase, IScripted<ISkillScript>
 
     public void Use(ActivationContext context)
     {
-        if (!Script.CanUse(context))
-            return;
-
         Script.OnUse(context);
 
         context.Source.LastAttack = DateTime.UtcNow;

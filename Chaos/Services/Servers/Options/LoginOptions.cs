@@ -9,5 +9,5 @@ public record LoginOptions : ServerOptions
     public string StartingMapInstanceId { get; set; } = null!;
     public Point StartingPoint { get; set; }
     public string StartingPointStr { get; set; } = null!;
-    public ConnectionInfo WorldConnection { get; set; } = null!;
+    public ConnectionInfo WorldRedirect { get; set; } = null!;
 }

@@ -22,7 +22,7 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;
-    public required ConnectionInfo LoginConnection { get; init; }
+    public required ConnectionInfo LoginRedirect { get; init; }
     /// <inheritdoc />
     public required int MaxActionsPerSecond { get; init; }
     /// <inheritdoc />

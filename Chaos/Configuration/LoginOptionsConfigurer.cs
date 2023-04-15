@@ -10,7 +10,7 @@ public sealed class LoginOptionsConfigurer : RedirectAddressConfigurer, IPostCon
     public void PostConfigure(string? name, LoginOptions options)
     {
         base.PostConfigure(name, options);
-        base.PostConfigure(name, options.WorldConnection);
+        base.PostConfigure(name, options.WorldRedirect);
 
         if (Point.TryParse(options.StartingPointStr, out var point))
             options.StartingPoint = point;

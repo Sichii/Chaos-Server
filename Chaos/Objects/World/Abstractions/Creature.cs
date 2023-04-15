@@ -380,6 +380,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     {
         Effects.Update(delta);
         RegenTimer.Update(delta);
+        Script.Update(delta);
     }
 
     public virtual void Walk(Direction direction)

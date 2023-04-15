@@ -159,11 +159,4 @@ public sealed class Merchant : Creature,
 
         return spell != null;
     }
-
-    /// <inheritdoc />
-    public override void Update(TimeSpan delta)
-    {
-        base.Update(delta);
-        Script.Update(delta);
-    }
 }

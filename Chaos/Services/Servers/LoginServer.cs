@@ -183,13 +183,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         var redirect = new Redirect(
             ClientId.NextId,
-            Options.WorldConnection,
+            Options.WorldRedirect,
             ServerType.World,
             client.Crypto.Key,
             client.Crypto.Seed,
             name);
 
-        Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.WorldConnection);
+        Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.WorldRedirect);
 
         RedirectManager.Add(redirect);
         client.SendLoginMessage(LoginMessageType.Confirm);

@@ -9,6 +9,7 @@ public sealed class WorldOptionsConfigurer : RedirectAddressConfigurer, IPostCon
     public void PostConfigure(string? name, WorldOptions options)
     {
         base.PostConfigure(name, options);
+        base.PostConfigure(name, options.LoginRedirect);
 
         WorldOptions.Instance = options;
     }

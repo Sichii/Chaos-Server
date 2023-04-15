@@ -24,7 +24,9 @@ in the [LobbyOptions](LobbyOptions.md), [LoginOptions](LoginOptions.md), and [Wo
 
 - Configure [Logging](Logging.md)
 - Configure [Access](AccessManager.md)
-- Configure your [LobbyOptions](LobbyOptions.md), [LoginOptions](LoginOptions.md), and [WorldOptions](WorldOptions.md)
+- Configure [LobbyOptions](LobbyOptions.md)
+- Configure [LoginOptions](LoginOptions.md)
+- Configure [WorldOptions](WorldOptions.md)
 
 ## Add content
 
