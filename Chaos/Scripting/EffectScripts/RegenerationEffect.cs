@@ -6,7 +6,7 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts;
 
-public sealed class RegenerationIntervalEffect : ContinuousAnimationEffectBase
+public sealed class RegenerationEffect : ContinuousAnimationEffectBase
 {
     /// <inheritdoc />
     public override byte Icon => 146;

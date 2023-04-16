@@ -6,7 +6,7 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts;
 
-public class PoisonIntervalEffect : ContinuousAnimationEffectBase
+public class PoisonEffect : ContinuousAnimationEffectBase
 {
     /// <inheritdoc />
     public override byte Icon => 35;

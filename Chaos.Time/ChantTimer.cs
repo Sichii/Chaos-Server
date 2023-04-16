@@ -39,7 +39,7 @@ public sealed class ChantTimer : IDeltaUpdatable
 
         if (RemainingChantTimeMs < 0)
         {
-            Interlocked.Add(ref TimeBurdenMs, -RemainingChantTimeMs);
+            Interlocked.Add(ref TimeBurdenMs, RemainingChantTimeMs);
             RemainingChantTimeMs = 0;
 
             if (TimeBurdenMs < 0)
