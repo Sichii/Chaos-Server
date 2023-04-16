@@ -36,6 +36,8 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public required int MaximumMonsterAc { get; init; }
     /// <inheritdoc />
+    public int MaxItemsPerSecond { get; init; }
+    /// <inheritdoc />
     public required int MaxLevel { get; init; }
     /// <inheritdoc />
     public int MaxSkillsPerSecond { get; init; }

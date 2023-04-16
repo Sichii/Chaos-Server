@@ -37,22 +37,22 @@ public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
     public ushort? DisplaySprite { get; set; }
 
     /// <summary>
-    ///     The type of equipment this item is
+    ///     Default null<br />If specified, this is the type of equipment this item is
     /// </summary>
-    public EquipmentType EquipmentType { get; set; } = EquipmentType.NotEquipment;
+    public EquipmentType? EquipmentType { get; set; }
 
     /// <summary>
-    ///     The gender required to use this item
+    ///     Default null<br />If specified, this is the gender required to use this item
     /// </summary>
-    public Gender Gender { get; set; } = Gender.Unisex;
+    public Gender? Gender { get; set; }
 
     /// <summary>
-    ///     Whether or not the item can be dyed
+    ///     Whether or not the item can be dyed. This is specifically if an item can have it's colors changed. Town dyes on pre-99 armor is not dye.
     /// </summary>
     public bool IsDyeable { get; set; }
 
     /// <summary>
-    ///     Whether or not an instance of the item can be modified
+    ///     Whether or not an instance of the item can be modified. This is specifically if an item can have it's stats/modifiers changed. Also controls if an item can be affected by meta node mutators.
     /// </summary>
     public bool IsModifiable { get; set; }
 

@@ -84,6 +84,10 @@ public interface IWorldOptions
     /// </summary>
     int MaximumMonsterAc { get; }
     /// <summary>
+    ///     The maximum number of items a player can use in a second
+    /// </summary>
+    int MaxItemsPerSecond { get; }
+    /// <summary>
     ///     This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach this level you will
     ///     stop gaining experience.
     /// </summary>

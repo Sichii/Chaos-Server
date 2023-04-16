@@ -21,7 +21,7 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
-        if (template.EquipmentType == EquipmentType.NotEquipment)
+        if (template.EquipmentType is null or EquipmentType.NotEquipment)
         {
             source.SendOrangeBarMessage("You can't equip that");
 
@@ -29,7 +29,7 @@ public class EquipmentScript : ConfigurableItemScriptBase
         }
 
         //gender check
-        if (!template.Gender.HasFlag(source.Gender))
+        if (template.Gender.HasValue && !template.Gender.Value.HasFlag(source.Gender))
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you");
 
@@ -73,7 +73,7 @@ public class EquipmentScript : ConfigurableItemScriptBase
             return;
         }
 
-        source.Equip(template.EquipmentType, Subject);
+        source.Equip(template.EquipmentType.Value, Subject);
     }
 
     #region ScriptVars

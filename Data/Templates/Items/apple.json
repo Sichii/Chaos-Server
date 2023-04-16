@@ -1,21 +1,17 @@
 {
-  "buyCost": 100,
-  "category": "food",
-  "color": "Default",
-  "gender": "Unisex",
-  "maxStacks": 100,
-  "sellValue": 50,
-  "weight": 1,
-  "description": "Definitely not a stick",
-  "name": "Apple",
-  "panelSprite": 40,
-  "scriptKeys": [
-    "vitalityConsumable"
-  ],
-  "scriptVars": {
-    "vitalityConsumable": {
-      "healthAmount": 100
-    }
-  },
-  "templateKey": "apple"
+    "buyCost": 100,
+    "category": "food",
+    "maxStacks": 100,
+    "sellValue": 50,
+    "weight": 1,
+    "description": "A shiny red apple. Looks edible!",
+    "name": "Apple",
+    "panelSprite": 40,
+    "scriptKeys": ["vitalityConsumable"],
+    "scriptVars": {
+        "vitalityConsumable": {
+            "healthAmount": 100
+        }
+    },
+    "templateKey": "apple"
 }

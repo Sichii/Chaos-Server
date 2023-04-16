@@ -11,8 +11,8 @@ public sealed record ItemTemplate : PanelObjectTemplateBase
     public required int BuyCost { get; init; }
     public required string Category { get; init; } = string.Empty;
     public required DisplayColor Color { get; init; }
-    public required EquipmentType EquipmentType { get; init; } = EquipmentType.NotEquipment;
-    public required Gender Gender { get; init; } = Gender.Unisex;
+    public required EquipmentType? EquipmentType { get; init; }
+    public required Gender? Gender { get; init; }
     public required bool IsDyeable { get; init; }
     public required bool IsModifiable { get; init; }
     public required ItemSprite ItemSprite { get; init; } = null!;

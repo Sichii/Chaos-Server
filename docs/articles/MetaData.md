@@ -1,24 +1,30 @@
 # MetaData
 
-When a client logs into the game, one of the first things it does is request the server's metadata. There are various kinds of metadata and
+When a client logs into the game, one of the first things it does is request the server's metadata. There are various
+kinds of metadata and
 each kind will be detailed below. Generation of metadata is handled by
 the [MetaDataCache](<xref:Chaos.Services.Storage.MetaDataCache>) class. Configuration for this class can be specified
 via `Options:MetaDataCacheOptions`.
 
 ## MetaDataCacheOptions
 
-The `MetaDataCacheOptions` class contains configuration for the `MetaDataCache` class. The following properties are available:  
+The `MetaDataCacheOptions` class contains configuration for the `MetaDataCache` class. The following properties are
+available:  
 [!code-csharp[](../../Chaos/Services/Storage/Options/MetaDataCacheOptions.cs)]
 
 ### Mutators
 
-Mutators are used to modify Item metadata before it is finalized. For example, if you implement a system in your server for enchanting
-items, the enchanted items would not be completely new items. You could achieve those enchantments by setting the values on Item.cs and
-letting them serialize as overrides to the template values. To have these items show up in metadata, you would create a mutator that
+Mutators are used to modify Item metadata before it is finalized. For example, if you implement a system in your server
+for enchanting
+items, the enchanted items would not be completely new items. You could achieve those enchantments by setting the values
+on Item.cs and
+letting them serialize as overrides to the template values. To have these items show up in metadata, you would create a
+mutator that
 simulates enchantments through non-destructive mutation of an item meta node.
 
-Implement your own mutator as implementations of the [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>)
-interface and add it to the `MetaDataCacheOptions` in Chaos.Extensions.ServiceCollectionExtensions.AddStorage`
+Implement your own mutator as implementations of
+the [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>)
+interface and add it to the `MetaDataCacheOptions` via the Chaos.Configuration.MetaDataCacheOptionsConfigurer`
 
 ### Example
 
@@ -26,17 +32,19 @@ Here is an example of a mutator that generates mutations of items similarly to t
 
 [!code-csharp[](../../Chaos/Services/Storage/Mutators/EnchantmentMetaNodeMutator.cs)]
 
-This mutator is then added to the `MetaDataCacheOptions` in `Chaos.Extensions.ServiceCollectionExtensions.AddStorage`
+This mutator is then added to the `MetaDataCacheOptions` in `Chaos.Configuration.MetaDataCacheOptionsConfigurer`
 
-[!code-csharp[](../../Chaos/Extensions/ServiceCollectionExtensions.cs#L148-L153)]
+[!code-csharp[](../../Chaos/Configuration/MetaDataCacheOptionsConfigurer.cs)]
 
 > [!NOTE]
-> You can have both Prefix and Suffix mutators. When metadata is generated, it will create a cross product of all prefix and suffix
+> You can have both Prefix and Suffix mutators. When metadata is generated, it will create a cross product of all prefix
+> and suffix
 > mutations
 
 ## Item MetaData
 
-Item metadata is shown when a player hovers over an item in a shop or the bank. Item metadata is pulled from the details in
+Item metadata is shown when a player hovers over an item in a shop or the bank. Item metadata is pulled from the details
+in
 the `ItemTemplate`s that you have already created.
 
 ### Item MetaData Mapping
@@ -52,8 +60,10 @@ the `ItemTemplate`s that you have already created.
 
 ## Ability MetaData
 
-Ability metadata is shown per-class in the character's profile under the `Skills` tab. Ability metadata is pulled from the details in
-the `SkillTemplate`s and `SpellTemplate`s that you have already created. Each `SClass` metadata file is for a specific class. They follow
+Ability metadata is shown per-class in the character's profile under the `Skills` tab. Ability metadata is pulled from
+the details in
+the `SkillTemplate`s and `SpellTemplate`s that you have already created. Each `SClass` metadata file is for a specific
+class. They follow
 the pattern laid out in the [Class](<xref:Chaos.Common.Definitions.BaseClass>) enum.  
 For example, the `SClass1` metadata file is for the Warrior class.  
 The `SClass2` metadata file is for the Rogue class.
@@ -80,8 +90,10 @@ The `SClass2` metadata file is for the Rogue class.
 
 ## Event MetaData
 
-Event metadata appears in the character's profile under the `Events` tab. It is a list of events a player can complete, along with details
-about those events. These events can be in one of 3 states, unavailable, available, or completed. Here are the requirements for an event to
+Event metadata appears in the character's profile under the `Events` tab. It is a list of events a player can complete,
+along with details
+about those events. These events can be in one of 3 states, unavailable, available, or completed. Here are the
+requirements for an event to
 be in each state:
 
 ### Unavailable (gray with a crossed out circle)
@@ -125,19 +137,23 @@ This file is located at `StagingDir/MetaData/Events.json` by default
 ## Nation Description MetaData
 
 Nation description metadata is used to display the description of a nation in the character's profile.
-the [Nation](<xref:Chaos.Common.Definitions.Nation>) enum technically only controls the emblem that is displayed on the profile. The words
+the [Nation](<xref:Chaos.Common.Definitions.Nation>) enum technically only controls the emblem that is displayed on the
+profile. The words
 next to it are controlled by the nation description metadata. This metadata is automatically generated from
 the [Nation](<xref:Chaos.Common.Definitions.Nation>) enum.
 
 ### Nation MetaData Mapping
 
-The nation enum is mapped by it's number and name. For example, `Nation.Suomi` is mapped so that the description of the emblem for that
+The nation enum is mapped by it's number and name. For example, `Nation.Suomi` is mapped so that the description of the
+emblem for that
 number is "Suomi".
 
 ## Mundane Illustration MetaData
 
-Mundane illustration metadata is used by the client to determine which full art illustrations to display for mundanes, if any. This metadata
-must be specified directly through [MundaneIllustrationMetaSchema](<xref:Chaos.Schemas.MetaData.MundaneIllustrationMetaSchema>).
+Mundane illustration metadata is used by the client to determine which full art illustrations to display for mundanes,
+if any. This metadata
+must be specified directly
+through [MundaneIllustrationMetaSchema](<xref:Chaos.Schemas.MetaData.MundaneIllustrationMetaSchema>).
 
 This file is located at `StagingDir/MetaData/MundaneIllustrations.json` by default
 

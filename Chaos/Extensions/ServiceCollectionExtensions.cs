@@ -33,7 +33,6 @@ using Chaos.Services.Servers;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
-using Chaos.Services.Storage.Mutators;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Templates;
@@ -130,12 +129,8 @@ public static class ServiceCollectionExtensions
         services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
 
-        services.AddDirectoryBoundOptionsFromConfig<MetaDataCacheOptions>(Startup.ConfigKeys.Options.Key)
-                .Configure(
-                    o =>
-                    {
-                        o.PrefixMutators.Add(new EnchantmentMetaNodeMutator());
-                    });
+        services.AddDirectoryBoundOptionsFromConfig<MetaDataCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.ConfigureOptions<MetaDataCacheOptionsConfigurer>();
 
         services.AddSingleton<IMetaDataCache, MetaDataCache>();
 

@@ -14,7 +14,8 @@ The port the server will listen on. Default is 4202
 ### LoginRedirect
 
 This is a redirect object that will be used to redirect players to the login server for this world when they log out.
-This object consists of a hostname and port. These values should usually match up to the hostname and port specified for the LoginOptions
+This object consists of a hostname and port. These values should usually match up to the hostname and port specified for
+the LoginOptions
 section.
 
 ## General Settings
@@ -23,11 +24,13 @@ section.
 
 ### MaxGroupSize
 
-The maximum number of players that can be in a group together. If a group reaches this size, invites and invite accepts will fail.
+The maximum number of players that can be in a group together. If a group reaches this size, invites and invite accepts
+will fail.
 
 ### SaveIntervalMins
 
-This is the amount of time in minutes between global character saves. This is on top of players automatically saving when they log out.
+This is the amount of time in minutes between global character saves. This is on top of players automatically saving
+when they log out.
 
 > [!WARNING]
 > Do not set this value too low or it will become a burden on the server.
@@ -37,7 +40,8 @@ This is the amount of time in minutes between global character saves. This is on
 
 ### UpdatesPerSecond
 
-This is the number of times per second that the server will update the game state. .NET isn't great for this kind of workload due garbage
+This is the number of times per second that the server will update the game state. .NET isn't great for this kind of
+workload due garbage
 collection and JIT recompilation/OSR.
 
 > [!CAUTION]
@@ -54,12 +58,14 @@ This is the template key of the merchant to display when a player presses F1. Th
 
 ---
 
-A channel is a membership of players that can send message to eachother. Think global and trade chat in other games, but also group and
+A channel is a membership of players that can send message to eachother. Think global and trade chat in other games, but
+also group and
 guild chat in Dark Ages. These settings represent the parts of those systems that are configurable.
 
 ### DefaultChannels
 
-This is a collection of channel names that new characters will join by default. These channels are also registered with the channel service
+This is a collection of channel names that new characters will join by default. These channels are also registered with
+the channel service
 during startup.
 
 | Name         | Type                                                         | Description                                  |
@@ -76,7 +82,8 @@ An alternative string that can be typed into the client to speak to the group ch
 
 ### GroupMessageColor
 
-The color the message will be for the group chat. In Dark Ages this chat was sent over a specific channel, and that channel had it's own
+The color the message will be for the group chat. In Dark Ages this chat was sent over a specific channel, and that
+channel had it's own
 color. To keep that color, specify "Default" as the color, so as not to use any color.
 
 ## Aisling Settings
@@ -85,9 +92,11 @@ color. To keep that color, specify "Default" as the color, so as not to use any 
 
 ### AislingAssailIntervalMs
 
-All creatures have an AssailInterval. AssailInterval is essentially the cooldown in milliseconds for skills marked as assails. This value is
+All creatures have an AssailInterval. AssailInterval is essentially the cooldown in milliseconds for skills marked as
+assails. This value is
 modified by the
-AtkSpeedPct attribute and can be modified to be 3x faster or slower than the base value. This property sets the base interval for all
+AtkSpeedPct attribute and can be modified to be 3x faster or slower than the base value. This property sets the base
+interval for all
 aislings.
 
 > [!TIP]
@@ -108,17 +117,20 @@ This is the maximum amount of gold a player can hold in their inventory.
 
 ### MaximumAislingAc
 
-This is the maximum amount of AC a player can have. damage formulas can be changed, but with the default damage formula, higher AC = more
+This is the maximum amount of AC a player can have. damage formulas can be changed, but with the default damage formula,
+higher AC = more
 damage taken.
 
 ### MaxLevel
 
-This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach this level you will stop
+This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach this
+level you will stop
 gaining experience.
 
 ### MinimumAislingAc
 
-This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage formula, lower AC = less
+This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage formula,
+lower AC = less
 damage taken.
 > [!WARNING]
 > With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.
@@ -147,12 +159,14 @@ This is the maximum distance from a player that they can initiate a trade with a
 
 ### MaximumMonsterAc
 
-This is the maximum amount of AC a monster can have. damage formulas can be changed, but with the default damage formula, higher AC = more
+This is the maximum amount of AC a monster can have. damage formulas can be changed, but with the default damage
+formula, higher AC = more
 damage taken.
 
 ### MinimumMonsterAc
 
-This is the minimum amount of AC a monster can have. damage formulas can be changed, but with the default damage formula, lower AC = less
+This is the minimum amount of AC a monster can have. damage formulas can be changed, but with the default damage
+formula, lower AC = less
 damage taken.
 
 > [!WARNING]
@@ -164,8 +178,10 @@ damage taken.
 
 ### MaxActionsPerSecond
 
-It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could become a huge burden
-on the server. This value is used to control the maximum number of actions a player can take in a second. An action is defined as using any
+It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could
+become a huge burden
+on the server. This value is used to control the maximum number of actions a player can take in a second. An action is
+defined as using any
 spell, skill, or item. This includes equipping items.
 
 > [!TIP]
@@ -173,7 +189,8 @@ spell, skill, or item. This includes equipping items.
 
 ### MaxSkillsPerSecond
 
-The maximum number of skills a player can use in a second. Assails do not count towards this value. This can be used to disallow combos.
+The maximum number of skills a player can use in a second. Assails do not count towards this value. This can be used to
+disallow combos.
 
 > [!TIP]
 > Use a low value like 3 if you want to disallow combos, otherwise use a higher value like 30
@@ -183,20 +200,30 @@ The maximum number of skills a player can use in a second. Assails do not count 
 The maximum number of spells a player can cast in a second.
 
 > [!NOTE]
-> This can be used to somewhat emulate the original game with a setting of 3, but keep in mind this server responds immediately, not in a
+> This can be used to somewhat emulate the original game with a setting of 3, but keep in mind this server responds
+> immediately, not in a
 > 3updates per 1 second loop
+
+### MaxItemsPerSecond
+
+The maximum number of items a player can use in a second. Includes equipping items, consumables, trinkets, etc...
 
 ### MaxChantTimeBurdenMs
 
-When players cast spells, each spell line takes approximately 1000ms to chant. The amount of time a spell will take to cast can be predicted
+When players cast spells, each spell line takes approximately 1000ms to chant. The amount of time a spell will take to
+cast can be predicted
 to be 1000ms * (NumSpellLines).
 
-Due to latency and jitter, players will often cast spells for slightly more or less than the expected amount of time. With big latency
-spikes, the observed amount of time could be far off than the expected value. To be able to tolerate this while also prohibiting "speed
+Due to latency and jitter, players will often cast spells for slightly more or less than the expected amount of time.
+With big latency
+spikes, the observed amount of time could be far off than the expected value. To be able to tolerate this while also
+prohibiting "speed
 casting", the server will allow spell casts that occur too quickly and add up a time burden.
 
-Each time a player casts a spell that completes faster than expected, the difference in time will be added to the time burden. This burden
-will accumulate with every consecutive spell that occurs too quickly, and be subtracted from if a spell completes too slowly. The time
+Each time a player casts a spell that completes faster than expected, the difference in time will be added to the time
+burden. This burden
+will accumulate with every consecutive spell that occurs too quickly, and be subtracted from if a spell completes too
+slowly. The time
 burden will also decrease while not casting spells.
 
 If the time burden exceeds MaxChantTimeBurdenMs, the spell cast will be ignored.
@@ -218,7 +245,8 @@ When this is enabled it will prevent players from utilizing more nefarious metho
 
 ### RefreshIntervalMs
 
-This is the quickest interval in milliseconds that players will be allowed to refresh their client. This will not include refreshes utilized
+This is the quickest interval in milliseconds that players will be allowed to refresh their client. This will not
+include refreshes utilized
 by the server, such as for refreshing a player's position if they walk into a wall.
 
 > [!TIP]

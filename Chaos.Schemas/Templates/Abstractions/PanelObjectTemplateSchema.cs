@@ -43,7 +43,7 @@ public abstract record PanelObjectTemplateSchema
     public ushort PanelSprite { get; set; }
 
     /// <summary>
-    ///     Whether or not this object required you to be a master
+    ///     Whether or not this object requires you to be a master
     /// </summary>
     public bool RequiresMaster { get; set; }
 
