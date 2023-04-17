@@ -10,6 +10,7 @@ namespace Chaos.Utilities;
 
 public static class ShutdownUtility
 {
+    private const string SHUTDOWN_FORMAT = "Server will be shutting down in {Time}";
     private static readonly AutoReleasingMonitor Sync;
     public static CancellationTokenSource? CancellationTokenSource { get; private set; }
     public static Task? ShutdownTask { get; private set; }
@@ -18,7 +19,7 @@ public static class ShutdownUtility
 
     public static void AbortShutdown() => CancellationTokenSource?.Cancel();
 
-    public static void BeginShutdown(IServiceProvider serviceProvider, string messageFormat, int mins)
+    public static void BeginShutdown(IServiceProvider serviceProvider, int mins)
     {
         using var @lock = Sync.Enter();
 
@@ -32,13 +33,12 @@ public static class ShutdownUtility
 
         ShutdownTask = ShutdownAsync(
             clientRegistry,
-            messageFormat,
             mins,
             serverCancellationTokenSource,
             CancellationTokenSource.Token);
     }
 
-    private static void SendPeriodicMessages(IEnumerable<IWorldClient> clients, string message)
+    private static void SendMessage(IEnumerable<IWorldClient> clients, string message)
     {
         foreach (var client in clients)
             client.SendServerMessage(ServerMessageType.ActiveMessage, message);
@@ -46,7 +46,6 @@ public static class ShutdownUtility
 
     private static async Task ShutdownAsync(
         IClientRegistry<IWorldClient> clients,
-        string messageFormat,
         int mins,
         CancellationTokenSource serverCancellationTokenSource,
         CancellationToken cancellationToken
@@ -60,10 +59,10 @@ public static class ShutdownUtility
             TimeSpan.FromMinutes(5),
             TimeSpan.FromMinutes(1),
             TimeSpan.FromSeconds(15),
-            messageFormat,
-            message => SendPeriodicMessages(clients, message));
+            SHUTDOWN_FORMAT,
+            message => SendMessage(clients, message));
 
-        SendPeriodicMessages(clients, messageFormat.Inject($"{mins} mins"));
+        SendMessage(clients, SHUTDOWN_FORMAT.Inject($"{mins} mins"));
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -86,8 +85,7 @@ public static class ShutdownUtility
             }
         }
 
-        foreach (var client in clients)
-            client.SendServerMessage(ServerMessageType.ActiveMessage, "Shutdown aborted");
+        SendMessage(clients, "Server shutdown has been canceled");
 
         CancellationTokenSource = null;
         ShutdownTask = null;

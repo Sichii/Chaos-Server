@@ -12,6 +12,8 @@
   href: WorldOptions.md
 - name: Caching and Serialization
   href: CachingAndSerialization.md
+- name: Commands
+  href: Commands.md
 - name: Maps
   href: Maps.md
 - name: Items

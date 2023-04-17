@@ -18,12 +18,13 @@ namespace Chaos.Security;
 /// </summary>
 public sealed class AccessManager : BackgroundService, IAccessManager
 {
+    private readonly AutoReleasingSemaphoreSlim AccessSync;
     private readonly string BlacklistPath;
     private readonly PeriodicTimer CleanupTimer;
+    private readonly AutoReleasingSemaphoreSlim CredentialSync;
     private readonly ConcurrentDictionary<string, CredentialFailureDetails> FailureDetails;
     private readonly ILogger<AccessManager> Logger;
     private readonly AccessManagerOptions Options;
-    private readonly AutoReleasingSemaphoreSlim Sync;
     private readonly string WhitelistPath;
 
     /// <summary>
@@ -34,7 +35,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     public AccessManager(IOptionsSnapshot<AccessManagerOptions> options, ILogger<AccessManager> logger)
     {
         Logger = logger;
-        Sync = new AutoReleasingSemaphoreSlim(1, 1);
+        CredentialSync = new AutoReleasingSemaphoreSlim(1, 1);
+        AccessSync = new AutoReleasingSemaphoreSlim(1, 1);
         Options = options.Value;
         BlacklistPath = Path.Combine(Options.Directory, "blacklist.txt");
         WhitelistPath = Path.Combine(Options.Directory, "whitelist.txt");
@@ -52,6 +54,21 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     }
 
     /// <inheritdoc />
+    public async Task BanishAsync(IPAddress ipAddress)
+    {
+        await using var @lock = await AccessSync.WaitAsync();
+
+        var ipStr = ipAddress.ToString();
+
+        await File.AppendAllLinesAsync(BlacklistPath, new[] { ipStr });
+
+        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
+        whiteList.RemoveAll(str => str.EqualsI(ipStr));
+
+        await File.WriteAllLinesAsync(WhitelistPath, whiteList);
+    }
+
+    /// <inheritdoc />
     public async Task<CredentialValidationResult> ChangePasswordAsync(
         IPAddress ipAddress,
         string name,
@@ -59,7 +76,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         string newPassword
     )
     {
-        await using var sync = await Sync.WaitAsync();
+        await using var sync = await CredentialSync.WaitAsync();
 
         if (FailureDetails.TryGetValue(ipAddress.ToString(), out var failureDetails)
             && (failureDetails.FailureCount > Options.MaxCredentialAttempts))
@@ -205,7 +222,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <inheritdoc />
     public async Task<CredentialValidationResult> SaveNewCredentialsAsync(IPAddress ipAddress, string name, string password)
     {
-        await using var sync = await Sync.WaitAsync();
+        await using var sync = await CredentialSync.WaitAsync();
 
         var result = ValidateUserNameRules(name);
 
@@ -236,17 +253,22 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     }
 
     /// <inheritdoc />
-    public async Task<bool> ShouldAllowAsync(IPAddress ipAddress) => Options.Mode switch
+    public async Task<bool> ShouldAllowAsync(IPAddress ipAddress)
     {
-        IpAccessMode.Blacklist => !await IsBlacklisted(ipAddress),
-        IpAccessMode.Whitelist => await IsWhitelisted(ipAddress),
-        _                      => throw new ArgumentOutOfRangeException()
-    };
+        await using var @lock = await AccessSync.WaitAsync();
+
+        return Options.Mode switch
+        {
+            IpAccessMode.Blacklist => !await IsBlacklisted(ipAddress),
+            IpAccessMode.Whitelist => await IsWhitelisted(ipAddress),
+            _                      => throw new ArgumentOutOfRangeException()
+        };
+    }
 
     /// <inheritdoc />
     public async Task<CredentialValidationResult> ValidateCredentialsAsync(IPAddress ipAddress, string name, string password)
     {
-        await using var sync = await Sync.WaitAsync();
+        await using var sync = await CredentialSync.WaitAsync();
 
         var result = await InnerValidateCredentialsAsync(ipAddress, name, password);
 

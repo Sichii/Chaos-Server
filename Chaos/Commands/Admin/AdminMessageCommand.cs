@@ -25,7 +25,7 @@ public class AdminMessageCommand : ICommand<Aisling>
             return default;
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        foreach (var client in ClientRegistry.Where(c => c.Aisling != null))
+        foreach (var client in ClientRegistry)
             client.Aisling.SendActiveMessage($"{MessageColor.Blue.ToPrefix()}[Admin]: {message}");
 
         return default;

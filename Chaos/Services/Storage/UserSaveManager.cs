@@ -242,6 +242,9 @@ public sealed class UserSaveManager : BackgroundService, ISaveManager<Aisling>
         try
         {
             await action();
+        } catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to execute directory action for \"{Directory}\"", directory);
         } finally
         {
             LockedFiles.Remove(directory);

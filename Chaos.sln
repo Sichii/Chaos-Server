@@ -126,6 +126,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\Dialogs.md = docs\articles\Dialogs.md
 		docs\articles\AccessManager.md = docs\articles\AccessManager.md
 		docs\articles\InitialSetup.md = docs\articles\InitialSetup.md
+		docs\articles\Commands.md = docs\articles\Commands.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"

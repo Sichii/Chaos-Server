@@ -11,27 +11,14 @@ namespace Chaos.Scripting.MonsterScripts;
 // ReSharper disable once ClassCanBeSealed.Global
 public class AggroTargetingScript : MonsterScriptBase
 {
-    private readonly Dictionary<uint, DateTime> ApproachTime;
     private readonly IIntervalTimer TargetUpdateTimer;
     private int InitialAggro = 10;
 
     /// <inheritdoc />
     public AggroTargetingScript(Monster subject)
-        : base(subject)
-    {
+        : base(subject) =>
         TargetUpdateTimer =
             new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(250, Subject.Template.SkillIntervalMs)));
-
-        ApproachTime = new Dictionary<uint, DateTime>();
-    }
-
-    /// <inheritdoc />
-    public override void OnApproached(Creature source)
-    {
-        base.OnApproached(source);
-
-        ApproachTime.TryAdd(source.Id, DateTime.UtcNow);
-    }
 
     /// <inheritdoc />
     public override void OnAttacked(Creature source, int damage, int? aggroOverride)
@@ -45,14 +32,6 @@ public class AggroTargetingScript : MonsterScriptBase
             return;
 
         AggroList.AddOrUpdate(source.Id, _ => aggro, (_, currentAggro) => currentAggro + aggro);
-    }
-
-    /// <inheritdoc />
-    public override void OnDeparture(Creature source)
-    {
-        base.OnDeparture(source);
-
-        ApproachTime.Remove(source.Id);
     }
 
     /// <inheritdoc />
@@ -100,7 +79,7 @@ public class AggroTargetingScript : MonsterScriptBase
                       .Where(
                           obj => !obj.Equals(Subject)
                                  && obj.IsAlive
-                                 && ApproachTime.TryGetValue(obj.Id, out var time)
+                                 && Subject.ApproachTime.TryGetValue(obj.Id, out var time)
                                  && ((DateTime.UtcNow - time).TotalSeconds >= 1.5))
                       .ClosestOrDefault(Subject);
 

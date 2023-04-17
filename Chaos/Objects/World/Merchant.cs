@@ -118,12 +118,22 @@ public sealed class Merchant : Creature,
     public bool IsBuying(Item item) => ItemsToBuy.Contains(item.Template.TemplateKey);
 
     /// <inheritdoc />
-    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
+    public override void OnApproached(Creature creature)
+    {
+        base.OnApproached(creature);
+
+        Script.OnApproached(creature);
+    }
 
     public override void OnClicked(Aisling source) => Script.OnClicked(source);
 
     /// <inheritdoc />
-    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
+    public override void OnDeparture(Creature creature)
+    {
+        base.OnDeparture(creature);
+
+        Script.OnDeparture(creature);
+    }
 
     public override void OnGoldDroppedOn(Aisling source, int amount) => Script.OnGoldDroppedOn(source, amount);
 

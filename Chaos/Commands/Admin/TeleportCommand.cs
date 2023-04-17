@@ -37,7 +37,6 @@ public sealed class TeleportCommand : ICommand<Aisling>
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 var player = ClientRegistry
                              .Select(c => c.Aisling)
-                             .Where(a => a != null)
                              .FirstOrDefault(a => a.Name.EqualsI(playerName));
 
                 if (player == null)

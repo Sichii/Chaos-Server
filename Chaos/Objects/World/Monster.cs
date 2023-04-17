@@ -90,7 +90,12 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     void IDialogSourceEntity.Activate(Aisling source) => Script.OnClicked(source);
 
     /// <inheritdoc />
-    public override void OnApproached(Creature creature) => Script.OnApproached(creature);
+    public override void OnApproached(Creature creature)
+    {
+        base.OnApproached(creature);
+
+        Script.OnApproached(creature);
+    }
 
     public override void OnClicked(Aisling source)
     {
@@ -106,7 +111,12 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void OnDeparture(Creature creature) => Script.OnDeparture(creature);
+    public override void OnDeparture(Creature creature)
+    {
+        base.OnDeparture(creature);
+
+        Script.OnDeparture(creature);
+    }
 
     public override void OnGoldDroppedOn(Aisling source, int amount)
     {
@@ -138,6 +148,26 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
                 Items.Add(item);
                 Script.OnItemDroppedOn(source, item);
             }
+    }
+
+    public void ResetAggro()
+    {
+        Target = null;
+        AggroList.Clear();
+
+        foreach (var key in ApproachTime.Keys)
+            ApproachTime[key] = DateTime.UtcNow;
+    }
+
+    public void ResetAggro(uint id)
+    {
+        if (Target?.Id == id)
+            Target = null;
+
+        AggroList.Remove(id, out _);
+
+        if (ApproachTime.TryGetValue(id, out _))
+            ApproachTime[id] = DateTime.UtcNow;
     }
 
     /// <inheritdoc />

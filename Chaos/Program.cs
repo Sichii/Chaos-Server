@@ -67,4 +67,4 @@ await serverCtx.Token.WaitTillCanceled();
 logger.LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
 
 //wait for everything to shut down
-await Task.Delay(5);
+await Task.Delay(5000);

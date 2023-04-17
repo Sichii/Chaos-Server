@@ -31,6 +31,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public DateTime LastMove { get; set; }
     public Status Status { get; set; }
     protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
+    public Dictionary<uint, DateTime> ApproachTime { get; }
     public abstract int AssailIntervalMs { get; }
     public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
     public virtual bool IsAlive => StatSheet.CurrentHp > 0;
@@ -60,6 +61,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Effects = new EffectsBar(this);
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
         RegenTimer = new RegenTimer(this, DefaultNaturalRegenerationScript.Create());
+        ApproachTime = new Dictionary<uint, DateTime>();
     }
 
     /// <inheritdoc />
@@ -137,9 +139,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         _        => false
     };
 
-    public virtual void OnApproached(Creature creature) { }
-    public virtual void OnDeparture(Creature creature) { }
-
+    public virtual void OnApproached(Creature creature) => ApproachTime.TryAdd(creature.Id, DateTime.UtcNow);
+    public virtual void OnDeparture(Creature creature) => ApproachTime.Remove(creature.Id);
     public abstract void OnGoldDroppedOn(Aisling source, int amount);
 
     public abstract void OnItemDroppedOn(Aisling source, byte slot, byte count);

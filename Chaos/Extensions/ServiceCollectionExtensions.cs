@@ -164,7 +164,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IGroupService, GroupService>();
 
         services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
-        services.AddSingleton<IClientRegistry<IWorldClient>, ClientRegistry<IWorldClient>>();
+        services.AddSingleton<IClientRegistry<IWorldClient>, WorldClientRegistry>();
 
         services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key);
         services.ConfigureOptions<WorldOptionsConfigurer>();

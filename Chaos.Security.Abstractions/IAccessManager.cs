@@ -8,6 +8,11 @@ namespace Chaos.Security.Abstractions;
 public interface IAccessManager
 {
     /// <summary>
+    ///     Bans the specified IP address
+    /// </summary>
+    Task BanishAsync(IPAddress ipAddress);
+
+    /// <summary>
     ///     Changes the password for the specified character
     /// </summary>
     /// <param name="ipAddress">The ip address of the client</param>

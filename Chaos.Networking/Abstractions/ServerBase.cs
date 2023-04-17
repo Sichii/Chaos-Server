@@ -95,7 +95,13 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
 
         await stoppingToken.WaitTillCanceled();
 
-        Socket.Shutdown(SocketShutdown.Receive);
+        try
+        {
+            Socket.Shutdown(SocketShutdown.Receive);
+        } catch
+        {
+            //ignored
+        }
 
         await Parallel.ForEachAsync(
             ClientRegistry,

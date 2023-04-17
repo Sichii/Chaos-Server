@@ -22,7 +22,7 @@ public class ReviveCommand : ICommand<Aisling>
         if (!args.TryGetNext<string>(out var name))
             return;
 
-        var client = ClientRegistry.FirstOrDefault(cli => cli.Aisling?.Name.EqualsI(name) ?? false);
+        var client = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name));
 
         if (client == null)
             return;
