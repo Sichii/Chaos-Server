@@ -14,8 +14,8 @@ using Chaos.Extensions.Common;
 using Chaos.Formulae;
 using Chaos.Messaging.Abstractions;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
-using Chaos.Networking.Options;
 using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Packets;
@@ -299,13 +299,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            return OnClientRedirectedAsync(localClient, localArgs, redirect);
+            return OnClientRedirectedAsync(localClient, redirect);
         }
 
         return ExecuteHandler(client, args, InnerOnClientRedirected);
     }
 
-    public async ValueTask OnClientRedirectedAsync(IWorldClient client, ClientRedirectedArgs args, IRedirect redirect)
+    public async ValueTask OnClientRedirectedAsync(IWorldClient client, IRedirect redirect)
     {
         client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
         var aisling = await AislingSaveManager.LoadAsync(redirect.Name);
@@ -486,7 +486,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             else
             {
                 var redirect = new Redirect(
-                    ClientId.NextId,
+                    EphemeralRandomIdGenerator<uint>.Shared.NextId,
                     Options.LoginRedirect,
                     ServerType.Login,
                     localClient.Crypto.Key,

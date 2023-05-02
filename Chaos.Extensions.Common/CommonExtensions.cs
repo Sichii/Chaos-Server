@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -29,7 +28,6 @@ public static class CommonExtensions
             path = $"{subSection}:{path}";
 
         return services.AddOptions<T>()
-                       .Configure<IConfiguration>(
-                           (o, c) => c.GetRequiredSection(path).Bind(o, options => options.ErrorOnUnknownConfiguration = true));
+                       .BindConfiguration(path, o => o.ErrorOnUnknownConfiguration = true);
     }
 }

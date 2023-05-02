@@ -33,7 +33,7 @@ public sealed class Item : PanelObjectBase, IScripted<IItemScript>, IDialogSourc
     string IDialogSourceEntity.Name => DisplayName;
 
     /// <inheritdoc />
-    ushort IDialogSourceEntity.Sprite => ItemSprite.OffsetPanelSprite;
+    ushort IDialogSourceEntity.Sprite => ItemSprite.PanelSprite;
 
     public Item(
         ItemTemplate template,

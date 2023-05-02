@@ -1,4 +1,5 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -17,7 +18,7 @@ public sealed record AddItemToPaneSerializer : ServerPacketSerializer<AddItemToP
     public override void Serialize(ref SpanWriter writer, AddItemToPaneArgs args)
     {
         writer.WriteByte(args.Item.Slot);
-        writer.WriteUInt16(args.Item.Sprite);
+        writer.WriteUInt16((ushort)(args.Item.Sprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET));
         writer.WriteByte((byte)args.Item.Color);
         writer.WriteString8(args.Item.Name);
         writer.WriteUInt32(args.Item.Count!.Value);

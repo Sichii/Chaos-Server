@@ -19,6 +19,9 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
     public virtual bool CanMove() => true;
 
     /// <inheritdoc />
+    public virtual bool CanSee(VisibleEntity entity) => true;
+
+    /// <inheritdoc />
     public virtual bool CanTalk() => true;
 
     /// <inheritdoc />

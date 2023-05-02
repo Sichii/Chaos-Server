@@ -15,6 +15,9 @@ public abstract class ConfigurableMerchantScriptBase : ConfigurableScriptBase<Me
     public virtual bool CanMove() => true;
 
     /// <inheritdoc />
+    public virtual bool CanSee(VisibleEntity entity) => true;
+
+    /// <inheritdoc />
     public virtual bool CanTalk() => true;
 
     /// <inheritdoc />

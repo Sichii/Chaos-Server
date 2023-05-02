@@ -43,6 +43,12 @@ var startup = new Startup(configuration);
 startup.ConfigureServices(services);
 var serverCtx = startup.ServerCtx;
 
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+    serverCtx.Cancel();
+};
+
 services.AddLobbyServer();
 services.AddLoginserver();
 services.AddWorldServer();
@@ -64,7 +70,7 @@ var startFuncs = hostedServices
 await serverCtx.Token.WhenAllWithCancellation(startFuncs);
 await serverCtx.Token.WaitTillCanceled();
 
-logger.LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+logger.LogInformation("Waiting 2.5 seconds for post shutdown tasks to complete");
 
 //wait for everything to shut down
-await Task.Delay(5000);
+await Task.Delay(2500);

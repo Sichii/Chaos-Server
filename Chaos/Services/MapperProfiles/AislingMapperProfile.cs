@@ -2,6 +2,7 @@ using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Geometry.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Objects.Panel;
@@ -233,7 +234,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                              ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,
                 IsDead = obj.IsDead,
-                IsHidden = false, //TODO: invisibility
+                IsHidden = obj.Visibility is VisibilityType.Hidden or VisibilityType.TrueHidden or VisibilityType.GmHidden,
                 LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later

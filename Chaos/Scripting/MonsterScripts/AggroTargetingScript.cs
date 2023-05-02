@@ -62,7 +62,7 @@ public class AggroTargetingScript : MonsterScriptBase
             if (!Map.TryGetObject<Creature>(kvp.Key, out var possibleTarget))
                 continue;
 
-            if (!possibleTarget.IsAlive || !possibleTarget.IsVisibleTo(Subject) || !possibleTarget.WithinRange(Subject))
+            if (!possibleTarget.IsAlive || !Subject.CanObserve(possibleTarget) || !possibleTarget.WithinRange(Subject))
                 continue;
 
             Target = possibleTarget;
@@ -75,7 +75,7 @@ public class AggroTargetingScript : MonsterScriptBase
 
         //if we failed to get a target via aggroList, grab the closest aisling within aggro range
         Target ??= Map.GetEntitiesWithinRange<Aisling>(Subject, AggroRange)
-                      .ThatAreVisibleTo(Subject)
+                      .ThatAreObservedBy(Subject)
                       .Where(
                           obj => !obj.Equals(Subject)
                                  && obj.IsAlive

@@ -20,6 +20,12 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    /// <param name="entity"></param>
+    public virtual bool CanSee(VisibleEntity entity) => Components.All(component => component.CanSee(entity));
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanTalk() => Components.All(component => component.CanTalk());
 
     /// <summary>

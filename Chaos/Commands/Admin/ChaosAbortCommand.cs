@@ -6,8 +6,8 @@ using Chaos.Utilities;
 
 namespace Chaos.Commands.Admin;
 
-[Command("shutdownabort")]
-public class ShutdownAbortCommand : ICommand<Aisling>
+[Command("chaosabort")]
+public class ChaosAbortCommand : ICommand<Aisling>
 {
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

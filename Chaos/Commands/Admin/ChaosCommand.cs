@@ -9,13 +9,13 @@ using Chaos.Utilities;
 
 namespace Chaos.Commands.Admin;
 
-[Command("shutdown")]
-public class ShutdownCommand : ICommand<Aisling>
+[Command("chaos")]
+public class ChaosCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;
     private readonly IServiceProvider ServiceProvider;
 
-    public ShutdownCommand(IServiceProvider serviceProvider, IClientRegistry<IWorldClient> clientRegistry)
+    public ChaosCommand(IServiceProvider serviceProvider, IClientRegistry<IWorldClient> clientRegistry)
     {
         ServiceProvider = serviceProvider;
         ClientRegistry = clientRegistry;

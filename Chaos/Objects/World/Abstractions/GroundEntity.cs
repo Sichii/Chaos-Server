@@ -1,4 +1,5 @@
 using Chaos.Containers;
+using Chaos.Definitions;
 using Chaos.Geometry.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -38,6 +39,25 @@ public abstract class GroundEntity : NamedEntity
 
     /// <inheritdoc />
     public override void OnClicked(Aisling source) { }
+
+    /// <inheritdoc />
+    public override void SetVisibility(VisibilityType newVisibilityType)
+    {
+        if (Visibility != newVisibilityType)
+        {
+            var stack = MapInstance.GetEntitiesAtPoint<GroundEntity>(this)
+                                   .OrderBy(entity => entity.Creation)
+                                   .ToList();
+
+            foreach (var entity in stack)
+                entity.Hide();
+
+            Visibility = newVisibilityType;
+
+            foreach (var entity in stack)
+                entity.Display();
+        }
+    }
 
     public override void Update(TimeSpan delta)
     {

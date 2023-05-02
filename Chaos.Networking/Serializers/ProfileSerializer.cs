@@ -24,7 +24,12 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
         {
             args.Equipment.TryGetValue(slot, out var item);
 
-            writer.WriteUInt16(item?.Sprite ?? 0);
+            var offsetSprite = item?.Sprite ?? 0;
+
+            if (offsetSprite is not 0)
+                offsetSprite += NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET;
+
+            writer.WriteUInt16(offsetSprite);
             writer.WriteByte((byte)(item?.Color ?? DisplayColor.Default));
         }
 

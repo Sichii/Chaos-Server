@@ -2,12 +2,11 @@ using Chaos.Collections.Common;
 using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Objects.World;
-using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Commands.Admin;
 
-[Command("clear")]
-public class ClearCommand : ICommand<Aisling>
+[Command("destroyall")]
+public class DestroyAllCommand : ICommand<Aisling>
 {
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
@@ -36,12 +35,9 @@ public class ClearCommand : ICommand<Aisling>
                     map.RemoveObject(monster);
 
                 break;
-            case "all":
-                foreach (var groundEntity in map.GetEntities<GroundEntity>().ToList())
-                    map.RemoveObject(groundEntity);
-
-                foreach (var monster in map.GetEntities<Monster>().ToList())
-                    map.RemoveObject(monster);
+            case "merchants":
+                foreach (var merchant in map.GetEntities<Merchant>().ToList())
+                    map.RemoveObject(merchant);
 
                 break;
         }

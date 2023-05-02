@@ -8,7 +8,6 @@ using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
-using Chaos.Networking.Definitions;
 using Chaos.Objects.Panel;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
@@ -53,7 +52,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     )
         : base(
             name,
-            (ushort)(sprite == 0 ? 0 : sprite + NETWORKING_CONSTANTS.CREATURE_SPRITE_OFFSET),
+            sprite,
             mapInstance,
             point)
     {
@@ -70,14 +69,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var targetedAnimation = animation.GetTargetedAnimation(Id, sourceId);
 
         foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                       .ThatCanSee(this))
+                                       .ThatCanObserve(this))
             obj.Client.SendAnimation(targetedAnimation);
     }
 
     public virtual void AnimateBody(BodyAnimation bodyAnimation, ushort speed = 25, byte? sound = null)
     {
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanSee(this))
+                                           .ThatCanObserve(this))
             aisling.Client.SendBodyAnimation(
                 Id,
                 bodyAnimation,
@@ -180,7 +179,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public virtual void ShowHealth(byte? sound = null)
     {
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanSee(this))
+                                           .ThatCanObserve(this))
             aisling.Client.SendHealthBar(this, sound);
     }
 
@@ -218,7 +217,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         foreach (var creature in entitiesWithinRange)
             switch (creature)
             {
-                case Aisling aisling when IsVisibleTo(aisling) && !aisling.IgnoreList.Contains(Name):
+                case Aisling aisling when !aisling.IgnoreList.Contains(Name):
                     aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
 
                     break;
@@ -257,12 +256,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
                     if (!fromWolrdMap && !currentMap.RemoveObject(this))
                         return;
-
-                    //set the creature's location and point
-                    //but at this point they are not technically on the map yet
-                    //this is so that if a player executes a handler, that handler will enter the new map's synchronization instead of the old one
-                    //and if they do any movement or anything, it will on the new map
-                    SetLocationFaux(destinationMap, destinationPoint);
 
                     if (aisling is not null && ignoreSharding)
                         destinationMap.AddAislingDirect(aisling, destinationPoint);
@@ -373,7 +366,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Direction = direction;
 
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanSee(this))
+                                           .ThatCanObserve(this))
             aisling.Client.SendCreatureTurn(Id, direction);
     }
 

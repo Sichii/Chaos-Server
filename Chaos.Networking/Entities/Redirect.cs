@@ -2,11 +2,13 @@ using System.Net;
 using Chaos.Common.Definitions;
 using Chaos.Networking.Abstractions;
 
-namespace Chaos.Networking.Options;
+namespace Chaos.Networking.Entities;
 
 /// <inheritdoc />
 public sealed record Redirect : IRedirect
 {
+    /// <inheritdoc />
+    public DateTime Created { get; }
     /// <inheritdoc />
     public IPEndPoint EndPoint { get; }
     /// <inheritdoc />
@@ -43,6 +45,7 @@ public sealed record Redirect : IRedirect
         Key = key;
         Seed = seed;
         Name = name ?? "Login";
+        Created = DateTime.UtcNow;
 
         var address = serverInfo.Address;
 

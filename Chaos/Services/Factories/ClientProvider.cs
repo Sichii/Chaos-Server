@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Services.Factories;
 
-public class ClientProvider : IClientProvider
+public sealed class ClientProvider : IClientProvider
 {
     private readonly IServiceProvider ServiceProvider;
 

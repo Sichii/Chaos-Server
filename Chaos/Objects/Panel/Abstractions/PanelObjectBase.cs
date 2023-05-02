@@ -22,7 +22,7 @@ public abstract class PanelObjectBase : IDeltaUpdatable, IScripted
 
     protected PanelObjectBase(PanelObjectTemplateBase template, ulong? uniqueId = null, int? elapsedMs = null)
     {
-        uniqueId ??= ServerId.NextId;
+        uniqueId ??= PersistentIdGenerator<ulong>.Shared.NextId;
         Template = template;
         Cooldown = template.Cooldown;
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);

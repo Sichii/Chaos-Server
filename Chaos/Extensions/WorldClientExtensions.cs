@@ -9,5 +9,5 @@ public static class WorldClientExtensions
     public static void SendDoors(this IWorldClient worldClient, params Door[] doors) => worldClient.SendDoors(doors);
 
     public static void SendVisibleObjects(this IWorldClient worldClient, params VisibleEntity[] objects) =>
-        worldClient.SendVisibleObjects(objects);
+        worldClient.SendVisibleEntities(objects);
 }

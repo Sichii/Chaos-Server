@@ -4,6 +4,7 @@ using Chaos.Common.Definitions;
 using Chaos.Containers;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Data;
+using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -242,8 +243,17 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     {
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
-        if (!Aisling.IsFriendlyTo(aisling))
-            args.NameTagStyle = NameTagStyle.Hostile;
+        if (!Aisling.Equals(aisling))
+        {
+            if (!Aisling.IsFriendlyTo(aisling))
+                args.NameTagStyle = NameTagStyle.Hostile;
+
+            if (!Aisling.IsAdmin && !Aisling.Script.CanSee(aisling))
+            {
+                args.Name = string.Empty;
+                args.Sprite = 0;
+            }
+        }
 
         Send(args);
     }
@@ -299,7 +309,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             ExchangeResponseType = ExchangeResponseType.AddItem,
             RightSide = rightSide,
             ExchangeIndex = index,
-            ItemSprite = item.ItemSprite.OffsetPanelSprite,
+            ItemSprite = item.ItemSprite.PanelSprite,
             ItemColor = item.Color,
             ItemName = item.DisplayName
         };
@@ -648,7 +658,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendVisibleObjects(IEnumerable<VisibleEntity> objects)
+    public void SendVisibleEntities(IEnumerable<VisibleEntity> objects)
     {
         foreach (var chunk in objects.OrderBy(o => o.Creation).Chunk(5000))
         {
@@ -660,41 +670,66 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
                 switch (obj)
                 {
                     case GroundItem groundItem:
-                        visibleArgs.Add(
-                            new GroundItemInfo
+                        var groundItemInfo = new GroundItemInfo
+                        {
+                            Id = groundItem.Id,
+                            Color = groundItem.Item.Color,
+                            X = groundItem.X,
+                            Y = groundItem.Y,
+                            Sprite = groundItem.Sprite
+                        };
+
+                        if (groundItem.Visibility is not VisibilityType.Normal)
+                            if (Aisling.IsAdmin || Aisling.Script.CanSee(groundItem))
                             {
-                                Id = groundItem.Id,
-                                Color = groundItem.Item.Color,
-                                X = groundItem.X,
-                                Y = groundItem.Y,
-                                Sprite = groundItem.Sprite
-                            });
+                                groundItemInfo.Sprite = 11978;
+                                groundItemInfo.Color = DisplayColor.Black;
+                            } else
+                                groundItemInfo.Sprite = 0;
+
+                        visibleArgs.Add(groundItemInfo);
 
                         break;
                     case Money money:
-                        visibleArgs.Add(
-                            new GroundItemInfo
-                            {
-                                Id = money.Id,
-                                Color = DisplayColor.Default,
-                                X = money.X,
-                                Y = money.Y,
-                                Sprite = money.Sprite
-                            });
+                        var moneyInfo = new GroundItemInfo
+                        {
+                            Id = money.Id,
+                            Color = DisplayColor.Default,
+                            X = money.X,
+                            Y = money.Y,
+                            Sprite = money.Sprite
+                        };
+
+                        if (money.Visibility is not VisibilityType.Normal)
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (Aisling.IsAdmin || Aisling.Script.CanSee(money))
+                                moneyInfo.Sprite = 138;
+                            else
+                                moneyInfo.Sprite = 0;
+
+                        visibleArgs.Add(moneyInfo);
 
                         break;
                     case Creature creature:
-                        visibleArgs.Add(
-                            new CreatureInfo
-                            {
-                                Id = creature.Id,
-                                X = creature.X,
-                                Y = creature.Y,
-                                Sprite = creature.Sprite,
-                                CreatureType = creature.Type,
-                                Direction = creature.Direction,
-                                Name = creature.Name
-                            });
+                        var creatureInfo = new CreatureInfo
+                        {
+                            Id = creature.Id,
+                            X = creature.X,
+                            Y = creature.Y,
+                            Sprite = creature.Sprite,
+                            CreatureType = creature.Type,
+                            Direction = creature.Direction,
+                            Name = creature.Name
+                        };
+
+                        if (creature.Visibility is not VisibilityType.Normal)
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (Aisling.IsAdmin || Aisling.Script.CanSee(creature))
+                                creatureInfo.Sprite = 405;
+                            else
+                                creatureInfo.Sprite = 0;
+
+                        visibleArgs.Add(creatureInfo);
 
                         break;
                 }

@@ -64,7 +64,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         ILogger<SocketClientBase> logger
     )
     {
-        Id = ClientId.NextId;
+        Id = SequentialIdGenerator<uint>.Shared.NextId;
         ReceiveSync = new FifoSemaphoreSlim(1, 1);
         Socket = socket;
         RemoteIp = (socket.RemoteEndPoint as IPEndPoint)?.Address!;

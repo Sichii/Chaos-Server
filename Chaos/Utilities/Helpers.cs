@@ -9,10 +9,10 @@ public static class Helpers
         if (creature1.Equals(creature2))
             return;
 
-        if (creature1.IsVisibleTo(creature2))
+        if (creature2.CanObserve(creature1))
             creature2.OnApproached(creature1);
 
-        if (creature2.IsVisibleTo(creature1))
+        if (creature1.CanObserve(creature2))
             creature1.OnApproached(creature2);
     }
 
@@ -21,10 +21,10 @@ public static class Helpers
         if (creature1.Equals(creature2))
             return;
 
-        if (creature1.IsVisibleTo(creature2))
+        if (creature2.CanObserve(creature1))
             creature2.OnDeparture(creature1);
 
-        if (creature2.IsVisibleTo(creature1))
+        if (creature1.CanObserve(creature2))
             creature1.OnDeparture(creature2);
     }
 }

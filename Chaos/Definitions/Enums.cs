@@ -20,3 +20,11 @@ public enum TargetFilter
     AislingsOnly = 1 << 4,
     MonstersOnly = 1 << 5
 }
+
+public enum VisibilityType
+{
+    Normal,
+    Hidden,
+    TrueHidden,
+    GmHidden
+}

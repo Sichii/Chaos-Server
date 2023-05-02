@@ -416,7 +416,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     {
         if (source.Equals(this))
             source.Client.SendSelfProfile();
-        else if (IsVisibleTo(source))
+        else if (source.CanObserve(this))
             source.Client.SendProfile(this);
     }
 
@@ -459,14 +459,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             if (nearbyAisling.Equals(this))
                 continue;
 
-            if (IsVisibleTo(nearbyAisling))
+            if (nearbyAisling.CanObserve(this))
                 nearbyAisling.Client.SendDisplayAisling(this);
 
-            if (nearbyAisling.IsVisibleTo(this))
+            if (CanObserve(nearbyAisling))
                 Client.SendDisplayAisling(nearbyAisling);
         }
 
-        Client.SendVisibleObjects(otherVisibles.ThatAreVisibleTo(this));
+        Client.SendVisibleEntities(otherVisibles.ThatAreObservedBy(this));
         Client.SendDoors(doors);
         Client.SendMapLoadComplete();
         Client.SendDisplayAisling(this);
@@ -878,10 +878,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         //remove eachother from eachother's view
         foreach (var aisling in objsBeforeWalk.Aislings.Except(objsAfterWalk.Aislings))
         {
-            if (aisling.IsVisibleTo(this))
+            if (CanObserve(aisling))
                 aisling.HideFrom(this);
 
-            if (IsVisibleTo(aisling))
+            if (aisling.CanObserve(this))
                 HideFrom(aisling);
         }
 
@@ -890,7 +890,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         //remove eachother from eachother's view
         foreach (var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
         {
-            if (visible.IsVisibleTo(this))
+            if (CanObserve(visible))
                 visible.HideFrom(this);
 
             //handle departure
@@ -903,10 +903,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         //show eachother to eachother
         foreach (var aisling in objsAfterWalk.Aislings.Except(objsBeforeWalk.Aislings))
         {
-            if (aisling.IsVisibleTo(this))
+            if (CanObserve(aisling))
                 aisling.ShowTo(this);
 
-            if (IsVisibleTo(aisling))
+            if (aisling.CanObserve(this))
                 ShowTo(aisling);
         }
 
@@ -927,14 +927,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Client.SendDoors(doors);
 
         //send any other visible objs that came into view that we're able to see
-        Client.SendVisibleObjects(
+        Client.SendVisibleEntities(
             objsAfterWalk.OtherVisibles
                          .Except(objsBeforeWalk.OtherVisibles)
-                         .ThatAreVisibleTo(this));
+                         .ThatAreObservedBy(this));
 
         var aislingsToUpdate = objsBeforeWalk.Aislings
                                              .Intersect(objsAfterWalk.Aislings)
-                                             .ThatCanSee(this);
+                                             .ThatCanObserve(this);
 
         foreach (var aisling in aislingsToUpdate)
             if (!aisling.Equals(this))

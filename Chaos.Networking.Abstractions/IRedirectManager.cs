@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
-///     An object used to manage redirects
+///     Defines the properties and methods for managing redirects
 /// </summary>
 public interface IRedirectManager
 {
@@ -13,5 +15,5 @@ public interface IRedirectManager
     /// <summary>
     ///     Tries to remove a redirect that should be in progress
     /// </summary>
-    bool TryGetRemove(uint id, out IRedirect redirect);
+    bool TryGetRemove(uint id, [MaybeNullWhen(false)] out IRedirect redirect);
 }

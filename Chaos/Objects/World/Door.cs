@@ -52,7 +52,7 @@ public sealed class Door : VisibleEntity
             }
 
             foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 15)
-                                               .ThatCanSee(this))
+                                               .ThatCanObserve(this))
                 aisling.Client.SendDoors(doorCluster);
         }
     }

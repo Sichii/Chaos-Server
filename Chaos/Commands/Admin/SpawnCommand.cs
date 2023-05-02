@@ -1,6 +1,5 @@
 using Chaos.Collections.Common;
 using Chaos.Containers;
-using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
@@ -30,43 +29,47 @@ public class SpawnCommand : ICommand<Aisling>
         if (!args.TryGetNext<string>(out var entityType))
             return default;
 
-        if ("monster".ContainsI(entityType))
+        switch (entityType.ToLower())
         {
-            if (!args.TryGetNext<string>(out var monsterTemplateKey))
-                return default;
+            case "monster":
+                if (!args.TryGetNext<string>(out var monsterTemplateKey))
+                    return default;
 
-            var monster = MonsterFactory.Create(monsterTemplateKey, source.MapInstance, source);
+                var monster = MonsterFactory.Create(monsterTemplateKey, source.MapInstance, source);
 
-            if (args.TryGetNext<string>(out var lootTableKey))
-            {
-                var lootTable = SimpleCache.Get<LootTable>(lootTableKey);
-                monster.Items.AddRange(lootTable.GenerateLoot());
-            }
+                if (args.TryGetNext<string>(out var lootTableKey))
+                {
+                    var lootTable = SimpleCache.Get<LootTable>(lootTableKey);
+                    monster.Items.AddRange(lootTable.GenerateLoot());
+                }
 
-            if (args.TryGetNext<int>(out var expAmount))
-                monster.Experience = expAmount;
+                if (args.TryGetNext<int>(out var expAmount))
+                    monster.Experience = expAmount;
 
-            if (args.TryGetNext<int>(out var goldAmount))
-                monster.Gold = goldAmount;
+                if (args.TryGetNext<int>(out var goldAmount))
+                    monster.Gold = goldAmount;
 
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (args.TryGetNext<int>(out var aggroRange))
-                monster.AggroRange = aggroRange;
-            else
-                monster.AggroRange = 0;
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (args.TryGetNext<int>(out var aggroRange))
+                    monster.AggroRange = aggroRange;
+                else
+                    monster.AggroRange = 0;
 
-            source.MapInstance.AddObject(monster, source);
-        } else if ("merchant".ContainsI(entityType))
-        {
-            if (!args.TryGetNext<string>(out var merchantTemplateKey))
-                return default;
+                source.MapInstance.AddObject(monster, source);
 
-            var merchant = MerchantFactory.Create(merchantTemplateKey, source.MapInstance, source);
+                break;
+            case "merchant":
+                if (!args.TryGetNext<string>(out var merchantTemplateKey))
+                    return default;
 
-            if (args.TryGetNext<Direction>(out var direction))
-                merchant.Direction = direction;
+                var merchant = MerchantFactory.Create(merchantTemplateKey, source.MapInstance, source);
 
-            source.MapInstance.AddObject(merchant, source);
+                if (args.TryGetNext<Direction>(out var direction))
+                    merchant.Direction = direction;
+
+                source.MapInstance.AddObject(merchant, source);
+
+                break;
         }
 
         return default;

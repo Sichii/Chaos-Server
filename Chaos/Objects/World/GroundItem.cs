@@ -22,7 +22,7 @@ public sealed class GroundItem : GroundEntity, IDialogSourceEntity
     public GroundItem(Item item, MapInstance mapInstance, IPoint point)
         : base(
             item.DisplayName,
-            item.ItemSprite.OffsetPanelSprite,
+            item.ItemSprite.PanelSprite,
             mapInstance,
             point) =>
         Item = item;
@@ -36,7 +36,7 @@ public sealed class GroundItem : GroundEntity, IDialogSourceEntity
         var targetedAnimation = animation.GetTargetedAnimation(Id, sourceId);
 
         foreach (var obj in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                       .ThatCanSee(this))
+                                       .ThatCanObserve(this))
             obj.Client.SendAnimation(targetedAnimation);
     }
 

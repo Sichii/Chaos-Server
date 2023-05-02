@@ -287,34 +287,4 @@ public sealed record UserStatSheet : StatSheet
 
         return true;
     }
-
-    public ref struct UserStatSheetRef
-    {
-        public ref int CurrentWeight;
-        public ref int Level;
-        public ref long ToNextAbility;
-        public ref long ToNextLevel;
-        public ref long TotalAbility;
-        public ref long TotalExp;
-        public ref int UnspentPoints;
-
-        public UserStatSheetRef(
-            ref int currentWeight,
-            ref long totalExp,
-            ref long totalAbility,
-            ref long toNextLevel,
-            ref long toNextAbility,
-            ref int unspentPoints,
-            ref int level
-        )
-        {
-            CurrentWeight = ref currentWeight;
-            TotalExp = ref totalExp;
-            TotalAbility = ref totalAbility;
-            ToNextLevel = ref toNextLevel;
-            ToNextAbility = ref toNextAbility;
-            UnspentPoints = ref unspentPoints;
-            Level = ref level;
-        }
-    }
 }

@@ -1,5 +1,4 @@
 using Chaos.Clients.Abstractions;
-using Chaos.Configuration;
 using Chaos.Containers;
 using Chaos.Data;
 using Chaos.Extensions.Common;
@@ -64,7 +63,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IClientRegistry<ILobbyClient>, ClientRegistry<ILobbyClient>>();
 
         services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key);
-        services.ConfigureOptions<LobbyOptionsConfigurer>();
 
         services.AddSingleton<ILobbyServer<ILobbyClient>, IHostedService, LobbyServer>();
     }
@@ -75,7 +73,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IClientRegistry<ILoginClient>, ClientRegistry<ILoginClient>>();
 
         services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key);
-        services.ConfigureOptions<LoginOptionsConfigurer>();
 
         services.AddSingleton<ILoginServer<ILoginClient>, IHostedService, LoginServer>();
     }
@@ -101,13 +98,13 @@ public static class ServiceCollectionExtensions
 
     public static void AddServerAuthentication(this IServiceCollection services)
     {
-        services.AddSingleton<IRedirectManager, RedirectManager>();
+        services.AddSingleton<IRedirectManager, IHostedService, RedirectManager>();
         services.AddSecurity(Startup.ConfigKeys.Options.Key);
     }
 
     public static void AddStorage(this IServiceCollection services)
     {
-        services.AddDirectoryBoundOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key); //bound
         services.AddSingleton<ISaveManager<Aisling>, IHostedService, UserSaveManager>();
 
         services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
@@ -129,8 +126,7 @@ public static class ServiceCollectionExtensions
         services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
 
-        services.AddDirectoryBoundOptionsFromConfig<MetaDataCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.ConfigureOptions<MetaDataCacheOptionsConfigurer>();
+        services.AddOptionsFromConfig<MetaDataCacheOptions>(Startup.ConfigKeys.Options.Key); //bound
 
         services.AddSingleton<IMetaDataCache, MetaDataCache>();
 
@@ -167,7 +163,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IClientRegistry<IWorldClient>, WorldClientRegistry>();
 
         services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key);
-        services.ConfigureOptions<WorldOptionsConfigurer>();
 
         services.AddSingleton<IWorldServer<IWorldClient>, IHostedService, WorldServer>();
     }

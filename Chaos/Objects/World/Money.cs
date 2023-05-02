@@ -1,6 +1,5 @@
 using Chaos.Containers;
 using Chaos.Geometry.Abstractions;
-using Chaos.Networking.Definitions;
 using Chaos.Objects.World.Abstractions;
 
 namespace Chaos.Objects.World;
@@ -28,7 +27,7 @@ public sealed class Money : GroundEntity
             _       => 139
         };
 
-        return (ushort)(sprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET);
+        return (ushort)sprite;
     }
 
     public override void OnClicked(Aisling source) { }

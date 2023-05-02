@@ -8,6 +8,7 @@ using Chaos.Commands.Options;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
+using Chaos.Configuration;
 using Chaos.Containers;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
@@ -15,7 +16,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Messaging;
 using Chaos.Networking.Abstractions;
-using Chaos.Networking.Options;
+using Chaos.Networking.Entities;
 using Chaos.Objects.Menu;
 using Chaos.Objects.Panel;
 using Chaos.Objects.World;
@@ -38,7 +39,7 @@ using NLog.Extensions.Logging;
 
 namespace Chaos;
 
-public class Startup
+public sealed class Startup
 {
     private static readonly SerializationContext JsonContext;
     private static readonly JsonSerializerOptions JsonSerializerOptions;
@@ -75,6 +76,7 @@ public class Startup
         ServerCtx = new CancellationTokenSource();
     }
 
+    // ReSharper disable once MemberCanBeMadeStatic.Global
     public void AddJsonSerializerOptions(IServiceCollection services) =>
         services.AddOptions<JsonSerializerOptions>()
                 .Configure<ILogger<WarningJsonTypeInfoResolver>>(
@@ -100,9 +102,10 @@ public class Startup
 
         services.AddSingleton(Configuration);
         services.AddOptions();
+        services.ConfigureOptions<OptionsConfigurer>();
+        services.ConfigureOptions<OptionsValidator>();
 
-        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key)
-                .Validate(o => !string.IsNullOrEmpty(o.StagingDirectory), "StagingDirectory is required");
+        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key);
 
         services.AddSingleton<IStagingDirectory, ChaosOptions>(p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>().Value);
 
@@ -152,6 +155,7 @@ public class Startup
             p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
     }
 
+    // ReSharper disable once MemberCanBeMadeStatic.Global
     public void RegisterStructuredLoggingTransformations() =>
         LogManager.Setup()
                   .SetupSerialization(

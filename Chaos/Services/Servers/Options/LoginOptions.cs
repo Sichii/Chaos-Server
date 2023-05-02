@@ -2,7 +2,7 @@ using Chaos.Networking.Options;
 
 namespace Chaos.Services.Servers.Options;
 
-public record LoginOptions : ServerOptions
+public sealed record LoginOptions : ServerOptions
 {
     public string NoticeMessage { get; set; } = null!;
     public ReservedRedirectInfo[] ReservedRedirects { get; set; } = Array.Empty<ReservedRedirectInfo>();

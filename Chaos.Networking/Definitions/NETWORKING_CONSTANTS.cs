@@ -11,11 +11,11 @@ public static class NETWORKING_CONSTANTS
     /// <summary>
     ///     The offset value for a creature's sprite
     /// </summary>
-    public const int CREATURE_SPRITE_OFFSET = 16384;
+    internal const ushort CREATURE_SPRITE_OFFSET = 16384;
     /// <summary>
     ///     The offset value for an item's sprite
     /// </summary>
-    public const int ITEM_SPRITE_OFFSET = 32768;
+    internal const ushort ITEM_SPRITE_OFFSET = 32768;
 
     /// <summary>
     ///     The order in which equipment slots are sent to the client

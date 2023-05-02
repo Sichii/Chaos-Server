@@ -20,6 +20,11 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual bool CanSee(VisibleEntity entity) => Components.All(component => component.CanSee(entity));
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanTalk() => Components.All(component => component.CanTalk());
 
     /// <summary>

@@ -49,7 +49,7 @@ public static class Randomizer
             weight = accumulator;
         }
 
-        var rand = Random.Shared.Next(accumulator);
+        var rand = Random.Shared.Next(0, accumulator);
 
         for (var i = 0; i < localWeights.Length; i++)
         {

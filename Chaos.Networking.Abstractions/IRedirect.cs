@@ -9,6 +9,10 @@ namespace Chaos.Networking.Abstractions;
 public interface IRedirect
 {
     /// <summary>
+    ///     The time the redirect was created
+    /// </summary>
+    DateTime Created { get; }
+    /// <summary>
     ///     The endpoint to redirect the client to
     /// </summary>
     IPEndPoint EndPoint { get; }

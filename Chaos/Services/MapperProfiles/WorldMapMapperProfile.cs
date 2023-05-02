@@ -10,7 +10,7 @@ namespace Chaos.Services.MapperProfiles;
 public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
                                      IMapperProfile<WorldMapNode, WorldMapNodeSchema>
 {
-    private static readonly IdGenerator<ushort> IdGenerator = new();
+    private static readonly SequentialIdGenerator<ushort> IdGenerator = new();
     private readonly ISimpleCache SimpleCache;
 
     public WorldMapMapperProfile(ISimpleCache simpleCache) => SimpleCache = simpleCache;

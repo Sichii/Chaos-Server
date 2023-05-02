@@ -9,7 +9,6 @@ using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
-using Chaos.Networking.Options;
 using Chaos.Objects.World;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
@@ -182,7 +181,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         Logger.LogDebug("Validated credentials for {@Client}", client);
 
         var redirect = new Redirect(
-            ClientId.NextId,
+            EphemeralRandomIdGenerator<uint>.Shared.NextId,
             Options.WorldRedirect,
             ServerType.World,
             client.Crypto.Key,

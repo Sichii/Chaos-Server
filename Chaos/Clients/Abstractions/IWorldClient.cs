@@ -80,7 +80,7 @@ public interface IWorldClient : ISocketClient
     void SendSound(byte sound, bool isMusic);
     void SendUnequip(EquipmentSlot equipmentSlot);
     void SendUserId();
-    void SendVisibleObjects(IEnumerable<VisibleEntity> objects);
+    void SendVisibleEntities(IEnumerable<VisibleEntity> objects);
     void SendWorldList(IEnumerable<Aisling> users);
     void SendWorldMap(WorldMap worldMap);
 }

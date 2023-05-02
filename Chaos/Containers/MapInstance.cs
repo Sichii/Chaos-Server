@@ -140,7 +140,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 Helpers.HandleApproach(creature, nearbyCreature);
 
             if (creature is Aisling aisling && objectsInRange.Any())
-                aisling.Client.SendVisibleObjects(objectsInRange.ThatAreVisibleTo(aisling));
+                aisling.Client.SendVisibleEntities(objectsInRange.ThatAreObservedBy(aisling));
         }
     }
 
@@ -169,7 +169,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public void Click(uint id, Aisling source)
     {
         if (TryGetObject<VisibleEntity>(id, out var obj))
-            if (obj.WithinRange(source) && obj.IsVisibleTo(source))
+            if (obj.WithinRange(source) && source.CanObserve(obj))
                 obj.OnClicked(source);
     }
 
@@ -498,14 +498,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (nearbyUser.Equals(aisling))
                     continue;
 
-                if (aisling.IsVisibleTo(nearbyUser))
+                if (nearbyUser.CanObserve(aisling))
                     nearbyUser.Client.SendDisplayAisling(aisling);
 
-                if (nearbyUser.IsVisibleTo(aisling))
+                if (aisling.CanObserve(nearbyUser))
                     aisling.Client.SendDisplayAisling(nearbyUser);
             }
 
-            aisling.Client.SendVisibleObjects(otherVisibles);
+            aisling.Client.SendVisibleEntities(otherVisibles);
             aisling.Client.SendDoors(doors);
             aisling.Client.SendMapChangeComplete();
             aisling.Client.SendSound(Music, true);
@@ -520,7 +520,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             if (visibleEntity is not Creature creature)
             {
                 foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity)
-                                                     .ThatCanSee(visibleEntity))
+                                                     .ThatCanObserve(visibleEntity))
                     nearbyAisling.Client.SendVisibleObjects(visibleEntity);
 
                 return;
@@ -531,7 +531,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (nearbyCreature.Equals(creature))
                     continue;
 
-                if (nearbyCreature is Aisling nearbyAisling && creature.IsVisibleTo(nearbyCreature))
+                if (nearbyCreature is Aisling nearbyAisling && nearbyAisling.CanObserve(visibleEntity))
                     nearbyAisling.Client.SendVisibleObjects(visibleEntity);
 
                 Helpers.HandleApproach(creature, nearbyCreature);
@@ -616,7 +616,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         if (mapEntity is VisibleEntity visibleObject)
             foreach (var aisling in Objects.WithinRange<Aisling>(visibleObject)
-                                           .ThatCanSee(visibleObject))
+                                           .ThatCanObserve(visibleObject))
                 aisling.Client.SendRemoveObject(visibleObject.Id);
 
         if (mapEntity is Creature creature)
@@ -636,7 +636,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         {
             if (TryGetObject<Creature>(animation.TargetId.Value, out var target))
                 foreach (var aisling in Objects.WithinRange<Aisling>(target)
-                                               .ThatCanSee(target))
+                                               .ThatCanObserve(target))
                     aisling.Client.SendAnimation(animation);
         } else if (animation.TargetPoint != default)
             foreach (var aisling in Objects.WithinRange<Aisling>(animation.TargetPoint))

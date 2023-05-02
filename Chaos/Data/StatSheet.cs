@@ -379,6 +379,7 @@ public record StatSheet : Attributes
     }
 
     #region SharedAttributes
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     protected int _ability;
     protected int _currentHp;
     protected int _currentMp;

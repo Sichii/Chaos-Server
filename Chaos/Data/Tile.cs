@@ -12,6 +12,10 @@ public readonly struct Tile : IEquatable<Tile>
 
     public static byte[] Sotp { get; } = ResourceManager.Sotp;
 
+    public static bool operator ==(Tile left, Tile right) => left.Equals(right);
+
+    public static bool operator !=(Tile left, Tile right) => !(left == right);
+
     public Tile(ushort background, ushort leftForeground, ushort rightForeground)
     {
         Background = background;

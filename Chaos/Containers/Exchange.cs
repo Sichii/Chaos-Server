@@ -23,7 +23,7 @@ public sealed class Exchange
 
     public Exchange(Aisling sender, Aisling receiver, ILogger logger)
     {
-        ExchangeId = ServerId.NextId;
+        ExchangeId = PersistentIdGenerator<ulong>.Shared.NextId;
         Logger = logger;
         User1 = sender;
         User2 = receiver;

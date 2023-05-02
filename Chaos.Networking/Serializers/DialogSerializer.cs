@@ -1,5 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -22,13 +23,28 @@ public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
         if (args.DialogType == DialogType.CloseDialog)
             return;
 
+        var offsetSprite = args.Sprite;
+
+        if (args.Sprite is not 0)
+            switch (args.EntityType)
+            {
+                case EntityType.Item:
+                    offsetSprite += NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET;
+
+                    break;
+                case EntityType.Aisling or EntityType.Creature:
+                    offsetSprite += NETWORKING_CONSTANTS.CREATURE_SPRITE_OFFSET;
+
+                    break;
+            }
+
         writer.WriteByte((byte)args.EntityType);
         writer.WriteUInt32(args.SourceId ?? 0);
         writer.WriteByte(0); //dunno
-        writer.WriteUInt16(args.Sprite);
+        writer.WriteUInt16(offsetSprite);
         writer.WriteByte((byte)args.Color);
         writer.WriteByte(0); //dunno
-        writer.WriteUInt16(args.Sprite);
+        writer.WriteUInt16(offsetSprite);
         writer.WriteByte((byte)args.Color);
         writer.WriteUInt16(args.PursuitId ?? 0);
         writer.WriteUInt16(args.DialogId);

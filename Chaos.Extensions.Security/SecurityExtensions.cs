@@ -1,6 +1,6 @@
-using System.Text.RegularExpressions;
 using Chaos.Security;
 using Chaos.Security.Abstractions;
+using Chaos.Security.Configuration;
 using Chaos.Security.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,14 +23,8 @@ public static class SecurityExtensions
     /// </param>
     public static void AddSecurity(this IServiceCollection services, string subSection)
     {
-        services.AddDirectoryBoundOptionsFromConfig<AccessManagerOptions>(subSection)
-                .PostConfigure(
-                    o =>
-                    {
-                        o.ValidCharactersRegex = new Regex(o.ValidCharactersPattern, RegexOptions.Compiled);
-                        o.ValidFormatRegex = new Regex(o.ValidFormatPattern, RegexOptions.Compiled);
-                    });
-
+        services.AddOptionsFromConfig<AccessManagerOptions>(subSection); //bound
+        services.ConfigureOptions<AccessManagerOptionsConfigurer>();
         services.AddSingleton<IAccessManager, IHostedService, AccessManager>();
     }
 }

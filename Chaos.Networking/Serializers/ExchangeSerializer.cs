@@ -1,5 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.IO.Memory;
+using Chaos.Networking.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -33,7 +34,7 @@ public sealed record ExchangeSerializer : ServerPacketSerializer<ExchangeArgs>
             case ExchangeResponseType.AddItem:
                 writer.WriteBoolean(args.RightSide!.Value);
                 writer.WriteByte(args.ExchangeIndex!.Value);
-                writer.WriteUInt16(args.ItemSprite!.Value);
+                writer.WriteUInt16((ushort)(args.ItemSprite!.Value + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET));
                 writer.WriteByte((byte)args.ItemColor!.Value);
                 writer.WriteString8(args.ItemName!);
 

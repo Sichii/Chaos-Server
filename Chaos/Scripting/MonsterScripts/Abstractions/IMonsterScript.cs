@@ -3,6 +3,8 @@ using Chaos.Objects.World;
 using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 
+// ReSharper disable UnusedParameter.Global
+
 namespace Chaos.Scripting.MonsterScripts.Abstractions;
 
 public interface IMonsterScript : ICreatureScript

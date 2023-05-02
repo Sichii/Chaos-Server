@@ -141,4 +141,5 @@ namespace Chaos;
 //other primitives
 [JsonSerializable(typeof(DateTime))]
 [JsonSerializable(typeof(TimeSpan))]
+// ReSharper disable once ClassCanBeSealed.Global No it can not
 public partial class SerializationContext : JsonSerializerContext { }

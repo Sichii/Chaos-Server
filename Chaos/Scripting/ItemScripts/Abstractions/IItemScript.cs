@@ -4,6 +4,8 @@ using Chaos.Objects.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Time.Abstractions;
 
+// ReSharper disable UnusedParameter.Global
+
 namespace Chaos.Scripting.ItemScripts.Abstractions;
 
 public interface IItemScript : IScript, IDeltaUpdatable

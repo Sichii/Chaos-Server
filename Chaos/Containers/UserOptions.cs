@@ -59,6 +59,8 @@ public sealed class UserOptions
                 GuildChat = !GuildChat;
 
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(opt), opt, "Unknown enum value");
         }
     }
 

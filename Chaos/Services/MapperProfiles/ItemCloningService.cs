@@ -20,7 +20,7 @@ public sealed class ItemCloningService : ICloningService<Item>
     public Item Clone(Item obj)
     {
         var schema = Mapper.Map<ItemSchema>(obj);
-        schema.UniqueId = ServerId.NextId;
+        schema.UniqueId = PersistentIdGenerator<ulong>.Shared.NextId;
         var cloned = Mapper.Map<Item>(schema);
 
         Logger.LogDebug("Cloned {@OriginItem} into {@ClonedItem}", obj, cloned);
