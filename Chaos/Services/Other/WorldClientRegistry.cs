@@ -1,4 +1,4 @@
-using Chaos.Clients.Abstractions;
+using Chaos.Networking.Abstractions;
 
 namespace Chaos.Services.Other;
 

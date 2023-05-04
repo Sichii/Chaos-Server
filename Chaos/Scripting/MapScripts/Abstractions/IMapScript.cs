@@ -1,4 +1,4 @@
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Time.Abstractions;
 

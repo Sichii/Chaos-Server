@@ -1,8 +1,8 @@
 using Chaos.Common.Abstractions;
-using Chaos.Objects.World;
+using Chaos.Models.Templates;
+using Chaos.Models.World;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
-using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;

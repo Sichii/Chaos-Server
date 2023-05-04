@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
-using Chaos.Data;
-using Chaos.Objects.World;
+using Chaos.Models.Data;
+using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.SkillScripts.Abstractions;
 

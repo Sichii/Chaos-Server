@@ -1,6 +1,6 @@
-using Chaos.Objects.Abstractions;
-using Chaos.Objects.Menu;
-using Chaos.Objects.World;
+using Chaos.Models.Abstractions;
+using Chaos.Models.Menu;
+using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;

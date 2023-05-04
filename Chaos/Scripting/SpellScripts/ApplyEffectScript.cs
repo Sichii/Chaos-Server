@@ -1,6 +1,6 @@
-using Chaos.Data;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 

@@ -1,4 +1,3 @@
-using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;

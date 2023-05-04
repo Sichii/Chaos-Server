@@ -1,5 +1,5 @@
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
 using Chaos.Scripting.ItemScripts.Abstractions;
 
 namespace Chaos.Scripting.ItemScripts;

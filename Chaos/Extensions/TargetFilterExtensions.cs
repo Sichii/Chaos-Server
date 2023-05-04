@@ -1,6 +1,6 @@
 using Chaos.Definitions;
-using Chaos.Objects.World;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Extensions;
 
@@ -13,6 +13,9 @@ public static class TargetFilterExtensions
 
         if (source != null)
         {
+            if (filter.HasFlag(TargetFilter.SelfOnly) && !source.Equals(target))
+                return false;
+
             if (filter.HasFlag(TargetFilter.FriendlyOnly) && !target.IsFriendlyTo(source))
                 return false;
 

@@ -1,4 +1,4 @@
-using Chaos.Data;
+using Chaos.Models.Data;
 using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 

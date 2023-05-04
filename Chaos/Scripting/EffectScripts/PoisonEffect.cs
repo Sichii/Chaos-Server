@@ -1,5 +1,5 @@
 using Chaos.Common.Definitions;
-using Chaos.Data;
+using Chaos.Models.Data;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -34,7 +34,7 @@ public class PoisonEffect : ContinuousAnimationEffectBase
         if (Subject.StatSheet.CurrentHp <= DAMAGE_PER_TICK)
             return;
 
-        Subject.StatSheet.SubtractHp(DAMAGE_PER_TICK);
-        AislingSubject?.Client.SendAttributes(StatUpdateType.Vitality);
+        if (Subject.StatSheet.TrySubtractHp(DAMAGE_PER_TICK))
+            AislingSubject?.Client.SendAttributes(StatUpdateType.Vitality);
     }
 }

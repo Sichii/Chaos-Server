@@ -1,5 +1,5 @@
-using Chaos.Containers;
-using Chaos.Objects.Panel;
+using Chaos.Collections;
+using Chaos.Models.Panel;
 using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 

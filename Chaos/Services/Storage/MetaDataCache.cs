@@ -6,12 +6,12 @@ using Chaos.MetaData.EventMetadata;
 using Chaos.MetaData.ItemMetadata;
 using Chaos.MetaData.MundaneMetadata;
 using Chaos.MetaData.NationMetaData;
+using Chaos.Models.Templates;
+using Chaos.Models.Templates.Abstractions;
 using Chaos.Schemas.MetaData;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
-using Chaos.Templates;
-using Chaos.Templates.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

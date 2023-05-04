@@ -1,7 +1,7 @@
 using Chaos.Extensions.Common;
-using Chaos.Objects.Abstractions;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
+using Chaos.Models.Abstractions;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 

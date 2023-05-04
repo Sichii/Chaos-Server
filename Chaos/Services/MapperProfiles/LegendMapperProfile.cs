@@ -1,5 +1,5 @@
+using Chaos.Models.Legend;
 using Chaos.Networking.Entities.Server;
-using Chaos.Objects.Legend;
 using Chaos.Schemas.Aisling;
 using Chaos.Time;
 using Chaos.TypeMapper.Abstractions;

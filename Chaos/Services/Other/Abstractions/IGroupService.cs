@@ -1,4 +1,4 @@
-using Chaos.Objects.World;
+using Chaos.Models.World;
 
 namespace Chaos.Services.Other.Abstractions;
 

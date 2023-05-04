@@ -1,12 +1,13 @@
-using Chaos.Containers;
-using Chaos.Data;
-using Chaos.Objects.World;
+using Chaos.Collections;
+using Chaos.Models.Data;
+using Chaos.Models.Map;
+using Chaos.Models.Templates;
+using Chaos.Models.World;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
-using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 

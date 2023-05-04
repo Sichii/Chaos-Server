@@ -1,6 +1,4 @@
 using System.Net.Sockets;
-using Chaos.Clients;
-using Chaos.Clients.Abstractions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Packets.Abstractions;

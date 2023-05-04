@@ -93,9 +93,13 @@ public sealed record DisplayAislingArgs : ISendArgs
     /// </summary>
     public bool IsDead { get; set; }
     /// <summary>
-    ///     Whether or not the aisling is hidden. If true, the aisling will be semitransparent
+    ///     Whether or not the aisling is hidden. If true, the aisling will be fully invisible
     /// </summary>
     public bool IsHidden { get; set; }
+    /// <summary>
+    ///     Whether or not the aisling is hidden. If true, the aisling will be semitransparent
+    /// </summary>
+    public bool IsTransparent { get; set; }
     /// <summary>
     ///     If the aisling is on a dark map and has a light source, this is the size of the visible area around the aisling
     /// </summary>

@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
 using Chaos.Scripting.Components;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ApplyDamage;

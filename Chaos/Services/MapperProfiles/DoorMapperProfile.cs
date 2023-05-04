@@ -1,5 +1,5 @@
+using Chaos.Models.World;
 using Chaos.Networking.Entities.Server;
-using Chaos.Objects.World;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;

@@ -1,5 +1,5 @@
-using Chaos.Containers;
-using Chaos.Objects.World;
+using Chaos.Collections;
+using Chaos.Models.World;
 
 namespace Chaos.Services.Factories.Abstractions;
 

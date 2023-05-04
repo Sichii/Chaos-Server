@@ -22,7 +22,14 @@ public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAi
         writer.WriteByte((byte)args.Direction);
         writer.WriteUInt32(args.Id);
 
-        if (args.Sprite.HasValue && (args.Sprite != 0))
+        if (args is { IsHidden: true })
+        {
+            writer.WriteUInt16(0);
+            writer.WriteByte((byte)BodySprite.None);
+            writer.WriteBytes(new byte[25]);
+            writer.WriteBoolean(args.IsHidden);
+            writer.WriteByte(0);
+        } else if (args.Sprite.HasValue)
         {
             writer.WriteUInt16(ushort.MaxValue);
             writer.WriteUInt16((ushort)(args.Sprite.Value + NETWORKING_CONSTANTS.CREATURE_SPRITE_OFFSET));
@@ -34,12 +41,12 @@ public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAi
             writer.WriteUInt16(args.HeadSprite);
             writer.WriteByte((byte)(args.Gender == Gender.Male ? BodySprite.MaleGhost : BodySprite.FemaleGhost));
             writer.WriteBytes(new byte[25]);
-            writer.WriteBoolean(args.IsHidden);
+            writer.WriteBoolean(args.IsTransparent);
             writer.WriteByte(args.FaceSprite);
         } else
         {
             writer.WriteUInt16(args.HeadSprite);
-            writer.WriteByte((byte)args.BodySprite); //add pants to body sprite
+            writer.WriteByte((byte)args.BodySprite);
             writer.WriteUInt16(args.ArmorSprite1);
             writer.WriteByte(args.BootsSprite);
             writer.WriteUInt16(args.ArmorSprite2);
@@ -58,7 +65,7 @@ public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAi
             writer.WriteUInt16(args.OvercoatSprite);
             writer.WriteByte((byte)args.OvercoatColor);
             writer.WriteByte((byte)args.BodyColor);
-            writer.WriteBoolean(args.IsHidden);
+            writer.WriteBoolean(args.IsTransparent);
             writer.WriteByte(args.FaceSprite);
         }
 

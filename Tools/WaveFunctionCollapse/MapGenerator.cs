@@ -1,9 +1,9 @@
 using Chaos.Extensions.Common;
-using Chaos.Templates;
+using Chaos.Models.Templates;
 using DeBroglie;
 using DeBroglie.Models;
 using DeBroglie.Topo;
-using ChaosTile = Chaos.Data.Tile;
+using ChaosTile = Chaos.Models.Map.Tile;
 
 namespace WaveFunctionCollapse;
 

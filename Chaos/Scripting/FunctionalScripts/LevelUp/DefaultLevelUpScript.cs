@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Formulae;
 using Chaos.Formulae.Abstractions;
-using Chaos.Objects.World;
+using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Services.Servers.Options;

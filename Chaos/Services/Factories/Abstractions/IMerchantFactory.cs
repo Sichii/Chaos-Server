@@ -1,6 +1,6 @@
-using Chaos.Containers;
+using Chaos.Collections;
 using Chaos.Geometry.Abstractions;
-using Chaos.Objects.World;
+using Chaos.Models.World;
 
 namespace Chaos.Services.Factories.Abstractions;
 

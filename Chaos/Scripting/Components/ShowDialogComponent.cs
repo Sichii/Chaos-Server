@@ -1,5 +1,5 @@
-using Chaos.Objects.Abstractions;
-using Chaos.Objects.World;
+using Chaos.Models.Abstractions;
+using Chaos.Models.World;
 using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripting.Components;

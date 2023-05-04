@@ -1,12 +1,12 @@
 using System.Runtime.Serialization;
 using System.Text.Json;
-using Chaos.Data;
 using Chaos.Definitions;
 using Chaos.Extensions.Cryptography;
+using Chaos.Models.Map;
+using Chaos.Models.Templates;
 using Chaos.Schemas.Templates;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage;
-using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;

@@ -1,11 +1,11 @@
 ﻿using Chaos;
+using Chaos.Models.Templates;
 using Chaos.Storage.Abstractions;
-using Chaos.Templates;
 using DeBroglie;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WaveFunctionCollapse;
-using ChaosTile = Chaos.Data.Tile;
+using ChaosTile = Chaos.Models.Map.Tile;
 
 var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())

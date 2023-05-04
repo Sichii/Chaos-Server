@@ -1,8 +1,8 @@
 using Chaos.Common.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
-using Chaos.Objects.World;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts.Abstractions;
 
@@ -33,7 +33,7 @@ public abstract class EffectBase : IEffect
     /// <inheritdoc />
     public virtual void OnApplied() { }
 
-    public virtual void OnDispelled() { }
+    public virtual void OnDispelled() => OnTerminated();
 
     /// <inheritdoc />
     public virtual void OnReApplied() => OnApplied();
@@ -41,7 +41,17 @@ public abstract class EffectBase : IEffect
     public virtual void OnTerminated() { }
 
     /// <inheritdoc />
-    public virtual bool ShouldApply(Creature source, Creature target) => !target.Effects.Contains(Name);
+    public virtual bool ShouldApply(Creature source, Creature target)
+    {
+        if (target.Effects.Contains(Name))
+        {
+            AislingSubject?.SendOrangeBarMessage($"You are already affected by {Name}.");
+
+            return false;
+        }
+
+        return true;
+    }
 
     public virtual void Update(TimeSpan delta)
     {

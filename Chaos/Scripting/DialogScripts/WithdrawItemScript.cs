@@ -1,7 +1,7 @@
-﻿using Chaos.Data;
-using Chaos.Objects.Menu;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
+﻿using Chaos.Models.Data;
+using Chaos.Models.Menu;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;

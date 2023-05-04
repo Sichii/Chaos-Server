@@ -1,4 +1,4 @@
-using Chaos.Objects.World;
+using Chaos.Models.World;
 using Chaos.Scripting.Components;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;

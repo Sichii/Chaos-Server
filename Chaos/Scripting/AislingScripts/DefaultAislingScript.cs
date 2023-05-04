@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.AislingScripts.Abstractions;
 using Chaos.Scripting.Components;
 using Chaos.Time;
@@ -13,17 +13,22 @@ public class DefaultAislingScript : AislingScriptBase
 {
     private readonly IIntervalTimer SleepAnimationTimer;
     protected virtual RestrictionComponent RestrictionComponent { get; }
+    protected virtual VisibilityComponent VisibilityComponent { get; }
 
     /// <inheritdoc />
     public DefaultAislingScript(Aisling subject)
         : base(subject)
     {
         RestrictionComponent = new RestrictionComponent();
+        VisibilityComponent = new VisibilityComponent();
         SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5));
     }
 
     /// <inheritdoc />
     public override bool CanMove() => RestrictionComponent.CanMove(Subject);
+
+    /// <inheritdoc />
+    public override bool CanSee(VisibleEntity entity) => VisibilityComponent.CanSee(Subject, entity);
 
     /// <inheritdoc />
     public override bool CanTalk() => RestrictionComponent.CanTalk(Subject);

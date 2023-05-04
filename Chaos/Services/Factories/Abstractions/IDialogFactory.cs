@@ -1,5 +1,5 @@
-using Chaos.Objects.Abstractions;
-using Chaos.Objects.Menu;
+using Chaos.Models.Abstractions;
+using Chaos.Models.Menu;
 
 namespace Chaos.Services.Factories.Abstractions;
 

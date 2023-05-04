@@ -1,5 +1,5 @@
 using Chaos.Common.Identity;
-using Chaos.Objects.Panel;
+using Chaos.Models.Panel;
 using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;

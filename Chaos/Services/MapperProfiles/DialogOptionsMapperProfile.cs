@@ -1,4 +1,4 @@
-using Chaos.Objects.Menu;
+using Chaos.Models.Menu;
 using Chaos.Schemas.Data;
 using Chaos.TypeMapper.Abstractions;
 

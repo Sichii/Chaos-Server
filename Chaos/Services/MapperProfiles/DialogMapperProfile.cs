@@ -1,6 +1,6 @@
 using Chaos.Extensions.Common;
+using Chaos.Models.Menu;
 using Chaos.Networking.Entities.Server;
-using Chaos.Objects.Menu;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;

@@ -1,8 +1,8 @@
-using Chaos.Data;
-using Chaos.Objects.Abstractions;
-using Chaos.Objects.Menu;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
+using Chaos.Models.Abstractions;
+using Chaos.Models.Data;
+using Chaos.Models.Menu;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Utilities;

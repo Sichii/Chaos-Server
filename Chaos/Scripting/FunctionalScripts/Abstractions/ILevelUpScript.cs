@@ -1,5 +1,5 @@
 using Chaos.Formulae.Abstractions;
-using Chaos.Objects.World;
+using Chaos.Models.World;
 
 namespace Chaos.Scripting.FunctionalScripts.Abstractions;
 

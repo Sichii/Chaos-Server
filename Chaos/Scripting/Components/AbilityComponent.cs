@@ -1,10 +1,10 @@
 using Chaos.Common.Definitions;
-using Chaos.Data;
 using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.Data;
+using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Scripting.Components;
 

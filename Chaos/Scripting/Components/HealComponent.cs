@@ -1,7 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
-using Chaos.Data;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.Data;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 

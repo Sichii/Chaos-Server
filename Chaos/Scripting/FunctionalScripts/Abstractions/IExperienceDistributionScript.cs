@@ -1,6 +1,6 @@
 using Chaos.Formulae.Abstractions;
-using Chaos.Objects.World;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Scripting.FunctionalScripts.Abstractions;
 

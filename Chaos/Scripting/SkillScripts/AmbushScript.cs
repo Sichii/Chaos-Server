@@ -1,8 +1,8 @@
-using Chaos.Data;
 using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.SkillScripts.Abstractions;
 
 namespace Chaos.Scripting.SkillScripts;

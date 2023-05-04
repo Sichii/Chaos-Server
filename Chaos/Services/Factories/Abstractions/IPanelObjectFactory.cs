@@ -1,9 +1,9 @@
-using Chaos.Objects.Panel;
-using Chaos.Objects.Panel.Abstractions;
+using Chaos.Models.Panel;
+using Chaos.Models.Panel.Abstractions;
 
 namespace Chaos.Services.Factories.Abstractions;
 
-public interface IPanelObjectFactory<out TPanelObject> where TPanelObject: PanelObjectBase
+public interface IPanelObjectFactory<out TPanelObject> where TPanelObject: PanelEntityBase
 {
     TPanelObject Create(string templateKey, ICollection<string>? extraScriptKeys = null);
     TPanelObject CreateFaux(string templateKey, ICollection<string>? extraScriptKeys = null);

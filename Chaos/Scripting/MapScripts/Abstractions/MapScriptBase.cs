@@ -1,5 +1,5 @@
-using Chaos.Containers;
-using Chaos.Objects.World.Abstractions;
+using Chaos.Collections;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripting.MapScripts.Abstractions;

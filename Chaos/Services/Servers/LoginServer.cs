@@ -1,15 +1,14 @@
 using System.Net;
 using System.Net.Sockets;
-using Chaos.Clients.Abstractions;
+using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
-using Chaos.Containers;
 using Chaos.Cryptography;
 using Chaos.Extensions.Common;
+using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
-using Chaos.Objects.World;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;

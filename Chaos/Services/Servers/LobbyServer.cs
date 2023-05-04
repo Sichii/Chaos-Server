@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Sockets;
-using Chaos.Clients.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Networking.Abstractions;

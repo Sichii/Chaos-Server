@@ -1,4 +1,4 @@
-using Chaos.Data;
+using Chaos.Models.Data;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts.Abstractions;

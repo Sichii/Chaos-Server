@@ -1,5 +1,5 @@
-using Chaos.Objects.Menu;
-using Chaos.Objects.World;
+using Chaos.Models.Menu;
+using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Scripting.DialogScripts.Abstractions;

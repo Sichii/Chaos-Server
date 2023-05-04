@@ -1,5 +1,5 @@
 using Chaos.Common.Definitions;
-using Chaos.Data;
+using Chaos.Models.Data;
 using Chaos.Networking.Options;
 
 namespace Chaos.Services.Servers.Options;

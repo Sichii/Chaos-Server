@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Chaos.Objects.World;
+using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 

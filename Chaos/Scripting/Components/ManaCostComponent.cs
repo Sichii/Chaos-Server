@@ -1,6 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
-using Chaos.Data;
+using Chaos.Models.Data;
 
 namespace Chaos.Scripting.Components;
 

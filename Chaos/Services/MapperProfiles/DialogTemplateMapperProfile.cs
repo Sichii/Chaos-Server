@@ -1,7 +1,7 @@
 using Chaos.Common.Abstractions;
-using Chaos.Objects.Menu;
+using Chaos.Models.Menu;
+using Chaos.Models.Templates;
 using Chaos.Schemas.Templates;
-using Chaos.Templates;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;

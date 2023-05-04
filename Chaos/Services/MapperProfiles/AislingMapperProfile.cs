@@ -1,12 +1,12 @@
+using Chaos.Collections;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
-using Chaos.Containers;
-using Chaos.Data;
 using Chaos.Definitions;
 using Chaos.Geometry.Abstractions;
+using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
 using Chaos.Networking.Entities.Server;
-using Chaos.Objects.Panel;
-using Chaos.Objects.World;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
@@ -234,7 +234,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                              ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,
                 IsDead = obj.IsDead,
-                IsHidden = obj.Visibility is VisibilityType.Hidden or VisibilityType.TrueHidden or VisibilityType.GmHidden,
+                IsTransparent = obj.Visibility is VisibilityType.Hidden or VisibilityType.TrueHidden or VisibilityType.GmHidden,
                 LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
@@ -244,7 +244,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 Y = obj.Y,
                 RestPosition = RestPosition.None, //TODO: if we add rest positions in later,
                 ShieldSprite = (byte)(shield?.ItemSprite.DisplaySprite ?? 0),
-                Sprite = obj.Sprite,
+                Sprite = obj.Sprite == 0 ? null : obj.Sprite,
                 WeaponSprite = weapon?.ItemSprite.DisplaySprite ?? 0
             };
         }

@@ -1,4 +1,4 @@
-using Chaos.Objects.World.Abstractions;
+using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Formulae.Abstractions;
 
