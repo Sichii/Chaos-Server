@@ -173,10 +173,9 @@ public sealed class Startup
                                   Aisling = client.Aisling != null!
                                       ? new
                                       {
-                                          Type = nameof(Aisling),
                                           Id = client.Aisling.Id,
-                                          Location = ILocation.ToString(client.Aisling),
-                                          Name = client.Aisling.Name
+                                          Name = client.Aisling.Name,
+                                          Location = ILocation.ToString(client.Aisling)
                                       }
                                       : null
                               });
@@ -234,10 +233,9 @@ public sealed class Startup
                                   IpAddress = obj.Client?.RemoteIp,
                                   Aisling = new
                                   {
-                                      Type = nameof(Aisling),
                                       Id = obj.Id,
-                                      Location = ILocation.ToString(obj),
-                                      Name = obj.Name
+                                      Name = obj.Name,
+                                      Location = ILocation.ToString(obj)
                                   }
                               });
 
@@ -246,9 +244,9 @@ public sealed class Startup
                               {
                                   Type = nameof(Monster),
                                   Id = obj.Id,
-                                  Location = ILocation.ToString(obj),
                                   Name = obj.Name,
-                                  TemplateKey = obj.Template.TemplateKey
+                                  TemplateKey = obj.Template.TemplateKey,
+                                  Location = ILocation.ToString(obj)
                               });
 
                           builder.RegisterObjectTransformation<Merchant>(
@@ -256,9 +254,9 @@ public sealed class Startup
                               {
                                   Type = nameof(Merchant),
                                   Id = obj.Id,
-                                  Location = ILocation.ToString(obj),
                                   Name = obj.Name,
-                                  TemplateKey = obj.Template.TemplateKey
+                                  TemplateKey = obj.Template.TemplateKey,
+                                  Location = ILocation.ToString(obj)
                               });
 
                           builder.RegisterObjectTransformation<GroundItem>(
@@ -266,9 +264,9 @@ public sealed class Startup
                               {
                                   Type = nameof(GroundItem),
                                   Id = obj.Id,
+                                  Item = obj.Item,
                                   Creation = obj.Creation,
-                                  Location = ILocation.ToString(obj),
-                                  Item = obj.Item
+                                  Location = ILocation.ToString(obj)
                               });
 
                           builder.RegisterObjectTransformation<Money>(
@@ -276,9 +274,9 @@ public sealed class Startup
                               {
                                   Type = nameof(Money),
                                   Id = obj.Id,
+                                  Amount = obj.Amount,
                                   Creation = obj.Creation,
-                                  Location = ILocation.ToString(obj),
-                                  Amount = obj.Amount
+                                  Location = ILocation.ToString(obj)
                               });
 
                           builder.RegisterObjectTransformation<Item>(
@@ -318,6 +316,7 @@ public sealed class Startup
                               map => new
                               {
                                   InstanceId = map.InstanceId,
+                                  BaseInstanceId = map.BaseInstanceId,
                                   TemplateKey = map.Template.TemplateKey,
                                   Name = map.Name
                               });

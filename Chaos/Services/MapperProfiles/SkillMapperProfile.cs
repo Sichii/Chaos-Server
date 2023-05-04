@@ -52,6 +52,7 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
     SkillInfo IMapperProfile<Skill, SkillInfo>.Map(Skill obj) => new()
     {
         Name = obj.Template.Name,
+        PanelName = obj.PanelDisplayName,
         Slot = obj.Slot,
         Sprite = obj.Template.PanelSprite
     };

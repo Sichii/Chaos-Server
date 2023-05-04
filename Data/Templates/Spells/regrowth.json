@@ -7,7 +7,9 @@
       }
     ],
     "prerequisiteSkillTemplateKeys": [],
-    "prerequisiteSpellTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [
+      "healies"
+    ],
     "requiredGold": 10000,
     "requiredStats": {
       "con": 1,

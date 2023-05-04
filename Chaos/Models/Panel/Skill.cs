@@ -13,6 +13,7 @@ namespace Chaos.Models.Panel;
 /// </summary>
 public sealed class Skill : PanelEntityBase, IScripted<ISkillScript>
 {
+    public string PanelDisplayName { get; }
     public ISkillScript Script { get; }
     public override SkillTemplate Template { get; }
 
@@ -34,6 +35,7 @@ public sealed class Skill : PanelEntityBase, IScripted<ISkillScript>
             Cooldown = TimeSpan.Zero;
 
         Script = scriptProvider.CreateScript<ISkillScript, Skill>(ScriptKeys, this);
+        PanelDisplayName = $"{Template.Name} (Lev:100/100)";
     }
 
     /// <inheritdoc />

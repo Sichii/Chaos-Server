@@ -19,7 +19,7 @@ public sealed record AddSpellToPaneSerializer : ServerPacketSerializer<AddSpellT
         writer.WriteByte(args.Spell.Slot);
         writer.WriteUInt16(args.Spell.Sprite);
         writer.WriteByte((byte)args.Spell.SpellType);
-        writer.WriteString8(args.Spell.Name);
+        writer.WriteString8(args.Spell.PanelName);
         writer.WriteString8(args.Spell.Prompt);
         writer.WriteByte(args.Spell.CastLines);
     }

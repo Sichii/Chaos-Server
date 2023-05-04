@@ -17,6 +17,11 @@ public sealed record SpellInfo
     ///     The name of the spell
     /// </summary>
     public string Name { get; set; } = null!;
+
+    /// <summary>
+    ///     The text that appears when you hover this spell on the spell panel
+    /// </summary>
+    public string PanelName { get; set; } = null!;
     /// <summary>
     ///     If the spell has a prompt, this is that prompt
     /// </summary>

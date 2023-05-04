@@ -53,6 +53,7 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
     {
         CastLines = obj.CastLines,
         Name = obj.Template.Name,
+        PanelName = obj.PanelDisplayName,
         Prompt = obj.Template.Prompt ?? string.Empty,
         Slot = obj.Slot,
         SpellType = obj.Template.SpellType,

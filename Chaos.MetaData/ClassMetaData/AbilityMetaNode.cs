@@ -113,8 +113,8 @@ public sealed record AbilityMetaNode(string Name, bool IsSkill, BaseClass Class)
         writer.WriteString16($"{Level}/{Convert.ToByte(RequiresMaster)}/{Ability}");
         writer.WriteString16($"{IconId}/0/0");
         writer.WriteString16($"{Str}/{Int}/{Wis}/{Dex}/{Con}");
-        writer.WriteString16($"{PreReq1Name ?? "0"}/{PreReq1Level?.ToString() ?? string.Empty}");
-        writer.WriteString16($"{PreReq2Name ?? "0"}/{PreReq2Level?.ToString() ?? string.Empty}");
+        writer.WriteString16($"{PreReq1Name ?? "0"}/{PreReq1Level ?? 0}");
+        writer.WriteString16($"{PreReq2Name ?? "0"}/{PreReq2Level ?? 0}");
         writer.WriteString16(Description ?? string.Empty);
     }
 }

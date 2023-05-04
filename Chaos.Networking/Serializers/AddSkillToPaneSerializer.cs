@@ -18,6 +18,6 @@ public sealed record AddSkillToPaneSerializer : ServerPacketSerializer<AddSkillT
     {
         writer.WriteByte(args.Skill.Slot);
         writer.WriteUInt16(args.Skill.Sprite);
-        writer.WriteString8(args.Skill.Name);
+        writer.WriteString8(args.Skill.PanelName);
     }
 }

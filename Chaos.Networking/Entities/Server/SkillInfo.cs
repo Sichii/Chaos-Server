@@ -11,6 +11,12 @@ public sealed record SkillInfo
     ///     The name of the skill
     /// </summary>
     public string Name { get; set; } = null!;
+
+    /// <summary>
+    ///     The text that appears when you hover this skill on the skill panel
+    /// </summary>
+    public string PanelName { get; set; } = null!;
+
     /// <summary>
     ///     The slot the skill is in
     /// </summary>

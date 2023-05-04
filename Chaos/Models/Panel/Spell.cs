@@ -13,6 +13,7 @@ namespace Chaos.Models.Panel;
 public sealed class Spell : PanelEntityBase, IScripted<ISpellScript>
 {
     public byte CastLines { get; set; }
+    public string PanelDisplayName { get; }
     public ISpellScript Script { get; }
     public override SpellTemplate Template { get; }
 
@@ -32,6 +33,7 @@ public sealed class Spell : PanelEntityBase, IScripted<ISpellScript>
             ScriptKeys.AddRange(extraScriptKeys);
 
         Script = scriptProvider.CreateScript<ISpellScript, Spell>(ScriptKeys, this);
+        PanelDisplayName = $"{Template.Name} (Lev:100/100)";
     }
 
     /// <inheritdoc />
