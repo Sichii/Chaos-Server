@@ -1,8 +1,11 @@
 using Chaos.Messaging.Abstractions;
 
-namespace Chaos.Commands.Options;
+namespace Chaos.Messaging.Options;
 
-/// <inheritdoc />
+/// <summary>
+///     Represents the configuration options for a <see cref="CommandInterceptor{T,TOptions}" /> that uses
+///     <see cref="Chaos.Models.World.Aisling" />s as the target type
+/// </summary>
 public class AislingCommandInterceptorOptions : ICommandInterceptorOptions
 {
     /// <inheritdoc />

@@ -2,9 +2,9 @@ using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Behaviors;
 
-public class RestrictionComponent
+public class RestrictionBehavior
 {
     public virtual bool CanMove(Creature creature) => creature.IsAlive;
 

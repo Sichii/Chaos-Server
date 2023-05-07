@@ -7,6 +7,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components;
+using Chaos.Scripting.Components.Utilities;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ApplyDamage;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
@@ -17,17 +18,16 @@ using Chaos.Time.Abstractions;
 namespace Chaos.Scripting.ReactorTileScripts;
 
 public class TrapScript : ConfigurableReactorTileScriptBase,
-                          AbilityComponent.IAbilityComponentOptions,
+                          GetTargetsComponent<Creature>.IGetTargetsComponentOptions,
+                          SoundComponent.ISoundComponentOptions,
+                          AnimationComponent.IAnimationComponentOptions,
                           DamageComponent.IDamageComponentOptions,
-                          ManaDrainComponent.IManaDrainComponentOptions
+                          ManaDrainComponent.IManaDrainComponentOptions,
+                          ApplyEffectComponent.IApplyEffectComponentOptions
 {
-    protected IEffectFactory EffectFactory { get; set; }
     protected Creature Owner { get; set; }
     protected IIntervalTimer? Timer { get; set; }
     protected int TriggerCount { get; set; }
-    protected AbilityComponent AbilityComponent { get; }
-    protected DamageComponent DamageComponent { get; }
-    protected ManaDrainComponent ManaDrainComponent { get; }
 
     /// <inheritdoc />
     public TrapScript(ReactorTile subject, IEffectFactory effectFactory)
@@ -36,7 +36,7 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
         if (Subject.Owner == null)
             throw new Exception(
                 $"""
-{nameof(TrapScript)} script initialized fo {Subject} that has no owner. 
+{nameof(TrapScript)} script initialized for {Subject} that has no owner. 
 If this reactor was created through json, you must specify the optional parameter "owningMonsterTemplateKey". 
 If this reactor was created through a script, you must specify the owner in the {nameof(IReactorTileFactory)}.{
     nameof(IReactorTileFactory.Create)}() call.
@@ -49,40 +49,30 @@ If this reactor was created through a script, you must specify the owner in the 
         if (DurationSecs.HasValue)
             Timer = new IntervalTimer(TimeSpan.FromSeconds(DurationSecs.Value), false);
 
-        ApplyDamageScript = ApplyAttackDamageScript.Create();
+        ApplyDamageScript = ApplyNonAttackDamageScript.Create();
         ApplyDamageScript.DamageFormula = DamageFormulae.PureDamage;
         SourceScript = this;
-
-        AbilityComponent = new AbilityComponent();
-        DamageComponent = new DamageComponent();
-        ManaDrainComponent = new ManaDrainComponent();
     }
 
     /// <inheritdoc />
     public override void OnWalkedOn(Creature source)
     {
         //if the person who stepped on it isnt a valid target, do nothing
-        if (Filter.HasValue && !Filter.Value.IsValidTarget(Owner, source))
+        if (!Filter.IsValidTarget(Owner, source))
             return;
 
-        var context = new ActivationContext(Owner, source);
+        var executed = new ComponentExecutor(Owner, source)
+                       .WithOptions(this)
+                       .ExecuteAndCheck<GetTargetsComponent<Creature>>()
+                       ?
+                       .Execute<SoundComponent>()
+                       .Execute<AnimationComponent>()
+                       .Execute<DamageComponent>()
+                       .Execute<ManaDrainComponent>()
+                       .Execute<ApplyEffectComponent>()
+                       != null;
 
-        var targets = AbilityComponent.Activate<Creature>(context, this);
-
-        if (MustHaveTargets && !targets.TargetEntities.Any())
-            return;
-
-        DamageComponent.ApplyDamage(context, targets.TargetEntities, this);
-        ManaDrainComponent.ApplyManaDrain(targets.TargetEntities, this);
-
-        if (!string.IsNullOrEmpty(EffectKey))
-            foreach (var entity in targets.TargetEntities)
-            {
-                var effect = EffectFactory.Create(EffectKey);
-                entity.Effects.Apply(context.Source, effect);
-            }
-
-        if (MaxTriggers.HasValue)
+        if (executed && MaxTriggers.HasValue)
         {
             TriggerCount++;
 
@@ -106,22 +96,22 @@ If this reactor was created through a script, you must specify the owner in the 
     }
 
     #region ScriptVars
+    public IEffectFactory EffectFactory { get; init; }
     public IApplyDamageScript ApplyDamageScript { get; init; }
     public AoeShape Shape { get; init; }
-    public BodyAnimation? BodyAnimation { get; init; }
+    public BodyAnimation BodyAnimation { get; init; }
     public int Range { get; init; }
-    public TargetFilter? Filter { get; init; }
+    public TargetFilter Filter { get; init; }
     public Animation? Animation { get; init; }
     public byte? Sound { get; init; }
     public bool AnimatePoints { get; init; }
     public bool MustHaveTargets { get; init; } = true;
-    public bool IncludeSourcePoint { get; init; } = true;
+    public bool ExcludeSourcePoint { get; init; } = true;
     public int? BaseDamage { get; init; }
     public Stat? DamageStat { get; init; }
     public decimal? DamageStatMultiplier { get; init; }
     public decimal? PctHpDamage { get; init; }
     public IScript SourceScript { get; init; }
-    /// <inheritdoc />
     public Element? Element { get; init; }
     public int? DurationSecs { get; init; }
     public int? MaxTriggers { get; init; }

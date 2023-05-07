@@ -1,9 +1,8 @@
 using Chaos.Collections.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("destroyall")]
 public class DestroyAllCommand : ICommand<Aisling>

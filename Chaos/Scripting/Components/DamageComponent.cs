@@ -3,42 +3,17 @@ using Chaos.Common.Utilities;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripting.Components.Abstractions;
+using Chaos.Scripting.Components.Utilities;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 
 namespace Chaos.Scripting.Components;
 
-/// <summary>
-///     Component that can be used to calculate and deal damage to entities
-/// </summary>
-public class DamageComponent
+public class DamageComponent : IComponent
 {
-    public virtual void ApplyDamage(
-        ActivationContext context,
-        IReadOnlyCollection<Creature> targetEntities,
-        IDamageComponentOptions options
-    )
-    {
-        var damage = CalculateDamage(
-            context,
-            options.BaseDamage,
-            options.PctHpDamage,
-            options.DamageStat,
-            options.DamageStatMultiplier);
-
-        if (damage <= 0)
-            return;
-
-        foreach (var target in targetEntities)
-            options.ApplyDamageScript.ApplyDamage(
-                context.Source,
-                target,
-                options.SourceScript,
-                damage,
-                options.Element);
-    }
-
     protected virtual int CalculateDamage(
-        ActivationContext context,
+        Creature source,
+        Creature target,
         int? baseDamage = null,
         decimal? pctHpDamage = null,
         Stat? damageStat = null,
@@ -47,24 +22,51 @@ public class DamageComponent
     {
         var finalDamage = baseDamage ?? 0;
 
-        finalDamage += MathEx.GetPercentOf<int>((int)context.Target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
+        finalDamage += MathEx.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
 
         if (!damageStat.HasValue)
             return finalDamage;
 
         if (!damageStatMultiplier.HasValue)
         {
-            finalDamage += context.Source.StatSheet.GetEffectiveStat(damageStat.Value);
+            finalDamage += source.StatSheet.GetEffectiveStat(damageStat.Value);
 
             return finalDamage;
         }
 
-        finalDamage += Convert.ToInt32(context.Source.StatSheet.GetEffectiveStat(damageStat.Value) * damageStatMultiplier.Value);
+        finalDamage += Convert.ToInt32(source.StatSheet.GetEffectiveStat(damageStat.Value) * damageStatMultiplier.Value);
 
         return finalDamage;
     }
 
-    // ReSharper disable once ClassCanBeSealed.Global
+    /// <inheritdoc />
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions<IDamageComponentOptions>();
+        var targets = vars.GetTargets<Creature>();
+
+        foreach (var target in targets)
+        {
+            var damage = CalculateDamage(
+                context.Source,
+                target,
+                options.BaseDamage,
+                options.PctHpDamage,
+                options.DamageStat,
+                options.DamageStatMultiplier);
+
+            if (damage <= 0)
+                continue;
+
+            options.ApplyDamageScript.ApplyDamage(
+                context.Source,
+                target,
+                options.SourceScript,
+                damage,
+                options.Element);
+        }
+    }
+
     public interface IDamageComponentOptions
     {
         IApplyDamageScript ApplyDamageScript { get; init; }

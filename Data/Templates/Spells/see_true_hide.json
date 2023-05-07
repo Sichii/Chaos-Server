@@ -27,7 +27,7 @@
     "scriptVars": {
         "applyEffect": {
             "effectKey": "seetruehide",
-            "filter": "selfOnly"
+            "filter": "selfOnly, aliveOnly"
         }
     },
     "templateKey": "see_true_hide"

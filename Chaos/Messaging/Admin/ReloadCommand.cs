@@ -1,11 +1,10 @@
 using Chaos.Collections.Common;
 using Chaos.Extensions;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Microsoft.Extensions.Logging;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("reload")]
 public sealed class ReloadCommand : ICommand<Aisling>

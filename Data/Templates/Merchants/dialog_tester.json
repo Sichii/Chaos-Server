@@ -20,7 +20,7 @@
     ],
     "itemsToBuy": ["apple"],
     "skillstoteach": ["assail", "ambush"],
-    "spellstoteach": ["firebreath", "healies", "regrowth", "needle_trap"],
+    "spellstoteach": ["fire_breath", "healies", "regrowth", "needle_trap"],
     "restockIntervalHours": 1,
     "restockPercent": 100
 }

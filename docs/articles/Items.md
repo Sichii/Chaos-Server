@@ -63,7 +63,7 @@ things to know before implementing these systems.
 - Items that have been modified must have a unique `DisplayName` that is specific to the modifications that were made
     - `DisplayName` is a property of the item, not the template, and overrides the template's `Name` property
 - You will need to create an implementation
-  of [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator>) for each modification system
+  of [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>) for each modification system
     - More details about these mutators can be found in [this article](MetaData.md#mutators)
 
 Normally when an item is serialized, only the template key, and some other minimal information is serialized. For

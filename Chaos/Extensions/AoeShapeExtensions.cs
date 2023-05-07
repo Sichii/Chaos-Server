@@ -13,7 +13,7 @@ public static class AoeShapeExtensions
         int range = 1,
         Direction? direction = null,
         IRectangle? bounds = null,
-        bool includeSource = false
+        bool excludeSource = false
     )
     {
         var sourcePoint = Point.From(source);
@@ -59,7 +59,7 @@ public static class AoeShapeExtensions
         if (bounds != null)
             points = points.Where(p => bounds.Contains(p));
 
-        if (includeSource)
+        if (!excludeSource)
             points = points.Prepend(sourcePoint);
 
         return points.Distinct();

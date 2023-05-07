@@ -1,12 +1,11 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Utilities;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("chaos")]
 public class ChaosCommand : ICommand<Aisling>

@@ -1,12 +1,11 @@
 using Chaos.Collections.Common;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("destroy")]
 public class DestroyCommand : ICommand<Aisling>

@@ -55,25 +55,26 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
     }
 
     /// <inheritdoc />
-    public ValueTask HandleCommandAsync(T source, string commandStr)
+    /// <remarks>async is intentional, so that the try/catch handles any exception that comes from executing the command</remarks>
+    public async ValueTask HandleCommandAsync(T source, string commandStr)
     {
         var command = commandStr[1..];
         var commandParts = new ArgumentCollection(command);
 
         if (commandParts.Count == 0)
-            return default;
+            return;
 
         if (!commandParts.TryGetNext<string>(out var commandName))
-            return default;
+            return;
 
         if (!Commands.TryGetValue(commandName, out var descriptor))
-            return default;
+            return;
 
         if (descriptor.Details.RequiresAdmin && !source.IsAdmin)
         {
             Logger.LogWarning("Non-Admin {@Source} tried to execute admin command {CommandName}", source, commandName);
 
-            return default;
+            return;
         }
 
         try
@@ -95,7 +96,7 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
                     commandArgs.ToString());
             }
 
-            return InnerExecute();
+            await InnerExecute();
         } catch (Exception e)
         {
             Logger.LogError(
@@ -104,8 +105,6 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
                 source,
                 descriptor);
         }
-
-        return default;
     }
 
     /// <inheritdoc />

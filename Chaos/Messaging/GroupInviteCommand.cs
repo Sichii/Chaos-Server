@@ -1,12 +1,11 @@
 using Chaos.Collections.Common;
 using Chaos.Extensions.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Services.Other.Abstractions;
 
-namespace Chaos.Commands;
+namespace Chaos.Messaging;
 
 [Command("invite", false)]
 public class GroupInviteCommand : ICommand<Aisling>

@@ -72,7 +72,7 @@ public abstract class VisibleEntity : MapEntity
         }
     }
 
-    public virtual void ShowTo(Aisling aisling) => aisling.Client.SendVisibleObjects(this);
+    public virtual void ShowTo(Aisling aisling) => aisling.Client.SendVisibleEntities(this);
 
     public override void WarpTo(IPoint destinationPoint)
     {

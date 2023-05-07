@@ -28,11 +28,12 @@
             "damageStat": "str",
             "baseDamage": 3,
             "range": 1,
-            "bodyAnimation": "kick",
+            "bodyAnimation": "assail",
             "shape": "front",
             "damageStatMultiplier": 2,
-            "filter": "hostileOnly",
-            "sound": 1
+            "filter": "hostileOnly, aliveOnly",
+            "sound": 1,
+            "excludeSourcePoint": true
         }
     },
     "templateKey": "assail"

@@ -107,7 +107,12 @@ public sealed class EffectsBar : IEffectsBar
     {
         using var @lock = Sync.Enter();
 
-        return Effects.TryGetValue(effectName, out effect);
+        if (Effects.TryGetValue(effectName, out effect))
+            return true;
+
+        effect = Effects.Values.FirstOrDefault(e => e.ScriptKey.EqualsI(effectName));
+
+        return effect is not null;
     }
 
     public void Update(TimeSpan delta)

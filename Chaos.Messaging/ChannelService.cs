@@ -9,7 +9,9 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Messaging;
 
-/// <inheritdoc />
+/// <summary>
+///     Represents a service that manages channels and their subscribers
+/// </summary>
 public sealed class ChannelService : IChannelService
 {
     private readonly ConcurrentDictionary<string, ChannelDetails> Channels;

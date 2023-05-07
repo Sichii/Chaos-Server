@@ -75,6 +75,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void AnimateBody(BodyAnimation bodyAnimation, ushort speed = 25, byte? sound = null)
     {
+        if (bodyAnimation is BodyAnimation.None)
+            return;
+
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
                                            .ThatCanObserve(this))
             aisling.Client.SendBodyAnimation(

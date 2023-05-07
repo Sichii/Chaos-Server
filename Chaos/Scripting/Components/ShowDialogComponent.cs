@@ -1,24 +1,35 @@
 using Chaos.Models.Abstractions;
-using Chaos.Models.World;
+using Chaos.Models.Data;
+using Chaos.Scripting.Components.Abstractions;
+using Chaos.Scripting.Components.Utilities;
 using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripting.Components;
 
-public class ShowDialogComponent
+public class ShowDialogComponent : IComponent
 {
-    protected IDialogFactory DialogFactory { get; }
-
-    public ShowDialogComponent(IDialogFactory dialogFactory) => DialogFactory = dialogFactory;
-
-    public virtual void ShowDialog(Aisling aisling, IDialogSourceEntity source, IShowDialogComponentOptions options)
+    /// <inheritdoc />
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
     {
-        aisling.DialogHistory.Clear();
-        var dialog = DialogFactory.Create(options.DialogKey, source);
-        dialog.Display(aisling);
+        var options = vars.GetOptions<IShowDialogComponentOptions>();
+
+        if (string.IsNullOrEmpty(options.DialogKey))
+            return;
+
+        var targetAisling = context.TargetAisling;
+
+        if (targetAisling == null)
+            return;
+
+        targetAisling.DialogHistory.Clear();
+        var dialog = options.DialogFactory.Create(options.DialogKey, options.DialogSource);
+        dialog.Display(targetAisling);
     }
 
     public interface IShowDialogComponentOptions
     {
-        string DialogKey { get; init; }
+        IDialogFactory DialogFactory { get; init; }
+        string? DialogKey { get; init; }
+        IDialogSourceEntity DialogSource { get; init; }
     }
 }

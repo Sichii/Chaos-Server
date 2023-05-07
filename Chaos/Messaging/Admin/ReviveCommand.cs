@@ -1,12 +1,11 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Abstractions;
 using Chaos.Extensions.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("revive")]
 public class ReviveCommand : ICommand<Aisling>

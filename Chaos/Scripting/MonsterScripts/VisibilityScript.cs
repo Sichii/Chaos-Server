@@ -1,18 +1,18 @@
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
-using Chaos.Scripting.Components;
+using Chaos.Scripting.Behaviors;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 
 namespace Chaos.Scripting.MonsterScripts;
 
 public class VisibilityScript : MonsterScriptBase
 {
-    protected virtual VisibilityComponent VisibilityComponent { get; }
+    protected virtual VisibilityBehavior VisibilityBehavior { get; }
 
     /// <inheritdoc />
     public VisibilityScript(Monster subject)
-        : base(subject) => VisibilityComponent = new VisibilityComponent();
+        : base(subject) => VisibilityBehavior = new VisibilityBehavior();
 
     /// <inheritdoc />
-    public override bool CanSee(VisibleEntity entity) => VisibilityComponent.CanSee(Subject, entity);
+    public override bool CanSee(VisibleEntity entity) => VisibilityBehavior.CanSee(Subject, entity);
 }

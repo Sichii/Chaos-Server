@@ -24,7 +24,7 @@ simulates enchantments through non-destructive mutation of an item meta node.
 
 Implement your own mutator as implementations of
 the [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>)
-interface and add it to the `MetaDataCacheOptions` via the Chaos.Configuration.MetaDataCacheOptionsConfigurer`
+interface and add it to the `MetaDataCacheOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
 
 ### Example
 
@@ -32,9 +32,9 @@ Here is an example of a mutator that generates mutations of items similarly to t
 
 [!code-csharp[](../../Chaos/Services/Storage/Mutators/EnchantmentMetaNodeMutator.cs)]
 
-This mutator is then added to the `MetaDataCacheOptions` in `Chaos.Configuration.MetaDataCacheOptionsConfigurer`
+This mutator is then added to the `MetaDataCacheOptions` in `Chaos.Services.Configuration.OptionsConfigurer`
 
-[!code-csharp[](../../Chaos/Configuration/MetaDataCacheOptionsConfigurer.cs)]
+[!code-csharp[](../../Chaos/Services/Configuration/OptionsConfigurer.cs#L59-65)]
 
 > [!NOTE]
 > You can have both Prefix and Suffix mutators. When metadata is generated, it will create a cross product of all prefix
@@ -124,7 +124,7 @@ This file is located at `StagingDir/MetaData/Events.json` by default
 | string                                                                     | Title               | The title of the event                                                                                                                                                          |
 | int?                                                                       | PageOverride        | Default null<br />If set, this is the page that the event will show up on(starting at index of 1). If null, the page will be determined by the event's lowest qualifying circle |
 | ICollection\<[LevelCircle](<xref:Chaos.Common.Definitions.LevelCircle>)\>? | QualifyingCircles   | Default null<br />if set, these are the circles this quest is available to. If null, the event will be available to all circles                                                 |
-| ICollection\<[Baseclass](<xref:Chaos.Common.Definitions.Baseclass>)\>?     | QualifyingClasses   | Default null<br />If set, these are the classes this event is available to.<br />If null, the event will be available to all classes                                            |
+| ICollection\<[BaseClass](<xref:Chaos.Common.Definitions.BaseClass>)\>?     | QualifyingClasses   | Default null<br />If set, these are the classes this event is available to.<br />If null, the event will be available to all classes                                            |
 | string?                                                                    | PrerequisiteEventId | The id of the event that must be completed before this event can be completed. This event will only show up blue(available) if the previous event was completed                 |
 | string                                                                     | Summary             | A brief summary of the event                                                                                                                                                    |
 | string?                                                                    | Rewards             | Default null.<br />The rewards given when the event is completed                                                                                                                |

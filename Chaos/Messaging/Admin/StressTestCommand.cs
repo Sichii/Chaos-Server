@@ -1,11 +1,10 @@
 using Chaos.Collections.Common;
 using Chaos.Extensions.Geometry;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Services.Factories.Abstractions;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("stressTest")]
 public class StressTestCommand : ICommand<Aisling>

@@ -1,40 +1,59 @@
+using Chaos.Common.Definitions;
+using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Components;
+using Chaos.Scripting.Components.Utilities;
 using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripting.SpellScripts;
 
-public class LayReactorTileScript : BasicSpellScriptBase
+public class LayReactorTileScript : ConfigurableSpellScriptBase,
+                                    AbilityComponent<MapEntity>.IAbilityComponentOptions,
+                                    LayReactorComponent.ILayReactorComponentOptions
 {
-    protected IReactorTileFactory ReactorTileFactory { get; set; }
-
-    #region ScriptVars
-    protected string ReactorTileTemplateKey { get; init; } = null!;
-    #endregion
-
-    /// <inheritdoc />
     public LayReactorTileScript(Spell subject, IReactorTileFactory reactorTileFactory)
         : base(subject) =>
         ReactorTileFactory = reactorTileFactory;
 
     /// <inheritdoc />
-    public override void OnUse(SpellContext context)
-    {
-        var targets = AbilityComponent.Activate<Creature>(context, this);
+    public override void OnUse(SpellContext context) =>
+        new ComponentExecutor(context)
+            .WithOptions(this)
+            .ExecuteAndCheck<AbilityComponent<MapEntity>>()
+            ?
+            .Execute<LayReactorComponent>();
 
-        context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
-
-        foreach (var point in targets.TargetPoints)
-        {
-            var trap = ReactorTileFactory.Create(
-                ReactorTileTemplateKey,
-                context.Map,
-                point,
-                owner: context.Target);
-
-            context.Map.SimpleAdd(trap);
-        }
-    }
+    #region ScriptVars
+    /// <inheritdoc />
+    public bool ShouldNotBreakHide { get; init; }
+    /// <inheritdoc />
+    public AoeShape Shape { get; init; }
+    /// <inheritdoc />
+    public TargetFilter Filter { get; init; }
+    /// <inheritdoc />
+    public int Range { get; init; }
+    /// <inheritdoc />
+    public bool ExcludeSourcePoint { get; init; }
+    /// <inheritdoc />
+    public bool MustHaveTargets { get; init; } = false;
+    /// <inheritdoc />
+    public byte? Sound { get; init; }
+    /// <inheritdoc />
+    public BodyAnimation BodyAnimation { get; init; }
+    /// <inheritdoc />
+    public Animation? Animation { get; init; }
+    /// <inheritdoc />
+    public bool AnimatePoints { get; init; }
+    /// <inheritdoc />
+    public string? ReactorTileTemplateKey { get; init; }
+    /// <inheritdoc />
+    public IReactorTileFactory ReactorTileFactory { get; init; }
+    /// <inheritdoc />
+    public int? ManaCost { get; init; }
+    /// <inheritdoc />
+    public decimal PctManaCost { get; init; }
+    #endregion
 }

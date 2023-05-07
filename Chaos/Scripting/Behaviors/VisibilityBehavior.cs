@@ -4,9 +4,9 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.EffectScripts.HideEffects;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Behaviors;
 
-public class VisibilityComponent
+public class VisibilityBehavior
 {
     private readonly ImmutableList<string> SeeHiddenEffects = ImmutableList.Create(
         EffectBase.GetEffectKey(typeof(SeeHideEffect)),

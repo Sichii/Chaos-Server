@@ -138,6 +138,9 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         byte? sound = null
     )
     {
+        if (bodyAnimation is BodyAnimation.None)
+            return;
+
         var args = new BodyAnimationArgs
         {
             SourceId = id,
@@ -732,7 +735,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
                             if (Aisling.IsAdmin || Aisling.Script.CanSee(creature))
                                 creatureInfo.Sprite = 405;
                             else
-                                creatureInfo.Sprite = 0;
+                                creatureInfo.Sprite = 492;
 
                         visibleArgs.Add(creatureInfo);
 

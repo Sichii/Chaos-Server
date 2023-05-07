@@ -1,11 +1,10 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 
-namespace Chaos.Commands;
+namespace Chaos.Messaging;
 
 [Command("setchannelcolor", false)]
 public class SetChannelColorCommand : ICommand<Aisling>

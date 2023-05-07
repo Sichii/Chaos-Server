@@ -1,3 +1,4 @@
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts.HideEffects;
@@ -24,4 +25,7 @@ public class SeeHideEffect : EffectBase
         AislingSubject?.SendOrangeBarMessage("You can no longer detect hidden things");
         AislingSubject?.Refresh(true);
     }
+
+    /// <inheritdoc />
+    public override bool ShouldApply(Creature source, Creature target) => base.ShouldApply(source, target);
 }

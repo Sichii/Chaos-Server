@@ -9,7 +9,7 @@ and adding the [CommandAttribute](<xref:Chaos.Messaging.CommandAttribute>) attri
 specified the command name that will be used to execute the command, and whether or not the command requires admin
 privileges.
 
-Chaos comes with many commands out of the box, and you can find them in the [Chaos.Commands](<xref:Chaos.Commands>)
+Chaos comes with many commands out of the box, and you can find them in the [Chaos.Messaging](<xref:Chaos.Messaging>)
 namespace.
 
 > [!NOTE]
@@ -23,14 +23,14 @@ for each execution, and are dependency injected.
 ## Arguments
 
 Commands are provided the object that executed the command (in this case,
-an [Aisling](<xref:Chaos.Objects.World.Aisling>)), and
-an [ArgumentCollection](<xref:Chaos.Collection.Common.ArgumentCollection>). The ArgumentCollection helps to facilitate
+an [Aisling](<xref:Chaos.Models.World.Aisling>)), and
+an [ArgumentCollection](<xref:Chaos.Collections.Common.ArgumentCollection>). The ArgumentCollection helps to facilitate
 conversion of strings to other data types, as well as usage of familiar patterns in command line interfaces, such as
 preserving arguments that have spaces within double quotes("").
 
 The ArgumentCollection can be accessed by index via
-the [TryGet<T>](<xref:Chaos.Collections.Common.ArgumentCollection.TryGet>) method, or by accessing arguments linearly
-via the [TryGetNext<T>](<xref:Chaos.Collection.Common.ArgumentCollection.TryGetNext>) method.
+the [TryGet<T>](<xref:Chaos.Collections.Common.ArgumentCollection.TryGet*>) method, or by accessing arguments linearly
+via the [TryGetNext<T>](<xref:Chaos.Collections.Common.ArgumentCollection.TryGetNext*>) method.
 
 > [!NOTE]
 > TryGetNext will not increment the index if it returns false

@@ -22,7 +22,9 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     public void Add(TScript script) => Components.Add(script);
 
     /// <inheritdoc />
-    public T? GetComponent<T>()
+    public T? GetComponent<T>() => this.OfType<T>().FirstOrDefault();
+
+    /*
     {
         foreach (var component in Components)
             switch (component)
@@ -36,7 +38,10 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
             }
 
         return default;
-    }
+    }*/
+
+    /// <inheritdoc />
+    public IEnumerable<T> GetComponents<T>() => this.OfType<T>();
 
     /// <inheritdoc />
     public IEnumerator<TScript> GetEnumerator()

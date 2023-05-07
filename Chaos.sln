@@ -118,7 +118,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\MetaData.md = docs\articles\MetaData.md
 		docs\articles\Monsters.md = docs\articles\Monsters.md
 		README.md = README.md
-		docs\articles\Scripts.md = docs\articles\Scripts.md
 		docs\articles\Skills.md = docs\articles\Skills.md
 		docs\articles\Spells.md = docs\articles\Spells.md
 		docs\articles\toc.yml = docs\articles\toc.yml
@@ -128,6 +127,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\InitialSetup.md = docs\articles\InitialSetup.md
 		docs\articles\Commands.md = docs\articles\Commands.md
 		docs\articles\Visibility.md = docs\articles\Visibility.md
+		docs\articles\Components.md = docs\articles\Components.md
+		docs\articles\Scripting.md = docs\articles\Scripting.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"

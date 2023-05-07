@@ -1,10 +1,9 @@
 using Chaos.Collections.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
 
-namespace Chaos.Commands;
+namespace Chaos.Messaging;
 
 [Command("leavechannel", false)]
 public class LeaveChannelCommand : ICommand<Aisling>

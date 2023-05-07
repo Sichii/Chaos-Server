@@ -1,13 +1,18 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Models.Data;
+using Chaos.Scripting.Components.Abstractions;
+using Chaos.Scripting.Components.Utilities;
 
 namespace Chaos.Scripting.Components;
 
-public class ManaCostComponent
+public class ManaCostComponent : IConditionalComponent
 {
-    public bool TryApplyManaCost(ActivationContext context, IManaCostComponentOptions options)
+    /// <inheritdoc />
+    public virtual bool Execute(ActivationContext context, ComponentVars vars)
     {
+        var options = vars.GetOptions<IManaCostComponentOptions>();
+
         var cost = options.ManaCost ?? 0;
         cost += MathEx.GetPercentOf<int>((int)context.Source.StatSheet.EffectiveMaximumMp, options.PctManaCost);
 

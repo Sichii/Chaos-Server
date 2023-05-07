@@ -1,42 +1,38 @@
 {
-  "learningRequirements": {
-    "itemRequirements": [
-      {
-        "amountRequired": 15,
-        "itemTemplateKey": "apple"
-      }
-    ],
-    "prerequisiteSkillTemplateKeys": [],
-    "prerequisiteSpellTemplateKeys": [
-      "healies"
-    ],
-    "requiredGold": 10000,
-    "requiredStats": {
-      "con": 1,
-      "dex": 1,
-      "int": 1,
-      "str": 1,
-      "wis": 2
-    }
-  },
-  "spellType": "Targeted",
-  "class": "Priest",
-  "description": "Applies a regenerative effect to your target, and all friendlies around that target.",
-  "level": 10,
-  "name": "Regrowth",
-  "panelSprite": 146,
-  "scriptKeys": [
-    "applyEffect"
-  ],
-  "scriptVars": {
-    "applyEffect": {
-      "effectKey": "regeneration",
-      "range": 2,
-      "bodyAnimation": "handsup",
-      "shape": "allaround",
-      "filter": "friendlyOnly",
-      "sound": 8
-    }
-  },
-  "templateKey": "regrowth"
+    "learningRequirements": {
+        "itemRequirements": [
+            {
+                "amountRequired": 15,
+                "itemTemplateKey": "apple"
+            }
+        ],
+        "prerequisiteSkillTemplateKeys": [],
+        "prerequisiteSpellTemplateKeys": ["healies"],
+        "requiredGold": 10000,
+        "requiredStats": {
+            "con": 1,
+            "dex": 1,
+            "int": 1,
+            "str": 1,
+            "wis": 2
+        }
+    },
+    "spellType": "Targeted",
+    "class": "Priest",
+    "description": "Applies a regenerative effect to your target, and all friendlies around that target.",
+    "level": 10,
+    "name": "Regrowth",
+    "panelSprite": 146,
+    "scriptKeys": ["applyEffect"],
+    "scriptVars": {
+        "applyEffect": {
+            "effectKey": "regeneration",
+            "range": 2,
+            "bodyAnimation": "handsup",
+            "shape": "allaround",
+            "filter": "friendlyOnly, aliveOnly",
+            "sound": 8
+        }
+    },
+    "templateKey": "regrowth"
 }

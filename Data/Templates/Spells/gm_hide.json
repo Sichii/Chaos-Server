@@ -5,11 +5,11 @@
     "level": 35,
     "name": "Gm Hide",
     "panelSprite": 131,
-    "scriptKeys": ["applyEffect"],
+    "scriptKeys": ["toggleEffect"],
     "scriptVars": {
-        "applyEffect": {
+        "toggleEffect": {
             "effectKey": "gmHide",
-            "filter": "selfOnly"
+            "filter": "selfOnly, aliveOnly"
         }
     },
     "templateKey": "gm_hide"

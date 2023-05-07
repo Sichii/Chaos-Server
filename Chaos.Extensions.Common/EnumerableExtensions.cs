@@ -52,20 +52,8 @@ public static class EnumerableExtensions
     /// <typeparam name="TReturn">The type to cast the IEnumerable to</typeparam>
     public static List<TReturn> ToListCast<TReturn>(this IEnumerable enumerable)
     {
-        if (enumerable is ICollection collection)
-        {
-            var count = collection.Count;
-            var newList = new List<TReturn>(count);
-            var index = 0;
-
-            foreach (var item in collection.Cast<TReturn>())
-            {
-                newList[index] = item;
-                index++;
-            }
-
-            return newList;
-        }
+        if (enumerable is List<TReturn> list)
+            return list;
 
         return enumerable.Cast<TReturn>().ToList();
     }

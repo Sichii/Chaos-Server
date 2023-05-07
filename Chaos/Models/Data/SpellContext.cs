@@ -2,9 +2,9 @@ using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Models.Data;
 
-public sealed class SpellContext : ActivationContext
+public sealed record SpellContext : ActivationContext
 {
-    public string? Prompt { get; }
+    public string? Prompt { get; init; }
 
     /// <inheritdoc />
     public SpellContext(Creature source, Creature target, string? prompt = null)

@@ -1,41 +1,72 @@
 using Chaos.Common.Definitions;
+using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components;
+using Chaos.Scripting.Components.Utilities;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.SpellScripts.Abstractions;
 
 namespace Chaos.Scripting.SpellScripts;
 
-public class HealScript : BasicSpellScriptBase, HealComponent.IHealComponentOptions
+public class HealScript : ConfigurableSpellScriptBase,
+                          AbilityComponent<Creature>.IAbilityComponentOptions,
+                          HealComponent.IHealComponentOptions
 {
-    public IApplyHealScript ApplyHealScript { get; init; }
-    public IScript SourceScript { get; init; }
-    protected HealComponent HealComponent { get; }
-
     /// <inheritdoc />
     public HealScript(Spell subject)
         : base(subject)
     {
         ApplyHealScript = FunctionalScripts.ApplyHealing.HealScript.Create();
-        HealComponent = new HealComponent();
         SourceScript = this;
     }
 
     /// <inheritdoc />
-    public override void OnUse(SpellContext context)
-    {
-        var targets = AbilityComponent.Activate<Creature>(context, this);
-        context.SourceAisling?.SendActiveMessage($"You cast {Subject.Template.Name}");
-        HealComponent.ApplyHeal(context, targets.TargetEntities, this);
-    }
+    public override void OnUse(SpellContext context) =>
+        new ComponentExecutor(context)
+            .WithOptions(this)
+            .ExecuteAndCheck<AbilityComponent<Creature>>()
+            ?
+            .Execute<HealComponent>();
 
     #region ScriptVars
+    /// <inheritdoc />
+    public bool ShouldNotBreakHide { get; init; }
+    /// <inheritdoc />
+    public AoeShape Shape { get; init; }
+    /// <inheritdoc />
+    public TargetFilter Filter { get; init; }
+    /// <inheritdoc />
+    public int Range { get; init; }
+    /// <inheritdoc />
+    public bool ExcludeSourcePoint { get; init; }
+    /// <inheritdoc />
+    public bool MustHaveTargets { get; init; }
+    /// <inheritdoc />
+    public byte? Sound { get; init; }
+    /// <inheritdoc />
+    public BodyAnimation BodyAnimation { get; init; }
+    /// <inheritdoc />
+    public Animation? Animation { get; init; }
+    /// <inheritdoc />
+    public bool AnimatePoints { get; init; }
+    /// <inheritdoc />
+    public IApplyHealScript ApplyHealScript { get; init; }
+    /// <inheritdoc />
     public int? BaseHeal { get; init; }
+    /// <inheritdoc />
     public Stat? HealStat { get; init; }
+    /// <inheritdoc />
     public decimal? HealStatMultiplier { get; init; }
+    /// <inheritdoc />
     public decimal? PctHpHeal { get; init; }
+    /// <inheritdoc />
+    public IScript SourceScript { get; init; }
+    /// <inheritdoc />
+    public int? ManaCost { get; init; }
+    /// <inheritdoc />
+    public decimal PctManaCost { get; init; }
     #endregion
 }

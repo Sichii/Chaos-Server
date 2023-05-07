@@ -477,9 +477,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     private void InnerAddObject(VisibleEntity visibleEntity, IPoint point)
     {
+        visibleEntity.SetLocation(this, point);
         Objects.Add(visibleEntity.Id, visibleEntity);
-        visibleEntity.MapInstance = this;
-        visibleEntity.SetLocation(point);
 
         if (visibleEntity is Creature c)
             Script.OnEntered(c);
@@ -521,7 +520,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             {
                 foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity)
                                                      .ThatCanObserve(visibleEntity))
-                    nearbyAisling.Client.SendVisibleObjects(visibleEntity);
+                    nearbyAisling.Client.SendVisibleEntities(visibleEntity);
 
                 return;
             }
@@ -532,7 +531,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     continue;
 
                 if (nearbyCreature is Aisling nearbyAisling && nearbyAisling.CanObserve(visibleEntity))
-                    nearbyAisling.Client.SendVisibleObjects(visibleEntity);
+                    nearbyAisling.Client.SendVisibleEntities(visibleEntity);
 
                 Helpers.HandleApproach(creature, nearbyCreature);
             }

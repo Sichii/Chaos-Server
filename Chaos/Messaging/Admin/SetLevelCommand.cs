@@ -1,10 +1,9 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("setlevel")]
 public class SetLevelCommand : ICommand<Aisling>

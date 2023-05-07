@@ -1,9 +1,8 @@
 using Chaos.Collections.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 
-namespace Chaos.Commands;
+namespace Chaos.Messaging;
 
 [Command("channellist", false)]
 public class ChannelListCommand : ICommand<Aisling>

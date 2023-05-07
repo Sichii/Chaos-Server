@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Chaos.Collections;
-using Chaos.Commands.Options;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
@@ -13,6 +12,7 @@ using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Messaging;
+using Chaos.Messaging.Options;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
@@ -324,9 +324,9 @@ public sealed class Startup
                           builder.RegisterObjectTransformation<CommandDescriptor>(
                               obj => new
                               {
-                                  ExecutedByType = obj.Type.FullName,
+                                  CommandName = obj.Details.CommandName,
                                   RequiresAdmin = obj.Details.RequiresAdmin,
-                                  CommandName = obj.Details.CommandName
+                                  ExecutedByType = obj.Type.FullName
                               });
 
                           builder.RegisterObjectTransformation<Dialog>(

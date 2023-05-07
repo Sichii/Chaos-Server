@@ -1,10 +1,9 @@
 using Chaos.Collections.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Utilities;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("chaosabort")]
 public class ChaosAbortCommand : ICommand<Aisling>

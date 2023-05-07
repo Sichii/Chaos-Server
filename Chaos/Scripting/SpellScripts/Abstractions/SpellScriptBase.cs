@@ -12,7 +12,7 @@ public abstract class SpellScriptBase : SubjectiveScriptBase<Spell>, ISpellScrip
         : base(subject) { }
 
     /// <inheritdoc />
-    public virtual bool CanUse(SpellContext context) => context.Source.IsAlive && context.Target.IsAlive;
+    public virtual bool CanUse(SpellContext context) => context.Source.IsAlive && (context.TargetCreature?.IsAlive ?? true);
 
     /// <inheritdoc />
     public virtual void OnForgotten(Aisling aisling) { }

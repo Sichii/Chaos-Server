@@ -34,8 +34,10 @@
   href: Visibility.md
 - name: Formulae
   href: Formulae.md
-- name: Scripts
-  href: Scripts.md
+- name: Components
+  href: Components.md
+- name: Scripting
+  href: Scripting.md
 - name: Functional Scripts
   href: FunctionalScripts.md
 - name: Meta Data

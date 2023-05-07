@@ -1,21 +1,35 @@
 using System.Collections.Concurrent;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Converters;
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Common;
 
 /// <summary>
 /// </summary>
-public sealed class StaticVars : IScriptVars
+public class StaticVars : IScriptVars
 {
-    private readonly ConcurrentDictionary<string, object> Vars;
+    /// <summary>
+    ///     Gets or sets the value associated with the specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    public object this[string key]
+    {
+        get => Vars[key];
+        set => Vars[key] = value;
+    }
+
+    /// <summary>
+    ///     Stores key-value pairs of key to variable-values
+    /// </summary>
+    protected ConcurrentDictionary<string, object> Vars { get; }
 
     /// <summary>
     ///     Initializes a new instance of the StaticVars class with an optional initial set of key-value pairs.
     /// </summary>
     /// <param name="objs"></param>
-    public StaticVars(IDictionary<string, object> objs) =>
-        Vars = new ConcurrentDictionary<string, object>(objs, StringComparer.OrdinalIgnoreCase);
+    public StaticVars(IDictionary<string, object>? objs = null) =>
+        Vars = new ConcurrentDictionary<string, object>(objs ?? new Dictionary<string, object>(), StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     public bool ContainsKey(string key) => Vars.ContainsKey(key);
@@ -35,10 +49,11 @@ public sealed class StaticVars : IScriptVars
         if (!Vars.TryGetValue(key, out var value))
             return null;
 
-        if (value is IConvertible)
-            return Convert.ChangeType(value, type);
-
-        return value;
+        return value switch
+        {
+            IConvertible => PrimitiveConverter.Convert(type, value),
+            _            => value
+        };
     }
 
     /// <inheritdoc />
@@ -55,4 +70,9 @@ public sealed class StaticVars : IScriptVars
                 $"Required key \"{key}\" was found, but resulted in a default value while populating script variables")
         };
     }
+
+    /// <summary>
+    ///     Sets the value associated with the specified key.
+    /// </summary>
+    public void Set(string key, object value) => Vars[key] = value;
 }

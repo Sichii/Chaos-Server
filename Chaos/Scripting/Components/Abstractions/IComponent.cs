@@ -1,0 +1,9 @@
+using Chaos.Models.Data;
+using Chaos.Scripting.Components.Utilities;
+
+namespace Chaos.Scripting.Components.Abstractions;
+
+public interface IComponent
+{
+    void Execute(ActivationContext context, ComponentVars vars);
+}

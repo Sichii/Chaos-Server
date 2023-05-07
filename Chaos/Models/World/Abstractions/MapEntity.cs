@@ -49,7 +49,7 @@ public abstract class MapEntity : WorldEntity, ILocation
             creature.LastMove = DateTime.UtcNow;
     }
 
-    public void SetLocationFaux(MapInstance mapInstance, IPoint point)
+    public void SetLocation(MapInstance mapInstance, IPoint point)
     {
         // ReSharper disable once JoinNullCheckWithUsage
         ArgumentNullException.ThrowIfNull(mapInstance);

@@ -3,32 +3,14 @@ using Chaos.Common.Utilities;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripting.Components.Abstractions;
+using Chaos.Scripting.Components.Utilities;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 
 namespace Chaos.Scripting.Components;
 
-public class ManaBasedDamageComponent
+public class ManaBasedDamageComponent : IComponent
 {
-    public virtual void ApplyDamage(
-        ActivationContext context,
-        IReadOnlyCollection<Creature> targetEntities,
-        IManaBasedDamageComponentOptions options
-    )
-    {
-        var damage = CalculateDamage(context, options);
-
-        if (damage <= 0)
-            return;
-
-        foreach (var target in targetEntities)
-            options.ApplyDamageScript.ApplyDamage(
-                context.Source,
-                target,
-                options.SourceScript,
-                damage,
-                options.Element);
-    }
-
     protected virtual int CalculateDamage(
         ActivationContext context,
         IManaBasedDamageComponentOptions options
@@ -54,15 +36,35 @@ public class ManaBasedDamageComponent
         return finalDamage;
     }
 
+    /// <inheritdoc />
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions<IManaBasedDamageComponentOptions>();
+        var targets = vars.GetTargets<Creature>();
+
+        var damage = CalculateDamage(context, options);
+
+        if (damage <= 0)
+            return;
+
+        foreach (var target in targets)
+            options.ApplyDamageScript.ApplyDamage(
+                context.Source,
+                target,
+                options.SourceScript,
+                damage,
+                options.Element);
+    }
+
     public interface IManaBasedDamageComponentOptions
     {
-        IApplyDamageScript ApplyDamageScript { get; }
-        int? BaseDamage { get; }
-        decimal? BaseDamageMultiplier { get; }
-        Element? Element { get; }
-        decimal? FinalMultiplier { get; }
-        decimal? PctOfMana { get; }
-        decimal? PctOfManaMultiplier { get; }
-        IScript SourceScript { get; }
+        IApplyDamageScript ApplyDamageScript { get; init; }
+        int? BaseDamage { get; init; }
+        decimal? BaseDamageMultiplier { get; init; }
+        Element? Element { get; init; }
+        decimal? FinalMultiplier { get; init; }
+        decimal? PctOfMana { get; init; }
+        decimal? PctOfManaMultiplier { get; init; }
+        IScript SourceScript { get; init; }
     }
 }

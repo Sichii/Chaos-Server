@@ -10,7 +10,8 @@
     "scriptKeys": ["vitalityConsumable"],
     "scriptVars": {
         "vitalityConsumable": {
-            "healthAmount": 100
+            "baseHeal": 100,
+            "filter": "selfOnly, aliveOnly"
         }
     },
     "templateKey": "apple"

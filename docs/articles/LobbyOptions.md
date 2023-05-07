@@ -9,19 +9,23 @@ This section is serialized into [LobbyOptions](<xref:Chaos.Services.Servers.Opti
 
 ### Port
 
-The port the server will listen on. Default is 4200, if this value is changed, the client will need to be edited to connect to a different
+The port the server will listen on. Default is 4200, if this value is changed, the client will need to be edited to
+connect to a different
 port.
 
 ### Servers
 
-When a client connects to a server, the first thing is displays to the player is a list of available login servers to connect to.  
-When the original game first launched, there were 3 servers, and you would select the server you wanted to connect to at the lobby. For each
-of these servers, the name and a short description would display, and each would connect you to a unique world with it's own login
+When a client connects to a server, the first thing is displays to the player is a list of available login servers to
+connect to.  
+When the original game first launched, there were 3 servers, and you would select the server you wanted to connect to at
+the lobby. For each
+of these servers, the name and a short description would display, and each would connect you to a unique world with it's
+own login
 server.
 
-Each server is serialized into [ServerInfo](<xref:Chaos.Networking.Options.ServerInfo>)
+Each server is serialized into [ServerInfo](<xref:Chaos.Networking.Options.ConnectionInfo>)
 
-### ServerInfo
+### ConnectionInfo
 
 |  Type  |    Name     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 |:------:|:-----------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -33,7 +37,8 @@ Each server is serialized into [ServerInfo](<xref:Chaos.Networking.Options.Serve
 
 ### Examples
 
-The recommended way to use this configuration would be to set the port in your "appsettings.json", but leave the servers blank so they can
+The recommended way to use this configuration would be to set the port in your "appsettings.json", but leave the servers
+blank so they can
 be overridden depending on environment like so
 
 #### appsettings.json lobby options

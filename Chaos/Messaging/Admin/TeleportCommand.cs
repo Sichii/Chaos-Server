@@ -1,13 +1,12 @@
 using Chaos.Collections;
 using Chaos.Collections.Common;
 using Chaos.Extensions.Common;
-using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Storage.Abstractions;
 
-namespace Chaos.Commands.Admin;
+namespace Chaos.Messaging.Admin;
 
 [Command("tpto")]
 public sealed class TeleportCommand : ICommand<Aisling>
