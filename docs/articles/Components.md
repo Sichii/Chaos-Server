@@ -1,7 +1,7 @@
 # Components
 
-Components are a way of separating out functionality into smaller, more manageable pieces. They let you pull pieces of
-logic out of script so that you can reuse them in multiple places, and in multiple different script types. For example,
+Components are a way of separating functionality into smaller, more manageable pieces. They let you pull pieces of
+logic out of scripts so that you can reuse them in multiple places and multiple different script types. For example,
 both skills and spells can have animations, body animations, sounds, deal damage, and more. Each of these things can be
 separated into their own components.
 
@@ -10,7 +10,7 @@ separated into their own components.
 There are 2 kinds of components: [IComponent](<xref:Chaos.Scripting.Components.Abstractions.IComponent>)
 and [IConditionalComponent](<xref:Chaos.Scripting.Components.Abstractions.IConditionalComponent>).
 
-`IComponent` is used to execute a piece of logic when nothing depends on it's execution. For example, animation or
+`IComponent` is used to execute a piece of logic when nothing depends on its execution. For example, animation or
 sound. There is no way for these actions to "fail", and thus nothing is going to depend on those components' execution.
 Most components will be of this type.
 
@@ -44,7 +44,7 @@ public class MyConditionalComponent : IConditionalComponent
 ## Component options
 
 Any component that has options associated with it should create an interface that specifies those options. The component
-should expect it's options to be contained within the `ComponentVars` passed to the `Execute` method of the component.
+should expect its options to be contained within the `ComponentVars` passed to the `Execute` method of the component.
 The options can be obtained via `ComponentVars.GetOptions<TOptions>()`.
 
 ```csharp
@@ -64,8 +64,8 @@ public class MyComponent : IComponent
 }
 ```
 
-Any component that utilizes another component should ensure that it's own options interface inherits from the options
-interfaces of it's subcomponents.
+Any component that utilizes another component should ensure that its own options interface inherits from the options
+interfaces of its subcomponents.
 
 ```csharp
 public class MyComponent : IComponent
@@ -92,7 +92,7 @@ public class MyComponent : IComponent
 
 Components can share variables with each other via the `ComponentVars` object. Some examples of this
 are `vars.GetPoints()` and `vars.GetTargets<T>()`. These are populated by another component,
-the [GetTargetsComponent](<xref:Chaos.Scripting.Components.GetTargetsComponent`1>). The only caveat being, any
+the [GetTargetsComponent](<xref:Chaos.Scripting.Components.GetTargetsComponent`1>). The only caveat is, any
 components that use variables populated by another component must be executed after that component.
 
 ```csharp
@@ -108,11 +108,11 @@ public class MyComponent : IComponent
 ```
 
 If you create a component that needs to share variables with other components, you should create methods
-inside `ComponentVars` to store and retreive that information.
+inside `ComponentVars` to store and retrieve that information.
 
 ## Scripting
 
-Components are intended to be used in scripts. The first step it to know what components you will be utilizing within
+Components are intended to be used in scripts. The first step is to know what components you will be utilizing within
 your script. For example, if you want to create a script that plays a body animation, gets targets, deals damage to
 those targets, animates those targets, and plays a sound, it might look something like this.
 
@@ -124,16 +124,15 @@ those targets, animates those targets, and plays a sound, it might look somethin
                                 AnimationComponent.IAnimationComponentOptions,
                                 SoundComponent.ISoundComponentOptions
     {
-        public void Execute(ActivationContext context)
-        {
+        public override OnUse(SpellContext context) =>
             new ComponentExecutor(context)
-                .Execute<PlayBodyAnimationComponent>()
+                .WithOptions(this)
+                .Execute<BodyAnimationComponent>()
                 .ExecuteAndCheck<GetTargetsComponent<Creature>>()
                 ?
                 .Execute<DamageComponent>()
                 .Execute<AnimationComponent>()
                 .Execute<SoundComponent>();
-        }
         
         #region ScriptVars
         // All of the combined options from the component options interfaces
@@ -148,4 +147,4 @@ be found in the [Scripting article](Scripting.md).
 Another important thing to notice is that the `GetTargetsComponent<T>` is an `IConditionalComponent`. These types of
 components are executed via `ExecuteAndCheck<TComponent>()`. If the conditional part of the component fails, it causes
 the execution of `ExecuteAndCheck<TComponent>()` to return `null`. By using the `Save Navigation Operator (?)`, we can
-make all of the method invocations that come after it not occur if it returns `null`.
+cause all of the method invocations that come after it to not occur if it returns `null`.
