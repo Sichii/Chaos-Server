@@ -4,6 +4,7 @@ using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Templates;
@@ -76,7 +77,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
         var walkableArea = template.Height * template.Width - template.Tiles.Flatten().Count(t => t.IsWall);
-        Objects = new MapEntityCollection(template.Width, template.Height, walkableArea);
+
+        Objects = new MapEntityCollection(
+            logger,
+            template.Width,
+            template.Height,
+            walkableArea);
+
         MapInstanceCtx = CancellationTokenSource.CreateLinkedTokenSource(ServerShutdownToken);
         MonsterSpawns = new List<MonsterSpawn>();
         Sync = new FifoAutoReleasingSemaphoreSlim(1, 1);
@@ -218,6 +225,17 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 12) where T: MapEntity =>
         Objects.WithinRange<T>(point, range);
+
+    public IPoint GetRandomPoint()
+    {
+        IPoint point;
+
+        do
+            point = Template.Bounds.GetRandomPoint();
+        while (!IsWalkable(point, CreatureType.Normal));
+
+        return point;
+    }
 
     private void HandleSharding(Aisling aisling, IPoint point)
     {

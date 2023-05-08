@@ -32,11 +32,7 @@ public class DeathScript : MonsterScriptBase
         var rewardTarget = Subject.Contribution
                                   .OrderByDescending(kvp => kvp.Value)
                                   .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
-                                  .FirstOrDefault(a => a is not null)
-                           ?? Subject.AggroList
-                                     .OrderByDescending(kvp => kvp.Value)
-                                     .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
-                                     .FirstOrDefault(a => a is not null);
+                                  .FirstOrDefault(a => a is not null);
 
         Aisling[]? rewardTargets = null;
 

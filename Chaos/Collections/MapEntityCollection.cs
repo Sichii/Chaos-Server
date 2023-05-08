@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -6,6 +5,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Time.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 
@@ -16,15 +16,24 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
+    private readonly ILogger Logger;
     private readonly HashSet<Merchant> Merchants;
     private readonly HashSet<Monster> Monsters;
     private readonly HashSet<MapEntity> Other;
     private readonly HashSet<MapEntity>[,] PointLookup;
     private readonly HashSet<ReactorTile> Reactors;
+    private readonly UpdatableCollection Updatables;
+
     private readonly int WalkableArea;
 
-    public MapEntityCollection(int mapWidth, int mapHeight, int walkableWalkableArea)
+    public MapEntityCollection(
+        ILogger logger,
+        int mapWidth,
+        int mapHeight,
+        int walkableArea
+    )
     {
+        Logger = logger;
         EntityLookup = new Dictionary<uint, MapEntity>();
         PointLookup = new HashSet<MapEntity>[mapWidth, mapHeight];
         Monsters = new HashSet<Monster>(WorldEntity.IdComparer);
@@ -34,6 +43,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         Reactors = new HashSet<ReactorTile>(WorldEntity.IdComparer);
         Doors = new HashSet<Door>(WorldEntity.IdComparer);
         Other = new HashSet<MapEntity>(WorldEntity.IdComparer);
+        Updatables = new UpdatableCollection(logger);
 
         Bounds = new Rectangle(
             0,
@@ -41,7 +51,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
             mapWidth,
             mapHeight);
 
-        WalkableArea = walkableWalkableArea;
+        WalkableArea = walkableArea;
 
         for (var x = 0; x < mapWidth; x++)
             for (var y = 0; y < mapHeight; y++)
@@ -52,6 +62,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     {
         EntityLookup.Add(id, entity);
         AddToPointLookup(entity);
+
+        if (entity is IDeltaUpdatable updatable)
+            Updatables.Add(updatable);
 
         switch (entity)
         {
@@ -107,6 +120,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         Reactors.Clear();
         Doors.Clear();
         Other.Clear();
+        Updatables.Clear();
 
         foreach (var lookup in PointLookup.Flatten())
             lookup.Clear();
@@ -130,6 +144,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
         if (!RemoveFromPointLookup(entity))
             return false;
+
+        if (entity is IDeltaUpdatable updatable)
+            Updatables.Remove(updatable);
 
         switch (entity)
         {
@@ -188,15 +205,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     }
 
     /// <inheritdoc />
-    public void Update(TimeSpan delta)
-    {
-        var entities = EntityLookup.Values
-                                   .OfType<IDeltaUpdatable>()
-                                   .ToList();
-
-        foreach (ref var entity in CollectionsMarshal.AsSpan(entities))
-            entity.Update(delta);
-    }
+    public void Update(TimeSpan delta) => Updatables.Update(delta);
 
     public IEnumerable<T> Values<T>() where T: MapEntity
     {

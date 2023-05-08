@@ -52,7 +52,7 @@ public class AggroTargetingScript : MonsterScriptBase
 
         Target = null;
 
-        if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
+        if (!Map.GetEntities<Aisling>().Any())
             return;
 
         //first try to get target via aggro list

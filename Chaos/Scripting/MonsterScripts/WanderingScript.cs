@@ -18,7 +18,7 @@ public class WanderingScript : MonsterScriptBase
         if ((Target != null) || !ShouldWander)
             return;
 
-        if (!Map.GetEntitiesWithinRange<Aisling>(Subject).Any())
+        if (!Map.GetEntities<Aisling>().Any())
             return;
 
         Subject.Wander();
