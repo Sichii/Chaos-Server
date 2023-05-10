@@ -176,6 +176,7 @@ public static class PointExtensions
     ///     optional. Direction.Invalid direction returns empty list.
     /// </summary>
     /// <param name="start"></param>
+    /// <param name="direction"></param>
     /// <param name="radius">The max distance to generate points</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="radius" /> must be positive</exception>
     /// <remarks>
@@ -187,21 +188,26 @@ public static class PointExtensions
     ///     <code>
     /// //generates points in a counter clockwise spiral around the start
     /// //will generate the 4 points immediately around the start
-    /// var points = new Point(0, 0).GenerateCardinalPoints(1);
+    /// var points = new Point(0, 0).GenerateCardinalPoints();
     /// </code>
     /// </example>
-    public static IEnumerable<Point> GenerateCardinalPoints(this IPoint start, int radius = 1)
+    public static IEnumerable<Point> GenerateCardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
     {
+        if (direction == Direction.Invalid)
+            yield break;
+
         if (radius <= 0)
             throw new ArgumentOutOfRangeException($"{nameof(radius)} must be positive");
 
         for (var i = 1; i <= radius; i++)
-        {
-            yield return start.DirectionalOffset(Direction.Up, i);
-            yield return start.DirectionalOffset(Direction.Right, i);
-            yield return start.DirectionalOffset(Direction.Down, i);
-            yield return start.DirectionalOffset(Direction.Left, i);
-        }
+            if (direction == Direction.All)
+            {
+                yield return start.DirectionalOffset(Direction.Up, i);
+                yield return start.DirectionalOffset(Direction.Right, i);
+                yield return start.DirectionalOffset(Direction.Down, i);
+                yield return start.DirectionalOffset(Direction.Left, i);
+            } else
+                yield return start.DirectionalOffset(direction, i);
     }
 
     /// <summary>

@@ -99,6 +99,8 @@ public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBas
     /// <inheritdoc />
     public AoeShape Shape { get; init; }
     /// <inheritdoc />
+    public bool IgnoreWalls { get; init; }
+    /// <inheritdoc />
     public TargetFilter Filter { get; init; }
     /// <inheritdoc />
     public int Range { get; init; }

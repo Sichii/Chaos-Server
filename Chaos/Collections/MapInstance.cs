@@ -571,17 +571,17 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         {
             CreatureType.Normal => !IsWallToCreaturesOnly(point)
                                    && !IsWall(point)
-                                   && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+                                   && !creatures.Any(c => creatureType.WillCollideWith(c)),
             CreatureType.WalkThrough => !IsWallToCreaturesOnly(point)
                                         && IsWithinMap(point)
-                                        && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+                                        && !creatures.Any(c => creatureType.WillCollideWith(c)),
             CreatureType.Merchant => !IsWallToCreaturesOnly(point)
                                      && !IsWall(point)
-                                     && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+                                     && !creatures.Any(c => creatureType.WillCollideWith(c)),
             CreatureType.WhiteSquare => !IsWallToCreaturesOnly(point)
                                         && !IsWall(point)
-                                        && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
-            CreatureType.Aisling => !IsWall(point) && !creatures.Any(c => c.Type.WillCollideWith(creatureType)),
+                                        && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.Aisling => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
             _                    => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
     }

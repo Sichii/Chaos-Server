@@ -153,7 +153,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                                      .Where(door => door.Closed);
 
         var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                         .ThatCollideWith(this);
+                                         .ThatThisCollidesWith(this);
 
         var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
                                                 .Concat(unwalkablePoints ?? Array.Empty<IPoint>())
@@ -164,7 +164,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             this,
             target,
             Type == CreatureType.WalkThrough,
-            nearbyUnwalkablePoints);
+            nearbyUnwalkablePoints,
+            12);
 
         if (direction == Direction.Invalid)
             return;
@@ -429,7 +430,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                                      .Where(door => door.Closed);
 
         var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this, 1)
-                                         .ThatCollideWith(this);
+                                         .ThatThisCollidesWith(this);
 
         var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
                                                 .Concat(unwalkablePoints ?? Array.Empty<IPoint>())
@@ -469,7 +470,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Display();
     }
 
-    public virtual bool WillCollideWith(Creature other) => Type.WillCollideWith(other.Type);
+    public virtual bool WillCollideWith(Creature other) => Type.WillCollideWith(other);
 
     public virtual bool WithinLevelRange(Creature other) =>
         LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);

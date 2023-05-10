@@ -5,9 +5,20 @@ namespace Chaos.Pathfinding;
 internal sealed class PathNode : IEquatable<IPoint>, IPoint
 {
     public bool Closed { get; set; }
-    public bool IsCreature { get; set; }
+    /// <summary>
+    ///     The node is blacklisted. Blacklisted nodes are not to ever be opened, and you shouldn't walk onto them even if it's
+    ///     the last point in the path
+    /// </summary>
+    public bool IsBlackListed { get; set; }
+    /// <summary>
+    ///     The node is blocked. Blocked nodes are opened, but cannot be ignored. Blocked nodes can be walked on if it's the
+    ///     last point in the path.
+    /// </summary>
+    public bool IsBlocked { get; set; }
+    /// <summary>
+    ///     The node is a wall. Walls are opened, and can be ignored depending on the pathfinding request
+    /// </summary>
     public bool IsWall { get; set; }
-    public bool IsWallToCreature { get; set; }
     public bool Open { get; set; }
     public PathNode? Parent { get; set; }
     public PathNode?[] Neighbors { get; }
@@ -47,14 +58,14 @@ internal sealed class PathNode : IEquatable<IPoint>, IPoint
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
 
-    public bool IsWalkable(bool ignoreWalls) => !IsCreature && !IsWallToCreature && (ignoreWalls || !IsWall);
+    public bool IsWalkable(bool ignoreWalls) => !IsBlocked && (ignoreWalls || !IsWall);
 
     public void Reset()
     {
-        IsCreature = false;
         //by default nodes are not searchable
         Closed = true;
         Open = false;
         Parent = null;
+        IsBlocked = false;
     }
 }

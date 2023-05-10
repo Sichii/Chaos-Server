@@ -31,29 +31,22 @@
     "scriptVars": {
         "cascadingDamage": {
             "bodyAnimation": "handsup",
-            "filter": "hostileOnly, aliveOnly",
-            "shape": "front",
-            "range": 2,
-            "baseDamage": 100,
-            "damageStat": "int",
-            "damageStatMultiplier": 10,
-            "element": "fire",
-            "pctHpDamage": 25.0,
             "animation": {
                 "targetAnimation": 138,
                 "animationSpeed": 100
             },
+            "shape": "allAround",
+            "range": 2,
             "animatePoints": true,
             "sound": 140,
-            "manaCost": 10,
-            "excludeSourcePoint": true
+            "manaCost": 10
         },
         "cascadingDamageTile": {
             "minSoundIntervalMs": 900,
             "cascadeIntervalMs": 300,
-            "shape": "frontalDiamond",
+            "shape": "allAround",
             "filter": "hostileOnly, aliveOnly",
-            "range": 10,
+            "range": 12,
             "baseDamage": 50,
             "damageStat": "int",
             "damageStatMultiplier": 5,

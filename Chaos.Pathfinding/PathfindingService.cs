@@ -53,14 +53,16 @@ public sealed class PathfindingService : IPathfindingService
     /// <param name="start">The starting point</param>
     /// <param name="end">The ending point</param>
     /// <param name="ignoreWalls">Whether or not to ignore walls</param>
-    /// <param name="unwalkablePoints">A collection of extra unwalkable points such as creatures</param>
+    /// <param name="blocked">A collection of extra unwalkable points such as creatures</param>
+    /// <param name="limitRadius">Specify a max radius to use for path calculation, this can help with performance by limiting node discovery</param>
     /// <returns></returns>
     public Direction Pathfind(
         string gridKey,
         IPoint start,
         IPoint end,
         bool ignoreWalls,
-        IReadOnlyCollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> blocked,
+        int? limitRadius = null
     )
     {
         var lookupKey = ConstructKey(gridKey);
@@ -71,7 +73,8 @@ public sealed class PathfindingService : IPathfindingService
             start,
             end,
             ignoreWalls,
-            unwalkablePoints);
+            blocked,
+            limitRadius);
     }
 
     /// <summary>
@@ -86,13 +89,14 @@ public sealed class PathfindingService : IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
-        IReadOnlyCollection<IPoint> unwalkablePoints
+        IReadOnlyCollection<IPoint> blocked
     )
     {
         var lookupKey = ConstructKey(key);
 
+        //not thread safe, but it should be fine if we occasionally create a duplicate pathfinder
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.Wander(start, ignoreWalls, unwalkablePoints);
+        return pathFinder!.Wander(start, ignoreWalls, blocked);
     }
 }

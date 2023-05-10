@@ -1,4 +1,7 @@
 using Chaos.Common.Definitions;
+using Chaos.Definitions;
+using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Extensions;
 
@@ -13,4 +16,12 @@ public static class CreatureTypeExtensions
         CreatureType.Aisling     => otherType is not CreatureType.WalkThrough,
         _                        => throw new ArgumentOutOfRangeException()
     };
+
+    public static bool WillCollideWith(this CreatureType type, Creature creature)
+    {
+        if (creature is Aisling { IsAdmin: true, Visibility: VisibilityType.GmHidden })
+            return false;
+
+        return type.WillCollideWith(creature.Type);
+    }
 }

@@ -674,6 +674,24 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     {
         exchange = ExchangeFactory.CreateExchange(source, this);
 
+        if (!source.Options.Exchange)
+        {
+            source.SendActiveMessage("You have disabled exchanging");
+            exchange = null;
+
+            return false;
+        }
+
+        if (!Options.Exchange)
+        {
+            source.SendActiveMessage($"{Name} has disabled exchanging");
+            SendActiveMessage($"{source.Name} is trying to exchange with you, but it is disabled");
+
+            exchange = null;
+
+            return false;
+        }
+
         if (!ActiveObject.SetIfNull(exchange))
         {
             source.SendActiveMessage($"{Name} is busy right now");

@@ -1,6 +1,5 @@
 using Chaos.Definitions;
 using Chaos.Extensions;
-using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -28,13 +27,19 @@ public class GetCascadingTargetsComponent<TEntity> : IConditionalComponent where
             if (direction == Direction.Invalid)
                 direction = context.SnapshotSourceDirection;
 
-            allPoints = options.Shape.ResolvePoints(
-                                   context.TargetPoint,
-                                   options.Range,
-                                   direction,
-                                   null,
-                                   options.IncludeSourcePoint)
-                               .ToListCast<IPoint>();
+            var tempAllPoints = options.Shape.ResolvePoints(
+                                           context.TargetPoint,
+                                           options.Range,
+                                           direction,
+                                           null,
+                                           options.IncludeSourcePoint)
+                                       .Cast<IPoint>();
+
+            if (options.IgnoreWalls)
+                allPoints = tempAllPoints.ToList();
+            else
+                allPoints = tempAllPoints.FilterByLineOfSight(context.SnapshotSourcePoint, context.TargetMap)
+                                         .ToList();
 
             vars.SetAllPoints(allPoints);
         } else
@@ -62,6 +67,7 @@ public class GetCascadingTargetsComponent<TEntity> : IConditionalComponent where
     public interface IGetCascadingTargetsComponentOptions
     {
         TargetFilter Filter { get; init; }
+        bool IgnoreWalls { get; init; }
         bool IncludeSourcePoint { get; init; }
         bool MustHaveTargets { get; init; }
         int Range { get; init; }

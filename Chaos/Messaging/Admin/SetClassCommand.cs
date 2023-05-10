@@ -16,6 +16,7 @@ public class SetClassCommand : ICommand<Aisling>
 
         source.UserStatSheet.SetBaseClass(@class);
         source.Client.SendAttributes(StatUpdateType.Full);
+        source.Client.SendUserId();
 
         return default;
     }
