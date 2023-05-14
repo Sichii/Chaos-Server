@@ -84,9 +84,9 @@ public enum ServerTableRequestType : byte
 }
 
 /// <summary>
-///     A byte switch as used for ClientOpCode.MetafileRequest
+///     A byte switch as used for ClientOpCode.MetaDataRequest
 /// </summary>
-public enum MetafileRequestType : byte
+public enum MetaDataRequestType : byte
 {
     /// <summary>
     ///     The client is requesting the data for a specific metadata file

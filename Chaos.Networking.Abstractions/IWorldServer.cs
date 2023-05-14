@@ -96,7 +96,7 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ISoc
     /// <summary>
     ///     Occurs when a client requests metadata details or data
     /// </summary>
-    ValueTask OnMetafileRequest(TClient client, in ClientPacket clientPacket);
+    ValueTask OnMetaDataRequest(TClient client, in ClientPacket clientPacket);
 
     /// <summary>
     ///     Occurs when a client picks up an item from the ground

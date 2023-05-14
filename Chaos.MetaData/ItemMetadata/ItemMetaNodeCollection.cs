@@ -11,28 +11,28 @@ public sealed class ItemMetaNodeCollection : MetaNodeCollection<ItemMetaNode>, I
     public IEnumerable<MetaDataBase<ItemMetaNode>> Split()
     {
         var index = 0;
-        var metafile = new ItemMetaData(index++);
+        var metadata = new ItemMetaData(index++);
         var size = 0;
 
         for (var i = 0; i < Nodes.Count; i++)
         {
             if (size > MAX_SIZE)
             {
-                metafile.Compress();
+                metadata.Compress();
 
-                yield return metafile;
+                yield return metadata;
 
-                metafile = new ItemMetaData(index++);
+                metadata = new ItemMetaData(index++);
                 size = 0;
             }
 
             var node = Nodes[i];
-            metafile.AddNode(node);
+            metadata.AddNode(node);
             size += node.Length;
         }
 
-        metafile.Compress();
+        metadata.Compress();
 
-        yield return metafile;
+        yield return metadata;
     }
 }

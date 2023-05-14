@@ -194,11 +194,11 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         client.SendRedirect(redirect);
     }
 
-    public ValueTask OnMetafileRequest(ILoginClient client, in ClientPacket packet)
+    public ValueTask OnMetaDataRequest(ILoginClient client, in ClientPacket packet)
     {
-        (var metafileRequestType, var name) = PacketSerializer.Deserialize<MetafileRequestArgs>(in packet);
+        (var metadataRequestType, var name) = PacketSerializer.Deserialize<MetaDataRequestArgs>(in packet);
 
-        client.SendMetafile(metafileRequestType, MetaDataCache, name);
+        client.SendMetaData(metadataRequestType, MetaDataCache, name);
 
         return default;
     }
@@ -264,7 +264,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
         ClientHandlers[(byte)ClientOpCode.HomepageRequest] = OnHomepageRequest;
         ClientHandlers[(byte)ClientOpCode.Login] = OnLogin;
-        ClientHandlers[(byte)ClientOpCode.MetafileRequest] = OnMetafileRequest;
+        ClientHandlers[(byte)ClientOpCode.MetaDataRequest] = OnMetaDataRequest;
         ClientHandlers[(byte)ClientOpCode.NoticeRequest] = OnNoticeRequest;
         ClientHandlers[(byte)ClientOpCode.PasswordChange] = OnPasswordChange;
     }

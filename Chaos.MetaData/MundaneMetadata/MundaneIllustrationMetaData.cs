@@ -7,9 +7,9 @@ namespace Chaos.MetaData.MundaneMetadata;
 /// </summary>
 public sealed class MundaneIllustrationMetaData : MetaDataBase<MundaneIllustrationMetaNode>
 {
-    private const string MUNDANE_ILLUSTRATION_METAFILE_NAME = "NPCIllust";
+    private const string MUNDANE_ILLUSTRATION_METADATA_NAME = "NPCIllust";
 
     /// <inheritdoc />
     public MundaneIllustrationMetaData()
-        : base(MUNDANE_ILLUSTRATION_METAFILE_NAME) { }
+        : base(MUNDANE_ILLUSTRATION_METADATA_NAME) { }
 }

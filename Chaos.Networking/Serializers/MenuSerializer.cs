@@ -95,7 +95,7 @@ public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
                     writer.WriteByte((byte)item.Color);
                     writer.WriteUInt32((uint)item.Cost!.Value);
                     writer.WriteString8(item.Name);
-                    //TODO: figure out what this is, maybe something to do with metafiles
+                    //TODO: figure out what this is, maybe something to do with metadatas
                     writer.WriteString8("what is this");
                 }
 

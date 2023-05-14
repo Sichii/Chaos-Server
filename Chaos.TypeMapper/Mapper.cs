@@ -78,12 +78,38 @@ public sealed class Mapper : ITypeMapper
         var from = key.From;
         var to = key.To;
 
+        var mapperType = typeof(IMapperProfile<,>);
         //the mapper's type args could be in either order, so we need to check both orders
-        var mapperType1 = typeof(IMapperProfile<,>).MakeGenericType(from, to);
-        var mapperType2 = typeof(IMapperProfile<,>).MakeGenericType(to, from);
+        var mapperType1 = mapperType.MakeGenericType(from, to);
+        var mapperType2 = mapperType.MakeGenericType(to, from);
 
         //find the typeMapper
         var service = Provider.GetService(mapperType1) ?? Provider.GetService(mapperType2);
+
+        //type exploration to find a suitable mapper
+        if (service == null)
+        {
+            //the from type could be anything, so explore the from type's entire hierarchy
+            //the to type must be what is specified above
+            var possibleFromTypes = from.GetInterfaces().Concat(from.GetBaseTypes()).Prepend(from);
+
+            //for each possible from type, check for mappers that use that from type and the specified to type
+            foreach (var fromType in possibleFromTypes)
+            {
+                //same stuff as before, just a wider search
+                mapperType1 = mapperType.MakeGenericType(fromType, to);
+                mapperType2 = mapperType.MakeGenericType(to, fromType);
+
+                service = Provider.GetService(mapperType1) ?? Provider.GetService(mapperType2);
+
+                if (service != null)
+                {
+                    from = fromType;
+
+                    break;
+                }
+            }
+        }
 
         if (service == null)
             throw new InvalidOperationException("No mapper found for types " + from + " and " + to);

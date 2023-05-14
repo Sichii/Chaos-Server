@@ -484,44 +484,34 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(ref packet);
     }
 
-    public void SendMetafile(MetafileRequestType metafileRequestType, IMetaDataCache metaDataCache, string? name = null)
+    public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataCache metaDataCache, string? name = null)
     {
-        var args = new MetafileArgs
+        var args = new MetaDataArgs
         {
-            MetafileRequestType = metafileRequestType
+            MetaDataRequestType = metaDataRequestType
         };
 
-        switch (metafileRequestType)
+        switch (metaDataRequestType)
         {
-            case MetafileRequestType.DataByName:
+            case MetaDataRequestType.DataByName:
             {
                 ArgumentNullException.ThrowIfNull(name);
 
-                var metafile = metaDataCache.GetMetafile(name);
+                var metadata = metaDataCache.GetMetaData(name);
 
-                args.MetafileData = new MetafileInfo
-                {
-                    Name = metafile.Name,
-                    CheckSum = metafile.CheckSum,
-                    Data = metafile.Data
-                };
+                args.MetaDataData = Mapper.Map<MetaDataInfo>(metadata);
 
                 break;
             }
-            case MetafileRequestType.AllCheckSums:
+            case MetaDataRequestType.AllCheckSums:
             {
-                args.Info = metaDataCache.Select(
-                                             metafile => new MetafileInfo
-                                             {
-                                                 Name = metafile.Name,
-                                                 CheckSum = metafile.CheckSum
-                                             })
-                                         .ToList();
+                args.Info = Mapper.MapMany<MetaDataInfo>(metaDataCache)
+                                  .ToList();
 
                 break;
             }
             default:
-                throw new ArgumentOutOfRangeException(nameof(metafileRequestType), metafileRequestType, "Unknown enum value");
+                throw new ArgumentOutOfRangeException(nameof(metaDataRequestType), metaDataRequestType, "Unknown enum value");
         }
 
         Send(args);
@@ -678,64 +668,34 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
                 switch (obj)
                 {
                     case GroundItem groundItem:
-                        var groundItemInfo = new GroundItemInfo
-                        {
-                            Id = groundItem.Id,
-                            Color = groundItem.Item.Color,
-                            X = groundItem.X,
-                            Y = groundItem.Y,
-                            Sprite = groundItem.Sprite
-                        };
+                        var groundItemInfo = Mapper.Map<GroundItemInfo>(groundItem);
 
-                        if (groundItem.Visibility is not VisibilityType.Normal)
-                            if (Aisling.IsAdmin || Aisling.Script.CanSee(groundItem))
-                            {
-                                groundItemInfo.Sprite = 11978;
-                                groundItemInfo.Color = DisplayColor.Black;
-                            } else
-                                groundItemInfo.Sprite = 0;
+                        //non visible item that can be seen
+                        if (groundItem.Visibility is not VisibilityType.Normal && (Aisling.IsAdmin || Aisling.Script.CanSee(groundItem)))
+                        {
+                            groundItemInfo.Sprite = 11978;
+                            groundItemInfo.Color = DisplayColor.Black;
+                        }
 
                         visibleArgs.Add(groundItemInfo);
 
                         break;
                     case Money money:
-                        var moneyInfo = new GroundItemInfo
-                        {
-                            Id = money.Id,
-                            Color = DisplayColor.Default,
-                            X = money.X,
-                            Y = money.Y,
-                            Sprite = money.Sprite
-                        };
+                        var moneyInfo = Mapper.Map<GroundItemInfo>(money);
 
-                        if (money.Visibility is not VisibilityType.Normal)
-                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                            if (Aisling.IsAdmin || Aisling.Script.CanSee(money))
-                                moneyInfo.Sprite = 138;
-                            else
-                                moneyInfo.Sprite = 0;
+                        //non visible money that can be seen
+                        if (money.Visibility is not VisibilityType.Normal && (Aisling.IsAdmin || Aisling.Script.CanSee(money)))
+                            moneyInfo.Sprite = 138;
 
                         visibleArgs.Add(moneyInfo);
 
                         break;
                     case Creature creature:
-                        var creatureInfo = new CreatureInfo
-                        {
-                            Id = creature.Id,
-                            X = creature.X,
-                            Y = creature.Y,
-                            Sprite = creature.Sprite,
-                            CreatureType = creature.Type,
-                            Direction = creature.Direction,
-                            Name = creature.Name
-                        };
+                        var creatureInfo = Mapper.Map<CreatureInfo>(creature);
 
-                        if (creature.Visibility is not VisibilityType.Normal)
-                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                            if (Aisling.IsAdmin || Aisling.Script.CanSee(creature))
-                                creatureInfo.Sprite = 405;
-                            else
-                                creatureInfo.Sprite = 492;
+                        //none visible creature that can be seen
+                        if (creature.Visibility is not VisibilityType.Normal && (Aisling.IsAdmin || Aisling.Script.CanSee(creature)))
+                            creatureInfo.Sprite = 405;
 
                         visibleArgs.Add(creatureInfo);
 
@@ -772,12 +732,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendWorldMap(WorldMap worldMap)
     {
-        var args = new WorldMapArgs
-        {
-            FieldName = worldMap.WorldMapKey,
-            FieldIndex = worldMap.FieldIndex,
-            Nodes = worldMap.Nodes.Values.Cast<WorldMapNodeInfo>().ToList()
-        };
+        var args = Mapper.Map<WorldMapArgs>(worldMap);
 
         Send(args);
     }

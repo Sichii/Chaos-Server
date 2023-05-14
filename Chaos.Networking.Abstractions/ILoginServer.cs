@@ -37,9 +37,9 @@ public interface ILoginServer<in TClient> : IServer<TClient> where TClient: ISoc
     ValueTask OnLogin(TClient client, in ClientPacket packet);
 
     /// <summary>
-    ///     Occurs when a client requests either a metafile hash, or a full copy of the metafiles
+    ///     Occurs when a client requests either a metadata hash, or a full copy of the metadata
     /// </summary>
-    ValueTask OnMetafileRequest(TClient client, in ClientPacket packet);
+    ValueTask OnMetaDataRequest(TClient client, in ClientPacket packet);
 
     /// <summary>
     ///     Occurs when a client requests EULA details

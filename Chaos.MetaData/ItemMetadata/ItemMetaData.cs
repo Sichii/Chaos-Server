@@ -7,7 +7,7 @@ namespace Chaos.MetaData.ItemMetadata;
 /// </summary>
 public sealed class ItemMetaData : MetaDataBase<ItemMetaNode>
 {
-    private const string ITEM_METAFILE_NAME = "ItemInfo";
+    private const string ITEM_METADATA_NAME = "ItemInfo";
 
     /// <summary>
     ///     The size of the <see cref="ItemMetaData" /> in bytes
@@ -16,5 +16,5 @@ public sealed class ItemMetaData : MetaDataBase<ItemMetaNode>
 
     /// <inheritdoc />
     public ItemMetaData(int num)
-        : base(ITEM_METAFILE_NAME + num) { }
+        : base(ITEM_METADATA_NAME + num) { }
 }

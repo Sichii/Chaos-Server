@@ -3,6 +3,7 @@ using Chaos.Cryptography.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -16,6 +17,7 @@ public sealed class LoginClientFactory : IClientFactory<LoginClient>
     // ReSharper disable once NotAccessedField.Local
     private readonly ILogger<LoginClientFactory> Logger;
     private readonly ILoginServer<ILoginClient> LoginServer;
+    private readonly ITypeMapper Mapper;
     private readonly IPacketSerializer PacketSerializer;
 
     public LoginClientFactory(
@@ -23,13 +25,15 @@ public sealed class LoginClientFactory : IClientFactory<LoginClient>
         ICryptoFactory cryptoFactory,
         ILoginServer<ILoginClient> loginServer,
         IPacketSerializer packetSerializer,
-        ILoggerFactory loggerFactory
+        ILoggerFactory loggerFactory,
+        ITypeMapper mapper
     )
     {
         ChaosOptions = chaosOptions;
         CryptoFactory = cryptoFactory;
         LoginServer = loginServer;
         PacketSerializer = packetSerializer;
+        Mapper = mapper;
         ClientLogger = loggerFactory.CreateLogger<LoginClient>();
         Logger = loggerFactory.CreateLogger<LoginClientFactory>();
     }
@@ -41,5 +45,6 @@ public sealed class LoginClientFactory : IClientFactory<LoginClient>
             CryptoFactory.Create(),
             LoginServer,
             PacketSerializer,
-            ClientLogger);
+            ClientLogger,
+            Mapper);
 }

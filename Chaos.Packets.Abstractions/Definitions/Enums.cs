@@ -265,7 +265,7 @@ public enum ClientOpCode : byte
     ///     OpCode used when a client requests metadata details or data<br />
     ///     Hex value: 0x7B
     /// </summary>
-    MetafileRequest = 123
+    MetaDataRequest = 123
 }
 
 /// <summary>
@@ -553,10 +553,10 @@ public enum ServerOpCode : byte
     /// </summary>
     SynchronizeTicks = 104,
     /// <summary>
-    ///     OpCode used to send metafile data to a client<br />
+    ///     OpCode used to send metadata data to a client<br />
     ///     Hex value: 0x6F
     /// </summary>
-    Metafile = 111,
+    MetaData = 111,
     /// <summary>
     ///     OpCode sent to a client to confirm their initial connection<br />
     ///     Hex value: 0x7E

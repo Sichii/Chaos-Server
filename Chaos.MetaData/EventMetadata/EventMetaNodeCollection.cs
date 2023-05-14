@@ -14,14 +14,14 @@ public sealed class EventMetaNodeCollection : MetaNodeCollection<EventMetaNode>,
 
         foreach (var nodeGroup in nodes)
         {
-            var eventMetafile = new EventMetaData(nodeGroup.Key);
+            var eventMetaData = new EventMetaData(nodeGroup.Key);
 
             foreach (var node in nodeGroup)
-                eventMetafile.AddNode(node);
+                eventMetaData.AddNode(node);
 
-            eventMetafile.Compress();
+            eventMetaData.Compress();
 
-            yield return eventMetafile;
+            yield return eventMetaData;
         }
     }
 }

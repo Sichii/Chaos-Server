@@ -42,9 +42,9 @@ public class MetaDataCache : IMetaDataCache
     }
 
     /// <inheritdoc />
-    public uint GetCheckSum(string name) => MetaData.TryGetValue(name, out var metaFile)
-        ? metaFile.CheckSum
-        : throw new KeyNotFoundException($"Metafile with name \"{name}\" not found in cache");
+    public uint GetCheckSum(string name) => MetaData.TryGetValue(name, out var metaData)
+        ? metaData.CheckSum
+        : throw new KeyNotFoundException($"MetaData with name \"{name}\" not found in cache");
 
     /// <inheritdoc />
     public IEnumerator<IMetaDataDescriptor> GetEnumerator() => MetaData.Values.GetEnumerator();
@@ -53,10 +53,10 @@ public class MetaDataCache : IMetaDataCache
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IMetaDataDescriptor GetMetafile(string name) =>
-        MetaData.TryGetValue(name, out var metaFile)
-            ? metaFile
-            : throw new KeyNotFoundException($"Metafile with name \"{name}\" not found in cache");
+    public IMetaDataDescriptor GetMetaData(string name) =>
+        MetaData.TryGetValue(name, out var metaData)
+            ? metaData
+            : throw new KeyNotFoundException($"MetaData with name \"{name}\" not found in cache");
 
     /// <inheritdoc />
     public void Load()
@@ -83,7 +83,7 @@ public class MetaDataCache : IMetaDataCache
         var spellTemplateCache = CacheProvider.GetCache<SpellTemplate>();
         spellTemplateCache.ForceLoad();
 
-        var masterAbilityMetafile = new AbilityMetaNodeCollection();
+        var masterAbilityMetaData = new AbilityMetaNodeCollection();
 
         foreach (var template in skillTemplateCache.Concat<PanelObjectTemplateBase>(spellTemplateCache))
         {
@@ -151,10 +151,10 @@ public class MetaDataCache : IMetaDataCache
                 Description = template.Description
             };
 
-            masterAbilityMetafile.AddNode(node);
+            masterAbilityMetaData.AddNode(node);
         }
 
-        foreach (var abilityMetaData in masterAbilityMetafile.Split())
+        foreach (var abilityMetaData in masterAbilityMetaData.Split())
             MetaData.TryAdd(abilityMetaData.Name, abilityMetaData);
 
         Logger.LogDebug("Ability metadata generated");

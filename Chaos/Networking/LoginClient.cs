@@ -7,6 +7,7 @@ using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Storage.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,6 +15,7 @@ namespace Chaos.Networking;
 
 public sealed class LoginClient : SocketClientBase, ILoginClient
 {
+    private readonly ITypeMapper Mapper;
     private readonly ILoginServer<ILoginClient> Server;
 
     public LoginClient(
@@ -22,7 +24,8 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         ICrypto crypto,
         ILoginServer<ILoginClient> server,
         IPacketSerializer packetSerializer,
-        ILogger<LoginClient> logger
+        ILogger<LoginClient> logger,
+        ITypeMapper mapper
     )
         : base(
             socket,
@@ -32,6 +35,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
     {
         LogRawPackets = chaosOptions.Value.LogRawPackets;
         Server = server;
+        Mapper = mapper;
     }
 
     /// <inheritdoc />
@@ -87,44 +91,34 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         Send(args);
     }
 
-    public void SendMetafile(MetafileRequestType metafileRequestType, IMetaDataCache metaDataCache, string? name = null)
+    public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataCache metaDataCache, string? name = null)
     {
-        var args = new MetafileArgs
+        var args = new MetaDataArgs
         {
-            MetafileRequestType = metafileRequestType
+            MetaDataRequestType = metaDataRequestType
         };
 
-        switch (metafileRequestType)
+        switch (metaDataRequestType)
         {
-            case MetafileRequestType.DataByName:
+            case MetaDataRequestType.DataByName:
             {
                 ArgumentNullException.ThrowIfNull(name);
 
-                var metafile = metaDataCache.GetMetafile(name);
+                var metadata = metaDataCache.GetMetaData(name);
 
-                args.MetafileData = new MetafileInfo
-                {
-                    Name = metafile.Name,
-                    CheckSum = metafile.CheckSum,
-                    Data = metafile.Data
-                };
+                args.MetaDataData = Mapper.Map<MetaDataInfo>(metadata);
 
                 break;
             }
-            case MetafileRequestType.AllCheckSums:
+            case MetaDataRequestType.AllCheckSums:
             {
-                args.Info = metaDataCache.Select(
-                                             metafile => new MetafileInfo
-                                             {
-                                                 Name = metafile.Name,
-                                                 CheckSum = metafile.CheckSum
-                                             })
-                                         .ToList();
+                args.Info = Mapper.MapMany<MetaDataInfo>(metaDataCache)
+                                  .ToList();
 
                 break;
             }
             default:
-                throw new ArgumentOutOfRangeException(nameof(metafileRequestType), metafileRequestType, "Unknown enum value");
+                throw new ArgumentOutOfRangeException(nameof(metaDataRequestType), metaDataRequestType, "Unknown enum value");
         }
 
         Send(args);

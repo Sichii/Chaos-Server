@@ -5,7 +5,7 @@ using Chaos.MetaData.Abstractions;
 namespace Chaos.MetaData.NationMetaData;
 
 /// <summary>
-///     A metafile node that represents a mundane illustration.
+///     A metadata node that represents a mundane illustration.
 /// </summary>
 public sealed record NationDescriptionMetaNode : IMetaNode
 {

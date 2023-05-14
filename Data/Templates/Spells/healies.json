@@ -32,8 +32,8 @@
             "range": 2,
             "healStat": "wis",
             "animation": {
-                "targetAnimation": 4,
-                "animationSpeed": 100
+                "targetAnimation": 246,
+                "animationSpeed": 1000
             },
             "baseHeal": 500,
             "sound": 8,

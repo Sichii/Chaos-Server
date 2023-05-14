@@ -21,7 +21,7 @@ public class DefaultAislingScript : AislingScriptBase
     {
         RestrictionBehavior = new RestrictionBehavior();
         VisibilityBehavior = new VisibilityBehavior();
-        SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5));
+        SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5), false);
     }
 
     /// <inheritdoc />

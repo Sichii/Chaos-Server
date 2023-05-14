@@ -4,7 +4,7 @@ using Chaos.MetaData.Abstractions;
 namespace Chaos.MetaData.MundaneMetadata;
 
 /// <summary>
-///     A metafile node that represents a mundane illustration.
+///     A metadata node that represents a mundane illustration.
 /// </summary>
 public sealed record MundaneIllustrationMetaNode(string Name, string ImageName) : IMetaNode
 {

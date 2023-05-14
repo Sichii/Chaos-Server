@@ -44,6 +44,21 @@ public static class TypeExtensions
     }
 
     /// <summary>
+    ///     Lazily yields all base types of a type
+    /// </summary>
+    public static IEnumerable<Type> GetBaseTypes(this Type type)
+    {
+        var current = type.BaseType;
+
+        while (current != null)
+        {
+            yield return current;
+
+            current = current.BaseType;
+        }
+    }
+
+    /// <summary>
     ///     Determines whether a type inherits from the specified base type
     /// </summary>
     public static bool HasBaseType(this Type type, Type baseType)

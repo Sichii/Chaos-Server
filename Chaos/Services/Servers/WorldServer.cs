@@ -704,22 +704,22 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         return ExecuteHandler(client, InnerOnMapDataRequest);
     }
 
-    public ValueTask OnMetafileRequest(IWorldClient client, in ClientPacket clientPacket)
+    public ValueTask OnMetaDataRequest(IWorldClient client, in ClientPacket clientPacket)
     {
-        var args = PacketSerializer.Deserialize<MetafileRequestArgs>(in clientPacket);
+        var args = PacketSerializer.Deserialize<MetaDataRequestArgs>(in clientPacket);
 
-        ValueTask InnerOnMetafileRequest(IWorldClient localClient, MetafileRequestArgs localArgs)
+        ValueTask InnerOnMetaDataRequest(IWorldClient localClient, MetaDataRequestArgs localArgs)
         {
-            (var metafileRequestType, var name) = localArgs;
+            (var metadataRequestType, var name) = localArgs;
 
-            switch (metafileRequestType)
+            switch (metadataRequestType)
             {
-                case MetafileRequestType.DataByName:
-                    localClient.SendMetafile(MetafileRequestType.DataByName, MetaDataCache, name);
+                case MetaDataRequestType.DataByName:
+                    localClient.SendMetaData(MetaDataRequestType.DataByName, MetaDataCache, name);
 
                     break;
-                case MetafileRequestType.AllCheckSums:
-                    localClient.SendMetafile(MetafileRequestType.AllCheckSums, MetaDataCache);
+                case MetaDataRequestType.AllCheckSums:
+                    localClient.SendMetaData(MetaDataRequestType.AllCheckSums, MetaDataCache);
 
                     break;
                 default:
@@ -729,7 +729,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             return default;
         }
 
-        return ExecuteHandler(client, args, InnerOnMetafileRequest);
+        return ExecuteHandler(client, args, InnerOnMetaDataRequest);
     }
 
     public ValueTask OnPickup(IWorldClient client, in ClientPacket clientPacket)
@@ -1381,7 +1381,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ClientHandlers[(byte)ClientOpCode.Chant] = OnChant;
         ClientHandlers[(byte)ClientOpCode.Profile] = OnProfile;
         ClientHandlers[(byte)ClientOpCode.SocialStatus] = OnSocialStatus;
-        ClientHandlers[(byte)ClientOpCode.MetafileRequest] = OnMetafileRequest;
+        ClientHandlers[(byte)ClientOpCode.MetaDataRequest] = OnMetaDataRequest;
     }
 
     protected override void OnConnection(IAsyncResult ar)

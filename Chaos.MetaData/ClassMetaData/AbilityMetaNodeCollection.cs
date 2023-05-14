@@ -19,14 +19,14 @@ public sealed class AbilityMetaNodeCollection : MetaNodeCollection<AbilityMetaNo
         {
             var name = $"SClass{(byte)nodeGroup.Key}";
 
-            var metafile = new AbilityMetaData(name);
+            var metadata = new AbilityMetaData(name);
 
             foreach (var node in nodeGroup)
-                metafile.AddNode(node);
+                metadata.AddNode(node);
 
-            metafile.Compress();
+            metadata.Compress();
 
-            yield return metafile;
+            yield return metadata;
         }
     }
 }
