@@ -499,14 +499,14 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
                 var metadata = metaDataCache.GetMetaData(name);
 
-                args.MetaDataData = Mapper.Map<MetaDataInfo>(metadata);
+                args.MetaDataInfo = Mapper.Map<MetaDataInfo>(metadata);
 
                 break;
             }
             case MetaDataRequestType.AllCheckSums:
             {
-                args.Info = Mapper.MapMany<MetaDataInfo>(metaDataCache)
-                                  .ToList();
+                args.MetaDataCollection = Mapper.MapMany<MetaDataInfo>(metaDataCache)
+                                                .ToList();
 
                 break;
             }

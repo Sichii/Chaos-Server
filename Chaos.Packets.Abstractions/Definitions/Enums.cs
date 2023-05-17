@@ -138,7 +138,7 @@ public enum ClientOpCode : byte
     ItemDroppedOnCreature = 41,
     /// <summary>
     ///     OpCode used when a client drops gold on a creature<br />
-    ///     Hex value: 0x3A
+    ///     Hex value: 0x2A
     /// </summary>
     GoldDroppedOnCreature = 42,
     /// <summary>
