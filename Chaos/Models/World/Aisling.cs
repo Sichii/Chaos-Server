@@ -663,8 +663,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (TryGiveGold(money.Amount))
         {
             Logger.LogDebug("{@Player} picked up {@Money}", this, money);
+            MapInstance.RemoveObject(money);
 
-            return MapInstance.RemoveObject(money);
+            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money).ToList())
+                reactor.OnGoldPickedUpFrom(this, money);
         }
 
         return false;

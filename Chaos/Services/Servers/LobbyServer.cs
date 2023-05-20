@@ -46,45 +46,57 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     #region OnHandlers
     public ValueTask OnConnectionInfoRequest(ILobbyClient client, in ClientPacket _)
     {
-        client.SendConnectionInfo(ServerTable.CheckSum);
+        ValueTask InnerOnConnectionInfoRequest(ILobbyClient localClient)
+        {
+            localClient.SendConnectionInfo(ServerTable.CheckSum);
 
-        return default;
+            return default;
+        }
+
+        return ExecuteHandler(client, InnerOnConnectionInfoRequest);
     }
 
     public ValueTask OnServerTableRequest(ILobbyClient client, in ClientPacket packet)
     {
-        (var serverTableRequestType, var serverId) = PacketSerializer.Deserialize<ServerTableRequestArgs>(in packet);
+        var args = PacketSerializer.Deserialize<ServerTableRequestArgs>(in packet);
 
-        switch (serverTableRequestType)
+        ValueTask InnerOnServerTableRequest(ILobbyClient localClient, ServerTableRequestArgs localArgs)
         {
-            case ServerTableRequestType.ServerId:
-                if (ServerTable.Servers.TryGetValue(serverId!.Value, out var serverInfo))
-                {
-                    var redirect = new Redirect(
-                        EphemeralRandomIdGenerator<uint>.Shared.NextId,
-                        serverInfo,
-                        ServerType.Login,
-                        client.Crypto.Key,
-                        client.Crypto.Seed);
+            (var serverTableRequestType, var serverId) = localArgs;
 
-                    RedirectManager.Add(redirect);
+            switch (serverTableRequestType)
+            {
+                case ServerTableRequestType.ServerId:
+                    if (ServerTable.Servers.TryGetValue(serverId!.Value, out var serverInfo))
+                    {
+                        var redirect = new Redirect(
+                            EphemeralRandomIdGenerator<uint>.Shared.NextId,
+                            serverInfo,
+                            ServerType.Login,
+                            client.Crypto.Key,
+                            client.Crypto.Seed);
 
-                    Logger.LogDebug("Redirecting {@Client} to {@Server}", client, serverInfo);
+                        RedirectManager.Add(redirect);
 
-                    client.SendRedirect(redirect);
-                } else
-                    throw new InvalidOperationException($"Server id \"{serverId}\" requested, but does not exist.");
+                        Logger.LogDebug("Redirecting {@Client} to {@Server}", client, serverInfo);
 
-                break;
-            case ServerTableRequestType.RequestTable:
-                client.SendServerTable(ServerTable);
+                        client.SendRedirect(redirect);
+                    } else
+                        throw new InvalidOperationException($"Server id \"{serverId}\" requested, but does not exist.");
 
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+                    break;
+                case ServerTableRequestType.RequestTable:
+                    client.SendServerTable(ServerTable);
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return default;
         }
 
-        return default;
+        return ExecuteHandler(client, args, InnerOnServerTableRequest);
     }
     #endregion
 

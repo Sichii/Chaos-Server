@@ -299,13 +299,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            return OnClientRedirectedAsync(localClient, redirect);
+            return LoadAislingAsync(localClient, redirect);
         }
 
         return ExecuteHandler(client, args, InnerOnClientRedirected);
     }
 
-    public async ValueTask OnClientRedirectedAsync(IWorldClient client, IRedirect redirect)
+    public async ValueTask LoadAislingAsync(IWorldClient client, IRedirect redirect)
     {
         client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
         var aisling = await AislingSaveManager.LoadAsync(redirect.Name);
@@ -1250,14 +1250,15 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     #endregion
 
     #region Connection / Handler
-    public async ValueTask ExecuteHandler<TArgs>(IWorldClient client, TArgs args, Func<IWorldClient, TArgs, ValueTask> action)
+    public override async ValueTask ExecuteHandler<TArgs>(IWorldClient client, TArgs args, Func<IWorldClient, TArgs, ValueTask> action)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
         IPolyDisposable disposable;
 
+        //if map instance is null, use server synchronization
         if (mapInstance == null)
-            disposable = new NoOpDisposable();
+            disposable = await Sync.WaitAsync();
         else
         {
             //await entrancy into the map synchronization
@@ -1289,14 +1290,14 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public async ValueTask ExecuteHandler(IWorldClient client, Func<IWorldClient, ValueTask> action)
+    public override async ValueTask ExecuteHandler(IWorldClient client, Func<IWorldClient, ValueTask> action)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
         IPolyDisposable disposable;
 
         if (mapInstance == null)
-            disposable = new NoOpDisposable();
+            disposable = await Sync.WaitAsync();
         else
         {
             //await entrancy into the map synchronization

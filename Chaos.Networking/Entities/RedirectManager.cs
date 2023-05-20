@@ -9,6 +9,7 @@ namespace Chaos.Networking.Entities;
 /// </summary>
 public sealed class RedirectManager : BackgroundService, IRedirectManager
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
     private readonly ILogger<RedirectManager> Logger;
     private readonly ConcurrentDictionary<uint, IRedirect> Redirects = new();
 
@@ -36,7 +37,7 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
                 var now = DateTime.UtcNow;
 
                 foreach (var redirect in Redirects.Values)
-                    if (now.Subtract(redirect.Created) > TimeSpan.FromSeconds(10))
+                    if (now.Subtract(redirect.Created) > Timeout)
                     {
                         Logger.LogTrace("{@Redirect} has timed out", redirect);
                         Redirects.TryRemove(redirect.Id, out _);

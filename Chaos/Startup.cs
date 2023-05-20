@@ -325,8 +325,7 @@ public sealed class Startup
                               obj => new
                               {
                                   CommandName = obj.Details.CommandName,
-                                  RequiresAdmin = obj.Details.RequiresAdmin,
-                                  ExecutedByType = obj.Type.FullName
+                                  RequiresAdmin = obj.Details.RequiresAdmin
                               });
 
                           builder.RegisterObjectTransformation<Dialog>(

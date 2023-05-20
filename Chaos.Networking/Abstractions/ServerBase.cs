@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
@@ -54,6 +55,10 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     ///     The socket used for handling incoming connections.
     /// </summary>
     protected Socket Socket { get; }
+    /// <summary>
+    ///     A semaphore for synchronizing access to the server.
+    /// </summary>
+    protected FifoAutoReleasingSemaphoreSlim Sync { get; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ServerBase{T}" /> class.
@@ -79,6 +84,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         PacketSerializer = packetSerializer;
         ClientHandlers = new ClientHandler?[byte.MaxValue];
         Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        Sync = new FifoAutoReleasingSemaphoreSlim(1, 1);
         IndexHandlers();
     }
 
@@ -137,7 +143,54 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     {
         var handler = ClientHandlers[(byte)packet.OpCode];
 
+        if (handler is null)
+            return default;
+
         return handler?.Invoke(client, in packet) ?? default;
+    }
+
+    /// <summary>
+    ///     Executes an asynchronous action for a client within a sychronized context
+    /// </summary>
+    /// <param name="client">The client to execute the action against</param>
+    /// <param name="args">The args deserialized from the packet</param>
+    /// <param name="action">The action that uses the args</param>
+    /// <typeparam name="TArgs">The type of the args that were deserialized</typeparam>
+    public virtual async ValueTask ExecuteHandler<TArgs>(T client, TArgs args, Func<T, TArgs, ValueTask> action)
+    {
+        await using var @lock = await Sync.WaitAsync();
+
+        try
+        {
+            await action(client, args);
+        } catch (Exception e)
+        {
+            Logger.LogError(
+                e,
+                "Failed to execute inner handler with {@ArgsType} {@Args} for {@ClientType} {@Client}",
+                args!.GetType().Name,
+                args,
+                client.GetType().Name,
+                client);
+        }
+    }
+
+    /// <summary>
+    ///     Executes an asynchronous action for a client within a sychronized context
+    /// </summary>
+    /// <param name="client">The client to execute the action against</param>
+    /// <param name="action">The action to be executed</param>
+    public virtual async ValueTask ExecuteHandler(T client, Func<T, ValueTask> action)
+    {
+        await using var @lock = await Sync.WaitAsync();
+
+        try
+        {
+            await action(client);
+        } catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to execute inner handler for {@Client}", client);
+        }
     }
 
     /// <inheritdoc />

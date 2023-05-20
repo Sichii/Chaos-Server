@@ -1,12 +1,14 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.DialogScripts;
 using Chaos.Scripting.DialogScripts.Abstractions;
@@ -201,6 +203,13 @@ public sealed record Dialog : IScripted<IDialogScript>
 
             if (nextDialogKey.EqualsI("top"))
             {
+                if (SourceEntity is MapEntity mapEntity && !mapEntity.WithinRange(source))
+                {
+                    Close(source);
+
+                    return;
+                }
+
                 SourceEntity.Activate(source);
 
                 return;
@@ -220,7 +229,11 @@ public sealed record Dialog : IScripted<IDialogScript>
 
     public void Previous(Aisling source)
     {
-        if (!string.IsNullOrEmpty(PrevDialogKey))
+        //if no prev dialog key, close
+        //if source is a map entity that's out of range, close
+        if (string.IsNullOrEmpty(PrevDialogKey) || (SourceEntity is MapEntity mapEntity && !mapEntity.WithinRange(source)))
+            Close(source);
+        else
         {
             var prevDialog = source.DialogHistory.PopUntil(d => d.Template.TemplateKey.EqualsI(PrevDialogKey));
             source.DialogHistory.TryPeek(out var prevPrevDialog);
@@ -246,8 +259,7 @@ public sealed record Dialog : IScripted<IDialogScript>
 
             Script.OnPrevious(source);
             prevDialog.Display(source);
-        } else
-            Close(source);
+        }
     }
 
     public void Reply(Aisling source, string dialogText, string? nextDialogKey = null)

@@ -1,5 +1,4 @@
 using Chaos.Collections.Common;
-using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.World.Abstractions;
 
@@ -24,7 +23,7 @@ public class ComponentVars : StaticVars
     public virtual int GetStage() => GetRequired<int>(CASCADE_STAGE_KEY);
 
     public virtual IReadOnlyCollection<T> GetTargets<T>() =>
-        GetRequired<IReadOnlyCollection<MapEntity>>(TARGETS_KEY).ToListCast<T>();
+        GetRequired<IReadOnlyCollection<MapEntity>>(TARGETS_KEY).OfType<T>().ToList();
 
     public virtual void SetAllPoints(List<IPoint> points) => Set(CASCADE_ALL_POINTS_KEY, points);
     public virtual void SetOptions(object options) => Set(OPTIONS_KEY, options!);

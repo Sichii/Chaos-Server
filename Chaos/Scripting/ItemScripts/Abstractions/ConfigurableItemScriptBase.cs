@@ -13,7 +13,7 @@ public abstract class ConfigurableItemScriptBase : ConfigurableScriptBase<Item>,
         : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
     /// <inheritdoc />
-    public virtual bool CanUse(Aisling source) => source.IsAlive;
+    public virtual bool CanUse(Aisling source) => true;
 
     /// <inheritdoc />
     public virtual void OnDropped(Creature source, MapInstance mapInstance) { }

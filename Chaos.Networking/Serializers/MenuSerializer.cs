@@ -91,7 +91,7 @@ public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
 
                 foreach (var item in args.Items)
                 {
-                    writer.WriteUInt16(item.Sprite);
+                    writer.WriteUInt16((ushort)(item.Sprite + NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET));
                     writer.WriteByte((byte)item.Color);
                     writer.WriteUInt32((uint)item.Cost!.Value);
                     writer.WriteString8(item.Name);
