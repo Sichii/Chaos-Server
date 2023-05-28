@@ -143,6 +143,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkEditTool", "Tools\BulkE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.MetaData", "Chaos.MetaData\Chaos.MetaData.csproj", "{1F36E08E-BEF4-46BE-9D15-67D413CD0A6D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{D5DE58CA-F39A-4656-9890-DA737AC428E1}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\docs.yml = .github\workflows\docs.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
