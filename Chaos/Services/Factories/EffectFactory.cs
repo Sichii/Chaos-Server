@@ -31,8 +31,6 @@ public sealed class EffectFactory : IEffectFactory
         if (instance is not IEffect effect)
             throw new InvalidCastException($"Object obtained from key \"{effectKey}\" is not a valid effect");
 
-        Logger.LogDebug("Created {@Effect}", effect);
-
         return effect;
     }
 
@@ -44,7 +42,7 @@ public sealed class EffectFactory : IEffectFactory
         {
             var effectKey = EffectBase.GetEffectKey(type);
             EffectTypeCache.TryAdd(effectKey, type);
-            Logger.LogTrace("Loaded effect type with key \"{EffectKey}\" for type \"{Type}\"", effectKey, type.Name);
+            Logger.LogTrace("Loaded effect type with key {@EffectKey} for type {@Type}", effectKey, type.Name);
         }
 
         Logger.LogInformation("{Count} effects loaded", EffectTypeCache.Count);

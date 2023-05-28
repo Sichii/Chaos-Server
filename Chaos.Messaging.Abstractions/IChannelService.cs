@@ -31,21 +31,22 @@ public interface IChannelService
     /// <summary>
     ///     Joins a channel, allowing you to send and receive messages to/from it
     /// </summary>
-    /// <param name="obj">The object being added to the channel</param>
+    /// <param name="subscriber">The object being added to the channel</param>
     /// <param name="channelName">The name of the channel</param>
-    void JoinChannel(IChannelSubscriber obj, string channelName);
+    /// <param name="bypassValidation">Whether or not to bypass validation of the channel name</param>
+    void JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false);
 
     /// <summary>
     ///     Leaves a channel, preventing you from sending and receiving messages to/from it
     /// </summary>
-    /// <param name="obj">The object leaving the channel</param>
+    /// <param name="subscriber">The object leaving the channel</param>
     /// <param name="channelName">The name of the channel</param>
-    void LeaveChannel(IChannelSubscriber obj, string channelName);
+    void LeaveChannel(IChannelSubscriber subscriber, string channelName);
 
     /// <summary>
     ///     Registers a channel, allowing you to send and receive messages to/from it
     /// </summary>
-    /// <param name="obj">If a subscriber registered the channel, this will be that subscriber</param>
+    /// <param name="subscriber">If a subscriber registered the channel, this will be that subscriber</param>
     /// <param name="channelName">The name of the channel</param>
     /// <param name="defaultMessageColor">The color to use for the given channel</param>
     /// <param name="bypassValidation">
@@ -55,7 +56,7 @@ public interface IChannelService
     /// <param name="channelNameOverride">The name that will be displayed when sending and receiving from this channel (INTERNAL ONLY)</param>
     /// <param name="messageType">The message type to use for the registered channel</param>
     void RegisterChannel(
-        IChannelSubscriber? obj,
+        IChannelSubscriber? subscriber,
         string channelName,
         MessageColor defaultMessageColor,
         bool bypassValidation = false,
@@ -66,18 +67,18 @@ public interface IChannelService
     /// <summary>
     ///     Sends a message to a channel
     /// </summary>
-    /// <param name="obj">The obj sending the message</param>
+    /// <param name="subscriber">The obj sending the message</param>
     /// <param name="channelName">The name of the channel to send to</param>
     /// <param name="message">The message to send to the channel</param>
-    void SendMessage(IChannelSubscriber obj, string channelName, string message);
+    void SendMessage(IChannelSubscriber subscriber, string channelName, string message);
 
     /// <summary>
     ///     Sets the text color of a channel
     /// </summary>
-    /// <param name="obj">The subscriber to set the channel color for</param>
+    /// <param name="subscriber">The subscriber to set the channel color for</param>
     /// <param name="channelName">The name of the channel</param>
     /// <param name="messageColor">The color to use for the given channel</param>
-    void SetChannelColor(IChannelSubscriber obj, string channelName, MessageColor messageColor);
+    void SetChannelColor(IChannelSubscriber subscriber, string channelName, MessageColor messageColor);
 
     /// <summary>
     ///     Unregisters a channel, preventing anyone from sending and receiving messages to/from it

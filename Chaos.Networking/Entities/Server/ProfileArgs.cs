@@ -32,7 +32,7 @@ public sealed record ProfileArgs : ISendArgs
     /// <summary>
     ///     The character's guild title
     /// </summary>
-    public string? GuildTitle { get; set; }
+    public string? GuildRank { get; set; }
     /// <summary>
     ///     The character's id
     /// </summary>

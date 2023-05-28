@@ -26,6 +26,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                                            IMapperProfile<Aisling, WorldListMemberInfo>
 {
     private readonly IExchangeFactory ExchangeFactory;
+    private readonly IStore<Guild> GuildStore;
     private readonly ICloningService<Item> ItemCloner;
     private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
@@ -38,12 +39,14 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         IExchangeFactory exchangeFactory,
         ILoggerFactory loggerFactory,
         ICloningService<Item> itemCloner,
-        IScriptProvider scriptProvider
+        IScriptProvider scriptProvider,
+        IStore<Guild> guildStore
     )
     {
         Mapper = mapper;
         ItemCloner = itemCloner;
         ScriptProvider = scriptProvider;
+        GuildStore = guildStore;
         ExchangeFactory = exchangeFactory;
         SimpleCache = simpleCache;
         LoggerFactory = loggerFactory;
@@ -94,8 +97,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
-            GuildName = obj.GuildName,
-            GuildTitle = obj.GuildTitle,
             HairColor = obj.HairColor,
             HairStyle = obj.HairStyle,
             Nation = obj.Nation,
@@ -107,6 +108,13 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             IsDead = obj.IsDead,
             ChannelSettings = new SynchronizedHashSet<ChannelSettings>(Mapper.MapMany<ChannelSettings>(obj.ChannelSettings))
         };
+
+        //lookup guild and attach
+        if (!string.IsNullOrEmpty(obj.GuildName) && GuildStore.Exists(obj.GuildName))
+        {
+            var guild = GuildStore.Load(obj.GuildName);
+            aisling.Guild = guild;
+        }
 
         return aisling;
     }
@@ -124,8 +132,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             GamePoints = obj.GamePoints,
             Gender = obj.Gender,
             Gold = obj.Gold,
-            GuildName = obj.GuildName,
-            GuildTitle = obj.GuildTitle,
+            GuildName = obj.Guild?.Name,
             HairColor = obj.HairColor,
             HairStyle = obj.HairStyle,
             Name = obj.Name,
@@ -280,8 +287,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>),
         GroupOpen = obj.Options.Group,
         GroupString = obj.Group?.ToString(),
-        GuildName = obj.GuildName,
-        GuildTitle = obj.GuildTitle,
+        GuildName = obj.Guild?.Name,
+        GuildRank = obj.GuildRank,
         IsMaster = obj.UserStatSheet.Master,
         LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend).ToList(),
         Name = obj.Name,
@@ -299,8 +306,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         BaseClass = obj.UserStatSheet.BaseClass,
         Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>)!,
         GroupOpen = obj.Options.Group,
-        GuildName = obj.GuildName,
-        GuildTitle = obj.GuildTitle,
+        GuildName = obj.Guild?.Name,
+        GuildRank = obj.GuildRank,
         Id = obj.Id,
         LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend).ToList(),
         Name = obj.Name,

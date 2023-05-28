@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-using System.Text.Json;
 using Chaos.Definitions;
 using Chaos.Extensions.Cryptography;
 using Chaos.Models.Map;
@@ -7,7 +5,7 @@ using Chaos.Models.Templates;
 using Chaos.Schemas.Templates;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage;
-using Chaos.TypeMapper.Abstractions;
+using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,15 +20,13 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
     /// <inheritdoc />
     public ExpiringMapTemplateCache(
         IMemoryCache cache,
-        ITypeMapper mapper,
-        IOptions<JsonSerializerOptions> jsonSerializerOptions,
+        IEntityRepository entityRepository,
         IOptions<MapTemplateCacheOptions> options,
         ILogger<ExpiringMapTemplateCache> logger
     )
         : base(
             cache,
-            mapper,
-            jsonSerializerOptions,
+            entityRepository,
             options,
             logger)
     {
@@ -41,19 +37,31 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
             Directory.CreateDirectory(NeedsMapDataDir);
     }
 
-    protected override MapTemplate LoadFromFile(string path)
+    protected override MapTemplate CreateFromEntry(ICacheEntry entry)
     {
-        using var stream = File.OpenRead(path);
-        var schema = JsonSerializer.Deserialize<MapTemplateSchema>(stream, JsonSerializerOptions);
+        var key = entry.Key.ToString();
+        var keyActual = DeconstructKeyForType(key!);
 
-        if (schema == null)
-            throw new SerializationException($"Failed to serialize {nameof(MapTemplateSchema)} from path \"{path}\"");
+        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
 
-        var mapTemplate = Mapper.Map<MapTemplate>(schema);
+        entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
+        entry.RegisterPostEvictionCallback(RemoveValueCallback);
 
-        LoadMapData(mapTemplate);
+        var path = GetPathForKey(keyActual);
 
-        return mapTemplate;
+        var ret = EntityRepository.LoadAndMap<MapTemplate, MapTemplateSchema>(path);
+
+        LoadMapData(ret);
+
+        LocalLookup[key!] = ret;
+
+        Logger.LogDebug(
+            "Created new {@TypeName} entry with key {@Key} from path {@Path}",
+            nameof(MapTemplate),
+            key,
+            path);
+
+        return ret;
     }
 
     private void LoadMapData(MapTemplate mapTemplate)

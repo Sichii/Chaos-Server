@@ -18,6 +18,7 @@ var services = new ServiceCollection();
 var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")
+                    .AddJsonFile("appsettings.logging.json")
                     #if DEBUG
                     .AddJsonFile("appsettings.local.json")
                     #else
@@ -29,11 +30,7 @@ var builder = new ConfigurationBuilder()
 var initialConfiguration = builder.Build();
 
 if(initialConfiguration.GetValue<bool>(Startup.ConfigKeys.Logging.UseSeq))
-    #if DEBUG
-    builder.AddJsonFile("appsettings.seq.local.json");
-    #else
-    builder.AddJsonFile("appsettings.seq.prod.json");
-    #endif
+    builder.AddJsonFile("appsettings.seq.json");
 
 var configuration = builder.Build();
 // @formatter:on
@@ -70,7 +67,7 @@ var startFuncs = hostedServices
 await serverCtx.Token.WhenAllWithCancellation(startFuncs);
 await serverCtx.Token.WaitTillCanceled();
 
-logger.LogInformation("Waiting 2.5 seconds for post shutdown tasks to complete");
+logger.LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
 
 //wait for everything to shut down
-await Task.Delay(2500);
+await Task.Delay(5000);

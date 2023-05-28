@@ -27,10 +27,10 @@
         <None Update="appsettings.prod.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.seq.local.json">
+        <None Update="appsettings.seq.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.seq.prod.json">
+        <None Update="appsettings.logging.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
@@ -55,7 +55,6 @@
         <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="NLog.Targets.Seq"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
         <PackageReference Include="System.Configuration.ConfigurationManager"/>
         <PackageReference Include="System.Linq.Async"/>

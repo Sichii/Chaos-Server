@@ -21,17 +21,17 @@ public class DialogMapperProfile : IMapperProfile<Dialog, DialogArgs>, IMapperPr
         new()
         {
             Args = obj.MenuArgs.LastOrDefault(),
-            EntityType = obj.SourceEntity.EntityType,
+            EntityType = obj.DialogSource.EntityType,
             Items = Mapper.MapMany<ItemInfo>(obj.Items).ToList(),
             MenuType = obj.Type.ToMenuType()!.Value,
-            Name = obj.SourceEntity.Name,
+            Name = obj.DialogSource.Name,
             Options = obj.Options.Select(op => op.OptionText).ToList(),
             PursuitId = 0,
             Skills = Mapper.MapMany<SkillInfo>(obj.Skills).ToList(),
             Spells = Mapper.MapMany<SpellInfo>(obj.Spells).ToList(),
-            SourceId = obj.SourceEntity.Id,
-            Sprite = obj.SourceEntity.Sprite,
-            Color = obj.SourceEntity.Color,
+            SourceId = obj.DialogSource.Id,
+            Sprite = obj.DialogSource.Sprite,
+            Color = obj.DialogSource.Color,
             Text = obj.Text.Replace("\r\n", "\n").TrimEnd('\n'),
             Slots = obj.Slots
         };
@@ -42,15 +42,15 @@ public class DialogMapperProfile : IMapperProfile<Dialog, DialogArgs>, IMapperPr
         {
             DialogId = 0,
             DialogType = obj.Type.ToDialogType()!.Value,
-            EntityType = obj.SourceEntity.EntityType,
+            EntityType = obj.DialogSource.EntityType,
             HasNextButton = !string.IsNullOrWhiteSpace(obj.NextDialogKey),
             HasPreviousButton = !string.IsNullOrWhiteSpace(obj.PrevDialogKey),
-            Name = obj.SourceEntity.Name,
+            Name = obj.DialogSource.Name,
             Options = obj.Options.Select(o => o.OptionText).ToList(),
             PursuitId = 0,
-            SourceId = obj.SourceEntity.Id,
-            Sprite = obj.SourceEntity.Sprite,
-            Color = obj.SourceEntity.Color,
+            SourceId = obj.DialogSource.Id,
+            Sprite = obj.DialogSource.Sprite,
+            Color = obj.DialogSource.Color,
             Text = obj.Text.Replace("\r\n", "\n").TrimEnd('\n'),
             TextBoxLength = obj.TextBoxLength
         };

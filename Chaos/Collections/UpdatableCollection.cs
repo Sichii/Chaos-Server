@@ -58,7 +58,7 @@ public sealed class UpdatableCollection : IDeltaUpdatable
                 obj.Update(delta);
             } catch (Exception e)
             {
-                Logger.LogError(e, "Error updating entity {Obj}", obj);
+                Logger.LogError(e, "Error updating entity {@Entity}", obj);
             }
 
         lock (this)

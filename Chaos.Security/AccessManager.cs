@@ -92,8 +92,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         {
             if (result.Code == CredentialValidationResult.FailureCode.TooManyAttempts)
                 Logger.LogWarning(
-                    "{IpAddress} has exceeded the maximum number of credential attempts while attempting to change password",
-                    ipAddress);
+                    "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to change password",
+                    ipAddress.ToString());
 
             return result;
         }
@@ -273,7 +273,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         var result = await InnerValidateCredentialsAsync(ipAddress, name, password);
 
         if (result is { Success: false, Code: CredentialValidationResult.FailureCode.TooManyAttempts })
-            Logger.LogWarning("{IpAddress} has exceeded the maximum number of credential attempts while attempting to log in", ipAddress);
+            Logger.LogWarning(
+                "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to log in",
+                ipAddress.ToString());
 
         return result;
     }

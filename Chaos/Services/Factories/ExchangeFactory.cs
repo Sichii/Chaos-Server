@@ -11,5 +11,5 @@ public sealed class ExchangeFactory : IExchangeFactory
 
     public ExchangeFactory(ILoggerFactory loggerFactory) => LoggerFactory = loggerFactory;
 
-    public Exchange CreateExchange(Aisling sender, Aisling receiver) => new(sender, receiver, LoggerFactory.CreateLogger<Exchange>());
+    public Exchange Create(Aisling sender, Aisling receiver) => new(sender, receiver, LoggerFactory.CreateLogger<Exchange>());
 }

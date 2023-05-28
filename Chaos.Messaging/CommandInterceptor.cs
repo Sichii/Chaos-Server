@@ -72,7 +72,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
 
         if (descriptor.Details.RequiresAdmin && !source.IsAdmin)
         {
-            Logger.LogWarning("Non-Admin {@Source} tried to execute admin command {@Command}", source, commandStr);
+            Logger.WithProperties(source, descriptor, commandStr)
+                  .LogWarning("Non-Admin {@SourceType} tried to execute admin command {@CommandStr}", source.GetType().Name, commandStr);
 
             return;
         }
@@ -81,7 +82,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
         {
             var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
 
-            Logger.LogTrace("Successfully created command {CommandName}", commandName);
+            Logger.WithProperties(source, descriptor, commandStr)
+                  .LogTrace("Successfully created command {@CommandName}", commandName);
 
             var commandArgs = new ArgumentCollection(commandParts.Skip(1));
 
@@ -89,21 +91,19 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
             {
                 await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
 
-                Logger.LogInformation(
-                    "{@Source} executed {@Command}",
-                    source,
-                    commandStr);
+                Logger.WithProperties(source, descriptor)
+                      .LogInformation("{@SourceType} executed {@CommandStr}", source.GetType().Name, commandStr);
             }
 
             await InnerExecute();
         } catch (Exception e)
         {
-            Logger.LogError(
-                e,
-                "{@Source} failed to execute {@Command}. (Descriptor: {@Descriptor})",
-                source,
-                commandStr,
-                descriptor);
+            Logger.WithProperties(source, descriptor)
+                  .LogError(
+                      e,
+                      "{@SourceType} failed to execute {@Command}",
+                      source.GetType().Name,
+                      commandStr);
         }
     }
 

@@ -40,6 +40,16 @@ public interface IWorldOptions
     ///     The default message color used for group chat
     /// </summary>
     MessageColor GroupMessageColor { get; }
+
+    /// <summary>
+    ///     When whispering a target name in the client, this is the name that will redirect to guild chat
+    /// </summary>
+    string GuildChatName { get; }
+
+    /// <summary>
+    ///     The default message color used for guild chat
+    /// </summary>
+    MessageColor GuildMessageColor { get; }
     /// <summary>
     ///     It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could become a huge
     ///     burden on the server. This value is used to control the maximum number of actions a player can take in a second. An action is defined

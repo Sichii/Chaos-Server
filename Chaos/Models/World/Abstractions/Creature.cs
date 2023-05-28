@@ -3,6 +3,7 @@ using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
@@ -267,12 +268,13 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                         destinationMap.AddObject(this, destinationPoint);
                 } catch (Exception e)
                 {
-                    Logger.LogCritical(
-                        e,
-                        "Exception thrown while {@Creature} attempted to traverse from {@FromMapInstance} to {@ToMapInstance}",
-                        this,
-                        currentMap,
-                        destinationMap);
+                    Logger.WithProperties(this, currentMap, destinationMap)
+                          .LogCritical(
+                              e,
+                              "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
+                              Name,
+                              currentMap.InstanceId,
+                              destinationMap.InstanceId);
                 } finally
                 {
                     aisling?.Client.ReceiveSync.Release();
@@ -294,7 +296,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         foreach (var groundItem in groundItems)
         {
-            Logger.LogDebug("{@Creature} dropped {@Item}", this, groundItem);
+            Logger.WithProperties(this, groundItem)
+                  .LogDebug(
+                      "{@CreatureType} {@CreatureName} dropped item {@ItemName} at {@Location}",
+                      GetType().Name,
+                      Name,
+                      groundItem.Name,
+                      ILocation.ToString(groundItem));
+
             groundItem.Item.Script.OnDropped(this, MapInstance);
 
             foreach (var reactor in reactors)
@@ -319,7 +328,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         money = new Money(amount, MapInstance, point);
 
         MapInstance.AddObject(money, point);
-        Logger.LogDebug("{@Creature} dropped {@Money}", this, money);
+
+        Logger.WithProperties(this, money)
+              .LogTrace(
+                  "{@CreatureType} {@CreatureName} dropped {Amount} gold at {@Location}",
+                  GetType().Name,
+                  Name,
+                  money.Amount,
+                  ILocation.ToString(money));
 
         foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(point).ToList())
             reactor.OnGoldDroppedOn(this, money);

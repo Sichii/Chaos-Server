@@ -25,13 +25,13 @@ namespace Chaos.Collections;
 
 public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
+    private readonly IAsyncStore<Aisling> AislingStore;
     private readonly DeltaMonitor DeltaMonitor;
     private readonly DeltaTime DeltaTime;
     private readonly PeriodicTimer DeltaTimer;
     private readonly IIntervalTimer HandleShardLimitersTimer;
     private readonly ILogger<MapInstance> Logger;
     private readonly MapEntityCollection Objects;
-    private readonly ISaveManager<Aisling> SaveManager;
     private readonly CancellationToken ServerShutdownToken;
     private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
@@ -64,7 +64,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         IScriptProvider scriptProvider,
         string name,
         string instanceId,
-        ISaveManager<Aisling> saveManager,
+        IAsyncStore<Aisling> aislingStore,
         CancellationTokenSource serverCtx,
         ILogger<MapInstance> logger,
         ICollection<string>? extraScriptKeys = null
@@ -72,7 +72,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     {
         Name = name;
         InstanceId = instanceId;
-        SaveManager = saveManager;
+        AislingStore = aislingStore;
         Logger = logger;
         ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
@@ -198,7 +198,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Destroy()
     {
-        Logger.LogInformation("Shutting down map instance {@MapInstance}", this);
+        Logger.WithProperty(this)
+              .LogInformation("Shutting down map instance {@MapInstanceId}", InstanceId);
+
         Stop();
         Shards.Remove(InstanceId, out _);
         Objects.Clear();
@@ -226,16 +228,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 12) where T: MapEntity =>
         Objects.WithinRange<T>(point, range);
 
-    public IPoint GetRandomPoint()
-    {
-        IPoint point;
-
-        do
-            point = Template.Bounds.GetRandomPoint();
-        while (!IsWalkable(point, CreatureType.Normal));
-
-        return point;
-    }
+    public IPoint GetRandomWalkablePoint(CreatureType creatureType = CreatureType.Normal) =>
+        Template.Bounds.GetRandomPoint(pt => IsWalkable(pt, creatureType));
 
     private void HandleSharding(Aisling aisling, IPoint point)
     {
@@ -710,7 +704,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 HandleShardLimiters();
         } catch (Exception e)
         {
-            Logger.LogCritical(e, "Failed to update {@MapInstance}", this);
+            Logger.WithProperty(this)
+                  .LogCritical(e, "Failed to update map {@MapInstanceId}", InstanceId);
         }
     }
 
@@ -727,7 +722,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         var aislingsToSave = Objects.Values<Aisling>()
                                     .Where(aisling => aisling.SaveTimer.IntervalElapsed);
 
-        await Task.WhenAll(aislingsToSave.Select(SaveManager.SaveAsync));
+        await Task.WhenAll(aislingsToSave.Select(AislingStore.SaveAsync));
 
         var elapsed = Stopwatch.GetElapsedTime(start);
         DeltaMonitor.AddExecutionDelta(elapsed);

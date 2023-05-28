@@ -1,7 +1,0 @@
-{
-    "nextDialogKey": "top",
-    "scriptKeys": ["giveLegendMark"],
-    "templateKey": "tester_2_give_legend_mark",
-    "text": "Here's a legend mark, check for it!",
-    "type": "normal"
-}

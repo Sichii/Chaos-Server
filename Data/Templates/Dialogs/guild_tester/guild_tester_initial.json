@@ -1,0 +1,6 @@
+{
+    "templateKey": "guild_tester_initial",
+    "text": "just a basic bitch dialog",
+    "type": "menu",
+    "scriptKeys": ["guildManagement"]
+}

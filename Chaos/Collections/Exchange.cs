@@ -1,5 +1,6 @@
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
+using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Observers;
 using Microsoft.Extensions.Logging;
@@ -66,12 +67,17 @@ public sealed class Exchange
     {
         using var sync = Sync.Enter();
 
+        IsActive = true;
+
         User1.Client.SendExchangeStart(User2);
         User2.Client.SendExchangeStart(User1);
 
-        Logger.LogDebug("{@Exchange} activated", this);
-
-        IsActive = true;
+        Logger.WithProperty(this)
+              .LogDebug(
+                  "Exchange {@ExchangeId} started between {@AislingName1} and {@AislingName2}",
+                  ExchangeId,
+                  User1.Name,
+                  User2.Name);
     }
 
     public void AddItem(Aisling aisling, byte slot)
@@ -106,11 +112,12 @@ public sealed class Exchange
             aisling.Inventory.Remove(slot);
             userItems.TryAddToNextSlot(item);
 
-            Logger.LogDebug(
-                "{@Player} added {@Item} to {@Exchange}",
-                aisling,
-                item,
-                this);
+            Logger.WithProperties(aisling, item, this)
+                  .LogDebug(
+                      "Aisling {@AislingName} added item {@ItemName} to exchange {@ExchangeId}",
+                      aisling.Name,
+                      item.DisplayName,
+                      ExchangeId);
         }
     }
 
@@ -157,11 +164,12 @@ public sealed class Exchange
         {
             userItems.TryAddToNextSlot(removedItem);
 
-            Logger.LogDebug(
-                "{@Player} added {@Item} to {@Exchange}",
-                aisling,
-                removedItem,
-                this);
+            Logger.WithProperties(aisling, removedItem, this)
+                  .LogDebug(
+                      "Aisling {@AislingName} added item {@ItemName} to exchange {@ExchangeId}",
+                      aisling.Name,
+                      removedItem.DisplayName,
+                      ExchangeId);
         }
     }
 
@@ -181,7 +189,9 @@ public sealed class Exchange
 
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
-        Logger.LogDebug("{@Exchange} was canceled by {@Player}", this, aisling);
+
+        Logger.WithProperties(aisling, this)
+              .LogDebug("Exchange {@ExchangeId} was canceled by aisling {@AislingName}", ExchangeId, aisling.Name);
 
         Deactivate();
     }
@@ -198,22 +208,27 @@ public sealed class Exchange
     {
         aisling.TryGiveGold(gold);
 
-        Logger.LogDebug(
-            "{@Exchange} distributed {Amount} gold to {@Player}",
-            this,
-            gold,
-            aisling);
+        Logger.WithProperties(aisling, this)
+              .LogDebug(
+                  "Exchange {@ExchangeId} distributed {Amount} gold to {@AislingName}",
+                  ExchangeId,
+                  gold,
+                  aisling.Name);
 
         foreach (var item in items)
         {
             items.Remove(item.Slot);
 
             if (aisling.Inventory.TryAddToNextSlot(item))
-                Logger.LogDebug(
-                    "{@Exchange} distributed {@Item} to {@Player}",
-                    this,
-                    item,
-                    aisling);
+                Logger.WithProperties(aisling, item, this)
+                      .LogDebug(
+                          "Exchange {@ExchangeId} distributed item {@ItemName} to {@AislingName}",
+                          ExchangeId,
+                          item.DisplayName,
+                          aisling.Name);
+            else
+                Logger.WithProperties(aisling, item, this)
+                      .LogCritical("Exchange {@ExchangeId} failed to distribute item {@ItemName}", ExchangeId, item.DisplayName);
         }
     }
 
@@ -241,11 +256,12 @@ public sealed class Exchange
         {
             SetUserGold(aisling, amount);
 
-            Logger.LogDebug(
-                "{@Player} set their gold amount to {GoldAmount} for {@Exchange}",
-                aisling,
-                amount,
-                this);
+            Logger.WithProperties(aisling, this)
+                  .LogDebug(
+                      "Aisling {@AislingName} set their gold amount to {GoldAmount} for exchange {@ExchangeId}",
+                      aisling.Name,
+                      amount,
+                      ExchangeId);
         }
 
         aisling.Client.SendExchangeSetGold(false, amount);

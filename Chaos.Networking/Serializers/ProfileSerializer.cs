@@ -38,7 +38,7 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
         writer.WriteByte((byte)args.Nation);
         writer.WriteString8(args.Title ?? string.Empty);
         writer.WriteBoolean(args.GroupOpen);
-        writer.WriteString8(args.GuildTitle ?? string.Empty);
+        writer.WriteString8(args.GuildRank ?? string.Empty);
         writer.WriteString8(args.AdvClass != AdvClass.None ? args.AdvClass.ToString() : args.BaseClass.ToString());
         writer.WriteString8(args.GuildName ?? string.Empty);
         writer.WriteByte((byte)args.LegendMarks.Count);

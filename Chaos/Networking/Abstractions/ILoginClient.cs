@@ -8,5 +8,5 @@ public interface ILoginClient : ISocketClient
     void SendLoginControls(LoginControlsType loginControlsType, string message);
     void SendLoginMessage(LoginMessageType loginMessageType, string? message = null);
     void SendLoginNotice(bool full, INotice notice);
-    void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataCache metaDataCache, string? name = null);
+    void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataStore metaDataStore, string? name = null);
 }

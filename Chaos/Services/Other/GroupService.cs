@@ -1,6 +1,7 @@
 using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
+using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Services.Other.Abstractions;
@@ -120,10 +121,11 @@ public sealed class GroupService : IGroupService
         //if the target is ignoring the sender, log a warning
         //dont return here, let things play out, there should be another check to prevent sending an invite
         if (receiver.IgnoreList.Contains(sender.Name))
-            Logger.LogWarning(
-                "{@FromPlayer} attempted to send a group invite to {@TargetPlayer}, but that player is ignoring them. (potential harassment)",
-                sender,
-                receiver);
+            Logger.WithProperties(sender, receiver)
+                  .LogWarning(
+                      "Aisling {@FromAisling} attempted to send a group invite to aisling {@TargetAisling}, but that player is ignoring them. (potential harassment)",
+                      sender.Name,
+                      receiver.Name);
 
         if (sender.Group == null)
         {

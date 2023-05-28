@@ -18,7 +18,7 @@ public sealed record SelfProfileSerializer : ServerPacketSerializer<SelfProfileA
     public override void Serialize(ref SpanWriter writer, SelfProfileArgs args)
     {
         writer.WriteByte((byte)args.Nation);
-        writer.WriteString8(args.GuildTitle ?? string.Empty);
+        writer.WriteString8(args.GuildRank ?? string.Empty);
         writer.WriteString8(args.Title ?? string.Empty);
 
         var str = args.GroupString;

@@ -49,7 +49,7 @@ public sealed record SelfProfileArgs : ISendArgs
     /// <summary>
     ///     The character's guild title
     /// </summary>
-    public string? GuildTitle { get; set; }
+    public string? GuildRank { get; set; }
     /// <summary>
     ///     Whether or not the character is a Master
     /// </summary>

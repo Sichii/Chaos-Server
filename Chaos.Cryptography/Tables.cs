@@ -8,7 +8,7 @@ namespace Chaos.Cryptography;
 public static class Tables
 {
     /// <summary>
-    ///     16-bit CRC table (CRC-16-CCITT, 0x1021)
+    ///     16-bit CRC table (CRC-16/CCITT-FALSE) (0x1021)
     /// </summary>
     public static readonly ImmutableArray<ushort> TABLE16 = new ushort[]
     {
@@ -30,7 +30,7 @@ public static class Tables
     }.ToImmutableArray();
 
     /// <summary>
-    ///     32-bit CRC table (0x04C11DB7
+    ///     32-bit CRC table (CRC-32/DEFAULT) (0x04C11DB7)
     /// </summary>
     public static readonly ImmutableArray<uint> TABLE32 = new[]
     {
@@ -64,6 +64,7 @@ public static class Tables
         3453421203U, 1423857449U, 601450431U, 3009837614U, 3294710456U, 1567103746U, 711928724U, 3020668471U, 3272380065U,
         1510334235U, 755167117U
     }.ToImmutableArray();
+
     internal static readonly ImmutableArray<ImmutableArray<byte>> SALT_TABLE = new[]
     {
         new byte[]

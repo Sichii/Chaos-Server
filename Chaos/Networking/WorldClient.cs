@@ -62,7 +62,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
-            Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+            Logger.WithProperty(this)
+                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);
     }
@@ -484,7 +485,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(ref packet);
     }
 
-    public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataCache metaDataCache, string? name = null)
+    public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataStore metaDataStore, string? name = null)
     {
         var args = new MetaDataArgs
         {
@@ -497,7 +498,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             {
                 ArgumentNullException.ThrowIfNull(name);
 
-                var metadata = metaDataCache.GetMetaData(name);
+                var metadata = metaDataStore.Get(name);
 
                 args.MetaDataInfo = Mapper.Map<MetaDataInfo>(metadata);
 
@@ -505,7 +506,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             }
             case MetaDataRequestType.AllCheckSums:
             {
-                args.MetaDataCollection = Mapper.MapMany<MetaDataInfo>(metaDataCache)
+                args.MetaDataCollection = Mapper.MapMany<MetaDataInfo>(metaDataStore)
                                                 .ToList();
 
                 break;

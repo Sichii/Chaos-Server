@@ -168,10 +168,8 @@ public static class ServiceProviderExtensions
                 newMap.BaseInstanceId = oldMap.BaseInstanceId;
             } catch (Exception e)
             {
-                logger.LogError(
-                    e,
-                    "Failed to migrate map \"{MapId}\" during reload",
-                    oldMap.InstanceId);
+                logger.WithProperty(oldMap)
+                      .LogError(e, "Failed to migrate map {@MapInstanceId} during reload", oldMap.InstanceId);
             }
     }
 
@@ -207,11 +205,12 @@ public static class ServiceProviderExtensions
                     merchantsToAdd.Add(newMerchant);
                 } catch (Exception e)
                 {
-                    logger.LogError(
-                        e,
-                        "Failed to migrate merchant \"{MerchantId}\" on map \"{MapId}\" during reload",
-                        merchant.Template.TemplateKey,
-                        mapInstance.InstanceId);
+                    logger.WithProperties(merchant, mapInstance)
+                          .LogError(
+                              e,
+                              "Failed to migrate merchant {@MerchantTemplateKey} on map {@MapInstanceId} during reload",
+                              merchant.Template.TemplateKey,
+                              mapInstance.InstanceId);
                 }
 
             mapInstance.AddObjects(merchantsToAdd);
@@ -252,11 +251,12 @@ public static class ServiceProviderExtensions
                     monstersToAdd.Add(newMonster);
                 } catch (Exception e)
                 {
-                    logger.LogError(
-                        e,
-                        "Failed to migrate monster \"{MonsterId}\" on map \"{MapId}\" during reload",
-                        monster.Template.TemplateKey,
-                        mapInstance.InstanceId);
+                    logger.WithProperties(monster, mapInstance)
+                          .LogError(
+                              e,
+                              "Failed to migrate monster {@MonsterTemplateKey} on map {@MapInstanceId} during reload",
+                              monster.Template.TemplateKey,
+                              mapInstance.InstanceId);
                 }
 
             mapInstance.AddObjects(monstersToAdd);

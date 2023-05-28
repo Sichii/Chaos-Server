@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
+using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
@@ -78,7 +80,10 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
                         RedirectManager.Add(redirect);
 
-                        Logger.LogDebug("Redirecting {@Client} to {@Server}", client, serverInfo);
+                        Logger.LogDebug(
+                            "Redirecting {@ClientIp} to {@ServerIp}",
+                            client.RemoteIp.ToString(),
+                            serverInfo.Address.ToString());
 
                         client.SendRedirect(redirect);
                     } else
@@ -127,14 +132,18 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {Ip}", ip);
+        Logger.LogDebug("Incoming connection from {@Ip}", ip!.ToString());
 
         var client = ClientProvider.CreateClient<ILobbyClient>(clientSocket);
-        Logger.LogDebug("Connection established with {@Client}", client);
+        Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
 
         if (!ClientRegistry.TryAdd(client))
         {
-            Logger.LogError("Somehow, two clients got the same id? (ID: {Id})", client.Id);
+            var stackTrace = new StackTrace(true).ToString();
+
+            Logger.WithProperty(client.Id, stackTrace)
+                  .LogError("Somehow, two clients got the same id");
+
             client.Disconnect();
 
             return;

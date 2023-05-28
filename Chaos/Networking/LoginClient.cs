@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
@@ -49,7 +50,8 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
-            Logger.LogTrace("[Rcv] {Packet}", packet.ToString());
+            Logger.WithProperty(this)
+                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);
     }
@@ -91,7 +93,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         Send(args);
     }
 
-    public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataCache metaDataCache, string? name = null)
+    public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataStore metaDataStore, string? name = null)
     {
         var args = new MetaDataArgs
         {
@@ -104,7 +106,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
             {
                 ArgumentNullException.ThrowIfNull(name);
 
-                var metadata = metaDataCache.GetMetaData(name);
+                var metadata = metaDataStore.Get(name);
 
                 args.MetaDataInfo = Mapper.Map<MetaDataInfo>(metadata);
 
@@ -112,7 +114,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
             }
             case MetaDataRequestType.AllCheckSums:
             {
-                args.MetaDataCollection = Mapper.MapMany<MetaDataInfo>(metaDataCache)
+                args.MetaDataCollection = Mapper.MapMany<MetaDataInfo>(metaDataStore)
                                                 .ToList();
 
                 break;

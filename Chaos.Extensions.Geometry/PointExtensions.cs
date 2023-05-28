@@ -306,6 +306,39 @@ public static class PointExtensions
     }
 
     /// <summary>
+    ///     Determines if this point is on either intercardinal diagonal in relation to another point, in the given direction
+    /// </summary>
+    /// <param name="point">The point to test</param>
+    /// <param name="other">The point in which directions are based on</param>
+    /// <param name="direction">The direction between the 2 intercardinals to check</param>
+    /// <returns>
+    ///     <c>true</c> if this point is on an intercardinal diagonal in relation to the other point in the given
+    ///     direction, otherwise <c>false</c>
+    /// </returns>
+    public static bool IsInterCardinalTo(this IPoint point, IPoint other, Direction direction)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        var xDiff = point.X - other.X;
+        var yDiff = point.Y - other.Y;
+
+        if (Math.Abs(xDiff) != Math.Abs(yDiff))
+            return false;
+
+        return direction switch
+        {
+            Direction.Up    => ((xDiff < 0) && (yDiff < 0)) || ((xDiff > 0) && (yDiff < 0)),
+            Direction.Right => ((xDiff > 0) && (yDiff < 0)) || ((xDiff > 0) && (yDiff > 0)),
+            Direction.Down  => ((xDiff > 0) && (yDiff > 0)) || ((xDiff < 0) && (yDiff > 0)),
+            Direction.Left  => ((xDiff < 0) && (yDiff > 0)) || ((xDiff < 0) && (yDiff < 0)),
+            Direction.All   => true,
+            _               => false
+        };
+    }
+
+    /// <summary>
     ///     Offsets one <see cref="Chaos.Geometry.Abstractions.IPoint" /> towards another <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
     /// <param name="point"></param>

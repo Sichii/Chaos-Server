@@ -6,7 +6,7 @@ using Chaos.Services.Servers.Options;
 
 namespace Chaos.Collections;
 
-public sealed class Group : IEnumerable<Aisling>
+public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 {
     private readonly IChannelService ChannelService;
     private readonly List<Aisling> Members;
@@ -44,8 +44,8 @@ public sealed class Group : IEnumerable<Aisling>
             "!group",
             ServerMessageType.GroupChat);
 
-        ChannelService.JoinChannel(sender, ChannelName);
-        ChannelService.JoinChannel(receiver, ChannelName);
+        JoinChannel(sender);
+        JoinChannel(receiver);
 
         sender.SendActiveMessage($"You form a group with {receiver.Name}");
         receiver.SendActiveMessage($"You form a group with {sender.Name}");
@@ -65,7 +65,7 @@ public sealed class Group : IEnumerable<Aisling>
 
         Members.Add(aisling);
 
-        ChannelService.JoinChannel(aisling, ChannelName);
+        JoinChannel(aisling);
         aisling.SendActiveMessage($"You have joined {Leader.Name}'s group");
         aisling.Group = this;
         aisling.Client.SendSelfProfile();
@@ -78,7 +78,7 @@ public sealed class Group : IEnumerable<Aisling>
         foreach (var member in this)
         {
             member.Group = null;
-            ChannelService.LeaveChannel(member, ChannelName);
+            LeaveChannel(member);
             member.SendActiveMessage("The group has been disbanded");
             member.Client.SendSelfProfile();
         }
@@ -100,6 +100,9 @@ public sealed class Group : IEnumerable<Aisling>
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public void JoinChannel(IChannelSubscriber subscriber) => ChannelService.JoinChannel(subscriber, ChannelName, true);
 
     public void Kick(Aisling aisling)
     {
@@ -154,6 +157,9 @@ public sealed class Group : IEnumerable<Aisling>
         }
     }
 
+    /// <inheritdoc />
+    public void LeaveChannel(IChannelSubscriber subscriber) => ChannelService.LeaveChannel(subscriber, ChannelName);
+
     private bool Remove(Aisling aisling)
     {
         using var @lock = Sync.Enter();
@@ -163,10 +169,12 @@ public sealed class Group : IEnumerable<Aisling>
 
         aisling.Group = null;
         aisling.Client.SendSelfProfile();
-        ChannelService.LeaveChannel(aisling, ChannelName);
+        LeaveChannel(aisling);
 
         return true;
     }
+
+    public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);
 
     public override string ToString()
     {

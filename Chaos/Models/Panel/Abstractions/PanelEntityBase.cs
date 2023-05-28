@@ -17,10 +17,10 @@ public abstract class PanelEntityBase : IDeltaUpdatable, IScripted
     public byte Slot { get; set; }
     public uint Id => (uint)UniqueId;
     public ISet<string> ScriptKeys { get; }
-    public virtual PanelObjectTemplateBase Template { get; }
+    public virtual PanelEntityTemplateBase Template { get; }
     public ulong UniqueId { get; }
 
-    protected PanelEntityBase(PanelObjectTemplateBase template, ulong? uniqueId = null, int? elapsedMs = null)
+    protected PanelEntityBase(PanelEntityTemplateBase template, ulong? uniqueId = null, int? elapsedMs = null)
     {
         uniqueId ??= PersistentIdGenerator<ulong>.Shared.NextId;
         Template = template;

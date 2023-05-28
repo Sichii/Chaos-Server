@@ -8,7 +8,7 @@ namespace Chaos.Schemas.Templates;
 /// <summary>
 ///     Represents the serializable schema for a spell template
 /// </summary>
-public sealed record SpellTemplateSchema : PanelObjectTemplateSchema
+public sealed record SpellTemplateSchema : PanelEntityTemplateSchema
 {
     /// <summary>
     ///     The number of chant lines this spell requires by default

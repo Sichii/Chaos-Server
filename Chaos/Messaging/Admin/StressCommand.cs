@@ -37,7 +37,7 @@ public class StressCommand : ICommand<Aisling>
                 for (var i = 0; i < amount; i++)
                 {
                     var item = ItemFactory.Create("stick");
-                    var point = map.Template.Bounds.GetRandomPoint();
+                    var point = map.Template.Bounds.GetRandomPoint(pt => !map.IsWall(pt));
                     items.Add(new GroundItem(item, map, point));
                 }
 
@@ -57,7 +57,7 @@ public class StressCommand : ICommand<Aisling>
 
                 for (var i = 0; i < amount; i++)
                 {
-                    var point = map.GetRandomPoint();
+                    var point = map.GetRandomWalkablePoint();
                     var monster = MonsterFactory.Create("common_rat", map, point);
                     monster.AggroRange = 12;
                     monsters.Add(monster);

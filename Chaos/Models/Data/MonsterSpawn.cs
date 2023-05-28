@@ -13,6 +13,7 @@ namespace Chaos.Models.Data;
 public sealed class MonsterSpawn : IDeltaUpdatable
 {
     public required int AggroRange { get; init; }
+    public required ICollection<IPoint> BlackList { get; init; }
     public required int ExpReward { get; init; }
     public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
     public required LootTable? LootTable { get; set; }
@@ -46,17 +47,8 @@ public sealed class MonsterSpawn : IDeltaUpdatable
         monster.Experience = ExpReward;
     }
 
-    private Point GenerateSpawnPoint(ICollection<IPoint> blackList)
-    {
-        Point point;
-
-        do
-            point = SpawnArea!.GetRandomPoint();
-        while (!MapInstance.IsWalkable(point, MonsterTemplate.Type)
-               || blackList.Contains(point, PointEqualityComparer.Instance));
-
-        return point;
-    }
+    private IPoint GenerateSpawnPoint(ICollection<IPoint> blackList) => MapInstance.Template.Bounds.GetRandomPoint(
+        pt => MapInstance.IsWalkable(pt, MonsterTemplate.Type) && !blackList.Contains(pt, PointEqualityComparer.Instance));
 
     private void SpawnMonsters()
     {
@@ -69,13 +61,9 @@ public sealed class MonsterSpawn : IDeltaUpdatable
         var spawnAmount = Math.Min(MaxAmount - currentCount, MaxPerSpawn);
         var monsters = new List<Monster>();
 
-        var warps = MapInstance.GetEntities<ReactorTile>()
-                               .Where(rt => rt.ShouldBlockPathfinding)
-                               .ToList<IPoint>();
-
         for (var i = 0; i < spawnAmount; i++)
         {
-            var point = GenerateSpawnPoint(warps);
+            var point = GenerateSpawnPoint(BlackList);
 
             var monster = MonsterFactory.Create(
                 MonsterTemplate.TemplateKey,

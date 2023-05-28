@@ -14,8 +14,9 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
                                         IPostConfigureOptions<LobbyOptions>,
                                         IPostConfigureOptions<LoginOptions>,
                                         IPostConfigureOptions<WorldOptions>,
-                                        IPostConfigureOptions<MetaDataCacheOptions>,
-                                        IPostConfigureOptions<UserSaveManagerOptions>
+                                        IPostConfigureOptions<MetaDataStoreOptions>,
+                                        IPostConfigureOptions<GuildStoreOptions>,
+                                        IPostConfigureOptions<AislingStoreOptions>
 
 {
     private readonly IStagingDirectory StagingDirectory;
@@ -56,7 +57,7 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     }
 
     /// <inheritdoc />
-    public void PostConfigure(string? name, MetaDataCacheOptions options)
+    public void PostConfigure(string? name, MetaDataStoreOptions options)
     {
         options.UseBaseDirectory(StagingDirectory.StagingDirectory);
         // ReSharper disable once ArrangeMethodOrOperatorBody
@@ -65,5 +66,8 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     }
 
     /// <inheritdoc />
-    public void PostConfigure(string? name, UserSaveManagerOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
+    public void PostConfigure(string? name, AislingStoreOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
+
+    /// <inheritdoc />
+    public void PostConfigure(string? name, GuildStoreOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
 }

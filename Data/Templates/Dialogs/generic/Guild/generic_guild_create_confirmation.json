@@ -1,0 +1,17 @@
+{
+    "scriptKeys": ["guildCreate"],
+    "templateKey": "generic_guild_create_confirmation",
+    "text": "Are you sure you want to create the guild \"{GuildName}\" for {Amount} gold coins?",
+    "type": "Menu",
+    "contextual": true,
+    "options": [
+        {
+            "optionText": "Yes!",
+            "dialogKey": "generic_guild_create_accepted"
+        },
+        {
+            "optionText": "No, wait!",
+            "dialogKey": "top"
+        }
+    ]
+}

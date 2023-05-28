@@ -44,54 +44,63 @@ public sealed class ChannelService : IChannelService
     public bool IsChannel(string str) => str.StartsWithI(Options.ChannelPrefix);
 
     /// <inheritdoc />
-    public void JoinChannel(IChannelSubscriber obj, string channelName)
+    public void JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false)
     {
-        if (!Channels.TryGetValue(channelName, out var channelDetails))
+        if (!bypassValidation && Options.ReservedChannelNames.Any(channelName.ContainsI))
         {
-            obj.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
+            subscriber.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
 
             return;
         }
 
-        if (channelDetails.AddSubscriber(obj))
+        if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
-            Logger.LogDebug("{@Subscriber} has joined channel {@ChannelName}", obj, channelName);
+            subscriber.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
 
-            obj.SendServerMessage(
+            return;
+        }
+
+        if (channelDetails.AddSubscriber(subscriber))
+        {
+            Logger.WithProperty(subscriber)
+                  .LogDebug("{@SubscriberName} has joined channel {@ChannelName}", subscriber.Name, channelName);
+
+            subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
                 $"You have joined channel {channelDetails.ChannelNameOverride ?? channelName}");
         } else
-            obj.SendServerMessage(
+            subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
                 $"You are already in channel {channelDetails.ChannelNameOverride ?? channelName}");
     }
 
     /// <inheritdoc />
-    public void LeaveChannel(IChannelSubscriber obj, string channelName)
+    public void LeaveChannel(IChannelSubscriber subscriber, string channelName)
     {
         if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
-            obj.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
+            subscriber.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
 
             return;
         }
 
-        if (channelDetails.RemoveSubscriber(obj))
+        if (channelDetails.RemoveSubscriber(subscriber))
         {
-            Logger.LogDebug("{@Subscriber} has left channel {@ChannelName}", obj, channelName);
+            Logger.WithProperty(subscriber)
+                  .LogDebug("{@SubscriberName} has left channel {@ChannelName}", subscriber.Name, channelName);
 
-            obj.SendServerMessage(
+            subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
                 $"You have left channel {channelDetails.ChannelNameOverride ?? channelName}");
         } else
-            obj.SendServerMessage(
+            subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
                 $"You are not in channel {channelDetails.ChannelNameOverride ?? channelName}");
     }
 
     /// <inheritdoc />
     public void RegisterChannel(
-        IChannelSubscriber? obj,
+        IChannelSubscriber? subscriber,
         string channelName,
         MessageColor defaultMessageColor,
         bool bypassValidation = false,
@@ -105,53 +114,61 @@ public sealed class ChannelService : IChannelService
         if (!bypassValidation)
         {
             if (Options.BlacklistedChannelNamePhrases.Any(channelName.ContainsI))
-                return;
+            {
+                subscriber?.SendServerMessage(ServerMessageType.ActiveMessage, "Invalid channel name");
 
-            if (Options.ReservedChannelNames.ContainsI(channelName))
                 return;
+            }
+
+            if (Options.ReservedChannelNames.Any(channelName.ContainsI))
+            {
+                subscriber?.SendServerMessage(ServerMessageType.ActiveMessage, "Invalid channel name");
+
+                return;
+            }
 
             if (Channels.TryGetValue(channelName, out _))
             {
-                obj?.SendServerMessage(ServerMessageType.ActiveMessage, "Channel already exists");
+                subscriber?.SendServerMessage(ServerMessageType.ActiveMessage, "Channel already exists");
 
                 return;
             }
 
             if (Options.MaxChannelNameLength < channelName.Length)
             {
-                obj?.SendServerMessage(ServerMessageType.ActiveMessage, "Channel name is too long");
+                subscriber?.SendServerMessage(ServerMessageType.ActiveMessage, "Channel name is too long");
 
                 return;
             }
 
             if (Options.MinChannelNameLength > channelName.Length)
             {
-                obj?.SendServerMessage(ServerMessageType.ActiveMessage, "Channel name is too short");
+                subscriber?.SendServerMessage(ServerMessageType.ActiveMessage, "Channel name is too short");
 
                 return;
             }
         }
 
         Channels.TryAdd(channelName, new ChannelDetails(defaultMessageColor, messageTypeOverride, channelNameOverride));
-        Logger.LogDebug("Channel {@ChannelName} has been registered", channelName);
+        Logger.LogInformation("Channel {@ChannelName} has been registered", channelName);
 
-        if (obj is not null)
-            JoinChannel(obj, channelName);
+        if (subscriber is not null)
+            JoinChannel(subscriber, channelName, bypassValidation);
     }
 
     /// <inheritdoc />
-    public void SendMessage(IChannelSubscriber obj, string channelName, string message)
+    public void SendMessage(IChannelSubscriber subscriber, string channelName, string message)
     {
         if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
-            obj.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
+            subscriber.SendServerMessage(ServerMessageType.ActiveMessage, $"Channel {channelName} not found");
 
             return;
         }
 
-        if (!channelDetails.ContainsSubscriber(obj))
+        if (!channelDetails.ContainsSubscriber(subscriber))
         {
-            obj.SendServerMessage(ServerMessageType.ActiveMessage, "You are not in that channel");
+            subscriber.SendServerMessage(ServerMessageType.ActiveMessage, "You are not in that channel");
 
             return;
         }
@@ -173,7 +190,7 @@ public sealed class ChannelService : IChannelService
         spanWriter.WriteString("[");
         spanWriter.WriteString(channelDetails.ChannelNameOverride ?? channelName);
         spanWriter.WriteString("] ");
-        spanWriter.WriteString(obj.Name);
+        spanWriter.WriteString(subscriber.Name);
         spanWriter.WriteString(": ");
         spanWriter.WriteString(message);
         spanWriter.Flush();
@@ -183,16 +200,17 @@ public sealed class ChannelService : IChannelService
 
         var defaultMessage = Encoding.Default.GetString(buffer);
 
-        Logger.LogTrace(
-            "{@Subscriber} sent message {@Message} to channel {@ChannelName}",
-            obj,
-            channelName,
-            message);
+        Logger.WithProperty(subscriber)
+              .LogTrace(
+                  "Subscriber {@SubscriberName} sent message {@Message} to channel {@ChannelName}",
+                  subscriber.Name,
+                  message,
+                  channelName);
 
         foreach (var subDetails in channelDetails.Subscribers.Values)
         {
             //don't log here, channels are a choice
-            if (subDetails.Subscriber.IsIgnoring(obj.Name))
+            if (subDetails.Subscriber.IsIgnoring(subscriber.Name))
                 continue;
 
             //if there's a message color override
@@ -208,14 +226,14 @@ public sealed class ChannelService : IChannelService
     }
 
     /// <inheritdoc />
-    public void SetChannelColor(IChannelSubscriber obj, string channelName, MessageColor messageColor)
+    public void SetChannelColor(IChannelSubscriber subscriber, string channelName, MessageColor messageColor)
     {
         if (!Channels.TryGetValue(channelName, out var channelDetails))
             return;
 
-        if (!channelDetails.TryGetSubscriber(obj.Name, out var subDetails))
+        if (!channelDetails.TryGetSubscriber(subscriber.Name, out var subDetails))
         {
-            obj.SendServerMessage(
+            subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
                 $"You are not in channel {channelDetails.ChannelNameOverride ?? channelName}");
 
@@ -234,7 +252,7 @@ public sealed class ChannelService : IChannelService
         foreach (var subDetails in channel.Subscribers.Values)
             LeaveChannel(subDetails.Subscriber, channelName);
 
-        Logger.LogDebug("Channel {@ChannelName} has been unregistered", channelName);
+        Logger.LogInformation("Channel {@ChannelName} has been unregistered", channelName);
 
         return Channels.TryRemove(channelName, out _);
     }

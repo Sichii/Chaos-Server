@@ -1,0 +1,11 @@
+{
+    "name": "Misc Tester 1",
+    "scriptKeys": ["showdialog"],
+    "scriptVars": {
+        "showdialog": {
+            "dialogKey": "misc_tester_1_initial"
+        }
+    },
+    "sprite": 106,
+    "templateKey": "misc_tester_1"
+}

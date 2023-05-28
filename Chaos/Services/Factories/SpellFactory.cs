@@ -3,25 +3,21 @@ using Chaos.Models.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
 public sealed class SpellFactory : ISpellFactory
 {
-    private readonly ILogger<SpellFactory> Logger;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
     public SpellFactory(
         ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ILogger<SpellFactory> logger
+        IScriptProvider scriptProvider
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Logger = logger;
     }
 
     public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
@@ -29,8 +25,6 @@ public sealed class SpellFactory : ISpellFactory
         extraScriptKeys ??= Array.Empty<string>();
         var template = SimpleCache.Get<SpellTemplate>(templateKey);
         var spell = new Spell(template, ScriptProvider, extraScriptKeys);
-
-        Logger.LogDebug("Created {@Spell}", spell);
 
         return spell;
     }

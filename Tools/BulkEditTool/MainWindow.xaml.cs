@@ -66,7 +66,7 @@ public partial class MainWindow : Window
                 Assembly.Load("RoslynPad.Roslyn.Windows"),
                 Assembly.Load("RoslynPad.Editor.Windows"),
                 Assembly.Load("BulkEditTool")
-                //Assembly.Load("Chaos")
+                //Assembly.LoadProjection("Chaos")
             },
             RoslynHostReferences.NamespaceDefault.With(
                 assemblyReferences: new[]

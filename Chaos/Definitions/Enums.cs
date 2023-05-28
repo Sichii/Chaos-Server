@@ -19,7 +19,8 @@ public enum TargetFilter
     DeadOnly = 1 << 3,
     AislingsOnly = 1 << 4,
     MonstersOnly = 1 << 5,
-    SelfOnly = 1 << 6
+    SelfOnly = 1 << 6,
+    GroupOnly = 1 << 7
 }
 
 public enum VisibilityType

@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Text.Json;
 using Chaos.Collections;
 using Chaos.Collections.Common;
 using Chaos.Common.Abstractions;
@@ -33,13 +32,13 @@ namespace Chaos.Services.Servers;
 
 public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldClient>
 {
-    private readonly ISaveManager<Aisling> AislingSaveManager;
+    private readonly IAsyncStore<Aisling> AislingStore;
     private readonly IChannelService ChannelService;
     private readonly IClientProvider ClientProvider;
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
     private readonly IGroupService GroupService;
     private readonly IMerchantFactory MerchantFactory;
-    private readonly IMetaDataCache MetaDataCache;
+    private readonly IMetaDataStore MetaDataStore;
 
     public IEnumerable<Aisling> Aislings => ClientRegistry
                                             .Select(c => c.Aisling)
@@ -49,7 +48,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     public WorldServer(
         IClientRegistry<IWorldClient> clientRegistry,
         IClientProvider clientProvider,
-        ISaveManager<Aisling> aislingSaveManager,
+        IAsyncStore<Aisling> aislingStore,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         ICommandInterceptor<Aisling> commandInterceptor,
@@ -57,7 +56,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         IMerchantFactory merchantFactory,
         IOptions<WorldOptions> options,
         ILogger<WorldServer> logger,
-        IMetaDataCache metaDataCache,
+        IMetaDataStore metaDataStore,
         IChannelService channelService
     )
         : base(
@@ -69,37 +68,18 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     {
         Options = options.Value;
         ClientProvider = clientProvider;
-        AislingSaveManager = aislingSaveManager;
+        AislingStore = aislingStore;
         CommandInterceptor = commandInterceptor;
         GroupService = groupService;
         MerchantFactory = merchantFactory;
-        MetaDataCache = metaDataCache;
+        MetaDataStore = metaDataStore;
         ChannelService = channelService;
 
         IndexHandlers();
     }
 
     #region Server Loop
-    private async Task SaveUserAsync(Aisling aisling)
-    {
-        try
-        {
-            await AislingSaveManager.SaveAsync(aisling);
-        } catch (Exception e)
-        {
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNameCaseInsensitive = true,
-                IgnoreReadOnlyProperties = false,
-                IgnoreReadOnlyFields = false,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                AllowTrailingCommas = true
-            };
-
-            Logger.LogCritical(e, "Exception while saving user. \"{@Player}\"", JsonSerializer.Serialize(aisling, jsonSerializerOptions));
-        }
-    }
+    private Task SaveUserAsync(Aisling aisling) => AislingStore.SaveAsync(aisling);
     #endregion
 
     #region OnHandlers
@@ -266,7 +246,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             if (!RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
-                Logger.LogWarning("{@Client} tried to redirect to the world with invalid {Args}", client, localArgs);
+                Logger.WithProperty(localArgs)
+                      .LogWarning("{@ClientIp} tried to redirect to the world with invalid details", client.RemoteIp.ToString());
+
                 localClient.Disconnect();
 
                 return default;
@@ -275,25 +257,30 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             //keep this case sensitive
             if (localArgs.Name != redirect.Name)
             {
-                Logger.LogCritical(
-                    "{@Client} tried to impersonate a {@Redirect} with {@Args}",
-                    localClient,
-                    redirect,
-                    localArgs);
+                Logger
+                    .WithProperties(redirect, localArgs)
+                    .LogWarning(
+                        "{@ClientIp} tried to impersonate a redirect with redirect {@RedirectId}",
+                        localClient.RemoteIp.ToString(),
+                        redirect.Id);
 
                 localClient.Disconnect();
 
                 return default;
             }
 
-            Logger.LogDebug("Received world {@Redirect}", redirect);
-            var existingUser = Aislings.FirstOrDefault(user => user.Name.EqualsI(redirect.Name));
+            Logger.WithProperties(localClient, redirect)
+                  .LogDebug("Received world redirect {@RedirectId}", redirect.Id);
+
+            var existingAisling = Aislings.FirstOrDefault(user => user.Name.EqualsI(redirect.Name));
 
             //double logon, disconnect both clients
-            if (existingUser != null)
+            if (existingAisling != null)
             {
-                Logger.LogDebug("Duplicate login detected for {Name}, disconnecting both players", redirect.Name);
-                existingUser.Client.Disconnect();
+                Logger.WithProperties(localClient, existingAisling)
+                      .LogDebug("Duplicate login detected for aisling {@AislingName}, disconnecting both clients", existingAisling.Name);
+
+                existingAisling.Client.Disconnect();
                 localClient.Disconnect();
 
                 return default;
@@ -307,38 +294,56 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public async ValueTask LoadAislingAsync(IWorldClient client, IRedirect redirect)
     {
-        client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
-        var aisling = await AislingSaveManager.LoadAsync(redirect.Name);
-
-        client.Aisling = aisling;
-        aisling.Client = client;
-
-        await using var sync = await aisling.MapInstance.Sync.WaitAsync();
-
         try
         {
-            aisling.BeginObserving();
-            client.SendAttributes(StatUpdateType.Full);
-            client.SendLightLevel(LightLevel.Lightest);
-            client.SendUserId();
-            aisling.MapInstance.AddAislingDirect(aisling, aisling);
-            client.SendProfileRequest();
+            client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
 
-            foreach (var channel in aisling.ChannelSettings)
+            var aisling = await AislingStore.LoadAsync(redirect.Name);
+
+            client.Aisling = aisling;
+            aisling.Client = client;
+
+            await using var sync = await aisling.MapInstance.Sync.WaitAsync();
+
+            try
             {
-                ChannelService.JoinChannel(aisling, channel.ChannelName);
+                aisling.Guild?.Associate(aisling);
+                aisling.BeginObserving();
+                client.SendAttributes(StatUpdateType.Full);
+                client.SendLightLevel(LightLevel.Lightest);
+                client.SendUserId();
+                aisling.MapInstance.AddAislingDirect(aisling, aisling);
+                client.SendProfileRequest();
 
-                if (channel.MessageColor.HasValue)
-                    ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
+                foreach (var channel in aisling.ChannelSettings)
+                {
+                    ChannelService.JoinChannel(aisling, channel.ChannelName, true);
+
+                    if (channel.MessageColor.HasValue)
+                        ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
+                }
+
+                Logger.LogDebug("World redirect finalized for {@ClientIp}", client.RemoteIp.ToString());
+
+                foreach (var reactor in aisling.MapInstance.GetDistinctReactorsAtPoint(aisling).ToList())
+                    reactor.OnWalkedOn(aisling);
+            } catch (Exception e)
+            {
+                Logger.WithProperty(aisling)
+                      .LogCritical(e, "Failed to add aisling {@AislingName} to the world", aisling.Name);
+
+                client.Disconnect();
             }
-
-            Logger.LogDebug("World redirect finalized for {@Client}", client);
-
-            foreach (var reactor in aisling.MapInstance.GetDistinctReactorsAtPoint(aisling).ToList())
-                reactor.OnWalkedOn(aisling);
         } catch (Exception e)
         {
-            Logger.LogCritical(e, "{@Player} failed to load", aisling);
+            Logger.WithProperties(client, redirect)
+                  .LogCritical(
+                      e,
+                      "Client with ip {ClientIp} failed to load aisling {@AislingName}",
+                      client.RemoteIp,
+                      redirect.Name);
+
+            client.Disconnect();
         }
     }
 
@@ -373,7 +378,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (dialog == null)
             {
                 localClient.Aisling.DialogHistory.Clear();
-                Logger.LogWarning("No active dialog found for {@Client}", localClient);
+
+                Logger.WithProperties(localClient.Aisling, localArgs)
+                      .LogWarning(
+                          "Aisling {@AislingName} attempted to access a dialog, but there is no active dialog (possibly packeting)",
+                          localClient.Aisling.Name);
 
                 return default;
             }
@@ -440,9 +449,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             switch (localArgs.ExchangeRequestType)
             {
                 case ExchangeRequestType.StartExchange:
-                    Logger.LogError(
-                        "{@Client} attempted to directly start an exchange. This should not be possible unless packeting",
-                        localClient);
+                    Logger.WithProperty(localClient)
+                          .LogWarning(
+                              "Aisling {@AislingName} attempted to directly start an exchange. This should not be possible unless packeting",
+                              localClient.Aisling.Name);
 
                     break;
                 case ExchangeRequestType.AddItem:
@@ -494,7 +504,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
                 RedirectManager.Add(redirect);
 
-                Logger.LogDebug("Redirecting {@Client} to {@Server}", client, Options.LoginRedirect);
+                Logger.WithProperty(localClient)
+                      .LogDebug(
+                          "Redirecting {@ClientIp} to {@ServerIp}",
+                          client.RemoteIp.ToString(),
+                          Options.LoginRedirect.Address.ToString());
 
                 localClient.SendRedirect(redirect);
             }
@@ -571,25 +585,26 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            var localAisling = localClient.Aisling;
+            var aisling = localClient.Aisling;
 
             switch (groupRequestType)
             {
                 case GroupRequestType.FormalInvite:
-                    Logger.LogWarning(
-                        "{@Client} attempted to send a formal invite to the server. This type of group request is something only the server should send",
-                        localClient);
+                    Logger.WithProperty(aisling)
+                          .LogWarning(
+                              "Aisling {@AislingName} attempted to send a formal group invite to the server. This type of group request is something only the server should send",
+                              localClient);
 
                     return default;
                 case GroupRequestType.TryInvite:
                 {
-                    GroupService.Invite(localAisling, target);
+                    GroupService.Invite(aisling, target);
 
                     return default;
                 }
                 case GroupRequestType.AcceptInvite:
                 {
-                    GroupService.AcceptInvite(target, localAisling);
+                    GroupService.AcceptInvite(target, aisling);
 
                     return default;
                 }
@@ -715,11 +730,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             switch (metadataRequestType)
             {
                 case MetaDataRequestType.DataByName:
-                    localClient.SendMetaData(MetaDataRequestType.DataByName, MetaDataCache, name);
+                    localClient.SendMetaData(MetaDataRequestType.DataByName, MetaDataStore, name);
 
                     break;
                 case MetaDataRequestType.AllCheckSums:
-                    localClient.SendMetaData(MetaDataRequestType.AllCheckSums, MetaDataCache);
+                    localClient.SendMetaData(MetaDataRequestType.AllCheckSums, MetaDataStore);
 
                     break;
                 default:
@@ -833,7 +848,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (dialog == null)
             {
-                Logger.LogWarning("No active dialog found for {@Client}", localClient);
+                Logger.WithProperties(localClient.Aisling, localArgs)
+                      .LogWarning(
+                          "Aisling {@AislingName} attempted to access a dialog, but there is no active dialog (possibly packeting)",
+                          localClient.Aisling.Name);
 
                 return default;
             }
@@ -1133,7 +1151,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ValueTask InnerOnWhisper(IWorldClient localClient, WhisperArgs localArgs)
         {
             (var targetName, var message) = localArgs;
-            var aisling = localClient.Aisling;
+            var fromAisling = localClient.Aisling;
 
             if (message.Length > 100)
                 return default;
@@ -1142,70 +1160,82 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 if (targetName.EqualsI(WorldOptions.Instance.GroupChatName) || targetName.EqualsI("!group"))
                 {
-                    if (aisling.Group == null)
+                    if (fromAisling.Group == null)
                     {
-                        aisling.SendOrangeBarMessage("You are not in a group");
+                        fromAisling.SendOrangeBarMessage("You are not in a group");
 
                         return default;
                     }
 
-                    ChannelService.SendMessage(aisling, aisling.Group.ChannelName, message);
+                    fromAisling.Group.SendMessage(fromAisling, message);
+                } else if (targetName.EqualsI(WorldOptions.Instance.GuildChatName) || targetName.EqualsI("!guild"))
+                {
+                    if (fromAisling.Guild == null)
+                    {
+                        fromAisling.SendOrangeBarMessage("You are not in a guild");
+
+                        return default;
+                    }
+
+                    fromAisling.Guild.SendMessage(fromAisling, message);
                 } else if (ChannelService.ContainsChannel(targetName))
-                    ChannelService.SendMessage(aisling, targetName, message);
+                    ChannelService.SendMessage(fromAisling, targetName, message);
 
                 return default;
             }
 
-            var targetUser = Aislings.FirstOrDefault(player => player.Name.EqualsI(targetName));
+            var targetAisling = Aislings.FirstOrDefault(player => player.Name.EqualsI(targetName));
 
-            if (targetUser == null)
+            if (targetAisling == null)
             {
-                localClient.Aisling.SendActiveMessage($"{targetName} is not online");
+                fromAisling.SendActiveMessage($"{targetName} is not online");
 
                 return default;
             }
 
-            if (targetUser.Equals(localClient.Aisling))
+            if (targetAisling.Equals(fromAisling))
             {
                 localClient.SendServerMessage(ServerMessageType.Whisper, "Talking to yourself?");
 
                 return default;
             }
 
-            if (targetUser.SocialStatus == SocialStatus.DoNotDisturb)
+            if (targetAisling.SocialStatus == SocialStatus.DoNotDisturb)
             {
-                localClient.SendServerMessage(ServerMessageType.Whisper, $"{targetUser.Name} doesn't want to be bothered");
+                localClient.SendServerMessage(ServerMessageType.Whisper, $"{targetAisling.Name} doesn't want to be bothered");
 
                 return default;
             }
 
-            var maxLength = CONSTANTS.MAX_SERVER_MESSAGE_LENGTH - targetUser.Name.Length - 4;
+            var maxLength = CONSTANTS.MAX_SERVER_MESSAGE_LENGTH - targetAisling.Name.Length - 4;
 
             if (message.Length > maxLength)
                 message = message[..maxLength];
 
-            localClient.SendServerMessage(ServerMessageType.Whisper, $"[{targetUser.Name}]> {message}");
+            localClient.SendServerMessage(ServerMessageType.Whisper, $"[{targetAisling.Name}]> {message}");
 
             //if someone is being ignored, they shouldnt know it
             //let them waste their time typing for no reason
-            if (targetUser.IgnoreList.ContainsI(localClient.Aisling.Name))
+            if (targetAisling.IgnoreList.ContainsI(fromAisling.Name))
             {
-                Logger.LogWarning(
-                    "{@FromPlayer} sent whisper {@Message} to {@TargetPlayer}, but they are being ignored",
-                    localClient.Aisling,
-                    message,
-                    targetUser);
+                Logger.WithProperties(fromAisling, targetAisling)
+                      .LogWarning(
+                          "Aisling {@FromAislingName} sent whisper {@Message} to aisling {@TargetAislingName}, but they are being ignored (possibly harassment)",
+                          fromAisling.Name,
+                          message,
+                          targetAisling.Name);
 
                 return default;
             }
 
-            Logger.LogTrace(
-                "{@FromPlayer} sent whisper {@Message} to {@TargetPlayer}",
-                localClient.Aisling,
-                message,
-                targetUser);
+            Logger.WithProperties(fromAisling, targetAisling)
+                  .LogTrace(
+                      "Aisling {@FromAislingName} sent whisper {@Message} to aisling {@TargetAislingName}",
+                      fromAisling.Name,
+                      message,
+                      targetAisling.Name);
 
-            targetUser.Client.SendServerMessage(ServerMessageType.Whisper, $"[{localClient.Aisling.Name}]: {message}");
+            targetAisling.Client.SendServerMessage(ServerMessageType.Whisper, $"[{fromAisling.Name}]: {message}");
 
             return default;
         }
@@ -1280,13 +1310,12 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             await action(client, args);
         } catch (Exception e)
         {
-            Logger.LogError(
-                e,
-                "Failed to execute inner handler with {@ArgsType} {@Args} for {@ClientType} {@Client}",
-                args!.GetType().Name,
-                args,
-                client.GetType().Name,
-                client);
+            Logger.WithProperties(client, args!)
+                  .LogError(
+                      e,
+                      "{@ClientType} failed to execute inner handler with args type {@ArgsType}",
+                      client.GetType().Name,
+                      args!.GetType().Name);
         }
     }
 
@@ -1319,7 +1348,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             await action(client);
         } catch (Exception e)
         {
-            Logger.LogError(e, "Failed to execute inner handler for {@Client}", client);
+            Logger.WithProperty(client)
+                  .LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
         }
     }
 
@@ -1393,16 +1423,18 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {Ip}", ip);
+        Logger.LogDebug("Incoming connection from {@Ip}", ip!.ToString());
 
         var client = ClientProvider.CreateClient<IWorldClient>(clientSocket);
         client.OnDisconnected += OnDisconnect;
 
-        Logger.LogDebug("Connection established with {@Client}", client);
+        Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
 
         if (!ClientRegistry.TryAdd(client))
         {
-            Logger.LogError("Somehow two clients got the same id. (Id: {Id})", client.Id);
+            Logger.WithProperty(client)
+                  .LogError("Somehow two clients got the same id");
+
             client.Disconnect();
             clientSocket.Disconnect(false);
 
@@ -1438,6 +1470,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 //leave the group if in one
                 aisling.Group?.Leave(aisling);
 
+                //leave guild channel if in one
+                aisling.Guild?.LeaveChannel(aisling);
+
                 //leave chat channels
                 foreach (var channel in aisling.ChannelSettings)
                     ChannelService.LeaveChannel(aisling, channel.ChannelName);
@@ -1450,7 +1485,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             }
         } catch (Exception ex)
         {
-            Logger.LogError(ex, "Exception thrown while {@Client} was trying to disconnect", client);
+            Logger.WithProperty(client)
+                  // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                  .LogError(ex, "Exception thrown while {@AislingName} was trying to disconnect", client.Aisling?.Name ?? "N/A");
         }
     }
 

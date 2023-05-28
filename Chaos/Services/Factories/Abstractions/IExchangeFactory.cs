@@ -5,5 +5,5 @@ namespace Chaos.Services.Factories.Abstractions;
 
 public interface IExchangeFactory
 {
-    Exchange CreateExchange(Aisling sender, Aisling receiver);
+    Exchange Create(Aisling sender, Aisling receiver);
 }

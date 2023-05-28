@@ -80,6 +80,22 @@ public static class RectangleExtensions
         rect.Top + Random.Shared.Next(rect.Height));
 
     /// <summary>
+    ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
+    /// </summary>
+    /// <param name="rect">The rect to use as bounds</param>
+    /// <param name="predicate">A predicate the point must match</param>
+    public static Point GetRandomPoint(this IRectangle rect, Func<Point, bool> predicate)
+    {
+        while (true)
+        {
+            var randomPoint = new Point(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
+
+            if (predicate(randomPoint))
+                return randomPoint;
+        }
+    }
+
+    /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects another
     ///     <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>

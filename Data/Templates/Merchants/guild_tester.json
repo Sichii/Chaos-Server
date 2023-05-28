@@ -1,0 +1,11 @@
+{
+    "name": "Guild Tester",
+    "scriptKeys": ["showdialog"],
+    "scriptVars": {
+        "showdialog": {
+            "dialogKey": "guild_tester_initial"
+        }
+    },
+    "sprite": 30,
+    "templateKey": "guild_tester"
+}

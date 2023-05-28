@@ -8,7 +8,7 @@ namespace Chaos.Schemas.Templates;
 /// <summary>
 ///     Represents the serializable schema for an item template
 /// </summary>
-public sealed record ItemTemplateSchema : PanelObjectTemplateSchema
+public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
 {
     /// <summary>
     ///     If the item is account bound, it cannot be traded or dropped

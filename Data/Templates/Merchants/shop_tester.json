@@ -1,0 +1,24 @@
+{
+    "name": "Shop Tester",
+    "scriptKeys": ["showdialog"],
+    "scriptVars": {
+        "showdialog": {
+            "dialogKey": "shop_tester_initial"
+        }
+    },
+    "sprite": 30,
+    "templateKey": "shop_tester",
+    "itemsForSale": [
+        {
+            "itemTemplateKey": "teleport_trinket",
+            "stock": 5
+        },
+        {
+            "itemTemplateKey": "apple",
+            "stock": 100
+        }
+    ],
+    "itemsToBuy": ["apple"],
+    "restockIntervalHours": 1,
+    "restockPercent": 100
+}

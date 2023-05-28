@@ -170,14 +170,9 @@ public sealed class Startup
                               client => new
                               {
                                   IpAddress = client.RemoteIp,
-                                  Aisling = client.Aisling != null!
-                                      ? new
-                                      {
-                                          Id = client.Aisling.Id,
-                                          Name = client.Aisling.Name,
-                                          Location = ILocation.ToString(client.Aisling)
-                                      }
-                                      : null
+                                  Id = client.Aisling?.Id,
+                                  Name = client.Aisling?.Name,
+                                  Location = client.Aisling is not null ? ILocation.ToString(client.Aisling) : null
                               });
 
                           builder.RegisterObjectTransformation<WorldEntity>(
@@ -231,12 +226,9 @@ public sealed class Startup
                               {
                                   // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
                                   IpAddress = obj.Client?.RemoteIp,
-                                  Aisling = new
-                                  {
-                                      Id = obj.Id,
-                                      Name = obj.Name,
-                                      Location = ILocation.ToString(obj)
-                                  }
+                                  Id = (uint?)obj.Id,
+                                  Name = obj.Name,
+                                  Location = ILocation.ToString(obj)
                               });
 
                           builder.RegisterObjectTransformation<Monster>(
@@ -280,45 +272,45 @@ public sealed class Startup
                               });
 
                           builder.RegisterObjectTransformation<Item>(
-                              item => new
+                              obj => new
                               {
-                                  Uid = item.UniqueId,
-                                  Name = item.DisplayName,
-                                  TemplateKey = item.Template.TemplateKey,
-                                  Count = item.Count
+                                  Uid = obj.UniqueId,
+                                  Name = obj.DisplayName,
+                                  TemplateKey = obj.Template.TemplateKey,
+                                  Count = obj.Count
                               });
 
                           builder.RegisterObjectTransformation<Spell>(
-                              spell => new
+                              obj => new
                               {
-                                  Uid = spell.UniqueId,
-                                  Name = spell.Template.Name,
-                                  TemplateKey = spell.Template.TemplateKey
+                                  Uid = obj.UniqueId,
+                                  Name = obj.Template.Name,
+                                  TemplateKey = obj.Template.TemplateKey
                               });
 
                           builder.RegisterObjectTransformation<Skill>(
-                              skill => new
+                              obj => new
                               {
-                                  Uid = skill.UniqueId,
-                                  Name = skill.Template.Name,
-                                  TemplateKey = skill.Template.TemplateKey
+                                  Uid = obj.UniqueId,
+                                  Name = obj.Template.Name,
+                                  TemplateKey = obj.Template.TemplateKey
                               });
 
                           builder.RegisterObjectTransformation<Exchange>(
-                              exchange => new
+                              obj => new
                               {
-                                  Id = exchange.ExchangeId,
-                                  User1 = exchange.User1,
-                                  User2 = exchange.User2
+                                  Id = obj.ExchangeId,
+                                  User1 = obj.User1,
+                                  User2 = obj.User2
                               });
 
                           builder.RegisterObjectTransformation<MapInstance>(
-                              map => new
+                              obj => new
                               {
-                                  InstanceId = map.InstanceId,
-                                  BaseInstanceId = map.BaseInstanceId,
-                                  TemplateKey = map.Template.TemplateKey,
-                                  Name = map.Name
+                                  InstanceId = obj.InstanceId,
+                                  BaseInstanceId = obj.BaseInstanceId,
+                                  TemplateKey = obj.Template.TemplateKey,
+                                  Name = obj.Name
                               });
 
                           builder.RegisterObjectTransformation<CommandDescriptor>(
@@ -329,17 +321,18 @@ public sealed class Startup
                               });
 
                           builder.RegisterObjectTransformation<Dialog>(
-                              dialog => new
+                              obj => new
                               {
-                                  TemplateKey = dialog.Template.TemplateKey,
-                                  Type = dialog.Template.Type
+                                  TemplateKey = obj.Template.TemplateKey,
+                                  Type = obj.Template.Type,
+                                  Source = obj.DialogSource
                               });
 
                           builder.RegisterObjectTransformation<IEffect>(
-                              effect => new
+                              obj => new
                               {
-                                  EffectKey = effect.ScriptKey,
-                                  Name = effect.Name
+                                  EffectKey = obj.ScriptKey,
+                                  Name = obj.Name
                               });
 
                           builder.RegisterObjectTransformation<Redirect>(
@@ -350,6 +343,8 @@ public sealed class Startup
                                   Type = obj.Type,
                                   Address = obj.EndPoint
                               });
+
+                          builder.RegisterObjectTransformation<Guild>(obj => obj.Name);
                       });
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]

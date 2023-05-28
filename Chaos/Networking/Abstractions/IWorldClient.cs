@@ -56,7 +56,7 @@ public interface IWorldClient : ISocketClient
     void SendMapData();
     void SendMapInfo();
     void SendMapLoadComplete();
-    void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataCache metaData, string? name = null);
+    void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataStore metaData, string? name = null);
 
     void SendNotepad(
         byte identifier,

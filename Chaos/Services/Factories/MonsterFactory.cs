@@ -11,7 +11,6 @@ namespace Chaos.Services.Factories;
 
 public sealed class MonsterFactory : IMonsterFactory
 {
-    private readonly ILogger<MonsterFactory> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
@@ -21,7 +20,6 @@ public sealed class MonsterFactory : IMonsterFactory
     public MonsterFactory(
         ISimpleCache simpleCache,
         IScriptProvider scriptProvider,
-        ILogger<MonsterFactory> logger,
         ILoggerFactory loggerFactory,
         ISkillFactory skillFactory,
         ISpellFactory spellFactory
@@ -29,7 +27,6 @@ public sealed class MonsterFactory : IMonsterFactory
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Logger = logger;
         LoggerFactory = loggerFactory;
         SkillFactory = skillFactory;
         SpellFactory = spellFactory;
@@ -66,8 +63,6 @@ public sealed class MonsterFactory : IMonsterFactory
             var spell = SpellFactory.CreateFaux(spellTemplateKey);
             monster.Spells.Add(spell);
         }
-
-        Logger.LogTrace("Created {@Monster}", monster);
 
         return monster;
     }

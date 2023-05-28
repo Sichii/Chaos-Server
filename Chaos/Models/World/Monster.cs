@@ -126,11 +126,12 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
             source.Client.SendAttributes(StatUpdateType.ExpGold);
             Script.OnGoldDroppedOn(source, amount);
 
-            Logger.LogDebug(
-                "{@Player} dropped {Amount} gold on {@Monster}",
-                source,
-                amount,
-                this);
+            Logger.WithProperties(source, this)
+                  .LogDebug(
+                      "Aisling {@AislingName} dropped {Amount} gold on monster {@MonsterName}",
+                      source.Name,
+                      amount,
+                      Name);
         }
     }
 
@@ -139,11 +140,12 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
             {
-                Logger.LogDebug(
-                    "{@Player} dropped {@Item} on monster {@Monster}",
-                    source,
-                    item,
-                    this);
+                Logger.WithProperties(source, item, this)
+                      .LogDebug(
+                          "Aisling {@AislingName} dropped item {@ItemName} on monster {@MonsterName}",
+                          source.Name,
+                          item.DisplayName,
+                          Name);
 
                 Items.Add(item);
                 Script.OnItemDroppedOn(source, item);

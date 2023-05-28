@@ -7,7 +7,7 @@ namespace Chaos.Schemas.Aisling;
 /// <summary>
 ///     Represents the serializable schema of an item
 /// </summary>
-public sealed record ItemSchema : PanelObjectSchema
+public sealed record ItemSchema : PanelEntitySchema
 {
     /// <summary>
     ///     The color of this item if it's different that what is specified by it's template

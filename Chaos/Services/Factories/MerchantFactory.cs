@@ -13,7 +13,6 @@ namespace Chaos.Services.Factories;
 public sealed class MerchantFactory : IMerchantFactory
 {
     private readonly IItemFactory ItemFactory;
-    private readonly ILogger<MerchantFactory> Logger;
     private readonly ILoggerFactory LoggerFactory;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
@@ -22,7 +21,6 @@ public sealed class MerchantFactory : IMerchantFactory
     private readonly IStockService StockService;
 
     public MerchantFactory(
-        ILogger<MerchantFactory> logger,
         ILoggerFactory loggerFactory,
         IScriptProvider scriptProvider,
         ISimpleCache simpleCache,
@@ -32,7 +30,6 @@ public sealed class MerchantFactory : IMerchantFactory
         IStockService stockService
     )
     {
-        Logger = logger;
         LoggerFactory = loggerFactory;
         ScriptProvider = scriptProvider;
         SimpleCache = simpleCache;
@@ -65,8 +62,6 @@ public sealed class MerchantFactory : IMerchantFactory
             StockService,
             ScriptProvider,
             extraScriptKeys);
-
-        Logger.LogDebug("Created {@Merchant}", merchant);
 
         return merchant;
     }

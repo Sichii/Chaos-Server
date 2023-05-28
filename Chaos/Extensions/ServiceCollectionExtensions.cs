@@ -33,6 +33,7 @@ using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
+using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -103,8 +104,13 @@ public static class ServiceCollectionExtensions
 
     public static void AddStorage(this IServiceCollection services)
     {
-        services.AddOptionsFromConfig<UserSaveManagerOptions>(Startup.ConfigKeys.Options.Key); //bound
-        services.AddSingleton<ISaveManager<Aisling>, IHostedService, UserSaveManager>();
+        services.AddTransient<IEntityRepository, EntityRepository>();
+
+        services.AddOptionsFromConfig<GuildStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddSingleton<IStore<Guild>, IHostedService, GuildStore>();
+
+        services.AddOptionsFromConfig<AislingStoreOptions>(Startup.ConfigKeys.Options.Key); //bound
+        services.AddSingleton<IAsyncStore<Aisling>, IHostedService, AislingStore>();
 
         services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCache<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
@@ -125,9 +131,9 @@ public static class ServiceCollectionExtensions
         services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
 
-        services.AddOptionsFromConfig<MetaDataCacheOptions>(Startup.ConfigKeys.Options.Key); //bound
+        services.AddOptionsFromConfig<MetaDataStoreOptions>(Startup.ConfigKeys.Options.Key); //bound
 
-        services.AddSingleton<IMetaDataCache, MetaDataCache>();
+        services.AddSingleton<IMetaDataStore, MetaDataStore>();
 
         services.AddSingleton<ISimpleCache, ISimpleCacheProvider, SimpleCache>();
     }
@@ -142,15 +148,16 @@ public static class ServiceCollectionExtensions
 
     public static void AddWorldFactories(this IServiceCollection services)
     {
-        services.AddTransient<IPanelObjectFactory<Item>, IItemFactory, ItemFactory>();
-        services.AddTransient<IPanelObjectFactory<Skill>, ISkillFactory, SkillFactory>();
-        services.AddTransient<IPanelObjectFactory<Spell>, ISpellFactory, SpellFactory>();
+        services.AddTransient<IPanelEntityFactory<Item>, IItemFactory, ItemFactory>();
+        services.AddTransient<IPanelEntityFactory<Skill>, ISkillFactory, SkillFactory>();
+        services.AddTransient<IPanelEntityFactory<Spell>, ISpellFactory, SpellFactory>();
         services.AddTransient<IReactorTileFactory, ReactorTileFactory>();
         services.AddTransient<IMonsterFactory, MonsterFactory>();
         services.AddTransient<IMerchantFactory, MerchantFactory>();
         services.AddTransient<IDialogFactory, DialogFactory>();
         services.AddSingleton<IEffectFactory, EffectFactory>();
         services.AddTransient<IExchangeFactory, ExchangeFactory>();
+        services.AddTransient<IGuildFactory, GuildFactory>();
         services.AddTransient<IClientProvider, ClientProvider>();
     }
 

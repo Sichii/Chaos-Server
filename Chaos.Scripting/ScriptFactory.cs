@@ -71,7 +71,7 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
 
                     if (instance is not TScript tScript)
                     {
-                        Logger.LogError("Script obtained from key \"{ScriptKey}\" is not of type {TypeName}", scriptKey, TypeName);
+                        Logger.LogError("Script obtained from key {@ScriptKey} is not of type {@TypeName}", scriptKey, TypeName);
 
                         continue;
                     }
@@ -96,12 +96,12 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             ScriptTypeCache[scriptKey] = type;
 
             Logger.LogTrace(
-                "Cached {TypeName} type {@Type} with key {@ScriptKey}",
+                "Cached {@TypeName} of type {@Type} with key {@ScriptKey}",
                 TypeName,
                 type.Name,
                 scriptKey);
         }
 
-        Logger.LogInformation("{Count} {TScriptName}s loaded", ScriptTypeCache.Count, TypeName);
+        Logger.LogInformation("{Count} {@TScriptName}s loaded", ScriptTypeCache.Count, TypeName);
     }
 }

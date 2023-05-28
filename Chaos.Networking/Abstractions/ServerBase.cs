@@ -97,7 +97,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         Socket.Bind(endPoint);
         Socket.Listen(20);
         Socket.BeginAccept(OnConnection, Socket);
-        Logger.LogInformation("Listening on {EndPoint}", endPoint);
+        Logger.LogInformation("Listening on {@EndPoint}", endPoint.ToString());
 
         await stoppingToken.WaitTillCanceled();
 
@@ -165,13 +165,13 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             await action(client, args);
         } catch (Exception e)
         {
-            Logger.LogError(
-                e,
-                "Failed to execute inner handler with {@ArgsType} {@Args} for {@ClientType} {@Client}",
-                args!.GetType().Name,
-                args,
-                client.GetType().Name,
-                client);
+            Logger
+                .WithProperties(client, args!)
+                .LogError(
+                    e,
+                    "{@ClientType} failed to execute inner handler with args type {@ArgsType}",
+                    client.GetType().Name,
+                    args!.GetType().Name);
         }
     }
 
@@ -189,7 +189,8 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             await action(client);
         } catch (Exception e)
         {
-            Logger.LogError(e, "Failed to execute inner handler for {@Client}", client);
+            Logger.WithProperty(client)
+                  .LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
         }
     }
 

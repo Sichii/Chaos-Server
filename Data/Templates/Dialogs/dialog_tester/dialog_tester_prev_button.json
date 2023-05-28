@@ -1,9 +1,0 @@
-{
-    "options": [],
-    "prevDialogKey": "dialog_tester_initial",
-    "scriptKeys": [],
-    "scriptVars": {},
-    "templateKey": "dialog_tester_prev_button",
-    "text": "Go back scrub",
-    "type": "Normal"
-}

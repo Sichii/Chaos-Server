@@ -16,7 +16,7 @@ namespace Chaos.Services.MapperProfiles;
 public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>,
                                                IMapperProfile<MapTemplate, MapTemplateSchema>
 {
-    private readonly ISaveManager<Aisling> AislingSaveManager;
+    private readonly IAsyncStore<Aisling> AislingStore;
     private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
@@ -29,7 +29,7 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
         IScriptProvider scriptProvider,
         ITypeMapper mapper,
         IShardGenerator shardGenerator,
-        ISaveManager<Aisling> aislingSaveManager,
+        IAsyncStore<Aisling> aislingStore,
         CancellationTokenSource serverCtx,
         ILoggerFactory loggerFactory
     )
@@ -38,7 +38,7 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
         ScriptProvider = scriptProvider;
         Mapper = mapper;
         ShardGenerator = shardGenerator;
-        AislingSaveManager = aislingSaveManager;
+        AislingStore = aislingStore;
         ServerCtx = serverCtx;
         LoggerFactory = loggerFactory;
     }
@@ -54,7 +54,7 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
             ScriptProvider,
             obj.Name,
             obj.InstanceId,
-            AislingSaveManager,
+            AislingStore,
             ServerCtx,
             LoggerFactory.CreateLogger<MapInstance>(),
             obj.ScriptKeys)

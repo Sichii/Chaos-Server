@@ -15,6 +15,11 @@ public sealed record MonsterSpawnSchema
     public int AggroRange { get; set; } = -1;
 
     /// <summary>
+    ///     A collection of points that monsters created by this spawn will not spawn on
+    /// </summary>
+    public ICollection<Point> BlackList { get; set; } = Array.Empty<Point>();
+
+    /// <summary>
     ///     The amount of exp monsters created by this spawn will reward when killed
     /// </summary>
     public int ExpReward { get; set; }

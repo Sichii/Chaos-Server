@@ -20,6 +20,10 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public MessageColor GroupMessageColor { get; init; }
     /// <inheritdoc />
+    public required string GuildChatName { get; init; }
+    /// <inheritdoc />
+    public MessageColor GuildMessageColor { get; init; }
+    /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;
     public required ConnectionInfo LoginRedirect { get; init; }

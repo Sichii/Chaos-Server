@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-using System.Text.Json;
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Extensions;
@@ -12,7 +10,7 @@ using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage;
-using Chaos.TypeMapper.Abstractions;
+using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,19 +30,17 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
     /// <inheritdoc />
     public ExpiringMapInstanceCache(
         IMemoryCache cache,
-        ITypeMapper mapper,
+        IEntityRepository entityRepository,
         IMerchantFactory merchantFactory,
         IMonsterFactory monsterFactory,
         IPathfindingService pathfindingService,
         IReactorTileFactory reactorTileFactory,
-        IOptions<JsonSerializerOptions> jsonSerializerOptions,
         IOptions<MapInstanceCacheOptions> options,
         ILogger<ExpiringMapInstanceCache> logger
     )
         : base(
             cache,
-            mapper,
-            jsonSerializerOptions,
+            entityRepository,
             options,
             logger)
     {
@@ -73,16 +69,14 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                         Get(mapInstance.InstanceId);
             } catch (Exception e)
             {
-                Logger.LogCritical(
+                Logger.LogError(
                     e,
-                    "Critical exception in {ClassName} while attempting to persist maps that are in use",
+                    "Exception in {@ClassName} while attempting to persist maps that are in use",
                     nameof(ExpiringMapInstanceCache));
             }
 
         // ReSharper disable once FunctionNeverReturns
     }
-
-    protected override MapInstance LoadFromFile(string directory) => InnerLoadFromFile(directory);
 
     /// <inheritdoc />
     protected override MapInstance CreateFromEntry(ICacheEntry entry) => InnerCreateFromEntry(entry);
@@ -98,7 +92,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var entryKeyActual = DeconstructKeyForType(entryKey!);
         var shardId = string.IsNullOrEmpty(loadFromFileKeyOverride) ? null : entryKeyActual;
 
-        Logger.LogTrace("Creating new {TypeName} entry with key \"{Key}\"", nameof(MapInstance), loadInstanceId);
+        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", nameof(MapInstance), loadInstanceId);
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
@@ -106,9 +100,9 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var path = GetPathForKey(loadInstanceIdActual);
 
         //we use entry.Key.ToString()
-        var ret = InnerLoadFromFile(path, shardId);
+        var mapInstance = InnerLoadFromFile(path, shardId);
 
-        if (!ret.LoadedFromInstanceId.EqualsI(loadInstanceIdActual))
+        if (!mapInstance.LoadedFromInstanceId.EqualsI(loadInstanceIdActual))
         {
             var endOfPath = Path.GetFileName(path);
 
@@ -117,54 +111,43 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                     nameof(MapInstance)}");
         }
 
-        LocalLookup[entryKey!] = ret;
+        LocalLookup[entryKey!] = mapInstance;
 
-        Logger.LogDebug(
-            "Created new {TypeName} entry with key \"{Key}\" from path \"{Path}\"",
-            nameof(MapInstance),
-            loadInstanceId,
-            path);
+        Logger.WithProperty(mapInstance)
+              .LogInformation(
+                  "Created new {@TypeName} entry with key {@Key} from path {@Path}",
+                  nameof(MapInstance),
+                  loadInstanceId,
+                  path);
 
-        return ret;
+        return mapInstance;
     }
 
     private MapInstance InnerLoadFromFile(string directory, string? shardId = null)
     {
+        var baseInstanceId = default(string?);
+
         var mapInstancePath = Path.Combine(directory, "instance.json");
         var monsterSpawnsPath = Path.Combine(directory, "monsters.json");
         var merchantSpawnsPath = Path.Combine(directory, "merchants.json");
         var reactorsPath = Path.Combine(directory, "reactors.json");
 
-        using var mapInstanceStream = File.OpenRead(mapInstancePath);
-        using var monsterSpawnsStream = File.OpenRead(monsterSpawnsPath);
-        using var merchantSpawnsStream = File.OpenRead(merchantSpawnsPath);
-        using var reactorsStream = File.OpenRead(reactorsPath);
+        Action<MapInstanceSchema>? mapInstanceAction = string.IsNullOrEmpty(shardId)
+            ? null
+            : schema =>
+            {
+                baseInstanceId = schema.InstanceId;
+                schema.InstanceId = shardId;
+            };
 
-        var mapInstanceSchema = JsonSerializer.Deserialize<MapInstanceSchema>(mapInstanceStream, JsonSerializerOptions);
+        var mapInstance = EntityRepository.LoadAndMap<MapInstance, MapInstanceSchema>(mapInstancePath, mapInstanceAction);
+        var monsterSpawns = EntityRepository.LoadAndMapMany<MonsterSpawn, MonsterSpawnSchema>(monsterSpawnsPath);
+        var merchantSpawnSchemas = EntityRepository.LoadMany<MerchantSpawnSchema>(merchantSpawnsPath);
+        var reactorsSchemas = EntityRepository.LoadMany<ReactorTileSchema>(reactorsPath);
 
-        var monsterSpawnSchemas =
-            JsonSerializer.Deserialize<IEnumerable<MonsterSpawnSchema>>(monsterSpawnsStream, JsonSerializerOptions);
-
-        var merchantSpawnSchemas =
-            JsonSerializer.Deserialize<IEnumerable<MerchantSpawnSchema>>(merchantSpawnsStream, JsonSerializerOptions);
-
-        var reactorsSchemas = JsonSerializer.Deserialize<IEnumerable<ReactorTileSchema>>(reactorsStream, JsonSerializerOptions);
-
-        if (mapInstanceSchema == null)
-            throw new SerializationException($"Failed to serialize {nameof(MapInstanceSchema)} from directory \"{directory}\"");
-
-        var baseInstanceId = default(string?);
-
-        if (!string.IsNullOrEmpty(shardId))
-        {
-            baseInstanceId = mapInstanceSchema.InstanceId;
-            mapInstanceSchema.InstanceId = shardId;
-        }
-
-        var mapInstance = Mapper.Map<MapInstance>(mapInstanceSchema);
         mapInstance.BaseInstanceId = baseInstanceId;
 
-        foreach (var reactorSchema in reactorsSchemas!)
+        foreach (var reactorSchema in reactorsSchemas)
         {
             var owner = string.IsNullOrEmpty(reactorSchema.OwnerMonsterTemplateKey)
                 ? null
@@ -183,7 +166,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
             mapInstance.SimpleAdd(reactor);
         }
 
-        foreach (var merchantSpawn in merchantSpawnSchemas!)
+        foreach (var merchantSpawn in merchantSpawnSchemas)
         {
             var merchant = MerchantFactory.Create(
                 merchantSpawn.MerchantTemplateKey,
@@ -194,8 +177,6 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
             merchant.Direction = merchantSpawn.Direction;
             mapInstance.SimpleAdd(merchant);
         }
-
-        var monsterSpawns = Mapper.MapMany<MonsterSpawn>(monsterSpawnSchemas!);
 
         foreach (var monsterSpawn in monsterSpawns)
         {
@@ -251,7 +232,8 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 entry.Value = mapInstance.IsShard ? InnerCreateFromEntry(entry, instanceId) : InnerCreateFromEntry(entry);
             } catch (Exception e)
             {
-                Logger.LogError(e, "Failed to reload MapInstance with key \"{Key}\"", key);
+                Logger.WithProperty(mapInstance)
+                      .LogError(e, "Failed to reload map instance with key {@Key}", key);
                 //otherwise ignored
             }
         }

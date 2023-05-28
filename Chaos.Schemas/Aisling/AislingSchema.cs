@@ -59,10 +59,6 @@ public sealed record AislingSchema
     /// </summary>
     public string? GuildName { get; set; }
     /// <summary>
-    ///     The title the aisling has within their guild, if any
-    /// </summary>
-    public string? GuildTitle { get; set; }
-    /// <summary>
     ///     The color of the aisling's hair
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]

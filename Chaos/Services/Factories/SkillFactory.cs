@@ -3,25 +3,21 @@ using Chaos.Models.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
 public sealed class SkillFactory : ISkillFactory
 {
-    private readonly ILogger<SkillFactory> Logger;
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
     public SkillFactory(
         ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ILogger<SkillFactory> logger
+        IScriptProvider scriptProvider
     )
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
-        Logger = logger;
     }
 
     public Skill Create(string templateKey, ICollection<string>? extraScriptKeys = null)
@@ -29,8 +25,6 @@ public sealed class SkillFactory : ISkillFactory
         extraScriptKeys ??= Array.Empty<string>();
         var template = SimpleCache.Get<SkillTemplate>(templateKey);
         var skill = new Skill(template, ScriptProvider, extraScriptKeys);
-
-        Logger.LogDebug("Created {@Skill}", skill);
 
         return skill;
     }

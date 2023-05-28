@@ -1,0 +1,56 @@
+{
+  "bodyColor": "White",
+  "bodySprite": "Male",
+  "channelSettings": [
+    {
+      "channelName": "!global"
+    },
+    {
+      "channelName": "!trade"
+    }
+  ],
+  "direction": "Right",
+  "effects": [],
+  "gender": "Male",
+  "gold": 98000,
+  "guildName": "meepers",
+  "hairColor": "Default",
+  "hairStyle": 5,
+  "ignoreList": [],
+  "isAdmin": true,
+  "mapInstanceId": "testTown",
+  "name": "mink",
+  "nation": "Exile",
+  "statSheet": {
+    "advClass": "None",
+    "baseClass": "Diacht",
+    "maxWeight": 40,
+    "toNextLevel": 100,
+    "currentHp": 100,
+    "currentMp": 50,
+    "level": 1,
+    "ac": 100,
+    "maximumHp": 100,
+    "maximumMp": 50,
+    "con": 1,
+    "dex": 1,
+    "int": 1,
+    "str": 1,
+    "wis": 1
+  },
+  "titles": [
+    ""
+  ],
+  "userOptions": {
+    "exchange": false,
+    "fastMove": false,
+    "group": true,
+    "guildChat": true,
+    "magic": true,
+    "shout": true,
+    "whisper": true,
+    "wisdom": true
+  },
+  "x": 25,
+  "y": 27
+}

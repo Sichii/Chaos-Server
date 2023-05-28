@@ -4,7 +4,7 @@ using Chaos.Models.Templates.Abstractions;
 
 namespace Chaos.Models.Templates;
 
-public sealed record ItemTemplate : PanelObjectTemplateBase
+public sealed record ItemTemplate : PanelEntityTemplateBase
 {
     public required bool AccountBound { get; init; }
 

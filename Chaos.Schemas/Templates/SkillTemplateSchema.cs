@@ -6,7 +6,7 @@ namespace Chaos.Schemas.Templates;
 /// <summary>
 ///     Represents the serializable schema for a skill template
 /// </summary>
-public sealed record SkillTemplateSchema : PanelObjectTemplateSchema
+public sealed record SkillTemplateSchema : PanelEntityTemplateSchema
 {
     /// <summary>
     ///     Whether or not the skill is an assail and should be used when spacebar is pressed<br />Assail cooldowns are handled by AssailIntervalMs

@@ -1,13 +1,10 @@
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Runtime.Serialization;
-using System.Text.Json;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
-using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,10 +28,11 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     ///     The memory cache used to store the data.
     /// </summary>
     protected IMemoryCache Cache { get; }
+
     /// <summary>
-    ///     The JSON serializer options used for deserializing data.
+    ///     The store used to load and save objects that map to a different type when serialized
     /// </summary>
-    protected JsonSerializerOptions JsonSerializerOptions { get; }
+    protected IEntityRepository EntityRepository { get; }
     /// <summary>
     ///     The prefix used for cache keys.
     /// </summary>
@@ -47,14 +45,12 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     ///     The logger instance for logging events in this cache.
     /// </summary>
     protected virtual ILogger<ExpiringFileCache<T, TSchema, TOptions>> Logger { get; }
-    /// <summary>
-    ///     The type mapper used to map between TSchema and T objects.
-    /// </summary>
-    protected ITypeMapper Mapper { get; }
+
     /// <summary>
     ///     The options used for configuring this cache.
     /// </summary>
     protected TOptions Options { get; }
+
     /// <summary>
     ///     The synchronization monitor used to manage concurrent access to the cache.
     /// </summary>
@@ -63,26 +59,19 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <summary>
     ///     Initializes a new instance of the <see cref="ExpiringFileCache{T, TSchema, TOptions}" /> class.
     /// </summary>
-    /// <param name="cache">The memory cache instance used to store the data.</param>
-    /// <param name="mapper">The type mapper used to map between TSchema and T objects.</param>
-    /// <param name="jsonSerializerOptions">The JSON serializer options used for deserializing data.</param>
-    /// <param name="options">The options used for configuring this cache.</param>
-    /// <param name="logger">The logger instance for logging events in this cache.</param>
     public ExpiringFileCache(
         IMemoryCache cache,
-        ITypeMapper mapper,
-        IOptions<JsonSerializerOptions> jsonSerializerOptions,
+        IEntityRepository entityRepository,
         IOptions<TOptions> options,
         ILogger<ExpiringFileCache<T, TSchema, TOptions>> logger
     )
     {
         Options = options.Value;
         Cache = cache;
-        Mapper = mapper;
-        JsonSerializerOptions = jsonSerializerOptions.Value;
         KeyPrefix = $"{typeof(T).Name}___".ToLowerInvariant();
         LocalLookup = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
+        EntityRepository = entityRepository;
         Sync = new AutoReleasingMonitor();
 
         if (!Directory.Exists(Options.Directory))
@@ -111,24 +100,24 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var key = entry.Key.ToString();
         var keyActual = DeconstructKeyForType(key!);
 
-        Logger.LogTrace("Creating new {TypeName} entry with key \"{Key}\"", typeof(T), key);
+        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
 
         var path = GetPathForKey(keyActual);
 
-        var ret = LoadFromFile(path);
+        var entity = EntityRepository.LoadAndMap<T, TSchema>(path);
 
-        LocalLookup[key!] = ret;
+        LocalLookup[key!] = entity;
 
         Logger.LogDebug(
-            "Created new {TypeName} entry with key \"{Key}\" from path \"{Path}\"",
-            typeof(T),
+            "Created new {@TypeName} entry with key {@Key} from path {@Path}",
+            typeof(T).Name,
             key,
             path);
 
-        return ret;
+        return entity;
     }
 
     /// <summary>
@@ -140,7 +129,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     public void ForceLoad()
     {
-        Logger.LogDebug("Force loading {TypeName} cache", typeof(T).Name);
+        Logger.LogInformation("Force loading {@TypeName} cache", typeof(T).Name);
 
         using var @lock = Sync.Enter();
 
@@ -202,23 +191,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     }
 
     /// <summary>
-    ///     Loads the object from the specified path and returns it
-    /// </summary>
-    /// <param name="path">The path to the file to deserialize</param>
-    protected virtual T LoadFromFile(string path)
-    {
-        Logger.LogTrace("Loading new {TypeName} object from path \"{Path}\"", typeof(T).Name, path);
-
-        using var stream = File.OpenRead(path);
-        var schema = JsonSerializer.Deserialize<TSchema>(stream, JsonSerializerOptions);
-
-        if (schema == null)
-            throw new SerializationException($"Failed to serialize {typeof(TSchema).Name} from path \"{path}\"");
-
-        return Mapper.Map<T>(schema);
-    }
-
-    /// <summary>
     ///     Loads all potential paths from the configured directory
     /// </summary>
     /// <returns></returns>
@@ -257,7 +229,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
             {
                 Logger.LogError(
                     e,
-                    "Failed to reload {TypeName} with key \"{Key}\"",
+                    "Failed to reload {@TypeName} with key {@Key}",
                     typeof(T).Name,
                     key);
                 //otherwise ignored

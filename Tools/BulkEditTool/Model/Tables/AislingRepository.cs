@@ -8,10 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace BulkEditTool.Model.Tables;
 
-public sealed class AislingRepository : RepositoryBase<AislingRepository.AislingComposite, UserSaveManagerOptions>
+public sealed class AislingRepository : RepositoryBase<AislingRepository.AislingComposite, AislingStoreOptions>
 {
     /// <inheritdoc />
-    public AislingRepository(IOptions<UserSaveManagerOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
+    public AislingRepository(IOptions<AislingStoreOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
         : base(options, jsonSerializerOptions) { }
 
     /// <inheritdoc />

@@ -1,0 +1,8 @@
+{
+    "scriptKeys": ["guildCreate"],
+    "templateKey": "generic_guild_create_accepted",
+    "text": "Congratulations! {GuildName} is now an officially recognized guild!",
+    "type": "Normal",
+    "nextDialogKey": "top",
+    "contextual": true
+}

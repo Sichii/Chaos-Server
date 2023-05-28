@@ -21,6 +21,7 @@ public sealed record Dialog : IScripted<IDialogScript>
 {
     private readonly IDialogFactory DialogFactory;
     public object? Context { get; set; }
+    public IDialogSourceEntity DialogSource { get; set; }
     public List<ItemDetails> Items { get; set; }
     public ArgumentCollection MenuArgs { get; set; }
     public string? NextDialogKey { get; set; }
@@ -28,7 +29,6 @@ public sealed record Dialog : IScripted<IDialogScript>
     public string? PrevDialogKey { get; set; }
     public List<Skill> Skills { get; set; }
     public List<byte>? Slots { get; set; }
-    public IDialogSourceEntity SourceEntity { get; set; }
     public List<Spell> Spells { get; set; }
     public DialogTemplate Template { get; set; }
     public string Text { get; private set; }
@@ -40,11 +40,11 @@ public sealed record Dialog : IScripted<IDialogScript>
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
 
-    private Dialog(DialogTemplate template, IDialogSourceEntity sourceEntity)
+    private Dialog(DialogTemplate template, IDialogSourceEntity dialogSource)
     {
         DialogFactory = null!;
         Template = template;
-        SourceEntity = sourceEntity;
+        DialogSource = dialogSource;
         ScriptKeys = null!;
         Script = null!;
         Items = new List<ItemDetails>();
@@ -63,12 +63,12 @@ public sealed record Dialog : IScripted<IDialogScript>
 
     public Dialog(
         DialogTemplate template,
-        IDialogSourceEntity sourceEntity,
+        IDialogSourceEntity dialogSource,
         IScriptProvider scriptProvider,
         IDialogFactory dialogFactory,
         ICollection<string>? extraScriptKeys = null
     )
-        : this(template, sourceEntity)
+        : this(template, dialogSource)
     {
         extraScriptKeys ??= Array.Empty<string>();
 
@@ -78,7 +78,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     }
 
     public Dialog(
-        IDialogSourceEntity sourceEntity,
+        IDialogSourceEntity dialogSource,
         IDialogFactory dialogFactory,
         ChaosDialogType type,
         string text
@@ -86,7 +86,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     {
         Text = text;
         Type = type;
-        SourceEntity = sourceEntity;
+        DialogSource = dialogSource;
         Template = null!;
         DialogFactory = dialogFactory;
         TextBoxLength = null;
@@ -136,22 +136,6 @@ public sealed record Dialog : IScripted<IDialogScript>
             else
                 Close(source);
     }
-
-    public int? GetOptionIndex(string optionText)
-    {
-        var index = Options.FindIndex(option => option.OptionText.EqualsI(optionText));
-
-        return index == -1 ? null : index;
-    }
-
-    public string? GetOptionText(int optionIndex)
-    {
-        var option = Options.ElementAtOrDefault(optionIndex);
-
-        return option?.OptionText;
-    }
-
-    public bool HasOption(DialogOption option) => GetOptionIndex(option.OptionText) != null;
 
     public void InjectTextParameters(params object[] parameters) => Text = Text.Inject(parameters);
 
@@ -203,19 +187,19 @@ public sealed record Dialog : IScripted<IDialogScript>
 
             if (nextDialogKey.EqualsI("top"))
             {
-                if (SourceEntity is MapEntity mapEntity && !mapEntity.WithinRange(source))
+                if (DialogSource is MapEntity mapEntity && !mapEntity.WithinRange(source))
                 {
                     Close(source);
 
                     return;
                 }
 
-                SourceEntity.Activate(source);
+                DialogSource.Activate(source);
 
                 return;
             }
 
-            var nextDialog = DialogFactory.Create(nextDialogKey, SourceEntity);
+            var nextDialog = DialogFactory.Create(nextDialogKey, DialogSource);
 
             if (nextDialog.Contextual)
             {
@@ -231,7 +215,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     {
         //if no prev dialog key, close
         //if source is a map entity that's out of range, close
-        if (string.IsNullOrEmpty(PrevDialogKey) || (SourceEntity is MapEntity mapEntity && !mapEntity.WithinRange(source)))
+        if (string.IsNullOrEmpty(PrevDialogKey) || (DialogSource is MapEntity mapEntity && !mapEntity.WithinRange(source)))
             Close(source);
         else
         {
@@ -248,7 +232,7 @@ public sealed record Dialog : IScripted<IDialogScript>
                     }\" but no dialog with that key was found in the history.");
             }
 
-            var newPrevDialog = DialogFactory.Create(PrevDialogKey, SourceEntity);
+            var newPrevDialog = DialogFactory.Create(PrevDialogKey, DialogSource);
 
             //if the dialog is contextual, copy the context and menu args from the previous dialog
             if (newPrevDialog.Contextual)
@@ -265,7 +249,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     public void Reply(Aisling source, string dialogText, string? nextDialogKey = null)
     {
         var newDialog = new Dialog(
-            SourceEntity,
+            DialogSource,
             DialogFactory,
             ChaosDialogType.Normal,
             dialogText)
@@ -277,4 +261,38 @@ public sealed record Dialog : IScripted<IDialogScript>
     }
 
     public void ReplyToUnknownInput(Aisling source) => Reply(source, DialogString.UnknownInput.Value);
+
+    #region Dialog Options
+    public int? GetOptionIndex(string optionText)
+    {
+        var index = Options.FindIndex(option => option.OptionText.EqualsI(optionText));
+
+        return index == -1 ? null : index;
+    }
+
+    public string? GetOptionText(int optionIndex)
+    {
+        var option = Options.ElementAtOrDefault(optionIndex);
+
+        return option?.OptionText;
+    }
+
+    public bool HasOption(string optionText) => GetOptionIndex(optionText) is not null;
+
+    public DialogOption GetOption(string optionText) => Options.First(option => option.OptionText.EqualsI(optionText));
+
+    public void InsertOption(int index, string optionText, string dialogKey)
+    {
+        if (index >= Options.Count)
+            AddOption(optionText, dialogKey);
+        else
+            Options.Insert(index, new DialogOption { OptionText = optionText, DialogKey = dialogKey });
+    }
+
+    public void AddOption(string optionText, string dialogKey) =>
+        Options.Add(new DialogOption { OptionText = optionText, DialogKey = dialogKey });
+
+    public void AddOptions(params (string OptionText, string DialogKey)[] options) => Options.AddRange(
+        options.Select(option => new DialogOption { OptionText = option.OptionText, DialogKey = option.DialogKey }));
+    #endregion
 }

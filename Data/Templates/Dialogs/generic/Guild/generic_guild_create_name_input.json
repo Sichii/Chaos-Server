@@ -1,0 +1,6 @@
+{
+    "templateKey": "generic_guild_create_name_input",
+    "text": "What would you like to name your guild?",
+    "type": "MenuTextEntry",
+    "nextDialogKey": "generic_guild_create_confirmation"
+}

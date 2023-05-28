@@ -1,0 +1,11 @@
+{
+    "name": "Bank Tester",
+    "scriptKeys": ["showdialog"],
+    "scriptVars": {
+        "showdialog": {
+            "dialogKey": "bank_tester_initial"
+        }
+    },
+    "sprite": 56,
+    "templateKey": "bank_tester"
+}
