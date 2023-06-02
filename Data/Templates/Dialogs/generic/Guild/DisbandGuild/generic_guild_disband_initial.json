@@ -1,0 +1,16 @@
+{
+    "scriptKeys": ["guildDisband"],
+    "templateKey": "generic_guild_disband_initial",
+    "text": "Are you sure you want to disband {GuildName}? ((THIS IS AN IRREVERSABLE ACTION))",
+    "type": "Menu",
+    "options": [
+        {
+            "optionText": "Yeah fuck em",
+            "dialogKey": "generic_guild_disband_accepted"
+        },
+        {
+            "optionText": "No wait! I changed my mind",
+            "dialogKey": "top"
+        }
+    ]
+}

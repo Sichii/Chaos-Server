@@ -126,7 +126,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
             source.Client.SendAttributes(StatUpdateType.ExpGold);
             Script.OnGoldDroppedOn(source, amount);
 
-            Logger.WithProperties(source, this)
+            Logger.WithProperty(source)
                   .LogDebug(
                       "Aisling {@AislingName} dropped {Amount} gold on monster {@MonsterName}",
                       source.Name,
@@ -140,7 +140,9 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
             {
-                Logger.WithProperties(source, item, this)
+                Logger.WithProperty(source)
+                      .WithProperty(item)
+                      .WithProperty(this)
                       .LogDebug(
                           "Aisling {@AislingName} dropped item {@ItemName} on monster {@MonsterName}",
                           source.Name,

@@ -1,0 +1,17 @@
+{
+    "scriptKeys": ["guildMemberAdmit"],
+    "templateKey": "generic_guild_members_admit_confirmation",
+    "text": "You are admitting {Name} to the guild. Is this correct?",
+    "type": "Menu",
+    "contextual": true,
+    "options": [
+        {
+            "optionText": "Yes",
+            "dialogKey": "generic_guild_members_admit_accepted"
+        },
+        {
+            "optionText": "No",
+            "dialogKey": "generic_guild_members_initial"
+        }
+    ]
+}

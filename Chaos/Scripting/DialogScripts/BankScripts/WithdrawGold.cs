@@ -34,7 +34,8 @@ public class WithdrawGoldScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawGoldResult.Success:
-                Logger.WithProperties(source, Subject.DialogSource)
+                Logger.WithProperty(source)
+                      .WithProperty(Subject.DialogSource)
                       .LogDebug(
                           "Aisling {@AislingName} withdrew {Amount} gold from the bank",
                           source,

@@ -76,7 +76,9 @@ public class SellShopScript : DialogScriptBase
         switch (sellItemResult)
         {
             case ComplexActionHelper.SellItemResult.Success:
-                Logger.WithProperties(source, item, SellShopSource)
+                Logger.WithProperty(source)
+                      .WithProperty(item)
+                      .WithProperty(SellShopSource)
                       .LogDebug(
                           "Aisling {@AislingName} sold {ItemAmount} {@ItemName} to merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,

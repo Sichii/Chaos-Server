@@ -1,12 +1,12 @@
 # Items
 
-Items in Chaos are both templated and scripted objects. Technically what you create are item templates, and those
-template can be further changed by in-game systems. The item remains associated to the template to avoid having to
-serialize data that you have already defined.
+Items in Chaos are both templated and scripted objects. When you define an item, you are actually defining an item
+template, and that iem template can be further changed via in-game systems. The item remains associated to the template
+to avoid having to serialize data that you have already defined.
 
 ## Item Templates
 
-An item template is a definition of an item. It contains all the data that is common to all instances of the item.
+An item template is the definition of an item. It contains all data that is common to all instances of that item.
 
 By default, Item Templates are stored at `Data\Templates\Items`. Configuration of how item templates are loaded can be
 found in `appsettings.json` at `Options:ItemTemplateCacheOptions`.

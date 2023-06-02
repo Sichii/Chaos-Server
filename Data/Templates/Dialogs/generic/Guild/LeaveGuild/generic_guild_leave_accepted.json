@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["guildLeave"],
+    "templateKey": "generic_guild_leave_accepted",
+    "text": "skip",
+    "type": "Normal",
+    "nextDialogKey": "top"
+}

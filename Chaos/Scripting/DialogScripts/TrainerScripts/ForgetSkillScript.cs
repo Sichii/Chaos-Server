@@ -45,7 +45,9 @@ public class ForgetSkillScript : DialogScriptBase
         }
 
         if (source.SkillBook.Remove(slot))
-            Logger.WithProperties(source, skill, Subject.DialogSource)
+            Logger.WithProperty(source)
+                  .WithProperty(skill)
+                  .WithProperty(Subject.DialogSource)
                   .LogDebug("Aisling {@AislingName} forgot skill {@SkillName}", source.Name, skill.Template.Name);
     }
 

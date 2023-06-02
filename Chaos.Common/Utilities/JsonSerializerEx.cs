@@ -22,7 +22,7 @@ public static class JsonSerializerEx
                 Access = FileAccess.Read,
                 Mode = FileMode.Open,
                 Options = FileOptions.SequentialScan,
-                Share = FileShare.Read
+                Share = FileShare.ReadWrite
             });
 
         var ret = JsonSerializer.Deserialize<T>(stream, options);
@@ -45,7 +45,7 @@ public static class JsonSerializerEx
                 Access = FileAccess.Read,
                 Mode = FileMode.Open,
                 Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                Share = FileShare.Read
+                Share = FileShare.ReadWrite
             });
 
         var ret = await JsonSerializer.DeserializeAsync<T>(stream, options);
@@ -68,7 +68,7 @@ public static class JsonSerializerEx
                 Access = FileAccess.ReadWrite,
                 Mode = FileMode.OpenOrCreate,
                 Options = FileOptions.SequentialScan,
-                Share = FileShare.None
+                Share = FileShare.ReadWrite
             });
 
         stream.SetLength(0);
@@ -91,7 +91,7 @@ public static class JsonSerializerEx
                 Access = FileAccess.ReadWrite,
                 Mode = FileMode.OpenOrCreate,
                 Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                Share = FileShare.None
+                Share = FileShare.ReadWrite
             });
 
         stream.SetLength(0);

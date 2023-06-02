@@ -3,6 +3,7 @@ using Chaos.Models.World;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 using Chaos.Scripting.MonsterScripts.Abstractions;
+using Chaos.Services.Servers.Options;
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -49,12 +50,17 @@ public class DeathScript : MonsterScriptBase
 
         if (rewardTargets is not null)
         {
-            if (droppedGold)
-                money!.LockToCreatures(30, rewardTargets);
+            if (WorldOptions.Instance.LootDropsLockToRewardTargetSecs.HasValue)
+            {
+                var lockSecs = WorldOptions.Instance.LootDropsLockToRewardTargetSecs.Value;
 
-            if (droppedITems)
-                foreach (var groundItem in groundItems!)
-                    groundItem.LockToCreatures(30, rewardTargets);
+                if (droppedGold)
+                    money!.LockToAislings(lockSecs, rewardTargets);
+
+                if (droppedITems)
+                    foreach (var groundItem in groundItems!)
+                        groundItem.LockToAislings(lockSecs, rewardTargets);
+            }
 
             ExperienceDistributionScript.DistributeExperience(Subject, rewardTargets);
         }

@@ -89,13 +89,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnBeginChant(IWorldClient localClient, BeginChantArgs localArgs)
         {
-            if (localClient.Aisling.Status.HasFlag(Status.Dead))
-            {
-                localClient.SendCancelCasting();
-
-                return default;
-            }
-
             localClient.Aisling.UserState |= UserState.IsChanting;
             localClient.Aisling.ChantTimer.Start(localArgs.CastLineCount);
 
@@ -258,7 +251,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (localArgs.Name != redirect.Name)
             {
                 Logger
-                    .WithProperties(redirect, localArgs)
+                    .WithProperty(redirect)
+                    .WithProperty(localArgs)
                     .LogWarning(
                         "{@ClientIp} tried to impersonate a redirect with redirect {@RedirectId}",
                         localClient.RemoteIp.ToString(),
@@ -269,7 +263,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            Logger.WithProperties(localClient, redirect)
+            Logger.WithProperty(localClient)
+                  .WithProperty(redirect)
                   .LogDebug("Received world redirect {@RedirectId}", redirect.Id);
 
             var existingAisling = Aislings.FirstOrDefault(user => user.Name.EqualsI(redirect.Name));
@@ -277,7 +272,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             //double logon, disconnect both clients
             if (existingAisling != null)
             {
-                Logger.WithProperties(localClient, existingAisling)
+                Logger.WithProperty(localClient)
+                      .WithProperty(existingAisling)
                       .LogDebug("Duplicate login detected for aisling {@AislingName}, disconnecting both clients", existingAisling.Name);
 
                 existingAisling.Client.Disconnect();
@@ -336,7 +332,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             }
         } catch (Exception e)
         {
-            Logger.WithProperties(client, redirect)
+            Logger.WithProperty(client)
+                  .WithProperty(redirect)
                   .LogCritical(
                       e,
                       "Client with ip {ClientIp} failed to load aisling {@AislingName}",
@@ -379,7 +376,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 localClient.Aisling.DialogHistory.Clear();
 
-                Logger.WithProperties(localClient.Aisling, localArgs)
+                Logger.WithProperty(localClient.Aisling)
+                      .WithProperty(localArgs)
                       .LogWarning(
                           "Aisling {@AislingName} attempted to access a dialog, but there is no active dialog (possibly packeting)",
                           localClient.Aisling.Name);
@@ -848,7 +846,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             if (dialog == null)
             {
-                Logger.WithProperties(localClient.Aisling, localArgs)
+                Logger.WithProperty(localClient.Aisling)
+                      .WithProperty(localArgs)
                       .LogWarning(
                           "Aisling {@AislingName} attempted to access a dialog, but there is no active dialog (possibly packeting)",
                           localClient.Aisling.Name);
@@ -919,6 +918,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     {
         static ValueTask InnerOnSpacebar(IWorldClient localClient)
         {
+            localClient.SendCancelCasting();
+
             foreach (var skill in localClient.Aisling.SkillBook)
                 if (skill.Template.IsAssail)
                     localClient.Aisling.TryUseSkill(skill);
@@ -1218,7 +1219,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             //let them waste their time typing for no reason
             if (targetAisling.IgnoreList.ContainsI(fromAisling.Name))
             {
-                Logger.WithProperties(fromAisling, targetAisling)
+                Logger.WithProperty(fromAisling)
+                      .WithProperty(targetAisling)
                       .LogWarning(
                           "Aisling {@FromAislingName} sent whisper {@Message} to aisling {@TargetAislingName}, but they are being ignored (possibly harassment)",
                           fromAisling.Name,
@@ -1228,7 +1230,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            Logger.WithProperties(fromAisling, targetAisling)
+            Logger.WithProperty(fromAisling)
+                  .WithProperty(targetAisling)
                   .LogTrace(
                       "Aisling {@FromAislingName} sent whisper {@Message} to aisling {@TargetAislingName}",
                       fromAisling.Name,
@@ -1310,7 +1313,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             await action(client, args);
         } catch (Exception e)
         {
-            Logger.WithProperties(client, args!)
+            Logger.WithProperty(client)
+                  .WithProperty(args!)
                   .LogError(
                       e,
                       "{@ClientType} failed to execute inner handler with args type {@ArgsType}",

@@ -141,7 +141,8 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         {
             var stackTrace = new StackTrace(true).ToString();
 
-            Logger.WithProperty(client.Id, stackTrace)
+            Logger.WithProperty(client.Id)
+                  .WithProperty(stackTrace)
                   .LogError("Somehow, two clients got the same id");
 
             client.Disconnect();

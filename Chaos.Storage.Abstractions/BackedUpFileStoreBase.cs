@@ -108,6 +108,44 @@ public abstract class BackedUpFileStoreBase<T, TOptions> : BackgroundService, IB
     /// </summary>
     /// <param name="directory">The directory to lock</param>
     /// <param name="action">The action to perform</param>
+    protected virtual void SafeExecuteDirectoryAction(string directory, Action action)
+    {
+        SpinWait.SpinUntil(() => LockedFiles.Add(directory));
+
+        try
+        {
+            action();
+        } finally
+        {
+            LockedFiles.Remove(directory);
+        }
+    }
+
+    /// <summary>
+    ///     Executes the specified action on the specified directory, ensuring that no other actions are being performed on the
+    ///     directory
+    /// </summary>
+    /// <param name="directory">The directory to lock</param>
+    /// <param name="action">The action to perform</param>
+    protected virtual TResult SafeExecuteDirectoryAction<TResult>(string directory, Func<TResult> action)
+    {
+        SpinWait.SpinUntil(() => LockedFiles.Add(directory));
+
+        try
+        {
+            return action();
+        } finally
+        {
+            LockedFiles.Remove(directory);
+        }
+    }
+
+    /// <summary>
+    ///     Executes the specified action on the specified directory, ensuring that no other actions are being performed on the
+    ///     directory
+    /// </summary>
+    /// <param name="directory">The directory to lock</param>
+    /// <param name="action">The action to perform</param>
     protected virtual async Task SafeExecuteDirectoryActionAsync(string directory, Func<Task> action)
     {
         while (!LockedFiles.Add(directory))

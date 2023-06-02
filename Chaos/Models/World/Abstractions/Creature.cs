@@ -237,7 +237,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         MapInstance destinationMap,
         IPoint destinationPoint,
         bool ignoreSharding = false,
-        bool fromWolrdMap = false
+        bool fromWolrdMap = false,
+        Func<Task>? onTraverse = null
     ) =>
         //run a task that will await entrancy into the destination map
         //once synchronized, the creature will be added to the map
@@ -266,9 +267,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                         destinationMap.AddAislingDirect(aisling, destinationPoint);
                     else
                         destinationMap.AddObject(this, destinationPoint);
+
+                    if (onTraverse is not null)
+                        await onTraverse();
                 } catch (Exception e)
                 {
-                    Logger.WithProperties(this, currentMap, destinationMap)
+                    Logger.WithProperty(this)
+                          .WithProperty(currentMap)
+                          .WithProperty(destinationMap)
                           .LogCritical(
                               e,
                               "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
@@ -296,7 +302,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         foreach (var groundItem in groundItems)
         {
-            Logger.WithProperties(this, groundItem)
+            Logger.WithProperty(this)
+                  .WithProperty(groundItem)
                   .LogDebug(
                       "{@CreatureType} {@CreatureName} dropped item {@ItemName} at {@Location}",
                       GetType().Name,
@@ -329,7 +336,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         MapInstance.AddObject(money, point);
 
-        Logger.WithProperties(this, money)
+        Logger.WithProperty(this)
+              .WithProperty(money)
               .LogTrace(
                   "{@CreatureType} {@CreatureName} dropped {Amount} gold at {@Location}",
                   GetType().Name,

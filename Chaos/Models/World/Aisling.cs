@@ -553,7 +553,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         money = new Money(amount, MapInstance, point);
         MapInstance.AddObject(money, point);
 
-        Logger.WithProperties(this, money)
+        Logger.WithProperty(this)
+              .WithProperty(money)
               .LogDebug(
                   "Aisling {@AislingName} dropped {Amount} gold at {@Location}",
                   Name,
@@ -630,7 +631,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         if (TryGiveItem(item, destinationSlot))
         {
-            Logger.WithProperties(this, groundItem)
+            Logger.WithProperty(this)
+                  .WithProperty(groundItem)
                   .LogDebug(
                       "Aisling {@AislingName} picked up item {@ItemName} from {@Location}",
                       Name,
@@ -660,7 +662,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         if (TryGiveGold(money.Amount))
         {
-            Logger.WithProperties(this, money)
+            Logger.WithProperty(this)
+                  .WithProperty(money)
                   .LogDebug(
                       "Aisling {@AislingName} picked up {Amount} gold from {@Location}",
                       Name,

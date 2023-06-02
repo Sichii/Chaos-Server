@@ -14,6 +14,8 @@ public sealed class GuildRank
     /// </summary>
     public string Name { get; private set; }
 
+    public int Count => MemberNames.Count;
+
     /// <summary>
     ///     The tier of the rank. Lower is better
     /// </summary>

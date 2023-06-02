@@ -15,7 +15,7 @@ public sealed record SkillTemplateSchema : PanelEntityTemplateSchema
     public bool IsAssail { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />If set, these are the requirements for the skill to be learned
+    ///     Defaults to null<br />If set, these are the requirements for the skill to be learned<br />If null, the skill can't be learned
     /// </summary>
     public LearningRequirementsSchema? LearningRequirements { get; set; }
 }

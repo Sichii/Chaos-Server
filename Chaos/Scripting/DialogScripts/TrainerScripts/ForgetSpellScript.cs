@@ -45,7 +45,9 @@ public class ForgetSpellScript : DialogScriptBase
         }
 
         if (source.SpellBook.Remove(slot))
-            Logger.WithProperties(source, spell, Subject.DialogSource)
+            Logger.WithProperty(source)
+                  .WithProperty(spell)
+                  .WithProperty(Subject.DialogSource)
                   .LogDebug("Aisling {@AislingName} forgot spell {@SpellName}", source.Name, spell.Template.Name);
     }
 

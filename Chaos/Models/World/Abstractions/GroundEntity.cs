@@ -1,6 +1,8 @@
 using Chaos.Collections;
 using Chaos.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
+using Chaos.Services.Servers.Options;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 
@@ -24,11 +26,11 @@ public abstract class GroundEntity : NamedEntity
             sprite,
             mapInstance,
             point) =>
-        GroundTimer = new IntervalTimer(TimeSpan.FromHours(1), false);
+        GroundTimer = new IntervalTimer(TimeSpan.FromMinutes(WorldOptions.Instance.GroundItemDespawnTimeMins), false);
 
-    public virtual bool CanPickUp(Aisling source) => true;
+    public virtual bool CanPickUp(Aisling source) => Owners.IsNullOrEmpty() || source.IsAdmin || Owners!.Contains(source.Name);
 
-    public void LockToCreatures(int seconds, params Aisling[] aislings)
+    public void LockToAislings(int seconds, params Aisling[] aislings)
     {
         if (seconds <= 0)
             return;
@@ -70,7 +72,7 @@ public abstract class GroundEntity : NamedEntity
             Owners = null;
         }
 
-        //if the entity has been on the ground for over an hour, destroy it
+        //if the entity has been on the ground for longer than the configured time, destroy it
         if (GroundTimer.IntervalElapsed)
             MapInstance.RemoveObject(this);
     }

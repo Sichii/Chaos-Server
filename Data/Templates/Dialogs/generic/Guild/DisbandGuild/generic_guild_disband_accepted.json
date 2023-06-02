@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["guildDisband"],
+    "templateKey": "generic_guild_disband_accepted",
+    "text": "skip",
+    "type": "Normal",
+    "nextDialogKey": "top"
+}

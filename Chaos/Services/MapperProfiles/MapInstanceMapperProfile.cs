@@ -3,6 +3,7 @@ using Chaos.Models.Data;
 using Chaos.Models.Map;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
+using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
@@ -14,7 +15,8 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Services.MapperProfiles;
 
 public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>,
-                                               IMapperProfile<MapTemplate, MapTemplateSchema>
+                                               IMapperProfile<MapTemplate, MapTemplateSchema>,
+                                               IMapperProfile<MapInstance, MapInfoArgs>
 {
     private readonly IAsyncStore<Aisling> AislingStore;
     private readonly ILoggerFactory LoggerFactory;
@@ -74,6 +76,20 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
 
         return mapInstance;
     }
+
+    /// <inheritdoc />
+    public MapInstance Map(MapInfoArgs obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    MapInfoArgs IMapperProfile<MapInstance, MapInfoArgs>.Map(MapInstance obj) => new()
+    {
+        Name = obj.Name,
+        MapId = obj.Template.MapId,
+        Width = obj.Template.Width,
+        Height = obj.Template.Height,
+        CheckSum = obj.Template.CheckSum,
+        Flags = (byte)obj.Flags
+    };
 
     public MapInstanceSchema Map(MapInstance obj) => throw new NotImplementedException();
 

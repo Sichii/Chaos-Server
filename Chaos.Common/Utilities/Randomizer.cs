@@ -1,11 +1,10 @@
 using System.Diagnostics;
-using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 
 namespace Chaos.Common.Utilities;
 
 /// <summary>
-///     A Utility class for generating random numbers
+///     A Utility class for operations involving random numbers
 /// </summary>
 public static class Randomizer
 {
@@ -18,148 +17,62 @@ public static class Randomizer
     public static T PickRandom<T>(this IReadOnlyCollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
 
     /// <summary>
-    ///     Picks a random element from the specified collection, using the provided weights.
+    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are exhaustive.
     /// </summary>
-    /// <typeparam name="T">The type of the elements in the collection.</typeparam>
-    /// <param name="objs">The collection to pick a random element from.</param>
-    /// <param name="weights">The weights associated with each element in the collection.</param>
-    /// <returns>A random element from the specified collection, selected based on the provided weights.</returns>
-    /// <exception cref="ArgumentException">
-    ///     Thrown when the count of elements in <paramref name="objs" /> and <paramref name="weights" /> is not
-    ///     equal or when both collections are empty.
-    /// </exception>
-    public static T PickRandom<T>(this IEnumerable<T> objs, IEnumerable<decimal> weights)
+    /// <param name="weightedChoices">A collection of choices with their corresponding weights</param>
+    /// <typeparam name="T">The type of object to return</typeparam>
+    /// <returns>A random element from the specified collection</returns>
+    public static T PickRandomWeighted<T>(this ICollection<KeyValuePair<T, int>> weightedChoices)
     {
-        var localObjs = objs.ToArray();
-        var localWeights = weights.ToArray();
+        var totalWeight = weightedChoices.Sum(x => x.Value);
+        var randomWeight = Random.Shared.Next(0, totalWeight);
+        var accumulator = 0;
 
-        if (localObjs.Length != localWeights.Length)
-            throw new ArgumentException($"{nameof(objs)} and {nameof(weights)} must have the same count");
-
-        if (localObjs.Length == 0)
-            throw new ArgumentException("Arguments must contains more than 0 elements");
-
-        Array.Sort(localWeights, localObjs);
-
-        var accumulator = 0m;
-
-        foreach (ref var weight in localWeights.AsSpan())
+        foreach ((var choice, var weight) in weightedChoices)
         {
             accumulator += weight;
-            weight = accumulator;
-        }
 
-        var rand = Random.Shared.Next(0, accumulator);
-
-        for (var i = 0; i < localWeights.Length; i++)
-        {
-            var weight = localWeights[i];
-
-            if (rand < weight)
-                return localObjs[i];
+            if (accumulator > randomWeight)
+                return choice;
         }
 
         throw new UnreachableException("The loop that picks a random number should be exhaustive");
     }
 
     /// <summary>
-    ///     Randomly determins if a roll is successful or not.
+    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are exhaustive.
     /// </summary>
-    public static bool RollChance(int successChance) => RollSingle(100) <= successChance;
-
-    /// <summary>
-    ///     Generates 2 random numbers between 1 and <paramref name="maxPer" /> and adds them together. Inclusive on both ends.
-    /// </summary>
-    public static int RollDouble(int maxPer) => RollSingle(maxPer) + RollSingle(maxPer);
-
-    /// <summary>
-    ///     Generates a random number within the specified range, applying the given randomization type.
-    /// </summary>
-    /// <param name="baseValue">The base value of the range.</param>
-    /// <param name="variancePct">The percentage of variance allowed.</param>
-    /// <param name="randomizationType">The type of randomization to apply.</param>
-    /// <returns>A random number within the specified range, according to the randomization type.</returns>
-    public static int RollRange(int baseValue, int variancePct, RandomizationType randomizationType)
+    /// <param name="weightedChoices">A collection of choices with their corresponding weights</param>
+    /// <typeparam name="T">The type of object to return</typeparam>
+    /// <returns>A random element from the specified collection</returns>
+    public static T PickRandomWeighted<T>(this ICollection<KeyValuePair<T, decimal>> weightedChoices)
     {
-        var randomPct = Random.Shared.Next(0, variancePct);
-        decimal applicablePct;
+        var totalWeight = weightedChoices.Sum(x => x.Value);
+        var randomWeight = Random.Shared.Next(0, totalWeight);
+        var accumulator = 0.0m;
 
-        switch (randomizationType)
+        foreach ((var choice, var weight) in weightedChoices)
         {
-            case RandomizationType.Balanced:
-            {
-                var half = variancePct / 2;
+            accumulator += weight;
 
-                applicablePct = (randomPct - half) / 100m;
-
-                break;
-            }
-            case RandomizationType.Positive:
-            {
-                applicablePct = randomPct / 100m;
-
-                break;
-            }
-            case RandomizationType.Negative:
-            {
-                applicablePct = -(randomPct / 100m);
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
+            if (accumulator > randomWeight)
+                return choice;
         }
 
-        var amountToAdd = Convert.ToInt32(baseValue * applicablePct);
-
-        return baseValue + amountToAdd;
+        throw new UnreachableException("The loop that picks a random number should be exhaustive");
     }
 
     /// <summary>
-    ///     Generates a random number within the specified range, applying the given randomization type.
+    ///    Picks a random choice based on the weights.
+    /// The higher the weight, the more likely it is to be picked.
+    /// Chances are exhaustive.
     /// </summary>
-    /// <param name="baseValue">The base value of the range.</param>
-    /// <param name="variancePct">The percentage of variance allowed.</param>
-    /// <param name="randomizationType">The type of randomization to apply.</param>
-    /// <returns>A random number within the specified range, according to the randomization type.</returns>
-    public static long RollRange(long baseValue, int variancePct, RandomizationType randomizationType)
-    {
-        var randomPct = Random.Shared.Next(0, variancePct);
-        decimal applicablePct;
-
-        switch (randomizationType)
-        {
-            case RandomizationType.Balanced:
-            {
-                var half = variancePct / 2;
-
-                applicablePct = (randomPct - half) / 100m;
-
-                break;
-            }
-            case RandomizationType.Positive:
-            {
-                applicablePct = randomPct / 100m;
-
-                break;
-            }
-            case RandomizationType.Negative:
-            {
-                applicablePct = -(randomPct / 100m);
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        var amountToAdd = Convert.ToInt64(baseValue * applicablePct);
-
-        return baseValue + amountToAdd;
-    }
-
-    /// <summary>
-    ///     Generates a random number between 1 and <paramref name="max" />. Inclusive on both ends.
-    /// </summary>
-    public static int RollSingle(int max) => Random.Shared.Next(1, max + 1);
+    /// <param name="choices">The choices to choose from</param>
+    /// <param name="weights">The weights of those choices</param>
+    /// <typeparam name="T">The type of object to return</typeparam>
+    /// <returns>A random element from the given choices</returns>
+    public static T PickRandomWeighted<T>(this IEnumerable<T> choices, IEnumerable<int> weights) =>
+        choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
+               .ToList()
+               .PickRandomWeighted();
 }

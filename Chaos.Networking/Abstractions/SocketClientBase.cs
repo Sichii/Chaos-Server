@@ -190,7 +190,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                 {
                     var buffer = BitConverter.ToString(MemoryBuffer.Span.ToArray()).Replace("-", string.Empty);
 
-                    Logger.WithProperties(this, buffer)
+                    Logger.WithProperty(this)
+                          .WithProperty(buffer)
                           .LogCritical(ex, "Exception while handling a packet for {@ClientType}", GetType().Name);
                 }
 

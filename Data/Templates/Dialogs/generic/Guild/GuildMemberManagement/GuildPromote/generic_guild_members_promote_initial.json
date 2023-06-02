@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["guildMemberPromote"],
+    "templateKey": "generic_guild_members_promote_initial",
+    "text": "Who would you like to promote?",
+    "type": "MenuTextEntry",
+    "nextDialogKey": "generic_guild_members_promote_confirmation"
+}

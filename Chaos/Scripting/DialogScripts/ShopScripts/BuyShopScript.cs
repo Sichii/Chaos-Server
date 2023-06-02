@@ -91,7 +91,9 @@ public class BuyShopScript : DialogScriptBase
         switch (buyItemResult)
         {
             case ComplexActionHelper.BuyItemResult.Success:
-                Logger.WithProperties(source, item, BuyShopSource)
+                Logger.WithProperty(source)
+                      .WithProperty(item)
+                      .WithProperty(BuyShopSource)
                       .LogDebug(
                           "Aisling {@AislingName} bought {ItemAmount} {@ItemName} from merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,

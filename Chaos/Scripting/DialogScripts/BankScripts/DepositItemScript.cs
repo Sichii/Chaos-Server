@@ -82,7 +82,9 @@ public class DepositItemScript : DialogScriptBase
         switch (depositItemResult)
         {
             case ComplexActionHelper.DepositItemResult.Success:
-                Logger.WithProperties(source, item, Subject.DialogSource)
+                Logger.WithProperty(source)
+                      .WithProperty(item)
+                      .WithProperty(Subject.DialogSource)
                       .LogDebug(
                           "Aisling {@AislingName} deposited {Amount} {@ItemName} in the bank",
                           source.Name,

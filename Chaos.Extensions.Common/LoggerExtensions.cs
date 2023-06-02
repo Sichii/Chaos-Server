@@ -10,67 +10,6 @@ namespace Chaos.Extensions.Common;
 public static class LoggerExtensions
 {
     /// <summary>
-    ///     Adds multiple properties to the log event.
-    /// </summary>
-    /// <param name="logger">The logger to add the property to</param>
-    /// <param name="value1">The value of the first property</param>
-    /// <param name="name1">
-    ///     The name of the first property (this will be auto populated to the variable name you pass in if you
-    ///     leave it blank
-    /// </param>
-    /// <param name="value2">The value of the second property</param>
-    /// <param name="name2">
-    ///     The name of the second property (this will be auto populated to the variable name you pass in if
-    ///     you leave it blank
-    /// </param>
-    public static ILogger WithProperties(
-        this ILogger logger,
-        object value1,
-        object value2,
-        [CallerArgumentExpression(nameof(value1))]
-        string name1 = "",
-        [CallerArgumentExpression(nameof(value2))]
-        string name2 = ""
-    ) =>
-        logger.WithProperty(value1, name1)
-              .WithProperty(value2, name2);
-
-    /// <summary>
-    ///     Adds multiple properties to the log event.
-    /// </summary>
-    /// <param name="logger">The logger to add the property to</param>
-    /// <param name="value1">The value of the first property</param>
-    /// <param name="name1">
-    ///     The name of the first property (this will be auto populated to the variable name you pass in if you
-    ///     leave it blank
-    /// </param>
-    /// <param name="value2">The value of the second property</param>
-    /// <param name="name2">
-    ///     The name of the second property (this will be auto populated to the variable name you pass in if
-    ///     you leave it blank
-    /// </param>
-    /// <param name="value3">The value of the third property</param>
-    /// <param name="name3">
-    ///     The name of the third property (this will be auto populated to the variable name you pass in if you
-    ///     leave it blank
-    /// </param>
-    public static ILogger WithProperties(
-        this ILogger logger,
-        object value1,
-        object value2,
-        object value3,
-        [CallerArgumentExpression(nameof(value1))]
-        string name1 = "",
-        [CallerArgumentExpression(nameof(value2))]
-        string name2 = "",
-        [CallerArgumentExpression(nameof(value3))]
-        string name3 = ""
-    ) =>
-        logger.WithProperty(value1, name1)
-              .WithProperty(value2, name2)
-              .WithProperty(value3, name3);
-
-    /// <summary>
     ///     Adds a property to the log event.
     /// </summary>
     /// <param name="logger">The logger to add the property to</param>

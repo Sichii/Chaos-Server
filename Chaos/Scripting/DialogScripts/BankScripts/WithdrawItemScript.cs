@@ -82,7 +82,9 @@ public class WithdrawItemScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawItemResult.Success:
-                Logger.WithProperties(source, item, Subject.DialogSource)
+                Logger.WithProperty(source)
+                      .WithProperty(item)
+                      .WithProperty(Subject.DialogSource)
                       .LogDebug(
                           "Aisling {@AislingName} withdrew {Amount} {@ItemName} from the bank",
                           source.Name,

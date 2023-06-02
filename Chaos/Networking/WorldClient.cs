@@ -100,15 +100,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendAnimation(Animation animation)
     {
-        var args = new AnimationArgs
-        {
-            AnimationSpeed = animation.AnimationSpeed,
-            SourceAnimation = animation.SourceAnimation,
-            SourceId = animation.SourceId,
-            TargetAnimation = animation.TargetAnimation,
-            TargetId = animation.TargetId,
-            TargetPoint = animation.TargetPoint
-        };
+        var args = Mapper.Map<AnimationArgs>(animation);
 
         Send(args);
     }
@@ -393,7 +385,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         var args = new HealthBarArgs
         {
             SourceId = creature.Id,
-            HealthPercent = (byte)Math.Clamp(creature.StatSheet.HealthPercent, 0, 100),
+            HealthPercent = (byte)creature.StatSheet.HealthPercent,
             Sound = sound
         };
 
@@ -462,18 +454,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendMapInfo()
     {
-        var instance = Aisling.MapInstance;
-        var mapTemplate = instance.Template;
-
-        var args = new MapInfoArgs
-        {
-            Name = instance.Name,
-            MapId = mapTemplate.MapId,
-            Width = mapTemplate.Width,
-            Height = mapTemplate.Height,
-            CheckSum = mapTemplate.CheckSum,
-            Flags = (byte)instance.Flags
-        };
+        var args = Mapper.Map<MapInfoArgs>(Aisling.MapInstance);
 
         Send(args);
     }
@@ -659,6 +640,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendVisibleEntities(IEnumerable<VisibleEntity> objects)
     {
+        //split this into chunks so as not to crash the client
         foreach (var chunk in objects.OrderBy(o => o.Creation).Chunk(5000))
         {
             var args = new DisplayVisibleEntitiesArgs();

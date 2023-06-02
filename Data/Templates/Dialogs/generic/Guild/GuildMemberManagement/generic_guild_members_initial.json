@@ -1,0 +1,6 @@
+{
+    "scriptKeys": ["guildMemberManagement"],
+    "templateKey": "generic_guild_members_initial",
+    "text": "What would you like to do?",
+    "type": "Menu"
+}

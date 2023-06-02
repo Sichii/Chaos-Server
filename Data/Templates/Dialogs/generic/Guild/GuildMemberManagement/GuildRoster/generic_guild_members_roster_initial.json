@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["guildMemberRoster"],
+    "templateKey": "generic_guild_members_roster_initial",
+    "text": "skip",
+    "type": "Normal",
+    "nextDialogKey": "close"
+}

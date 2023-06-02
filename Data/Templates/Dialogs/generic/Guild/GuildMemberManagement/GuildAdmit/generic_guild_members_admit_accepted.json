@@ -1,0 +1,8 @@
+{
+    "scriptKeys": ["guildMemberAdmit"],
+    "templateKey": "generic_guild_members_admit_accepted",
+    "text": "skip",
+    "type": "Normal",
+    "nextDialogKey": "generic_guild_members_initial",
+    "contextual": true
+}

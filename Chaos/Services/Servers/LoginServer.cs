@@ -76,21 +76,24 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             if (reservedRedirect != null)
             {
-                Logger.WithProperties(localClient, reservedRedirect)
+                Logger.WithProperty(localClient)
+                      .WithProperty(reservedRedirect)
                       .LogDebug("Received external redirect {@RedirectID}", reservedRedirect.Id);
 
                 localClient.Crypto = new Crypto(localArgs.Seed, localArgs.Key, string.Empty);
                 localClient.SendLoginNotice(false, Notice);
             } else if (RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
-                Logger.WithProperties(localClient, redirect)
+                Logger.WithProperty(localClient)
+                      .WithProperty(redirect)
                       .LogDebug("Received internal redirect {@RedirectId}", redirect.Id);
 
                 localClient.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
                 localClient.SendLoginNotice(false, Notice);
             } else
             {
-                Logger.WithProperties(localClient, localArgs)
+                Logger.WithProperty(localClient)
+                      .WithProperty(localArgs)
                       .LogWarning("{@ClientIp} tried to redirect with invalid redirect details", localClient.RemoteIp.ToString());
 
                 localClient.Disconnect();
@@ -187,7 +190,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             if (!result.Success)
             {
-                Logger.WithProperty(localClient, password)
+                Logger.WithProperty(localClient)
+                      .WithProperty(password)
                       .LogDebug("Failed to validate credentials for {@Name} for reason {@Reason}", name, result.FailureMessage);
 
                 localClient.SendLoginMessage(LoginMessageType.WrongPassword, result.FailureMessage);

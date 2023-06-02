@@ -72,10 +72,9 @@ public class MetaDataStore : IMetaDataStore
         Logger.LogTrace("Generating ability metadata...");
 
         var skillTemplateCache = CacheProvider.GetCache<SkillTemplate>();
-        skillTemplateCache.ForceLoad();
-
         var spellTemplateCache = CacheProvider.GetCache<SpellTemplate>();
-        spellTemplateCache.ForceLoad();
+
+        Parallel.Invoke(skillTemplateCache.ForceLoad, spellTemplateCache.ForceLoad);
 
         var masterAbilityMetaData = new AbilityMetaNodeCollection();
 

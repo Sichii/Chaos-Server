@@ -34,7 +34,8 @@ public class DepositGoldScript : DialogScriptBase
         switch (depositResult)
         {
             case ComplexActionHelper.DepositGoldResult.Success:
-                Logger.WithProperties(source, Subject.DialogSource)
+                Logger.WithProperty(source)
+                      .WithProperty(Subject.DialogSource)
                       .LogDebug(
                           "Aisling {@AislingName} deposited {Amount} gold in the bank",
                           source.Name,

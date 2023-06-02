@@ -112,7 +112,9 @@ public sealed class Exchange
             aisling.Inventory.Remove(slot);
             userItems.TryAddToNextSlot(item);
 
-            Logger.WithProperties(aisling, item, this)
+            Logger.WithProperty(aisling)
+                  .WithProperty(item)
+                  .WithProperty(this)
                   .LogDebug(
                       "Aisling {@AislingName} added item {@ItemName} to exchange {@ExchangeId}",
                       aisling.Name,
@@ -164,7 +166,9 @@ public sealed class Exchange
         {
             userItems.TryAddToNextSlot(removedItem);
 
-            Logger.WithProperties(aisling, removedItem, this)
+            Logger.WithProperty(aisling)
+                  .WithProperty(removedItem)
+                  .WithProperty(this)
                   .LogDebug(
                       "Aisling {@AislingName} added item {@ItemName} to exchange {@ExchangeId}",
                       aisling.Name,
@@ -190,7 +194,8 @@ public sealed class Exchange
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
 
-        Logger.WithProperties(aisling, this)
+        Logger.WithProperty(aisling)
+              .WithProperty(this)
               .LogDebug("Exchange {@ExchangeId} was canceled by aisling {@AislingName}", ExchangeId, aisling.Name);
 
         Deactivate();
@@ -208,7 +213,8 @@ public sealed class Exchange
     {
         aisling.TryGiveGold(gold);
 
-        Logger.WithProperties(aisling, this)
+        Logger.WithProperty(aisling)
+              .WithProperty(this)
               .LogDebug(
                   "Exchange {@ExchangeId} distributed {Amount} gold to {@AislingName}",
                   ExchangeId,
@@ -220,14 +226,18 @@ public sealed class Exchange
             items.Remove(item.Slot);
 
             if (aisling.Inventory.TryAddToNextSlot(item))
-                Logger.WithProperties(aisling, item, this)
+                Logger.WithProperty(aisling)
+                      .WithProperty(item)
+                      .WithProperty(this)
                       .LogDebug(
                           "Exchange {@ExchangeId} distributed item {@ItemName} to {@AislingName}",
                           ExchangeId,
                           item.DisplayName,
                           aisling.Name);
             else
-                Logger.WithProperties(aisling, item, this)
+                Logger.WithProperty(aisling)
+                      .WithProperty(item)
+                      .WithProperty(this)
                       .LogCritical("Exchange {@ExchangeId} failed to distribute item {@ItemName}", ExchangeId, item.DisplayName);
         }
     }
@@ -256,7 +266,8 @@ public sealed class Exchange
         {
             SetUserGold(aisling, amount);
 
-            Logger.WithProperties(aisling, this)
+            Logger.WithProperty(aisling)
+                  .WithProperty(this)
                   .LogDebug(
                       "Aisling {@AislingName} set their gold amount to {GoldAmount} for exchange {@ExchangeId}",
                       aisling.Name,

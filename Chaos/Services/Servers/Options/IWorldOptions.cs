@@ -30,6 +30,11 @@ public interface IWorldOptions
     ///     This is the template key of the merchant to display when a player presses F1. This is generally some kind of help npc
     /// </summary>
     string F1MerchantTemplateKey { get; }
+    /// <summary>
+    ///     The number of minutes that ground items will remain on the ground before despawning. This includes items dropped by
+    ///     players for any reason
+    /// </summary>
+    int GroundItemDespawnTimeMins { get; }
 
     /// <summary>
     ///     When whispering a target name in the client, this is the name that will redirect to group chat
@@ -50,6 +55,10 @@ public interface IWorldOptions
     ///     The default message color used for guild chat
     /// </summary>
     MessageColor GuildMessageColor { get; }
+    /// <summary>
+    /// Default null.<br />If specified, locks loot drops to the reward target for this many seconds.<br />If null, loot drops are not locked to the reward target.
+    /// </summary>
+    int? LootDropsLockToRewardTargetSecs { get; }
     /// <summary>
     ///     It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could become a huge
     ///     burden on the server. This value is used to control the maximum number of actions a player can take in a second. An action is defined

@@ -1,0 +1,7 @@
+{
+    "scriptKeys": ["guildMemberDemote"],
+    "templateKey": "generic_guild_members_demote_initial",
+    "text": "Who would you like to demote?",
+    "type": "MenuTextEntry",
+    "nextDialogKey": "generic_guild_members_demote_confirmation"
+}

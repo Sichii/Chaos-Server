@@ -12,21 +12,24 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public required ChannelSettings[] DefaultChannels { get; set; } = Array.Empty<ChannelSettings>();
     /// <inheritdoc />
     public required int DropRange { get; init; }
-
     /// <inheritdoc />
     public required string F1MerchantTemplateKey { get; init; }
     /// <inheritdoc />
+    public required int GroundItemDespawnTimeMins { get; init; }
+    /// <inheritdoc />
     public required string GroupChatName { get; init; }
     /// <inheritdoc />
-    public MessageColor GroupMessageColor { get; init; }
+    public required MessageColor GroupMessageColor { get; init; }
     /// <inheritdoc />
     public required string GuildChatName { get; init; }
     /// <inheritdoc />
-    public MessageColor GuildMessageColor { get; init; }
+    public required MessageColor GuildMessageColor { get; init; }
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
     public static IWorldOptions Instance { get; set; } = null!;
     public required ConnectionInfo LoginRedirect { get; init; }
+    /// <inheritdoc />
+    public int? LootDropsLockToRewardTargetSecs { get; init; }
     /// <inheritdoc />
     public required int MaxActionsPerSecond { get; init; }
     /// <inheritdoc />
@@ -40,13 +43,13 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     /// <inheritdoc />
     public required int MaximumMonsterAc { get; init; }
     /// <inheritdoc />
-    public int MaxItemsPerSecond { get; init; }
+    public required int MaxItemsPerSecond { get; init; }
     /// <inheritdoc />
     public required int MaxLevel { get; init; }
     /// <inheritdoc />
-    public int MaxSkillsPerSecond { get; init; }
+    public required int MaxSkillsPerSecond { get; init; }
     /// <inheritdoc />
-    public int MaxSpellsPerSecond { get; init; }
+    public required int MaxSpellsPerSecond { get; init; }
     /// <inheritdoc />
     public required int MinimumAislingAc { get; init; }
     /// <inheritdoc />

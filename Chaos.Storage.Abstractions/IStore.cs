@@ -10,6 +10,7 @@ public interface IStore<T>
     ///     Checks if an object with the specified key exists, whether it is loaded or not
     /// </summary>
     /// <param name="key">The key to check</param>
+    /// <returns><c>true</c> if the key was found, otherwise <c>false</c></returns>
     bool Exists(string key);
 
     /// <summary>
@@ -17,6 +18,13 @@ public interface IStore<T>
     /// </summary>
     /// <param name="key">A key that is unique to the object to be loaded</param>
     T Load(string key);
+
+    /// <summary>
+    ///     Removes an object from the store
+    /// </summary>
+    /// <param name="key">The key of the object to remove</param>
+    /// <returns><c>true</c> if the key was found and removed, otherwise <c>false</c></returns>
+    bool Remove(string key);
 
     /// <summary>
     ///     Saves an object

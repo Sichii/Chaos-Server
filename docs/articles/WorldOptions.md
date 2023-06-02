@@ -54,6 +54,16 @@ collection and JIT recompilation/OSR.
 
 This is the template key of the merchant to display when a player presses F1. This is generally some kind of help npc
 
+### LootDropsLockToRewardTargetSecs
+
+This is the amount of time in seconds that loot drops will be locked to the reward target(s) of those loot drops. If
+this value is not specified, loot drops will not lock at all.
+
+### GroundItemDespawnTimeMins
+
+This is the amount of time in minutes that ground items will remain on the ground before despawning. This applies to all
+ground items, including items dropped by players.
+
 ## Channel Settings
 
 ---

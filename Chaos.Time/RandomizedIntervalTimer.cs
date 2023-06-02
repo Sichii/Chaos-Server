@@ -65,7 +65,7 @@ public class RandomizedIntervalTimer : IntervalTimer
     protected void SetRandomizedInterval()
     {
         var ticks = Interval.Ticks;
-        var randomizedTicks = Randomizer.RollRange(ticks, MaxRandomizationPct, Type);
+        var randomizedTicks = IntegerRandomizer.RollRange(ticks, MaxRandomizationPct, Type);
 
         RandomizedInterval = new TimeSpan(randomizedTicks);
     }

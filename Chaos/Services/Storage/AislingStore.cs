@@ -130,6 +130,10 @@ public sealed class AislingStore : BackedUpFileStoreBase<Aisling, AislingStoreOp
         return aisling;
     }
 
+    /// <inheritdoc />
+    public Task RemoveAsync(string key) =>
+        throw new NotImplementedException("This would effectively delete the character. This is reserved for manual operations");
+
     public async Task SaveAsync(Aisling aisling)
     {
         Logger.WithProperty(aisling)

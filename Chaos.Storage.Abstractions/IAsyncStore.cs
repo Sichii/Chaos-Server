@@ -13,14 +13,20 @@ public interface IAsyncStore<T>
     Task<bool> ExistsAsync(string key);
 
     /// <summary>
-    ///     Loads an object with the specified key
+    ///     Asynchronously loads an object with the specified key
     /// </summary>
     /// <param name="key">A key that is unique to the object to be loaded</param>
-    /// <returns>A task that returns the object</returns>
     Task<T> LoadAsync(string key);
 
     /// <summary>
-    ///     Saves an object
+    ///     Asynchronously removes an object from the store
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    Task RemoveAsync(string key);
+
+    /// <summary>
+    ///     Asynchronously saves an object to the store
     /// </summary>
     /// <param name="obj">The object to be saved</param>
     Task SaveAsync(T obj);

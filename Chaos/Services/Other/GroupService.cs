@@ -121,7 +121,8 @@ public sealed class GroupService : IGroupService
         //if the target is ignoring the sender, log a warning
         //dont return here, let things play out, there should be another check to prevent sending an invite
         if (receiver.IgnoreList.Contains(sender.Name))
-            Logger.WithProperties(sender, receiver)
+            Logger.WithProperty(sender)
+                  .WithProperty(receiver)
                   .LogWarning(
                       "Aisling {@FromAisling} attempted to send a group invite to aisling {@TargetAisling}, but that player is ignoring them. (potential harassment)",
                       sender.Name,

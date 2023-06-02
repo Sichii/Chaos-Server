@@ -10,7 +10,7 @@ namespace Chaos.Extensions.Common;
 public static class RandomExtensions
 {
     /// <summary>
-    /// Returns a random number between 0 and the number's max value
+    /// Returns a random number between 0 and the number's max value (1 for floating point types and decimals)
     /// </summary>
     public static T Next<T>(this Random random) where T: INumber<T>
     {

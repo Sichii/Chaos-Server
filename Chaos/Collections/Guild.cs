@@ -46,7 +46,7 @@ public sealed class Guild : IDedicatedChannel
             ServerMessageType.GuildChat);
     }
 
-    public void AddMember(Aisling aisling)
+    public void AddMember(Aisling aisling, Aisling by)
     {
         ArgumentNullException.ThrowIfNull(aisling);
 
@@ -68,6 +68,9 @@ public sealed class Guild : IDedicatedChannel
         aisling.GuildRank = lowestRank.Name;
         JoinChannel(aisling);
         aisling.Client.SendSelfProfile();
+
+        foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
+            member.SendActiveMessage($"{aisling.Name} has been admitted to the guild by {by.Name}");
     }
 
     public void Associate(Aisling aisling)
@@ -87,7 +90,7 @@ public sealed class Guild : IDedicatedChannel
         JoinChannel(aisling);
     }
 
-    public void ChangeRank(Aisling aisling, int newTier)
+    public void ChangeRank(Aisling aisling, int newTier, Aisling by)
     {
         using var @lock = Sync.Enter();
 
@@ -109,6 +112,13 @@ public sealed class Guild : IDedicatedChannel
         newRank.AddMember(aisling.Name);
         aisling.GuildRank = newRank.Name;
         aisling.Client.SendSelfProfile();
+
+        if (newRank.Tier < currentRank.Tier)
+            foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
+                member.SendActiveMessage($"{aisling.Name} has been promoted to {newRank.Name} by {by.Name}");
+        else
+            foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
+                member.SendActiveMessage($"{aisling.Name} has been demoted to {newRank.Name} by {by.Name}");
     }
 
     public void Disband()
@@ -117,7 +127,10 @@ public sealed class Guild : IDedicatedChannel
 
         foreach (var aisling in GetOnlineMembers())
         {
+            LeaveChannel(aisling);
             aisling.Guild = null;
+            aisling.GuildRank = null;
+            aisling.Client.SendSelfProfile();
             aisling.SendActiveMessage($"{Name} has been disbanded");
         }
 
@@ -145,6 +158,13 @@ public sealed class Guild : IDedicatedChannel
         return onlineMembers;
     }
 
+    public ICollection<GuildRank> GetRanks()
+    {
+        using var @lock = Sync.Enter();
+
+        return GuildHierarchy.Select(x => new GuildRank(x.Name, x.Tier, x.GetMemberNames().ToList())).ToList();
+    }
+
     public bool HasMember(string memberName)
     {
         using var @lock = Sync.Enter();
@@ -163,41 +183,76 @@ public sealed class Guild : IDedicatedChannel
     /// <inheritdoc />
     public void JoinChannel(IChannelSubscriber subscriber) => ChannelService.JoinChannel(subscriber, ChannelName, true);
 
+    public bool KickMember(string memberName, Aisling by)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(memberName);
+
+        using var @lock = Sync.Enter();
+
+        var rank = GuildHierarchy.FirstOrDefault(x => x.HasMember(memberName));
+
+        //leaders can not be removed
+        if (rank is null or { Tier: 0 })
+            return false;
+
+        rank.RemoveMember(memberName);
+        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(memberName))?.Aisling;
+
+        if (aisling is not null)
+        {
+            LeaveChannel(aisling);
+            aisling.Guild = null;
+            aisling.GuildRank = null;
+            aisling.Client.SendSelfProfile();
+        }
+
+        foreach (var member in GetOnlineMembers())
+            member.SendActiveMessage($"{memberName} has been kicked from the guild by {by}");
+
+        return true;
+    }
+
+    public bool Leave(Aisling aisling)
+    {
+        ArgumentNullException.ThrowIfNull(aisling);
+
+        using var @lock = Sync.Enter();
+
+        var memberName = aisling.Name;
+        var rank = GuildHierarchy.FirstOrDefault(x => x.HasMember(memberName));
+
+        //leaders can only leave if there's another leader
+        if (rank is null or { Tier: 0, Count: <= 1 })
+            return false;
+
+        rank.RemoveMember(memberName);
+
+        LeaveChannel(aisling);
+        aisling.Guild = null;
+        aisling.GuildRank = null;
+        aisling.Client.SendSelfProfile();
+
+        aisling.SendActiveMessage($"You have left {Name}");
+
+        foreach (var member in GetOnlineMembers())
+            member.SendActiveMessage($"{memberName} has left the guild");
+
+        return true;
+    }
+
     /// <inheritdoc />
     public void LeaveChannel(IChannelSubscriber subscriber) => ChannelService.LeaveChannel(subscriber, ChannelName);
 
-    public GuildRank? RankOf(string name)
+    public GuildRank RankOf(string name)
     {
         using var @lock = Sync.Enter();
 
         var ret = GuildHierarchy.FirstOrDefault(rank => rank.HasMember(name));
 
         if (ret is null)
-            return null;
+            throw new InvalidOperationException("Attempted to get rank of a member that is not in the guild.");
 
         return new GuildRank(ret.Name, ret.Tier, ret.GetMemberNames().ToList());
-    }
-
-    public void RemoveMember(string memberName)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(memberName);
-
-        using var @lock = Sync.Enter();
-
-        foreach (var rank in GuildHierarchy)
-            if (rank.RemoveMember(memberName))
-            {
-                var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(memberName))?.Aisling;
-
-                if (aisling is not null)
-                {
-                    LeaveChannel(aisling);
-                    aisling.Guild = null;
-                    aisling.Client.SendSelfProfile();
-                }
-
-                break;
-            }
     }
 
     public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);

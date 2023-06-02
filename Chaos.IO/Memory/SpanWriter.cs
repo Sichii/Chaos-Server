@@ -212,21 +212,27 @@ public ref struct SpanWriter
     /// <summary>
     ///     Writes a byte array with a prepended 16-bit length to the buffer.
     /// </summary>
-    /// <param name="value">The byte array to write.</param>
-    public void WriteData16(byte[] value)
+    /// <param name="buffer">The byte array to write.</param>
+    public void WriteData16(byte[] buffer)
     {
-        WriteUInt16((ushort)value.Length);
-        WriteData(value);
+        if (buffer.Length > ushort.MaxValue)
+            buffer = buffer[..ushort.MaxValue];
+
+        WriteUInt16((ushort)buffer.Length);
+        WriteData(buffer);
     }
 
     /// <summary>
     ///     Writes a byte array with a prepended 8-bit length to the buffer.
     /// </summary>
-    /// <param name="value">The byte array to write.</param>
-    public void WriteData8(byte[] value)
+    /// <param name="buffer">The byte array to write.</param>
+    public void WriteData8(byte[] buffer)
     {
-        WriteByte((byte)value.Length);
-        WriteData(value);
+        if (buffer.Length > byte.MaxValue)
+            buffer = buffer[..byte.MaxValue];
+
+        WriteByte((byte)buffer.Length);
+        WriteData(buffer);
     }
 
     /// <summary>
@@ -313,7 +319,10 @@ public ref struct SpanWriter
     /// <param name="value">The string to write.</param>
     public void WriteString16(string value)
     {
-        var buffer = Encoding.GetBytes(value);
+        var buffer = Encoding.GetBytes(value).AsSpan();
+
+        if (buffer.Length > ushort.MaxValue)
+            buffer = buffer[..ushort.MaxValue];
 
         WriteUInt16((ushort)buffer.Length);
         InnerWriteString(buffer);
@@ -325,7 +334,10 @@ public ref struct SpanWriter
     /// <param name="value">The string to write.</param>
     public void WriteString8(string value)
     {
-        var buffer = Encoding.GetBytes(value);
+        var buffer = Encoding.GetBytes(value).AsSpan();
+
+        if (buffer.Length > byte.MaxValue)
+            buffer = buffer[..byte.MaxValue];
 
         WriteByte((byte)buffer.Length);
         InnerWriteString(buffer);

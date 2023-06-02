@@ -40,9 +40,6 @@ public sealed class GroundItem : GroundEntity, IDialogSourceEntity
             obj.Client.SendAnimation(targetedAnimation);
     }
 
-    /// <inheritdoc />
-    public override bool CanPickUp(Aisling source) => source.IsAdmin || (Owners?.Contains(source.Name) != false);
-
     public override void OnClicked(Aisling source)
     {
         //nothing

@@ -143,7 +143,7 @@ public static class ServiceProviderExtensions
 
         await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
             TimeSpan.FromSeconds(5),
-            TimeSpan.FromMilliseconds(10),
+            TimeSpan.FromMilliseconds(50),
             newMaps.Values.Select(m => m.Sync).ToArray());
 
         foreach (var oldMap in oldMaps.Values)
@@ -205,7 +205,8 @@ public static class ServiceProviderExtensions
                     merchantsToAdd.Add(newMerchant);
                 } catch (Exception e)
                 {
-                    logger.WithProperties(merchant, mapInstance)
+                    logger.WithProperty(merchant)
+                          .WithProperty(mapInstance)
                           .LogError(
                               e,
                               "Failed to migrate merchant {@MerchantTemplateKey} on map {@MapInstanceId} during reload",
@@ -251,7 +252,8 @@ public static class ServiceProviderExtensions
                     monstersToAdd.Add(newMonster);
                 } catch (Exception e)
                 {
-                    logger.WithProperties(monster, mapInstance)
+                    logger.WithProperty(monster)
+                          .WithProperty(mapInstance)
                           .LogError(
                               e,
                               "Failed to migrate monster {@MonsterTemplateKey} on map {@MapInstanceId} during reload",
