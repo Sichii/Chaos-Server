@@ -79,5 +79,9 @@ public static class PolygonExtensions
             foreach (var point in current.RayTraceTo(next).SkipLast(1))
                 yield return point;
         }
+
+        //include the last point
+        foreach (var point in vertices[^1].RayTraceTo(vertices[0]).SkipLast(1))
+            yield return point;
     }
 }

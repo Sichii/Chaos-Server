@@ -7,9 +7,9 @@ namespace Chaos.Scripting.EffectScripts.HideEffects;
 public class GmHideEffect : EffectBase
 {
     /// <inheritdoc />
-    public override byte Icon { get; } = 131;
+    public override byte Icon => 131;
     /// <inheritdoc />
-    public override string Name { get; } = "Gm Hide";
+    public override string Name => "Gm Hide";
     /// <inheritdoc />
     protected override TimeSpan Duration { get; } = TimeSpan.FromDays(100);
 

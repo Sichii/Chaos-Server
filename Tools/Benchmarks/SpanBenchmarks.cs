@@ -10,7 +10,6 @@ public class SpanBenchmarks
 {
     public short Int16 = 1;
     public int Int32 = 2;
-    public int Index { get; set; }
     public Memory<byte> Memory { get; }
 
     public SpanBenchmarks()
@@ -23,19 +22,22 @@ public class SpanBenchmarks
     public void Int16Assignment()
     {
         var span = Memory.Span;
-        span[Index++] = (byte)(Int16 >> 8);
-        span[Index++] = (byte)Int16;
+        var index = 0;
+
+        span[index++] = (byte)(Int16 >> 8);
+        span[index] = (byte)Int16;
     }
 
     [Benchmark, BenchmarkCategory("Int16", "Assignment", "Fill")]
     public void Int16AssignmentFill()
     {
         var span = Memory.Span;
+        var index = 0;
 
-        for (; Index < 16;)
+        for (; index < 16;)
         {
-            span[Index++] = (byte)(Int16 >> 8);
-            span[Index++] = (byte)Int16;
+            span[index++] = (byte)(Int16 >> 8);
+            span[index++] = (byte)Int16;
         }
     }
 
@@ -49,35 +51,36 @@ public class SpanBenchmarks
     [Benchmark, BenchmarkCategory("Int16", "Marshal", "Fill")]
     public void Int16MarshalFill()
     {
-        for (; Index < 16;)
-        {
-            var span = Memory[Index..].Span;
-            MemoryMarshal.Write(span, ref Int16);
-            Index += 2;
-        }
+        var buffer = Memory.Span;
+
+        for (var index = 0; index < 16; index += 2)
+            MemoryMarshal.Write(buffer[index..], ref Int16);
     }
 
     [Benchmark, BenchmarkCategory("Int32", "Assignment")]
     public void Int32Assignment()
     {
         var span = Memory.Span;
-        span[Index++] = (byte)(Int32 >> 24);
-        span[Index++] = (byte)(Int32 >> 16);
-        span[Index++] = (byte)(Int32 >> 8);
-        span[Index++] = (byte)Int32;
+        var index = 0;
+
+        span[index++] = (byte)(Int32 >> 24);
+        span[index++] = (byte)(Int32 >> 16);
+        span[index++] = (byte)(Int32 >> 8);
+        span[index] = (byte)Int32;
     }
 
     [Benchmark, BenchmarkCategory("Int32", "Assignment", "Fill")]
     public void Int32AssignmentFill()
     {
         var span = Memory.Span;
+        var index = 0;
 
-        for (; Index < 16;)
+        for (; index < 16;)
         {
-            span[Index++] = (byte)(Int32 >> 24);
-            span[Index++] = (byte)(Int32 >> 16);
-            span[Index++] = (byte)(Int32 >> 8);
-            span[Index++] = (byte)Int32;
+            span[index++] = (byte)(Int32 >> 24);
+            span[index++] = (byte)(Int32 >> 16);
+            span[index++] = (byte)(Int32 >> 8);
+            span[index++] = (byte)Int32;
         }
     }
 
@@ -91,11 +94,9 @@ public class SpanBenchmarks
     [Benchmark, BenchmarkCategory("Int32", "Marshal", "Fill")]
     public void Int32MarshalFill()
     {
-        for (; Index < 16;)
-        {
-            var span = Memory[Index..].Span;
-            MemoryMarshal.Write(span, ref Int32);
-            Index += 4;
-        }
+        var buffer = Memory.Span;
+
+        for (var index = 0; index < 16; index += 4)
+            MemoryMarshal.Write(buffer[index..], ref Int32);
     }
 }

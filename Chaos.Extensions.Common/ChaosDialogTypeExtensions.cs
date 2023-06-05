@@ -24,7 +24,7 @@ public static class ChaosDialogTypeExtensions
         ChaosDialogType.CreatureMenu    => DialogType.CreatureMenu,
         ChaosDialogType.Protected       => DialogType.Protected,
         ChaosDialogType.CloseDialog     => DialogType.CloseDialog,
-        _                               => null
+        _                               => throw new ArgumentOutOfRangeException(nameof(value), value, null)
     };
 
     /// <summary>
@@ -47,6 +47,6 @@ public static class ChaosDialogTypeExtensions
         ChaosDialogType.ShowSkills            => MenuType.ShowSkills,
         ChaosDialogType.ShowPlayerSpells      => MenuType.ShowPlayerSpells,
         ChaosDialogType.ShowPlayerSkills      => MenuType.ShowPlayerSkills,
-        _                                     => null
+        _                                     => throw new ArgumentOutOfRangeException(nameof(value), value, null)
     };
 }

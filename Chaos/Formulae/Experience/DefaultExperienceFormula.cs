@@ -38,6 +38,7 @@ public class DefaultExperienceFormula : IExperienceFormula
         _ => throw new ArgumentOutOfRangeException(nameof(group.Count), "Group size is too large.")
     };
 
+    // ReSharper disable once ParameterTypeCanBeEnumerable.Global
     protected virtual decimal GetMonsterLevelDifferenceDeductions(ICollection<Aisling> group, Monster monster)
     {
         var averageLevel = Convert.ToInt32(group.Average(p => p.StatSheet.Level));

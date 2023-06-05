@@ -26,7 +26,7 @@ public class ComponentVars : StaticVars
         GetRequired<IReadOnlyCollection<MapEntity>>(TARGETS_KEY).OfType<T>().ToList();
 
     public virtual void SetAllPoints(List<IPoint> points) => Set(CASCADE_ALL_POINTS_KEY, points);
-    public virtual void SetOptions(object options) => Set(OPTIONS_KEY, options!);
+    public virtual void SetOptions(object options) => Set(OPTIONS_KEY, options);
     public virtual void SetPoints(IReadOnlyCollection<IPoint> points) => Set(POINTS_KEY, points);
 
     public virtual void SetStage(int stage) => Set(CASCADE_STAGE_KEY, stage);

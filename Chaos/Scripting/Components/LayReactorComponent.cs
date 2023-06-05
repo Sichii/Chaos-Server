@@ -8,10 +8,10 @@ namespace Chaos.Scripting.Components;
 public class LayReactorComponent : IComponent
 {
     /// <inheritdoc />
-    public void Execute(ActivationContext context, ComponentVars vars)
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<ILayReactorComponentOptions>();
-        var map = context.TargetMap ?? context.SourceMap;
+        var map = context.TargetMap;
 
         if (string.IsNullOrEmpty(options.ReactorTileTemplateKey))
             return;

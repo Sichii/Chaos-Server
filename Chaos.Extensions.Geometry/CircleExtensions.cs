@@ -18,46 +18,46 @@ public static class CircleExtensions
     public static Point? CalculateIntersectionEntryPoint(this ICircle circle, IPoint lineStart, IPoint lineEnd)
     {
         ArgumentNullException.ThrowIfNull(circle);
-
         ArgumentNullException.ThrowIfNull(lineStart);
-
         ArgumentNullException.ThrowIfNull(lineEnd);
 
-        var center = circle.Center;
-        var radius = circle.Radius;
+        var xDiff = Math.Abs(lineEnd.X - lineStart.X);
+        var yDiff = Math.Abs(lineEnd.Y - lineStart.Y);
 
-        // Calculate the line vector
-        var lineX = lineEnd.X - lineStart.X;
-        var lineY = lineEnd.Y - lineStart.Y;
+        var directionalX = lineStart.X < lineEnd.X ? 1 : -1;
+        var directionalY = lineStart.Y < lineEnd.Y ? 1 : -1;
 
-        // Calculate the vector from the center of the circle to the start of the line
-        var circleToLineX = lineStart.X - center.X;
-        var circleToLineY = lineStart.Y - center.Y;
+        var err = xDiff - yDiff;
 
-        // Calculate the dot product of the line and the vector from the center of the circle to the start of the line
-        var dotProduct = lineX * circleToLineX + lineY * circleToLineY;
+        var retX = lineStart.X;
+        var retY = lineStart.Y;
 
-        // Calculate the squared length of the line
-        var lineLengthSquared = lineX * lineX + lineY * lineY;
+        while (true)
+        {
+            var distanceSquared = Math.Pow(retX - circle.Center.X, 2) + Math.Pow(retY - circle.Center.Y, 2);
 
-        // Calculate the squared distance from the center of the circle to the line
-        var distanceSquared = circleToLineX * circleToLineX + circleToLineY * circleToLineY - dotProduct * dotProduct / lineLengthSquared;
+            // If the current point is inside the circle, return it as the intersection point.
+            if (distanceSquared <= Math.Pow(circle.Radius, 2))
+                return new Point(retX, retY);
 
-        // If the distance is greater than the radius, the line does not intersect the circle
-        if (distanceSquared > radius * radius)
-            return null;
+            // If the line has ended, return null.
+            if ((retX == lineEnd.X) && (retY == lineEnd.Y))
+                return null;
 
-        // Calculate the distance along the line from the start to the point of intersection
-        var distanceAlongLine = (int)Math.Sqrt(radius * radius - distanceSquared);
+            var e2 = 2 * err;
 
-        // Calculate the coordinates of the first point of intersection
-        var intersectionX =
-            lineStart.X + lineX * dotProduct / lineLengthSquared - distanceAlongLine * lineY / (int)Math.Sqrt(lineLengthSquared);
+            if (e2 > -yDiff)
+            {
+                err -= yDiff;
+                retX += directionalX;
+            }
 
-        var intersectionY =
-            lineStart.Y + lineY * dotProduct / lineLengthSquared + distanceAlongLine * lineX / (int)Math.Sqrt(lineLengthSquared);
-
-        return new Point(intersectionX, intersectionY);
+            if (e2 < xDiff)
+            {
+                err += xDiff;
+                retY += directionalY;
+            }
+        }
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public static class CircleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Radius >= circle.EdgeToEdgeDistanceFrom(other) + other.Radius;
+        return circle.Radius >= circle.Center.DistanceFrom(other.Center) + other.Radius;
     }
 
     /// <summary>
@@ -100,10 +100,8 @@ public static class CircleExtensions
     /// <param name="circle">This circle.</param>
     /// <param name="other">A center-point of some entity.</param>
     /// <returns>
-    ///     <see cref="float" />
-    ///     <br />
     ///     The euclidean distance between the center-point of this circle and the some other point, minus this circle's
-    ///     radius.
+    ///     radius. Value can not be negative.
     /// </returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
@@ -113,7 +111,7 @@ public static class CircleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return Math.Max(0, circle.Center.DistanceFrom(other) - circle.Radius);
+        return Math.Max(0.0f, circle.Center.EuclideanDistanceFrom(other) - circle.Radius);
     }
 
     /// <summary>
@@ -122,9 +120,7 @@ public static class CircleExtensions
     /// <param name="circle">This circle.</param>
     /// <param name="other">Another circle.</param>
     /// <returns>
-    ///     <see cref="float" />
-    ///     <br />
-    ///     The euclidean distance between the centerpoints of two circles, minus the sum of their radi.
+    ///     The euclidean distance between the centerpoints of two circles, minus the sum of their radi. Value can not be negative.
     /// </returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
@@ -134,7 +130,7 @@ public static class CircleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return Math.Max(0, circle.Center.DistanceFrom(other.Center) - circle.Radius - other.Radius);
+        return Convert.ToInt32(Math.Max(0.0f, circle.Center.EuclideanDistanceFrom(other.Center) - circle.Radius - other.Radius));
     }
 
     /// <summary>
@@ -147,6 +143,7 @@ public static class CircleExtensions
     {
         ArgumentNullException.ThrowIfNull(circle);
 
+        var set = new HashSet<Point>();
         var x = circle.Center.X;
         var y = circle.Center.Y;
         var xOffset = circle.Radius;
@@ -155,14 +152,38 @@ public static class CircleExtensions
 
         while (yOffset <= xOffset)
         {
-            yield return new Point(x + xOffset, y + yOffset);
-            yield return new Point(x + yOffset, y + xOffset);
-            yield return new Point(x - yOffset, y + xOffset);
-            yield return new Point(x - xOffset, y + yOffset);
-            yield return new Point(x - xOffset, y - yOffset);
-            yield return new Point(x - yOffset, y - xOffset);
-            yield return new Point(x + yOffset, y - xOffset);
-            yield return new Point(x + xOffset, y - yOffset);
+            var pt1 = new Point(x + xOffset, y + yOffset);
+            var pt2 = new Point(x + yOffset, y + xOffset);
+            var pt3 = new Point(x - yOffset, y + xOffset);
+            var pt4 = new Point(x - xOffset, y + yOffset);
+            var pt5 = new Point(x - xOffset, y - yOffset);
+            var pt6 = new Point(x - yOffset, y - xOffset);
+            var pt7 = new Point(x + yOffset, y - xOffset);
+            var pt8 = new Point(x + xOffset, y - yOffset);
+
+            if (set.Add(pt1))
+                yield return pt1;
+
+            if (set.Add(pt2))
+                yield return pt2;
+
+            if (set.Add(pt3))
+                yield return pt3;
+
+            if (set.Add(pt4))
+                yield return pt4;
+
+            if (set.Add(pt5))
+                yield return pt5;
+
+            if (set.Add(pt6))
+                yield return pt6;
+
+            if (set.Add(pt7))
+                yield return pt7;
+
+            if (set.Add(pt8))
+                yield return pt8;
 
             yOffset++;
 
@@ -186,6 +207,7 @@ public static class CircleExtensions
     {
         ArgumentNullException.ThrowIfNull(circle);
 
+        var set = new HashSet<Point>();
         var centerX = circle.Center.X;
         var centerY = circle.Center.Y;
         var radiusSqrd = circle.Radius * circle.Radius;
@@ -201,10 +223,22 @@ public static class CircleExtensions
                     var xS = centerX - xdc;
                     var yS = centerY - ydc;
 
-                    yield return new Point(x, y);
-                    yield return new Point(x, yS);
-                    yield return new Point(xS, y);
-                    yield return new Point(xS, yS);
+                    var pt1 = new Point(x, y);
+                    var pt2 = new Point(x, yS);
+                    var pt3 = new Point(xS, y);
+                    var pt4 = new Point(xS, yS);
+
+                    if (set.Add(pt1))
+                        yield return pt1;
+
+                    if (set.Add(pt2))
+                        yield return pt2;
+
+                    if (set.Add(pt3))
+                        yield return pt3;
+
+                    if (set.Add(pt4))
+                        yield return pt4;
                 }
             }
     }
@@ -240,6 +274,6 @@ public static class CircleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Center.DistanceFrom(other.Center) <= circle.Radius + other.Radius;
+        return circle.Center.EuclideanDistanceFrom(other.Center) <= circle.Radius + other.Radius;
     }
 }

@@ -3,7 +3,7 @@ using Chaos.Common.Abstractions;
 namespace Chaos.Storage.Abstractions;
 
 /// <summary>
-///     Provides the options required for a <see cref="IBackedUpFileStore{T}" />
+///     Provides the options required for a <see cref="IBackedUpFileStore" />
 /// </summary>
 public interface IBackedUpFileStoreOptions : IDirectoryBound
 {

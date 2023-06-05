@@ -11,7 +11,7 @@ namespace Chaos.Storage;
 /// <summary>
 ///     Represents a store that can load and save objects that map to a different type when serialized
 /// </summary>
-public class EntityRepository : IEntityRepository
+public sealed class EntityRepository : IEntityRepository
 {
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger<EntityRepository> Logger;

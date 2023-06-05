@@ -32,15 +32,15 @@ public abstract class GuildScriptBase : DialogScriptBase
         GuildFactory = guildFactory;
     }
 
-    protected bool CanBeDemoted(GuildRank rank) => rank.Tier != 0;
+    protected static bool CanBeDemoted(GuildRank rank) => rank.Tier != 0;
 
-    protected bool CanBePromoted(GuildRank rank) => rank.Tier != 1;
+    protected static bool CanBePromoted(GuildRank rank) => rank.Tier != 1;
 
     protected bool GuildExists(string name) => GuildStore.Exists(name);
 
-    protected bool IsInferiorRank(GuildRank rank, GuildRank other) => rank.Tier > other.Tier;
+    protected static bool IsInferiorRank(GuildRank rank, GuildRank other) => rank.Tier > other.Tier;
 
-    protected bool IsInGuild(Aisling source, [MaybeNullWhen(false)] out Guild guild, [MaybeNullWhen(false)] out GuildRank sourceRank)
+    protected static bool IsInGuild(Aisling source, [MaybeNullWhen(false)] out Guild guild, [MaybeNullWhen(false)] out GuildRank sourceRank)
     {
         guild = source.Guild;
         sourceRank = guild?.RankOf(source.Name);
@@ -48,9 +48,9 @@ public abstract class GuildScriptBase : DialogScriptBase
         return guild is not null;
     }
 
-    protected bool IsLeader(GuildRank rank) => rank.Tier == 0;
+    protected static bool IsLeader(GuildRank rank) => rank.Tier == 0;
 
-    protected bool IsOfficer(GuildRank rank) => rank.Tier <= 1;
+    protected static bool IsOfficer(GuildRank rank) => rank.Tier <= 1;
 
-    protected bool IsSuperiorRank(GuildRank rank, GuildRank other) => rank.Tier < other.Tier;
+    protected static bool IsSuperiorRank(GuildRank rank, GuildRank other) => rank.Tier < other.Tier;
 }

@@ -15,7 +15,7 @@ public class BreaksHideComponent : IComponent
         EffectBase.GetEffectKey(typeof(TrueHideEffect)));
 
     /// <inheritdoc />
-    public void Execute(ActivationContext context, ComponentVars vars)
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IBreaksHideComponentOptions>();
 

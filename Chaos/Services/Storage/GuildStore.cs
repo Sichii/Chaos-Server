@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class GuildStore : BackedUpFileStoreBase<Guild, GuildStoreOptions>, IStore<Guild>
+public class GuildStore : BackedUpFileStoreBase<GuildStoreOptions>, IStore<Guild>
 {
     private readonly ConcurrentDictionary<string, Guild> Cache;
     private readonly IEntityRepository EntityRepository;
@@ -117,7 +117,7 @@ public class GuildStore : BackedUpFileStoreBase<Guild, GuildStoreOptions>, IStor
 
         var directory = Path.Combine(Options.Directory, key);
 
-        Guild InnerLoad() => Cache.GetOrAdd(key, InnerLoadGuild!, (directory, EntityRepository));
+        Guild InnerLoad() => Cache.GetOrAdd(key, InnerLoadGuild, (directory, EntityRepository));
 
         return SafeExecuteDirectoryAction(directory, InnerLoad);
     }

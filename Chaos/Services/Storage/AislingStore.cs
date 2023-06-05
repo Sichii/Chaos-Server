@@ -17,7 +17,7 @@ namespace Chaos.Services.Storage;
 /// <summary>
 ///     Manages save files for Aislings
 /// </summary>
-public sealed class AislingStore : BackedUpFileStoreBase<Aisling, AislingStoreOptions>, IAsyncStore<Aisling>
+public sealed class AislingStore : BackedUpFileStoreBase<AislingStoreOptions>, IAsyncStore<Aisling>
 {
     private readonly IEntityRepository EntityRepository;
     private readonly ICloningService<Item> ItemCloningService;

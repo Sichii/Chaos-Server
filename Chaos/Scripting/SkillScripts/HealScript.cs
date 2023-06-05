@@ -18,7 +18,7 @@ public class HealScript : ConfigurableSkillScriptBase,
     public HealScript(Skill subject)
         : base(subject)
     {
-        ApplyHealScript = FunctionalScripts.ApplyHealing.HealScript.Create();
+        ApplyHealScript = FunctionalScripts.ApplyHealing.ApplyHealScript.Create();
         SourceScript = this;
     }
 

@@ -56,6 +56,9 @@ public static class RectangleExtensions
             foreach (var point in current.GetDirectPath(next).SkipLast(1))
                 yield return point;
         }
+
+        foreach (var point in vertices[^1].GetDirectPath(vertices[0]).SkipLast(1))
+            yield return point;
     }
 
     /// <summary>
@@ -88,7 +91,7 @@ public static class RectangleExtensions
     {
         while (true)
         {
-            var randomPoint = new Point(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
+            var randomPoint = rect.GetRandomPoint();
 
             if (predicate(randomPoint))
                 return randomPoint;
@@ -108,6 +111,6 @@ public static class RectangleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return !((rect.Bottom >= other.Top) || (rect.Left >= other.Right) || (rect.Right <= other.Left) || (rect.Top <= other.Bottom));
+        return !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
     }
 }

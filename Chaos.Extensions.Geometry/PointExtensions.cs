@@ -134,6 +134,25 @@ public static class PointExtensions
     }
 
     /// <summary>
+    ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
+    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
+    /// <returns>The distance between the two given points allowing diagonal movement</returns>
+    public static float EuclideanDistanceFrom(this IPoint point, IPoint other)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        var xDiff = other.X - point.X;
+        var yDiff = other.Y - point.Y;
+
+        return (float)Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+    }
+
+    /// <summary>
     ///     Flood fills in a given point set starting at a given point
     /// </summary>
     /// <param name="points">All possible points</param>

@@ -2,12 +2,12 @@ using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts.HideEffects;
 
-public class SeeTrueHideEffect : EffectBase
+public sealed class SeeTrueHideEffect : EffectBase
 {
     /// <inheritdoc />
-    public override byte Icon { get; } = 7;
+    public override byte Icon => 7;
     /// <inheritdoc />
-    public override string Name { get; } = "See True Hide";
+    public override string Name => "See True Hide";
     /// <inheritdoc />
     protected override TimeSpan Duration { get; } = TimeSpan.FromSeconds(15);
 

@@ -5,8 +5,7 @@ namespace Chaos.Storage.Abstractions;
 /// <summary>
 ///     Provides the methods required to manage a file store that takes backups
 /// </summary>
-/// <typeparam name="T">The model type of the object the model store holds</typeparam>
-public interface IBackedUpFileStore<T> : IHostedService
+public interface IBackedUpFileStore : IHostedService
 {
     /// <summary>
     ///     Handles the retention of backups in the specified directory

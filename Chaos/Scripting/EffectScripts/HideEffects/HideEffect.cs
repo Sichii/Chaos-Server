@@ -4,12 +4,12 @@ using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Scripting.EffectScripts.HideEffects;
 
-public class HideEffect : EffectBase
+public sealed class HideEffect : EffectBase
 {
     /// <inheritdoc />
-    public override byte Icon { get; } = 10;
+    public override byte Icon => 10;
     /// <inheritdoc />
-    public override string Name { get; } = "Hide";
+    public override string Name => "Hide";
     /// <inheritdoc />
     protected override TimeSpan Duration { get; } = TimeSpan.FromMinutes(2);
 

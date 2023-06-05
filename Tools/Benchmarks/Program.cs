@@ -4,5 +4,5 @@ namespace Benchmarks;
 
 public static class Program
 {
-    public static void Main() => BenchmarkRunner.Run<StringProcessorBenchmarks>();
+    public static void Main() => BenchmarkRunner.Run<SpanBenchmarks>();
 }

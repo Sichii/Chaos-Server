@@ -8,16 +8,16 @@ using Chaos.Scripting.FunctionalScripts.Abstractions;
 
 namespace Chaos.Scripting.FunctionalScripts.ApplyHealing;
 
-public class HealScript : ScriptBase, IApplyHealScript
+public class ApplyHealScript : ScriptBase, IApplyHealScript
 {
     /// <inheritdoc />
     public IHealFormula HealFormula { get; set; }
-    public static string Key { get; } = GetScriptKey(typeof(HealScript));
+    public static string Key { get; } = GetScriptKey(typeof(ApplyHealScript));
 
-    public HealScript() => HealFormula = HealFormulae.Default;
+    public ApplyHealScript() => HealFormula = HealFormulae.Default;
 
     /// <inheritdoc />
-    public void ApplyHeal(
+    public virtual void ApplyHeal(
         Creature source,
         Creature target,
         IScript script,

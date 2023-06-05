@@ -19,7 +19,7 @@ public class HealScript : ConfigurableSpellScriptBase,
     public HealScript(Spell subject)
         : base(subject)
     {
-        ApplyHealScript = FunctionalScripts.ApplyHealing.HealScript.Create();
+        ApplyHealScript = FunctionalScripts.ApplyHealing.ApplyHealScript.Create();
         SourceScript = this;
     }
 

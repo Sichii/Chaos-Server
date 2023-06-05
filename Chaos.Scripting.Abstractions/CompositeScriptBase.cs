@@ -24,22 +24,6 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     /// <inheritdoc />
     public T? GetComponent<T>() => this.OfType<T>().FirstOrDefault();
 
-    /*
-    {
-        foreach (var component in Components)
-            switch (component)
-            {
-                case T obj:
-                    return obj;
-                case ICompositeScript composite:
-                    return composite.GetComponent<T>();
-                default:
-                    continue;
-            }
-
-        return default;
-    }*/
-
     /// <inheritdoc />
     public IEnumerable<T> GetComponents<T>() => this.OfType<T>();
 

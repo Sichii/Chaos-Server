@@ -146,7 +146,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         if (handler is null)
             return default;
 
-        return handler?.Invoke(client, in packet) ?? default;
+        return handler(client, in packet);
     }
 
     /// <summary>

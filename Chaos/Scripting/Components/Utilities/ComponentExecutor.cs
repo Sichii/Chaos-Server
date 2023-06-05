@@ -78,7 +78,7 @@ public sealed class ComponentExecutor
 
     public ComponentExecutor WithSource(Creature source)
     {
-        Context = new ActivationContext(source, Context.Target, Context.TargetMap!);
+        Context = new ActivationContext(source, Context.Target, Context.TargetMap);
 
         return this;
     }

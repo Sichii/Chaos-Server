@@ -77,7 +77,7 @@ public static class LocationExtensions
     ///     Ensures both locations are on the same map
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>
-    private static void EnsureSameMap(ILocation location1, ILocation location2)
+    internal static void EnsureSameMap(ILocation location1, ILocation location2)
     {
         if (!location1.OnSameMapAs(location2))
             throw new InvalidOperationException(

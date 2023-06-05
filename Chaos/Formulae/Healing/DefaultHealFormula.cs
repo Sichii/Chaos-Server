@@ -7,7 +7,7 @@ namespace Chaos.Formulae.Healing;
 public class DefaultHealFormula : IHealFormula
 {
     /// <inheritdoc />
-    public int Calculate(
+    public virtual int Calculate(
         Creature source,
         Creature target,
         IScript script,

@@ -55,6 +55,6 @@ public static class EnumerableExtensions
         if (enumerable is List<TReturn> list)
             return list;
 
-        return enumerable.Cast<TReturn>().ToList();
+        return enumerable.SafeCast<TReturn>().ToList();
     }
 }

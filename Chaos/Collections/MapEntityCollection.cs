@@ -16,6 +16,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
+    // ReSharper disable once NotAccessedField.Local
     private readonly ILogger Logger;
     private readonly HashSet<Merchant> Merchants;
     private readonly HashSet<Monster> Monsters;

@@ -7,8 +7,8 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Storage.Abstractions;
 
-/// <inheritdoc cref="IBackedUpFileStore{T}" />
-public abstract class BackedUpFileStoreBase<T, TOptions> : BackgroundService, IBackedUpFileStore<T>
+/// <inheritdoc cref="IBackedUpFileStore" />
+public abstract class BackedUpFileStoreBase<TOptions> : BackgroundService, IBackedUpFileStore
     where TOptions: class, IBackedUpFileStoreOptions
 {
     /// <summary>
@@ -25,7 +25,7 @@ public abstract class BackedUpFileStoreBase<T, TOptions> : BackgroundService, IB
     protected TOptions Options { get; }
 
     /// <summary>
-    ///     Creates a new instance of <see cref="BackedUpFileStoreBase{T,TOptions}" />
+    ///     Creates a new instance of <see cref="BackedUpFileStoreBase{TOptions}" />
     /// </summary>
     protected BackedUpFileStoreBase(
         IOptions<TOptions> options,
@@ -166,7 +166,7 @@ public abstract class BackedUpFileStoreBase<T, TOptions> : BackgroundService, IB
     /// </summary>
     /// <param name="directory">The directory to lock</param>
     /// <param name="action">The action to perform</param>
-    protected virtual async Task<T> SafeExecuteDirectoryActionAsync(string directory, Func<Task<T>> action)
+    protected virtual async Task<T> SafeExecuteDirectoryActionAsync<T>(string directory, Func<Task<T>> action)
     {
         while (!LockedFiles.Add(directory))
             await Task.Yield();

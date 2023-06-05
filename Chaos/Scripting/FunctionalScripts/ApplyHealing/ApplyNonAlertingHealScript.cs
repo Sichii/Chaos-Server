@@ -17,7 +17,7 @@ public class ApplyNonAlertingHealScript : ScriptBase, IApplyHealScript
     public ApplyNonAlertingHealScript() => HealFormula = HealFormulae.Default;
 
     /// <inheritdoc />
-    public void ApplyHeal(
+    public virtual void ApplyHeal(
         Creature source,
         Creature target,
         IScript script,

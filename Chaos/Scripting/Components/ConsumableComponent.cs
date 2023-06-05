@@ -7,7 +7,7 @@ namespace Chaos.Scripting.Components;
 public class ConsumableComponent : IComponent
 {
     /// <inheritdoc />
-    public void Execute(ActivationContext context, ComponentVars vars)
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IConsumableComponentOptions>();
 

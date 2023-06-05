@@ -15,7 +15,7 @@ namespace Chaos.Scripting.Components;
 public class CascadingComponent<TTileScript> : IComponent where TTileScript: ICascadingTileScript
 {
     /// <inheritdoc />
-    public void Execute(ActivationContext context, ComponentVars vars)
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<ICascadingComponentOptions>();
         var targets = vars.GetTargets<MapEntity>();

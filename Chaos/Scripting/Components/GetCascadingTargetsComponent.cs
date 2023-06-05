@@ -13,7 +13,7 @@ namespace Chaos.Scripting.Components;
 public class GetCascadingTargetsComponent<TEntity> : IConditionalComponent where TEntity: MapEntity
 {
     /// <inheritdoc />
-    public bool Execute(ActivationContext context, ComponentVars vars)
+    public virtual bool Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IGetCascadingTargetsComponentOptions>();
         var stage = vars.GetStage();

@@ -4,6 +4,7 @@ using Chaos.Scripting.Components.Utilities;
 
 namespace Chaos.Scripting.Components;
 
+// ReSharper disable once ClassCanBeSealed.Global
 public class ToggleEffectComponent : ApplyEffectComponent
 {
     /// <inheritdoc />
