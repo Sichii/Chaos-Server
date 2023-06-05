@@ -2,9 +2,11 @@ using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Common.Abstractions;
+using Chaos.MetaData;
+using Chaos.MetaData.ItemMetadata;
 using Chaos.Networking.Abstractions;
+using Chaos.Scripting.ItemScripts.Enchantments;
 using Chaos.Services.Servers.Options;
-using Chaos.Services.Storage.Mutators;
 using Chaos.Services.Storage.Options;
 using Microsoft.Extensions.Options;
 
@@ -61,7 +63,7 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     {
         options.UseBaseDirectory(StagingDirectory.StagingDirectory);
         // ReSharper disable once ArrangeMethodOrOperatorBody
-        options.PrefixMutators.Add(new EnchantmentMetaNodeMutator());
+        options.PrefixMutators.Add(MetaNodeMutator<ItemMetaNode>.Create(MagicPrefixScript.Mutate));
         //add more mutators here
     }
 

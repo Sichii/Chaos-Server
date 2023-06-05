@@ -26,8 +26,8 @@
     "baseClass": "Diacht",
     "maxWeight": 40,
     "toNextLevel": 100,
-    "currentHp": 54,
-    "currentMp": 50,
+    "currentHp": 100,
+    "currentMp": 20,
     "level": 1,
     "ac": 100,
     "maximumHp": 100,
@@ -51,6 +51,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 25,
-  "y": 27
+  "x": 21,
+  "y": 29
 }

@@ -49,9 +49,6 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             Slot = obj.Slot ?? 0
         };
 
-        if (template.IsModifiable && (obj.Modifiers != null))
-            item.Modifiers = Mapper.Map<Attributes>(obj.Modifiers);
-
         if (obj.Color.HasValue)
             item.Color = obj.Color.Value;
 
@@ -118,7 +115,6 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             CurrentDurability = obj.CurrentDurability,
             Slot = obj.Slot,
             DisplayName = obj.DisplayName == obj.Template.Name ? null : obj.DisplayName,
-            Modifiers = obj.Template.IsModifiable && (obj.Modifiers != null) ? Mapper.Map<AttributesSchema>(obj.Modifiers) : null,
             Weight = obj.Weight == obj.Template.Weight ? null : obj.Weight,
             PanelSprite = obj.ItemSprite.PanelSprite == obj.Template.ItemSprite.PanelSprite ? null : obj.ItemSprite.PanelSprite,
             DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite

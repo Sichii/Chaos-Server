@@ -70,7 +70,7 @@ public static class DeepClone
             return toObj;
 
         if (typeof(Delegate).IsAssignableFrom(type))
-            return default;
+            return (fromObj as Delegate)?.Clone();
 
         var clonedObj = CreateMemberwiseClone(fromObj);
 

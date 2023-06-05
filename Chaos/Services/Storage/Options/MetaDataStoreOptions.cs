@@ -1,6 +1,6 @@
 using Chaos.Common.Abstractions;
+using Chaos.MetaData.Abstractions;
 using Chaos.MetaData.ItemMetadata;
-using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Options;
 

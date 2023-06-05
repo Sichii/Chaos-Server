@@ -31,10 +31,6 @@ public sealed record ItemSchema : PanelEntitySchema
     /// </summary>
     public ushort? DisplaySprite { get; set; }
     /// <summary>
-    ///     Extra modifiers applied to this item that are not specified by it's template
-    /// </summary>
-    public AttributesSchema? Modifiers { get; set; }
-    /// <summary>
     ///     The sprite to display for this item in the panel if it's different than what is specified by it's template
     /// </summary>
     public ushort? PanelSprite { get; set; }
