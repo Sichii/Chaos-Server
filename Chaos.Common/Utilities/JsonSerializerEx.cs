@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace Chaos.Common.Utilities;
@@ -5,6 +6,7 @@ namespace Chaos.Common.Utilities;
 /// <summary>
 ///     A static utility for serializing and deserializing objects
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "No logic, just a wrapper utility")]
 public static class JsonSerializerEx
 {
     /// <summary>

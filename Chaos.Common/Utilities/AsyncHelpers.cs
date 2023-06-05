@@ -124,46 +124,4 @@ public static class AsyncHelpers
         public override void Send(SendOrPostCallback d, object? state) =>
             throw new NotSupportedException("We cannot send to our same thread");
     }
-
-    /*
-         public static void RunSync(Func<Task> taskFactory) => taskFactory.WithNoContext().Wait();
-
-    public static TResult RunSync<TResult>(Func<Task<TResult>> taskFactory) => taskFactory.WithNoContext().Result;
-
-    public static Task<TResult> WithNoContext<TResult>(this Func<Task<TResult>> taskFactory)
-    {
-        Task<TResult> task;
-        var sc = SynchronizationContext.Current;
-        try
-        {
-            SynchronizationContext.SetSynchronizationContext(null);
-            // do not await the task here, so the SC is restored right after
-            // the execution point hits the first await inside func
-            task = taskFactory();
-        }
-        finally
-        {
-            SynchronizationContext.SetSynchronizationContext(sc);
-        }
-        return task;
-    }
-    
-    public static Task WithNoContext(this Func<Task> taskFactory)
-    {
-        Task task;
-        var sc = SynchronizationContext.Current;
-        try
-        {
-            SynchronizationContext.SetSynchronizationContext(null);
-            // do not await the task here, so the SC is restored right after
-            // the execution point hits the first await inside func
-            task = taskFactory();
-        }
-        finally
-        {
-            SynchronizationContext.SetSynchronizationContext(sc);
-        }
-        return task;
-    }
-     */
 }

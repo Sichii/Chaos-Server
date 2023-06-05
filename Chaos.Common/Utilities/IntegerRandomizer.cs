@@ -19,7 +19,7 @@ public static class IntegerRandomizer
     public static T? PickRandomWeightedSingleOrDefault<T>(this ICollection<KeyValuePair<T, int>> weightedChoices)
     {
         // Calculate the chance that any choice is taken
-        var chanceOfNoSelection = weightedChoices.Aggregate(100, (acc, item) => acc * (100 - item.Value));
+        var chanceOfNoSelection = weightedChoices.Aggregate(100, (acc, item) => Convert.ToInt32(acc * (100 - item.Value) / 100.0m));
         var chanceOfSelection = 100 - chanceOfNoSelection;
 
         //no choice
@@ -143,5 +143,11 @@ public static class IntegerRandomizer
     /// <summary>
     ///     Generates a random number between 1 and <paramref name="max" />. Inclusive on both ends.
     /// </summary>
-    public static int RollSingle(int max) => Random.Shared.Next(1, max + 1);
+    public static int RollSingle(int max)
+    {
+        if (max < 1)
+            throw new InvalidOperationException("Max must be greater than 1. This method is like simulating dice rolls.");
+
+        return Random.Shared.Next(1, max + 1);
+    }
 }

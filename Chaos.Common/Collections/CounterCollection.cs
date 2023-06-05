@@ -77,6 +77,9 @@ public sealed class CounterCollection : IEnumerable<KeyValuePair<string, int>>
 
             newValue = count - 1;
 
+            if (newValue < 0)
+                return false;
+
             if (Counters.TryUpdate(key, newValue, count))
                 return true;
         }

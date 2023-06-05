@@ -12,7 +12,7 @@ public static class ArrayExtensions
     /// </summary>
     /// <param name="array"></param>
     /// <param name="action"></param>
-    public static void ForEach(this Array array, Action<Array, int[]> action)
+    internal static void ForEach(this Array array, Action<Array, int[]> action)
     {
         if (array.LongLength == 0)
             return;

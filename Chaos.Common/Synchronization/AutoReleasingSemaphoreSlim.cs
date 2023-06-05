@@ -7,6 +7,9 @@ public sealed class AutoReleasingSemaphoreSlim
 {
     private readonly SemaphoreSlim Root;
 
+    /// <inheritdoc cref="SemaphoreSlim.CurrentCount" />
+    public int CurrentCount => Root.CurrentCount;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="AutoReleasingSemaphoreSlim" /> class.
     /// </summary>

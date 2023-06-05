@@ -1,3 +1,4 @@
+using Chaos.Common.Utilities;
 using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Options;
@@ -18,5 +19,8 @@ public sealed class GuildStoreOptions : IBackedUpFileStoreOptions
     {
         Directory = Path.Combine(baseDirectory, Directory);
         BackupDirectory = Path.Combine(baseDirectory, BackupDirectory);
+
+        if (PathEx.IsSubPathOf(BackupDirectory, Directory))
+            throw new InvalidOperationException($"{nameof(BackupDirectory)} cannot be a subdirectory of {nameof(Directory)}");
     }
 }

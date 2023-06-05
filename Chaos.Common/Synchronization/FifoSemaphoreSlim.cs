@@ -10,6 +10,9 @@ public sealed class FifoSemaphoreSlim
     private readonly SemaphoreSlim Sync;
     private readonly ConcurrentQueue<TaskCompletionSource<bool>> TaskQueue = new();
 
+    /// <inheritdoc cref="SemaphoreSlim.CurrentCount" />
+    public int CurrentCount => Sync.CurrentCount;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="FifoSemaphoreSlim" /> class.
     /// </summary>

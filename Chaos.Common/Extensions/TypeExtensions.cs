@@ -25,5 +25,6 @@ public static class TypeExtensions
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static bool IsPrimitive(this Type type) => (type == typeof(string)) || (type.IsValueType & type.IsPrimitive);
+    public static bool IsPrimitive(this Type type) =>
+        (type == typeof(string)) || (type == typeof(decimal)) || type is { IsValueType: true, IsPrimitive: true };
 }

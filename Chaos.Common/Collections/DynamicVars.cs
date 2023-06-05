@@ -79,11 +79,9 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
 
     /// <inheritdoc />
     public T GetRequired<T>(string key) =>
-        (Vars.TryGetValue(key, out var value)
-            ? value.Deserialize<T>(JsonOptions)
-            : throw new KeyNotFoundException($"Required key \"{key}\" was not found while populating script variables"))
-        ?? throw new NullReferenceException(
-            $"Required key \"{key}\" was found, but resulted in a default value while populating script variables");
+        Vars.TryGetValue(key, out var value)
+            ? value.Deserialize<T>(JsonOptions)!
+            : throw new KeyNotFoundException($"Required key \"{key}\" was not found while populating script variables");
 
     private static object? GetValue(
         Type type,

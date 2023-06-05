@@ -9,6 +9,9 @@ public sealed class FifoAutoReleasingSemaphoreSlim
 {
     private readonly FifoSemaphoreSlim Root;
 
+    /// <inheritdoc cref="FifoSemaphoreSlim.CurrentCount" />
+    public int CurrentCount => Root.CurrentCount;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="FifoAutoReleasingSemaphoreSlim" /> class.
     /// </summary>
@@ -55,6 +58,35 @@ public sealed class FifoAutoReleasingSemaphoreSlim
             return new AutoReleasingSubscription(Root);
 
         return null;
+    }
+
+    /// <summary>
+    ///     Asynchronously waits to enter the semaphore with a timeout.
+    /// </summary>
+    /// <param name="timeout">The amount of time to wait before giving up</param>
+    /// <param name="subscriptionTask">
+    ///     A task that, if the semaphore is acquired, will contain a disposable subscription to
+    ///     that semaphore
+    /// </param>
+    /// <returns><c>true</c> if the semaphore was successfully acquired before the timeout, otherwise <c>false</c></returns>
+    public ValueTask<bool> WaitAsync(TimeSpan timeout, out Task<IPolyDisposable> subscriptionTask)
+    {
+        var tcs = new TaskCompletionSource<IPolyDisposable>(TaskCreationOptions.RunContinuationsAsynchronously);
+        subscriptionTask = tcs.Task;
+
+        async ValueTask<bool> InnerWaitAsync(TimeSpan localTimeout, TaskCompletionSource<IPolyDisposable> localTcs)
+        {
+            if (await Root.WaitAsync(localTimeout))
+            {
+                localTcs.TrySetResult(new AutoReleasingSubscription(Root));
+
+                return true;
+            }
+
+            return false;
+        }
+
+        return InnerWaitAsync(timeout, tcs);
     }
 
     private sealed record AutoReleasingSubscription : IPolyDisposable

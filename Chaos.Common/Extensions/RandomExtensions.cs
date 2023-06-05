@@ -39,14 +39,7 @@ public static class RandomExtensions
             case decimal:
                 var dbl = random.NextDouble();
 
-                return T.CreateChecked(
-                    Convert.ToDecimal(
-                        MathEx.ScaleRange(
-                            dbl,
-                            0.0d,
-                            1.0d,
-                            0.0d,
-                            Convert.ToDouble(decimal.MaxValue))));
+                return T.CreateChecked(Convert.ToDecimal(dbl));
             case float:
                 return T.CreateChecked(random.NextSingle());
             case double:

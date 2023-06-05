@@ -1,8 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Chaos.Common.Utilities;
 
 /// <summary>
 ///     Provides atomic operations for various types using interlocked methods.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Unsure how to test this")]
+//TODO: figure out how to test this
 public static class InterlockedEx
 {
     /// <summary>

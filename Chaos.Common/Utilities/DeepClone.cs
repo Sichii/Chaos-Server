@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Chaos.Extensions.Common;
-using ReferenceEqualityComparer = Chaos.Common.Comparers.ReferenceEqualityComparer;
 
 namespace Chaos.Common.Utilities;
 
@@ -55,7 +54,7 @@ public static class DeepClone
     /// <returns></returns>
     public static T? Create<T>(T fromObj) => (T?)InternalCopy(
         fromObj!,
-        new Dictionary<object, object>(new ReferenceEqualityComparer()));
+        new Dictionary<object, object>(ReferenceEqualityComparer.Instance));
 
     private static object? InternalCopy(object? fromObj, IDictionary<object, object> visited)
     {

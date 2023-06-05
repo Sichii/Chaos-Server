@@ -48,12 +48,7 @@ public static class DecimalRandomizer
     /// <summary>
     ///     Randomly determins if a roll is successful or not.
     /// </summary>
-    public static bool RollChance(decimal successChance) => RollSingle() <= successChance;
-
-    /// <summary>
-    ///     Generates 2 random numbers between 1 and <paramref name="maxPer" /> and adds them together. Inclusive on both ends.
-    /// </summary>
-    public static decimal RollDouble(decimal maxPer) => RollSingle(maxPer) + RollSingle(maxPer);
+    public static bool RollChance(decimal successChance) => Random.Shared.Next<decimal>() < successChance;
 
     /// <summary>
     ///     Generates a random number within the specified range, applying the given randomization type.
@@ -97,9 +92,4 @@ public static class DecimalRandomizer
 
         return baseValue + amountToAdd;
     }
-
-    /// <summary>
-    ///     Generates a random number between 0 and <paramref name="max" />.
-    /// </summary>
-    public static decimal RollSingle(decimal max = 1.0m) => max == 1.0m ? Random.Shared.Next<decimal>() : Random.Shared.Next(0, max);
 }

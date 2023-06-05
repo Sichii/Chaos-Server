@@ -9,7 +9,7 @@
       "channelName": "!trade"
     }
   ],
-  "direction": "Up",
+  "direction": "Right",
   "effects": [],
   "gender": "Male",
   "gold": 98000,
@@ -18,7 +18,7 @@
   "hairStyle": 5,
   "ignoreList": [],
   "isAdmin": true,
-  "mapInstanceId": "test5",
+  "mapInstanceId": "testTown",
   "name": "mink",
   "nation": "Exile",
   "statSheet": {
@@ -26,7 +26,7 @@
     "baseClass": "Diacht",
     "maxWeight": 40,
     "toNextLevel": 100,
-    "currentHp": 82,
+    "currentHp": 54,
     "currentMp": 50,
     "level": 1,
     "ac": 100,
@@ -51,6 +51,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 20,
-  "y": 23
+  "x": 25,
+  "y": 27
 }
