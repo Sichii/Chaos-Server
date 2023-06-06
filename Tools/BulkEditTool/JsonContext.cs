@@ -148,16 +148,17 @@ public class JsonContext
         LoadingCompletion.TrySetResult();
     }
 
-    public static Task SaveChangesAsync() => Task.WhenAll(
-        LootTables.SaveChangesAsync(),
-        Aislings.SaveChangesAsync(),
-        MapInstances.SaveChangesAsync(),
-        DialogTemplates.SaveChangesAsync(),
-        ItemTemplates.SaveChangesAsync(),
-        MapTemplates.SaveChangesAsync(),
-        MerchantTemplates.SaveChangesAsync(),
-        MonsterTemplates.SaveChangesAsync(),
-        ReactorTileTemplates.SaveChangesAsync(),
-        SkillTemplates.SaveChangesAsync(),
-        SpellTemplates.SaveChangesAsync());
+    public static Task SaveChangesAsync() =>
+        Task.WhenAll(
+            LootTables.SaveChangesAsync(),
+            Aislings.SaveChangesAsync(),
+            MapInstances.SaveChangesAsync(),
+            DialogTemplates.SaveChangesAsync(),
+            ItemTemplates.SaveChangesAsync(),
+            MapTemplates.SaveChangesAsync(),
+            MerchantTemplates.SaveChangesAsync(),
+            MonsterTemplates.SaveChangesAsync(),
+            ReactorTileTemplates.SaveChangesAsync(),
+            SkillTemplates.SaveChangesAsync(),
+            SpellTemplates.SaveChangesAsync());
 }

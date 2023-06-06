@@ -24,32 +24,47 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
     /// <inheritdoc />
     protected override async Task<MapInstanceComposite?> LoadFromFileAsync(string path)
     {
-        var instance = await JsonSerializerEx.DeserializeAsync<MapInstanceSchema>(
-            Path.Combine(path, "instance.json"),
-            JsonSerializerOptions);
-
-        var merchants = await JsonSerializerEx.DeserializeAsync<List<MerchantSpawnSchema>>(
-            Path.Combine(path, "merchants.json"),
-            JsonSerializerOptions);
-
-        var monsters = await JsonSerializerEx.DeserializeAsync<List<MonsterSpawnSchema>>(
-            Path.Combine(path, "monsters.json"),
-            JsonSerializerOptions);
-
-        var reactors = await JsonSerializerEx.DeserializeAsync<List<ReactorTileSchema>>(
-            Path.Combine(path, "reactors.json"),
-            JsonSerializerOptions);
-
-        if ((instance == null) || (merchants == null) || (monsters == null) || (reactors == null))
-            return null;
-
-        return new MapInstanceComposite
+        try
         {
-            Instance = instance,
-            Merchants = merchants,
-            Monsters = monsters,
-            Reactors = reactors
-        };
+            var instanceTask = JsonSerializerEx.DeserializeAsync<MapInstanceSchema>(
+                Path.Combine(path, "instance.json"),
+                JsonSerializerOptions);
+
+            var merchantsTask = JsonSerializerEx.DeserializeAsync<List<MerchantSpawnSchema>>(
+                Path.Combine(path, "merchants.json"),
+                JsonSerializerOptions);
+
+            var monstersTask = JsonSerializerEx.DeserializeAsync<List<MonsterSpawnSchema>>(
+                Path.Combine(path, "monsters.json"),
+                JsonSerializerOptions);
+
+            var reactorsTask = JsonSerializerEx.DeserializeAsync<List<ReactorTileSchema>>(
+                Path.Combine(path, "reactors.json"),
+                JsonSerializerOptions);
+
+            await Task.WhenAll(
+                instanceTask,
+                merchantsTask,
+                monstersTask,
+                reactorsTask);
+
+            if ((instanceTask.Result == null)
+                || (merchantsTask.Result == null)
+                || (monstersTask.Result == null)
+                || (reactorsTask.Result == null))
+                return null;
+
+            return new MapInstanceComposite
+            {
+                Instance = instanceTask.Result,
+                Merchants = merchantsTask.Result,
+                Monsters = monstersTask.Result,
+                Reactors = reactorsTask.Result
+            };
+        } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
+        {
+            throw new JsonException($"Failed to deserialize {nameof(MapInstanceComposite)} from path \"{path}\"", e);
+        }
     }
 
     public override void Remove(string name)
@@ -63,16 +78,22 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
         Objects.Remove(wrapper);
     }
 
-    public override Task SaveItemAsync(TraceWrapper<MapInstanceComposite> wrapped)
+    public override async Task SaveItemAsync(TraceWrapper<MapInstanceComposite> wrapped)
     {
-        if (!Directory.Exists(wrapped.Path))
-            Directory.CreateDirectory(wrapped.Path);
+        try
+        {
+            if (!Directory.Exists(wrapped.Path))
+                Directory.CreateDirectory(wrapped.Path);
 
-        return Task.WhenAll(
-            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "instance.json"), wrapped.Obj.Instance, JsonSerializerOptions),
-            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "merchants.json"), wrapped.Obj.Merchants, JsonSerializerOptions),
-            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "monsters.json"), wrapped.Obj.Monsters, JsonSerializerOptions),
-            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "reactors.json"), wrapped.Obj.Reactors, JsonSerializerOptions));
+            await Task.WhenAll(
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "instance.json"), wrapped.Obj.Instance, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "merchants.json"), wrapped.Obj.Merchants, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "monsters.json"), wrapped.Obj.Monsters, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "reactors.json"), wrapped.Obj.Reactors, JsonSerializerOptions));
+        } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
+        {
+            throw new JsonException($"Failed to serialize {nameof(MapInstanceComposite)} to path \"{wrapped.Path}\"", e);
+        }
     }
 
     public sealed class MapInstanceComposite

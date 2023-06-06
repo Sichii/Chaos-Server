@@ -81,7 +81,16 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
             });
     }
 
-    protected virtual Task<T?> LoadFromFileAsync(string path) => JsonSerializerEx.DeserializeAsync<T>(path, JsonSerializerOptions);
+    protected virtual async Task<T?> LoadFromFileAsync(string path)
+    {
+        try
+        {
+            return await JsonSerializerEx.DeserializeAsync<T>(path, JsonSerializerOptions);
+        } catch (JsonException e)
+        {
+            throw new JsonException($"Failed to deserialize {typeof(T).Name} from path \"{path}\"", e);
+        }
+    }
 
     public abstract void Remove(string name);
 
@@ -89,13 +98,19 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
         Objects,
         async (obj, _) => await SaveItemAsync(obj));
 
-    public virtual Task SaveItemAsync(TraceWrapper<T> wrapped)
+    public virtual async Task SaveItemAsync(TraceWrapper<T> wrapped)
     {
-        var dir = Path.GetDirectoryName(wrapped.Path)!;
+        try
+        {
+            var dir = Path.GetDirectoryName(wrapped.Path)!;
 
-        if (!Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
-        return JsonSerializerEx.SerializeAsync(wrapped.Path, wrapped.Obj, JsonSerializerOptions);
+            await JsonSerializerEx.SerializeAsync(wrapped.Path, wrapped.Obj, JsonSerializerOptions);
+        } catch (JsonException e)
+        {
+            throw new JsonException($"Failed to serialize {typeof(T).Name} to path \"{wrapped.Path}\"", e);
+        }
     }
 }
