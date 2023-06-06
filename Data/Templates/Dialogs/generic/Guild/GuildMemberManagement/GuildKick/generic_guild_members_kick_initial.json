@@ -1,7 +1,11 @@
 {
-    "scriptKeys": ["guildMemberKick"],
-    "templateKey": "generic_guild_members_kick_initial",
-    "text": "Who would you like to kick from the guild?",
-    "type": "MenuTextEntry",
-    "nextDialogKey": "generic_guild_members_kick_confirmation"
+  "nextDialogKey": "generic_guild_members_kick_confirmation",
+  "options": [],
+  "scriptKeys": [
+    "guildMemberKick"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_kick_initial",
+  "text": "Who would you like to kick from the guild?",
+  "type": "MenuTextEntry"
 }

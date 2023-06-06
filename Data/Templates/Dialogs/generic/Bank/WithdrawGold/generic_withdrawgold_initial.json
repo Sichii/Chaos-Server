@@ -1,7 +1,11 @@
 {
-    "scriptKeys": ["withdrawgold"],
-    "templateKey": "generic_withdrawgold_initial",
-    "text": "You have {Amount} gold deposited, how much would you like to withdraw?",
-    "type": "menuTextEntry",
-    "nextDialogKey": "top"
+  "nextDialogKey": "top",
+  "options": [],
+  "scriptKeys": [
+    "withdrawgold"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_withdrawgold_initial",
+  "text": "You have {Amount} gold deposited, how much would you like to withdraw?",
+  "type": "MenuTextEntry"
 }

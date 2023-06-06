@@ -1,8 +1,12 @@
 {
-    "scriptKeys": ["withdrawitem"],
-    "templateKey": "generic_withdrawitem_amountrequest",
-    "text": "How many {ItemName} would you like to withdraw? You have {Amount} deposited.",
-    "type": "menuTextEntryWithArgs",
-    "nextDialogKey": "generic_withdrawitem_initial",
-    "contextual": true
+  "contextual": true,
+  "nextDialogKey": "generic_withdrawitem_initial",
+  "options": [],
+  "scriptKeys": [
+    "withdrawitem"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_withdrawitem_amountrequest",
+  "text": "How many {ItemName} would you like to withdraw? You have {Amount} deposited.",
+  "type": "MenuTextEntryWithArgs"
 }

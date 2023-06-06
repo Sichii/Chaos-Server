@@ -1,17 +1,20 @@
 {
-    "scriptKeys": ["guildMemberDemote"],
-    "templateKey": "generic_guild_members_demote_confirmation",
-    "text": "You are demoting {Name} to {Rank}. Are you sure of this?",
-    "type": "Menu",
-    "contextual": true,
-    "options": [
-        {
-            "optionText": "Yes",
-            "dialogKey": "generic_guild_members_demote_accepted"
-        },
-        {
-            "optionText": "No",
-            "dialogKey": "generic_guild_members_initial"
-        }
-    ]
+  "contextual": true,
+  "options": [
+    {
+      "dialogKey": "generic_guild_members_demote_accepted",
+      "optionText": "Yes"
+    },
+    {
+      "dialogKey": "generic_guild_members_initial",
+      "optionText": "No"
+    }
+  ],
+  "scriptKeys": [
+    "guildMemberDemote"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_demote_confirmation",
+  "text": "You are demoting {Name} to {Rank}. Are you sure of this?",
+  "type": "Menu"
 }

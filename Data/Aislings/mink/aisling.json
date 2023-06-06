@@ -27,7 +27,7 @@
     "maxWeight": 40,
     "toNextLevel": 100,
     "currentHp": 100,
-    "currentMp": 20,
+    "currentMp": 43,
     "level": 1,
     "ac": 100,
     "maximumHp": 100,
@@ -51,6 +51,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 21,
+  "x": 24,
   "y": 29
 }

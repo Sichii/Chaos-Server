@@ -1,7 +1,11 @@
 {
-    "scriptKeys": ["learnskill"],
-    "templateKey": "generic_learnskill_initial",
-    "text": "Here are the skills I can currently teach you, what would you like to learn?",
-    "type": "ShowSkills",
-    "nextdialogkey": "generic_learnskill_showrequirements"
+  "nextDialogKey": "generic_learnskill_showrequirements",
+  "options": [],
+  "scriptKeys": [
+    "learnskill"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_learnskill_initial",
+  "text": "Here are the skills I can currently teach you, what would you like to learn?",
+  "type": "ShowSkills"
 }

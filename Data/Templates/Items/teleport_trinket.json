@@ -5,6 +5,7 @@
   "color": "Default",
   "gender": "Unisex",
   "maxStacks": 1,
+  "pantsColor": "Default",
   "sellValue": 500,
   "weight": 1,
   "description": "Definitely not a stick",

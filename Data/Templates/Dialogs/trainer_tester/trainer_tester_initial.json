@@ -1,23 +1,25 @@
 {
-    "options": [
-        {
-            "dialogkey": "generic_learnskill_initial",
-            "optiontext": "Learn Skill"
-        },
-        {
-            "dialogkey": "generic_learnspell_initial",
-            "optiontext": "Learn Spell"
-        },
-        {
-            "dialogkey": "generic_forgetskill_initial",
-            "optiontext": "Forget Skill"
-        },
-        {
-            "dialogkey": "generic_forgetspell_initial",
-            "optiontext": "Forget Spell"
-        }
-    ],
-    "templateKey": "trainer_tester_initial",
-    "text": "just a basic bitch dialog",
-    "type": "menu"
+  "options": [
+    {
+      "dialogKey": "generic_learnskill_initial",
+      "optionText": "Learn Skill"
+    },
+    {
+      "dialogKey": "generic_learnspell_initial",
+      "optionText": "Learn Spell"
+    },
+    {
+      "dialogKey": "generic_forgetskill_initial",
+      "optionText": "Forget Skill"
+    },
+    {
+      "dialogKey": "generic_forgetspell_initial",
+      "optionText": "Forget Spell"
+    }
+  ],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "trainer_tester_initial",
+  "text": "just a basic bitch dialog",
+  "type": "Menu"
 }

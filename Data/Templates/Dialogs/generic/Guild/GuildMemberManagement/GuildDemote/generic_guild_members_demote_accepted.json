@@ -1,8 +1,12 @@
 {
-    "scriptKeys": ["guildMemberDemote"],
-    "templateKey": "generic_guild_members_demote_accepted",
-    "text": "skip",
-    "type": "Normal",
-    "nextDialogKey": "generic_guild_members_initial",
-    "contextual": true
+  "contextual": true,
+  "nextDialogKey": "generic_guild_members_initial",
+  "options": [],
+  "scriptKeys": [
+    "guildMemberDemote"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_demote_accepted",
+  "text": "skip",
+  "type": "Normal"
 }

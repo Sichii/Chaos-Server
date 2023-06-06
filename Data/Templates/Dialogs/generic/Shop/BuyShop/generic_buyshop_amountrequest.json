@@ -1,8 +1,12 @@
 {
-    "scriptKeys": ["buyshop"],
-    "templateKey": "generic_buyshop_amountrequest",
-    "text": "How many {ItemName} would you like to buy? They are {Cost} gold each.",
-    "type": "menuTextEntryWithArgs",
-    "nextDialogKey": "generic_buyshop_confirmation",
-    "contextual": true
+  "contextual": true,
+  "nextDialogKey": "generic_buyshop_confirmation",
+  "options": [],
+  "scriptKeys": [
+    "buyshop"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_buyshop_amountrequest",
+  "text": "How many {ItemName} would you like to buy? They are {Cost} gold each.",
+  "type": "MenuTextEntryWithArgs"
 }

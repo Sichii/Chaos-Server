@@ -1,24 +1,30 @@
 {
-    "name": "Shop Tester",
-    "scriptKeys": ["showdialog"],
-    "scriptVars": {
-        "showdialog": {
-            "dialogKey": "shop_tester_initial"
-        }
+  "itemsForSale": [
+    {
+      "itemTemplateKey": "teleport_trinket",
+      "stock": 5
     },
-    "sprite": 30,
-    "templateKey": "shop_tester",
-    "itemsForSale": [
-        {
-            "itemTemplateKey": "teleport_trinket",
-            "stock": 5
-        },
-        {
-            "itemTemplateKey": "apple",
-            "stock": 100
-        }
-    ],
-    "itemsToBuy": ["apple"],
-    "restockIntervalHours": 1,
-    "restockPercent": 100
+    {
+      "itemTemplateKey": "apple",
+      "stock": 100
+    }
+  ],
+  "itemsToBuy": [
+    "apple"
+  ],
+  "name": "Shop Tester",
+  "restockIntervalHours": 1,
+  "restockPercent": 100,
+  "scriptKeys": [
+    "showdialog"
+  ],
+  "scriptVars": {
+    "showdialog": {
+      "dialogKey": "shop_tester_initial"
+    }
+  },
+  "skillsToTeach": [],
+  "spellsToTeach": [],
+  "sprite": 30,
+  "templateKey": "shop_tester"
 }

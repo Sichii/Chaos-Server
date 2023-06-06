@@ -4,36 +4,46 @@
              xmlns:codeFixes="clr-namespace:RoslynPad.Roslyn.CodeFixes;assembly=RoslynPad.Roslyn"
              xmlns:codeActions="clr-namespace:Microsoft.CodeAnalysis.CodeActions;assembly=Microsoft.CodeAnalysis.Workspaces"
              xmlns:local="clr-namespace:BulkEditTool"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <DrawingImage x:Key="Bulb">
-            <DrawingImage.Drawing>
-                <GeometryDrawing Brush="Gold">
-                    <GeometryDrawing.Geometry>
-                        <EllipseGeometry RadiusX="1"
-                                         RadiusY="1" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingImage.Drawing>
-        </DrawingImage>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="DeepPurple" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignDarkTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFixCollection}"
-                                  ItemsSource="{Binding Fixes, Mode=OneTime}">
-            <TextBlock Text="{Binding Provider, Mode=OneTime}"
-                       Background="#303030"
-                       Foreground="White" />
-        </HierarchicalDataTemplate>
+            <DrawingImage x:Key="Bulb">
+                <DrawingImage.Drawing>
+                    <GeometryDrawing Brush="Gold">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry RadiusX="1"
+                                             RadiusY="1" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingImage.Drawing>
+            </DrawingImage>
 
-        <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFix}"
-                                  ItemsSource="{Binding Action, Mode=OneTime, Converter={local:CodeActionsConverter}}">
-            <ContentPresenter Content="{Binding Action, Mode=OneTime}" />
-        </HierarchicalDataTemplate>
+            <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFixCollection}"
+                                      ItemsSource="{Binding Fixes, Mode=OneTime}">
+                <TextBlock Text="{Binding Provider, Mode=OneTime}"
+                           Background="#303030"
+                           Foreground="White" />
+            </HierarchicalDataTemplate>
 
-        <DataTemplate DataType="{x:Type codeActions:CodeAction}">
-            <TextBlock Text="{Binding Title, Mode=OneTime}"
-                       Background="#303030"
-                       Foreground="White" />
-        </DataTemplate>
+            <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFix}"
+                                      ItemsSource="{Binding Action, Mode=OneTime, Converter={local:CodeActionsConverter}}">
+                <ContentPresenter Content="{Binding Action, Mode=OneTime}" />
+            </HierarchicalDataTemplate>
+
+            <DataTemplate DataType="{x:Type codeActions:CodeAction}">
+                <TextBlock Text="{Binding Title, Mode=OneTime}"
+                           Background="#303030"
+                           Foreground="White" />
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

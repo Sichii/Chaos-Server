@@ -4,20 +4,20 @@
   ],
   "scriptVars": {
     "trap": {
-      "durationSecs": 300,
-      "maxTriggers": 1,
-      "baseDamage": 500,
       "animation": {
         "animationSpeed": 25,
         "targetAnimation": 42
       },
-      "range": 0,
-      "mustHaveTargets": true,
-      "includeSourcePoint": true,
-      "shape": "none",
-      "filter": "hostileOnly",
       "animatePoints": true,
-      "sound": 1
+      "includeSourcePoint": true,
+      "baseDamage": 500,
+      "durationSecs": 300,
+      "filter": "hostileOnly",
+      "maxTriggers": 1,
+      "sound": 1,
+      "shape": "none",
+      "mustHaveTargets": true,
+      "range": 0
     }
   },
   "templateKey": "needle_trap"

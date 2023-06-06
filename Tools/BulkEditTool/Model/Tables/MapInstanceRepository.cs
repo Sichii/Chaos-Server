@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using BulkEditTool.Model.Abstractions;
 using Chaos.Common.Utilities;
+using Chaos.Extensions.Common;
 using Chaos.Schemas.Content;
 using Chaos.Services.Storage.Options;
 using Microsoft.Extensions.Options;
@@ -13,6 +14,12 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
     /// <inheritdoc />
     public MapInstanceRepository(IOptions<MapInstanceCacheOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
         : base(options, jsonSerializerOptions) { }
+
+    public override void Add(string path, MapInstanceComposite obj)
+    {
+        var wrapper = new TraceWrapper<MapInstanceComposite>(path, obj);
+        Objects.Add(wrapper);
+    }
 
     /// <inheritdoc />
     protected override async Task<MapInstanceComposite?> LoadFromFileAsync(string path)
@@ -45,15 +52,27 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
         };
     }
 
-    internal override async Task SaveChangesAsync()
+    public override void Remove(string name)
     {
-        foreach (var obj in Objects)
-        {
-            await JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "instance.json"), obj.Obj.Instance, JsonSerializerOptions);
-            await JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "merchants.json"), obj.Obj.Merchants, JsonSerializerOptions);
-            await JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "monsters.json"), obj.Obj.Monsters, JsonSerializerOptions);
-            await JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "reactors.json"), obj.Obj.Reactors, JsonSerializerOptions);
-        }
+        var wrapper = Objects.FirstOrDefault(wp => wp.Obj.Instance.InstanceId.EqualsI(name));
+
+        if (wrapper is null)
+            return;
+
+        Directory.Delete(wrapper.Path, true);
+        Objects.Remove(wrapper);
+    }
+
+    public override Task SaveItemAsync(TraceWrapper<MapInstanceComposite> wrapped)
+    {
+        if (!Directory.Exists(wrapped.Path))
+            Directory.CreateDirectory(wrapped.Path);
+
+        return Task.WhenAll(
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "instance.json"), wrapped.Obj.Instance, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "merchants.json"), wrapped.Obj.Merchants, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "monsters.json"), wrapped.Obj.Monsters, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "reactors.json"), wrapped.Obj.Reactors, JsonSerializerOptions));
     }
 
     public sealed class MapInstanceComposite

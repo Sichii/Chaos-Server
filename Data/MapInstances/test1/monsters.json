@@ -1,6 +1,7 @@
 [
   {
     "aggroRange": 6,
+    "blackList": [],
     "expReward": 100,
     "extraScriptKeys": [],
     "intervalSecs": 30,

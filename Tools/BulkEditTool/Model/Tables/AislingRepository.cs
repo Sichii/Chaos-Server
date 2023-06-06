@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using BulkEditTool.Model.Abstractions;
 using Chaos.Common.Utilities;
+using Chaos.Extensions.Common;
 using Chaos.Schemas.Aisling;
 using Chaos.Services.Storage.Options;
 using Microsoft.Extensions.Options;
@@ -14,7 +15,14 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
     public AislingRepository(IOptions<AislingStoreOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
         : base(options, jsonSerializerOptions) { }
 
+    public override void Add(string path, AislingComposite obj)
+    {
+        var wrapper = new TraceWrapper<AislingComposite>(path, obj);
+        Objects.Add(wrapper);
+    }
+
     /// <inheritdoc />
+    /// <remarks>Must override here because AislingStoreOptions is not an IExpiringFileCacheOptions implementation</remarks>
     protected override IEnumerable<string> GetPaths() =>
         Directory.EnumerateDirectories(Options.Directory, "*", SearchOption.AllDirectories)
                  .Where(src => Directory.EnumerateFiles(src).Any());
@@ -69,19 +77,32 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
         };
     }
 
-    internal override async Task SaveChangesAsync()
+    public override void Remove(string name)
     {
-        foreach (var obj in Objects)
-            await Task.WhenAll(
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "aisling.json"), obj.Obj.Aisling, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "bank.json"), obj.Obj.Bank, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "effects.json"), obj.Obj.Effects, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "equipment.json"), obj.Obj.Equipment, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "inventory.json"), obj.Obj.Inventory, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "legend.json"), obj.Obj.Legend, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "skills.json"), obj.Obj.Skills, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "spells.json"), obj.Obj.Spells, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(obj.Path, "trackers.json"), obj.Obj.Trackers, JsonSerializerOptions));
+        var wrapper = Objects.FirstOrDefault(wp => wp.Obj.Aisling.Name.EqualsI(name));
+
+        if (wrapper is null)
+            return;
+
+        Directory.Delete(wrapper.Path, true);
+        Objects.Remove(wrapper);
+    }
+
+    public override Task SaveItemAsync(TraceWrapper<AislingComposite> wrapped)
+    {
+        if (!Directory.Exists(wrapped.Path))
+            Directory.CreateDirectory(wrapped.Path);
+
+        return Task.WhenAll(
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "aisling.json"), wrapped.Obj.Aisling, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "bank.json"), wrapped.Obj.Bank, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "effects.json"), wrapped.Obj.Effects, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "equipment.json"), wrapped.Obj.Equipment, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "inventory.json"), wrapped.Obj.Inventory, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "legend.json"), wrapped.Obj.Legend, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "skills.json"), wrapped.Obj.Skills, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "spells.json"), wrapped.Obj.Spells, JsonSerializerOptions),
+            JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "trackers.json"), wrapped.Obj.Trackers, JsonSerializerOptions));
     }
 
     public sealed class AislingComposite

@@ -1,16 +1,19 @@
 {
-    "scriptKeys": ["guildCreate"],
-    "templateKey": "generic_guild_create_initial",
-    "text": "Something something guilds r gud. Creating a guild is costly omg who would have thought. Are you prepared to pay {Amount} gold coins?",
-    "type": "Menu",
-    "options": [
-        {
-            "optionText": "I have the funds",
-            "dialogKey": "generic_guild_create_name_input"
-        },
-        {
-            "optionText": "Yeah right",
-            "dialogKey": "top"
-        }
-    ]
+  "options": [
+    {
+      "dialogKey": "generic_guild_create_name_input",
+      "optionText": "I have the funds"
+    },
+    {
+      "dialogKey": "top",
+      "optionText": "Yeah right"
+    }
+  ],
+  "scriptKeys": [
+    "guildCreate"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_create_initial",
+  "text": "Something something guilds r gud. Creating a guild is costly omg who would have thought. Are you prepared to pay {Amount} gold coins?",
+  "type": "Menu"
 }

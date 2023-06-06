@@ -1,17 +1,20 @@
 {
-    "scriptKeys": ["learnspell"],
-    "templateKey": "generic_learnspell_showrequirements",
-    "text": "{Description}\n\nEnsure you have what is required.\n\n{Requirements}\n\nDo you wish to learn this spell?",
-    "type": "menuWithArgs",
-    "options": [
-        {
-            "dialogKey": "generic_learnspell_accepted",
-            "optionText": "Yes"
-        },
-        {
-            "dialogKey": "generic_learnspell_initial",
-            "optionText": "No"
-        }
-    ],
-    "contextual": true
+  "contextual": true,
+  "options": [
+    {
+      "dialogKey": "generic_learnspell_accepted",
+      "optionText": "Yes"
+    },
+    {
+      "dialogKey": "generic_learnspell_initial",
+      "optionText": "No"
+    }
+  ],
+  "scriptKeys": [
+    "learnspell"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_learnspell_showrequirements",
+  "text": "{Description}\n\nEnsure you have what is required.\n\n{Requirements}\n\nDo you wish to learn this spell?",
+  "type": "MenuWithArgs"
 }

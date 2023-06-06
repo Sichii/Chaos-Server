@@ -1,34 +1,36 @@
 {
-    "learningRequirements": {
-        "itemRequirements": [
-            {
-                "amountRequired": 1,
-                "itemTemplateKey": "apple"
-            }
-        ],
-        "prerequisiteSkillTemplateKeys": [],
-        "prerequisiteSpellTemplateKeys": [],
-        "requiredGold": 10000,
-        "requiredStats": {
-            "con": 1,
-            "dex": 5,
-            "int": 1,
-            "str": 1,
-            "wis": 2
-        }
-    },
-    "spellType": "NoTarget",
-    "class": "Rogue",
-    "description": "Allows you to see well hidden creatures, items, etc",
-    "level": 55,
-    "name": "See True Hide",
-    "panelSprite": 7,
-    "scriptKeys": ["applyEffect"],
-    "scriptVars": {
-        "applyEffect": {
-            "effectKey": "seetruehide",
-            "filter": "selfOnly, aliveOnly"
-        }
-    },
-    "templateKey": "see_true_hide"
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 1,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "prerequisiteSkillTemplateKeys": [],
+    "prerequisiteSpellTemplateKeys": [],
+    "requiredGold": 10000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 5,
+      "int": 1,
+      "str": 1,
+      "wis": 2
+    }
+  },
+  "spellType": "NoTarget",
+  "class": "Rogue",
+  "description": "Allows you to see well hidden creatures, items, etc",
+  "level": 55,
+  "name": "See True Hide",
+  "panelSprite": 7,
+  "scriptKeys": [
+    "applyEffect"
+  ],
+  "scriptVars": {
+    "applyEffect": {
+      "effectKey": "seetruehide",
+      "filter": "selfOnly, aliveOnly"
+    }
+  },
+  "templateKey": "see_true_hide"
 }

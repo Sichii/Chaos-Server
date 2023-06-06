@@ -1,17 +1,20 @@
 {
-    "scriptKeys": ["sellShop"],
-    "templateKey": "generic_sellshop_confirmation",
-    "text": "You want to sell {ItemAmount} {ItemName}s? I can give you {Amount} gold, does that sound fair?",
-    "type": "menuWithArgs",
-    "options": [
-        {
-            "dialogKey": "generic_sellshop_accepted",
-            "optionText": "Yes"
-        },
-        {
-            "dialogKey": "generic_sellshop_declined",
-            "optionText": "No"
-        }
-    ],
-    "contextual": true
+  "contextual": true,
+  "options": [
+    {
+      "dialogKey": "generic_sellshop_accepted",
+      "optionText": "Yes"
+    },
+    {
+      "dialogKey": "generic_sellshop_declined",
+      "optionText": "No"
+    }
+  ],
+  "scriptKeys": [
+    "sellShop"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_sellshop_confirmation",
+  "text": "You want to sell {ItemAmount} {ItemName}s? I can give you {Amount} gold, does that sound fair?",
+  "type": "MenuWithArgs"
 }

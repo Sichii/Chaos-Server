@@ -1,17 +1,20 @@
 {
-    "scriptKeys": ["guildMemberPromote"],
-    "templateKey": "generic_guild_members_promote_confirmation",
-    "text": "You are promoting {Name} to {Rank}. Have they proven themself?",
-    "type": "Menu",
-    "contextual": true,
-    "options": [
-        {
-            "optionText": "Yes",
-            "dialogKey": "generic_guild_members_promote_accepted"
-        },
-        {
-            "optionText": "No",
-            "dialogKey": "generic_guild_members_initial"
-        }
-    ]
+  "contextual": true,
+  "options": [
+    {
+      "dialogKey": "generic_guild_members_promote_accepted",
+      "optionText": "Yes"
+    },
+    {
+      "dialogKey": "generic_guild_members_initial",
+      "optionText": "No"
+    }
+  ],
+  "scriptKeys": [
+    "guildMemberPromote"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_promote_confirmation",
+  "text": "You are promoting {Name} to {Rank}. Have they proven themself?",
+  "type": "Menu"
 }

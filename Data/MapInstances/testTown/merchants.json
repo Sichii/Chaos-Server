@@ -1,27 +1,32 @@
 [
-    {
-        "direction": "Right",
-        "merchantTemplateKey": "shop_tester",
-        "spawnPoint": "(25, 25)"
-    },
-    {
-        "direction": "Right",
-        "merchantTemplateKey": "bank_tester",
-        "spawnpoint": "(25, 24)"
-    },
-    {
-        "direction": "Right",
-        "merchantTemplateKey": "trainer_tester",
-        "spawnPoint": "(25, 23)"
-    },
-    {
-        "direction": "Right",
-        "merchantTemplateKey": "guild_tester",
-        "spawnPoint": "(25, 22)"
-    },
-    {
-        "direction": "Right",
-        "merchantTemplateKey": "misc_tester_1",
-        "spawnPoint": "(25, 21)"
-    }
+  {
+    "direction": "Right",
+    "extraScriptKeys": [],
+    "merchantTemplateKey": "shop_tester",
+    "spawnPoint": "(25, 25)"
+  },
+  {
+    "direction": "Right",
+    "extraScriptKeys": [],
+    "merchantTemplateKey": "bank_tester",
+    "spawnPoint": "(25, 24)"
+  },
+  {
+    "direction": "Right",
+    "extraScriptKeys": [],
+    "merchantTemplateKey": "trainer_tester",
+    "spawnPoint": "(25, 23)"
+  },
+  {
+    "direction": "Right",
+    "extraScriptKeys": [],
+    "merchantTemplateKey": "guild_tester",
+    "spawnPoint": "(25, 22)"
+  },
+  {
+    "direction": "Right",
+    "extraScriptKeys": [],
+    "merchantTemplateKey": "misc_tester_1",
+    "spawnPoint": "(25, 21)"
+  }
 ]

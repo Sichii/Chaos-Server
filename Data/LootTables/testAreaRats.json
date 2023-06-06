@@ -1,13 +1,13 @@
 {
-    "key": "testAreaRats",
-    "lootDrops": [
-        {
-            "dropChance": 0.25,
-            "itemTemplateKey": "stick"
-        },
-        {
-            "dropChance": 0.1,
-            "itemTemplateKey": "apple"
-        }
-    ]
+  "key": "testAreaRats",
+  "lootDrops": [
+    {
+      "dropChance": 0.25,
+      "itemTemplateKey": "stick"
+    },
+    {
+      "dropChance": 0.1,
+      "itemTemplateKey": "apple"
+    }
+  ]
 }

@@ -1,16 +1,18 @@
 {
-    "spellType": "NoTarget",
-    "class": "Diacht",
-    "description": "Shrouds you in darkness, hiding you from sight",
-    "level": 35,
-    "name": "Gm Hide",
-    "panelSprite": 131,
-    "scriptKeys": ["toggleEffect"],
-    "scriptVars": {
-        "toggleEffect": {
-            "effectKey": "gmHide",
-            "filter": "selfOnly, aliveOnly"
-        }
-    },
-    "templateKey": "gm_hide"
+  "spellType": "NoTarget",
+  "class": "Diacht",
+  "description": "Shrouds you in darkness, hiding you from sight",
+  "level": 35,
+  "name": "Gm Hide",
+  "panelSprite": 131,
+  "scriptKeys": [
+    "toggleEffect"
+  ],
+  "scriptVars": {
+    "toggleEffect": {
+      "effectKey": "gmHide",
+      "filter": "selfOnly, aliveOnly"
+    }
+  },
+  "templateKey": "gm_hide"
 }

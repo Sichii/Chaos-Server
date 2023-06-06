@@ -1,5 +1,9 @@
 {
+  "itemsForSale": [],
+  "itemsToBuy": [],
   "name": "ackshually",
+  "restockIntervalHours": 6,
+  "restockPercent": 100,
   "scriptKeys": [
     "showdialog"
   ],
@@ -8,6 +12,8 @@
       "dialogKey": "ackshually_initial"
     }
   },
+  "skillsToTeach": [],
+  "spellsToTeach": [],
   "sprite": 76,
   "templateKey": "ackshually"
 }

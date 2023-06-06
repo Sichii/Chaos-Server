@@ -1,21 +1,35 @@
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using BulkEditTool.Model.Tables;
 using Chaos;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
+using Chaos.Geometry.JsonConverters;
+using Chaos.Services.Configuration;
+using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BulkEditTool;
 
 public class JsonContext
 {
+    private static readonly SerializationContext Context;
+    private static readonly JsonSerializerOptions JsonSerializerOptions;
+    private static readonly TaskCompletionSource LoadingCompletion;
     private static readonly IServiceProvider Services;
+    private static bool IsInitialized;
     public static AislingRepository Aislings { get; private set; } = null!;
     public static DialogTemplateRepository DialogTemplates { get; private set; } = null!;
     public static ItemTemplateRepository ItemTemplates { get; private set; } = null!;
+    public static Task LoadingTask { get; private set; }
     public static LootTableRepository LootTables { get; private set; } = null!;
     public static MapInstanceRepository MapInstances { get; private set; } = null!;
     public static MapTemplateRepository MapTemplates { get; private set; } = null!;
@@ -24,9 +38,32 @@ public class JsonContext
     public static ReactorTileTemplateRepository ReactorTileTemplates { get; private set; } = null!;
     public static SkillTemplateRepository SkillTemplates { get; private set; } = null!;
     public static SpellTemplateRepository SpellTemplates { get; private set; } = null!;
+    public static string BaseDirectory { get; }
 
     static JsonContext()
     {
+        LoadingCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        LoadingTask = LoadingCompletion.Task;
+
+        JsonSerializerOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            PropertyNameCaseInsensitive = true,
+            IgnoreReadOnlyProperties = true,
+            IgnoreReadOnlyFields = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            AllowTrailingCommas = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
+        JsonSerializerOptions.Converters.Add(new PointConverter());
+        JsonSerializerOptions.Converters.Add(new LocationConverter());
+        JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+        Context = new SerializationContext(JsonSerializerOptions);
+
         var services = new ServiceCollection();
 
         // @formatter:off
@@ -42,11 +79,27 @@ public class JsonContext
                             ;
         // @formatter:on
         var configuration = builder.Build();
-        var startup = new Startup(configuration);
-        services.AddSingleton(startup.Configuration);
+        services.AddSingleton<IConfiguration>(configuration);
         services.AddLogging();
 
-        startup.AddJsonSerializerOptions(services);
+        services.AddOptions<JsonSerializerOptions>()
+                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
+                    (options, logger) =>
+                    {
+                        if (!IsInitialized)
+                        {
+                            IsInitialized = true;
+                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+                            var combinedResoler = JsonTypeInfoResolver.Combine(Context, defaultResolver);
+
+                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
+                        }
+
+                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
+                    });
+
+        services.ConfigureOptions<OptionsConfigurer>();
+        services.ConfigureOptions<OptionsValidator>();
 
         services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
         services.AddSingleton<IStagingDirectory>(sp => sp.GetRequiredService<IOptions<ChaosOptions>>().Value);
@@ -57,6 +110,7 @@ public class JsonContext
 
         var stagingDir = Services.GetRequiredService<IStagingDirectory>();
         stagingDir.StagingDirectory = Path.Combine("..", stagingDir.StagingDirectory);
+        BaseDirectory = stagingDir.StagingDirectory;
 
         CreateTables();
     }
@@ -76,18 +130,23 @@ public class JsonContext
         SpellTemplates = ActivatorUtilities.CreateInstance<SpellTemplateRepository>(Services);
     }
 
-    internal static Task LoadAsync() => Task.WhenAll(
-        LootTables.LoadAsync(),
-        Aislings.LoadAsync(),
-        MapInstances.LoadAsync(),
-        DialogTemplates.LoadAsync(),
-        ItemTemplates.LoadAsync(),
-        MapTemplates.LoadAsync(),
-        MerchantTemplates.LoadAsync(),
-        MonsterTemplates.LoadAsync(),
-        ReactorTileTemplates.LoadAsync(),
-        SkillTemplates.LoadAsync(),
-        SpellTemplates.LoadAsync());
+    internal static async Task LoadAsync()
+    {
+        await Task.WhenAll(
+            LootTables.LoadAsync(),
+            Aislings.LoadAsync(),
+            MapInstances.LoadAsync(),
+            DialogTemplates.LoadAsync(),
+            ItemTemplates.LoadAsync(),
+            MapTemplates.LoadAsync(),
+            MerchantTemplates.LoadAsync(),
+            MonsterTemplates.LoadAsync(),
+            ReactorTileTemplates.LoadAsync(),
+            SkillTemplates.LoadAsync(),
+            SpellTemplates.LoadAsync());
+
+        LoadingCompletion.TrySetResult();
+    }
 
     public static Task SaveChangesAsync() => Task.WhenAll(
         LootTables.SaveChangesAsync(),

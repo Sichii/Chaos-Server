@@ -37,9 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Common", "Chaos.Commo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B-4052-4E73-B24D-03799847282A}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
-		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
@@ -100,30 +100,30 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Scripting"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{B72FF7E2-9186-4ADE-AC9B-8F9B3E7C55DD}"
 	ProjectSection(SolutionItems) = preProject
+		docs\articles\AccessManager.md = docs\articles\AccessManager.md
 		docs\articles\CachingAndSerialization.md = docs\articles\CachingAndSerialization.md
+		docs\articles\Commands.md = docs\articles\Commands.md
+		docs\articles\Components.md = docs\articles\Components.md
+		docs\articles\Dialogs.md = docs\articles\Dialogs.md
 		docs\articles\Formulae.md = docs\articles\Formulae.md
 		docs\articles\FunctionalScripts.md = docs\articles\FunctionalScripts.md
+		docs\articles\InitialSetup.md = docs\articles\InitialSetup.md
 		docs\articles\Items.md = docs\articles\Items.md
 		docs\articles\LobbyOptions.md = docs\articles\LobbyOptions.md
 		docs\articles\Logging.md = docs\articles\Logging.md
 		docs\articles\LoginOptions.md = docs\articles\LoginOptions.md
+		docs\articles\LootTables.md = docs\articles\LootTables.md
 		docs\articles\Maps.md = docs\articles\Maps.md
 		docs\articles\Merchants.md = docs\articles\Merchants.md
 		docs\articles\MetaData.md = docs\articles\MetaData.md
 		docs\articles\Monsters.md = docs\articles\Monsters.md
 		README.md = README.md
+		docs\articles\Scripting.md = docs\articles\Scripting.md
 		docs\articles\Skills.md = docs\articles\Skills.md
 		docs\articles\Spells.md = docs\articles\Spells.md
 		docs\articles\toc.yml = docs\articles\toc.yml
-		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
-		docs\articles\Dialogs.md = docs\articles\Dialogs.md
-		docs\articles\AccessManager.md = docs\articles\AccessManager.md
-		docs\articles\InitialSetup.md = docs\articles\InitialSetup.md
-		docs\articles\Commands.md = docs\articles\Commands.md
 		docs\articles\Visibility.md = docs\articles\Visibility.md
-		docs\articles\Components.md = docs\articles\Components.md
-		docs\articles\Scripting.md = docs\articles\Scripting.md
-		docs\articles\LootTables.md = docs\articles\LootTables.md
+		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"
@@ -134,26 +134,28 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage", "Chaos.Stor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveFunctionCollapse", "Tools\WaveFunctionCollapse\WaveFunctionCollapse.csproj", "{D8A5DC97-9A70-4533-81CC-9B74D19A3401}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkEditTool", "Tools\BulkEditTool\BulkEditTool.csproj", "{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulkEditTool", "Tools\BulkEditTool\BulkEditTool.csproj", "{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.MetaData", "Chaos.MetaData\Chaos.MetaData.csproj", "{1F36E08E-BEF4-46BE-9D15-67D413CD0A6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.MetaData", "Chaos.MetaData\Chaos.MetaData.csproj", "{1F36E08E-BEF4-46BE-9D15-67D413CD0A6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{D5DE58CA-F39A-4656-9890-DA737AC428E1}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\docs.yml = .github\workflows\docs.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Scripting.Abstractions.Tests", "Tests\Chaos.Scripting.Abstractions.Tests\Chaos.Scripting.Abstractions.Tests.csproj", "{02CBFCE5-FA7E-4695-982F-012AD3E102FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Scripting.Abstractions.Tests", "Tests\Chaos.Scripting.Abstractions.Tests\Chaos.Scripting.Abstractions.Tests.csproj", "{02CBFCE5-FA7E-4695-982F-012AD3E102FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Storage.Abstractions.Tests", "Tests\Chaos.Storage.Abstractions.Tests\Chaos.Storage.Abstractions.Tests.csproj", "{57DAC917-129E-44C9-B2B1-714789CB9D92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage.Abstractions.Tests", "Tests\Chaos.Storage.Abstractions.Tests\Chaos.Storage.Abstractions.Tests.csproj", "{57DAC917-129E-44C9-B2B1-714789CB9D92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Common.Tests", "Tests\Chaos.Extensions.Common.Tests\Chaos.Extensions.Common.Tests.csproj", "{6781C369-AD5E-48D6-8381-F018645AFB3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Common.Tests", "Tests\Chaos.Extensions.Common.Tests\Chaos.Extensions.Common.Tests.csproj", "{6781C369-AD5E-48D6-8381-F018645AFB3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Extensions.Geometry.Tests", "Tests\Chaos.Extensions.Geometry.Tests\Chaos.Extensions.Geometry.Tests.csproj", "{F0EA582A-6FDE-4225-A322-D63D2051173D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Geometry.Tests", "Tests\Chaos.Extensions.Geometry.Tests\Chaos.Extensions.Geometry.Tests.csproj", "{F0EA582A-6FDE-4225-A322-D63D2051173D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Common.Tests", "Tests\Chaos.Common.Tests\Chaos.Common.Tests.csproj", "{9194BAB7-C5A7-4B6D-969D-80678CCC5CD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Common.Tests", "Tests\Chaos.Common.Tests\Chaos.Common.Tests.csproj", "{9194BAB7-C5A7-4B6D-969D-80678CCC5CD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Testing.Infrastructure", "Tests\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj", "{0DAB625B-53E6-451F-81E0-670FD6521387}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Testing.Infrastructure", "Tests\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj", "{0DAB625B-53E6-451F-81E0-670FD6521387}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{E1769C05-C6A0-4506-B6A3-1C506A62DE9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,19 @@
 [
   {
     "count": 1,
+    "currentDurability": 1000,
+    "displayName": "Magic Stick",
+    "scriptKeys": [
+      "MagicPrefix"
+    ],
     "slot": 1,
+    "templateKey": "stick",
+    "uniqueId": 1
+  },
+  {
+    "count": 1,
+    "scriptKeys": [],
+    "slot": 14,
     "templateKey": "teleport_trinket",
     "uniqueId": 1
   }

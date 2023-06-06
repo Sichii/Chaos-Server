@@ -26,7 +26,7 @@ public sealed class ChaosDialogTypeExtensionsTests
     }
 
     [Fact]
-    public void ToDialogType_Should_Throw_Exception_For_Undefined_ChaosDialogType()
+    public void ToDialogType_Should_ReturnNull_For_Undefined_ChaosDialogType()
     {
         // Arrange
         const ChaosDialogType CHAOS_DIALOG_TYPE = (ChaosDialogType)99;
@@ -36,8 +36,10 @@ public sealed class ChaosDialogTypeExtensionsTests
         var func = () => CHAOS_DIALOG_TYPE.ToDialogType();
 
         func.Should()
-            .ThrowExactly<ArgumentOutOfRangeException>()
-            .WithParameterName("value");
+            .NotThrow()
+            .Which
+            .Should()
+            .BeNull();
     }
 
     [Theory]
@@ -61,7 +63,7 @@ public sealed class ChaosDialogTypeExtensionsTests
     }
 
     [Fact]
-    public void ToMenuType_Should_Throw_Exception_For_Undefined_ChaosDialogType()
+    public void ToMenuType_Should_ReturnNull_For_Undefined_ChaosDialogType()
     {
         // Arrange
         const ChaosDialogType CHAOS_DIALOG_TYPE = (ChaosDialogType)99;
@@ -71,7 +73,9 @@ public sealed class ChaosDialogTypeExtensionsTests
         var func = () => CHAOS_DIALOG_TYPE.ToMenuType();
 
         func.Should()
-            .ThrowExactly<ArgumentOutOfRangeException>()
-            .WithParameterName("value");
+            .NotThrow()
+            .Which
+            .Should()
+            .BeNull();
     }
 }

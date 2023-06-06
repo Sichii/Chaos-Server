@@ -1,17 +1,20 @@
 {
-    "scriptKeys": ["guildMemberKick"],
-    "templateKey": "generic_guild_members_kick_confirmation",
-    "text": "Are you sure you want to kick {Name} from {GuildName}?",
-    "type": "Menu",
-    "contextual": true,
-    "options": [
-        {
-            "optionText": "Yes",
-            "dialogKey": "generic_guild_members_kick_accepted"
-        },
-        {
-            "optionText": "No",
-            "dialogKey": "generic_guild_members_initial"
-        }
-    ]
+  "contextual": true,
+  "options": [
+    {
+      "dialogKey": "generic_guild_members_kick_accepted",
+      "optionText": "Yes"
+    },
+    {
+      "dialogKey": "generic_guild_members_initial",
+      "optionText": "No"
+    }
+  ],
+  "scriptKeys": [
+    "guildMemberKick"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_kick_confirmation",
+  "text": "Are you sure you want to kick {Name} from {GuildName}?",
+  "type": "Menu"
 }

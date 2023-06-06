@@ -33,6 +33,8 @@ public partial class MainWindow : Window
         DocViewModel = new ObservableCollection<DocumentViewModel>();
         Items.ItemsSource = DocViewModel;
 
+        Loaded += MainWindow_Loaded;
+
         var currentAssembly = Assembly.GetExecutingAssembly();
 
         var currentAssemblyStack = currentAssembly.GetReferencedAssemblies()
@@ -83,10 +85,10 @@ public partial class MainWindow : Window
 
     private void AddNewDocument(DocumentViewModel? previous = null) => DocViewModel.Add(new DocumentViewModel(RoslynHost, previous));
 
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e) => await JsonContext.LoadAsync();
+
     private async void OnItemLoaded(object sender, EventArgs e)
     {
-        await JsonContext.LoadAsync();
-
         Editor = (RoslynCodeEditor)sender;
 
         Editor.TextArea.SelectionCornerRadius = 0;

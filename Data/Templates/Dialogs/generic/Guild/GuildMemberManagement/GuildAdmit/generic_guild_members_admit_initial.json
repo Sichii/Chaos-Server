@@ -1,7 +1,11 @@
 {
-    "scriptKeys": ["guildMemberAdmit"],
-    "templateKey": "generic_guild_members_admit_initial",
-    "text": "Who would you like to admit?",
-    "type": "MenuTextEntry",
-    "nextDialogKey": "generic_guild_members_admit_confirmation"
+  "nextDialogKey": "generic_guild_members_admit_confirmation",
+  "options": [],
+  "scriptKeys": [
+    "guildMemberAdmit"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_admit_initial",
+  "text": "Who would you like to admit?",
+  "type": "MenuTextEntry"
 }

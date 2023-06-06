@@ -2,26 +2,27 @@
 
 The server runs on scripts. Skills, Spells, Items, Dialogs, Monsters, Merchants, MapInstances, ReactorTiles, etc.. are
 all scripted objects.
-To control
-how these objects respond to input, a script must be written. Scripts can be found under `Chaos.Scripting`. There are a
-number of
-default scripts created as examples, but writing your own scripts is the only way to truly customize the server.
+To control how these objects respond to input, a script must be written. Scripts can be found under `Chaos.Scripting`.
+There are a number of default scripts created as examples, but writing your own scripts is the only way to truly
+customize the server.
 
 There are 2 main types of scripts for most entities. `Base Scripts` and `Configurable Scripts`. Let's take item scripts
-as an example. There
-are 2 base types you can choose to use,
+as an example. There are 2 base types you can choose to use,
 the [ItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.ItemScriptBase>) and
 the [ConfigurableItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.ConfigurableItemScriptBase>).
+
+> [!TIP]
+> You can add scripts to scripted objects at runtime by
+> using [AddScript](<xref:Chaos.Extensions.ScriptExtensions.AddScript`2>)
 
 ### Base Scripts
 
 Base scripts are just empty scripts with no functionality. They have empty virtual implementations of all of the
-possible events that could
-occur for that object. These events are intended to be overridden and have functionality added.
+possible events that could occur for that object. These events are intended to be overridden and have functionality
+added.
 > [!TIP]
 > Base scripts are intended for use when no external configuration is necessary. A script inheriting from a BaseScript
-> should generally do
-> something specific
+> should generally do something specific
 
 ### Configurable Scripts
 

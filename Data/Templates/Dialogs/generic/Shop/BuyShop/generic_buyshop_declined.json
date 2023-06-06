@@ -1,7 +1,10 @@
 {
-    "templateKey": "generic_buyshop_declined",
-    "text": "Ah rats, we almost had a deal...",
-    "type": "normal",
-    "prevDialogKey": "generic_buyshop_confirmation",
-    "nextDialogKey": "generic_buyshop_initial"
+  "nextDialogKey": "generic_buyshop_initial",
+  "options": [],
+  "prevDialogKey": "generic_buyshop_confirmation",
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "generic_buyshop_declined",
+  "text": "Ah rats, we almost had a deal...",
+  "type": "Normal"
 }

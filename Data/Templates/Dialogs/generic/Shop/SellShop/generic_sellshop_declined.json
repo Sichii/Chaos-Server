@@ -1,7 +1,10 @@
 {
-    "templateKey": "generic_sellshop_accepted",
-    "text": "Ah rats, we almost had a deal...",
-    "type": "normal",
-    "prevDialogKey": "generic_sellshop_confirmation",
-    "nextDialogKey": "generic_sellshop_initial"
+  "nextDialogKey": "generic_sellshop_initial",
+  "options": [],
+  "prevDialogKey": "generic_sellshop_confirmation",
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "generic_sellshop_accepted",
+  "text": "Ah rats, we almost had a deal...",
+  "type": "Normal"
 }

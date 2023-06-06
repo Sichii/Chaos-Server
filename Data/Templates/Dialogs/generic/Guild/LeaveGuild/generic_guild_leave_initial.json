@@ -1,16 +1,19 @@
 {
-    "scriptKeys": ["guildLeave"],
-    "templateKey": "generic_guild_leave_initial",
-    "text": "Are you sure you want to leave {GuildName}?",
-    "type": "Menu",
-    "options": [
-        {
-            "optionText": "Yeah fuck em",
-            "dialogKey": "generic_guild_leave_accepted"
-        },
-        {
-            "optionText": "No wait! I changed my mind",
-            "dialogKey": "top"
-        }
-    ]
+  "options": [
+    {
+      "dialogKey": "generic_guild_leave_accepted",
+      "optionText": "Yeah fuck em"
+    },
+    {
+      "dialogKey": "top",
+      "optionText": "No wait! I changed my mind"
+    }
+  ],
+  "scriptKeys": [
+    "guildLeave"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_leave_initial",
+  "text": "Are you sure you want to leave {GuildName}?",
+  "type": "Menu"
 }

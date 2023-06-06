@@ -1,15 +1,17 @@
 {
-    "options": [
-        {
-            "dialogKey": "generic_buyShop_initial",
-            "optionText": "Buy"
-        },
-        {
-            "dialogKey": "generic_sellshop_initial",
-            "optionText": "Sell"
-        }
-    ],
-    "templateKey": "shop_tester_initial",
-    "text": "just a basic bitch dialog",
-    "type": "menu"
+  "options": [
+    {
+      "dialogKey": "generic_buyShop_initial",
+      "optionText": "Buy"
+    },
+    {
+      "dialogKey": "generic_sellshop_initial",
+      "optionText": "Sell"
+    }
+  ],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "shop_tester_initial",
+  "text": "just a basic bitch dialog",
+  "type": "Menu"
 }

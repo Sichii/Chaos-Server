@@ -1,8 +1,12 @@
 {
-    "scriptKeys": ["guildMemberPromote"],
-    "templateKey": "generic_guild_members_promote_accepted",
-    "text": "skip",
-    "type": "Normal",
-    "nextDialogKey": "generic_guild_members_initial",
-    "contextual": true
+  "contextual": true,
+  "nextDialogKey": "generic_guild_members_initial",
+  "options": [],
+  "scriptKeys": [
+    "guildMemberPromote"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_members_promote_accepted",
+  "text": "skip",
+  "type": "Normal"
 }

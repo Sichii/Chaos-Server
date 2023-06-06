@@ -1,8 +1,12 @@
 {
-    "scriptKeys": ["sellShop"],
-    "templateKey": "generic_sellshop_amountrequest",
-    "text": "How many {ItemName} would you like to sell? You have {Amount} of them.",
-    "type": "menuTextEntryWithArgs",
-    "nextDialogKey": "generic_sellshop_confirmation",
-    "contextual": true
+  "contextual": true,
+  "nextDialogKey": "generic_sellshop_confirmation",
+  "options": [],
+  "scriptKeys": [
+    "sellShop"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_sellshop_amountrequest",
+  "text": "How many {ItemName} would you like to sell? You have {Amount} of them.",
+  "type": "MenuTextEntryWithArgs"
 }

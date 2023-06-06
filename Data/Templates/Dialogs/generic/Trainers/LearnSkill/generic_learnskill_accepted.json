@@ -1,7 +1,11 @@
 {
-    "scriptKeys": ["learnskill"],
-    "templateKey": "generic_learnskill_accepted",
-    "text": "Something something use it for evil idk",
-    "type": "normal",
-    "contextual": true
+  "contextual": true,
+  "options": [],
+  "scriptKeys": [
+    "learnskill"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_learnskill_accepted",
+  "text": "Something something use it for evil idk",
+  "type": "Normal"
 }

@@ -1,17 +1,20 @@
 {
-    "scriptKeys": ["forgetspell"],
-    "templateKey": "generic_forgetspell_confirmation",
-    "text": "Are you sure you want to forget {SpellName}?",
-    "type": "menuWithArgs",
-    "options": [
-        {
-            "dialogkey": "generic_forgetspell_accepted",
-            "optiontext": "Yes, I'm sure"
-        },
-        {
-            "dialogkey": "generic_forgetspell_initial",
-            "optiontext": "No, wait!"
-        }
-    ],
-    "contextual": true
+  "contextual": true,
+  "options": [
+    {
+      "dialogKey": "generic_forgetspell_accepted",
+      "optionText": "Yes, I'm sure"
+    },
+    {
+      "dialogKey": "generic_forgetspell_initial",
+      "optionText": "No, wait!"
+    }
+  ],
+  "scriptKeys": [
+    "forgetspell"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_forgetspell_confirmation",
+  "text": "Are you sure you want to forget {SpellName}?",
+  "type": "MenuWithArgs"
 }

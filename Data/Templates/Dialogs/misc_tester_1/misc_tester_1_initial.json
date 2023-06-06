@@ -1,11 +1,13 @@
 {
-    "options": [
-        {
-            "dialogkey": "misc_tester_1_give_legend_mark",
-            "optiontext": "Test Legend Marks"
-        }
-    ],
-    "templateKey": "misc_tester_1_initial",
-    "text": "My life for ire",
-    "type": "menu"
+  "options": [
+    {
+      "dialogKey": "misc_tester_1_give_legend_mark",
+      "optionText": "Test Legend Marks"
+    }
+  ],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "misc_tester_1_initial",
+  "text": "My life for ire",
+  "type": "Menu"
 }

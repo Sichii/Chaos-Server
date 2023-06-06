@@ -13,8 +13,8 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
                                                                    where TOptions: class
 {
     public SynchronizedList<TraceWrapper<T>> Objects { get; }
+    public TOptions Options { get; }
     protected JsonSerializerOptions JsonSerializerOptions { get; }
-    protected TOptions Options { get; }
     protected SynchronizedHashSet<string> Paths { get; }
 
     protected RepositoryBase(IOptions<TOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
@@ -24,6 +24,8 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
         JsonSerializerOptions = jsonSerializerOptions.Value;
         Objects = new SynchronizedList<TraceWrapper<T>>();
     }
+
+    public abstract void Add(string path, T obj);
 
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator() => Objects.Select(wrapped => wrapped.Obj).GetEnumerator();
@@ -38,20 +40,21 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
 
         var searchPattern = options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-        return options.SearchType switch
-        {
-            SearchType.Files => Directory.EnumerateFiles(
-                options.Directory,
-                options.FilePattern ?? string.Empty,
-                searchPattern),
-            SearchType.Directories => Directory
-                                      .EnumerateDirectories(
-                                          options.Directory,
-                                          options.FilePattern ?? string.Empty,
-                                          searchPattern)
-                                      .Where(src => Directory.EnumerateFiles(src).Any()),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return (options.SearchType switch
+            {
+                SearchType.Files => Directory.EnumerateFiles(
+                    options.Directory,
+                    options.FilePattern ?? string.Empty,
+                    searchPattern),
+                SearchType.Directories => Directory
+                                          .EnumerateDirectories(
+                                              options.Directory,
+                                              options.FilePattern ?? string.Empty,
+                                              searchPattern)
+                                          .Where(src => Directory.EnumerateFiles(src).Any()),
+                _ => throw new ArgumentOutOfRangeException()
+            })
+            .Select(Path.GetFullPath);
     }
 
     internal virtual async Task LoadAsync()
@@ -64,27 +67,35 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
         if (Objects.Any())
             Objects.Clear();
 
-        foreach (var path in Paths)
-            try
+        await Parallel.ForEachAsync(
+            Paths,
+            async (path, _) =>
             {
                 var obj = await LoadFromFileAsync(path);
 
                 if (obj == null)
-                    continue;
+                    return;
 
                 var wrapped = new TraceWrapper<T>(path, obj);
                 Objects.Add(wrapped);
-            } catch
-            {
-                //ignored
-            }
+            });
     }
 
     protected virtual Task<T?> LoadFromFileAsync(string path) => JsonSerializerEx.DeserializeAsync<T>(path, JsonSerializerOptions);
 
-    internal virtual async Task SaveChangesAsync()
+    public abstract void Remove(string name);
+
+    public virtual Task SaveChangesAsync() => Parallel.ForEachAsync(
+        Objects,
+        async (obj, _) => await SaveItemAsync(obj));
+
+    public virtual Task SaveItemAsync(TraceWrapper<T> wrapped)
     {
-        foreach (var obj in Objects)
-            await JsonSerializerEx.SerializeAsync(obj.Path, obj.Obj, JsonSerializerOptions);
+        var dir = Path.GetDirectoryName(wrapped.Path)!;
+
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+
+        return JsonSerializerEx.SerializeAsync(wrapped.Path, wrapped.Obj, JsonSerializerOptions);
     }
 }

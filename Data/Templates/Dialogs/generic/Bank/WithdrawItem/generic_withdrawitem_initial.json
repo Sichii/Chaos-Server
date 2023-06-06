@@ -1,8 +1,11 @@
 {
-    "options": [],
-    "scriptKeys": ["withdrawitem"],
-    "templateKey": "generic_withdrawitem_initial",
-    "text": "What would you like to withdraw?",
-    "type": "ShowItems",
-    "nextDialogKey": "generic_withdrawitem_amountrequest"
+  "nextDialogKey": "generic_withdrawitem_amountrequest",
+  "options": [],
+  "scriptKeys": [
+    "withdrawitem"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_withdrawitem_initial",
+  "text": "What would you like to withdraw?",
+  "type": "ShowItems"
 }

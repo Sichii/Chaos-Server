@@ -1,8 +1,12 @@
 {
-    "scriptKeys": ["sellShop"],
-    "templateKey": "generic_sellshop_accepted",
-    "text": "skip",
-    "type": "normal",
-    "nextDialogKey": "generic_sellshop_initial",
-    "contextual": true
+  "contextual": true,
+  "nextDialogKey": "generic_sellshop_initial",
+  "options": [],
+  "scriptKeys": [
+    "sellShop"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_sellshop_accepted",
+  "text": "skip",
+  "type": "Normal"
 }
