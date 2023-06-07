@@ -33,6 +33,19 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
         InitializeComponent();
     }
 
+    private void UserControl_Initialized(object sender, EventArgs e)
+    {
+        ColorCmbox.ItemsSource = Enum.GetNames<DisplayColor>();
+        EquipmentTypeCmbox.ItemsSource = Enum.GetNames<EquipmentType>().Prepend(string.Empty);
+        GenderCmbox.ItemsSource = Enum.GetNames<Gender>().Prepend(string.Empty);
+        PantsColorCmbox.ItemsSource = Enum.GetNames<DisplayColor>().Take(16).Prepend(string.Empty);
+        ClassCmbox.ItemsSource = Enum.GetNames<BaseClass>().Prepend(string.Empty);
+        AdvClassCmbox.ItemsSource = Enum.GetNames<BaseClass>().Prepend(string.Empty);
+
+        PopulateControlsFromItem();
+    }
+
+    #region Controls > Template > Controls
     public void CopySelectionsToItem()
     {
         var template = Item.Obj;
@@ -105,12 +118,6 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
         ObservableProperties.Key = template.TemplateKey;
     }
 
-    private void DeleteBtn_OnClick(object sender, RoutedEventArgs e)
-    {
-        JsonContext.ItemTemplates.Remove(Item.Obj.TemplateKey);
-        ListItems.Remove(ObservableProperties);
-    }
-
     public void PopulateControlsFromItem()
     {
         var template = Item.Obj;
@@ -177,6 +184,14 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
         CategoryTbox.Text = template.Category;
         DescriptionTbox.Text = template.Description;
     }
+    #endregion
+
+    #region Buttons
+    private void DeleteBtn_OnClick(object sender, RoutedEventArgs e)
+    {
+        JsonContext.ItemTemplates.Remove(Item.Obj.TemplateKey);
+        ListItems.Remove(ObservableProperties);
+    }
 
     private void RevertButton_Click(object sender, RoutedEventArgs e) => PopulateControlsFromItem();
 
@@ -223,21 +238,6 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
         await JsonContext.ItemTemplates.SaveItemAsync(Item);
     }
 
-    private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-    private void TemplateKeyTbox_OnKeyUp(object sender, KeyEventArgs e) => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
-
-    private void UserControl_Initialized(object sender, EventArgs e)
-    {
-        ColorCmbox.ItemsSource = Enum.GetNames<DisplayColor>();
-        EquipmentTypeCmbox.ItemsSource = Enum.GetNames<EquipmentType>().Prepend(string.Empty);
-        GenderCmbox.ItemsSource = Enum.GetNames<Gender>().Prepend(string.Empty);
-        PantsColorCmbox.ItemsSource = Enum.GetNames<DisplayColor>().Take(16).Prepend(string.Empty);
-        ClassCmbox.ItemsSource = Enum.GetNames<BaseClass>().Prepend(string.Empty);
-        AdvClassCmbox.ItemsSource = Enum.GetNames<BaseClass>().Prepend(string.Empty);
-
-        PopulateControlsFromItem();
-    }
-
     private bool ValidatePreSave()
     {
         var fileName = Path.GetFileNameWithoutExtension(PathTbox.Text);
@@ -255,4 +255,10 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
 
         return true;
     }
+    #endregion
+
+    #region Tbox Validation
+    private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
+    private void TemplateKeyTbox_OnKeyUp(object sender, KeyEventArgs e) => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    #endregion
 }

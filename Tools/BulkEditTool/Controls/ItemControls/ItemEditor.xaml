@@ -46,7 +46,7 @@
                       ItemsSource="{Binding ItemTemplates}"
                       DisplayMemberPath="Key"
                       SelectionChanged="ListView_SelectionChanged" />
-            <Button Grid.Row="2" Name="AddButton" Content="Add" Margin="10" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+            <Button Grid.Row="2" Name="AddBtn" Content="Add" Margin="10" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
                     Click="AddButton_Click" />
         </Grid>
         <GridSplitter Grid.Column="1"
