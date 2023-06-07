@@ -47,8 +47,11 @@ public sealed class MonsterSpawn : IDeltaUpdatable
         monster.Experience = ExpReward;
     }
 
-    private IPoint GenerateSpawnPoint(ICollection<IPoint> blackList) => MapInstance.Template.Bounds.GetRandomPoint(
-        pt => MapInstance.IsWalkable(pt, MonsterTemplate.Type) && !blackList.Contains(pt, PointEqualityComparer.Instance));
+    private IPoint GenerateSpawnPoint() => MapInstance.Template.Bounds.GetRandomPoint(PointValidator);
+
+    private bool PointValidator(Point point) => (SpawnArea is null || SpawnArea.Contains(point))
+                                                && MapInstance.IsWalkable(point, MonsterTemplate.Type)
+                                                && !BlackList.Contains(point, PointEqualityComparer.Instance);
 
     private void SpawnMonsters()
     {
@@ -63,7 +66,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
         for (var i = 0; i < spawnAmount; i++)
         {
-            var point = GenerateSpawnPoint(BlackList);
+            var point = GenerateSpawnPoint();
 
             var monster = MonsterFactory.Create(
                 MonsterTemplate.TemplateKey,

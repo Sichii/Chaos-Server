@@ -15,7 +15,8 @@
              TextElement.FontSize="14"
              FontFamily="{materialDesign:MaterialDesignFont}"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Initialized="UserControl_Initialized">
+             Initialized="UserControl_Initialized"
+             PreviewKeyDown="ItemEditor_OnPreviewKeyDown">
     <Grid Name="ContentGrid"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch">
@@ -53,8 +54,34 @@
                       Style="{StaticResource MaterialDesignGridSplitter}" />
         <Grid Name="PropertyEditor"
               Grid.Column="2" />
+
         <materialDesign:DialogHost Name="DialogHost"
                                    Grid.Column="2"
                                    CloseOnClickAway="True" />
+
+        <materialDesign:Snackbar Name="Snackbar"
+                                 Grid.ColumnSpan="99"
+                                 Grid.RowSpan="99"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 MessageQueue="{materialDesign:MessageQueue}" />
+
+        <TextBox Name="FindTbox"
+                 Grid.Column="2"
+                 Grid.Row="0"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 MaxLines="1"
+                 MinWidth="250"
+                 Margin="10"
+                 materialDesign:TextFieldAssist.HasClearButton="True"
+                 materialDesign:HintAssist.Hint="Search..."
+                 IsTabStop="False"
+                 Visibility="Collapsed"
+                 materialDesign:TextFieldAssist.HasFilledTextField="True"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 Background="#DD404040"
+                 Panel.ZIndex="99999"
+                 TextChanged="FindTbox_OnTextChanged" />
     </Grid>
 </UserControl>
