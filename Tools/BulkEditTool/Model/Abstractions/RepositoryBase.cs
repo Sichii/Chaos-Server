@@ -28,7 +28,7 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
     public abstract void Add(string path, T obj);
 
     /// <inheritdoc />
-    public IEnumerator<T> GetEnumerator() => Objects.Select(wrapped => wrapped.Obj).GetEnumerator();
+    public IEnumerator<T> GetEnumerator() => Objects.Select(wrapped => wrapped.Object).GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -107,7 +107,7 @@ public abstract class RepositoryBase<T, TOptions> : IEnumerable<T> where T: clas
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
-            await JsonSerializerEx.SerializeAsync(wrapped.Path, wrapped.Obj, JsonSerializerOptions);
+            await JsonSerializerEx.SerializeAsync(wrapped.Path, wrapped.Object, JsonSerializerOptions);
         } catch (JsonException e)
         {
             throw new JsonException($"Failed to serialize {typeof(T).Name} to path \"{wrapped.Path}\"", e);

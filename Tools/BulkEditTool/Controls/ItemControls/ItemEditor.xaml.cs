@@ -7,7 +7,6 @@ using System.Windows.Input;
 using BulkEditTool.Comparers;
 using BulkEditTool.Extensions;
 using BulkEditTool.Model;
-using BulkEditTool.Model.Observables;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Templates;
 using MaterialDesignExtensions.Controls;
@@ -20,11 +19,11 @@ namespace BulkEditTool.Controls.ItemControls;
 /// </summary>
 public sealed partial class ItemEditor
 {
-    public ObservableCollection<ObservableListItem<ItemPropertyEditor>> ItemTemplates { get; }
+    public ObservableCollection<ListViewItem<ItemTemplateSchema, ItemPropertyEditor>> ListViewItems { get; }
 
     public ItemEditor()
     {
-        ItemTemplates = new ObservableCollection<ObservableListItem<ItemPropertyEditor>>();
+        ListViewItems = new ObservableCollection<ListViewItem<ItemTemplateSchema, ItemPropertyEditor>>();
 
         InitializeComponent();
 
@@ -56,26 +55,63 @@ public sealed partial class ItemEditor
         Snackbar.MessageQueue?.Clear();
 
         var objs = JsonContext.ItemTemplates.Objects.Select(
-                                  wrapper =>
+                                  wrapper => new ListViewItem<ItemTemplateSchema, ItemPropertyEditor>
                                   {
-                                      var editor = new ItemPropertyEditor(ItemTemplates, wrapper);
-
-                                      var listItem = new ObservableListItem<ItemPropertyEditor>(editor)
-                                      {
-                                          Key = wrapper.Obj.TemplateKey
-                                      };
-
-                                      return listItem;
+                                      Name = wrapper.Object.TemplateKey,
+                                      Wrapper = wrapper
                                   })
-                              .OrderBy(_ => _, ObservableListItemComparer.Instance);
+                              .OrderBy(_ => _, ListViewItemComparer.Instance);
 
-        ItemTemplates.AddRange(objs);
+        ListViewItems.AddRange(objs);
+
+        var findCommand = new RoutedCommand();
+        var escCommand = new RoutedCommand();
+
+        var findInputBinding = new InputBinding(findCommand, new KeyGesture(Key.F, ModifierKeys.Control));
+        var escInputBinding = new InputBinding(escCommand, new KeyGesture(Key.Escape));
+
+        var findCmdBinding = new CommandBinding(findCommand, Show_FindTbox);
+        var escCmdBinding = new CommandBinding(escCommand, Hide_FindTBox);
+
+        InputBindings.Add(findInputBinding);
+        InputBindings.Add(escInputBinding);
+        CommandBindings.Add(findCmdBinding);
+        CommandBindings.Add(escCmdBinding);
 
         AddBtn.IsEnabled = true;
         GridViewBtn.IsEnabled = true;
     }
 
     #region CTRL+F (Find)
+    private void Show_FindTbox(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+
+        FindTbox.Visibility = Visibility.Visible;
+        FindTbox.Focus();
+        FindTbox.SelectAll();
+    }
+
+    private void Hide_FindTBox(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+
+        FindTbox.Text = string.Empty;
+        FindTbox.Visibility = Visibility.Collapsed;
+
+        if (ItemTemplatesView.IsVisible)
+            Keyboard.Focus(ItemTemplatesView);
+        else
+        {
+            var currentView = PropertyEditor.Children
+                                            .OfType<Control>()
+                                            .FirstOrDefault();
+
+            if (currentView is not null)
+                Keyboard.Focus(currentView);
+        }
+    }
+
     private void FindTbox_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         var tbox = (TextBox)sender;
@@ -114,8 +150,8 @@ public sealed partial class ItemEditor
 
             default:
             {
-                var searchResult = ItemTemplates
-                                   .Select(listItem => listItem.Control.Item.Obj.EnumerateProperties())
+                var searchResult = ListViewItems
+                                   .Select(listItem => listItem.Object.EnumerateProperties())
                                    .SelectMany(
                                        (rowValue, rowIndex) =>
                                            rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
@@ -124,33 +160,11 @@ public sealed partial class ItemEditor
                 if (searchResult.cellValue is null)
                     return;
 
-                ItemTemplatesView.SelectedIndex = searchResult.rowIndex;
+                var selected = ListViewItems[searchResult.rowIndex];
+                ItemTemplatesView.SelectedItem = selected;
 
                 break;
             }
-        }
-    }
-
-    private void ItemEditor_OnPreviewKeyDown(object sender, KeyEventArgs e)
-    {
-        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
-        switch (e.Key)
-        {
-            case Key.F when Keyboard.Modifiers == ModifierKeys.Control:
-                e.Handled = true;
-
-                FindTbox.Visibility = Visibility.Visible;
-                FindTbox.Focus();
-
-                break;
-            case Key.Escape when FindTbox.IsVisible:
-                e.Handled = true;
-
-                FindTbox.Text = null;
-                FindTbox.Visibility = Visibility.Collapsed;
-                ItemTemplatesView.Focus();
-
-                break;
         }
     }
     #endregion
@@ -158,7 +172,7 @@ public sealed partial class ItemEditor
     #region ListView
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ObservableListItem<ItemPropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems.OfType<ListViewItem<ItemTemplateSchema, ItemPropertyEditor>>().FirstOrDefault();
 
         if (selected is null)
         {
@@ -170,8 +184,20 @@ public sealed partial class ItemEditor
             return;
         }
 
+        selected.Control ??= new ItemPropertyEditor(selected);
+        selected.Control.DeleteBtn.Click += DeleteBtnOnClick;
+
         PropertyEditor.Children.Clear();
         PropertyEditor.Children.Add(selected.Control);
+    }
+
+    private void DeleteBtnOnClick(object sender, RoutedEventArgs e)
+    {
+        if (ItemTemplatesView.SelectedItem is not ListViewItem<ItemTemplateSchema, ItemPropertyEditor> selected)
+            return;
+
+        ListViewItems.Remove(selected);
+        JsonContext.ItemTemplates.Remove(selected.Name);
     }
 
     private async void AddButton_Click(object sender, RoutedEventArgs e)
@@ -191,14 +217,14 @@ public sealed partial class ItemEditor
 
         var template = new ItemTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
         var wrapper = new TraceWrapper<ItemTemplateSchema>(path, template);
-        var editor = new ItemPropertyEditor(ItemTemplates, wrapper);
 
-        var listItem = new ObservableListItem<ItemPropertyEditor>(editor)
+        var listItem = new ListViewItem<ItemTemplateSchema, ItemPropertyEditor>
         {
-            Key = template.TemplateKey
+            Name = TOOL_CONSTANTS.TEMP_PATH,
+            Wrapper = wrapper
         };
 
-        ItemTemplates.Add(listItem);
+        ListViewItems.Add(listItem);
 
         ItemTemplatesView.SelectedItem = listItem;
     }

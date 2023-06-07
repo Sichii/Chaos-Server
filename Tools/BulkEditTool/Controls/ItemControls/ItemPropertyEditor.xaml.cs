@@ -1,10 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using BulkEditTool.Model;
-using BulkEditTool.Model.Abstractions;
-using BulkEditTool.Model.Observables;
 using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Aisling;
@@ -15,20 +12,14 @@ namespace BulkEditTool.Controls.ItemControls;
 /// <summary>
 ///     Interaction logic for ItemPropertyEditor.xaml
 /// </summary>
-public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableListItem<ItemPropertyEditor>>
+public sealed partial class ItemPropertyEditor
 {
-    private readonly ObservableCollection<ObservableListItem<ItemPropertyEditor>> ListItems;
-    /// <inheritdoc />
-    public ObservableListItem<ItemPropertyEditor> ObservableProperties { get; set; } = null!;
-    public TraceWrapper<ItemTemplateSchema> Item { get; }
+    public ListViewItem<ItemTemplateSchema, ItemPropertyEditor> ListItem { get; }
+    public TraceWrapper<ItemTemplateSchema> Wrapper => ListItem.Wrapper;
 
-    public ItemPropertyEditor(
-        ObservableCollection<ObservableListItem<ItemPropertyEditor>> listItems,
-        TraceWrapper<ItemTemplateSchema> wrapper
-    )
+    public ItemPropertyEditor(ListViewItem<ItemTemplateSchema, ItemPropertyEditor> listItem)
     {
-        ListItems = listItems;
-        Item = wrapper;
+        ListItem = listItem;
 
         InitializeComponent();
     }
@@ -48,9 +39,9 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
     #region Controls > Template > Controls
     public void CopySelectionsToItem()
     {
-        var template = Item.Obj;
+        var template = Wrapper.Object;
 
-        Item.Path = PathTbox.Text;
+        Wrapper.Path = PathTbox.Text;
         template.TemplateKey = TemplateKeyTbox.Text;
         template.Name = NameTbox.Text;
         template.PanelSprite = ushort.Parse(PanelSpriteTbox.Text);
@@ -115,14 +106,14 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
         template.Category = CategoryTbox.Text;
         template.Description = DescriptionTbox.Text;
 
-        ObservableProperties.Key = template.TemplateKey;
+        ListItem.Name = template.TemplateKey;
     }
 
     public void PopulateControlsFromItem()
     {
-        var template = Item.Obj;
+        var template = Wrapper.Object;
 
-        PathTbox.Text = Item.Path;
+        PathTbox.Text = Wrapper.Path;
         TemplateKeyTbox.Text = template.TemplateKey;
         NameTbox.Text = template.Name;
         PanelSpriteTbox.Text = template.PanelSprite.ToString();
@@ -187,20 +178,14 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
     #endregion
 
     #region Buttons
-    private void DeleteBtn_OnClick(object sender, RoutedEventArgs e)
-    {
-        JsonContext.ItemTemplates.Remove(Item.Obj.TemplateKey);
-        ListItems.Remove(ObservableProperties);
-    }
-
     private void RevertButton_Click(object sender, RoutedEventArgs e) => PopulateControlsFromItem();
 
     private async void SaveButton_Click(object sender, RoutedEventArgs e)
     {
         try
         {
-            var existing = JsonContext.ItemTemplates.Objects.Where(obj => !ReferenceEquals(obj, Item))
-                                      .FirstOrDefault(obj => obj.Path == Item.Path);
+            var existing = JsonContext.ItemTemplates.Objects.Where(obj => !ReferenceEquals(obj, Wrapper))
+                                      .FirstOrDefault(obj => obj.Path == Wrapper.Path);
 
             if (existing is not null)
             {
@@ -209,21 +194,21 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
                 return;
             }
 
-            existing = JsonContext.ItemTemplates.Objects.Where(obj => !ReferenceEquals(obj, Item))
-                                  .FirstOrDefault(obj => obj.Obj.TemplateKey.EqualsI(Item.Obj.TemplateKey));
+            existing = JsonContext.ItemTemplates.Objects.Where(obj => !ReferenceEquals(obj, Wrapper))
+                                  .FirstOrDefault(obj => obj.Object.TemplateKey.EqualsI(Wrapper.Object.TemplateKey));
 
             if (existing is not null)
             {
                 Snackbar.MessageQueue?.Enqueue(
-                    $"Save failed. An item already exists with template key \"{existing.Obj.TemplateKey}\" at path \"{existing.Path}\"");
+                    $"Save failed. An item already exists with template key \"{existing.Object.TemplateKey}\" at path \"{existing.Path}\"");
 
                 return;
             }
 
-            existing = JsonContext.ItemTemplates.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Item));
+            existing = JsonContext.ItemTemplates.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Wrapper));
 
             if (existing is null)
-                JsonContext.ItemTemplates.Objects.Add(Item);
+                JsonContext.ItemTemplates.Objects.Add(Wrapper);
 
             if (!ValidatePreSave())
                 return;
@@ -235,7 +220,7 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
             Snackbar.MessageQueue?.Enqueue(ex.ToString());
         }
 
-        await JsonContext.ItemTemplates.SaveItemAsync(Item);
+        await JsonContext.ItemTemplates.SaveItemAsync(Wrapper);
     }
 
     private bool ValidatePreSave()
@@ -249,9 +234,9 @@ public sealed partial class ItemPropertyEditor : IPropertyModifier<ObservableLis
             return false;
         }
 
-        if (!Item.Path.EqualsI(PathTbox.Text))
-            if (File.Exists(Item.Path))
-                File.Delete(Item.Path);
+        if (!Wrapper.Path.EqualsI(PathTbox.Text))
+            if (File.Exists(Wrapper.Path))
+                File.Delete(Wrapper.Path);
 
         return true;
     }

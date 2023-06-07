@@ -69,7 +69,7 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
 
     public override void Remove(string name)
     {
-        var wrapper = Objects.FirstOrDefault(wp => wp.Obj.Instance.InstanceId.EqualsI(name));
+        var wrapper = Objects.FirstOrDefault(wp => wp.Object.Instance.InstanceId.EqualsI(name));
 
         if (wrapper is null)
             return;
@@ -86,10 +86,22 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
                 Directory.CreateDirectory(wrapped.Path);
 
             await Task.WhenAll(
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "instance.json"), wrapped.Obj.Instance, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "merchants.json"), wrapped.Obj.Merchants, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "monsters.json"), wrapped.Obj.Monsters, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "reactors.json"), wrapped.Obj.Reactors, JsonSerializerOptions));
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "instance.json"),
+                    wrapped.Object.Instance,
+                    JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "merchants.json"),
+                    wrapped.Object.Merchants,
+                    JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "monsters.json"),
+                    wrapped.Object.Monsters,
+                    JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "reactors.json"),
+                    wrapped.Object.Reactors,
+                    JsonSerializerOptions));
         } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
         {
             throw new JsonException($"Failed to serialize {nameof(MapInstanceComposite)} to path \"{wrapped.Path}\"", e);

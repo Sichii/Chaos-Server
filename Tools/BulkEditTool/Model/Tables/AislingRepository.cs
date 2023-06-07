@@ -99,7 +99,7 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
 
     public override void Remove(string name)
     {
-        var wrapper = Objects.FirstOrDefault(wp => wp.Obj.Aisling.Name.EqualsI(name));
+        var wrapper = Objects.FirstOrDefault(wp => wp.Object.Aisling.Name.EqualsI(name));
 
         if (wrapper is null)
             return;
@@ -116,15 +116,24 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
                 Directory.CreateDirectory(wrapped.Path);
 
             await Task.WhenAll(
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "aisling.json"), wrapped.Obj.Aisling, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "bank.json"), wrapped.Obj.Bank, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "effects.json"), wrapped.Obj.Effects, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "equipment.json"), wrapped.Obj.Equipment, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "inventory.json"), wrapped.Obj.Inventory, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "legend.json"), wrapped.Obj.Legend, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "skills.json"), wrapped.Obj.Skills, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "spells.json"), wrapped.Obj.Spells, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "trackers.json"), wrapped.Obj.Trackers, JsonSerializerOptions));
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "aisling.json"), wrapped.Object.Aisling, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "bank.json"), wrapped.Object.Bank, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "effects.json"), wrapped.Object.Effects, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "equipment.json"),
+                    wrapped.Object.Equipment,
+                    JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "inventory.json"),
+                    wrapped.Object.Inventory,
+                    JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "legend.json"), wrapped.Object.Legend, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "skills.json"), wrapped.Object.Skills, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "spells.json"), wrapped.Object.Spells, JsonSerializerOptions),
+                JsonSerializerEx.SerializeAsync(
+                    Path.Combine(wrapped.Path, "trackers.json"),
+                    wrapped.Object.Trackers,
+                    JsonSerializerOptions));
         } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
         {
             throw new JsonException($"Failed to serialize {nameof(AislingComposite)} to path \"{wrapped.Path}\"", e);

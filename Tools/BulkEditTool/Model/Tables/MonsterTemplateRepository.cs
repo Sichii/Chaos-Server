@@ -22,7 +22,7 @@ public sealed class MonsterTemplateRepository : RepositoryBase<MonsterTemplateSc
 
     public override void Remove(string name)
     {
-        var wrapper = Objects.FirstOrDefault(wp => wp.Obj.TemplateKey.EqualsI(name));
+        var wrapper = Objects.FirstOrDefault(wp => wp.Object.TemplateKey.EqualsI(name));
 
         if (wrapper is null)
             return;

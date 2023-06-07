@@ -22,7 +22,7 @@ public sealed class LootTableRepository : RepositoryBase<LootTableSchema, LootTa
 
     public override void Remove(string name)
     {
-        var wrapper = Objects.FirstOrDefault(wp => wp.Obj.Key.EqualsI(name));
+        var wrapper = Objects.FirstOrDefault(wp => wp.Object.Key.EqualsI(name));
 
         if (wrapper is null)
             return;

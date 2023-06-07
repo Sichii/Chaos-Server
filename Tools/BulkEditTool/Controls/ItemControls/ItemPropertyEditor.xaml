@@ -17,8 +17,9 @@
              TextElement.FontSize="14"
              FontFamily="{materialDesign:MaterialDesignFont}"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Initialized="UserControl_Initialized">
-    <Grid>
+             Initialized="UserControl_Initialized"
+             Focusable="True">
+    <Grid Focusable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
             <ColumnDefinition Width="11*" />
@@ -632,8 +633,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
-                Click="DeleteBtn_OnClick" />
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
 
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"

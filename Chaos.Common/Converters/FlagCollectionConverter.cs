@@ -18,7 +18,7 @@ public sealed class FlagCollectionConverter : JsonConverter<FlagCollection>
 
         var possibleTypes = AppDomain.CurrentDomain
                                      .GetAssemblies()
-                                     .Where(a => !a.IsDynamic && !a.ReflectionOnly)
+                                     .Where(a => a is { IsDynamic: false, ReflectionOnly: false })
                                      .SelectMany(
                                          a =>
                                          {

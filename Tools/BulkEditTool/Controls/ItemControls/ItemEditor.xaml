@@ -15,8 +15,7 @@
              TextElement.FontSize="14"
              FontFamily="{materialDesign:MaterialDesignFont}"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Initialized="UserControl_Initialized"
-             PreviewKeyDown="ItemEditor_OnPreviewKeyDown">
+             Initialized="UserControl_Initialized">
     <Grid Name="ContentGrid"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch">
@@ -43,8 +42,8 @@
                       SelectionMode="Single"
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      ItemsSource="{Binding ItemTemplates}"
-                      DisplayMemberPath="Key"
+                      ItemsSource="{Binding ListViewItems}"
+                      DisplayMemberPath="Name"
                       SelectionChanged="ListView_SelectionChanged" />
             <Button Grid.Row="2" Name="AddBtn" Content="Add" Margin="10" Style="{StaticResource MaterialDesignFlatAccentBgButton}"
                     Click="AddButton_Click" />
@@ -53,7 +52,8 @@
                       HorizontalAlignment="Stretch"
                       Style="{StaticResource MaterialDesignGridSplitter}" />
         <Grid Name="PropertyEditor"
-              Grid.Column="2" />
+              Grid.Column="2"
+              Focusable="True" />
 
         <materialDesign:DialogHost Name="DialogHost"
                                    Grid.Column="2"
