@@ -8,6 +8,7 @@ using Chaos.Extensions.Common;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
+using ChaosTool.Extensions;
 using ChaosTool.Model;
 
 namespace ChaosTool.Controls.SpellControls;
@@ -16,19 +17,19 @@ public sealed partial class SpellPropertyEditor
 {
     public ObservableCollection<ItemRequirementSchema> ItemRequirementsViewItems { get; }
     public ListViewItem<SpellTemplateSchema, SpellPropertyEditor> ListItem { get; }
-    public ObservableCollection<string> PrereqSkillTemplateKeysViewItems { get; }
-    public ObservableCollection<string> PrereqSpellTemplateKeysViewItems { get; }
-    public ObservableCollection<string> ScriptKeysViewItems { get; }
+    public ObservableCollection<BindableString> PrereqSkillTemplateKeysViewItems { get; }
+    public ObservableCollection<BindableString> PrereqSpellTemplateKeysViewItems { get; }
+    public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
 
     public TraceWrapper<SpellTemplateSchema> Wrapper => ListItem.Wrapper;
 
     public SpellPropertyEditor(ListViewItem<SpellTemplateSchema, SpellPropertyEditor> listItem)
     {
         ListItem = listItem;
-        ScriptKeysViewItems = new ObservableCollection<string>();
+        ScriptKeysViewItems = new ObservableCollection<BindableString>();
         ItemRequirementsViewItems = new ObservableCollection<ItemRequirementSchema>();
-        PrereqSpellTemplateKeysViewItems = new ObservableCollection<string>();
-        PrereqSkillTemplateKeysViewItems = new ObservableCollection<string>();
+        PrereqSpellTemplateKeysViewItems = new ObservableCollection<BindableString>();
+        PrereqSkillTemplateKeysViewItems = new ObservableCollection<BindableString>();
 
         InitializeComponent();
     }
@@ -74,12 +75,12 @@ public sealed partial class SpellPropertyEditor
         stats.Dex = ParsePrimitive<int>(DexTbox.Text);
 
         learningRequirements.ItemRequirements = ItemRequirementsViewItems.Select(ShallowCopy<ItemRequirementSchema>.Create).ToList();
-        learningRequirements.PrerequisiteSpellTemplateKeys = PrereqSpellTemplateKeysViewItems.ToList();
-        learningRequirements.PrerequisiteSkillTemplateKeys = PrereqSkillTemplateKeysViewItems.ToList();
+        learningRequirements.PrerequisiteSpellTemplateKeys = PrereqSpellTemplateKeysViewItems.ToStrings().ToList();
+        learningRequirements.PrerequisiteSkillTemplateKeys = PrereqSkillTemplateKeysViewItems.ToStrings().ToList();
 
         template.CooldownMs = ParsePrimitive<int?>(CooldownMsTbox.Text);
         template.Description = DescriptionTbox.Text;
-        template.ScriptKeys = ScriptKeysViewItems.ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
 
         ListItem.Name = template.TemplateKey;
 
@@ -124,13 +125,13 @@ public sealed partial class SpellPropertyEditor
             ?? new List<ItemRequirementSchema>());
 
         PrereqSpellTemplateKeysViewItems.Clear();
-        PrereqSpellTemplateKeysViewItems.AddRange(learningRequirements?.PrerequisiteSpellTemplateKeys.ToList() ?? new List<string>());
+        PrereqSpellTemplateKeysViewItems.AddRange((learningRequirements?.PrerequisiteSpellTemplateKeys).ToBindableStrings());
 
         PrereqSkillTemplateKeysViewItems.Clear();
-        PrereqSkillTemplateKeysViewItems.AddRange(learningRequirements?.PrerequisiteSkillTemplateKeys.ToList() ?? new List<string>());
+        PrereqSkillTemplateKeysViewItems.AddRange((learningRequirements?.PrerequisiteSkillTemplateKeys).ToBindableStrings());
 
         ScriptKeysViewItems.Clear();
-        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToList());
+        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToBindableStrings());
     }
     #endregion
 
@@ -198,7 +199,7 @@ public sealed partial class SpellPropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not string scriptKey)
+        if (button.DataContext is not BindableString scriptKey)
             return;
 
         ScriptKeysViewItems.Remove(scriptKey);
@@ -211,7 +212,7 @@ public sealed partial class SpellPropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not string spellTemplateKey)
+        if (button.DataContext is not BindableString spellTemplateKey)
             return;
 
         PrereqSpellTemplateKeysViewItems.Remove(spellTemplateKey);
@@ -226,7 +227,7 @@ public sealed partial class SpellPropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not string skillTemplateKey)
+        if (button.DataContext is not BindableString skillTemplateKey)
             return;
 
         PrereqSkillTemplateKeysViewItems.Remove(skillTemplateKey);

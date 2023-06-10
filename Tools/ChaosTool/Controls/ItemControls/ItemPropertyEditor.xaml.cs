@@ -6,6 +6,7 @@ using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Templates;
+using ChaosTool.Extensions;
 using ChaosTool.Model;
 
 namespace ChaosTool.Controls.ItemControls;
@@ -16,13 +17,13 @@ namespace ChaosTool.Controls.ItemControls;
 public sealed partial class ItemPropertyEditor
 {
     public ListViewItem<ItemTemplateSchema, ItemPropertyEditor> ListItem { get; }
-    public ObservableCollection<string> ScriptKeysViewItems { get; }
+    public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
     public TraceWrapper<ItemTemplateSchema> Wrapper => ListItem.Wrapper;
 
     public ItemPropertyEditor(ListViewItem<ItemTemplateSchema, ItemPropertyEditor> listItem)
     {
         ListItem = listItem;
-        ScriptKeysViewItems = new ObservableCollection<string>();
+        ScriptKeysViewItems = new ObservableCollection<BindableString>();
 
         InitializeComponent();
     }
@@ -98,7 +99,7 @@ public sealed partial class ItemPropertyEditor
         template.IsModifiable = IsModifiableCbox.IsChecked!.Value;
         template.Category = CategoryTbox.Text;
         template.Description = DescriptionTbox.Text;
-        template.ScriptKeys = ScriptKeysViewItems.ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -156,7 +157,7 @@ public sealed partial class ItemPropertyEditor
         DescriptionTbox.Text = template.Description;
 
         ScriptKeysViewItems.Clear();
-        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToList());
+        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToBindableStrings());
     }
     #endregion
 
@@ -222,7 +223,7 @@ public sealed partial class ItemPropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not string scriptKey)
+        if (button.DataContext is not BindableString scriptKey)
             return;
 
         ScriptKeysViewItems.Remove(scriptKey);

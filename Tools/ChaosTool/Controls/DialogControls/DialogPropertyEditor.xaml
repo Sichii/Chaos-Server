@@ -288,7 +288,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=.}"
+                                     Text="{Binding}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />

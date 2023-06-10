@@ -156,8 +156,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Common.Tests", "Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Testing.Infrastructure", "Tests\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj", "{0DAB625B-53E6-451F-81E0-670FD6521387}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{E1769C05-C6A0-4506-B6A3-1C506A62DE9B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

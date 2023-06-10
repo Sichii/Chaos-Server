@@ -7,6 +7,7 @@
                                  xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
                                  xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
                                  xmlns:controls="clr-namespace:ChaosTool.Controls"
+                                 xmlns:model="clr-namespace:ChaosTool.Model"
                                  mc:Ignorable="d"
                                  d:DesignHeight="700"
                                  d:DesignWidth="900"
@@ -425,7 +426,7 @@
                       d:ItemsSource="{x:Static controls:SampleData.Strings}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="{x:Type model:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -438,7 +439,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding .}"
+                                     Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
@@ -487,7 +488,7 @@
                       d:ItemsSource="{x:Static controls:SampleData.Strings}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="{x:Type model:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -500,7 +501,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=.}"
+                                     Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
@@ -548,7 +549,7 @@
                       d:ItemsSource="{x:Static controls:SampleData.Strings}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="{x:Type model:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -561,7 +562,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding .}"
+                                     Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />

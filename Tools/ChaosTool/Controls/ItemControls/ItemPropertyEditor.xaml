@@ -6,6 +6,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
     xmlns:Controls="clr-namespace:ChaosTool.Controls"
+    xmlns:model="clr-namespace:ChaosTool.Model"
     x:Class="ChaosTool.Controls.ItemControls.ItemPropertyEditor"
     mc:Ignorable="d"
     d:DesignHeight="700"
@@ -625,7 +626,7 @@
                       d:ItemsSource="{x:Static Controls:SampleData.Strings}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="{x:Type model:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -638,7 +639,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding .}"
+                                     Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
