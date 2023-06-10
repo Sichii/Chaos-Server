@@ -30,7 +30,7 @@ before being mapped to a non-schema type.
 | [AdvClass](<xref:Chaos.Common.Definitions.AdvClass>)?                               | AdvClass             | The advanced class required to use this object                                                                                                                                                |
 | int?                                                                                | CooldownMs           | Defaults to null<br />If specified, any on-use effect of this object will use this cooldown                                                                                                   |
 | bool                                                                                | IsAssail             | Whether or not the skill is an assail and should be used when spacebar is pressed<br/>Assail cooldowns are handled by AssailIntervalMs and AtkSpeedPct                                        |
-| [LearningRequirementsSchema]?(<xref:Chaos.Schemas.Data.LearningRequirementsSchema>) | LearningRequirements | Defaults to null<br/>If set, these are the requirements for the skill to be learned<br/>If null, the skill can't be learned                                                                   |
+| [LearningRequirementsSchema](<xref:Chaos.Schemas.Data.LearningRequirementsSchema>)? | LearningRequirements | Defaults to null<br/>If set, these are the requirements for the skill to be learned<br/>If null, the skill can't be learned                                                                   |
 
 ### Example Skill Template Json
 

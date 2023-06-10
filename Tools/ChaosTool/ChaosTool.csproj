@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <AssemblyName>ChaosTool</AssemblyName>
+        <RootNamespace>ChaosTool</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MaterialDesignExtensions"/>
+        <PackageReference Include="MaterialDesignThemes"/>
+        <PackageReference Include="RoslynPad.Editor.Windows"/>
+        <PackageReference Include="ShowMeTheXAML.MSBuild"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Chaos\Chaos.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Page Update="Controls\SpellControls\SpellEditor.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Controls\SpellControls\SpellPropertyEditor.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Controls\SkillControls\SkillEditor.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Controls\SkillControls\SkillPropertyEditor.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+    </ItemGroup>
+
+</Project>

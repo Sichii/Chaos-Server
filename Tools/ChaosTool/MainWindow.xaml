@@ -1,0 +1,104 @@
+﻿<Window x:Class="ChaosTool.MainWindow"
+        x:Name="Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:itemControls="clr-namespace:ChaosTool.Controls.ItemControls"
+        xmlns:spellControls="clr-namespace:ChaosTool.Controls.SpellControls"
+        xmlns:skillControls="clr-namespace:ChaosTool.Controls.SkillControls"
+        xmlns:dialogControls="clr-namespace:ChaosTool.Controls.DialogControls"
+        mc:Ignorable="d"
+        Title="Bulk Edit Tool"
+        Width="1200"
+        Height="800"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <TabControl Style="{StaticResource MaterialDesignTabControl}">
+        <TabItem Header="Items"
+                 IsSelected="True"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <itemControls:ItemEditor />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Spells"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <spellControls:SpellEditor />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Skills"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <skillControls:SkillEditor />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Dialogs"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <dialogControls:DialogEditor />
+            </Grid>
+        </TabItem>
+        <TabItem Header="BulkEdit"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <DockPanel Name="MasterDockPanel"
+                       LastChildFill="True">
+                <Button Height="Auto"
+                        Width="Auto"
+                        HorizontalAlignment="Left"
+                        Margin="10"
+                        Content="➤"
+                        DockPanel.Dock="Top"
+                        Click="OnRunClicked"
+                        Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                <StackPanel DockPanel.Dock="Bottom">
+                    <Label Content="Output"
+                           Style="{StaticResource MaterialDesignLabel}" />
+                    <TextBlock Name="Output"
+                               Style="{StaticResource MaterialDesignTextBlock}"
+                               TextWrapping="Wrap"
+                               MinHeight="100"
+                               Padding="5"
+                               Background="#404040"
+                               Foreground="White"
+                               HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <ItemsControl Name="Items"
+                              DockPanel.Dock="Top"
+                              VerticalAlignment="Stretch"
+                              VerticalContentAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              Background="#FF303030"
+                              Foreground="White"
+                              Margin="0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <editor:RoslynCodeEditor Name="CodeEditor"
+                                                     Loaded="OnItemLoaded"
+                                                     FontFamily="Consolas"
+                                                     Margin="0"
+                                                     Padding="5"
+                                                     Background="#FF303030"
+                                                     Foreground="White"
+                                                     ContextActionsIcon="{StaticResource Bulb}"
+                                                     IsReadOnly="False"
+                                                     HorizontalScrollBarVisibility="Auto"
+                                                     VerticalScrollBarVisibility="Auto"
+                                                     ShowLineNumbers="True"
+                                                     IsBraceCompletionEnabled="True"
+                                                     LineNumbersForeground="DarkGray" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
+</Window>

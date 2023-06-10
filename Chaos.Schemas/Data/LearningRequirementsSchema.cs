@@ -1,4 +1,3 @@
-using Chaos.Common.Definitions;
 using Chaos.Schemas.Aisling;
 
 namespace Chaos.Schemas.Data;
@@ -24,19 +23,10 @@ public sealed record LearningRequirementsSchema
     public ICollection<string> PrerequisiteSpellTemplateKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     The class required to learn this ability
-    /// </summary>
-    public BaseClass? RequiredClass { get; set; }
-
-    /// <summary>
     ///     The amount of gold required to learn this ability
     /// </summary>
     public int? RequiredGold { get; set; }
 
-    /// <summary>
-    ///     The level required to learn this ability
-    /// </summary>
-    public int? RequiredLevel { get; set; }
     /// <summary>
     ///     The attributes required to learn this skill
     /// </summary>

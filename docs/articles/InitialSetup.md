@@ -30,8 +30,13 @@ in the [LobbyOptions](LobbyOptions.md), [LoginOptions](LoginOptions.md), and [Wo
 
 ## Add content
 
+> [!TIP]
+> There's a tool to help create content, look for the [ChaosTool](ChaosTool.md)
+
 - Add [Maps](Maps.md)
 - Add [Items](Items.md)
+- Add [Spells](Spells.md)
+- Add [Skills](Skills.md)
 - Add [Merchants](Merchants.md)
 - Add [Dialogs](Dialogs.md)
 - Add [Monsters](Monsters.md)

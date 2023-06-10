@@ -124,6 +124,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\toc.yml = docs\articles\toc.yml
 		docs\articles\Visibility.md = docs\articles\Visibility.md
 		docs\articles\WorldOptions.md = docs\articles\WorldOptions.md
+		docs\articles\ChaosTool.md = docs\articles\ChaosTool.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"
@@ -134,7 +135,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage", "Chaos.Stor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaveFunctionCollapse", "Tools\WaveFunctionCollapse\WaveFunctionCollapse.csproj", "{D8A5DC97-9A70-4533-81CC-9B74D19A3401}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulkEditTool", "Tools\BulkEditTool\BulkEditTool.csproj", "{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChaosTool", "Tools\ChaosTool\ChaosTool.csproj", "{4DA779B2-3CE1-40CC-B884-E6A46C4BD291}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.MetaData", "Chaos.MetaData\Chaos.MetaData.csproj", "{1F36E08E-BEF4-46BE-9D15-67D413CD0A6D}"
 EndProject
