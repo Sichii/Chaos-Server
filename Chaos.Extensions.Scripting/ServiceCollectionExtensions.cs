@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Scripting;
 using Chaos.Scripting.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     <see cref="Chaos.Scripting" /> DI extensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
 {
     /// <summary>

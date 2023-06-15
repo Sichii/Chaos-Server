@@ -11,7 +11,7 @@
         xmlns:skillControls="clr-namespace:ChaosTool.Controls.SkillControls"
         xmlns:dialogControls="clr-namespace:ChaosTool.Controls.DialogControls"
         mc:Ignorable="d"
-        Title="Bulk Edit Tool"
+        Title="Chaos Tool"
         Width="1200"
         Height="800"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -48,57 +48,76 @@
         </TabItem>
         <TabItem Header="BulkEdit"
                  Style="{StaticResource MaterialDesignTabItem}">
-            <DockPanel Name="MasterDockPanel"
-                       LastChildFill="True">
-                <Button Height="Auto"
+            <Grid Name="MasterDockPanel"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0"
+                        Height="Auto"
                         Width="Auto"
                         HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
                         Margin="10"
                         Content="➤"
-                        DockPanel.Dock="Top"
                         Click="OnRunClicked"
                         Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
-                <StackPanel DockPanel.Dock="Bottom">
-                    <Label Content="Output"
-                           Style="{StaticResource MaterialDesignLabel}" />
-                    <TextBlock Name="Output"
-                               Style="{StaticResource MaterialDesignTextBlock}"
-                               TextWrapping="Wrap"
-                               MinHeight="100"
-                               Padding="5"
-                               Background="#404040"
-                               Foreground="White"
-                               HorizontalAlignment="Stretch" />
-                </StackPanel>
-                <ItemsControl Name="Items"
-                              DockPanel.Dock="Top"
+                <ScrollViewer Grid.Row="1"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto"
                               VerticalAlignment="Stretch"
                               VerticalContentAlignment="Stretch"
-                              HorizontalAlignment="Stretch"
-                              HorizontalContentAlignment="Stretch"
-                              Background="#FF303030"
-                              Foreground="White"
-                              Margin="0">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <editor:RoslynCodeEditor Name="CodeEditor"
-                                                     Loaded="OnItemLoaded"
-                                                     FontFamily="Consolas"
-                                                     Margin="0"
-                                                     Padding="5"
-                                                     Background="#FF303030"
-                                                     Foreground="White"
-                                                     ContextActionsIcon="{StaticResource Bulb}"
-                                                     IsReadOnly="False"
-                                                     HorizontalScrollBarVisibility="Auto"
-                                                     VerticalScrollBarVisibility="Auto"
-                                                     ShowLineNumbers="True"
-                                                     IsBraceCompletionEnabled="True"
-                                                     LineNumbersForeground="DarkGray" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </DockPanel>
+                              PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
+                    <ItemsControl
+                        Name="Items"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Background="#FF303030"
+                        Foreground="White"
+                        Margin="0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <editor:RoslynCodeEditor Name="CodeEditor"
+                                                         Loaded="OnItemLoaded"
+                                                         FontFamily="Consolas"
+                                                         Margin="0"
+                                                         Padding="5"
+                                                         Background="#FF303030"
+                                                         Foreground="White"
+                                                         ContextActionsIcon="{StaticResource Bulb}"
+                                                         IsReadOnly="False"
+                                                         HorizontalScrollBarVisibility="Auto"
+                                                         VerticalScrollBarVisibility="Auto"
+                                                         ShowLineNumbers="True"
+                                                         IsBraceCompletionEnabled="True"
+                                                         VerticalAlignment="Stretch"
+                                                         VerticalContentAlignment="Stretch"
+                                                         LineNumbersForeground="DarkGray" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Label Grid.Row="2"
+                       Content="Output"
+                       Style="{StaticResource MaterialDesignLabel}" />
+                <TextBlock Grid.Row="3"
+                           Name="Output"
+                           Style="{StaticResource MaterialDesignTextBlock}"
+                           TextWrapping="Wrap"
+                           MinHeight="150"
+                           MaxHeight="250"
+                           Padding="5"
+                           Background="#404040"
+                           Foreground="White"
+                           HorizontalAlignment="Stretch" />
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>

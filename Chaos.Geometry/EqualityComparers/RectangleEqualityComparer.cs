@@ -3,8 +3,13 @@ using Chaos.Geometry.Abstractions;
 namespace Chaos.Geometry.EqualityComparers;
 
 /// <inheritdoc />
-public class RectangleEqualityComparer : IEqualityComparer<IRectangle>
+public sealed class RectangleEqualityComparer : IEqualityComparer<IRectangle>
 {
+    /// <summary>
+    ///     Gets the singleton instance of this comparer.
+    /// </summary>
+    public static IEqualityComparer<IRectangle> Instance { get; } = new RectangleEqualityComparer();
+
     /// <inheritdoc />
     public bool Equals(IRectangle? x, IRectangle? y)
     {

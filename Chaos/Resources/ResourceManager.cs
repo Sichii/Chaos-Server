@@ -4,6 +4,7 @@ namespace Chaos.Resources;
 
 public static class ResourceManager
 {
+    public static byte[] ChaosIcon => ReadResource("Chaos.Resources.chaos.ico");
     public static byte[] Sotp => ReadResource("Chaos.Resources.sotp.dat");
 
     private static byte[] ReadResource(string resouceName)

@@ -6,6 +6,11 @@ namespace Chaos.Geometry.JsonConverters;
 /// <inheritdoc />
 public sealed class RectangleConverter : JsonConverter<Rectangle>
 {
+    /// <summary>
+    ///     The singleton instance of <see cref="RectangleConverter" />
+    /// </summary>
+    public static JsonConverter<Rectangle> Instance { get; } = new RectangleConverter();
+
     /// <inheritdoc />
     public override Rectangle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -47,9 +52,6 @@ public sealed class RectangleConverter : JsonConverter<Rectangle>
                     break;
             }
         }
-
-        //reader endObj
-        //reader.Read();
 
         return new Rectangle(
             left,

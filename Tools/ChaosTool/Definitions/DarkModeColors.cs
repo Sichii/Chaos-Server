@@ -4,7 +4,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis.Classification;
 using RoslynPad.Editor;
 
-namespace ChaosTool;
+namespace ChaosTool.Definitions;
 
 internal sealed class DarkModeColors : IClassificationHighlightColors
 {

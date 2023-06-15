@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Cryptography;
 using Chaos.Cryptography.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     <see cref="Chaos.Cryptography" /> DI extensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class CryptographyExtensions
 {
     /// <summary>

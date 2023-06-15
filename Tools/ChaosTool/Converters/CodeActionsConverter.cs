@@ -4,7 +4,7 @@ using System.Windows.Markup;
 using Microsoft.CodeAnalysis.CodeActions;
 using RoslynPad.Roslyn.CodeActions;
 
-namespace ChaosTool;
+namespace ChaosTool.Converters;
 
 internal sealed class CodeActionsConverter : MarkupExtension, IValueConverter
 {

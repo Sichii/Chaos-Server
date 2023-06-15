@@ -30,7 +30,7 @@ public static class Tables
     }.ToImmutableArray();
 
     /// <summary>
-    ///     32-bit CRC table (CRC-32/DEFAULT) (0x04C11DB7)
+    ///     32-bit CRC table (CRC-32/adler) (0xEDB88320)
     /// </summary>
     public static readonly ImmutableArray<uint> TABLE32 = new[]
     {

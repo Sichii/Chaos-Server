@@ -7,6 +7,11 @@ namespace Chaos.Geometry.JsonConverters;
 /// <inheritdoc />
 public sealed class PointConverter : JsonConverter<Point>
 {
+    /// <summary>
+    ///     The singleton instance of <see cref="PointConverter" />
+    /// </summary>
+    public static JsonConverter<Point> Instance { get; } = new PointConverter();
+
     /// <inheritdoc />
     public override Point Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

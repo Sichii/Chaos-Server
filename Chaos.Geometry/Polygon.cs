@@ -35,20 +35,51 @@ public sealed class Polygon : IPolygon, IEquatable<IPolygon>
         if (ReferenceEquals(this, other))
             return true;
 
-        return Vertices.Equals(other.Vertices);
+        var vertices = Vertices.ToList();
+        var otherVertices = other.Vertices.ToList();
+
+        if (vertices.Count != otherVertices.Count)
+            return false;
+
+        var index2 = 0;
+
+        while (index2 < otherVertices.Count)
+        {
+            if (Equals(vertices[0], otherVertices[index2]))
+            {
+                var tempIndex1 = 0;
+                var tempIndex2 = index2;
+                var isSequentiallyEqual = true;
+
+                while ((tempIndex1 < vertices.Count) && (tempIndex2 < otherVertices.Count))
+                {
+                    if (!Equals(vertices[tempIndex1], otherVertices[tempIndex2]))
+                    {
+                        isSequentiallyEqual = false;
+
+                        break;
+                    }
+
+                    tempIndex1++;
+                    tempIndex2++;
+
+                    //allow tempIndex2 to rollover to 0 if tempIndex1 is still less than vertices.Count
+                    if ((tempIndex1 < vertices.Count) && (tempIndex2 == otherVertices.Count))
+                        tempIndex2 = 0;
+                }
+
+                if (isSequentiallyEqual)
+                    return true;
+            }
+
+            index2++;
+        }
+
+        return false;
     }
 
     /// <inheritdoc />
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-            return false;
-
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        return Equals((IPolygon)obj);
-    }
+    public override bool Equals(object? obj) => obj is IPolygon other && Equals(other);
 
     /// <inheritdoc />
     public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
@@ -56,5 +87,13 @@ public sealed class Polygon : IPolygon, IEquatable<IPolygon>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public override int GetHashCode() => Vertices.GetHashCode();
+    public override int GetHashCode()
+    {
+        var hashCode = new HashCode();
+
+        foreach (var vertex in Vertices)
+            hashCode.Add(vertex);
+
+        return hashCode.ToHashCode();
+    }
 }

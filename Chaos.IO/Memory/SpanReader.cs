@@ -192,22 +192,27 @@ public ref struct SpanReader
     /// </summary>
     public string ReadString()
     {
-        var length = -1;
+        var index = -1;
 
         for (var i = Position; i < Buffer.Length; i++)
-            if (Buffer[i] == 10)
+            if ((Buffer[i] == 10) || (Buffer[i] == 0))
             {
-                length = i;
+                index = i;
 
                 break;
             }
 
+        var length = index - Position;
+
         //if no terminators were found, just read the rest of the buffer as a string
-        if (length == -1)
+        if (length < 0)
             length = Buffer.Length - Position;
 
         var ret = Encoding.GetString(Buffer.Slice(Position, length));
         Position += length;
+
+        if (Position != Buffer.Length)
+            Position++;
 
         return ret;
     }

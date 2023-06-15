@@ -6,6 +6,7 @@
         <UseWPF>true</UseWPF>
         <AssemblyName>ChaosTool</AssemblyName>
         <RootNamespace>ChaosTool</RootNamespace>
+        <ApplicationIcon>..\..\Chaos\Resources\chaos.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -40,6 +41,12 @@
             <XamlRuntime>Wpf</XamlRuntime>
             <SubType>Designer</SubType>
         </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\Chaos\Resources\chaos.ico">
+            <Link>chaos.ico</Link>
+        </None>
     </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Extensions.Common;
 using Chaos.TypeMapper;
 using Chaos.TypeMapper.Abstractions;
@@ -9,6 +10,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     <see cref="Chaos.TypeMapper" /> DI extensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class TypeMapperExtensions
 {
     /// <summary>

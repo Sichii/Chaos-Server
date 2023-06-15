@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Chaos.Extensions.Common;
 using Chaos.Packets;
@@ -10,6 +11,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     <see cref="Chaos.Packets" /> DI extensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class PacketExtensions
 {
     /// <summary>

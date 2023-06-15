@@ -66,6 +66,9 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     {
         extraScriptKeys ??= Array.Empty<string>();
 
+        AggroRange = template.AggroRange;
+        Experience = template.ExpReward;
+        Gold = Random.Shared.Next(template.MinGoldDrop, template.MaxGoldDrop + 1);
         Items = new List<Item>();
         Skills = new List<Skill>();
         Spells = new List<Spell>();

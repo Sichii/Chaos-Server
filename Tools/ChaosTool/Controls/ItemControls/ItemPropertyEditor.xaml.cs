@@ -6,6 +6,7 @@ using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Templates;
+using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Model;
 

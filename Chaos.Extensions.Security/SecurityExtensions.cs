@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Security;
 using Chaos.Security.Abstractions;
 using Chaos.Security.Configuration;
@@ -11,6 +12,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     <see cref="Chaos.Security" /> DI extensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SecurityExtensions
 {
     /// <summary>

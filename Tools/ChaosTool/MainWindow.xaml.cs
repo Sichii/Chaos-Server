@@ -4,8 +4,12 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Chaos.Extensions.Common;
+using ChaosTool.Definitions;
+using ChaosTool.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -110,6 +114,8 @@ public partial class MainWindow : Window
 
         Editor.Loaded -= OnItemLoaded;
         Editor.Focus();
+        Editor.Options.EnableRectangularSelection = true;
+        Editor.Options.AllowToggleOverstrikeMode = true;
 
         var viewModel = (DocumentViewModel)Editor.DataContext;
         var workingDirectory = Directory.GetCurrentDirectory();
@@ -157,6 +163,13 @@ public partial class MainWindow : Window
 
         await viewModel.TrySubmitAsync().ConfigureAwait(true);
         Output.Text = viewModel.Result;
+    }
+
+    private void UIElement_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        var scv = (ScrollViewer)sender;
+        scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta / 10.0);
+        e.Handled = true;
     }
 
     // TODO: workaround for GetSolutionAnalyzerReferences bug (should be added once per Solution)

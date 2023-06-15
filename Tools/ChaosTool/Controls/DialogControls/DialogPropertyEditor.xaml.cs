@@ -7,6 +7,7 @@ using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
+using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Model;
 

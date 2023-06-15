@@ -14,10 +14,9 @@
         <OutputPath>bin\$(Configuration)\</OutputPath>
     </PropertyGroup>
     <PropertyGroup>
-        <ApplicationIcon>chaos.ico</ApplicationIcon>
+        <ApplicationIcon>Resources\chaos.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
-        <Content Include="chaos.ico"/>
         <None Update="appsettings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
@@ -61,5 +60,6 @@
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\sotp.dat"/>
+        <EmbeddedResource Include="Resources\chaos.ico"/>
     </ItemGroup>
 </Project>

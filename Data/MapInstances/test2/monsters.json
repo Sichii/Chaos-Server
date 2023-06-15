@@ -1,16 +1,12 @@
 [
   {
-    "aggroRange": 6,
     "blackList": [],
-    "expReward": 50,
     "extraScriptKeys": [],
     "intervalSecs": 30,
     "intervalVariancePct": 50,
     "lootTableKey": "testAreaRats",
     "maxAmount": 1000,
-    "maxGoldDrop": 30,
     "maxPerSpawn": 600,
-    "minGoldDrop": 10,
     "monsterTemplateKey": "common_rat"
   }
 ]

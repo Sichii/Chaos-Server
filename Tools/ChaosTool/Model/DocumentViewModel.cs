@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 using RoslynPad.Roslyn;
 
-namespace ChaosTool;
+namespace ChaosTool.Model;
 
 internal class DocumentViewModel : INotifyPropertyChanged
 {

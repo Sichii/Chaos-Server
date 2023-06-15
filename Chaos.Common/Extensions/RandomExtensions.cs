@@ -16,37 +16,21 @@ public static class RandomExtensions
     {
         var zero = T.Zero;
 
-        switch (zero)
+        return zero switch
         {
-            case byte:
-                return T.CreateChecked(random.Next(byte.MaxValue));
-            case sbyte:
-                return T.CreateChecked(random.Next(sbyte.MaxValue));
-            case short:
-                return T.CreateChecked(random.Next(short.MaxValue));
-            case ushort:
-                return T.CreateChecked(random.Next(ushort.MaxValue));
-            case int:
-                return T.CreateChecked(random.Next(int.MaxValue));
-            case uint:
-                return T.CreateChecked(random.NextInt64(uint.MaxValue));
-            case long:
-                return T.CreateChecked(random.NextInt64(long.MaxValue));
-            case ulong:
-                var randomNum = (ulong)random.NextInt64(long.MinValue, long.MaxValue);
-
-                return T.CreateChecked(randomNum);
-            case decimal:
-                var dbl = random.NextDouble();
-
-                return T.CreateChecked(Convert.ToDecimal(dbl));
-            case float:
-                return T.CreateChecked(random.NextSingle());
-            case double:
-                return T.CreateChecked(random.NextDouble());
-            default:
-                throw new ArgumentOutOfRangeException(nameof(T));
-        }
+            byte    => T.CreateChecked(random.Next(byte.MaxValue)),
+            sbyte   => T.CreateChecked(random.Next(sbyte.MaxValue)),
+            short   => T.CreateChecked(random.Next(short.MaxValue)),
+            ushort  => T.CreateChecked(random.Next(ushort.MaxValue)),
+            int     => T.CreateChecked(random.Next(int.MaxValue)),
+            uint    => T.CreateChecked((uint)random.Next(int.MaxValue)),
+            long    => T.CreateChecked(random.NextInt64(long.MaxValue)),
+            ulong   => T.CreateChecked((ulong)random.NextInt64(long.MinValue, long.MaxValue)),
+            decimal => T.CreateChecked(Convert.ToDecimal(random.NextDouble())),
+            float   => T.CreateChecked(random.NextSingle()),
+            double  => T.CreateChecked(random.NextDouble()),
+            _       => throw new ArgumentOutOfRangeException(nameof(T))
+        };
     }
 
     /// <summary>
@@ -94,12 +78,20 @@ public static class RandomExtensions
 
                 return T.CreateChecked(random.NextInt64(minLong, maxLong));
             case ulong:
-                var minULong = (long)(decimal.CreateChecked(min) - long.MaxValue);
-                var maxULong = (long)(decimal.CreateChecked(max) - long.MaxValue);
+                //there is no "bigger datatype" so we gotta do some tricks
+                //move the random values down into the range of long
+                var minULong = (long)(ulong.CreateChecked(min) - long.MaxValue);
+                var maxULong = (long)(ulong.CreateChecked(max) - long.MaxValue);
 
-                var randomNum = (decimal)random.NextInt64(minULong, maxULong) + long.MaxValue;
+                //generate random long
+                var randomLong = random.NextInt64(minULong, maxULong);
 
-                return T.CreateChecked(randomNum);
+                //if the random long is negative, return long.MaxValue - Math.Abs(randomLong)
+                //this is the equivalent of "randomLong + long.MaxValue" which is not otherwise possible due to long/ulong overflow
+                if (randomLong < 0)
+                    return T.CreateChecked(long.MaxValue - (ulong)Math.Abs(randomLong));
+
+                return T.CreateChecked(long.MaxValue + (ulong)randomLong);
             case decimal:
                 var minDecimal = decimal.CreateChecked(min);
                 var maxDecimal = decimal.CreateChecked(max);

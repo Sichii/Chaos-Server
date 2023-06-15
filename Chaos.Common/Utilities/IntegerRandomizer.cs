@@ -19,7 +19,7 @@ public static class IntegerRandomizer
     public static T? PickRandomWeightedSingleOrDefault<T>(this ICollection<KeyValuePair<T, int>> weightedChoices)
     {
         // Calculate the chance that any choice is taken
-        var chanceOfNoSelection = weightedChoices.Aggregate(100, (acc, item) => Convert.ToInt32(acc * (100 - item.Value) / 100.0m));
+        var chanceOfNoSelection = weightedChoices.Aggregate(100, (acc, item) => Convert.ToInt32(acc * (100 - item.Value) / 100m));
         var chanceOfSelection = 100 - chanceOfNoSelection;
 
         //no choice

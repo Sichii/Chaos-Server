@@ -27,14 +27,14 @@
   ],
   "scriptVars": {
     "damage": {
-      "excludeSourcePoint": true,
-      "sound": 1,
       "bodyAnimation": "assail",
-      "damageStatMultiplier": 2,
+      "sound": 1,
+      "damageStat": "str",
       "range": 1,
       "shape": "front",
+      "excludeSourcePoint": true,
+      "damageStatMultiplier": 2,
       "baseDamage": 3,
-      "damageStat": "str",
       "filter": "hostileOnly, aliveOnly"
     }
   },

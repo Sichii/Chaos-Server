@@ -12,16 +12,12 @@ namespace Chaos.Models.Data;
 
 public sealed class MonsterSpawn : IDeltaUpdatable
 {
-    public required int AggroRange { get; init; }
     public required ICollection<IPoint> BlackList { get; init; }
-    public required int ExpReward { get; init; }
     public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
     public required LootTable? LootTable { get; set; }
     public MapInstance MapInstance { get; set; } = null!;
     public required int MaxAmount { get; init; }
-    public required int MaxGoldDrop { get; init; }
     public required int MaxPerSpawn { get; init; }
-    public required int MinGoldDrop { get; init; }
     public required IMonsterFactory MonsterFactory { get; init; }
     public required MonsterTemplate MonsterTemplate { get; init; }
     public Rectangle? SpawnArea { get; set; }
@@ -39,12 +35,6 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
             SpawnMonsters();
         }
-    }
-
-    private void GenerateGoldAndExp(Monster monster)
-    {
-        monster.Gold = Random.Shared.Next(MinGoldDrop, MaxGoldDrop + 1);
-        monster.Experience = ExpReward;
     }
 
     private IPoint GenerateSpawnPoint() => MapInstance.Template.Bounds.GetRandomPoint(PointValidator);
@@ -74,10 +64,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
                 point,
                 ExtraScriptKeys);
 
-            monster.AggroRange = AggroRange;
             monster.LootTable = LootTable;
-
-            GenerateGoldAndExp(monster);
             monsters.Add(monster);
         }
 

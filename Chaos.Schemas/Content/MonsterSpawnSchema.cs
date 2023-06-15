@@ -9,20 +9,9 @@ namespace Chaos.Schemas.Content;
 public sealed record MonsterSpawnSchema
 {
     /// <summary>
-    ///     Defaults to 0<br />If specified, monsters created by this spawn will be aggressive and attack enemies if they come within the specified
-    ///     distance
-    /// </summary>
-    public int AggroRange { get; set; } = -1;
-
-    /// <summary>
     ///     A collection of points that monsters created by this spawn will not spawn on
     /// </summary>
     public ICollection<Point> BlackList { get; set; } = Array.Empty<Point>();
-
-    /// <summary>
-    ///     The amount of exp monsters created by this spawn will reward when killed
-    /// </summary>
-    public int ExpReward { get; set; }
 
     /// <summary>
     ///     A collection of extra monster script keys to add to the monsters created by this spawn
@@ -52,19 +41,9 @@ public sealed record MonsterSpawnSchema
     public int MaxAmount { get; set; }
 
     /// <summary>
-    ///     Maximum amount of gold for monsters created by this spawn to drop
-    /// </summary>
-    public int MaxGoldDrop { get; set; }
-
-    /// <summary>
     ///     The maximum number of monsters to create per interval of this spawn
     /// </summary>
     public int MaxPerSpawn { get; set; }
-
-    /// <summary>
-    ///     Minimum amount of gold for monsters created by this spawn to drop
-    /// </summary>
-    public int MinGoldDrop { get; set; }
 
     /// <summary>
     ///     The unique id for the template of the monster to spawn

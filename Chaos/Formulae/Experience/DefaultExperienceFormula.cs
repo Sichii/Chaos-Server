@@ -31,9 +31,9 @@ public class DefaultExperienceFormula : IExperienceFormula
     {
         1 => 0,
         2 => 0,
-        3 => 0.10m,
-        4 => 0.20m,
-        5 => 0.30m,
+        3 => 0.20m,
+        4 => 0.30m,
+        5 => 0.40m,
         6 => 0.50m,
         _ => throw new ArgumentOutOfRangeException(nameof(group.Count), "Group size is too large.")
     };

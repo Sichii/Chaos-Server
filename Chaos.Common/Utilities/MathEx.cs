@@ -15,7 +15,7 @@ public static class MathEx
     /// <typeparam name="TNumber">The type of numeric to return</typeparam>
     /// <returns>The percentile <paramref name="current" /> is of <paramref name="max" /></returns>
     public static TNumber CalculatePercent<TNumber>(int current, int max) where TNumber: INumber<TNumber> =>
-        (TNumber)Convert.ChangeType(current / (decimal)max * 100.0m, typeof(TNumber));
+        (TNumber)Convert.ChangeType(current / (decimal)max * 100m, typeof(TNumber));
 
     /// <summary>
     ///     Calculates the percentage of a number
@@ -25,7 +25,7 @@ public static class MathEx
     /// <typeparam name="TNumber">The type of numeric to return</typeparam>
     /// <returns>A number that is "<paramref name="percent" />" percent of <paramref name="num" /></returns>
     public static TNumber GetPercentOf<TNumber>(int num, decimal percent) where TNumber: INumber<TNumber> =>
-        (TNumber)Convert.ChangeType(num / 100.0m * percent, typeof(TNumber));
+        (TNumber)Convert.ChangeType(num / 100m * percent, typeof(TNumber));
 
     /// <summary>
     ///     Scales a number from one range to another range.

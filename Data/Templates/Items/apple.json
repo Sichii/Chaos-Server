@@ -1,20 +1,22 @@
 {
-    "buyCost": 100,
-    "category": "food",
-    "color": "Default",
-    "isModifiable": true,
-    "maxStacks": 100,
-    "sellValue": 50,
-    "weight": 1,
-    "description": "A shiny red apple. Looks edible!",
-    "name": "Apple",
-    "panelSprite": 40,
-    "scriptKeys": ["vitalityConsumable"],
-    "scriptVars": {
-        "vitalityConsumable": {
-            "baseHeal": 100,
-            "filter": "selfOnly, aliveOnly"
-        }
-    },
-    "templateKey": "apple"
+  "buyCost": 100,
+  "category": "food",
+  "color": "Default",
+  "isModifiable": true,
+  "maxStacks": 100,
+  "sellValue": 50,
+  "weight": 1,
+  "description": "A shiny red apple. Looks edible!",
+  "name": "Apple",
+  "panelSprite": 40,
+  "scriptKeys": [
+    "vitalityConsumable"
+  ],
+  "scriptVars": {
+    "vitalityConsumable": {
+      "baseHeal": 100,
+      "filter": "selfOnly, aliveOnly"
+    }
+  },
+  "templateKey": "apple"
 }

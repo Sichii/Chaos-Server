@@ -12,6 +12,11 @@ namespace Chaos.Schemas.Templates;
 public sealed record MonsterTemplateSchema
 {
     /// <summary>
+    ///     Defaults to 0<br />If specified, this will be aggressive and attack enemies if they come within the specified
+    ///     distance
+    /// </summary>
+    public int AggroRange { get; set; } = -1;
+    /// <summary>
     ///     The number of milliseconds between usages of assails
     /// </summary>
     public int AssailIntervalMs { get; set; }
@@ -19,6 +24,21 @@ public sealed record MonsterTemplateSchema
     ///     The initial direction of the monster when spawned
     /// </summary>
     public Direction Direction { get; set; } = (Direction)Random.Shared.Next(4);
+
+    /// <summary>
+    ///     The amount of exp this monster will reward when killed
+    /// </summary>
+    public int ExpReward { get; set; }
+
+    /// <summary>
+    ///     Maximum amount of gold for this monster to drop
+    /// </summary>
+    public int MaxGoldDrop { get; set; }
+
+    /// <summary>
+    ///     Minimum amount of gold for this monster to drop
+    /// </summary>
+    public int MinGoldDrop { get; set; }
     /// <summary>
     ///     The number of milliseconds between movements while this monster is targeting an enemy
     /// </summary>

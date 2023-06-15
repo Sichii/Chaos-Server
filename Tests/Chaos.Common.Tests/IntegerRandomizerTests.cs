@@ -72,7 +72,7 @@ public sealed class IntegerRandomizerTests
         }
 
         // The success rate should be close to the successChance. Allow a 10% error margin.
-        (successCount * 100.0 / testCount).Should().BeApproximately(successChance, 10);
+        (successCount * 100m / testCount).Should().BeApproximately(successChance, 10);
     }
 
     [Theory]

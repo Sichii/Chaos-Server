@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Pathfinding;
 using Chaos.Pathfinding.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     <see cref="Chaos.Pathfinding" /> DI extensions
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class PathfindingExtensions
 {
     /// <summary>

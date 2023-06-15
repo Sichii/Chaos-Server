@@ -7,6 +7,11 @@ namespace Chaos.Geometry.JsonConverters;
 /// <inheritdoc />
 public sealed class LocationConverter : JsonConverter<Location>
 {
+    /// <summary>
+    ///     The singleton instance of <see cref="LocationConverter" />
+    /// </summary>
+    public static JsonConverter<Location> Instance { get; } = new LocationConverter();
+
     /// <inheritdoc />
     public override Location Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

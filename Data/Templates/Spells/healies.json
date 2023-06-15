@@ -29,18 +29,18 @@
   ],
   "scriptVars": {
     "heal": {
-      "sound": 8,
       "bodyAnimation": "priestCast",
-      "baseHeal": 500,
-      "range": 2,
-      "shape": "allaround",
-      "healStatMultiplier": 25,
-      "healStat": "wis",
-      "filter": "friendlyOnly, aliveOnly",
       "animation": {
         "targetAnimation": 246,
         "animationSpeed": 1000
-      }
+      },
+      "healStatMultiplier": 25,
+      "sound": 8,
+      "baseHeal": 500,
+      "healStat": "wis",
+      "range": 2,
+      "shape": "allaround",
+      "filter": "friendlyOnly, aliveOnly"
     }
   },
   "templateKey": "healies"

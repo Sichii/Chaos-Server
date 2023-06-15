@@ -127,8 +127,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\ChaosTool.md = docs\articles\ChaosTool.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{431395E2-5117-4988-A2E3-14F8FBA078E0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Extensions.Networking", "Chaos.Extensions.Networking\Chaos.Extensions.Networking.csproj", "{5BA286E6-5169-4E8D-A1AE-9ED9E6DE846A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage", "Chaos.Storage\Chaos.Storage.csproj", "{776DB858-7973-4458-A923-49C31CC934C7}"
@@ -155,6 +153,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Common.Tests", "Tests\Chaos.Common.Tests\Chaos.Common.Tests.csproj", "{9194BAB7-C5A7-4B6D-969D-80678CCC5CD7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Testing.Infrastructure", "Tests\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj", "{0DAB625B-53E6-451F-81E0-670FD6521387}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Cryptography.Tests", "Tests\Chaos.Cryptography.Tests\Chaos.Cryptography.Tests.csproj", "{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.IO.Tests", "Tests\Chaos.IO.Tests\Chaos.IO.Tests.csproj", "{56A0DA66-ACF4-47E7-873B-DC246948ED02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -354,6 +356,14 @@ Global
 		{0DAB625B-53E6-451F-81E0-670FD6521387}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DAB625B-53E6-451F-81E0-670FD6521387}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DAB625B-53E6-451F-81E0-670FD6521387}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -391,6 +401,8 @@ Global
 		{F0EA582A-6FDE-4225-A322-D63D2051173D} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{9194BAB7-C5A7-4B6D-969D-80678CCC5CD7} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{0DAB625B-53E6-451F-81E0-670FD6521387} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
+		{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
+		{56A0DA66-ACF4-47E7-873B-DC246948ED02} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}

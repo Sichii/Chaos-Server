@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ChaosTool;
+namespace ChaosTool.Definitions;
 
 public static class Validators
 {

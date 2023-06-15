@@ -7,6 +7,11 @@ namespace Chaos.Geometry.JsonConverters;
 /// <inheritdoc />
 public sealed class PolygonConverter : JsonConverter<Polygon>
 {
+    /// <summary>
+    ///     The singleton instance of <see cref="PolygonConverter" />
+    /// </summary>
+    public static JsonConverter<Polygon> Instance { get; } = new PolygonConverter();
+
     /// <inheritdoc />
     public override Polygon Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -26,6 +31,7 @@ public sealed class PolygonConverter : JsonConverter<Polygon>
                 throw new InvalidOperationException("Invalid point format");
 
             vertices.Add(point);
+            reader.Read();
         }
 
         //read end of array

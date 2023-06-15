@@ -3,7 +3,7 @@ using Chaos.Schemas.Data;
 
 // ReSharper disable CollectionNeverQueried.Global
 
-namespace ChaosTool.Controls;
+namespace ChaosTool.Definitions;
 
 public static class SampleData
 {

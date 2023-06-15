@@ -10,6 +10,11 @@ namespace Chaos.Models.Templates;
 public sealed record MonsterTemplate : ITemplate, IScripted
 {
     /// <summary>
+    ///     Defaults to 0<br />If specified, this will be aggressive and attack enemies if they come within the specified
+    ///     distance
+    /// </summary>
+    public required int AggroRange { get; set; }
+    /// <summary>
     ///     The number of milliseconds between usages of assails
     /// </summary>
     public required int AssailIntervalMs { get; init; }
@@ -17,6 +22,21 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     ///     The initial direction of the monster when spawned
     /// </summary>
     public required Direction Direction { get; init; }
+
+    /// <summary>
+    ///     The amount of exp this monster will reward when killed
+    /// </summary>
+    public required int ExpReward { get; set; }
+
+    /// <summary>
+    ///     Maximum amount of gold for this monster to drop
+    /// </summary>
+    public required int MaxGoldDrop { get; set; }
+
+    /// <summary>
+    ///     Minimum amount of gold for this monster to drop
+    /// </summary>
+    public required int MinGoldDrop { get; set; }
     /// <summary>
     ///     The number of milliseconds between movements while this monster is targeting an enemy
     /// </summary>

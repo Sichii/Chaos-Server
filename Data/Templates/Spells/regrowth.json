@@ -30,11 +30,11 @@
   ],
   "scriptVars": {
     "applyEffect": {
-      "sound": 8,
-      "effectKey": "regeneration",
       "bodyAnimation": "handsup",
+      "sound": 8,
       "range": 2,
       "shape": "allaround",
+      "effectKey": "regeneration",
       "filter": "friendlyOnly, aliveOnly"
     }
   },

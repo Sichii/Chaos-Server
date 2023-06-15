@@ -27,5 +27,9 @@
   },
   "templateKey": "common_rat",
   "type": "Normal",
-  "wanderIntervalMs": 2000
+  "wanderIntervalMs": 2000,
+  "aggroRange": 6,
+  "expReward": 50,
+  "maxGoldDrop": 30,
+  "minGoldDrop": 10
 }

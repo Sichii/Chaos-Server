@@ -30,12 +30,8 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
     /// <inheritdoc />
     public MonsterSpawn Map(MonsterSpawnSchema obj) => new()
     {
-        AggroRange = obj.AggroRange,
-        ExpReward = obj.ExpReward,
         LootTable = obj.LootTableKey == null ? null : SimpleCache.Get<LootTable>(obj.LootTableKey),
         MaxAmount = obj.MaxAmount,
-        MaxGoldDrop = obj.MaxGoldDrop,
-        MinGoldDrop = obj.MinGoldDrop,
         MonsterFactory = MonsterFactory,
         MonsterTemplate = SimpleCache.Get<MonsterTemplate>(obj.MonsterTemplateKey),
         MaxPerSpawn = obj.MaxPerSpawn,
@@ -58,12 +54,16 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
 
         return new MonsterTemplate
         {
+            AggroRange = obj.AggroRange,
             AssailIntervalMs = obj.AssailIntervalMs,
             SkillIntervalMs = obj.SkillIntervalMs,
             SpellIntervalMs = obj.SpellIntervalMs,
             Direction = obj.Direction,
             MoveIntervalMs = obj.MoveIntervalMs,
             Name = obj.Name,
+            ExpReward = obj.ExpReward,
+            MaxGoldDrop = obj.MaxGoldDrop,
+            MinGoldDrop = obj.MinGoldDrop,
             ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
             SkillTemplateKeys = new HashSet<string>(obj.SkillTemplateKeys, StringComparer.OrdinalIgnoreCase),
             SpellTemplateKeys = new HashSet<string>(obj.SpellTemplateKeys, StringComparer.OrdinalIgnoreCase),

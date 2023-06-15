@@ -1,10 +1,12 @@
-﻿using Chaos.Cryptography;
+﻿using System.Diagnostics.CodeAnalysis;
+using Chaos.Cryptography;
 
 namespace Chaos.Extensions.Cryptography;
 
 /// <summary>
 ///     Provides extensions methods for <see cref="System.Collections.Generic.IReadOnlyCollection{T}" />
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class Crc
 {
     /// <summary>

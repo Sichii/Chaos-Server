@@ -6,7 +6,7 @@
                                  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                                  xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
                                  xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
-                                 xmlns:controls="clr-namespace:ChaosTool.Controls"
+                                 xmlns:definitions="clr-namespace:ChaosTool.Definitions"
                                  mc:Ignorable="d"
                                  d:DesignHeight="700"
                                  d:DesignWidth="900"
@@ -175,7 +175,7 @@
                       SelectionMode="Single"
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static controls:SampleData.DialogOptions}"
+                      d:ItemsSource="{x:Static definitions:SampleData.DialogOptions}"
                       materialDesign:RippleAssist.IsDisabled="True"
                       materialDesign:ListBoxItemAssist.ShowSelection="True"
                       MaxHeight="400"
@@ -272,7 +272,7 @@
                       SelectionMode="Single"
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static controls:SampleData.Strings}"
+                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
                     <DataTemplate>

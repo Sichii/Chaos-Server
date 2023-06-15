@@ -12,6 +12,7 @@
   },
   {
     "count": 1,
+    "scriptKeys": [],
     "slot": 14,
     "templateKey": "teleport_trinket",
     "uniqueId": 1

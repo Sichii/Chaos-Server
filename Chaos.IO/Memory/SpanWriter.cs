@@ -48,6 +48,7 @@ public ref struct SpanWriter
         Position = 0;
         AutoGrow = false;
         Endianness = endianness;
+        IsLittleEndian = Endianness == Endianness.LittleEndian;
     }
 
     /// <summary>

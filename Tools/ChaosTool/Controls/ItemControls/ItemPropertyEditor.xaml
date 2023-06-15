@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
-    xmlns:Controls="clr-namespace:ChaosTool.Controls"
     xmlns:model="clr-namespace:ChaosTool.Model"
+    xmlns:definitions="clr-namespace:ChaosTool.Definitions"
     x:Class="ChaosTool.Controls.ItemControls.ItemPropertyEditor"
     mc:Ignorable="d"
     d:DesignHeight="700"
@@ -623,7 +623,7 @@
                       SelectionMode="Single"
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static Controls:SampleData.Strings}"
+                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type model:BindableString}">
