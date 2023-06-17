@@ -73,7 +73,8 @@ public class ReactorTile : MapEntity, IDeltaUpdatable, IScripted<IReactorTileScr
 
     public void OnItemDroppedOn(Creature source, GroundItem groundItem) => Script.OnItemDroppedOn(source, groundItem);
 
-    public void OnItemPickedUpFrom(Aisling source, GroundItem groundItem) => Script.OnItemPickedUpFrom(source, groundItem);
+    public void OnItemPickedUpFrom(Aisling source, GroundItem groundItem, int originalCount) =>
+        Script.OnItemPickedUpFrom(source, groundItem, originalCount);
 
     public void OnWalkedOn(Creature source) => Script.OnWalkedOn(source);
 

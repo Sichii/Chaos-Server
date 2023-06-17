@@ -1,3 +1,5 @@
+// ReSharper disable once CheckNamespace
+
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Scripting;
 using Chaos.Scripting.Abstractions;

@@ -1,4 +1,5 @@
 using Chaos.Collections;
+using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -15,7 +16,7 @@ public interface IItemScript : IScript, IDeltaUpdatable
 
     void OnEquipped(Aisling aisling);
 
-    void OnPickup(Aisling aisling);
+    void OnPickup(Aisling aisling, Item originalItem, int originalCount);
     void OnUnEquipped(Aisling aisling);
 
     void OnUse(Aisling source);

@@ -26,11 +26,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         {
             using var @lock = Sync.Enter();
 
-            var actualObjects = Objects.Where(obj => obj is not null)
-                                       .ToList();
-
-            return actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name))
-                   ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
+            return this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
         }
     }
 
@@ -141,7 +137,15 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         using var @lock = Sync.Enter();
 
-        return Objects.Any(obj => obj is not null && (obj.Template.Name.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name)));
+        return this.Any(obj => obj.Template.Name.EqualsI(name));
+    }
+
+    /// <inheritdoc />
+    public bool ContainsByTemplateKey(string templateKey)
+    {
+        using var @lock = Sync.Enter();
+
+        return this.Any(obj => obj.Template.TemplateKey.EqualsI(templateKey));
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -183,8 +187,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         using var @lock = Sync.Enter();
 
-        var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name))
-                  ?? this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(name));
+        var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
 
         if (obj == null)
             return false;
@@ -208,6 +211,19 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         BroadcastOnRemoved(slot, existing);
 
         return true;
+    }
+
+    /// <inheritdoc />
+    public bool RemoveByTemplateKey(string templateKey)
+    {
+        using var @lock = Sync.Enter();
+
+        var obj = this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(templateKey));
+
+        if (obj == null)
+            return false;
+
+        return Remove(obj.Slot);
     }
 
     public virtual bool TryAdd(byte slot, T obj) => InnerTryAdd(slot, obj);
@@ -244,8 +260,19 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         var actualObjects = Objects.Where(obj => obj is not null)
                                    .ToList();
 
-        obj = actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name))
-              ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
+        obj = actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name));
+
+        return obj != null;
+    }
+
+    public virtual bool TryGetObjectByTemplateKey(string templateKey, [MaybeNullWhen(false)] out T obj)
+    {
+        using var @lock = Sync.Enter();
+
+        var actualObjects = Objects.Where(obj => obj is not null)
+                                   .ToList();
+
+        obj = actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(templateKey));
 
         return obj != null;
     }
@@ -277,10 +304,25 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
         using var @lock = Sync.Enter();
 
-        var actualObjects = Objects.Where(obj => obj is not null)
-                                   .ToList();
+        obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
 
-        obj = actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name));
+        if (obj == null)
+            return false;
+
+        Objects[obj.Slot] = default;
+        BroadcastOnRemoved(obj.Slot, obj);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool TryGetRemoveByTemplateKey(string templateKey, [MaybeNullWhen(false)] out T obj)
+    {
+        obj = default;
+
+        using var @lock = Sync.Enter();
+
+        obj = this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(templateKey));
 
         if (obj == null)
             return false;

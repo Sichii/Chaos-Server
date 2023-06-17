@@ -39,6 +39,13 @@ public static class ScriptExtensions
         return Enumerable.Empty<TScript>();
     }
 
+    public static bool Is<TScript>(this IScript script)
+    {
+        var outScript = script.As<TScript>();
+
+        return outScript is not null;
+    }
+
     public static bool Is<TScript>(this IScript script, [MaybeNullWhen(false)] out TScript outScript)
     {
         outScript = script.As<TScript>();

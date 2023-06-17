@@ -101,7 +101,7 @@ public class WithdrawItemScript : DialogScriptBase
 
                 return;
             case ComplexActionHelper.WithdrawItemResult.BadInput:
-                Subject.Reply(source, DialogString.UnknownInput.Value);
+                Subject.ReplyToUnknownInput(source);
 
                 return;
             default:

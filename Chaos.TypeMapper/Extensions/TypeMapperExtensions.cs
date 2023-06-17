@@ -14,7 +14,8 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class TypeMapperExtensions
 {
     /// <summary>
-    ///     Adds <see cref="Chaos.TypeMapper.Mapper" /> as an implementation of <see cref="Chaos.TypeMapper.Abstractions.ITypeMapper" />
+    ///     Adds <see cref="Chaos.TypeMapper.Mapper" /> as an implementation of
+    ///     <see cref="Chaos.TypeMapper.Abstractions.ITypeMapper" />
     /// </summary>
     /// <param name="services">The service collection to add the service to</param>
     /// <remarks>

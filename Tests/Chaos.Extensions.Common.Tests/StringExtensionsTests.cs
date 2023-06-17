@@ -1,10 +1,81 @@
 using FluentAssertions;
 using Xunit;
 
+// ReSharper disable ArrangeAttributes
+
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class StringExtensionsTests
 {
+    public static IEnumerable<object?[]> FuzzySearchTestData => new List<object?[]>
+    {
+        new object?[] { new[] { "kitten", "sitting", "mittens" }, "sitten", 0.6m, 0.33m, default(int?), true, "kitten" },
+        new object?[] { new[] { "kitten", "sitting", "mittens" }, "sitten", 0.6m, 0.33m, default(int?), false, "kitten" },
+        new object?[] { new[] { "kitten", "Sitting", "mittens" }, "sitteng", 0.6m, 0.33m, default(int?), true, "kitten" },
+        new object?[] { new[] { "kitten", "Sitting", "mittens" }, "sitteng", 0.6m, 0.33m, default(int?), false, "Sitting" },
+        new object?[] { new[] { "Written", "writing", "kitten" }, "ritten", 0.6m, 0.33m, default(int?), true, "Written" },
+        new object?[] { new[] { "Written", "writing", "kitten" }, "ritten", 0.6m, 0.33m, default(int?), false, "Written" },
+        new object?[] { new[] { "apple", "banana", "cherry" }, "peach", 0, 1, default(int?), true, "cherry" },
+        new object?[] { new[] { "apple", "banana", "cherry" }, "peach", 0, 1, default(int?), true, "cherry" },
+        new object?[] { Array.Empty<string>(), "peach", 0, 1, default(int?), true, default(string) }
+    };
+
+    //@formatter:off
+    [Theory]
+    [InlineData("night", "nacht", true, 0.25)]
+    [InlineData("night", "nacht", false, 0.25)]
+    [InlineData("context", "contact", true, 0.5)]
+    [InlineData("context", "contact", false, 0.5)]
+    [InlineData("Context", "contact", true, 0.3333)]
+    [InlineData("Context", "contact", false, 0.5)]
+    [InlineData("Stick", "sticks", true, 0.6667)]
+    [InlineData("Stick", "sticks", false, 0.8889)]
+    [InlineData("sticks", "Stick", true, 0.6667)]
+    [InlineData("sticks", "Stick", false, 0.8889)]
+    [InlineData("", "", true, 0)]
+    [InlineData("", "", false, 0)]
+    //@formatter:on
+    public void CalculateDiceCoefficientTests(
+        string string1,
+        string string2,
+        bool caseSensitive,
+        decimal expected
+    )
+    {
+        // Act
+        var actual = string1.CalculateSorensenCoefficient(string2, caseSensitive);
+
+        // Assert
+        actual.Should().BeApproximately(expected, 0.0001m);
+    }
+
+    //@formatter:off
+    [Theory]
+    [InlineData("kitten", "sitting", true, 3)]
+    [InlineData("kitten", "sitting", false, 3)]
+    [InlineData("Kitten", "sitting", true, 3)]
+    [InlineData("Kitten", "sitting", false, 3)]
+    [InlineData("Saturday", "Sunday", true, 3)]
+    [InlineData("Saturday", "Sunday", false, 3)]
+    [InlineData("Saturday", "SUNDAY", true, 7)]
+    [InlineData("Saturday", "SUNDAY", false, 3)]
+    [InlineData("", "", true, 0)]
+    [InlineData("", "", false, 0)]
+    //@formatter:on
+    public void CalculateLevenshteinDistanceTests(
+        string str1,
+        string str2,
+        bool caseSensitive,
+        int expected
+    )
+    {
+        // Act
+        var actual = str1.CalculateLevenshteinDistance(str2, caseSensitive);
+
+        // Assert
+        actual.Should().Be(expected);
+    }
+
     [Fact]
     public void CenterAlign_Should_Return_Empty_String_If_Width_Is_Zero()
     {
@@ -168,6 +239,55 @@ public sealed class StringExtensionsTests
 
         // Assert
         action.Should().Throw<ArgumentNullException>(); // Expected result: ArgumentNullException
+    }
+
+    [Theory]
+    [MemberData(nameof(FuzzySearchTestData))]
+    public void FuzzySearchByTests(
+        IEnumerable<string> strings,
+        string str,
+        decimal minCoefficient,
+        decimal maxDistancePct,
+        int? maxDistance,
+        bool caseSensitive,
+        string? expected
+    )
+    {
+        // Act
+        var actual = strings.FuzzySearchBy(
+            _ => _,
+            str,
+            minCoefficient,
+            maxDistancePct,
+            maxDistance,
+            caseSensitive);
+
+        // Assert
+        actual.Should().Be(expected);
+    }
+
+    [Theory]
+    [MemberData(nameof(FuzzySearchTestData))]
+    public void FuzzySearchTests(
+        IEnumerable<string> strings,
+        string str,
+        decimal minCoefficient,
+        decimal maxDistancePct,
+        int? maxDistance,
+        bool caseSensitive,
+        string? expected
+    )
+    {
+        // Act
+        var actual = strings.FuzzySearch(
+            str,
+            minCoefficient,
+            maxDistancePct,
+            maxDistance,
+            caseSensitive);
+
+        // Assert
+        actual.Should().Be(expected);
     }
 
     [Fact]

@@ -16,8 +16,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         {
             using var @lock = Sync.Enter();
 
-            return Objects.FirstOrDefault(i => i is not null && (i.DisplayName.EqualsI(name) || i.Template.TemplateKey.EqualsI(name)))
-                   ?? base[name];
+            return this.FirstOrDefault(i => i.DisplayName.EqualsI(name));
         }
     }
 
@@ -47,7 +46,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     {
         using var @lock = Sync.Enter();
 
-        return Objects.Any(obj => obj is not null && (obj.DisplayName.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name)));
+        return Objects.Any(obj => obj is not null && obj.DisplayName.EqualsI(name));
     }
 
     /// <inheritdoc />
@@ -57,7 +56,16 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     {
         using var @lock = Sync.Enter();
 
-        return this.Where(item => item.DisplayName.EqualsI(name) || item.Template.TemplateKey.EqualsI(name))
+        return this.Where(item => item.DisplayName.EqualsI(name))
+                   .Sum(item => item.Count);
+    }
+
+    /// <inheritdoc />
+    public int CountOfByTemplateKey(string templateKey)
+    {
+        using var @lock = Sync.Enter();
+
+        return this.Where(item => item.Template.TemplateKey.EqualsI(templateKey))
                    .Sum(item => item.Count);
     }
 
@@ -69,12 +77,19 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     }
 
     /// <inheritdoc />
+    public bool HasCountByTemplateKey(string templateKey, int quantity)
+    {
+        using var @lock = Sync.Enter();
+
+        return CountOfByTemplateKey(templateKey) >= quantity;
+    }
+
+    /// <inheritdoc />
     public override bool Remove(string name)
     {
         using var @lock = Sync.Enter();
 
-        var obj = this.FirstOrDefault(obj => obj.DisplayName.EqualsI(name))
-                  ?? this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(name));
+        var obj = this.FirstOrDefault(obj => obj.DisplayName.EqualsI(name));
 
         if (obj == null)
             return false;
@@ -92,7 +107,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             return false;
 
         var existingItems = this
-                            .Where(item => item.DisplayName.EqualsI(name) || item.Template.TemplateKey.EqualsI(name))
+                            .Where(item => item.DisplayName.EqualsI(name))
                             .ToList();
 
         if (!existingItems.Any())
@@ -182,9 +197,8 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this
-                            .Where(item => item.DisplayName.EqualsI(name) || item.Template.TemplateKey.EqualsI(name))
-                            .ToList();
+        var existingItems = this.Where(item => item.DisplayName.EqualsI(name))
+                                .ToList();
 
         if (!existingItems.Any())
             return false;
@@ -237,6 +251,91 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             if (quantity <= 0)
                 break;
             else if (item!.Count <= quantity)
+            {
+                Objects[item.Slot] = null;
+                BroadcastOnRemoved(item.Slot, item);
+                quantity -= item.Count;
+            } else
+            {
+                item.Count -= quantity;
+                BroadcastOnUpdated(item.Slot, item);
+
+                break;
+            }
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool RemoveQuantityByTemplateKey(string templateKey, int quantity, [MaybeNullWhen(false)] out List<Item> items)
+    {
+        using var @lock = Sync.Enter();
+
+        items = null;
+
+        if (quantity <= 0)
+            return false;
+
+        var existingItems = this
+                            .Where(item => item.Template.TemplateKey.EqualsI(templateKey))
+                            .ToList();
+
+        if (!existingItems.Any())
+            return false;
+
+        var sum = existingItems.Sum(item => item.Count);
+
+        if (sum < quantity)
+            return false;
+
+        var ret = new List<Item>();
+
+        foreach (var item in existingItems)
+            if (quantity <= 0)
+                break;
+            else if (item.Count <= quantity)
+            {
+                Objects[item.Slot] = null;
+                BroadcastOnRemoved(item.Slot, item);
+                quantity -= item.Count;
+                ret.Add(item);
+            } else
+            {
+                var split = item.Split(quantity, ItemCloner);
+                BroadcastOnUpdated(item.Slot, item);
+                ret.Add(split);
+
+                break;
+            }
+
+        items = ret;
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool RemoveQuantityByTemplateKey(string templateKey, int quantity)
+    {
+        using var @lock = Sync.Enter();
+
+        if (quantity <= 0)
+            return false;
+
+        var existingItems = this.Where(item => item.Template.TemplateKey.EqualsI(templateKey))
+                                .ToList();
+
+        if (!existingItems.Any())
+            return false;
+
+        var sum = existingItems.Sum(item => item.Count);
+
+        if (sum < quantity)
+            return false;
+
+        foreach (var item in existingItems)
+            if (quantity <= 0)
+                break;
+            else if (item.Count <= quantity)
             {
                 Objects[item.Slot] = null;
                 BroadcastOnRemoved(item.Slot, item);
@@ -331,11 +430,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     {
         using var @lock = Sync.Enter();
 
-        var actualObjects = Objects.Where(obj => obj is not null)
-                                   .ToList();
-
-        obj = actualObjects.FirstOrDefault(obj => obj!.DisplayName.EqualsI(name))
-              ?? actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(name));
+        obj = this.FirstOrDefault(obj => obj.DisplayName.EqualsI(name));
 
         return obj != null;
     }
@@ -347,10 +442,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         using var @lock = Sync.Enter();
 
-        var actualObjects = Objects.Where(obj => obj is not null)
-                                   .ToList();
-
-        obj = actualObjects.FirstOrDefault(obj => obj!.DisplayName.EqualsI(name) || obj.Template.TemplateKey.EqualsI(name));
+        obj = this.FirstOrDefault(obj => obj.DisplayName.EqualsI(name));
 
         if (obj == null)
             return false;

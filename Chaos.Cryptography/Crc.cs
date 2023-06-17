@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Chaos.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Chaos.Extensions.Cryptography;
+namespace Chaos.Cryptography;
 
 /// <summary>
 ///     Provides extensions methods for <see cref="System.Collections.Generic.IReadOnlyCollection{T}" />

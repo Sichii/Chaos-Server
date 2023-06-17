@@ -50,10 +50,10 @@ public class CompositeReactorTileScript : CompositeScriptBase<IReactorTileScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnItemPickedUpFrom(Aisling source, GroundItem groundItem)
+    public virtual void OnItemPickedUpFrom(Aisling source, GroundItem groundItem, int originalCount)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnItemPickedUpFrom(source, groundItem);
+            component.OnItemPickedUpFrom(source, groundItem, originalCount);
     }
 
     /// <summary>

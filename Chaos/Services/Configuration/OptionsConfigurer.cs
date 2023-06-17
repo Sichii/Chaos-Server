@@ -25,8 +25,11 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     public OptionsConfigurer(IStagingDirectory stagingDirectory) => StagingDirectory = stagingDirectory;
 
     /// <inheritdoc />
-    public void PostConfigure(string? name, IConnectionInfo options) =>
-        options.Address = Dns.GetHostAddresses(options.HostName).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)!;
+    public void PostConfigure(string? name, IConnectionInfo options)
+    {
+        if (!string.IsNullOrEmpty(options.HostName))
+            options.Address = Dns.GetHostAddresses(options.HostName).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)!;
+    }
 
     /// <inheritdoc />
     public void PostConfigure(string? name, LobbyOptions options)

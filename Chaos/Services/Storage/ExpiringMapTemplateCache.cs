@@ -1,5 +1,5 @@
+using Chaos.Cryptography;
 using Chaos.Definitions;
-using Chaos.Extensions.Cryptography;
 using Chaos.Models.Map;
 using Chaos.Models.Templates;
 using Chaos.Schemas.Templates;

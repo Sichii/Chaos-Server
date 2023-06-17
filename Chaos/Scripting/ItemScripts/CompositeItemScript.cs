@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Chaos.Collections;
+using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -46,10 +47,10 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual void OnPickup(Aisling aisling)
+    public virtual void OnPickup(Aisling aisling, Item originalItem, int originalCount)
     {
         foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnPickup(aisling);
+            component.OnPickup(aisling, originalItem, originalCount);
     }
 
     /// <summary>

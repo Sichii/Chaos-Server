@@ -2,7 +2,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Cryptography\Chaos.Cryptography.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
-        <ProjectReference Include="..\Chaos.Extensions.Cryptography\Chaos.Extensions.Cryptography.csproj"/>
         <ProjectReference Include="..\Chaos.Geometry\Chaos.Geometry.csproj"/>
         <ProjectReference Include="..\Chaos.Networking.Abstractions\Chaos.Networking.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.Packets\Chaos.Packets.csproj"/>

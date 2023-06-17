@@ -37,11 +37,8 @@ public sealed class ArgumentCollectionTests
     public void Add_WithStringAndDelimiter_ShouldSplitStringIntoArgumentsAndAddToCollection()
     {
         // Arrange
-        var argumentCollection = new ArgumentCollection
-        {
-            // Act
-            { "arg1,arg2,arg3", "," }
-        };
+        // Act
+        var argumentCollection = new ArgumentCollection("arg1,arg2,arg3", ",");
 
         // Assert
         argumentCollection.Should().Equal("arg1", "arg2", "arg3");

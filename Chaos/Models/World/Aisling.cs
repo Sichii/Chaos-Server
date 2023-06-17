@@ -588,7 +588,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         return true;
     }
 
-    public bool TryGiveItem(Item item, byte? slot = null)
+    public bool TryGiveItem(ref Item item, byte? slot = null)
     {
         if (!CanCarry(item))
         {
@@ -598,9 +598,27 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         if (slot.HasValue)
-            return Inventory.TryAdd(slot.Value, item);
+        {
+            if (Inventory.TryAdd(slot.Value, item))
+            {
+                if (item.Template.Stackable)
+                    item = Inventory[item.DisplayName]!;
 
-        return Inventory.TryAddToNextSlot(item);
+                return true;
+            }
+
+            return false;
+        }
+
+        if (Inventory.TryAddToNextSlot(item))
+        {
+            if (item.Template.Stackable)
+                item = Inventory[item.DisplayName]!;
+
+            return true;
+        }
+
+        return false;
     }
 
     public bool TryGiveItems(params Item[] items)
@@ -628,8 +646,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         var item = groundItem.Item;
+        var originalItem = item;
+        var originalCount = originalItem.Count;
 
-        if (TryGiveItem(item, destinationSlot))
+        if (TryGiveItem(ref item, destinationSlot))
         {
             Logger.WithProperty(this)
                   .WithProperty(groundItem)
@@ -640,10 +660,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                       ILocation.ToString(groundItem));
 
             MapInstance.RemoveObject(groundItem);
-            item.Script.OnPickup(this);
+            item.Script.OnPickup(this, originalItem, originalCount);
 
             foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem).ToList())
-                reactor.OnItemPickedUpFrom(this, groundItem);
+                reactor.OnItemPickedUpFrom(this, groundItem, originalCount);
 
             return true;
         }

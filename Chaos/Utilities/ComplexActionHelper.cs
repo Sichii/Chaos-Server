@@ -28,7 +28,7 @@ public static class ComplexActionHelper
     public enum DepositGoldResult
     {
         Success,
-        NotEnoughGold,
+        DontHaveThatMany,
         BadInput
     }
 
@@ -71,7 +71,7 @@ public static class ComplexActionHelper
     {
         Success,
         TooMuchGold,
-        NotEnoughGold,
+        DontHaveThatMany,
         BadInput
     }
 
@@ -139,7 +139,7 @@ public static class ComplexActionHelper
             return DepositGoldResult.BadInput;
 
         if (!source.TryTakeGold(amount))
-            return DepositGoldResult.NotEnoughGold;
+            return DepositGoldResult.DontHaveThatMany;
 
         source.Bank.AddGold((uint)amount);
 
@@ -341,7 +341,7 @@ public static class ComplexActionHelper
             return WithdrawGoldResult.BadInput;
 
         if (source.Bank.Gold < amount)
-            return WithdrawGoldResult.NotEnoughGold;
+            return WithdrawGoldResult.DontHaveThatMany;
 
         if (!source.TryGiveGold(amount))
             return WithdrawGoldResult.TooMuchGold;

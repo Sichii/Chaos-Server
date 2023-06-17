@@ -42,7 +42,7 @@ public class DepositGoldScript : DialogScriptBase
                           amount);
 
                 break;
-            case ComplexActionHelper.DepositGoldResult.NotEnoughGold:
+            case ComplexActionHelper.DepositGoldResult.DontHaveThatMany:
                 Subject.Reply(source, "You don't have enough gold.", "generic_depositgold_initial");
 
                 break;

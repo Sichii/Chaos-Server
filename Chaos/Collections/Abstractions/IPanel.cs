@@ -14,15 +14,19 @@ public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
     bool Contains(T obj);
     bool Contains(byte slot);
     bool Contains(string name);
+    bool ContainsByTemplateKey(string templateKey);
     bool IsValidSlot(byte slot);
     bool Remove(byte slot);
     bool Remove(string name);
+    bool RemoveByTemplateKey(string templateKey);
     bool TryAdd(byte slot, T obj);
     bool TryAddToNextSlot(T obj);
     bool TryGetObject(byte slot, [MaybeNullWhen(false)] out T obj);
     bool TryGetObject(string name, [MaybeNullWhen(false)] out T obj);
+    bool TryGetObjectByTemplateKey(string templateKey, [MaybeNullWhen(false)] out T obj);
     bool TryGetRemove(byte slot, [MaybeNullWhen(false)] out T obj);
     bool TryGetRemove(string name, [MaybeNullWhen(false)] out T obj);
+    bool TryGetRemoveByTemplateKey(string templateKey, [MaybeNullWhen(false)] out T obj);
     bool TrySwap(byte slot1, byte slot2);
     void Update(byte slot, Action<T>? action = null);
 }

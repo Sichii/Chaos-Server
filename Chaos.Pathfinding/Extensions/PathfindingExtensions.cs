@@ -1,3 +1,5 @@
+// ReSharper disable once CheckNamespace
+
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Pathfinding;
 using Chaos.Pathfinding.Abstractions;
@@ -13,7 +15,8 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class PathfindingExtensions
 {
     /// <summary>
-    ///     Adds <see cref="Chaos.Pathfinding.PathfindingService" /> as an implementation of <see cref="IPathfindingService" /> to the service
+    ///     Adds <see cref="Chaos.Pathfinding.PathfindingService" /> as an implementation of <see cref="IPathfindingService" />
+    ///     to the service
     ///     collection
     /// </summary>
     /// <param name="serviceCollection">The service collection to add to</param>

@@ -17,6 +17,6 @@ public interface IReactorTileScript : IScript, IDeltaUpdatable
 
     void OnItemDroppedOn(Creature source, GroundItem groundItem);
 
-    void OnItemPickedUpFrom(Aisling source, GroundItem groundItem);
+    void OnItemPickedUpFrom(Aisling source, GroundItem groundItem, int originalCount);
     void OnWalkedOn(Creature source);
 }

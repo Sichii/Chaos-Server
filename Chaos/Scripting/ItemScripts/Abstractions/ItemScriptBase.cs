@@ -22,7 +22,7 @@ public abstract class ItemScriptBase : SubjectiveScriptBase<Item>, IItemScript
     public virtual void OnEquipped(Aisling aisling) { }
 
     /// <inheritdoc />
-    public virtual void OnPickup(Aisling aisling) { }
+    public virtual void OnPickup(Aisling aisling, Item originalItem, int originalCount) { }
 
     /// <inheritdoc />
     public virtual void OnUnEquipped(Aisling aisling) { }

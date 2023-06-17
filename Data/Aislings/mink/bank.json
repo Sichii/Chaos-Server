@@ -1,4 +1,12 @@
 {
   "gold": 290,
-  "items": []
+  "items": [
+    {
+      "count": 20,
+      "currentDurability": 1000,
+      "slot": 2,
+      "templateKey": "stick",
+      "uniqueId": 32
+    }
+  ]
 }

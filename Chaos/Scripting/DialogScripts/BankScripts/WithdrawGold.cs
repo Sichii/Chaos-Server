@@ -46,7 +46,7 @@ public class WithdrawGoldScript : DialogScriptBase
                 Subject.Reply(source, "You are carrying too much gold.", "generic_withdrawgold_initial");
 
                 break;
-            case ComplexActionHelper.WithdrawGoldResult.NotEnoughGold:
+            case ComplexActionHelper.WithdrawGoldResult.DontHaveThatMany:
                 Subject.Reply(source, "You don't have that much.", "generic_withdrawgold_initial");
 
                 break;

@@ -45,8 +45,8 @@ be overridden depending on environment like so
 
 ```json
 "LobbyOptions": {
-"Port": 4200,
-"Servers": []
+  "Port": 4200,
+  "Servers": []
 }
 ```
 
@@ -76,7 +76,7 @@ be overridden depending on environment like so
       "Name": "Chaos",
       "HostName": "chaos-server.net",
       "Port": 4201,
-      "Description": "Private DA server"
+      "Description": "Private Server"
     }
   ]
 }

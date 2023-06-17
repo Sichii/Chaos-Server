@@ -216,21 +216,18 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 throw new ArgumentOutOfRangeException(nameof(publicMessageType), publicMessageType, null);
         }
 
-        if (sendMessage.Length > CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH)
+        if (this is Aisling && (sendMessage.Length > CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH))
             sendMessage = sendMessage[..CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH];
 
-        foreach (var creature in entitiesWithinRange)
-            switch (creature)
-            {
-                case Aisling aisling when !aisling.IgnoreList.Contains(Name):
-                    aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
+        entitiesWithinRange = entitiesWithinRange.ToList();
 
-                    break;
-                case Merchant merchant:
-                    merchant.Script.OnPublicMessage(this, message);
+        //separated to merchant replies show up below the text theyre responding to
+        foreach (var aisling in entitiesWithinRange.OfType<Aisling>())
+            if (!aisling.IgnoreList.Contains(Name))
+                aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
 
-                    break;
-            }
+        foreach (var merchant in entitiesWithinRange.OfType<Merchant>())
+            merchant.Script.OnPublicMessage(this, message);
     }
 
     public void TraverseMap(

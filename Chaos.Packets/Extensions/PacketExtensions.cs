@@ -22,8 +22,10 @@ public static class PacketExtensions
     /// <remarks>
     ///     This extension scans all loaded assemblies for types that implement of
     ///     <see cref="Chaos.Packets.Abstractions.IClientPacketDeserializer" /> or
-    ///     <see cref="Chaos.Packets.Abstractions.IServerPacketSerializer" />. It initializes instances of all of these types through
-    ///     <see cref="System.Activator" />.<see cref="System.Activator.CreateInstance(Type)" /> and uses the types and objects as parameters for
+    ///     <see cref="Chaos.Packets.Abstractions.IServerPacketSerializer" />. It initializes instances of all of these types
+    ///     through
+    ///     <see cref="System.Activator" />.<see cref="System.Activator.CreateInstance(Type)" /> and uses the types and objects
+    ///     as parameters for
     ///     the <see cref="Chaos.Packets.PacketSerializer" />
     ///     constructor.
     /// </remarks>

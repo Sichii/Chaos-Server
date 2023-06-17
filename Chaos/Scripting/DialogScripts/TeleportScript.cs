@@ -4,7 +4,6 @@ using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Storage.Abstractions;
-using Chaos.Utilities;
 
 namespace Chaos.Scripting.DialogScripts;
 
@@ -22,14 +21,14 @@ public class TeleportScript : DialogScriptBase
     {
         if (!TryFetchArgs<ArgumentCollection>(out var locationArgs))
         {
-            Subject.Reply(source, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
             return;
         }
 
         if (!locationArgs.TryGetNext<string>(out var mapInstanceId))
         {
-            Subject.Reply(source, DialogString.UnknownInput.Value);
+            Subject.ReplyToUnknownInput(source);
 
             return;
         }

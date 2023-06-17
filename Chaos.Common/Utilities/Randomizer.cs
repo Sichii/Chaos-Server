@@ -14,7 +14,7 @@ public static class Randomizer
     /// <typeparam name="T">The type of the elements in the collection.</typeparam>
     /// <param name="objs">The collection to pick a random element from.</param>
     /// <returns>A random element from the specified collection.</returns>
-    public static T PickRandom<T>(this IReadOnlyCollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
+    public static T PickRandom<T>(this ICollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
 
     /// <summary>
     ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are exhaustive.

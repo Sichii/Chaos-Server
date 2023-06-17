@@ -260,7 +260,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         newDialog.Display(source);
     }
 
-    public void ReplyToUnknownInput(Aisling source) => Reply(source, DialogString.UnknownInput.Value);
+    public void ReplyToUnknownInput(Aisling source) => Reply(source, DialogString.UnknownInput);
 
     #region Dialog Options
     public int? GetOptionIndex(string optionText)
