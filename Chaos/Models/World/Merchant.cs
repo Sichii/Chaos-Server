@@ -34,7 +34,7 @@ public sealed class Merchant : Creature,
     public ICollection<Item> ItemsForSale { get; }
 
     /// <inheritdoc />
-    public ICollection<string> ItemsToBuy { get; }
+    public ICollection<Item> ItemsToBuy { get; }
     public override ILogger<Merchant> Logger { get; }
     /// <inheritdoc />
     public override IMerchantScript Script { get; }
@@ -98,7 +98,7 @@ public sealed class Merchant : Creature,
                                    })
                                .ToList();
 
-        ItemsToBuy = template.ItemsToBuy.ToList();
+        ItemsToBuy = template.ItemsToBuy.Select(itemKey => itemFactory.CreateFaux(itemKey)).ToList();
         SkillsToTeach = template.SkillsToTeach.Select(key => skillFactory.CreateFaux(key)).ToList();
         SpellsToTeach = template.SpellsToTeach.Select(key => spellFactory.CreateFaux(key)).ToList();
 
@@ -123,7 +123,7 @@ public sealed class Merchant : Creature,
     bool IBuyShopSource.HasStock(string itemTemplateKey) => StockService.HasStock(Template.TemplateKey, itemTemplateKey);
 
     /// <inheritdoc />
-    public bool IsBuying(Item item) => ItemsToBuy.Contains(item.Template.TemplateKey);
+    public bool IsBuying(Item item) => ItemsToBuy.Any(i => i.DisplayName.EqualsI(item.DisplayName));
 
     public override void OnClicked(Aisling source) => Script.OnClicked(source);
 

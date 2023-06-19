@@ -9,10 +9,10 @@
       "channelName": "!trade"
     }
   ],
-  "direction": "Right",
+  "direction": "Down",
   "effects": [],
   "gender": "Male",
-  "gold": 98290,
+  "gold": 91790,
   "guildName": "meepers",
   "hairColor": "Default",
   "hairStyle": 5,
@@ -52,6 +52,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 25,
-  "y": 28
+  "x": 27,
+  "y": 23
 }

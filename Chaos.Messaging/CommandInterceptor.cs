@@ -41,18 +41,18 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
 
         foreach (var type in commandTypes)
         {
-            var attribute = type.GetCustomAttribute<CommandAttribute>();
+            var attributes = type.GetCustomAttributes<CommandAttribute>();
 
-            if (attribute == null)
-                continue;
-
-            var descriptor = new CommandDescriptor
+            foreach (var attribute in attributes)
             {
-                Details = attribute,
-                Type = type
-            };
+                var descriptor = new CommandDescriptor
+                {
+                    Details = attribute,
+                    Type = type
+                };
 
-            Commands.Add(attribute.CommandName, descriptor);
+                Commands.Add(attribute.CommandName, descriptor);
+            }
         }
     }
 

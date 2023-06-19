@@ -1,33 +1,35 @@
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace Chaos.Definitions;
 
 public static partial class RegexCache
 {
-    public static readonly ICollection<Regex> DEPOSIT_PATTERNS = new List<Regex>
-    {
+    public static readonly ICollection<Regex> DEPOSIT_PATTERNS = ImmutableList.Create(
         DepositRegex1(),
         DepositRegex2(),
         DepositRegex3(),
         DepositRegex4(),
         DepositRegex5(),
-        DepositRegex6()
-    };
-
-    public static readonly ICollection<Regex> WITHDRAW_PATTERNS = new List<Regex>
-    {
+        DepositRegex6());
+    public static readonly ICollection<Regex> WITHDRAW_PATTERNS = ImmutableList.Create(
         WithdrawRegex1(),
         WithdrawRegex2(),
         WithdrawRegex3(),
         WithdrawRegex4(),
         WithdrawRegex5(),
-        WithdrawRegex6()
-    };
-    public static readonly ICollection<Regex> ITEM_CHECK_PATTERNS = new List<Regex>
-    {
+        WithdrawRegex6());
+    public static readonly ICollection<Regex> ITEM_CHECK_PATTERNS = ImmutableList.Create(
         ItemCheckRegex1(),
-        ItemCheckRegex2()
-    };
+        ItemCheckRegex2());
+    public static readonly ICollection<Regex> SELL_ITEM_PATTERNS = ImmutableList.Create(
+        SellItemRegex1(),
+        SellItemRegex2(),
+        SellItemRegex3());
+    public static readonly ICollection<Regex> BUY_ITEM_PATTERNS = ImmutableList.Create(BuyItemRegex1());
+
+    [GeneratedRegex(@"^I (?:will )?buy (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex BuyItemRegex1();
 
     [GeneratedRegex(@"^I (?:will )?deposit (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex1();
@@ -52,6 +54,15 @@ public static partial class RegexCache
 
     [GeneratedRegex(@"^How (?:many|much) (?<thing>.+) I got", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex ItemCheckRegex2();
+
+    [GeneratedRegex(@"^I (?:will )?sell (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex SellItemRegex1();
+
+    [GeneratedRegex(@"^I (?:will )?sell (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex SellItemRegex2();
+
+    [GeneratedRegex(@"^I (?:will )?sell (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    private static partial Regex SellItemRegex3();
 
     [GeneratedRegex(@"^I (?:will )?withdraw (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex1();

@@ -136,7 +136,7 @@ public class SellShopScript : DialogScriptBase
 
     private void OnDisplayingInitial(Aisling source) =>
         Subject.Slots = source.Inventory
-                              .Where(item => SellShopSource.ItemsToBuy.Contains(item.Template.TemplateKey))
+                              .Where(SellShopSource.IsBuying)
                               .Select(item => item.Slot)
                               .ToList();
 }

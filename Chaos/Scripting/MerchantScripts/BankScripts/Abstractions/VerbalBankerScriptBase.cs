@@ -61,7 +61,8 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
     {
         "coins",
         "money",
-        "cash"
+        "cash",
+        "gold"
     };
 
     protected static ICollection<string> WithdrawPhrases { get; } = new List<string>
