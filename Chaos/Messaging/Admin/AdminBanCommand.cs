@@ -7,7 +7,7 @@ using Chaos.Security.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("adminban")]
+[Command("adminban", helpText: "<name>")]
 public class AdminBanCommand : ICommand<Aisling>
 {
     private readonly IAccessManager AccessManager;

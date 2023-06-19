@@ -4,7 +4,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("form")]
+[Command("form", helpText: "<formNumber?0>")]
 public class FormCommand : ICommand<Aisling>
 {
     /// <inheritdoc />

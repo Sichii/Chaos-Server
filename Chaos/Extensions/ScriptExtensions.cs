@@ -23,30 +23,30 @@ public static class ScriptExtensions
             panelToUpdate.Update(panelEntity.Slot);
     }
 
-    public static TScript? As<TScript>(this IScript script) =>
+    public static TScript? As<TScript>(this IScript script) where TScript: IScript =>
         script switch
         {
             TScript typedScript              => typedScript,
-            ICompositeScript compositeScript => compositeScript.GetComponent<TScript>(),
+            ICompositeScript compositeScript => compositeScript.GetScript<TScript>(),
             _                                => default
         };
 
-    public static IEnumerable<TScript> GetComponents<TScript>(this IScript script)
+    public static IEnumerable<TScript> GetScripts<TScript>(this IScript script) where TScript: IScript
     {
         if (script is ICompositeScript compositeScript)
-            return compositeScript.GetComponents<TScript>();
+            return compositeScript.GetScripts<TScript>();
 
         return Enumerable.Empty<TScript>();
     }
 
-    public static bool Is<TScript>(this IScript script)
+    public static bool Is<TScript>(this IScript script) where TScript: IScript
     {
         var outScript = script.As<TScript>();
 
         return outScript is not null;
     }
 
-    public static bool Is<TScript>(this IScript script, [MaybeNullWhen(false)] out TScript outScript)
+    public static bool Is<TScript>(this IScript script, [MaybeNullWhen(false)] out TScript outScript) where TScript: IScript
     {
         outScript = script.As<TScript>();
 

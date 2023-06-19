@@ -69,4 +69,9 @@ public sealed record MerchantTemplateSchema
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; set; } = null!;
+
+    /// <summary>
+    ///     The number of milliseconds between movements while this merchant is wandering
+    /// </summary>
+    public int WanderIntervalMs { get; set; }
 }

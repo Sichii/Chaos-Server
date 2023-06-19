@@ -22,10 +22,10 @@ public class DefaultScript : CompositeMonsterScript
     /// <inheritdoc />
     public DefaultScript(IScriptProvider scriptProvider, Monster subject)
     {
-        if (scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, subject) is not CompositeMonsterScript script)
+        if (scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, subject) is not CompositeMonsterScript compositeScript)
             throw new InvalidOperationException("Unable to create componentized script");
 
-        foreach (var component in script)
-            Add(component);
+        foreach (var script in compositeScript)
+            Add(script);
     }
 }

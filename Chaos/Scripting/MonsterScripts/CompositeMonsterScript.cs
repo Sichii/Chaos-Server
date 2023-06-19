@@ -15,40 +15,40 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanMove() => Components.All(component => component.CanMove());
+    public virtual bool CanMove() => Scripts.All(script => script.CanMove());
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanSee(VisibleEntity entity) => Components.All(component => component.CanSee(entity));
+    public virtual bool CanSee(VisibleEntity entity) => Scripts.All(script => script.CanSee(entity));
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanTalk() => Components.All(component => component.CanTalk());
+    public virtual bool CanTalk() => Scripts.All(script => script.CanTalk());
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanTurn() => Components.All(component => component.CanTurn());
+    public virtual bool CanTurn() => Scripts.All(script => script.CanTurn());
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseSkill(Skill skill) => Components.All(component => component.CanUseSkill(skill));
+    public virtual bool CanUseSkill(Skill skill) => Scripts.All(script => script.CanUseSkill(skill));
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseSpell(Spell spell) => Components.All(component => component.CanUseSpell(spell));
+    public virtual bool CanUseSpell(Spell spell) => Scripts.All(script => script.CanUseSpell(spell));
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
     public virtual void OnApproached(Creature source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnApproached(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnApproached(source);
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnAttacked(Creature source, int damage, int? aggroOverride)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnAttacked(source, damage);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnAttacked(source, damage);
     }
 
     /// <summary>
@@ -70,8 +70,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnClicked(Aisling source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnClicked(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnClicked(source);
     }
 
     /// <summary>
@@ -79,8 +79,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnDeath()
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnDeath();
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDeath();
     }
 
     /// <summary>
@@ -88,8 +88,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnDeparture(Creature source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnDeparture(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDeparture(source);
     }
 
     /// <summary>
@@ -97,8 +97,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnGoldDroppedOn(Aisling source, int amount)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnGoldDroppedOn(source, amount);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnGoldDroppedOn(source, amount);
     }
 
     /// <summary>
@@ -106,8 +106,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnHealed(Creature source, int healing)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnHealed(source, healing);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnHealed(source, healing);
     }
 
     /// <summary>
@@ -115,8 +115,17 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnItemDroppedOn(Aisling source, Item item)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnItemDroppedOn(source, item);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnItemDroppedOn(source, item);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual void OnPublicMessage(Creature source, string message)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnPublicMessage(source, message);
     }
 
     /// <summary>
@@ -124,8 +133,8 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void OnSpawn()
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnSpawn();
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnSpawn();
     }
 
     /// <summary>
@@ -133,7 +142,7 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// </summary>
     public virtual void Update(TimeSpan delta)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.Update(delta);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.Update(delta);
     }
 }

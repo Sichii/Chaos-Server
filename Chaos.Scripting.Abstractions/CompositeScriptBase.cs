@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace Chaos.Scripting.Abstractions;
 
@@ -11,26 +12,20 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     /// <summary>
     ///     The components of this script
     /// </summary>
-    protected List<TScript> Components { get; }
+    protected List<TScript> Scripts { get; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CompositeScriptBase{TScript}" /> class.
     /// </summary>
-    protected CompositeScriptBase() => Components = new List<TScript>();
+    protected CompositeScriptBase() => Scripts = new List<TScript>();
 
     /// <inheritdoc />
-    public void Add(TScript script) => Components.Add(script);
-
-    /// <inheritdoc />
-    public T? GetComponent<T>() => this.OfType<T>().FirstOrDefault();
-
-    /// <inheritdoc />
-    public IEnumerable<T> GetComponents<T>() => this.OfType<T>();
+    public void Add(TScript script) => Scripts.Add(script);
 
     /// <inheritdoc />
     public IEnumerator<TScript> GetEnumerator()
     {
-        foreach (var component in Components)
+        foreach (var component in Scripts)
             if (component is ICompositeScript<TScript> composite)
             {
                 yield return component;
@@ -44,5 +39,38 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public void Remove(TScript script) => Components.Remove(script);
+    public T? GetScript<T>()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            switch (script)
+            {
+                case ICompositeScript<TScript> composite:
+                    return composite.GetScript<T>();
+                case T tScript:
+                    return tScript;
+            }
+
+        return default;
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<T> GetScripts<T>()
+    {
+        foreach (var script in Scripts)
+            switch (script)
+            {
+                case ICompositeScript<TScript> composite:
+                    foreach (var subScript in composite.GetScripts<T>())
+                        yield return subScript;
+
+                    break;
+                case T tScript:
+                    yield return tScript;
+
+                    break;
+            }
+    }
+
+    /// <inheritdoc />
+    public void Remove(TScript script) => Scripts.Remove(script);
 }

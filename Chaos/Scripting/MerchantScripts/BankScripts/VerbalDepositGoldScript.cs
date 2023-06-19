@@ -5,14 +5,15 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
 public class VerbalDepositGoldScript : VerbalBankerScriptBase
 {
     /// <inheritdoc />
-    public VerbalDepositGoldScript(Merchant subject)
-        : base(subject) { }
+    public VerbalDepositGoldScript(Merchant subject, ILogger<VerbalDepositGoldScript> logger)
+        : base(subject, logger) { }
 
     protected virtual void DepositGold(Aisling source, int amount)
     {
@@ -24,6 +25,13 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
             {
                 var phrase = DepositPhrases.PickRandom();
                 Subject.Say(phrase.Inject(source.Name, amount, "gold"));
+
+                Logger.WithProperty(source)
+                      .WithProperty(Subject)
+                      .LogDebug(
+                          "Aisling {@AislingName} deposited {Amount} gold in the bank",
+                          source.Name,
+                          amount);
 
                 break;
             }

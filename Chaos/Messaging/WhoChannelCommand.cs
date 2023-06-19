@@ -4,7 +4,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging;
 
-[Command("whochannel", false)]
+[Command("whochannel", false, "<channelName>")]
 public class WhoChannelCommand : ICommand<Aisling>
 {
     private readonly IChannelService ChannelService;

@@ -61,6 +61,9 @@ public abstract class ConfigurableMonsterScriptBase : ConfigurableScriptBase<Mon
     public virtual void OnItemDroppedOn(Aisling source, Item item) { }
 
     /// <inheritdoc />
+    public virtual void OnPublicMessage(Creature source, string message) { }
+
+    /// <inheritdoc />
     public virtual void OnSpawn() { }
 
     /// <inheritdoc />

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("reload")]
+[Command("reload", helpText: "<skills|spells|items|monsters|merchants|maps|dialogs|worldMaps|loottables>")]
 public sealed class ReloadCommand : ICommand<Aisling>
 {
     private readonly ILogger<ReloadCommand> Logger;

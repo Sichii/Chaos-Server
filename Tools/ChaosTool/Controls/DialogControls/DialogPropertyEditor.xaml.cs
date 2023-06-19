@@ -18,14 +18,14 @@ public sealed partial class DialogPropertyEditor
     private Point DragPoint;
     public ListViewItem<DialogTemplateSchema, DialogPropertyEditor> ListItem { get; }
     public ObservableCollection<DialogOptionSchema> OptionsViewItems { get; }
-    public ObservableCollection<string> ScriptKeysViewItems { get; }
+    public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
     public TraceWrapper<DialogTemplateSchema> Wrapper => ListItem.Wrapper;
 
     public DialogPropertyEditor(ListViewItem<DialogTemplateSchema, DialogPropertyEditor> listItem)
     {
         ListItem = listItem;
         OptionsViewItems = new ObservableCollection<DialogOptionSchema>();
-        ScriptKeysViewItems = new ObservableCollection<string>();
+        ScriptKeysViewItems = new ObservableCollection<BindableString>();
 
         InitializeComponent();
     }
@@ -48,12 +48,12 @@ public sealed partial class DialogPropertyEditor
         template.TemplateKey = TemplateKeyTbox.Text;
         template.Type = ParsePrimitive<ChaosDialogType>(TypeCmbox.Text);
         template.Text = TextTbox.Text.ReplaceLineEndings("\n");
-        template.NextDialogKey = NextDialogKeyTbox.Text;
-        template.PrevDialogKey = PrevDialogKeyTbox.Text;
+        template.NextDialogKey = string.IsNullOrWhiteSpace(NextDialogKeyTbox.Text) ? null : NextDialogKeyTbox.Text;
+        template.PrevDialogKey = string.IsNullOrWhiteSpace(PrevDialogKeyTbox.Text) ? null : PrevDialogKeyTbox.Text;
         template.Contextual = ContextualCbox.IsChecked ?? false;
         template.TextBoxLength = ParsePrimitive<ushort?>(TextBoxLengthTbox.Text);
         template.Options = OptionsViewItems.Select(ShallowCopy<DialogOptionSchema>.Create).ToList();
-        template.ScriptKeys = ScriptKeysViewItems.ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -65,7 +65,8 @@ public sealed partial class DialogPropertyEditor
         PathTbox.Text = Wrapper.Path;
         TemplateKeyTbox.Text = template.TemplateKey;
         TypeCmbox.SelectedItem = SelectPrimitive(template.Type, TypeCmbox.ItemsSource);
-        TextTbox.Text = template.Text.ReplaceLineEndings();
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        TextTbox.Text = template.Text?.ReplaceLineEndings();
         NextDialogKeyTbox.Text = template.NextDialogKey;
         PrevDialogKeyTbox.Text = template.PrevDialogKey;
         ContextualCbox.IsChecked = template.Contextual;
@@ -75,7 +76,7 @@ public sealed partial class DialogPropertyEditor
         OptionsViewItems.AddRange(template.Options.Select(ShallowCopy<DialogOptionSchema>.Create));
 
         ScriptKeysViewItems.Clear();
-        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToList());
+        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToBindableStrings());
     }
     #endregion
 
@@ -197,12 +198,7 @@ public sealed partial class DialogPropertyEditor
     private void ListViewItem_Drop(object sender, DragEventArgs e)
     {
         if (sender is not ListViewItem viewItem)
-        {
             viewItem = ((DependencyObject)sender).FindVisualParent<ListViewItem>()!;
-
-            if (viewItem is null)
-                return;
-        }
 
         if (viewItem.DataContext is not DialogOptionSchema target)
             return;

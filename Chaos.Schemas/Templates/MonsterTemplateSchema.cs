@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
-using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Schemas.Aisling;
 
 namespace Chaos.Schemas.Templates;
@@ -20,10 +19,6 @@ public sealed record MonsterTemplateSchema
     ///     The number of milliseconds between usages of assails
     /// </summary>
     public int AssailIntervalMs { get; set; }
-    /// <summary>
-    ///     The initial direction of the monster when spawned
-    /// </summary>
-    public Direction Direction { get; set; } = (Direction)Random.Shared.Next(4);
 
     /// <summary>
     ///     The amount of exp this monster will reward when killed

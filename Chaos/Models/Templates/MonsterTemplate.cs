@@ -1,6 +1,5 @@
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
-using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Templates.Abstractions;
 using Chaos.Scripting.Abstractions;
@@ -18,10 +17,6 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     ///     The number of milliseconds between usages of assails
     /// </summary>
     public required int AssailIntervalMs { get; init; }
-    /// <summary>
-    ///     The initial direction of the monster when spawned
-    /// </summary>
-    public required Direction Direction { get; init; }
 
     /// <summary>
     ///     The amount of exp this monster will reward when killed

@@ -3,6 +3,7 @@ using Chaos.Extensions.Geometry;
 using Chaos.Models.World;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 
@@ -55,6 +56,7 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
         "How much money I got",
         "How many coins I got"
     };
+    protected ILogger Logger { get; }
     protected static ICollection<string> MoneyTerms { get; } = new List<string>
     {
         "coins",
@@ -77,8 +79,8 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
     };
 
     /// <inheritdoc />
-    protected VerbalBankerScriptBase(Merchant subject)
-        : base(subject) { }
+    protected VerbalBankerScriptBase(Merchant subject, ILogger logger)
+        : base(subject) => Logger = logger;
 
     protected virtual bool IsClosestVerbalBankerTo(Aisling aisling)
     {

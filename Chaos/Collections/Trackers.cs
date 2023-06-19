@@ -1,25 +1,45 @@
 using Chaos.Collections.Common;
 using Chaos.Collections.Time;
+using Chaos.Models.Panel;
+using Chaos.Models.World.Abstractions;
 using Chaos.Time.Abstractions;
 
 namespace Chaos.Collections;
 
-public sealed class Trackers : IDeltaUpdatable
+public class Trackers : IDeltaUpdatable
 {
-    public required CounterCollection Counters { get; init; }
-    public required EnumCollection Enums { get; init; }
-    public required FlagCollection Flags { get; init; }
-    public DateTime? LastCast { get; set; }
+    public CounterCollection Counters { get; init; }
+    public EnumCollection Enums { get; init; }
+    public FlagCollection Flags { get; init; }
+    public Creature? LastDamagedBy { get; set; }
+    public string? LastMapInstanceId { get; set; }
+    public Location? LastPosition { get; set; }
+    public DateTime? LastSkillUse { get; set; }
+    public DateTime? LastSpellUse { get; set; }
+    public DateTime? LastTalk { get; set; }
+    public DateTime? LastTurn { get; set; }
+    public Skill? LastUsedSkill { get; set; }
+    public Spell? LastUsedSpell { get; set; }
+    public DateTime? LastWalk { get; set; }
+    public TimedEventCollection TimedEvents { get; init; }
 
-    public DateTime? LastEquip { get; set; }
-    public DateTime? LastManualAction { get; set; }
-    public DateTime? LastRefresh { get; set; }
-    public DateTime? LastSkill { get; set; }
-    public DateTime? LastUnequip { get; set; }
-    public required TimedEventCollection TimedEvents { get; init; }
-
-    public DateTime? LastEquipOrUnequip => LastEquip > LastUnequip ? LastEquip : LastUnequip;
+    public Trackers()
+    {
+        Counters = new CounterCollection();
+        Enums = new EnumCollection();
+        Flags = new FlagCollection();
+        TimedEvents = new TimedEventCollection();
+    }
 
     /// <inheritdoc />
     public void Update(TimeSpan delta) => TimedEvents.Update(delta);
+}
+
+public sealed class AislingTrackers : Trackers
+{
+    public DateTime? LastEquip { get; set; }
+    public DateTime? LastManualAction { get; set; }
+    public DateTime? LastRefresh { get; set; }
+    public DateTime? LastUnequip { get; set; }
+    public DateTime? LastEquipOrUnequip => LastEquip > LastUnequip ? LastEquip : LastUnequip;
 }

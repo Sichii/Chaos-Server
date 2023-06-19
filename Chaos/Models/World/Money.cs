@@ -30,5 +30,9 @@ public sealed class Money : GroundEntity
         return (ushort)sprite;
     }
 
-    public override void OnClicked(Aisling source) { }
+    public override void OnClicked(Aisling source)
+    {
+        //nothing
+        //there's a different packet for picking up money
+    }
 }

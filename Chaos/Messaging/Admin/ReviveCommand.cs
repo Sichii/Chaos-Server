@@ -7,7 +7,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("revive")]
+[Command("revive", helpText: "<targetName>")]
 public class ReviveCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;
@@ -17,10 +17,10 @@ public class ReviveCommand : ICommand<Aisling>
     /// <inheritdoc />
     public async ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGetNext<string>(out var name))
+        if (!args.TryGetNext<string>(out var targetName))
             return;
 
-        var client = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name));
+        var client = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(targetName));
 
         if (client == null)
             return;

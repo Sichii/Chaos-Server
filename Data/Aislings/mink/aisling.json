@@ -12,7 +12,7 @@
   "direction": "Right",
   "effects": [],
   "gender": "Male",
-  "gold": 98000,
+  "gold": 98290,
   "guildName": "meepers",
   "hairColor": "Default",
   "hairStyle": 5,
@@ -25,9 +25,10 @@
     "advClass": "None",
     "baseClass": "Diacht",
     "maxWeight": 40,
-    "toNextLevel": 100,
+    "toNextLevel": 50,
+    "totalExp": 50,
     "currentHp": 100,
-    "currentMp": 50,
+    "currentMp": 100,
     "level": 1,
     "ac": 100,
     "maximumHp": 100,
@@ -51,6 +52,6 @@
     "whisper": true,
     "wisdom": true
   },
-  "x": 24,
-  "y": 27
+  "x": 25,
+  "y": 28
 }

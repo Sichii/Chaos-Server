@@ -2,14 +2,15 @@ using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
 public class VerbalGoldCheckScript : VerbalBankerScriptBase
 {
     /// <inheritdoc />
-    public VerbalGoldCheckScript(Merchant subject)
-        : base(subject) { }
+    public VerbalGoldCheckScript(Merchant subject, ILogger<VerbalGoldCheckScript> logger)
+        : base(subject, logger) { }
 
     /// <inheritdoc />
     public override void OnPublicMessage(Creature source, string message)

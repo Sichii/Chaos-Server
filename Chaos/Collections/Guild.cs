@@ -1,5 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
+using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
@@ -79,7 +80,7 @@ public sealed class Guild : IDedicatedChannel
 
         using var @lock = Sync.Enter();
 
-        var rank = GuildHierarchy.FirstOrDefault(x => x.HasMember(aisling.Name));
+        var rank = UnsafeRankof(aisling.Name);
 
         if (rank is null)
             return;
@@ -119,6 +120,19 @@ public sealed class Guild : IDedicatedChannel
         else
             foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
                 member.SendActiveMessage($"{aisling.Name} has been demoted to {newRank.Name} by {by.Name}");
+    }
+
+    public void ChangeRankName(string currentRankName, string newRankName)
+    {
+        ArgumentNullException.ThrowIfNull(newRankName);
+        ArgumentNullException.ThrowIfNull(currentRankName);
+
+        using var @lock = Sync.Enter();
+
+        if (!UnsafeTryGetRank(currentRankName, out var rank))
+            return;
+
+        rank.ChangeRankName(newRankName, ClientRegistry);
     }
 
     public void Disband()
@@ -162,7 +176,7 @@ public sealed class Guild : IDedicatedChannel
     {
         using var @lock = Sync.Enter();
 
-        return GuildHierarchy.Select(x => new GuildRank(x.Name, x.Tier, x.GetMemberNames().ToList())).ToList();
+        return GuildHierarchy.Select(DeepClone.CreateRequired).ToList();
     }
 
     public bool HasMember(string memberName)
@@ -189,7 +203,7 @@ public sealed class Guild : IDedicatedChannel
 
         using var @lock = Sync.Enter();
 
-        var rank = GuildHierarchy.FirstOrDefault(x => x.HasMember(memberName));
+        var rank = UnsafeRankof(memberName);
 
         //leaders can not be removed
         if (rank is null or { Tier: 0 })
@@ -219,7 +233,7 @@ public sealed class Guild : IDedicatedChannel
         using var @lock = Sync.Enter();
 
         var memberName = aisling.Name;
-        var rank = GuildHierarchy.FirstOrDefault(x => x.HasMember(memberName));
+        var rank = UnsafeRankof(memberName);
 
         //leaders can only leave if there's another leader
         if (rank is null or { Tier: 0, Count: <= 1 })
@@ -247,12 +261,12 @@ public sealed class Guild : IDedicatedChannel
     {
         using var @lock = Sync.Enter();
 
-        var ret = GuildHierarchy.FirstOrDefault(rank => rank.HasMember(name));
+        var ret = UnsafeRankof(name);
 
         if (ret is null)
             throw new InvalidOperationException("Attempted to get rank of a member that is not in the guild.");
 
-        return new GuildRank(ret.Name, ret.Tier, ret.GetMemberNames().ToList());
+        return DeepClone.CreateRequired(ret);
     }
 
     public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);
@@ -264,12 +278,10 @@ public sealed class Guild : IDedicatedChannel
 
         using var @lock = Sync.Enter();
 
-        var rank = GuildHierarchy.FirstOrDefault(rank => rank.Name.EqualsI(rankName));
-
-        if (rank is null)
+        if (!UnsafeTryGetRank(rankName, out var rank))
             return false;
 
-        guildRank = new GuildRank(rank.Name, rank.Tier, rank.GetMemberNames().ToList());
+        guildRank = DeepClone.CreateRequired(rank)!;
 
         return true;
     }
@@ -280,13 +292,38 @@ public sealed class Guild : IDedicatedChannel
 
         using var @lock = Sync.Enter();
 
-        var rank = GuildHierarchy.FirstOrDefault(rank => rank.Tier == tier);
-
-        if (rank is null)
+        if (!UnsafeTryGetRank(tier, out var rank))
             return false;
 
-        guildRank = new GuildRank(rank.Name, rank.Tier, rank.GetMemberNames().ToList());
+        guildRank = DeepClone.CreateRequired(rank)!;
 
         return true;
+    }
+
+    private GuildRank? UnsafeRankof(string memberName)
+    {
+        using var @lock = Sync.Enter();
+
+        return GuildHierarchy.FirstOrDefault(rank => rank.HasMember(memberName));
+    }
+
+    private bool UnsafeTryGetRank(string rankName, [MaybeNullWhen(false)] out GuildRank guildRank)
+    {
+        ArgumentNullException.ThrowIfNull(rankName);
+
+        using var @lock = Sync.Enter();
+
+        guildRank = GuildHierarchy.FirstOrDefault(rank => rank.Name.EqualsI(rankName));
+
+        return guildRank is not null;
+    }
+
+    private bool UnsafeTryGetRank(int tier, [MaybeNullWhen(false)] out GuildRank guildRank)
+    {
+        using var @lock = Sync.Enter();
+
+        guildRank = GuildHierarchy.FirstOrDefault(rank => rank.Tier == tier);
+
+        return guildRank is not null;
     }
 }

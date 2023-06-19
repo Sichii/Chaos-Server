@@ -6,7 +6,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("adminkick")]
+[Command("adminkick", helpText: "<name>")]
 public class AdminKickCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;

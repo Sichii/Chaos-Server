@@ -7,7 +7,7 @@ using Chaos.Services.Other.Abstractions;
 
 namespace Chaos.Messaging;
 
-[Command("invite", false)]
+[Command("invite", false, "<targetName>")]
 public class GroupInviteCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;
@@ -22,14 +22,14 @@ public class GroupInviteCommand : ICommand<Aisling>
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGetNext<string>(out var name))
+        if (!args.TryGetNext<string>(out var targetName))
             return default;
 
-        var targetClient = ClientRegistry.FirstOrDefault(c => c.Aisling.Name.EqualsI(name));
+        var targetClient = ClientRegistry.FirstOrDefault(c => c.Aisling.Name.EqualsI(targetName));
 
         if ((targetClient == null) || targetClient.Aisling.IsAdmin)
         {
-            source.SendOrangeBarMessage($"{name} can not be found");
+            source.SendOrangeBarMessage($"{targetName} can not be found");
 
             return default;
         }

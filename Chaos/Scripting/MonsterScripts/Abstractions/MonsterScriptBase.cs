@@ -74,6 +74,9 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
     public virtual void OnItemDroppedOn(Aisling source, Item item) { }
 
     /// <inheritdoc />
+    public virtual void OnPublicMessage(Creature source, string message) { }
+
+    /// <inheritdoc />
     public virtual void OnSpawn() { }
 
     /// <inheritdoc />

@@ -3,14 +3,15 @@ using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
 public class VerbalItemCheckScript : VerbalBankerScriptBase
 {
     /// <inheritdoc />
-    public VerbalItemCheckScript(Merchant subject)
-        : base(subject) { }
+    public VerbalItemCheckScript(Merchant subject, ILogger<VerbalItemCheckScript> logger)
+        : base(subject, logger) { }
 
     /// <inheritdoc />
     public override void OnPublicMessage(Creature source, string message)

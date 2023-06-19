@@ -10,9 +10,7 @@ namespace Chaos.Models.World;
 public sealed class Door : VisibleEntity
 {
     public bool Closed { get; set; }
-    public DateTime LastClick { get; set; }
     public bool OpenRight { get; }
-    public bool ShouldRegisterClick => DateTime.UtcNow.Subtract(LastClick).TotalSeconds > 1.5;
 
     public Door(
         bool openRight,
@@ -24,7 +22,6 @@ public sealed class Door : VisibleEntity
     {
         Closed = true;
         OpenRight = openRight;
-        LastClick = DateTime.Now.Subtract(TimeSpan.FromHours(1));
     }
 
     public Door(DoorTemplate doorTemplate, MapInstance mapInstance)
@@ -41,21 +38,24 @@ public sealed class Door : VisibleEntity
 
     public override void OnClicked(Aisling source)
     {
-        if (ShouldRegisterClick)
+        if (!ShouldRegisterClick(source.Id))
+            return;
+
+        var doorCluster = GetCluster().ToList();
+
+        foreach (var door in doorCluster)
         {
-            var doorCluster = GetCluster().ToList();
-
-            foreach (var door in doorCluster)
-            {
-                door.Closed = !door.Closed;
-                door.LastClick = DateTime.UtcNow;
-            }
-
-            foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 15)
-                                               .ThatCanObserve(this))
-                aisling.Client.SendDoors(doorCluster);
+            door.Closed = !door.Closed;
+            door.LastClicked[source.Id] = DateTime.UtcNow;
         }
+
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 15)
+                                           .ThatCanObserve(this))
+            aisling.Client.SendDoors(doorCluster);
     }
+
+    public override bool ShouldRegisterClick(uint fromId) =>
+        !LastClicked.Any() || (DateTime.UtcNow.Subtract(LastClicked.Values.Max()).TotalMilliseconds > 1500);
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDoors(GetCluster());
 }

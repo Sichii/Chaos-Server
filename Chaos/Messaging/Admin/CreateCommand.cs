@@ -5,7 +5,7 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("create")]
+[Command("create", helpText: "<itemTemplateKey> <amount?1>")]
 public class CreateCommand : ICommand<Aisling>
 {
     private readonly IItemFactory ItemFactory;

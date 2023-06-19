@@ -33,6 +33,8 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
         if (damage <= 0)
             return;
 
+        target.Trackers.LastDamagedBy = source;
+
         switch (target)
         {
             case Aisling aisling:
@@ -40,7 +42,7 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
                 aisling.Client.SendAttributes(StatUpdateType.Vitality);
 
                 if (!aisling.IsAlive)
-                    aisling.Script.OnDeath(source);
+                    aisling.Script.OnDeath();
 
                 break;
             case Monster monster:

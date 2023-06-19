@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Collections;
@@ -1016,7 +1015,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnUseItem(IWorldClient localClient, ItemUseArgs localArgs)
         {
-            var sw = Stopwatch.StartNew();
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
             if (exchange != null)
@@ -1027,9 +1025,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             }
 
             localClient.Aisling.TryUseItem(localArgs.SourceSlot);
-            var e = sw.Elapsed;
-
-            Console.WriteLine(e);
 
             return default;
         }

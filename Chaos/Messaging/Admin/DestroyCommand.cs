@@ -7,7 +7,7 @@ using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("destroy")]
+[Command("destroy", helpText: "<id|name>")]
 public class DestroyCommand : ICommand<Aisling>
 {
     /// <inheritdoc />

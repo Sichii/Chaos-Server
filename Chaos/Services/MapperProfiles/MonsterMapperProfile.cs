@@ -38,6 +38,7 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
         ExtraScriptKeys = new HashSet<string>(obj.ExtraScriptKeys, StringComparer.OrdinalIgnoreCase),
         SpawnArea = obj.SpawnArea!,
         BlackList = obj.BlackList.ToListCast<IPoint>(),
+        Direction = obj.Direction,
         SpawnTimer = obj.IntervalVariancePct.HasValue
             ? new RandomizedIntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), obj.IntervalVariancePct.Value, startAsElapsed: false)
             : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), false)
@@ -58,7 +59,6 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
             AssailIntervalMs = obj.AssailIntervalMs,
             SkillIntervalMs = obj.SkillIntervalMs,
             SpellIntervalMs = obj.SpellIntervalMs,
-            Direction = obj.Direction,
             MoveIntervalMs = obj.MoveIntervalMs,
             Name = obj.Name,
             ExpReward = obj.ExpReward,

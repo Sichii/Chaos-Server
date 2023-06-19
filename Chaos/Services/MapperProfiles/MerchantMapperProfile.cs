@@ -26,7 +26,8 @@ public class MerchantMapperProfile : IMapperProfile<MerchantTemplate, MerchantTe
         SkillsToTeach = obj.SkillsToTeach.ToList(),
         SpellsToTeach = obj.SpellsToTeach.ToList(),
         RestockIntervalHours = obj.RestockIntervalHours,
-        RestockPercent = obj.RestockPercent
+        RestockPercent = obj.RestockPercent,
+        WanderIntervalMs = obj.WanderIntervalMs
     };
 
     /// <inheritdoc />

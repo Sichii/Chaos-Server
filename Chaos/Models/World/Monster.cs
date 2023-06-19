@@ -4,6 +4,8 @@ using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
@@ -20,6 +22,7 @@ namespace Chaos.Models.World;
 public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSourceEntity
 {
     public int AggroRange { get; set; }
+    public ICollection<IPoint> BlackList { get; set; }
     public int Experience { get; set; }
     public LootTable? LootTable { get; set; }
     public Creature? Target { get; set; }
@@ -77,7 +80,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         StatSheet = ShallowCopy<StatSheet>.Create(template.StatSheet);
         Items = new List<Item>();
         Type = template.Type;
-        Direction = template.Direction;
+        Direction = (Direction)Random.Shared.Next(4);
         AggroList = new ConcurrentDictionary<uint, int>();
         Contribution = new ConcurrentDictionary<uint, int>();
         WanderTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.WanderIntervalMs), 10, RandomizationType.Positive);
@@ -85,77 +88,13 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         SkillTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.SkillIntervalMs), 50);
         SpellTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.SpellIntervalMs), 50);
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
+        BlackList = new HashSet<IPoint>(PointEqualityComparer.Instance);
         ScriptKeys.AddRange(extraScriptKeys);
         Script = scriptProvider.CreateScript<IMonsterScript, Monster>(ScriptKeys, this);
     }
 
     /// <inheritdoc />
     void IDialogSourceEntity.Activate(Aisling source) => Script.OnClicked(source);
-
-    /// <inheritdoc />
-    public override void OnApproached(Creature creature)
-    {
-        base.OnApproached(creature);
-
-        Script.OnApproached(creature);
-    }
-
-    public override void OnClicked(Aisling source)
-    {
-        var now = DateTime.UtcNow;
-
-        if (LastClicked.TryGetValue(source.Id, out var lastClicked))
-            if (now.Subtract(lastClicked).TotalMilliseconds < 1000)
-                return;
-
-        LastClicked[source.Id] = now;
-        source.SendOrangeBarMessage(Name);
-        Script.OnClicked(source);
-    }
-
-    /// <inheritdoc />
-    public override void OnDeparture(Creature creature)
-    {
-        base.OnDeparture(creature);
-
-        Script.OnDeparture(creature);
-    }
-
-    public override void OnGoldDroppedOn(Aisling source, int amount)
-    {
-        if (source.TryTakeGold(amount))
-        {
-            Gold += amount;
-            source.Client.SendAttributes(StatUpdateType.ExpGold);
-            Script.OnGoldDroppedOn(source, amount);
-
-            Logger.WithProperty(source)
-                  .LogDebug(
-                      "Aisling {@AislingName} dropped {Amount} gold on monster {@MonsterName}",
-                      source.Name,
-                      amount,
-                      Name);
-        }
-    }
-
-    public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
-    {
-        if (source.Inventory.RemoveQuantity(slot, count, out var items))
-            foreach (var item in items)
-            {
-                Logger.WithProperty(source)
-                      .WithProperty(item)
-                      .WithProperty(this)
-                      .LogDebug(
-                          "Aisling {@AislingName} dropped item {@ItemName} on monster {@MonsterName}",
-                          source.Name,
-                          item.DisplayName,
-                          Name);
-
-                Items.Add(item);
-                Script.OnItemDroppedOn(source, item);
-            }
-    }
 
     public void ResetAggro()
     {
@@ -192,5 +131,16 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         SpellTimer.Update(delta);
 
         base.Update(delta);
+    }
+
+    /// <inheritdoc />
+    public override void Wander(ICollection<IPoint>? unwalkablePoints = null)
+    {
+        if (unwalkablePoints.IsNullOrEmpty())
+            base.Wander(BlackList);
+        else if (BlackList.IsNullOrEmpty())
+            base.Wander(unwalkablePoints);
+        else
+            base.Wander(unwalkablePoints!.Concat(BlackList).ToList());
     }
 }

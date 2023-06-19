@@ -40,9 +40,6 @@ public abstract class GroundEntity : NamedEntity
     }
 
     /// <inheritdoc />
-    public override void OnClicked(Aisling source) { }
-
-    /// <inheritdoc />
     public override void SetVisibility(VisibilityType newVisibilityType)
     {
         if (Visibility != newVisibilityType)

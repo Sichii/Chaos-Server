@@ -6,7 +6,7 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("stress")]
+[Command("stress", helpText: "<grounditems|monsters> <amount>")]
 public class StressCommand : ICommand<Aisling>
 {
     private readonly IItemFactory ItemFactory;

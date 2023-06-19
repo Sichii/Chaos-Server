@@ -5,14 +5,15 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
 public class VerbalWithdrawItemScript : VerbalBankerScriptBase
 {
     /// <inheritdoc />
-    public VerbalWithdrawItemScript(Merchant subject)
-        : base(subject) { }
+    public VerbalWithdrawItemScript(Merchant subject, ILogger<VerbalWithdrawItemScript> logger)
+        : base(subject, logger) { }
 
     /// <inheritdoc />
     public override void OnPublicMessage(Creature source, string message)
@@ -67,7 +68,7 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
             ReplyToUnknownInput(aisling);
     }
 
-    private void WithdrawItem(Aisling source, int amount, string itemName)
+    public virtual void WithdrawItem(Aisling source, int amount, string itemName)
     {
         var result = ComplexActionHelper.WithdrawItem(source, itemName, amount);
 
@@ -77,6 +78,14 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
             {
                 var phrase = WithdrawPhrases.PickRandom();
                 Subject.Say(phrase.Inject(source.Name, amount, itemName));
+
+                Logger.WithProperty(source)
+                      .WithProperty(Subject)
+                      .LogDebug(
+                          "Aisling {@AislingName} withdrew {Amount} {@ItemName} from the bank",
+                          source.Name,
+                          amount,
+                          itemName);
 
                 break;
             }

@@ -5,7 +5,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("setclass")]
+[Command("setclass", helpText: "<class>")]
 public class SetClassCommand : ICommand<Aisling>
 {
     /// <inheritdoc />

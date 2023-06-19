@@ -6,7 +6,7 @@ using Chaos.Networking.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("giveGold")]
+[Command("giveGold", helpText: "<amount|targetName>")]
 public class GiveGoldCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;

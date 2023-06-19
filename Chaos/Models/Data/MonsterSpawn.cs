@@ -2,6 +2,7 @@ using Chaos.Collections;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
@@ -13,6 +14,7 @@ namespace Chaos.Models.Data;
 public sealed class MonsterSpawn : IDeltaUpdatable
 {
     public required ICollection<IPoint> BlackList { get; init; }
+    public required Direction? Direction { get; init; }
     public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
     public required LootTable? LootTable { get; set; }
     public MapInstance MapInstance { get; set; } = null!;
@@ -65,6 +67,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
                 ExtraScriptKeys);
 
             monster.LootTable = LootTable;
+            monster.Direction = Direction ?? (Direction)Random.Shared.Next(4);
             monsters.Add(monster);
         }
 

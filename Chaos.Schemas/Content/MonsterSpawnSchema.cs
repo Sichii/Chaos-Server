@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Geometry;
+using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Schemas.Content;
 
@@ -9,9 +10,15 @@ namespace Chaos.Schemas.Content;
 public sealed record MonsterSpawnSchema
 {
     /// <summary>
-    ///     A collection of points that monsters created by this spawn will not spawn on
+    ///     A collection of points that monsters created by this spawn will not spawn or wander on
     /// </summary>
     public ICollection<Point> BlackList { get; set; } = Array.Empty<Point>();
+
+    /// <summary>
+    ///     Default to null, causing monsters to spawn facing random directions<br />If specified, will spawn monsters facing
+    ///     in the specified direction
+    /// </summary>
+    public Direction? Direction { get; set; }
 
     /// <summary>
     ///     A collection of extra monster script keys to add to the monsters created by this spawn

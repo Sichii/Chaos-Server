@@ -49,12 +49,29 @@ public static class DeepClone
     /// <summary>
     ///     Attemps to create a deep clone of the object.
     /// </summary>
-    /// <param name="fromObj"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
+    /// <param name="fromObj">The object to clone</param>
+    /// <typeparam name="T">The type of the object being cloned</typeparam>
+    /// <returns>A deep cloned instance of the object, or null if the clone was unsuccessful</returns>
     public static T? Create<T>(T fromObj) => (T?)InternalCopy(
         fromObj!,
         new Dictionary<object, object>(ReferenceEqualityComparer.Instance));
+
+    /// <summary>
+    ///     Creates a deep clone of the object.
+    /// </summary>
+    /// <param name="fromObj">The object to clone</param>
+    /// <typeparam name="T">The type of the object being cloned</typeparam>
+    /// <returns>A deep cloned instance of the object</returns>
+    /// <exception cref="InvalidOperationException">Failed to create a deep clone of the object.</exception>
+    public static T CreateRequired<T>(T fromObj)
+    {
+        var obj = Create(fromObj);
+
+        if (obj is null)
+            throw new InvalidOperationException("Failed to create a deep clone of the object.");
+
+        return obj;
+    }
 
     private static object? InternalCopy(object? fromObj, IDictionary<object, object> visited)
     {

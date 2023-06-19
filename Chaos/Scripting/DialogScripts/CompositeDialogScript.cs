@@ -15,8 +15,8 @@ public class CompositeDialogScript : CompositeScriptBase<IDialogScript>, IDialog
     /// </summary>
     public virtual void OnDisplayed(Aisling source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnDisplayed(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDisplayed(source);
     }
 
     /// <summary>
@@ -24,8 +24,8 @@ public class CompositeDialogScript : CompositeScriptBase<IDialogScript>, IDialog
     /// </summary>
     public virtual void OnDisplaying(Aisling source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnDisplaying(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDisplaying(source);
     }
 
     /// <summary>
@@ -33,8 +33,8 @@ public class CompositeDialogScript : CompositeScriptBase<IDialogScript>, IDialog
     /// </summary>
     public virtual void OnNext(Aisling source, byte? optionIndex = null)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnNext(source, optionIndex);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnNext(source, optionIndex);
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class CompositeDialogScript : CompositeScriptBase<IDialogScript>, IDialog
     /// </summary>
     public virtual void OnPrevious(Aisling source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnPrevious(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnPrevious(source);
     }
 }

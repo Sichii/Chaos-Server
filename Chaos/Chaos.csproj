@@ -56,4 +56,7 @@
         <EmbeddedResource Include="Resources\sotp.dat"/>
         <EmbeddedResource Include="Resources\chaos.ico"/>
     </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Scripting\MerchantScripts\ShopScripts\"/>
+    </ItemGroup>
 </Project>

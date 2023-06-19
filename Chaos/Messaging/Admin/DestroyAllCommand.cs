@@ -4,7 +4,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("destroyall")]
+[Command("destroyall", helpText: "<coins|money|groundItems|items|monsters|merchants>")]
 public class DestroyAllCommand : ICommand<Aisling>
 {
     /// <inheritdoc />
@@ -13,7 +13,7 @@ public class DestroyAllCommand : ICommand<Aisling>
         var map = source.MapInstance;
 
         if (!args.TryGetNext<string>(out var clearType))
-            clearType = "all";
+            return default;
 
         switch (clearType.ToLower())
         {

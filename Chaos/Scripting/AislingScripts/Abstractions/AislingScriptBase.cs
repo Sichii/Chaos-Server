@@ -41,13 +41,19 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
     public virtual bool CanUseSpell(Spell spell) => true;
 
     /// <inheritdoc />
+    public virtual void OnApproached(Creature source) { }
+
+    /// <inheritdoc />
     public virtual void OnAttacked(Creature source, int damage) { }
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }
 
     /// <inheritdoc />
-    public virtual void OnDeath(Creature source) { }
+    public virtual void OnDeath() { }
+
+    /// <inheritdoc />
+    public virtual void OnDeparture(Creature source) { }
 
     /// <inheritdoc />
     public virtual void OnGoldDroppedOn(Aisling source, int amount) { }
@@ -57,6 +63,9 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
 
     /// <inheritdoc />
     public virtual void OnItemDroppedOn(Aisling source, Item item) { }
+
+    /// <inheritdoc />
+    public virtual void OnPublicMessage(Creature source, string message) { }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta) { }

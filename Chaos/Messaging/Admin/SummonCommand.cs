@@ -7,7 +7,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("summon")]
+[Command("summon", helpText: "<targetName>")]
 public class SummonCommand : ICommand<Aisling>
 {
     private readonly ISimpleCacheProvider CacheProvider;

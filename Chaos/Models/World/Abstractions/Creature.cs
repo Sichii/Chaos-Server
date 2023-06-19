@@ -11,6 +11,7 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripting.CreatureScripts.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
 using Chaos.Time;
@@ -30,7 +31,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public DateTime LastAttack { get; set; }
     public DateTime LastMove { get; set; }
     public Status Status { get; set; }
-    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
+    public Trackers Trackers { get; set; }
     public Dictionary<uint, DateTime> ApproachTime { get; }
     public abstract int AssailIntervalMs { get; }
     public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
@@ -59,9 +60,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     {
         Direction = Direction.Down;
         Effects = new EffectsBar(this);
-        LastClicked = new ConcurrentDictionary<uint, DateTime>();
         RegenTimer = new RegenTimer(this, DefaultNaturalRegenerationScript.Create());
         ApproachTime = new Dictionary<uint, DateTime>();
+        Trackers = new Trackers();
     }
 
     /// <inheritdoc />
@@ -142,11 +143,66 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         _        => false
     };
 
-    public virtual void OnApproached(Creature creature) => ApproachTime.TryAdd(creature.Id, DateTime.UtcNow);
-    public virtual void OnDeparture(Creature creature) => ApproachTime.Remove(creature.Id);
-    public abstract void OnGoldDroppedOn(Aisling source, int amount);
+    public virtual void OnApproached(Creature creature)
+    {
+        ApproachTime.TryAdd(creature.Id, DateTime.UtcNow);
 
-    public abstract void OnItemDroppedOn(Aisling source, byte slot, byte count);
+        Script.OnApproached(creature);
+    }
+
+    public override void OnClicked(Aisling source)
+    {
+        if (!ShouldRegisterClick(source.Id))
+            return;
+
+        LastClicked[source.Id] = DateTime.UtcNow;
+        Script.OnClicked(source);
+    }
+
+    public virtual void OnDeparture(Creature creature)
+    {
+        ApproachTime.Remove(creature.Id);
+
+        Script.OnDeparture(creature);
+    }
+
+    public virtual void OnGoldDroppedOn(Aisling source, int amount)
+    {
+        if (source.TryTakeGold(amount))
+        {
+            Gold += amount;
+            source.Client.SendAttributes(StatUpdateType.ExpGold);
+            Script.OnGoldDroppedOn(source, amount);
+
+            Logger.WithProperty(source)
+                  .LogDebug(
+                      "Aisling {@AislingName} dropped {Amount} gold on creature {@CreatureName}",
+                      source.Name,
+                      amount,
+                      Name);
+        }
+    }
+
+    public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count)
+    {
+        if (source.Inventory.RemoveQuantity(slot, count, out var items))
+            foreach (var item in items)
+            {
+                Logger.WithProperty(source)
+                      .WithProperty(item)
+                      .WithProperty(this)
+                      .LogDebug(
+                          "Aisling {@AislingName} dropped item {@ItemName} on creature {@CreatureName}",
+                          source.Name,
+                          item.DisplayName,
+                          Name);
+
+                if (this is Monster monster)
+                    monster.Items.Add(item);
+
+                Script.OnItemDroppedOn(source, item);
+            }
+    }
 
     public void Pathfind(IPoint target, ICollection<IPoint>? unwalkablePoints = null)
     {
@@ -176,9 +232,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
 
-    public bool ShouldRegisterClick(uint fromId) =>
-        !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);
-
     public virtual void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
 
     public virtual void ShowHealth(byte? sound = null)
@@ -193,23 +246,23 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (!Script.CanTalk())
             return;
 
-        IEnumerable<Creature>? entitiesWithinRange;
+        IEnumerable<Creature>? creaturesWithinRange;
         var sendMessage = message;
 
         switch (publicMessageType)
         {
             case PublicMessageType.Normal:
-                entitiesWithinRange = MapInstance.GetEntitiesWithinRange<Creature>(this);
+                creaturesWithinRange = MapInstance.GetEntitiesWithinRange<Creature>(this);
                 sendMessage = $"{Name}: {message}";
 
                 break;
             case PublicMessageType.Shout:
-                entitiesWithinRange = MapInstance.GetEntities<Creature>();
+                creaturesWithinRange = MapInstance.GetEntities<Creature>();
                 sendMessage = $"{Name}! {message}";
 
                 break;
             case PublicMessageType.Chant:
-                entitiesWithinRange = MapInstance.GetEntities<Creature>();
+                creaturesWithinRange = MapInstance.GetEntities<Creature>();
 
                 break;
             default:
@@ -219,15 +272,17 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (this is Aisling && (sendMessage.Length > CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH))
             sendMessage = sendMessage[..CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH];
 
-        entitiesWithinRange = entitiesWithinRange.ToList();
+        creaturesWithinRange = creaturesWithinRange.ToList();
 
         //separated to merchant replies show up below the text theyre responding to
-        foreach (var aisling in entitiesWithinRange.OfType<Aisling>())
+        foreach (var aisling in creaturesWithinRange.OfType<Aisling>())
             if (!aisling.IgnoreList.Contains(Name))
                 aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
 
-        foreach (var merchant in entitiesWithinRange.OfType<Merchant>())
-            merchant.Script.OnPublicMessage(this, message);
+        Trackers.LastTalk = DateTime.UtcNow;
+
+        foreach (var creature in creaturesWithinRange)
+            creature.Script.OnPublicMessage(this, message);
     }
 
     public void TraverseMap(
@@ -259,6 +314,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
                     if (!fromWolrdMap && !currentMap.RemoveObject(this))
                         return;
+
+                    if (currentMap.InstanceId != destinationMap.InstanceId)
+                        Trackers.LastMapInstanceId = currentMap.InstanceId;
 
                     if (aisling is not null && ignoreSharding)
                         destinationMap.AddAislingDirect(aisling, destinationPoint);
@@ -354,6 +412,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             return false;
 
         skill.Use(context);
+        Trackers.LastSkillUse = DateTime.UtcNow;
+        Trackers.LastUsedSkill = skill;
 
         return true;
     }
@@ -379,6 +439,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             return false;
 
         spell.Use(context);
+        Trackers.LastSpellUse = DateTime.UtcNow;
+        Trackers.LastUsedSpell = spell;
 
         return true;
     }
@@ -393,6 +455,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
                                            .ThatCanObserve(this))
             aisling.Client.SendCreatureTurn(Id, direction);
+
+        Trackers.LastTurn = DateTime.UtcNow;
     }
 
     public override void Update(TimeSpan delta)
@@ -400,6 +464,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Effects.Update(delta);
         RegenTimer.Update(delta);
         Script.Update(delta);
+        Trackers.Update(delta);
     }
 
     public virtual void Walk(Direction direction)
@@ -408,6 +473,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             return;
 
         Direction = direction;
+        var startPosition = Location.From(this);
         var startPoint = Point.From(this);
         var endPoint = ((IPoint)this).DirectionalOffset(direction);
 
@@ -418,6 +484,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                                        .ToList();
 
         SetLocation(endPoint);
+        Trackers.LastWalk = DateTime.UtcNow;
+        Trackers.LastPosition = startPosition;
 
         var visibleAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                       .ToList();
@@ -445,7 +513,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             reactor.OnWalkedOn(this);
     }
 
-    public void Wander(ICollection<IPoint>? unwalkablePoints = null)
+    public virtual void Wander(ICollection<IPoint>? unwalkablePoints = null)
     {
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
                                      .Where(door => door.Closed);
@@ -477,7 +545,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var creaturesBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                          .ToList();
 
+        var startPosition = Location.From(this);
         SetLocation(destinationPoint);
+        Trackers.LastPosition = startPosition;
 
         var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                         .ToList();

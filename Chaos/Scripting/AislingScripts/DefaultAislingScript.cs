@@ -46,7 +46,7 @@ public class DefaultAislingScript : AislingScriptBase
     public override bool CanUseSpell(Spell spell) => RestrictionBehavior.CanUseSpell(Subject, spell);
 
     /// <inheritdoc />
-    public override void OnDeath(Creature source)
+    public override void OnDeath()
     {
         Subject.IsDead = true;
         Subject.Refresh(true);

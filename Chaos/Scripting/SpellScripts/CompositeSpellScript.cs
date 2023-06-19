@@ -18,8 +18,8 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     {
         var canUse = true;
 
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            canUse &= component.CanUse(context);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            canUse &= script.CanUse(context);
 
         return canUse;
     }
@@ -29,8 +29,8 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     /// </summary>
     public void OnForgotten(Aisling aisling)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnForgotten(aisling);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnForgotten(aisling);
     }
 
     /// <summary>
@@ -38,8 +38,8 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     /// </summary>
     public void OnLearned(Aisling aisling)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnLearned(aisling);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnLearned(aisling);
     }
 
     /// <summary>
@@ -47,14 +47,14 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     /// </summary>
     public void OnUse(SpellContext context)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnUse(context);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnUse(context);
     }
 
     /// <inheritdoc />
     public void Update(TimeSpan delta)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.Update(delta);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.Update(delta);
     }
 }

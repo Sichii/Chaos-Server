@@ -5,7 +5,7 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("learn")]
+[Command("learn", helpText: "<spell|skill> <templateKey>")]
 public class LearnCommand : ICommand<Aisling>
 {
     private readonly ISkillFactory SkillFactory;
@@ -23,19 +23,19 @@ public class LearnCommand : ICommand<Aisling>
         if (!args.TryGetNext<string>(out var type))
             return default;
 
-        if (!args.TryGetNext<string>(out var name))
+        if (!args.TryGetNext<string>(out var templateKey))
             return default;
 
         switch (type.ToLower())
         {
             case "spell":
-                var spell = SpellFactory.Create(name);
+                var spell = SpellFactory.Create(templateKey);
 
                 source.SpellBook.TryAddToNextSlot(spell);
 
                 break;
             case "skill":
-                var skill = SkillFactory.Create(name);
+                var skill = SkillFactory.Create(templateKey);
 
                 source.SkillBook.TryAddToNextSlot(skill);
 

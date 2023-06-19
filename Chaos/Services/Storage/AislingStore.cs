@@ -59,7 +59,7 @@ public sealed class AislingStore : BackedUpFileStoreBase<AislingStoreOptions>, I
 
         var aislingTask = EntityRepository.LoadAndMapAsync<Aisling, AislingSchema>(aislingPath);
         var bankTask = EntityRepository.LoadAndMapAsync<Bank, BankSchema>(bankPath);
-        var trackersTask = EntityRepository.LoadAndMapAsync<Trackers, TrackersSchema>(trackersPath);
+        var trackersTask = EntityRepository.LoadAndMapAsync<AislingTrackers, TrackersSchema>(trackersPath);
         var effectsTask = EntityRepository.LoadAndMapManyAsync<IEffect, EffectSchema>(effectsPath).ToListAsync();
         var equipmentTask = EntityRepository.LoadAndMapManyAsync<Item, ItemSchema>(equipmentPath).ToListAsync();
         var inventoryTask = EntityRepository.LoadAndMapManyAsync<Item, ItemSchema>(inventoryPath).ToListAsync();

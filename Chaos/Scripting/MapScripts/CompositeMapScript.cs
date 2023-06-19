@@ -15,8 +15,8 @@ public class CompositeMapScript : CompositeScriptBase<IMapScript>, IMapScript
     /// </summary>
     public virtual void OnEntered(Creature creature)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnEntered(creature);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnEntered(creature);
     }
 
     /// <summary>
@@ -24,14 +24,14 @@ public class CompositeMapScript : CompositeScriptBase<IMapScript>, IMapScript
     /// </summary>
     public virtual void OnExited(Creature creature)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnExited(creature);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnExited(creature);
     }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.Update(delta);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.Update(delta);
     }
 }

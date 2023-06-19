@@ -8,7 +8,7 @@ using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("giveExp")]
+[Command("giveExp", helpText: "<amount|targetName>")]
 public class GiveExpCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;

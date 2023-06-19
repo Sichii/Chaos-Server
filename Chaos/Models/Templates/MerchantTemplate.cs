@@ -28,4 +28,6 @@ public sealed record MerchantTemplate : ITemplate, IScripted
     public required ushort Sprite { get; init; }
     /// <inheritdoc />
     public required string TemplateKey { get; init; }
+
+    public required int WanderIntervalMs { get; init; }
 }

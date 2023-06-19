@@ -1,12 +1,17 @@
 {
-  "gold": 290,
   "items": [
     {
       "count": 20,
       "currentDurability": 1000,
       "slot": 2,
       "templateKey": "stick",
-      "uniqueId": 32
+      "uniqueId": 22
+    },
+    {
+      "count": 20,
+      "slot": 2,
+      "templateKey": "teleport_trinket",
+      "uniqueId": 12
     }
   ]
 }

@@ -62,7 +62,13 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public SocialStatus SocialStatus { get; set; }
     public IPanel<Spell> SpellBook { get; private set; }
     public TitleList Titles { get; init; }
-    public Trackers Trackers { get; private set; }
+
+    public new AislingTrackers Trackers
+    {
+        get => (AislingTrackers)base.Trackers;
+        private set => base.Trackers = value;
+    }
+
     public UserState UserState { get; set; }
     public UserStatSheet UserStatSheet { get; init; }
     public ResettingCounter ActionThrottle { get; }
@@ -203,7 +209,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         ChannelSettings = new SynchronizedHashSet<ChannelSettings>();
         DialogHistory = new Stack<Dialog>();
 
-        Trackers = new Trackers
+        Trackers = new AislingTrackers
         {
             Flags = new FlagCollection(),
             Enums = new EnumCollection(),
@@ -396,7 +402,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellBook spellBook,
         Collections.Legend legend,
         EffectsBar effects,
-        Trackers trackers
+        AislingTrackers aislingTrackers
     )
     {
         Name = name;
@@ -407,7 +413,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellBook = spellBook;
         Legend = legend;
         Effects = effects;
-        Trackers = trackers;
+        Trackers = aislingTrackers;
     }
 
     /// <inheritdoc />
@@ -415,10 +421,22 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public override void OnClicked(Aisling source)
     {
+        if (!ShouldRegisterClick(source.Id))
+            return;
+
         if (source.Equals(this))
+        {
             source.Client.SendSelfProfile();
-        else if (source.CanObserve(this))
+
+            LastClicked[source.Id] = DateTime.UtcNow;
+            Script.OnClicked(source);
+        } else if (source.CanObserve(this))
+        {
             source.Client.SendProfile(this);
+
+            LastClicked[source.Id] = DateTime.UtcNow;
+            Script.OnClicked(source);
+        }
     }
 
     public override void OnGoldDroppedOn(Aisling source, int amount)
@@ -809,6 +827,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         skill.Use(context);
+        Trackers.LastSkillUse = DateTime.UtcNow;
+        Trackers.LastUsedSkill = skill;
 
         return true;
     }
@@ -849,6 +869,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             return false;
 
         spell.Use(context);
+        Trackers.LastSpellUse = DateTime.UtcNow;
+        Trackers.LastUsedSpell = spell;
 
         return true;
     }
@@ -885,7 +907,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         ItemThrottle.Update(delta);
         WalkCounter.Update(delta);
         ChantTimer.Update(delta);
-        Trackers.Update(delta);
         SaveTimer.Update(delta);
 
         base.Update(delta);
@@ -901,6 +922,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         Direction = direction;
+        var startPosition = Location.From(this);
         var startPoint = Point.From(this);
         var endPoint = PointExtensions.DirectionalOffset(this, direction);
 
@@ -916,6 +938,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                                         .PartitionBySendType();
 
         SetLocation(endPoint);
+        Trackers.LastWalk = DateTime.UtcNow;
+        Trackers.LastPosition = startPosition;
 
         var objsAfterWalk = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
                                        .PartitionBySendType();
@@ -1001,7 +1025,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         var creaturesBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                          .ToList();
 
+        var startPosition = Location.From(this);
         SetLocation(destinationPoint);
+        Trackers.LastPosition = startPosition;
 
         var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                         .ToList();

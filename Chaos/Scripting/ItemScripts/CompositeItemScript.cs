@@ -20,8 +20,8 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     {
         var canUse = true;
 
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            canUse &= component.CanUse(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            canUse &= script.CanUse(source);
 
         return canUse;
     }
@@ -31,8 +31,8 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// </summary>
     public virtual void OnDropped(Creature source, MapInstance mapInstance)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnDropped(source, mapInstance);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDropped(source, mapInstance);
     }
 
     /// <summary>
@@ -40,8 +40,8 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// </summary>
     public virtual void OnEquipped(Aisling aisling)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnEquipped(aisling);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnEquipped(aisling);
     }
 
     /// <summary>
@@ -49,8 +49,8 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// </summary>
     public virtual void OnPickup(Aisling aisling, Item originalItem, int originalCount)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnPickup(aisling, originalItem, originalCount);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnPickup(aisling, originalItem, originalCount);
     }
 
     /// <summary>
@@ -58,8 +58,8 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// </summary>
     public virtual void OnUnEquipped(Aisling aisling)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnUnEquipped(aisling);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnUnEquipped(aisling);
     }
 
     /// <summary>
@@ -67,14 +67,14 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// </summary>
     public virtual void OnUse(Aisling source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.OnUse(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnUse(source);
     }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Components))
-            component.Update(delta);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.Update(delta);
     }
 }

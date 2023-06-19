@@ -5,7 +5,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging;
 
-[Command("leavechannel", false)]
+[Command("leavechannel", false, "<channelName>")]
 public class LeaveChannelCommand : ICommand<Aisling>
 {
     private readonly IChannelService ChannelService;

@@ -43,6 +43,9 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
     public virtual void OnClicked(Aisling source) { }
 
     /// <inheritdoc />
+    public virtual void OnDeath() { }
+
+    /// <inheritdoc />
     public virtual void OnDeparture(Creature source) { }
 
     /// <inheritdoc />
@@ -52,7 +55,7 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
     public virtual void OnHealed(Creature source, int healing) { }
 
     /// <inheritdoc />
-    public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count) { }
+    public virtual void OnItemDroppedOn(Aisling source, Item item) { }
 
     /// <inheritdoc />
     public virtual void OnPublicMessage(Creature source, string message) { }

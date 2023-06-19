@@ -7,7 +7,7 @@ using Chaos.Utilities;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("chaos")]
+[Command("chaos", helpText: "<message> <mins>")]
 public class ChaosCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IWorldClient> ClientRegistry;

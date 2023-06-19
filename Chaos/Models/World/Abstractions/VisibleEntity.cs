@@ -12,9 +12,14 @@ public abstract class VisibleEntity : MapEntity
 {
     public ushort Sprite { get; set; }
     public VisibilityType Visibility { get; set; }
+    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
 
     protected VisibleEntity(ushort sprite, MapInstance mapInstance, IPoint point)
-        : base(mapInstance, point) => Sprite = sprite;
+        : base(mapInstance, point)
+    {
+        Sprite = sprite;
+        LastClicked = new ConcurrentDictionary<uint, DateTime>();
+    }
 
     public virtual bool CanObserve(VisibleEntity entity)
     {
@@ -71,6 +76,9 @@ public abstract class VisibleEntity : MapEntity
             Display();
         }
     }
+
+    public virtual bool ShouldRegisterClick(uint fromId) =>
+        !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);
 
     public virtual void ShowTo(Aisling aisling) => aisling.Client.SendVisibleEntities(this);
 

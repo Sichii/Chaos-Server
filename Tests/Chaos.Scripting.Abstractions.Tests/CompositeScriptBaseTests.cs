@@ -18,7 +18,7 @@ public sealed class CompositeScriptTests
         compositeScript.Add(scriptMock.Object);
 
         // Assert
-        compositeScript.GetComponents<IScript>().Should().Contain(scriptMock.Object);
+        compositeScript.GetScripts<IScript>().Should().Contain(scriptMock.Object);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class CompositeScriptTests
         compositeScript.Add(scriptMock2.Object);
 
         // Act
-        var component = compositeScript.GetComponent<IScript>();
+        var component = compositeScript.GetScript<IScript>();
 
         // Assert
         component.Should().Be(scriptMock1.Object);
@@ -49,7 +49,7 @@ public sealed class CompositeScriptTests
         compositeScript.Add(scriptMock2.Object);
 
         // Act
-        var components = compositeScript.GetComponents<IScript>();
+        var components = compositeScript.GetScripts<IScript>();
 
         // Assert
         components.Should().Contain(new[] { scriptMock1.Object, scriptMock2.Object });
@@ -85,6 +85,6 @@ public sealed class CompositeScriptTests
         compositeScript.Remove(scriptMock.Object);
 
         // Assert
-        compositeScript.GetComponents<IScript>().Should().NotContain(scriptMock.Object);
+        compositeScript.GetScripts<IScript>().Should().NotContain(scriptMock.Object);
     }
 }

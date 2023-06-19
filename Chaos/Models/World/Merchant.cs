@@ -2,6 +2,7 @@ using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
@@ -11,6 +12,8 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other.Abstractions;
+using Chaos.Time;
+using Chaos.Time.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Models.World;
@@ -22,6 +25,7 @@ public sealed class Merchant : Creature,
                                ISkillTeacherSource,
                                ISpellTeacherSource
 {
+    public ICollection<IPoint> BlackList { get; set; }
     /// <inheritdoc />
     public override int AssailIntervalMs => 500;
     public override bool IsAlive => true;
@@ -47,6 +51,7 @@ public sealed class Merchant : Creature,
     public MerchantTemplate Template { get; }
 
     public override CreatureType Type { get; }
+    public IIntervalTimer WanderTimer { get; }
 
     /// <inheritdoc />
     DisplayColor IDialogSourceEntity.Color => DisplayColor.Default;
@@ -78,10 +83,11 @@ public sealed class Merchant : Creature,
         Logger = logger;
         StatSheet = StatSheet.Maxed;
         Type = CreatureType.Merchant;
+        StockService = stockService;
+        WanderTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.WanderIntervalMs), 10, RandomizationType.Positive);
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
         ScriptKeys.AddRange(extraScriptKeys);
-        Script = scriptProvider.CreateScript<IMerchantScript, Merchant>(ScriptKeys, this);
-        StockService = stockService;
+        BlackList = new HashSet<IPoint>(PointEqualityComparer.Instance);
 
         ItemsForSale = template.ItemsForSale.Select(
                                    kvp =>
@@ -103,6 +109,8 @@ public sealed class Merchant : Creature,
                 Template.ItemsForSale.Select(kvp => (kvp.Key, kvp.Value)),
                 TimeSpan.FromHours(Template.RestockIntervalHours),
                 Template.RestockPercent);
+
+        Script = scriptProvider.CreateScript<IMerchantScript, Merchant>(ScriptKeys, this);
     }
 
     /// <inheritdoc />
@@ -117,27 +125,9 @@ public sealed class Merchant : Creature,
     /// <inheritdoc />
     public bool IsBuying(Item item) => ItemsToBuy.Contains(item.Template.TemplateKey);
 
-    /// <inheritdoc />
-    public override void OnApproached(Creature creature)
-    {
-        base.OnApproached(creature);
-
-        Script.OnApproached(creature);
-    }
-
     public override void OnClicked(Aisling source) => Script.OnClicked(source);
 
-    /// <inheritdoc />
-    public override void OnDeparture(Creature creature)
-    {
-        base.OnDeparture(creature);
-
-        Script.OnDeparture(creature);
-    }
-
     public override void OnGoldDroppedOn(Aisling source, int amount) => Script.OnGoldDroppedOn(source, amount);
-
-    public override void OnItemDroppedOn(Aisling source, byte slot, byte count) => Script.OnItemDroppedOn(source, slot, count);
 
     /// <inheritdoc />
     void IBuyShopSource.Restock(decimal percent) => StockService.Restock(Template.TemplateKey, percent);
@@ -168,5 +158,23 @@ public sealed class Merchant : Creature,
         spell = SpellsToTeach.FirstOrDefault(spell => spell.Template.Name.EqualsI(spellName));
 
         return spell != null;
+    }
+
+    /// <inheritdoc />
+    public override void Update(TimeSpan delta)
+    {
+        WanderTimer.Update(delta);
+        base.Update(delta);
+    }
+
+    /// <inheritdoc />
+    public override void Wander(ICollection<IPoint>? unwalkablePoints = null)
+    {
+        if (unwalkablePoints.IsNullOrEmpty())
+            base.Wander(BlackList);
+        else if (BlackList.IsNullOrEmpty())
+            base.Wander(unwalkablePoints);
+        else
+            base.Wander(unwalkablePoints!.Concat(BlackList).ToList());
     }
 }

@@ -5,7 +5,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging;
 
-[Command("joinchannel", false)]
+[Command("joinchannel", false, "<channelName>")]
 public class JoinChannelCommand : ICommand<Aisling>
 {
     private readonly IChannelService ChannelService;

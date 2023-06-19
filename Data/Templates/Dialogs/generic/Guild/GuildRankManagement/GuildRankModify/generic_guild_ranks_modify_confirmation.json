@@ -1,0 +1,18 @@
+{
+    "contextual": true,
+    "options": [
+        {
+            "dialogKey": "generic_guild_ranks_modify_accepted",
+            "optionText": "Yes"
+        },
+        {
+            "dialogKey": "generic_guild_ranks_initial",
+            "optionText": "Nevermind"
+        }
+    ],
+    "scriptKeys": ["guildRankModify"],
+    "scriptVars": {},
+    "templateKey": "generic_guild_ranks_modify_confirmation",
+    "text": "Are you sure you want to change {OldRankName} to {NewRankName}?",
+    "type": "Menu"
+}
