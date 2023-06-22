@@ -2,6 +2,8 @@ using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
@@ -175,7 +177,8 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 merchantSpawn.SpawnPoint,
                 merchantSpawn.ExtraScriptKeys);
 
-            merchant.BlackList = merchantSpawn.BlackList;
+            var pathingBoundsBlacklist = merchantSpawn.PathingBounds?.GetOutline() ?? Array.Empty<Point>();
+            merchant.BlackList = merchantSpawn.BlackList.Concat(pathingBoundsBlacklist.OfType<IPoint>()).ToList();
             merchant.Direction = merchantSpawn.Direction ?? (Direction)Random.Shared.Next(4);
             mapInstance.SimpleAdd(merchant);
         }

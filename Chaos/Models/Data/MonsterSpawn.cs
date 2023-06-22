@@ -22,7 +22,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
     public required int MaxPerSpawn { get; init; }
     public required IMonsterFactory MonsterFactory { get; init; }
     public required MonsterTemplate MonsterTemplate { get; init; }
-    public Rectangle? SpawnArea { get; set; }
+    public required Rectangle? SpawnArea { get; set; }
     public required IIntervalTimer SpawnTimer { get; init; }
 
     /// <inheritdoc />

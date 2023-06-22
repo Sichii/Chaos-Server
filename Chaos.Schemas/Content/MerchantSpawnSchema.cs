@@ -33,6 +33,11 @@ public sealed record MerchantSpawnSchema
     public string MerchantTemplateKey { get; set; } = null!;
 
     /// <summary>
+    ///     Default null<br />If specified, the merchant will not path outside of these bounds
+    /// </summary>
+    public Rectangle? PathingBounds { get; set; }
+
+    /// <summary>
     ///     The point on ths map where the merchant will spawn
     /// </summary>
     public Point SpawnPoint { get; set; }
