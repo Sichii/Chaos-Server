@@ -3,7 +3,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class GuildStoreOptions : IBackedUpFileStoreOptions
+public sealed class GuildStoreOptions : IDirectoryBackupOptions
 {
     /// <inheritdoc />
     public string BackupDirectory { get; set; } = null!;

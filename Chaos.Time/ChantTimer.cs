@@ -3,7 +3,8 @@ using Chaos.Time.Abstractions;
 namespace Chaos.Time;
 
 /// <summary>
-///     Keeps track of when spell chants start and end, and validates whether or not a spell should be allowed to finish casting.
+///     Keeps track of when spell chants start and end, and validates whether or not a spell should be allowed to finish
+///     casting.
 /// </summary>
 public sealed class ChantTimer : IDeltaUpdatable
 {
@@ -19,6 +20,15 @@ public sealed class ChantTimer : IDeltaUpdatable
     /// <param name="maxTimeBurden">The maximum number of milliseconds the spell can be late before being canceled</param>
     public ChantTimer(int maxTimeBurden) => MaxTimeBurden = TimeSpan.FromMilliseconds(maxTimeBurden);
 
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        Elapsed += delta;
+
+        if (Elapsed > ExpectedChantTime)
+            TimeBurden = ClampPositive(TimeBurden - (Elapsed - ExpectedChantTime));
+    }
+
     private TimeSpan ClampPositive(TimeSpan value) => value < TimeSpan.Zero ? TimeSpan.Zero : value;
 
     /// <summary>
@@ -32,20 +42,14 @@ public sealed class ChantTimer : IDeltaUpdatable
         ExpectedChantTime = TimeSpan.FromMilliseconds(castLines * 1000);
     }
 
-    /// <inheritdoc />
-    public void Update(TimeSpan delta)
-    {
-        Elapsed += delta;
-
-        if (Elapsed > ExpectedChantTime)
-            TimeBurden = ClampPositive(TimeBurden - (Elapsed - ExpectedChantTime));
-    }
-
     /// <summary>
     ///     Validates that a spell chant was valid and was completed in approximately the expected amount of time.
     /// </summary>
     /// <param name="castLines">The number of cast lines the spell should have had. This value is trustable.</param>
-    /// <returns><c>true</c> if the spell cast is valid and finished in approximately the expected amount of time, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if the spell cast is valid and finished in approximately the expected amount of time, otherwise
+    ///     <c>false</c>
+    /// </returns>
     public bool Validate(byte castLines)
     {
         //if the cast lines of the spell being cast are more than the expected count, the chant is invalid

@@ -59,12 +59,12 @@ public sealed class CredentialValidationResult
     public string? FailureMessage { get; init; }
 
     /// <summary>
-    ///     Whether or not the validation succeeded
-    /// </summary>
-    public bool Success => string.IsNullOrEmpty(FailureMessage);
-
-    /// <summary>
     ///     The result of a successful credential validation
     /// </summary>
     public static CredentialValidationResult SuccessResult { get; } = new();
+
+    /// <summary>
+    ///     Whether or not the validation succeeded
+    /// </summary>
+    public bool Success => string.IsNullOrEmpty(FailureMessage);
 }

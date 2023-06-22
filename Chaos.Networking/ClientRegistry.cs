@@ -22,10 +22,10 @@ public class ClientRegistry<T> : IClientRegistry<T> where T: ISocketClient
     public virtual T? GetClient(uint id) => Clients.TryGetValue(id, out var client) ? client : default;
 
     /// <inheritdoc />
-    public virtual IEnumerator<T> GetEnumerator() => Clients.Values.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public virtual IEnumerator<T> GetEnumerator() => Clients.Values.GetEnumerator();
 
     /// <inheritdoc />
     public virtual bool TryAdd(T client) => Clients.TryAdd(client.Id, client);

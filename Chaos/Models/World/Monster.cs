@@ -27,8 +27,6 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     public LootTable? LootTable { get; set; }
     public Creature? Target { get; set; }
     public ConcurrentDictionary<uint, int> AggroList { get; }
-    /// <inheritdoc />
-    public override int AssailIntervalMs => Template.AssailIntervalMs;
     public ConcurrentDictionary<uint, int> Contribution { get; }
     public List<Item> Items { get; }
     public override ILogger<Monster> Logger { get; }
@@ -46,6 +44,8 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     public MonsterTemplate Template { get; }
     public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
+    /// <inheritdoc />
+    public override int AssailIntervalMs => Template.AssailIntervalMs;
 
     /// <inheritdoc />
     DisplayColor IDialogSourceEntity.Color => DisplayColor.Default;

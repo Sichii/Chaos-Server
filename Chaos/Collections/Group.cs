@@ -13,8 +13,6 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
     private readonly AutoReleasingMonitor Sync;
     public string ChannelName { get; }
 
-    public int Count => Members.Count;
-
     public Aisling Leader
     {
         get
@@ -24,6 +22,8 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
             return Members[0];
         }
     }
+
+    public int Count => Members.Count;
 
     public Group(Aisling sender, Aisling receiver, IChannelService channelService)
     {
@@ -52,6 +52,28 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
         Sync = new AutoReleasingMonitor();
     }
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<Aisling> GetEnumerator()
+    {
+        List<Aisling> snapshot;
+
+        using (Sync.Enter())
+            snapshot = Members.ToList();
+
+        return snapshot.GetEnumerator();
+    }
+
+    /// <inheritdoc />
+    public void JoinChannel(IChannelSubscriber subscriber) => ChannelService.JoinChannel(subscriber, ChannelName, true);
+
+    /// <inheritdoc />
+    public void LeaveChannel(IChannelSubscriber subscriber) => ChannelService.LeaveChannel(subscriber, ChannelName);
+
+    public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);
 
     public void Add(Aisling aisling)
     {
@@ -86,23 +108,6 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
         ChannelService.UnregisterChannel(ChannelName);
         Members.Clear();
     }
-
-    /// <inheritdoc />
-    public IEnumerator<Aisling> GetEnumerator()
-    {
-        List<Aisling> snapshot;
-
-        using (Sync.Enter())
-            snapshot = Members.ToList();
-
-        return snapshot.GetEnumerator();
-    }
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    /// <inheritdoc />
-    public void JoinChannel(IChannelSubscriber subscriber) => ChannelService.JoinChannel(subscriber, ChannelName, true);
 
     public void Kick(Aisling aisling)
     {
@@ -157,9 +162,6 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
         }
     }
 
-    /// <inheritdoc />
-    public void LeaveChannel(IChannelSubscriber subscriber) => ChannelService.LeaveChannel(subscriber, ChannelName);
-
     private bool Remove(Aisling aisling)
     {
         using var @lock = Sync.Enter();
@@ -173,8 +175,6 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
         return true;
     }
-
-    public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);
 
     public override string ToString()
     {

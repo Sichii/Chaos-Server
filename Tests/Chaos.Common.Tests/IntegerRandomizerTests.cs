@@ -49,7 +49,7 @@ public sealed class IntegerRandomizerTests
             }
         }
 
-        // Verify that the result distribution roughly matches the weights
+        // VerifySimpleLog that the result distribution roughly matches the weights
         choice1Count.Should().BeInRange(10, 100);
         choice2Count.Should().BeInRange(10, 900);
         choice3Count.Should().BeInRange(10, 200);

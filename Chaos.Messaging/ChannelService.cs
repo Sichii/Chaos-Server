@@ -177,8 +177,7 @@ public sealed class ChannelService : IChannelService
         //the string values here that are not stored in other objects should be intern()'d
         //all other strings are just having their bytes copied into the span
         //the only allocation is the final string
-        Span<byte> buffer = stackalloc byte[CONSTANTS.MAX_SERVER_MESSAGE_LENGTH];
-        var spanWriter = new SpanWriter(Encoding.Default, ref buffer);
+        var spanWriter = new SpanWriter(Encoding.Default);
         //$"[{finalChannelName}] {senderName}: {message}";
 
         if (channelDetails.DefaultColor != MessageColor.Default)
@@ -193,7 +192,8 @@ public sealed class ChannelService : IChannelService
         spanWriter.WriteString(subscriber.Name);
         spanWriter.WriteString(": ");
         spanWriter.WriteString(message);
-        spanWriter.Flush();
+
+        var buffer = spanWriter.ToSpan();
 
         if (buffer.Length > CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
             buffer = buffer[..CONSTANTS.MAX_SERVER_MESSAGE_LENGTH];

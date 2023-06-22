@@ -7,8 +7,8 @@ namespace Chaos.Scripting.ReactorTileScripts.Abstractions;
 
 public abstract class ConfigurableReactorTileScriptBase : ConfigurableScriptBase<ReactorTile>, IReactorTileScript
 {
-    protected MapInstance Map => Subject.MapInstance;
     protected Point Point { get; }
+    protected MapInstance Map => Subject.MapInstance;
 
     protected ConfigurableReactorTileScriptBase(ReactorTile subject)
         : base(subject, scriptKey => subject.ScriptVars[scriptKey]) =>

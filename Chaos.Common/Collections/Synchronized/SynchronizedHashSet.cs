@@ -5,7 +5,8 @@ using Chaos.Common.Synchronization;
 namespace Chaos.Common.Collections.Synchronized;
 
 /// <summary>
-///     Wraps a <see cref="System.Collections.Generic.HashSet{T}" />, entering a lock for each of it's methods. Enumeration will occur on a
+///     Wraps a <see cref="System.Collections.Generic.HashSet{T}" />, entering a lock for each of it's methods. Enumeration
+///     will occur on a
 ///     snapshot.
 /// </summary>
 /// <inheritdoc cref="System.Collections.Generic.HashSet{T}" />
@@ -80,6 +81,8 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
         Set.ExceptWith(other);
     }
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
     public IEnumerator<T> GetEnumerator()
     {
@@ -91,8 +94,6 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
         foreach (var item in snapshot)
             yield return item;
     }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public void IntersectWith(IEnumerable<T> other)
@@ -164,18 +165,18 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
         Set.SymmetricExceptWith(other);
     }
 
+    /// <inheritdoc />
+    public void UnionWith(IEnumerable<T> other)
+    {
+        using var @lock = Sync.Enter();
+        Set.UnionWith(other);
+    }
+
     /// <inheritdoc cref="HashSet{T}.TryGetValue" />
     public bool TryGetValue(T equalValue, [MaybeNullWhen(false)] out T actualValue)
     {
         using var @lock = Sync.Enter();
 
         return Set.TryGetValue(equalValue, out actualValue);
-    }
-
-    /// <inheritdoc />
-    public void UnionWith(IEnumerable<T> other)
-    {
-        using var @lock = Sync.Enter();
-        Set.UnionWith(other);
     }
 }

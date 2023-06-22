@@ -35,7 +35,6 @@ public sealed record ItemMetaNode(string Name) : IMetaNode
     ///     The weight of the item
     /// </summary>
     public int Weight { get; set; }
-
     /// <summary>
     ///     The length of the serialized data
     /// </summary>

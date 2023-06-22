@@ -76,7 +76,8 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     /// </summary>
     public required string TemplateKey { get; init; }
     /// <summary>
-    ///     The monster's type<br />WhiteSquare has no additional functionality, it just appears as a white square on the tab map
+    ///     The monster's type<br />WhiteSquare has no additional functionality, it just appears as a white square on the tab
+    ///     map
     /// </summary>
     public required CreatureType Type { get; init; }
     /// <summary>

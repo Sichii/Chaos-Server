@@ -61,11 +61,11 @@ public sealed class ArgumentCollectionTests
     public void Constructor_WithDelimiter_ShouldSplitStringsIntoArguments()
     {
         // Arrange
-        var argumentStr = "arg1,arg2,arg3";
-        var delimiter = ",";
+        const string ARGUMENT_STR = "arg1,arg2,arg3";
+        const string DELIMITER = ",";
 
         // Act
-        var argumentCollection = new ArgumentCollection(argumentStr, delimiter);
+        var argumentCollection = new ArgumentCollection(ARGUMENT_STR, DELIMITER);
 
         // Assert
         argumentCollection.Should().Equal("arg1", "arg2", "arg3");
@@ -75,10 +75,10 @@ public sealed class ArgumentCollectionTests
     public void Constructor_WithString_ShouldParseArgumentsFromSpaceDelimitedString()
     {
         // Arrange
-        var argumentStr = "arg1 arg2 arg3";
+        const string ARGUMENT_STR = "arg1 arg2 arg3";
 
         // Act
-        var argumentCollection = new ArgumentCollection(argumentStr);
+        var argumentCollection = new ArgumentCollection(ARGUMENT_STR);
 
         // Assert
         argumentCollection.Should().Equal("arg1", "arg2", "arg3");

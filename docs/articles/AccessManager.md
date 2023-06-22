@@ -1,13 +1,15 @@
 # Access Manager
 
-The access manager is exactly what it sounds like, but also more. This is either a poorly named class, or an object that has too many jobs.
+The access manager is exactly what it sounds like, but also more. This is either a poorly named class, or an object that
+has too many jobs.
 Maybe I'll remedy this in the future, but for now it is what it is.
 
 It handles not just access, but also player username and password rules and other various rules for character creation.
 
 ## Configuration
 
-The access manager is configured via the `Options:AccessManagerOptions` section of the `appsettings.json` file. These options are serialized
+The access manager is configured via the `Options:AccessManagerOptions` section of the `appsettings.json` file. These
+options are serialized
 into [AccessManagerOptions](<xref:Chaos.Security.Options.AccessManagerOptions>)
 
 | Type   | Name                   | Description                                                                                                         |
@@ -51,7 +53,10 @@ into [AccessManagerOptions](<xref:Chaos.Security.Options.AccessManagerOptions>)
 
 ## Mode
 
-The mode can be either `Whitelist`, or `Blacklist`. In whitelist mode, only the IPs in the whitelist file are allowed to connect. In
-blacklist mode, all IPs are allowed to connect, except those in the blacklist file. These files are located in the directory specified and
-the contents of these files should be IP addresses. They can be IPv4 or IPv6 addresses. If the file contains a line that is not a valid IP,
+The mode can be either `Whitelist`, or `Blacklist`. In whitelist mode, only the IPs in the whitelist file are allowed to
+connect. In
+blacklist mode, all IPs are allowed to connect, except those in the blacklist file. These files are located in the
+directory specified and
+the contents of these files should be IP addresses. They can be IPv4 or IPv6 addresses. If the file contains a line that
+is not a valid IP,
 it will be ignored.

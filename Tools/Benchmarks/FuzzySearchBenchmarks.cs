@@ -2,10 +2,13 @@ using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using Chaos.Extensions.Common;
 
+// ReSharper disable ClassCanBeSealed.Global
+
+[assembly: SuppressMessage("ReSharper", "ClassCanBeSealed.Global")]
+
 namespace Benchmarks;
 
 [MemoryDiagnoser]
-[assembly: SuppressMessage("ReSharper", "ClassCanBeSealed.Global")]
 public class FuzzySearchBenchmarks
 {
     public const string LONG_STRING_1 = "The quick brown fox jumps over the lazy dog";

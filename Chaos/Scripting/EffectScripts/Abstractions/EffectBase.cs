@@ -9,6 +9,7 @@ namespace Chaos.Scripting.EffectScripts.Abstractions;
 public abstract class EffectBase : IEffect
 {
     public EffectColor Color { get; set; }
+    protected TimeSpan Elapsed { get; private set; }
 
     public TimeSpan Remaining
     {
@@ -17,18 +18,15 @@ public abstract class EffectBase : IEffect
     }
 
     public Creature Subject { get; set; } = null!;
-    protected TimeSpan Elapsed { get; private set; }
+    protected abstract TimeSpan Duration { get; }
     public abstract byte Icon { get; }
     public abstract string Name { get; }
 
     /// <inheritdoc />
     public string ScriptKey { get; }
     protected Aisling? AislingSubject => Subject as Aisling;
-    protected abstract TimeSpan Duration { get; }
 
     protected EffectBase() => ScriptKey = GetEffectKey(GetType());
-
-    public static string GetEffectKey(Type type) => type.Name.ReplaceI("effect", string.Empty);
 
     /// <inheritdoc />
     public virtual void OnApplied() { }
@@ -65,4 +63,6 @@ public abstract class EffectBase : IEffect
             AislingSubject?.Client.SendEffect(Color, Icon);
         }
     }
+
+    public static string GetEffectKey(Type type) => type.Name.ReplaceI("effect", string.Empty);
 }

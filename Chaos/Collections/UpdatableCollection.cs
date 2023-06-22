@@ -19,33 +19,6 @@ public sealed class UpdatableCollection : IDeltaUpdatable
         PendingActions = new ConcurrentQueue<PendingAction>();
     }
 
-    public void Add(IDeltaUpdatable obj)
-    {
-        lock (this)
-            if (!IsUpdating)
-                Objs.Add(obj);
-            else
-                PendingActions.Enqueue(PendingAction.Add(obj));
-    }
-
-    public void Clear()
-    {
-        lock (this)
-            if (!IsUpdating)
-                Objs.Clear();
-            else
-                PendingActions.Enqueue(PendingAction.Clear());
-    }
-
-    public void Remove(IDeltaUpdatable obj)
-    {
-        lock (this)
-            if (!IsUpdating)
-                Objs.Remove(obj);
-            else
-                PendingActions.Enqueue(PendingAction.Remove(obj));
-    }
-
     /// <inheritdoc />
     public void Update(TimeSpan delta)
     {
@@ -84,6 +57,33 @@ public sealed class UpdatableCollection : IDeltaUpdatable
 
             IsUpdating = false;
         }
+    }
+
+    public void Add(IDeltaUpdatable obj)
+    {
+        lock (this)
+            if (!IsUpdating)
+                Objs.Add(obj);
+            else
+                PendingActions.Enqueue(PendingAction.Add(obj));
+    }
+
+    public void Clear()
+    {
+        lock (this)
+            if (!IsUpdating)
+                Objs.Clear();
+            else
+                PendingActions.Enqueue(PendingAction.Clear());
+    }
+
+    public void Remove(IDeltaUpdatable obj)
+    {
+        lock (this)
+            if (!IsUpdating)
+                Objs.Remove(obj);
+            else
+                PendingActions.Enqueue(PendingAction.Remove(obj));
     }
 
     internal sealed record PendingAction

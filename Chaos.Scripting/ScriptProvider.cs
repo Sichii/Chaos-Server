@@ -9,7 +9,8 @@ namespace Chaos.Scripting;
 ///     implemented and added to the service provider
 /// </summary>
 /// <remarks>
-///     This provider merely looks up the <see cref="Chaos.Scripting.Abstractions.IScriptFactory{TScript,TScripted}" /> used to generate a
+///     This provider merely looks up the <see cref="Chaos.Scripting.Abstractions.IScriptFactory{TScript,TScripted}" />
+///     used to generate a
 ///     given <see cref="Chaos.Scripting.Abstractions.IScript" />
 ///     type, and then requests that script from the factory.
 /// </remarks>

@@ -21,7 +21,8 @@ public interface IMetaDataDescriptor
     string Name { get; set; }
 
     /// <summary>
-    ///     Compresses the metadata, stores it in <see cref="Data" /> and generates a checksum, storing it in <see cref="CheckSum" />.
+    ///     Compresses the metadata, stores it in <see cref="Data" /> and generates a checksum, storing it in
+    ///     <see cref="CheckSum" />.
     /// </summary>
     void Compress();
 }

@@ -12,12 +12,12 @@ public sealed class MetaNodeMutator<T> : IMetaNodeMutator<T> where T: class
 
     private MetaNodeMutator(Func<T, IEnumerable<T>> mutateAction) => MutateAction = mutateAction;
 
+    /// <inheritdoc />
+    public IEnumerable<T> Mutate(T obj) => MutateAction(obj);
+
     /// <summary>
     ///     Creates a new instance of the <see cref="MetaNodeMutator{T}" /> class
     /// </summary>
     /// <param name="mutateAction">The mutate action to perform</param>
     public static IMetaNodeMutator<T> Create(Func<T, IEnumerable<T>> mutateAction) => new MetaNodeMutator<T>(mutateAction);
-
-    /// <inheritdoc />
-    public IEnumerable<T> Mutate(T obj) => MutateAction(obj);
 }

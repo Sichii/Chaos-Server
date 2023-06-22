@@ -31,13 +31,13 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var flag = SampleFlag1.Value1;
+        const SampleFlag1 FLAG = SampleFlag1.Value1;
 
         // Act
-        collection.AddFlag(flag);
+        collection.AddFlag(FLAG);
 
         // Assert
-        collection.HasFlag(flag).Should().BeTrue();
+        collection.HasFlag(FLAG).Should().BeTrue();
     }
 
     [Fact]
@@ -45,10 +45,10 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var enumValue = SampleEnum1.Value1;
+        const SampleEnum1 ENUM_VALUE = SampleEnum1.Value1;
 
         // Act
-        var act = () => collection.AddFlag(enumValue);
+        var act = () => collection.AddFlag(ENUM_VALUE);
 
         // Assert
         act.Should()
@@ -61,14 +61,14 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var flag = SampleFlag1.Value1;
-        collection.AddFlag(flag);
+        const SampleFlag1 FLAG = SampleFlag1.Value1;
+        collection.AddFlag(FLAG);
 
         // Act
         var result = collection.GetFlag<SampleFlag1>();
 
         // Assert
-        result.Should().Be(flag);
+        result.Should().Be(FLAG);
     }
 
     [Fact]
@@ -106,10 +106,10 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var flag = SampleFlag1.Value1;
+        const SampleFlag1 FLAG = SampleFlag1.Value1;
 
         // Act
-        var result = collection.HasFlag(flag);
+        var result = collection.HasFlag(FLAG);
 
         // Assert
         result.Should().BeFalse();
@@ -120,11 +120,11 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var flag = SampleFlag1.Value1;
-        collection.AddFlag(flag);
+        const SampleFlag1 FLAG = SampleFlag1.Value1;
+        collection.AddFlag(FLAG);
 
         // Act
-        var result = collection.HasFlag(flag);
+        var result = collection.HasFlag(FLAG);
 
         // Assert
         result.Should().BeTrue();
@@ -135,10 +135,10 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var enumValue = SampleEnum1.Value1;
+        const SampleEnum1 ENUM_VALUE = SampleEnum1.Value1;
 
         // Act
-        Action act = () => collection.HasFlag(enumValue);
+        Action act = () => collection.HasFlag(ENUM_VALUE);
 
         // Assert
         act.Should()
@@ -151,10 +151,10 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var enumValue = SampleEnum1.Value1;
+        const SampleEnum1 ENUM_VALUE = SampleEnum1.Value1;
 
         // Act
-        var act = () => collection.RemoveFlag(enumValue);
+        var act = () => collection.RemoveFlag(ENUM_VALUE);
 
         // Assert
         act.Should().NotThrow();
@@ -165,17 +165,17 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var initialFlag = SampleFlag1.Value1 | SampleFlag1.Value2;
-        var flagToRemove = SampleFlag1.Value2;
-        collection.AddFlag(initialFlag);
+        const SampleFlag1 INITIAL_FLAG = SampleFlag1.Value1 | SampleFlag1.Value2;
+        const SampleFlag1 FLAG_TO_REMOVE = SampleFlag1.Value2;
+        collection.AddFlag(INITIAL_FLAG);
 
         // Act
-        collection.RemoveFlag(flagToRemove);
+        collection.RemoveFlag(FLAG_TO_REMOVE);
 
         // Assert
         collection.HasFlag(SampleFlag1.Value1).Should().BeTrue();
-        collection.HasFlag(initialFlag).Should().BeFalse();
-        collection.HasFlag(flagToRemove).Should().BeFalse();
+        collection.HasFlag(INITIAL_FLAG).Should().BeFalse();
+        collection.HasFlag(FLAG_TO_REMOVE).Should().BeFalse();
     }
 
     [Fact]
@@ -196,15 +196,15 @@ public sealed class FlagCollectionTests
     {
         // Arrange
         var collection = new FlagCollection();
-        var flag = SampleFlag1.Value1;
-        collection.AddFlag(flag);
+        const SampleFlag1 FLAG = SampleFlag1.Value1;
+        collection.AddFlag(FLAG);
 
         // Act
         var result = collection.TryGetFlag<SampleFlag1>(out var value);
 
         // Assert
         result.Should().BeTrue();
-        value.Should().Be(flag);
+        value.Should().Be(FLAG);
     }
 
     [Fact]

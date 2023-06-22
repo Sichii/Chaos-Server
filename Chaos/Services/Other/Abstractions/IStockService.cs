@@ -47,7 +47,8 @@ public interface IStockService
     /// <param name="itemTemplateKey">The template key of the item do decrease stock of</param>
     /// <param name="amount">The amount to decrease the stock by</param>
     /// <returns>
-    ///     <c>true</c> if the merchant exists and has stock greater than or equals to the amount being removed, otherwise <c>false</c>
+    ///     <c>true</c> if the merchant exists and has stock greater than or equals to the amount being removed, otherwise
+    ///     <c>false</c>
     /// </returns>
     bool TryDecrementStock(string key, string itemTemplateKey, int amount = 1);
 }

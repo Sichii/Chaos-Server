@@ -38,7 +38,8 @@ public sealed record AislingSchema
     /// </summary>
     public int FaceSprite { get; set; }
     /// <summary>
-    ///     If the aisling is in an instance, this is the location they will be teleported to if they log in and the instance no longer exists
+    ///     If the aisling is in an instance, this is the location they will be teleported to if they log in and the instance
+    ///     no longer exists
     /// </summary>
     public Location? FallbackLocation { get; set; }
     /// <summary>

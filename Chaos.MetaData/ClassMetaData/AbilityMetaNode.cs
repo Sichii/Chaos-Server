@@ -8,7 +8,8 @@ namespace Chaos.MetaData.ClassMetaData;
 ///     A node that stores metadata about an ability.
 /// </summary>
 /// <remarks>
-///     Each file has a name of SClass{Number} where Number is the byte representing the class the metadata file is for <br />
+///     Each file has a name of SClass{Number} where Number is the byte representing the class the metadata file is for
+///     <br />
 ///     <br />
 ///     Peasant = 0, <br />
 ///     Warrior = 1, <br />
@@ -18,7 +19,8 @@ namespace Chaos.MetaData.ClassMetaData;
 ///     Monk = 5, <br />
 ///     <br />
 ///     There is a node named "Skill" with no properties at the beginnin <br />
-///     after all the skills, there is a node "Skill_End" with 1 property, but that property is blank "00 01 00 00" followed by 3 more 00s "00
+///     after all the skills, there is a node "Skill_End" with 1 property, but that property is blank "00 01 00 00"
+///     followed by 3 more 00s "00
 ///     00 00" <br />
 ///     <br />
 ///     then, there is a node "Spell" with 1 empty property "00 01 00 00" <br />

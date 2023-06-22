@@ -3,9 +3,9 @@ using Chaos.Common.Abstractions;
 namespace Chaos.Storage.Abstractions;
 
 /// <summary>
-///     Provides the options required for a <see cref="IBackedUpFileStore" />
+///     Provides the options required for a <see cref="IDirectoryBackupService" />
 /// </summary>
-public interface IBackedUpFileStoreOptions : IDirectoryBound
+public interface IDirectoryBackupOptions : IDirectoryBound
 {
     /// <summary>
     ///     The directory where backups are stored

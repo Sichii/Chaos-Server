@@ -12,7 +12,8 @@ namespace Chaos.Extensions.DependencyInjection;
 public static class StorageExtensions
 {
     /// <summary>
-    ///     Adds a singleton instance of <see cref="ExpiringFileCache{T,TSchema,TOptions}" /> to the service collection as an implementation of
+    ///     Adds a singleton instance of <see cref="ExpiringFileCache{T,TSchema,TOptions}" /> to the service collection as an
+    ///     implementation of
     ///     <see cref="ISimpleCache{T}" />.
     /// </summary>
     /// <typeparam name="T">The type of object being cached.</typeparam>
@@ -29,7 +30,8 @@ public static class StorageExtensions
     }
 
     /// <summary>
-    ///     Adds an implementation of <see cref="ISimpleCache{T}" /> to the service collection with a specified <typeparamref name="TImpl" /> type,
+    ///     Adds an implementation of <see cref="ISimpleCache{T}" /> to the service collection with a specified
+    ///     <typeparamref name="TImpl" /> type,
     ///     configured with <typeparamref name="TOptions" /> options.
     /// </summary>
     /// <typeparam name="T">The type of object being cached.</typeparam>

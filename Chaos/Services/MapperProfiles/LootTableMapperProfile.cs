@@ -20,16 +20,6 @@ public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTable
     }
 
     /// <inheritdoc />
-    public LootTable Map(LootTableSchema obj) => new(ItemFactory)
-    {
-        Key = obj.Key,
-        LootDrops = Mapper.MapMany<LootDrop>(obj.LootDrops).ToList()
-    };
-
-    /// <inheritdoc />
-    public LootTableSchema Map(LootTable obj) => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public LootDrop Map(LootDropSchema obj) => new()
     {
         ItemTemplateKey = obj.ItemTemplateKey,
@@ -38,4 +28,14 @@ public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTable
 
     /// <inheritdoc />
     public LootDropSchema Map(LootDrop obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public LootTable Map(LootTableSchema obj) => new(ItemFactory)
+    {
+        Key = obj.Key,
+        LootDrops = Mapper.MapMany<LootDrop>(obj.LootDrops).ToList()
+    };
+
+    /// <inheritdoc />
+    public LootTableSchema Map(LootTable obj) => throw new NotImplementedException();
 }

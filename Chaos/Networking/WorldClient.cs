@@ -51,23 +51,6 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Server = server;
     }
 
-    /// <inheritdoc />
-    protected override ValueTask HandlePacketAsync(Span<byte> span)
-    {
-        var opCode = span[3];
-        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            Crypto.Decrypt(ref packet);
-
-        if (LogRawPackets)
-            Logger.WithProperty(this)
-                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, in packet);
-    }
-
     public void SendAddItemToPane(Item item)
     {
         var args = new AddItemToPaneArgs
@@ -718,5 +701,22 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         var args = Mapper.Map<WorldMapArgs>(worldMap);
 
         Send(args);
+    }
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            Crypto.Decrypt(ref packet);
+
+        if (LogRawPackets)
+            Logger.WithProperty(this)
+                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, in packet);
     }
 }

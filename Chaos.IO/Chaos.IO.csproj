@@ -4,5 +4,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+        <InternalsVisibleTo Include="Chaos.IO.Tests"/>
     </ItemGroup>
 </Project>

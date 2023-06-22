@@ -108,9 +108,11 @@ public static class ServiceCollectionExtensions
 
         services.AddOptionsFromConfig<GuildStoreOptions>(Startup.ConfigKeys.Options.Key);
         services.AddSingleton<IStore<Guild>, IHostedService, GuildStore>();
+        services.AddHostedService<DirectoryBackupService<GuildStoreOptions>>();
 
-        services.AddOptionsFromConfig<AislingStoreOptions>(Startup.ConfigKeys.Options.Key); //bound
-        services.AddSingleton<IAsyncStore<Aisling>, IHostedService, AislingStore>();
+        services.AddOptionsFromConfig<AislingStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddSingleton<IAsyncStore<Aisling>, AislingStore>();
+        services.AddHostedService<DirectoryBackupService<AislingStoreOptions>>();
 
         services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCache<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);

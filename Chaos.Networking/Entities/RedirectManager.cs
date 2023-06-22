@@ -29,6 +29,20 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
     }
 
     /// <inheritdoc />
+    public bool TryGetRemove(uint id, [MaybeNullWhen(false)] out IRedirect redirect)
+    {
+        if (Redirects.TryRemove(id, out redirect))
+        {
+            Logger.WithProperty(redirect)
+                  .LogTrace("Redirect {@RedirectId} has been consumed", redirect.Id);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
@@ -51,19 +65,5 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
             {
                 return;
             }
-    }
-
-    /// <inheritdoc />
-    public bool TryGetRemove(uint id, [MaybeNullWhen(false)] out IRedirect redirect)
-    {
-        if (Redirects.TryRemove(id, out redirect))
-        {
-            Logger.WithProperty(redirect)
-                  .LogTrace("Redirect {@RedirectId} has been consumed", redirect.Id);
-
-            return true;
-        }
-
-        return false;
     }
 }

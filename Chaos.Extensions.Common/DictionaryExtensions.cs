@@ -8,7 +8,8 @@ namespace Chaos.Extensions.Common;
 public static class DictionaryExtensions
 {
     /// <summary>
-    ///     Removes the element with the specified key from the <see cref="System.Collections.Generic.IDictionary{TKey,TValue}" /> and makes the
+    ///     Removes the element with the specified key from the
+    ///     <see cref="System.Collections.Generic.IDictionary{TKey,TValue}" /> and makes the
     ///     value available through the <paramref name="value" /> parameter.
     /// </summary>
     /// <param name="dic">The dictionary to remove the element from</param>
@@ -20,7 +21,8 @@ public static class DictionaryExtensions
     /// <typeparam name="TKey">The type of the key</typeparam>
     /// <typeparam name="TValue">The type of the value</typeparam>
     /// <returns>
-    ///     <c>true</c> if the object that implements <see cref="System.Collections.Generic.IDictionary{TKey,TValue}" /> contains an element
+    ///     <c>true</c> if the object that implements <see cref="System.Collections.Generic.IDictionary{TKey,TValue}" />
+    ///     contains an element
     ///     with the specified key; otherwise, <c>false</c>
     /// </returns>
     public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key, [MaybeNullWhen(false)] out TValue value) =>

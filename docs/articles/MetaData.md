@@ -10,7 +10,7 @@ via `Options:MetaDataCacheOptions`.
 
 The `MetaDataCacheOptions` class contains configuration for the `MetaDataCache` class. The following properties are
 available:  
-[!code-csharp[](../../Chaos/Services/Storage/Options/MetaDataCacheOptions.cs)]
+[!code-csharp[](../../Chaos/Services/Storage/Options/MetaDataStoreOptions.cs)]
 
 ### Mutators
 
@@ -23,14 +23,14 @@ mutator that
 simulates enchantments through non-destructive mutation of an item meta node.
 
 Implement your own mutator as implementations of
-the [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>)
-interface and add it to the `MetaDataCacheOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
+the [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>) interface and add it to
+the `MetaDataCacheOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
 
 ### Example
 
 Here is an example of a mutator that generates mutations of items similarly to the original enchantment system.
 
-[!code-csharp[](../../Chaos/Services/Storage/Mutators/EnchantmentMetaNodeMutator.cs)]
+[!code-csharp[](../../Chaos/Scripting/ItemScripts/Enchantments/MagicPrefixScript.cs)]
 
 This mutator is then added to the `MetaDataCacheOptions` in `Chaos.Services.Configuration.OptionsConfigurer`
 
@@ -99,7 +99,7 @@ be in each state:
 ### Unavailable (gray with a crossed out circle)
 
 * The criteria for available are not met
-* If the character is a master, all events before circle 6 will be unvavailable
+* If the character is a master, all events before circle 6 will be unavailable
 * If the character has an Advanced Class, all events before circle 7 will be unavailable
 
 ### Available (blue with an exclamation mark)

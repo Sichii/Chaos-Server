@@ -47,10 +47,10 @@ public class MetaDataStore : IMetaDataStore
             : throw new KeyNotFoundException($"MetaData with name \"{name}\" not found in cache");
 
     /// <inheritdoc />
-    public IEnumerator<IMetaDataDescriptor> GetEnumerator() => MetaData.Values.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerator<IMetaDataDescriptor> GetEnumerator() => MetaData.Values.GetEnumerator();
 
     /// <inheritdoc />
     public void Load()

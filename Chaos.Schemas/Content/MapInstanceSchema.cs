@@ -10,7 +10,8 @@ namespace Chaos.Schemas.Content;
 public sealed record MapInstanceSchema
 {
     /// <summary>
-    ///     A flag, or combination of flags that should affect the map<br />You can combine multiple flags by separating them with commas<br />Ex.
+    ///     A flag, or combination of flags that should affect the map<br />You can combine multiple flags by separating them
+    ///     with commas<br />Ex.
     ///     "Snow, NoTabMap"
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
@@ -33,7 +34,8 @@ public sealed record MapInstanceSchema
     public int? MinimumLevel { get; set; }
 
     /// <summary>
-    ///     The byte values of the music track to play when entering the map<br />These values aren't explored yet, so you'll have to figure out
+    ///     The byte values of the music track to play when entering the map<br />These values aren't explored yet, so you'll
+    ///     have to figure out
     ///     what's available yourself
     /// </summary>
     public byte Music { get; set; }

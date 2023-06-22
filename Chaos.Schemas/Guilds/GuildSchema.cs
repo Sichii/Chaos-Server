@@ -11,5 +11,5 @@ public sealed record GuildSchema
     ///     The name of the guild. This must be unique and match the directory name
     /// </summary>
     [JsonRequired]
-    public string Name { get; init; } = null!;
+    public string Name { get; set; } = null!;
 }

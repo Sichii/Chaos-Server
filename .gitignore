@@ -247,3 +247,4 @@ ModelManifest.xml
 PATH.txt
 Data/Saved/
 Data/SavedBackups/
+Tests/Reports/CoverageReport/

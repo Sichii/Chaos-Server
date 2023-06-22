@@ -34,8 +34,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public Trackers Trackers { get; set; }
     public Dictionary<uint, DateTime> ApproachTime { get; }
     public abstract int AssailIntervalMs { get; }
-    public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
-    public virtual bool IsAlive => StatSheet.CurrentHp > 0;
     public abstract ILogger Logger { get; }
     public IIntervalTimer RegenTimer { get; }
     /// <inheritdoc />
@@ -45,6 +43,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public abstract ISet<string> ScriptKeys { get; }
     public abstract StatSheet StatSheet { get; }
     public abstract CreatureType Type { get; }
+    public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
+    public virtual bool IsAlive => StatSheet.CurrentHp > 0;
 
     protected Creature(
         string name,
@@ -63,6 +63,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         RegenTimer = new RegenTimer(this, DefaultNaturalRegenerationScript.Create());
         ApproachTime = new Dictionary<uint, DateTime>();
         Trackers = new Trackers();
+    }
+
+    public override void Update(TimeSpan delta)
+    {
+        Effects.Update(delta);
+        RegenTimer.Update(delta);
+        Script.Update(delta);
+        Trackers.Update(delta);
     }
 
     /// <inheritdoc />
@@ -457,14 +465,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             aisling.Client.SendCreatureTurn(Id, direction);
 
         Trackers.LastTurn = DateTime.UtcNow;
-    }
-
-    public override void Update(TimeSpan delta)
-    {
-        Effects.Update(delta);
-        RegenTimer.Update(delta);
-        Script.Update(delta);
-        Trackers.Update(delta);
     }
 
     public virtual void Walk(Direction direction)

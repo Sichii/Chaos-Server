@@ -35,7 +35,8 @@ public sealed class FifoAutoReleasingSemaphoreSlim
 
     /// <summary>
     ///     The same as <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim.WaitAsync()" />.
-    ///     Returns a disposable object that when disposed will release the internal <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.
+    ///     Returns a disposable object that when disposed will release the internal
+    ///     <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.
     /// </summary>
     public async ValueTask<IPolyDisposable> WaitAsync()
     {
@@ -49,7 +50,8 @@ public sealed class FifoAutoReleasingSemaphoreSlim
     /// </summary>
     /// <param name="timeout">The amount of time to wait before giving up</param>
     /// <returns>
-    ///     If we enter the semaphore before the timeout elapses, this returns a disposable object that when disposed will release the
+    ///     If we enter the semaphore before the timeout elapses, this returns a disposable object that when disposed will
+    ///     release the
     ///     semaphore, otherwise null
     /// </returns>
     public async ValueTask<IPolyDisposable?> WaitAsync(TimeSpan timeout)

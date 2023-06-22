@@ -20,10 +20,7 @@ public class MagicPrefixScript : ItemScriptBase, IEnchantmentScript
             MaximumMp = 50
         };
 
-        if (subject.Modifiers is null)
-            subject.Modifiers = attributes;
-        else
-            subject.Modifiers.Add(attributes);
+        subject.Modifiers.Add(attributes);
     }
 
     /// <inheritdoc />

@@ -33,23 +33,6 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
         Server = server;
     }
 
-    /// <inheritdoc />
-    protected override ValueTask HandlePacketAsync(Span<byte> span)
-    {
-        var opCode = span[3];
-        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            Crypto.Decrypt(ref packet);
-
-        if (LogRawPackets)
-            Logger.WithProperty(this)
-                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, in packet);
-    }
-
     public void SendConnectionInfo(uint serverTableCheckSum)
     {
         var args = new ConnectionInfoArgs
@@ -70,5 +53,22 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
         };
 
         Send(args);
+    }
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            Crypto.Decrypt(ref packet);
+
+        if (LogRawPackets)
+            Logger.WithProperty(this)
+                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, in packet);
     }
 }

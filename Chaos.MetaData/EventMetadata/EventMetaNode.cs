@@ -30,7 +30,8 @@ namespace Chaos.MetaData.EventMetadata;
 public sealed record EventMetaNode(string Name, int Page) : IMetaNode
 {
     /// <summary>
-    ///     The id of the event. To have the event marked as completed, you will need a legend mark with a key equal to this id.
+    ///     The id of the event. To have the event marked as completed, you will need a legend mark with a key equal to this
+    ///     id.
     /// </summary>
     public string? Id { get; init; }
 

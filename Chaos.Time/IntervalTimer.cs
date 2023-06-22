@@ -7,18 +7,17 @@ namespace Chaos.Time;
 /// </summary>
 public class IntervalTimer : IIntervalTimer
 {
-    /// <inheritdoc />
-    public bool IntervalElapsed { get; protected set; }
-
     /// <summary>
-    ///     The amount of time that has elapsed since this timer crossed it's <see cref="Interval"/>
+    ///     The amount of time that has elapsed since this timer crossed it's <see cref="Interval" />
     /// </summary>
     protected TimeSpan Elapsed { get; set; }
 
     /// <summary>
-    ///     The amount of time that must accumulate to set <see cref="IntervalElapsed"/> to true
+    ///     The amount of time that must accumulate to set <see cref="IntervalElapsed" /> to true
     /// </summary>
     protected TimeSpan Interval { get; set; }
+    /// <inheritdoc />
+    public bool IntervalElapsed { get; protected set; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="IntervalTimer" /> class

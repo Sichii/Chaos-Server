@@ -95,10 +95,10 @@ public sealed class PathExTests
     {
         // Arrange
         string path = null!;
-        var parentPath = @"C:\Parent";
+        const string PARENT_PATH = @"C:\Parent";
 
         // Act
-        var action = () => PathEx.IsSubPathOf(path, parentPath);
+        var action = () => PathEx.IsSubPathOf(path, PARENT_PATH);
 
         // Assert
         action.Should().ThrowExactly<ArgumentNullException>();

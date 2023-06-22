@@ -4,13 +4,15 @@ namespace Chaos.Packets.Abstractions.Definitions;
 ///     OpCodes used when receiving packets from a client
 /// </summary>
 /// <remarks>
-///     In networking, an opcode is used to identify the type of packet that is being sent. The opcode is generally part of a header near the
+///     In networking, an opcode is used to identify the type of packet that is being sent. The opcode is generally part of
+///     a header near the
 ///     beginning of the data stream
 /// </remarks>
 public enum ClientOpCode : byte
 {
     /// <summary>
-    ///     OpCode used when a client requests the encryption details, and a checksum of the details of available login servers<br />
+    ///     OpCode used when a client requests the encryption details, and a checksum of the details of available login servers
+    ///     <br />
     ///     Hex value: 0x00
     /// </summary>
     ConnectionInfoRequest = 0,
@@ -147,7 +149,8 @@ public enum ClientOpCode : byte
     /// </summary>
     RequestProfile = 45,
     /// <summary>
-    ///     OpCode used when a client invites another player to a group, responds to a group invite, or creates or destroys a group box<br />
+    ///     OpCode used when a client invites another player to a group, responds to a group invite, or creates or destroys a
+    ///     group box<br />
     ///     Hex value: 0x2E
     /// </summary>
     GroupRequest = 46,
@@ -272,7 +275,8 @@ public enum ClientOpCode : byte
 ///     OpCodes used when sending packets to a client
 /// </summary>
 /// <remarks>
-///     In networking, an opcode is used to identify the type of packet that is being sent. The opcode is generally part of a header near the
+///     In networking, an opcode is used to identify the type of packet that is being sent. The opcode is generally part of
+///     a header near the
 ///     beginning of the data stream
 /// </remarks>
 public enum ServerOpCode : byte

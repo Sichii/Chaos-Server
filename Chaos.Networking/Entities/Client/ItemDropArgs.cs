@@ -4,7 +4,8 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ItemDrop" /> packet
+///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ItemDrop" />
+///     packet
 /// </summary>
 /// <param name="SourceSlot">The slot of the item the client is trying to drop</param>
 /// <param name="DestinationPoint">The point the client is trying to drop the item on</param>

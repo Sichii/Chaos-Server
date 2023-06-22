@@ -9,7 +9,7 @@ using Chaos.Common.Converters;
 namespace Chaos.Collections.Common;
 
 /// <summary>
-/// Represents a collection of dynamic variables with JSON elements as values.
+///     Represents a collection of dynamic variables with JSON elements as values.
 /// </summary>
 [JsonConverter(typeof(DynamicVarsConverter))]
 public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>, IScriptVars
@@ -72,10 +72,10 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
             (Type: type, Lookup: Vars, JsonOptions));
 
     /// <inheritdoc />
-    public IEnumerator<KeyValuePair<string, JsonElement>> GetEnumerator() => Vars.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerator<KeyValuePair<string, JsonElement>> GetEnumerator() => Vars.GetEnumerator();
 
     /// <inheritdoc />
     public T GetRequired<T>(string key) =>

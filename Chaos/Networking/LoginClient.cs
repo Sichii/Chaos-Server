@@ -39,23 +39,6 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         Mapper = mapper;
     }
 
-    /// <inheritdoc />
-    protected override ValueTask HandlePacketAsync(Span<byte> span)
-    {
-        var opCode = span[3];
-        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
-
-        if (isEncrypted)
-            Crypto.Decrypt(ref packet);
-
-        if (LogRawPackets)
-            Logger.WithProperty(this)
-                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
-
-        return Server.HandlePacketAsync(this, in packet);
-    }
-
     public void SendLoginControls(LoginControlsType loginControlsType, string message)
     {
         var args = new LoginControlArgs
@@ -124,5 +107,22 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         }
 
         Send(args);
+    }
+
+    /// <inheritdoc />
+    protected override ValueTask HandlePacketAsync(Span<byte> span)
+    {
+        var opCode = span[3];
+        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
+        var packet = new ClientPacket(ref span, isEncrypted);
+
+        if (isEncrypted)
+            Crypto.Decrypt(ref packet);
+
+        if (LogRawPackets)
+            Logger.WithProperty(this)
+                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
+
+        return Server.HandlePacketAsync(this, in packet);
     }
 }

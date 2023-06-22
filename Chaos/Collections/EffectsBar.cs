@@ -65,6 +65,8 @@ public sealed class EffectsBar : IEffectsBar
         }
     }
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     public IEnumerator<IEffect> GetEnumerator()
     {
         List<IEffect> snapshot;
@@ -73,21 +75,6 @@ public sealed class EffectsBar : IEffectsBar
             snapshot = Effects.Values.ToList();
 
         return snapshot.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    private void ResetDisplay()
-    {
-        //clear all effects
-        foreach (var effect in Effects.Values)
-            AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
-
-        var orderedEffects = Effects.Values.OrderBy(e => e.Remaining).ToList();
-
-        //re-apply all effects sorted by ascending remaining duration
-        foreach (var effect in orderedEffects)
-            AffectedAisling?.Client.SendEffect(effect.Color, effect.Icon);
     }
 
     public void Terminate(string effectName)
@@ -137,5 +124,18 @@ public sealed class EffectsBar : IEffectsBar
 
         if (shouldResetDisplay)
             ResetDisplay();
+    }
+
+    private void ResetDisplay()
+    {
+        //clear all effects
+        foreach (var effect in Effects.Values)
+            AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
+
+        var orderedEffects = Effects.Values.OrderBy(e => e.Remaining).ToList();
+
+        //re-apply all effects sorted by ascending remaining duration
+        foreach (var effect in orderedEffects)
+            AffectedAisling?.Client.SendEffect(effect.Color, effect.Icon);
     }
 }

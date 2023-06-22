@@ -14,6 +14,15 @@ public sealed class OptionsValidator : IValidateOptions<LobbyOptions>,
     public OptionsValidator(ILogger<OptionsValidator> logger) => Logger = logger;
 
     /// <inheritdoc />
+    public ValidateOptionsResult Validate(string? name, ChaosOptions options)
+    {
+        if (string.IsNullOrEmpty(options.StagingDirectory))
+            return ValidateOptionsResult.Fail("StagingDirectory is required");
+
+        return ValidateOptionsResult.Success;
+    }
+
+    /// <inheritdoc />
     public ValidateOptionsResult Validate(string? name, LobbyOptions options)
     {
         foreach (var server in options.Servers)
@@ -38,15 +47,6 @@ public sealed class OptionsValidator : IValidateOptions<LobbyOptions>,
                 server.Name = server.Name[..9];
             }
         }
-
-        return ValidateOptionsResult.Success;
-    }
-
-    /// <inheritdoc />
-    public ValidateOptionsResult Validate(string? name, ChaosOptions options)
-    {
-        if (string.IsNullOrEmpty(options.StagingDirectory))
-            return ValidateOptionsResult.Fail("StagingDirectory is required");
 
         return ValidateOptionsResult.Success;
     }

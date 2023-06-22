@@ -24,9 +24,9 @@ public class ListViewItem<T, TControl> : IListViewItem where TControl: Control
     }
 
     public required TraceWrapper<T> Wrapper { get; init; }
+    public T Object => Wrapper.Object;
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    public T Object => Wrapper.Object;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

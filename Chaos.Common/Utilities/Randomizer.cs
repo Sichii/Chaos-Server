@@ -17,7 +17,8 @@ public static class Randomizer
     public static T PickRandom<T>(this ICollection<T> objs) => objs.ElementAt(Random.Shared.Next(objs.Count));
 
     /// <summary>
-    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are exhaustive.
+    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are
+    ///     exhaustive.
     /// </summary>
     /// <param name="weightedChoices">A collection of choices with their corresponding weights</param>
     /// <typeparam name="T">The type of object to return</typeparam>
@@ -40,7 +41,8 @@ public static class Randomizer
     }
 
     /// <summary>
-    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are exhaustive.
+    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are
+    ///     exhaustive.
     /// </summary>
     /// <param name="weightedChoices">A collection of choices with their corresponding weights</param>
     /// <typeparam name="T">The type of object to return</typeparam>
@@ -63,9 +65,9 @@ public static class Randomizer
     }
 
     /// <summary>
-    ///    Picks a random choice based on the weights.
-    /// The higher the weight, the more likely it is to be picked.
-    /// Chances are exhaustive.
+    ///     Picks a random choice based on the weights.
+    ///     The higher the weight, the more likely it is to be picked.
+    ///     Chances are exhaustive.
     /// </summary>
     /// <param name="choices">The choices to choose from</param>
     /// <param name="weights">The weights of those choices</param>

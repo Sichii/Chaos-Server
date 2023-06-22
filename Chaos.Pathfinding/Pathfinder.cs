@@ -55,6 +55,63 @@ public sealed class Pathfinder : IPathfinder
                 }
     }
 
+    /// <summary>
+    ///     Finds a path from start to end, returning the next direction to walk to get there
+    /// </summary>
+    /// <param name="start">The starting point</param>
+    /// <param name="end">Where to find a path to</param>
+    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
+    /// <param name="blocked">A collection of extra unwalkable points such as creatures</param>
+    /// <param name="limitRadius">
+    ///     Specify a max radius to use for path calculation, this can help with performance by limiting
+    ///     node discovery
+    /// </param>
+    public Direction Pathfind(
+        IPoint start,
+        IPoint end,
+        bool ignoreWalls,
+        IReadOnlyCollection<IPoint> blocked,
+        int? limitRadius = null
+    )
+    {
+        //if we're standing on the end already
+        //try to walk out from under it
+        if (Equals(start, end))
+            return Wander(start, ignoreWalls, blocked);
+
+        if (start.DistanceFrom(end) == 1)
+            return end.DirectionalRelationTo(start);
+
+        var nextPoint = FindOptimalPoint(
+            start,
+            end,
+            ignoreWalls,
+            blocked,
+            limitRadius);
+
+        //failed to find path
+        //find a direction to walk(if any) via simple logic
+        if (nextPoint == null)
+            return FindSimpleDirectionOrInvalid(
+                start,
+                end,
+                ignoreWalls,
+                blocked);
+
+        return nextPoint.DirectionalRelationTo(start);
+    }
+
+    /// <inheritdoc />
+    public Direction Wander(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
+    {
+        var optimalPoint = GetFirstWalkablePoint(start.GenerateCardinalPoints().Shuffle(), ignoreWalls, blocked);
+
+        if (!optimalPoint.HasValue)
+            return Direction.Invalid;
+
+        return optimalPoint.DirectionalRelationTo(start);
+    }
+
     private IPoint? FindOptimalPoint(
         IPoint start,
         IPoint end,
@@ -190,49 +247,6 @@ public sealed class Pathfinder : IPathfinder
                 PathNodes[point.X, point.Y].IsBlocked = true;
     }
 
-    /// <summary>
-    ///     Finds a path from start to end, returning the next direction to walk to get there
-    /// </summary>
-    /// <param name="start">The starting point</param>
-    /// <param name="end">Where to find a path to</param>
-    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
-    /// <param name="blocked">A collection of extra unwalkable points such as creatures</param>
-    /// <param name="limitRadius">Specify a max radius to use for path calculation, this can help with performance by limiting node discovery</param>
-    public Direction Pathfind(
-        IPoint start,
-        IPoint end,
-        bool ignoreWalls,
-        IReadOnlyCollection<IPoint> blocked,
-        int? limitRadius = null
-    )
-    {
-        //if we're standing on the end already
-        //try to walk out from under it
-        if (PointEqualityComparer.Instance.Equals(start, end))
-            return Wander(start, ignoreWalls, blocked);
-
-        if (start.DistanceFrom(end) == 1)
-            return end.DirectionalRelationTo(start);
-
-        var nextPoint = FindOptimalPoint(
-            start,
-            end,
-            ignoreWalls,
-            blocked,
-            limitRadius);
-
-        //failed to find path
-        //find a direction to walk(if any) via simple logic
-        if (nextPoint == null)
-            return FindSimpleDirectionOrInvalid(
-                start,
-                end,
-                ignoreWalls,
-                blocked);
-
-        return nextPoint.DirectionalRelationTo(start);
-    }
-
     private void ResetGrid(IEnumerable<IPoint> blocked, IEnumerable<IPoint>? subGrid = null)
     {
         foreach (var point in subGrid ?? PathNodes.Flatten())
@@ -246,17 +260,6 @@ public sealed class Pathfinder : IPathfinder
     }
 
     private IEnumerable<IPoint> TracePath(PathNode pathNode) => GetParentChain(pathNode).Reverse();
-
-    /// <inheritdoc />
-    public Direction Wander(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
-    {
-        var optimalPoint = GetFirstWalkablePoint(start.GenerateCardinalPoints().Shuffle(), ignoreWalls, blocked);
-
-        if (!optimalPoint.HasValue)
-            return Direction.Invalid;
-
-        return optimalPoint.DirectionalRelationTo(start);
-    }
 
     private bool WithinGrid(IPoint point) => (point.X >= 0) && (point.X < Width) && (point.Y >= 0) && (point.Y < Height);
 }

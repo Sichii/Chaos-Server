@@ -14,7 +14,9 @@ public static class RectangleExtensions
     /// </summary>
     /// <param name="rect">The possibly outer rectangle</param>
     /// <param name="other">The possible inner rectangle</param>
-    /// <returns><c>true</c> if <paramref name="rect" /> fully encompasses <paramref name="other" />, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if <paramref name="rect" /> fully encompasses <paramref name="other" />, otherwise <c>false</c>
+    /// </returns>
     public static bool Contains(this IRectangle rect, IRectangle other)
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -30,7 +32,9 @@ public static class RectangleExtensions
     /// </summary>
     /// <param name="rect">The rectangle to check</param>
     /// <param name="point">The point to check</param>
-    /// <returns><c>true</c> if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise <c>false</c>
+    /// </returns>
     public static bool Contains(this IRectangle rect, IPoint point)
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -41,7 +45,8 @@ public static class RectangleExtensions
     }
 
     /// <summary>
-    ///     Lazily generates points along the outline of the rectangle. The points will be in the order the vertices are listed.
+    ///     Lazily generates points along the outline of the rectangle. The points will be in the order the vertices are
+    ///     listed.
     /// </summary>
     public static IEnumerable<Point> GetOutline(this IRectangle rect)
     {
@@ -104,7 +109,10 @@ public static class RectangleExtensions
     /// </summary>
     /// <param name="rect">A rectangle</param>
     /// <param name="other">Another rectangle</param>
-    /// <returns><c>true</c> if the rectangles intersect at any point or if either rect fully contains the other, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if the rectangles intersect at any point or if either rect fully contains the other, otherwise
+    ///     <c>false</c>
+    /// </returns>
     public static bool Intersects(this IRectangle rect, IRectangle other)
     {
         ArgumentNullException.ThrowIfNull(rect);

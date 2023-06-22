@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace ChaosTool.Comparers;
 
-public class NaturalStringComparer : IComparer<string>
+public sealed class NaturalStringComparer : IComparer<string>
 {
     public static IComparer<string> Instance { get; } = new NaturalStringComparer();
 

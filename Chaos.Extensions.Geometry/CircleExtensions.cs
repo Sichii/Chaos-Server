@@ -120,7 +120,8 @@ public static class CircleExtensions
     /// <param name="circle">This circle.</param>
     /// <param name="other">Another circle.</param>
     /// <returns>
-    ///     The euclidean distance between the centerpoints of two circles, minus the sum of their radi. Value can not be negative.
+    ///     The euclidean distance between the centerpoints of two circles, minus the sum of their radi. Value can not be
+    ///     negative.
     /// </returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>

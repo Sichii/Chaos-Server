@@ -3,7 +3,7 @@ using Chaos.Geometry.Abstractions;
 namespace Chaos.Geometry.EqualityComparers;
 
 /// <inheritdoc />
-public class CircleEqualityComparer : IEqualityComparer<ICircle>
+public sealed class CircleEqualityComparer : IEqualityComparer<ICircle>
 {
     /// <summary>
     ///     The singleton instance of this comparer
@@ -25,7 +25,7 @@ public class CircleEqualityComparer : IEqualityComparer<ICircle>
         if (x.GetType() != y.GetType())
             return false;
 
-        return PointEqualityComparer.Instance.Equals(x.Center, y.Center)
+        return Equals(x.Center, y.Center)
                && (x.Radius == y.Radius);
     }
 

@@ -7,8 +7,6 @@ namespace Chaos.Collections;
 
 public sealed class Equipment : PanelBase<Item>, IEquipment
 {
-    public Item? this[EquipmentSlot slot] => this[(byte)slot];
-
     public Equipment(IEnumerable<Item>? items = null)
         : base(
             PanelType.Equipment,
@@ -20,6 +18,8 @@ public sealed class Equipment : PanelBase<Item>, IEquipment
         foreach (var item in items)
             Objects[item.Slot] = item;
     }
+
+    public Item? this[EquipmentSlot slot] => this[(byte)slot];
 
     public bool TryEquip(EquipmentType equipmentType, Item item, out Item? returnedItem)
     {

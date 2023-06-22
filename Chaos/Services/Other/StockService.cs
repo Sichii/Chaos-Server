@@ -24,27 +24,6 @@ public sealed class StockService : BackgroundService, IStockService
     }
 
     /// <inheritdoc />
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-
-        while (!stoppingToken.IsCancellationRequested)
-            try
-            {
-                await timer.WaitForNextTickAsync(stoppingToken);
-
-                var delta = DeltaTime.GetDelta;
-
-                foreach (var kvp in Stock)
-                    kvp.Value.Update(delta);
-            } catch (OperationCanceledException)
-            {
-                //ignore
-                return;
-            }
-    }
-
-    /// <inheritdoc />
     public int GetStock(string key, string itemTemplateKey)
     {
         if (!InternalTryGetStock(key, itemTemplateKey, out var itemStock))
@@ -60,16 +39,6 @@ public sealed class StockService : BackgroundService, IStockService
             return false;
 
         return itemStock.HasStock;
-    }
-
-    private bool InternalTryGetStock(string key, string itemTemplateKey, [MaybeNullWhen(false)] out ItemStock itemStock)
-    {
-        itemStock = null;
-
-        if (!Stock.TryGetValue(key, out var merchantStock))
-            return false;
-
-        return merchantStock.Stock.TryGetValue(itemTemplateKey, out itemStock);
     }
 
     /// <inheritdoc />
@@ -124,64 +93,45 @@ public sealed class StockService : BackgroundService, IStockService
         return itemStock.TryDecrementStock(amount);
     }
 
-    internal sealed class MerchantStock : IDeltaUpdatable
+    /// <inheritdoc />
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        private readonly string Key;
-        private readonly ILogger Logger;
-        private readonly TimeSpan RestockInterval;
-        private readonly decimal RestockPercent;
-        private readonly IIntervalTimer RestockTimer;
-        public ConcurrentDictionary<string, ItemStock> Stock { get; }
+        var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
-        internal MerchantStock(
-            string key,
-            IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
-            TimeSpan restockInterval,
-            decimal restockPercent,
-            ILogger logger
-        )
-        {
-            Key = key;
-            Logger = logger;
-
-            Stock = new ConcurrentDictionary<string, ItemStock>(
-                stock.Select(x => new KeyValuePair<string, ItemStock>(x.ItemTemplateKey, new ItemStock(x.MaxStock))),
-                StringComparer.OrdinalIgnoreCase);
-
-            RestockInterval = restockInterval;
-            RestockPercent = restockPercent;
-            RestockTimer = new IntervalTimer(RestockInterval, false);
-            RestockTimer.SetOrigin(DateTime.UtcNow.Date);
-        }
-
-        internal void Restock(decimal percent)
-        {
-            foreach (var kvp in Stock)
-                kvp.Value.Restock(percent);
-        }
-
-        /// <inheritdoc />
-        public void Update(TimeSpan delta)
-        {
-            RestockTimer.Update(delta);
-
-            if (RestockTimer.IntervalElapsed)
+        while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                Restock(RestockPercent);
+                await timer.WaitForNextTickAsync(stoppingToken);
 
-                Logger.LogDebug("Auto restocked {@Key}", Key);
+                var delta = DeltaTime.GetDelta;
+
+                foreach (var kvp in Stock)
+                    kvp.Value.Update(delta);
+            } catch (OperationCanceledException)
+            {
+                //ignore
+                return;
             }
-        }
+    }
+
+    private bool InternalTryGetStock(string key, string itemTemplateKey, [MaybeNullWhen(false)] out ItemStock itemStock)
+    {
+        itemStock = null;
+
+        if (!Stock.TryGetValue(key, out var merchantStock))
+            return false;
+
+        return merchantStock.Stock.TryGetValue(itemTemplateKey, out itemStock);
     }
 
     internal sealed class ItemStock
     {
         private int _currentStock;
+        internal int MaxStock { get; }
 
         internal int CurrentStock => _currentStock;
 
         internal bool HasStock => (MaxStock == -1) || (_currentStock > 0);
-        internal int MaxStock { get; }
 
         internal ItemStock(int maxStock)
         {
@@ -229,6 +179,56 @@ public sealed class StockService : BackgroundService, IStockService
                 });
 
             return ret;
+        }
+    }
+
+    internal sealed class MerchantStock : IDeltaUpdatable
+    {
+        private readonly string Key;
+        private readonly ILogger Logger;
+        private readonly TimeSpan RestockInterval;
+        private readonly decimal RestockPercent;
+        private readonly IIntervalTimer RestockTimer;
+        public ConcurrentDictionary<string, ItemStock> Stock { get; }
+
+        internal MerchantStock(
+            string key,
+            IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
+            TimeSpan restockInterval,
+            decimal restockPercent,
+            ILogger logger
+        )
+        {
+            Key = key;
+            Logger = logger;
+
+            Stock = new ConcurrentDictionary<string, ItemStock>(
+                stock.Select(x => new KeyValuePair<string, ItemStock>(x.ItemTemplateKey, new ItemStock(x.MaxStock))),
+                StringComparer.OrdinalIgnoreCase);
+
+            RestockInterval = restockInterval;
+            RestockPercent = restockPercent;
+            RestockTimer = new IntervalTimer(RestockInterval, false);
+            RestockTimer.SetOrigin(DateTime.UtcNow.Date);
+        }
+
+        /// <inheritdoc />
+        public void Update(TimeSpan delta)
+        {
+            RestockTimer.Update(delta);
+
+            if (RestockTimer.IntervalElapsed)
+            {
+                Restock(RestockPercent);
+
+                Logger.LogDebug("Auto restocked {@Key}", Key);
+            }
+        }
+
+        internal void Restock(decimal percent)
+        {
+            foreach (var kvp in Stock)
+                kvp.Value.Restock(percent);
         }
     }
 }

@@ -15,7 +15,10 @@ public interface IPacketSerializer
     /// <summary>
     ///     Deserializes the specified client packet into an instance of <typeparamref name="T" />.
     /// </summary>
-    /// <typeparam name="T">The type of object to deserialize the packet into, which must implement <see cref="IReceiveArgs" />.</typeparam>
+    /// <typeparam name="T">
+    ///     The type of object to deserialize the packet into, which must implement <see cref="IReceiveArgs" />
+    ///     .
+    /// </typeparam>
     /// <param name="packet">The client packet to deserialize.</param>
     /// <returns>An instance of <typeparamref name="T" /> deserialized from the client packet.</returns>
     T Deserialize<T>(in ClientPacket packet) where T: IReceiveArgs;

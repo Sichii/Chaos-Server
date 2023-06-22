@@ -63,14 +63,12 @@ internal static class ControlExtensions
 
             if (presenter != null)
             {
-                var cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
-
-                if (cell == null)
+                if (presenter.ItemContainerGenerator.ContainerFromIndex(column) is not DataGridCell cell)
                 {
                     /* bring the column into view
                      * in case it has been virtualized away */
                     dataGrid.ScrollIntoView(rowContainer, dataGrid.Columns[column]);
-                    cell = presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell;
+                    cell = (presenter.ItemContainerGenerator.ContainerFromIndex(column) as DataGridCell)!;
                 }
 
                 return cell;
@@ -99,6 +97,7 @@ internal static class ControlExtensions
         dataGrid.SelectedCells.Clear();
 
         var item = dataGrid.Items[rowIndex];
+        // ReSharper disable once UseNegatedPatternMatching
         var row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
 
         if (row == null)

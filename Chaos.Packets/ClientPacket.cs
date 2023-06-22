@@ -31,7 +31,8 @@ public ref struct ClientPacket
     public byte Signature { get; }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ClientPacket" /> struct with the specified buffer and encryption status.
+    ///     Initializes a new instance of the <see cref="ClientPacket" /> struct with the specified buffer and encryption
+    ///     status.
     /// </summary>
     /// <param name="span">The buffer containing the packet data.</param>
     /// <param name="isEncrypted"><c>true</c> if the packet is encrypted; otherwise, <c>false</c></param>

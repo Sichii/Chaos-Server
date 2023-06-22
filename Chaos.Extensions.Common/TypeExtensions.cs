@@ -12,7 +12,10 @@ public static class TypeExtensions
     ///     Extracts the generic base type that use a generic type definition within the hierarchy of the type.
     /// </summary>
     /// <param name="type"></param>
-    /// <param name="genericBaseType">A generic type definition (non-interface). (The type of a generic without the type params specified)</param>
+    /// <param name="genericBaseType">
+    ///     A generic type definition (non-interface). (The type of a generic without the type params
+    ///     specified)
+    /// </param>
     /// <returns></returns>
     public static Type? ExtractGenericBaseType(this Type type, Type genericBaseType)
     {
@@ -33,7 +36,10 @@ public static class TypeExtensions
     ///     Extracts all generic interfaces types from a generic type definition within the hierarchy of the type.
     /// </summary>
     /// <param name="type"></param>
-    /// <param name="genericInterfaceType">A generic type definition of an interface. (The type of a generic without the type params specified)</param>
+    /// <param name="genericInterfaceType">
+    ///     A generic type definition of an interface. (The type of a generic without the type
+    ///     params specified)
+    /// </param>
     public static IEnumerable<Type> ExtractGenericInterfaces(this Type type, Type genericInterfaceType)
     {
         var interfaces = type.GetInterfaces();

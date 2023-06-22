@@ -47,8 +47,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public ConcurrentDictionary<Aisling, IIntervalTimer> ShardLimiterTimers { get; set; }
     public ConcurrentDictionary<string, MapInstance> Shards { get; set; }
     public MapTemplate Template { get; set; }
-    public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
-    public string LoadedFromInstanceId => BaseInstanceId ?? InstanceId;
     public CancellationTokenSource MapInstanceCtx { get; }
     public List<MonsterSpawn> MonsterSpawns { get; }
     /// <inheritdoc />
@@ -56,6 +54,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
     public FifoAutoReleasingSemaphoreSlim Sync { get; }
+    public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
+    public string LoadedFromInstanceId => BaseInstanceId ?? InstanceId;
 
     public MapInstance(
         MapTemplate template,
@@ -107,6 +107,30 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             ScriptKeys.AddRange(extraScriptKeys);
 
         Script = scriptProvider.CreateScript<IMapScript, MapInstance>(ScriptKeys, this);
+    }
+
+    public void Update(TimeSpan delta)
+    {
+        try
+        {
+            Objects.Update(delta);
+
+            foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
+                spawn.Update(delta);
+
+            Script.Update(delta);
+            HandleShardLimitersTimer.Update(delta);
+
+            foreach (var timer in ShardLimiterTimers.Values)
+                timer.Update(delta);
+
+            if (HandleShardLimitersTimer.IntervalElapsed)
+                HandleShardLimiters();
+        } catch (Exception e)
+        {
+            Logger.WithProperty(this)
+                  .LogCritical(e, "Failed to update map {@MapInstanceId}", InstanceId);
+        }
     }
 
     public void AddAislingDirect(Aisling aisling, IPoint point) => InnerAddObject(aisling, point);
@@ -595,7 +619,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 
     /// <summary>
-    ///     Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU ARE DOING.
+    ///     Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU
+    ///     ARE DOING.
     /// </summary>
     public void MoveEntity(MapEntity entity, Point oldPoint) => Objects.MoveEntity(entity, oldPoint);
 
@@ -684,30 +709,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public void Stop() => MapInstanceCtx.Cancel();
 
     public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
-
-    public void Update(TimeSpan delta)
-    {
-        try
-        {
-            Objects.Update(delta);
-
-            foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
-                spawn.Update(delta);
-
-            Script.Update(delta);
-            HandleShardLimitersTimer.Update(delta);
-
-            foreach (var timer in ShardLimiterTimers.Values)
-                timer.Update(delta);
-
-            if (HandleShardLimitersTimer.IntervalElapsed)
-                HandleShardLimiters();
-        } catch (Exception e)
-        {
-            Logger.WithProperty(this)
-                  .LogCritical(e, "Failed to update map {@MapInstanceId}", InstanceId);
-        }
-    }
 
     public async Task UpdateMapAsync(TimeSpan delta)
     {

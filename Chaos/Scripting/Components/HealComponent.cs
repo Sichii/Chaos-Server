@@ -11,6 +11,33 @@ namespace Chaos.Scripting.Components;
 
 public class HealComponent : IComponent
 {
+    /// <inheritdoc />
+    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions<IHealComponentOptions>();
+        var targets = vars.GetTargets<Creature>();
+
+        foreach (var target in targets)
+        {
+            var heal = CalculateHeal(
+                context.Source,
+                target,
+                options.BaseHeal,
+                options.PctHpHeal,
+                options.HealStat,
+                options.HealStatMultiplier);
+
+            if (heal <= 0)
+                continue;
+
+            options.ApplyHealScript.ApplyHeal(
+                context.Source,
+                target,
+                options.SourceScript,
+                heal);
+        }
+    }
+
     protected virtual int CalculateHeal(
         Creature source,
         Creature target,
@@ -37,33 +64,6 @@ public class HealComponent : IComponent
         finalHeal += Convert.ToInt32(source.StatSheet.GetEffectiveStat(healStat.Value) * healStatMultiplier.Value);
 
         return finalHeal;
-    }
-
-    /// <inheritdoc />
-    public virtual void Execute(ActivationContext context, ComponentVars vars)
-    {
-        var options = vars.GetOptions<IHealComponentOptions>();
-        var targets = vars.GetTargets<Creature>();
-
-        foreach (var target in targets)
-        {
-            var heal = CalculateHeal(
-                context.Source,
-                target,
-                options.BaseHeal,
-                options.PctHpHeal,
-                options.HealStat,
-                options.HealStatMultiplier);
-
-            if (heal <= 0)
-                continue;
-
-            options.ApplyHealScript.ApplyHeal(
-                context.Source,
-                target,
-                options.SourceScript,
-                heal);
-        }
     }
 
     public interface IHealComponentOptions

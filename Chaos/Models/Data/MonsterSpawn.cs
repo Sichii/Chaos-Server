@@ -25,6 +25,15 @@ public sealed class MonsterSpawn : IDeltaUpdatable
     public Rectangle? SpawnArea { get; set; }
     public required IIntervalTimer SpawnTimer { get; init; }
 
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        SpawnTimer.Update(delta);
+
+        if (SpawnTimer.IntervalElapsed)
+            SpawnMonsters();
+    }
+
     public void FullSpawn()
     {
         while (true)
@@ -75,14 +84,5 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
         foreach (var monster in monsters)
             monster.Script.OnSpawn();
-    }
-
-    /// <inheritdoc />
-    public void Update(TimeSpan delta)
-    {
-        SpawnTimer.Update(delta);
-
-        if (SpawnTimer.IntervalElapsed)
-            SpawnMonsters();
     }
 }

@@ -65,6 +65,8 @@ public class ReactorTile : MapEntity, IDeltaUpdatable, IScripted<IReactorTileScr
         Script = scriptProvider.CreateScript<IReactorTileScript, ReactorTile>(ScriptKeys, this);
     }
 
+    public void Update(TimeSpan elapsed) => Script.Update(elapsed);
+
     public void OnClicked(Aisling source) => Script.OnClicked(source);
 
     public void OnGoldDroppedOn(Creature source, Money money) => Script.OnGoldDroppedOn(source, money);
@@ -77,6 +79,4 @@ public class ReactorTile : MapEntity, IDeltaUpdatable, IScripted<IReactorTileScr
         Script.OnItemPickedUpFrom(source, groundItem, originalCount);
 
     public void OnWalkedOn(Creature source) => Script.OnWalkedOn(source);
-
-    public void Update(TimeSpan elapsed) => Script.Update(elapsed);
 }

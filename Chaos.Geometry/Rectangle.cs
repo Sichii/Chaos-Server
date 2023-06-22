@@ -40,7 +40,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
     public int Area => Height * Width;
 
     /// <summary>
-    ///    Creates a new <see cref="Rectangle"/> with no vertices
+    ///     Creates a new <see cref="Rectangle" /> with no vertices
     /// </summary>
     public Rectangle() { }
 
@@ -95,6 +95,11 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
                && (Width == other.Width);
     }
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
+
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
@@ -117,11 +122,6 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
         new Point(Right, Bottom),
         new Point(Left, Bottom)
     };
-
-    /// <inheritdoc />
-    public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public override int GetHashCode() =>

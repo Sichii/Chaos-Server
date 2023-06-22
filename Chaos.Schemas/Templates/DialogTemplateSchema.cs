@@ -15,7 +15,8 @@ public sealed record DialogTemplateSchema
     /// </summary>
     public bool Contextual { get; set; }
     /// <summary>
-    ///     The template key of the dialog that should be displayed after this one<br />If specified and the <see cref="Type" /> is Normal, the
+    ///     The template key of the dialog that should be displayed after this one<br />If specified and the
+    ///     <see cref="Type" /> is Normal, the
     ///     dialog will have a next button
     /// </summary>
     public string? NextDialogKey { get; set; }
@@ -24,7 +25,8 @@ public sealed record DialogTemplateSchema
     /// </summary>
     public ICollection<DialogOptionSchema> Options { get; set; } = Array.Empty<DialogOptionSchema>();
     /// <summary>
-    ///     If specified and the <see cref="Type" /> is Normal, the dialog will have a previous button that will take them to the dialog with this
+    ///     If specified and the <see cref="Type" /> is Normal, the dialog will have a previous button that will take them to
+    ///     the dialog with this
     ///     template key
     /// </summary>
     public string? PrevDialogKey { get; set; }
@@ -35,7 +37,8 @@ public sealed record DialogTemplateSchema
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of
+    ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value
+    ///     pair, and the value of
     ///     that entry is a dictionary of propertyName-Value pairs
     /// </summary>
     public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
@@ -48,7 +51,8 @@ public sealed record DialogTemplateSchema
     public string TemplateKey { get; set; } = null!;
 
     /// <summary>
-    ///     The text displayed on the template. This can be a string format with injectable parameters, but those parameters must be injected by a
+    ///     The text displayed on the template. This can be a string format with injectable parameters, but those parameters
+    ///     must be injected by a
     ///     script
     /// </summary>
     [JsonRequired]

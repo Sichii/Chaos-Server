@@ -12,7 +12,8 @@ using Microsoft.Extensions.Options;
 namespace Chaos.Storage;
 
 /// <summary>
-///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}" /> that loads data from a file and caches it. The data has a
+///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}" /> that loads data from a file and caches it. The
+///     data has a
 ///     configurable expiration.
 /// </summary>
 /// <typeparam name="T">The type of object stored in the cache</typeparam>
@@ -38,7 +39,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// </summary>
     protected string KeyPrefix { get; }
     /// <summary>
-    ///     Many different types of objects are stored in the memory cache, this lookup is used to store the data for this specific type
+    ///     Many different types of objects are stored in the memory cache, this lookup is used to store the data for this
+    ///     specific type
     /// </summary>
     protected ConcurrentDictionary<string, T> LocalLookup { get; }
     /// <summary>
@@ -80,52 +82,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         Paths = LoadPaths();
     }
 
-    /// <summary>
-    ///     Constructs a cache key for the specified object type.
-    /// </summary>
-    /// <param name="key">The key to be used for the cache entry.</param>
-    /// <returns>A constructed cache key.</returns>
-    protected virtual string ConstructKeyForType(string key) => KeyPrefix + key.ToLowerInvariant();
-
-    /// <summary>
-    ///     Searches the configured directory for an object matching the configured parameters that correlates to the provided key
-    /// </summary>
-    /// <param name="entry">The cache entry object</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    /// <exception cref="FileNotFoundException"></exception>
-    /// <exception cref="DirectoryNotFoundException"></exception>
-    protected virtual T CreateFromEntry(ICacheEntry entry)
-    {
-        var key = entry.Key.ToString();
-        var keyActual = DeconstructKeyForType(key!);
-
-        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
-
-        entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
-        entry.RegisterPostEvictionCallback(RemoveValueCallback);
-
-        var path = GetPathForKey(keyActual);
-
-        var entity = EntityRepository.LoadAndMap<T, TSchema>(path);
-
-        LocalLookup[key!] = entity;
-
-        Logger.LogDebug(
-            "Created new {@TypeName} entry with key {@Key} from path {@Path}",
-            typeof(T).Name,
-            key,
-            path);
-
-        return entity;
-    }
-
-    /// <summary>
-    ///     Deconstructs a cache key for the specified object type.
-    /// </summary>
-    /// <param name="key">The key to deconstruct</param>
-    protected virtual string DeconstructKeyForType(string key) => key.Replace(KeyPrefix, string.Empty, StringComparison.OrdinalIgnoreCase);
-
     /// <inheritdoc />
     public void ForceLoad()
     {
@@ -164,10 +120,85 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     }
 
     /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
     public IEnumerator<T> GetEnumerator() => LocalLookup.Values.GetEnumerator();
 
     /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public virtual Task ReloadAsync()
+    {
+        using var @lock = Sync.Enter();
+
+        Paths = LoadPaths();
+
+        foreach (var key in LocalLookup.Keys)
+            try
+            {
+                if (!Cache.TryGetValue(key, out _))
+                    continue;
+
+                using var entry = Cache.CreateEntry(key);
+                entry.Value = CreateFromEntry(entry);
+            } catch (Exception e)
+            {
+                Logger.LogError(
+                    e,
+                    "Failed to reload {@TypeName} with key {@Key}",
+                    typeof(T).Name,
+                    key);
+                //otherwise ignored
+            }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Constructs a cache key for the specified object type.
+    /// </summary>
+    /// <param name="key">The key to be used for the cache entry.</param>
+    /// <returns>A constructed cache key.</returns>
+    protected virtual string ConstructKeyForType(string key) => KeyPrefix + key.ToLowerInvariant();
+
+    /// <summary>
+    ///     Searches the configured directory for an object matching the configured parameters that correlates to the provided
+    ///     key
+    /// </summary>
+    /// <param name="entry">The cache entry object</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="FileNotFoundException"></exception>
+    /// <exception cref="DirectoryNotFoundException"></exception>
+    protected virtual T CreateFromEntry(ICacheEntry entry)
+    {
+        var key = entry.Key.ToString();
+        var keyActual = DeconstructKeyForType(key!);
+
+        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
+
+        entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
+        entry.RegisterPostEvictionCallback(RemoveValueCallback);
+
+        var path = GetPathForKey(keyActual);
+
+        var entity = EntityRepository.LoadAndMap<T, TSchema>(path);
+
+        LocalLookup[key!] = entity;
+
+        Logger.LogDebug(
+            "Created new {@TypeName} entry with key {@Key} from path {@Path}",
+            typeof(T).Name,
+            key,
+            path);
+
+        return entity;
+    }
+
+    /// <summary>
+    ///     Deconstructs a cache key for the specified object type.
+    /// </summary>
+    /// <param name="key">The key to deconstruct</param>
+    protected virtual string DeconstructKeyForType(string key) => key.Replace(KeyPrefix, string.Empty, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Loads the paths for the configured directory and returns it
@@ -208,34 +239,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         };
 
         return new SynchronizedHashSet<string>(paths, StringComparer.OrdinalIgnoreCase);
-    }
-
-    /// <inheritdoc />
-    public virtual Task ReloadAsync()
-    {
-        using var @lock = Sync.Enter();
-
-        Paths = LoadPaths();
-
-        foreach (var key in LocalLookup.Keys)
-            try
-            {
-                if (!Cache.TryGetValue(key, out _))
-                    continue;
-
-                using var entry = Cache.CreateEntry(key);
-                entry.Value = CreateFromEntry(entry);
-            } catch (Exception e)
-            {
-                Logger.LogError(
-                    e,
-                    "Failed to reload {@TypeName} with key {@Key}",
-                    typeof(T).Name,
-                    key);
-                //otherwise ignored
-            }
-
-        return Task.CompletedTask;
     }
 
     /// <summary>

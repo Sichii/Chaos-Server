@@ -1,45 +1,33 @@
 using System.Diagnostics;
 using Chaos.Collections;
 using Chaos.Extensions.Common;
+using Chaos.IO.FileSystem;
 using Chaos.Schemas.Guilds;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
-public class GuildStore : BackedUpFileStoreBase<GuildStoreOptions>, IStore<Guild>
+public class GuildStore : BackgroundService, IStore<Guild>
 {
     private readonly ConcurrentDictionary<string, Guild> Cache;
     private readonly IEntityRepository EntityRepository;
+    private readonly ILogger<GuildStore> Logger;
+    private readonly GuildStoreOptions Options;
 
-    /// <inheritdoc />
     public GuildStore(
         IEntityRepository entityRepository,
         IOptions<GuildStoreOptions> options,
         ILogger<GuildStore> logger
     )
-        : base(options, logger)
     {
+        Logger = logger;
+        Options = options.Value;
         EntityRepository = entityRepository;
         Cache = new ConcurrentDictionary<string, Guild>(StringComparer.OrdinalIgnoreCase);
-    }
-
-    /// <inheritdoc />
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        await Task.WhenAll(
-            base.ExecuteAsync(stoppingToken),
-            PeriodicSaveAsync(stoppingToken));
-
-        Logger.LogDebug("Performing final save before shutdown");
-
-        var values = Cache.Values.ToList();
-
-        await Task.WhenAll(values.Select(SaveGuildAsync));
-
-        Logger.LogInformation("Final save completed");
     }
 
     /// <inheritdoc />
@@ -47,15 +35,90 @@ public class GuildStore : BackedUpFileStoreBase<GuildStoreOptions>, IStore<Guild
     {
         var directory = Path.Combine(Options.Directory, key);
 
-        bool InnerExists()
+        bool InnerExists(string dir)
         {
-            if (Directory.Exists(directory))
+            if (Directory.Exists(dir))
                 return true;
 
             return Cache.ContainsKey(key);
         }
 
-        return SafeExecuteDirectoryAction(directory, InnerExists);
+        return directory.SafeExecute(InnerExists);
+    }
+
+    /// <inheritdoc />
+    public Guild Load(string key)
+    {
+        Logger.LogTrace("Loading guild {@GuildName}", key);
+
+        var directory = Path.Combine(Options.Directory, key);
+
+        Guild InnerLoad(string dir) => Cache.GetOrAdd(key, InnerLoadGuild, (dir, EntityRepository));
+
+        return directory.SafeExecute(InnerLoad);
+    }
+
+    /// <inheritdoc />
+    public bool Remove(string key)
+    {
+        var directory = Path.Combine(Options.Directory, key);
+
+        bool InnerRemove(string dir)
+        {
+            if (!Directory.Exists(directory))
+                return Cache.Remove(key, out _);
+
+            Cache.Remove(key, out _);
+            Directory.Delete(dir);
+
+            return true;
+        }
+
+        return directory.SafeExecute(InnerRemove);
+    }
+
+    /// <inheritdoc />
+    public void Save(Guild guild)
+    {
+        if (!Cache.TryAdd(guild.Name, guild))
+            throw new InvalidOperationException($"The guild \"{guild.Name}\" is already being saved.");
+
+        Logger.WithProperty(guild)
+              .LogDebug("Added new guild {@GuildName} to guild store", guild.Name);
+    }
+
+    /// <inheritdoc />
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        var saveTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins));
+
+        while (!stoppingToken.IsCancellationRequested)
+            try
+            {
+                await saveTimer.WaitForNextTickAsync(stoppingToken);
+                var start = Stopwatch.GetTimestamp();
+
+                Logger.LogTrace("Performing save");
+                var guilds = Cache.Values.ToList();
+
+                await Task.WhenAll(guilds.Select(SaveGuildAsync));
+
+                Logger.LogDebug("Save completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
+            } catch (OperationCanceledException)
+            {
+                //ignore
+                return;
+            } catch (Exception e)
+            {
+                Logger.LogCritical(e, "Exception while performing save");
+            }
+
+        Logger.LogDebug("Performing final save before shutdown");
+
+        var guildsToSave = Cache.Values.ToList();
+        await Task.WhenAll(guildsToSave.Select(SaveGuildAsync));
+
+        Logger.LogInformation("Final save completed");
     }
 
     private static Guild InnerLoadGuild(string key, (string, IEntityRepository) args)
@@ -110,73 +173,6 @@ public class GuildStore : BackedUpFileStoreBase<GuildStoreOptions>, IStore<Guild
             EntityRepository.SaveAsync<GuildRank, GuildRankSchema>(tier3, tier3Path));
     }
 
-    /// <inheritdoc />
-    public Guild Load(string key)
-    {
-        Logger.LogTrace("Loading guild {@GuildName}", key);
-
-        var directory = Path.Combine(Options.Directory, key);
-
-        Guild InnerLoad() => Cache.GetOrAdd(key, InnerLoadGuild, (directory, EntityRepository));
-
-        return SafeExecuteDirectoryAction(directory, InnerLoad);
-    }
-
-    private async Task PeriodicSaveAsync(CancellationToken stoppingToken)
-    {
-        var saveTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.SaveIntervalMins));
-
-        while (!stoppingToken.IsCancellationRequested)
-            try
-            {
-                await saveTimer.WaitForNextTickAsync(stoppingToken);
-                var start = Stopwatch.GetTimestamp();
-
-                Logger.LogTrace("Performing save");
-                var values = Cache.Values.ToList();
-
-                await Task.WhenAll(values.Select(SaveGuildAsync));
-
-                Logger.LogDebug("Save completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
-            } catch (OperationCanceledException)
-            {
-                //ignore
-                return;
-            } catch (Exception e)
-            {
-                Logger.LogCritical(e, "Exception while performing save");
-            }
-    }
-
-    /// <inheritdoc />
-    public bool Remove(string key)
-    {
-        var directory = Path.Combine(Options.Directory, key);
-
-        bool InnerRemove()
-        {
-            if (!Directory.Exists(directory))
-                return Cache.Remove(key, out _);
-
-            Cache.Remove(key, out _);
-            Directory.Delete(directory);
-
-            return true;
-        }
-
-        return SafeExecuteDirectoryAction(directory, InnerRemove);
-    }
-
-    /// <inheritdoc />
-    public void Save(Guild guild)
-    {
-        if (!Cache.TryAdd(guild.Name, guild))
-            throw new InvalidOperationException($"The guild \"{guild.Name}\" is already being saved.");
-
-        Logger.WithProperty(guild)
-              .LogDebug("Added new guild {@GuildName} to guild store", guild.Name);
-    }
-
     protected virtual async Task SaveGuildAsync(Guild guild)
     {
         Logger.WithProperty(guild)
@@ -191,7 +187,7 @@ public class GuildStore : BackedUpFileStoreBase<GuildStoreOptions>, IStore<Guild
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            await SafeExecuteDirectoryActionAsync(directory, () => InnerSaveAsync(directory, guild));
+            await directory.SafeExecuteAsync(dir => InnerSaveAsync(dir, guild));
 
             Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
 

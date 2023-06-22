@@ -33,6 +33,23 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         Mapper = mapper;
     }
 
+    public Item Map(ItemInfo obj) => throw new NotImplementedException();
+
+    ItemInfo IMapperProfile<Item, ItemInfo>.Map(Item obj) => new()
+    {
+        Color = obj.Color,
+        Cost = obj.Template.BuyCost,
+        Count = obj.Count < 0
+            ? throw new InvalidOperationException($"Item \"{obj.DisplayName}\" has negative count of {obj.Count}")
+            : Convert.ToUInt32(obj.Count),
+        CurrentDurability = obj.CurrentDurability ?? 0,
+        MaxDurability = obj.Template.MaxDurability ?? 0,
+        Name = obj.DisplayName,
+        Slot = obj.Slot,
+        Sprite = obj.ItemSprite.PanelSprite,
+        Stackable = obj.Template.Stackable
+    };
+
     public Item Map(ItemSchema obj)
     {
         var template = SimpleCache.Get<ItemTemplate>(obj.TemplateKey);
@@ -62,44 +79,6 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         return item;
     }
 
-    public Item Map(ItemInfo obj) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public ItemInfo Map(ItemDetails obj)
-    {
-        var item = obj.Item;
-
-        return new ItemInfo
-        {
-            Color = item.Color,
-            Cost = obj.Price,
-            Count = item.Count < 0
-                ? throw new InvalidOperationException($"Item \"{item.DisplayName}\" has negative count of {item.Count}")
-                : Convert.ToUInt32(item.Count),
-            CurrentDurability = item.CurrentDurability ?? 0,
-            MaxDurability = item.Template.MaxDurability ?? 0,
-            Name = item.DisplayName,
-            Slot = item.Slot,
-            Sprite = item.ItemSprite.PanelSprite,
-            Stackable = item.Template.Stackable
-        };
-    }
-
-    ItemInfo IMapperProfile<Item, ItemInfo>.Map(Item obj) => new()
-    {
-        Color = obj.Color,
-        Cost = obj.Template.BuyCost,
-        Count = obj.Count < 0
-            ? throw new InvalidOperationException($"Item \"{obj.DisplayName}\" has negative count of {obj.Count}")
-            : Convert.ToUInt32(obj.Count),
-        CurrentDurability = obj.CurrentDurability ?? 0,
-        MaxDurability = obj.Template.MaxDurability ?? 0,
-        Name = obj.DisplayName,
-        Slot = obj.Slot,
-        Sprite = obj.ItemSprite.PanelSprite,
-        Stackable = obj.Template.Stackable
-    };
-
     public ItemSchema Map(Item obj)
     {
         var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -122,6 +101,40 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
 
         return ret;
     }
+
+    /// <inheritdoc />
+    public ItemInfo Map(ItemDetails obj)
+    {
+        var item = obj.Item;
+
+        return new ItemInfo
+        {
+            Color = item.Color,
+            Cost = obj.Price,
+            Count = item.Count < 0
+                ? throw new InvalidOperationException($"Item \"{item.DisplayName}\" has negative count of {item.Count}")
+                : Convert.ToUInt32(item.Count),
+            CurrentDurability = item.CurrentDurability ?? 0,
+            MaxDurability = item.Template.MaxDurability ?? 0,
+            Name = item.DisplayName,
+            Slot = item.Slot,
+            Sprite = item.ItemSprite.PanelSprite,
+            Stackable = item.Template.Stackable
+        };
+    }
+
+    /// <inheritdoc />
+    ItemDetails IMapperProfile<ItemDetails, ItemInfo>.Map(ItemInfo obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public ItemRequirement Map(ItemRequirementSchema obj) => new()
+    {
+        ItemTemplateKey = obj.ItemTemplateKey,
+        AmountRequired = obj.AmountRequired
+    };
+
+    /// <inheritdoc />
+    public ItemRequirementSchema Map(ItemRequirement obj) => throw new NotImplementedException();
 
     public ItemTemplate Map(ItemTemplateSchema obj) => new()
     {
@@ -156,17 +169,4 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
     };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public ItemRequirement Map(ItemRequirementSchema obj) => new()
-    {
-        ItemTemplateKey = obj.ItemTemplateKey,
-        AmountRequired = obj.AmountRequired
-    };
-
-    /// <inheritdoc />
-    public ItemRequirementSchema Map(ItemRequirement obj) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    ItemDetails IMapperProfile<ItemDetails, ItemInfo>.Map(ItemInfo obj) => throw new NotImplementedException();
 }

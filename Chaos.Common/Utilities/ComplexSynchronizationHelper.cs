@@ -15,7 +15,10 @@ public static class ComplexSynchronizationHelper
     /// <param name="individualTimeout">The timeout of each attempt to enter a semaphore</param>
     /// <param name="synchronizers">One or more semaphores to be synchronized</param>
     /// <returns>An object that when disposed will release all of the semaphores that were entered</returns>
-    /// <exception cref="TimeoutException">The timeout period elapsed. The helper was unable to acquire all semaphores in the alotted time.</exception>
+    /// <exception cref="TimeoutException">
+    ///     The timeout period elapsed. The helper was unable to acquire all semaphores in the
+    ///     alotted time.
+    /// </exception>
     /// <remarks>
     ///     If a TimeoutException is thrown, the signature is the number of failed attempts to enter each semaphore,
     ///     arranged in the same order the semaphores were provided to the method

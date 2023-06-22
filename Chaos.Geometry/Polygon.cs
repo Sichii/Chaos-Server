@@ -78,13 +78,13 @@ public sealed class Polygon : IPolygon, IEquatable<IPolygon>
         return false;
     }
 
-    /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is IPolygon other && Equals(other);
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is IPolygon other && Equals(other);
 
     /// <inheritdoc />
     public override int GetHashCode()

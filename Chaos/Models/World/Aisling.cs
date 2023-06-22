@@ -85,9 +85,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public override IAislingScript Script { get; }
     /// <inheritdoc />
     public override ISet<string> ScriptKeys { get; }
-    public bool ShouldRefresh => !Trackers.LastRefresh.HasValue
-                                 || (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value).TotalMilliseconds
-                                     > WorldOptions.Instance.RefreshIntervalMs);
 
     public bool ShouldWalk
     {
@@ -119,9 +116,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public ResettingCounter SkillThrottle { get; }
     public ResettingCounter SpellThrottle { get; }
-
-    public override StatSheet StatSheet => UserStatSheet;
-    public override CreatureType Type => CreatureType.Aisling;
     public ResettingCounter WalkCounter { get; }
 
     /// <inheritdoc />
@@ -129,6 +123,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Aisling;
+    public bool ShouldRefresh => !Trackers.LastRefresh.HasValue
+                                 || (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value).TotalMilliseconds
+                                     > WorldOptions.Instance.RefreshIntervalMs);
+
+    public override StatSheet StatSheet => UserStatSheet;
+    public override CreatureType Type => CreatureType.Aisling;
 
     public Aisling(
         string name,
@@ -231,6 +231,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     /// <inheritdoc />
     void IDialogSourceEntity.Activate(Aisling source) => Script.OnClicked(source);
+
+    /// <inheritdoc />
+    public bool IsIgnoring(string name) => IgnoreList.Contains(name);
+
+    public void SendServerMessage(ServerMessageType serverMessageType, string message) =>
+        Client.SendServerMessage(serverMessageType, message);
 
     public void BeginObserving()
     {
@@ -416,9 +422,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Trackers = aislingTrackers;
     }
 
-    /// <inheritdoc />
-    public bool IsIgnoring(string name) => IgnoreList.Contains(name);
-
     public override void OnClicked(Aisling source)
     {
         if (!ShouldRegisterClick(source.Id))
@@ -500,9 +503,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public void SendOrangeBarMessage(string message) => SendServerMessage(ServerMessageType.OrangeBar1, message);
 
     public void SendPersistentMessage(string message) => SendServerMessage(ServerMessageType.PersistentMessage, message);
-
-    public void SendServerMessage(ServerMessageType serverMessageType, string message) =>
-        Client.SendServerMessage(serverMessageType, message);
 
     /// <inheritdoc />
     public override void ShowPublicMessage(PublicMessageType publicMessageType, string message)

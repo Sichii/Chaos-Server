@@ -31,6 +31,25 @@ public class DefaultDamageFormula : IDamageFormula
         // @formatter:on
     }.ToImmutableArray();
 
+    /// <inheritdoc />
+    public int Calculate(
+        Creature source,
+        Creature target,
+        IScript script,
+        int damage,
+        Element? elementOverride = null
+    )
+    {
+        ApplySkillSpellModifier(ref damage, script, source);
+
+        var defenderAc = GetDefenderAc(target);
+
+        ApplyAcModifier(ref damage, defenderAc);
+        ApplyElementalModifier(ref damage, elementOverride ?? source.StatSheet.OffenseElement, target.StatSheet.DefenseElement);
+
+        return damage;
+    }
+
     protected virtual void ApplyAcModifier(ref int damage, int defenderAc) => damage = Convert.ToInt32(damage * (1 + defenderAc / 100m));
 
     protected virtual void ApplyElementalModifier(ref int damage, Element attackElement, Element defenseElement) =>
@@ -55,25 +74,6 @@ public class DefaultDamageFormula : IDamageFormula
                 break;
             }
         }
-    }
-
-    /// <inheritdoc />
-    public int Calculate(
-        Creature source,
-        Creature target,
-        IScript script,
-        int damage,
-        Element? elementOverride = null
-    )
-    {
-        ApplySkillSpellModifier(ref damage, script, source);
-
-        var defenderAc = GetDefenderAc(target);
-
-        ApplyAcModifier(ref damage, defenderAc);
-        ApplyElementalModifier(ref damage, elementOverride ?? source.StatSheet.OffenseElement, target.StatSheet.DefenseElement);
-
-        return damage;
     }
 
     protected virtual int GetDefenderAc(Creature defender) => defender switch

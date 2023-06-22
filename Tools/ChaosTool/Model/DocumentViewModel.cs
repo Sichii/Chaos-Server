@@ -41,7 +41,9 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
     public string? Text { get; set; }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    private static MethodInfo HasSubmissionResult { get; } =
+        typeof(Compilation).GetMethod(nameof(HasSubmissionResult), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+        ?? throw new MissingMemberException(nameof(HasSubmissionResult));
 
     public DocumentViewModel? LastGoodPrevious
     {
@@ -58,10 +60,6 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
     public DocumentViewModel? Previous { get; }
 
-    private static MethodInfo HasSubmissionResult { get; } =
-        typeof(Compilation).GetMethod(nameof(HasSubmissionResult), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-        ?? throw new MissingMemberException(nameof(HasSubmissionResult));
-
     private static PrintOptions PrintOptions { get; } =
         new()
             { MemberDisplayFormat = MemberDisplayFormat.SeparateLines };
@@ -71,6 +69,8 @@ internal class DocumentViewModel : INotifyPropertyChanged
         _host = host;
         Previous = previous;
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private async Task ExecuteAsync(bool hasResult)
     {

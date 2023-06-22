@@ -4,7 +4,8 @@ using Chaos.Common.Utilities;
 namespace Chaos.Time;
 
 /// <summary>
-///     A timers that utilizes a delta time value to increment elapsed time. Each time the interval elapses, a new interval is set with an
+///     A timers that utilizes a delta time value to increment elapsed time. Each time the interval elapses, a new interval
+///     is set with an
 ///     amount of randomization as specified through configuration
 /// </summary>
 // ReSharper disable once ClassCanBeSealed.Global
@@ -59,7 +60,8 @@ public class RandomizedIntervalTimer : IntervalTimer
     }
 
     /// <summary>
-    ///     Sets the <see cref="RandomizedInterval" /> based on the <see cref="IntervalTimer.Interval" />, <see cref="RandomizationType" />, and
+    ///     Sets the <see cref="RandomizedInterval" /> based on the <see cref="IntervalTimer.Interval" />,
+    ///     <see cref="RandomizationType" />, and
     ///     <see cref="MaxRandomizationPct" />
     /// </summary>
     protected void SetRandomizedInterval()

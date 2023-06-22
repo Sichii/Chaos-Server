@@ -22,13 +22,20 @@ public sealed class CounterCollection : IEnumerable<KeyValuePair<string, int>>
             enumerable ?? Array.Empty<KeyValuePair<string, int>>(),
             StringComparer.OrdinalIgnoreCase);
 
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => Counters.GetEnumerator();
+
     /// <summary>
     ///     Adds a new counter with the specified key and an initial value of 1, or increments the existing counter by 1.
     /// </summary>
     public int AddOrIncrement(string key) => Counters.AddOrUpdate(key, 1, (_, count) => count + 1);
 
     /// <summary>
-    ///     Adds a new counter with the specified key and the specified initial value, or increments the existing counter by the specified value.
+    ///     Adds a new counter with the specified key and the specified initial value, or increments the existing counter by
+    ///     the specified value.
     /// </summary>
     public int AddOrIncrement(string key, int value) => Counters.AddOrUpdate(key, value, (_, count) => count + value);
 
@@ -38,20 +45,16 @@ public sealed class CounterCollection : IEnumerable<KeyValuePair<string, int>>
     public bool ContainsKey(string key) => Counters.ContainsKey(key);
 
     /// <summary>
-    ///     Determines whether the counter value associated with the specified key is greater than or equal to the specified value.
+    ///     Determines whether the counter value associated with the specified key is greater than or equal to the specified
+    ///     value.
     /// </summary>
     public bool CounterGreaterThanOrEqualTo(string key, int value) => Counters.TryGetValue(key, out var count) && (count >= value);
 
     /// <summary>
-    ///     Determines whether the counter value associated with the specified key is less than or equal to the specified value.
+    ///     Determines whether the counter value associated with the specified key is less than or equal to the specified
+    ///     value.
     /// </summary>
     public bool CounterLessThanOrEqualTo(string key, int value) => Counters.TryGetValue(key, out var count) && (count <= value);
-
-    /// <inheritdoc />
-    public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => Counters.GetEnumerator();
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
     ///     Removes the counter with the specified key from the collection and returns its value.

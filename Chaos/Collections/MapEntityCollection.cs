@@ -59,6 +59,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
                 PointLookup[x, y] = new HashSet<MapEntity>(WorldEntity.IdComparer);
     }
 
+    /// <inheritdoc />
+    public void Update(TimeSpan delta) => Updatables.Update(delta);
+
     public void Add(uint id, MapEntity entity)
     {
         EntityLookup.Add(id, entity);
@@ -204,9 +207,6 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
         return false;
     }
-
-    /// <inheritdoc />
-    public void Update(TimeSpan delta) => Updatables.Update(delta);
 
     public IEnumerable<T> Values<T>() where T: MapEntity
     {

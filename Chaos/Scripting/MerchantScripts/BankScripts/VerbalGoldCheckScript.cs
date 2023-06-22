@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
-public class VerbalGoldCheckScript : VerbalBankerScriptBase
+public sealed class VerbalGoldCheckScript : VerbalBankerScriptBase
 {
     /// <inheritdoc />
     public VerbalGoldCheckScript(Merchant subject, ILogger<VerbalGoldCheckScript> logger)

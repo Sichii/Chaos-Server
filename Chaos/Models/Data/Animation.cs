@@ -11,7 +11,6 @@ public sealed record Animation
 
     public uint? TargetId { get; set; }
     public IPoint? TargetPoint { get; set; }
-
     /// <summary>
     ///     Static constructor for no animation.
     /// </summary>

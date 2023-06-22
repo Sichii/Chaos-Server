@@ -68,7 +68,8 @@ ground items, including items dropped by players.
 
 ---
 
-A channel is a membership of players that can send message to eachother. Think global and trade chat in other games, but
+A channel is a membership of players that can send message to each other. Think global and trade chat in other games,
+but
 also group and guild chat in Dark Ages. These settings represent the parts of those systems that are configurable.
 
 ### DefaultChannels

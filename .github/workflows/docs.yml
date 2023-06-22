@@ -1,29 +1,29 @@
 name: Docs
 on:
-    push:
-        branches:
-            - master
-    pull_request:
-        branches:
-            - master
-    workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 jobs:
-    publish-docs:
-        if: github.repository == 'Sichii/Chaos-Server'
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-dotnet@v3
-              with:
-                  dotnet-version: 7.x
+  publish-docs:
+    if: github.repository == 'Sichii/Chaos-Server'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.x
 
-            - run: dotnet tool install -g docfx --version 2.67.1
-            - run: docfx docs/docfx.json
+      - run: dotnet tool install -g docfx --version 2.67.1
+      - run: docfx docs/docfx.json
 
-            - name: Deploy
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: docs/_site
-                  force_orphan: true
-                  cname: docs.chaos-server.net
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_site
+          force_orphan: true
+          cname: docs.chaos-server.net

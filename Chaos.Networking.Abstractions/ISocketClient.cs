@@ -16,12 +16,6 @@ public interface ISocketClient
     ///     Handles encryption and decryption of packets
     /// </summary>
     ICrypto Crypto { get; set; }
-
-    /// <summary>
-    ///     An event that is called when a client disconnects
-    /// </summary>
-    event EventHandler? OnDisconnected;
-
     /// <summary>
     ///     Whether or not the client is connected
     /// </summary>
@@ -52,7 +46,8 @@ public interface ISocketClient
     void BeginReceive();
 
     /// <summary>
-    ///     Disconnects the client from the server and calls the <see cref="Chaos.Networking.Abstractions.ISocketClient.OnDisconnected" /> event
+    ///     Disconnects the client from the server and calls the
+    ///     <see cref="Chaos.Networking.Abstractions.ISocketClient.OnDisconnected" /> event
     /// </summary>
     void Disconnect();
 
@@ -60,6 +55,11 @@ public interface ISocketClient
     ///     Determins whether or not the client is a loopback client or not (client is on same server as ip)
     /// </summary>
     bool IsLoopback();
+
+    /// <summary>
+    ///     An event that is called when a client disconnects
+    /// </summary>
+    event EventHandler? OnDisconnected;
 
     /// <summary>
     ///     Serializes an object and sends it to the client

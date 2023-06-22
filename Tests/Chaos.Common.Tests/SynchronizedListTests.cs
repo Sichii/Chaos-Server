@@ -10,10 +10,11 @@ public sealed class SynchronizedListTests
     public void Add_ShouldAddItemToList()
     {
         // Arrange
-        var list = new SynchronizedList<int>();
-
-        // Act
-        list.Add(42);
+        var list = new SynchronizedList<int>
+        {
+            // Act
+            42
+        };
 
         // Assert
         list.Count.Should().Be(1);
@@ -185,6 +186,7 @@ public sealed class SynchronizedListTests
     public void IsReadOnly_ShouldReturnFalse()
     {
         // Arrange
+        // ReSharper disable once CollectionNeverUpdated.Local
         var list = new SynchronizedList<int>();
 
         // Act

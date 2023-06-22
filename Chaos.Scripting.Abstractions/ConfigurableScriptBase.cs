@@ -7,7 +7,8 @@ namespace Chaos.Scripting.Abstractions;
 ///     Defines the basic functionality of a script that can have variables loaded into it
 /// </summary>
 /// <remarks>
-///     This kind of script accepts variables through it's <see cref="Chaos.Common.Abstractions.IScriptVars" /> parameter. It then scans the
+///     This kind of script accepts variables through it's <see cref="Chaos.Common.Abstractions.IScriptVars" /> parameter.
+///     It then scans the
 ///     inheritance
 ///     chain and populates all non-public, writable, instanced properties automatically with values from the
 ///     <see cref="Chaos.Common.Abstractions.IScriptVars" />

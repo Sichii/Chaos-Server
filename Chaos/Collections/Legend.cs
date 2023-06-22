@@ -13,6 +13,14 @@ public sealed class Legend : IEnumerable<LegendMark>
         Marks = new ConcurrentDictionary<string, LegendMark>(marks.ToDictionary(mark => mark.Key), StringComparer.OrdinalIgnoreCase);
     }
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public IEnumerator<LegendMark> GetEnumerator()
+    {
+        foreach (var kvp in Marks.OrderBy(kvp => kvp.Value.Added))
+            yield return kvp.Value;
+    }
+
     public bool AddOrAccumulate(LegendMark mark)
     {
         if (Marks.TryGetValue(mark.Key, out var existingMark))
@@ -40,14 +48,6 @@ public sealed class Legend : IEnumerable<LegendMark>
 
         return 0;
     }
-
-    public IEnumerator<LegendMark> GetEnumerator()
-    {
-        foreach (var kvp in Marks.OrderBy(kvp => kvp.Value.Added))
-            yield return kvp.Value;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public bool Remove(string key, [MaybeNullWhen(false)] out LegendMark mark) => Marks.Remove(key, out mark);
 

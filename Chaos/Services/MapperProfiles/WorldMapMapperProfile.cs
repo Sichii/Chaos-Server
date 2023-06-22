@@ -18,15 +18,6 @@ public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
     public WorldMapMapperProfile(ISimpleCache simpleCache) => SimpleCache = simpleCache;
 
     /// <inheritdoc />
-    public WorldMap Map(WorldMapSchema obj) => new()
-    {
-        WorldMapKey = obj.WorldMapKey,
-        FieldIndex = obj.FieldIndex,
-        Nodes = obj.NodeKeys.Select(key => SimpleCache.Get<WorldMapNode>(key))
-                   .ToDictionary(node => node.UniqueId)
-    };
-
-    /// <inheritdoc />
     public WorldMap Map(WorldMapArgs obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
@@ -35,6 +26,15 @@ public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
         FieldName = obj.WorldMapKey,
         FieldIndex = obj.FieldIndex,
         Nodes = obj.Nodes.Values.Cast<WorldMapNodeInfo>().ToList()
+    };
+
+    /// <inheritdoc />
+    public WorldMap Map(WorldMapSchema obj) => new()
+    {
+        WorldMapKey = obj.WorldMapKey,
+        FieldIndex = obj.FieldIndex,
+        Nodes = obj.NodeKeys.Select(key => SimpleCache.Get<WorldMapNode>(key))
+                   .ToDictionary(node => node.UniqueId)
     };
 
     /// <inheritdoc />

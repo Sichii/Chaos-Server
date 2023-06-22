@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Messaging;
 using Chaos.Messaging.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ namespace Chaos.Extensions.DependencyInjection;
 /// <summary>
 ///     A class containing extension methods for the Chaos.Messaging library
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class MessagingExtensions
 {
     /// <summary>

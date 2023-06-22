@@ -37,10 +37,10 @@ public abstract class ConfigurableMonsterScriptBase : ConfigurableScriptBase<Mon
     public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />
-    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride) { }
+    public void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
 
     /// <inheritdoc />
-    public void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
+    public virtual void OnAttacked(Creature source, int damage, int? aggroOverride) { }
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

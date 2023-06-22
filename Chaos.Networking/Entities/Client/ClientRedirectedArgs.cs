@@ -3,7 +3,8 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ClientRedirected" /> packet
+///     Represents the serialization of the
+///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ClientRedirected" /> packet
 /// </summary>
 /// <param name="Seed">The new encryption seed to be used</param>
 /// <param name="Key">The new encryption key to be used</param>

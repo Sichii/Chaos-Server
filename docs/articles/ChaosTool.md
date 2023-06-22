@@ -24,6 +24,6 @@ call `await JsonContext.SaveChangesAsync();`
 ## Future Features
 
 - more entity types
-- rendered panelsprites (item, skill, spell)
+- rendered panel sprites (item, skill, spell)
 - rendered creature sprites
 - map viewer

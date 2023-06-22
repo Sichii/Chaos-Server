@@ -38,10 +38,6 @@ public record ActivationContext : IActivationContext
     public Aisling? SourceAisling { get; init; }
     public Aisling? TargetAisling { get; init; }
     public Creature? TargetCreature { get; init; }
-    public Direction Direction => Source.Direction;
-    public Direction SourceDirection => Source.Direction;
-    public MapInstance SourceMap => Source.MapInstance;
-    public Point SourcePoint => Point.From(Source);
     public IPoint Target { get; }
 
     public Direction TargetDirection
@@ -60,12 +56,18 @@ public record ActivationContext : IActivationContext
         }
     }
 
+    public Direction Direction => Source.Direction;
+    public Direction SourceDirection => Source.Direction;
+    public MapInstance SourceMap => Source.MapInstance;
+    public Point SourcePoint => Point.From(Source);
+
     public MapInstance TargetMap => (Target as MapEntity)?.MapInstance
                                     ?? SnapshotTargetMap
                                     ?? throw new UnreachableException(
                                         "Target map should always be populated. "
                                         + "Either the target should be an entity with a map, "
                                         + "or it should be a point that was passed in with a map in it's constructor");
+
     public Point TargetPoint => Point.From(Target);
 
     public ActivationContext(Creature source, MapEntity target)

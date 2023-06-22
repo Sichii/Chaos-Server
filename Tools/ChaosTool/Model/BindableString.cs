@@ -13,15 +13,15 @@ public class BindableString : INotifyPropertyChanged
         set => SetField(ref _string, value);
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    public static implicit operator string(BindableString bindableString) => bindableString.String;
-    public static implicit operator BindableString(string @string) => new() { String = @string };
-
     public BindableString() => String = string.Empty;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    public static implicit operator string(BindableString bindableString) => bindableString.String;
+    public static implicit operator BindableString(string @string) => new() { String = @string };
 
     protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {

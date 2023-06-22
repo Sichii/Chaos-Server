@@ -5,8 +5,6 @@ namespace Chaos.Collections.Abstractions;
 
 public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
 {
-    T? this[byte slot] { get; }
-    T? this[string name] { get; }
     int AvailableSlots { get; }
     bool IsFull { get; }
     PanelType PaneType { get; }
@@ -16,6 +14,8 @@ public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
     bool Contains(string name);
     bool ContainsByTemplateKey(string templateKey);
     bool IsValidSlot(byte slot);
+    T? this[byte slot] { get; }
+    T? this[string name] { get; }
     bool Remove(byte slot);
     bool Remove(string name);
     bool RemoveByTemplateKey(string templateKey);

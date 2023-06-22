@@ -41,6 +41,15 @@ public sealed class ResettingCounter : IDeltaUpdatable
         MaxCount = maxPerSecond * updateIntervalSecs;
     }
 
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        Timer.Update(delta);
+
+        if (Timer.IntervalElapsed)
+            Counter = 0;
+    }
+
     /// <summary>
     ///     Attempts to increment the counter
     /// </summary>
@@ -53,14 +62,5 @@ public sealed class ResettingCounter : IDeltaUpdatable
         var newCounter = Interlocked.Increment(ref Counter);
 
         return newCounter < MaxCount;
-    }
-
-    /// <inheritdoc />
-    public void Update(TimeSpan delta)
-    {
-        Timer.Update(delta);
-
-        if (Timer.IntervalElapsed)
-            Counter = 0;
     }
 }

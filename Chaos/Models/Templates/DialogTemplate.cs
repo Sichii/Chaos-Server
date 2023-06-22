@@ -18,7 +18,6 @@ public sealed record DialogTemplate : ITemplate
     public required string Text { get; init; }
     public required ushort? TextBoxLength { get; init; }
     public required ChaosDialogType Type { get; init; }
-
     public static DialogTemplate CloseDialogTemplate { get; } = new()
     {
         TemplateKey = "close",

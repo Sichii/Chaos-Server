@@ -34,26 +34,8 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
             Events.Add(timedEvent.EventId, timedEvent);
     }
 
-    /// <summary>
-    ///     Adds an event to the collection
-    /// </summary>
-    /// <param name="eventId">The id of the event</param>
-    /// <param name="duration">The duration of the event</param>
-    /// <param name="autoConsume">Whether or not the event should be automatically removed from the collection when it has expired</param>
-    /// <exception cref="InvalidOperationException">An event with the same ID already exists</exception>
-    /// <exception cref="ArgumentException">Event ID cannot be null or empty</exception>
-    public void AddEvent(string eventId, TimeSpan duration, bool autoConsume = false)
-    {
-        using var sync = Sync.Enter();
-
-        var timedEvent = new Event(eventId, duration, autoConsume);
-
-        if (string.IsNullOrEmpty(timedEvent.EventId))
-            throw new ArgumentException("Event ID cannot be null or empty", nameof(timedEvent));
-
-        if (!Events.TryAdd(timedEvent.EventId, timedEvent))
-            throw new InvalidOperationException("An event with the same ID already exists");
-    }
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public IEnumerator<KeyValuePair<string, Event>> GetEnumerator()
@@ -64,51 +46,6 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
             snapShot = Events.ToList();
 
         return snapShot.GetEnumerator();
-    }
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    /// <summary>
-    ///     Attempts to retreive an active event
-    /// </summary>
-    /// <param name="eventId">The id of the event to check if is active</param>
-    /// <param name="event">If an event with the given id was found and is not completed, this will be that event</param>
-    /// <returns><c>true</c> if an event was found with the given ID and that event was not completed, otherwise <c>false</c></returns>
-    /// <remarks>Use this when you are checking for an event that has AutoConsume=true</remarks>
-    public bool HasActiveEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
-    {
-        using var sync = Sync.Enter();
-
-        if (!Events.TryGetValue(eventId, out @event))
-            return false;
-
-        return !@event.Completed;
-    }
-
-    /// <summary>
-    ///     Attempts to consume an event
-    /// </summary>
-    /// <param name="eventId">The id of the event to consume</param>
-    /// <param name="event">If an event with the given Id was present and completed, this will be that event</param>
-    /// <returns><c>true</c> if an event was found with the given ID and that event was in a completed state, otherwise <c>false</c></returns>
-    public bool TryConsumeEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
-    {
-        using var sync = Sync.Enter();
-
-        @event = null;
-
-        if (!Events.TryGetValue(eventId, out var existingEvent))
-            return false;
-
-        if (existingEvent.Completed)
-        {
-            @event = existingEvent;
-
-            return Events.Remove(eventId);
-        }
-
-        return false;
     }
 
     /// <inheritdoc />
@@ -132,6 +69,77 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     }
 
     /// <summary>
+    ///     Adds an event to the collection
+    /// </summary>
+    /// <param name="eventId">The id of the event</param>
+    /// <param name="duration">The duration of the event</param>
+    /// <param name="autoConsume">
+    ///     Whether or not the event should be automatically removed from the collection when it has
+    ///     expired
+    /// </param>
+    /// <exception cref="InvalidOperationException">An event with the same ID already exists</exception>
+    /// <exception cref="ArgumentException">Event ID cannot be null or empty</exception>
+    public void AddEvent(string eventId, TimeSpan duration, bool autoConsume = false)
+    {
+        using var sync = Sync.Enter();
+
+        var timedEvent = new Event(eventId, duration, autoConsume);
+
+        if (string.IsNullOrEmpty(timedEvent.EventId))
+            throw new ArgumentException("Event ID cannot be null or empty", nameof(timedEvent));
+
+        if (!Events.TryAdd(timedEvent.EventId, timedEvent))
+            throw new InvalidOperationException("An event with the same ID already exists");
+    }
+
+    /// <summary>
+    ///     Attempts to retreive an active event
+    /// </summary>
+    /// <param name="eventId">The id of the event to check if is active</param>
+    /// <param name="event">If an event with the given id was found and is not completed, this will be that event</param>
+    /// <returns>
+    ///     <c>true</c> if an event was found with the given ID and that event was not completed, otherwise <c>false</c>
+    /// </returns>
+    /// <remarks>Use this when you are checking for an event that has AutoConsume=true</remarks>
+    public bool HasActiveEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
+    {
+        using var sync = Sync.Enter();
+
+        if (!Events.TryGetValue(eventId, out @event))
+            return false;
+
+        return !@event.Completed;
+    }
+
+    /// <summary>
+    ///     Attempts to consume an event
+    /// </summary>
+    /// <param name="eventId">The id of the event to consume</param>
+    /// <param name="event">If an event with the given Id was present and completed, this will be that event</param>
+    /// <returns>
+    ///     <c>true</c> if an event was found with the given ID and that event was in a completed state, otherwise
+    ///     <c>false</c>
+    /// </returns>
+    public bool TryConsumeEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
+    {
+        using var sync = Sync.Enter();
+
+        @event = null;
+
+        if (!Events.TryGetValue(eventId, out var existingEvent))
+            return false;
+
+        if (existingEvent.Completed)
+        {
+            @event = existingEvent;
+
+            return Events.Remove(eventId);
+        }
+
+        return false;
+    }
+
+    /// <summary>
     ///     An event with timing information
     /// </summary>
     public sealed class Event : IEquatable<Event>
@@ -141,11 +149,6 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         /// </summary>
         [JsonInclude]
         public bool AutoConsume { get; }
-
-        /// <summary>
-        ///     Whether or not the event has completed
-        /// </summary>
-        public bool Completed => Remaining <= TimeSpan.Zero;
 
         /// <summary>
         ///     The duration of the event
@@ -160,15 +163,20 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         public string EventId { get; }
 
         /// <summary>
-        ///     The remaining time of the event
-        /// </summary>
-        public TimeSpan Remaining => Start + Duration - DateTime.UtcNow;
-
-        /// <summary>
         ///     The start time of the event
         /// </summary>
         [JsonInclude]
         public DateTime Start { get; }
+
+        /// <summary>
+        ///     Whether or not the event has completed
+        /// </summary>
+        public bool Completed => Remaining <= TimeSpan.Zero;
+
+        /// <summary>
+        ///     The remaining time of the event
+        /// </summary>
+        public TimeSpan Remaining => Start + Duration - DateTime.UtcNow;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimedEventCollection.Event" /> class

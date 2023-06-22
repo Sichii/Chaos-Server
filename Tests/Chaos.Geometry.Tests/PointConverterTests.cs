@@ -46,8 +46,8 @@ public sealed class PointConverterTests
     [Fact]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsInvalid()
     {
-        var jsonString = "\"invalid\"";
-        var utf8JsonReader = new Utf8JsonReader(Encoding.UTF8.GetBytes(jsonString));
+        const string JSON_STRING = "\"invalid\"";
+        var utf8JsonReader = new Utf8JsonReader(Encoding.UTF8.GetBytes(JSON_STRING));
 
         utf8JsonReader.Read();
 

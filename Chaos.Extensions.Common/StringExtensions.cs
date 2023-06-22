@@ -139,7 +139,8 @@ public static class StringExtensions
     /// <param name="str1"></param>
     /// <param name="str2">The string to seek</param>
     /// <returns>
-    ///     <c>true</c> if the value parameter occurs within this string, or if value is the empty string (""); otherwise, <c>false</c>
+    ///     <c>true</c> if the value parameter occurs within this string, or if value is the empty string (""); otherwise,
+    ///     <c>false</c>
     /// </returns>
     public static bool ContainsI(this string str1, string str2) => str1.Contains(str2, StringComparison.OrdinalIgnoreCase);
 
@@ -410,22 +411,26 @@ public static class StringExtensions
     }
 
     /// <summary>
-    ///     Returns a new string in which all occurrences of a specified string in the current instance are replaced with another specified string
+    ///     Returns a new string in which all occurrences of a specified string in the current instance are replaced with
+    ///     another specified string
     ///     when compared case insensitively
     /// </summary>
     /// <param name="str1"></param>
     /// <param name="oldValue">The string to be replaced</param>
     /// <param name="newValue">The string to replace all occurrences of oldValue</param>
     /// <returns>
-    ///     A string that is equivalent to the current string except that all instances of <paramref name="oldValue" /> are replaced with
-    ///     <paramref name="newValue" />. If <paramref name="oldValue" /> is not found in the current instance, the method returns the current
+    ///     A string that is equivalent to the current string except that all instances of <paramref name="oldValue" /> are
+    ///     replaced with
+    ///     <paramref name="newValue" />. If <paramref name="oldValue" /> is not found in the current instance, the method
+    ///     returns the current
     ///     instance unchanged
     /// </returns>
     public static string ReplaceI(this string str1, string oldValue, string newValue) =>
         str1.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    ///     Determines whether the beginning of this string instance matches the specified string when compared case insensitively.
+    ///     Determines whether the beginning of this string instance matches the specified string when compared case
+    ///     insensitively.
     /// </summary>
     /// <param name="str1"></param>
     /// <param name="str2">The string to compare</param>

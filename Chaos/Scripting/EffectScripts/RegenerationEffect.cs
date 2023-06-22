@@ -9,11 +9,6 @@ namespace Chaos.Scripting.EffectScripts;
 public sealed class RegenerationEffect : ContinuousAnimationEffectBase
 {
     /// <inheritdoc />
-    public override byte Icon => 146;
-    /// <inheritdoc />
-    public override string Name => "Regeneration";
-
-    /// <inheritdoc />
     protected override Animation Animation { get; } = new()
     {
         AnimationSpeed = 100,
@@ -25,6 +20,10 @@ public sealed class RegenerationEffect : ContinuousAnimationEffectBase
     protected override TimeSpan Duration { get; } = TimeSpan.FromSeconds(10);
     /// <inheritdoc />
     protected override IIntervalTimer Interval { get; } = new IntervalTimer(TimeSpan.FromMilliseconds(100));
+    /// <inheritdoc />
+    public override byte Icon => 146;
+    /// <inheritdoc />
+    public override string Name => "Regeneration";
 
     /// <inheritdoc />
     protected override void OnIntervalElapsed()

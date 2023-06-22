@@ -30,6 +30,19 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
         Mapper = mapper;
     }
 
+    public Spell Map(SpellInfo obj) => throw new NotImplementedException();
+
+    SpellInfo IMapperProfile<Spell, SpellInfo>.Map(Spell obj) => new()
+    {
+        CastLines = obj.CastLines,
+        Name = obj.Template.Name,
+        PanelName = obj.PanelDisplayName,
+        Prompt = obj.Template.Prompt ?? string.Empty,
+        Slot = obj.Slot,
+        SpellType = obj.Template.SpellType,
+        Sprite = obj.Template.PanelSprite
+    };
+
     public Spell Map(SpellSchema obj)
     {
         var template = SimpleCache.Get<SpellTemplate>(obj.TemplateKey);
@@ -46,19 +59,6 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
 
         return spell;
     }
-
-    public Spell Map(SpellInfo obj) => throw new NotImplementedException();
-
-    SpellInfo IMapperProfile<Spell, SpellInfo>.Map(Spell obj) => new()
-    {
-        CastLines = obj.CastLines,
-        Name = obj.Template.Name,
-        PanelName = obj.PanelDisplayName,
-        Prompt = obj.Template.Prompt ?? string.Empty,
-        Slot = obj.Slot,
-        SpellType = obj.Template.SpellType,
-        Sprite = obj.Template.PanelSprite
-    };
 
     public SpellSchema Map(Spell obj)
     {

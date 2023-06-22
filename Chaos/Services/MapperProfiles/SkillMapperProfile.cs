@@ -30,6 +30,16 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
         Mapper = mapper;
     }
 
+    public Skill Map(SkillInfo obj) => throw new NotImplementedException();
+
+    SkillInfo IMapperProfile<Skill, SkillInfo>.Map(Skill obj) => new()
+    {
+        Name = obj.Template.Name,
+        PanelName = obj.PanelDisplayName,
+        Slot = obj.Slot,
+        Sprite = obj.Template.PanelSprite
+    };
+
     public Skill Map(SkillSchema obj)
     {
         var template = SimpleCache.Get<SkillTemplate>(obj.TemplateKey);
@@ -46,16 +56,6 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
 
         return skill;
     }
-
-    public Skill Map(SkillInfo obj) => throw new NotImplementedException();
-
-    SkillInfo IMapperProfile<Skill, SkillInfo>.Map(Skill obj) => new()
-    {
-        Name = obj.Template.Name,
-        PanelName = obj.PanelDisplayName,
-        Slot = obj.Slot,
-        Sprite = obj.Template.PanelSprite
-    };
 
     public SkillSchema Map(Skill obj)
     {

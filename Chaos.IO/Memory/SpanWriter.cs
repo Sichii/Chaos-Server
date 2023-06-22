@@ -7,7 +7,8 @@ using Chaos.IO.Definitions;
 namespace Chaos.IO.Memory;
 
 /// <summary>
-///     A ref struct for writing primitive types, strings, and other data to a <see cref="Span{T}" /> with support for endianness and growing.
+///     A ref struct for writing primitive types, strings, and other data to a <see cref="Span{T}" /> with support for
+///     endianness and growing.
 /// </summary>
 public ref struct SpanWriter
 {
@@ -52,7 +53,8 @@ public ref struct SpanWriter
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SpanWriter" /> struct with the specified encoding, initial buffer size, and endianness.
+    ///     Initializes a new instance of the <see cref="SpanWriter" /> struct with the specified encoding, initial buffer
+    ///     size, and endianness.
     /// </summary>
     /// <param name="encoding">The encoding used for writing strings.</param>
     /// <param name="initialBufferSize">The initial size of the buffer.</param>

@@ -38,11 +38,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     private readonly IGroupService GroupService;
     private readonly IMerchantFactory MerchantFactory;
     private readonly IMetaDataStore MetaDataStore;
+    private new WorldOptions Options { get; }
 
     public IEnumerable<Aisling> Aislings => ClientRegistry
                                             .Select(c => c.Aisling)
                                             .Where(player => player != null!);
-    private new WorldOptions Options { get; }
 
     public WorldServer(
         IClientRegistry<IWorldClient> clientRegistry,

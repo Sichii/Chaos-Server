@@ -68,7 +68,8 @@ public readonly struct Location : ILocation, IEquatable<ILocation>
     public override bool Equals(object? obj) => obj is ILocation other && Equals(other);
 
     /// <summary>
-    ///     Creates a new <see cref="Chaos.Geometry.Location" /> from an existing <see cref="Chaos.Geometry.Abstractions.ILocation" />
+    ///     Creates a new <see cref="Chaos.Geometry.Location" /> from an existing
+    ///     <see cref="Chaos.Geometry.Abstractions.ILocation" />
     /// </summary>
     /// <param name="location">An implementation of ILocation</param>
     /// <returns></returns>

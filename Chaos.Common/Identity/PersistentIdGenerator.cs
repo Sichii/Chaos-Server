@@ -13,11 +13,11 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
 {
     private static readonly string FilePath = $"PersistentId{typeof(T).Name}.json";
     private readonly IIdGenerator<T> IdGenerator;
-    /// <inheritdoc />
-    public T NextId => IdGenerator.NextId;
 
     /// <inheritdoc />
     public static IIdGenerator<T> Shared { get; }
+    /// <inheritdoc />
+    public T NextId => IdGenerator.NextId;
 
     static PersistentIdGenerator()
     {

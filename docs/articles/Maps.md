@@ -1,17 +1,22 @@
 # Maps
 
-Chaos uses a map instancing system. What map an object is on is determined by that map's MapInstanceId. This allow multiple maps
-with the same MapId/Name to coexist at the same time. Chaos also has an automatic map sharding system that will be explained later.
+Chaos uses a map instancing system. What map an object is on is determined by that map's MapInstanceId. This allow
+multiple maps
+with the same MapId/Name to coexist at the same time. Chaos also has an automatic map sharding system that will be
+explained later.
 
 ## Map Templates
 
-A map template contains a bare minimum of information about a map. Contained within this project are a large amount of auto-generated map
+A map template contains a bare minimum of information about a map. Contained within this project are a large amount of
+auto-generated map
 templates that should match up to the maps in original Dark Ages.
 
-By default, Map Templates are stored at `Data\Templates\Maps`. Configuration of how map templates are loaded can be found
+By default, Map Templates are stored at `Data\Templates\Maps`. Configuration of how map templates are loaded can be
+found
 in `appsettings.json` at `Options:MapTemplateCacheOptions`.
 
-Map templates are initially serialized into [MapTemplateSchema](<xref:Chaos.Schemas.Templates.MapTemplateSchema>) before being mapped to a
+Map templates are initially serialized into [MapTemplateSchema](<xref:Chaos.Schemas.Templates.MapTemplateSchema>) before
+being mapped to a
 non-schema type.
 
 ### MapTemplateSchema
@@ -26,7 +31,8 @@ non-schema type.
 
 ### Example Map Template Json
 
-Here is an example of a map template json for the map used for Mileth (MapId: 500). As with all template objects, the file name should match
+Here is an example of a map template json for the map used for Mileth (MapId: 500). As with all template objects, the
+file name should match
 the template key. So in this case, the file name is `500.json`, and it is stored in the `Data\Templates\Maps` directory.
 
 [!code-json[](../../Data/Templates/Maps/500.json)]
@@ -57,7 +63,8 @@ in `appsettings.json` at `Options:MapInstanceCacheOptions`.
 
 ## instance.json
 
-`instance.json` is serialized into [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>) before being mapped to a
+`instance.json` is serialized into [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>) before being
+mapped to a
 non-schema type.
 
 ### MapInstanceSchema
@@ -76,14 +83,16 @@ non-schema type.
 
 ### Example instance.json
 
-Here is an example of an `instance.json` for Mileth. Note that this map instance references a `templateKey` of `500`. This is the key of
+Here is an example of an `instance.json` for Mileth. Note that this map instance references a `templateKey` of `500`.
+This is the key of
 the Map Template that this map instance is based on.
 
 [!code-json[](../../Data/MapInstances/mileth/instance.json)]
 
 ### Instance Sharding
 
-When sharding options are specified in the `instance.json` file, automatic sharding will be enabled for that map instance.  
+When sharding options are specified in the `instance.json` file, automatic sharding will be enabled for that map
+instance.  
 See [ShardingOptionsSchema](<xref:Chaos.Schemas.Data.ShardingOptionsSchema>) for more details
 
 ### ShardingOptionsSchema
@@ -96,18 +105,22 @@ See [ShardingOptionsSchema](<xref:Chaos.Schemas.Data.ShardingOptionsSchema>) for
 
 ### Example instance.json with sharding
 
-In this example, this map will shard every time a unique player tries to enter the map. If for any reason the server does not know where to
-put a player that is trying to enter a shard of this map, say for example they log off for an extended period of time and the shard shuts
+In this example, this map will shard every time a unique player tries to enter the map. If for any reason the server
+does not know where to
+put a player that is trying to enter a shard of this map, say for example they log off for an extended period of time
+and the shard shuts
 down, they will be placed in the map instance `testTown` at coordinates `1, 13`
 
 [!code-json[](../../Data/MapInstances/testArea/instance.json)]
 
 ## merchants.json
 
-`merchants.json` is serialized into [MerchantSpawnSchema](<xref:Chaos.Schemas.Content.MerchantSpawnSchema>) before being mapped to
+`merchants.json` is serialized into [MerchantSpawnSchema](<xref:Chaos.Schemas.Content.MerchantSpawnSchema>) before being
+mapped to
 a non-schema type.
 
-Most importantly, there is the ability to add extra script keys to the merchant that are not normally part of it. This allows you to have
+Most importantly, there is the ability to add extra script keys to the merchant that are not normally part of it. This
+allows you to have
 multiple instances of the same merchant that each do slightly different things.
 
 See [the article on merchants](<Merchants.md>) for more information on how to create merchants.
@@ -127,13 +140,15 @@ See [the article on merchants](<Merchants.md>) for more information on how to cr
 
 ## monsters.json
 
-`monsters.json` is serialized into [MonsterSpawnSchema](<xref:Chaos.Schemas.Content.MonsterSpawnSchema>) before being mapped to a non-schema
+`monsters.json` is serialized into [MonsterSpawnSchema](<xref:Chaos.Schemas.Content.MonsterSpawnSchema>) before being
+mapped to a non-schema
 type.
 
 See [the article on monsters](<Monsters.md>) for more information on how to create monsters.  
 See [the article on loot tables](<LootTables.md>) for more information on how to create loot tables.
 
-Similarly to `merchants.json` you can add extra script keys, and various other information to a specific spawn of a monster.
+Similarly to `merchants.json` you can add extra script keys, and various other information to a specific spawn of a
+monster.
 
 ### MonsterSpawnSchema
 
@@ -158,7 +173,8 @@ Similarly to `merchants.json` you can add extra script keys, and various other i
 
 ## reactors.json
 
-`reactors.json` is serialized into [ReactorTileSchema](<xref:Chaos.Schemas.Content.ReactorTileSchema>) before being mapped to a non-schema
+`reactors.json` is serialized into [ReactorTileSchema](<xref:Chaos.Schemas.Content.ReactorTileSchema>) before being
+mapped to a non-schema
 type.
 
 > [!CAUTION]

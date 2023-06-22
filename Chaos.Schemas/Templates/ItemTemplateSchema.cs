@@ -47,12 +47,14 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public Gender? Gender { get; set; }
 
     /// <summary>
-    ///     Whether or not the item can be dyed. This is specifically if an item can have it's colors changed. Town dyes on pre-99 armor is not dye.
+    ///     Whether or not the item can be dyed. This is specifically if an item can have it's colors changed. Town dyes on
+    ///     pre-99 armor is not dye.
     /// </summary>
     public bool IsDyeable { get; set; }
 
     /// <summary>
-    ///     Whether or not an instance of the item can be modified. This is specifically if an item can have it's stats/modifiers changed. Also controls if an item can be affected by meta node mutators.
+    ///     Whether or not an instance of the item can be modified. This is specifically if an item can have it's
+    ///     stats/modifiers changed. Also controls if an item can be affected by meta node mutators.
     /// </summary>
     public bool IsModifiable { get; set; }
 

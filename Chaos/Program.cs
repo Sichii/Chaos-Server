@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Chaos;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 Environment.SetEnvironmentVariable("DOTNET_ReadyToRun", "0");
+Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 //Environment.SetEnvironmentVariable("DOTNET_GCHeapHardLimit", "0x1F400000");
 
 var services = new ServiceCollection();
@@ -22,8 +24,8 @@ var builder = new ConfigurationBuilder()
                     #if DEBUG
                     .AddJsonFile("appsettings.local.json")
                     #else
-                    .AddJsonFile("appsettings.prod.json")
-                    //.AddJsonFile("appsettings.local.json")
+                    //.AddJsonFile("appsettings.prod.json")
+                    .AddJsonFile("appsettings.local.json")
                     #endif
                     ;
 

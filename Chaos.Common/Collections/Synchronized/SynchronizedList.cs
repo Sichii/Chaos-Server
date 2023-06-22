@@ -4,7 +4,8 @@ using Chaos.Common.Synchronization;
 namespace Chaos.Common.Collections.Synchronized;
 
 /// <summary>
-///     Wraps a <see cref="System.Collections.Generic.List{T}" />, entering a lock for each of it's methods. Enumeration will occur on a
+///     Wraps a <see cref="System.Collections.Generic.List{T}" />, entering a lock for each of it's methods. Enumeration
+///     will occur on a
 ///     snapshot.
 /// </summary>
 /// <inheritdoc cref="System.Collections.Generic.List{T}" />
@@ -89,6 +90,8 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
         List.CopyTo(array, arrayIndex);
     }
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     /// <inheritdoc />
     public virtual IEnumerator<T> GetEnumerator()
     {
@@ -100,8 +103,6 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
         foreach (var item in snapshot)
             yield return item;
     }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc cref="IList{T}.IndexOf" />
     public virtual int IndexOf(T item)

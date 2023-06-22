@@ -40,18 +40,6 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
     private IReadOnlyList<KeyValuePair<string, object>> LogValues = null!;
 
     /// <inheritdoc />
-    public KeyValuePair<string, object> this[int index]
-    {
-        get
-        {
-            if (index < LogValues.Count)
-                return LogValues[index];
-
-            return ExtraProperties[index - LogValues.Count];
-        }
-    }
-
-    /// <inheritdoc />
     public int Count => LogValues.Count + ExtraProperties.Count;
 
     public LogEvent(ILogger logger)
@@ -64,13 +52,25 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
     public IDisposable? BeginScope<TState>(TState state) where TState: notnull => Logger.BeginScope(state);
 
     /// <inheritdoc />
-    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => LogValues.Concat(ExtraProperties).GetEnumerator();
-
-    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => LogValues.Concat(ExtraProperties).GetEnumerator();
+
+    /// <inheritdoc />
     public bool IsEnabled(LogLevel logLevel) => Logger.IsEnabled(logLevel);
+
+    /// <inheritdoc />
+    public KeyValuePair<string, object> this[int index]
+    {
+        get
+        {
+            if (index < LogValues.Count)
+                return LogValues[index];
+
+            return ExtraProperties[index - LogValues.Count];
+        }
+    }
 
     /// <inheritdoc />
     public void Log<TState>(

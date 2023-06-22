@@ -21,6 +21,12 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
     /// </summary>
     public FlagCollection() => Flags = new ConcurrentDictionary<Type, Enum>();
 
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<KeyValuePair<Type, Enum>> GetEnumerator() => Flags.GetEnumerator();
+
     /// <summary>
     ///     Adds a flag to an existing flag of the same type, or sets it
     /// </summary>
@@ -45,12 +51,6 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
         else
             Flags.TryAdd(flagType, flagValue);
     }
-
-    /// <inheritdoc />
-    public IEnumerator<KeyValuePair<Type, Enum>> GetEnumerator() => Flags.GetEnumerator();
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
     ///     Gets the flag of the specified type
@@ -77,7 +77,10 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
     /// </summary>
     /// <param name="flag">The flag value to check for</param>
     /// <typeparam name="T">The type of the flag</typeparam>
-    /// <returns><c>true</c> if a flag of the given value was found, and that flag contains the value specified, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if a flag of the given value was found, and that flag contains the value specified, otherwise
+    ///     <c>false</c>
+    /// </returns>
     /// <exception cref="InvalidOperationException">Enum must have flag attribute</exception>
     public bool HasFlag<T>(T flag) where T: Enum
     {

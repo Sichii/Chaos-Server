@@ -11,34 +11,6 @@ namespace Chaos.Scripting.Components;
 
 public class DamageComponent : IComponent
 {
-    protected virtual int CalculateDamage(
-        Creature source,
-        Creature target,
-        int? baseDamage = null,
-        decimal? pctHpDamage = null,
-        Stat? damageStat = null,
-        decimal? damageStatMultiplier = null
-    )
-    {
-        var finalDamage = baseDamage ?? 0;
-
-        finalDamage += MathEx.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
-
-        if (!damageStat.HasValue)
-            return finalDamage;
-
-        if (!damageStatMultiplier.HasValue)
-        {
-            finalDamage += source.StatSheet.GetEffectiveStat(damageStat.Value);
-
-            return finalDamage;
-        }
-
-        finalDamage += Convert.ToInt32(source.StatSheet.GetEffectiveStat(damageStat.Value) * damageStatMultiplier.Value);
-
-        return finalDamage;
-    }
-
     /// <inheritdoc />
     public virtual void Execute(ActivationContext context, ComponentVars vars)
     {
@@ -65,6 +37,34 @@ public class DamageComponent : IComponent
                 damage,
                 options.Element);
         }
+    }
+
+    protected virtual int CalculateDamage(
+        Creature source,
+        Creature target,
+        int? baseDamage = null,
+        decimal? pctHpDamage = null,
+        Stat? damageStat = null,
+        decimal? damageStatMultiplier = null
+    )
+    {
+        var finalDamage = baseDamage ?? 0;
+
+        finalDamage += MathEx.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
+
+        if (!damageStat.HasValue)
+            return finalDamage;
+
+        if (!damageStatMultiplier.HasValue)
+        {
+            finalDamage += source.StatSheet.GetEffectiveStat(damageStat.Value);
+
+            return finalDamage;
+        }
+
+        finalDamage += Convert.ToInt32(source.StatSheet.GetEffectiveStat(damageStat.Value) * damageStatMultiplier.Value);
+
+        return finalDamage;
     }
 
     public interface IDamageComponentOptions

@@ -9,7 +9,6 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
 {
     public DateTime Creation { get; init; } = DateTime.UtcNow;
     public uint Id { get; init; } = SequentialIdGenerator<uint>.Shared.NextId;
-
     public static IEqualityComparer<WorldEntity> IdComparer { get; } = new IdEqualityComparer();
 
     public bool Equals(WorldEntity? other)

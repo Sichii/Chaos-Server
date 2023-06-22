@@ -9,14 +9,6 @@ namespace Chaos.Services.MapperProfiles;
 public sealed class LegendMapperProfile : IMapperProfile<LegendMark, LegendMarkSchema>,
                                           IMapperProfile<LegendMark, LegendMarkInfo>
 {
-    public LegendMark Map(LegendMarkSchema obj) => new(
-        obj.Text,
-        obj.Key,
-        obj.Icon,
-        obj.Color,
-        obj.Count,
-        GameTime.FromDateTime(obj.Added));
-
     public LegendMark Map(LegendMarkInfo obj) => throw new NotImplementedException();
 
     LegendMarkInfo IMapperProfile<LegendMark, LegendMarkInfo>.Map(LegendMark obj) => new()
@@ -26,6 +18,14 @@ public sealed class LegendMapperProfile : IMapperProfile<LegendMark, LegendMarkS
         Key = obj.Key,
         Text = obj.ToString()
     };
+
+    public LegendMark Map(LegendMarkSchema obj) => new(
+        obj.Text,
+        obj.Key,
+        obj.Icon,
+        obj.Color,
+        obj.Count,
+        GameTime.FromDateTime(obj.Added));
 
     public LegendMarkSchema Map(LegendMark obj) => new()
     {

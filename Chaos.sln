@@ -142,6 +142,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Cryptography.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.IO.Tests", "Tests\Chaos.IO.Tests\Chaos.IO.Tests.csproj", "{56A0DA66-ACF4-47E7-873B-DC246948ED02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Messaging.Tests", "Tests\Chaos.Messaging.Tests\Chaos.Messaging.Tests.csproj", "{A6A835CD-FBB6-4F60-98F1-5A067FC30A83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -316,6 +318,10 @@ Global
 		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56A0DA66-ACF4-47E7-873B-DC246948ED02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6A835CD-FBB6-4F60-98F1-5A067FC30A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6A835CD-FBB6-4F60-98F1-5A067FC30A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6A835CD-FBB6-4F60-98F1-5A067FC30A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6A835CD-FBB6-4F60-98F1-5A067FC30A83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -347,6 +353,7 @@ Global
 		{0DAB625B-53E6-451F-81E0-670FD6521387} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{F5F1CE2B-86E5-48C6-9092-9D28962DBB0A} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{56A0DA66-ACF4-47E7-873B-DC246948ED02} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
+		{A6A835CD-FBB6-4F60-98F1-5A067FC30A83} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}

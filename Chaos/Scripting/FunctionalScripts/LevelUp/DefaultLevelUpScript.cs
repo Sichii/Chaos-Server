@@ -11,7 +11,6 @@ namespace Chaos.Scripting.FunctionalScripts.LevelUp;
 public class DefaultLevelUpScript : ScriptBase, ILevelUpScript
 {
     public ILevelUpFormula LevelUpFormula { get; set; }
-
     /// <inheritdoc />
     public static string Key { get; } = GetScriptKey(typeof(DefaultLevelUpScript));
 

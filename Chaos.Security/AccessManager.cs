@@ -111,6 +111,67 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         return result;
     }
 
+    /// <inheritdoc />
+    public async Task<CredentialValidationResult> SaveNewCredentialsAsync(IPAddress ipAddress, string name, string password)
+    {
+        await using var sync = await CredentialSync.WaitAsync();
+
+        var result = ValidateUserNameRules(name);
+
+        if (!result.Success)
+            return result;
+
+        result = ValidatePasswordRules(password);
+
+        if (!result.Success)
+            return result;
+
+        var characterDir = Path.Combine(Options.Directory, name);
+
+        if (Directory.Exists(characterDir))
+            return new CredentialValidationResult
+            {
+                Code = CredentialValidationResult.FailureCode.InvalidUsername,
+                FailureMessage = "Username is taken"
+            };
+
+        Directory.CreateDirectory(characterDir);
+        var hash = ComputeHash(password);
+
+        var passwordPath = Path.Combine(characterDir, "password.txt");
+        await File.WriteAllTextAsync(passwordPath, hash);
+
+        return CredentialValidationResult.SuccessResult;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> ShouldAllowAsync(IPAddress ipAddress)
+    {
+        await using var @lock = await AccessSync.WaitAsync();
+
+        return Options.Mode switch
+        {
+            IpAccessMode.Blacklist => !await IsBlacklisted(ipAddress),
+            IpAccessMode.Whitelist => await IsWhitelisted(ipAddress),
+            _                      => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    /// <inheritdoc />
+    public async Task<CredentialValidationResult> ValidateCredentialsAsync(IPAddress ipAddress, string name, string password)
+    {
+        await using var sync = await CredentialSync.WaitAsync();
+
+        var result = await InnerValidateCredentialsAsync(ipAddress, name, password);
+
+        if (result is { Success: false, Code: CredentialValidationResult.FailureCode.TooManyAttempts })
+            Logger.LogWarning(
+                "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to log in",
+                ipAddress.ToString());
+
+        return result;
+    }
+
     /// <summary>
     ///     Computes a hash for the given password
     /// </summary>
@@ -154,7 +215,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <param name="ipAddress">The ip address of the client</param>
     /// <param name="name">The name to validate</param>
     /// <param name="password">The password to validate</param>
-    /// <returns><c>true</c> if the username exists, and the password specified matches the record, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if the username exists, and the password specified matches the record, otherwise <c>false</c>
+    /// </returns>
     private async Task<CredentialValidationResult> InnerValidateCredentialsAsync(IPAddress ipAddress, string name, string password)
     {
         var ipStr = ipAddress.ToString();
@@ -218,67 +281,6 @@ public sealed class AccessManager : BackgroundService, IAccessManager
                   .Select(line => IPAddress.TryParse(line, out var ip) ? ip : null)
                   .Where(obj => obj is not null)
                   .ContainsAsync(ipAddress);
-
-    /// <inheritdoc />
-    public async Task<CredentialValidationResult> SaveNewCredentialsAsync(IPAddress ipAddress, string name, string password)
-    {
-        await using var sync = await CredentialSync.WaitAsync();
-
-        var result = ValidateUserNameRules(name);
-
-        if (!result.Success)
-            return result;
-
-        result = ValidatePasswordRules(password);
-
-        if (!result.Success)
-            return result;
-
-        var characterDir = Path.Combine(Options.Directory, name);
-
-        if (Directory.Exists(characterDir))
-            return new CredentialValidationResult
-            {
-                Code = CredentialValidationResult.FailureCode.InvalidUsername,
-                FailureMessage = "Username is taken"
-            };
-
-        Directory.CreateDirectory(characterDir);
-        var hash = ComputeHash(password);
-
-        var passwordPath = Path.Combine(characterDir, "password.txt");
-        await File.WriteAllTextAsync(passwordPath, hash);
-
-        return CredentialValidationResult.SuccessResult;
-    }
-
-    /// <inheritdoc />
-    public async Task<bool> ShouldAllowAsync(IPAddress ipAddress)
-    {
-        await using var @lock = await AccessSync.WaitAsync();
-
-        return Options.Mode switch
-        {
-            IpAccessMode.Blacklist => !await IsBlacklisted(ipAddress),
-            IpAccessMode.Whitelist => await IsWhitelisted(ipAddress),
-            _                      => throw new ArgumentOutOfRangeException()
-        };
-    }
-
-    /// <inheritdoc />
-    public async Task<CredentialValidationResult> ValidateCredentialsAsync(IPAddress ipAddress, string name, string password)
-    {
-        await using var sync = await CredentialSync.WaitAsync();
-
-        var result = await InnerValidateCredentialsAsync(ipAddress, name, password);
-
-        if (result is { Success: false, Code: CredentialValidationResult.FailureCode.TooManyAttempts })
-            Logger.LogWarning(
-                "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to log in",
-                ipAddress.ToString());
-
-        return result;
-    }
 
     /// <summary>
     ///     Validates a password against the rules specified in the configuration

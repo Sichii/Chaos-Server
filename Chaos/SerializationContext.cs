@@ -8,6 +8,7 @@ using Chaos.Models.Data;
 using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
+using Chaos.Schemas.Guilds;
 using Chaos.Schemas.MetaData;
 using Chaos.Schemas.Templates;
 
@@ -24,6 +25,8 @@ namespace Chaos;
 [JsonSerializable(typeof(EventMetaSchema))]
 [JsonSerializable(typeof(Animation))]
 //schemas
+[JsonSerializable(typeof(GuildSchema))]
+[JsonSerializable(typeof(GuildRankSchema))]
 [JsonSerializable(typeof(AislingSchema))]
 [JsonSerializable(typeof(ItemRequirementSchema))]
 [JsonSerializable(typeof(LearningRequirementsSchema))]
@@ -73,6 +76,7 @@ namespace Chaos;
 [JsonSerializable(typeof(List<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(List<ChannelSettingsSchema>))]
 [JsonSerializable(typeof(List<ItemDetailsSchema>))]
+[JsonSerializable(typeof(List<GuildRankSchema>))]
 [JsonSerializable(typeof(ICollection<ItemSchema>))]
 [JsonSerializable(typeof(ICollection<SkillSchema>))]
 [JsonSerializable(typeof(ICollection<SpellSchema>))]
@@ -85,6 +89,7 @@ namespace Chaos;
 [JsonSerializable(typeof(ICollection<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(ICollection<ChannelSettingsSchema>))]
 [JsonSerializable(typeof(ICollection<ItemDetailsSchema>))]
+[JsonSerializable(typeof(ICollection<GuildRankSchema>))]
 [JsonSerializable(typeof(IEnumerable<ItemSchema>))]
 [JsonSerializable(typeof(IEnumerable<SkillSchema>))]
 [JsonSerializable(typeof(IEnumerable<SpellSchema>))]
@@ -97,6 +102,7 @@ namespace Chaos;
 [JsonSerializable(typeof(IEnumerable<MundaneIllustrationMetaSchema>))]
 [JsonSerializable(typeof(IEnumerable<ChannelSettingsSchema>))]
 [JsonSerializable(typeof(IEnumerable<ItemDetailsSchema>))]
+[JsonSerializable(typeof(IEnumerable<GuildRankSchema>))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(Dictionary<string, JsonElement>))]
 [JsonSerializable(typeof(Dictionary<string, int>))]

@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 namespace Chaos.Schemas.MetaData;
 
 /// <summary>
-///     Represents the serializable schema of the details of a mundane illustration as part of the mundane illustrations meta data
+///     Represents the serializable schema of the details of a mundane illustration as part of the mundane illustrations
+///     meta data
 /// </summary>
 public sealed record MundaneIllustrationMetaSchema
 {

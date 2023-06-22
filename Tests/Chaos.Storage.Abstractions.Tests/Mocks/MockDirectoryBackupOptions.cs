@@ -1,6 +1,6 @@
 namespace Chaos.Storage.Abstractions.Tests.Mocks;
 
-public sealed class MockBackedUpFileStoreOptions : IBackedUpFileStoreOptions
+public sealed class MockDirectoryBackupOptions : IDirectoryBackupOptions
 {
     /// <inheritdoc />
     public string BackupDirectory { get; set; } = null!;

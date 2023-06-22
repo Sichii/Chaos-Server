@@ -19,8 +19,10 @@ public static class PointExtensions
     /// <returns>An enumeration of points in the shape of a cone</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <remarks>
-    ///     The <paramref name="maxDistance" /> is the maximum distance the cone extends from the starting point, however there will be points
-    ///     that are part of the cone that are farther than <paramref name="maxDistance" /> distance from the starting point. This is because the
+    ///     The <paramref name="maxDistance" /> is the maximum distance the cone extends from the starting point, however there
+    ///     will be points
+    ///     that are part of the cone that are farther than <paramref name="maxDistance" /> distance from the starting point.
+    ///     This is because the
     ///     forward edges and the center of the cone both extend the same number of spaces in the given direction.
     /// </remarks>
     public static IEnumerable<Point> ConalSearch(this IPoint point, Direction direction, int maxDistance)
@@ -46,7 +48,8 @@ public static class PointExtensions
     /// <param name="direction">The direction to offset to</param>
     /// <param name="distance">The distance to offset by</param>
     /// <returns>
-    ///     A new <see cref="Chaos.Geometry.Point" /> offset <paramref name="distance" /> number of tiles in <paramref name="direction" />
+    ///     A new <see cref="Chaos.Geometry.Point" /> offset <paramref name="distance" /> number of tiles in
+    ///     <paramref name="direction" />
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
@@ -74,7 +77,8 @@ public static class PointExtensions
     /// <param name="point">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> whose relation to another to find</param>
     /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to find the relation to</param>
     /// <returns>
-    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> <paramref name="other" /> would need to face to be facing
+    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> <paramref name="other" /> would need to face
+    ///     to be facing
     ///     <paramref name="point" />
     /// </returns>
     public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
@@ -191,7 +195,8 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Lazily generates an enumeration of points in a line from the user, with an option for distance and direction. Direction.All is
+    ///     Lazily generates an enumeration of points in a line from the user, with an option for distance and direction.
+    ///     Direction.All is
     ///     optional. Direction.Invalid direction returns empty list.
     /// </summary>
     /// <param name="start"></param>
@@ -199,7 +204,8 @@ public static class PointExtensions
     /// <param name="radius">The max distance to generate points</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="radius" /> must be positive</exception>
     /// <remarks>
-    ///     Assumes <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal direction "North", this
+    ///     Assumes <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal direction
+    ///     "North", this
     ///     method will generate points in all 4
     ///     cardinal directions. Points will be generated 1 radius at a time, clock-wise.
     /// </remarks>
@@ -230,17 +236,21 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Lazily generates an enumeration of diagonal points in relevance to the user, with an optional distance and direction.
+    ///     Lazily generates an enumeration of diagonal points in relevance to the user, with an optional distance and
+    ///     direction.
     ///     Direction.All is optional. Direction.Invalid direction returns an empty enumeration
     /// </summary>
     /// <param name="start"></param>
     /// <param name="direction">The general direction to generate points for. See remarks.</param>
     /// <param name="radius">The range in which to generate points</param>
     /// <remarks>
-    ///     Assuming <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal direction "North", this
+    ///     Assuming <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal
+    ///     direction "North", this
     ///     method will generate points in the
-    ///     inter-cardinal directions "North-East", "South-East", "South-West", and "North-West". Points will be generated 1 radius at a time,
-    ///     clock-wise. Optionally, you can choose a cardinal <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to generate points
+    ///     inter-cardinal directions "North-East", "South-East", "South-West", and "North-West". Points will be generated 1
+    ///     radius at a time,
+    ///     clock-wise. Optionally, you can choose a cardinal <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" />
+    ///     to generate points
     ///     for the 2 inter-cardinal directions that
     ///     share the given cardinal direction.
     /// </remarks>
@@ -358,11 +368,14 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Offsets one <see cref="Chaos.Geometry.Abstractions.IPoint" /> towards another <see cref="Chaos.Geometry.Abstractions.IPoint" />
+    ///     Offsets one <see cref="Chaos.Geometry.Abstractions.IPoint" /> towards another
+    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
     /// <param name="point"></param>
     /// <param name="other">The point to offset towards</param>
-    /// <returns>A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" /></returns>
+    /// <returns>
+    ///     A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" />
+    /// </returns>
     public static Point OffsetTowards(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -381,7 +394,8 @@ public static class PointExtensions
     /// <param name="start">The starting point</param>
     /// <param name="end">The ending point</param>
     /// <remarks>
-    ///     This will enumerate all points between <paramref name="start" /> and <paramref name="end" /> as if a line had been drawn perfectly
+    ///     This will enumerate all points between <paramref name="start" /> and <paramref name="end" /> as if a line had been
+    ///     drawn perfectly
     ///     between the two points. Any point the line crosses over will be returned. <br />
     /// </remarks>
     public static IEnumerable<Point> RayTraceTo(this IPoint start, IPoint end)
@@ -418,12 +432,16 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Lazily generates points around a given point. The search expands outwards from the given point until it reaches the specified max
+    ///     Lazily generates points around a given point. The search expands outwards from the given point until it reaches the
+    ///     specified max
     ///     distance
     /// </summary>
     /// <param name="point">The point to search around</param>
     /// <param name="maxRadius">The maximum distance from the <paramref name="point" /> to search</param>
-    /// <remarks>The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> and searches clock-wise</remarks>
+    /// <remarks>
+    ///     The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> and searches
+    ///     clock-wise
+    /// </remarks>
     public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
     {
         var currentPoint = Point.From(point);

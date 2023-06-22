@@ -47,6 +47,14 @@ public sealed class Guild : IDedicatedChannel
             ServerMessageType.GuildChat);
     }
 
+    /// <inheritdoc />
+    public void JoinChannel(IChannelSubscriber subscriber) => ChannelService.JoinChannel(subscriber, ChannelName, true);
+
+    /// <inheritdoc />
+    public void LeaveChannel(IChannelSubscriber subscriber) => ChannelService.LeaveChannel(subscriber, ChannelName);
+
+    public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);
+
     public void AddMember(Aisling aisling, Aisling by)
     {
         ArgumentNullException.ThrowIfNull(aisling);
@@ -194,9 +202,6 @@ public sealed class Guild : IDedicatedChannel
         GuildHierarchy.AddRange(guildHierarchy);
     }
 
-    /// <inheritdoc />
-    public void JoinChannel(IChannelSubscriber subscriber) => ChannelService.JoinChannel(subscriber, ChannelName, true);
-
     public bool KickMember(string memberName, Aisling by)
     {
         ArgumentException.ThrowIfNullOrEmpty(memberName);
@@ -254,9 +259,6 @@ public sealed class Guild : IDedicatedChannel
         return true;
     }
 
-    /// <inheritdoc />
-    public void LeaveChannel(IChannelSubscriber subscriber) => ChannelService.LeaveChannel(subscriber, ChannelName);
-
     public GuildRank RankOf(string name)
     {
         using var @lock = Sync.Enter();
@@ -269,8 +271,6 @@ public sealed class Guild : IDedicatedChannel
         return DeepClone.CreateRequired(ret);
     }
 
-    public void SendMessage(IChannelSubscriber from, string message) => ChannelService.SendMessage(from, ChannelName, message);
-
     public bool TryGetRank(string rankName, [MaybeNullWhen(false)] out GuildRank guildRank)
     {
         guildRank = null;
@@ -281,7 +281,7 @@ public sealed class Guild : IDedicatedChannel
         if (!UnsafeTryGetRank(rankName, out var rank))
             return false;
 
-        guildRank = DeepClone.CreateRequired(rank)!;
+        guildRank = DeepClone.CreateRequired(rank);
 
         return true;
     }
@@ -295,7 +295,7 @@ public sealed class Guild : IDedicatedChannel
         if (!UnsafeTryGetRank(tier, out var rank))
             return false;
 
-        guildRank = DeepClone.CreateRequired(rank)!;
+        guildRank = DeepClone.CreateRequired(rank);
 
         return true;
     }

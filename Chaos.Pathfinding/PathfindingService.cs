@@ -25,27 +25,6 @@ public sealed class PathfindingService : IPathfindingService
         MemoryCache = memoryCache;
     }
 
-    private string ConstructKey(string key) => $"{KEY_PREFIX}{key}".ToLowerInvariant();
-
-    private IPathfinder CreatePathfinder(ICacheEntry cacheEntry)
-    {
-        cacheEntry.SetSlidingExpiration(TimeSpan.FromMinutes(60));
-
-        var key = cacheEntry.Key.ToString();
-
-        if (string.IsNullOrEmpty(key))
-            throw new InvalidOperationException("Key cannot be null or empty");
-
-        var keyActual = DeconstructKey(key);
-
-        if (!GridDetails.TryGetValue(keyActual, out var gridDetails))
-            throw new KeyNotFoundException($"{keyActual} not found for pathfinder grid details");
-
-        return new Pathfinder(gridDetails);
-    }
-
-    private string DeconstructKey(string key) => key.Replace(KEY_PREFIX, string.Empty, StringComparison.OrdinalIgnoreCase);
-
     /// <summary>
     ///     Finds a path between two points
     /// </summary>
@@ -54,7 +33,10 @@ public sealed class PathfindingService : IPathfindingService
     /// <param name="end">The ending point</param>
     /// <param name="ignoreWalls">Whether or not to ignore walls</param>
     /// <param name="blocked">A collection of extra unwalkable points such as creatures</param>
-    /// <param name="limitRadius">Specify a max radius to use for path calculation, this can help with performance by limiting node discovery</param>
+    /// <param name="limitRadius">
+    ///     Specify a max radius to use for path calculation, this can help with performance by limiting
+    ///     node discovery
+    /// </param>
     /// <returns></returns>
     public Direction Pathfind(
         string gridKey,
@@ -99,4 +81,25 @@ public sealed class PathfindingService : IPathfindingService
 
         return pathFinder!.Wander(start, ignoreWalls, blocked);
     }
+
+    private string ConstructKey(string key) => $"{KEY_PREFIX}{key}".ToLowerInvariant();
+
+    private IPathfinder CreatePathfinder(ICacheEntry cacheEntry)
+    {
+        cacheEntry.SetSlidingExpiration(TimeSpan.FromMinutes(60));
+
+        var key = cacheEntry.Key.ToString();
+
+        if (string.IsNullOrEmpty(key))
+            throw new InvalidOperationException("Key cannot be null or empty");
+
+        var keyActual = DeconstructKey(key);
+
+        if (!GridDetails.TryGetValue(keyActual, out var gridDetails))
+            throw new KeyNotFoundException($"{keyActual} not found for pathfinder grid details");
+
+        return new Pathfinder(gridDetails);
+    }
+
+    private string DeconstructKey(string key) => key.Replace(KEY_PREFIX, string.Empty, StringComparison.OrdinalIgnoreCase);
 }

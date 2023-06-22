@@ -10,16 +10,6 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 {
     private readonly ICloningService<Item> ItemCloner;
 
-    public override Item? this[string name]
-    {
-        get
-        {
-            using var @lock = Sync.Enter();
-
-            return this.FirstOrDefault(i => i.DisplayName.EqualsI(name));
-        }
-    }
-
     /// <summary>
     ///     Used for character creation
     /// </summary>
@@ -82,6 +72,16 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         using var @lock = Sync.Enter();
 
         return CountOfByTemplateKey(templateKey) >= quantity;
+    }
+
+    public override Item? this[string name]
+    {
+        get
+        {
+            using var @lock = Sync.Enter();
+
+            return this.FirstOrDefault(i => i.DisplayName.EqualsI(name));
+        }
     }
 
     /// <inheritdoc />
@@ -368,53 +368,6 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
     public bool TryAddDirect(byte slot, Item obj) => base.TryAdd(slot, obj);
 
-    private bool TryAddStackable(Item obj, byte? preferredSlot = null)
-    {
-        if (!obj.Template.Stackable)
-            return false;
-
-        if (obj.Count == 0)
-            obj.Count = 1;
-
-        using var @lock = Sync.Enter();
-
-        var items = Objects.Where(i => i != null)
-                           .ToList();
-
-        //if there is a preferred slot, consider that slot first when adding
-        if (preferredSlot.HasValue && (Objects[preferredSlot.Value] != null))
-        {
-            var preferredItem = Objects[preferredSlot.Value];
-
-            items = items.Where(i => i!.Slot != preferredSlot.Value)
-                         .Prepend(preferredItem)
-                         .ToList();
-        }
-
-        foreach (var item in items)
-            if (item!.DisplayName.Equals(obj.DisplayName, StringComparison.OrdinalIgnoreCase)
-                && (item.Count < item.Template.MaxStacks))
-            {
-                var incomingStacks = obj.Count;
-                var existingStacks = item.Count;
-                var amountPossible = item.Template.MaxStacks - existingStacks;
-
-                if (amountPossible == 0)
-                    continue;
-
-                var amountToAdd = Math.Clamp(obj.Count, 1, amountPossible);
-
-                item.Count = (ushort)(existingStacks + amountToAdd);
-                obj.Count = (ushort)Math.Clamp(incomingStacks - amountToAdd, 0, obj.Count);
-                BroadcastOnUpdated(item.Slot, item);
-
-                if (obj.Count <= 0)
-                    return true;
-            }
-
-        return false;
-    }
-
     public override bool TryAddToNextSlot(Item obj)
     {
         using var @lock = Sync.Enter();
@@ -481,5 +434,52 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             Update(slot1, i => i.Count -= stacksToGive);
 
         return true;
+    }
+
+    private bool TryAddStackable(Item obj, byte? preferredSlot = null)
+    {
+        if (!obj.Template.Stackable)
+            return false;
+
+        if (obj.Count == 0)
+            obj.Count = 1;
+
+        using var @lock = Sync.Enter();
+
+        var items = Objects.Where(i => i != null)
+                           .ToList();
+
+        //if there is a preferred slot, consider that slot first when adding
+        if (preferredSlot.HasValue && (Objects[preferredSlot.Value] != null))
+        {
+            var preferredItem = Objects[preferredSlot.Value];
+
+            items = items.Where(i => i!.Slot != preferredSlot.Value)
+                         .Prepend(preferredItem)
+                         .ToList();
+        }
+
+        foreach (var item in items)
+            if (item!.DisplayName.Equals(obj.DisplayName, StringComparison.OrdinalIgnoreCase)
+                && (item.Count < item.Template.MaxStacks))
+            {
+                var incomingStacks = obj.Count;
+                var existingStacks = item.Count;
+                var amountPossible = item.Template.MaxStacks - existingStacks;
+
+                if (amountPossible == 0)
+                    continue;
+
+                var amountToAdd = Math.Clamp(obj.Count, 1, amountPossible);
+
+                item.Count = (ushort)(existingStacks + amountToAdd);
+                obj.Count = (ushort)Math.Clamp(incomingStacks - amountToAdd, 0, obj.Count);
+                BroadcastOnUpdated(item.Slot, item);
+
+                if (obj.Count <= 0)
+                    return true;
+            }
+
+        return false;
     }
 }

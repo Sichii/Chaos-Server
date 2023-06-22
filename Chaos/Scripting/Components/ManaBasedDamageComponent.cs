@@ -11,6 +11,26 @@ namespace Chaos.Scripting.Components;
 
 public class ManaBasedDamageComponent : IComponent
 {
+    /// <inheritdoc />
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions<IManaBasedDamageComponentOptions>();
+        var targets = vars.GetTargets<Creature>();
+
+        var damage = CalculateDamage(context, options);
+
+        if (damage <= 0)
+            return;
+
+        foreach (var target in targets)
+            options.ApplyDamageScript.ApplyDamage(
+                context.Source,
+                target,
+                options.SourceScript,
+                damage,
+                options.Element);
+    }
+
     protected virtual int CalculateDamage(
         ActivationContext context,
         IManaBasedDamageComponentOptions options
@@ -34,26 +54,6 @@ public class ManaBasedDamageComponent : IComponent
             finalDamage = Convert.ToInt32(finalDamage * options.FinalMultiplier.Value);
 
         return finalDamage;
-    }
-
-    /// <inheritdoc />
-    public void Execute(ActivationContext context, ComponentVars vars)
-    {
-        var options = vars.GetOptions<IManaBasedDamageComponentOptions>();
-        var targets = vars.GetTargets<Creature>();
-
-        var damage = CalculateDamage(context, options);
-
-        if (damage <= 0)
-            return;
-
-        foreach (var target in targets)
-            options.ApplyDamageScript.ApplyDamage(
-                context.Source,
-                target,
-                options.SourceScript,
-                damage,
-                options.Element);
     }
 
     public interface IManaBasedDamageComponentOptions

@@ -1,6 +1,7 @@
 {
-  "rankName": "Leader",
   "members": [
     "mink"
-  ]
+  ],
+  "rankName": "Leader",
+  "tier": 0
 }

@@ -9,7 +9,6 @@ public abstract class MapEntity : WorldEntity, ILocation
     public MapInstance MapInstance { get; set; }
     public int X { get; private set; }
     public int Y { get; private set; }
-
     string ILocation.Map => MapInstance.InstanceId;
 
     protected MapEntity(MapInstance mapInstance, IPoint point)

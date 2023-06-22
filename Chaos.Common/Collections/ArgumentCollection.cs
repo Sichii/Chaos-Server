@@ -22,7 +22,8 @@ public sealed class ArgumentCollection : IEnumerable<string>
     public int Count => Arguments.Count;
 
     /// <summary>
-    ///     Creates an <see cref="ArgumentCollection" /> from a sequence of strings. Strings will be split by the given delimiter if one is
+    ///     Creates an <see cref="ArgumentCollection" /> from a sequence of strings. Strings will be split by the given
+    ///     delimiter if one is
     ///     provided.
     /// </summary>
     /// <param name="arguments">A sequence of argument strings</param>
@@ -38,7 +39,8 @@ public sealed class ArgumentCollection : IEnumerable<string>
     }
 
     /// <summary>
-    ///     Creates an <see cref="ArgumentCollection" /> from a string. String will be parsed for arguments using the " " as a delimiter, but
+    ///     Creates an <see cref="ArgumentCollection" /> from a string. String will be parsed for arguments using the " " as a
+    ///     delimiter, but
     ///     keeping double quoted strings intact.
     /// </summary>
     /// <param name="argumentStr">A string containing arguments</param>
@@ -57,7 +59,8 @@ public sealed class ArgumentCollection : IEnumerable<string>
     }
 
     /// <summary>
-    ///     Creates an <see cref="ArgumentCollection" /> from a string. String will be parsed for arguments using the given delimiter.
+    ///     Creates an <see cref="ArgumentCollection" /> from a string. String will be parsed for arguments using the given
+    ///     delimiter.
     /// </summary>
     /// <param name="argumentStr">A string containing arguments</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
@@ -68,8 +71,15 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </summary>
     public ArgumentCollection() => Arguments = new List<string>();
 
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<string> GetEnumerator() => Arguments.GetEnumerator();
+
     /// <summary>
-    ///     Adds a sequence of strings to the end of the collection. Strings will be split by the given delimiter if one is provided.
+    ///     Adds a sequence of strings to the end of the collection. Strings will be split by the given delimiter if one is
+    ///     provided.
     /// </summary>
     /// <param name="arguments">A sequence of string arguments</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
@@ -82,14 +92,16 @@ public sealed class ArgumentCollection : IEnumerable<string>
     }
 
     /// <summary>
-    ///     Adds a string or argument to the end of the collection. The string will be split by the given delimiter if one is provided.
+    ///     Adds a string or argument to the end of the collection. The string will be split by the given delimiter if one is
+    ///     provided.
     /// </summary>
     /// <param name="argument">A string containing arguments</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
     public void Add(string argument, string? delimiter) => Add(new[] { argument }, delimiter);
 
     /// <summary>
-    ///     Adds a string or argument to the end of the collection. The string will be parsed for arguments using the " " as a delimiter, but
+    ///     Adds a string or argument to the end of the collection. The string will be parsed for arguments using the " " as a
+    ///     delimiter, but
     ///     keeping double quoted strings intact.
     /// </summary>
     /// <param name="argument">A string containing arguments</param>
@@ -104,12 +116,6 @@ public sealed class ArgumentCollection : IEnumerable<string>
             Arguments.Add(!string.IsNullOrEmpty(grp) ? grp : match.Groups[2].Value);
         }
     }
-
-    /// <inheritdoc />
-    public IEnumerator<string> GetEnumerator() => Arguments.GetEnumerator();
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public override string ToString()
@@ -133,7 +139,10 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// <param name="index">The index to fetch the argument from</param>
     /// <param name="value">The argument converted to the specified type</param>
     /// <typeparam name="T">The type to convert the argument to</typeparam>
-    /// <returns><c>true</c> if an argument exists at the given index and is convertible to the specified type, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if an argument exists at the given index and is convertible to the specified type, otherwise
+    ///     <c>false</c>
+    /// </returns>
     public bool TryGet<T>(int index, [MaybeNullWhen(false)] out T value)
     {
         value = default;
@@ -163,7 +172,10 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </summary>
     /// <param name="value">The argument converted to the specified type</param>
     /// <typeparam name="T">The type to convert the argument to</typeparam>
-    /// <returns><c>true</c> if an argument exists at the next index and is convertible to the specified type, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if an argument exists at the next index and is convertible to the specified type, otherwise
+    ///     <c>false</c>
+    /// </returns>
     public bool TryGetNext<T>([MaybeNullWhen(false)] out T value)
     {
         var result = TryGet(Index, out value);

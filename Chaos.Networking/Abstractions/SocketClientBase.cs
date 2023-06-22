@@ -32,15 +32,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// </summary>
     public bool LogRawPackets { get; set; }
     /// <inheritdoc />
-    public event EventHandler? OnDisconnected;
-    /// <inheritdoc />
     public uint Id { get; }
-    /// <inheritdoc />
-    public FifoSemaphoreSlim ReceiveSync { get; }
-    /// <inheritdoc />
-    public IPAddress RemoteIp { get; }
-    /// <inheritdoc />
-    public Socket Socket { get; }
     /// <summary>
     ///     The logger for logging client-related events
     /// </summary>
@@ -49,6 +41,12 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     ///     The packet serializer for serializing and deserializing packets
     /// </summary>
     protected IPacketSerializer PacketSerializer { get; }
+    /// <inheritdoc />
+    public FifoSemaphoreSlim ReceiveSync { get; }
+    /// <inheritdoc />
+    public IPAddress RemoteIp { get; }
+    /// <inheritdoc />
+    public Socket Socket { get; }
     private Span<byte> Buffer => MemoryBuffer.Span;
 
     /// <summary>
@@ -86,6 +84,9 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         GC.SuppressFinalize(this);
         Socket.Dispose();
     }
+
+    /// <inheritdoc />
+    public event EventHandler? OnDisconnected;
 
     /// <summary>
     ///     Asynchronously handles a span buffer as a packet

@@ -21,7 +21,8 @@ public sealed record SpellTemplateSchema : PanelEntityTemplateSchema
     /// <remarks>this is a test</remarks>
     public LearningRequirementsSchema? LearningRequirements { get; set; }
     /// <summary>
-    ///     Defaults to null<br />Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when used in game
+    ///     Defaults to null<br />Should be specified with a spell type of "Prompt", this is the prompt the spell will offer
+    ///     when used in game
     /// </summary>
     public string? Prompt { get; set; }
     /// <summary>

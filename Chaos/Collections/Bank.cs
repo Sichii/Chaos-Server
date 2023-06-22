@@ -26,6 +26,18 @@ public sealed class Bank : IEnumerable<Item>
         : this(items) =>
         ItemCloner = itemCloner;
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public IEnumerator<Item> GetEnumerator()
+    {
+        List<Item> snapshot;
+
+        using (Sync.Enter())
+            snapshot = Items.Values.ToList();
+
+        return snapshot.GetEnumerator();
+    }
+
     public void AddGold(uint amount)
     {
         using var @lock = Sync.Enter();
@@ -64,18 +76,6 @@ public sealed class Bank : IEnumerable<Item>
         } else
             Items.Add(item.DisplayName, item);
     }
-
-    public IEnumerator<Item> GetEnumerator()
-    {
-        List<Item> snapshot;
-
-        using (Sync.Enter())
-            snapshot = Items.Values.ToList();
-
-        return snapshot.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public bool HasCount(string itemName, int amount) => CountOf(itemName) >= amount;
 

@@ -351,11 +351,6 @@ public sealed class Startup
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
     public static class ConfigKeys
     {
-        public static class Options
-        {
-            public static string Key => "Options";
-        }
-
         public static class Logging
         {
             public static string Key => "Logging";
@@ -365,6 +360,11 @@ public sealed class Startup
             {
                 public static string Key => $"{Logging.Key}:NLog";
             }
+        }
+
+        public static class Options
+        {
+            public static string Key => "Options";
         }
     }
 }

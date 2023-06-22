@@ -45,6 +45,20 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
         LoggerFactory = loggerFactory;
     }
 
+    /// <inheritdoc />
+    public MapInstance Map(MapInfoArgs obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    MapInfoArgs IMapperProfile<MapInstance, MapInfoArgs>.Map(MapInstance obj) => new()
+    {
+        Name = obj.Name,
+        MapId = obj.Template.MapId,
+        Width = obj.Template.Width,
+        Height = obj.Template.Height,
+        CheckSum = obj.Template.CheckSum,
+        Flags = (byte)obj.Flags
+    };
+
     public MapInstance Map(MapInstanceSchema obj)
     {
         var template = SimpleCache.Get<MapTemplate>(obj.TemplateKey);
@@ -76,20 +90,6 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
 
         return mapInstance;
     }
-
-    /// <inheritdoc />
-    public MapInstance Map(MapInfoArgs obj) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    MapInfoArgs IMapperProfile<MapInstance, MapInfoArgs>.Map(MapInstance obj) => new()
-    {
-        Name = obj.Name,
-        MapId = obj.Template.MapId,
-        Width = obj.Template.Width,
-        Height = obj.Template.Height,
-        CheckSum = obj.Template.CheckSum,
-        Flags = (byte)obj.Flags
-    };
 
     public MapInstanceSchema Map(MapInstance obj) => throw new NotImplementedException();
 

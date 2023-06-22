@@ -14,8 +14,10 @@ namespace Chaos.Scripting;
 /// <remarks>
 ///     This object requires that any given <see cref="Chaos.Scripting.Abstractions.IScript" /> type has an implemented
 ///     <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> type.
-///     This script factory will utilize that composite script to compose multiple scripts into one. The script returned by this factory will
-///     always be the <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> implementation, and it will contain all of scripts
+///     This script factory will utilize that composite script to compose multiple scripts into one. The script returned by
+///     this factory will
+///     always be the <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> implementation, and it will
+///     contain all of scripts
 ///     generated from the keys that
 ///     are supplied.
 /// </remarks>

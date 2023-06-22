@@ -1,7 +1,8 @@
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
-///     Defines the requirements for a server table. The server table is used to display available servers to connect to from
+///     Defines the requirements for a server table. The server table is used to display available servers to connect to
+///     from
 ///     the lobby server.
 /// </summary>
 public interface IServerTable

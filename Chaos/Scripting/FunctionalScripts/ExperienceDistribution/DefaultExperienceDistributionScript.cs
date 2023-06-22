@@ -18,7 +18,6 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
     public IExperienceFormula ExperienceFormula { get; set; }
     public ILevelUpScript LevelUpScript { get; set; }
     public ILogger<DefaultExperienceDistributionScript> Logger { get; set; }
-
     /// <inheritdoc />
     public static string Key { get; } = GetScriptKey(typeof(DefaultExperienceDistributionScript));
 

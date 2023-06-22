@@ -14,12 +14,12 @@ public sealed class GuildRank
     /// </summary>
     public string Name { get; private set; }
 
-    public int Count => MemberNames.Count;
-
     /// <summary>
     ///     The tier of the rank. Lower is better
     /// </summary>
     public int Tier { get; }
+
+    public int Count => MemberNames.Count;
 
     public GuildRank(string name, int tier, ICollection<string>? memberNames = null)
     {

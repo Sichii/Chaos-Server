@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <RunConfiguration>    
+    <ResultsDirectory>TestResults</ResultsDirectory>    
+  </RunConfiguration>
+
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>opencover</Format>          
+          <Exclude>[coverlet.*.tests?]*,[*]Coverlet.Core*,[*Test*]*,</Exclude> <!-- [Assembly-Filter]Type-Filter -->
+          <Include>[Chaos*]*</Include> <!-- [Assembly-Filter]Type-Filter -->
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverage</ExcludeByAttribute>
+          <!--<ExcludeByFile></ExcludeByFile>--> <!-- Globbing filter -->
+          <!--<IncludeDirectory>*</IncludeDirectory>-->
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SkipAutoProps>true</SkipAutoProps>
+          <!--<DeterministicReport>false</DeterministicReport>-->
+          <ExcludeAssembliesWithoutSources>MissingAll,MissingAny,None</ExcludeAssembliesWithoutSources>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

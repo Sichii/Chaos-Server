@@ -4,7 +4,8 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.CreateCharFinalize" /> packet
+///     Represents the serialization of the
+///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.CreateCharFinalize" /> packet
 /// </summary>
 /// <param name="HairStyle">The hairstyle to use for the new character</param>
 /// <param name="Gender">The gender of the new character</param>

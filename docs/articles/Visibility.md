@@ -22,12 +22,12 @@ like `Monsters` and `Items`.
 
 Another way of thinking of things is the following chart.
 
-| VisibilityType | CanObserve | CanObserveWhenCanSee | ExpectedEffect                                                                                                                          |
-|----------------|------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| Normal         | True       | True                 | Entity is displayed normally                                                                                                            |
-| Hidden         | True       | True                 | Entity has no bodysprite by default<br/>Aisling has transparent image when CanSee<br/>Other entities has alternative sprite when CanSee |
-| TrueHidden     | False      | True                 | Entity is not observed by default<br/>Aisling has transparent image when CanSee<br/>Other entities has alternative sprite when CanSee   |
-| GmHidden       | False      | False                | Unobservable, except by admins                                                                                                          |
+| VisibilityType | CanObserve | CanObserveWhenCanSee | ExpectedEffect                                                                                                                           |
+|----------------|------------|----------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| Normal         | True       | True                 | Entity is displayed normally                                                                                                             |
+| Hidden         | True       | True                 | Entity has no body sprite by default<br/>Aisling has transparent image when CanSee<br/>Other entities has alternative sprite when CanSee |
+| TrueHidden     | False      | True                 | Entity is not observed by default<br/>Aisling has transparent image when CanSee<br/>Other entities has alternative sprite when CanSee    |
+| GmHidden       | False      | False                | Unobservable, except by admins                                                                                                           |
 
 > [!TIP]
 > All visibility types are visible to admins

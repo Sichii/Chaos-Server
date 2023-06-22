@@ -25,7 +25,9 @@ public interface IChannelService
     ///     Determines whether or not the given string is a valid channel name
     /// </summary>
     /// <param name="str">The string to check</param>
-    /// <returns><c>true</c> if the given string is in the correct format to be a channel name, otherwise <c>false</c></returns>
+    /// <returns>
+    ///     <c>true</c> if the given string is in the correct format to be a channel name, otherwise <c>false</c>
+    /// </returns>
     bool IsChannel(string str);
 
     /// <summary>
@@ -53,7 +55,10 @@ public interface IChannelService
     ///     Whether or not to bypass the phrase filter. Use this to add channels with names that you have added to the
     ///     phrase blacklist for reservation purposes
     /// </param>
-    /// <param name="channelNameOverride">The name that will be displayed when sending and receiving from this channel (INTERNAL ONLY)</param>
+    /// <param name="channelNameOverride">
+    ///     The name that will be displayed when sending and receiving from this channel
+    ///     (INTERNAL ONLY)
+    /// </param>
     /// <param name="messageType">The message type to use for the registered channel</param>
     void RegisterChannel(
         IChannelSubscriber? subscriber,

@@ -18,7 +18,8 @@ public interface IScriptVars
     /// <param name="key">The key of the value to locate</param>
     /// <typeparam name="T">The type to convert the result to</typeparam>
     /// <returns>
-    ///     The value at the location specified by the key as the type given. If the value can not be located, or the value can not be
+    ///     The value at the location specified by the key as the type given. If the value can not be located, or the value can
+    ///     not be
     ///     converted to the correct type, then null
     /// </returns>
     T? Get<T>(string key);
@@ -29,7 +30,8 @@ public interface IScriptVars
     /// <param name="type">The type to convert the resulting value to</param>
     /// <param name="key">The key of the value to locate</param>
     /// <returns>
-    ///     The value at the location specified by the key as the type given. If the value can not be located, or the value can not be
+    ///     The value at the location specified by the key as the type given. If the value can not be located, or the value can
+    ///     not be
     ///     converted to the correct type, then null
     /// </returns>
     object? Get(Type type, string key);
@@ -40,7 +42,8 @@ public interface IScriptVars
     /// <param name="key">The key of the value to locate</param>
     /// <typeparam name="T">The type to convert the result to</typeparam>
     /// <returns>
-    ///     The value at the location specified by the key as the type given. If the value can not be located, or the value can not be
+    ///     The value at the location specified by the key as the type given. If the value can not be located, or the value can
+    ///     not be
     ///     converted to the correct type, then an exception is thrown
     /// </returns>
     T GetRequired<T>(string key);

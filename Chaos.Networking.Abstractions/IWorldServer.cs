@@ -69,7 +69,8 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ISoc
     ValueTask OnGoldDroppedOnCreature(TClient client, in ClientPacket clientPacket);
 
     /// <summary>
-    ///     Occurs when a client invites another player to a group, responds to a group invite, or creates or destroys a group box
+    ///     Occurs when a client invites another player to a group, responds to a group invite, or creates or destroys a group
+    ///     box
     /// </summary>
     ValueTask OnGroupRequest(TClient client, in ClientPacket clientPacket);
 

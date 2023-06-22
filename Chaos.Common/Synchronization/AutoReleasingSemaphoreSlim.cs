@@ -19,7 +19,8 @@ public sealed class AutoReleasingSemaphoreSlim
 
     /// <summary>
     ///     The same as <see cref="System.Threading.SemaphoreSlim.WaitAsync()" />.
-    ///     Returns a disposable object that when disposed will release the internal <see cref="System.Threading.SemaphoreSlim" />.
+    ///     Returns a disposable object that when disposed will release the internal
+    ///     <see cref="System.Threading.SemaphoreSlim" />.
     /// </summary>
     public async Task<IAsyncDisposable> WaitAsync()
     {

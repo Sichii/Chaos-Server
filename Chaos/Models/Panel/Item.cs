@@ -29,11 +29,9 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
     public override ItemTemplate Template { get; }
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Item;
-
     /// <inheritdoc />
     string IDialogSourceEntity.Name => DisplayName;
 
-    /// <inheritdoc />
     ushort IDialogSourceEntity.Sprite => ItemSprite.PanelSprite;
 
     public Item(

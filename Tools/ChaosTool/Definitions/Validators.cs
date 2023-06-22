@@ -5,11 +5,14 @@ using System.Windows.Input;
 
 namespace ChaosTool.Definitions;
 
-public static class Validators
+public static partial class Validators
 {
-    private static readonly Regex NumberValidator = new("[^0-9]+", RegexOptions.Compiled);
+    private static readonly Regex NotANumberPattern = NotANumberRegex();
 
-    public static void NumberValidationTextBox(object sender, TextCompositionEventArgs e) => e.Handled = NumberValidator.IsMatch(e.Text);
+    [GeneratedRegex("[^0-9]+", RegexOptions.Compiled)]
+    private static partial Regex NotANumberRegex();
+
+    public static void NumberValidationTextBox(object sender, TextCompositionEventArgs e) => e.Handled = NotANumberPattern.IsMatch(e.Text);
 
     public static void TemplateKeyMatchesFileName(TextBox templateKeyTextBox, TextBox fileNameTextBox)
     {

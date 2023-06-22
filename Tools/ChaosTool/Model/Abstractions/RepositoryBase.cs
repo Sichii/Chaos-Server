@@ -11,13 +11,13 @@ namespace ChaosTool.Model.Abstractions;
 
 public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
 {
+    protected JsonSerializerOptions JsonSerializerOptions { get; }
     public SynchronizedList<TraceWrapper<T>> Objects { get; }
     public IExpiringFileCacheOptions? Options { get; }
+    protected SynchronizedHashSet<string> Paths { get; }
 
     public virtual string RootDirectory =>
         Options?.Directory ?? throw new InvalidOperationException("If using a different options type, override this method");
-    protected JsonSerializerOptions JsonSerializerOptions { get; }
-    protected SynchronizedHashSet<string> Paths { get; }
 
     protected RepositoryBase(IOptions<IExpiringFileCacheOptions>? options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
     {
@@ -27,13 +27,13 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
         Objects = new SynchronizedList<TraceWrapper<T>>();
     }
 
-    public abstract void Add(string path, T obj);
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator() => Objects.Select(wrapped => wrapped.Object).GetEnumerator();
 
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public abstract void Add(string path, T obj);
 
     protected virtual IEnumerable<string> GetPaths()
     {

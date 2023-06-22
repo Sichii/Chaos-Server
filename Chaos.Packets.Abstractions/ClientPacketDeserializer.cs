@@ -10,8 +10,8 @@ public abstract record ClientPacketDeserializer<T> : IClientPacketDeserializer<T
     public abstract ClientOpCode ClientOpCode { get; }
 
     /// <inheritdoc />
-    public abstract T Deserialize(ref SpanReader reader);
+    object IClientPacketDeserializer.Deserialize(ref SpanReader reader) => Deserialize(ref reader);
 
     /// <inheritdoc />
-    object IClientPacketDeserializer.Deserialize(ref SpanReader reader) => Deserialize(ref reader);
+    public abstract T Deserialize(ref SpanReader reader);
 }

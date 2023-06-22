@@ -22,10 +22,10 @@ public sealed class EnumCollection : IEnumerable<KeyValuePair<Type, Enum>>
     public EnumCollection() => Enums = new ConcurrentDictionary<Type, Enum>();
 
     /// <inheritdoc />
-    public IEnumerator<KeyValuePair<Type, Enum>> GetEnumerator() => Enums.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerator<KeyValuePair<Type, Enum>> GetEnumerator() => Enums.GetEnumerator();
 
     /// <summary>
     ///     Removes the enum of the specified type

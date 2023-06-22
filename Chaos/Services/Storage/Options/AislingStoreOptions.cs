@@ -3,7 +3,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed record AislingStoreOptions : IBackedUpFileStoreOptions
+public sealed record AislingStoreOptions : IDirectoryBackupOptions
 {
     public required string BackupDirectory { get; set; }
     public int BackupIntervalMins { get; set; }

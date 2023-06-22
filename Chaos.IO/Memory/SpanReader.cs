@@ -187,7 +187,8 @@ public ref struct SpanReader
     }
 
     /// <summary>
-    ///     Reads a string separated ending with a null terminator from the current position in the Span, or the rest of the Span if no null
+    ///     Reads a string separated ending with a null terminator from the current position in the Span, or the rest of the
+    ///     Span if no null
     ///     terminator is found.
     /// </summary>
     public string ReadString()

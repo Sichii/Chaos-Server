@@ -22,6 +22,8 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     /// <inheritdoc />
     public void Add(TScript script) => Scripts.Add(script);
 
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     /// <inheritdoc />
     public IEnumerator<TScript> GetEnumerator()
     {
@@ -35,8 +37,6 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
             } else
                 yield return component;
     }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public T? GetScript<T>()

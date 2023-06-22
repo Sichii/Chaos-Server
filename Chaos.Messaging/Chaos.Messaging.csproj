@@ -11,4 +11,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
     </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Chaos.Messaging.Tests"/>
+    </ItemGroup>
 </Project>

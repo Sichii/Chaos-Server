@@ -10,4 +10,8 @@
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+    </ItemGroup>
 </Project>

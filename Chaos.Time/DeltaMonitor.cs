@@ -4,7 +4,8 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Time;
 
 /// <summary>
-///     Monitors the execution time of a tight loop. Logs output so the used has better insight into how long execution is taking.
+///     Monitors the execution time of a tight loop. Logs output so the used has better insight into how long execution is
+///     taking.
 /// </summary>
 public sealed class DeltaMonitor : IDeltaUpdatable
 {
@@ -37,8 +38,20 @@ public sealed class DeltaMonitor : IDeltaUpdatable
         BeginLogging = false;
     }
 
+    /// <inheritdoc />
+    public void Update(TimeSpan delta)
+    {
+        Timer.Update(delta);
+
+        if (Timer.IntervalElapsed)
+        {
+            CheckStatistics(ExecutionDeltas);
+            ExecutionDeltas = new List<TimeSpan>(ExecutionDeltas.Count);
+        }
+    }
+
     /// <summary>
-    ///     Adds a recorded <see cref="System.TimeSpan"/> that represents how much time execution took
+    ///     Adds a recorded <see cref="System.TimeSpan" /> that represents how much time execution took
     /// </summary>
     /// <param name="executionDelta">The amount of time the loop took to execute</param>
     public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);
@@ -112,16 +125,4 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 
             return Task.CompletedTask;
         });
-
-    /// <inheritdoc />
-    public void Update(TimeSpan delta)
-    {
-        Timer.Update(delta);
-
-        if (Timer.IntervalElapsed)
-        {
-            CheckStatistics(ExecutionDeltas);
-            ExecutionDeltas = new List<TimeSpan>(ExecutionDeltas.Count);
-        }
-    }
 }

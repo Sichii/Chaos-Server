@@ -68,6 +68,7 @@
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,139,9,0" />
+        <!-- ReSharper disable once MarkupAttributeTypo -->
         <Label Grid.Column="2"
                Content="IsDyeable"
                HorizontalAlignment="Right"

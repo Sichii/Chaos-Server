@@ -10,9 +10,9 @@ namespace Chaos.Models.World.Abstractions;
 /// </summary>
 public abstract class VisibleEntity : MapEntity
 {
+    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
     public ushort Sprite { get; set; }
     public VisibilityType Visibility { get; set; }
-    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
 
     protected VisibleEntity(ushort sprite, MapInstance mapInstance, IPoint point)
         : base(mapInstance, point)

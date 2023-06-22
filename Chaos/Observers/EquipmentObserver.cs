@@ -16,7 +16,7 @@ public sealed class EquipmentObserver : Abstractions.IObserver<Item>
         Aisling.Display();
         Aisling.UserStatSheet.AddWeight(obj.Weight);
 
-        if (obj.Modifiers != null)
+        if (!obj.Modifiers.Equals(default))
             Aisling.UserStatSheet.AddBonus(obj.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
@@ -31,7 +31,7 @@ public sealed class EquipmentObserver : Abstractions.IObserver<Item>
 
         Aisling.UserStatSheet.AddWeight(-obj.Weight);
 
-        if (obj.Modifiers != null)
+        if (!obj.Modifiers.Equals(default))
             Aisling.UserStatSheet.SubtractBonus(obj.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);

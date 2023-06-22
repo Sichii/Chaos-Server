@@ -54,16 +54,16 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnAttacked(Creature source, int damage, int? aggroOverride)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             script.OnAttacked(source, damage);
     }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public virtual void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT

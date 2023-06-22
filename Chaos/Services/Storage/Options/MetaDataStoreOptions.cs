@@ -14,7 +14,6 @@ public sealed class MetaDataStoreOptions : IDirectoryBound
     ///     The path to the mundane illustration meta file
     /// </summary>
     public string MundaneIllustrationMetaPath { get; set; } = null!;
-
     public ICollection<IMetaNodeMutator<ItemMetaNode>> PrefixMutators { get; } = new List<IMetaNodeMutator<ItemMetaNode>>();
 
     public ICollection<IMetaNodeMutator<ItemMetaNode>> SuffixMutators { get; } = new List<IMetaNodeMutator<ItemMetaNode>>();

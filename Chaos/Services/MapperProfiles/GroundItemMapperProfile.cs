@@ -13,20 +13,20 @@ public class GroundItemMapperProfile : IMapperProfile<GroundItem, GroundItemInfo
     GroundItem IMapperProfile<GroundItem, GroundItemInfo>.Map(GroundItemInfo obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public GroundItemInfo Map(Money obj) => new()
+    public GroundItemInfo Map(GroundItem obj) => new()
     {
         Id = obj.Id,
-        Color = DisplayColor.Default,
+        Color = obj.Item.Color,
         X = obj.X,
         Y = obj.Y,
         Sprite = obj.Visibility is not VisibilityType.Normal ? (ushort)0 : obj.Sprite
     };
 
     /// <inheritdoc />
-    public GroundItemInfo Map(GroundItem obj) => new()
+    public GroundItemInfo Map(Money obj) => new()
     {
         Id = obj.Id,
-        Color = obj.Item.Color,
+        Color = DisplayColor.Default,
         X = obj.X,
         Y = obj.Y,
         Sprite = obj.Visibility is not VisibilityType.Normal ? (ushort)0 : obj.Sprite

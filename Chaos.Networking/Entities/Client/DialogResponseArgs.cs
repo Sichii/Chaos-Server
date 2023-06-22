@@ -4,7 +4,8 @@ using Chaos.Packets.Abstractions;
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.DialogResponse" /> packet
+///     Represents the serialization of the
+///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.DialogResponse" /> packet
 /// </summary>
 /// <param name="EntityType">The type of the entity this dialog was generated from</param>
 /// <param name="EntityId">The id of the entity this dialog was generated from</param>

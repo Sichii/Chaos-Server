@@ -8,20 +8,20 @@ using Xunit;
 
 namespace Chaos.Storage.Abstractions.Tests;
 
-public sealed class BackedUpFileStoreBaseTests : IDisposable
+public sealed class DirectoryBackupServiceTests : IDisposable
 {
-    private readonly Mock<ILogger<BackedUpFileStoreBase<IBackedUpFileStoreOptions>>> LoggerMock;
-    private readonly IOptions<IBackedUpFileStoreOptions> Options;
-    private readonly MockBackedUpFileStore Store;
+    private readonly MockDirectoryBackupService BackupService;
+    private readonly Mock<ILogger<MockDirectoryBackupService>> LoggerMock;
+    private readonly IOptions<IDirectoryBackupOptions> Options;
     private readonly string TestDirectory;
 
-    public BackedUpFileStoreBaseTests()
+    public DirectoryBackupServiceTests()
     {
-        LoggerMock = new Mock<ILogger<BackedUpFileStoreBase<IBackedUpFileStoreOptions>>>();
+        LoggerMock = new Mock<ILogger<MockDirectoryBackupService>>();
         TestDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
-        Options = Microsoft.Extensions.Options.Options.Create<IBackedUpFileStoreOptions>(
-            new MockBackedUpFileStoreOptions
+        Options = Microsoft.Extensions.Options.Options.Create<IDirectoryBackupOptions>(
+            new MockDirectoryBackupOptions
             {
                 Directory = Path.Combine(TestDirectory, "ExistingDirectory"),
                 BackupDirectory = Path.Combine(TestDirectory, "BackupDirectory"),
@@ -29,7 +29,7 @@ public sealed class BackedUpFileStoreBaseTests : IDisposable
                 BackupRetentionDays = 1
             });
 
-        Store = new MockBackedUpFileStore(Options, LoggerMock.Object);
+        BackupService = new MockDirectoryBackupService(Options, LoggerMock.Object);
         Directory.CreateDirectory(Options.Value.Directory);
         Directory.CreateDirectory(Options.Value.BackupDirectory);
     }
@@ -39,33 +39,35 @@ public sealed class BackedUpFileStoreBaseTests : IDisposable
         Directory.Delete(TestDirectory, true);
 
     [Fact]
-    public void HandleBackupRetention_Should_Delete_Old_Backups()
+    public async Task HandleBackupRetention_Should_Delete_Old_Backups()
     {
         // Arrange
+        var token = new CancellationToken();
         var oldBackup = Path.Combine(Options.Value.BackupDirectory, "oldBackup.zip");
-        File.WriteAllText(oldBackup, "dummy content");
+        await File.WriteAllTextAsync(oldBackup, "dummy content", token);
         File.SetCreationTimeUtc(oldBackup, DateTime.UtcNow.AddDays(-Options.Value.BackupRetentionDays - 2)); // Set the file to be old
 
         // Act
-        Store.HandleBackupRetention(Options.Value.BackupDirectory);
+        await BackupService.HandleBackupRetentionAsync(Options.Value.BackupDirectory, token);
 
         // Assert
         File.Exists(oldBackup).Should().BeFalse();
     }
 
     [Fact]
-    public void HandleBackupRetention_Should_Not_Delete_Backups_Within_Retention_Period()
+    public async Task HandleBackupRetention_Should_Not_Delete_Backups_Within_Retention_Period()
     {
         // Arrange
+        var token = new CancellationToken();
         var backupDirectory = Options.Value.BackupDirectory;
 
         var backupFilePath = Path.Combine(backupDirectory, "backup.zip");
 
         // Create a backup file with today's date
-        File.Create(backupFilePath).Dispose();
+        await File.Create(backupFilePath).DisposeAsync();
 
         // Act
-        Store.HandleBackupRetention(backupDirectory);
+        await BackupService.HandleBackupRetentionAsync(backupDirectory, token);
 
         // Assert
         File.Exists(backupFilePath).Should().BeTrue("because the backup is within the retention period and should not be deleted");
@@ -89,7 +91,7 @@ public sealed class BackedUpFileStoreBaseTests : IDisposable
         Directory.SetLastWriteTimeUtc(saveDirectory, DateTime.UtcNow); // Set the directory to be recent
 
         // Act
-        await Store.TakeBackupAsync(saveDirectory, CancellationToken.None);
+        await BackupService.TakeBackupAsync(saveDirectory, CancellationToken.None);
 
         // Assert
         var backupFiles = Directory.GetFiles(backupDirectory, "*.zip", SearchOption.AllDirectories);
@@ -111,7 +113,7 @@ public sealed class BackedUpFileStoreBaseTests : IDisposable
         var nonExistentDirectory = Path.Combine(TestDirectory, "NonExistentDirectory");
 
         // Act
-        await Store.TakeBackupAsync(nonExistentDirectory, CancellationToken.None);
+        await BackupService.TakeBackupAsync(nonExistentDirectory, CancellationToken.None);
 
         // Assert
         var backupFiles = Directory.GetFiles(Options.Value.BackupDirectory, "*.zip");

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Chaos.Collections;
 using Chaos.Extensions.Common;
+using Chaos.IO.FileSystem;
 using Chaos.Models.Legend;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
@@ -17,10 +18,12 @@ namespace Chaos.Services.Storage;
 /// <summary>
 ///     Manages save files for Aislings
 /// </summary>
-public sealed class AislingStore : BackedUpFileStoreBase<AislingStoreOptions>, IAsyncStore<Aisling>
+public sealed class AislingStore : IAsyncStore<Aisling>
 {
     private readonly IEntityRepository EntityRepository;
     private readonly ICloningService<Item> ItemCloningService;
+    private readonly ILogger<AislingStore> Logger;
+    private readonly AislingStoreOptions Options;
 
     public AislingStore(
         IEntityRepository entityRepository,
@@ -28,8 +31,9 @@ public sealed class AislingStore : BackedUpFileStoreBase<AislingStoreOptions>, I
         ILogger<AislingStore> logger,
         ICloningService<Item> itemCloningService
     )
-        : base(options, logger)
     {
+        Logger = logger;
+        Options = options.Value;
         ItemCloningService = itemCloningService;
         EntityRepository = entityRepository;
     }
@@ -40,6 +44,54 @@ public sealed class AislingStore : BackedUpFileStoreBase<AislingStoreOptions>, I
         var directory = Path.Combine(Options.Directory, key.ToLower());
 
         return Task.FromResult(Directory.Exists(directory));
+    }
+
+    public async Task<Aisling> LoadAsync(string name)
+    {
+        Logger.LogTrace("Loading aisling {@AislingName}", name);
+
+        var directory = Path.Combine(Options.Directory, name.ToLower());
+
+        var aisling = await directory.SafeExecuteAsync(dir => InnerLoadAsync(name, dir));
+
+        Logger.WithProperty(aisling)
+              .LogDebug("Loaded aisling {@AislingName}", aisling.Name);
+
+        return aisling;
+    }
+
+    /// <inheritdoc />
+    public Task RemoveAsync(string key) =>
+        throw new NotImplementedException("This would effectively delete the character. This is reserved for manual operations");
+
+    public async Task SaveAsync(Aisling aisling)
+    {
+        Logger.WithProperty(aisling)
+              .LogTrace("Saving {@AislingName}", aisling.Name);
+
+        var start = Stopwatch.GetTimestamp();
+
+        try
+        {
+            var directory = Path.Combine(Options.Directory, aisling.Name.ToLower());
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            await directory.SafeExecuteAsync(dir => InnerSaveAsync(dir, aisling));
+            Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+
+            Logger.WithProperty(aisling)
+                  .LogDebug("Saved aisling {@AislingName}, took {@Elapsed}", aisling.Name, Stopwatch.GetElapsedTime(start));
+        } catch (Exception e)
+        {
+            Logger.WithProperty(aisling)
+                  .LogCritical(
+                      e,
+                      "Failed to save aisling {@AislingName} in {@Elapsed}",
+                      aisling.Name,
+                      Stopwatch.GetElapsedTime(start));
+        }
     }
 
     private async Task<Aisling> InnerLoadAsync(string name, string directory)
@@ -114,54 +166,5 @@ public sealed class AislingStore : BackedUpFileStoreBase<AislingStoreOptions>, I
             EntityRepository.SaveAsync<Spell, SpellSchema>(aisling.SpellBook, spellsPath),
             EntityRepository.SaveAsync<Item, ItemSchema>(aisling.Equipment, equipmentPath),
             EntityRepository.SaveAsync<IEffect, EffectSchema>(aisling.Effects, effectsPath));
-    }
-
-    public async Task<Aisling> LoadAsync(string name)
-    {
-        Logger.LogTrace("Loading aisling {@AislingName}", name);
-
-        var directory = Path.Combine(Options.Directory, name.ToLower());
-
-        var aisling = await SafeExecuteDirectoryActionAsync(directory, () => InnerLoadAsync(name, directory));
-
-        Logger.WithProperty(aisling)
-              .LogDebug("Loaded aisling {@AislingName}", aisling.Name);
-
-        return aisling;
-    }
-
-    /// <inheritdoc />
-    public Task RemoveAsync(string key) =>
-        throw new NotImplementedException("This would effectively delete the character. This is reserved for manual operations");
-
-    public async Task SaveAsync(Aisling aisling)
-    {
-        Logger.WithProperty(aisling)
-              .LogTrace("Saving {@AislingName}", aisling.Name);
-
-        var start = Stopwatch.GetTimestamp();
-
-        try
-        {
-            var directory = Path.Combine(Options.Directory, aisling.Name.ToLower());
-
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
-
-            await SafeExecuteDirectoryActionAsync(directory, () => InnerSaveAsync(directory, aisling));
-
-            Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
-
-            Logger.WithProperty(aisling)
-                  .LogDebug("Saved aisling {@AislingName}, took {@Elapsed}", aisling.Name, Stopwatch.GetElapsedTime(start));
-        } catch (Exception e)
-        {
-            Logger.WithProperty(aisling)
-                  .LogCritical(
-                      e,
-                      "Failed to save aisling {@AislingName} in {@Elapsed}",
-                      aisling.Name,
-                      Stopwatch.GetElapsedTime(start));
-        }
     }
 }

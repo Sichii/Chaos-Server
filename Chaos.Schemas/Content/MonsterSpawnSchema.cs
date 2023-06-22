@@ -31,7 +31,8 @@ public sealed record MonsterSpawnSchema
     public int IntervalSecs { get; set; }
 
     /// <summary>
-    ///     Defaults to 0<br />If specified, will randomize the interval by the percentage specified<br />Ex. With an interval of 60, and a
+    ///     Defaults to 0<br />If specified, will randomize the interval by the percentage specified<br />Ex. With an interval
+    ///     of 60, and a
     ///     Variance of 50, the spawn interval would vary from 45-75secs
     /// </summary>
     public int? IntervalVariancePct { get; set; }

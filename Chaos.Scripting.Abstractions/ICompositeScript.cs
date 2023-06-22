@@ -18,7 +18,7 @@ public interface ICompositeScript
     IEnumerable<T> GetScripts<T>();
 }
 
-/// <inheritdoc cref="ICompositeScript"/>
+/// <inheritdoc cref="ICompositeScript" />
 /// <typeparam name="TScript">A type that inherits from <see cref="Chaos.Scripting.Abstractions.IScript" /></typeparam>
 public interface ICompositeScript<TScript> : ICompositeScript, IEnumerable<TScript> where TScript: IScript
 {

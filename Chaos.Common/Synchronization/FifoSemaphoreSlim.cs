@@ -53,7 +53,8 @@ public sealed class FifoSemaphoreSlim
     /// </summary>
     /// <param name="timeout"></param>
     /// <returns>
-    ///     A task that will complete with a result of true if the current thread successfully entered the SemaphoreSlim, otherwise with a
+    ///     A task that will complete with a result of true if the current thread successfully entered the SemaphoreSlim,
+    ///     otherwise with a
     ///     result of false
     /// </returns>
     public async Task<bool> WaitAsync(TimeSpan timeout)

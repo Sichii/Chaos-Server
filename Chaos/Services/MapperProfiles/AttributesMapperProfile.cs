@@ -69,6 +69,54 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
         Dex = obj.Dex
     };
 
+    public StatSheet Map(StatSheetSchema obj) => new()
+    {
+        AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct,
+        Ac = obj.Ac,
+        Dmg = obj.Dmg,
+        Hit = obj.Hit,
+        Str = obj.Str,
+        Int = obj.Int,
+        Wis = obj.Wis,
+        Con = obj.Con,
+        Dex = obj.Dex,
+        MagicResistance = obj.MagicResistance,
+        MaximumHp = obj.MaximumHp,
+        MaximumMp = obj.MaximumMp,
+        CurrentHp = obj.CurrentHp,
+        CurrentMp = obj.CurrentMp,
+        Ability = obj.Ability,
+        Level = obj.Level
+    };
+
+    public StatSheetSchema Map(StatSheet obj) => new()
+    {
+        AtkSpeedPct = obj.AtkSpeedPct,
+        FlatSkillDamage = obj.FlatSkillDamage,
+        FlatSpellDamage = obj.FlatSpellDamage,
+        SkillDamagePct = obj.SkillDamagePct,
+        SpellDamagePct = obj.SpellDamagePct,
+        Ability = obj.Ability,
+        Ac = obj.Ac,
+        Con = obj.Con,
+        CurrentHp = obj.CurrentHp,
+        CurrentMp = obj.CurrentMp,
+        Level = obj.Level,
+        Dex = obj.Dex,
+        Dmg = obj.Dmg,
+        Hit = obj.Hit,
+        Int = obj.Int,
+        MagicResistance = obj.MagicResistance,
+        MaximumHp = obj.MaximumHp,
+        MaximumMp = obj.MaximumMp,
+        Str = obj.Str,
+        Wis = obj.Wis
+    };
+
     public UserStatSheet Map(UserStatSheetSchema obj) => new()
     {
         AtkSpeedPct = obj.AtkSpeedPct,
@@ -131,53 +179,5 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
         Str = obj.Str,
         Wis = obj.Wis,
         MaxWeight = obj.MaxWeight
-    };
-
-    public StatSheet Map(StatSheetSchema obj) => new()
-    {
-        AtkSpeedPct = obj.AtkSpeedPct,
-        FlatSkillDamage = obj.FlatSkillDamage,
-        FlatSpellDamage = obj.FlatSpellDamage,
-        SkillDamagePct = obj.SkillDamagePct,
-        SpellDamagePct = obj.SpellDamagePct,
-        Ac = obj.Ac,
-        Dmg = obj.Dmg,
-        Hit = obj.Hit,
-        Str = obj.Str,
-        Int = obj.Int,
-        Wis = obj.Wis,
-        Con = obj.Con,
-        Dex = obj.Dex,
-        MagicResistance = obj.MagicResistance,
-        MaximumHp = obj.MaximumHp,
-        MaximumMp = obj.MaximumMp,
-        CurrentHp = obj.CurrentHp,
-        CurrentMp = obj.CurrentMp,
-        Ability = obj.Ability,
-        Level = obj.Level
-    };
-
-    public StatSheetSchema Map(StatSheet obj) => new()
-    {
-        AtkSpeedPct = obj.AtkSpeedPct,
-        FlatSkillDamage = obj.FlatSkillDamage,
-        FlatSpellDamage = obj.FlatSpellDamage,
-        SkillDamagePct = obj.SkillDamagePct,
-        SpellDamagePct = obj.SpellDamagePct,
-        Ability = obj.Ability,
-        Ac = obj.Ac,
-        Con = obj.Con,
-        CurrentHp = obj.CurrentHp,
-        CurrentMp = obj.CurrentMp,
-        Level = obj.Level,
-        Dex = obj.Dex,
-        Dmg = obj.Dmg,
-        Hit = obj.Hit,
-        Int = obj.Int,
-        MagicResistance = obj.MagicResistance,
-        MaximumHp = obj.MaximumHp,
-        MaximumMp = obj.MaximumMp,
-        Str = obj.Str,
-        Wis = obj.Wis
     };
 }

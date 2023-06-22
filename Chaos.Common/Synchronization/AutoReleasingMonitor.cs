@@ -25,7 +25,8 @@ public sealed class AutoReleasingMonitor
 
     /// <summary>
     ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />
+    ///     Returns a disposable object that when disposed will exit the lock via
+    ///     <see cref="System.Threading.Monitor.Exit(object)" />
     /// </summary>
     public IDisposable Enter()
     {
@@ -36,7 +37,8 @@ public sealed class AutoReleasingMonitor
 
     /// <summary>
     ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />.
+    ///     Returns a disposable object that when disposed will exit the lock via
+    ///     <see cref="System.Threading.Monitor.Exit(object)" />.
     ///     Will first check if the current thread owns the lock in order to avoid an exception.
     /// </summary>
     public IDisposable EnterWithSafeExit()
@@ -53,11 +55,13 @@ public sealed class AutoReleasingMonitor
 
     /// <summary>
     ///     The same as <see cref="System.Threading.Monitor.TryEnter(object, TimeSpan)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />.
+    ///     Returns a disposable object that when disposed will exit the lock via
+    ///     <see cref="System.Threading.Monitor.Exit(object)" />.
     /// </summary>
     /// <param name="timeoutMs"></param>
     /// <returns>
-    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when disposed
+    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when
+    ///     disposed
     ///     will exit the lock
     /// </returns>
     public IDisposable? TryEnter(int timeoutMs)
@@ -66,20 +70,6 @@ public sealed class AutoReleasingMonitor
             return new SafeAutoReleasingSubscription(Root);
 
         return default;
-    }
-
-    private sealed record SafeAutoReleasingSubscription : IDisposable
-    {
-        private readonly object Root;
-        private int Disposed;
-
-        internal SafeAutoReleasingSubscription(object root) => Root = root;
-
-        public void Dispose()
-        {
-            if ((Interlocked.CompareExchange(ref Disposed, 1, 0) == 0) && Monitor.IsEntered(Root))
-                Monitor.Exit(Root);
-        }
     }
 
     private sealed record AutoReleasingSubscription : IDisposable
@@ -92,6 +82,20 @@ public sealed class AutoReleasingMonitor
         public void Dispose()
         {
             if (Interlocked.CompareExchange(ref Disposed, 1, 0) == 0)
+                Monitor.Exit(Root);
+        }
+    }
+
+    private sealed record SafeAutoReleasingSubscription : IDisposable
+    {
+        private readonly object Root;
+        private int Disposed;
+
+        internal SafeAutoReleasingSubscription(object root) => Root = root;
+
+        public void Dispose()
+        {
+            if ((Interlocked.CompareExchange(ref Disposed, 1, 0) == 0) && Monitor.IsEntered(Root))
                 Monitor.Exit(Root);
         }
     }
