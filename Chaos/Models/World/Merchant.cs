@@ -107,8 +107,8 @@ public sealed class Merchant : Creature,
             StockService.RegisterStock(
                 Template.TemplateKey,
                 Template.ItemsForSale.Select(kvp => (kvp.Key, kvp.Value)),
-                TimeSpan.FromHours(Template.RestockIntervalHours),
-                Template.RestockPercent);
+                TimeSpan.FromHours(Template.RestockIntervalHrs),
+                Template.RestockPct);
 
         Script = scriptProvider.CreateScript<IMerchantScript, Merchant>(ScriptKeys, this);
     }
@@ -126,7 +126,7 @@ public sealed class Merchant : Creature,
     public bool IsBuying(Item item) => ItemsToBuy.Any(i => i.DisplayName.EqualsI(item.DisplayName));
 
     /// <inheritdoc />
-    void IBuyShopSource.Restock(decimal percent) => StockService.Restock(Template.TemplateKey, percent);
+    void IBuyShopSource.Restock(int percent) => StockService.Restock(Template.TemplateKey, percent);
 
     /// <inheritdoc />
     bool IBuyShopSource.TryDecrementStock(string itemTemplateKey, int amount) =>

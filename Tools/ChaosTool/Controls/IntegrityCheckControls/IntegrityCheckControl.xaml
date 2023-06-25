@@ -1,0 +1,42 @@
+<UserControl x:Class="ChaosTool.Controls.IntegrityCheckControls.IntegrityCheckControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="1200"
+             MinWidth="900"
+             MinHeight="700"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Name="IntegrityCheckBtn"
+                Grid.Row="0"
+                Click="IntegrityCheckBtn_OnClick"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="10"
+                Content="Perform Integrity Check"
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl Name="IntegrityViolationsControl"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          HorizontalContentAlignment="Left"
+                          VerticalContentAlignment="Top"
+                          Margin="0"
+                          Style="{StaticResource fileSystemEntriesItemsControlStyle}" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>

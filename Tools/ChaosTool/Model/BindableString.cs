@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace ChaosTool.Model;
 
-public class BindableString : INotifyPropertyChanged
+public record BindableString : INotifyPropertyChanged
 {
     private string _string = null!;
 

@@ -1,10 +1,10 @@
 {
-  "nextDialogKey": "generic_sellshop_initial",
+  "nextDialogKey": "generic_sellshop_declined",
   "options": [],
   "prevDialogKey": "generic_sellshop_confirmation",
   "scriptKeys": [],
   "scriptVars": {},
-  "templateKey": "generic_sellshop_accepted",
+  "templateKey": "generic_sellshop_declined",
   "text": "Ah rats, we almost had a deal...",
   "type": "Normal"
 }

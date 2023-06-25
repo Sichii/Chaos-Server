@@ -16,6 +16,9 @@ public static partial class Validators
 
     public static void TemplateKeyMatchesFileName(TextBox templateKeyTextBox, TextBox fileNameTextBox)
     {
+        if (!templateKeyTextBox.IsEnabled)
+            return;
+
         var templateKey = templateKeyTextBox.Text;
         var extension = Path.GetExtension(fileNameTextBox.Text);
         var currentFileName = Path.GetFileNameWithoutExtension(fileNameTextBox.Text);

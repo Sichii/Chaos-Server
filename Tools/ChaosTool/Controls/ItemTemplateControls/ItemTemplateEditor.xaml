@@ -1,4 +1,4 @@
-<abstractions:EditorBase x:Class="ChaosTool.Controls.SkillControls.SkillEditor"
+﻿<abstractions:EditorBase x:Class="ChaosTool.Controls.ItemTemplateControls.ItemTemplateEditor"
                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -37,8 +37,7 @@
                     Content="Grid View"
                     Style="{StaticResource MaterialDesignFlatAccentBgButton}"
                     Click="ToggleGridViewBtn_OnClick" />
-            <ListView Name="TemplatesView"
-                      Grid.Row="1"
+            <ListView Name="TemplatesView" Grid.Row="1"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       SelectionMode="Single"

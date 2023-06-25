@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Chaos.Extensions.Common;
-using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using ChaosTool.Comparers;
 using ChaosTool.Converters;
@@ -13,15 +12,15 @@ using ChaosTool.Model;
 using MaterialDesignExtensions.Controls;
 using TOOL_CONSTANTS = ChaosTool.Definitions.CONSTANTS;
 
-namespace ChaosTool.Controls.SkillControls;
+namespace ChaosTool.Controls.MerchantTemplateControls;
 
-public sealed partial class SkillEditor
+public sealed partial class MerchantTemplateEditor
 {
-    public ObservableCollection<ListViewItem<SkillTemplateSchema, SkillPropertyEditor>> ListViewItems { get; }
+    public ObservableCollection<ListViewItem<MerchantTemplateSchema, MerchantTemplatePropertyEditor>> ListViewItems { get; }
 
-    public SkillEditor()
+    public MerchantTemplateEditor()
     {
-        ListViewItems = new ObservableCollection<ListViewItem<SkillTemplateSchema, SkillPropertyEditor>>();
+        ListViewItems = new ObservableCollection<ListViewItem<MerchantTemplateSchema, MerchantTemplatePropertyEditor>>();
 
         InitializeComponent();
     }
@@ -71,7 +70,7 @@ public sealed partial class SkillEditor
             case DataGrid dataGrid:
             {
                 var searchResult = dataGrid.ItemsSource
-                                           .OfType<SkillTemplateSchema>()
+                                           .OfType<MerchantTemplateSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
                                                (rowValue, rowIndex) =>
@@ -113,8 +112,8 @@ public sealed partial class SkillEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.SkillTemplates.Objects.Select(
-                                  wrapper => new ListViewItem<SkillTemplateSchema, SkillPropertyEditor>
+        var objs = JsonContext.MerchantTemplates.Objects.Select(
+                                  wrapper => new ListViewItem<MerchantTemplateSchema, MerchantTemplatePropertyEditor>
                                   {
                                       Name = wrapper.Object.TemplateKey,
                                       Wrapper = wrapper
@@ -126,7 +125,7 @@ public sealed partial class SkillEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<SkillTemplateSchema, SkillPropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems.OfType<ListViewItem<MerchantTemplateSchema, MerchantTemplatePropertyEditor>>().FirstOrDefault();
 
         if (selected is null)
         {
@@ -138,7 +137,7 @@ public sealed partial class SkillEditor
             return;
         }
 
-        selected.Control ??= new SkillPropertyEditor(selected);
+        selected.Control ??= new MerchantTemplatePropertyEditor(selected);
         selected.Control.DeleteBtn.Click += DeleteBtnOnClick;
 
         PropertyEditor.Children.Clear();
@@ -147,17 +146,17 @@ public sealed partial class SkillEditor
 
     private void DeleteBtnOnClick(object sender, RoutedEventArgs e)
     {
-        if (TemplatesView.SelectedItem is not ListViewItem<SkillTemplateSchema, SkillPropertyEditor> selected)
+        if (TemplatesView.SelectedItem is not ListViewItem<MerchantTemplateSchema, MerchantTemplatePropertyEditor> selected)
             return;
 
         ListViewItems.Remove(selected);
-        JsonContext.SkillTemplates.Remove(selected.Name);
+        JsonContext.MerchantTemplates.Remove(selected.Name);
     }
 
     private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var path = TOOL_CONSTANTS.TEMP_PATH;
-        var baseDir = JsonContext.SkillTemplates.RootDirectory;
+        var baseDir = JsonContext.MerchantTemplates.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
@@ -169,10 +168,10 @@ public sealed partial class SkillEditor
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new SkillTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
-        var wrapper = new TraceWrapper<SkillTemplateSchema>(path, template);
+        var template = new MerchantTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var wrapper = new TraceWrapper<MerchantTemplateSchema>(path, template);
 
-        var listItem = new ListViewItem<SkillTemplateSchema, SkillPropertyEditor>
+        var listItem = new ListViewItem<MerchantTemplateSchema, MerchantTemplatePropertyEditor>
         {
             Name = TOOL_CONSTANTS.TEMP_PATH,
             Wrapper = wrapper
@@ -200,7 +199,7 @@ public sealed partial class SkillEditor
 
             await JsonContext.LoadingTask;
 
-            var lcv = new ListCollectionView(JsonContext.SkillTemplates.ToList());
+            var lcv = new ListCollectionView(JsonContext.MerchantTemplates.ToList());
             dataGrid.ItemsSource = lcv;
 
             PropertyEditor.Children.Clear();
@@ -226,7 +225,7 @@ public sealed partial class SkillEditor
 
         var index = 0;
 
-        foreach (var property in TOOL_CONSTANTS.SkillPropertyOrder)
+        foreach (var property in TOOL_CONSTANTS.MerchantTemplatePropertyOrder)
         {
             var column = dataGrid.Columns.FirstOrDefault(c => c.Header.ToString()!.EqualsI(property));
 
@@ -242,82 +241,7 @@ public sealed partial class SkillEditor
         if (sender is not DataGrid dataGrid)
             return;
 
-        if (e.PropertyName.EqualsI(nameof(SkillTemplateSchema.LearningRequirements)))
-        {
-            e.Cancel = true;
-
-            foreach (var property in TOOL_CONSTANTS.LearningRequirementProperties)
-                switch (property)
-                {
-                    case nameof(LearningRequirementsSchema.PrerequisiteSkillTemplateKeys):
-                    case nameof(LearningRequirementsSchema.PrerequisiteSpellTemplateKeys):
-                    {
-                        var column = new DataGridTextColumn
-                        {
-                            Header = property,
-                            Binding = new Binding($"{nameof(SkillTemplateSchema.LearningRequirements)}.{property}")
-                            {
-                                Converter = JoinStringCollectionConverter.Instance,
-                                ValidatesOnDataErrors = true
-                            }
-                        };
-
-                        dataGrid.Columns.Add(column);
-
-                        break;
-                    }
-                    case nameof(LearningRequirementsSchema.RequiredStats):
-                    {
-                        foreach (var stat in TOOL_CONSTANTS.StatProperties)
-                        {
-                            var column = new DataGridTextColumn
-                            {
-                                Header = stat,
-                                Binding = new Binding($"{nameof(SkillTemplateSchema.LearningRequirements)}.{property}.{stat}")
-                                {
-                                    ValidatesOnDataErrors = true
-                                }
-                            };
-
-                            dataGrid.Columns.Add(column);
-                        }
-
-                        break;
-                    }
-                    case nameof(LearningRequirementsSchema.ItemRequirements):
-                    {
-                        var itemRequirementsColumn = new DataGridTextColumn
-                        {
-                            Header = nameof(LearningRequirementsSchema.ItemRequirements),
-                            Binding = new Binding(
-                                $"{nameof(SkillTemplateSchema.LearningRequirements)}.{nameof(LearningRequirementsSchema.ItemRequirements)}")
-                            {
-                                Converter = ItemRequirementCollectionConverter.Instance,
-                                ValidatesOnDataErrors = true
-                            }
-                        };
-
-                        dataGrid.Columns.Add(itemRequirementsColumn);
-
-                        break;
-                    }
-                    default:
-                    {
-                        var column = new DataGridTextColumn
-                        {
-                            Header = property,
-                            Binding = new Binding($"{nameof(SkillTemplateSchema.LearningRequirements)}.{property}")
-                            {
-                                ValidatesOnDataErrors = true
-                            }
-                        };
-
-                        dataGrid.Columns.Add(column);
-
-                        break;
-                    }
-                }
-        } else if (e.PropertyName.EqualsI(nameof(SkillTemplateSchema.ScriptKeys)))
+        if (e.PropertyName.EqualsI(nameof(MerchantTemplateSchema.ScriptKeys)))
         {
             e.Cancel = true;
 
@@ -332,7 +256,7 @@ public sealed partial class SkillEditor
             };
 
             dataGrid.Columns.Add(column);
-        } else if (!TOOL_CONSTANTS.SkillPropertyOrder.ContainsI(e.PropertyName))
+        } else if (!TOOL_CONSTANTS.MerchantTemplatePropertyOrder.ContainsI(e.PropertyName))
             e.Cancel = true;
     }
     #endregion

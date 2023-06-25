@@ -76,7 +76,7 @@ public sealed class Pathfinder : IPathfinder
     {
         //if we're standing on the end already
         //try to walk out from under it
-        if (Equals(start, end))
+        if (PointEqualityComparer.Instance.Equals(start, end))
             return Wander(start, ignoreWalls, blocked);
 
         if (start.DistanceFrom(end) == 1)

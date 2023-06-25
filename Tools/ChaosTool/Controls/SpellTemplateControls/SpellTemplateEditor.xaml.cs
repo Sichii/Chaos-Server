@@ -1,9 +1,10 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Chaos.Extensions.Common;
+using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using ChaosTool.Comparers;
 using ChaosTool.Converters;
@@ -12,18 +13,15 @@ using ChaosTool.Model;
 using MaterialDesignExtensions.Controls;
 using TOOL_CONSTANTS = ChaosTool.Definitions.CONSTANTS;
 
-namespace ChaosTool.Controls.ItemControls;
+namespace ChaosTool.Controls.SpellTemplateControls;
 
-/// <summary>
-///     Interaction logic for ItemEditor.xaml
-/// </summary>
-public sealed partial class ItemEditor
+public sealed partial class SpellTemplateEditor
 {
-    public ObservableCollection<ListViewItem<ItemTemplateSchema, ItemPropertyEditor>> ListViewItems { get; }
+    public ObservableCollection<ListViewItem<SpellTemplateSchema, SpellTemplatePropertyEditor>> ListViewItems { get; }
 
-    public ItemEditor()
+    public SpellTemplateEditor()
     {
-        ListViewItems = new ObservableCollection<ListViewItem<ItemTemplateSchema, ItemPropertyEditor>>();
+        ListViewItems = new ObservableCollection<ListViewItem<SpellTemplateSchema, SpellTemplatePropertyEditor>>();
 
         InitializeComponent();
     }
@@ -41,6 +39,8 @@ public sealed partial class ItemEditor
         AddBtn.IsEnabled = true;
         GridViewBtn.IsEnabled = true;
     }
+
+    /// <inheritdoc />
 
     #region CTRL+F (Find)
     protected override UIElement? GetFocusElement()
@@ -71,7 +71,7 @@ public sealed partial class ItemEditor
             case DataGrid dataGrid:
             {
                 var searchResult = dataGrid.ItemsSource
-                                           .OfType<ItemTemplateSchema>()
+                                           .OfType<SpellTemplateSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
                                                (rowValue, rowIndex) =>
@@ -113,8 +113,8 @@ public sealed partial class ItemEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.ItemTemplates.Objects.Select(
-                                  wrapper => new ListViewItem<ItemTemplateSchema, ItemPropertyEditor>
+        var objs = JsonContext.SpellTemplates.Objects.Select(
+                                  wrapper => new ListViewItem<SpellTemplateSchema, SpellTemplatePropertyEditor>
                                   {
                                       Name = wrapper.Object.TemplateKey,
                                       Wrapper = wrapper
@@ -126,7 +126,7 @@ public sealed partial class ItemEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<ItemTemplateSchema, ItemPropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems.OfType<ListViewItem<SpellTemplateSchema, SpellTemplatePropertyEditor>>().FirstOrDefault();
 
         if (selected is null)
         {
@@ -138,7 +138,7 @@ public sealed partial class ItemEditor
             return;
         }
 
-        selected.Control ??= new ItemPropertyEditor(selected);
+        selected.Control ??= new SpellTemplatePropertyEditor(selected);
         selected.Control.DeleteBtn.Click += DeleteBtnOnClick;
 
         PropertyEditor.Children.Clear();
@@ -147,17 +147,17 @@ public sealed partial class ItemEditor
 
     private void DeleteBtnOnClick(object sender, RoutedEventArgs e)
     {
-        if (TemplatesView.SelectedItem is not ListViewItem<ItemTemplateSchema, ItemPropertyEditor> selected)
+        if (TemplatesView.SelectedItem is not ListViewItem<SpellTemplateSchema, SpellTemplatePropertyEditor> selected)
             return;
 
         ListViewItems.Remove(selected);
-        JsonContext.ItemTemplates.Remove(selected.Name);
+        JsonContext.SpellTemplates.Remove(selected.Name);
     }
 
     private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var path = TOOL_CONSTANTS.TEMP_PATH;
-        var baseDir = JsonContext.ItemTemplates.RootDirectory;
+        var baseDir = JsonContext.SpellTemplates.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
@@ -169,10 +169,10 @@ public sealed partial class ItemEditor
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new ItemTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
-        var wrapper = new TraceWrapper<ItemTemplateSchema>(path, template);
+        var template = new SpellTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var wrapper = new TraceWrapper<SpellTemplateSchema>(path, template);
 
-        var listItem = new ListViewItem<ItemTemplateSchema, ItemPropertyEditor>
+        var listItem = new ListViewItem<SpellTemplateSchema, SpellTemplatePropertyEditor>
         {
             Name = TOOL_CONSTANTS.TEMP_PATH,
             Wrapper = wrapper
@@ -200,7 +200,7 @@ public sealed partial class ItemEditor
 
             await JsonContext.LoadingTask;
 
-            var lcv = new ListCollectionView(JsonContext.ItemTemplates.ToList());
+            var lcv = new ListCollectionView(JsonContext.SpellTemplates.ToList());
             dataGrid.ItemsSource = lcv;
 
             PropertyEditor.Children.Clear();
@@ -226,7 +226,7 @@ public sealed partial class ItemEditor
 
         var index = 0;
 
-        foreach (var property in TOOL_CONSTANTS.ItemPropertyOrder)
+        foreach (var property in TOOL_CONSTANTS.SpellTemplatePropertyOrder)
         {
             var column = dataGrid.Columns.FirstOrDefault(c => c.Header.ToString()!.EqualsI(property));
 
@@ -242,24 +242,82 @@ public sealed partial class ItemEditor
         if (sender is not DataGrid dataGrid)
             return;
 
-        if (e.PropertyName.EqualsI(nameof(ItemTemplateSchema.Modifiers)))
+        if (e.PropertyName.EqualsI(nameof(SpellTemplateSchema.LearningRequirements)))
         {
             e.Cancel = true;
 
-            foreach (var propertyName in TOOL_CONSTANTS.ModifierProperties)
-            {
-                var column = new DataGridTextColumn
+            foreach (var property in TOOL_CONSTANTS.LearningRequirementProperties)
+                switch (property)
                 {
-                    Header = propertyName,
-                    Binding = new Binding($"{nameof(ItemTemplateSchema.Modifiers)}.{propertyName}")
+                    case nameof(LearningRequirementsSchema.PrerequisiteSpellTemplateKeys):
+                    case nameof(LearningRequirementsSchema.PrerequisiteSkillTemplateKeys):
                     {
-                        ValidatesOnDataErrors = true
-                    }
-                };
+                        var column = new DataGridTextColumn
+                        {
+                            Header = property,
+                            Binding = new Binding($"{nameof(SpellTemplateSchema.LearningRequirements)}.{property}")
+                            {
+                                Converter = JoinStringCollectionConverter.Instance,
+                                ValidatesOnDataErrors = true
+                            }
+                        };
 
-                dataGrid.Columns.Add(column);
-            }
-        } else if (e.PropertyName.EqualsI("ScriptKeys"))
+                        dataGrid.Columns.Add(column);
+
+                        break;
+                    }
+                    case nameof(LearningRequirementsSchema.RequiredStats):
+                    {
+                        foreach (var stat in TOOL_CONSTANTS.StatProperties)
+                        {
+                            var column = new DataGridTextColumn
+                            {
+                                Header = stat,
+                                Binding = new Binding($"{nameof(SpellTemplateSchema.LearningRequirements)}.{property}.{stat}")
+                                {
+                                    ValidatesOnDataErrors = true
+                                }
+                            };
+
+                            dataGrid.Columns.Add(column);
+                        }
+
+                        break;
+                    }
+                    case nameof(LearningRequirementsSchema.ItemRequirements):
+                    {
+                        var itemRequirementsColumn = new DataGridTextColumn
+                        {
+                            Header = nameof(LearningRequirementsSchema.ItemRequirements),
+                            Binding = new Binding(
+                                $"{nameof(SpellTemplateSchema.LearningRequirements)}.{nameof(LearningRequirementsSchema.ItemRequirements)}")
+                            {
+                                Converter = ItemRequirementCollectionConverter.Instance,
+                                ValidatesOnDataErrors = true
+                            }
+                        };
+
+                        dataGrid.Columns.Add(itemRequirementsColumn);
+
+                        break;
+                    }
+                    default:
+                    {
+                        var column = new DataGridTextColumn
+                        {
+                            Header = property,
+                            Binding = new Binding($"{nameof(SpellTemplateSchema.LearningRequirements)}.{property}")
+                            {
+                                ValidatesOnDataErrors = true
+                            }
+                        };
+
+                        dataGrid.Columns.Add(column);
+
+                        break;
+                    }
+                }
+        } else if (e.PropertyName.EqualsI(nameof(SpellTemplateSchema.ScriptKeys)))
         {
             e.Cancel = true;
 
@@ -268,13 +326,13 @@ public sealed partial class ItemEditor
                 Header = e.PropertyName,
                 Binding = new Binding(e.PropertyName)
                 {
-                    ValidatesOnDataErrors = true,
-                    Converter = JoinStringCollectionConverter.Instance
+                    Converter = JoinStringCollectionConverter.Instance,
+                    ValidatesOnDataErrors = true
                 }
             };
 
             dataGrid.Columns.Add(column);
-        } else if (!TOOL_CONSTANTS.ItemPropertyOrder.ContainsI(e.PropertyName))
+        } else if (!TOOL_CONSTANTS.SpellTemplatePropertyOrder.ContainsI(e.PropertyName))
             e.Cancel = true;
     }
     #endregion

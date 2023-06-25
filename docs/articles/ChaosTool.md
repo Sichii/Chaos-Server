@@ -14,6 +14,7 @@ all json files using settings from Chaos and allows you to edit all properties e
 - an editable form view for each entity type
 - CTRL+F functionality for both views
 - start typing into the left-hand side list to search there specifically
+- integrity checks for all entity types
 
 ## BulkEdit
 
@@ -23,7 +24,6 @@ call `await JsonContext.SaveChangesAsync();`
 
 ## Future Features
 
-- more entity types
 - rendered panel sprites (item, skill, spell)
 - rendered creature sprites
 - map viewer

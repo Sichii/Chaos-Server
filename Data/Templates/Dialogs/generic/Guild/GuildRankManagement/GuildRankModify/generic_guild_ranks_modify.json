@@ -1,10 +1,12 @@
 {
-    "contextual": true,
-    "nextDialogKey": "generic_guild_ranks_confirmation",
-    "options": [],
-    "scriptKeys": ["guildRankModify"],
-    "scriptVars": {},
-    "templateKey": "generic_guild_ranks_modify",
-    "text": "What would you like the new name of the {RankName} rank to be?",
-    "type": "MenuTextEntry"
+  "contextual": true,
+  "nextDialogKey": "generic_guild_ranks_modify_confirmation",
+  "options": [],
+  "scriptKeys": [
+    "guildRankModify"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_ranks_modify",
+  "text": "What would you like the new name of the {RankName} rank to be?",
+  "type": "MenuTextEntry"
 }

@@ -33,7 +33,8 @@ public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTable
     public LootTable Map(LootTableSchema obj) => new(ItemFactory)
     {
         Key = obj.Key,
-        LootDrops = Mapper.MapMany<LootDrop>(obj.LootDrops).ToList()
+        LootDrops = Mapper.MapMany<LootDrop>(obj.LootDrops).ToList(),
+        Mode = obj.Mode
     };
 
     /// <inheritdoc />

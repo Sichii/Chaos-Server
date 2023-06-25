@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Chaos.Extensions.Common;
-using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using ChaosTool.Comparers;
 using ChaosTool.Converters;
@@ -13,15 +12,15 @@ using ChaosTool.Model;
 using MaterialDesignExtensions.Controls;
 using TOOL_CONSTANTS = ChaosTool.Definitions.CONSTANTS;
 
-namespace ChaosTool.Controls.SpellControls;
+namespace ChaosTool.Controls.MapTemplateControls;
 
-public sealed partial class SpellEditor
+public sealed partial class MapTemplateEditor
 {
-    public ObservableCollection<ListViewItem<SpellTemplateSchema, SpellPropertyEditor>> ListViewItems { get; }
+    public ObservableCollection<ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>> ListViewItems { get; }
 
-    public SpellEditor()
+    public MapTemplateEditor()
     {
-        ListViewItems = new ObservableCollection<ListViewItem<SpellTemplateSchema, SpellPropertyEditor>>();
+        ListViewItems = new ObservableCollection<ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>>();
 
         InitializeComponent();
     }
@@ -71,7 +70,7 @@ public sealed partial class SpellEditor
             case DataGrid dataGrid:
             {
                 var searchResult = dataGrid.ItemsSource
-                                           .OfType<SpellTemplateSchema>()
+                                           .OfType<MapTemplateSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
                                                (rowValue, rowIndex) =>
@@ -113,8 +112,8 @@ public sealed partial class SpellEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.SpellTemplates.Objects.Select(
-                                  wrapper => new ListViewItem<SpellTemplateSchema, SpellPropertyEditor>
+        var objs = JsonContext.MapTemplates.Objects.Select(
+                                  wrapper => new ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>
                                   {
                                       Name = wrapper.Object.TemplateKey,
                                       Wrapper = wrapper
@@ -126,7 +125,7 @@ public sealed partial class SpellEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<SpellTemplateSchema, SpellPropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems.OfType<ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>>().FirstOrDefault();
 
         if (selected is null)
         {
@@ -138,7 +137,7 @@ public sealed partial class SpellEditor
             return;
         }
 
-        selected.Control ??= new SpellPropertyEditor(selected);
+        selected.Control ??= new MapTemplatePropertyEditor(selected);
         selected.Control.DeleteBtn.Click += DeleteBtnOnClick;
 
         PropertyEditor.Children.Clear();
@@ -147,17 +146,17 @@ public sealed partial class SpellEditor
 
     private void DeleteBtnOnClick(object sender, RoutedEventArgs e)
     {
-        if (TemplatesView.SelectedItem is not ListViewItem<SpellTemplateSchema, SpellPropertyEditor> selected)
+        if (TemplatesView.SelectedItem is not ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor> selected)
             return;
 
         ListViewItems.Remove(selected);
-        JsonContext.SpellTemplates.Remove(selected.Name);
+        JsonContext.MapTemplates.Remove(selected.Name);
     }
 
     private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var path = TOOL_CONSTANTS.TEMP_PATH;
-        var baseDir = JsonContext.SpellTemplates.RootDirectory;
+        var baseDir = JsonContext.MapTemplates.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
@@ -169,10 +168,10 @@ public sealed partial class SpellEditor
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new SpellTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
-        var wrapper = new TraceWrapper<SpellTemplateSchema>(path, template);
+        var template = new MapTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var wrapper = new TraceWrapper<MapTemplateSchema>(path, template);
 
-        var listItem = new ListViewItem<SpellTemplateSchema, SpellPropertyEditor>
+        var listItem = new ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>
         {
             Name = TOOL_CONSTANTS.TEMP_PATH,
             Wrapper = wrapper
@@ -200,7 +199,7 @@ public sealed partial class SpellEditor
 
             await JsonContext.LoadingTask;
 
-            var lcv = new ListCollectionView(JsonContext.SpellTemplates.ToList());
+            var lcv = new ListCollectionView(JsonContext.MapTemplates.ToList());
             dataGrid.ItemsSource = lcv;
 
             PropertyEditor.Children.Clear();
@@ -226,7 +225,7 @@ public sealed partial class SpellEditor
 
         var index = 0;
 
-        foreach (var property in TOOL_CONSTANTS.SpellPropertyOrder)
+        foreach (var property in TOOL_CONSTANTS.MapTemplatePropertyOrder)
         {
             var column = dataGrid.Columns.FirstOrDefault(c => c.Header.ToString()!.EqualsI(property));
 
@@ -242,82 +241,7 @@ public sealed partial class SpellEditor
         if (sender is not DataGrid dataGrid)
             return;
 
-        if (e.PropertyName.EqualsI(nameof(SpellTemplateSchema.LearningRequirements)))
-        {
-            e.Cancel = true;
-
-            foreach (var property in TOOL_CONSTANTS.LearningRequirementProperties)
-                switch (property)
-                {
-                    case nameof(LearningRequirementsSchema.PrerequisiteSpellTemplateKeys):
-                    case nameof(LearningRequirementsSchema.PrerequisiteSkillTemplateKeys):
-                    {
-                        var column = new DataGridTextColumn
-                        {
-                            Header = property,
-                            Binding = new Binding($"{nameof(SpellTemplateSchema.LearningRequirements)}.{property}")
-                            {
-                                Converter = JoinStringCollectionConverter.Instance,
-                                ValidatesOnDataErrors = true
-                            }
-                        };
-
-                        dataGrid.Columns.Add(column);
-
-                        break;
-                    }
-                    case nameof(LearningRequirementsSchema.RequiredStats):
-                    {
-                        foreach (var stat in TOOL_CONSTANTS.StatProperties)
-                        {
-                            var column = new DataGridTextColumn
-                            {
-                                Header = stat,
-                                Binding = new Binding($"{nameof(SpellTemplateSchema.LearningRequirements)}.{property}.{stat}")
-                                {
-                                    ValidatesOnDataErrors = true
-                                }
-                            };
-
-                            dataGrid.Columns.Add(column);
-                        }
-
-                        break;
-                    }
-                    case nameof(LearningRequirementsSchema.ItemRequirements):
-                    {
-                        var itemRequirementsColumn = new DataGridTextColumn
-                        {
-                            Header = nameof(LearningRequirementsSchema.ItemRequirements),
-                            Binding = new Binding(
-                                $"{nameof(SpellTemplateSchema.LearningRequirements)}.{nameof(LearningRequirementsSchema.ItemRequirements)}")
-                            {
-                                Converter = ItemRequirementCollectionConverter.Instance,
-                                ValidatesOnDataErrors = true
-                            }
-                        };
-
-                        dataGrid.Columns.Add(itemRequirementsColumn);
-
-                        break;
-                    }
-                    default:
-                    {
-                        var column = new DataGridTextColumn
-                        {
-                            Header = property,
-                            Binding = new Binding($"{nameof(SpellTemplateSchema.LearningRequirements)}.{property}")
-                            {
-                                ValidatesOnDataErrors = true
-                            }
-                        };
-
-                        dataGrid.Columns.Add(column);
-
-                        break;
-                    }
-                }
-        } else if (e.PropertyName.EqualsI(nameof(SpellTemplateSchema.ScriptKeys)))
+        if (e.PropertyName.EqualsI(nameof(MapTemplateSchema.ScriptKeys)))
         {
             e.Cancel = true;
 
@@ -332,7 +256,7 @@ public sealed partial class SpellEditor
             };
 
             dataGrid.Columns.Add(column);
-        } else if (!TOOL_CONSTANTS.SpellPropertyOrder.ContainsI(e.PropertyName))
+        } else if (!TOOL_CONSTANTS.MapTemplatePropertyOrder.ContainsI(e.PropertyName))
             e.Cancel = true;
     }
     #endregion

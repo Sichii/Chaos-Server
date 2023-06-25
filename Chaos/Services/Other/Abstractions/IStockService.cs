@@ -32,13 +32,13 @@ public interface IStockService
         string key,
         IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
         TimeSpan restockInterval,
-        decimal restockPercent
+        int restockPercent
     );
 
     /// <summary>
     ///     Restocks the specified object, adding back a percentage of the maximum stock of each item they sell
     /// </summary>
-    void Restock(string key, decimal percent);
+    void Restock(string key, int percent);
 
     /// <summary>
     ///     Attempts to decrease the stock of an item

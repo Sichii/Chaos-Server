@@ -12,15 +12,15 @@ using ChaosTool.Model;
 using MaterialDesignExtensions.Controls;
 using TOOL_CONSTANTS = ChaosTool.Definitions.CONSTANTS;
 
-namespace ChaosTool.Controls.DialogControls;
+namespace ChaosTool.Controls.ReactorTileTemplateControls;
 
-public sealed partial class DialogEditor
+public sealed partial class ReactorTileTemplateEditor
 {
-    public ObservableCollection<ListViewItem<DialogTemplateSchema, DialogPropertyEditor>> ListViewItems { get; }
+    public ObservableCollection<ListViewItem<ReactorTileTemplateSchema, ReactorTileTemplatePropertyEditor>> ListViewItems { get; }
 
-    public DialogEditor()
+    public ReactorTileTemplateEditor()
     {
-        ListViewItems = new ObservableCollection<ListViewItem<DialogTemplateSchema, DialogPropertyEditor>>();
+        ListViewItems = new ObservableCollection<ListViewItem<ReactorTileTemplateSchema, ReactorTileTemplatePropertyEditor>>();
 
         InitializeComponent();
     }
@@ -70,7 +70,7 @@ public sealed partial class DialogEditor
             case DataGrid dataGrid:
             {
                 var searchResult = dataGrid.ItemsSource
-                                           .OfType<DialogTemplateSchema>()
+                                           .OfType<ReactorTileTemplateSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
                                                (rowValue, rowIndex) =>
@@ -112,8 +112,8 @@ public sealed partial class DialogEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.DialogTemplates.Objects.Select(
-                                  wrapper => new ListViewItem<DialogTemplateSchema, DialogPropertyEditor>
+        var objs = JsonContext.ReactorTileTemplates.Objects.Select(
+                                  wrapper => new ListViewItem<ReactorTileTemplateSchema, ReactorTileTemplatePropertyEditor>
                                   {
                                       Name = wrapper.Object.TemplateKey,
                                       Wrapper = wrapper
@@ -125,7 +125,7 @@ public sealed partial class DialogEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<DialogTemplateSchema, DialogPropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems.OfType<ListViewItem<ReactorTileTemplateSchema, ReactorTileTemplatePropertyEditor>>().FirstOrDefault();
 
         if (selected is null)
         {
@@ -137,7 +137,7 @@ public sealed partial class DialogEditor
             return;
         }
 
-        selected.Control ??= new DialogPropertyEditor(selected);
+        selected.Control ??= new ReactorTileTemplatePropertyEditor(selected);
         selected.Control.DeleteBtn.Click += DeleteBtnOnClick;
 
         PropertyEditor.Children.Clear();
@@ -146,17 +146,17 @@ public sealed partial class DialogEditor
 
     private void DeleteBtnOnClick(object sender, RoutedEventArgs e)
     {
-        if (TemplatesView.SelectedItem is not ListViewItem<DialogTemplateSchema, DialogPropertyEditor> selected)
+        if (TemplatesView.SelectedItem is not ListViewItem<ReactorTileTemplateSchema, ReactorTileTemplatePropertyEditor> selected)
             return;
 
         ListViewItems.Remove(selected);
-        JsonContext.DialogTemplates.Remove(selected.Name);
+        JsonContext.ReactorTileTemplates.Remove(selected.Name);
     }
 
     private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var path = TOOL_CONSTANTS.TEMP_PATH;
-        var baseDir = JsonContext.DialogTemplates.RootDirectory;
+        var baseDir = JsonContext.ReactorTileTemplates.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
@@ -168,10 +168,10 @@ public sealed partial class DialogEditor
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new DialogTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
-        var wrapper = new TraceWrapper<DialogTemplateSchema>(path, template);
+        var template = new ReactorTileTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var wrapper = new TraceWrapper<ReactorTileTemplateSchema>(path, template);
 
-        var listItem = new ListViewItem<DialogTemplateSchema, DialogPropertyEditor>
+        var listItem = new ListViewItem<ReactorTileTemplateSchema, ReactorTileTemplatePropertyEditor>
         {
             Name = TOOL_CONSTANTS.TEMP_PATH,
             Wrapper = wrapper
@@ -199,7 +199,7 @@ public sealed partial class DialogEditor
 
             await JsonContext.LoadingTask;
 
-            var lcv = new ListCollectionView(JsonContext.DialogTemplates.ToList());
+            var lcv = new ListCollectionView(JsonContext.ReactorTileTemplates.ToList());
             dataGrid.ItemsSource = lcv;
 
             PropertyEditor.Children.Clear();
@@ -225,7 +225,7 @@ public sealed partial class DialogEditor
 
         var index = 0;
 
-        foreach (var property in TOOL_CONSTANTS.DialogPropertyOrder)
+        foreach (var property in TOOL_CONSTANTS.ReactorTileTemplatePropertyOrder)
         {
             var column = dataGrid.Columns.FirstOrDefault(c => c.Header.ToString()!.EqualsI(property));
 
@@ -241,22 +241,7 @@ public sealed partial class DialogEditor
         if (sender is not DataGrid dataGrid)
             return;
 
-        if (e.PropertyName.EqualsI("Options"))
-        {
-            e.Cancel = true;
-
-            var column = new DataGridTextColumn
-            {
-                Header = e.PropertyName,
-                Binding = new Binding(e.PropertyName)
-                {
-                    Converter = DialogOptionCollectionConverter.Instance,
-                    ValidatesOnDataErrors = true
-                }
-            };
-
-            dataGrid.Columns.Add(column);
-        } else if (e.PropertyName.EqualsI("ScriptKeys"))
+        if (e.PropertyName.EqualsI(nameof(ReactorTileTemplateSchema.ScriptKeys)))
         {
             e.Cancel = true;
 
@@ -271,7 +256,7 @@ public sealed partial class DialogEditor
             };
 
             dataGrid.Columns.Add(column);
-        } else if (!TOOL_CONSTANTS.DialogPropertyOrder.ContainsI(e.PropertyName))
+        } else if (!TOOL_CONSTANTS.ReactorTileTemplatePropertyOrder.ContainsI(e.PropertyName))
             e.Cancel = true;
     }
     #endregion

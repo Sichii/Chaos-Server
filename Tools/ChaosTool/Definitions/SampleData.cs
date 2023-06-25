@@ -36,6 +36,30 @@ public static class SampleData
         }
     };
 
+    public static ObservableCollection<ItemDetailsSchema> ItemDetails { get; } = new()
+    {
+        new ItemDetailsSchema
+        {
+            ItemTemplateKey = "some_item_1",
+            Stock = 50
+        },
+        new ItemDetailsSchema
+        {
+            ItemTemplateKey = "some_item_2",
+            Stock = 10
+        },
+        new ItemDetailsSchema
+        {
+            ItemTemplateKey = "some_item_3",
+            Stock = 100
+        },
+        new ItemDetailsSchema
+        {
+            ItemTemplateKey = "some_item_4",
+            Stock = 1
+        }
+    };
+
     public static ObservableCollection<ItemRequirementSchema> ItemRequirements { get; } = new()
     {
         new ItemRequirementSchema

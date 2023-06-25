@@ -10,7 +10,69 @@ internal static class CONSTANTS
 {
     internal const string TEMP_PATH = "NEW.json";
 
-    internal static readonly ImmutableList<string> DialogPropertyOrder = ImmutableList.Create(
+    internal static readonly ImmutableList<string> MerchantTemplatePropertyOrder = ImmutableList.Create(
+        nameof(MerchantTemplateSchema.TemplateKey),
+        nameof(MerchantTemplateSchema.Name),
+        nameof(MerchantTemplateSchema.Sprite),
+        nameof(MerchantTemplateSchema.RestockPct),
+        nameof(MerchantTemplateSchema.RestockIntervalHrs),
+        nameof(MerchantTemplateSchema.WanderIntervalMs),
+        nameof(MerchantTemplateSchema.ItemsForSale),
+        nameof(MerchantTemplateSchema.ItemsToBuy),
+        nameof(MerchantTemplateSchema.SkillsToTeach),
+        nameof(MerchantTemplateSchema.SpellsToTeach),
+        nameof(MerchantTemplateSchema.ScriptKeys));
+
+    internal static readonly ImmutableList<string> MonsterTemplatePropertyOrder = ImmutableList.Create(
+        nameof(MonsterTemplateSchema.TemplateKey),
+        nameof(MonsterTemplateSchema.Name),
+        nameof(MonsterTemplateSchema.Sprite),
+        nameof(MonsterTemplateSchema.Type),
+        nameof(MonsterTemplateSchema.AggroRange),
+        nameof(MonsterTemplateSchema.ExpReward),
+        nameof(MonsterTemplateSchema.MinGoldDrop),
+        nameof(MonsterTemplateSchema.MaxGoldDrop),
+        nameof(MonsterTemplateSchema.AssailIntervalMs),
+        nameof(MonsterTemplateSchema.SkillIntervalMs),
+        nameof(MonsterTemplateSchema.SpellIntervalMs),
+        nameof(MonsterTemplateSchema.MoveIntervalMs),
+        nameof(MonsterTemplateSchema.WanderIntervalMs),
+        nameof(StatSheetSchema.Ability),
+        nameof(StatSheetSchema.Level),
+        nameof(StatSheetSchema.AtkSpeedPct),
+        nameof(StatSheetSchema.Ac),
+        nameof(StatSheetSchema.MagicResistance),
+        nameof(StatSheetSchema.Hit),
+        nameof(StatSheetSchema.Dmg),
+        nameof(StatSheetSchema.FlatSkillDamage),
+        nameof(StatSheetSchema.FlatSpellDamage),
+        nameof(StatSheetSchema.SkillDamagePct),
+        nameof(StatSheetSchema.SpellDamagePct),
+        nameof(StatSheetSchema.MaximumHp),
+        nameof(StatSheetSchema.MaximumMp),
+        nameof(StatSheetSchema.Str),
+        nameof(StatSheetSchema.Int),
+        nameof(StatSheetSchema.Wis),
+        nameof(StatSheetSchema.Con),
+        nameof(StatSheetSchema.Dex),
+        nameof(MonsterTemplateSchema.SpellTemplateKeys),
+        nameof(MonsterTemplateSchema.SkillTemplateKeys),
+        nameof(MonsterTemplateSchema.ScriptKeys));
+
+    internal static readonly ImmutableList<string> MapInstancePropertyOrder = ImmutableList.Create("TODO");
+
+    internal static readonly ImmutableList<string> ReactorTileTemplatePropertyOrder = ImmutableList.Create(
+        nameof(ReactorTileTemplateSchema.TemplateKey),
+        nameof(ReactorTileTemplateSchema.ShouldBlockPathfinding),
+        nameof(ReactorTileTemplateSchema.ScriptKeys));
+
+    internal static readonly ImmutableList<string> MapTemplatePropertyOrder = ImmutableList.Create(
+        nameof(MapTemplateSchema.TemplateKey),
+        nameof(MapTemplateSchema.Width),
+        nameof(MapTemplateSchema.Height),
+        nameof(MapTemplateSchema.ScriptKeys));
+
+    internal static readonly ImmutableList<string> DialogTemplatePropertyOrder = ImmutableList.Create(
         nameof(DialogTemplateSchema.TemplateKey),
         nameof(DialogTemplateSchema.Type),
         nameof(DialogTemplateSchema.Text),
@@ -21,7 +83,7 @@ internal static class CONSTANTS
         nameof(DialogTemplateSchema.Options),
         nameof(DialogTemplateSchema.ScriptKeys));
 
-    internal static readonly ImmutableList<string> ItemPropertyOrder = ImmutableList.Create(
+    internal static readonly ImmutableList<string> ItemTemplatePropertyOrder = ImmutableList.Create(
         nameof(ItemTemplateSchema.TemplateKey),
         nameof(ItemTemplateSchema.Name),
         nameof(ItemTemplateSchema.PanelSprite),
@@ -87,7 +149,27 @@ internal static class CONSTANTS
         nameof(AttributesSchema.Con),
         nameof(AttributesSchema.Dex));
 
-    internal static readonly ImmutableList<string> SkillPropertyOrder = ImmutableList.Create(
+    internal static readonly ImmutableList<string> StatSheetProperties = ImmutableList.Create(
+        nameof(StatSheetSchema.Ability),
+        nameof(StatSheetSchema.Level),
+        nameof(StatSheetSchema.AtkSpeedPct),
+        nameof(StatSheetSchema.Ac),
+        nameof(StatSheetSchema.MagicResistance),
+        nameof(StatSheetSchema.Hit),
+        nameof(StatSheetSchema.Dmg),
+        nameof(StatSheetSchema.FlatSkillDamage),
+        nameof(StatSheetSchema.FlatSpellDamage),
+        nameof(StatSheetSchema.SkillDamagePct),
+        nameof(StatSheetSchema.SpellDamagePct),
+        nameof(StatSheetSchema.MaximumHp),
+        nameof(StatSheetSchema.MaximumMp),
+        nameof(StatSheetSchema.Str),
+        nameof(StatSheetSchema.Int),
+        nameof(StatSheetSchema.Wis),
+        nameof(StatSheetSchema.Con),
+        nameof(StatSheetSchema.Dex));
+
+    internal static readonly ImmutableList<string> SkillTemplatePropertyOrder = ImmutableList.Create(
         nameof(SkillTemplateSchema.TemplateKey),
         nameof(SkillTemplateSchema.Name),
         nameof(SkillTemplateSchema.IsAssail),
@@ -109,7 +191,7 @@ internal static class CONSTANTS
         nameof(LearningRequirements.PrerequisiteSpellTemplateKeys),
         nameof(SkillTemplateSchema.ScriptKeys));
 
-    internal static readonly ImmutableList<string> SpellPropertyOrder = ImmutableList.Create(
+    internal static readonly ImmutableList<string> SpellTemplatePropertyOrder = ImmutableList.Create(
         nameof(SpellTemplateSchema.TemplateKey),
         nameof(SpellTemplateSchema.Name),
         nameof(SpellTemplateSchema.SpellType),

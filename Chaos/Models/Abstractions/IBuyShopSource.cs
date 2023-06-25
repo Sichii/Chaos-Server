@@ -7,7 +7,7 @@ public interface IBuyShopSource : IDialogSourceEntity
     ICollection<Item> ItemsForSale { get; }
     int GetStock(string itemTemplateKey);
     bool HasStock(string itemTemplateKey);
-    void Restock(decimal percent);
+    void Restock(int percent);
 
     bool TryDecrementStock(string itemTemplateKey, int amount);
 

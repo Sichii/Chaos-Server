@@ -11,17 +11,17 @@ using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Model;
 
-namespace ChaosTool.Controls.DialogControls;
+namespace ChaosTool.Controls.DialogTemplateControls;
 
-public sealed partial class DialogPropertyEditor
+public sealed partial class DialogTemplatePropertyEditor
 {
     private Point DragPoint;
-    public ListViewItem<DialogTemplateSchema, DialogPropertyEditor> ListItem { get; }
+    public ListViewItem<DialogTemplateSchema, DialogTemplatePropertyEditor> ListItem { get; }
     public ObservableCollection<DialogOptionSchema> OptionsViewItems { get; }
     public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
     public TraceWrapper<DialogTemplateSchema> Wrapper => ListItem.Wrapper;
 
-    public DialogPropertyEditor(ListViewItem<DialogTemplateSchema, DialogPropertyEditor> listItem)
+    public DialogTemplatePropertyEditor(ListViewItem<DialogTemplateSchema, DialogTemplatePropertyEditor> listItem)
     {
         ListItem = listItem;
         OptionsViewItems = new ObservableCollection<DialogOptionSchema>();
@@ -63,7 +63,11 @@ public sealed partial class DialogPropertyEditor
         var template = Wrapper.Object;
 
         PathTbox.Text = Wrapper.Path;
+
+        TemplateKeyTbox.IsEnabled = false;
         TemplateKeyTbox.Text = template.TemplateKey;
+        TemplateKeyTbox.IsEnabled = true;
+
         TypeCmbox.SelectedItem = SelectPrimitive(template.Type, TypeCmbox.ItemsSource);
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         TextTbox.Text = template.Text?.ReplaceLineEndings();
@@ -87,8 +91,8 @@ public sealed partial class DialogPropertyEditor
     {
         try
         {
-            var existing = JsonContext.DialogTemplates.Objects.Where(obj => obj != Wrapper)
-                                      .FirstOrDefault(obj => obj.Path == Wrapper.Path);
+            var existing = JsonContext.DialogTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+                                      .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
             {
@@ -97,8 +101,8 @@ public sealed partial class DialogPropertyEditor
                 return;
             }
 
-            existing = JsonContext.DialogTemplates.Objects.Where(obj => obj != Wrapper)
-                                  .FirstOrDefault(obj => obj.Object.TemplateKey.EqualsI(Wrapper.Object.TemplateKey));
+            existing = JsonContext.DialogTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+                                  .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
             {
@@ -133,7 +137,9 @@ public sealed partial class DialogPropertyEditor
 
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-    private void TemplateKeyTbox_OnKeyUp(object sender, KeyEventArgs e) => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
+        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region DialogOptions Controls
@@ -164,7 +170,7 @@ public sealed partial class DialogPropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not string scriptKey)
+        if (button.DataContext is not BindableString scriptKey)
             return;
 
         ScriptKeysViewItems.Remove(scriptKey);

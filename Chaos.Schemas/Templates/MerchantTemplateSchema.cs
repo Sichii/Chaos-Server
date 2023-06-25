@@ -10,11 +10,6 @@ namespace Chaos.Schemas.Templates;
 public sealed record MerchantTemplateSchema
 {
     /// <summary>
-    ///     The unique id of a dialog that should be shown when this merchant is activated
-    /// </summary>
-    public string? DialogKey { get; set; }
-
-    /// <summary>
     ///     A collection of items that this merchant will sell. If stock is set to -1, the merchant will have infinite stock of
     ///     it.
     /// </summary>
@@ -33,12 +28,12 @@ public sealed record MerchantTemplateSchema
     /// <summary>
     ///     Defaults to 6 hours. If this merchant sells items, this specifies how often the merchant will restock those items
     /// </summary>
-    public int RestockIntervalHours { get; set; } = 6;
+    public int RestockIntervalHrs { get; set; } = 6;
 
     /// <summary>
     ///     Defaults to 100%. If this merchant sells items, this specifies the percentage of items that will be restocked
     /// </summary>
-    public decimal RestockPercent { get; set; } = 100;
+    public int RestockPct { get; set; } = 100;
     /// <summary>
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>

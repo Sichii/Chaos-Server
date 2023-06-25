@@ -1,0 +1,184 @@
+<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.MapInstanceControls.MapInstancePropertyEditor"
+                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                                 xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
+                                 xmlns:definitions="clr-namespace:ChaosTool.Definitions"
+                                 xmlns:model="clr-namespace:ChaosTool.Model"
+                                 mc:Ignorable="d"
+                                 d:DesignHeight="700"
+                                 d:DesignWidth="900"
+                                 MinHeight="700"
+                                 MinWidth="900"
+                                 HorizontalAlignment="Stretch"
+                                 Width="Auto"
+                                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+                                 Background="{DynamicResource MaterialDesignPaper}"
+                                 TextElement.FontWeight="Medium"
+                                 TextElement.FontSize="14"
+                                 FontFamily="{materialDesign:MaterialDesignFont}"
+                                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                                 Initialized="UserControl_Initialized"
+                                 Focusable="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <TabControl Style="{StaticResource MaterialDesignTabControl}">
+                <TabItem Name="MapInstanceTab"
+                         Header="Instance"
+                         Style="{StaticResource MaterialDesignTabItem}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="11*" />
+                            <ColumnDefinition Width="11*" />
+                            <ColumnDefinition Width="6*" />
+                        </Grid.ColumnDefinitions>
+                        <!-- #region Labels -->
+                        <Label Grid.Column="2"
+                               Content="ScriptKeys"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Style="{StaticResource MaterialDesignLabel}"
+                               Margin="0,109,10,0" />
+                        <Label Content="TemplateKey"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Style="{StaticResource MaterialDesignLabel}"
+                               Margin="0,109,10,0" />
+                        <Label Content="Path"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Style="{StaticResource MaterialDesignLabel}"
+                               Margin="0,49,10,0" />
+                        <!-- #endregion -->
+                        <!-- #region Input -->
+                        <TextBox Grid.ColumnSpan="3"
+                                 Grid.Column="1"
+                                 Name="PathTbox"
+                                 HorizontalAlignment="Left"
+                                 HorizontalContentAlignment="Left"
+                                 VerticalAlignment="Top"
+                                 Margin="10,48,10,0"
+                                 TextWrapping="NoWrap"
+                                 MinWidth="200"
+                                 Style="{StaticResource MaterialDesignTextBox}" />
+                        <TextBox Grid.Column="1"
+                                 Name="TemplateKeyTbox"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Top"
+                                 Margin="10,108,75,0"
+                                 TextWrapping="NoWrap"
+                                 MinWidth="160"
+                                 Style="{StaticResource MaterialDesignTextBox}"
+                                 TextChanged="TemplateKeyTbox_OnTextChanged" />
+                        <Grid Grid.Column="3"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Stretch"
+                              Height="Auto"
+                              Margin="0,109,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ListView Grid.Row="0"
+                                      Name="ScriptKeysView"
+                                      HorizontalContentAlignment="Stretch"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Top"
+                                      SelectionMode="Single"
+                                      Style="{StaticResource MaterialDesignListView}"
+                                      materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
+                                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                                      Margin="0,0,5,0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type model:BindableString}">
+                                        <Grid HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch"
+                                              Width="Auto">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0"
+                                                     MaxLines="1"
+                                                     TextWrapping="NoWrap"
+                                                     VerticalAlignment="Top"
+                                                     HorizontalAlignment="Stretch"
+                                                     HorizontalContentAlignment="Left"
+                                                     Text="{Binding String}"
+                                                     Style="{StaticResource MaterialDesignTextBox}"
+                                                     Padding="3"
+                                                     Margin="3, 0, 3, 3" />
+                                            <Button x:Name="DeleteScriptKeyBtn"
+                                                    Grid.ColumnSpan="99"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    MaxHeight="20"
+                                                    MaxWidth="20"
+                                                    Margin="0, 0, -8, 2"
+                                                    Content="{materialDesign:PackIcon Kind=CloseBold}"
+                                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                                    Click="DeleteScriptKeyBtn_Click" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <Button Grid.Row="1"
+                                    Name="AddScriptKeyBtn"
+                                    Content="{materialDesign:PackIcon Kind=PlusBold}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    MaxWidth="20"
+                                    MaxHeight="20"
+                                    Margin="5"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Click="AddScriptKeyBtn_Click" />
+                        </Grid>
+                        <!-- #endregion -->
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <!-- #region Footer -->
+        <Button Grid.Row="1"
+                Grid.ColumnSpan="99"
+                Name="DeleteBtn"
+                Content="Delete"
+                HorizontalAlignment="Right"
+                Margin="0,0,200,10"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+        <Button Grid.Row="1"
+                Grid.ColumnSpan="99"
+                Name="RevertBtn"
+                Content="Revert"
+                HorizontalAlignment="Right"
+                Margin="0,0,100,10"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Click="RevertBtn_Click" />
+        <Button Grid.Row="1"
+                Grid.ColumnSpan="99"
+                Name="SaveBtn"
+                Content="Save"
+                HorizontalAlignment="Right"
+                Margin="0,0,10,10"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Click="SaveBtn_Click" />
+        <materialDesign:Snackbar Name="Snackbar"
+                                 Grid.RowSpan="99"
+                                 Grid.ColumnSpan="99"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Bottom"
+                                 Margin="10, 10, 150, 10"
+                                 MessageQueue="{materialDesign:MessageQueue}" />
+        <!-- #endregion Footer -->
+    </Grid>
+</abstractions:PropertyEditorBase>

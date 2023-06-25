@@ -386,6 +386,16 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
     }
 
+    public void GiveItemOrSendToBank(Item item)
+    {
+        if (!CanCarry(item) || !Inventory.TryAddToNextSlot(item))
+        {
+            Bank.Deposit(item);
+
+            SendOrangeBarMessage($"{item.DisplayName} was sent to your bank as overflow");
+        }
+    }
+
     /// <summary>
     ///     Determines whether or not an aisling's class counts as being a certain class
     /// </summary>

@@ -6,10 +6,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:itemControls="clr-namespace:ChaosTool.Controls.ItemControls"
-        xmlns:spellControls="clr-namespace:ChaosTool.Controls.SpellControls"
-        xmlns:skillControls="clr-namespace:ChaosTool.Controls.SkillControls"
-        xmlns:dialogControls="clr-namespace:ChaosTool.Controls.DialogControls"
+        xmlns:integrityCheckControls="clr-namespace:ChaosTool.Controls.IntegrityCheckControls"
+        xmlns:itemTemplateControls="clr-namespace:ChaosTool.Controls.ItemTemplateControls"
+        xmlns:spellTemplateControls="clr-namespace:ChaosTool.Controls.SpellTemplateControls"
+        xmlns:skillTemplateControls="clr-namespace:ChaosTool.Controls.SkillTemplateControls"
+        xmlns:dialogTemplateControls="clr-namespace:ChaosTool.Controls.DialogTemplateControls"
+        xmlns:mapTemplateControls="clr-namespace:ChaosTool.Controls.MapTemplateControls"
+        xmlns:reactorTileTemplateControls="clr-namespace:ChaosTool.Controls.ReactorTileTemplateControls"
+        xmlns:monsterTemplateControls="clr-namespace:ChaosTool.Controls.MonsterTemplateControls"
+        xmlns:merchantTemplateControls="clr-namespace:ChaosTool.Controls.MerchantTemplateControls"
         mc:Ignorable="d"
         Title="Chaos Tool"
         Width="1200"
@@ -22,28 +27,60 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <TabControl Style="{StaticResource MaterialDesignTabControl}">
         <TabItem Header="Items"
+                 Name="ItemsTab"
                  IsSelected="True"
                  Style="{StaticResource MaterialDesignTabItem}">
             <Grid>
-                <itemControls:ItemEditor />
+                <itemTemplateControls:ItemTemplateEditor x:Name="ItemTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Spells"
+                 Name="SpellsTab"
                  Style="{StaticResource MaterialDesignTabItem}">
             <Grid>
-                <spellControls:SpellEditor />
+                <spellTemplateControls:SpellTemplateEditor x:Name="SpellTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Skills"
+                 Name="SkillsTab"
                  Style="{StaticResource MaterialDesignTabItem}">
             <Grid>
-                <skillControls:SkillEditor />
+                <skillTemplateControls:SkillTemplateEditor x:Name="SkillTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Dialogs"
+                 Name="DialogsTab"
                  Style="{StaticResource MaterialDesignTabItem}">
             <Grid>
-                <dialogControls:DialogEditor />
+                <dialogTemplateControls:DialogTemplateEditor x:Name="DialogTemplateEditor" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Maps"
+                 Name="MapTemplatesTab"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <mapTemplateControls:MapTemplateEditor x:Name="MapTemplateEditor" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="ReactorTiles"
+                 Name="ReactorTileTemplatesTab"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <reactorTileTemplateControls:ReactorTileTemplateEditor x:Name="ReactorTileTemplateEditor" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Monsters"
+                 Name="MonsterTemplatesTab"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <monsterTemplateControls:MonsterTemplateEditor x:Name="MonsterTemplateEditor" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Merchants"
+                 Name="MerchantTemplatesTab"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <merchantTemplateControls:MerchantTemplateEditor x:Name="MerchantTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="BulkEdit"
@@ -104,9 +141,10 @@
                     </ItemsControl>
                 </ScrollViewer>
 
-                <Label Grid.Row="2"
-                       Content="Output"
-                       Style="{StaticResource MaterialDesignLabel}" />
+                <TextBox Grid.Row="2"
+                         Text="Output"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         IsReadOnly="True" />
                 <TextBlock Grid.Row="3"
                            Name="Output"
                            Style="{StaticResource MaterialDesignTextBlock}"
@@ -117,6 +155,13 @@
                            Background="#404040"
                            Foreground="White"
                            HorizontalAlignment="Stretch" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="Integrity"
+                 Name="IntegrityTab"
+                 Style="{StaticResource MaterialDesignTabItem}">
+            <Grid>
+                <integrityCheckControls:IntegrityCheckControl x:Name="IntegrityCheck" />
             </Grid>
         </TabItem>
     </TabControl>

@@ -8,15 +8,14 @@ namespace Chaos.Models.Templates;
 public sealed record MerchantTemplate : ITemplate, IScripted
 {
     public required Dictionary<string, int> DefaultStock { get; init; }
-    public required string? DialogKey { get; init; }
     public required CounterCollection ItemsForSale { get; init; }
 
     public required ICollection<string> ItemsToBuy { get; init; }
     public required string Name { get; init; }
 
-    public required int RestockIntervalHours { get; init; }
+    public required int RestockIntervalHrs { get; init; }
 
-    public required decimal RestockPercent { get; init; }
+    public required int RestockPct { get; init; }
     /// <inheritdoc />
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public required IDictionary<string, IScriptVars> ScriptVars { get; init; } =

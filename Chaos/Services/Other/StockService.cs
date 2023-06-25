@@ -46,7 +46,7 @@ public sealed class StockService : BackgroundService, IStockService
         string key,
         IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
         TimeSpan restockInterval,
-        decimal restockPercent
+        int restockPercent
     )
     {
         var merchantStock = new MerchantStock(
@@ -75,7 +75,7 @@ public sealed class StockService : BackgroundService, IStockService
     }
 
     /// <inheritdoc />
-    public void Restock(string key, decimal percent)
+    public void Restock(string key, int percent)
     {
         if (!Stock.TryGetValue(key, out var merchantStock))
             return;
@@ -145,7 +145,7 @@ public sealed class StockService : BackgroundService, IStockService
             MaxStock = maxStock;
         }
 
-        internal void Restock(decimal percent) =>
+        internal void Restock(int percent) =>
             InterlockedEx.SetValue(
                 ref _currentStock,
                 () =>
@@ -187,7 +187,7 @@ public sealed class StockService : BackgroundService, IStockService
         private readonly string Key;
         private readonly ILogger Logger;
         private readonly TimeSpan RestockInterval;
-        private readonly decimal RestockPercent;
+        private readonly int RestockPct;
         private readonly IIntervalTimer RestockTimer;
         public ConcurrentDictionary<string, ItemStock> Stock { get; }
 
@@ -195,7 +195,7 @@ public sealed class StockService : BackgroundService, IStockService
             string key,
             IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
             TimeSpan restockInterval,
-            decimal restockPercent,
+            int restockPct,
             ILogger logger
         )
         {
@@ -207,7 +207,7 @@ public sealed class StockService : BackgroundService, IStockService
                 StringComparer.OrdinalIgnoreCase);
 
             RestockInterval = restockInterval;
-            RestockPercent = restockPercent;
+            RestockPct = restockPct;
             RestockTimer = new IntervalTimer(RestockInterval, false);
             RestockTimer.SetOrigin(DateTime.UtcNow.Date);
         }
@@ -219,13 +219,13 @@ public sealed class StockService : BackgroundService, IStockService
 
             if (RestockTimer.IntervalElapsed)
             {
-                Restock(RestockPercent);
+                Restock(RestockPct);
 
                 Logger.LogDebug("Auto restocked {@Key}", Key);
             }
         }
 
-        internal void Restock(decimal percent)
+        internal void Restock(int percent)
         {
             foreach (var kvp in Stock)
                 kvp.Value.Restock(percent);

@@ -10,18 +10,18 @@ using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Model;
 
-namespace ChaosTool.Controls.ItemControls;
+namespace ChaosTool.Controls.ItemTemplateControls;
 
 /// <summary>
-///     Interaction logic for ItemPropertyEditor.xaml
+///     Interaction logic for ItemTemplatePropertyEditor.xaml
 /// </summary>
-public sealed partial class ItemPropertyEditor
+public sealed partial class ItemTemplatePropertyEditor
 {
-    public ListViewItem<ItemTemplateSchema, ItemPropertyEditor> ListItem { get; }
+    public ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor> ListItem { get; }
     public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
     public TraceWrapper<ItemTemplateSchema> Wrapper => ListItem.Wrapper;
 
-    public ItemPropertyEditor(ListViewItem<ItemTemplateSchema, ItemPropertyEditor> listItem)
+    public ItemTemplatePropertyEditor(ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor> listItem)
     {
         ListItem = listItem;
         ScriptKeysViewItems = new ObservableCollection<BindableString>();
@@ -110,7 +110,11 @@ public sealed partial class ItemPropertyEditor
         var template = Wrapper.Object;
 
         PathTbox.Text = Wrapper.Path;
+
+        TemplateKeyTbox.IsEnabled = false;
         TemplateKeyTbox.Text = template.TemplateKey;
+        TemplateKeyTbox.IsEnabled = true;
+
         NameTbox.Text = template.Name;
         PanelSpriteTbox.Text = template.PanelSprite.ToString();
         DisplaySpriteTbox.Text = template.DisplaySprite?.ToString();
@@ -169,8 +173,8 @@ public sealed partial class ItemPropertyEditor
     {
         try
         {
-            var existing = JsonContext.ItemTemplates.Objects.Where(obj => obj != Wrapper)
-                                      .FirstOrDefault(obj => obj.Path == Wrapper.Path);
+            var existing = JsonContext.ItemTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+                                      .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
             {
@@ -179,8 +183,8 @@ public sealed partial class ItemPropertyEditor
                 return;
             }
 
-            existing = JsonContext.ItemTemplates.Objects.Where(obj => !ReferenceEquals(obj, Wrapper))
-                                  .FirstOrDefault(obj => obj.Object.TemplateKey.EqualsI(Wrapper.Object.TemplateKey));
+            existing = JsonContext.ItemTemplates.Objects.Where(wrapper => !ReferenceEquals(wrapper, Wrapper))
+                                  .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
             {
@@ -215,7 +219,9 @@ public sealed partial class ItemPropertyEditor
 
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-    private void TemplateKeyTbox_OnKeyUp(object sender, KeyEventArgs e) => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
+        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Control

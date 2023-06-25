@@ -12,19 +12,19 @@ using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Model;
 
-namespace ChaosTool.Controls.SpellControls;
+namespace ChaosTool.Controls.SkillTemplateControls;
 
-public sealed partial class SpellPropertyEditor
+public sealed partial class SkillTemplatePropertyEditor
 {
     public ObservableCollection<ItemRequirementSchema> ItemRequirementsViewItems { get; }
-    public ListViewItem<SpellTemplateSchema, SpellPropertyEditor> ListItem { get; }
+    public ListViewItem<SkillTemplateSchema, SkillTemplatePropertyEditor> ListItem { get; }
     public ObservableCollection<BindableString> PrereqSkillTemplateKeysViewItems { get; }
     public ObservableCollection<BindableString> PrereqSpellTemplateKeysViewItems { get; }
     public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
 
-    public TraceWrapper<SpellTemplateSchema> Wrapper => ListItem.Wrapper;
+    public TraceWrapper<SkillTemplateSchema> Wrapper => ListItem.Wrapper;
 
-    public SpellPropertyEditor(ListViewItem<SpellTemplateSchema, SpellPropertyEditor> listItem)
+    public SkillTemplatePropertyEditor(ListViewItem<SkillTemplateSchema, SkillTemplatePropertyEditor> listItem)
     {
         ListItem = listItem;
         ScriptKeysViewItems = new ObservableCollection<BindableString>();
@@ -37,7 +37,6 @@ public sealed partial class SpellPropertyEditor
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
-        SpellTypeCmbox.ItemsSource = GetEnumNames<SpellType>();
         ClassCmbox.ItemsSource = GetEnumNames<BaseClass?>();
         AdvClassCmbox.ItemsSource = GetEnumNames<AdvClass?>();
 
@@ -57,11 +56,10 @@ public sealed partial class SpellPropertyEditor
         var stats = new StatsSchema();
 
         Wrapper.Path = PathTbox.Text;
+
         template.TemplateKey = TemplateKeyTbox.Text;
         template.Name = NameTbox.Text;
-        template.SpellType = ParsePrimitive<SpellType>(SpellTypeCmbox.Text);
-        template.Prompt = PromptTbox.Text;
-        template.CastLines = ParsePrimitive<byte>(CastLinesTbox.Text);
+        template.IsAssail = IsAssailCbox?.IsChecked ?? false;
         template.PanelSprite = ParsePrimitive<ushort>(PanelSpriteTbox.Text);
         template.Level = ParsePrimitive<int>(LevelTbox.Text);
         template.Class = ParsePrimitive<BaseClass?>(ClassCmbox.Text);
@@ -99,12 +97,13 @@ public sealed partial class SpellPropertyEditor
         var stats = learningRequirements?.RequiredStats;
 
         PathTbox.Text = Wrapper.Path;
+
+        TemplateKeyTbox.IsEnabled = false;
         TemplateKeyTbox.Text = template.TemplateKey;
+        TemplateKeyTbox.IsEnabled = true;
 
         NameTbox.Text = template.Name;
-        SpellTypeCmbox.SelectedItem = SelectPrimitive(template.SpellType, SpellTypeCmbox.Items);
-        PromptTbox.Text = template.Prompt;
-        CastLinesTbox.Text = template.CastLines.ToString();
+        IsAssailCbox.IsChecked = template.IsAssail;
         PanelSpriteTbox.Text = template.PanelSprite.ToString();
         LevelTbox.Text = template.Level.ToString();
         ClassCmbox.SelectedItem = SelectPrimitive(template.Class, ClassCmbox.Items);
@@ -143,8 +142,8 @@ public sealed partial class SpellPropertyEditor
     {
         try
         {
-            var existing = JsonContext.SpellTemplates.Objects.Where(obj => obj != Wrapper)
-                                      .FirstOrDefault(obj => obj.Path == Wrapper.Path);
+            var existing = JsonContext.SkillTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+                                      .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
             {
@@ -153,8 +152,8 @@ public sealed partial class SpellPropertyEditor
                 return;
             }
 
-            existing = JsonContext.SpellTemplates.Objects.Where(obj => obj != Wrapper)
-                                  .FirstOrDefault(obj => obj.Object.TemplateKey.EqualsI(Wrapper.Object.TemplateKey));
+            existing = JsonContext.SkillTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+                                  .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
             {
@@ -164,10 +163,10 @@ public sealed partial class SpellPropertyEditor
                 return;
             }
 
-            existing = JsonContext.SpellTemplates.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Wrapper));
+            existing = JsonContext.SkillTemplates.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Wrapper));
 
             if (existing is null)
-                JsonContext.SpellTemplates.Objects.Add(Wrapper);
+                JsonContext.SkillTemplates.Objects.Add(Wrapper);
 
             if (!ValidatePreSave(Wrapper, PathTbox, TemplateKeyTbox))
             {
@@ -183,13 +182,16 @@ public sealed partial class SpellPropertyEditor
             Snackbar.MessageQueue?.Enqueue(ex.ToString());
         }
 
-        await JsonContext.SpellTemplates.SaveItemAsync(Wrapper);
+        await JsonContext.SkillTemplates.SaveItemAsync(Wrapper);
     }
     #endregion
 
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-    private void TemplateKeyTbox_OnKeyUp(object sender, KeyEventArgs e) => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) => Validators.TemplateKeyMatchesFileName(
+        TemplateKeyTbox,
+        PathTbox);
     #endregion
 
     #region ScriptKeys Controls
@@ -208,21 +210,6 @@ public sealed partial class SpellPropertyEditor
     #endregion
 
     #region PrereqSpellTemplateKeys Controls
-    private void DeleteSpellTemplateKeyBtn_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Button button)
-            return;
-
-        if (button.DataContext is not BindableString spellTemplateKey)
-            return;
-
-        PrereqSpellTemplateKeysViewItems.Remove(spellTemplateKey);
-    }
-
-    private void AddSpellTemplateKeyBtn_Click(object sender, RoutedEventArgs e) => PrereqSpellTemplateKeysViewItems.Add(string.Empty);
-    #endregion
-
-    #region PrereqSpellTemplateKeys Controls
     private void DeleteSkillTemplateKeyBtn_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button)
@@ -235,6 +222,21 @@ public sealed partial class SpellPropertyEditor
     }
 
     private void AddSkillTemplateKeyBtn_Click(object sender, RoutedEventArgs e) => PrereqSkillTemplateKeysViewItems.Add(string.Empty);
+    #endregion
+
+    #region PrereqSpellTemplateKeys Controls
+    private void DeleteSpellTemplateKeyBtn_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+
+        if (button.DataContext is not BindableString skillTemplateKey)
+            return;
+
+        PrereqSpellTemplateKeysViewItems.Remove(skillTemplateKey);
+    }
+
+    private void AddSpellTemplateKeyBtn_Click(object sender, RoutedEventArgs e) => PrereqSpellTemplateKeysViewItems.Add(string.Empty);
     #endregion
 
     #region ItemRequirements Controls

@@ -29,8 +29,7 @@
             <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFixCollection}"
                                       ItemsSource="{Binding Fixes, Mode=OneTime}">
                 <TextBlock Text="{Binding Provider, Mode=OneTime}"
-                           Background="#303030"
-                           Foreground="White" />
+                           Style="{StaticResource MaterialDesignTextBlock}" />
             </HierarchicalDataTemplate>
 
             <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFix}"
@@ -40,8 +39,7 @@
 
             <DataTemplate DataType="{x:Type codeActions:CodeAction}">
                 <TextBlock Text="{Binding Title, Mode=OneTime}"
-                           Background="#303030"
-                           Foreground="White" />
+                           Style="{StaticResource MaterialDesignTextBlock}" />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

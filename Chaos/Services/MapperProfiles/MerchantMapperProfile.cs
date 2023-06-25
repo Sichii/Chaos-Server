@@ -11,7 +11,6 @@ public class MerchantMapperProfile : IMapperProfile<MerchantTemplate, MerchantTe
     /// <inheritdoc />
     public MerchantTemplate Map(MerchantTemplateSchema obj) => new()
     {
-        DialogKey = obj.DialogKey,
         Name = obj.Name,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
         ScriptVars = new Dictionary<string, IScriptVars>(
@@ -25,8 +24,8 @@ public class MerchantMapperProfile : IMapperProfile<MerchantTemplate, MerchantTe
         DefaultStock = obj.ItemsForSale.ToDictionary(details => details.ItemTemplateKey, details => details.Stock),
         SkillsToTeach = obj.SkillsToTeach.ToList(),
         SpellsToTeach = obj.SpellsToTeach.ToList(),
-        RestockIntervalHours = obj.RestockIntervalHours,
-        RestockPercent = obj.RestockPercent,
+        RestockIntervalHrs = obj.RestockIntervalHrs,
+        RestockPct = obj.RestockPct,
         WanderIntervalMs = obj.WanderIntervalMs
     };
 

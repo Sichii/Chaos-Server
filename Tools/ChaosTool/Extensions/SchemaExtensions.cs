@@ -1,4 +1,6 @@
+using System.Globalization;
 using Chaos.Schemas.Templates;
+using ChaosTool.Model.Tables;
 
 namespace ChaosTool.Extensions;
 
@@ -125,6 +127,86 @@ internal static class SchemaExtensions
         yield return reqs?.PrerequisiteSkillTemplateKeys.ToLinePerString();
         yield return reqs?.PrerequisiteSpellTemplateKeys.ToLinePerString();
         yield return schema.ScriptKeys.ToLinePerString();
+    }
+
+    internal static IEnumerable<string?> EnumerateProperties(this MapTemplateSchema schema)
+    {
+        yield return schema.TemplateKey;
+        yield return schema.Width.ToString();
+        yield return schema.Height.ToString();
+        yield return schema.ScriptKeys.ToLinePerString();
+    }
+
+    internal static IEnumerable<string?> EnumerateProperties(this ReactorTileTemplateSchema schema)
+    {
+        yield return schema.TemplateKey;
+        yield return schema.ShouldBlockPathfinding.ToString();
+        yield return schema.ScriptKeys.ToLinePerString();
+    }
+
+    internal static IEnumerable<string?> EnumerateProperties(this MonsterTemplateSchema schema)
+    {
+        var stats = schema.StatSheet;
+
+        yield return schema.TemplateKey;
+        yield return schema.Name;
+        yield return schema.Sprite.ToString();
+        yield return schema.Type.ToString();
+        yield return schema.AggroRange.ToString();
+        yield return schema.ExpReward.ToString();
+        yield return schema.MinGoldDrop.ToString();
+        yield return schema.MaxGoldDrop.ToString();
+        yield return schema.AssailIntervalMs.ToString();
+        yield return schema.SkillIntervalMs.ToString();
+        yield return schema.SpellIntervalMs.ToString();
+        yield return schema.MoveIntervalMs.ToString();
+        yield return schema.WanderIntervalMs.ToString();
+        yield return stats.Ability.ToString();
+        yield return stats.Level.ToString();
+        yield return stats.AtkSpeedPct.ToString();
+        yield return stats.Ac.ToString();
+        yield return stats.MagicResistance.ToString();
+        yield return stats.Hit.ToString();
+        yield return stats.Dmg.ToString();
+        yield return stats.FlatSkillDamage.ToString();
+        yield return stats.FlatSpellDamage.ToString();
+        yield return stats.SkillDamagePct.ToString();
+        yield return stats.SpellDamagePct.ToString();
+        yield return stats.MaximumHp.ToString();
+        yield return stats.MaximumMp.ToString();
+        yield return stats.Str.ToString();
+        yield return stats.Int.ToString();
+        yield return stats.Wis.ToString();
+        yield return stats.Con.ToString();
+        yield return stats.Dex.ToString();
+        yield return schema.SpellTemplateKeys.ToLinePerString();
+        yield return schema.SkillTemplateKeys.ToLinePerString();
+        yield return schema.ScriptKeys.ToLinePerString();
+    }
+
+    internal static IEnumerable<string?> EnumerateProperties(this MerchantTemplateSchema schema)
+    {
+        yield return schema.TemplateKey;
+        yield return schema.Name;
+        yield return schema.Sprite.ToString();
+        yield return schema.RestockPct.ToString(CultureInfo.InvariantCulture);
+        yield return schema.RestockIntervalHrs.ToString();
+        yield return schema.WanderIntervalMs.ToString();
+
+        yield return schema.ItemsForSale.To2LinesPerItem(
+            item => item.ItemTemplateKey,
+            item => item.Stock.ToString());
+
+        yield return schema.ItemsToBuy.ToLinePerString();
+        yield return schema.SkillsToTeach.ToLinePerString();
+        yield return schema.SpellsToTeach.ToLinePerString();
+        yield return schema.ScriptKeys.ToLinePerString();
+    }
+
+    internal static IEnumerable<string?> EnumerateProperties(this MapInstanceRepository.MapInstanceComposite composite)
+    {
+        //TODO: this
+        yield break;
     }
 
     internal static string To2LinesPerItem<T>(this IEnumerable<T> items, Func<T, string> selector1, Func<T, string> selector2) =>

@@ -1,6 +1,9 @@
 {
+  "aggroRange": 6,
   "assailIntervalMs": 1500,
-  "direction": "Down",
+  "expReward": 50,
+  "maxGoldDrop": 30,
+  "minGoldDrop": 10,
   "moveIntervalMs": 1500,
   "name": "Common Rat",
   "scriptKeys": [
@@ -27,9 +30,5 @@
   },
   "templateKey": "common_rat",
   "type": "Normal",
-  "wanderIntervalMs": 2000,
-  "aggroRange": 6,
-  "expReward": 50,
-  "maxGoldDrop": 30,
-  "minGoldDrop": 10
+  "wanderIntervalMs": 2000
 }

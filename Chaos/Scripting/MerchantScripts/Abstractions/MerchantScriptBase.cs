@@ -8,7 +8,6 @@ namespace Chaos.Scripting.MerchantScripts.Abstractions;
 
 public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerchantScript
 {
-    protected virtual string? InitialDialogKey => Subject.Template.DialogKey;
     protected virtual MapInstance Map => Subject.MapInstance;
 
     /// <inheritdoc />
