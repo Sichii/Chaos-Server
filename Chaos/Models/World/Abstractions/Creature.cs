@@ -28,8 +28,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public int GamePoints { get; set; }
     public int Gold { get; set; }
     public virtual bool IsDead { get; set; }
-    public DateTime LastAttack { get; set; }
-    public DateTime LastMove { get; set; }
     public Status Status { get; set; }
     public Trackers Trackers { get; set; }
     public Dictionary<uint, DateTime> ApproachTime { get; }

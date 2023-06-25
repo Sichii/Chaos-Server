@@ -1,9 +1,9 @@
 using System.IO;
 using System.Text.Json;
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Content;
 using Chaos.Services.Storage.Options;
+using Chaos.Storage.Abstractions;
 using ChaosTool.Model.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -12,8 +12,8 @@ namespace ChaosTool.Model.Tables;
 public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository.MapInstanceComposite>
 {
     /// <inheritdoc />
-    public MapInstanceRepository(IOptions<MapInstanceCacheOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
-        : base(options, jsonSerializerOptions) { }
+    public MapInstanceRepository(IEntityRepository entityRepository, IOptions<MapInstanceCacheOptions> options)
+        : base(entityRepository, options) { }
 
     public override void Add(string path, MapInstanceComposite obj)
     {
@@ -26,33 +26,25 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
     {
         try
         {
-            var instanceTask = JsonSerializerEx.DeserializeAsync<MapInstanceSchema>(
-                Path.Combine(path, "instance.json"),
-                JsonSerializerOptions);
+            var instanceTask = EntityRepository.LoadAsync<MapInstanceSchema>(Path.Combine(path, "instance.json"));
 
-            var merchantsTask = JsonSerializerEx.DeserializeAsync<List<MerchantSpawnSchema>>(
-                Path.Combine(path, "merchants.json"),
-                JsonSerializerOptions);
+            var merchantsTask = EntityRepository.LoadManyAsync<MerchantSpawnSchema>(Path.Combine(path, "merchants.json"))
+                                                .ToListAsync()
+                                                .AsTask();
 
-            var monstersTask = JsonSerializerEx.DeserializeAsync<List<MonsterSpawnSchema>>(
-                Path.Combine(path, "monsters.json"),
-                JsonSerializerOptions);
+            var monstersTask = EntityRepository.LoadManyAsync<MonsterSpawnSchema>(Path.Combine(path, "monsters.json"))
+                                               .ToListAsync()
+                                               .AsTask();
 
-            var reactorsTask = JsonSerializerEx.DeserializeAsync<List<ReactorTileSchema>>(
-                Path.Combine(path, "reactors.json"),
-                JsonSerializerOptions);
+            var reactorsTask = EntityRepository.LoadManyAsync<ReactorTileSchema>(Path.Combine(path, "reactors.json"))
+                                               .ToListAsync()
+                                               .AsTask();
 
             await Task.WhenAll(
                 instanceTask,
                 merchantsTask,
                 monstersTask,
                 reactorsTask);
-
-            if ((instanceTask.Result == null)
-                || (merchantsTask.Result == null)
-                || (monstersTask.Result == null)
-                || (reactorsTask.Result == null))
-                return null;
 
             return new MapInstanceComposite
             {
@@ -86,22 +78,10 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
                 Directory.CreateDirectory(wrapped.Path);
 
             await Task.WhenAll(
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "instance.json"),
-                    wrapped.Object.Instance,
-                    JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "merchants.json"),
-                    wrapped.Object.Merchants,
-                    JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "monsters.json"),
-                    wrapped.Object.Monsters,
-                    JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "reactors.json"),
-                    wrapped.Object.Reactors,
-                    JsonSerializerOptions));
+                EntityRepository.SaveAsync(wrapped.Object.Instance, Path.Combine(wrapped.Path, "instance.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Merchants, Path.Combine(wrapped.Path, "merchants.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Monsters, Path.Combine(wrapped.Path, "monsters.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Reactors, Path.Combine(wrapped.Path, "reactors.json")));
         } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
         {
             throw new JsonException($"Failed to serialize {nameof(MapInstanceComposite)} to path \"{wrapped.Path}\"", e);

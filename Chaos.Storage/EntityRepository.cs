@@ -166,7 +166,18 @@ public sealed class EntityRepository : IEntityRepository
     }
 
     /// <inheritdoc />
-    public void Save<T, TSchema>(T obj, string path)
+    public void Save<TSchema>(TSchema obj, string path)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        Logger.LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+
+        JsonSerializerEx.Serialize(path, obj, JsonSerializerOptions);
+    }
+
+    /// <inheritdoc />
+    public void SaveAndMap<T, TSchema>(T obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -179,20 +190,7 @@ public sealed class EntityRepository : IEntityRepository
     }
 
     /// <inheritdoc />
-    public void Save<T, TSchema>(IEnumerable<T> obj, string path)
-    {
-        ArgumentNullException.ThrowIfNull(obj);
-        ArgumentException.ThrowIfNullOrEmpty(path);
-
-        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
-
-        var schema = Mapper.MapMany<T, TSchema>(obj);
-
-        JsonSerializerEx.Serialize(path, schema, JsonSerializerOptions);
-    }
-
-    /// <inheritdoc />
-    public Task SaveAsync<T, TSchema>(T obj, string path)
+    public Task SaveAndMapAsync<T, TSchema>(T obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -205,7 +203,20 @@ public sealed class EntityRepository : IEntityRepository
     }
 
     /// <inheritdoc />
-    public Task SaveAsync<T, TSchema>(IEnumerable<T> obj, string path)
+    public void SaveAndMapMany<T, TSchema>(IEnumerable<T> obj, string path)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
+
+        var schema = Mapper.MapMany<T, TSchema>(obj);
+
+        JsonSerializerEx.Serialize(path, schema, JsonSerializerOptions);
+    }
+
+    /// <inheritdoc />
+    public Task SaveAndMapManyAsync<T, TSchema>(IEnumerable<T> obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -215,5 +226,38 @@ public sealed class EntityRepository : IEntityRepository
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
         return JsonSerializerEx.SerializeAsync(path, schema, JsonSerializerOptions);
+    }
+
+    /// <inheritdoc />
+    public Task SaveAsync<TSchema>(TSchema obj, string path)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        Logger.LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+
+        return JsonSerializerEx.SerializeAsync(path, obj, JsonSerializerOptions);
+    }
+
+    /// <inheritdoc />
+    public void SaveMany<TSchema>(IEnumerable<TSchema> obj, string path)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+
+        JsonSerializerEx.Serialize(path, obj, JsonSerializerOptions);
+    }
+
+    /// <inheritdoc />
+    public Task SaveManyAsync<TSchema>(IEnumerable<TSchema> obj, string path)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+
+        return JsonSerializerEx.SerializeAsync(path, obj, JsonSerializerOptions);
     }
 }

@@ -1,8 +1,8 @@
 using System.IO;
-using System.Text.Json;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Content;
 using Chaos.Services.Storage.Options;
+using Chaos.Storage.Abstractions;
 using ChaosTool.Model.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -11,8 +11,8 @@ namespace ChaosTool.Model.Tables;
 public sealed class LootTableRepository : RepositoryBase<LootTableSchema>
 {
     /// <inheritdoc />
-    public LootTableRepository(IOptions<LootTableCacheOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
-        : base(options, jsonSerializerOptions) { }
+    public LootTableRepository(IEntityRepository entityRepository, IOptions<LootTableCacheOptions> options)
+        : base(entityRepository, options) { }
 
     public override void Add(string path, LootTableSchema obj)
     {

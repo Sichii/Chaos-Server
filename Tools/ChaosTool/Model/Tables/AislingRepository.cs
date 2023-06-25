@@ -1,9 +1,9 @@
 using System.IO;
 using System.Text.Json;
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Aisling;
 using Chaos.Services.Storage.Options;
+using Chaos.Storage.Abstractions;
 using ChaosTool.Model.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -17,8 +17,8 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
     public override string RootDirectory => Options.Directory;
 
     /// <inheritdoc />
-    public AislingRepository(IOptions<AislingStoreOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
-        : base(null, jsonSerializerOptions) => Options = options.Value;
+    public AislingRepository(IEntityRepository entityRepository, IOptions<AislingStoreOptions> options)
+        : base(entityRepository, null) => Options = options.Value;
 
     public override void Add(string path, AislingComposite obj)
     {
@@ -37,30 +37,34 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
     {
         try
         {
-            var aislingTask = JsonSerializerEx.DeserializeAsync<AislingSchema>(Path.Combine(path, "aisling.json"), JsonSerializerOptions);
-            var bankTask = JsonSerializerEx.DeserializeAsync<BankSchema>(Path.Combine(path, "bank.json"), JsonSerializerOptions);
+            var aislingTask = EntityRepository.LoadAsync<AislingSchema>(Path.Combine(path, "aisling.json"));
+            var bankTask = EntityRepository.LoadAsync<BankSchema>(Path.Combine(path, "bank.json"));
 
-            var effectsTask = JsonSerializerEx.DeserializeAsync<List<EffectSchema>>(
-                Path.Combine(path, "effects.json"),
-                JsonSerializerOptions);
+            var effectsTask = EntityRepository.LoadManyAsync<EffectSchema>(Path.Combine(path, "effects.json"))
+                                              .ToListAsync()
+                                              .AsTask();
 
-            var equipmentTask = JsonSerializerEx.DeserializeAsync<List<ItemSchema>>(
-                Path.Combine(path, "equipment.json"),
-                JsonSerializerOptions);
+            var equipmentTask = EntityRepository.LoadManyAsync<ItemSchema>(Path.Combine(path, "equipment.json"))
+                                                .ToListAsync()
+                                                .AsTask();
 
-            var inventoryTask = JsonSerializerEx.DeserializeAsync<List<ItemSchema>>(
-                Path.Combine(path, "inventory.json"),
-                JsonSerializerOptions);
+            var inventoryTask = EntityRepository.LoadManyAsync<ItemSchema>(Path.Combine(path, "inventory.json"))
+                                                .ToListAsync()
+                                                .AsTask();
 
-            var legendTask = JsonSerializerEx.DeserializeAsync<List<LegendMarkSchema>>(
-                Path.Combine(path, "legend.json"),
-                JsonSerializerOptions);
+            var legendTask = EntityRepository.LoadManyAsync<LegendMarkSchema>(Path.Combine(path, "legend.json"))
+                                             .ToListAsync()
+                                             .AsTask();
 
-            var skillsTask = JsonSerializerEx.DeserializeAsync<List<SkillSchema>>(Path.Combine(path, "skills.json"), JsonSerializerOptions);
-            var spellsTask = JsonSerializerEx.DeserializeAsync<List<SpellSchema>>(Path.Combine(path, "spells.json"), JsonSerializerOptions);
+            var skillsTask = EntityRepository.LoadManyAsync<SkillSchema>(Path.Combine(path, "skills.json"))
+                                             .ToListAsync()
+                                             .AsTask();
 
-            var trackersTask =
-                JsonSerializerEx.DeserializeAsync<TrackersSchema>(Path.Combine(path, "trackers.json"), JsonSerializerOptions);
+            var spellsTask = EntityRepository.LoadManyAsync<SpellSchema>(Path.Combine(path, "spells.json"))
+                                             .ToListAsync()
+                                             .AsTask();
+
+            var trackersTask = EntityRepository.LoadAsync<TrackersSchema>(Path.Combine(path, "trackers.json"));
 
             await Task.WhenAll(
                 aislingTask,
@@ -72,17 +76,6 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
                 skillsTask,
                 spellsTask,
                 trackersTask);
-
-            if ((aislingTask.Result == null)
-                || (bankTask.Result == null)
-                || (effectsTask.Result == null)
-                || (equipmentTask.Result == null)
-                || (inventoryTask.Result == null)
-                || (legendTask.Result == null)
-                || (skillsTask.Result == null)
-                || (spellsTask.Result == null)
-                || (trackersTask.Result == null))
-                return null;
 
             return new AislingComposite
             {
@@ -121,24 +114,15 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
                 Directory.CreateDirectory(wrapped.Path);
 
             await Task.WhenAll(
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "aisling.json"), wrapped.Object.Aisling, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "bank.json"), wrapped.Object.Bank, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "effects.json"), wrapped.Object.Effects, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "equipment.json"),
-                    wrapped.Object.Equipment,
-                    JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "inventory.json"),
-                    wrapped.Object.Inventory,
-                    JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "legend.json"), wrapped.Object.Legend, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "skills.json"), wrapped.Object.Skills, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(Path.Combine(wrapped.Path, "spells.json"), wrapped.Object.Spells, JsonSerializerOptions),
-                JsonSerializerEx.SerializeAsync(
-                    Path.Combine(wrapped.Path, "trackers.json"),
-                    wrapped.Object.Trackers,
-                    JsonSerializerOptions));
+                EntityRepository.SaveAsync(wrapped.Object.Aisling, Path.Combine(wrapped.Path, "aisling.json")),
+                EntityRepository.SaveAsync(wrapped.Object.Bank, Path.Combine(wrapped.Path, "bank.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Effects, Path.Combine(wrapped.Path, "effects.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Equipment, Path.Combine(wrapped.Path, "equipment.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Inventory, Path.Combine(wrapped.Path, "inventory.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Legend, Path.Combine(wrapped.Path, "legend.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Skills, Path.Combine(wrapped.Path, "skills.json")),
+                EntityRepository.SaveManyAsync(wrapped.Object.Spells, Path.Combine(wrapped.Path, "spells.json")),
+                EntityRepository.SaveAsync(wrapped.Object.Trackers, Path.Combine(wrapped.Path, "trackers.json")));
         } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
         {
             throw new JsonException($"Failed to serialize {nameof(AislingComposite)} to path \"{wrapped.Path}\"", e);

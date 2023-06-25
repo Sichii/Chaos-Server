@@ -11,8 +11,8 @@
     ],
     "itemsToBuy": ["apple"],
     "name": "Shop Tester",
-    "restockIntervalHours": 1,
-    "restockPercent": 100,
+    "restockIntervalHrs": 1,
+    "restockPCt": 100,
     "scriptKeys": ["showdialog", "verbalShop"],
     "scriptVars": {
         "showdialog": {

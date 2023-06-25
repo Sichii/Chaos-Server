@@ -71,22 +71,21 @@ public interface IEntityRepository
     IAsyncEnumerable<TSchema> LoadManyAsync<TSchema>(string path);
 
     /// <summary>
+    ///     Saves a schema object to the specified path, without mapping it to a different type
+    /// </summary>
+    /// <param name="obj">The object to save</param>
+    /// <param name="path">The path to save the object to</param>
+    /// <typeparam name="TSchema">The type of the object to save</typeparam>
+    void Save<TSchema>(TSchema obj, string path);
+
+    /// <summary>
     ///     Saves a schema object to the specified path, mapping it from the specified type to the schema type
     /// </summary>
     /// <param name="obj">The object to save</param>
     /// <param name="path">The path to save the object to</param>
     /// <typeparam name="T">The type of the object to save</typeparam>
     /// <typeparam name="TSchema">The type of the schema object to map the object to</typeparam>
-    void Save<T, TSchema>(T obj, string path);
-
-    /// <summary>
-    ///     Saves a collection of schema objects to the specified path, mapping them from the specified type to the schema type
-    /// </summary>
-    /// <param name="obj">The object to save</param>
-    /// <param name="path">The path to save the object to</param>
-    /// <typeparam name="T">The type of the object to save</typeparam>
-    /// <typeparam name="TSchema">The type of the schema object to map the object to</typeparam>
-    void Save<T, TSchema>(IEnumerable<T> obj, string path);
+    void SaveAndMap<T, TSchema>(T obj, string path);
 
     /// <summary>
     ///     Asynchronously saves a schema object to the specified path, mapping it from the specified type to the schema type
@@ -95,7 +94,16 @@ public interface IEntityRepository
     /// <param name="path">The path to save the object to</param>
     /// <typeparam name="T">The type of the object to save</typeparam>
     /// <typeparam name="TSchema">The type of the schema object to map the object to</typeparam>
-    Task SaveAsync<T, TSchema>(T obj, string path);
+    Task SaveAndMapAsync<T, TSchema>(T obj, string path);
+
+    /// <summary>
+    ///     Saves a collection of schema objects to the specified path, mapping them from the specified type to the schema type
+    /// </summary>
+    /// <param name="obj">The object to save</param>
+    /// <param name="path">The path to save the object to</param>
+    /// <typeparam name="T">The type of the object to save</typeparam>
+    /// <typeparam name="TSchema">The type of the schema object to map the object to</typeparam>
+    void SaveAndMapMany<T, TSchema>(IEnumerable<T> obj, string path);
 
     /// <summary>
     ///     Asynchronously saves a collection of schema object to the specified path, mapping them from the specified type to
@@ -105,5 +113,29 @@ public interface IEntityRepository
     /// <param name="path">The path to save the object to</param>
     /// <typeparam name="T">The type of the object to save</typeparam>
     /// <typeparam name="TSchema">The type of the schema object to map the object to</typeparam>
-    Task SaveAsync<T, TSchema>(IEnumerable<T> obj, string path);
+    Task SaveAndMapManyAsync<T, TSchema>(IEnumerable<T> obj, string path);
+
+    /// <summary>
+    ///     Asynchronously saves a schema object to the specified path, without mapping it to a different type
+    /// </summary>
+    /// <param name="obj">The object to save</param>
+    /// <param name="path">The path to save the object to</param>
+    /// <typeparam name="TSchema">The type of the object to save</typeparam>
+    Task SaveAsync<TSchema>(TSchema obj, string path);
+
+    /// <summary>
+    ///     Saves a collection of schema objects to the specified path, without mapping them to a different type
+    /// </summary>
+    /// <param name="obj">The object to save</param>
+    /// <param name="path">The path to save the object to</param>
+    /// <typeparam name="TSchema">The type of the object to save</typeparam>
+    void SaveMany<TSchema>(IEnumerable<TSchema> obj, string path);
+
+    /// <summary>
+    ///     Asynchronously saves a collection of schema objects to the specified path, without mapping them to a different type
+    /// </summary>
+    /// <param name="obj">The object to save</param>
+    /// <param name="path">The path to save the object to</param>
+    /// <typeparam name="TSchema">The type of the object to save</typeparam>
+    Task SaveManyAsync<TSchema>(IEnumerable<TSchema> obj, string path);
 }

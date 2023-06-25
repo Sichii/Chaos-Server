@@ -166,11 +166,11 @@ public class GuildStore : BackgroundService, IStore<Guild>
             throw new InvalidOperationException("The guild does not have a tier 3 rank");
 
         return Task.WhenAll(
-            EntityRepository.SaveAsync<Guild, GuildSchema>(guild, guildPath),
-            EntityRepository.SaveAsync<GuildRank, GuildRankSchema>(tier0, tier0Path),
-            EntityRepository.SaveAsync<GuildRank, GuildRankSchema>(tier1, tier1Path),
-            EntityRepository.SaveAsync<GuildRank, GuildRankSchema>(tier2, tier2Path),
-            EntityRepository.SaveAsync<GuildRank, GuildRankSchema>(tier3, tier3Path));
+            EntityRepository.SaveAndMapAsync<Guild, GuildSchema>(guild, guildPath),
+            EntityRepository.SaveAndMapAsync<GuildRank, GuildRankSchema>(tier0, tier0Path),
+            EntityRepository.SaveAndMapAsync<GuildRank, GuildRankSchema>(tier1, tier1Path),
+            EntityRepository.SaveAndMapAsync<GuildRank, GuildRankSchema>(tier2, tier2Path),
+            EntityRepository.SaveAndMapAsync<GuildRank, GuildRankSchema>(tier3, tier3Path));
     }
 
     protected virtual async Task SaveGuildAsync(Guild guild)

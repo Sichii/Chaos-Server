@@ -43,9 +43,6 @@ public abstract class MapEntity : WorldEntity, ILocation
         Y = point.Y;
 
         MapInstance.MoveEntity(this, oldPoint);
-
-        if (this is Creature creature)
-            creature.LastMove = DateTime.UtcNow;
     }
 
     public void SetLocation(MapInstance mapInstance, IPoint point)

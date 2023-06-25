@@ -10,6 +10,8 @@ using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Services.Configuration;
+using Chaos.Storage;
+using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
 using ChaosTool.Model.Tables;
 using Microsoft.Extensions.Configuration;
@@ -80,6 +82,8 @@ public class JsonContext
         // @formatter:on
         var configuration = builder.Build();
         services.AddSingleton<IConfiguration>(configuration);
+        services.AddTypeMapper();
+        services.AddTransient<IEntityRepository, EntityRepository>();
         services.AddLogging();
 
         services.AddOptions<JsonSerializerOptions>()

@@ -2,7 +2,6 @@ using System.Collections;
 using System.IO;
 using System.Text.Json;
 using Chaos.Common.Collections.Synchronized;
-using Chaos.Common.Utilities;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
 using Microsoft.Extensions.Options;
@@ -11,7 +10,7 @@ namespace ChaosTool.Model.Abstractions;
 
 public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
 {
-    protected JsonSerializerOptions JsonSerializerOptions { get; }
+    protected IEntityRepository EntityRepository { get; }
     public SynchronizedList<TraceWrapper<T>> Objects { get; }
     public IExpiringFileCacheOptions? Options { get; }
     protected SynchronizedHashSet<string> Paths { get; }
@@ -19,11 +18,14 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
     public virtual string RootDirectory =>
         Options?.Directory ?? throw new InvalidOperationException("If using a different options type, override this method");
 
-    protected RepositoryBase(IOptions<IExpiringFileCacheOptions>? options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
+    protected RepositoryBase(
+        IEntityRepository entityRepository,
+        IOptions<IExpiringFileCacheOptions>? options
+    )
     {
+        EntityRepository = entityRepository;
         Options = options?.Value;
         Paths = new SynchronizedHashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
-        JsonSerializerOptions = jsonSerializerOptions.Value;
         Objects = new SynchronizedList<TraceWrapper<T>>();
     }
 
@@ -88,7 +90,7 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
     {
         try
         {
-            return await JsonSerializerEx.DeserializeAsync<T>(path, JsonSerializerOptions);
+            return await EntityRepository.LoadAsync<T>(path);
         } catch (JsonException e)
         {
             throw new JsonException($"Failed to deserialize {typeof(T).Name} from path \"{path}\"", e);
@@ -110,7 +112,7 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
-            await JsonSerializerEx.SerializeAsync(wrapped.Path, wrapped.Object, JsonSerializerOptions);
+            await EntityRepository.SaveAsync(wrapped.Object, wrapped.Path);
         } catch (JsonException e)
         {
             throw new JsonException($"Failed to serialize {typeof(T).Name} to path \"{wrapped.Path}\"", e);

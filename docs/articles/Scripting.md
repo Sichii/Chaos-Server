@@ -13,7 +13,7 @@ the [ConfigurableItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.
 
 > [!TIP]
 > You can add scripts to scripted objects at runtime by
-> using [AddScript](<xref:Chaos.Extensions.ScriptExtensions.AddScript`2>)
+> using [AddScript](<xref:Chaos.Extensions.ScriptExtensions.AddScript*>)
 
 ### Base Scripts
 
@@ -28,28 +28,22 @@ added.
 
 Configurable scripts are also empty scripts with all empty virtual implementations. The difference here is that these
 scripts are intended
-to have variables passed into them from json. Configurable scripts have an underlying mechanism that populates protected
-read/writeable
-variables
+to have variables passed into them from json. Configurable scripts have an underlying mechanism that populates variables
 automatically if it can find that variable within the source json the entity was created from. Configurable scripts read
-from
-the `scriptVars` property from whatever entity is the subject of that script.
+from the `scriptVars` property from whatever entity is the subject of that script.
 
 For example, here is a script that is used for consumable items that give back health or mana.  
 [!code-csharp[](../../Chaos/Scripting/ItemScripts/VitalityConsumableScript.cs)]  
 Note the `scriptVars` region. These properties don't appear to be set anywhere, but they are automatically populated by
-the script's base
-implementation from the item's json.
+the script's base implementation from the item's json.
 
 Here is a json for an `apple` item, note the `scriptVars` property  
 [!code-json[](../../Data/Templates/Items/apple.json)]
 
 Here the `scriptKeys` collection contains the `vitalityConsumable` script key, signaling that
-the `VitalityConsumableScript` should be
-attached to this entity.
+the `VitalityConsumableScript` should be attached to this entity.
 The `scriptVars` object here provides configuration for that script. If multiple configurable scripts are used, multiple
-configurations can
-be specified.
+configurations can be specified.
 
 > [!NOTE]
 > The key of a script is the name of the class without "Script" at the end. So `VitalityConsumableScript` would have the

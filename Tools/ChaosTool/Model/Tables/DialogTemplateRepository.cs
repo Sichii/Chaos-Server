@@ -1,8 +1,8 @@
 using System.IO;
-using System.Text.Json;
 using Chaos.Extensions.Common;
 using Chaos.Schemas.Templates;
 using Chaos.Services.Storage.Options;
+using Chaos.Storage.Abstractions;
 using ChaosTool.Model.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -11,8 +11,8 @@ namespace ChaosTool.Model.Tables;
 public sealed class DialogTemplateRepository : RepositoryBase<DialogTemplateSchema>
 {
     /// <inheritdoc />
-    public DialogTemplateRepository(IOptions<DialogTemplateCacheOptions> options, IOptions<JsonSerializerOptions> jsonSerializerOptions)
-        : base(options, jsonSerializerOptions) { }
+    public DialogTemplateRepository(IEntityRepository entityRepository, IOptions<DialogTemplateCacheOptions> options)
+        : base(entityRepository, options) { }
 
     public override void Add(string path, DialogTemplateSchema obj)
     {

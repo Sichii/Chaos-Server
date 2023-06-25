@@ -63,8 +63,6 @@ public sealed class Skill : PanelEntityBase, IScripted<ISkillScript>
     {
         Script.OnUse(context);
 
-        context.Source.LastAttack = DateTime.UtcNow;
-
         //for assails, their cooldowns are re-calculated each time they are used
         //the cooldown is based on the soruce's assail interval and atk speed
         if (Template.IsAssail)
