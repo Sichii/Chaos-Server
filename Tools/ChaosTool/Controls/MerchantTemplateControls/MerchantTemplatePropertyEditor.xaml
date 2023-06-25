@@ -75,30 +75,46 @@
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,259,10,0" />
-        <Label Grid.Column="1"
-               Content="ItemsForSale"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,79,10,0" />
-        <Label Grid.Column="1"
-               Content="ItemsToBuy"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,349,10,0" />
-        <Label Grid.Column="2"
-               Content="SkillsToTeach"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,79,10,0" />
-        <Label Grid.Column="2"
-               Content="SpellsToTeach"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,349,10,0" />
+        <Grid Grid.Column="1"
+              HorizontalAlignment="Right"
+              Margin="0, 79, 10, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Content="ItemsForSale"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top"
+                   Style="{StaticResource MaterialDesignLabel}"
+                   Margin="0,0,0,0" />
+            <Label Grid.Row="1"
+                   Content="ItemsToBuy"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top"
+                   Style="{StaticResource MaterialDesignLabel}"
+                   Margin="0,0,0,0" />
+        </Grid>
+        <Grid Grid.Column="2"
+              HorizontalAlignment="Right"
+              Margin="0, 79, 10, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0"
+                   Content="SkillsToTeach"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top"
+                   Style="{StaticResource MaterialDesignLabel}"
+                   Margin="0,0,0,0" />
+            <Label Grid.Row="1"
+                   Content="SpellsToTeach"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top"
+                   Style="{StaticResource MaterialDesignLabel}"
+                   Margin="0,0,0,0" />
+        </Grid>
 
 
         <!-- #endregion -->
@@ -231,276 +247,290 @@
         </Grid>
 
         <Grid Grid.Column="2"
-              VerticalAlignment="Top"
-              Height="Auto"
-              Margin="0,79,115,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ListView Grid.Column="0"
-                      Name="ItemsForSaleView"
-                      HorizontalAlignment="Stretch"
-                      HorizontalContentAlignment="Stretch"
-                      VerticalAlignment="Top"
-                      SelectionMode="Single"
-                      Style="{StaticResource MaterialDesignListView}"
-                      materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static definitions:SampleData.ItemDetails}"
-                      materialDesign:RippleAssist.IsDisabled="True"
-                      materialDesign:ListBoxItemAssist.ShowSelection="True"
-                      MaxHeight="400">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type data:ItemDetailsSchema}">
-                        <Grid Background="Transparent"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Top">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Border Grid.RowSpan="99"
-                                    Background="Transparent"
-                                    BorderBrush="White"
-                                    BorderThickness="1"
-                                    CornerRadius="5"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch" />
-                            <TextBox Grid.Row="0"
-                                     MaxLines="1"
-                                     TextWrapping="NoWrap"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Stretch"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=ItemTemplateKey}"
-                                     Style="{StaticResource MaterialDesignTextBox}"
-                                     Padding="3"
-                                     Margin="3, 3, 3, 0" />
-                            <Button x:Name="DeleteItemForSaleBtn"
-                                    Grid.RowSpan="99"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Stretch"
-                                    IsTabStop="False"
-                                    MaxHeight="20"
-                                    MaxWidth="20"
-                                    Margin="0, 0, -8, 2"
-                                    Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    Click="DeleteItemForSaleBtn_Click" />
-                            <TextBox Grid.Row="1"
-                                     MaxLines="1"
-                                     TextWrapping="NoWrap"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Stretch"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=Stock}"
-                                     Style="{StaticResource MaterialDesignTextBox}"
-                                     Padding="3"
-                                     Margin="3, 0, 3, 3"
-                                     PreviewTextInput="TboxNumberValidator" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Button Grid.Row="1"
-                    Name="AddItemForSaleBtn"
-                    Content="{materialDesign:PackIcon Kind=PlusBold}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    MaxWidth="20"
-                    MaxHeight="20"
-                    Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                    Click="AddItemForSaleBtn_Click" />
-        </Grid>
-
-        <Grid Grid.Column="2"
-              VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
-              Height="Auto"
-              Margin="0,348,115,0">
+              Margin="0, 79, 115, 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <ListView Grid.Row="0"
-                      Name="ItemsToBuyView"
-                      HorizontalContentAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Top"
-                      SelectionMode="Single"
-                      Style="{StaticResource MaterialDesignListView}"
-                      materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      Margin="0,0,5,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
-                        <Grid HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              Width="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
-                                     MaxLines="1"
-                                     TextWrapping="NoWrap"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Stretch"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding String}"
-                                     Style="{StaticResource MaterialDesignTextBox}"
-                                     Padding="3"
-                                     Margin="3, 0, 3, 3" />
-                            <Button Name="DeleteItemToBuyBtn"
-                                    Grid.ColumnSpan="99"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Stretch"
-                                    MaxHeight="20"
-                                    MaxWidth="20"
-                                    Margin="0, 0, -8, 2"
-                                    Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    Click="DeleteItemToBuyBtn_Click" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Button Grid.Row="1"
-                    Name="AddItemToBuyBtn"
-                    Content="{materialDesign:PackIcon Kind=PlusBold}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    MaxWidth="20"
-                    MaxHeight="20"
-                    Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                    Click="AddItemToBuyBtn_Click" />
-        </Grid>
+            <Grid Grid.Row="0"
+                  VerticalAlignment="Top"
+                  Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ListView Grid.Column="0"
+                          Name="ItemsForSaleView"
+                          HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          SelectionMode="Single"
+                          Style="{StaticResource MaterialDesignListView}"
+                          materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
+                          d:ItemsSource="{x:Static definitions:SampleData.ItemDetails}"
+                          materialDesign:RippleAssist.IsDisabled="True"
+                          materialDesign:ListBoxItemAssist.ShowSelection="True"
+                          MaxHeight="400">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type data:ItemDetailsSchema}">
+                            <Grid Background="Transparent"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Border Grid.RowSpan="99"
+                                        Background="Transparent"
+                                        BorderBrush="White"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                                <TextBox Grid.Row="0"
+                                         MaxLines="1"
+                                         TextWrapping="NoWrap"
+                                         VerticalAlignment="Top"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Left"
+                                         Text="{Binding Path=ItemTemplateKey}"
+                                         Style="{StaticResource MaterialDesignTextBox}"
+                                         Padding="3"
+                                         Margin="3, 3, 3, 0" />
+                                <Button x:Name="DeleteItemForSaleBtn"
+                                        Grid.RowSpan="99"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Stretch"
+                                        IsTabStop="False"
+                                        MaxHeight="20"
+                                        MaxWidth="20"
+                                        Margin="0, 0, -8, 2"
+                                        Content="{materialDesign:PackIcon Kind=CloseBold}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Click="DeleteItemForSaleBtn_Click" />
+                                <TextBox Grid.Row="1"
+                                         MaxLines="1"
+                                         TextWrapping="NoWrap"
+                                         VerticalAlignment="Top"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Left"
+                                         Text="{Binding Path=Stock}"
+                                         Style="{StaticResource MaterialDesignTextBox}"
+                                         Padding="3"
+                                         Margin="3, 0, 3, 3"
+                                         PreviewTextInput="TboxNumberValidator" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Grid.Row="1"
+                        Name="AddItemForSaleBtn"
+                        Content="{materialDesign:PackIcon Kind=PlusBold}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        MaxWidth="20"
+                        MaxHeight="20"
+                        Margin="5"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Click="AddItemForSaleBtn_Click" />
+            </Grid>
 
-        <Grid Grid.Column="3"
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Height="Auto"
-              Margin="0,78,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ListView Grid.Row="0"
-                      Name="SkillsToTeachView"
-                      HorizontalContentAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Top"
-                      SelectionMode="Single"
-                      Style="{StaticResource MaterialDesignListView}"
-                      materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      Margin="0,0,5,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
-                        <Grid HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              Width="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
-                                     MaxLines="1"
-                                     TextWrapping="NoWrap"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Stretch"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding String}"
-                                     Style="{StaticResource MaterialDesignTextBox}"
-                                     Padding="3"
-                                     Margin="3, 0, 3, 3" />
-                            <Button Name="DeleteSkillToTeachBtn"
-                                    Grid.ColumnSpan="99"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Stretch"
-                                    MaxHeight="20"
-                                    MaxWidth="20"
-                                    Margin="0, 0, -8, 2"
-                                    Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    Click="DeleteSkillToTeachBtn_Click" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Button Grid.Row="1"
-                    Name="AddSkillToTeachBtn"
-                    Content="{materialDesign:PackIcon Kind=PlusBold}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    MaxWidth="20"
-                    MaxHeight="20"
-                    Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                    Click="AddSkillToTeachBtn_Click" />
+            <Grid Grid.Row="1"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0"
+                          Name="ItemsToBuyView"
+                          HorizontalContentAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          SelectionMode="Single"
+                          Style="{StaticResource MaterialDesignListView}"
+                          materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
+                          d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                          Margin="0,0,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type model:BindableString}">
+                            <Grid HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Width="Auto">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         MaxLines="1"
+                                         TextWrapping="NoWrap"
+                                         VerticalAlignment="Top"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Left"
+                                         Text="{Binding String}"
+                                         Style="{StaticResource MaterialDesignTextBox}"
+                                         Padding="3"
+                                         Margin="3, 0, 3, 3" />
+                                <Button Name="DeleteItemToBuyBtn"
+                                        Grid.ColumnSpan="99"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Stretch"
+                                        MaxHeight="20"
+                                        MaxWidth="20"
+                                        Margin="0, 0, -8, 2"
+                                        Content="{materialDesign:PackIcon Kind=CloseBold}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Click="DeleteItemToBuyBtn_Click" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Grid.Row="1"
+                        Name="AddItemToBuyBtn"
+                        Content="{materialDesign:PackIcon Kind=PlusBold}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        MaxWidth="20"
+                        MaxHeight="20"
+                        Margin="5"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Click="AddItemToBuyBtn_Click" />
+            </Grid>
         </Grid>
 
         <Grid Grid.Column="3"
-              VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
-              Height="Auto"
-              Margin="0,348,0,0">
+              Margin="0, 79, 0, 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <ListView Grid.Row="0"
-                      Name="SpellsToTeachView"
-                      HorizontalContentAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Top"
-                      SelectionMode="Single"
-                      Style="{StaticResource MaterialDesignListView}"
-                      materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      Margin="0,0,5,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
-                        <Grid HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              Width="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
-                                     MaxLines="1"
-                                     TextWrapping="NoWrap"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Stretch"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding String}"
-                                     Style="{StaticResource MaterialDesignTextBox}"
-                                     Padding="3"
-                                     Margin="3, 0, 3, 3" />
-                            <Button Name="DeleteSpellToTeachBtn"
-                                    Grid.ColumnSpan="99"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Stretch"
-                                    MaxHeight="20"
-                                    MaxWidth="20"
-                                    Margin="0, 0, -8, 2"
-                                    Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    Click="DeleteSpellToTeachBtn_Click" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Button Grid.Row="1"
-                    Name="AddSpellToTeachBtn"
-                    Content="{materialDesign:PackIcon Kind=PlusBold}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    MaxWidth="20"
-                    MaxHeight="20"
-                    Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                    Click="AddSpellToTeachBtn_Click" />
+            <Grid Grid.Row="0"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  Height="Auto"
+                  Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0"
+                          Name="SkillsToTeachView"
+                          HorizontalContentAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          SelectionMode="Single"
+                          Style="{StaticResource MaterialDesignListView}"
+                          materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
+                          d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                          Margin="0,0,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type model:BindableString}">
+                            <Grid HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Width="Auto">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         MaxLines="1"
+                                         TextWrapping="NoWrap"
+                                         VerticalAlignment="Top"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Left"
+                                         Text="{Binding String}"
+                                         Style="{StaticResource MaterialDesignTextBox}"
+                                         Padding="3"
+                                         Margin="3, 0, 3, 3" />
+                                <Button Name="DeleteSkillToTeachBtn"
+                                        Grid.ColumnSpan="99"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Stretch"
+                                        MaxHeight="20"
+                                        MaxWidth="20"
+                                        Margin="0, 0, -8, 2"
+                                        Content="{materialDesign:PackIcon Kind=CloseBold}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Click="DeleteSkillToTeachBtn_Click" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Grid.Row="1"
+                        Name="AddSkillToTeachBtn"
+                        Content="{materialDesign:PackIcon Kind=PlusBold}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        MaxWidth="20"
+                        MaxHeight="20"
+                        Margin="5"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Click="AddSkillToTeachBtn_Click" />
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  Height="Auto"
+                  Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0"
+                          Name="SpellsToTeachView"
+                          HorizontalContentAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          SelectionMode="Single"
+                          Style="{StaticResource MaterialDesignListView}"
+                          materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
+                          d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                          Margin="0,0,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type model:BindableString}">
+                            <Grid HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Width="Auto">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         MaxLines="1"
+                                         TextWrapping="NoWrap"
+                                         VerticalAlignment="Top"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Left"
+                                         Text="{Binding String}"
+                                         Style="{StaticResource MaterialDesignTextBox}"
+                                         Padding="3"
+                                         Margin="3, 0, 3, 3" />
+                                <Button Name="DeleteSpellToTeachBtn"
+                                        Grid.ColumnSpan="99"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Stretch"
+                                        MaxHeight="20"
+                                        MaxWidth="20"
+                                        Margin="0, 0, -8, 2"
+                                        Content="{materialDesign:PackIcon Kind=CloseBold}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Click="DeleteSpellToTeachBtn_Click" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Grid.Row="1"
+                        Name="AddSpellToTeachBtn"
+                        Content="{materialDesign:PackIcon Kind=PlusBold}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        MaxWidth="20"
+                        MaxHeight="20"
+                        Margin="5"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Click="AddSpellToTeachBtn_Click" />
+            </Grid>
         </Grid>
         <!-- #endregion -->
         <!-- #region Footer -->
