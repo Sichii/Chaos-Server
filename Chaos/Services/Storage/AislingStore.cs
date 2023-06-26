@@ -78,8 +78,12 @@ public sealed class AislingStore : IAsyncStore<Aisling>
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            await directory.SafeExecuteAsync(dir => InnerSaveAsync(dir, aisling));
-            Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            await directory.SafeExecuteAsync(
+                async dir =>
+                {
+                    await InnerSaveAsync(dir, aisling);
+                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+                });
 
             Logger.WithProperty(aisling)
                   .LogDebug("Saved aisling {@AislingName}, took {@Elapsed}", aisling.Name, Stopwatch.GetElapsedTime(start));

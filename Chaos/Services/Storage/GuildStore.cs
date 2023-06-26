@@ -187,9 +187,12 @@ public class GuildStore : BackgroundService, IStore<Guild>
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
-            await directory.SafeExecuteAsync(dir => InnerSaveAsync(dir, guild));
-
-            Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            await directory.SafeExecuteAsync(
+                async dir =>
+                {
+                    await InnerSaveAsync(dir, guild);
+                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+                });
 
             Logger.WithProperty(guild)
                   .LogDebug("Saved guild {@GuildName}, took {@Elapsed}", guild.Name, Stopwatch.GetElapsedTime(start));

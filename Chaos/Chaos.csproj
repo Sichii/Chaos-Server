@@ -50,7 +50,6 @@
     <ItemGroup>
         <PackageReference Include="NLog.Web.AspNetCore"/>
         <PackageReference Include="System.Configuration.ConfigurationManager"/>
-        <PackageReference Include="System.Linq.Async"/>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\sotp.dat"/>
