@@ -440,7 +440,7 @@ public enum ServerOpCode : byte
     ///     OpCode used to display a board to a client<br />
     ///     Hex value: 0x31
     /// </summary>
-    BulletinBoard = 49,
+    Board = 49,
     /// <summary>
     ///     OpCode used to give details of nearby doors to a client<br />
     ///     Hex value: 0x32

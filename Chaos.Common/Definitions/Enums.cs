@@ -848,15 +848,16 @@ public enum DialogResult : sbyte
 ///     A byte representing the type of board being displayed.
 ///     Used by ServerOpCode.BulletinBoard
 /// </summary>
-public enum BoardType : byte
+public enum BoardOrResponseType : byte
 {
     BoardList = 1,
     PublicBoard = 2,
     PublicPost = 3,
-    PrivateBoard = 4,
-    PrivatePost = 5,
-    Message1 = 6,
-    Message2 = 7
+    MailBoard = 4,
+    MailPost = 5,
+    SubmitPostResponse = 6,
+    DeletePostResponse = 7,
+    HighlightPostResponse = 8
 }
 
 /// <summary>
@@ -872,6 +873,13 @@ public enum BoardRequestType : byte
     Delete = 5,
     SendMail = 6,
     Highlight = 7
+}
+
+public enum BoardControls : sbyte
+{
+    PreviousPage = -1,
+    RequestPost = 0,
+    NextPage = 1
 }
 
 public enum NotepadType

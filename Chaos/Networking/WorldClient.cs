@@ -98,13 +98,20 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     /// <inheritdoc />
     public void SendBoard()
     {
-        var packet = ServerPacketEx.FromData(
-            ServerOpCode.BulletinBoard,
-            PacketSerializer.Encoding,
-            1,
-            0);
+        var args = new BoardArgs
+        {
+            Type = BoardOrResponseType.BoardList,
+            Boards = new List<BoardInfo>
+            {
+                new()
+                {
+                    Name = "Under Construction",
+                    Posts = new List<PostInfo>()
+                }
+            }
+        };
 
-        Send(ref packet);
+        Send(args);
     }
 
     public void SendBodyAnimation(

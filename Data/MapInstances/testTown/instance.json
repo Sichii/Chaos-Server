@@ -1,8 +1,8 @@
 {
-  "flags": "None",
-  "instanceId": "testTown",
-  "music": 1,
-  "name": "Test Town",
-  "scriptKeys": [],
-  "templateKey": "3043"
+    "flags": "rain",
+    "instanceId": "testTown",
+    "music": 1,
+    "name": "Test Town",
+    "scriptKeys": [],
+    "templateKey": "3043"
 }
