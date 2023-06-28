@@ -1,4 +1,4 @@
-﻿using Chaos.Extensions.Common;
+﻿using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
@@ -34,8 +34,9 @@ public class WithdrawGoldScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawGoldResult.Success:
-                Logger.WithProperty(source)
+                Logger.WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
+                      .WithProperty(source)
                       .LogDebug(
                           "Aisling {@AislingName} withdrew {Amount} gold from the bank",
                           source,

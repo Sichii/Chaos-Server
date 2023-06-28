@@ -4,6 +4,7 @@ using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Cryptography;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;

@@ -18,12 +18,11 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// </summary>
     public virtual bool CanUse(Aisling source)
     {
-        var canUse = true;
-
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            canUse &= script.CanUse(source);
+            if (!script.CanUse(source))
+                return false;
 
-        return canUse;
+        return true;
     }
 
     /// <summary>

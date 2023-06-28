@@ -1,6 +1,6 @@
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.World;
 using Chaos.Observers;
 using Microsoft.Extensions.Logging;
@@ -9,29 +9,29 @@ namespace Chaos.Collections;
 
 public sealed class Exchange
 {
-    private readonly ILogger Logger;
+    private readonly Aisling Aisling1;
+    private readonly Inventory Aisling1Items;
+    private readonly Aisling Aisling2;
+    private readonly Inventory Aisling2Items;
+    private readonly ILogger<Exchange> Logger;
     private readonly AutoReleasingMonitor Sync;
-    private readonly Inventory User1Items;
-    private readonly Inventory User2Items;
+    private bool Aisling1Accept;
+    private int Aisling1Gold;
+    private bool Aisling2Accept;
+    private int Aisling2Gold;
     private bool IsActive;
-    private bool User1Accept;
-    private int User1Gold;
-    private bool User2Accept;
-    private int User2Gold;
     public ulong ExchangeId { get; }
-    public Aisling User1 { get; }
-    public Aisling User2 { get; }
 
-    public Exchange(Aisling sender, Aisling receiver, ILogger logger)
+    public Exchange(Aisling sender, Aisling receiver, ILogger<Exchange> logger)
     {
         ExchangeId = PersistentIdGenerator<ulong>.Shared.NextId;
         Logger = logger;
-        User1 = sender;
-        User2 = receiver;
-        User1Items = new Inventory();
-        User1Items.AddObserver(new ExchangeObserver(User1, User2));
-        User2Items = new Inventory();
-        User2Items.AddObserver(new ExchangeObserver(User2, User1));
+        Aisling1 = sender;
+        Aisling2 = receiver;
+        Aisling1Items = new Inventory();
+        Aisling1Items.AddObserver(new ExchangeObserver(Aisling1, Aisling2));
+        Aisling2Items = new Inventory();
+        Aisling2Items.AddObserver(new ExchangeObserver(Aisling2, Aisling1));
         Sync = new AutoReleasingMonitor();
     }
 
@@ -39,14 +39,14 @@ public sealed class Exchange
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(aisling);
-        (var gold, var items, var accepted) = GetUserVars(aisling);
-        (var otherGold, var otherItems, var otherAccepted) = GetUserVars(otherUser);
+        var otherUser = GetOther(aisling);
+        (var gold, var items, var accepted) = InnerGetVars(aisling);
+        (var otherGold, var otherItems, var otherAccepted) = InnerGetVars(otherUser);
 
         if (!IsActive || accepted)
             return;
 
-        SetUserAccepted(aisling, true);
+        InnerSetAccepted(aisling, true);
         accepted = true;
 
         otherUser.Client.SendExchangeAccepted(true);
@@ -69,23 +69,23 @@ public sealed class Exchange
 
         IsActive = true;
 
-        User1.Client.SendExchangeStart(User2);
-        User2.Client.SendExchangeStart(User1);
+        Aisling1.Client.SendExchangeStart(Aisling2);
+        Aisling2.Client.SendExchangeStart(Aisling1);
 
         Logger.WithProperty(this)
               .LogDebug(
                   "Exchange {@ExchangeId} started between {@AislingName1} and {@AislingName2}",
                   ExchangeId,
-                  User1.Name,
-                  User2.Name);
+                  Aisling1.Name,
+                  Aisling2.Name);
     }
 
     public void AddItem(Aisling aisling, byte slot)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(aisling);
-        (_, var userItems, var userAccepted) = GetUserVars(aisling);
+        var otherUser = GetOther(aisling);
+        (_, var userItems, var userAccepted) = InnerGetVars(aisling);
 
         if (!IsActive || !aisling.Inventory.TryGetObject(slot, out var item) || userAccepted)
             return;
@@ -127,8 +127,8 @@ public sealed class Exchange
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(aisling);
-        (_, var userItems, var userAccepted) = GetUserVars(aisling);
+        var otherUser = GetOther(aisling);
+        (_, var userItems, var userAccepted) = InnerGetVars(aisling);
 
         if (!IsActive || (amount <= 0) || !aisling.Inventory.TryGetObject(slot, out var item) || userAccepted)
             return;
@@ -181,9 +181,9 @@ public sealed class Exchange
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(aisling);
-        (var gold, var items, _) = GetUserVars(aisling);
-        (var otherGold, var otherItems, _) = GetUserVars(otherUser);
+        var otherUser = GetOther(aisling);
+        (var gold, var items, _) = InnerGetVars(aisling);
+        (var otherGold, var otherItems, _) = InnerGetVars(otherUser);
 
         if (!IsActive)
             return;
@@ -205,8 +205,8 @@ public sealed class Exchange
     {
         IsActive = false;
 
-        User1.ActiveObject.TryRemove(this);
-        User2.ActiveObject.TryRemove(this);
+        Aisling1.ActiveObject.TryRemove(this);
+        Aisling2.ActiveObject.TryRemove(this);
     }
 
     private void Distribute(Aisling aisling, int gold, Inventory items)
@@ -242,17 +242,33 @@ public sealed class Exchange
         }
     }
 
-    public Aisling GetOtherUser(Aisling aisling) => aisling.Equals(User1) ? User2 : User1;
+    public Aisling GetOther(Aisling aisling) => aisling.Equals(Aisling1) ? Aisling2 : Aisling1;
 
-    private (int Gold, Inventory Items, bool Accepted) GetUserVars(Aisling aisling) =>
-        aisling.Equals(User1) ? (User1Gold, User1Items, User1Accept) : (User2Gold, User2Items, User2Accept);
+    private (int Gold, Inventory Items, bool Accepted) InnerGetVars(Aisling aisling) =>
+        aisling.Equals(Aisling1) ? (Aisling1Gold, Aisling1Items, Aisling1Accept) : (Aisling2Gold, Aisling2Items, Aisling2Accept);
+
+    private void InnerSetAccepted(Aisling aisling, bool accepted)
+    {
+        if (aisling.Equals(Aisling1))
+            Aisling1Accept = accepted;
+        else
+            Aisling2Accept = accepted;
+    }
+
+    private void InnerSetGold(Aisling aisling, int amount)
+    {
+        if (aisling.Equals(Aisling1))
+            Aisling1Gold = amount;
+        else
+            Aisling2Gold = amount;
+    }
 
     public void SetGold(Aisling aisling, int amount)
     {
         using var sync = Sync.Enter();
 
-        var otherUser = GetOtherUser(aisling);
-        var uuserVars = GetUserVars(aisling);
+        var otherUser = GetOther(aisling);
+        var uuserVars = InnerGetVars(aisling);
         (var gold, _, var accepted) = uuserVars;
 
         if (!IsActive || accepted)
@@ -260,11 +276,11 @@ public sealed class Exchange
 
         //this is a set, so we should start by returning whatever gold is already in the exchange
         aisling.TryGiveGold(gold);
-        SetUserGold(aisling, 0);
+        InnerSetGold(aisling, 0);
 
         if (aisling.TryTakeGold(amount))
         {
-            SetUserGold(aisling, amount);
+            InnerSetGold(aisling, amount);
 
             Logger.WithProperty(aisling)
                   .WithProperty(this)
@@ -277,21 +293,5 @@ public sealed class Exchange
 
         aisling.Client.SendExchangeSetGold(false, amount);
         otherUser.Client.SendExchangeSetGold(true, amount);
-    }
-
-    private void SetUserAccepted(Aisling aisling, bool accepted)
-    {
-        if (aisling.Equals(User1))
-            User1Accept = accepted;
-        else
-            User2Accept = accepted;
-    }
-
-    private void SetUserGold(Aisling aisling, int amount)
-    {
-        if (aisling.Equals(User1))
-            User1Gold = amount;
-        else
-            User2Gold = amount;
     }
 }

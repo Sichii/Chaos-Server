@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Chaos.Collections;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
@@ -91,9 +91,10 @@ public class GuildMemberKickScript : GuildScriptBase
             throw new UnreachableException(
                 "The only failure reason is if the person being kicked is a leader. That should be checked for.");
 
-        Logger.WithProperty(source)
-              .WithProperty(guild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(guild)
               .LogDebug(
                   "Aisling {@AislingName} kicked {@TargetAislingName} from {@GuildName}",
                   source.Name,

@@ -17,6 +17,16 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         }
     }
 
+    public virtual int Count
+    {
+        get
+        {
+            using var @lock = Sync.Enter();
+
+            return Objects.Count(obj => obj != null);
+        }
+    }
+
     protected byte[] InvalidSlots { get; }
 
     public virtual bool IsFull

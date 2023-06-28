@@ -1,4 +1,4 @@
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
@@ -91,9 +91,10 @@ public class BuyShopScript : DialogScriptBase
         switch (buyItemResult)
         {
             case ComplexActionHelper.BuyItemResult.Success:
-                Logger.WithProperty(source)
+                Logger.WithProperty(Subject)
+                      .WithProperty(Subject.DialogSource)
+                      .WithProperty(source)
                       .WithProperty(item)
-                      .WithProperty(BuyShopSource)
                       .LogDebug(
                           "Aisling {@AislingName} bought {ItemAmount} {@ItemName} from merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,

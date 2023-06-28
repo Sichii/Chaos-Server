@@ -17,7 +17,7 @@ public static class PointExtensions
         return points.Where(point => !mapInstance.IsWall(point) && !origin.RayTraceTo(point).Any(pt => mapInstance.IsWall(pt)));
     }
 
-    public static bool WithinRange(this IPoint point, IPoint other, int distance = 12)
+    public static bool WithinRange(this IPoint point, IPoint other, int distance = 15)
     {
         ArgumentNullException.ThrowIfNull(point);
 

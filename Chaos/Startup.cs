@@ -108,18 +108,7 @@ public sealed class Startup
 
         services.AddSingleton<IStagingDirectory, ChaosOptions>(p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>().Value);
 
-        services.AddLogging(
-            logging =>
-            {
-                logging.AddConfiguration(Configuration.GetSection(ConfigKeys.Logging.Key));
-
-                logging.AddNLog(
-                    Configuration,
-                    new NLogProviderOptions
-                    {
-                        LoggingConfigurationSectionName = ConfigKeys.Logging.NLog.Key
-                    });
-            });
+        services.AddLogging(logging => logging.AddNLog());
 
         RegisterStructuredLoggingTransformations();
         AddJsonSerializerOptions(services);
@@ -252,16 +241,6 @@ public sealed class Startup
                                   Location = ILocation.ToString(obj)
                               });
 
-                          builder.RegisterObjectTransformation<GroundItem>(
-                              obj => new
-                              {
-                                  Type = nameof(GroundItem),
-                                  Id = obj.Id,
-                                  Item = obj.Item,
-                                  Creation = obj.Creation,
-                                  Location = ILocation.ToString(obj)
-                              });
-
                           builder.RegisterObjectTransformation<Money>(
                               obj => new
                               {
@@ -297,14 +276,6 @@ public sealed class Startup
                                   TemplateKey = obj.Template.TemplateKey
                               });
 
-                          builder.RegisterObjectTransformation<Exchange>(
-                              obj => new
-                              {
-                                  Id = obj.ExchangeId,
-                                  User1 = obj.User1,
-                                  User2 = obj.User2
-                              });
-
                           builder.RegisterObjectTransformation<MapInstance>(
                               obj => new
                               {
@@ -319,14 +290,6 @@ public sealed class Startup
                               {
                                   CommandName = obj.Details.CommandName,
                                   RequiresAdmin = obj.Details.RequiresAdmin
-                              });
-
-                          builder.RegisterObjectTransformation<Dialog>(
-                              obj => new
-                              {
-                                  TemplateKey = obj.Template.TemplateKey,
-                                  Type = obj.Template.Type,
-                                  Source = obj.DialogSource
                               });
 
                           builder.RegisterObjectTransformation<IEffect>(
@@ -346,6 +309,35 @@ public sealed class Startup
                               });
 
                           builder.RegisterObjectTransformation<Guild>(obj => obj.Name);
+
+                          builder.RegisterObjectTransformation<GroundItem>(
+                              obj => new
+                              {
+                                  Type = nameof(GroundItem),
+                                  Id = obj.Id,
+                                  ItemUid = obj.Item.UniqueId,
+                                  ItemName = obj.Item.DisplayName,
+                                  ItemTemplateKey = obj.Item.Template.TemplateKey,
+                                  ItemCount = obj.Item.Count,
+                                  Creation = obj.Creation,
+                                  Location = ILocation.ToString(obj)
+                              });
+
+                          builder.RegisterObjectTransformation<Dialog>(
+                              obj => new
+                              {
+                                  TemplateKey = obj.Template.TemplateKey,
+                                  Type = obj.Template.Type,
+                                  Contextual = obj.Template.Contextual,
+                                  HasContext = obj.Context is not null,
+                                  HasMenuArgs = obj.MenuArgs.Any()
+                              });
+
+                          builder.RegisterObjectTransformation<Exchange>(
+                              obj => new
+                              {
+                                  obj.ExchangeId
+                              });
                       });
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
@@ -360,6 +352,11 @@ public sealed class Startup
             {
                 public static string Key => $"{Logging.Key}:NLog";
             }
+        }
+
+        public static class NLog
+        {
+            public static string Key => "NLog";
         }
 
         public static class Options

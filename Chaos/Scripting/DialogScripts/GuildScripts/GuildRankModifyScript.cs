@@ -1,5 +1,5 @@
 using Chaos.Collections;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
@@ -98,11 +98,12 @@ public class GuildRankModifyScript : GuildScriptBase
 
         guild.ChangeRankName(currentRankName, newRankName);
 
-        Logger.WithProperty(source)
-              .WithProperty(guild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(guild)
               .LogInformation(
-                  "Aisling {AislingName} change rank {RankName} to {NewRankName}",
+                  "Aisling {@AislingName} changed rank {@RankName} to {@NewRankName}",
                   source.Name,
                   currentRankName,
                   newRankName);

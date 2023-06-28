@@ -1,5 +1,5 @@
 using Chaos.Collections;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
@@ -79,17 +79,19 @@ public class GuildLeaveScript : GuildScriptBase
                 "You can not leave the guild at this time. ((a GM has been notified of this issue))",
                 "generic_guild_members_initial");
 
-            Logger.WithProperty(source)
-                  .WithProperty(guild)
+            Logger.WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
+                  .WithProperty(source)
+                  .WithProperty(guild)
                   .LogWarning("Aisling {@AislingName} failed to leave guild {@GuildName} for an unknown reason", source.Name, guild.Name);
 
             return;
         }
 
-        Logger.WithProperty(source)
-              .WithProperty(guild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(guild)
               .LogDebug("Aisling {@AislingName} has left guild {@GuildName}", source.Name, guild.Name);
     }
 

@@ -1,4 +1,4 @@
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
@@ -45,9 +45,10 @@ public class ForgetSpellScript : DialogScriptBase
         }
 
         if (source.SpellBook.Remove(slot))
-            Logger.WithProperty(source)
-                  .WithProperty(spell)
+            Logger.WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
+                  .WithProperty(source)
+                  .WithProperty(spell)
                   .LogDebug("Aisling {@AislingName} forgot spell {@SpellName}", source.Name, spell.Template.Name);
     }
 

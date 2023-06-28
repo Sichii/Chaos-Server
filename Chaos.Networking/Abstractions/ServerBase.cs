@@ -165,13 +165,12 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             await action(client, args);
         } catch (Exception e)
         {
-            Logger.WithProperty(client)
-                  .WithProperty(args!)
-                  .LogError(
-                      e,
-                      "{@ClientType} failed to execute inner handler with args type {@ArgsType}",
-                      client.GetType().Name,
-                      args!.GetType().Name);
+            Logger.LogError(
+                e,
+                "{@ClientType} failed to execute inner handler with args type {@ArgsType} ({@Args})",
+                client.GetType().Name,
+                args!.GetType().Name,
+                args);
         }
     }
 
@@ -189,8 +188,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             await action(client);
         } catch (Exception e)
         {
-            Logger.WithProperty(client)
-                  .LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
+            Logger.LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
         }
     }
 

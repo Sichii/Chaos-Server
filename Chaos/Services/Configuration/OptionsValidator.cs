@@ -1,4 +1,4 @@
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Networking.Options;
 using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Logging;

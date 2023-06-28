@@ -123,11 +123,11 @@ public sealed class Pathfinder : IPathfinder
         using var @lock = Sync.Enter();
 
         var blockedPoints = blocked.ToList();
-        List<IPoint>? subGrid = null;
+        List<Point>? subGrid = null;
 
         if (limitRadius.HasValue)
             subGrid = start.SpiralSearch(limitRadius.Value)
-                           .ToListCast<IPoint>();
+                           .ToList();
 
         InitializeGrid(blockedPoints, subGrid);
 
@@ -229,29 +229,48 @@ public sealed class Pathfinder : IPathfinder
         }
     }
 
-    private void InitializeGrid(IEnumerable<IPoint> blocked, IEnumerable<IPoint>? subGrid = null)
+    private void InitializeGrid(IEnumerable<IPoint> blocked, IEnumerable<Point>? subGrid = null)
     {
         //un-close all the nodes in the sub grid
         //the sub grid is the path-searchable area
-        foreach (var point in subGrid ?? PathNodes.Flatten())
-            if (WithinGrid(point))
-            {
-                var node = PathNodes[point.X, point.Y];
+        //optimization to avoid boxing points
+        if (subGrid is not null)
+        {
+            foreach (var point in subGrid)
+                if (WithinGrid(point))
+                {
+                    var node = PathNodes[point.X, point.Y];
 
-                if (!node.IsBlackListed)
-                    PathNodes[point.X, point.Y].Closed = false;
-            }
+                    if (!node.IsBlackListed)
+                        PathNodes[point.X, point.Y].Closed = false;
+                }
+        } else
+            foreach (var point in PathNodes.Flatten())
+                if (WithinGrid(point))
+                {
+                    var node = PathNodes[point.X, point.Y];
+
+                    if (!node.IsBlackListed)
+                        PathNodes[point.X, point.Y].Closed = false;
+                }
 
         foreach (var point in blocked)
             if (WithinGrid(point))
                 PathNodes[point.X, point.Y].IsBlocked = true;
     }
 
-    private void ResetGrid(IEnumerable<IPoint> blocked, IEnumerable<IPoint>? subGrid = null)
+    private void ResetGrid(IEnumerable<IPoint> blocked, IEnumerable<Point>? subGrid = null)
     {
-        foreach (var point in subGrid ?? PathNodes.Flatten())
-            if (WithinGrid(point))
-                PathNodes[point.X, point.Y].Reset();
+        //optimization to avoid boxing points
+        if (subGrid is not null)
+        {
+            foreach (var point in subGrid)
+                if (WithinGrid(point))
+                    PathNodes[point.X, point.Y].Reset();
+        } else
+            foreach (var point in PathNodes.Flatten())
+                if (WithinGrid(point))
+                    PathNodes[point.X, point.Y].Reset();
 
         //necessary incase a blocked point was specified outside the sub grid
         foreach (var point in blocked)
@@ -261,5 +280,6 @@ public sealed class Pathfinder : IPathfinder
 
     private IEnumerable<IPoint> TracePath(PathNode pathNode) => GetParentChain(pathNode).Reverse();
 
-    private bool WithinGrid(IPoint point) => (point.X >= 0) && (point.X < Width) && (point.Y >= 0) && (point.Y < Height);
+    private bool WithinGrid<TPoint>(TPoint point) where TPoint: IPoint =>
+        (point.X >= 0) && (point.X < Width) && (point.Y >= 0) && (point.Y < Height);
 }

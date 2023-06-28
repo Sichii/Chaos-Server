@@ -154,25 +154,43 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         foreach (var visibleObj in visibleObjects)
         {
-            if (visibleObj is Creature creature)
-                Script.OnEntered(creature);
-
             visibleObj.MapInstance = this;
             Objects.Add(visibleObj.Id, visibleObj);
+
+            if (visibleObj is Creature creature)
+                Script.OnEntered(creature);
         }
 
-        foreach (var creature in Objects.Values<Creature>())
-        {
-            var objectsInRange = visibleObjects
-                                 .ThatAreWithinRange(creature)
-                                 .ToList();
+        var type = typeof(T);
+        var cType = typeof(Creature);
+        var meType = typeof(Merchant);
+        var moType = typeof(Monster);
 
-            foreach (var nearbyCreature in objectsInRange.OfType<Creature>())
-                Helpers.HandleApproach(creature, nearbyCreature);
+        //if ICollection<T> could possibly contain creatures, we need to handle them.
+        if ((type == meType) || (type == moType) || type.IsAssignableFrom(cType))
+            foreach (var creature in Objects.Values<Creature>())
+            {
+                var objectsInRange = visibleObjects
+                                     .ThatAreWithinRange(creature)
+                                     .ToList();
 
-            if (creature is Aisling aisling && objectsInRange.Any())
-                aisling.Client.SendVisibleEntities(objectsInRange.ThatAreObservedBy(aisling));
-        }
+                if (!objectsInRange.Any())
+                    continue;
+
+                if (creature is Aisling aisling)
+                    aisling.Client.SendVisibleEntities(objectsInRange.ThatAreObservedBy(aisling));
+
+                foreach (var nearbyCreature in objectsInRange.OfType<Creature>())
+                    Helpers.HandleApproach(creature, nearbyCreature);
+            }
+        else //otherwise just send stuff to the aislings that can see them
+            foreach (var aisling in Objects.Values<Aisling>())
+            {
+                var objsToSend = visibleObjects.ThatAreWithinRange(aisling)
+                                               .ThatAreObservedBy(aisling);
+
+                aisling.Client.SendVisibleEntities(objsToSend);
+            }
     }
 
     public void AddSpawner(MonsterSpawn monsterSpawn)
@@ -249,7 +267,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public IEnumerable<T> GetEntitiesAtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => Objects.AtPoints<T>(points);
 
-    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 12) where T: MapEntity =>
+    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity =>
         Objects.WithinRange<T>(point, range);
 
     public IPoint GetRandomWalkablePoint(CreatureType creatureType = CreatureType.Normal) =>

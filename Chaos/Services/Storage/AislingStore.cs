@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Chaos.Collections;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.IO.FileSystem;
 using Chaos.Models.Legend;
 using Chaos.Models.Panel;

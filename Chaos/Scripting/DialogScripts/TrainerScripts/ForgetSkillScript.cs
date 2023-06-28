@@ -1,4 +1,4 @@
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
@@ -45,9 +45,10 @@ public class ForgetSkillScript : DialogScriptBase
         }
 
         if (source.SkillBook.Remove(slot))
-            Logger.WithProperty(source)
-                  .WithProperty(skill)
+            Logger.WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
+                  .WithProperty(source)
+                  .WithProperty(skill)
                   .LogDebug("Aisling {@AislingName} forgot skill {@SkillName}", source.Name, skill.Template.Name);
     }
 

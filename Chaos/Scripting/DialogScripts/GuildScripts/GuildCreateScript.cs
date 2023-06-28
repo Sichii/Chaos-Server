@@ -1,5 +1,5 @@
 using Chaos.Collections;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
@@ -101,9 +101,10 @@ public class GuildCreateScript : GuildScriptBase
         newGuild.ChangeRank(source, 0, source);
         GuildStore.Save(newGuild);
 
-        Logger.WithProperty(source)
-              .WithProperty(newGuild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(newGuild)
               .LogInformation("New guild {@GuildName} created by {@AislingName}", newGuild.Name, source.Name);
     }
 

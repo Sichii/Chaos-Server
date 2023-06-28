@@ -24,7 +24,7 @@ public abstract class VisibleEntity : MapEntity
     public virtual bool CanObserve(VisibleEntity entity)
     {
         //can always see yourself
-        if (entity.Equals(this) || this is Aisling { IsAdmin: true })
+        if (entity.Equals(this))
             return true;
 
         switch (entity.Visibility)

@@ -1,4 +1,5 @@
 using Chaos.Collections;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
@@ -73,10 +74,10 @@ public class GuildMemberAdmitScript : GuildScriptBase
             return;
         }
 
-        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
+        var aislingToAdmit = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
 
         //ensure the player is online
-        if (aisling is null)
+        if (aislingToAdmit is null)
         {
             Subject.Reply(source, $"{name} is not online", "generic_guild_members_initial");
 
@@ -84,23 +85,24 @@ public class GuildMemberAdmitScript : GuildScriptBase
         }
 
         //ensure the player is not in a guild
-        if (IsInGuild(aisling, out _, out _))
+        if (IsInGuild(aislingToAdmit, out _, out _))
         {
             Subject.Reply(source, $"{name} is already in a guild", "generic_guild_members_initial");
 
             return;
         }
 
-        guild.AddMember(aisling, source);
+        guild.AddMember(aislingToAdmit, source);
 
-        Logger.WithProperty(source)
-              .WithProperty(aisling)
-              .WithProperty(guild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(guild)
+              .WithProperty(aislingToAdmit)
               .LogDebug(
                   "Aisling {@AislingName} admitted {@TargetAislingName} to {@GuildName}",
                   source.Name,
-                  aisling.Name,
+                  aislingToAdmit.Name,
                   guild.Name);
     }
 

@@ -1,4 +1,4 @@
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
@@ -76,9 +76,10 @@ public class SellShopScript : DialogScriptBase
         switch (sellItemResult)
         {
             case ComplexActionHelper.SellItemResult.Success:
-                Logger.WithProperty(source)
+                Logger.WithProperty(Subject)
+                      .WithProperty(Subject.DialogSource)
+                      .WithProperty(source)
                       .WithProperty(item)
-                      .WithProperty(SellShopSource)
                       .LogDebug(
                           "Aisling {@AislingName} sold {ItemAmount} {@ItemName} to merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,

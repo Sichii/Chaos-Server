@@ -1,8 +1,8 @@
-using System.Collections;
 using System.Runtime.CompilerServices;
+using Chaos.Extensions.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Chaos.Extensions.Common;
+namespace Chaos.Extensions;
 
 /// <summary>
 ///     Provides extensions for <see cref="ILogger" />.

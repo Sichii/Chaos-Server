@@ -368,7 +368,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (exchange == null)
                 return default;
 
-            if (exchange.GetOtherUser(localClient.Aisling).Id != localArgs.OtherPlayerId)
+            if (exchange.GetOther(localClient.Aisling).Id != localArgs.OtherPlayerId)
                 return default;
 
             switch (localArgs.ExchangeRequestType)

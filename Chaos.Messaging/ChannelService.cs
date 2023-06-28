@@ -62,8 +62,7 @@ public sealed class ChannelService : IChannelService
 
         if (channelDetails.AddSubscriber(subscriber))
         {
-            Logger.WithProperty(subscriber)
-                  .LogDebug("{@SubscriberName} has joined channel {@ChannelName}", subscriber.Name, channelName);
+            Logger.LogDebug("{@SubscriberName} has joined channel {@ChannelName}", subscriber.Name, channelName);
 
             subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
@@ -86,8 +85,7 @@ public sealed class ChannelService : IChannelService
 
         if (channelDetails.RemoveSubscriber(subscriber))
         {
-            Logger.WithProperty(subscriber)
-                  .LogDebug("{@SubscriberName} has left channel {@ChannelName}", subscriber.Name, channelName);
+            Logger.LogDebug("{@SubscriberName} has left channel {@ChannelName}", subscriber.Name, channelName);
 
             subscriber.SendServerMessage(
                 ServerMessageType.ActiveMessage,
@@ -200,12 +198,11 @@ public sealed class ChannelService : IChannelService
 
         var defaultMessage = Encoding.Default.GetString(buffer);
 
-        Logger.WithProperty(subscriber)
-              .LogTrace(
-                  "Subscriber {@SubscriberName} sent message {@Message} to channel {@ChannelName}",
-                  subscriber.Name,
-                  message,
-                  channelName);
+        Logger.LogTrace(
+            "Subscriber {@SubscriberName} sent message {@Message} to channel {@ChannelName}",
+            subscriber.Name,
+            message,
+            channelName);
 
         foreach (var subDetails in channelDetails.Subscribers.Values)
         {

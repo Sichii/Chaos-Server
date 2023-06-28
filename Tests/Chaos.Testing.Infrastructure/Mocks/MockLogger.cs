@@ -1,3 +1,4 @@
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -327,6 +327,15 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
 
     /// <inheritdoc />
+    public override bool CanObserve(VisibleEntity entity)
+    {
+        if (IsAdmin)
+            return true;
+
+        return base.CanObserve(entity);
+    }
+
+    /// <inheritdoc />
     public override bool CanUse(Skill skill, [MaybeNullWhen(false)] out ActivationContext skillContext)
     {
         skillContext = null;

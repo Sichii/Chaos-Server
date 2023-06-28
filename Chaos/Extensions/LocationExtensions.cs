@@ -5,7 +5,7 @@ namespace Chaos.Extensions;
 
 public static class LocationExtensions
 {
-    public static bool WithinRange(this ILocation location, ILocation other, int distance = 12)
+    public static bool WithinRange(this ILocation location, ILocation other, int distance = 15)
     {
         var ret = location.WithinRange((IPoint)other, distance);
 

@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 using Chaos.Cryptography.Abstractions;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Extensions.Networking;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;

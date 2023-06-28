@@ -47,26 +47,54 @@ public static class EnumerableExtensions
         return (aislings, doors, others);
     }
 
-    public static IEnumerable<T> ThatAreObservedBy<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: VisibleEntity =>
-        objs.Where(visibleEntity.CanObserve);
+    public static IEnumerable<T> ThatAreObservedBy<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: VisibleEntity
+    {
+        foreach (var obj in objs)
+            if (visibleEntity.CanObserve(obj))
+                yield return obj;
+    }
 
     public static IEnumerable<T> ThatAreOnPoint<T>(this IEnumerable<T> objs, IPoint point) where T: MapEntity
-        => objs.Where(o => PointEqualityComparer.Instance.Equals(o, point));
+    {
+        foreach (var obj in objs)
+            if (PointEqualityComparer.Instance.Equals(point, obj))
+                yield return obj;
+    }
 
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, ILocation point, int range = 12) where T: MapEntity
-        => objs.Where(o => o.WithinRange(point, range));
+    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, ILocation location, int range = 15) where T: MapEntity
+    {
+        foreach (var obj in objs)
+            if (obj.WithinRange(location, range))
+                yield return obj;
+    }
 
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, IPoint point, int range = 12) where T: MapEntity
-        => objs.Where(o => o.WithinRange(point, range));
+    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, IPoint point, int range = 15) where T: MapEntity
+    {
+        foreach (var obj in objs)
+            if (obj.WithinRange(point, range))
+                yield return obj;
+    }
 
-    public static IEnumerable<T> ThatCanObserve<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: Creature =>
-        objs.Where(obj => obj.CanObserve(visibleEntity));
+    public static IEnumerable<T> ThatCanObserve<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: Creature
+    {
+        foreach (var obj in objs)
+            if (obj.CanObserve(visibleEntity))
+                yield return obj;
+    }
 
-    public static IEnumerable<T> ThatCollideWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature =>
-        objs.Where(c => !c.Equals(creature) && c.WillCollideWith(creature));
+    public static IEnumerable<T> ThatCollideWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature
+    {
+        foreach (var obj in objs)
+            if (!obj.Equals(creature) && obj.WillCollideWith(creature))
+                yield return obj;
+    }
 
-    public static IEnumerable<T> ThatThisCollidesWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature =>
-        objs.Where(c => !c.Equals(creature) && creature.WillCollideWith(c));
+    public static IEnumerable<T> ThatThisCollidesWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature
+    {
+        foreach (var obj in objs)
+            if (!obj.Equals(creature) && creature.WillCollideWith(obj))
+                yield return obj;
+    }
 
     public static T? TopOrDefault<T>(this IEnumerable<T> objs) where T: WorldEntity => objs.MaxBy(o => o.Creation);
 
@@ -79,6 +107,10 @@ public static class EnumerableExtensions
                 return item1;
             });
 
-    public static IEnumerable<T> WithFilter<T>(this IEnumerable<T> objs, Creature source, TargetFilter filter) where T: MapEntity =>
-        objs.Where(o => o is not Creature creature || filter.IsValidTarget(source, creature));
+    public static IEnumerable<T> WithFilter<T>(this IEnumerable<T> objs, Creature source, TargetFilter filter) where T: MapEntity
+    {
+        foreach (var obj in objs)
+            if (obj is not Creature creature || filter.IsValidTarget(source, creature))
+                yield return obj;
+    }
 }

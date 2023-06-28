@@ -1,5 +1,5 @@
 using Chaos.Collections;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
@@ -67,9 +67,10 @@ public class GuildDisbandScript : GuildScriptBase
             return;
         }
 
-        Logger.WithProperty(source)
-              .WithProperty(guild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(guild)
               .LogInformation("Guild {@GuildName} has been disbanded by aisling {@AislingName}", guild.Name, source.Name);
 
         //disband the guild and remove it from the guild store

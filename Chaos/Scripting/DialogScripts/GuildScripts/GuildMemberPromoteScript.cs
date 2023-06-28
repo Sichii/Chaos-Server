@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Chaos.Collections;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
@@ -91,10 +92,10 @@ public class GuildMemberPromoteScript : GuildScriptBase
         }
 
         //grab the aisling to promote
-        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
+        var aislingToPromote = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
 
         //ensure the aisling is online
-        if (aisling is null)
+        if (aislingToPromote is null)
         {
             Subject.Reply(source, $"{name} is not online", "generic_guild_members_initial");
 
@@ -102,16 +103,17 @@ public class GuildMemberPromoteScript : GuildScriptBase
         }
 
         //change the rank of the aisling
-        guild.ChangeRank(aisling, sourceRank.Tier - 1, source);
+        guild.ChangeRank(aislingToPromote, sourceRank.Tier - 1, source);
 
-        Logger.WithProperty(source)
-              .WithProperty(aisling)
-              .WithProperty(guild)
+        Logger.WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
+              .WithProperty(source)
+              .WithProperty(guild)
+              .WithProperty(aislingToPromote)
               .LogDebug(
                   "Aisling {@AislingName} promoted {@TargetAislingName} to {@RankName} in {@GuildName}",
                   source.Name,
-                  aisling.Name,
+                  aislingToPromote.Name,
                   sourceRank.Name,
                   guild.Name);
     }

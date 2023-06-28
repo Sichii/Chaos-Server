@@ -1,4 +1,4 @@
-﻿using Chaos.Extensions.Common;
+﻿using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
@@ -34,8 +34,9 @@ public class DepositGoldScript : DialogScriptBase
         switch (depositResult)
         {
             case ComplexActionHelper.DepositGoldResult.Success:
-                Logger.WithProperty(source)
+                Logger.WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
+                      .WithProperty(source)
                       .LogDebug(
                           "Aisling {@AislingName} deposited {Amount} gold in the bank",
                           source.Name,

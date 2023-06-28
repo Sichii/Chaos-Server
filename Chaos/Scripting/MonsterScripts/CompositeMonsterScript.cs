@@ -15,32 +15,74 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanMove() => Scripts.All(script => script.CanMove());
+    public virtual bool CanMove()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanMove())
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanSee(VisibleEntity entity) => Scripts.All(script => script.CanSee(entity));
+    public virtual bool CanSee(VisibleEntity entity)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanSee(entity))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanTalk() => Scripts.All(script => script.CanTalk());
+    public virtual bool CanTalk()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanTalk())
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanTurn() => Scripts.All(script => script.CanTurn());
+    public virtual bool CanTurn()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanTurn())
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseSkill(Skill skill) => Scripts.All(script => script.CanUseSkill(skill));
+    public virtual bool CanUseSkill(Skill skill)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanUseSkill(skill))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseSpell(Spell spell) => Scripts.All(script => script.CanUseSpell(spell));
+    public virtual bool CanUseSpell(Spell spell)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanUseSpell(spell))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT

@@ -41,8 +41,8 @@ public sealed class CommandInterceptorTests
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/adminCommand");
 
-        LoggerMock.VerifyLogEvent(LogLevel.Trace, "Successfully created command adminCommand");
-        LoggerMock.VerifyLogEvent(LogLevel.Information, "ICommandSubjectProxy executed /adminCommand");
+        LoggerMock.VerifySimpleLog(LogLevel.Trace, "Successfully created command adminCommand");
+        LoggerMock.VerifySimpleLog(LogLevel.Information, "ICommandSubjectProxy executed /adminCommand");
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class CommandInterceptorTests
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/adminCommand");
 
-        LoggerMock.VerifyLogEvent(LogLevel.Warning, "Non-Admin ICommandSubjectProxy tried to execute admin command /adminCommand");
+        LoggerMock.VerifySimpleLog(LogLevel.Warning, "Non-Admin ICommandSubjectProxy tried to execute admin command /adminCommand");
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public sealed class CommandInterceptorTests
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/exception");
 
-        LoggerMock.VerifyLogEvent(LogLevel.Trace, "Successfully created command exception");
-        LoggerMock.VerifyLogEvent(LogLevel.Error, "ICommandSubjectProxy failed to execute /exception", new Exception("wathapn"));
+        LoggerMock.VerifySimpleLog(LogLevel.Trace, "Successfully created command exception");
+        LoggerMock.VerifySimpleLog(LogLevel.Error, "ICommandSubjectProxy failed to execute /exception", "wathapn");
     }
 
     [Fact]
@@ -73,8 +73,8 @@ public sealed class CommandInterceptorTests
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/help");
 
-        LoggerMock.VerifyLogEvent(LogLevel.Trace, "Successfully created command help");
-        LoggerMock.VerifyLogEvent(LogLevel.Information, "ICommandSubjectProxy executed /help");
+        LoggerMock.VerifySimpleLog(LogLevel.Trace, "Successfully created command help");
+        LoggerMock.VerifySimpleLog(LogLevel.Information, "ICommandSubjectProxy executed /help");
     }
 
     [Fact]

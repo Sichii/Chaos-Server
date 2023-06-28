@@ -15,46 +15,95 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanMove() => Scripts.All(component => component.CanMove());
+    public virtual bool CanMove()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanMove())
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
     /// <param name="entity"></param>
-    public virtual bool CanSee(VisibleEntity entity) => Scripts.All(component => component.CanSee(entity));
+    public virtual bool CanSee(VisibleEntity entity)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanSee(entity))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanTalk() => Scripts.All(component => component.CanTalk());
+    public virtual bool CanTalk()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanTalk())
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanTurn() => Scripts.All(component => component.CanTurn());
+    public virtual bool CanTurn()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanTurn())
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseItem(Item item) => Scripts.All(component => component.CanUseItem(item));
+    public virtual bool CanUseItem(Item item)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanUseItem(item))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseSkill(Skill skill) => Scripts.All(component => component.CanUseSkill(skill));
+    public virtual bool CanUseSkill(Skill skill)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanUseSkill(skill))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool CanUseSpell(Spell spell) => Scripts.All(component => component.CanUseSpell(spell));
+    public virtual bool CanUseSpell(Spell spell)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanUseSpell(spell))
+                return false;
+
+        return true;
+    }
 
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
     public virtual void OnApproached(Creature source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnApproached(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnApproached(source);
     }
 
     /// <summary>
@@ -62,8 +111,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnAttacked(Creature source, int damage)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnAttacked(source, damage);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnAttacked(source, damage);
     }
 
     /// <summary>
@@ -71,8 +120,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnClicked(Aisling source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnClicked(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnClicked(source);
     }
 
     /// <summary>
@@ -80,8 +129,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnDeath()
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnDeath();
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDeath();
     }
 
     /// <summary>
@@ -89,8 +138,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnDeparture(Creature source)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnDeparture(source);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnDeparture(source);
     }
 
     /// <summary>
@@ -98,8 +147,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnGoldDroppedOn(Aisling source, int amount)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnGoldDroppedOn(source, amount);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnGoldDroppedOn(source, amount);
     }
 
     /// <summary>
@@ -107,8 +156,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnHealed(Creature source, int healing)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnHealed(source, healing);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnHealed(source, healing);
     }
 
     /// <summary>
@@ -116,8 +165,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnItemDroppedOn(Aisling source, Item item)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnItemDroppedOn(source, item);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnItemDroppedOn(source, item);
     }
 
     /// <summary>
@@ -125,14 +174,14 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// </summary>
     public virtual void OnPublicMessage(Creature source, string message)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.OnPublicMessage(source, message);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnPublicMessage(source, message);
     }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta)
     {
-        foreach (ref var component in CollectionsMarshal.AsSpan(Scripts))
-            component.Update(delta);
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.Update(delta);
     }
 }

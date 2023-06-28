@@ -1,7 +1,7 @@
 using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Services.Other.Abstractions;

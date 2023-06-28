@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Chaos.Common.Definitions;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Formulae;
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World;

@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using Chaos.Models.Data;
-using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.SpellScripts.Abstractions;
 
@@ -16,30 +15,11 @@ public class CompositeSpellScript : CompositeScriptBase<ISpellScript>, ISpellScr
     /// </summary>
     public bool CanUse(SpellContext context)
     {
-        var canUse = true;
-
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            canUse &= script.CanUse(context);
+            if (!script.CanUse(context))
+                return false;
 
-        return canUse;
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public void OnForgotten(Aisling aisling)
-    {
-        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            script.OnForgotten(aisling);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public void OnLearned(Aisling aisling)
-    {
-        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            script.OnLearned(aisling);
+        return true;
     }
 
     /// <summary>

@@ -55,4 +55,7 @@
         <EmbeddedResource Include="Resources\sotp.dat"/>
         <EmbeddedResource Include="Resources\chaos.ico"/>
     </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+    </ItemGroup>
 </Project>

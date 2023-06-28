@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
-using Chaos.Extensions.Common;
+using Chaos.Extensions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;

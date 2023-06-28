@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using Chaos.Models.Data;
-using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.SkillScripts.Abstractions;
 
@@ -16,31 +15,11 @@ public class CompositeSkillScript : CompositeScriptBase<ISkillScript>, ISkillScr
     /// </summary>
     public bool CanUse(ActivationContext context)
     {
-        var canUse = true;
-
-        //if any script can't be used, the skill can't be used
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            canUse &= script.CanUse(context);
+            if (!script.CanUse(context))
+                return false;
 
-        return canUse;
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public void OnForgotten(Aisling aisling)
-    {
-        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            script.OnForgotten(aisling);
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
-    public void OnLearned(Aisling aisling)
-    {
-        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            script.OnLearned(aisling);
+        return true;
     }
 
     /// <summary>

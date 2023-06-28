@@ -45,6 +45,22 @@ public static class RectangleExtensions
     }
 
     /// <summary>
+    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> contains an
+    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
+    /// </summary>
+    /// <param name="rect">The rectangle to check</param>
+    /// <param name="point">The point to check</param>
+    /// <returns>
+    ///     <c>true</c> if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise <c>false</c>
+    /// </returns>
+    public static bool Contains(this IRectangle rect, Point point)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
+    }
+
+    /// <summary>
     ///     Lazily generates points along the outline of the rectangle. The points will be in the order the vertices are
     ///     listed.
     /// </summary>

@@ -1,4 +1,4 @@
-﻿using Chaos.Extensions.Common;
+﻿using Chaos.Extensions;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
@@ -82,9 +82,10 @@ public class WithdrawItemScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawItemResult.Success:
-                Logger.WithProperty(source)
-                      .WithProperty(item)
+                Logger.WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
+                      .WithProperty(source)
+                      .WithProperty(item)
                       .LogDebug(
                           "Aisling {@AislingName} withdrew {Amount} {@ItemName} from the bank",
                           source.Name,

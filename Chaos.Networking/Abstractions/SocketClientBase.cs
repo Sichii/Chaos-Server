@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Cryptography.Abstractions;
-using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.IO.Memory;
 using Chaos.Networking.Entities.Server;
@@ -191,9 +190,11 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                 {
                     var buffer = BitConverter.ToString(MemoryBuffer.Span.ToArray()).Replace("-", string.Empty);
 
-                    Logger.WithProperty(this)
-                          .WithProperty(buffer)
-                          .LogCritical(ex, "Exception while handling a packet for {@ClientType}", GetType().Name);
+                    Logger.LogCritical(
+                        ex,
+                        "Exception while handling a packet for {@ClientType} ({Buffer})",
+                        GetType().Name,
+                        buffer);
                 }
 
                 Count -= packetLength;
@@ -234,8 +235,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         //no way to pass the packet in because its a ref struct
         //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
         if (LogRawPackets)
-            Logger.WithProperty(this)
-                  .LogTrace("[Snd] {Packet}", packet.ToString());
+            Logger.LogTrace("[Snd] {Packet}", packet.ToString());
 
         packet.ShouldEncrypt = Crypto.ShouldEncrypt((byte)packet.OpCode);
 

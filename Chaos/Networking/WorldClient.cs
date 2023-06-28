@@ -3,6 +3,7 @@ using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Definitions;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;

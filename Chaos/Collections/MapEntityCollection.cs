@@ -256,7 +256,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         return EntityLookup.Values.OfType<T>();
     }
 
-    public IEnumerable<T> WithinRange<T>(IPoint point, int range = 12) where T: MapEntity
+    public IEnumerable<T> WithinRange<T>(IPoint point, int range = 15) where T: MapEntity
     {
         var area = Math.Ceiling(Math.Pow(range * 2 + 1, 2) / 2);
         var avgEntitiesPerTile = Math.Max(0.33, EntityLookup.Count / (float)WalkableArea);
@@ -278,14 +278,33 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         //if we can expect to search significantly fewer entities by searching points
         //then search by point lookup
         if (10 + area * avgEntitiesPerTile < entityCount)
-            return point.SpiralSearch(range)
-                        .Where(pt => Bounds.Contains(pt))
-                        .Select(pt => PointLookup[pt.X, pt.Y])
-                        .Where(cell => cell.Count > 0)
-                        .SelectMany(_ => _)
-                        .OfType<T>();
+            foreach (var pt in point.SpiralSearch(range))
+            {
+                if (!Bounds.Contains(pt))
+                    continue;
 
-        //otherwise just check every entity of that type with a distance check
-        return Values<T>().ThatAreWithinRange(point, range);
+                var entities = PointLookup[pt.X, pt.Y];
+
+                if (entities.Count == 0)
+                    continue;
+
+                foreach (var entity in entities)
+                    if (entity is T t)
+                        yield return t;
+            }
+        else //otherwise just check every entity of that type with a distance check
+            foreach (var entity in Values<T>().ThatAreWithinRange(point, range))
+                yield return entity;
+
+        /*
+        return point.SpiralSearch(range)
+                    .Where(pt => Bounds.Contains(pt))
+                    .Select(pt => PointLookup[pt.X, pt.Y])
+                    .Where(cell => cell.Count > 0)
+                    .SelectMany(_ => _)
+                    .OfType<T>();
+                    */
+
+        //return Values<T>().ThatAreWithinRange(point, range);
     }
 }

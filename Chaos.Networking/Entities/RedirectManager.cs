@@ -1,4 +1,3 @@
-using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -22,8 +21,7 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
     /// <inheritdoc />
     public void Add(IRedirect redirect)
     {
-        Logger.WithProperty(redirect)
-              .LogTrace("Now tracking redirect {@RedirectId}", redirect.Id);
+        Logger.LogTrace("Now tracking redirect {@RedirectId}", redirect.Id);
 
         Redirects.TryAdd(redirect.Id, redirect);
     }
@@ -33,8 +31,7 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
     {
         if (Redirects.TryRemove(id, out redirect))
         {
-            Logger.WithProperty(redirect)
-                  .LogTrace("Redirect {@RedirectId} has been consumed", redirect.Id);
+            Logger.LogTrace("Redirect {@RedirectId} has been consumed", redirect.Id);
 
             return true;
         }
@@ -56,8 +53,7 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
                 foreach (var redirect in Redirects.Values)
                     if (now.Subtract(redirect.Created) > Timeout)
                     {
-                        Logger.WithProperty(redirect)
-                              .LogTrace("Redirect {@RedirectId} has timed out", redirect.Id);
+                        Logger.LogTrace("Redirect {@RedirectId} has timed out", redirect.Id);
 
                         Redirects.TryRemove(redirect.Id, out _);
                     }
