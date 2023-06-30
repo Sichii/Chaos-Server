@@ -57,7 +57,7 @@ public static class AoeShapeExtensions
         }
 
         if (bounds != null)
-            points = points.Where(p => bounds.Contains(p));
+            points = points.Where(bounds.Contains);
 
         if (!excludeSource)
             points = points.Prepend(sourcePoint);

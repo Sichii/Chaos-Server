@@ -20,8 +20,7 @@
                                  TextElement.FontSize="14"
                                  FontFamily="{materialDesign:MaterialDesignFont}"
                                  DataContext="{Binding RelativeSource={RelativeSource Self}}"
-                                 Initialized="UserControl_Initialized"
-                                 Focusable="True">
+                                 Initialized="UserControl_Initialized">
     <Grid Focusable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
@@ -117,6 +116,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="ScriptKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteScriptKeyBtn"

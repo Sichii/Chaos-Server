@@ -12,7 +12,7 @@ public record WorldMapNodeInfo
     /// <summary>
     ///     The destination of the node the character will be teleported to
     /// </summary>
-    public Location Destination { get; set; }
+    public Location Destination { get; set; } = null!;
     /// <summary>
     ///     The X and Y screen coordinates where the node will be displayed on the world map (the screen is 640x480)
     /// </summary>

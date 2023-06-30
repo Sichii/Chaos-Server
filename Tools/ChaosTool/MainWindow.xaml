@@ -15,6 +15,7 @@
         xmlns:reactorTileTemplateControls="clr-namespace:ChaosTool.Controls.ReactorTileTemplateControls"
         xmlns:monsterTemplateControls="clr-namespace:ChaosTool.Controls.MonsterTemplateControls"
         xmlns:merchantTemplateControls="clr-namespace:ChaosTool.Controls.MerchantTemplateControls"
+        xmlns:lootTableControls="clr-namespace:ChaosTool.Controls.LootTableControls"
         mc:Ignorable="d"
         Title="Chaos Tool"
         Width="1200"
@@ -25,66 +26,86 @@
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <TabControl Style="{StaticResource MaterialDesignTabControl}">
+    <TabControl HorizontalContentAlignment="Left">
         <TabItem Header="Items"
                  Name="ItemsTab"
                  IsSelected="True"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <itemTemplateControls:ItemTemplateEditor x:Name="ItemTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Spells"
                  Name="SpellsTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Width="Auto"
+                 Margin="0"
+                 Padding="0"
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <spellTemplateControls:SpellTemplateEditor x:Name="SpellTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Skills"
                  Name="SkillsTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <skillTemplateControls:SkillTemplateEditor x:Name="SkillTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Dialogs"
                  Name="DialogsTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <dialogTemplateControls:DialogTemplateEditor x:Name="DialogTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Maps"
                  Name="MapTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <mapTemplateControls:MapTemplateEditor x:Name="MapTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="ReactorTiles"
                  Name="ReactorTileTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <reactorTileTemplateControls:ReactorTileTemplateEditor x:Name="ReactorTileTemplateEditor" />
             </Grid>
         </TabItem>
+        <TabItem Header="LootTables"
+                 Name="LootTablesTab"
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
+            <Grid>
+                <lootTableControls:LootTableEditor x:Name="LootTableEditor" />
+            </Grid>
+        </TabItem>
         <TabItem Header="Monsters"
                  Name="MonsterTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <monsterTemplateControls:MonsterTemplateEditor x:Name="MonsterTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="Merchants"
                  Name="MerchantTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <merchantTemplateControls:MerchantTemplateEditor x:Name="MerchantTemplateEditor" />
             </Grid>
         </TabItem>
         <TabItem Header="BulkEdit"
-                 Style="{StaticResource MaterialDesignTabItem}">
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid Name="MasterDockPanel"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch">
@@ -141,20 +162,20 @@
                     </ItemsControl>
                 </ScrollViewer>
 
-                <TextBox Grid.Row="2"
-                         Text="Output"
+                <Label Grid.Row="2"
+                       Content="Output"
+                       Style="{StaticResource MaterialDesignLabel}" />
+                <TextBox Grid.Row="3"
+                         Name="Output"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         IsReadOnly="True" />
-                <TextBlock Grid.Row="3"
-                           Name="Output"
-                           Style="{StaticResource MaterialDesignTextBlock}"
-                           TextWrapping="Wrap"
-                           MinHeight="150"
-                           MaxHeight="250"
-                           Padding="5"
-                           Background="#404040"
-                           Foreground="White"
-                           HorizontalAlignment="Stretch" />
+                         TextWrapping="Wrap"
+                         MinHeight="150"
+                         MaxHeight="250"
+                         Padding="5"
+                         HorizontalAlignment="Stretch"
+                         HorizontalContentAlignment="Left"
+                         IsReadOnly="True"
+                         IsReadOnlyCaretVisible="False" />
             </Grid>
         </TabItem>
         <TabItem Header="Integrity"

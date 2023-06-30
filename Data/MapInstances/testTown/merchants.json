@@ -1,29 +1,34 @@
 [
   {
+    "blackList": [],
     "direction": "Right",
     "extraScriptKeys": [],
     "merchantTemplateKey": "shop_tester",
     "spawnPoint": "(25, 25)"
   },
   {
+    "blackList": [],
     "direction": "Right",
     "extraScriptKeys": [],
     "merchantTemplateKey": "bank_tester",
     "spawnPoint": "(25, 24)"
   },
   {
+    "blackList": [],
     "direction": "Right",
     "extraScriptKeys": [],
     "merchantTemplateKey": "trainer_tester",
     "spawnPoint": "(25, 23)"
   },
   {
+    "blackList": [],
     "direction": "Right",
     "extraScriptKeys": [],
     "merchantTemplateKey": "guild_tester",
     "spawnPoint": "(25, 22)"
   },
   {
+    "blackList": [],
     "direction": "Right",
     "extraScriptKeys": [],
     "merchantTemplateKey": "misc_tester_1",

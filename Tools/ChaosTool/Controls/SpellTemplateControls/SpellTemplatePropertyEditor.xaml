@@ -366,6 +366,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=ItemTemplateKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="ItemTemplateKey"
                                      Padding="3"
                                      Margin="3, 3, 3, 0" />
                             <Button x:Name="DeleteItemRequirementBtn"
@@ -387,6 +388,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=AmountRequired}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="AmountRequired"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                         </Grid>
@@ -438,6 +440,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="SpellTemplateKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteSpellTemplateKeyBtn"
@@ -500,6 +503,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="ScriptKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteScriptKeyBtn"
@@ -561,6 +565,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="SkillTemplateKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteSkillTemplateKeyBtn"

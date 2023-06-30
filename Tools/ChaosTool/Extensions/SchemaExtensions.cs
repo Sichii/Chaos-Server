@@ -1,4 +1,5 @@
 using System.Globalization;
+using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using ChaosTool.Model.Tables;
 
@@ -144,6 +145,16 @@ internal static class SchemaExtensions
         yield return schema.ScriptKeys.ToLinePerString();
     }
 
+    internal static IEnumerable<string?> EnumerateProperties(this LootTableSchema schema)
+    {
+        yield return schema.Key;
+        yield return schema.Mode.ToString();
+
+        yield return schema.LootDrops.To2LinesPerItem(
+            drop => drop.ItemTemplateKey,
+            drop => drop.DropChance.ToString(CultureInfo.InvariantCulture));
+    }
+
     internal static IEnumerable<string?> EnumerateProperties(this MonsterTemplateSchema schema)
     {
         var stats = schema.StatSheet;
@@ -161,6 +172,7 @@ internal static class SchemaExtensions
         yield return schema.SpellIntervalMs.ToString();
         yield return schema.MoveIntervalMs.ToString();
         yield return schema.WanderIntervalMs.ToString();
+        yield return schema.LootTableKeys.ToLinePerString();
         yield return stats.Ability.ToString();
         yield return stats.Level.ToString();
         yield return stats.AtkSpeedPct.ToString();

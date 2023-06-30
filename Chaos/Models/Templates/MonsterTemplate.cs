@@ -1,3 +1,4 @@
+using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Models.Data;
@@ -22,6 +23,10 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     ///     The amount of exp this monster will reward when killed
     /// </summary>
     public required int ExpReward { get; set; }
+    /// <summary>
+    ///     A collection of loot table keys that this monster can drop from
+    /// </summary>
+    public required ICollection<LootTable> LootTables { get; set; } = Array.Empty<LootTable>();
 
     /// <summary>
     ///     Maximum amount of gold for this monster to drop

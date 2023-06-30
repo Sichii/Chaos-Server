@@ -109,6 +109,11 @@
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,469,10,0" />
+        <Label Content="LootTableKeys"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,499,10,0" />
 
         <Label Grid.Column="1"
                Content="AtkSpeedPct"
@@ -370,6 +375,70 @@
                  Style="{StaticResource MaterialDesignTextBox}"
                  PreviewTextInput="TboxNumberValidator" />
 
+        <Grid Grid.Column="1"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              MaxHeight="180"
+              Margin="10,498,75,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView Grid.Row="0"
+                      Name="LootTableKeysView"
+                      HorizontalContentAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      SelectionMode="Single"
+                      Style="{StaticResource MaterialDesignListView}"
+                      materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
+                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                      Margin="0,0,5,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type model:BindableString}">
+                        <Grid HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              Width="Auto">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     MaxLines="1"
+                                     TextWrapping="NoWrap"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Left"
+                                     Text="{Binding String}"
+                                     Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="LootTableKey"
+                                     Padding="3"
+                                     Margin="3, 0, 3, 3" />
+                            <Button Name="DeleteSkillTemplateKeyBtn"
+                                    Grid.ColumnSpan="99"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
+                                    MaxHeight="20"
+                                    MaxWidth="20"
+                                    Margin="0, 0, -8, 2"
+                                    Content="{materialDesign:PackIcon Kind=CloseBold}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Click="DeleteLootTableKeyBtn_OnClick" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Grid.Row="1"
+                    Name="AddLootTableKeyBtn"
+                    Content="{materialDesign:PackIcon Kind=PlusBold}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    MaxWidth="20"
+                    MaxHeight="20"
+                    Margin="5"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Click="AddLootTableKeyBtn_OnClick" />
+        </Grid>
+
         <TextBox Grid.Column="2"
                  Name="AtkSpeedPctTbox"
                  HorizontalAlignment="Left"
@@ -558,6 +627,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding String}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="ScriptKey"
                                          Padding="3"
                                          Margin="3, 0, 3, 3" />
                                 <Button x:Name="DeleteScriptKeyBtn"
@@ -620,6 +690,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding String}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="SpellTemplateKey"
                                          Padding="3"
                                          Margin="3, 0, 3, 3" />
                                 <Button Name="DeleteSpellTemplateKeyBtn"
@@ -683,6 +754,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding String}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="SkillTemplateKey"
                                          Padding="3"
                                          Margin="3, 0, 3, 3" />
                                 <Button Name="DeleteSkillTemplateKeyBtn"

@@ -18,7 +18,7 @@ public sealed record ShardingOptions
     ///     enter this instance
     ///     from
     /// </remarks>
-    public Location ExitLocation { get; init; }
+    public Location ExitLocation { get; init; } = null!;
 
     /// <summary>
     ///     The number of players or groups allowed per instance (based on Shardingtype)

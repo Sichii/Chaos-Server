@@ -116,6 +116,7 @@ public partial class MainWindow : Window
         Editor.Focus();
         Editor.Options.EnableRectangularSelection = true;
         Editor.Options.AllowToggleOverstrikeMode = true;
+        Editor.Options.ConvertTabsToSpaces = true;
 
         var viewModel = (DocumentViewModel)Editor.DataContext;
         var workingDirectory = Directory.GetCurrentDirectory();

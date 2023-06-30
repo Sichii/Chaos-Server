@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Chaos.Models.Data;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 
@@ -9,6 +10,11 @@ namespace ChaosTool.Definitions;
 internal static class CONSTANTS
 {
     internal const string TEMP_PATH = "NEW.json";
+
+    internal static readonly ImmutableList<string> LootTablePropertyOrder = ImmutableList.Create(
+        nameof(LootTableSchema.Key),
+        nameof(LootTableSchema.Mode),
+        nameof(LootTableSchema.LootDrops));
 
     internal static readonly ImmutableList<string> MerchantTemplatePropertyOrder = ImmutableList.Create(
         nameof(MerchantTemplateSchema.TemplateKey),
@@ -37,6 +43,7 @@ internal static class CONSTANTS
         nameof(MonsterTemplateSchema.SpellIntervalMs),
         nameof(MonsterTemplateSchema.MoveIntervalMs),
         nameof(MonsterTemplateSchema.WanderIntervalMs),
+        nameof(MonsterTemplateSchema.LootTableKeys),
         nameof(StatSheetSchema.Ability),
         nameof(StatSheetSchema.Level),
         nameof(StatSheetSchema.AtkSpeedPct),

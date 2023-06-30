@@ -21,6 +21,11 @@ public sealed record MonsterSpawnSchema
     public Direction? Direction { get; set; }
 
     /// <summary>
+    ///     A collection of extra loot table keys that this monster can drop from specifically for this map
+    /// </summary>
+    public ICollection<string> ExtraLootTableKeys { get; set; } = Array.Empty<string>();
+
+    /// <summary>
     ///     A collection of extra monster script keys to add to the monsters created by this spawn
     /// </summary>
     public ICollection<string> ExtraScriptKeys { get; set; } = Array.Empty<string>();
@@ -36,12 +41,6 @@ public sealed record MonsterSpawnSchema
     ///     Variance of 50, the spawn interval would vary from 45-75secs
     /// </summary>
     public int? IntervalVariancePct { get; set; }
-
-    /// <summary>
-    ///     Default is to not have a loot table.<br />
-    ///     If specified, the unique id for the loot table used to determine monster drops from this spawn
-    /// </summary>
-    public string? LootTableKey { get; set; }
 
     /// <summary>
     ///     The maximum number of monsters that can be on the map from this spawn

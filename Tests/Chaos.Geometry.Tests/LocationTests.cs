@@ -140,7 +140,7 @@ public sealed class LocationTests
 
         // Assert
         result.Should().BeTrue();
-        location.Map.Should().Be(EXPECTED_MAP);
+        location!.Map.Should().Be(EXPECTED_MAP);
         location.X.Should().Be(EXPECTED_X);
         location.Y.Should().Be(EXPECTED_Y);
     }

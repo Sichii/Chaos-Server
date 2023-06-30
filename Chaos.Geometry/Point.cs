@@ -7,7 +7,7 @@ namespace Chaos.Geometry;
 
 /// <inheritdoc cref="IPoint" />
 [JsonConverter(typeof(PointConverter))]
-public readonly struct Point : IPoint, IEquatable<IPoint>
+public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
 {
     /// <inheritdoc />
     public int X { get; init; }
@@ -134,4 +134,9 @@ public readonly struct Point : IPoint, IEquatable<IPoint>
 
         return true;
     }
+
+    /// <inheritdoc />
+    public bool Equals(Point other) =>
+        (X == other.X)
+        && (Y == other.Y);
 }

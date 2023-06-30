@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
@@ -24,7 +25,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     public int AggroRange { get; set; }
     public ICollection<IPoint> BlackList { get; set; }
     public int Experience { get; set; }
-    public LootTable? LootTable { get; set; }
+    public ILootTable LootTable { get; set; }
     public Creature? Target { get; set; }
     public ConcurrentDictionary<uint, int> AggroList { get; }
     public ConcurrentDictionary<uint, int> Contribution { get; }
@@ -83,6 +84,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         Direction = (Direction)Random.Shared.Next(4);
         AggroList = new ConcurrentDictionary<uint, int>();
         Contribution = new ConcurrentDictionary<uint, int>();
+        LootTable = new CompositeLootTable(template.LootTables);
         WanderTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.WanderIntervalMs), 10, RandomizationType.Positive);
         MoveTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.MoveIntervalMs), 10, RandomizationType.Positive);
         SkillTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.SkillIntervalMs), 50);

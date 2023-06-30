@@ -98,6 +98,7 @@
                  Margin="10,18,10,0"
                  TextWrapping="NoWrap"
                  MinWidth="200"
+
                  Style="{StaticResource MaterialDesignTextBox}" />
         <TextBox Grid.Column="1"
                  Name="TemplateKeyTbox"
@@ -214,6 +215,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=OptionText}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="OptionText"
                                      Padding="3"
                                      Margin="3, 3, 3, 0" />
                             <Button x:Name="DeleteDialogOptionBtn"
@@ -235,6 +237,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=DialogKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="DialogKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                         </Grid>
@@ -287,6 +290,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="ScriptKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteScriptKeyBtn"

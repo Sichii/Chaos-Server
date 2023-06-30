@@ -4,7 +4,9 @@
     "extraScriptKeys": [],
     "intervalSecs": 30,
     "intervalVariancePct": 50,
-    "lootTableKey": "testAreaRats",
+    "extraLootTableKeys": [
+      "testAreaRats"
+    ],
     "maxAmount": 100,
     "maxPerSpawn": 75,
     "monsterTemplateKey": "common_rat"

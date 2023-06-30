@@ -35,27 +35,11 @@ public static class RectangleExtensions
     /// <returns>
     ///     <c>true</c> if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise <c>false</c>
     /// </returns>
-    public static bool Contains(this IRectangle rect, IPoint point)
+    public static bool Contains<TPoint>(this IRectangle rect, TPoint point) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(rect);
 
         ArgumentNullException.ThrowIfNull(point);
-
-        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
-    }
-
-    /// <summary>
-    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> contains an
-    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
-    /// </summary>
-    /// <param name="rect">The rectangle to check</param>
-    /// <param name="point">The point to check</param>
-    /// <returns>
-    ///     <c>true</c> if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise <c>false</c>
-    /// </returns>
-    public static bool Contains(this IRectangle rect, Point point)
-    {
-        ArgumentNullException.ThrowIfNull(rect);
 
         return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
     }

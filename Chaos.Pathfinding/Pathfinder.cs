@@ -109,7 +109,7 @@ public sealed class Pathfinder : IPathfinder
         if (!optimalPoint.HasValue)
             return Direction.Invalid;
 
-        return optimalPoint.DirectionalRelationTo(start);
+        return optimalPoint.Value.DirectionalRelationTo(start);
     }
 
     private IPoint? FindOptimalPoint(
@@ -210,7 +210,7 @@ public sealed class Pathfinder : IPathfinder
         if (!optimalPoint.HasValue)
             return Direction.Invalid;
 
-        return optimalPoint.DirectionalRelationTo(start);
+        return optimalPoint.Value.DirectionalRelationTo(start);
     }
 
     private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked) =>

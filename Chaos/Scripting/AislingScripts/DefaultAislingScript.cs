@@ -59,6 +59,9 @@ public class DefaultAislingScript : AislingScriptBase
 
         if (SleepAnimationTimer.IntervalElapsed)
         {
+            if (!Subject.IsAlive)
+                return;
+
             var lastManualAction = Subject.Trackers.LastManualAction;
 
             if (!lastManualAction.HasValue || (DateTime.UtcNow.Subtract(lastManualAction.Value).TotalMinutes > 5))

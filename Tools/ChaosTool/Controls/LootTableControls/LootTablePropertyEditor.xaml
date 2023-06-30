@@ -1,4 +1,4 @@
-<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.MapTemplateControls.MapTemplatePropertyEditor"
+<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.LootTableControls.LootTablePropertyEditor"
                                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,7 @@
                                  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                                  xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
                                  xmlns:definitions="clr-namespace:ChaosTool.Definitions"
-                                 xmlns:model="clr-namespace:ChaosTool.Model"
+                                 xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
                                  mc:Ignorable="d"
                                  d:DesignHeight="700"
                                  d:DesignWidth="900"
@@ -34,32 +34,27 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!-- #region Labels -->
-        <Label Grid.Column="2"
-               Content="ScriptKeys"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,79,10,0" />
-        <Label Content="TemplateKey"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,79,10,0" />
-        <Label Content="Width"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,109,10,0" />
-        <Label Content="Height"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,139,10,0" />
         <Label Content="Path"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,19,10,0" />
+        <Label Content="Key"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,79,10,0" />
+        <Label Content="Mode"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,109,10,0" />
+        <Label Grid.Column="1"
+               Content="LootDrops"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,79,10,0" />
         <!-- #endregion -->
         <!-- #region Input -->
         <TextBox Grid.ColumnSpan="3"
@@ -73,86 +68,98 @@
                  MinWidth="200"
                  Style="{StaticResource MaterialDesignTextBox}" />
         <TextBox Grid.Column="1"
-                 Name="TemplateKeyTbox"
+                 Name="KeyTbox"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
-                 Margin="10,78,75,0"
+                 Margin="10,78,100,0"
                  TextWrapping="NoWrap"
                  MinWidth="160"
                  Style="{StaticResource MaterialDesignTextBox}"
                  TextChanged="TemplateKeyTbox_OnTextChanged" />
-        <TextBox Grid.Column="1"
-                 x:Name="WidthTbox"
-                 HorizontalAlignment="Left"
-                 VerticalAlignment="Top"
-                 Margin="10,108,0,0"
-                 TextWrapping="NoWrap"
-                 Width="80"
-                 Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
-        <TextBox Grid.Column="1"
-                 Name="HeightTbox"
-                 HorizontalAlignment="Left"
-                 VerticalAlignment="Top"
-                 Margin="10,138,0,0"
-                 TextWrapping="NoWrap"
-                 Width="80"
-                 Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
-        <Grid Grid.Column="3"
+        <ComboBox Name="ModeCmbox"
+                  Grid.Column="1"
+                  HorizontalAlignment="Left"
+                  Margin="10,108,130,0"
+                  VerticalAlignment="Top"
+                  MinWidth="120"
+                  Style="{StaticResource MaterialDesignComboBox}" />
+        <Grid Grid.Column="2"
               VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
+              HorizontalAlignment="Left"
               Height="Auto"
+              MinWidth="160"
               Margin="0,79,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ListView Grid.Row="0"
-                      Name="ScriptKeysView"
-                      HorizontalContentAlignment="Stretch"
+            <ListView Grid.Column="0"
+                      Name="LootDropsView"
                       HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch"
                       VerticalAlignment="Top"
                       SelectionMode="Single"
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
-                      d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      Margin="0,0,5,0">
+                      d:ItemsSource="{x:Static definitions:SampleData.LootDrops}"
+                      materialDesign:RippleAssist.IsDisabled="True"
+                      materialDesign:ListBoxItemAssist.ShowSelection="True"
+                      MaxHeight="400">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
-                        <Grid HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              Width="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
+                    <DataTemplate DataType="{x:Type data:LootDropSchema}">
+                        <Grid Background="Transparent"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Top">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.RowSpan="99"
+                                    Background="Transparent"
+                                    BorderBrush="White"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" />
+                            <TextBox Grid.Row="0"
                                      MaxLines="1"
                                      TextWrapping="NoWrap"
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding String}"
+                                     Text="{Binding Path=ItemTemplateKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
-                                     materialDesign:HintAssist.Hint="ScriptKey"
+                                     materialDesign:HintAssist.Hint="ItemTemplateKey"
                                      Padding="3"
-                                     Margin="3, 0, 3, 3" />
-                            <Button x:Name="DeleteScriptKeyBtn"
-                                    Grid.ColumnSpan="99"
+                                     Margin="3, 3, 3, 0" />
+                            <Button x:Name="DeleteLootDropBtn"
+                                    Grid.RowSpan="99"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Stretch"
+                                    IsTabStop="False"
                                     MaxHeight="20"
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
                                     Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    Click="DeleteScriptKeyBtn_Click" />
+                                    Click="DeleteLootDropBtn_Click" />
+                            <TextBox Grid.Row="1"
+                                     MaxLines="1"
+                                     TextWrapping="NoWrap"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Left"
+                                     Text="{Binding Path=DropChance}"
+                                     Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="DropChance"
+                                     Padding="3"
+                                     Margin="3, 0, 3, 3" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
             <Button Grid.Row="1"
-                    Name="AddScriptKeyBtn"
+                    Name="AddLootDropBtn"
                     Content="{materialDesign:PackIcon Kind=PlusBold}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
@@ -160,7 +167,7 @@
                     MaxHeight="20"
                     Margin="5"
                     Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                    Click="AddScriptKeyBtn_Click" />
+                    Click="AddLootDropBtn_Click" />
         </Grid>
         <!-- #endregion -->
         <!-- #region Footer -->

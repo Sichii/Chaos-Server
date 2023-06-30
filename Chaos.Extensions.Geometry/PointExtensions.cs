@@ -25,7 +25,8 @@ public static class PointExtensions
     ///     This is because the
     ///     forward edges and the center of the cone both extend the same number of spaces in the given direction.
     /// </remarks>
-    public static IEnumerable<Point> ConalSearch(this IPoint point, Direction direction, int maxDistance)
+    public static IEnumerable<Point> ConalSearch<TPoint>(this TPoint point, Direction direction, int maxDistance)
+        where TPoint: struct, IPoint
     {
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction), "Direction cannot be invalid");
@@ -52,7 +53,7 @@ public static class PointExtensions
     ///     <paramref name="direction" />
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
+    public static Point DirectionalOffset<TPoint>(this TPoint point, Direction direction, int distance = 1) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -81,7 +82,8 @@ public static class PointExtensions
     ///     to be facing
     ///     <paramref name="point" />
     /// </returns>
-    public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
+    public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
+        where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -128,7 +130,8 @@ public static class PointExtensions
     /// <param name="point"></param>
     /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
     /// <returns>The distance between the two given points without moving diagonally</returns>
-    public static int DistanceFrom(this IPoint point, IPoint other)
+    public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
+                                                                                        where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -144,7 +147,7 @@ public static class PointExtensions
     /// <param name="point"></param>
     /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
     /// <returns>The distance between the two given points allowing diagonal movement</returns>
-    public static float EuclideanDistanceFrom(this IPoint point, IPoint other)
+    public static float EuclideanDistanceFrom<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -216,7 +219,8 @@ public static class PointExtensions
     /// var points = new Point(0, 0).GenerateCardinalPoints();
     /// </code>
     /// </example>
-    public static IEnumerable<Point> GenerateCardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
+    public static IEnumerable<Point> GenerateCardinalPoints<TPoint>(this TPoint start, Direction direction = Direction.All, int radius = 1)
+        where TPoint: IPoint
     {
         if (direction == Direction.Invalid)
             yield break;
@@ -274,7 +278,11 @@ public static class PointExtensions
     ///     var points = new Point(0, 0).GenerateInterCardinalPoints(Direction.All, 3);
     /// </code>
     /// </example>
-    public static IEnumerable<Point> GenerateIntercardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
+    public static IEnumerable<Point> GenerateIntercardinalPoints<TPoint>(
+        this TPoint start,
+        Direction direction = Direction.All,
+        int radius = 1
+    ) where TPoint: IPoint
     {
         if (direction == Direction.Invalid)
             yield break;
@@ -320,17 +328,19 @@ public static class PointExtensions
     /// <param name="start">Starting point for the creation of the path</param>
     /// <param name="end">Ending point for the creation of the path</param>
     /// <remarks>Does not return the start point, only the points between the start and end, as well as the end point itself</remarks>
-    public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
+    public static IEnumerable<Point> GetDirectPath<TPoint1, TPoint2>(this TPoint1 start, TPoint2 end)
+        where TPoint1: IPoint where TPoint2: IPoint
     {
         var current = Point.From(start);
+        var endPoint = Point.From(end);
 
         yield return current;
 
-        while (current != end)
+        while (!current.Equals(endPoint))
         {
-            current = current.OffsetTowards(end);
+            current = current.OffsetTowards(endPoint);
 
-            yield return current;
+            yield return Point.From(current);
         }
     }
 
@@ -344,7 +354,7 @@ public static class PointExtensions
     ///     <c>true</c> if this point is on an intercardinal diagonal in relation to the other point in the given
     ///     direction, otherwise <c>false</c>
     /// </returns>
-    public static bool IsInterCardinalTo(this IPoint point, IPoint other, Direction direction)
+    public static bool IsInterCardinalTo<TPoint>(this TPoint point, TPoint other, Direction direction) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -376,7 +386,7 @@ public static class PointExtensions
     /// <returns>
     ///     A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" />
     /// </returns>
-    public static Point OffsetTowards(this IPoint point, IPoint other)
+    public static Point OffsetTowards<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -398,7 +408,7 @@ public static class PointExtensions
     ///     drawn perfectly
     ///     between the two points. Any point the line crosses over will be returned. <br />
     /// </remarks>
-    public static IEnumerable<Point> RayTraceTo(this IPoint start, IPoint end)
+    public static IEnumerable<Point> RayTraceTo<TPoint>(this TPoint start, TPoint end) where TPoint: IPoint
     {
         var x0 = start.X;
         var y0 = start.Y;
@@ -442,7 +452,7 @@ public static class PointExtensions
     ///     The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> and searches
     ///     clock-wise
     /// </remarks>
-    public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
+    public static IEnumerable<Point> SpiralSearch<TPoint>(this TPoint point, int maxRadius = byte.MaxValue) where TPoint: IPoint
     {
         var currentPoint = Point.From(point);
         var radius = 1;
@@ -492,7 +502,7 @@ public static class PointExtensions
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
+    public static IEnumerable<TPoint> WithDirectionBias<TPoint>(this IEnumerable<TPoint> points, Direction direction) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(points);
 

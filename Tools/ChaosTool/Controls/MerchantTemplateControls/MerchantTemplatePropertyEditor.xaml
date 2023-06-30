@@ -218,6 +218,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="ScriptKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteScriptKeyBtn"
@@ -296,6 +297,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding Path=ItemTemplateKey}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="ItemTemplateKey"
                                          Padding="3"
                                          Margin="3, 3, 3, 0" />
                                 <Button x:Name="DeleteItemForSaleBtn"
@@ -317,6 +319,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding Path=Stock}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="StockAmount"
                                          Padding="3"
                                          Margin="3, 0, 3, 3"
                                          PreviewTextInput="TboxNumberValidator" />
@@ -370,6 +373,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding String}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="ItemTemplateKey"
                                          Padding="3"
                                          Margin="3, 0, 3, 3" />
                                 <Button Name="DeleteItemToBuyBtn"
@@ -441,6 +445,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding String}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="SkillTemplateKey"
                                          Padding="3"
                                          Margin="3, 0, 3, 3" />
                                 <Button Name="DeleteSkillToTeachBtn"
@@ -504,6 +509,7 @@
                                          HorizontalContentAlignment="Left"
                                          Text="{Binding String}"
                                          Style="{StaticResource MaterialDesignTextBox}"
+                                         materialDesign:HintAssist.Hint="SpellTemplateKey"
                                          Padding="3"
                                          Margin="3, 0, 3, 3" />
                                 <Button Name="DeleteSpellToTeachBtn"

@@ -11,8 +11,8 @@ public sealed record WorldMapNodeSchema
     /// <summary>
     ///     The location this node leads to when clicked
     /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public Location Destination { get; set; }
+    [JsonRequired]
+    public Location Destination { get; set; } = null!;
     /// <summary>
     ///     A unique id specific to this node
     /// </summary>

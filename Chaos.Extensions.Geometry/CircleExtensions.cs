@@ -15,7 +15,8 @@ public static class CircleExtensions
     /// <param name="lineStart">The start point of the line.</param>
     /// <param name="lineEnd">The end point of the line.</param>
     /// <returns>The first point of intersection between the line and the circle, or null if they do not intersect.</returns>
-    public static Point? CalculateIntersectionEntryPoint(this ICircle circle, IPoint lineStart, IPoint lineEnd)
+    public static Point? CalculateIntersectionEntryPoint<TCircle, TPoint>(this TCircle circle, TPoint lineStart, TPoint lineEnd)
+        where TCircle: ICircle where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
         ArgumentNullException.ThrowIfNull(lineStart);
@@ -68,7 +69,7 @@ public static class CircleExtensions
     /// <returns><c>true</c> if this circle fully encompasses the other (or edges touch); otherwise, <c>false</c>.</returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
-    public static bool Contains(this ICircle circle, ICircle other)
+    public static bool Contains<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -85,7 +86,7 @@ public static class CircleExtensions
     /// <returns><c>true</c> if this circle contains the point, otherwise <c>false</c>.</returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">point</exception>
-    public static bool Contains(this ICircle circle, IPoint point)
+    public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point) where TCircle: ICircle where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -105,7 +106,7 @@ public static class CircleExtensions
     /// </returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
-    public static float EdgeDistanceFrom(this ICircle circle, IPoint other)
+    public static float EdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -125,7 +126,7 @@ public static class CircleExtensions
     /// </returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
-    public static float EdgeToEdgeDistanceFrom(this ICircle circle, ICircle other)
+    public static float EdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -140,7 +141,7 @@ public static class CircleExtensions
     /// <param name="circle">This circle.</param>
     /// <returns>A sequence of point along the circumfnerence of the circle</returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
-    public static IEnumerable<Point> GetOutline(this ICircle circle)
+    public static IEnumerable<Point> GetOutline<TCircle>(this TCircle circle) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -204,7 +205,7 @@ public static class CircleExtensions
     /// <param name="circle"></param>
     /// <returns><see cref="IEnumerable{T}" /> of <see cref="Point" /></returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
-    public static IEnumerable<Point> GetPoints(this ICircle circle)
+    public static IEnumerable<Point> GetPoints<TCircle>(this TCircle circle) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -249,7 +250,7 @@ public static class CircleExtensions
     /// </summary>
     /// <param name="circle">The circle</param>
     /// <returns></returns>
-    public static Point GetRandomPoint(this ICircle circle)
+    public static Point GetRandomPoint<TCircle>(this TCircle circle) where TCircle: ICircle
     {
         var rngA = Random.Shared.NextDouble();
         var rngR = Random.Shared.NextDouble();
@@ -269,7 +270,7 @@ public static class CircleExtensions
     /// <returns><c>true</c> if this circle intersects the <paramref name="other" />, <c>false</c> otherwise.</returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
-    public static bool Intersects(this ICircle circle, ICircle other)
+    public static bool Intersects<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 

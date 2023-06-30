@@ -115,7 +115,8 @@ public sealed partial class IntegrityCheckControl
             DetectMapTemplateViolationsAsync(),
             DetectReactorTileTemplateViolationsAsync(),
             DetectMonsterTemplateViolationsAsync(),
-            DetectMerchantTemplateViolationsAsync());
+            DetectMerchantTemplateViolationsAsync(),
+            DetectLootTableViolationsAsync());
 
         if (IntegrityViolationsControl.Items.IsEmpty)
             await Dispatcher.InvokeAsync(
@@ -163,6 +164,39 @@ public sealed partial class IntegrityCheckControl
 
             if (!template.TemplateKey.EqualsI(expectedTemplateKey))
                 await AddViolationAsync($"TemplateKey mismatch: {template.TemplateKey} != {expectedTemplateKey}", handler, true);
+        }
+    }
+
+    private async Task DetectLootTableViolationsAsync()
+    {
+        await Task.Yield();
+
+        foreach (var wrapper in JsonContext.LootTables.Objects)
+        {
+            var template = wrapper.Object;
+            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+
+            var handler = new RoutedEventHandler(
+                (_, _) =>
+                {
+                    var lootTableEditor = MainWindow.LootTableEditor;
+                    MainWindow.LootTablesTab.IsSelected = true;
+
+                    var selected = lootTableEditor.ListViewItems.FirstOrDefault(obs => obs.Object == template);
+
+                    if (selected is null)
+                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+
+                    lootTableEditor.TemplatesView.SelectedItem = selected;
+                    lootTableEditor.TemplatesView.ScrollIntoView(selected);
+                });
+
+            if (!template.Key.EqualsI(expectedTemplateKey))
+                await AddViolationAsync($"Key mismatch: {template.Key} != {expectedTemplateKey}", handler, true);
+
+            foreach (var lootTableItem in template.LootDrops)
+                if (!JsonContext.ItemTemplates.Any(obs => obs.TemplateKey.EqualsI(lootTableItem.ItemTemplateKey)))
+                    await AddViolationAsync($"LootDrop.ItemTemplateKey not found: {lootTableItem.ItemTemplateKey}", handler);
         }
     }
 
@@ -274,6 +308,10 @@ public sealed partial class IntegrityCheckControl
             foreach (var skillTemplateKey in template.SkillTemplateKeys)
                 if (!JsonContext.SkillTemplates.Any(obs => obs.TemplateKey.EqualsI(skillTemplateKey)))
                     await AddViolationAsync($"Skills.SkillTemplateKey not found: {skillTemplateKey}", handler);
+
+            foreach (var lootTableKey in template.LootTableKeys)
+                if (!JsonContext.LootTables.Any(obs => obs.Key.EqualsI(lootTableKey)))
+                    await AddViolationAsync($"LootTables.LootTableKey not found: {lootTableKey}", handler);
         }
     }
 
@@ -408,6 +446,6 @@ public sealed partial class IntegrityCheckControl
     {
         await JsonContext.LoadingTask;
 
-        await DetectIntegrityViolationsAsync();
+        await DetectIntegrityViolationsAsync().ConfigureAwait(false);
     }
 }

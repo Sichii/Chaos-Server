@@ -1,11 +1,13 @@
 [
-    {
-        "blackList": [],
-        "extraScriptKeys": [],
-        "intervalSecs": 1,
-        "lootTableKey": "testAreaRats",
-        "maxAmount": 2500,
-        "maxPerSpawn": 250,
-        "monsterTemplateKey": "common_rat"
-    }
+  {
+    "blackList": [],
+    "extraScriptKeys": [],
+    "intervalSecs": 1,
+    "extraLootTableKeys": [
+      "testAreaRats"
+    ],
+    "maxAmount": 10000,
+    "maxPerSpawn": 250,
+    "monsterTemplateKey": "common_rat"
+  }
 ]

@@ -8,6 +8,7 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Models.WorldMap;
 using Chaos.Schemas.Aisling;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ public static class ServiceProviderExtensions
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var itemTemplateCache = cacheProvider.GetCache<ItemTemplate>();
         var mapper = provider.GetRequiredService<ITypeMapper>();
+        var stockService = provider.GetRequiredService<IStockService>();
 
         await itemTemplateCache.ReloadAsync();
 
@@ -77,13 +79,46 @@ public static class ServiceProviderExtensions
                     }
                     case Monster monster:
                     {
-                        {
-                            var schemas = mapper.MapMany<ItemSchema>(monster.Items);
-                            var items = mapper.MapMany<Item>(schemas).ToList();
+                        var schemas = mapper.MapMany<ItemSchema>(monster.Items);
+                        var items = mapper.MapMany<Item>(schemas).ToList();
 
-                            monster.Items.Clear();
-                            monster.Items.AddRange(items);
+                        monster.Items.Clear();
+                        monster.Items.AddRange(items);
+
+                        break;
+                    }
+                    case Merchant merchant:
+                    {
+                        var hadStock = merchant.ItemsForSale.Any();
+                        var itemsForSale = merchant.ItemsForSale.ToList();
+                        merchant.ItemsForSale.Clear();
+
+                        foreach (var item in itemsForSale)
+                        {
+                            var schema = mapper.Map<ItemSchema>(item);
+                            var mappedItem = mapper.Map<Item>(schema);
+
+                            merchant.ItemsForSale.Add(mappedItem);
                         }
+
+                        var itemstoBuy = merchant.ItemsToBuy.ToList();
+                        merchant.ItemsToBuy.Clear();
+
+                        foreach (var item in itemstoBuy)
+                        {
+                            var schema = mapper.Map<ItemSchema>(item);
+                            var mappedItem = mapper.Map<Item>(schema);
+
+                            merchant.ItemsToBuy.Add(mappedItem);
+                        }
+
+                        //re-register this merchant's stock with the stock service
+                        if (hadStock)
+                            stockService.RegisterStock(
+                                merchant.Template.TemplateKey,
+                                merchant.Template.ItemsForSale.Select(kvp => (kvp.Key, kvp.Value)),
+                                TimeSpan.FromHours(merchant.Template.RestockIntervalHrs),
+                                merchant.Template.RestockPct);
 
                         break;
                     }
@@ -105,22 +140,36 @@ public static class ServiceProviderExtensions
 
             foreach (var monsterSpawn in mapInstance.MonsterSpawns)
             {
-                if (monsterSpawn.LootTable?.Key == null)
+                if (!monsterSpawn.ExtraLootTables.Any())
                     continue;
 
-                var lootTableKey = monsterSpawn.LootTable.Key;
-                var newLootTable = lootTableCache.Get(lootTableKey);
-                monsterSpawn.LootTable = newLootTable;
+                var lootTables = monsterSpawn.ExtraLootTables.Select(table => lootTableCache.Get(table.Key))
+                                             .ToList();
+
+                monsterSpawn.ExtraLootTables = lootTables;
+                monsterSpawn.FinalLootTable = null;
             }
 
             foreach (var monster in mapInstance.GetEntities<Monster>())
             {
-                if (monster.LootTable == null)
-                    continue;
+                var lootTables = new List<LootTable>();
 
-                var lootTableKey = monster.LootTable.Key;
-                var newLootTable = lootTableCache.Get(lootTableKey);
-                monster.LootTable = newLootTable;
+                switch (monster.LootTable)
+                {
+                    case CompositeLootTable composite:
+                        lootTables.AddRange(composite.GetLootTables());
+
+                        break;
+                    case LootTable table:
+                        lootTables.Add(table);
+
+                        break;
+                }
+
+                lootTables = lootTables.Select(table => lootTableCache.Get(table.Key))
+                                       .ToList();
+
+                monster.LootTable = new CompositeLootTable(lootTables);
             }
         }
     }
@@ -128,21 +177,23 @@ public static class ServiceProviderExtensions
     public static async Task ReloadMapsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var oldMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
 
         //locks ALL maps
         await using var oldSync = await ComplexSynchronizationHelper.WaitAsync(
-            TimeSpan.FromSeconds(1),
-            TimeSpan.FromMilliseconds(5),
+            TimeSpan.FromSeconds(10),
+            TimeSpan.FromMilliseconds(50),
             oldMaps.Values.Select(m => m.Sync).ToArray());
 
+        await mapTemplateCache.ReloadAsync();
         await mapCache.ReloadAsync();
 
         var newMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
 
         await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
-            TimeSpan.FromSeconds(5),
+            TimeSpan.FromSeconds(10),
             TimeSpan.FromMilliseconds(50),
             newMaps.Values.Select(m => m.Sync).ToArray());
 

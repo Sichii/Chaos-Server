@@ -365,21 +365,6 @@ public sealed class CircleExtensionsTests
     }
 
     [Fact]
-    public void GetPoints_Should_Throw_Exception_When_Circle_Is_Null()
-    {
-        // Arrange
-        Circle? circle = null;
-
-        // Act & Assert
-        // ReSharper disable once IteratorMethodResultIsIgnored
-        var action = () => circle!.GetPoints();
-
-        action.Enumerating()
-              .Should()
-              .Throw<ArgumentNullException>();
-    }
-
-    [Fact]
     public void GetRandomPoint_Should_Generate_Points_Within_Circle()
     {
         // Arrange

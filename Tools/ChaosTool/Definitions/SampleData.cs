@@ -79,6 +79,30 @@ public static class SampleData
         }
     };
 
+    public static ObservableCollection<LootDropSchema> LootDrops { get; } = new()
+    {
+        new LootDropSchema
+        {
+            ItemTemplateKey = "some_item_1",
+            DropChance = .50m
+        },
+        new LootDropSchema
+        {
+            ItemTemplateKey = "some_item_2",
+            DropChance = .10m
+        },
+        new LootDropSchema
+        {
+            ItemTemplateKey = "some_item_3",
+            DropChance = .100m
+        },
+        new LootDropSchema
+        {
+            ItemTemplateKey = "some_item_4",
+            DropChance = 1.0m
+        }
+    };
+
     public static ObservableCollection<string> Strings { get; } = new()
     {
         "consumable",

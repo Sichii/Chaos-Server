@@ -24,7 +24,7 @@ public sealed record ShardingOptionsSchema
     ///     from
     /// </remarks>
     [JsonRequired]
-    public Location ExitLocation { get; set; }
+    public Location ExitLocation { get; set; } = null!;
 
     /// <summary>
     ///     The number of players or groups allowed per instance (based on Shardingtype)

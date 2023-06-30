@@ -639,6 +639,7 @@
                                      HorizontalContentAlignment="Left"
                                      Text="{Binding Path=String}"
                                      Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="ScriptKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                             <Button x:Name="DeleteScriptKeyBtn"

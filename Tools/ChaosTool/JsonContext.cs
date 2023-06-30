@@ -24,7 +24,6 @@ namespace ChaosTool;
 public class JsonContext
 {
     private static readonly SerializationContext Context;
-    private static readonly JsonSerializerOptions JsonSerializerOptions;
     private static readonly TaskCompletionSource LoadingCompletion;
     private static readonly IServiceProvider Services;
     private static bool IsInitialized;
@@ -41,6 +40,7 @@ public class JsonContext
     public static SkillTemplateRepository SkillTemplates { get; private set; } = null!;
     public static SpellTemplateRepository SpellTemplates { get; private set; } = null!;
     public static string BaseDirectory { get; }
+    public static JsonSerializerOptions JsonSerializerOptions { get; }
 
     static JsonContext()
     {

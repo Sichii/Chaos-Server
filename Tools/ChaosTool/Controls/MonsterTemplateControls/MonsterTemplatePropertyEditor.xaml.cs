@@ -14,6 +14,7 @@ namespace ChaosTool.Controls.MonsterTemplateControls;
 public sealed partial class MonsterTemplatePropertyEditor
 {
     public ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor> ListItem { get; }
+    public ObservableCollection<BindableString> LootTableKeysViewItems { get; }
     public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
     public ObservableCollection<BindableString> SkillTemplateKeysViewItems { get; }
     public ObservableCollection<BindableString> SpellTemplateKeysViewItems { get; }
@@ -25,6 +26,7 @@ public sealed partial class MonsterTemplatePropertyEditor
         ScriptKeysViewItems = new ObservableCollection<BindableString>();
         SpellTemplateKeysViewItems = new ObservableCollection<BindableString>();
         SkillTemplateKeysViewItems = new ObservableCollection<BindableString>();
+        LootTableKeysViewItems = new ObservableCollection<BindableString>();
 
         InitializeComponent();
     }
@@ -35,6 +37,7 @@ public sealed partial class MonsterTemplatePropertyEditor
         ScriptKeysView.ItemsSource = ScriptKeysViewItems;
         SpellTemplateKeysView.ItemsSource = SpellTemplateKeysViewItems;
         SkillTemplateKeysView.ItemsSource = SkillTemplateKeysViewItems;
+        LootTableKeysView.ItemsSource = LootTableKeysViewItems;
 
         PopulateControlsFromItem();
     }
@@ -81,6 +84,7 @@ public sealed partial class MonsterTemplatePropertyEditor
         template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
         template.SpellTemplateKeys = SpellTemplateKeysViewItems.ToStrings().ToList();
         template.SkillTemplateKeys = SkillTemplateKeysViewItems.ToStrings().ToList();
+        template.LootTableKeys = LootTableKeysViewItems.ToStrings().ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -133,6 +137,9 @@ public sealed partial class MonsterTemplatePropertyEditor
 
         SkillTemplateKeysViewItems.Clear();
         SkillTemplateKeysViewItems.AddRange(template.SkillTemplateKeys.ToBindableStrings());
+
+        LootTableKeysViewItems.Clear();
+        LootTableKeysViewItems.AddRange(template.LootTableKeys.ToBindableStrings());
     }
     #endregion
 
@@ -237,5 +244,20 @@ public sealed partial class MonsterTemplatePropertyEditor
     }
 
     private void AddSkillTemplateKeyBtn_OnClick(object sender, RoutedEventArgs e) => SkillTemplateKeysViewItems.Add(string.Empty);
+    #endregion
+
+    #region LootTableKeysControls
+    private void DeleteLootTableKeyBtn_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+
+        if (button.DataContext is not BindableString scriptKey)
+            return;
+
+        LootTableKeysViewItems.Remove(scriptKey);
+    }
+
+    private void AddLootTableKeyBtn_OnClick(object sender, RoutedEventArgs e) => LootTableKeysViewItems.Add(string.Empty);
     #endregion
 }

@@ -49,7 +49,7 @@ public static class PolygonExtensions
     ///     IN CONNECTION WITH
     ///     THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     /// </remarks>
-    public static bool Contains(this IPolygon polygon, IPoint point)
+    public static bool Contains<TPoint>(this IPolygon polygon, TPoint point) where TPoint: IPoint
     {
         var inside = false;
         var vertices = polygon.Vertices;

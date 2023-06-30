@@ -62,16 +62,16 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             mapInstance = SimpleCache.Get<MapInstance>(obj.MapInstanceId);
         } catch (Exception e)
         {
-            if (obj.FallbackLocation.HasValue)
+            if (obj.FallbackLocation is not null)
                 try
                 {
-                    mapInstance = SimpleCache.Get<MapInstance>(obj.FallbackLocation.Value.Map);
-                    point = obj.FallbackLocation.Value;
+                    mapInstance = SimpleCache.Get<MapInstance>(obj.FallbackLocation.Map);
+                    point = obj.FallbackLocation;
                 } catch (Exception ex)
                 {
                     throw new KeyNotFoundException(
                         $"Unable to find {nameof(obj.MapInstanceId)} of \"{obj.MapInstanceId}\" or {nameof(obj.FallbackLocation)
-                        } of \"{obj.FallbackLocation.Value.Map}\"",
+                        } of \"{obj.FallbackLocation.Map}\"",
                         ex);
                 }
             else

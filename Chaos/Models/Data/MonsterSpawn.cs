@@ -1,4 +1,5 @@
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
@@ -15,8 +16,9 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 {
     public required ICollection<IPoint> BlackList { get; init; }
     public required Direction? Direction { get; init; }
+    public required ICollection<LootTable> ExtraLootTables { get; set; } = Array.Empty<LootTable>();
     public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
-    public required LootTable? LootTable { get; set; }
+    public ILootTable? FinalLootTable { get; set; }
     public MapInstance MapInstance { get; set; } = null!;
     public required int MaxAmount { get; init; }
     public required int MaxPerSpawn { get; init; }
@@ -75,7 +77,11 @@ public sealed class MonsterSpawn : IDeltaUpdatable
                 point,
                 ExtraScriptKeys);
 
-            monster.LootTable = LootTable;
+            FinalLootTable ??= ExtraLootTables.Any()
+                ? new CompositeLootTable(ExtraLootTables.Append(monster.LootTable))
+                : monster.LootTable;
+
+            monster.LootTable = FinalLootTable;
             monster.Direction = Direction ?? (Direction)Random.Shared.Next(4);
             monsters.Add(monster);
         }

@@ -1,3 +1,4 @@
+using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Models.Data;
@@ -6,7 +7,7 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Collections;
 
-public sealed class LootTable
+public sealed class LootTable : ILootTable
 {
     private readonly IItemFactory ItemFactory;
     public required string Key { get; init; }

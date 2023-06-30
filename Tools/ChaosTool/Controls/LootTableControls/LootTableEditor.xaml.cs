@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Chaos.Extensions.Common;
-using Chaos.Schemas.Templates;
+using Chaos.Schemas.Content;
 using ChaosTool.Comparers;
 using ChaosTool.Converters;
 using ChaosTool.Extensions;
@@ -12,15 +12,15 @@ using ChaosTool.Model;
 using MaterialDesignExtensions.Controls;
 using TOOL_CONSTANTS = ChaosTool.Definitions.CONSTANTS;
 
-namespace ChaosTool.Controls.MonsterTemplateControls;
+namespace ChaosTool.Controls.LootTableControls;
 
-public sealed partial class MonsterTemplateEditor
+public sealed partial class LootTableEditor
 {
-    public ObservableCollection<ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor>> ListViewItems { get; }
+    public ObservableCollection<ListViewItem<LootTableSchema, LootTablePropertyEditor>> ListViewItems { get; }
 
-    public MonsterTemplateEditor()
+    public LootTableEditor()
     {
-        ListViewItems = new ObservableCollection<ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor>>();
+        ListViewItems = new ObservableCollection<ListViewItem<LootTableSchema, LootTablePropertyEditor>>();
 
         InitializeComponent();
     }
@@ -70,7 +70,7 @@ public sealed partial class MonsterTemplateEditor
             case DataGrid dataGrid:
             {
                 var searchResult = dataGrid.ItemsSource
-                                           .OfType<MonsterTemplateSchema>()
+                                           .OfType<LootTableSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
                                                (rowValue, rowIndex) =>
@@ -112,10 +112,10 @@ public sealed partial class MonsterTemplateEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.MonsterTemplates.Objects.Select(
-                                  wrapper => new ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor>
+        var objs = JsonContext.LootTables.Objects.Select(
+                                  wrapper => new ListViewItem<LootTableSchema, LootTablePropertyEditor>
                                   {
-                                      Name = wrapper.Object.TemplateKey,
+                                      Name = wrapper.Object.Key,
                                       Wrapper = wrapper
                                   })
                               .OrderBy(_ => _, ListViewItemComparer.Instance);
@@ -125,7 +125,7 @@ public sealed partial class MonsterTemplateEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems.OfType<ListViewItem<LootTableSchema, LootTablePropertyEditor>>().FirstOrDefault();
 
         if (selected is null)
         {
@@ -137,7 +137,7 @@ public sealed partial class MonsterTemplateEditor
             return;
         }
 
-        selected.Control ??= new MonsterTemplatePropertyEditor(selected);
+        selected.Control ??= new LootTablePropertyEditor(selected);
         selected.Control.DeleteBtn.Click += DeleteBtnOnClick;
 
         PropertyEditor.Children.Clear();
@@ -146,17 +146,17 @@ public sealed partial class MonsterTemplateEditor
 
     private void DeleteBtnOnClick(object sender, RoutedEventArgs e)
     {
-        if (TemplatesView.SelectedItem is not ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor> selected)
+        if (TemplatesView.SelectedItem is not ListViewItem<LootTableSchema, LootTablePropertyEditor> selected)
             return;
 
         ListViewItems.Remove(selected);
-        JsonContext.MonsterTemplates.Remove(selected.Name);
+        JsonContext.LootTables.Remove(selected.Name);
     }
 
     private async void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var path = TOOL_CONSTANTS.TEMP_PATH;
-        var baseDir = JsonContext.MonsterTemplates.RootDirectory;
+        var baseDir = JsonContext.LootTables.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
@@ -168,10 +168,10 @@ public sealed partial class MonsterTemplateEditor
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new MonsterTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
-        var wrapper = new TraceWrapper<MonsterTemplateSchema>(path, template);
+        var template = new LootTableSchema { Key = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var wrapper = new TraceWrapper<LootTableSchema>(path, template);
 
-        var listItem = new ListViewItem<MonsterTemplateSchema, MonsterTemplatePropertyEditor>
+        var listItem = new ListViewItem<LootTableSchema, LootTablePropertyEditor>
         {
             Name = TOOL_CONSTANTS.TEMP_PATH,
             Wrapper = wrapper
@@ -199,7 +199,7 @@ public sealed partial class MonsterTemplateEditor
 
             await JsonContext.LoadingTask;
 
-            var lcv = new ListCollectionView(JsonContext.MonsterTemplates.ToList());
+            var lcv = new ListCollectionView(JsonContext.LootTables.ToList());
             dataGrid.ItemsSource = lcv;
 
             PropertyEditor.Children.Clear();
@@ -225,7 +225,7 @@ public sealed partial class MonsterTemplateEditor
 
         var index = 0;
 
-        foreach (var property in TOOL_CONSTANTS.MonsterTemplatePropertyOrder)
+        foreach (var property in TOOL_CONSTANTS.LootTablePropertyOrder)
         {
             var column = dataGrid.Columns.FirstOrDefault(c => c.Header.ToString()!.EqualsI(property));
 
@@ -241,27 +241,7 @@ public sealed partial class MonsterTemplateEditor
         if (sender is not DataGrid dataGrid)
             return;
 
-        if (e.PropertyName.EqualsI(nameof(MonsterTemplateSchema.StatSheet)))
-        {
-            e.Cancel = true;
-
-            foreach (var propertyName in TOOL_CONSTANTS.StatSheetProperties)
-            {
-                var column = new DataGridTextColumn
-                {
-                    Header = propertyName,
-                    Binding = new Binding($"{nameof(MonsterTemplateSchema.StatSheet)}.{propertyName}")
-                    {
-                        ValidatesOnDataErrors = true
-                    }
-                };
-
-                dataGrid.Columns.Add(column);
-            }
-        } else if (e.PropertyName.EqualsI(nameof(MonsterTemplateSchema.ScriptKeys))
-                   || e.PropertyName.EqualsI(nameof(MonsterTemplateSchema.SpellTemplateKeys))
-                   || e.PropertyName.EqualsI(nameof(MonsterTemplateSchema.SkillTemplateKeys))
-                   || e.PropertyName.EqualsI(nameof(MonsterTemplateSchema.LootTableKeys)))
+        if (e.PropertyName.EqualsI(nameof(LootTableSchema.LootDrops)))
         {
             e.Cancel = true;
 
@@ -270,13 +250,13 @@ public sealed partial class MonsterTemplateEditor
                 Header = e.PropertyName,
                 Binding = new Binding(e.PropertyName)
                 {
-                    Converter = JoinStringCollectionConverter.Instance,
+                    Converter = LootDropCollectionConverter.Instance,
                     ValidatesOnDataErrors = true
                 }
             };
 
             dataGrid.Columns.Add(column);
-        } else if (!TOOL_CONSTANTS.MonsterTemplatePropertyOrder.ContainsI(e.PropertyName))
+        } else if (!TOOL_CONSTANTS.LootTablePropertyOrder.ContainsI(e.PropertyName))
             e.Cancel = true;
     }
     #endregion

@@ -30,7 +30,7 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
     /// <inheritdoc />
     public MonsterSpawn Map(MonsterSpawnSchema obj) => new()
     {
-        LootTable = obj.LootTableKey == null ? null : SimpleCache.Get<LootTable>(obj.LootTableKey),
+        ExtraLootTables = obj.ExtraLootTableKeys.Select(key => SimpleCache.Get<LootTable>(key)).ToList(),
         MaxAmount = obj.MaxAmount,
         MonsterFactory = MonsterFactory,
         MonsterTemplate = SimpleCache.Get<MonsterTemplate>(obj.MonsterTemplateKey),
@@ -72,6 +72,7 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
             TemplateKey = obj.TemplateKey,
             Type = obj.Type,
             WanderIntervalMs = obj.WanderIntervalMs,
+            LootTables = obj.LootTableKeys.Select(SimpleCache.Get<LootTable>).ToList(),
             ScriptVars = new Dictionary<string, IScriptVars>(
                 obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
                 StringComparer.OrdinalIgnoreCase)

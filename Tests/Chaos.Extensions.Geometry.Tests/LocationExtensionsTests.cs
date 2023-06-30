@@ -29,7 +29,8 @@ public sealed class LocationExtensionsTests
         var location = new Location(null!, startX, startY);
 
         // Act
-        var offsetLocation = location.DirectionalOffset(direction, distance);
+        var offsetPoint = location.DirectionalOffset(direction, distance);
+        var offsetLocation = new Location(location.Map, offsetPoint);
 
         // Assert
         offsetLocation.Map.Should().BeNull();
