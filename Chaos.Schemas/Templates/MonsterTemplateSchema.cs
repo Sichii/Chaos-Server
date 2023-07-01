@@ -24,6 +24,10 @@ public sealed record MonsterTemplateSchema
     ///     The amount of exp this monster will reward when killed
     /// </summary>
     public int ExpReward { get; set; }
+    /// <summary>
+    ///     A collection of loot table keys that this monster can drop from
+    /// </summary>
+    public ICollection<string> LootTableKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
     ///     Maximum amount of gold for this monster to drop

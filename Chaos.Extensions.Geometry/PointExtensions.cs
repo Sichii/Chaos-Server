@@ -386,7 +386,7 @@ public static class PointExtensions
     /// <returns>
     ///     A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" />
     /// </returns>
-    public static Point OffsetTowards<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
+    public static Point OffsetTowards<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
