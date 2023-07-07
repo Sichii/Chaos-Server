@@ -52,7 +52,7 @@ in `appsettings.json` at `Options:MapInstanceCacheOptions`.
 ### Example map instance directory
 
 <pre>
-📂Data
+📂Configuration
  ┗📂MapInstances
    ┗📂mileth
      ┣📄instance.json

@@ -6,6 +6,7 @@ using Chaos.Common.Definitions;
 using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Boards;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Guilds;
@@ -63,6 +64,9 @@ namespace Chaos;
 [JsonSerializable(typeof(MundaneIllustrationMetaSchema))]
 [JsonSerializable(typeof(ChannelSettingsSchema))]
 [JsonSerializable(typeof(ItemDetailsSchema))]
+[JsonSerializable(typeof(BulletinBoardSchema))]
+[JsonSerializable(typeof(MailBoxSchema))]
+[JsonSerializable(typeof(PostSchema))]
 //collections
 [JsonSerializable(typeof(List<ItemSchema>))]
 [JsonSerializable(typeof(List<SkillSchema>))]
@@ -77,6 +81,7 @@ namespace Chaos;
 [JsonSerializable(typeof(List<ChannelSettingsSchema>))]
 [JsonSerializable(typeof(List<ItemDetailsSchema>))]
 [JsonSerializable(typeof(List<GuildRankSchema>))]
+[JsonSerializable(typeof(List<PostSchema>))]
 [JsonSerializable(typeof(ICollection<ItemSchema>))]
 [JsonSerializable(typeof(ICollection<SkillSchema>))]
 [JsonSerializable(typeof(ICollection<SpellSchema>))]
@@ -90,6 +95,7 @@ namespace Chaos;
 [JsonSerializable(typeof(ICollection<ChannelSettingsSchema>))]
 [JsonSerializable(typeof(ICollection<ItemDetailsSchema>))]
 [JsonSerializable(typeof(ICollection<GuildRankSchema>))]
+[JsonSerializable(typeof(ICollection<PostSchema>))]
 [JsonSerializable(typeof(IEnumerable<ItemSchema>))]
 [JsonSerializable(typeof(IEnumerable<SkillSchema>))]
 [JsonSerializable(typeof(IEnumerable<SpellSchema>))]
@@ -103,6 +109,7 @@ namespace Chaos;
 [JsonSerializable(typeof(IEnumerable<ChannelSettingsSchema>))]
 [JsonSerializable(typeof(IEnumerable<ItemDetailsSchema>))]
 [JsonSerializable(typeof(IEnumerable<GuildRankSchema>))]
+[JsonSerializable(typeof(IEnumerable<PostSchema>))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(Dictionary<string, JsonElement>))]
 [JsonSerializable(typeof(Dictionary<string, int>))]
@@ -149,6 +156,8 @@ namespace Chaos;
 //other primitives
 [JsonSerializable(typeof(DateTime))]
 [JsonSerializable(typeof(TimeSpan))]
+[JsonSerializable(typeof(DateTime?))]
+[JsonSerializable(typeof(TimeSpan?))]
 //obj
 [JsonSerializable(typeof(object))]
 // ReSharper disable once ClassCanBeSealed.Global No it can not

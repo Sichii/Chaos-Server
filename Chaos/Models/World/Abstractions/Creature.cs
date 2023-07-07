@@ -2,8 +2,8 @@ using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
+using Chaos.Definitions;
 using Chaos.Extensions;
-using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
@@ -87,12 +87,49 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             return;
 
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanObserve(this))
+                                           //intentional... if you're observable but still invisible
+                                           //we dont want the body animation to show
+                                           .ThatCanSee(this))
             aisling.Client.SendBodyAnimation(
                 Id,
                 bodyAnimation,
                 speed,
                 sound);
+    }
+
+    public virtual bool CanObserve(VisibleEntity entity)
+    {
+        //can always see yourself
+        if (entity.Equals(this))
+            return true;
+
+        switch (entity.Visibility)
+        {
+            case VisibilityType.Normal:
+            case VisibilityType.Hidden:
+                return true;
+            case VisibilityType.TrueHidden when this is Aisling aisling:
+                if (aisling.Group is not null && aisling.Group.Any(member => member.Equals(entity)))
+                    return true;
+
+                goto case VisibilityType.TrueHidden;
+            case VisibilityType.TrueHidden:
+                return Script.CanSee(entity);
+            case VisibilityType.GmHidden when this is Aisling aisling:
+                return aisling.IsAdmin;
+            case VisibilityType.GmHidden:
+                return false;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public virtual bool CanSee(VisibleEntity entity)
+    {
+        if (entity.Equals(this))
+            return true;
+
+        return Script.CanSee(entity);
     }
 
     public virtual bool CanUse(Skill skill, [MaybeNullWhen(false)] out ActivationContext skillContext)
@@ -238,12 +275,47 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
 
+    /// <inheritdoc />
+    public override void SetVisibility(VisibilityType newVisibilityType)
+    {
+        if (Visibility == newVisibilityType)
+            return;
+
+        var creaturesInRange = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                          .ToList();
+
+        var canObserveBefore = new List<Creature>();
+
+        foreach (var creature in creaturesInRange)
+            if (creature.CanObserve(this))
+                canObserveBefore.Add(creature);
+
+        Hide();
+
+        Visibility = newVisibilityType;
+
+        Display();
+
+        var canObserveAfter = new List<Creature>();
+
+        foreach (var creature in creaturesInRange)
+            if (creature.CanObserve(this))
+                canObserveAfter.Add(creature);
+
+        foreach (var creature in canObserveBefore.Except(canObserveAfter))
+            creature.OnDeparture(this);
+
+        foreach (var creature in canObserveAfter.Except(canObserveBefore))
+            creature.OnApproached(this);
+    }
+
     public virtual void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
 
     public virtual void ShowHealth(byte? sound = null)
     {
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanObserve(this))
+                                           //intentional... if you're observable but still invisible, health bar shouldnt show
+                                           .ThatCanSee(this))
             aisling.Client.SendHealthBar(this, sound);
     }
 

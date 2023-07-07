@@ -1,10 +1,10 @@
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +19,7 @@ public class GuildCreateScript : GuildScriptBase
         Dialog subject,
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
-        IGuildFactory guildFactory,
+        IFactory<Guild> guildFactory,
         ILogger<GuildCreateScript> logger
     )
         : base(
@@ -77,7 +77,7 @@ public class GuildCreateScript : GuildScriptBase
         }
 
         //ensure the player isn't already in a guild
-        if (!IsInGuild(source, out _, out _))
+        if (IsInGuild(source, out _, out _))
         {
             Subject.Reply(source, "You are already in a guild.", "top");
 

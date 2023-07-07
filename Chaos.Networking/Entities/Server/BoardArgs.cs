@@ -30,6 +30,10 @@ public sealed record BoardArgs : ISendArgs
     /// </summary>
     public string? ResponseMessage { get; set; }
     /// <summary>
+    ///     When paging through a board, this is the post id of the first post to send
+    /// </summary>
+    public short? StartPostId { get; set; }
+    /// <summary>
     ///     If the type is a response type, this is whether the given action was successful or not
     /// </summary>
     public bool? Success { get; set; }

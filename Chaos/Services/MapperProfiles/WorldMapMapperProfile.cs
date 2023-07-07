@@ -1,5 +1,6 @@
 using Chaos.Collections;
 using Chaos.Common.Identity;
+using Chaos.Common.Utilities;
 using Chaos.Models.WorldMap;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Content;
@@ -12,8 +13,10 @@ public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
                                      IMapperProfile<WorldMap, WorldMapArgs>,
                                      IMapperProfile<WorldMapNode, WorldMapNodeSchema>
 {
-    private static readonly SequentialIdGenerator<ushort> IdGenerator = new();
+    private static readonly KeyMapper<ushort> KeyMapper;
     private readonly ISimpleCache SimpleCache;
+
+    static WorldMapMapperProfile() => KeyMapper = new KeyMapper<ushort>(new SequentialIdGenerator<ushort>());
 
     public WorldMapMapperProfile(ISimpleCache simpleCache) => SimpleCache = simpleCache;
 
@@ -45,7 +48,7 @@ public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
         new(SimpleCache)
         {
             NodeKey = obj.NodeKey,
-            UniqueId = IdGenerator.NextId,
+            UniqueId = KeyMapper.GetId(obj.NodeKey),
             Destination = obj.Destination,
             ScreenPosition = obj.ScreenPosition,
             Text = obj.Text

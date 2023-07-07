@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
@@ -13,6 +14,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Messaging;
 using Chaos.Messaging.Options;
+using Chaos.Models.Board;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
@@ -338,6 +340,21 @@ public sealed class Startup
                               {
                                   obj.ExchangeId
                               });
+
+                          builder.RegisterObjectTransformation<BoardBase>(
+                              obj => new
+                              {
+                                  Key = obj.Key,
+                                  Name = obj.Name,
+                                  Posts = obj.Count()
+                              });
+
+                          builder.RegisterObjectTransformation<Post>(
+                              obj => new
+                              {
+                                  Subject = obj.Subject,
+                                  Creation = obj.CreationDate
+                              });
                       });
 
     [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
@@ -345,23 +362,23 @@ public sealed class Startup
     {
         public static class Logging
         {
-            public static string Key => "Logging";
-            public static string UseSeq => $"{Key}:UseSeq";
+            public static string Key => nameof(Logging);
+            public static string UseSeq => $"{Key}:{nameof(UseSeq)}";
 
             public static class NLog
             {
-                public static string Key => $"{Logging.Key}:NLog";
+                public static string Key => $"{Logging.Key}:{nameof(NLog)}";
             }
         }
 
         public static class NLog
         {
-            public static string Key => "NLog";
+            public static string Key => nameof(NLog);
         }
 
         public static class Options
         {
-            public static string Key => "Options";
+            public static string Key => nameof(Options);
         }
     }
 }

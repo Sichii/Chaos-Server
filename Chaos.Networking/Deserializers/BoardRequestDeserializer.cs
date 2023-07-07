@@ -31,7 +31,7 @@ public sealed record BoardRequestDeserializer : ClientPacketDeserializer<BoardRe
                 var startPostId = reader.ReadInt16();
                 //var unknown = reader.ReadByte();
 
-                return new BoardRequestArgs(boardRequestType, boardId, startPostId);
+                return new BoardRequestArgs(boardRequestType, boardId, StartPostId: startPostId);
             }
             case BoardRequestType.ViewPost:
             {

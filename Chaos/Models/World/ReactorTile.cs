@@ -34,7 +34,7 @@ public sealed class TemplatedReactorTile : ReactorTile
         Template = template;
 }
 
-public class ReactorTile : MapEntity, IDeltaUpdatable, IScripted<IReactorTileScript>
+public class ReactorTile : InteractableEntity, IDeltaUpdatable, IScripted<IReactorTileScript>
 {
     public Creature? Owner { get; }
     /// <inheritdoc />
@@ -67,7 +67,7 @@ public class ReactorTile : MapEntity, IDeltaUpdatable, IScripted<IReactorTileScr
 
     public void Update(TimeSpan elapsed) => Script.Update(elapsed);
 
-    public void OnClicked(Aisling source) => Script.OnClicked(source);
+    public override void OnClicked(Aisling source) => Script.OnClicked(source);
 
     public void OnGoldDroppedOn(Creature source, Money money) => Script.OnGoldDroppedOn(source, money);
 

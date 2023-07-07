@@ -1,4 +1,6 @@
+using System.Net.Sockets;
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Models.Menu;
@@ -8,6 +10,7 @@ using Chaos.Models.World;
 using Chaos.Models.WorldMap;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
+using Chaos.Schemas.Boards;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using Chaos.Scripting;
@@ -59,7 +62,6 @@ public static class ServiceCollectionExtensions
 
     public static void AddLobbyServer(this IServiceCollection services)
     {
-        services.AddTransient<IClientFactory<ILobbyClient>, LobbyClientFactory>();
         services.AddSingleton<IClientRegistry<ILobbyClient>, ClientRegistry<ILobbyClient>>();
 
         services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key);
@@ -69,7 +71,6 @@ public static class ServiceCollectionExtensions
 
     public static void AddLoginserver(this IServiceCollection services)
     {
-        services.AddTransient<IClientFactory<ILoginClient>, LoginClientFactory>();
         services.AddSingleton<IClientRegistry<ILoginClient>, ClientRegistry<ILoginClient>>();
 
         services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key);
@@ -106,6 +107,10 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IEntityRepository, EntityRepository>();
 
+        services.AddOptionsFromConfig<MailStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddSingleton<IStore<MailBox>, IHostedService, MailStore>();
+        services.AddHostedService<DirectoryBackupService<MailStoreOptions>>();
+
         services.AddOptionsFromConfig<GuildStoreOptions>(Startup.ConfigKeys.Options.Key);
         services.AddSingleton<IStore<Guild>, IHostedService, GuildStore>();
         services.AddHostedService<DirectoryBackupService<GuildStoreOptions>>();
@@ -126,6 +131,9 @@ public static class ServiceCollectionExtensions
 
         services.AddExpiringCache<WorldMap, WorldMapSchema, WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
         services.AddExpiringCache<WorldMapNode, WorldMapNodeSchema, WorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddExpiringCache<BoardBase, MailBoxSchema, BoardCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddSingleton<BoardKeyMapper>();
 
         services.AddExpiringCache<ReactorTileTemplate, ReactorTileTemplateSchema, ReactorTileTemplateCacheOptions>(
             Startup.ConfigKeys.Options.Key);
@@ -157,17 +165,21 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMonsterFactory, MonsterFactory>();
         services.AddTransient<IMerchantFactory, MerchantFactory>();
         services.AddTransient<IDialogFactory, DialogFactory>();
+
         services.AddSingleton<IEffectFactory, EffectFactory>();
-        services.AddTransient<IExchangeFactory, ExchangeFactory>();
-        services.AddTransient<IGuildFactory, GuildFactory>();
-        services.AddTransient<IClientProvider, ClientProvider>();
+
+        services.AddSimpleFactory<Guild>(typeof(string));
+        services.AddSimpleFactory<ILobbyClient, LobbyClient>(typeof(Socket));
+        services.AddSimpleFactory<ILoginClient, LoginClient>(typeof(Socket));
+        services.AddSimpleFactory<IWorldClient, WorldClient>(typeof(Socket));
+        services.AddSimpleFactory<Exchange>(typeof(Aisling), typeof(Aisling));
+        services.AddSimpleFactory<MailBox>(typeof(string));
     }
 
     public static void AddWorldServer(this IServiceCollection services)
     {
         services.AddSingleton<IGroupService, GroupService>();
 
-        services.AddTransient<IClientFactory<IWorldClient>, WorldClientFactory>();
         services.AddSingleton<IClientRegistry<IWorldClient>, WorldClientRegistry>();
 
         services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key);

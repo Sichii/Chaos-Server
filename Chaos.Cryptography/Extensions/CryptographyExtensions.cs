@@ -17,5 +17,5 @@ public static class CryptographyExtensions
     ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />
     /// </summary>
     /// <param name="services">The service collection to add to</param>
-    public static void AddCryptography(this IServiceCollection services) => services.AddTransient<ICryptoFactory, CryptoFactory>();
+    public static void AddCryptography(this IServiceCollection services) => services.AddTransient<ICrypto, Crypto>();
 }

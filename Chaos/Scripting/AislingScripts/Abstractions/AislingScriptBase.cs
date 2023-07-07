@@ -41,6 +41,9 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
     public virtual bool CanUseSpell(Spell spell) => true;
 
     /// <inheritdoc />
+    public virtual IEnumerable<BoardBase> GetBoardList() { yield break; }
+
+    /// <inheritdoc />
     public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />

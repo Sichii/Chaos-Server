@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Cryptography;
@@ -14,7 +15,6 @@ using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
 using Chaos.Security.Abstractions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
@@ -28,7 +28,9 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly IAccessManager AccessManager;
     private readonly IAsyncStore<Aisling> AislingStore;
     private readonly ISimpleCacheProvider CacheProvider;
-    private readonly IClientProvider ClientProvider;
+    private readonly IFactory<ILoginClient> ClientFactory;
+    private readonly IFactory<MailBox> MailBoxFactory;
+    private readonly IStore<MailBox> MailStore;
     private readonly IMetaDataStore MetaDataStore;
     private readonly Notice Notice;
     public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
@@ -37,14 +39,16 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     public LoginServer(
         IAsyncStore<Aisling> aislingStore,
         IClientRegistry<ILoginClient> clientRegistry,
-        IClientProvider clientProvider,
+        IFactory<ILoginClient> clientFactory,
         ISimpleCacheProvider cacheProvider,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptions<LoginOptions> options,
         ILogger<LoginServer> logger,
         IMetaDataStore metaDataStore,
-        IAccessManager accessManager
+        IAccessManager accessManager,
+        IStore<MailBox> mailStore,
+        IFactory<MailBox> mailBoxFactory
     )
         : base(
             redirectManager,
@@ -55,10 +59,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         Options = options.Value;
         AislingStore = aislingStore;
-        ClientProvider = clientProvider;
+        ClientFactory = clientFactory;
         CacheProvider = cacheProvider;
         MetaDataStore = metaDataStore;
         AccessManager = accessManager;
+        MailStore = mailStore;
+        MailBoxFactory = mailBoxFactory;
         Notice = new Notice(options.Value.NoticeMessage);
         CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
 
@@ -119,7 +125,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 var mapInstanceCache = CacheProvider.GetCache<MapInstance>();
                 var startingMap = mapInstanceCache.Get(Options.StartingMapInstanceId);
 
-                var user = new Aisling(
+                var aisling = new Aisling(
                     requestArgs.Name,
                     gender,
                     hairStyle,
@@ -127,10 +133,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                     startingMap,
                     Options.StartingPoint);
 
-                await AislingStore.SaveAsync(user);
+                var mailBox = MailBoxFactory.Create(aisling.Name);
+
+                await AislingStore.SaveAsync(aisling);
+                MailStore.Save(mailBox);
 
                 Logger.WithProperty(localClient)
-                      .LogDebug("New character created with name {@Name}", user.Name);
+                      .LogDebug("New character created with name {@Name}", aisling.Name);
 
                 localClient.SendLoginMessage(LoginMessageType.Confirm);
             } else
@@ -344,7 +353,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             return;
         }
 
-        var client = ClientProvider.CreateClient<ILoginClient>(clientSocket);
+        var client = ClientFactory.Create(clientSocket);
 
         Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
 

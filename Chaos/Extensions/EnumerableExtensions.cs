@@ -47,10 +47,10 @@ public static class EnumerableExtensions
         return (aislings, doors, others);
     }
 
-    public static IEnumerable<T> ThatAreObservedBy<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: VisibleEntity
+    public static IEnumerable<T> ThatAreObservedBy<T>(this IEnumerable<T> objs, Creature creature) where T: VisibleEntity
     {
         foreach (var obj in objs)
-            if (visibleEntity.CanObserve(obj))
+            if (creature.CanObserve(obj))
                 yield return obj;
     }
 
@@ -58,6 +58,13 @@ public static class EnumerableExtensions
     {
         foreach (var obj in objs)
             if (PointEqualityComparer.Instance.Equals(point, obj))
+                yield return obj;
+    }
+
+    public static IEnumerable<T> ThatAreVisibleTo<T>(this IEnumerable<T> objs, Creature creature) where T: VisibleEntity
+    {
+        foreach (var obj in objs)
+            if (creature.CanSee(obj))
                 yield return obj;
     }
 
@@ -79,6 +86,13 @@ public static class EnumerableExtensions
     {
         foreach (var obj in objs)
             if (obj.CanObserve(visibleEntity))
+                yield return obj;
+    }
+
+    public static IEnumerable<T> ThatCanSee<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: Creature
+    {
+        foreach (var obj in objs)
+            if (obj.CanSee(visibleEntity))
                 yield return obj;
     }
 

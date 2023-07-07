@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -20,10 +22,10 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly ILogger Logger;
     private readonly HashSet<Merchant> Merchants;
     private readonly HashSet<Monster> Monsters;
-    private readonly HashSet<MapEntity> Other;
     private readonly HashSet<MapEntity>[,] PointLookup;
     private readonly HashSet<ReactorTile> Reactors;
     private readonly UpdatableCollection Updatables;
+    private readonly TypeSwitchExpression<IEnumerable> ValuesCases;
 
     private readonly int WalkableArea;
 
@@ -43,7 +45,6 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         GroundEntities = new HashSet<GroundEntity>(WorldEntity.IdComparer);
         Reactors = new HashSet<ReactorTile>(WorldEntity.IdComparer);
         Doors = new HashSet<Door>(WorldEntity.IdComparer);
-        Other = new HashSet<MapEntity>(WorldEntity.IdComparer);
         Updatables = new UpdatableCollection(logger);
 
         Bounds = new Rectangle(
@@ -57,6 +58,20 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         for (var x = 0; x < mapWidth; x++)
             for (var y = 0; y < mapHeight; y++)
                 PointLookup[x, y] = new HashSet<MapEntity>(WorldEntity.IdComparer);
+
+        //setup Values<T> cases
+        ValuesCases = new TypeSwitchExpression<IEnumerable>()
+                      .Case<Aisling>(() => Aislings)
+                      .Case<Monster>(() => Monsters)
+                      .Case<Merchant>(() => Merchants)
+                      .Case<GroundEntity>(() => GroundEntities)
+                      .Case<ReactorTile>(() => Reactors)
+                      .Case<Door>(() => Doors)
+                      .Case<Creature>(() => Aislings.Concat<Creature>(Monsters).Concat(Merchants))
+                      .Case<NamedEntity>(() => Aislings.Concat<NamedEntity>(Monsters).Concat(Merchants).Concat(GroundEntities))
+                      .Case<VisibleEntity>(
+                          () => Aislings.Concat<VisibleEntity>(Monsters).Concat(Merchants).Concat(GroundEntities).Concat(Doors))
+                      .Default(() => EntityLookup.Values);
     }
 
     /// <inheritdoc />
@@ -97,9 +112,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
                 break;
             default:
-                Other.Add(entity);
-
-                break;
+                throw new InvalidOperationException("Unrecognized entity type");
         }
     }
 
@@ -123,7 +136,6 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         GroundEntities.Clear();
         Reactors.Clear();
         Doors.Clear();
-        Other.Clear();
         Updatables.Clear();
 
         foreach (var lookup in PointLookup.Flatten())
@@ -179,9 +191,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
                 break;
             default:
-                Other.Remove(entity);
-
-                break;
+                throw new InvalidOperationException("Unrecognized entity type");
         }
 
         return true;
@@ -210,50 +220,16 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
     public IEnumerable<T> Values<T>() where T: MapEntity
     {
-        var type = typeof(T);
+        var result = ValuesCases.Switch<T>();
 
-        if (type == typeof(MapEntity))
-            return (IEnumerable<T>)EntityLookup.Values.AsEnumerable();
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (result is null)
+            throw new UnreachableException("Expression result should never be null. If it is, some type is not handled");
 
-        if (type == typeof(VisibleEntity))
-            return (IEnumerable<T>)Doors.Concat<VisibleEntity>(Monsters)
-                                        .Concat(Merchants)
-                                        .Concat(Aislings)
-                                        .Concat(GroundEntities);
+        if (result is IEnumerable<T> typedResult)
+            return typedResult;
 
-        if (type == typeof(Door))
-            return (IEnumerable<T>)Doors;
-
-        if (type == typeof(NamedEntity))
-            return (IEnumerable<T>)Monsters
-                                   .Concat<NamedEntity>(Merchants)
-                                   .Concat(Aislings)
-                                   .Concat(GroundEntities);
-
-        if (type == typeof(Creature))
-            return (IEnumerable<T>)Monsters
-                                   .Concat<Creature>(Merchants)
-                                   .Concat(Aislings);
-
-        if (type == typeof(Aisling))
-            return (IEnumerable<T>)Aislings;
-
-        if (type == typeof(Monster))
-            return (IEnumerable<T>)Monsters;
-
-        if (type == typeof(Merchant))
-            return (IEnumerable<T>)Merchants;
-
-        if (type == typeof(ReactorTile))
-            return (IEnumerable<T>)Reactors;
-
-        if (type.IsAssignableTo(typeof(GroundEntity)))
-            return GroundEntities.OfType<T>();
-
-        if (type.IsAssignableTo(typeof(MapEntity)))
-            return Other.OfType<T>();
-
-        return EntityLookup.Values.OfType<T>();
+        return result.OfType<T>();
     }
 
     public IEnumerable<T> WithinRange<T>(IPoint point, int range = 15) where T: MapEntity
@@ -266,10 +242,14 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         //get an estimate of the number of entities that exist on the map for the type theyre trying to get
         if (tType.IsAssignableTo(typeof(Aisling)))
             entityCount = Aislings.Count;
-        else if (tType.IsAssignableTo(typeof(Creature)))
+        else if (tType.IsAssignableTo(typeof(Monster)))
             entityCount = Monsters.Count;
+        else if (tType.IsAssignableTo(typeof(Merchant)))
+            entityCount = Merchants.Count;
         else if (tType.IsAssignableTo(typeof(GroundEntity)))
             entityCount = GroundEntities.Count;
+        else if (tType.IsAssignableTo(typeof(ReactorTile)))
+            entityCount = Reactors.Count;
         else if (tType.IsAssignableFrom(typeof(VisibleEntity)))
             entityCount = EntityLookup.Count;
         else
@@ -295,16 +275,5 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         else //otherwise just check every entity of that type with a distance check
             foreach (var entity in Values<T>().ThatAreWithinRange(point, range))
                 yield return entity;
-
-        /*
-        return point.SpiralSearch(range)
-                    .Where(pt => Bounds.Contains(pt))
-                    .Select(pt => PointLookup[pt.X, pt.Y])
-                    .Where(cell => cell.Count > 0)
-                    .SelectMany(_ => _)
-                    .OfType<T>();
-                    */
-
-        //return Values<T>().ThatAreWithinRange(point, range);
     }
 }

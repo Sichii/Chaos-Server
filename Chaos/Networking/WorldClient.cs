@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Definitions;
@@ -7,6 +8,7 @@ using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Models.Board;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
@@ -97,19 +99,36 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     }
 
     /// <inheritdoc />
-    public void SendBoard()
+    public void SendBoard(BoardBase boardBase, short? startPostId = null)
+    {
+        var args = new BoardArgs
+        {
+            Type = boardBase is MailBox ? BoardOrResponseType.MailBoard : BoardOrResponseType.PublicBoard,
+            Board = Mapper.Map<BoardInfo>(boardBase),
+            StartPostId = startPostId
+        };
+
+        Send(args);
+    }
+
+    public void SendBoardList(IEnumerable<BoardBase> boards)
     {
         var args = new BoardArgs
         {
             Type = BoardOrResponseType.BoardList,
-            Boards = new List<BoardInfo>
-            {
-                new()
-                {
-                    Name = "Under Construction",
-                    Posts = new List<PostInfo>()
-                }
-            }
+            Boards = Mapper.MapMany<BoardBase, BoardInfo>(boards).ToList()
+        };
+
+        Send(args);
+    }
+
+    public void SendBoardResponse(BoardOrResponseType responseType, string message, bool success)
+    {
+        var args = new BoardArgs
+        {
+            Type = responseType,
+            ResponseMessage = message,
+            Success = success
         };
 
         Send(args);
@@ -505,6 +524,18 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             Height = height,
             Width = width,
             Message = message ?? string.Empty
+        };
+
+        Send(args);
+    }
+
+    public void SendPost(Post post, bool isMail, bool enablePrevBtn = true)
+    {
+        var args = new BoardArgs
+        {
+            Type = isMail ? BoardOrResponseType.MailPost : BoardOrResponseType.PublicPost,
+            Post = Mapper.Map<PostInfo>(post),
+            EnablePrevBtn = enablePrevBtn
         };
 
         Send(args);

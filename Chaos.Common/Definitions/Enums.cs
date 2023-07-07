@@ -877,9 +877,9 @@ public enum BoardRequestType : byte
 
 public enum BoardControls : sbyte
 {
-    PreviousPage = -1,
+    NextPage = -1,
     RequestPost = 0,
-    NextPage = 1
+    PreviousPage = 1
 }
 
 public enum NotepadType

@@ -1,6 +1,8 @@
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Models.Board;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
@@ -20,7 +22,9 @@ public interface IWorldClient : ISocketClient
     void SendAddSpellToPane(Spell spell);
     void SendAnimation(Animation animation);
     void SendAttributes(StatUpdateType statUpdateType);
-    void SendBoard();
+    void SendBoard(BoardBase boardBase, short? startPostId = null);
+    void SendBoardList(IEnumerable<BoardBase> boards);
+    void SendBoardResponse(BoardOrResponseType responseType, string message, bool success);
 
     void SendBodyAnimation(
         uint id,
@@ -65,6 +69,8 @@ public interface IWorldClient : ISocketClient
         byte width,
         string message
     );
+
+    void SendPost(Post post, bool isMail, bool enablePrevBtn = true);
 
     void SendProfile(Aisling aisling);
     void SendProfileRequest();

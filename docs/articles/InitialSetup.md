@@ -12,6 +12,31 @@
 By default, the staging directory is inside the git repo, at the root directory, in the "Data" folder. This staging
 directory can be changed if desired via `appsettings.json` at `Options:ChaosOptions:StagingDirectory`.
 
+## Default Folder Structure
+
+<pre>
+📂Data
+┣📂Backups
+┣📂Configuration
+┃ ┣📂Access
+┃ ┣📂Boards
+┃ ┣📂LootTables
+┃ ┣📂MapData
+┃ ┣📂MapInstances
+┃ ┣📂MetaData
+┃ ┣📂Templates
+┃ ┃ ┣📂Dialogs
+┃ ┃ ┣📂Items
+┃ ┃ ┣📂Maps
+┃ ┃ ┣📂Merchants
+┃ ┃ ┣📂Monsters
+┃ ┃ ┣📂ReactorTiles
+┃ ┃ ┣📂Skills
+┃ ┃ ┗📂Spells
+┃ ┗📂WorldMaps
+┗📂Saved
+</pre>
+
 ## Connecting
 
 If you have the necessary skills, you can edit a Dark Ages client to connect to 127.0.0.1 (localhost) and use it for

@@ -1,11 +1,11 @@
 using System.Text;
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +18,7 @@ public class GuildMemberRosterScript : GuildScriptBase
         Dialog subject,
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
-        IGuildFactory guildFactory,
+        IFactory<Guild> guildFactory,
         ILogger<GuildMemberRosterScript> logger
     )
         : base(

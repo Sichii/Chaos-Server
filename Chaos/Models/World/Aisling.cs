@@ -22,20 +22,18 @@ using Chaos.Observers;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.AislingScripts;
 using Chaos.Scripting.AislingScripts.Abstractions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
-using PointExtensions = Chaos.Extensions.Geometry.PointExtensions;
 
 namespace Chaos.Models.World;
 
 public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSourceEntity, ICommandSubject, IChannelSubscriber
 {
-    private readonly IExchangeFactory ExchangeFactory;
+    private readonly IFactory<Exchange> ExchangeFactory;
     private readonly ICloningService<Item> ItemCloner;
     public Bank Bank { get; private set; }
     public BodyColor BodyColor { get; set; }
@@ -134,7 +132,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         string name,
         MapInstance mapInstance,
         IPoint point,
-        IExchangeFactory exchangeFactory,
+        IFactory<Exchange> exchangeFactory,
         IScriptProvider scriptProvider,
         ILogger<Aisling> logger,
         ICloningService<Item> itemCloner
@@ -333,6 +331,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             return true;
 
         return base.CanObserve(entity);
+    }
+
+    public override bool CanSee(VisibleEntity entity)
+    {
+        if (IsAdmin)
+            return true;
+
+        return base.CanSee(entity);
     }
 
     /// <inheritdoc />
@@ -943,7 +949,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Direction = direction;
         var startPosition = Location.From(this);
         var startPoint = Point.From(this);
-        var endPoint = PointExtensions.DirectionalOffset(this, direction);
+        var endPoint = this.DirectionalOffset(direction);
 
         //admins can walk through creatures and walls
         if (!IsAdmin && !MapInstance.IsWalkable(endPoint, Type))

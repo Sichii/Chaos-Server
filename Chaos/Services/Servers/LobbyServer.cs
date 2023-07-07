@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Extensions;
@@ -10,7 +11,6 @@ using Chaos.Networking.Entities.Client;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,13 +19,13 @@ namespace Chaos.Services.Servers;
 
 public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyClient>
 {
-    private readonly IClientProvider ClientProvider;
+    private readonly IFactory<ILobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
     private new LobbyOptions Options { get; }
 
     public LobbyServer(
         IClientRegistry<ILobbyClient> clientRegistry,
-        IClientProvider clientProvider,
+        IFactory<ILobbyClient> clientFactory,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptions<LobbyOptions> options,
@@ -39,7 +39,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
             logger)
     {
         Options = options.Value;
-        ClientProvider = clientProvider;
+        ClientFactory = clientFactory;
         ServerTable = new ServerTable(Options.Servers);
 
         IndexHandlers();
@@ -134,7 +134,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
         Logger.LogDebug("Incoming connection from {@Ip}", ip!.ToString());
 
-        var client = ClientProvider.CreateClient<ILobbyClient>(clientSocket);
+        var client = ClientFactory.Create(clientSocket);
         Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
 
         if (!ClientRegistry.TryAdd(client))

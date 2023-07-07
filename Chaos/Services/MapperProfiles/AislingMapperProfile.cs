@@ -1,4 +1,5 @@
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
 using Chaos.Definitions;
@@ -9,7 +10,6 @@ using Chaos.Models.World;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -25,7 +25,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                                            IMapperProfile<Aisling, UserIdArgs>,
                                            IMapperProfile<Aisling, WorldListMemberInfo>
 {
-    private readonly IExchangeFactory ExchangeFactory;
+    private readonly IFactory<Exchange> ExchangeFactory;
     private readonly IStore<Guild> GuildStore;
     private readonly ICloningService<Item> ItemCloner;
     private readonly ILoggerFactory LoggerFactory;
@@ -36,7 +36,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
     public AislingMapperProfile(
         ISimpleCache simpleCache,
         ITypeMapper mapper,
-        IExchangeFactory exchangeFactory,
+        IFactory<Exchange> exchangeFactory,
         ILoggerFactory loggerFactory,
         ICloningService<Item> itemCloner,
         IScriptProvider scriptProvider,

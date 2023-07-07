@@ -18,6 +18,7 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
                                         IPostConfigureOptions<WorldOptions>,
                                         IPostConfigureOptions<MetaDataStoreOptions>,
                                         IPostConfigureOptions<GuildStoreOptions>,
+                                        IPostConfigureOptions<MailStoreOptions>,
                                         IPostConfigureOptions<AislingStoreOptions>
 
 {
@@ -75,4 +76,7 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
 
         WorldOptions.Instance = options;
     }
+
+    /// <inheritdoc />
+    public void PostConfigure(string? name, MailStoreOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
 }

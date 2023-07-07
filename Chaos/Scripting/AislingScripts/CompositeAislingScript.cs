@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using Chaos.Collections.Abstractions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
@@ -95,6 +96,17 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
                 return false;
 
         return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public IEnumerable<BoardBase> GetBoardList()
+    {
+        //cant use CollectionMarshal.AsSpan here because of yield
+        foreach (var script in Scripts)
+            foreach (var board in script.GetBoardList())
+                yield return board;
     }
 
     /// <summary>

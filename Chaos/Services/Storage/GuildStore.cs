@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Chaos.Collections;
+using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.IO.FileSystem;
 using Chaos.Schemas.Guilds;
@@ -11,6 +12,9 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
 
+/// <summary>
+///     A store for <see cref="Guild" />s.
+/// </summary>
 public class GuildStore : BackgroundService, IStore<Guild>
 {
     private readonly ConcurrentDictionary<string, Guild> Cache;
@@ -49,11 +53,9 @@ public class GuildStore : BackgroundService, IStore<Guild>
     /// <inheritdoc />
     public Guild Load(string key)
     {
-        Logger.LogTrace("Loading guild {@GuildName}", key);
-
         var directory = Path.Combine(Options.Directory, key);
 
-        Guild InnerLoad(string dir) => Cache.GetOrAdd(key, InnerLoadGuild, (dir, EntityRepository));
+        Guild InnerLoad(string dir) => Cache.GetOrAdd(key, InnerLoadGuild, (dir, EntityRepository, Logger));
 
         return directory.SafeExecute(InnerLoad);
     }
@@ -83,8 +85,10 @@ public class GuildStore : BackgroundService, IStore<Guild>
         if (!Cache.TryAdd(guild.Name, guild))
             throw new InvalidOperationException($"The guild \"{guild.Name}\" is already being saved.");
 
+        AsyncHelpers.RunSync(() => SaveGuildAsync(guild));
+
         Logger.WithProperty(guild)
-              .LogDebug("Added new guild {@GuildName} to guild store", guild.Name);
+              .LogDebug("Saved new guild {@GuildName} to guild store", guild.Name);
     }
 
     /// <inheritdoc />
@@ -107,7 +111,7 @@ public class GuildStore : BackgroundService, IStore<Guild>
             } catch (OperationCanceledException)
             {
                 //ignore
-                return;
+                break;
             } catch (Exception e)
             {
                 Logger.LogCritical(e, "Exception while performing save");
@@ -121,9 +125,12 @@ public class GuildStore : BackgroundService, IStore<Guild>
         Logger.LogInformation("Final save completed");
     }
 
-    private static Guild InnerLoadGuild(string key, (string, IEntityRepository) args)
+    private static Guild InnerLoadGuild(string key, (string, IEntityRepository, ILogger<GuildStore>) args)
     {
-        (var directory, var entityRepository) = args;
+        (var directory, var entityRepository, var logger) = args;
+
+        logger.LogTrace("Loading guild {@GuildName}...", key);
+        var start = Stopwatch.GetTimestamp();
 
         if (!Directory.Exists(directory))
             throw new InvalidOperationException($"No guild data exists for the key \"{key}\" at the specified path \"{directory}\"");
@@ -142,11 +149,16 @@ public class GuildStore : BackgroundService, IStore<Guild>
 
         guild.Initialize(new[] { tier0, tier1, tier2, tier3 });
 
+        logger.LogDebug("Loaded guild {@GuildName}, took {@Elapsed}", guild.Name, Stopwatch.GetElapsedTime(start));
+
         return guild;
     }
 
     private Task InnerSaveAsync(string directory, Guild guild)
     {
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
         var guildPath = Path.Combine(directory, "guild.json");
         var tier0Path = Path.Combine(directory, "tier0.json");
         var tier1Path = Path.Combine(directory, "tier1.json");
@@ -183,9 +195,6 @@ public class GuildStore : BackgroundService, IStore<Guild>
         try
         {
             var directory = Path.Combine(Options.Directory, guild.Name);
-
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
 
             await directory.SafeExecuteAsync(
                 async dir =>

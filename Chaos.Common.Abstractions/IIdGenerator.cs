@@ -15,5 +15,5 @@ public interface IIdGenerator<out T> where T: INumber<T>
     /// <summary>
     ///     A shared instance of the IdGenerator
     /// </summary>
-    static abstract IIdGenerator<T> Shared { get; }
+    static virtual IIdGenerator<T> Shared => throw new NotImplementedException();
 }

@@ -22,6 +22,7 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
         switch (args.Type)
         {
             case BoardOrResponseType.BoardList:
+            {
                 writer.WriteUInt16((ushort)args.Boards!.Count);
 
                 foreach (var board in args.Boards)
@@ -31,13 +32,26 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                 }
 
                 break;
+            }
             case BoardOrResponseType.PublicBoard:
+            {
                 writer.WriteBoolean(false);
                 writer.WriteUInt16(args.Board!.BoardId);
                 writer.WriteString8(args.Board.Name);
-                writer.WriteInt16((short)args.Board.Posts.Count);
 
-                foreach (var post in args.Board.Posts)
+                //order posts newest to oldest
+                var orderedPosts = (IEnumerable<PostInfo>)args.Board.Posts.OrderByDescending(p => p.CreationDate);
+
+                //if there's a StartPostId, only send posts with an id greater than or equal to it
+                if (args.StartPostId.HasValue)
+                    orderedPosts = orderedPosts.Where(p => p.PostId <= args.StartPostId.Value);
+
+                //only send up to 127 posts (i have no fucking clue why its sbyte.MaxValue)
+                var posts = orderedPosts.Take(sbyte.MaxValue).ToList();
+
+                writer.WriteSByte((sbyte)posts.Count);
+
+                foreach (var post in posts)
                 {
                     writer.WriteBoolean(post.IsHighlighted);
                     writer.WriteInt16(post.PostId);
@@ -48,7 +62,9 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                 }
 
                 break;
+            }
             case BoardOrResponseType.PublicPost:
+            {
                 writer.WriteBoolean(args.EnablePrevBtn);
                 writer.WriteByte(0); //dunno
                 writer.WriteInt16(args.Post!.PostId);
@@ -59,13 +75,26 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                 writer.WriteString16(args.Post.Message);
 
                 break;
+            }
             case BoardOrResponseType.MailBoard:
+            {
                 writer.WriteBoolean(false);
                 writer.WriteUInt16(args.Board!.BoardId);
                 writer.WriteString8(args.Board.Name);
-                writer.WriteUInt16((ushort)args.Board.Posts.Count);
 
-                foreach (var post in args.Board.Posts)
+                //order posts newest to oldest
+                var orderedPosts = (IEnumerable<PostInfo>)args.Board.Posts.OrderByDescending(p => p.PostId);
+
+                //if there's a StartPostId, only send posts with an id greater than or equal to it
+                if (args.StartPostId.HasValue)
+                    orderedPosts = orderedPosts.Where(p => p.PostId <= args.StartPostId.Value);
+
+                //only send up to 127 posts (i have no fucking clue why its sbyte.MaxValue)
+                var posts = orderedPosts.Take(sbyte.MaxValue).ToList();
+
+                writer.WriteSByte((sbyte)posts.Count);
+
+                foreach (var post in posts)
                 {
                     writer.WriteBoolean(post.IsHighlighted);
                     writer.WriteInt16(post.PostId);
@@ -76,7 +105,9 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                 }
 
                 break;
+            }
             case BoardOrResponseType.MailPost:
+            {
                 writer.WriteBoolean(args.EnablePrevBtn);
                 writer.WriteByte(0); //dunno
                 writer.WriteInt16(args.Post!.PostId);
@@ -87,13 +118,16 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                 writer.WriteString16(args.Post.Message);
 
                 break;
+            }
             case BoardOrResponseType.SubmitPostResponse:
             case BoardOrResponseType.DeletePostResponse:
             case BoardOrResponseType.HighlightPostResponse:
+            {
                 writer.WriteBoolean(args.Success!.Value);
                 writer.WriteString8(args.ResponseMessage!);
 
                 break;
+            }
             default:
                 throw new ArgumentOutOfRangeException();
         }

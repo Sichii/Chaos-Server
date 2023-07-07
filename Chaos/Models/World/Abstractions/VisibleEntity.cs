@@ -8,7 +8,7 @@ namespace Chaos.Models.World.Abstractions;
 /// <summary>
 ///     Represents an object that is visible.
 /// </summary>
-public abstract class VisibleEntity : MapEntity
+public abstract class VisibleEntity : InteractableEntity
 {
     protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
     public ushort Sprite { get; set; }
@@ -19,31 +19,6 @@ public abstract class VisibleEntity : MapEntity
     {
         Sprite = sprite;
         LastClicked = new ConcurrentDictionary<uint, DateTime>();
-    }
-
-    public virtual bool CanObserve(VisibleEntity entity)
-    {
-        //can always see yourself
-        if (entity.Equals(this))
-            return true;
-
-        switch (entity.Visibility)
-        {
-            case VisibilityType.Normal:
-            case VisibilityType.Hidden:
-                return true;
-            case VisibilityType.TrueHidden when this is not Creature:
-                return false;
-            case VisibilityType.TrueHidden when this is Creature creature:
-                if (creature is Aisling aisling && (aisling.Group?.Any(member => member.Equals(entity)) == true))
-                    return true;
-
-                return creature.Script.CanSee(entity);
-            case VisibilityType.GmHidden:
-                return false;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
     }
 
     public void Display()
@@ -62,8 +37,6 @@ public abstract class VisibleEntity : MapEntity
     }
 
     public virtual void HideFrom(Aisling aisling) => aisling.Client.SendRemoveObject(Id);
-
-    public abstract void OnClicked(Aisling source);
 
     public virtual void SetVisibility(VisibilityType newVisibilityType)
     {

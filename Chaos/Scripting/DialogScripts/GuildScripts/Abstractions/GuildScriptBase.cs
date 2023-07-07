@@ -1,9 +1,9 @@
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.DialogScripts.Abstractions;
-using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +12,7 @@ namespace Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 public abstract class GuildScriptBase : DialogScriptBase
 {
     protected IClientRegistry<IWorldClient> ClientRegistry { get; }
-    protected IGuildFactory GuildFactory { get; }
+    protected IFactory<Guild> GuildFactory { get; }
     protected IStore<Guild> GuildStore { get; }
     protected ILogger Logger { get; }
 
@@ -21,7 +21,7 @@ public abstract class GuildScriptBase : DialogScriptBase
         Dialog subject,
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
-        IGuildFactory guildFactory,
+        IFactory<Guild> guildFactory,
         ILogger logger
     )
         : base(subject)
