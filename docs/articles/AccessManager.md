@@ -35,7 +35,7 @@ into [AccessManagerOptions](<xref:Chaos.Security.Options.AccessManagerOptions>)
 
 ```json
 "AccessManagerOptions": {
-  "Directory": "Data\\Saved",
+  "Directory": "Data\\Configuration\\Access",
   "ValidCharactersPattern": "[a-zA-Z0-9 ]+",
   "ValidFormatPattern": "^[a-zA-Z]{3,}$|[a-zA-Z]{3,} ?[a-zA-Z]{3,}",
   "MaxUsernameLength": 12,
@@ -48,7 +48,7 @@ into [AccessManagerOptions](<xref:Chaos.Security.Options.AccessManagerOptions>)
   "Mode": "Blacklist",
   "MaxCredentialAttempts": 5,
   "LockoutMins": 5
-}
+},
 ```
 
 ## Mode

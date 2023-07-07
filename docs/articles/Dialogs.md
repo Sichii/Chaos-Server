@@ -9,7 +9,8 @@ A dialog template is used to create new instances of dialogs as required. Dialog
 mostly stateless. Any action that brings up a new dialog, whether is be clicking an NPC, or clicking Next or Previous on
 an existing dialog, the next dialog shown will be a unique instance of a dialog created from a template.
 
-By default, Map templates are stored at `Data\Templates\Dialogs`. Configuration of how map templates are loaded can be
+By default, Map templates are stored at `Data\Configuration\Templates\Dialogs`. Configuration of how map templates are
+loaded can be
 found
 in `appsettings.json` at `Options:DialogTemplateCacheOptions`.
 
@@ -40,7 +41,7 @@ script. The script injects those contextual parameters into the dialog's text. I
 come before it which
 collect the name of the item being bought, and how many of them.
 
-[!code-json[](../../Data/Templates/Dialogs/generic/Shop/BuyShop/generic_buyshop_confirmation.json)]
+[!code-json[](../../Data/Configuration/Templates/Dialogs/generic/Shop/BuyShop/generic_buyshop_confirmation.json)]
 
 ## State and Context
 

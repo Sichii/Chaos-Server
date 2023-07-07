@@ -1,6 +1,6 @@
 # Visibility
 
-Chaos has a 2 layer visibility system. To logically seperate these layers in your mind, you can think of them
+Chaos has a 2 layer visibility system. To logically separate these layers in your mind, you can think of them
 as `Observability` and `Visibility`.
 
 All [VisibleEntities](<xref:Chaos.Models.World.Abstractions.VisibleEntity>) have

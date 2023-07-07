@@ -38,7 +38,7 @@ Note the `scriptVars` region. These properties don't appear to be set anywhere, 
 the script's base implementation from the item's json.
 
 Here is a json for an `apple` item, note the `scriptVars` property  
-[!code-json[](../../Data/Templates/Items/apple.json)]
+[!code-json[](../../Data/Configuration/Templates/Items/apple.json)]
 
 Here the `scriptKeys` collection contains the `vitalityConsumable` script key, signaling that
 the `VitalityConsumableScript` should be attached to this entity.

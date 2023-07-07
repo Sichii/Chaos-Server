@@ -132,7 +132,7 @@ This file is located at `StagingDir/MetaData/Events.json` by default
 
 ### Example json
 
-[!code-json[](../../Data/MetaData/Events.json)]
+[!code-json[](../../Data/Configuration/MetaData/Events.json)]
 
 ## Nation Description MetaData
 
@@ -161,7 +161,7 @@ See [below](#illustrations) for a list of possible illustrations
 
 ### Example json
 
-[!code-json[](../../Data/MetaData/MundaneIllustrations.json)]
+[!code-json[](../../Data/Configuration/MetaData/MundaneIllustrations.json)]
 
 ### Illustrations
 

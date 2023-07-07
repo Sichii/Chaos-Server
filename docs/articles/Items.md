@@ -8,7 +8,8 @@ to avoid having to serialize data that you have already defined.
 
 An item template is the definition of an item. It contains all data that is common to all instances of that item.
 
-By default, Item Templates are stored at `Data\Templates\Items`. Configuration of how item templates are loaded can be
+By default, Item Templates are stored at `Data\Configuration\Templates\Items`. Configuration of how item templates are
+loaded can be
 found in `appsettings.json` at `Options:ItemTemplateCacheOptions`.
 
 Item templates are initially serialized into [ItemTemplateSchema](<xref:Chaos.Schemas.Templates.ItemTemplateSchema>)
@@ -52,7 +53,7 @@ the [VitalityConsumable](<xref:Chaos.Scripting.ItemScripts.VitalityConsumableScr
 configurable values that will determine how much health and mana are given when the item is used. The script will also
 remove 1 of the item when it is used. In this case, our apple will provide 100 health when used.
 
-[!code-json[](../../Data/Templates/Items/apple.json)]
+[!code-json[](../../Data/Configuration/Templates/Items/apple.json)]
 
 ## Modifiable Items
 

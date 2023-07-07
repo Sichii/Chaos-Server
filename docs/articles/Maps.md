@@ -11,7 +11,8 @@ A map template contains a bare minimum of information about a map. Contained wit
 auto-generated map
 templates that should match up to the maps in original Dark Ages.
 
-By default, Map Templates are stored at `Data\Templates\Maps`. Configuration of how map templates are loaded can be
+By default, Map Templates are stored at `Data\Configuration\Templates\Maps`. Configuration of how map templates are
+loaded can be
 found
 in `appsettings.json` at `Options:MapTemplateCacheOptions`.
 
@@ -33,9 +34,10 @@ non-schema type.
 
 Here is an example of a map template json for the map used for Mileth (MapId: 500). As with all template objects, the
 file name should match
-the template key. So in this case, the file name is `500.json`, and it is stored in the `Data\Templates\Maps` directory.
+the template key. So in this case, the file name is `500.json`, and it is stored in
+the `Data\Configuration\Templates\Maps` directory.
 
-[!code-json[](../../Data/Templates/Maps/500.json)]
+[!code-json[](../../Data/Configuration/Templates/Maps/500.json)]
 
 ## Map Instances
 
@@ -46,7 +48,8 @@ Map instances consist of a few different files that contain different informatio
 - `monsters.json` contains all of the monsters spawners that are on the map
 - `reactors.json` contains all of the reactor tiles that are on the map
 
-By default, Map Instances are stored at `Data\MapInstances`. Configuration of how map instances are loaded can be found
+By default, Map Instances are stored at `Data\Configuration\MapInstances`. Configuration of how map instances are loaded
+can be found
 in `appsettings.json` at `Options:MapInstanceCacheOptions`.
 
 ### Example map instance directory
@@ -87,7 +90,7 @@ Here is an example of an `instance.json` for Mileth. Note that this map instance
 This is the key of
 the Map Template that this map instance is based on.
 
-[!code-json[](../../Data/MapInstances/mileth/instance.json)]
+[!code-json[](../../Data/Configuration/MapInstances/mileth/instance.json)]
 
 ### Instance Sharding
 
@@ -111,7 +114,7 @@ put a player that is trying to enter a shard of this map, say for example they l
 and the shard shuts
 down, they will be placed in the map instance `testTown` at coordinates `1, 13`
 
-[!code-json[](../../Data/MapInstances/testArea/instance.json)]
+[!code-json[](../../Data/Configuration/MapInstances/testArea/instance.json)]
 
 ## merchants.json
 
@@ -136,7 +139,7 @@ See [the article on merchants](<Merchants.md>) for more information on how to cr
 
 ### Example merchants.json
 
-[!code-json[](../../Data/MapInstances/testTown/merchants.json)]
+[!code-json[](../../Data/Configuration/MapInstances/testTown/merchants.json)]
 
 ## monsters.json
 
@@ -165,7 +168,7 @@ monster.
 
 ### Example monsters.json
 
-[!code-json[](../../Data/MapInstances/test1/monsters.json)]
+[!code-json[](../../Data/Configuration/MapInstances/test1/monsters.json)]
 
 ## reactors.json
 
@@ -188,4 +191,4 @@ type.
 
 ### Example reactors.json
 
-[!code-json[](../../Data/MapInstances/testArea/reactors.json)]
+[!code-json[](../../Data/Configuration/MapInstances/testArea/reactors.json)]

@@ -8,7 +8,8 @@ template to avoid having to serialize data that you have already defined.
 
 A spell template is the definition of a spell. It contains all data that is common to all instances of that spell.
 
-By default, Spell Templates are stored at `Data\Templates\Spells`. Configuration of how spell templates are loaded can
+By default, Spell Templates are stored at `Data\Configuration\Templates\Spells`. Configuration of how spell templates
+are loaded can
 be found in `appsettings.json` at `Options:SpellTemplateCacheOptions`.
 
 Spell templates are initially serialized into [SpellTemplateSchema](<xref:Chaos.Schemas.Templates.SpellTemplateSchema>)
@@ -39,7 +40,7 @@ before being mapped to a non-schema type.
 Here is an example of a spell template json. This spell puts a regenerative effect on friendly targets in an area around
 the primary target. It requires level 10, 2 wis, and 15 apples to learn.
 
-[!code-json[](../../Data/Templates/Spells/regrowth.json)
+[!code-json[](../../Data/Configuration/Templates/Spells/regrowth.json)
 
 ## Modifying Spells
 
