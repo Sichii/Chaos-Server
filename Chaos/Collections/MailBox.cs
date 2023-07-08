@@ -4,7 +4,7 @@ using Chaos.Common.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Board;
-using Chaos.Networking.Abstractions;
+using Chaos.Models.World;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
@@ -27,43 +27,47 @@ public sealed class MailBox : BoardBase
             posts) => Logger = logger;
 
     /// <inheritdoc />
-    public override bool Delete(IWorldClient deletedBy, short postId)
+    public override bool Delete(Aisling deletedBy, short postId)
     {
         using var @lock = Sync.Enter();
 
-        //remove post from mailbox if it exists
-        if (!Posts.TryRemove(postId, out var post))
+        //check that post exists
+        if (!Posts.TryGetValue(postId, out var post))
         {
-            deletedBy.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "No such message", false);
+            deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "No such message", false);
 
             return false;
         }
 
         //only an admin or the owner can delete posts
-        if (!deletedBy.Aisling.IsAdmin && !Key.EqualsI(deletedBy.Aisling.Name))
+        if (!deletedBy.IsAdmin && !Key.EqualsI(deletedBy.Name))
         {
-            deletedBy.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "You lack the permission", false);
+            deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "You lack the permission", false);
 
             Logger.WithProperty(deletedBy)
                   .WithProperty(this)
                   .WithProperty(post)
                   .LogWarning(
                       "{@AislingName} attempted to delete {@PostSubject} from {@MailboxOwnerName}'s mailbox without permission",
-                      deletedBy.Aisling.Name,
+                      deletedBy.Name,
                       post.Subject,
                       Key);
 
             return false;
         }
 
-        deletedBy.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "Message deleted", true);
+        //remove post from mailbox
+        if (!Posts.TryRemove(postId, out _))
+            throw new UnreachableException("We already checked that the post exists");
+
+        deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "Message deleted", true);
 
         Logger.WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogDebug(
                   "{@AislingName} deleted {@PostSubject} from {@MailboxOwnerName}'s mailbox",
-                  deletedBy.Aisling.Name,
+                  deletedBy.Name,
                   post.Subject,
                   Key);
 
@@ -71,29 +75,29 @@ public sealed class MailBox : BoardBase
     }
 
     /// <inheritdoc />
-    public override void Highlight(IWorldClient highlightedBy, short postId)
+    public override void Highlight(Aisling highlightedBy, short postId)
     {
         using var @lock = Sync.Enter();
 
         //if post doesnt exist
         if (!Posts.TryGetValue(postId, out var post))
         {
-            highlightedBy.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "No such message", false);
+            highlightedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "No such message", false);
 
             return;
         }
 
         //only admins and the owner can highlight posts
-        if (!highlightedBy.Aisling.IsAdmin && !Key.EqualsI(highlightedBy.Aisling.Name))
+        if (!highlightedBy.IsAdmin && !Key.EqualsI(highlightedBy.Name))
         {
-            highlightedBy.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "You lack the permission", false);
+            highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "You lack the permission", false);
 
             Logger.WithProperty(highlightedBy)
                   .WithProperty(this)
                   .WithProperty(post)
                   .LogWarning(
                       "{@AislingName} attempted to highlight {@PostSubject} in {@MailboxOwnerName}'s mailbox without permission",
-                      highlightedBy.Aisling.Name,
+                      highlightedBy.Name,
                       post.Subject,
                       Key);
 
@@ -103,21 +107,21 @@ public sealed class MailBox : BoardBase
         //highlight post
         post = post with { IsHighlighted = true };
         Posts[postId] = post;
-        highlightedBy.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Message highlighted", true);
+        highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Message highlighted", true);
 
         Logger.WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogDebug(
                   "{@AislingName} highlighted {@PostSubject} in {@MailboxOwnerName}'s mailbox",
-                  highlightedBy.Aisling.Name,
+                  highlightedBy.Name,
                   post.Subject,
                   Key);
     }
 
     /// <inheritdoc />
     public override void Post(
-        IWorldClient addedBy,
+        Aisling addedBy,
         string author,
         string subject,
         string message,
@@ -140,47 +144,47 @@ public sealed class MailBox : BoardBase
             throw new UnreachableException(
                 "Failed to add post to board. This should be impossible due to the lock and threadsafe postId generator");
 
-        addedBy.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "Message sent", true);
+        addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "Message sent", true);
 
         Logger.WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogDebug(
                   "{@AislingName} posted {@PostSubject} in {@MailboxOwnerName}'s mailbox",
-                  addedBy.Aisling.Name,
+                  addedBy.Name,
                   post.Subject,
                   Key);
     }
 
     /// <inheritdoc />
-    public override void Show(IWorldClient client, short startPostId)
+    public override void Show(Aisling aisling, short startPostId = short.MaxValue)
     {
         using var @lock = Sync.Enter();
 
-        if (!ShouldShowTo(client.Id))
+        if (!ShouldShowTo(aisling.Id))
             return;
 
         var now = DateTime.UtcNow;
 
-        LastShown.AddOrUpdate(client.Id, now, (_, _) => now);
+        LastShown.AddOrUpdate(aisling.Id, now, (_, _) => now);
 
-        if (!client.Aisling.IsAdmin && !Key.EqualsI(client.Aisling.Name))
+        if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
-            Logger.WithProperty(client)
+            Logger.WithProperty(aisling)
                   .WithProperty(this)
                   .LogWarning(
                       "{@AislingName} attempted to view {@MailboxOwnerName}'s mailbox without permission",
-                      client.Aisling.Name,
+                      aisling.Name,
                       Key);
 
             return;
         }
 
-        client.SendBoard(this, startPostId);
+        aisling.Client.SendBoard(this, startPostId);
     }
 
     /// <inheritdoc />
-    public override void ShowPost(IWorldClient client, short postId, BoardControls control)
+    public override void ShowPost(Aisling aisling, short postId, BoardControls control)
     {
         using var @lock = Sync.Enter();
 
@@ -213,14 +217,14 @@ public sealed class MailBox : BoardBase
         if (!Posts.TryGetValue(postIdActual, out var post))
             return;
 
-        if (!client.Aisling.IsAdmin && !Key.EqualsI(client.Aisling.Name))
+        if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
-            Logger.WithProperty(client)
+            Logger.WithProperty(aisling)
                   .WithProperty(this)
                   .WithProperty(post)
                   .LogWarning(
                       "{@AislingName} attempted to view {@PostSubject} in {@MailboxOwnerName}'s mailbox without permission",
-                      client.Aisling.Name,
+                      aisling.Name,
                       post.Subject,
                       Key);
 
@@ -228,12 +232,12 @@ public sealed class MailBox : BoardBase
         }
 
         //mark as read
-        UnHighlight(client, ref post);
-        client.SendPost(post, true, Posts.Keys.Max() == postIdActual);
+        UnHighlight(aisling, ref post);
+        aisling.Client.SendPost(post, true, Posts.Keys.Max() == postIdActual);
     }
 
     /// <inheritdoc />
-    public override void UnHighlight(IWorldClient unhighlightedBy, ref Post post)
+    public override void UnHighlight(Aisling unhighlightedBy, ref Post post)
     {
         using var @lock = Sync.Enter();
 
@@ -249,7 +253,7 @@ public sealed class MailBox : BoardBase
               .WithProperty(post)
               .LogDebug(
                   "{@AislingName} unhighlighted {@PostSubject} in {@MailboxOwnerName}'s mailbox",
-                  unhighlightedBy.Aisling.Name,
+                  unhighlightedBy.Name,
                   post.Subject,
                   Key);
     }

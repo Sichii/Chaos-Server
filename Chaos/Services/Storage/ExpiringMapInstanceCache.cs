@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Extensions;
@@ -96,6 +97,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var shardId = string.IsNullOrEmpty(loadFromFileKeyOverride) ? null : entryKeyActual;
 
         Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", nameof(MapInstance), loadInstanceId);
+        var start = Stopwatch.GetTimestamp();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
@@ -118,10 +120,10 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
 
         Logger.WithProperty(mapInstance)
               .LogInformation(
-                  "Created new {@TypeName} entry with key {@Key} from path {@Path}",
+                  "Created new {@TypeName} entry with key {@Key}, took {@Elapsed}",
                   nameof(MapInstance),
                   loadInstanceId,
-                  path);
+                  Stopwatch.GetElapsedTime(start));
 
         return mapInstance;
     }

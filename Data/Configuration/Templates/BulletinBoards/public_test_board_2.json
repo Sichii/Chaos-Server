@@ -1,0 +1,12 @@
+{
+    "templateKey": "public_test_board_2",
+    "name": "Test Board 2",
+    "scriptKeys": ["publicBoard"],
+
+    "scriptVars": {
+        "publicBoard": {
+            "postRetentionHours": -1,
+            "moderators": ["nonadmin"]
+        }
+    }
+}

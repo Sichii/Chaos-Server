@@ -16,20 +16,11 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
                                         IPostConfigureOptions<LobbyOptions>,
                                         IPostConfigureOptions<LoginOptions>,
                                         IPostConfigureOptions<WorldOptions>,
-                                        IPostConfigureOptions<MetaDataStoreOptions>,
-                                        IPostConfigureOptions<GuildStoreOptions>,
-                                        IPostConfigureOptions<MailStoreOptions>,
-                                        IPostConfigureOptions<AislingStoreOptions>
+                                        IPostConfigureOptions<MetaDataStoreOptions>
 
 {
     private readonly IStagingDirectory StagingDirectory;
     public OptionsConfigurer(IStagingDirectory stagingDirectory) => StagingDirectory = stagingDirectory;
-
-    /// <inheritdoc />
-    public void PostConfigure(string? name, AislingStoreOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
-
-    /// <inheritdoc />
-    public void PostConfigure(string? name, GuildStoreOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
 
     /// <inheritdoc />
     public void PostConfigure(string? name, IConnectionInfo options)
@@ -76,7 +67,4 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
 
         WorldOptions.Instance = options;
     }
-
-    /// <inheritdoc />
-    public void PostConfigure(string? name, MailStoreOptions options) => options.UseBaseDirectory(StagingDirectory.StagingDirectory);
 }

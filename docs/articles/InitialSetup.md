@@ -19,12 +19,12 @@ directory can be changed if desired via `appsettings.json` at `Options:ChaosOpti
 ┣📂Backups
 ┣📂Configuration
 ┃ ┣📂Access
-┃ ┣📂Boards
 ┃ ┣📂LootTables
 ┃ ┣📂MapData
 ┃ ┣📂MapInstances
 ┃ ┣📂MetaData
 ┃ ┣📂Templates
+┃ ┃ ┣📂BulletinBoards
 ┃ ┃ ┣📂Dialogs
 ┃ ┃ ┣📂Items
 ┃ ┃ ┣📂Maps
@@ -58,7 +58,6 @@ in the [LobbyOptions](LobbyOptions.md), [LoginOptions](LoginOptions.md), and [Wo
 > [!TIP]
 > There's a tool to help create content, look for the [ChaosTool](ChaosTool.md)
 
-- Add [Maps](Maps.md)
 - Add [Items](Items.md)
 - Add [Spells](Spells.md)
 - Add [Skills](Skills.md)
@@ -66,6 +65,7 @@ in the [LobbyOptions](LobbyOptions.md), [LoginOptions](LoginOptions.md), and [Wo
 - Add [Dialogs](Dialogs.md)
 - Add [Monsters](Monsters.md)
 - Add [Loot Tables](LootTables.md)
+- Add [Maps](Maps.md)
 - Write custom [Components](Components.md)
 - Write custom [Scripts](Scripting.md)
 - Write custom [Formulae](Formulae.md)

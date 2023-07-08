@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
@@ -175,6 +176,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var keyActual = DeconstructKeyForType(key!);
 
         Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
+        var start = Stopwatch.GetTimestamp();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
@@ -186,10 +188,10 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         LocalLookup[key!] = entity;
 
         Logger.LogDebug(
-            "Created new {@TypeName} entry with key {@Key} from path {@Path}",
+            "Created new {@TypeName} entry with key {@Key}, took {@Elapsed}",
             typeof(T).Name,
             key,
-            path);
+            Stopwatch.GetElapsedTime(start));
 
         return entity;
     }

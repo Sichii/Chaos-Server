@@ -4,13 +4,10 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Storage.Options;
 
-public sealed class GuildStoreOptions : IDirectoryBackupOptions, IPeriodicSaveStoreOptions
+public sealed class BulletinBoardStoreOptions : IDirectoryBackupOptions, IPeriodicSaveStoreOptions
 {
-    /// <inheritdoc />
     public string BackupDirectory { get; set; } = null!;
-    /// <inheritdoc />
     public int BackupIntervalMins { get; set; }
-    /// <inheritdoc />
     public int BackupRetentionDays { get; set; }
     public string Directory { get; set; } = null!;
     public int SaveIntervalMins { get; set; }

@@ -10,6 +10,9 @@ public sealed class DefaultRegenFormula : IRegenFormula
     /// <inheritdoc />
     public int CalculateHealthRegen(Creature creature)
     {
+        if (creature.StatSheet.HealthPercent == 100)
+            return 0;
+
         var percentToRegenerate = creature switch
         {
             Aisling  => 10,
@@ -27,6 +30,9 @@ public sealed class DefaultRegenFormula : IRegenFormula
     /// <inheritdoc />
     public int CalculateManaRegen(Creature creature)
     {
+        if (creature.StatSheet.HealthPercent == 100)
+            return 0;
+
         var percentToRegenerate = creature switch
         {
             Aisling  => 5,

@@ -52,6 +52,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public IInventory Inventory { get; private set; }
     public bool IsAdmin { get; set; }
     public Collections.Legend Legend { get; private set; }
+    public MailBox MailBox { get; set; } = null!;
     public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
     public byte[] Portrait { get; set; }

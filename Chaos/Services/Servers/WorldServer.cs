@@ -34,7 +34,8 @@ namespace Chaos.Services.Servers;
 public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldClient>
 {
     private readonly IAsyncStore<Aisling> AislingStore;
-    private readonly BoardKeyMapper BoardKeyMapper;
+    private readonly BulletinBoardKeyMapper BulletinBoardKeyMapper;
+    private readonly IStore<BulletinBoard> BulletinBoardStore;
     private readonly IChannelService ChannelService;
     private readonly IFactory<IWorldClient> ClientFactory;
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
@@ -42,7 +43,6 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     private readonly IStore<MailBox> MailStore;
     private readonly IMerchantFactory MerchantFactory;
     private readonly IMetaDataStore MetaDataStore;
-    private readonly ISimpleCache SimpleCache;
     private new WorldOptions Options { get; }
 
     public IEnumerable<Aisling> Aislings => ClientRegistry
@@ -63,8 +63,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         IMetaDataStore metaDataStore,
         IChannelService channelService,
         IStore<MailBox> mailStore,
-        BoardKeyMapper boardKeyMapper,
-        ISimpleCache simpleCache
+        BulletinBoardKeyMapper bulletinBoardKeyMapper,
+        IStore<BulletinBoard> bulletinBoardStore
     )
         : base(
             redirectManager,
@@ -82,8 +82,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         MetaDataStore = metaDataStore;
         ChannelService = channelService;
         MailStore = mailStore;
-        BoardKeyMapper = boardKeyMapper;
-        SimpleCache = simpleCache;
+        BulletinBoardKeyMapper = bulletinBoardKeyMapper;
+        BulletinBoardStore = bulletinBoardStore;
 
         IndexHandlers();
     }
@@ -118,15 +118,15 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             case null:
                 break;
             case MailBox.BOARD_ID:
-                boardBase = MailStore.Load(client.Aisling.Name);
+                boardBase = client.Aisling.MailBox;
 
                 break;
             default:
             {
-                var key = BoardKeyMapper.GetKey(args.BoardId.Value);
+                var key = BulletinBoardKeyMapper.GetKey(args.BoardId.Value);
 
                 if (!string.IsNullOrEmpty(key))
-                    boardBase = SimpleCache.Get<BoardBase>(key);
+                    boardBase = BulletinBoardStore.Load(key);
 
                 break;
             }
@@ -164,7 +164,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     if (!TryGetBoard(localClient, localArgs, out var board))
                         return default;
 
-                    board.Show(localClient, localArgs.StartPostId!.Value);
+                    board.Show(localClient.Aisling, localArgs.StartPostId!.Value);
 
                     break;
                 }
@@ -173,7 +173,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     if (!TryGetBoard(localClient, localArgs, out var board))
                         return default;
 
-                    board.ShowPost(localClient, localArgs.PostId!.Value, localArgs.Controls!.Value);
+                    board.ShowPost(localClient.Aisling, localArgs.PostId!.Value, localArgs.Controls!.Value);
 
                     break;
                 }
@@ -196,7 +196,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     }
 
                     board.Post(
-                        localClient,
+                        localClient.Aisling,
                         localClient.Aisling.Name,
                         localArgs.Subject!,
                         localArgs.Message!);
@@ -208,7 +208,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     if (!TryGetBoard(localClient, localArgs, out var board))
                         return default;
 
-                    board.Delete(localClient, localArgs.PostId!.Value);
+                    board.Delete(localClient.Aisling, localArgs.PostId!.Value);
 
                     break;
                 }
@@ -218,7 +218,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                         return default;
 
                     board.Post(
-                        localClient,
+                        localClient.Aisling,
                         localClient.Aisling.Name,
                         localArgs.Subject!,
                         localArgs.Message!,
@@ -244,7 +244,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                         return default;
                     }
 
-                    board.Highlight(localClient, localArgs.PostId!.Value);
+                    board.Highlight(localClient.Aisling, localArgs.PostId!.Value);
 
                     break;
                 }
@@ -377,6 +377,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             try
             {
                 aisling.Guild?.Associate(aisling);
+                aisling.MailBox = MailStore.Load(aisling.Name);
                 aisling.BeginObserving();
                 client.SendAttributes(StatUpdateType.Full);
                 client.SendLightLevel(LightLevel.Lightest);

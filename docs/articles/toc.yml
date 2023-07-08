@@ -16,8 +16,6 @@
   href: CachingAndSerialization.md
 - name: Commands
   href: Commands.md
-- name: Maps
-  href: Maps.md
 - name: Items
   href: Items.md
 - name: Skills
@@ -32,6 +30,12 @@
   href: Monsters.md
 - name: Loot Tables
   href: LootTables.md
+- name: Reactor Tiles
+  href: ReactorTiles.md
+- name: Bulletin Boards
+  href: BulletinBoards.md
+- name: Maps
+  href: Maps.md
 - name: Visibility
   href: Visibility.md
 - name: Formulae

@@ -14,18 +14,18 @@ namespace Chaos.Scripting.AislingScripts;
 
 public class DefaultAislingScript : AislingScriptBase
 {
+    private readonly IStore<BulletinBoard> BoardStore;
     private readonly IStore<MailBox> MailStore;
-    private readonly ISimpleCache SimpleCache;
     private readonly IIntervalTimer SleepAnimationTimer;
     protected virtual RestrictionBehavior RestrictionBehavior { get; }
     protected virtual VisibilityBehavior VisibilityBehavior { get; }
 
     /// <inheritdoc />
-    public DefaultAislingScript(Aisling subject, ISimpleCache simpleCache, IStore<MailBox> mailStore)
+    public DefaultAislingScript(Aisling subject, IStore<MailBox> mailStore, IStore<BulletinBoard> boardStore)
         : base(subject)
     {
-        SimpleCache = simpleCache;
         MailStore = mailStore;
+        BoardStore = boardStore;
         RestrictionBehavior = new RestrictionBehavior();
         VisibilityBehavior = new VisibilityBehavior();
         SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5), false);
@@ -57,28 +57,31 @@ public class DefaultAislingScript : AislingScriptBase
     {
         //mailbox board
         yield return MailStore.Load(Subject.Name);
-        //yield return SimpleCache.Get<BoardBase>("test_public_board");
-        //yield return SimpleCache.Get<BoardBase>("test_privileged_board");
-        //yield return SimpleCache.Get<BoardBase>("test_private_board");
+
+        //change this to whatever naming scheme you want to follow for guild boards
+        if (Subject.Guild is not null && BoardStore.Exists(Subject.Guild.Name))
+            yield return BoardStore.Load(Subject.Guild.Name);
+
+        yield return BoardStore.Load("public_test_board");
 
         //things like... get board based on Nation, Guild, Enums, Flags, whatever
         //e.g.
         //var nationBoard = Subject.Nation switch
         //{
-        //    Nation.Exile      => SimpleCache.Get<Board>("nation_board_exile"),
-        //    Nation.Suomi      => SimpleCache.Get<Board>("nation_board_suomi"),
-        //    Nation.Ellas      => SimpleCache.Get<Board>("nation_board_ellas"),
-        //    Nation.Loures     => SimpleCache.Get<Board>("nation_board_loures"),
-        //    Nation.Mileth     => SimpleCache.Get<Board>("nation_board_mileth"),
-        //    Nation.Tagor      => SimpleCache.Get<Board>("nation_board_tagor"),
-        //    Nation.Rucesion   => SimpleCache.Get<Board>("nation_board_rucesion"),
-        //    Nation.Noes       => SimpleCache.Get<Board>("nation_board_noes"),
-        //    Nation.Illuminati => SimpleCache.Get<Board>("nation_board_illuminati"),
-        //    Nation.Piet       => SimpleCache.Get<Board>("nation_board_piet"),
-        //    Nation.Atlantis   => SimpleCache.Get<Board>("nation_board_atlantis"),
-        //    Nation.Abel       => SimpleCache.Get<Board>("nation_board_abel"),
-        //    Nation.Undine     => SimpleCache.Get<Board>("nation_board_undine"),
-        //    Nation.Purgatory  => SimpleCache.Get<Board>("nation_board_purgatory"),
+        //    Nation.Exile      => BoardStore.Load("nation_board_exile"),
+        //    Nation.Suomi      => BoardStore.Load("nation_board_suomi"),
+        //    Nation.Ellas      => BoardStore.Load("nation_board_ellas"),
+        //    Nation.Loures     => BoardStore.Load("nation_board_loures"),
+        //    Nation.Mileth     => BoardStore.Load("nation_board_mileth"),
+        //    Nation.Tagor      => BoardStore.Load("nation_board_tagor"),
+        //    Nation.Rucesion   => BoardStore.Load("nation_board_rucesion"),
+        //    Nation.Noes       => BoardStore.Load("nation_board_noes"),
+        //    Nation.Illuminati => BoardStore.Load("nation_board_illuminati"),
+        //    Nation.Piet       => BoardStore.Load("nation_board_piet"),
+        //    Nation.Atlantis   => BoardStore.Load("nation_board_atlantis"),
+        //    Nation.Abel       => BoardStore.Load("nation_board_abel"),
+        //    Nation.Undine     => BoardStore.Load("nation_board_undine"),
+        //    Nation.Purgatory  => BoardStore.Load("nation_board_purgatory"),
         //    _                 => throw new ArgumentOutOfRangeException()
         //};
         //

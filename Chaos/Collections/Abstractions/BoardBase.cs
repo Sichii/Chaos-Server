@@ -2,9 +2,8 @@ using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
-using Chaos.Extensions.Common;
 using Chaos.Models.Board;
-using Chaos.Networking.Abstractions;
+using Chaos.Models.World;
 
 namespace Chaos.Collections.Abstractions;
 
@@ -14,18 +13,16 @@ public abstract class BoardBase : IEnumerable<Post>
     public ushort BoardId { get; }
     public string Key { get; }
     protected ConcurrentDictionary<uint, DateTime> LastShown { get; }
-    public ICollection<string> Moderators { get; }
     public string Name { get; }
     protected IIdGenerator<short> PostIdGenerator { get; }
-    protected ConcurrentDictionary<short, Post> Posts { get; }
+    internal ConcurrentDictionary<short, Post> Posts { get; }
     protected AutoReleasingMonitor Sync { get; }
 
     protected BoardBase(
         ushort boardId,
         string name,
         string key,
-        IEnumerable<Post>? posts = null,
-        IEnumerable<string>? moderators = null
+        IEnumerable<Post>? posts = null
     )
     {
         BoardId = boardId;
@@ -33,12 +30,8 @@ public abstract class BoardBase : IEnumerable<Post>
         Key = key;
         Posts = new ConcurrentDictionary<short, Post>();
         PostIdGenerator = new SequentialIdGenerator<short>();
-        Moderators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         Sync = new AutoReleasingMonitor();
         LastShown = new ConcurrentDictionary<uint, DateTime>();
-
-        if (moderators is not null)
-            Moderators.AddRange(moderators);
 
         //for existing posts, number them sequentially
         //starting at 1 for the oldest, counting up to the newest
@@ -47,7 +40,7 @@ public abstract class BoardBase : IEnumerable<Post>
             {
                 var postActual = post with { PostId = PostIdGenerator.NextId };
 
-                Posts.TryAdd(postActual.PostId, postActual);
+                Posts[postActual.PostId] = postActual;
             }
     }
 
@@ -78,12 +71,12 @@ public abstract class BoardBase : IEnumerable<Post>
         return Contains(post.PostId);
     }
 
-    public abstract bool Delete(IWorldClient deletedBy, short postId);
+    public abstract bool Delete(Aisling deletedBy, short postId);
 
-    public abstract void Highlight(IWorldClient highlightedBy, short postId);
+    public abstract void Highlight(Aisling highlightedBy, short postId);
 
     public abstract void Post(
-        IWorldClient addedBy,
+        Aisling addedBy,
         string author,
         string subject,
         string message,
@@ -93,9 +86,9 @@ public abstract class BoardBase : IEnumerable<Post>
     protected virtual bool ShouldShowTo(uint clientId) => !LastShown.TryGetValue(clientId, out var lastShown)
                                                           || (DateTime.UtcNow.Subtract(lastShown) > MINIMUM_SHOW_INTERVAL);
 
-    public abstract void Show(IWorldClient client, short startPostId);
+    public abstract void Show(Aisling aisling, short startPostId = short.MaxValue);
 
-    public abstract void ShowPost(IWorldClient client, short postId, BoardControls control);
+    public abstract void ShowPost(Aisling aisling, short postId, BoardControls control);
 
     public virtual bool TryGet(short postId, [MaybeNullWhen(false)] out Post post)
     {
@@ -104,5 +97,5 @@ public abstract class BoardBase : IEnumerable<Post>
         return Posts.TryGetValue(postId, out post);
     }
 
-    public abstract void UnHighlight(IWorldClient unhighlightedBy, ref Post post);
+    public abstract void UnHighlight(Aisling unhighlightedBy, ref Post post);
 }

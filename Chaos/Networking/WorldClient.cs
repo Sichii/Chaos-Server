@@ -94,6 +94,10 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     public void SendAttributes(StatUpdateType statUpdateType)
     {
         var args = Mapper.Map<AttributesArgs>(Aisling);
+
+        if (Aisling.MailBox.Any(post => post.IsHighlighted))
+            statUpdateType |= StatUpdateType.UnreadMail;
+
         args.StatUpdateType = statUpdateType;
         Send(args);
     }

@@ -1,37 +1,45 @@
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
+using Chaos.Common.Abstractions;
 using Chaos.Models.Board;
+using Chaos.Models.Templates;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Boards;
+using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Other;
+using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
 public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
-                                  IMapperProfile<BulletinBoard, BulletinBoardSchema>,
                                   IMapperProfile<Post, PostSchema>,
                                   IMapperProfile<BoardBase, BoardInfo>,
-                                  IMapperProfile<Post, PostInfo>
+                                  IMapperProfile<Post, PostInfo>,
+                                  IMapperProfile<BulletinBoardTemplate, BulletinBoardTemplateSchema>,
+                                  IMapperProfile<BulletinBoard, BulletinBoardSchema>
 {
-    private readonly BoardKeyMapper KeyMapper;
+    private readonly BulletinBoardKeyMapper KeyMapper;
     private readonly ILoggerFactory LoggerFactory;
     private readonly ITypeMapper Mapper;
     private readonly IScriptProvider ScriptProvider;
+    private readonly ISimpleCache SimpleCache;
 
     public BoardMapperProfile(
         ITypeMapper mapper,
-        BoardKeyMapper keyMapper,
+        BulletinBoardKeyMapper keyMapper,
         ILoggerFactory loggerFactory,
-        IScriptProvider scriptProvider
+        IScriptProvider scriptProvider,
+        ISimpleCache simpleCache
     )
     {
         Mapper = mapper;
         KeyMapper = keyMapper;
         LoggerFactory = loggerFactory;
         ScriptProvider = scriptProvider;
+        SimpleCache = simpleCache;
     }
 
     /// <inheritdoc />
@@ -41,26 +49,6 @@ public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
     public MailBoxSchema Map(MailBox obj) => new()
     {
         Key = obj.Key,
-        Posts = Mapper.MapMany<Post, PostSchema>(obj).ToList()
-    };
-
-    /// <inheritdoc />
-    public BulletinBoard Map(BulletinBoardSchema obj) => new(
-        KeyMapper.GetId(obj.Key),
-        obj.Name,
-        obj.Key,
-        Mapper.MapMany<Post>(obj.Posts),
-        obj.Moderators,
-        LoggerFactory.CreateLogger<BulletinBoard>(),
-        ScriptProvider,
-        obj.ScriptKeys);
-
-    /// <inheritdoc />
-    public BulletinBoardSchema Map(BulletinBoard obj) => new()
-    {
-        Name = obj.Name,
-        Key = obj.Key,
-        Moderators = obj.Moderators,
         Posts = Mapper.MapMany<Post, PostSchema>(obj).ToList()
     };
 
@@ -106,5 +94,40 @@ public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
         Message = obj.Message,
         CreationDate = obj.CreationDate,
         IsHighlighted = obj.IsHighlighted
+    };
+
+    /// <inheritdoc />
+    public BulletinBoardTemplate Map(BulletinBoardTemplateSchema obj) => new()
+    {
+        TemplateKey = obj.TemplateKey,
+        Id = KeyMapper.GetId(obj.TemplateKey),
+        Name = obj.Name,
+        ScriptKeys = obj.ScriptKeys.ToHashSet(StringComparer.OrdinalIgnoreCase),
+        ScriptVars = obj.ScriptVars.ToDictionary(kvp => kvp.Key, kvp => (IScriptVars)kvp.Value, StringComparer.OrdinalIgnoreCase)
+    };
+
+    /// <inheritdoc />
+    public BulletinBoardTemplateSchema Map(BulletinBoardTemplate obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public BulletinBoard Map(BulletinBoardSchema obj)
+    {
+        var template = SimpleCache.Get<BulletinBoardTemplate>(obj.TemplateKey);
+        var posts = Mapper.MapMany<Post>(obj.Posts);
+
+        var board = new BulletinBoard(
+            template,
+            LoggerFactory.CreateLogger<BulletinBoard>(),
+            ScriptProvider,
+            posts);
+
+        return board;
+    }
+
+    /// <inheritdoc />
+    public BulletinBoardSchema Map(BulletinBoard obj) => new()
+    {
+        TemplateKey = obj.Template.TemplateKey,
+        Posts = Mapper.MapMany<Post, PostSchema>(obj).ToList()
     };
 }

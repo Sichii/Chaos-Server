@@ -41,7 +41,7 @@ public class RandomizedIntervalTimer : IntervalTimer
         RandomizationType type = RandomizationType.Balanced,
         bool startAsElapsed = true
     )
-        : base(interval)
+        : base(interval, startAsElapsed)
     {
         MaxRandomizationPct = maxRandomizationPct;
         Type = type;

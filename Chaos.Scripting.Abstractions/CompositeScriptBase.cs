@@ -72,5 +72,13 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
     }
 
     /// <inheritdoc />
-    public void Remove(TScript script) => Scripts.Remove(script);
+    public void Remove(TScript script)
+    {
+        if (Scripts.Remove(script))
+            return;
+
+        foreach (var s in Scripts.ToList())
+            if (s is ICompositeScript<TScript> composite)
+                composite.Remove(script);
+    }
 }

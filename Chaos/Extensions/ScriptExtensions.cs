@@ -15,8 +15,15 @@ public static class ScriptExtensions
     {
         var scriptKey = ScriptBase.GetScriptKey(scriptTypeToAdd);
         var script = scriptFactory.CreateScript(new[] { scriptKey }, scripted);
+        var scripts = script as IEnumerable<TScript>;
         var composite = (ICompositeScript<TScript>)scripted.Script;
-        composite.Add(script);
+
+        if (scripts is not null)
+            foreach (var createdScript in scripts)
+                composite.Add(createdScript);
+        else
+            composite.Add(script);
+
         scripted.ScriptKeys.Add(scriptKey);
 
         if (scripted is PanelEntityBase panelEntity && panelToUpdate is not null)
@@ -51,5 +58,15 @@ public static class ScriptExtensions
         outScript = script.As<TScript>();
 
         return outScript is not null;
+    }
+
+    public static void RemoveScript<TBaseScript, TScriptToRemove>(this IScripted<TBaseScript> scripted)
+        where TBaseScript: IScript where TScriptToRemove: TBaseScript
+    {
+        if (!scripted.Script.Is<TScriptToRemove>(out var scriptToRemove))
+            return;
+
+        if (scripted.Script is ICompositeScript<TBaseScript> composite)
+            composite.Remove(scriptToRemove);
     }
 }
