@@ -352,6 +352,7 @@ public sealed class Startup
                           builder.RegisterObjectTransformation<Post>(
                               obj => new
                               {
+                                  PostId = obj.PostId,
                                   Author = obj.Author,
                                   Subject = obj.Subject,
                                   Message = obj.Message,

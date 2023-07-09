@@ -54,9 +54,6 @@ into [AccessManagerOptions](<xref:Chaos.Security.Options.AccessManagerOptions>)
 ## Mode
 
 The mode can be either `Whitelist`, or `Blacklist`. In whitelist mode, only the IPs in the whitelist file are allowed to
-connect. In
-blacklist mode, all IPs are allowed to connect, except those in the blacklist file. These files are located in the
-directory specified and
-the contents of these files should be IP addresses. They can be IPv4 or IPv6 addresses. If the file contains a line that
-is not a valid IP,
-it will be ignored.
+connect. In blacklist mode, all IPs are allowed to connect, except those in the blacklist file. These files are located
+in the directory specified and the contents of these files should be IP addresses. They can be IPv4 or IPv6 addresses.
+If the file contains a line that is not a valid IP, it will be ignored.

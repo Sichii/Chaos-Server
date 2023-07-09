@@ -45,4 +45,4 @@ the primary target. It requires level 10, 2 wis, and 15 apples to learn.
 ## Modifying Spells
 
 While spells are templated and technically modifiable, there is currently very little to actually modify. Most of the
-behavior of spells is contained within scripts, which are not modifiable.
+behavior of spells is contained within scripts, which can be configurable via ScriptVars.

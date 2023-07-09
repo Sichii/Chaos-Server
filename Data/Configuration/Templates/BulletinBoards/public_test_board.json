@@ -6,7 +6,7 @@
     "scriptVars": {
         "publicBoard": {
             "postRetentionHours": -1,
-            "moderators": ["nonadmin"]
+            "moderators": ["fooBar"]
         }
     }
 }

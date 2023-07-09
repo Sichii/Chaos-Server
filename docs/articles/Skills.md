@@ -9,8 +9,7 @@ template to avoid having to serialize data that you have already defined.
 A skill template is the definition of a skill. It contains all data that is common to all instances of that skill.
 
 By default, Skill Templates are stored at `Data\Configuration\Templates\Skills`. Configuration of how skill templates
-are loaded can
-be found in `appsettings.json` at `Options:SkillTemplateCacheOptions`.
+are loaded can be found in `appsettings.json` at `Options:SkillTemplateCacheOptions`.
 
 Skill templates are initially serialized into [SkillTemplateSchema](<xref:Chaos.Schemas.Templates.SkillTemplateSchema>)
 before being mapped to a non-schema type.
@@ -38,9 +37,9 @@ before being mapped to a non-schema type.
 Here is an example of a skill template json. The skill is a basic assail that all classes can learn. It requires level
 1, 2 str, and 20 apples to learn.
 
-[!code-json[](../../Data/Configuration/Templates/Skills/assail.json)
+[!code-json[](../../Data/Configuration/Templates/Skills/assail.json)]
 
 ## Modifying Skills
 
 While skills are templated and technically modifiable, there is currently very little to actually modify. Most of the
-behavior of skills is contained within scripts, which are not modifiable.
+behavior of skills is contained within scripts, which can be configurable via ScriptVars.

@@ -1,58 +1,47 @@
 # Maps
 
-Chaos uses a map instancing system. What map an object is on is determined by that map's MapInstanceId. This allow
-multiple maps
-with the same MapId/Name to coexist at the same time. Chaos also has an automatic map sharding system that will be
-explained later.
+Maps in Chaos are both templated and scripted objects. There are multiple pieces of information to define to create a
+map, the map templates, and the map instances
+
+Chaos uses a map instancing system. What map an object is on is determined by that map's MapInstanceId, instead of it's
+numerical map file number. This allow multiple maps with the same MapId/Name to coexist at the same time. Chaos also has
+an automatic map sharding system that will be explained later.
 
 ## Map Templates
 
 A map template contains a bare minimum of information about a map. Contained within this project are a large amount of
-auto-generated map
-templates that should match up to the maps in original Dark Ages.
+auto-generated map templates that should match up to the maps in original Dark Ages.
 
-By default, Map Templates are stored at `Data\Configuration\Templates\Maps`. Configuration of how map templates are
-loaded can be
-found
-in `appsettings.json` at `Options:MapTemplateCacheOptions`.
+## How do I create them?
+
+There are 2 things you will need to create.
+
+1. A map template, which will define details about the map data to use
+2. A map instance, which will be an instance of a map using the data defined in the map template
+
+### Creating a MapTemplate
+
+By default, map templates should be created at `Data\Configuration\Templates\Maps`. Configuration of how map templates
+are loaded can be found in `appsettings.json` at `Options:MapTemplateCacheOptions`.
 
 Map templates are initially serialized into [MapTemplateSchema](<xref:Chaos.Schemas.Templates.MapTemplateSchema>) before
-being mapped to a
-non-schema type.
+being mapped to a [MapTemplate](<xref:Chaos.Models.Templates.MapTemplate>). The schema object is mapped via the
+the [MapInstanceMapperProfile](<xref:Chaos.Services.MapperProfiles.MapInstanceMapperProfile>).
 
-### MapTemplateSchema
+See [MapTemplateSchema](<xref:Chaos.Schemas.Templates.MapTemplateSchema>) for a list of all configurable properties with
+descriptions.
 
-| Type                  | Name        | Description                                                                                                |
-|-----------------------|-------------|------------------------------------------------------------------------------------------------------------|
-| string                | TemplateKey | A unique id specific to this map instance<br />This must match the name of the folder containing this file |
-| ICollection\<string\> | ScriptKeys  | A collection of names of map scripts to attach to this map by default                                      |
-| byte                  | Height      | The height of the map                                                                                      |
-| byte                  | Width       | The width of the map                                                                                       |
-| Point[]               | WarpPoints  | Nothing atm,                                                                                               |
+### Creating a MapInstance
 
-### Example Map Template Json
+By default, map instances should be created at `Data\Configuration\MapInstances`. Configuration of how map instances are
+loaded can be found in `appsettings.json` at `Options:MapInstanceCacheOptions`.
 
-Here is an example of a map template json for the map used for Mileth (MapId: 500). As with all template objects, the
-file name should match
-the template key. So in this case, the file name is `500.json`, and it is stored in
-the `Data\Configuration\Templates\Maps` directory.
+Map instances are initially serialized into [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>) before
+being mapped to a [MapInstance](<xref:Chaos.Collections.MapInstance>). The schema object is mapped via the
+the [MapInstanceMapperProfile](<xref:Chaos.Services.MapperProfiles.MapInstanceMapperProfile>).
 
-[!code-json[](../../Data/Configuration/Templates/Maps/500.json)]
-
-## Map Instances
-
-Map instances consist of a few different files that contain different information about a map.
-
-- `instance.json` contains additional details about the map instance itself
-- `merchants.json` contains all of the merchant spawners that are on the map
-- `monsters.json` contains all of the monsters spawners that are on the map
-- `reactors.json` contains all of the reactor tiles that are on the map
-
-By default, Map Instances are stored at `Data\Configuration\MapInstances`. Configuration of how map instances are loaded
-can be found
-in `appsettings.json` at `Options:MapInstanceCacheOptions`.
-
-### Example map instance directory
+Map instances are serialized from multiple files, so each map instance should be in it's own directory. Here is the
+folder structure for a map instance:
 
 <pre>
 📂Configuration
@@ -64,131 +53,96 @@ in `appsettings.json` at `Options:MapInstanceCacheOptions`.
      ┗📄reactors.json
 </pre>
 
-## instance.json
+For a list of all configurable properties with descriptions, see:
 
-`instance.json` is serialized into [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>) before being
-mapped to a
-non-schema type.
+- `instance.json` will be serialized from [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>)
+- `merchants.json` will be a jArray of [MerchantSpawnSchema](<xref:Chaos.Schemas.Content.MerchantSpawnSchema>)
+- `monsters.json` will be a jArray of [MonsterSpawnSchema](<xref:Chaos.Schemas.Content.MonsterSpawnSchema>)
+- `reactors.json` will be a jArray of [ReactorTileSchema](<xref:Chaos.Schemas.Content.ReactorTileSchema>)
 
-### MapInstanceSchema
+## How do I use them?
 
-| Type                                                                      | Name            | Description                                                                                                                                                    |
-|---------------------------------------------------------------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| string                                                                    | TemplateKey     | A string representation of the map id. Ex. 500 for mileth                                                                                                      |
-| string                                                                    | Name            | The name of the map that will display in-game                                                                                                                  |
-| string                                                                    | InstanceId      | A unique id specific to this map instance<br/>This must match the name of the folder containing this file                                                      |
-| [MapFlags](<xref:Chaos.Common.Definitions.MapFlags>)                      | Flags           | A flag, or combination of flags that should affect the map<br />You can combine multiple flags by separating them with commas<br />Ex. "Snow, NoTabMap"        |
-| int?                                                                      | MinimumLevel    | Default null<br />If specified, sets the maximum level allowed to enter this map via warp tile                                                                 |
-| int?                                                                      | MaximumLevel    | Default null<br />If specified, sets the minimum level needed to enter this map via warp tile                                                                  |
-| byte                                                                      | Music           | The byte values of the music track to play when entering the map<br />These values aren't explored yet, so you'll have to figure out what's available yourself |
-| ICollection\<string\>                                                     | ScriptKeys      | A collection of script keys for script to load for this map                                                                                                    |
-| [ShardingOptionsSchema?](<xref:Chaos.Schemas.Data.ShardingOptionsSchema>) | ShardingOptions | Default null<br/>If specified, these options will be used to determine how this instance will shard itself                                                     |
+Map instances are loaded via the [ExpiringMapInstanceCache](<xref:Cahos.Services.Storage.ExpiringMapInstanceCache>),
+which is an implementation of [ISimpleCache\<T\>](<xref:Chaos.Storage.Abstractions.ISimpleCache`1>).
 
-### Example instance.json
+> [!NOTE]
+> Map instances are loaded on-demand, and can expire if not accessed for a period of time
 
-Here is an example of an `instance.json` for Mileth. Note that this map instance references a `templateKey` of `500`.
-This is the key of
-the Map Template that this map instance is based on.
+You can fetch the map instance directly like this:
 
-[!code-json[](../../Data/Configuration/MapInstances/mileth/instance.json)]
+```cs
+private readonly ISimpleCache SimpleCache;
 
-### Instance Sharding
+public Foo(ISimpleCache simpleCache) => SimpleCache = simpleCache;
 
-When sharding options are specified in the `instance.json` file, automatic sharding will be enabled for that map
-instance.  
-See [ShardingOptionsSchema](<xref:Chaos.Schemas.Data.ShardingOptionsSchema>) for more details
+public void Bar()
+{
+    var mapInstance = SimpleCache.Get<MapInstance>("mileth");
+}
+```
 
-### ShardingOptionsSchema
+You can also fetch the cache itself like this:
 
-| Type                                                         | Name         | Description                                                                            |
-|--------------------------------------------------------------|--------------|----------------------------------------------------------------------------------------|
-| [Location](<xref:Chaos.Geometry.Location>)                   | ExitLocation | The instanceId to teleport players to if they log on and the instance no longer exists |
-| int                                                          | Limit        | The number of players or groups allowed per instance (based on Shardingtype)           |
-| [ShardingType](<xref:Chaos.Common.Definitions.ShardingType>) | ShardingType | The conditions that lead to new shards of this instance being created                  |
+```cs
+private readonly ISimpleCacheProvider SimpleCacheProvider;
 
-### Example instance.json with sharding
+public Foo(ISimpleCacheProvider simpleCacheProvider) => SimpleCacheProvider = simpleCacheProvider;
 
-In this example, this map will shard every time a unique player tries to enter the map. If for any reason the server
-does not know where to
-put a player that is trying to enter a shard of this map, say for example they log off for an extended period of time
-and the shard shuts
-down, they will be placed in the map instance `testTown` at coordinates `1, 13`
+public void Bar()
+{
+    //fetch the ISimpleCache<T> implementation
+    var mapInstanceCache = SimpleCacheProvider.GetCache<MapInstance>();
+    
+    //fetch map instance from that cache
+    var mapInstance = mapInstanceCache.Get("mileth");
+}
+```
 
-[!code-json[](../../Data/Configuration/MapInstances/testArea/instance.json)]
+## Map Sharding
 
-## merchants.json
+When creating your map instance, you might notice that there are sharding options. Under the conditions that you set in
+those options, a new map instance will be spun up with a new map instance id. The map instance id will be the same as
+the instance id of the map that it was sharded from, but with a guid attached. You can view all the shards of a map
+instance from any of the shards, or the base map instance by accessing the `MapInstance.Shards` property.
 
-`merchants.json` is serialized into [MerchantSpawnSchema](<xref:Chaos.Schemas.Content.MerchantSpawnSchema>) before being
-mapped to
-a non-schema type.
+It's important to note here that these shards are the same type of "instances" that you might find in AAA MMO's. These
+instances are not owned or associated to any aisling, and there are no persistent zone timers or anything.
 
-Most importantly, there is the ability to add extra script keys to the merchant that are not normally part of it. This
-allows you to have
-multiple instances of the same merchant that each do slightly different things.
+### AbsolutePlayerLimit
 
-See [the article on merchants](<Merchants.md>) for more information on how to create merchants.
+- Once the map instance has reached `ShardingOptions.Limit` number of players, any new players that get added will
+  instead be added to any existing shards that arent yet full
+- If no shards exist, or all shards are full, a new shard will be created
+- If the limit is 1, no checks will be made on existing shards, and a new map instance will always be created (shards
+  will not be reused)
+- If a player logs out of one of these instances, if the instance still exists, they will be added back to it, otherwise
+  they will be added moved to `ShardingOptions.ExitLocation`
+- If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
+  `ShardingOptions.ExitLocation` after a short delay
 
-### MerchantSpawnSchema
+### PlayerLimit
 
-| Type                                                                  | Name                | Description                                                                             |
-|-----------------------------------------------------------------------|---------------------|-----------------------------------------------------------------------------------------|
-| string                                                                | MerchantTemplateKey | The unique id for the template of the merchant to spawn                                 |
-| [Point](<xref:Chaos.Geometry.Point>)                                  | SpawnPoint          | The point on ths map where the merchant will spawn                                      |
-| [Direction](<xref:Chaos.Geometry.Abstractions.Definitions.Direction>) | Direction           | The direction the merchant will be facing when spawned                                  |
-| ICollection\<string\>                                                 | ExtraScriptKeys     | A collection of extra merchant script keys to add to the monsters created by this spawn |
+The same as AbsolutePlayerLimit except for the following
 
-### Example merchants.json
+- When joining a shard, an attempt will be made to place group members together, even if the shard is full
+- Players will not be removed from a shard if it is over-filled
 
-[!code-json[](../../Data/Configuration/MapInstances/testTown/merchants.json)]
+### AbsoluteGroupLimit
 
-## monsters.json
+- Once the map instance has reached `ShardingOptions.Limit` number of groups, any aisling not in an existing group that
+  get added will instead be added to any existing shards that arent yet full
+- If no shards exist, or all shards are full, a new shard will be created
+- If the limit is 1, if no group member is in an existing shard, a new shard will always be created. (shards will not be
+  reused)
+- If a player logs out of one of these instances, if the instance still exists, they will be added back to it, otherwise
+  they will be added moved to `ShardingOptions.ExitLocation`
+- If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
+  `ShardingOptions.ExitLocation` after a short delay. If the player is grouped by someone, they will not be moved.
 
-`monsters.json` is serialized into [MonsterSpawnSchema](<xref:Chaos.Schemas.Content.MonsterSpawnSchema>) before being
-mapped to a non-schema
-type.
+## Example
 
-See [the article on monsters](<Monsters.md>) for more information on how to create monsters.  
-See [the article on loot tables](<LootTables.md>) for more information on how to create loot tables.
+Here is an example of a map template json for the map used for Mileth (MapId: 500). As with all template objects, the
+file name should match the template key. So in this case, the file name is `500.json`, and it is stored in
+the `Data\Configuration\Templates\Maps` directory.
 
-Similarly to `merchants.json` you can add extra script keys, and various other information to a specific spawn of a
-monster.
-
-### MonsterSpawnSchema
-
-| Type                                          | Name                | Description                                                                                                                                                                                  |
-|-----------------------------------------------|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| string                                        | MonsterTemplateKey  | The unique id for the template of the monster to spawn                                                                                                                                       |
-| ICollection\<string\>                         | ExtraLootTableKeys  | A collection of extra loot table keys that this monster can drop from specifically for this map                                                                                              |
-| int                                           | MaxAmount           | The maximum number of monsters that can be on the map from this spawn                                                                                                                        |
-| int                                           | MaxPerSpawn         | The maximum number of monsters to create per interval of this spawn                                                                                                                          |
-| int                                           | IntervalSecs        | The number of seconds between each trigger of this spawn                                                                                                                                     |
-| int?                                          | IntervalVariancePct | Defaults to 0<br />If specified, will randomize the interval by the percentage specified<br />Ex. With an interval of 60, and a Variance of 50, the spawn interval would vary from 45-75secs |
-| [Rectangle?](<xref:Chaos.Geometry.Rectangle>) | SpawnArea           | Defaults to spawn on entire map<br />If specified, monsters will only spawn within the specified bounds                                                                                      |
-| ICollection\<string\>                         | ExtraScriptKeys     | A collection of extra monster script keys to add to the monsters created by this spawn                                                                                                       |
-
-### Example monsters.json
-
-[!code-json[](../../Data/Configuration/MapInstances/test1/monsters.json)]
-
-## reactors.json
-
-`reactors.json` is serialized into [ReactorTileSchema](<xref:Chaos.Schemas.Content.ReactorTileSchema>) before being
-mapped to a non-schema
-type.
-
-> [!CAUTION]
-> Reactors added directly to a map are not the same as the reactors that are created on the fly by scripts.
-
-### ReactorTileSchema
-
-| Type                                                                              | Name                    | Description                                                                                                                                                                                   |
-|-----------------------------------------------------------------------------------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Point](<xref:Chaos.Geometry.Point>)                                              | Source                  | The coordinates this reactor is located at                                                                                                                                                    |
-| bool                                                                              | ShouldBlockPathfinding  | Whether or not this reactor should block monster pathfinding. If this is set to false, monsters and merchants will be able to step on this reactor                                            |
-| string?                                                                           | OwnerMonsterTemplateKey | If this reactor does damage, it is required to have an owner, otherwise this property can be ignored. The owning monster can be a basic monster with no stats or scripts                      |
-| ICollection\<string\>                                                             | ScriptKeys              | A collection of names of scripts to attach to this object by default                                                                                                                          |
-| IDictionary\<string, [DynamicVars](<xref:Chaos.Collections.Common.DynamicVars>)\> | ScriptVars              | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
-
-### Example reactors.json
-
-[!code-json[](../../Data/Configuration/MapInstances/testArea/reactors.json)]
+[!code-json[](../../Data/Configuration/Templates/Maps/500.json)]
