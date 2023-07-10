@@ -58,6 +58,10 @@ public sealed record AttributesArgs : ISendArgs
     /// </summary>
     public uint Gold { get; set; }
     /// <summary>
+    ///     Whether or not the mail icon should blink
+    /// </summary>
+    public bool HasUnreadMail { get; set; }
+    /// <summary>
     ///     The hit stat of the character
     /// </summary>
     public byte Hit { get; set; }
@@ -77,10 +81,6 @@ public sealed record AttributesArgs : ISendArgs
     ///     The magic resistance of the character
     /// </summary>
     public byte MagicResistance { get; set; }
-    /// <summary>
-    ///     The mail flags of the character
-    /// </summary>
-    public MailFlag MailFlags { get; set; }
     /// <summary>
     ///     The maximum hp of the character
     /// </summary>

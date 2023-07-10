@@ -22,6 +22,9 @@ public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArg
         if (args.IsAdmin)
             updateType |= StatUpdateType.GameMasterA;
 
+        if (args.HasUnreadMail)
+            updateType |= StatUpdateType.UnreadMail;
+
         writer.WriteByte((byte)updateType);
 
         if (args.StatUpdateType.HasFlag(StatUpdateType.Primary))
@@ -64,7 +67,7 @@ public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArg
             writer.WriteByte(0); //dunno
             writer.WriteBoolean(args.Blind);
             writer.WriteBytes(new byte[3]); //dunno
-            writer.WriteByte((byte)args.MailFlags);
+            writer.WriteByte((byte)(args.HasUnreadMail ? MailFlag.HasMail : MailFlag.None));
             writer.WriteByte((byte)args.OffenseElement);
             writer.WriteByte((byte)args.DefenseElement);
             writer.WriteByte(args.MagicResistance);

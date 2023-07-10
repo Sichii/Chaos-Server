@@ -139,10 +139,49 @@ The same as AbsolutePlayerLimit except for the following
 - If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
   `ShardingOptions.ExitLocation` after a short delay. If the player is grouped by someone, they will not be moved.
 
+## Scripting
+
+Maps are scripted via [IMapScript](<xref:Chaos.Scripting.MapScripts.Abstractions.IMapScript>).
+
+- Inherit from [MapScriptBase](<xref:Chaos.Scripting.MapScripts.Abstractions.MapScriptBase>) for a basic script that
+  requires no external configuration
+- I could not think of a reason to have configurable map scripts, but you are free to create the base for yourself
+
+Specify any number of script keys in the `MapInstance.ScriptKeys` property, and those scripts will automatically be
+attached to the `MapInstance` when it is created.
+
+> [!NOTE]
+> The key of a script is the name of the class without 'Script' at the end
+
+Here are the events overridable in map scripts:
+
+| Event Name | Description                                                                                                                                                                              |
+|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OnEntered  | Called after a creature has entered the map for any reason (including spawns). This includes monsters, merchants, and aislings<br/>This is called after OnSpawn, but before OnApproached |
+| OnExited   | Called after a creature has exited the map for any reason (including death). This includes monsters, merchants, and aislings<br/>This is called after OnDeath, but before OnDeparture    |
+| Update     | Called every time the map updates. Ever map has it's own update loop. Time between updates is configurable via [WorldOptions](WorldOptions.md#updatespersecond)                          |
+
 ## Example
 
-Here is an example of a map template json for the map used for Mileth (MapId: 500). As with all template objects, the
-file name should match the template key. So in this case, the file name is `500.json`, and it is stored in
-the `Data\Configuration\Templates\Maps` directory.
+Here is an example of a map template json for the map used for TestTown. This map uses `lod3043.map`, has a number of
+test merchants on it, no monsters, 2 boards, a world map, and a warp reactor.
 
-[!code-json[](../../Data/Configuration/Templates/Maps/500.json)]
+### MapTemplate `3043.json`
+
+[!code-json[](../../Data/Configuration/Templates/Maps/3043.json)]
+
+### MapInstance `instance.json`
+
+[!code-json[](../../Data/Configuration/MapInstances/testTown/instance.json)]
+
+### MapInstance `merchants.json`
+
+[!code-json[](../../Data/Configuration/MapInstances/testTown/merchants.json)]
+
+### MapInstance `monsters.json`
+
+[!code-json[](../../Data/Configuration/MapInstances/testTown/monsters.json)]
+
+### MapInstance `reactors.json`
+
+[!code-json[](../../Data/Configuration/MapInstances/testTown/reactors.json)]

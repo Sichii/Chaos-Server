@@ -2,8 +2,6 @@
     "itemsForSale": [],
     "itemsToBuy": [],
     "name": "Bank Tester",
-    "restockIntervalHours": 6,
-    "restockPercent": 100,
     "scriptKeys": ["showdialog", "verbalBanker"],
     "scriptVars": {
         "showdialog": {

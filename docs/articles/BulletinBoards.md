@@ -125,13 +125,14 @@ property.
 
 Here are the events overridable in bulletinBoard scripts
 
-| Event Name         | Context                                                                                                                                               |
-|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| AllowedToDelete    | Called when an aisling is trying to delete a post                                                                                                     |
-| AllowedToHighlight | Called when an aisling is trying to highlight a post. It's also used to determine if an aisling has the ability to see the highlight button in the UI |
-| AllowedToPost      | Called when an aisling is trying to post to the board                                                                                                 |
-| AllowedToView      | Called when an aisling is trying to view the board, or a post on the board                                                                            |
-| ShouldRejectPost   | Called when an aisling is trying to post to the board. This event should be used to filter out posts for whatever reason you decide                   |
+| Event Name         | Context                                                                                                                                                             |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AllowedToDelete    | Called when an aisling is trying to delete a post                                                                                                                   |
+| AllowedToHighlight | Called when an aisling is trying to highlight a post. It's also used to determine if an aisling has the ability to see the highlight button in the UI               |
+| AllowedToPost      | Called when an aisling is trying to post to the board                                                                                                               |
+| AllowedToView      | Called when an aisling is trying to view the board, or a post on the board                                                                                          |
+| ShouldRejectPost   | Called when an aisling is trying to post to the board. This event should be used to filter out posts for whatever reason you decide                                 |
+| Update             | Called every time boards update, which is about once per minute. Boards update separately from all other objects. Only boards that have been loaded will be updated |
 
 See [Scripting](Scripting.md) for more details on scripting in general
 

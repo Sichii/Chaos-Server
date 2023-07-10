@@ -95,10 +95,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     {
         var args = Mapper.Map<AttributesArgs>(Aisling);
 
-        if (Aisling.MailBox.Any(post => post.IsHighlighted))
-            statUpdateType |= StatUpdateType.UnreadMail;
-
-        args.StatUpdateType = statUpdateType;
+        args.StatUpdateType |= statUpdateType;
         Send(args);
     }
 

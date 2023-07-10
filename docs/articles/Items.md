@@ -25,7 +25,7 @@ with descriptions.
 ## How do I use them?
 
 Items can be created by using the [ItemFactory](<xref:Chaos.Services.Factories.ItemFactory>), which is an implementation
-of [IItemFactory](<xref:Chaos.Services.Factories.Abstractions.IItemFactory).
+of [IItemFactory](<xref:Chaos.Services.Factories.Abstractions.IItemFactory>).
 
 > [!NOTE]
 > Each item is a fresh instance of an item created from a template. Any changes made to the template will apply to all
@@ -58,7 +58,7 @@ things to know before implementing these systems.
 - You must mutate the meta node of the item so that there is a separate meta node for each modification.
   See [this article](MetaData.md#mutators) on how to do that
 
-When the item is serialize back to file, the extra script key of the script you added that contains the modifications
+When the item is serialized back to file, the extra script key of the script you added that contains the modifications
 will be serialized as well. This will allow that modification script to be re-applied when the item is deserialized.
 
 To add a script to an object at runtime, just use the extension method `AddScript`.
@@ -67,6 +67,35 @@ To add a script to an object at runtime, just use the extension method `AddScrip
 
 The color of the item (not the item template) can be changed, but in order for this change to be persisted,
 the `ItemTemplate.IsDyeable` must be set to true.
+
+## Scripting
+
+Items are scripted via [IItemScript](<xref:Chaos.Scripting.ItemScripts.Abstractions.IItemScript>).
+
+- Inherit from [ItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.ItemScriptBase>) for a basic script that
+  requires no external configuration
+- Inherit from [ConfigurableItemScriptBase](<xref:Chaos.Scripting.ItemScripts.Abstractions.ConfigurableItemScriptBase>)
+  for a script that requires external configuration via ScriptVars
+
+Specify any number of script keys in the `ItemTemplate.ScriptKeys` property, and those scripts will automatically be
+attached to the `Item` when it is created.
+
+If the script is configurable, you must also have an entry for that script in the `ItemTemplate.ScriptVars` property.
+
+> [!NOTE]
+> The key of a script is the name of the class without 'Script' at the end
+
+Here are the events overridable in item scripts:
+
+| Event Name   | Description                                                                                                                                                                                                                                     |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CanUse       | Called before the item is used. Return false to prevent the item from being used                                                                                                                                                                |
+| OnDropped    | Called after the item is dropped, but before reactor tiles are notified                                                                                                                                                                         |
+| OnEquipped   | Called after the item has been equipped                                                                                                                                                                                                         |
+| OnPickup     | Called after the item has been picked up. Beware that if a stackable item is picked up, this event will be fired from the item after it has been merged into another stack.<br/>Details about the original item will be properties in the event |
+| OnUnEquipped | Called after the item has been unequipped                                                                                                                                                                                                       |
+| OnUse        | Called when the item is used. Provide functionality to items via this event                                                                                                                                                                     |
+| Update       | Called every time the map updates. Items will update if they're on the ground, in an inventory, or equipped, but will not update if they are in the bank                                                                                        |
 
 ## Example
 

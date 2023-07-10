@@ -248,6 +248,10 @@ public sealed class MailBox : BoardBase
 
         Posts[post.PostId] = post;
 
+        //if no unread mail, remove blinking mail icon
+        if (!Posts.Values.Any(i => i.IsHighlighted))
+            unhighlightedBy.Client.SendAttributes(StatUpdateType.Secondary);
+
         Logger.WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)

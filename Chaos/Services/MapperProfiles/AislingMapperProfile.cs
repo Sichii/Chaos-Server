@@ -175,8 +175,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Int = obj.UserStatSheet.EffectiveInt,
         IsAdmin = obj.IsAdmin,
         Level = (byte)obj.UserStatSheet.Level,
+        HasUnreadMail = obj.MailBox.Any(post => post.IsHighlighted),
         MagicResistance = (byte)(obj.UserStatSheet.EffectiveMagicResistance / 10),
-        MailFlags = MailFlag.None, //TODO: mail system
         MaximumHp = obj.UserStatSheet.EffectiveMaximumHp,
         MaximumMp = obj.UserStatSheet.EffectiveMaximumMp,
         MaxWeight = (short)obj.UserStatSheet.MaxWeight,
