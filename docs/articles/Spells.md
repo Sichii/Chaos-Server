@@ -1,48 +1,79 @@
 # Spells
 
 Spells in Chaos are both templated and scripted objects. When you define a spell, you are actually defining a spell
-template, and that spell template can be further changed via in-game systems. The spell remains associated to the
-template to avoid having to serialize data that you have already defined.
+template that will be used to create new instances of that spell as requested. Each spell that is created is a fresh
+instance of that spell created from it's template.
 
 ## Spell Templates
 
-A spell template is the definition of a spell. It contains all data that is common to all instances of that spell.
+A spell template is used to create new instances of spells as required. The template defines the base properties of the
+spell, but most of the effects of spells are determine through their scripts.
 
-By default, Spell Templates are stored at `Data\Configuration\Templates\Spells`. Configuration of how spell templates
-are loaded can
-be found in `appsettings.json` at `Options:SpellTemplateCacheOptions`.
+## How do I create them?
+
+By default, spell templates should be created in `Data\Configuration\Templates\Spells`. Configuration of how spell
+templates are loaded can be found in `appsettings.json` at `Options:SpellTemplateCacheOptions`.
 
 Spell templates are initially serialized into [SpellTemplateSchema](<xref:Chaos.Schemas.Templates.SpellTemplateSchema>)
-before being mapped to a non-schema type.
+before being mapped to a [SpellTemplate](<xref:Chaos.Models.Templates.SpellTemplate>). The schema object is mapped via
+the [SpellMapperProfile](<xref:Chaos.Services.MapperProfiles.SpellMapperProfile>).
 
-### SpellTemplateSchema
+See [SpellTemplateSchema](<xref:Chaos.Schemas.Templates.SpellTemplateSchema>) for a list of all configurable properties
+with descriptions.
 
-| Type                                                                                | Name                 | Description                                                                                                                                                                                   |
-|-------------------------------------------------------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| string                                                                              | TemplateKey          | A unique id specific to this template. This must match the file name                                                                                                                          |
-| ICollection\<string\>                                                               | ScriptKeys           | A collection of names of scripts to attach to this object by default                                                                                                                          |
-| IDictionary\<string, [DynamicVars](<xref:Chaos.Collections.Common.DynamicVars>)\>   | ScriptVars           | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
-| string                                                                              | Name                 | The base name of the object                                                                                                                                                                   |
-| string?                                                                             | Description          | A brief description of this entity                                                                                                                                                            |
-| ushort                                                                              | PanelSprite          | The sprite id used to display the object in it's respective panel, minus the offset                                                                                                           |
-| int                                                                                 | Level                | The level required to use this object                                                                                                                                                         |
-| bool                                                                                | RequiresMaster       | Whether or not this object requires you to be a master                                                                                                                                        |
-| [BaseClass](<xref:Chaos.Common.Definitions.BaseClass>)?                             | Class                | The class required to use this object                                                                                                                                                         |
-| [AdvClass](<xref:Chaos.Common.Definitions.AdvClass>)?                               | AdvClass             | The advanced class required to use this object                                                                                                                                                |
-| int?                                                                                | CooldownMs           | Defaults to null<br />If specified, any on-use effect of this object will use this cooldown                                                                                                   |
-| [LearningRequirementsSchema](<xref:Chaos.Schemas.Data.LearningRequirementsSchema>)? | LearningRequirements | Defaults to null<br/>If set, these are the requirements for the spell to be learned<br/>If null, the spell can't be learned                                                                   |
-| byte                                                                                | CastLines            | The number of chant lines this spell requires by default                                                                                                                                      |
-| string?                                                                             | Prompt               | Defaults to null<br/>Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when used in game                                                             |
-| [SpellType](<xref:Chaos.Common.Definitions.SpellType>)                              | SpellType            | The way the spell is cast by the player                                                                                                                                                       |
+## How do I use them?
 
-### Example Spell Template Json
+Spells can be created by using the [SpellFactory](<xref:Chaos.Services.Factories.SpellFactory>), which is an
+implementation of [ISpellFactory](<xref:Chaos.Services.Factories.Abstractions.ISpellFactory>).
 
-Here is an example of a spell template json. This spell puts a regenerative effect on friendly targets in an area around
-the primary target. It requires level 10, 2 wis, and 15 apples to learn.
+> [!NOTE]
+> Each spell is a fresh instance of an spell created from a template. Any changes made to the template will apply to all
+> instances of that spell.
 
-[!code-json[](../../Data/Configuration/Templates/Spells/regrowth.json)
+```cs
+private readonly ISpellFactory SpellFactory;
 
-## Modifying Spells
+public Foo(ISpellFactory spellFactory) => SpellFactory = spellFactory;
 
-While spells are templated and technically modifiable, there is currently very little to actually modify. Most of the
-behavior of spells is contained within scripts, which can be configurable via ScriptVars.
+public void Bar()
+{
+    // create a new instance of the "hide" spell
+    // extraScriptKeys is optional, and can be used to pass in extra script keys that are not part of the templated spell
+    var spell = SpellFactory.Create("hide", extraScriptKeys);
+}
+```
+
+Every spell has a unique id, however, if you only want to create a spell for the purposes of finding or displaying
+information about it, you can instead use `CreateFaux`. This will create a spell without a unique id.
+
+## Scripting
+
+Spells are scripted via [ISpellScript](<xref:Chaos.Scripting.SpellScripts.Abstractions.ISpellScript>).
+
+- Inherit from [SpellScriptBase](<xref:Chaos.Scripting.SpellScripts.Abstractions.SpellScriptBase>) for a basic script
+  that requires no external configuration
+- Inherit
+  from [ConfigurableSpellScriptBase](<xref:Chaos.Scripting.SpellScripts.Abstractions.ConfigurableSpellScriptBase>)
+  for a script that requires external configuration via ScriptVars
+
+Specify any number of script keys in the `SpellTemplate.ScriptKeys` property, and those scripts will automatically be
+attached to the `Spell` when it is created.
+
+If the script is configurable, you must also have an entry for the script in the `SpellTemplate.ScriptVars` property.
+
+> [!NOTE]
+> The key of a script is the name of the class without 'Script' at the end
+
+Here are the events overridable in spell scripts:
+
+| Event Name | Description                                                                                   |
+|------------|-----------------------------------------------------------------------------------------------|
+| CanUse     | Called when a spell is about to be used. Return false to prevent the spell from being used    |
+| OnUse      | Called when a spell is used. Provide functionality to spells via this event                   |
+| Update     | Called every time the map updates. Spells will update only if they're in a player's spellbook |
+
+## Example
+
+Here is an example of a spell that functions similarly to "Hide" from original DarkAges.
+
+[!code-json[](../../Data/Configuration/Templates/Spells/hide.json)]

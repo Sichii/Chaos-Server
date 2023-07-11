@@ -24,7 +24,7 @@ configurable properties with descriptions.
 ## How do I use them?
 
 BulletinBoards are loaded via the [BulletinBoardStore](<xref:Chaos.Services.Storage.BulletinBoardStore>),
-which is an implementation of [IStore\<T\>](<xref:Chaos.Storage.Abstraction.IStore`1>).
+which is an implementation of [IStore\<T\>](<xref:Chaos.Storage.Abstractions.IStore`1>).
 
 > [!NOTE]
 > Objects stored via `IStore<T>` are loaded on-demand, and never go out of scope
@@ -51,7 +51,7 @@ in `appsettings.json` at `Options:MailBoxStoreOptions`.
 ### How do I use them?
 
 MailBoxes are made accessibly through the [MailStore](<xref:Chaos.Services.Storage.MailStore>), which is an
-implementation of [IStore\<T\>](<xref:Chaos.Storage.Abstraction.IStore`1>).
+implementation of [IStore\<T\>](<xref:Chaos.Storage.Abstractions.IStore`1>).
 
 > [!NOTE]
 > Objects stored via `IStore<T>` are loaded on-demand, and never go out of scope

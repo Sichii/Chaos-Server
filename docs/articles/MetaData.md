@@ -3,8 +3,8 @@
 When a client logs into the game, one of the first things it does is request the server's metadata. There are various
 kinds of metadata and
 each kind will be detailed below. Generation of metadata is handled by
-the [MetaDataCache](<xref:Chaos.Services.Storage.MetaDataCache>) class. Configuration for this class can be specified
-via `Options:MetaDataCacheOptions`.
+the [MetaDataStore](<xref:Chaos.Services.Storage.MetaDataStore>) class. Configuration for this class can be specified
+via `Options:MetaDataStoreOptions`.
 
 ## MetaDataCacheOptions
 
@@ -23,7 +23,7 @@ mutator that
 simulates enchantments through non-destructive mutation of an item meta node.
 
 Implement your own mutator as implementations of
-the [IMetaNodeMutator](<xref:Chaos.Services.Storage.Abstractions.IMetaNodeMutator`1>) interface and add it to
+the [IMetaNodeMutator](<xref:Chaos.MetaData.Abstractions.IMetaNodeMutator`1>) interface and add it to
 the `MetaDataCacheOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
 
 ### Example

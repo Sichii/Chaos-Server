@@ -378,7 +378,16 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendForcedClientPacket(ref ClientPacket clientPacket) => throw new NotImplementedException();
+    public void SendForcedClientPacket(ref ClientPacket clientPacket)
+    {
+        var args = new ForceClientPacketArgs
+        {
+            ClientOpCode = clientPacket.OpCode,
+            Data = clientPacket.Buffer.ToArray()
+        };
+
+        Send(args);
+    }
 
     public void SendGroupRequest(GroupRequestType groupRequestType, string fromName)
     {

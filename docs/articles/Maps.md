@@ -62,7 +62,7 @@ For a list of all configurable properties with descriptions, see:
 
 ## How do I use them?
 
-Map instances are loaded via the [ExpiringMapInstanceCache](<xref:Cahos.Services.Storage.ExpiringMapInstanceCache>),
+Map instances are loaded via the [ExpiringMapInstanceCache](<xref:Chaos.Services.Storage.ExpiringMapInstanceCache>),
 which is an implementation of [ISimpleCache\<T\>](<xref:Chaos.Storage.Abstractions.ISimpleCache`1>).
 
 > [!NOTE]

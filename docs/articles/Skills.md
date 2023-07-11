@@ -1,45 +1,79 @@
 # Skills
 
 Skills in Chaos are both templated and scripted objects. When you define a skill, you are actually defining a skill
-template, and that skill template can be further changed via in-game systems. The skill remains associated to the
-template to avoid having to serialize data that you have already defined.
+template that will be used to create new instances of that skill as requested. Each skill that is created is a fresh
+instance of that skill created from it's template.
 
 ## Skill Templates
 
-A skill template is the definition of a skill. It contains all data that is common to all instances of that skill.
+A skill template is used to create new instances of skills as required. The template defines the base properties of the
+skill, but most of the effects of skills are determine through their scripts.
 
-By default, Skill Templates are stored at `Data\Configuration\Templates\Skills`. Configuration of how skill templates
-are loaded can be found in `appsettings.json` at `Options:SkillTemplateCacheOptions`.
+## How do I create them?
+
+By default, skill templates should be created in `Data\Configuration\Templates\Skills`. Configuration of how skill
+templates are loaded can be found in `appsettings.json` at `Options:SkillTemplateCacheOptions`.
 
 Skill templates are initially serialized into [SkillTemplateSchema](<xref:Chaos.Schemas.Templates.SkillTemplateSchema>)
-before being mapped to a non-schema type.
+before being mapped to a [SkillTemplate](<xref:Chaos.Models.Templates.SkillTemplate>). The schema object is mapped via
+the [SkillMapperProfile](<xref:Chaos.Services.MapperProfiles.SkillMapperProfile>).
 
-### SkillTemplateSchema
+See [SkillTemplateSchema](<xref:Chaos.Schemas.Templates.SkillTemplateSchema>) for a list of all configurable properties
+with descriptions.
 
-| Type                                                                                | Name                 | Description                                                                                                                                                                                   |
-|-------------------------------------------------------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| string                                                                              | TemplateKey          | A unique id specific to this template. This must match the file name                                                                                                                          |
-| ICollection\<string\>                                                               | ScriptKeys           | A collection of names of scripts to attach to this object by default                                                                                                                          |
-| IDictionary\<string, [DynamicVars](<xref:Chaos.Collections.Common.DynamicVars>)\>   | ScriptVars           | A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of propertyName-Value pairs |
-| string                                                                              | Name                 | The base name of the object                                                                                                                                                                   |
-| string?                                                                             | Description          | A brief description of this entity                                                                                                                                                            |
-| ushort                                                                              | PanelSprite          | The sprite id used to display the object in it's respective panel, minus the offset                                                                                                           |
-| int                                                                                 | Level                | The level required to use this object                                                                                                                                                         |
-| bool                                                                                | RequiresMaster       | Whether or not this object requires you to be a master                                                                                                                                        |
-| [BaseClass](<xref:Chaos.Common.Definitions.BaseClass>)?                             | Class                | The class required to use this object                                                                                                                                                         |
-| [AdvClass](<xref:Chaos.Common.Definitions.AdvClass>)?                               | AdvClass             | The advanced class required to use this object                                                                                                                                                |
-| int?                                                                                | CooldownMs           | Defaults to null<br />If specified, any on-use effect of this object will use this cooldown                                                                                                   |
-| bool                                                                                | IsAssail             | Whether or not the skill is an assail and should be used when spacebar is pressed<br/>Assail cooldowns are handled by AssailIntervalMs and AtkSpeedPct                                        |
-| [LearningRequirementsSchema](<xref:Chaos.Schemas.Data.LearningRequirementsSchema>)? | LearningRequirements | Defaults to null<br/>If set, these are the requirements for the skill to be learned<br/>If null, the skill can't be learned                                                                   |
+## How do I use them?
 
-### Example Skill Template Json
+Skills can be created by using the [SkillFactory](<xref:Chaos.Services.Factories.SkillFactory>), which is an
+implementation of [ISkillFactory](<xref:Chaos.Services.Factories.Abstractions.ISkillFactory>).
 
-Here is an example of a skill template json. The skill is a basic assail that all classes can learn. It requires level
-1, 2 str, and 20 apples to learn.
+> [!NOTE]
+> Each skill is a fresh instance of an skill created from a template. Any changes made to the template will apply to all
+> instances of that skill.
+
+```cs
+private readonly ISkillFactory SkillFactory;
+
+public Foo(ISkillFactory skillFactory) => SkillFactory = skillFactory;
+
+public void Bar()
+{
+    // create a new instance of the "assail" skill
+    // extraScriptKeys is optional, and can be used to pass in extra script keys that are not part of the templated skill
+    var skill = SkillFactory.Create("assail", extraScriptKeys);
+}
+```
+
+Every skill has a unique id, however, if you only want to create a skill for the purposes of finding or displaying
+information about it, you can instead use `CreateFaux`. This will create a skill without a unique id.
+
+## Scripting
+
+Skills are scripted via [ISkillScript](<xref:Chaos.Scripting.SkillScripts.Abstractions.ISkillScript>).
+
+- Inherit from [SkillScriptBase](<xref:Chaos.Scripting.SkillScripts.Abstractions.SkillScriptBase>) for a basic script
+  that requires no external configuration
+- Inherit
+  from [ConfigurableSkillScriptBase](<xref:Chaos.Scripting.SkillScripts.Abstractions.ConfigurableSkillScriptBase>)
+  for a script that requires external configuration via ScriptVars
+
+Specify any number of script keys in the `SkillTemplate.ScriptKeys` property, and those scripts will automatically be
+attached to the `Skill` when it is created.
+
+If the script is configurable, you must also have an entry for the script in the `SkillTemplate.ScriptVars` property.
+
+> [!NOTE]
+> The key of a script is the name of the class without 'Script' at the end
+
+Here are the events overridable in skill scripts:
+
+| Event Name | Description                                                                                   |
+|------------|-----------------------------------------------------------------------------------------------|
+| CanUse     | Called when a skill is about to be used. Return false to prevent the skill from being used    |
+| OnUse      | Called when a skill is used. Provide functionality to skills via this event                   |
+| Update     | Called every time the map updates. Skills will update only if they're in a player's skillbook |
+
+## Example
+
+Here is an example of a skill that functions similarly to "Assail" from original DarkAges.
 
 [!code-json[](../../Data/Configuration/Templates/Skills/assail.json)]
-
-## Modifying Skills
-
-While skills are templated and technically modifiable, there is currently very little to actually modify. Most of the
-behavior of skills is contained within scripts, which can be configurable via ScriptVars.

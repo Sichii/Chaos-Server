@@ -16,7 +16,7 @@ By default, item templates should be created in `Data\Configuration\Templates\It
 templates are loaded can be found in `appsettings.json` at `Options:ItemTemplateCacheOptions`.
 
 Item templates are initially serialized into [ItemTemplateSchema](<xref:Chaos.Schemas.Templates.ItemTemplateSchema>)
-before being mapped to an [ItemTemplate](<xref:Chaos.Models.Template.ItemTemplate>). The schema object is mapped via
+before being mapped to an [ItemTemplate](<xref:Chaos.Models.Templates.ItemTemplate>). The schema object is mapped via
 the [ItemMapperProfile](<xref:Chaos.Services.MapperProfiles.ItemMapperProfile>).
 
 See [ItemTemplateSchema](<xref:Chaos.Schemas.Templates.ItemTemplateSchema>) for a list of all configurable properties

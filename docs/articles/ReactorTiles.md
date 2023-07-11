@@ -61,12 +61,13 @@ See the article on [MapInstances](Maps.md) for more details.
 ## Scripting
 
 Reactor tiles are scripted
-via [IReactorTileScript](<xref:Chaos.Scripting.ReactorTiles.Abstractions.IReactorTileScript>).
+via [IReactorTileScript](<xref:Chaos.Scripting.ReactorTileScripts.Abstractions.IReactorTileScript>).
 
-- Inherit from [ReactorTileScriptBase](<xref:Chaos.Scripting.ReactorTiles.Abstractions.ReactorTileScriptBase>) for a
+- Inherit from [ReactorTileScriptBase](<xref:Chaos.Scripting.ReactorTileScripts.Abstractions.ReactorTileScriptBase>) for
+  a
   basic script that requires no external configuration
 - Inherit
-  from [ConfigurableReactorTileScriptBase](<xref:Chaos.Scripting.ReactorTiles.Abstractions.ConfigurableReactorTileScriptBase>)
+  from [ConfigurableReactorTileScriptBase](<xref:Chaos.Scripting.ReactorTileScripts.Abstractions.ConfigurableReactorTileScriptBase>)
   for a script that requires external configuration via ScriptVars
 
 Specify any number of script keys in the `ReactorTileTemplate.ScriptKeys` property, and those scripts will automatically
@@ -98,4 +99,4 @@ The trap will last for 300 seconds, and deal 500 damage to any hostile creature 
 1 time before removing itself. The trap will also not block pathfinding, which is a property not shown here because
 false is the default value of a boolean.
 
-[!code-json[](../../Data/Configuration/Templates/ReactorTiles/needle_trap.json)
+[!code-json[](../../Data/Configuration/Templates/ReactorTiles/needle_trap.json)]

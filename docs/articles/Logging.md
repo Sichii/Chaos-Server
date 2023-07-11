@@ -11,7 +11,7 @@ built in log target.
 Chaos makes great use of object destructuring, combined with NLogs object transformers. If there is a desire to swap the
 logging provider to something like [Serilog](https://serilog.net/), you will need to replace this behavior with
 the `.Destructure.ByTransforming<T>`feature. You will also need to find a suitable replacement for
-the [LogEvent](<xref:Chaos.Extensions.Common.LoggerExtensions.LogEvent>) class.
+the [LogEvent](<xref:Chaos.Extensions.LogEvent>) class.
 
 This structured/destructured style of logging data can be more easily viewed via logging tools
 like [ElasticSearch](https://www.elastic.co/) or [Seq](https://datalust.co/seq).
