@@ -600,8 +600,13 @@
                  VerticalAlignment="Top"
                  Margin="10,259,10,0"
                  TextWrapping="Wrap"
+                 MaxLength="255"
                  Padding="3"
                  MinHeight="90"
+                 AcceptsReturn="True"
+                 materialDesign:TextFieldAssist.IncludeSpellingSuggestions="True"
+                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                 materialDesign:TextFieldAssist.CharacterCounterStyle="{StaticResource MaterialDesignCharacterCounterTextBlock}"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}" />
         <Grid Grid.Column="3"
               VerticalAlignment="Top"

@@ -47,11 +47,12 @@ public sealed partial class DialogTemplatePropertyEditor
         Wrapper.Path = PathTbox.Text;
         template.TemplateKey = TemplateKeyTbox.Text;
         template.Type = ParsePrimitive<ChaosDialogType>(TypeCmbox.Text);
-        template.Text = TextTbox.Text.ReplaceLineEndings("\n");
+        template.Text = TextTbox.Text.FixLineEndings();
         template.NextDialogKey = string.IsNullOrWhiteSpace(NextDialogKeyTbox.Text) ? null : NextDialogKeyTbox.Text;
         template.PrevDialogKey = string.IsNullOrWhiteSpace(PrevDialogKeyTbox.Text) ? null : PrevDialogKeyTbox.Text;
         template.Contextual = ContextualCbox.IsChecked ?? false;
         template.TextBoxLength = ParsePrimitive<ushort?>(TextBoxLengthTbox.Text);
+        template.TextBoxPrompt = string.IsNullOrEmpty(TextBoxPromptTbox.Text) ? null : TextBoxPromptTbox.Text.FixLineEndings();
         template.Options = OptionsViewItems.Select(ShallowCopy<DialogOptionSchema>.Create).ToList();
         template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
 
@@ -70,11 +71,12 @@ public sealed partial class DialogTemplatePropertyEditor
 
         TypeCmbox.SelectedItem = SelectPrimitive(template.Type, TypeCmbox.ItemsSource);
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        TextTbox.Text = template.Text?.ReplaceLineEndings();
+        TextTbox.Text = template.Text.FixLineEndings();
         NextDialogKeyTbox.Text = template.NextDialogKey;
         PrevDialogKeyTbox.Text = template.PrevDialogKey;
         ContextualCbox.IsChecked = template.Contextual;
         TextBoxLengthTbox.Text = template.TextBoxLength?.ToString();
+        TextBoxPromptTbox.Text = template.TextBoxPrompt?.FixLineEndings();
 
         OptionsViewItems.Clear();
         OptionsViewItems.AddRange(template.Options.Select(ShallowCopy<DialogOptionSchema>.Create));

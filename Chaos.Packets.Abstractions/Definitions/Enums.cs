@@ -15,7 +15,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x00
     /// </summary>
-    ConnectionInfoRequest = 0,
+    Version = 0,
     /// <summary>
     ///     Opcode used when a client requests to create a new character. This is the first step in the process and
     ///     will only contain a name and password<br />

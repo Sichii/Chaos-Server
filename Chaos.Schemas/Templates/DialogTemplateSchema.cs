@@ -64,6 +64,11 @@ public sealed record DialogTemplateSchema
     public ushort? TextBoxLength { get; set; }
 
     /// <summary>
+    ///     When the <see cref="Type" /> is DialogTextEntry, this will be the message displayed above the text box (optional)
+    /// </summary>
+    public string? TextBoxPrompt { get; set; }
+
+    /// <summary>
     ///     The type of dialog this is
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]

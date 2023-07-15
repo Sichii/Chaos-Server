@@ -177,6 +177,12 @@ public static class StringExtensions
     }
 
     /// <summary>
+    ///     Fixes line endings so that they match the line endings in DarkAges
+    /// </summary>
+    /// <param name="str">The string whose line endings to fix</param>
+    public static string FixLineEndings(this string str) => str.ReplaceLineEndings("\n").TrimEnd('\n');
+
+    /// <summary>
     ///     Determines if any of the strings approximately match the specified string
     /// </summary>
     /// <param name="strings">The strings to search</param>

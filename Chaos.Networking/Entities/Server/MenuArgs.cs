@@ -37,7 +37,7 @@ public sealed record MenuArgs : ISendArgs
     /// <summary>
     ///     If the menu has options, this is a collection of strings that represent selectable options in the dialog's menu
     /// </summary>
-    public ICollection<string>? Options { get; set; }
+    public ICollection<(string Text, ushort Pursuit)>? Options { get; set; }
 
     /// <summary>
     ///     If the menu is part of a pursuit chain, this is the id of that pursuit

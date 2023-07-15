@@ -1,0 +1,11 @@
+{
+  "nextDialogKey": "top",
+  "options": [],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "misc_tester_1_dialogTextEntry",
+  "text": "This is the body text\nYep body text\nyeeeeeep",
+  "textBoxLength": 10,
+  "textBoxPrompt": "I like them big :)\nand round",
+  "type": "DialogTextEntry"
+}

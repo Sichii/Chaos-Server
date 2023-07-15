@@ -87,6 +87,7 @@ internal static class CONSTANTS
         nameof(DialogTemplateSchema.PrevDialogKey),
         nameof(DialogTemplateSchema.Contextual),
         nameof(DialogTemplateSchema.TextBoxLength),
+        nameof(DialogTemplateSchema.TextBoxPrompt),
         nameof(DialogTemplateSchema.Options),
         nameof(DialogTemplateSchema.ScriptKeys));
 

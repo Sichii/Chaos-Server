@@ -66,7 +66,8 @@ public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
 
                 break;
             case DialogType.TextEntry:
-                writer.WriteUInt16(args.TextBoxLength!.Value);
+                writer.WriteString8(args.TextBoxPrompt ?? string.Empty);
+                writer.WriteByte((byte)(args.TextBoxLength ?? 0));
 
                 break;
             case DialogType.Speak:
@@ -81,7 +82,7 @@ public sealed record DialogSerializer : ServerPacketSerializer<DialogArgs>
             case DialogType.Protected:
                 break;
             case DialogType.CloseDialog:
-                throw new InvalidOperationException("This should never happen");
+                throw new InvalidOperationException("This should never happen, CloseDialog is handled above");
             default:
                 throw new ArgumentOutOfRangeException(nameof(args.DialogType), args.DialogType, "Unknown dialog type");
         }

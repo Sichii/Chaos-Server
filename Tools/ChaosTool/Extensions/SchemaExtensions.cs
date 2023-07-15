@@ -16,6 +16,7 @@ internal static class SchemaExtensions
         yield return schema.PrevDialogKey;
         yield return schema.Contextual.ToString();
         yield return schema.TextBoxLength?.ToString();
+        yield return schema.TextBoxPrompt;
         yield return string.Join(", ", schema.Options.Select(opt => $"{opt.OptionText}/{opt.DialogKey}"));
         yield return string.Join(", ", schema.ScriptKeys);
     }

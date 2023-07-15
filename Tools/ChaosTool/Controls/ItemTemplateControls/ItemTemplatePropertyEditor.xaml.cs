@@ -99,7 +99,7 @@ public sealed partial class ItemTemplatePropertyEditor
         template.IsDyeable = IsDyeableCbox.IsChecked!.Value;
         template.IsModifiable = IsModifiableCbox.IsChecked!.Value;
         template.Category = CategoryTbox.Text;
-        template.Description = DescriptionTbox.Text;
+        template.Description = string.IsNullOrEmpty(DescriptionTbox.Text) ? null : DescriptionTbox.Text.FixLineEndings();
         template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
 
         ListItem.Name = template.TemplateKey;
@@ -159,7 +159,7 @@ public sealed partial class ItemTemplatePropertyEditor
         IsDyeableCbox.IsChecked = template.IsDyeable;
         IsModifiableCbox.IsChecked = template.IsModifiable;
         CategoryTbox.Text = template.Category;
-        DescriptionTbox.Text = template.Description;
+        DescriptionTbox.Text = template.Description?.FixLineEndings();
 
         ScriptKeysViewItems.Clear();
         ScriptKeysViewItems.AddRange(template.ScriptKeys.ToBindableStrings());

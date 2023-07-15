@@ -80,7 +80,7 @@ public sealed partial class SpellTemplatePropertyEditor
         learningRequirements.PrerequisiteSkillTemplateKeys = PrereqSkillTemplateKeysViewItems.ToStrings().ToList();
 
         template.CooldownMs = ParsePrimitive<int?>(CooldownMsTbox.Text);
-        template.Description = DescriptionTbox.Text;
+        template.Description = string.IsNullOrEmpty(DescriptionTbox.Text) ? null : DescriptionTbox.Text.FixLineEndings();
         template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
 
         ListItem.Name = template.TemplateKey;
@@ -120,7 +120,7 @@ public sealed partial class SpellTemplatePropertyEditor
         ConTbox.Text = stats?.Con.ToString();
         DexTbox.Text = stats?.Dex.ToString();
         CooldownMsTbox.Text = template.CooldownMs.ToString();
-        DescriptionTbox.Text = template.Description;
+        DescriptionTbox.Text = template.Description?.FixLineEndings();
 
         ItemRequirementsViewItems.Clear();
 

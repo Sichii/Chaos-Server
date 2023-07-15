@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using ChaosTool.Model;
 
@@ -100,6 +101,16 @@ public sealed partial class IntegrityCheckControl
 
             if ((template.PrevDialogKey != null) && !ValidateDialogKey(template.PrevDialogKey))
                 await AddViolationAsync($"PrevDialogKey not found: {template.PrevDialogKey}", handler);
+
+            if (template.Type != ChaosDialogType.DialogTextEntry)
+            {
+                if (template.TextBoxLength.HasValue)
+                    await AddViolationAsync("TextBoxLength should only be specified for DialogTextEntry", handler);
+
+                if (!string.IsNullOrEmpty(template.TextBoxPrompt))
+                    await AddViolationAsync("TextBoxPrompt should only be specified for DialogTextEntry", handler);
+            } else if (!template.TextBoxLength.HasValue && string.IsNullOrEmpty(template.TextBoxPrompt))
+                await AddViolationAsync("TextBoxLength AND/OR TextBoxPrompt should be specified for DialogTextEntry", handler);
         }
     }
 

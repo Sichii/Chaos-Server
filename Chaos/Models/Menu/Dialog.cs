@@ -33,6 +33,7 @@ public sealed record Dialog : IScripted<IDialogScript>
     public DialogTemplate Template { get; set; }
     public string Text { get; private set; }
     public ushort? TextBoxLength { get; set; }
+    public string? TextBoxPrompt { get; set; }
     public ChaosDialogType Type { get; set; }
     public bool Contextual { get; }
     /// <inheritdoc />
@@ -56,6 +57,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         Spells = new List<Spell>();
         Text = template.Text;
         TextBoxLength = template.TextBoxLength;
+        TextBoxPrompt = template.TextBoxPrompt;
         Type = template.Type;
         MenuArgs = new ArgumentCollection();
         Contextual = template.Contextual;

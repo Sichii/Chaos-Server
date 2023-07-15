@@ -46,16 +46,21 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     }
 
     #region OnHandlers
-    public ValueTask OnConnectionInfoRequest(ILobbyClient client, in ClientPacket _)
+    public ValueTask OnVersion(ILobbyClient client, in ClientPacket packet)
     {
-        ValueTask InnerOnConnectionInfoRequest(ILobbyClient localClient)
+        var args = PacketSerializer.Deserialize<VersionArgs>(in packet);
+
+        ValueTask InnerOnVersion(ILobbyClient localClient, VersionArgs localArgs)
         {
+            if (localArgs.Version != 741)
+                return default;
+
             localClient.SendConnectionInfo(ServerTable.CheckSum);
 
             return default;
         }
 
-        return ExecuteHandler(client, InnerOnConnectionInfoRequest);
+        return ExecuteHandler(client, args, InnerOnVersion);
     }
 
     public ValueTask OnServerTableRequest(ILobbyClient client, in ClientPacket packet)
@@ -120,7 +125,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
         base.IndexHandlers();
 
-        ClientHandlers[(byte)ClientOpCode.ConnectionInfoRequest] = OnConnectionInfoRequest;
+        ClientHandlers[(byte)ClientOpCode.Version] = OnVersion;
         ClientHandlers[(byte)ClientOpCode.ServerTableRequest] = OnServerTableRequest;
     }
 

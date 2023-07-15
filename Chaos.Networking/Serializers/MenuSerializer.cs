@@ -51,12 +51,11 @@ public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
             case MenuType.Menu:
             {
                 writer.WriteByte((byte)args.Options!.Count);
-                ushort index = 1;
 
                 foreach (var option in args.Options)
                 {
-                    writer.WriteString8(option);
-                    writer.WriteUInt16(index++);
+                    writer.WriteString8(option.Text);
+                    writer.WriteUInt16(option.Pursuit);
                 }
 
                 break;
@@ -65,12 +64,11 @@ public sealed record MenuSerializer : ServerPacketSerializer<MenuArgs>
             {
                 writer.WriteString8(args.Args!);
                 writer.WriteByte((byte)args.Options!.Count);
-                ushort index = 1;
 
                 foreach (var option in args.Options)
                 {
-                    writer.WriteString8(option);
-                    writer.WriteUInt16(index++);
+                    writer.WriteString8(option.Text);
+                    writer.WriteUInt16(option.Pursuit);
                 }
 
                 break;

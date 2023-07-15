@@ -58,7 +58,13 @@ public sealed record DialogArgs : ISendArgs
     /// </summary>
     public required string Text { get; set; } = null!;
     /// <summary>
-    ///     If the dialog is a type that has an input text box, this is the max input length for that text box
+    ///     When the <see cref="DialogType" /> is DialogTextEntry, this will limit the length of the input text box
     /// </summary>
     public ushort? TextBoxLength { get; set; }
+
+    /// <summary>
+    ///     When the <see cref="DialogType" /> is DialogTextEntry, this will be the message displayed above the text box
+    ///     (optional)
+    /// </summary>
+    public string? TextBoxPrompt { get; set; }
 }
