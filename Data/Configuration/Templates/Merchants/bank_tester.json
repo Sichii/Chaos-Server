@@ -2,7 +2,7 @@
     "itemsForSale": [],
     "itemsToBuy": [],
     "name": "Bank Tester",
-    "scriptKeys": ["showdialog", "verbalBanker"],
+    "scriptKeys": ["showdialog", "verbalBanker", "defaultBehaviors"],
     "scriptVars": {
         "showdialog": {
             "dialogKey": "bank_tester_initial"

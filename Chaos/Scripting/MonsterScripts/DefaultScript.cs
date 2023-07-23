@@ -8,8 +8,7 @@ public class DefaultScript : CompositeMonsterScript
 {
     private static readonly ICollection<string> ScriptKeys = new[]
     {
-        GetScriptKey(typeof(RestrictionScript)),
-        GetScriptKey(typeof(VisibilityScript)),
+        GetScriptKey(typeof(DefaultBehaviorsScript)),
         GetScriptKey(typeof(AggroTargetingScript)),
         GetScriptKey(typeof(ContributionScript)),
         GetScriptKey(typeof(CastingScript)),

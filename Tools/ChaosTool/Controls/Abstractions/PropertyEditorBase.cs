@@ -1,9 +1,11 @@
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Windows.Controls;
 using Chaos.Common.Converters;
 using Chaos.Extensions.Common;
 using ChaosTool.Model;
+using Namotion.Reflection;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 
@@ -11,6 +13,27 @@ namespace ChaosTool.Controls.Abstractions;
 
 public abstract class PropertyEditorBase : UserControl
 {
+    protected virtual string GetPropertyDocs<T>(string? propertyName = null)
+    {
+        var type = typeof(T);
+        var opts = new XmlDocsOptions { FormattingMode = XmlDocsFormattingMode.None, ResolveExternalXmlDocs = false };
+        var builder = new StringBuilder();
+
+        if (string.IsNullOrEmpty(propertyName))
+        {
+            builder.AppendLine(type.GetXmlDocsSummary(opts));
+            builder.AppendLine(type.GetXmlDocsRemarks(opts));
+        } else
+        {
+            var prop = type.GetProperty(propertyName);
+
+            builder.AppendLine(prop!.GetXmlDocsSummary(opts));
+            builder.AppendLine(prop!.GetXmlDocsRemarks(opts));
+        }
+
+        return builder.ToString().Trim();
+    }
+
     protected virtual bool ValidatePreSave<T>(TraceWrapper<T> wrapper, TextBox pathTbox, TextBox templateKeyTbox)
     {
         var fileName = Path.GetFileNameWithoutExtension(pathTbox.Text);

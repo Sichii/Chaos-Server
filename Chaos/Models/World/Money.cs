@@ -10,7 +10,7 @@ public sealed class Money : GroundEntity
 
     public Money(int amount, MapInstance mapInstance, IPoint point)
         : base(
-            "Coins",
+            "Gold",
             GetSprite(amount),
             mapInstance,
             point) => Amount = amount;

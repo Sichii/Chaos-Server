@@ -1,4 +1,5 @@
 using Chaos.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 
@@ -6,50 +7,31 @@ namespace Chaos.Extensions;
 
 public static class TargetFilterExtensions
 {
-    public static bool IsValidTarget(this TargetFilter filter, Creature? source, Creature target)
+    private static bool InnerIsValidTarget(this TargetFilter filter, Creature source, Creature target) => filter switch
     {
-        if (filter == TargetFilter.None)
-            return true;
+        TargetFilter.None => true,
+        TargetFilter.FriendlyOnly => source.IsFriendlyTo(target),
+        TargetFilter.HostileOnly => source.IsHostileTo(target),
+        TargetFilter.NeutralOnly => !source.IsFriendlyTo(target) && !source.IsHostileTo(target),
+        TargetFilter.NonFriendlyOnly => !source.IsFriendlyTo(target),
+        TargetFilter.NonHostileOnly => !source.IsHostileTo(target),
+        TargetFilter.NonNeutralOnly => source.IsFriendlyTo(target) || source.IsHostileTo(target),
+        TargetFilter.AliveOnly => target.IsAlive,
+        TargetFilter.DeadOnly => target.IsDead,
+        TargetFilter.AislingsOnly => target is Aisling,
+        TargetFilter.MonstersOnly => target is Monster,
+        TargetFilter.MerchantsOnly => target is Merchant,
+        TargetFilter.NonAislingsOnly => target is not Aisling,
+        TargetFilter.NonMonstersOnly => target is not Monster,
+        TargetFilter.NonMerchantsOnly => target is not Merchant,
+        TargetFilter.SelfOnly => source.Equals(target),
+        TargetFilter.OthersOnly => !source.Equals(target),
+        TargetFilter.GroupOnly => source is Aisling { Group: not null } aisling && aisling.Group.Contains(target, WorldEntity.IdComparer),
+        _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
+    };
 
-        if (source != null)
-        {
-            if (filter.HasFlag(TargetFilter.SelfOnly) && !source.Equals(target))
-                return false;
-
-            if (filter.HasFlag(TargetFilter.GroupOnly))
-            {
-                if (source is not Aisling aisling)
-                    return false;
-
-                if (!source.Equals(target))
-                {
-                    if (aisling.Group == null)
-                        return false;
-
-                    if (!aisling.Group.Contains(target, WorldEntity.IdComparer))
-                        return false;
-                }
-            }
-
-            if (filter.HasFlag(TargetFilter.FriendlyOnly) && !target.IsFriendlyTo(source))
-                return false;
-
-            if (filter.HasFlag(TargetFilter.HostileOnly) && !target.IsHostileTo(source))
-                return false;
-        }
-
-        if (filter.HasFlag(TargetFilter.AliveOnly) && !target.IsAlive)
-            return false;
-
-        if (filter.HasFlag(TargetFilter.DeadOnly) && !target.IsDead)
-            return false;
-
-        if (filter.HasFlag(TargetFilter.AislingsOnly) && target is not Aisling)
-            return false;
-
-        if (filter.HasFlag(TargetFilter.MonstersOnly) && target is not Monster)
-            return false;
-
-        return true;
-    }
+    //iterate over all flags present in the enum value
+    //if they all result in true, this is a valid target
+    public static bool IsValidTarget(this TargetFilter filter, Creature source, Creature target) => (filter == TargetFilter.None)
+        || filter.GetFlags().All(flag => InnerIsValidTarget(flag, source, target));
 }

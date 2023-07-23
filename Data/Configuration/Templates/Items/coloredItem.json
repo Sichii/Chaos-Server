@@ -1,0 +1,13 @@
+{
+  "buyCost": 100,
+  "category": "things",
+  "color": "Forest",
+  "isModifiable": true,
+  "maxStacks": 100,
+  "sellValue": 50,
+  "weight": 1,
+  "description": "An item with a custom color",
+  "name": "Colored Item",
+  "panelSprite": 11975,
+  "templateKey": "coloredItem"
+}

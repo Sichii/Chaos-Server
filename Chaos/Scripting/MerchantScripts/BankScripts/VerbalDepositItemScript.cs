@@ -6,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
+using Humanizer;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
@@ -29,7 +30,7 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
             case ComplexActionHelper.DepositItemResult.Success:
             {
                 var phrase = DepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, itemName));
+                Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
 
                 Logger.WithProperty(source)
                       .WithProperty(Subject)
@@ -44,7 +45,7 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
             case ComplexActionHelper.DepositItemResult.DontHaveThatMany:
             {
                 var phrase = DontHaveThatManyDepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, itemName));
+                Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
 
                 break;
             }

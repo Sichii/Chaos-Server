@@ -1,8 +1,15 @@
 using System.Net.Sockets;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.Common.Configuration;
+using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.DependencyInjection;
+using Chaos.Geometry.JsonConverters;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
 using Chaos.Models.Templates;
@@ -26,6 +33,7 @@ using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
 using Chaos.Scripting.SkillScripts.Abstractions;
 using Chaos.Scripting.SpellScripts.Abstractions;
+using Chaos.Services.Configuration;
 using Chaos.Services.Factories;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.MapperProfiles;
@@ -39,13 +47,55 @@ using Chaos.Services.Storage.Options;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+using Chaos.Utilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Chaos.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    private static readonly SerializationContext JsonContext;
+    private static readonly JsonSerializerOptions JsonSerializerOptions;
+    private static bool IsInitialized { get; set; }
+
+    static ServiceCollectionExtensions()
+    {
+        JsonSerializerOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            PropertyNameCaseInsensitive = true,
+            IgnoreReadOnlyProperties = true,
+            IgnoreReadOnlyFields = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            AllowTrailingCommas = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
+        JsonSerializerOptions.Converters.Add(new PointConverter());
+        JsonSerializerOptions.Converters.Add(new LocationConverter());
+        JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+        JsonContext = new SerializationContext(JsonSerializerOptions);
+    }
+
+    public static void AddChaosOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton(configuration);
+        services.AddOptions();
+        services.ConfigureOptions<OptionsConfigurer>();
+        services.ConfigureOptions<OptionsValidator>();
+
+        services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
+
+        services.AddSingleton<IStagingDirectory, ChaosOptions>(p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>().Value);
+    }
+
     public static void AddFunctionalScriptRegistry(this IServiceCollection services) =>
         services.AddSingleton<IScriptRegistry, FunctionalScriptRegistry>(
             p =>
@@ -59,6 +109,23 @@ public static class ServiceCollectionExtensions
 
                 return registry;
             });
+
+    public static void AddJsonSerializerOptions(this IServiceCollection services) =>
+        services.AddOptions<JsonSerializerOptions>()
+                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
+                    (options, logger) =>
+                    {
+                        if (!IsInitialized)
+                        {
+                            IsInitialized = true;
+                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+                            var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
+
+                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
+                        }
+
+                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
+                    });
 
     public static void AddLobbyServer(this IServiceCollection services)
     {

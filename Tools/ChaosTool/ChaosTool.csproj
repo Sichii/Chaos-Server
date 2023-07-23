@@ -12,6 +12,7 @@
     <ItemGroup>
         <PackageReference Include="MaterialDesignExtensions"/>
         <PackageReference Include="MaterialDesignThemes"/>
+        <PackageReference Include="Namotion.Reflection"/>
         <PackageReference Include="RoslynPad.Editor.Windows"/>
         <PackageReference Include="ShowMeTheXAML.MSBuild"/>
     </ItemGroup>

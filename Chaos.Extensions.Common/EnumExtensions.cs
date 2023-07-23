@@ -8,6 +8,18 @@ namespace Chaos.Extensions.Common;
 public static class EnumExtensions
 {
     /// <summary>
+    ///     Gets the individual flag parts of a flag enum value />
+    /// </summary>
+    /// <param name="input">An enum value with one or more flags</param>
+    /// <typeparam name="T">An enum type</typeparam>
+    public static IEnumerable<T> GetFlags<T>(this T input) where T: Enum
+    {
+        foreach (T value in Enum.GetValues(input.GetType()))
+            if (input.HasFlag(value))
+                yield return value;
+    }
+
+    /// <summary>
     ///     Converts an <see cref="EquipmentType" /> to one or more <see cref="EquipmentSlot" />s
     /// </summary>
     /// <param name="type">An <see cref="EquipmentType" /> value</param>

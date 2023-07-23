@@ -45,8 +45,11 @@ public sealed record DisplayAislingSerializer : ServerPacketSerializer<DisplayAi
             writer.WriteByte(args.FaceSprite);
         } else
         {
+            var pantsColor = (byte)(args.PantsColor ?? 0);
+            var bodySprite = (byte)(args.BodySprite + pantsColor);
+
             writer.WriteUInt16(args.HeadSprite);
-            writer.WriteByte((byte)args.BodySprite);
+            writer.WriteByte(bodySprite);
             writer.WriteUInt16(args.ArmorSprite1);
             writer.WriteByte(args.BootsSprite);
             writer.WriteUInt16(args.ArmorSprite2);

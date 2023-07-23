@@ -89,7 +89,11 @@ public partial class MainWindow : Window
 
     private void AddNewDocument(DocumentViewModel? previous = null) => DocViewModel.Add(new DocumentViewModel(RoslynHost, previous));
 
-    private async void MainWindow_Loaded(object sender, RoutedEventArgs e) => await JsonContext.LoadAsync();
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        await JsonContext.LoadAsync();
+        ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(Label), new FrameworkPropertyMetadata(500));
+    }
 
     private async void OnItemLoaded(object sender, EventArgs e)
     {

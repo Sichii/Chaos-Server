@@ -1,31 +1,28 @@
 {
-  "buyCost": 1000,
-  "category": "m armor",
-  "color": "Default",
-  "displaySprite": 1,
-  "equipmentType": "Armor",
-  "gender": "Male",
-  "maxDurability": 1000,
-  "maxStacks": 1,
-  "modifiers": {
-    "con": 1
-  },
-  "pantsColor": "Black",
-  "sellValue": 500,
-  "weight": 10,
-  "description": "Definitely not a stick",
-  "name": "Cuck Plate",
-  "panelSprite": 96,
-  "scriptKeys": [
-    "Equipment",
-    "setelement"
-  ],
-  "scriptVars": {
-    "equipment": {},
-    "setelement": {
-      "defenseElement": "undead",
-      "offenseElement": "undead"
-    }
-  },
-  "templateKey": "cuckArmor"
+    "buyCost": 1000,
+    "category": "m armor",
+    "color": "Default",
+    "displaySprite": 1,
+    "equipmentType": "Armor",
+    "gender": "Male",
+    "maxDurability": 1000,
+    "maxStacks": 1,
+    "modifiers": {
+        "con": 1
+    },
+    "pantsColor": "Black",
+    "sellValue": 500,
+    "weight": 10,
+    "description": "Definitely not a stick",
+    "name": "Cuck Plate",
+    "panelSprite": 96,
+    "scriptKeys": ["Equipment", "setelement"],
+    "scriptVars": {
+        "equipment": {},
+        "setelement": {
+            "defenseElement": "undead",
+            "offenseElement": "undead"
+        }
+    },
+    "templateKey": "cuckArmor"
 }

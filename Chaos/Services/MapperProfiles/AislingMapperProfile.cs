@@ -161,7 +161,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             obj.UserStatSheet.EffectiveAc,
             WorldOptions.Instance.MinimumAislingAc,
             WorldOptions.Instance.MaximumAislingAc),
-        //TODO: blind
+        Blind = obj.Script.IsBlind(),
         Con = obj.UserStatSheet.EffectiveCon,
         CurrentHp = (uint)Math.Clamp(obj.UserStatSheet.CurrentHp, 0, int.MaxValue),
         CurrentMp = (uint)Math.Clamp(obj.UserStatSheet.CurrentMp, 0, int.MaxValue),
@@ -205,7 +205,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             var acc2 = obj.Equipment[EquipmentSlot.Accessory2];
             var acc3 = obj.Equipment[EquipmentSlot.Accessory3];
             var overcoat = obj.Equipment[EquipmentSlot.Overcoat];
-            var pantsColor = (byte)((overcoat?.Template.PantsColor ?? armor?.Template.PantsColor) ?? 0);
+            var pantsColor = overcoat?.Template.PantsColor ?? armor?.Template.PantsColor;
 
             DisplayColor headColor;
 
@@ -229,7 +229,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 ArmorSprite1 = armor?.ItemSprite.DisplaySprite ?? 0, //TODO: figure this out again cuz i deleted it
                 ArmorSprite2 = armor?.ItemSprite.DisplaySprite ?? 0,
                 BodyColor = obj.BodyColor,
-                BodySprite = obj.BodySprite + pantsColor,
+                BodySprite = obj.BodySprite,
+                PantsColor = pantsColor,
                 BootsColor = boots?.Color ?? DisplayColor.Default,
                 BootsSprite = (byte)(boots?.ItemSprite.DisplaySprite ?? 0),
                 Direction = obj.Direction,
@@ -242,14 +243,14 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 Id = obj.Id,
                 IsDead = obj.IsDead,
                 IsTransparent = obj.Visibility is VisibilityType.Hidden or VisibilityType.TrueHidden or VisibilityType.GmHidden,
-                LanternSize = LanternSize.None, //TODO: if we add lanterns and dark maps later,
+                LanternSize = obj.LanternSize,
                 Name = obj.Name,
-                NameTagStyle = NameTagStyle.NeutralHover, //TODO: if we add pvp later
+                NameTagStyle = NameTagStyle.NeutralHover, //this is a default value
                 OvercoatColor = overcoat?.Color ?? DisplayColor.Default,
                 OvercoatSprite = overcoat?.ItemSprite.DisplaySprite ?? 0,
                 X = obj.X,
                 Y = obj.Y,
-                RestPosition = RestPosition.None, //TODO: if we add rest positions in later,
+                RestPosition = obj.RestPosition,
                 ShieldSprite = (byte)(shield?.ItemSprite.DisplaySprite ?? 0),
                 Sprite = obj.Sprite == 0 ? null : obj.Sprite,
                 WeaponSprite = weapon?.ItemSprite.DisplaySprite ?? 0

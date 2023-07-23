@@ -48,6 +48,7 @@
         <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj"/>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Humanizer"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
         <PackageReference Include="System.Configuration.ConfigurationManager"/>
     </ItemGroup>

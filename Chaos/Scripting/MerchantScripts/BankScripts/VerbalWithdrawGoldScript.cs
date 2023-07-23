@@ -65,7 +65,7 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
             case ComplexActionHelper.WithdrawGoldResult.Success:
             {
                 var phrase = WithdrawPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, "gold"));
+                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
 
                 Logger.WithProperty(source)
                       .WithProperty(Subject)
@@ -85,7 +85,7 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
             case ComplexActionHelper.WithdrawGoldResult.DontHaveThatMany:
             {
                 var phrase = DontHaveThatManyWithdrawPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, "gold"));
+                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
 
                 break;
             }

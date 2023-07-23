@@ -34,10 +34,19 @@ public abstract class ConfigurableMonsterScriptBase : ConfigurableScriptBase<Mon
     public virtual bool CanUseSpell(Spell spell) => true;
 
     /// <inheritdoc />
+    public virtual bool IsBlind() => false;
+
+    /// <inheritdoc />
+    public virtual bool IsFriendlyTo(Creature creature) => false;
+
+    /// <inheritdoc />
+    public virtual bool IsHostileTo(Creature creature) => false;
+
+    /// <inheritdoc />
     public virtual void OnApproached(Creature source) { }
 
     /// <inheritdoc />
-    public void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
+    public virtual void OnAttacked(Creature source, int damage) => OnAttacked(source, damage, null);
 
     /// <inheritdoc />
     public virtual void OnAttacked(Creature source, int damage, int? aggroOverride) { }

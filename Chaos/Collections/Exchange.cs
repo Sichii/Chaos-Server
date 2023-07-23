@@ -3,6 +3,7 @@ using Chaos.Common.Synchronization;
 using Chaos.Extensions;
 using Chaos.Models.World;
 using Chaos.Observers;
+using Humanizer;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
@@ -142,7 +143,7 @@ public sealed class Exchange
 
         if (!aisling.Inventory.HasCount(item.DisplayName, amount))
         {
-            aisling.SendActiveMessage($"You don't have {amount} of {item.DisplayName}");
+            aisling.SendActiveMessage($"You don't have {item.DisplayName.ToQuantity(amount)}");
 
             return;
         }

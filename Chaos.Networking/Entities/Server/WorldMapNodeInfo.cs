@@ -10,9 +10,17 @@ namespace Chaos.Networking.Entities.Server;
 public record WorldMapNodeInfo
 {
     /// <summary>
-    ///     The destination of the node the character will be teleported to
+    ///     The unique id of the node (or checksum, depends how you want to use it)
     /// </summary>
-    public Location Destination { get; set; } = null!;
+    public ushort CheckSum { get; set; }
+    /// <summary>
+    ///     The destination point on the map
+    /// </summary>
+    public Point DestinationPoint { get; set; }
+    /// <summary>
+    ///     The destination map id
+    /// </summary>
+    public ushort MapId { get; set; }
     /// <summary>
     ///     The X and Y screen coordinates where the node will be displayed on the world map (the screen is 640x480)
     /// </summary>
@@ -21,8 +29,4 @@ public record WorldMapNodeInfo
     ///     The text displayed on the node
     /// </summary>
     public string Text { get; set; } = null!;
-    /// <summary>
-    ///     The unique id of the node (or checksum, depends how you want to use it)
-    /// </summary>
-    public ushort UniqueId { get; set; }
 }

@@ -8,6 +8,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Utilities;
+using Humanizer;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts;
@@ -88,8 +89,7 @@ public class VerbalSellShopScript : VerbalShopScriptBase
                 Subject.Say(
                     phrase.Inject(
                         source.Name,
-                        amount,
-                        item.DisplayName,
+                        item.DisplayName.ToQuantity(amount),
                         totalCost));
 
                 Logger.WithProperty(source)
@@ -108,7 +108,7 @@ public class VerbalSellShopScript : VerbalShopScriptBase
             case ComplexActionHelper.SellItemResult.DontHaveThatMany:
             {
                 var phrase = DontHaveThatManySellPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, item.DisplayName));
+                Subject.Say(phrase.Inject(source.Name, item.DisplayName.ToQuantity(amount)));
 
                 break;
             }

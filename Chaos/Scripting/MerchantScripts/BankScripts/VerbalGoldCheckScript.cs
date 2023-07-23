@@ -23,7 +23,7 @@ public sealed class VerbalGoldCheckScript : VerbalBankerScriptBase
         if (!IsClosestVerbalBankerTo(aisling))
             return;
 
-        if (HowManyCoinsPhrases.FuzzyContains(message, 0.75m, 0.25m))
+        if (HowMuchGoldPhrases.FuzzyContains(message, 0.75m, 0.25m))
             Subject.Say($"{aisling.Name}, you have {aisling.Bank.Gold} gold stashed away.");
     }
 }

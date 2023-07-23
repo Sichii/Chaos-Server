@@ -55,6 +55,8 @@ public class AggroTargetingScript : MonsterScriptBase
         if (!Map.GetEntities<Aisling>().Any())
             return;
 
+        var isBlind = Subject.IsBlind;
+
         //first try to get target via aggro list
         //if something is already aggro, ignore aggro range
         foreach (var kvp in AggroList.OrderByDescending(kvp => kvp.Value))
@@ -65,6 +67,10 @@ public class AggroTargetingScript : MonsterScriptBase
             if (!possibleTarget.IsAlive || !Subject.CanSee(possibleTarget) || !possibleTarget.WithinRange(Subject))
                 continue;
 
+            //if we're blind, we can only target things within 1 tile
+            if (isBlind && !possibleTarget.WithinRange(Subject, 1))
+                continue;
+
             Target = possibleTarget;
 
             break;
@@ -73,8 +79,11 @@ public class AggroTargetingScript : MonsterScriptBase
         if (Target != null)
             return;
 
+        //if blind, we can only target things within 1 space
+        var range = isBlind ? 1 : AggroRange;
+
         //if we failed to get a target via aggroList, grab the closest aisling within aggro range
-        Target ??= Map.GetEntitiesWithinRange<Monster>(Subject, AggroRange)
+        Target ??= Map.GetEntitiesWithinRange<Aisling>(Subject, range)
                       .ThatAreVisibleTo(Subject)
                       .Where(
                           obj => !obj.Equals(Subject)

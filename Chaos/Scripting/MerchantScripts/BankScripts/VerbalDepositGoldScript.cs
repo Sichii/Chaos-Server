@@ -25,7 +25,7 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
             case ComplexActionHelper.DepositGoldResult.Success:
             {
                 var phrase = DepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, "gold"));
+                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
 
                 Logger.WithProperty(source)
                       .WithProperty(Subject)
@@ -39,7 +39,7 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
             case ComplexActionHelper.DepositGoldResult.DontHaveThatMany:
             {
                 var phrase = DontHaveThatManyDepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, "gold"));
+                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
 
                 break;
             }

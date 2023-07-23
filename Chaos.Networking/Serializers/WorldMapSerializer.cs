@@ -25,10 +25,9 @@ public sealed record WorldMapSerializer : ServerPacketSerializer<WorldMapArgs>
         {
             writer.WritePoint16(node.ScreenPosition);
             writer.WriteString8(node.Text);
-            writer.WriteUInt16(node.UniqueId);
-            writer.WriteUInt16(0);
-            writer.WriteInt32(0);
-            //writer.WritePoint16(node.DestinationPoint);
+            writer.WriteUInt16(node.CheckSum);
+            writer.WriteUInt16(node.MapId);
+            writer.WritePoint16(node.DestinationPoint);
         }
     }
 }

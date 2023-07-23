@@ -17,57 +17,57 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
 
     protected static ICollection<string> BuyItemPhrases { get; } = new List<string>
     {
-        "{Name}, we have a deal! {Amount} {Thing} is yours.",
-        "A fine trade, {Name}. Enjoy your {Amount} {Thing}.",
-        "It's a deal, {Name}. Here's your {Amount} {Thing}.",
-        "Bargain struck, {Name}. You now have {Amount} {Thing}.",
-        "Agreed, {Name}. {Amount} {Thing} is now yours."
+        "{Name}, we have a deal! {AmountOfThing} is yours.",
+        "A fine trade, {Name}. Enjoy your {AmountOfThing}.",
+        "It's a deal, {Name}. Here's your {AmountOfThing}.",
+        "Bargain struck, {Name}. You now have {AmountOfThing}.",
+        "Agreed, {Name}. {AmountOfThing} is now yours."
     };
 
     protected static ICollection<string> CantCarryPhrases { get; } = new List<string>
     {
-        "{Name}, you can't carry {Amount} {Thing}.",
-        "Sorry, {Name}. You don't seem to be able to carry {Amount} {Thing}.",
+        "{Name}, you can't carry {AmountOfThing}.",
+        "Sorry, {Name}. You don't seem to be able to carry {AmountOfThing}.",
         "{Name}, it seems you can't handle {Amount} more {Thing}.",
-        "{Name}, it looks like {Amount} {Thing} is too much for you.",
+        "{Name}, it looks like {AmountOfThing} is too much for you.",
         "{Name}, it appears you can't take {Amount} more {Thing}."
     };
 
     protected static ICollection<string> DontHaveThatManySellPhrases { get; } = new List<string>
     {
-        "{Name}, it appears you don't have {Amount} {Thing} to sell.",
-        "{Name}, {Amount} {Thing} seems to exceed your inventory.",
-        "{Name}, you don't have {Amount} {Thing} on hand.",
-        "{Name}, you're missing {Amount} {Thing} for sale.",
-        "{Name}, can't find your {Amount} {Thing} for sale."
+        "{Name}, it appears you don't have {AmountOfThing} to sell.",
+        "{Name}, {AmountOfThing} seems to exceed your inventory.",
+        "{Name}, you don't have {AmountOfThing} on hand.",
+        "{Name}, you're missing {AmountOfThing} for sale.",
+        "{Name}, can't find your {AmountOfThing} for sale."
     };
     protected ILogger Logger { get; }
 
     protected static ICollection<string> NotEnoughGoldPhrases { get; } = new List<string>
     {
-        "{Name}, you can't afford {Amount} of {Thing}.",
-        "Sorry, {Name}. {Amount} of {Thing} is too pricey for you.",
-        "{Name}, you need more gold for {Amount} of {Thing}.",
-        "{Name}, your gold isn't enough for {Amount} of {Thing}.",
-        "{Name}, you're short on gold for {Amount} of {Thing}."
+        "{Name}, you can't afford {AmountOfThing}.",
+        "Sorry, {Name}. {AmountOfThing} is too pricey for you.",
+        "{Name}, you need more gold for {AmountOfThing}.",
+        "{Name}, your gold isn't enough for {AmountOfThing}.",
+        "{Name}, you're short on gold for {AmountOfThing}."
     };
 
     protected static ICollection<string> OutOfStockPhrases { get; } = new List<string>
     {
-        "Sorry, {Name}. I don't have {Amount} {Thing} in stock.",
-        "{Name}, I can't provide {Amount} {Thing}. Stock is low.",
-        "{Name}, I don't have {Amount} {Thing} available.",
-        "{Name}, I can't fulfill {Amount} {Thing}. We're short.",
-        "{Name}, we're short of stock. Can't get you {Amount} {Thing}."
+        "Sorry, {Name}. I don't have {AmountOfThing} in stock.",
+        "{Name}, I can't provide {AmountOfThing}. Stock is low.",
+        "{Name}, I don't have {AmountOfThing} available.",
+        "{Name}, I can't fulfill {AmountOfThing}. We're short.",
+        "{Name}, we're short of stock. Can't get you {AmountOfThing}."
     };
 
     protected static ICollection<string> SellItemPhrases { get; } = new List<string>
     {
-        "{Name}, I'll buy {Amount} {Thing} for {Gold} gold.",
-        "Deal, {Name}. Your {Amount} {Thing} for {Gold} gold.",
-        "{Name}, we have a deal. {Amount} {Thing} for {Gold} gold.",
-        "Agreed, {Name}. I'll take {Amount} {Thing} for my {Gold} gold.",
-        "{Name}, it's a deal. Your {Amount} {Thing} for my {Gold} gold."
+        "{Name}, I'll buy {AmountOfThing} for {Gold} gold.",
+        "Deal, {Name}. Your {AmountOfThing} for {Gold} gold.",
+        "{Name}, we have a deal. {AmountOfThing} for {Gold} gold.",
+        "Agreed, {Name}. I'll take {AmountOfThing} for my {Gold} gold.",
+        "{Name}, it's a deal. Your {AmountOfThing} for my {Gold} gold."
     };
 
     /// <inheritdoc />

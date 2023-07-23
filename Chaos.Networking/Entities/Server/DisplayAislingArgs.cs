@@ -120,6 +120,11 @@ public sealed record DisplayAislingArgs : ISendArgs
     ///     The sprite of the aisling's armor in the overcoat slot
     /// </summary>
     public ushort OvercoatSprite { get; set; }
+
+    /// <summary>
+    ///     The color of the aisling's pants, if they have any
+    /// </summary>
+    public DisplayColor? PantsColor { get; set; }
     /// <summary>
     ///     If the aisling is sitting in a resting position, this is the identifier for that position
     /// </summary>

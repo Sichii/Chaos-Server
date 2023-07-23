@@ -17,6 +17,8 @@ public class DefaultAislingScript : AislingScriptBase
     private readonly IStore<BulletinBoard> BoardStore;
     private readonly IStore<MailBox> MailStore;
     private readonly IIntervalTimer SleepAnimationTimer;
+    protected virtual BlindBehavior BlindBehavior { get; }
+    protected virtual RelationshipBehavior RelationshipBehavior { get; }
     protected virtual RestrictionBehavior RestrictionBehavior { get; }
     protected virtual VisibilityBehavior VisibilityBehavior { get; }
 
@@ -28,6 +30,8 @@ public class DefaultAislingScript : AislingScriptBase
         BoardStore = boardStore;
         RestrictionBehavior = new RestrictionBehavior();
         VisibilityBehavior = new VisibilityBehavior();
+        RelationshipBehavior = new RelationshipBehavior();
+        BlindBehavior = new BlindBehavior();
         SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5), false);
     }
 
@@ -87,6 +91,15 @@ public class DefaultAislingScript : AislingScriptBase
         //
         //yield return nationBoard;
     }
+
+    /// <inheritdoc />
+    public override bool IsBlind() => BlindBehavior.IsBlind(Subject);
+
+    /// <inheritdoc />
+    public override bool IsFriendlyTo(Creature creature) => RelationshipBehavior.IsFriendlyTo(Subject, creature);
+
+    /// <inheritdoc />
+    public override bool IsHostileTo(Creature creature) => RelationshipBehavior.IsHostileTo(Subject, creature);
 
     /// <inheritdoc />
     public override void OnDeath()

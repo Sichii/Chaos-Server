@@ -1,6 +1,4 @@
 using Chaos.Collections;
-using Chaos.Common.Identity;
-using Chaos.Common.Utilities;
 using Chaos.Models.WorldMap;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Content;
@@ -11,14 +9,17 @@ namespace Chaos.Services.MapperProfiles;
 
 public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
                                      IMapperProfile<WorldMap, WorldMapArgs>,
-                                     IMapperProfile<WorldMapNode, WorldMapNodeSchema>
+                                     IMapperProfile<WorldMapNode, WorldMapNodeSchema>,
+                                     IMapperProfile<WorldMapNode, WorldMapNodeInfo>
 {
-    private static readonly KeyMapper<ushort> KeyMapper;
+    private readonly ITypeMapper Mapper;
     private readonly ISimpleCache SimpleCache;
 
-    static WorldMapMapperProfile() => KeyMapper = new KeyMapper<ushort>(new SequentialIdGenerator<ushort>());
-
-    public WorldMapMapperProfile(ISimpleCache simpleCache) => SimpleCache = simpleCache;
+    public WorldMapMapperProfile(ISimpleCache simpleCache, ITypeMapper mapper)
+    {
+        SimpleCache = simpleCache;
+        Mapper = mapper;
+    }
 
     /// <inheritdoc />
     public WorldMap Map(WorldMapArgs obj) => throw new NotImplementedException();
@@ -28,7 +29,7 @@ public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
     {
         FieldName = obj.WorldMapKey,
         FieldIndex = obj.FieldIndex,
-        Nodes = obj.Nodes.Values.Cast<WorldMapNodeInfo>().ToList()
+        Nodes = Mapper.MapMany<WorldMapNodeInfo>(obj.Nodes.Values).ToList()
     };
 
     /// <inheritdoc />
@@ -45,14 +46,25 @@ public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
 
     /// <inheritdoc />
     public WorldMapNode Map(WorldMapNodeSchema obj) =>
-        new(SimpleCache)
-        {
-            NodeKey = obj.NodeKey,
-            UniqueId = KeyMapper.GetId(obj.NodeKey),
-            Destination = obj.Destination,
-            ScreenPosition = obj.ScreenPosition,
-            Text = obj.Text
-        };
+        new(
+            SimpleCache,
+            obj.NodeKey,
+            obj.Destination,
+            obj.ScreenPosition,
+            obj.Text);
+
+    /// <inheritdoc />
+    public WorldMapNode Map(WorldMapNodeInfo obj) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    WorldMapNodeInfo IMapperProfile<WorldMapNode, WorldMapNodeInfo>.Map(WorldMapNode obj) => new()
+    {
+        CheckSum = obj.UniqueId, //check for this node id on the current world map, use the destination from there, not here
+        DestinationPoint = new Point(), //value not trusted, dont bother populating 
+        MapId = 0, //value not trusted, dont bother populating
+        ScreenPosition = obj.ScreenPosition,
+        Text = obj.Text
+    };
 
     /// <inheritdoc />
     public WorldMapNodeSchema Map(WorldMapNode obj) => throw new NotImplementedException();

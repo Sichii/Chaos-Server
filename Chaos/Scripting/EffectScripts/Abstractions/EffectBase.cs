@@ -17,6 +17,8 @@ public abstract class EffectBase : IEffect
         set => Elapsed = Duration - value;
     }
 
+    public Creature? Source { get; set; } = null!;
+
     public Creature Subject { get; set; } = null!;
     protected abstract TimeSpan Duration { get; }
     public abstract byte Icon { get; }
@@ -24,6 +26,7 @@ public abstract class EffectBase : IEffect
 
     /// <inheritdoc />
     public string ScriptKey { get; }
+    protected Aisling? AislingSource => Source as Aisling;
     protected Aisling? AislingSubject => Subject as Aisling;
 
     protected EffectBase() => ScriptKey = GetEffectKey(GetType());

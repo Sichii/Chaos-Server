@@ -34,13 +34,54 @@ public sealed partial class ItemTemplatePropertyEditor
         ColorCmbox.ItemsSource = GetEnumNames<DisplayColor>();
         EquipmentTypeCmbox.ItemsSource = GetEnumNames<EquipmentType?>();
         GenderCmbox.ItemsSource = GetEnumNames<Gender?>();
-        PantsColorCmbox.ItemsSource = GetEnumNames<DisplayColor?>().Take(17); //16 color + empty
+        PantsColorCmbox.ItemsSource = GetEnumNames<DisplayColor?>().Take(17); //0-15 + null
         ClassCmbox.ItemsSource = GetEnumNames<BaseClass?>();
         AdvClassCmbox.ItemsSource = GetEnumNames<AdvClass?>();
 
         ScriptKeysView.ItemsSource = ScriptKeysViewItems;
 
         PopulateControlsFromItem();
+
+        TemplateKeyLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.TemplateKey));
+        NameLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Name));
+        PanelSpriteLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.PanelSprite));
+        DisplaySpriteLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.DisplaySprite));
+        ColorLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Color));
+        PantsColorLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.PantsColor));
+        MaxStacksLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.MaxStacks));
+        AccountBoundLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.AccountBound));
+        BuyCostLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.BuyCost));
+        SellValueLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.SellValue));
+        WeightLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Weight));
+        MaxDurabilityLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.MaxDurability));
+        ClassLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Class));
+        AdvClassLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.AdvClass));
+        LevelLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Level));
+        RequiresMasterLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.RequiresMaster));
+
+        AtkSpeedPctLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.AtkSpeedPct));
+        AcLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Ac));
+        MagicResistanceLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.MagicResistance));
+        HitLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Hit));
+        DmgLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Dmg));
+        FlatSkillDamageLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.FlatSkillDamage));
+        FlatSpellDamageLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.FlatSpellDamage));
+        SkillDamagePctLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.SkillDamagePct));
+        SpellDamagePctLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.SpellDamagePct));
+        StrLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Str));
+        IntLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Int));
+        WisLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Wis));
+        ConLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Con));
+        DexLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Dex));
+
+        CooldownMsLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.CooldownMs));
+        EquipmentTypeLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.EquipmentType));
+        GenderLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Gender));
+        IsDyeableLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.IsDyeable));
+        IsModifiableLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.IsModifiable));
+        CategoryLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Category));
+        DescriptionLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Description));
+        ScriptKeysLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.ScriptKeys));
     }
 
     #region Controls > Template > Controls

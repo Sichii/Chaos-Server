@@ -252,8 +252,12 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         //we can always see ourselves, and we're never hostile to ourself
         if (!Aisling.Equals(aisling))
         {
-            if (!Aisling.IsFriendlyTo(aisling))
+            if (Aisling.IsHostileTo(aisling))
                 args.NameTagStyle = NameTagStyle.Hostile;
+            else if (Aisling.IsFriendlyTo(aisling))
+                args.NameTagStyle = NameTagStyle.FriendlyHover;
+            else
+                args.NameTagStyle = NameTagStyle.Neutral;
 
             //if we're not an admin, and the aisling is not visible
             if (!Aisling.IsAdmin && aisling.Visibility is not VisibilityType.Normal)
@@ -689,7 +693,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
                         if (groundItem.Visibility is not VisibilityType.Normal && (Aisling.IsAdmin || Aisling.Script.CanSee(groundItem)))
                         {
                             groundItemInfo.Sprite = 11978;
-                            groundItemInfo.Color = DisplayColor.Black;
+                            groundItemInfo.Color = DisplayColor.MatteBlack;
                         }
 
                         visibleArgs.Add(groundItemInfo);

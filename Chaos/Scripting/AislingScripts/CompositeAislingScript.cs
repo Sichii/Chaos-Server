@@ -101,12 +101,48 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public IEnumerable<BoardBase> GetBoardList()
+    public virtual IEnumerable<BoardBase> GetBoardList()
     {
         //cant use CollectionMarshal.AsSpan here because of yield
         foreach (var script in Scripts)
             foreach (var board in script.GetBoardList())
                 yield return board;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool IsBlind()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (script.IsBlind())
+                return true;
+
+        return false;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool IsFriendlyTo(Creature creature)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (script.IsFriendlyTo(creature))
+                return true;
+
+        return false;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool IsHostileTo(Creature creature)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (script.IsHostileTo(creature))
+                return true;
+
+        return false;
     }
 
     /// <summary>
@@ -190,7 +226,9 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
             script.OnPublicMessage(source, message);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void Update(TimeSpan delta)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))

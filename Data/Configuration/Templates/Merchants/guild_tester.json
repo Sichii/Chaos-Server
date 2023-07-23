@@ -1,19 +1,17 @@
 {
-  "itemsForSale": [],
-  "itemsToBuy": [],
-  "name": "Guild Tester",
-  "restockIntervalHours": 6,
-  "restockPercent": 100,
-  "scriptKeys": [
-    "showdialog"
-  ],
-  "scriptVars": {
-    "showdialog": {
-      "dialogKey": "guild_tester_initial"
-    }
-  },
-  "skillsToTeach": [],
-  "spellsToTeach": [],
-  "sprite": 34,
-  "templateKey": "guild_tester"
+    "itemsForSale": [],
+    "itemsToBuy": [],
+    "name": "Guild Tester",
+    "restockIntervalHours": 6,
+    "restockPercent": 100,
+    "scriptKeys": ["showdialog", "defaultBehaviors"],
+    "scriptVars": {
+        "showdialog": {
+            "dialogKey": "guild_tester_initial"
+        }
+    },
+    "skillsToTeach": [],
+    "spellsToTeach": [],
+    "sprite": 34,
+    "templateKey": "guild_tester"
 }

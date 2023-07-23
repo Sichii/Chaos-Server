@@ -1,17 +1,10 @@
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
-using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
-using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.JsonConverters;
 using Chaos.Messaging;
 using Chaos.Messaging.Options;
 using Chaos.Models.Board;
@@ -22,19 +15,15 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Scripting.EffectScripts.Abstractions;
-using Chaos.Services.Configuration;
 using Chaos.Services.Other;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
-using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Extensions.Logging;
 
@@ -42,34 +31,8 @@ namespace Chaos;
 
 public sealed class Startup
 {
-    private static readonly SerializationContext JsonContext;
-    private static readonly JsonSerializerOptions JsonSerializerOptions;
-    private static bool IsInitialized;
-
     public IConfiguration Configuration { get; set; }
     public CancellationTokenSource ServerCtx { get; }
-
-    static Startup()
-    {
-        JsonSerializerOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString,
-            PropertyNameCaseInsensitive = true,
-            IgnoreReadOnlyProperties = true,
-            IgnoreReadOnlyFields = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            AllowTrailingCommas = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
-
-        JsonSerializerOptions.Converters.Add(new PointConverter());
-        JsonSerializerOptions.Converters.Add(new LocationConverter());
-        JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-
-        JsonContext = new SerializationContext(JsonSerializerOptions);
-    }
 
     public Startup(IConfiguration configuration)
     {
@@ -77,43 +40,18 @@ public sealed class Startup
         ServerCtx = new CancellationTokenSource();
     }
 
-    // ReSharper disable once MemberCanBeMadeStatic.Global
-    public void AddJsonSerializerOptions(IServiceCollection services) =>
-        services.AddOptions<JsonSerializerOptions>()
-                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
-                    (options, logger) =>
-                    {
-                        if (!IsInitialized)
-                        {
-                            IsInitialized = true;
-                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
-                            var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
-
-                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
-                        }
-
-                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
-                    });
-
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton(ServerCtx);
         var encodingProvider = CodePagesEncodingProvider.Instance;
         Encoding.RegisterProvider(encodingProvider);
 
-        services.AddSingleton(Configuration);
-        services.AddOptions();
-        services.ConfigureOptions<OptionsConfigurer>();
-        services.ConfigureOptions<OptionsValidator>();
-
-        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key);
-
-        services.AddSingleton<IStagingDirectory, ChaosOptions>(p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>().Value);
+        services.AddChaosOptions(Configuration);
 
         services.AddLogging(logging => logging.AddNLog());
-
         RegisterStructuredLoggingTransformations();
-        AddJsonSerializerOptions(services);
+
+        services.AddJsonSerializerOptions();
 
         services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
 

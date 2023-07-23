@@ -44,6 +44,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
     public virtual bool IsAlive => StatSheet.CurrentHp > 0;
 
+    public virtual bool IsBlind => Script.IsBlind();
+
     protected Creature(
         string name,
         ushort sprite,
@@ -170,21 +172,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
-    public virtual bool IsFriendlyTo(Creature other) => other switch
-    {
-        Monster  => other is Monster,
-        Aisling  => this is not Monster, //could also check if map is pvp enabled or something
-        Merchant => this is not Monster,
-        _        => false
-    };
+    public virtual bool IsFriendlyTo(Creature other) => Script.IsFriendlyTo(other);
 
-    public virtual bool IsHostileTo(Creature other) => other switch
-    {
-        Monster  => true,
-        Aisling  => this is Monster,
-        Merchant => this is Monster,
-        _        => false
-    };
+    public virtual bool IsHostileTo(Creature other) => Script.IsHostileTo(other);
 
     public virtual void OnApproached(Creature creature)
     {

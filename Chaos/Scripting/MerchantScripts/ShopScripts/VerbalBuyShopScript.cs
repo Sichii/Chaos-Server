@@ -10,6 +10,7 @@ using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
+using Humanizer;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts;
@@ -55,7 +56,7 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
             case ComplexActionHelper.BuyItemResult.Success:
             {
                 var phrase = BuyItemPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, itemToBuy.DisplayName));
+                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
 
                 Logger.WithProperty(source)
                       .WithProperty(itemToBuy)
@@ -73,14 +74,14 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
             case ComplexActionHelper.BuyItemResult.CantCarry:
             {
                 var phrase = CantCarryPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, itemToBuy.DisplayName));
+                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
 
                 break;
             }
             case ComplexActionHelper.BuyItemResult.NotEnoughGold:
             {
                 var phrase = NotEnoughGoldPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, itemToBuy.DisplayName));
+                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
 
                 break;
             }
@@ -93,7 +94,7 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
             case ComplexActionHelper.BuyItemResult.NotEnoughStock:
             {
                 var phrase = OutOfStockPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, amount, itemToBuy.DisplayName));
+                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
 
                 break;
             }

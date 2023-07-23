@@ -3,6 +3,7 @@ using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Time;
+using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Utilities;
@@ -61,7 +62,7 @@ public static class ShutdownUtility
             SHUTDOWN_FORMAT,
             message => SendMessage(clients, message));
 
-        SendMessage(clients, SHUTDOWN_FORMAT.Inject($"{mins} mins"));
+        SendMessage(clients, SHUTDOWN_FORMAT.Inject("min".ToQuantity(mins)));
 
         while (!cancellationToken.IsCancellationRequested)
         {

@@ -13,7 +13,7 @@
     "name": "Shop Tester",
     "restockIntervalHrs": 1,
     "restockPCt": 100,
-    "scriptKeys": ["showdialog", "verbalShop"],
+    "scriptKeys": ["showdialog", "verbalShop", "defaultBehaviors"],
     "scriptVars": {
         "showdialog": {
             "dialogKey": "shop_tester_initial"

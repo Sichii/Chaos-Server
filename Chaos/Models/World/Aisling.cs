@@ -51,12 +51,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public IgnoreList IgnoreList { get; init; }
     public IInventory Inventory { get; private set; }
     public bool IsAdmin { get; set; }
+    public LanternSize LanternSize { get; set; }
     public Collections.Legend Legend { get; private set; }
     public MailBox MailBox { get; set; } = null!;
     public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
     public byte[] Portrait { get; set; }
     public string ProfileText { get; set; }
+    public RestPosition RestPosition { get; set; }
     public IPanel<Skill> SkillBook { get; private set; }
     public SocialStatus SocialStatus { get; set; }
     public IPanel<Spell> SpellBook { get; private set; }

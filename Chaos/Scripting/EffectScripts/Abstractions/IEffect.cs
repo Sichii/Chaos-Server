@@ -9,6 +9,7 @@ public interface IEffect : IDeltaUpdatable, IScript
 {
     EffectColor Color { get; set; }
     TimeSpan Remaining { get; set; }
+    Creature? Source { get; set; }
     Creature Subject { get; set; }
     byte Icon { get; }
     string Name { get; }

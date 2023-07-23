@@ -37,6 +37,17 @@ public sealed partial class DialogTemplatePropertyEditor
         ScriptKeysView.ItemsSource = ScriptKeysViewItems;
 
         PopulateControlsFromItem();
+
+        TemplateKeyLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TemplateKey));
+        TypeLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Type));
+        TextLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Text));
+        NextDialogKeyLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.NextDialogKey));
+        PrevDialogKeyLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.PrevDialogKey));
+        ContextualLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Contextual));
+        TextBoxLengthLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TextBoxLength));
+        TextBoxPromptLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TextBoxPrompt));
+        OptionsLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Options));
+        ScriptKeysLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.ScriptKeys));
     }
 
     #region Controls > Template > Controls

@@ -4,7 +4,7 @@ using Chaos.Models.World;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("destroyall", helpText: "<coins|money|groundItems|items|monsters|merchants>")]
+[Command("destroyall", helpText: "<gold|coins|money|grounditems|items|monsters|merchants>")]
 public class DestroyAllCommand : ICommand<Aisling>
 {
     /// <inheritdoc />
@@ -17,13 +17,14 @@ public class DestroyAllCommand : ICommand<Aisling>
 
         switch (clearType.ToLower())
         {
+            case "gold":
             case "coins":
             case "money":
                 foreach (var money in map.GetEntities<Money>().ToList())
                     map.RemoveObject(money);
 
                 break;
-            case "groundItems":
+            case "grounditems":
             case "items":
                 foreach (var groundItem in map.GetEntities<GroundItem>().ToList())
                     map.RemoveObject(groundItem);

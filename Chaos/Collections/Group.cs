@@ -2,6 +2,7 @@ using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 using Chaos.Services.Servers.Options;
 
 namespace Chaos.Collections;
@@ -91,6 +92,13 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
         aisling.SendActiveMessage($"You have joined {Leader.Name}'s group");
         aisling.Group = this;
         aisling.Client.SendSelfProfile();
+    }
+
+    public bool Contains(Aisling aisling)
+    {
+        using var @lock = Sync.Enter();
+
+        return Members.Contains(aisling, WorldEntity.IdComparer);
     }
 
     private void Disband()
