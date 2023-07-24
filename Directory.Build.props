@@ -13,4 +13,10 @@
         <!--<ServerGarbageCollection>true</ServerGarbageCollection>
         <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>-->
     </PropertyGroup>
+
+    <PropertyGroup>
+        <Company>Chaotic Minds</Company>
+        <NeutralLanguage>en</NeutralLanguage>
+        <Copyright>Copyright@2023</Copyright>
+    </PropertyGroup>
 </Project>

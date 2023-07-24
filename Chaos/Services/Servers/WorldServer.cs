@@ -980,7 +980,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnSocialStatus(IWorldClient localClient, SocialStatusArgs localArgs)
         {
-            localClient.Aisling.SocialStatus = localArgs.SocialStatus;
+            localClient.Aisling.Options.SocialStatus = localArgs.SocialStatus;
 
             return default;
         }
@@ -1043,7 +1043,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         static ValueTask InnerOnToggleGroup(IWorldClient localClient)
         {
             //don't need to send the updated option, because they arent currently looking at it
-            localClient.Aisling.Options.Toggle(UserOption.Group);
+            localClient.Aisling.Options.Toggle(UserOption.Option2);
 
             if (localClient.Aisling.Group != null)
                 localClient.Aisling.Group?.Leave(localClient.Aisling);
@@ -1271,12 +1271,20 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            if (targetAisling.SocialStatus == SocialStatus.DoNotDisturb)
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (targetAisling.Options.SocialStatus == SocialStatus.DoNotDisturb)
             {
-                localClient.SendServerMessage(ServerMessageType.Whisper, $"{targetAisling.Name} doesn't want to be bothered");
+                localClient.SendServerMessage(
+                    ServerMessageType.Whisper,
+                    $"{MessageColor.Yellow.ToPrefix()}{targetAisling.Name} doesn't want to be bothered");
 
                 return default;
             }
+
+            if (targetAisling.Options.SocialStatus == SocialStatus.DayDreaming)
+                localClient.SendServerMessage(
+                    ServerMessageType.Whisper,
+                    $"{MessageColor.Yellow.ToPrefix()}{targetAisling.Name} is daydreaming");
 
             var maxLength = CONSTANTS.MAX_SERVER_MESSAGE_LENGTH - targetAisling.Name.Length - 4;
 

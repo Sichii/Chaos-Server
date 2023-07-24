@@ -60,7 +60,6 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public string ProfileText { get; set; }
     public RestPosition RestPosition { get; set; }
     public IPanel<Skill> SkillBook { get; private set; }
-    public SocialStatus SocialStatus { get; set; }
     public IPanel<Spell> SpellBook { get; private set; }
     public TitleList Titles { get; init; }
 
@@ -749,7 +748,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     {
         exchange = ExchangeFactory.Create(source, this);
 
-        if (!source.Options.Exchange)
+        if (!source.Options.AllowExchange)
         {
             source.SendActiveMessage("You have disabled exchanging");
             exchange = null;
@@ -757,7 +756,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             return false;
         }
 
-        if (!Options.Exchange)
+        if (!Options.AllowExchange)
         {
             source.SendActiveMessage($"{Name} has disabled exchanging");
             SendActiveMessage($"{source.Name} is trying to exchange with you, but it is disabled");

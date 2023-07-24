@@ -7,44 +7,54 @@ namespace Chaos.Schemas.Aisling;
 /// </summary>
 public sealed record UserOptionsSchema
 {
-    /// <summary>
-    ///     Whether or not the player is accepting exchanges.
-    /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool Exchange { get; set; }
-    /// <summary>
-    ///     Not current used rly
-    /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool FastMove { get; set; }
+    #region Other Options
     /// <summary>
     ///     Whether or not the player is accepting group invites.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool Group { get; set; }
+    public bool AllowGroup { get; set; }
+    #endregion
+
+    #region DontReorder
     /// <summary>
-    ///     Whether or not the player wishes to see guild chat
+    ///     Option 1
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool GuildChat { get; set; }
+    public bool ShowBodyAnimations { get; set; }
+
     /// <summary>
-    ///     Whether or not the player wishes to see animations
+    ///     Option 2
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool Magic { get; set; }
+    public bool ListenToHitSounds { get; set; }
     /// <summary>
-    ///     Whether or not the player wishes to see shouts
+    ///     Option 3
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool Shout { get; set; }
+    public bool Option3 { get; set; }
     /// <summary>
-    ///     Whether or not the player wishes to see whispers
+    ///     Option 4
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool Whisper { get; set; }
+    public bool Option4 { get; set; }
     /// <summary>
-    ///     Whether or not the player wishes to hear sounds
+    ///     Option 5
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-    public bool Wisdom { get; set; }
+    public bool Option5 { get; set; }
+
+    /// <summary>
+    ///     Option 6. Whether or not the player is allowing exchanges.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public bool AllowExchange { get; set; }
+
+    //Option7 doesnt show, so it is not saved or used
+
+    /// <summary>
+    ///     Option 8
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+    public bool Option8 { get; set; }
+    #endregion
 }

@@ -4,4 +4,7 @@
         <ProjectReference Include="..\Chaos.Geometry\Chaos.Geometry.csproj"/>
         <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj"/>
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Namotion.Reflection"/>
+    </ItemGroup>
 </Project>

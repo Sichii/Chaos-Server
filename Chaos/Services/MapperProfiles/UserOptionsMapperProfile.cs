@@ -8,25 +8,29 @@ public sealed class UserOptionsMapperProfile : IMapperProfile<UserOptions, UserO
 {
     public UserOptions Map(UserOptionsSchema obj) => new()
     {
-        Exchange = obj.Exchange,
-        FastMove = obj.FastMove,
-        Group = obj.Group,
-        GuildChat = obj.GuildChat,
-        Magic = obj.GuildChat,
-        Shout = obj.Shout,
-        Whisper = obj.Whisper,
-        Wisdom = obj.Wisdom
+        ShowBodyAnimations = obj.ShowBodyAnimations,
+        ListenToHitSounds = obj.ListenToHitSounds,
+        Option3 = obj.Option3,
+        Option4 = obj.Option4,
+        Option5 = obj.Option5,
+        AllowExchange = obj.AllowExchange,
+        //option 7 not used
+        Option8 = obj.Option8,
+        //other options
+        AllowGroup = obj.AllowGroup
     };
 
     public UserOptionsSchema Map(UserOptions obj) => new()
     {
-        Exchange = obj.Exchange,
-        FastMove = obj.FastMove,
-        Group = obj.Group,
-        GuildChat = obj.GuildChat,
-        Magic = obj.Magic,
-        Shout = obj.Shout,
-        Whisper = obj.Whisper,
-        Wisdom = obj.Wisdom
+        ShowBodyAnimations = obj.ShowBodyAnimations,
+        ListenToHitSounds = obj.ListenToHitSounds,
+        Option3 = obj.Option3,
+        Option4 = obj.Option4,
+        Option5 = obj.Option5,
+        AllowExchange = obj.AllowExchange,
+        //option 7 not used
+        Option8 = obj.Option8,
+        //other options
+        AllowGroup = obj.AllowGroup
     };
 }

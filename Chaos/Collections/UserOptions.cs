@@ -1,23 +1,36 @@
+using System.ComponentModel;
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 
 namespace Chaos.Collections;
 
 public sealed class UserOptions
 {
-    public bool Exchange { get; set; }
+    private string GetDescription(UserOption userOption) => userOption switch
+    {
+        UserOption.Option1 => typeof(UserOptions).GetDescription(nameof(ShowBodyAnimations)),
+        UserOption.Option2 => typeof(UserOptions).GetDescription(nameof(ListenToHitSounds)),
+        UserOption.Option3 => typeof(UserOptions).GetDescription(nameof(Option3)),
+        UserOption.Option4 => typeof(UserOptions).GetDescription(nameof(Option4)),
+        UserOption.Option5 => typeof(UserOptions).GetDescription(nameof(Option5)),
+        UserOption.Option6 => typeof(UserOptions).GetDescription(nameof(AllowExchange)),
+        UserOption.Option7 => string.Empty,
+        UserOption.Option8 => typeof(UserOptions).GetDescription(nameof(Option8)),
+        _                  => throw new ArgumentOutOfRangeException(nameof(userOption), userOption, null)
+    };
 
-    public bool FastMove { get; set; }
-
-    public bool Group { get; set; } = true;
-
-    public bool GuildChat { get; set; } = true;
-
-    public bool Magic { get; set; } = true;
-
-    public bool Shout { get; set; } = true;
-    public bool Whisper { get; set; } = true;
-
-    public bool Wisdom { get; set; } = true;
+    private bool IsEnabled(UserOption userOption) => userOption switch
+    {
+        UserOption.Option1 => ShowBodyAnimations,
+        UserOption.Option2 => ListenToHitSounds,
+        UserOption.Option3 => Option3,
+        UserOption.Option4 => Option4,
+        UserOption.Option5 => Option5,
+        UserOption.Option6 => AllowExchange,
+        UserOption.Option7 => false,
+        UserOption.Option8 => Option8,
+        _                  => throw new ArgumentOutOfRangeException(nameof(userOption), userOption, null)
+    };
 
     /// <summary>
     ///     Toggles the given UserOption.
@@ -27,36 +40,36 @@ public sealed class UserOptions
     {
         switch (opt)
         {
-            case UserOption.Whisper:
-                Whisper = !Whisper;
+            case UserOption.Option1:
+                ShowBodyAnimations = !ShowBodyAnimations;
 
                 break;
-            case UserOption.Group:
-                Group = !Group;
+            case UserOption.Option2:
+                AllowGroup = !AllowGroup;
 
                 break;
-            case UserOption.Shout:
-                Shout = !Shout;
+            case UserOption.Option3:
+                Option3 = !Option3;
 
                 break;
-            case UserOption.Wisdom:
-                Wisdom = !Wisdom;
+            case UserOption.Option4:
+                Option4 = !Option4;
 
                 break;
-            case UserOption.Magic:
-                Magic = !Magic;
+            case UserOption.Option5:
+                Option5 = !Option5;
 
                 break;
-            case UserOption.Exchange:
-                Exchange = !Exchange;
+            case UserOption.Option6:
+                AllowExchange = !AllowExchange;
 
                 break;
-            case UserOption.FastMove:
-                FastMove = !FastMove;
+            case UserOption.Option7:
+                //not used, don't use
 
                 break;
-            case UserOption.GuildChat:
-                GuildChat = !GuildChat;
+            case UserOption.Option8:
+                Option8 = !Option8;
 
                 break;
             default:
@@ -66,21 +79,15 @@ public sealed class UserOptions
 
     public string ToString(UserOption opt)
     {
+        if (opt == UserOption.Request)
+            return ToString();
+
         const string OPTIONS_FORMAT = "{0,-25}:{1,-3}";
 
-        return opt switch
-        {
-            UserOption.Request   => ToString(),
-            UserOption.Whisper   => string.Format(OPTIONS_FORMAT, "1Listen to whisper", Whisper ? "ON" : "OFF"),
-            UserOption.Group     => string.Format(OPTIONS_FORMAT, "2Join a group", Group ? "ON" : "OFF"),
-            UserOption.Shout     => string.Format(OPTIONS_FORMAT, "3Listen to shout", Shout ? "ON" : "OFF"),
-            UserOption.Wisdom    => string.Format(OPTIONS_FORMAT, "4Believe in wisdom", Wisdom ? "ON" : "OFF"),
-            UserOption.Magic     => string.Format(OPTIONS_FORMAT, "5Believe in magic", Magic ? "ON" : "OFF"),
-            UserOption.Exchange  => string.Format(OPTIONS_FORMAT, "6Exchange", Exchange ? "ON" : "OFF"),
-            UserOption.FastMove  => string.Format(OPTIONS_FORMAT, "7Fast Move", FastMove ? "ON" : "OFF"),
-            UserOption.GuildChat => string.Format(OPTIONS_FORMAT, "8Guild Chat", GuildChat ? "ON" : "OFF"),
-            _                    => throw new ArgumentOutOfRangeException(nameof(opt), opt, "Unknown enum value")
-        };
+        var enabled = IsEnabled(opt);
+        var description = GetDescription(opt);
+
+        return string.Format(OPTIONS_FORMAT, $"{(byte)opt}{description}", enabled ? "ON" : "OFF");
     }
 
     public override string ToString()
@@ -92,4 +99,26 @@ public sealed class UserOptions
 
         return $"0{string.Join("\t", options)}";
     }
+
+    #region OtherOptions
+    public bool AllowGroup { get; set; } = true;
+    public SocialStatus SocialStatus { get; set; }
+    #endregion
+
+    #region F4 Options
+    [Description("Show body animations")]
+    public bool ShowBodyAnimations { get; set; } = true;
+    [Description("Listen to hit sounds")]
+    public bool ListenToHitSounds { get; set; } = true;
+    [Description("Option 3")]
+    public bool Option3 { get; set; } = true;
+    [Description("Option 4")]
+    public bool Option4 { get; set; } = true;
+    [Description("Option 5")]
+    public bool Option5 { get; set; } = true;
+    [Description("Allow Exchanges")]
+    public bool AllowExchange { get; set; } = true;
+    [Description("Option 8")]
+    public bool Option8 { get; set; } = true;
+    #endregion
 }

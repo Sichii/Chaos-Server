@@ -193,11 +193,11 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public ValueTask OnHeartBeatAsync(T client, in ClientPacket packet)
+    public virtual ValueTask OnHeartBeatAsync(T client, in ClientPacket packet)
     {
-        (var first, var second) = PacketSerializer.Deserialize<HeartBeatArgs>(in packet);
+        _ = PacketSerializer.Deserialize<HeartBeatArgs>(in packet);
 
-        client.SendHeartBeat(second, first);
+        //do nothing
 
         return default;
     }
@@ -211,9 +211,13 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public ValueTask OnSynchronizeTicksAsync(T client, in ClientPacket packet) =>
-        //_ = PacketSerializer.Deserialize<SynchronizeTicksArgs>(ref packet);
+    public virtual ValueTask OnSynchronizeTicksAsync(T client, in ClientPacket packet)
+    {
+        _ = PacketSerializer.Deserialize<SynchronizeTicksArgs>(in packet);
+
         //do nothing
-        default;
+
+        return default;
+    }
     #endregion
 }

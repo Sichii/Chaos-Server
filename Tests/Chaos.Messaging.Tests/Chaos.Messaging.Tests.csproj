@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\..\Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj"/>
         <ProjectReference Include="..\..\Chaos.Messaging\Chaos.Messaging.csproj"/>

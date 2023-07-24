@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\..\Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj"/>
         <ProjectReference Include="..\..\Chaos.Geometry\Chaos.Geometry.csproj"/>

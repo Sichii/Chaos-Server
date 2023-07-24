@@ -145,6 +145,9 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         if (bodyAnimation is BodyAnimation.None)
             return;
 
+        if (Aisling is { Options.ShowBodyAnimations: false })
+            return;
+
         var args = new BodyAnimationArgs
         {
             SourceId = id,
@@ -648,6 +651,9 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
     public void SendSound(byte sound, bool isMusic)
     {
+        if (Aisling is { Options.ListenToHitSounds: false } && !isMusic && (sound == 1))
+            return;
+
         var args = new SoundArgs
         {
             Sound = sound,

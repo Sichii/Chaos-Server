@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\..\Chaos.Scripting.Abstractions\Chaos.Scripting.Abstractions.csproj"/>
         <ProjectReference Include="..\..\Chaos.Common\Chaos.Common.csproj"/>

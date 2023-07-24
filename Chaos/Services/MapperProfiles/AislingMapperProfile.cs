@@ -265,7 +265,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         AdvClass = obj.UserStatSheet.AdvClass,
         BaseClass = obj.UserStatSheet.BaseClass,
         Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>)!,
-        GroupOpen = obj.Options.Group,
+        GroupOpen = obj.Options.AllowGroup,
         GuildName = obj.Guild?.Name,
         GuildRank = obj.GuildRank,
         Id = obj.Id,
@@ -274,7 +274,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Nation = obj.Nation,
         Portrait = obj.Portrait,
         ProfileText = obj.ProfileText,
-        SocialStatus = obj.SocialStatus,
+        SocialStatus = obj.Options.SocialStatus,
         Title = obj.Titles.FirstOrDefault()
     };
 
@@ -285,7 +285,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         AdvClass = obj.UserStatSheet.AdvClass,
         BaseClass = obj.UserStatSheet.BaseClass,
         Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>),
-        GroupOpen = obj.Options.Group,
+        GroupOpen = obj.Options.AllowGroup,
         GroupString = obj.Group?.ToString(),
         GuildName = obj.Guild?.Name,
         GuildRank = obj.GuildRank,
@@ -295,7 +295,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Nation = obj.Nation,
         Portrait = obj.Portrait,
         ProfileText = obj.ProfileText,
-        SocialStatus = obj.SocialStatus,
+        SocialStatus = obj.Options.SocialStatus,
         SpouseName = null, //TODO: when we implement marraige i guess
         Title = obj.Titles.FirstOrDefault()
     };
@@ -318,7 +318,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Color = WorldListColor.White,
         IsMaster = obj.UserStatSheet.Master,
         Name = obj.Name,
-        SocialStatus = obj.SocialStatus,
+        SocialStatus = obj.Options.SocialStatus,
         Title = obj.Titles.FirstOrDefault()
     };
 }

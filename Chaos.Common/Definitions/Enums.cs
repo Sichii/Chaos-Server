@@ -754,14 +754,14 @@ public enum SocialStatus : byte
 public enum UserOption
 {
     Request = 0,
-    Whisper = 1,
-    Group = 2,
-    Shout = 3,
-    Wisdom = 4,
-    Magic = 5,
-    Exchange = 6,
-    FastMove = 7,
-    GuildChat = 8
+    Option1 = 1,
+    Option2 = 2,
+    Option3 = 3,
+    Option4 = 4,
+    Option5 = 5,
+    Option6 = 6,
+    Option7 = 7,
+    Option8 = 8
 }
 #endregion
 

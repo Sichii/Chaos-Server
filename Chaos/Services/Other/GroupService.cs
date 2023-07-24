@@ -96,14 +96,14 @@ public sealed class GroupService : IGroupService
     {
         using var @lock = Sync.Enter();
 
-        if (!sender.Options.Group)
+        if (!sender.Options.AllowGroup)
         {
             sender.SendOrangeBarMessage("You have elected not to join groups");
 
             return;
         }
 
-        if (!receiver.Options.Group)
+        if (!receiver.Options.AllowGroup)
         {
             sender.SendOrangeBarMessage($"{receiver.Name} refuses to join your group");
 

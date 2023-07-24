@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+#pragma warning disable CS1591
+
 var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")
@@ -72,7 +74,9 @@ foreach (var path in filePaths)
     }
 }
 
+#pragma warning disable CA1050
 public enum OldColors : byte
+    #pragma warning restore CA1050
 {
     Default,
     Black,

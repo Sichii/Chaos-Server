@@ -17,6 +17,7 @@ public class DefaultAislingScript : AislingScriptBase
     private readonly IStore<BulletinBoard> BoardStore;
     private readonly IStore<MailBox> MailStore;
     private readonly IIntervalTimer SleepAnimationTimer;
+    private SocialStatus PreAfkSocialStatus { get; set; }
     protected virtual BlindBehavior BlindBehavior { get; }
     protected virtual RelationshipBehavior RelationshipBehavior { get; }
     protected virtual RestrictionBehavior RestrictionBehavior { get; }
@@ -115,13 +116,26 @@ public class DefaultAislingScript : AislingScriptBase
 
         if (SleepAnimationTimer.IntervalElapsed)
         {
-            if (!Subject.IsAlive)
-                return;
-
             var lastManualAction = Subject.Trackers.LastManualAction;
+            var isAfk = !lastManualAction.HasValue || (DateTime.UtcNow.Subtract(lastManualAction.Value).TotalMinutes > 5);
 
-            if (!lastManualAction.HasValue || (DateTime.UtcNow.Subtract(lastManualAction.Value).TotalMinutes > 5))
-                Subject.AnimateBody(BodyAnimation.Snore);
+            if (isAfk)
+            {
+                if (Subject.IsAlive)
+                    Subject.AnimateBody(BodyAnimation.Snore);
+
+                //set player to daydreaming if they are currently set to awake
+                if (Subject.Options.SocialStatus != SocialStatus.DayDreaming)
+                {
+                    PreAfkSocialStatus = Subject.Options.SocialStatus;
+                    Subject.Options.SocialStatus = SocialStatus.DayDreaming;
+                    Subject.Client.SendSelfProfile();
+                }
+            } else if (Subject.Options.SocialStatus == SocialStatus.DayDreaming)
+            {
+                Subject.Options.SocialStatus = PreAfkSocialStatus;
+                Subject.Client.SendSelfProfile();
+            }
         }
     }
 }

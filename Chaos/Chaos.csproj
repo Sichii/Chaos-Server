@@ -4,14 +4,12 @@
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <PublishUrl>publish\</PublishUrl>
         <AssemblyTitle>Chaos Server</AssemblyTitle>
-        <Company>Chaotic Minds</Company>
         <Product>Chaos Server</Product>
-        <NeutralLanguage>en</NeutralLanguage>
         <Description>A private server for Dark Ages</Description>
-        <Copyright>Copyright © 2022</Copyright>
         <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <OutputPath>bin\$(Configuration)\</OutputPath>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationIcon>Resources\chaos.ico</ApplicationIcon>

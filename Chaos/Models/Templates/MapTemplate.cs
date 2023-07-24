@@ -17,7 +17,6 @@ public sealed record MapTemplate : ITemplate, IScripted
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     public required string TemplateKey { get; init; } = null!;
     public required Tile[,] Tiles { get; set; } = new Tile[0, 0];
-    public required Point[] WarpPoints { get; set; } = Array.Empty<Point>();
     public required byte Width { get; set; }
     public short MapId => short.Parse(TemplateKey);
 

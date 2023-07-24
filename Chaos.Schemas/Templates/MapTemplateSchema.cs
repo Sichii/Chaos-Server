@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Chaos.Geometry;
 
 namespace Chaos.Schemas.Templates;
 
@@ -23,10 +22,6 @@ public sealed record MapTemplateSchema
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; set; } = null!;
-    /// <summary>
-    ///     The coordinates of each warp tile on the map
-    /// </summary>
-    public Point[] WarpPoints { get; set; } = Array.Empty<Point>();
     /// <summary>
     ///     The width of the map
     /// </summary>

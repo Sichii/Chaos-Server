@@ -5,7 +5,7 @@
                 {
                     "src": "../",
                     "files": ["**.csproj"],
-                    "exclude": ["**/Tests/**", "**/Tools/**"]
+                    "exclude": ["**/Tests/**", "**/Tools/**, **/Patches/**"]
                 }
             ],
             "dest": "api",

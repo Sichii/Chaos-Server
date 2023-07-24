@@ -103,7 +103,6 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
             obj.Width,
             obj.Height),
         TemplateKey = obj.TemplateKey,
-        WarpPoints = obj.WarpPoints,
         ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
         Tiles = new Tile[obj.Width, obj.Height]
     };

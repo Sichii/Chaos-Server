@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj"/>
