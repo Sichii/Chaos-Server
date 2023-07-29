@@ -92,11 +92,10 @@ public class LearnSpellScript : DialogScriptBase
                 var animation = new Animation
                 {
                     AnimationSpeed = 50,
-                    TargetAnimation = 22,
-                    TargetId = source.Id
+                    TargetAnimation = 22
                 };
 
-                source.MapInstance.ShowAnimation(animation);
+                source.Animate(animation);
 
                 break;
             case ComplexActionHelper.LearnSpellResult.NoRoom:

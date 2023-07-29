@@ -636,6 +636,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 
+    public void Morph(string newMapTemplateKey)
+    {
+        var newMapTemplate = SimpleCache.Get<MapTemplate>(newMapTemplateKey);
+
+        Script.OnMorphing(newMapTemplate);
+
+        Template = newMapTemplate;
+
+        foreach (var aisling in Objects.Values<Aisling>())
+            aisling.Refresh(true);
+
+        Script.OnMorphed();
+    }
+
     /// <summary>
     ///     Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU
     ///     ARE DOING.
@@ -648,19 +662,26 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             aisling.Client.SendSound(music, true);
     }
 
-    public void PlaySound(byte sound, IPoint point)
+    public void PlaySound(byte sound, params IPoint[] points)
     {
-        foreach (var aisling in Objects.WithinRange<Aisling>(point))
-            aisling.Client.SendSound(sound, false);
-    }
+        switch (points)
+        {
+            case []:
+                return;
+            case [{ } pt]:
+                foreach (var aisling in Objects.WithinRange<Aisling>(pt))
+                    aisling.Client.SendSound(sound, false);
 
-    public void PlaySound(byte sound, IReadOnlyCollection<IPoint> points)
-    {
-        var aislings = Objects.Values<Aisling>()
-                              .Where(aisling => points.Any(p => p.WithinRange(aisling)));
+                break;
+            default:
+                var aislings = Objects.Values<Aisling>()
+                                      .Where(aisling => points.Any(p => p.WithinRange(aisling)));
 
-        foreach (var aisling in aislings)
-            aisling.Client.SendSound(sound, false);
+                foreach (var aisling in aislings)
+                    aisling.Client.SendSound(sound, false);
+
+                break;
+        }
     }
 
     public bool RemoveObject(MapEntity mapEntity)
@@ -686,15 +707,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void ShowAnimation(Animation animation)
     {
-        if (animation.TargetId.HasValue)
-        {
+        //if both target point and target id are set, prefer the point animation.
+        if (animation is { TargetPoint: not null, TargetId: not null })
+            animation = animation.GetPointAnimation(animation.TargetPoint);
+
+        if (animation.TargetPoint.HasValue)
+            foreach (var aisling in Objects.WithinRange<Aisling>(animation.TargetPoint))
+                aisling.Client.SendAnimation(animation);
+        else if (animation.TargetId.HasValue)
             if (TryGetObject<Creature>(animation.TargetId.Value, out var target))
                 foreach (var aisling in Objects.WithinRange<Aisling>(target)
                                                .ThatCanObserve(target))
                     aisling.Client.SendAnimation(animation);
-        } else if (animation.TargetPoint != default)
-            foreach (var aisling in Objects.WithinRange<Aisling>(animation.TargetPoint))
-                aisling.Client.SendAnimation(animation);
     }
 
     public void SimpleAdd(MapEntity mapEntity)

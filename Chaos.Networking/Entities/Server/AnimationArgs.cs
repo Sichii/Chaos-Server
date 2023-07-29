@@ -1,4 +1,4 @@
-using Chaos.Geometry.Abstractions;
+using Chaos.Geometry;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
@@ -32,5 +32,5 @@ public sealed record AnimationArgs : ISendArgs
     /// <summary>
     ///     If the animation targets a point, this is the point that animation will play on
     /// </summary>
-    public IPoint? TargetPoint { get; set; }
+    public Point? TargetPoint { get; set; }
 }

@@ -1,4 +1,5 @@
 using Chaos.Collections;
+using Chaos.Models.Templates;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 
@@ -15,6 +16,12 @@ public abstract class MapScriptBase : SubjectiveScriptBase<MapInstance>, IMapScr
 
     /// <inheritdoc />
     public virtual void OnExited(Creature creature) { }
+
+    /// <inheritdoc />
+    public virtual void OnMorphed() { }
+
+    /// <inheritdoc />
+    public virtual void OnMorphing(MapTemplate newMapTemplate) { }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta) { }

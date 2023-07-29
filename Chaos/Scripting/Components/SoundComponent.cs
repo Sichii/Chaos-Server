@@ -15,7 +15,7 @@ public class SoundComponent : IComponent
         if (!options.Sound.HasValue)
             return;
 
-        context.TargetMap.PlaySound(options.Sound.Value, points);
+        context.TargetMap.PlaySound(options.Sound.Value, points.ToArray());
     }
 
     public interface ISoundComponentOptions

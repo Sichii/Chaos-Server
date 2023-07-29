@@ -1,3 +1,4 @@
+using Chaos.Models.Templates;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Time.Abstractions;
@@ -10,4 +11,6 @@ public interface IMapScript : IScript, IDeltaUpdatable
 {
     void OnEntered(Creature creature);
     void OnExited(Creature creature);
+    void OnMorphed();
+    void OnMorphing(MapTemplate newMapTemplate);
 }

@@ -17,10 +17,9 @@ public sealed record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, AnimationArgs args)
     {
-        if (args.TargetPoint != null)
+        if (args.TargetPoint.HasValue)
         {
-            //writer.WriteBytes(new byte[4]); //dunno
-            writer.WriteUInt32(0);
+            writer.WriteUInt32(args.SourceId ?? 0);
             writer.WriteUInt16(args.TargetAnimation);
             writer.WriteUInt16(args.AnimationSpeed);
             writer.WritePoint16(args.TargetPoint);

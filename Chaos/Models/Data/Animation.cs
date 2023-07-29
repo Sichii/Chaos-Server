@@ -10,7 +10,7 @@ public sealed record Animation
     public ushort TargetAnimation { get; set; }
 
     public uint? TargetId { get; set; }
-    public IPoint? TargetPoint { get; set; }
+    public Point? TargetPoint { get; set; }
     /// <summary>
     ///     Static constructor for no animation.
     /// </summary>
@@ -20,13 +20,13 @@ public sealed record Animation
     ///     Returns a re-targeted animation based on a point. (Does not remove sourceAnimation)
     /// </summary>
     public Animation GetPointAnimation(IPoint targetPoint, uint? sourceId = null) =>
-        this with { TargetPoint = targetPoint, TargetId = null, SourceId = sourceId ?? SourceId };
+        this with { TargetPoint = Point.From(targetPoint), TargetId = null, SourceId = sourceId ?? SourceId };
 
     /// <summary>
     ///     Returns a re-target animation based on a point. Removes sourceAnimation.
     /// </summary>
     public Animation GetPointEffectAnimation(IPoint targetPoint, uint? sourceId = null) =>
-        this with { TargetPoint = targetPoint, TargetId = null, SourceId = sourceId ?? SourceId, SourceAnimation = 0 };
+        this with { TargetPoint = Point.From(targetPoint), TargetId = null, SourceId = sourceId ?? SourceId, SourceAnimation = 0 };
 
     /// <summary>
     ///     Returns a re-targeted animation based on IDs. (Does not remove sourceAnimation)
