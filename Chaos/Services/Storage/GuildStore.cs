@@ -84,7 +84,7 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     /// <inheritdoc />
     protected override Guild LoadFromFile(string dir, string key)
     {
-        Logger.LogTrace("Loading new {@TypeName} entry with key {@Key}", nameof(Guild), key);
+        Logger.LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(Guild), key);
         var start = Stopwatch.GetTimestamp();
 
         if (!Directory.Exists(dir))
@@ -117,7 +117,7 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     public override void Save(Guild obj)
     {
         Logger.WithProperty(obj)
-              .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(Guild), obj.Name);
+              .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(Guild), obj.Name);
 
         var start = Stopwatch.GetTimestamp();
 
@@ -165,7 +165,7 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
                 });
 
             Logger.WithProperty(obj)
-                  .LogDebug("Saved obj {@GuildName}, took {@Elapsed}", obj.Name, Stopwatch.GetElapsedTime(start));
+                  .LogTrace("Saved obj {@GuildName}, took {@Elapsed}", obj.Name, Stopwatch.GetElapsedTime(start));
         } catch (Exception e)
         {
             Logger.WithProperty(obj)

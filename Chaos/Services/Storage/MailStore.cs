@@ -20,7 +20,7 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     /// <inheritdoc />
     protected override MailBox LoadFromFile(string dir, string key)
     {
-        Logger.LogTrace("Loading new {@TypeName} entry with key {@Key}", nameof(MailBox), key);
+        Logger.LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(MailBox), key);
         var start = Stopwatch.GetTimestamp();
 
         if (!Directory.Exists(dir))
@@ -43,7 +43,7 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     public override void Save(MailBox obj)
     {
         Logger.WithProperty(obj)
-              .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
+              .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
 
         var start = Stopwatch.GetTimestamp();
 
@@ -106,7 +106,7 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
                 });
 
             Logger.WithProperty(obj)
-                  .LogDebug(
+                  .LogTrace(
                       "Saved {@TypeName} entry with key {@Key}, took {@Elapsed}",
                       nameof(MailBox),
                       obj.Key,

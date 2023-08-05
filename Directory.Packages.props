@@ -1,5 +1,6 @@
 <Project>
     <ItemGroup>
+        <PackageVersion Include="AutoMapper.Collection" Version="9.0.0"/>
         <PackageVersion Include="Avalonia.Desktop" Version="11.0.0-preview2"/>
         <PackageVersion Include="Avalonia.Diagnostics" Version="11.0.0-preview2"/>
         <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.5"/>

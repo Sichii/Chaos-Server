@@ -313,7 +313,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (!RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
                 Logger.WithProperty(localArgs)
-                      .LogWarning("{@ClientIp} tried to redirect to the world with invalid details", client.RemoteIp.ToString());
+                      .LogWarning("{@ClientIp} tried to redirect to the world with invalid details", client.RemoteIp);
 
                 localClient.Disconnect();
 
@@ -328,7 +328,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     .WithProperty(localArgs)
                     .LogWarning(
                         "{@ClientIp} tried to impersonate a redirect with redirect {@RedirectId}",
-                        localClient.RemoteIp.ToString(),
+                        localClient.RemoteIp,
                         redirect.Id);
 
                 localClient.Disconnect();
@@ -393,14 +393,12 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                         ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
                 }
 
-                Logger.LogDebug("World redirect finalized for {@ClientIp}", client.RemoteIp.ToString());
-
-                foreach (var reactor in aisling.MapInstance.GetDistinctReactorsAtPoint(aisling).ToList())
-                    reactor.OnWalkedOn(aisling);
+                Logger.WithProperty(client)
+                      .LogInformation("World redirect finalized for {@ClientIp}", client.RemoteIp);
             } catch (Exception e)
             {
                 Logger.WithProperty(aisling)
-                      .LogCritical(e, "Failed to add aisling {@AislingName} to the world", aisling.Name);
+                      .LogError(e, "Failed to add aisling {@AislingName} to the world", aisling.Name);
 
                 client.Disconnect();
             }
@@ -408,7 +406,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             Logger.WithProperty(client)
                   .WithProperty(redirect)
-                  .LogCritical(
+                  .LogError(
                       e,
                       "Client with ip {ClientIp} failed to load aisling {@AislingName}",
                       client.RemoteIp,
@@ -579,7 +577,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 Logger.WithProperty(localClient)
                       .LogDebug(
                           "Redirecting {@ClientIp} to {@ServerIp}",
-                          client.RemoteIp.ToString(),
+                          client.RemoteIp,
                           Options.LoginRedirect.Address.ToString());
 
                 localClient.SendRedirect(redirect);
@@ -1310,7 +1308,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
             Logger.WithProperty(fromAisling)
                   .WithProperty(targetAisling)
-                  .LogTrace(
+                  .LogInformation(
                       "Aisling {@FromAislingName} sent whisper {@Message} to aisling {@TargetAislingName}",
                       fromAisling.Name,
                       message,
@@ -1437,10 +1435,18 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public override ValueTask HandlePacketAsync(IWorldClient client, in ClientPacket packet)
     {
-        var handler = ClientHandlers[(byte)packet.OpCode];
-
+        var opCode = packet.OpCode;
+        var handler = ClientHandlers[(byte)opCode];
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var trackers = client.Aisling?.Trackers;
+
+        if (handler is not null)
+            Logger.WithProperty(client)
+                  .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
+        else
+            Logger.WithProperty(client)
+                  .WithProperty(packet.ToString(), "HexData")
+                  .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
         if ((trackers != null) && IsManualAction(packet.OpCode))
             trackers.LastManualAction = DateTime.UtcNow;
@@ -1505,12 +1511,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {@Ip}", ip!.ToString());
+        Logger.LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
 
         var client = ClientFactory.Create(clientSocket);
         client.OnDisconnected += OnDisconnect;
 
-        Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
+        Logger.WithProperty(client)
+              .LogInformation("Connection established with {@ClientIp}", client.RemoteIp);
 
         if (!ClientRegistry.TryAdd(client))
         {

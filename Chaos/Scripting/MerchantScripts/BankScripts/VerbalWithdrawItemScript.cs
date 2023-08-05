@@ -83,7 +83,7 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
 
                 Logger.WithProperty(source)
                       .WithProperty(Subject)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} withdrew {Amount} {@ItemName} from the bank",
                           source.Name,
                           amount,

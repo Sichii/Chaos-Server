@@ -87,7 +87,7 @@ public class LearnSpellScript : DialogScriptBase
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(spell)
-                      .LogDebug("Aisling {@AislingName} learned spell {@SpellName}", source.Name, spell.Template.Name);
+                      .LogInformation("Aisling {@AislingName} learned spell {@SpellName}", source.Name, spell.Template.Name);
 
                 var animation = new Animation
                 {

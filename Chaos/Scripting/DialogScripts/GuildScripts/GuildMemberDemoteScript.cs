@@ -118,7 +118,7 @@ public class GuildMemberDemoteScript : GuildScriptBase
               .WithProperty(source)
               .WithProperty(guild)
               .WithProperty(aislingToDemote)
-              .LogDebug(
+              .LogInformation(
                   "Aisling {@AislingName} demoted {@TargetAislingName} to {@RankName} in {@GuildName}",
                   source.Name,
                   aislingToDemote.Name,

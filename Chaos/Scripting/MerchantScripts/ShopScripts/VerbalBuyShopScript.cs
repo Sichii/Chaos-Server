@@ -61,7 +61,7 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
                 Logger.WithProperty(source)
                       .WithProperty(itemToBuy)
                       .WithProperty(BuyShopSource)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} bought {ItemAmount} {@ItemName} from merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,
                           amount,

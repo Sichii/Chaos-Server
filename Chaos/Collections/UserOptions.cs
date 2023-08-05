@@ -45,7 +45,7 @@ public sealed class UserOptions
 
                 break;
             case UserOption.Option2:
-                AllowGroup = !AllowGroup;
+                ListenToHitSounds = !ListenToHitSounds;
 
                 break;
             case UserOption.Option3:

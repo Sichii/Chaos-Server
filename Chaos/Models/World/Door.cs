@@ -1,5 +1,4 @@
 using Chaos.Collections;
-using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Templates;
@@ -49,8 +48,7 @@ public sealed class Door : VisibleEntity
             door.LastClicked[source.Id] = DateTime.UtcNow;
         }
 
-        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this, 15)
-                                           .ThatCanObserve(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this))
             aisling.Client.SendDoors(doorCluster);
     }
 

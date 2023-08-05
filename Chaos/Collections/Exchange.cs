@@ -116,7 +116,7 @@ public sealed class Exchange
             Logger.WithProperty(aisling)
                   .WithProperty(item)
                   .WithProperty(this)
-                  .LogDebug(
+                  .LogInformation(
                       "Aisling {@AislingName} added item {@ItemName} to exchange {@ExchangeId}",
                       aisling.Name,
                       item.DisplayName,
@@ -170,7 +170,7 @@ public sealed class Exchange
             Logger.WithProperty(aisling)
                   .WithProperty(removedItem)
                   .WithProperty(this)
-                  .LogDebug(
+                  .LogInformation(
                       "Aisling {@AislingName} added item {@ItemName} to exchange {@ExchangeId}",
                       aisling.Name,
                       removedItem.DisplayName,
@@ -216,7 +216,7 @@ public sealed class Exchange
 
         Logger.WithProperty(aisling)
               .WithProperty(this)
-              .LogDebug(
+              .LogInformation(
                   "Exchange {@ExchangeId} distributed {Amount} gold to {@AislingName}",
                   ExchangeId,
                   gold,
@@ -230,7 +230,7 @@ public sealed class Exchange
                 Logger.WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
-                      .LogDebug(
+                      .LogInformation(
                           "Exchange {@ExchangeId} distributed item {@ItemName} to {@AislingName}",
                           ExchangeId,
                           item.DisplayName,
@@ -239,7 +239,7 @@ public sealed class Exchange
                 Logger.WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
-                      .LogCritical("Exchange {@ExchangeId} failed to distribute item {@ItemName}", ExchangeId, item.DisplayName);
+                      .LogError("Exchange {@ExchangeId} failed to distribute item {@ItemName}", ExchangeId, item.DisplayName);
         }
     }
 
@@ -285,7 +285,7 @@ public sealed class Exchange
 
             Logger.WithProperty(aisling)
                   .WithProperty(this)
-                  .LogDebug(
+                  .LogInformation(
                       "Aisling {@AislingName} set their gold amount to {GoldAmount} for exchange {@ExchangeId}",
                       aisling.Name,
                       amount,

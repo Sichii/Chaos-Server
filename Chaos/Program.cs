@@ -19,20 +19,19 @@ var services = new ServiceCollection();
 // @formatter:off
 var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
-                    .AddJsonFile("appsettings.logging.json")
+                    .AddJsonFile("appsettings.json", false, true)
+                    .AddJsonFile("appsettings.logging.json", false, true)
                     #if DEBUG
-                    .AddJsonFile("appsettings.local.json")
+                    .AddJsonFile("appsettings.local.json", false, true)
                     #else
-                    //.AddJsonFile("appsettings.prod.json")
-                    .AddJsonFile("appsettings.local.json")
+                    //.AddJsonFile("appsettings.prod.json", false, true)
                     #endif
                     ;
 
 var initialConfiguration = builder.Build();
 
 if(initialConfiguration.GetValue<bool>(Startup.ConfigKeys.Logging.UseSeq))
-    builder.AddJsonFile("appsettings.seq.json");
+    builder.AddJsonFile("appsettings.seq.json", false, true);
 
 var configuration = builder.Build();
 // @formatter:on

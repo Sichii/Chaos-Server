@@ -37,7 +37,7 @@ public class DepositGoldScript : DialogScriptBase
                 Logger.WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} deposited {Amount} gold in the bank",
                           source.Name,
                           amount);

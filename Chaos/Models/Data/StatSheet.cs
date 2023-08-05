@@ -173,7 +173,7 @@ public record StatSheet : Attributes
 
     public decimal HealthPercent => Math.Clamp(CurrentHp / (decimal)EffectiveMaximumHp * 100, 0, 100);
 
-    public decimal ManaPercent => CurrentMp / (decimal)EffectiveMaximumMp * 100;
+    public decimal ManaPercent => Math.Clamp(CurrentMp / (decimal)EffectiveMaximumMp * 100, 0, 100);
 
     public static StatSheet Maxed =>
         new()

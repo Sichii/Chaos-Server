@@ -37,7 +37,7 @@ public class WithdrawGoldScript : DialogScriptBase
                 Logger.WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} withdrew {Amount} gold from the bank",
                           source,
                           amount);

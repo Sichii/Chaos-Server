@@ -116,7 +116,7 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
                 await backupTimer.WaitForNextTickAsync(stoppingToken);
                 var start = Stopwatch.GetTimestamp();
 
-                Logger.LogTrace("Performing backup");
+                Logger.LogDebug("Performing backup");
 
                 await Parallel.ForEachAsync(
                     Directory.EnumerateDirectories(Options.Directory),

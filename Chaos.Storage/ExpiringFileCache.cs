@@ -175,7 +175,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var key = entry.Key.ToString();
         var keyActual = DeconstructKeyForType(key!);
 
-        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
+        Logger.LogDebug("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
         var start = Stopwatch.GetTimestamp();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));

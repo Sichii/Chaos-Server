@@ -86,7 +86,7 @@ public class DepositItemScript : DialogScriptBase
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(item)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} deposited {Amount} {@ItemName} in the bank",
                           source.Name,
                           amount,

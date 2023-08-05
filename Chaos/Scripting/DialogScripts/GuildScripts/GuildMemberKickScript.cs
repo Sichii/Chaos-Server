@@ -95,7 +95,7 @@ public class GuildMemberKickScript : GuildScriptBase
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)
               .WithProperty(guild)
-              .LogDebug(
+              .LogInformation(
                   "Aisling {@AislingName} kicked {@TargetAislingName} from {@GuildName}",
                   source.Name,
                   name,

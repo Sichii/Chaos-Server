@@ -55,7 +55,7 @@ public class MetaDataStore : IMetaDataStore
     /// <inheritdoc />
     public void Load()
     {
-        Logger.LogTrace("Generating metadata in parallel...");
+        Logger.LogDebug("Generating metadata in parallel...");
 
         Parallel.Invoke(
             LoadNationDescriptionMetaData,
@@ -69,7 +69,7 @@ public class MetaDataStore : IMetaDataStore
 
     protected virtual void LoadAbilityMetaData()
     {
-        Logger.LogTrace("Generating ability metadata...");
+        Logger.LogDebug("Generating ability metadata...");
 
         var skillTemplateCache = CacheProvider.GetCache<SkillTemplate>();
         var spellTemplateCache = CacheProvider.GetCache<SpellTemplate>();
@@ -155,7 +155,7 @@ public class MetaDataStore : IMetaDataStore
 
     protected virtual void LoadEventMetaData()
     {
-        Logger.LogTrace("Generating event metadata...");
+        Logger.LogDebug("Generating event metadata...");
 
         var eventMetas = LoadMetaFromPath<EventMetaSchema>(Options.EventMetaPath);
         var eventMetaNodes = new EventMetaNodeCollection();
@@ -197,7 +197,7 @@ public class MetaDataStore : IMetaDataStore
 
     protected virtual void LoadItemMetaData()
     {
-        Logger.LogTrace("Generating item metadata...");
+        Logger.LogDebug("Generating item metadata...");
 
         var itemTemplateCache = CacheProvider.GetCache<ItemTemplate>();
         itemTemplateCache.ForceLoad();
@@ -272,7 +272,7 @@ public class MetaDataStore : IMetaDataStore
 
     protected virtual void LoadMundaneIllustrationMeta()
     {
-        Logger.LogTrace("Generating mundane illustration metadata...");
+        Logger.LogDebug("Generating mundane illustration metadata...");
 
         var mundaneIllustrationMetas = LoadMetaFromPath<MundaneIllustrationMetaSchema>(Options.MundaneIllustrationMetaPath);
         var metaData = new MundaneIllustrationMetaData();
@@ -291,7 +291,7 @@ public class MetaDataStore : IMetaDataStore
 
     protected virtual void LoadNationDescriptionMetaData()
     {
-        Logger.LogTrace("Generating nation description metadata...");
+        Logger.LogDebug("Generating nation description metadata...");
 
         var nations = Enum.GetValues<Nation>().OfType<Nation>();
         var nationDescriptionMetaData = new NationDescriptionMetaData();

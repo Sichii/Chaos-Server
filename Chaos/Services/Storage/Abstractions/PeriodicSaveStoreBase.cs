@@ -89,7 +89,7 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
                 await saveTimer.WaitForNextTickAsync(stoppingToken);
                 var start = Stopwatch.GetTimestamp();
 
-                Logger.LogTrace("Performing save");
+                Logger.LogDebug("Performing save");
                 var mailBoxes = Cache.Values.ToList();
 
                 await Task.WhenAll(mailBoxes.Select(SaveAsync));
@@ -104,7 +104,7 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
                 Logger.LogCritical(e, "Exception while performing save");
             }
 
-        Logger.LogDebug("Performing final save before shutdown");
+        Logger.LogInformation("Performing final save before shutdown");
 
         var guildsToSave = Cache.Values.ToList();
         await Task.WhenAll(guildsToSave.Select(SaveAsync));

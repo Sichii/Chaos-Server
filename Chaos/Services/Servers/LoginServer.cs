@@ -101,7 +101,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             {
                 Logger.WithProperty(localClient)
                       .WithProperty(localArgs)
-                      .LogWarning("{@ClientIp} tried to redirect with invalid redirect details", localClient.RemoteIp.ToString());
+                      .LogWarning("{@ClientIp} tried to redirect with invalid redirect details", localClient.RemoteIp);
 
                 localClient.Disconnect();
             }
@@ -139,7 +139,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 MailStore.Save(mailBox);
 
                 Logger.WithProperty(localClient)
-                      .LogDebug("New character created with name {@Name}", aisling.Name);
+                      .LogInformation("New character created with name {@Name}", aisling.Name);
 
                 localClient.SendLoginMessage(LoginMessageType.Confirm);
             } else
@@ -222,7 +222,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             Logger.LogDebug(
                 "Redirecting {@ClientIp} to {@ServerIp}",
-                localClient.RemoteIp.ToString(),
+                localClient.RemoteIp,
                 Options.WorldRedirect.Address.ToString());
 
             RedirectManager.Add(redirect);
@@ -299,7 +299,16 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     #region Connection / Handler
     public override ValueTask HandlePacketAsync(ILoginClient client, in ClientPacket packet)
     {
-        var handler = ClientHandlers[(byte)packet.OpCode];
+        var opCode = packet.OpCode;
+        var handler = ClientHandlers[(byte)opCode];
+
+        if (handler is not null)
+            Logger.WithProperty(client)
+                  .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
+        else
+            Logger.WithProperty(client)
+                  .WithProperty(packet.ToString(), "HexData")
+                  .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
         return handler?.Invoke(client, in packet) ?? default;
     }
@@ -329,7 +338,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {@Ip}", ip!.ToString());
+        Logger.LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
 
         try
         {
@@ -346,7 +355,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         if (!await AccessManager.ShouldAllowAsync(ipAddress))
         {
-            Logger.LogDebug("Rejected connection from {@Ip}", ipAddress.ToString());
+            Logger.LogDebug("Rejected connection from {@ClientIp}", ipAddress);
 
             await clientSocket.DisconnectAsync(false);
 
@@ -355,7 +364,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         var client = ClientFactory.Create(clientSocket);
 
-        Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
+        Logger.WithProperty(client)
+              .LogInformation("Connection established with {@ClientIp}", client.RemoteIp);
 
         if (!ClientRegistry.TryAdd(client))
         {

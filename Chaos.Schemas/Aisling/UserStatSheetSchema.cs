@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
+using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Aisling;
 

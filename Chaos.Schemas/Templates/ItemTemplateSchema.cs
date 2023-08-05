@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
-using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates.Abstractions;
 
 namespace Chaos.Schemas.Templates;

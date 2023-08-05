@@ -110,7 +110,7 @@ public class GuildMemberPromoteScript : GuildScriptBase
               .WithProperty(source)
               .WithProperty(guild)
               .WithProperty(aislingToPromote)
-              .LogDebug(
+              .LogInformation(
                   "Aisling {@AislingName} promoted {@TargetAislingName} to {@RankName} in {@GuildName}",
                   source.Name,
                   aislingToPromote.Name,

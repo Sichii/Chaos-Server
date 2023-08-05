@@ -95,7 +95,7 @@ public class BuyShopScript : DialogScriptBase
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(item)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} bought {ItemAmount} {@ItemName} from merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,
                           amount,

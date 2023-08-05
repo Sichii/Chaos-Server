@@ -65,7 +65,7 @@ public sealed class MailBox : BoardBase
         Logger.WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} deleted {@PostSubject} from {@MailboxOwnerName}'s mailbox",
                   deletedBy.Name,
                   post.Subject,
@@ -112,7 +112,7 @@ public sealed class MailBox : BoardBase
         Logger.WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} highlighted {@PostSubject} in {@MailboxOwnerName}'s mailbox",
                   highlightedBy.Name,
                   post.Subject,
@@ -149,7 +149,7 @@ public sealed class MailBox : BoardBase
         Logger.WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} posted {@PostSubject} in {@MailboxOwnerName}'s mailbox",
                   addedBy.Name,
                   post.Subject,
@@ -255,7 +255,7 @@ public sealed class MailBox : BoardBase
         Logger.WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} unhighlighted {@PostSubject} in {@MailboxOwnerName}'s mailbox",
                   unhighlightedBy.Name,
                   post.Subject,

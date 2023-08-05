@@ -48,7 +48,7 @@ public sealed class AislingStore : IAsyncStore<Aisling>
 
     public async Task<Aisling> LoadAsync(string name)
     {
-        Logger.LogTrace("Loading aisling {@AislingName}", name);
+        Logger.LogDebug("Loading aisling {@AislingName}", name);
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
 
@@ -67,7 +67,7 @@ public sealed class AislingStore : IAsyncStore<Aisling>
     public async Task SaveAsync(Aisling aisling)
     {
         Logger.WithProperty(aisling)
-              .LogTrace("Saving {@AislingName}", aisling.Name);
+              .LogDebug("Saving {@AislingName}", aisling.Name);
 
         var start = Stopwatch.GetTimestamp();
 

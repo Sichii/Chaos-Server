@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Cryptography.Abstractions;
@@ -160,6 +161,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         try
         {
+            var shouldReset = false;
             var count = e.BytesTransferred;
 
             //if we received a length of 0, the client is forcing a disconnection
@@ -183,23 +185,42 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                 if (Count < packetLength)
                     break;
 
+                if (Count < 4)
+                    break;
+
                 try
                 {
                     await HandlePacketAsync(MemoryBuffer.Span.Slice(offset, packetLength));
                 } catch (Exception ex)
                 {
-                    var buffer = BitConverter.ToString(MemoryBuffer.Span.ToArray()).Replace("-", string.Empty);
+                    void InnerCatch()
+                    {
+                        var buffer = MemoryBuffer.Span.TrimEnd((byte)0);
+                        var hex = BitConverter.ToString(buffer.ToArray()).Replace("-", " ");
+                        var ascii = Encoding.ASCII.GetString(buffer);
 
-                    Logger.LogCritical(
-                        ex,
-                        "Exception while handling a packet for {@ClientType} ({Buffer})",
-                        GetType().Name,
-                        buffer);
+                        Logger.LogCritical(
+                            ex,
+                            "Exception while handling a packet for {@ClientType}. (Count: {Count}, Offset: {Offset}, BufferHex: {BufferHex}, BufferAscii: {BufferAscii})",
+                            GetType().Name,
+                            Count,
+                            offset,
+                            hex,
+                            ascii);
+                    }
+
+                    InnerCatch();
+                    shouldReset = true;
                 }
 
                 Count -= packetLength;
                 offset += packetLength;
             }
+
+            //if an error occurs which causes shouldReset to be set to true
+            //set the Count to 0, effectively clearing the buffer
+            if (shouldReset)
+                Count = 0;
 
             //if we received the first few bytes of a new packet, they wont be at the beginning of the buffer
             //copy those couple bytes to the beginning of the buffer

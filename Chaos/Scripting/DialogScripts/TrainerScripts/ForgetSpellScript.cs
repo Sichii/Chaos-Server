@@ -49,7 +49,7 @@ public class ForgetSpellScript : DialogScriptBase
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)
                   .WithProperty(spell)
-                  .LogDebug("Aisling {@AislingName} forgot spell {@SpellName}", source.Name, spell.Template.Name);
+                  .LogInformation("Aisling {@AislingName} forgot spell {@SpellName}", source.Name, spell.Template.Name);
     }
 
     private void OnDisplayingConfirmation(Aisling source)

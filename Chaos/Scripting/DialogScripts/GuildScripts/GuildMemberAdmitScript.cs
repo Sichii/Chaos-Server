@@ -99,7 +99,7 @@ public class GuildMemberAdmitScript : GuildScriptBase
               .WithProperty(source)
               .WithProperty(guild)
               .WithProperty(aislingToAdmit)
-              .LogDebug(
+              .LogInformation(
                   "Aisling {@AislingName} admitted {@TargetAislingName} to {@GuildName}",
                   source.Name,
                   aislingToAdmit.Name,

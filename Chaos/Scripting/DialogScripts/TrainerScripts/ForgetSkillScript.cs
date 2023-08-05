@@ -49,7 +49,7 @@ public class ForgetSkillScript : DialogScriptBase
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)
                   .WithProperty(skill)
-                  .LogDebug("Aisling {@AislingName} forgot skill {@SkillName}", source.Name, skill.Template.Name);
+                  .LogInformation("Aisling {@AislingName} forgot skill {@SkillName}", source.Name, skill.Template.Name);
     }
 
     private void OnDisplayingConfirmation(Aisling source)

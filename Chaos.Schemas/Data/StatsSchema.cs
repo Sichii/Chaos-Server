@@ -1,4 +1,4 @@
-namespace Chaos.Schemas.Aisling;
+namespace Chaos.Schemas.Data;
 
 /// <summary>
 ///     Represents the serializable schema of stats

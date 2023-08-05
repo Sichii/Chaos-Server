@@ -87,7 +87,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
                         Logger.LogDebug(
                             "Redirecting {@ClientIp} to {@ServerIp}",
-                            client.RemoteIp.ToString(),
+                            client.RemoteIp,
                             serverInfo.Address.ToString());
 
                         client.SendRedirect(redirect);
@@ -113,7 +113,16 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     #region Connection / Handler
     public override ValueTask HandlePacketAsync(ILobbyClient client, in ClientPacket packet)
     {
-        var handler = ClientHandlers[(byte)packet.OpCode];
+        var opCode = packet.OpCode;
+        var handler = ClientHandlers[(byte)opCode];
+
+        if (handler is not null)
+            Logger.WithProperty(client)
+                  .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
+        else
+            Logger.WithProperty(client)
+                  .WithProperty(packet.ToString(), "HexData")
+                  .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
         return handler?.Invoke(client, in packet) ?? default;
     }
@@ -137,10 +146,12 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {@Ip}", ip!.ToString());
+        Logger.LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
 
         var client = ClientFactory.Create(clientSocket);
-        Logger.LogDebug("Connection established with {@ClientIp}", client.RemoteIp.ToString());
+
+        Logger.WithProperty(client)
+              .LogInformation("Connection established with {@ClientIp}", client.RemoteIp);
 
         if (!ClientRegistry.TryAdd(client))
         {

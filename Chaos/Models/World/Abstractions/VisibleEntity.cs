@@ -23,15 +23,13 @@ public abstract class VisibleEntity : InteractableEntity
 
     public void Display()
     {
-        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanObserve(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this))
             ShowTo(aisling);
     }
 
     public void Hide()
     {
-        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
-                                           .ThatCanObserve(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this))
             if (!aisling.Equals(this))
                 HideFrom(aisling);
     }

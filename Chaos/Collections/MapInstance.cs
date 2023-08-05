@@ -178,7 +178,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     continue;
 
                 if (creature is Aisling aisling)
-                    aisling.Client.SendVisibleEntities(objectsInRange.ThatAreObservedBy(aisling));
+                    aisling.Client.SendVisibleEntities(objectsInRange);
 
                 foreach (var nearbyCreature in objectsInRange.OfType<Creature>())
                     Helpers.HandleApproach(creature, nearbyCreature);
@@ -186,8 +186,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         else //otherwise just send stuff to the aislings that can see them
             foreach (var aisling in Objects.Values<Aisling>())
             {
-                var objsToSend = visibleObjects.ThatAreWithinRange(aisling)
-                                               .ThatAreObservedBy(aisling);
+                var objsToSend = visibleObjects.ThatAreWithinRange(aisling);
 
                 aisling.Client.SendVisibleEntities(objsToSend);
             }
@@ -196,13 +195,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public void AddSpawner(MonsterSpawn monsterSpawn)
     {
         monsterSpawn.MapInstance = this;
-
-        monsterSpawn.SpawnArea ??= new Rectangle(
-            0,
-            0,
-            Template.Width,
-            Template.Height);
-
         MonsterSpawns.Add(monsterSpawn);
     }
 
@@ -224,7 +216,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Click(IPoint point, Aisling source)
     {
+        if (!source.WithinRange(point))
+            return;
+
         var door = Objects.AtPoint<Door>(point)
+                          .ThatAreObservedBy(source)
                           .TopOrDefault();
 
         if (door != null)
@@ -551,11 +547,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (nearbyUser.Equals(aisling))
                     continue;
 
-                if (nearbyUser.CanObserve(aisling))
-                    nearbyUser.Client.SendDisplayAisling(aisling);
-
-                if (aisling.CanObserve(nearbyUser))
-                    aisling.Client.SendDisplayAisling(nearbyUser);
+                nearbyUser.Client.SendDisplayAisling(aisling);
+                aisling.Client.SendDisplayAisling(nearbyUser);
             }
 
             aisling.Client.SendVisibleEntities(otherVisibles);
@@ -572,8 +565,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             //fast path for non creatures
             if (visibleEntity is not Creature creature)
             {
-                foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity)
-                                                     .ThatCanObserve(visibleEntity))
+                foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity))
                     nearbyAisling.Client.SendVisibleEntities(visibleEntity);
 
                 return;
@@ -584,7 +576,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (nearbyCreature.Equals(creature))
                     continue;
 
-                if (nearbyCreature is Aisling nearbyAisling && nearbyAisling.CanObserve(visibleEntity))
+                if (nearbyCreature is Aisling nearbyAisling)
                     nearbyAisling.Client.SendVisibleEntities(visibleEntity);
 
                 Helpers.HandleApproach(creature, nearbyCreature);
@@ -690,8 +682,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             return false;
 
         if (mapEntity is VisibleEntity visibleObject)
-            foreach (var aisling in Objects.WithinRange<Aisling>(visibleObject)
-                                           .ThatCanObserve(visibleObject))
+            foreach (var aisling in Objects.WithinRange<Aisling>(visibleObject))
                 aisling.Client.SendRemoveObject(visibleObject.Id);
 
         if (mapEntity is Creature creature)

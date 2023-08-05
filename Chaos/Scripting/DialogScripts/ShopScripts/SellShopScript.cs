@@ -80,7 +80,7 @@ public class SellShopScript : DialogScriptBase
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(item)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} sold {ItemAmount} {@ItemName} to merchant {@MerchantName} for {GoldAmount} gold",
                           source.Name,
                           amount,

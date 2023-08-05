@@ -78,7 +78,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         Logger.WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} deleted {@PostSubject} from board {@BoardName}",
                   deletedBy.Name,
                   post.Subject,
@@ -125,7 +125,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         Logger.WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} highlighted {@PostSubject} on board {@BoardName}",
                   highlightedBy.Name,
                   post.Subject,
@@ -192,7 +192,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         Logger.WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} posted {@PostSubject} on board {@BoardName}",
                   addedBy.Name,
                   post.Subject,
@@ -298,7 +298,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         Logger.WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)
-              .LogDebug(
+              .LogInformation(
                   "{@AislingName} unhighlighted {@PostSubject} on board {@BoardName}",
                   unhighlightedBy.Name,
                   post.Subject,

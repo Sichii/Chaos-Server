@@ -62,7 +62,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         aisling.SendActiveMessage($"You have gained {amount:N0} experience!");
 
         Logger.WithProperty(aisling)
-              .LogTrace("Aisling {@AislingName} has gained {Amount:N0} experience", aisling.Name, amount);
+              .LogInformation("Aisling {@AislingName} has gained {Amount:N0} experience", aisling.Name, amount);
 
         while (amount > 0)
             if (aisling.UserStatSheet.Level >= WorldOptions.Instance.MaxLevel)
@@ -107,7 +107,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
             return false;
 
         Logger.WithProperty(aisling)
-              .LogTrace("Aisling {@AislingName} has lost {Amount:N0} experience", aisling, amount);
+              .LogInformation("Aisling {@AislingName} has lost {Amount:N0} experience", aisling, amount);
 
         aisling.Client.SendAttributes(StatUpdateType.ExpGold);
 

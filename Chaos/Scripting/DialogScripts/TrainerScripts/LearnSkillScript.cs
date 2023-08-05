@@ -87,7 +87,7 @@ public class LearnSkillScript : DialogScriptBase
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(skill)
-                      .LogDebug("Aisling {@AislingName} learned skill {@SkillName}", source.Name, skill.Template.Name);
+                      .LogInformation("Aisling {@AislingName} learned skill {@SkillName}", source.Name, skill.Template.Name);
 
                 var animation = new Animation
                 {

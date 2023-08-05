@@ -69,7 +69,7 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
 
                 Logger.WithProperty(source)
                       .WithProperty(Subject)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} withdrew {Amount} gold from the bank",
                           source,
                           amount);

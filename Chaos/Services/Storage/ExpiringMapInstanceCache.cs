@@ -96,7 +96,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var entryKeyActual = DeconstructKeyForType(entryKey!);
         var shardId = string.IsNullOrEmpty(loadFromFileKeyOverride) ? null : entryKeyActual;
 
-        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", nameof(MapInstance), loadInstanceId);
+        Logger.LogDebug("Creating new {@TypeName} entry with key {@Key}", nameof(MapInstance), loadInstanceId);
         var start = Stopwatch.GetTimestamp();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
@@ -119,7 +119,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         LocalLookup[entryKey!] = mapInstance;
 
         Logger.WithProperty(mapInstance)
-              .LogInformation(
+              .LogDebug(
                   "Created new {@TypeName} entry with key {@Key}, took {@Elapsed}",
                   nameof(MapInstance),
                   loadInstanceId,

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
-using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Templates;
 

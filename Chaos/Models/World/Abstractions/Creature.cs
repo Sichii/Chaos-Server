@@ -208,7 +208,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             Script.OnGoldDroppedOn(source, amount);
 
             Logger.WithProperty(source)
-                  .LogDebug(
+                  .LogInformation(
                       "Aisling {@AislingName} dropped {Amount} gold on creature {@CreatureName}",
                       source.Name,
                       amount,
@@ -224,7 +224,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 Logger.WithProperty(source)
                       .WithProperty(item)
                       .WithProperty(this)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} dropped item {@ItemName} on creature {@CreatureName}",
                           source.Name,
                           item.DisplayName,
@@ -427,7 +427,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         {
             Logger.WithProperty(this)
                   .WithProperty(groundItem)
-                  .LogDebug(
+                  .LogInformation(
                       "{@CreatureType} {@CreatureName} dropped item {@ItemName} at {@Location}",
                       GetType().Name,
                       Name,
@@ -461,7 +461,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         Logger.WithProperty(this)
               .WithProperty(money)
-              .LogTrace(
+              .LogInformation(
                   "{@CreatureType} {@CreatureName} dropped {Amount} gold at {@Location}",
                   GetType().Name,
                   Name,

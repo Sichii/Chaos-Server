@@ -29,7 +29,7 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
 
                 Logger.WithProperty(source)
                       .WithProperty(Subject)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} deposited {Amount} gold in the bank",
                           source.Name,
                           amount);

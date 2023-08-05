@@ -95,6 +95,20 @@ public sealed class Startup
                                   IpAddress = client.RemoteIp
                               });
 
+                          builder.RegisterObjectTransformation<ILobbyClient>(
+                              client => new
+                              {
+                                  IpAddress = client.RemoteIp,
+                                  Type = "LobbyClient"
+                              });
+
+                          builder.RegisterObjectTransformation<ILoginClient>(
+                              client => new
+                              {
+                                  IpAddress = client.RemoteIp,
+                                  Type = "LoginClient"
+                              });
+
                           builder.RegisterObjectTransformation<IWorldClient>(
                               client => new
                               {
@@ -102,7 +116,8 @@ public sealed class Startup
                                   // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
                                   Id = client.Aisling?.Id,
                                   Name = client.Aisling?.Name,
-                                  Location = client.Aisling is not null ? ILocation.ToString(client.Aisling) : null
+                                  Location = client.Aisling is not null ? ILocation.ToString(client.Aisling) : null,
+                                  Type = "WorldClient"
                               });
 
                           builder.RegisterObjectTransformation<WorldEntity>(

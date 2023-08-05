@@ -40,8 +40,8 @@ public interface IWorldClient : ISocketClient
     void SendCreatureTurn(uint id, Direction direction);
     void SendCreatureWalk(uint id, Point startPoint, Direction direction);
     void SendDialog(Dialog dialog);
-    void SendDisplayAisling(Aisling aisling);
-    void SendDoors(IEnumerable<Door> doors);
+    void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false);
+    void SendDoors(IEnumerable<Door> doors, bool ignoreObservability = false);
     void SendEffect(EffectColor effectColor, byte effectIcon);
     void SendEquipment(Item item);
     void SendExchangeAccepted(bool persistExchange);
@@ -85,7 +85,7 @@ public interface IWorldClient : ISocketClient
     void SendSound(byte sound, bool isMusic);
     void SendUnequip(EquipmentSlot equipmentSlot);
     void SendUserId();
-    void SendVisibleEntities(IEnumerable<VisibleEntity> objects);
+    void SendVisibleEntities(IEnumerable<VisibleEntity> objects, bool ignoreObservability = false);
     void SendWorldList(IEnumerable<Aisling> users);
     void SendWorldMap(WorldMap worldMap);
 }

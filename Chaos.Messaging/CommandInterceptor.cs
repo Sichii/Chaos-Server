@@ -72,6 +72,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
         if (!Commands.TryGetValue(commandName, out var descriptor))
             return;
 
+        Logger.LogDebug("Handling command {@CommandStr}", commandStr);
+
         if (descriptor.Details.RequiresAdmin && !source.IsAdmin)
         {
             Logger.LogWarning("Non-Admin {@SourceType} tried to execute admin command {@CommandStr}", source.GetType().Name, commandStr);

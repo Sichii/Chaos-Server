@@ -198,7 +198,7 @@ public sealed class ChannelService : IChannelService
 
         var defaultMessage = Encoding.Default.GetString(buffer);
 
-        Logger.LogTrace(
+        Logger.LogInformation(
             "Subscriber {@SubscriberName} sent message {@Message} to channel {@ChannelName}",
             subscriber.Name,
             message,

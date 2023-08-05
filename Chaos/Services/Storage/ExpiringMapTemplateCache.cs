@@ -43,7 +43,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
         var key = entry.Key.ToString();
         var keyActual = DeconstructKeyForType(key!);
 
-        Logger.LogTrace("Creating new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
+        Logger.LogDebug("Creating new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
         var start = Stopwatch.GetTimestamp();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));

@@ -86,7 +86,7 @@ public class WithdrawItemScript : DialogScriptBase
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(item)
-                      .LogDebug(
+                      .LogInformation(
                           "Aisling {@AislingName} withdrew {Amount} {@ItemName} from the bank",
                           source.Name,
                           amount,

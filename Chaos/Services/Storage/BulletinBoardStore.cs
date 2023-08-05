@@ -49,7 +49,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                 {
                     var start = Stopwatch.GetTimestamp();
 
-                    Logger.LogTrace("Performing save");
+                    Logger.LogDebug("Performing save");
                     var mailBoxes = Cache.Values.ToList();
 
                     await Task.WhenAll(mailBoxes.Select(SaveAsync));
@@ -62,10 +62,10 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                 break;
             } catch (Exception e)
             {
-                Logger.LogCritical(e, "Exception while performing save");
+                Logger.LogError(e, "Exception while performing save");
             }
 
-        Logger.LogDebug("Performing final save before shutdown");
+        Logger.LogInformation("Performing final save before shutdown");
 
         var guildsToSave = Cache.Values.ToList();
         await Task.WhenAll(guildsToSave.Select(SaveAsync));
@@ -90,7 +90,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     /// <inheritdoc />
     protected override BulletinBoard LoadFromFile(string dir, string key)
     {
-        Logger.LogTrace("Loading new {@TypeName} entry with key {@Key}", nameof(BulletinBoard), key);
+        Logger.LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(BulletinBoard), key);
         var start = Stopwatch.GetTimestamp();
 
         if (!Exists(key))
@@ -127,7 +127,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     public override void Save(BulletinBoard obj)
     {
         Logger.WithProperty(obj)
-              .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
+              .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
 
         var start = Stopwatch.GetTimestamp();
 
@@ -156,7 +156,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         } catch (Exception e)
         {
             Logger.WithProperty(obj)
-                  .LogCritical(
+                  .LogError(
                       e,
                       "Failed to save {@TypeName} entry with key {@Key} in {@Elapsed}",
                       nameof(BulletinBoard),
@@ -190,7 +190,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                 });
 
             Logger.WithProperty(obj)
-                  .LogDebug(
+                  .LogTrace(
                       "Saved {@TypeName} entry with key {@Key}, took {@Elapsed}",
                       nameof(BulletinBoard),
                       obj.Key,
@@ -198,7 +198,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         } catch (Exception e)
         {
             Logger.WithProperty(obj)
-                  .LogCritical(
+                  .LogError(
                       e,
                       "Failed to save {@TypeName} entry with key {@Key} in {@Elapsed}",
                       nameof(BulletinBoard),

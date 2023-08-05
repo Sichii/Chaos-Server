@@ -92,7 +92,7 @@ public class GuildLeaveScript : GuildScriptBase
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)
               .WithProperty(guild)
-              .LogDebug("Aisling {@AislingName} has left guild {@GuildName}", source.Name, guild.Name);
+              .LogInformation("Aisling {@AislingName} has left guild {@GuildName}", source.Name, guild.Name);
     }
 
     private void OnDisplayingInitial(Aisling source)

@@ -248,19 +248,22 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         }
     }
 
-    public void SendDisplayAisling(Aisling aisling)
+    public void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false)
     {
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
         //we can always see ourselves, and we're never hostile to ourself
         if (!Aisling.Equals(aisling))
         {
+            if (!ignoreObservability && !Aisling.CanObserve(aisling))
+                return;
+
             if (Aisling.IsHostileTo(aisling))
                 args.NameTagStyle = NameTagStyle.Hostile;
             else if (Aisling.IsFriendlyTo(aisling))
                 args.NameTagStyle = NameTagStyle.FriendlyHover;
             else
-                args.NameTagStyle = NameTagStyle.Neutral;
+                args.NameTagStyle = NameTagStyle.NeutralHover;
 
             //if we're not an admin, and the aisling is not visible
             if (!Aisling.IsAdmin && aisling.Visibility is not VisibilityType.Normal)
@@ -277,8 +280,11 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendDoors(IEnumerable<Door> doors)
+    public void SendDoors(IEnumerable<Door> doors, bool ignoreObservability = false)
     {
+        if (!ignoreObservability)
+            doors = doors.ThatAreObservedBy(Aisling);
+
         var args = new DoorArgs
         {
             Doors = Mapper.MapMany<DoorInfo>(doors).ToList()
@@ -680,8 +686,11 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendVisibleEntities(IEnumerable<VisibleEntity> objects)
+    public void SendVisibleEntities(IEnumerable<VisibleEntity> objects, bool ignoreObservability = false)
     {
+        if (!ignoreObservability)
+            objects = objects.ThatAreObservedBy(Aisling);
+
         //split this into chunks so as not to crash the client
         foreach (var chunk in objects.OrderBy(o => o.Creation).Chunk(5000))
         {

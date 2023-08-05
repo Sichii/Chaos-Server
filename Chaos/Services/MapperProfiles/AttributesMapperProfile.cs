@@ -1,5 +1,6 @@
 using Chaos.Models.Data;
 using Chaos.Schemas.Aisling;
+using Chaos.Schemas.Data;
 using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
