@@ -50,9 +50,9 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                     var start = Stopwatch.GetTimestamp();
 
                     Logger.LogDebug("Performing save");
-                    var mailBoxes = Cache.Values.ToList();
+                    var boards = Cache.Values.ToList();
 
-                    await Task.WhenAll(mailBoxes.Select(SaveAsync));
+                    await Task.WhenAll(boards.Select(SaveAsync));
 
                     Logger.LogDebug("Save completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
                 }

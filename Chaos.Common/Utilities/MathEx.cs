@@ -46,7 +46,13 @@ public static class MathEx
         double max,
         double newMin,
         double newMax
-    ) => (newMax - newMin) * (num - min) / (max - min) + newMin;
+    )
+    {
+        if (min.Equals(max))
+            throw new ArgumentOutOfRangeException(nameof(min), "Min and max cannot be the same value");
+
+        return (newMax - newMin) * (num - min) / (max - min) + newMin;
+    }
 
     /// <summary>
     ///     Scales a number from one range to another range.
@@ -68,12 +74,17 @@ public static class MathEx
         T2 newMin,
         T2 newMax
     ) where T1: INumber<T1>
-      where T2: INumber<T2> =>
-        T2.CreateTruncating(
+      where T2: INumber<T2>
+    {
+        if (min.Equals(max))
+            throw new ArgumentOutOfRangeException(nameof(min), "Min and max cannot be the same value");
+
+        return T2.CreateTruncating(
             ScaleRange(
                 double.CreateTruncating(num),
                 double.CreateTruncating(min),
                 double.CreateTruncating(max),
                 double.CreateTruncating(newMin),
                 double.CreateTruncating(newMax)));
+    }
 }

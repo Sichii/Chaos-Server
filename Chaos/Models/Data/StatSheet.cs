@@ -159,9 +159,9 @@ public record StatSheet : Attributes
 
     public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistanceMod, byte.MinValue, byte.MaxValue);
 
-    public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 0);
+    public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 1);
 
-    public uint EffectiveMaximumMp => (uint)Math.Max(MaximumMp + MaximumMpMod, 0);
+    public uint EffectiveMaximumMp => (uint)Math.Max(MaximumMp + MaximumMpMod, 1);
 
     public int EffectiveSkillDamagePct => SkillDamagePct + SkillDamagePctMod;
 

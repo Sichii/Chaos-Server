@@ -27,6 +27,9 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
         Options = options.Value;
         Logger = logger;
         Cache = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
+
+        if (!Directory.Exists(Options.Directory))
+            Directory.CreateDirectory(Options.Directory);
     }
 
     /// <inheritdoc />
