@@ -41,9 +41,13 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
             null,
             ChannelName,
             WorldOptions.Instance.GroupMessageColor,
+            (sub, msg) =>
+            {
+                var aisling = (Aisling)sub;
+                aisling.SendServerMessage(ServerMessageType.GroupChat, msg);
+            },
             true,
-            "!group",
-            ServerMessageType.GroupChat);
+            "!group");
 
         JoinChannel(sender);
         JoinChannel(receiver);

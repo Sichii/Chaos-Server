@@ -25,6 +25,10 @@ public class ToggleEffectComponent : ApplyEffectComponent
             else
             {
                 var effect = options.EffectFactory.Create(options.EffectKey);
+
+                if (options.EffectDurationOverride.HasValue)
+                    effect.SetDuration(options.EffectDurationOverride.Value);
+
                 target.Effects.Apply(context.Source, effect);
             }
     }

@@ -196,18 +196,17 @@ public sealed partial class IntegrityCheckControl
 
             //if the item is bought by a merchant
             if (sellableItems.Contains(template.TemplateKey))
-            {
                 if (template.SellValue == 0)
                     await AddViolationAsync("Sellable item has sellValue of 0", handler);
-
-                if (template.SellValue > template.BuyCost)
-                    await AddViolationAsync($"Sellable item has sellValue > buyCost: {template.SellValue} > {template.BuyCost}", handler);
-            }
 
             //if the item is sold by a merchant
             if (buyableItems.Contains(template.TemplateKey))
                 if (template.BuyCost == 0)
                     await AddViolationAsync("Buyable item has buyCost of 0", handler);
+
+            if (sellableItems.Contains(template.TemplateKey) && buyableItems.Contains(template.TemplateKey))
+                if (template.SellValue > template.BuyCost)
+                    await AddViolationAsync($"Sellable item has sellValue > buyCost: {template.SellValue} > {template.BuyCost}", handler);
         }
     }
 

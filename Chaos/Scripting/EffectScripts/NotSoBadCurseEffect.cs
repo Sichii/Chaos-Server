@@ -6,6 +6,8 @@ namespace Chaos.Scripting.EffectScripts;
 public class NotSoBadCurseEffect : NonOverwritableEffectBase
 {
     /// <inheritdoc />
+    protected override TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(2);
+    /// <inheritdoc />
     protected override Animation? Animation { get; } = new()
     {
         TargetAnimation = 45,
@@ -19,8 +21,6 @@ public class NotSoBadCurseEffect : NonOverwritableEffectBase
         "Curse",
         "Not So Bad Curse"
     };
-    /// <inheritdoc />
-    protected override TimeSpan Duration { get; } = TimeSpan.FromMinutes(2);
     /// <inheritdoc />
     public override byte Icon => 5;
     /// <inheritdoc />

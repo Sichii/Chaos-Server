@@ -21,12 +21,17 @@ public class ApplyEffectComponent : IComponent
         foreach (var target in targets)
         {
             var effect = options.EffectFactory.Create(options.EffectKey);
+
+            if (options.EffectDurationOverride.HasValue)
+                effect.SetDuration(options.EffectDurationOverride.Value);
+
             target.Effects.Apply(context.Source, effect);
         }
     }
 
     public interface IApplyEffectComponentOptions
     {
+        TimeSpan? EffectDurationOverride { get; init; }
         IEffectFactory EffectFactory { get; init; }
         string? EffectKey { get; init; }
     }

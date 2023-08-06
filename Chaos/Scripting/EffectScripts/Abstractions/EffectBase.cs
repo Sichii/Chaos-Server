@@ -9,6 +9,7 @@ namespace Chaos.Scripting.EffectScripts.Abstractions;
 public abstract class EffectBase : IEffect
 {
     public EffectColor Color { get; set; }
+    protected abstract TimeSpan Duration { get; set; }
     protected TimeSpan Elapsed { get; private set; }
 
     public TimeSpan Remaining
@@ -20,7 +21,6 @@ public abstract class EffectBase : IEffect
     public Creature? Source { get; set; } = null!;
 
     public Creature Subject { get; set; } = null!;
-    protected abstract TimeSpan Duration { get; }
     public abstract byte Icon { get; }
     public abstract string Name { get; }
 
@@ -40,6 +40,9 @@ public abstract class EffectBase : IEffect
     public virtual void OnReApplied() => OnApplied();
 
     public virtual void OnTerminated() { }
+
+    /// <inheritdoc />
+    public void SetDuration(TimeSpan duration) => Duration = duration;
 
     /// <inheritdoc />
     public virtual bool ShouldApply(Creature source, Creature target)

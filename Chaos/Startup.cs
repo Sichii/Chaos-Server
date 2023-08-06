@@ -64,6 +64,12 @@ public sealed class Startup
                         null,
                         defaultChannel.ChannelName,
                         defaultChannel.MessageColor ?? MessageColor.Gainsboro,
+                        (sub, message) =>
+                        {
+                            var aisling = (Aisling)sub;
+                            aisling.SendServerMessage(ServerMessageType.ActiveMessage, message);
+                            aisling.Client.SendPublicMessage(uint.MaxValue, PublicMessageType.Shout, message);
+                        },
                         true);
             });
 

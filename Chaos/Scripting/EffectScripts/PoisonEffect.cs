@@ -9,6 +9,8 @@ namespace Chaos.Scripting.EffectScripts;
 public class PoisonEffect : ContinuousAnimationEffectBase
 {
     /// <inheritdoc />
+    protected override TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(1);
+    /// <inheritdoc />
     protected override Animation Animation { get; } = new()
     {
         AnimationSpeed = 100,
@@ -16,8 +18,6 @@ public class PoisonEffect : ContinuousAnimationEffectBase
     };
     /// <inheritdoc />
     protected override IIntervalTimer AnimationInterval { get; } = new IntervalTimer(TimeSpan.FromMilliseconds(1500));
-    /// <inheritdoc />
-    protected override TimeSpan Duration { get; } = TimeSpan.FromMinutes(1);
     /// <inheritdoc />
     protected override IIntervalTimer Interval { get; } = new IntervalTimer(TimeSpan.FromMilliseconds(100));
     /// <inheritdoc />

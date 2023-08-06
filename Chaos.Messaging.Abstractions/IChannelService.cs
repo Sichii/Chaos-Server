@@ -51,6 +51,7 @@ public interface IChannelService
     /// <param name="subscriber">If a subscriber registered the channel, this will be that subscriber</param>
     /// <param name="channelName">The name of the channel</param>
     /// <param name="defaultMessageColor">The color to use for the given channel</param>
+    /// <param name="sendMessageAction">The action used to send a message to a subscriber on this channel</param>
     /// <param name="bypassValidation">
     ///     Whether or not to bypass the phrase filter. Use this to add channels with names that you have added to the
     ///     phrase blacklist for reservation purposes
@@ -59,14 +60,13 @@ public interface IChannelService
     ///     The name that will be displayed when sending and receiving from this channel
     ///     (INTERNAL ONLY)
     /// </param>
-    /// <param name="messageType">The message type to use for the registered channel</param>
     void RegisterChannel(
         IChannelSubscriber? subscriber,
         string channelName,
         MessageColor defaultMessageColor,
+        Action<IChannelSubscriber, string> sendMessageAction,
         bool bypassValidation = false,
-        string? channelNameOverride = null,
-        ServerMessageType messageType = ServerMessageType.ActiveMessage
+        string? channelNameOverride = null
     );
 
     /// <summary>

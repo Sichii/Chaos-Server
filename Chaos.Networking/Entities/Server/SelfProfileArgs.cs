@@ -75,10 +75,6 @@ public sealed record SelfProfileArgs : ISendArgs
     /// </summary>
     public string ProfileText { get; set; } = null!;
     /// <summary>
-    ///     The character's social status
-    /// </summary>
-    public SocialStatus SocialStatus { get; set; }
-    /// <summary>
     ///     The character's spouse name
     /// </summary>
     public string? SpouseName { get; set; }

@@ -5,7 +5,7 @@ namespace Chaos.Scripting.EffectScripts.HideEffects;
 public sealed class SeeHideEffect : EffectBase
 {
     /// <inheritdoc />
-    protected override TimeSpan Duration { get; } = TimeSpan.FromSeconds(30);
+    protected override TimeSpan Duration { get; set; } = TimeSpan.FromSeconds(30);
     /// <inheritdoc />
     public override byte Icon => 7;
     /// <inheritdoc />

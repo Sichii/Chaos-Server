@@ -77,6 +77,8 @@ public sealed class UserOptions
         }
     }
 
+    public void ToggleGroup() => AllowGroup = !AllowGroup;
+
     public string ToString(UserOption opt)
     {
         if (opt == UserOption.Request)

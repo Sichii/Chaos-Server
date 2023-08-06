@@ -129,13 +129,9 @@ public class DefaultAislingScript : AislingScriptBase
                 {
                     PreAfkSocialStatus = Subject.Options.SocialStatus;
                     Subject.Options.SocialStatus = SocialStatus.DayDreaming;
-                    Subject.Client.SendSelfProfile();
                 }
             } else if (Subject.Options.SocialStatus == SocialStatus.DayDreaming)
-            {
                 Subject.Options.SocialStatus = PreAfkSocialStatus;
-                Subject.Client.SendSelfProfile();
-            }
         }
     }
 }

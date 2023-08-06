@@ -52,6 +52,8 @@ public class ToggleEffectScript : ConfigurableSpellScriptBase,
     /// <inheritdoc />
     public string? EffectKey { get; init; }
     /// <inheritdoc />
+    public TimeSpan? EffectDurationOverride { get; init; }
+    /// <inheritdoc />
     public IEffectFactory EffectFactory { get; init; }
     /// <inheritdoc />
     public int? ManaCost { get; init; }

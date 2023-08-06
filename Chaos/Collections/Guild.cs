@@ -42,9 +42,13 @@ public sealed class Guild : IDedicatedChannel
             null,
             ChannelName,
             WorldOptions.Instance.GuildMessageColor,
+            (sub, msg) =>
+            {
+                var aisling = (Aisling)sub;
+                aisling.SendServerMessage(ServerMessageType.GuildChat, msg);
+            },
             true,
-            "!guild",
-            ServerMessageType.GuildChat);
+            "!guild");
     }
 
     /// <inheritdoc />

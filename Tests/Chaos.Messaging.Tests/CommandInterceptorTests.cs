@@ -37,50 +37,50 @@ public sealed class CommandInterceptorTests
     [Fact]
     public async Task HandleCommandAsync_AdminCommandWithIsAdmin_ShouldSucceed()
     {
-        var commandSubjectMock = MockCommandSubject.Create(true);
+        var commandSubjectMock = MockCommandSubject.Create("Test", true);
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/adminCommand");
 
         LoggerMock.VerifySimpleLog(LogLevel.Trace, "Successfully created command adminCommand");
-        LoggerMock.VerifySimpleLog(LogLevel.Information, "ICommandSubjectProxy executed /adminCommand");
+        LoggerMock.VerifySimpleLog(LogLevel.Information, "ICommandSubjectProxy Test executed /adminCommand");
     }
 
     [Fact]
     public async Task HandleCommandAsync_AdminCommandWithoutIsAdmin_ShouldFail()
     {
-        var commandSubjectMock = MockCommandSubject.Create(false);
+        var commandSubjectMock = MockCommandSubject.Create("Test", false);
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/adminCommand");
 
-        LoggerMock.VerifySimpleLog(LogLevel.Warning, "Non-Admin ICommandSubjectProxy tried to execute admin command /adminCommand");
+        LoggerMock.VerifySimpleLog(LogLevel.Warning, "Non-Admin ICommandSubjectProxy Test tried to execute admin command /adminCommand");
     }
 
     [Fact]
     public async Task HandleCommandAsync_Exception_ShouldLog()
     {
-        var commandSubjectMock = MockCommandSubject.Create(true);
+        var commandSubjectMock = MockCommandSubject.Create("Test", true);
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/exception");
 
         LoggerMock.VerifySimpleLog(LogLevel.Trace, "Successfully created command exception");
-        LoggerMock.VerifySimpleLog(LogLevel.Error, "ICommandSubjectProxy failed to execute /exception", "wathapn");
+        LoggerMock.VerifySimpleLog(LogLevel.Error, "ICommandSubjectProxy Test failed to execute /exception", "wathapn");
     }
 
     [Fact]
     public async Task HandleCommandAsync_HelpCommand_BuildsHelpTextCorrectly()
     {
-        var commandSubjectMock = MockCommandSubject.Create(true);
+        var commandSubjectMock = MockCommandSubject.Create("Test", true);
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/help");
 
         LoggerMock.VerifySimpleLog(LogLevel.Trace, "Successfully created command help");
-        LoggerMock.VerifySimpleLog(LogLevel.Information, "ICommandSubjectProxy executed /help");
+        LoggerMock.VerifySimpleLog(LogLevel.Information, "ICommandSubjectProxy Test executed /help");
     }
 
     [Fact]
     public async Task HandleCommandAsync_InvalidCommand_DoesNothing()
     {
-        var commandSubjectMock = MockCommandSubject.Create(true);
+        var commandSubjectMock = MockCommandSubject.Create("Test", true);
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/invalidCommand");
 
@@ -90,7 +90,7 @@ public sealed class CommandInterceptorTests
     [Fact]
     public async Task HandleCommandAsync_NoCommand_DoesNothing()
     {
-        var commandSubjectMock = MockCommandSubject.Create(true);
+        var commandSubjectMock = MockCommandSubject.Create("Test", true);
 
         await CommandInterceptor.HandleCommandAsync(commandSubjectMock.Object, "/");
 

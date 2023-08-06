@@ -9,12 +9,16 @@ internal sealed class ChannelDetails
 {
     internal string? ChannelNameOverride { get; set; }
     internal MessageColor DefaultColor { get; set; }
-    internal ServerMessageType MessageType { get; set; }
+    internal Action<IChannelSubscriber, string> SendMessageAction { get; set; }
     internal ConcurrentDictionary<string, SubscriberDetails> Subscribers { get; set; }
 
-    internal ChannelDetails(MessageColor defaultColor, ServerMessageType messageType, string? channelNameOverride = null)
+    internal ChannelDetails(
+        MessageColor defaultColor,
+        Action<IChannelSubscriber, string> sendMessageAction,
+        string? channelNameOverride = null
+    )
     {
-        MessageType = messageType;
+        SendMessageAction = sendMessageAction;
         DefaultColor = defaultColor;
         Subscribers = new ConcurrentDictionary<string, SubscriberDetails>(StringComparer.OrdinalIgnoreCase);
         ChannelNameOverride = channelNameOverride;

@@ -295,7 +295,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         Nation = obj.Nation,
         Portrait = obj.Portrait,
         ProfileText = obj.ProfileText,
-        SocialStatus = obj.Options.SocialStatus,
         SpouseName = null, //TODO: when we implement marraige i guess
         Title = obj.Titles.FirstOrDefault()
     };

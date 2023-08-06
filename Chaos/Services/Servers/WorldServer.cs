@@ -1046,7 +1046,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         static ValueTask InnerOnToggleGroup(IWorldClient localClient)
         {
             //don't need to send the updated option, because they arent currently looking at it
-            localClient.Aisling.Options.Toggle(UserOption.Option2);
+            localClient.Aisling.Options.ToggleGroup();
 
             if (localClient.Aisling.Group != null)
                 localClient.Aisling.Group?.Leave(localClient.Aisling);
@@ -1279,7 +1279,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 localClient.SendServerMessage(
                     ServerMessageType.Whisper,
-                    $"{MessageColor.Yellow.ToPrefix()}{targetAisling.Name} doesn't want to be bothered");
+                    $"{MessageColor.SpanishGray.ToPrefix()}{targetAisling.Name} doesn't want to be bothered");
 
                 return default;
             }
@@ -1287,7 +1287,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (targetAisling.Options.SocialStatus == SocialStatus.DayDreaming)
                 localClient.SendServerMessage(
                     ServerMessageType.Whisper,
-                    $"{MessageColor.Yellow.ToPrefix()}{targetAisling.Name} is daydreaming");
+                    $"{MessageColor.SpanishGray.ToPrefix()}{targetAisling.Name} is daydreaming");
 
             var maxLength = CONSTANTS.MAX_SERVER_MESSAGE_LENGTH - targetAisling.Name.Length - 4;
 

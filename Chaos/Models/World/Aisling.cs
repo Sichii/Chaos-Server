@@ -235,14 +235,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     /// <inheritdoc />
     public bool IsIgnoring(string name) => IgnoreList.Contains(name);
 
-    public void SendServerMessage(ServerMessageType serverMessageType, string message)
-    {
-        if (message.Length < CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
-            Client.SendServerMessage(serverMessageType, message);
-        else
-            foreach (var msg in message.Chunk(CONSTANTS.MAX_SERVER_MESSAGE_LENGTH))
-                Client.SendServerMessage(serverMessageType, new string(msg));
-    }
+    /// <inheritdoc />
+    public void SendMessage(string message) => SendActiveMessage(message);
 
     public void BeginObserving()
     {
@@ -533,6 +527,15 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public void SendOrangeBarMessage(string message) => SendServerMessage(ServerMessageType.OrangeBar1, message);
 
     public void SendPersistentMessage(string message) => SendServerMessage(ServerMessageType.PersistentMessage, message);
+
+    public void SendServerMessage(ServerMessageType serverMessageType, string message)
+    {
+        if (message.Length < CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
+            Client.SendServerMessage(serverMessageType, message);
+        else
+            foreach (var msg in message.Chunk(CONSTANTS.MAX_SERVER_MESSAGE_LENGTH))
+                Client.SendServerMessage(serverMessageType, new string(msg));
+    }
 
     /// <inheritdoc />
     public override void ShowPublicMessage(PublicMessageType publicMessageType, string message)

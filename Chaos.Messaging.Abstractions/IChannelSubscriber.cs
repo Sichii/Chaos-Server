@@ -1,5 +1,3 @@
-using Chaos.Common.Definitions;
-
 namespace Chaos.Messaging.Abstractions;
 
 /// <summary>
@@ -19,9 +17,8 @@ public interface IChannelSubscriber
     bool IsIgnoring(string name);
 
     /// <summary>
-    ///     Sends a message to the subscriber via the given channel
+    ///     Sends a message to the subscriber
     /// </summary>
-    /// <param name="type">The type of message being sent</param>
     /// <param name="message">The message being send</param>
-    void SendServerMessage(ServerMessageType type, string message);
+    void SendMessage(string message);
 }

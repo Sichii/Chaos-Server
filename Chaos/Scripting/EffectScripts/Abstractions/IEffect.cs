@@ -17,5 +17,6 @@ public interface IEffect : IDeltaUpdatable, IScript
     void OnDispelled();
     void OnReApplied();
     void OnTerminated();
+    void SetDuration(TimeSpan duration);
     bool ShouldApply(Creature source, Creature target);
 }
