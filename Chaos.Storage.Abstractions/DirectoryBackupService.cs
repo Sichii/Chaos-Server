@@ -62,9 +62,6 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
     {
         try
         {
-            if (!Directory.Exists(Options.BackupDirectory))
-                Directory.CreateDirectory(Options.BackupDirectory);
-
             var directoryInfo = new DirectoryInfo(saveDirectory);
 
             if (!directoryInfo.Exists)
@@ -109,6 +106,9 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
         var dop = Math.Max(1, Environment.ProcessorCount / 4);
         var pOptions = new ParallelOptions { MaxDegreeOfParallelism = dop };
         var backupTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.BackupIntervalMins));
+
+        if (!Directory.Exists(Options.BackupDirectory))
+            Directory.CreateDirectory(Options.BackupDirectory);
 
         while (!stoppingToken.IsCancellationRequested)
             try

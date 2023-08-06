@@ -23,9 +23,6 @@ public static class StringExtensions
         var length2 = span2.Length;
         Span<int> indexes = stackalloc int[(length1 + 1) * (length2 + 1)];
 
-        // map 2d coordinates to 1d
-        int MapIndex(int i, int j) => i * (length2 + 1) + j;
-
         // fast paths
         if (length1 == 0)
             return length2;
@@ -64,6 +61,9 @@ public static class StringExtensions
 
         // Return cost.
         return indexes[MapIndex(length1, length2)];
+
+        // map 2d coordinates to 1d
+        int MapIndex(int i, int j) => i * (length2 + 1) + j;
     }
 
     /// <summary>
@@ -75,16 +75,6 @@ public static class StringExtensions
     /// <returns>A value quantifying the same-ness of the 2 strings. Higher is better.</returns>
     public static decimal CalculateSorensenCoefficient(this string string1, string string2, bool caseSensitive = false)
     {
-        //encode a bigram as a single value (a bigram is just 2 chars, each char is 16bits (2 bytes))
-        //so we must encode into 32bits (4bytes) to be lossless (int = 4bytes)
-        static int EncodeBigram(ReadOnlySpan<char> chars, bool caseSensitive = false)
-        {
-            if (caseSensitive)
-                return (chars[0] << 16) | chars[1];
-
-            return (char.ToLowerInvariant(chars[0]) << 16) | char.ToLowerInvariant(chars[1]);
-        }
-
         var span1 = string1.AsSpan();
         var span2 = string2.AsSpan();
         var intersections = 0;
@@ -115,6 +105,16 @@ public static class StringExtensions
         }
 
         return 2m * intersections / totalBigrams;
+
+        //encode a bigram as a single value (a bigram is just 2 chars, each char is 16bits (2 bytes))
+        //so we must encode into 32bits (4bytes) to be lossless (int = 4bytes)
+        static int EncodeBigram(ReadOnlySpan<char> chars, bool caseSensitive = false)
+        {
+            if (caseSensitive)
+                return (chars[0] << 16) | chars[1];
+
+            return (char.ToLowerInvariant(chars[0]) << 16) | char.ToLowerInvariant(chars[1]);
+        }
     }
 
     /// <summary>
@@ -270,6 +270,8 @@ public static class StringExtensions
             if (possibleMatches.Count == 1)
                 return possibleMatches[0].String;
 
+            return possibleMatches.MaxBy(CalculateHeuristic).String;
+
             //based on the 2 values, calculate a heuristic to determine the best match
             decimal CalculateHeuristic((string String, decimal Coefficient, int Distance) x)
             {
@@ -284,8 +286,6 @@ public static class StringExtensions
 
                 return distanceHeuristic * coefficientHeuristic;
             }
-
-            return possibleMatches.MaxBy(CalculateHeuristic).String;
         } catch
         {
             return null;

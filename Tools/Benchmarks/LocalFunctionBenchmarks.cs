@@ -15,19 +15,19 @@ public class LocalFunctionBenchmarks
     [Benchmark]
     public int AddLocal()
     {
+        return InternalAddLocal();
+
         // ReSharper disable once LocalFunctionCanBeMadeStatic
         int InternalAddLocal() => NUM1 + NUM2;
-
-        return InternalAddLocal();
     }
 
     [Benchmark]
     public int AddLocalNoScope()
     {
+        return InternalAddLocalNoSope(NUM1, NUM2);
+
         // ReSharper disable once LocalFunctionCanBeMadeStatic
         int InternalAddLocalNoSope(int num1, int num2) => num1 + num2;
-
-        return InternalAddLocalNoSope(NUM1, NUM2);
     }
 
     [Benchmark(Baseline = true)]
@@ -36,9 +36,9 @@ public class LocalFunctionBenchmarks
     [Benchmark]
     public int AddStaticLocal()
     {
-        static int InternalAddStaticLocal(int num1, int num2) => num1 + num2;
-
         return InternalAddStaticLocal(NUM1, NUM2);
+
+        static int InternalAddStaticLocal(int num1, int num2) => num1 + num2;
     }
 
     private int InternalAdd(int num1, int num2) => num1 + num2;

@@ -76,6 +76,8 @@ public sealed class FifoAutoReleasingSemaphoreSlim
         var tcs = new TaskCompletionSource<IPolyDisposable>(TaskCreationOptions.RunContinuationsAsynchronously);
         subscriptionTask = tcs.Task;
 
+        return InnerWaitAsync(timeout, tcs);
+
         async ValueTask<bool> InnerWaitAsync(TimeSpan localTimeout, TaskCompletionSource<IPolyDisposable> localTcs)
         {
             if (await Root.WaitAsync(localTimeout))
@@ -87,8 +89,6 @@ public sealed class FifoAutoReleasingSemaphoreSlim
 
             return false;
         }
-
-        return InnerWaitAsync(timeout, tcs);
     }
 
     private sealed record AutoReleasingSubscription : IPolyDisposable

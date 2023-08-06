@@ -50,6 +50,8 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     {
         var args = PacketSerializer.Deserialize<VersionArgs>(in packet);
 
+        return ExecuteHandler(client, args, InnerOnVersion);
+
         ValueTask InnerOnVersion(ILobbyClient localClient, VersionArgs localArgs)
         {
             if (localArgs.Version != 741)
@@ -59,13 +61,13 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
             return default;
         }
-
-        return ExecuteHandler(client, args, InnerOnVersion);
     }
 
     public ValueTask OnServerTableRequest(ILobbyClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<ServerTableRequestArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnServerTableRequest);
 
         ValueTask InnerOnServerTableRequest(ILobbyClient localClient, ServerTableRequestArgs localArgs)
         {
@@ -105,8 +107,6 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
             return default;
         }
-
-        return ExecuteHandler(client, args, InnerOnServerTableRequest);
     }
     #endregion
 

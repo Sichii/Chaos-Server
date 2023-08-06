@@ -9,4 +9,8 @@ public interface ICommandSubject
     ///     Whether or not the subject has admin privileges
     /// </summary>
     bool IsAdmin { get; }
+    /// <summary>
+    ///     The name of the subject
+    /// </summary>
+    string Name { get; }
 }

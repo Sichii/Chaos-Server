@@ -76,7 +76,11 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
 
         if (descriptor.Details.RequiresAdmin && !source.IsAdmin)
         {
-            Logger.LogWarning("Non-Admin {@SourceType} tried to execute admin command {@CommandStr}", source.GetType().Name, commandStr);
+            Logger.LogWarning(
+                "Non-Admin {@SourceType} {@SourceName} tried to execute admin command {@CommandStr}",
+                source.GetType().Name,
+                source.Name,
+                commandStr);
 
             return;
         }
@@ -99,7 +103,11 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
             {
                 await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
 
-                Logger.LogInformation("{@SourceType} executed {@CommandStr}", source.GetType().Name, commandStr);
+                Logger.LogInformation(
+                    "{@SourceType} {@SourceName} executed {@CommandStr}",
+                    source.GetType().Name,
+                    source.Name,
+                    commandStr);
             }
 
             await InnerExecute();
@@ -107,8 +115,9 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
         {
             Logger.LogError(
                 e,
-                "{@SourceType} failed to execute {@Command}",
+                "{@SourceType} {@SourceName} failed to execute {@Command}",
                 source.GetType().Name,
+                source.Name,
                 commandStr);
         }
     }

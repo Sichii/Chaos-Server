@@ -37,6 +37,8 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
     {
         var directory = Path.Combine(Options.Directory, key);
 
+        return directory.SafeExecute(InnerExists);
+
         bool InnerExists(string dir)
         {
             if (Directory.Exists(dir))
@@ -44,8 +46,6 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
 
             return Cache.ContainsKey(key);
         }
-
-        return directory.SafeExecute(InnerExists);
     }
 
     /// <inheritdoc />
@@ -53,16 +53,18 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
     {
         var directory = Path.Combine(Options.Directory, key);
 
+        return directory.SafeExecute(InnerLoad);
+
         // ReSharper disable once HeapView.CanAvoidClosure
         T InnerLoad(string dir) => Cache.GetOrAdd(key, _ => LoadFromFile(directory, key));
-
-        return directory.SafeExecute(InnerLoad);
     }
 
     /// <inheritdoc />
     public virtual bool Remove(string key)
     {
         var directory = Path.Combine(Options.Directory, key);
+
+        return directory.SafeExecute(InnerRemove);
 
         bool InnerRemove(string dir)
         {
@@ -74,8 +76,6 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
 
             return true;
         }
-
-        return directory.SafeExecute(InnerRemove);
     }
 
     /// <inheritdoc />

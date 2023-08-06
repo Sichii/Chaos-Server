@@ -62,9 +62,6 @@ public sealed partial class IntegrityCheckControl
 
         var acceptableKeys = new[] { "top", "close" };
 
-        bool ValidateDialogKey(string key) => acceptableKeys.ContainsI(key)
-                                              || JsonContext.DialogTemplates.Any(t => t.TemplateKey.EqualsI(key));
-
         foreach (var wrapper in JsonContext.DialogTemplates.Objects)
         {
             var template = wrapper.Object;
@@ -112,6 +109,11 @@ public sealed partial class IntegrityCheckControl
             } else if (!template.TextBoxLength.HasValue && string.IsNullOrEmpty(template.TextBoxPrompt))
                 await AddViolationAsync("TextBoxLength AND/OR TextBoxPrompt should be specified for DialogTextEntry", handler);
         }
+
+        return;
+
+        bool ValidateDialogKey(string key) => acceptableKeys.ContainsI(key)
+                                              || JsonContext.DialogTemplates.Any(t => t.TemplateKey.EqualsI(key));
     }
 
     private async Task DetectIntegrityViolationsAsync()

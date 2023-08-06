@@ -76,6 +76,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(in packet);
 
+        return ExecuteHandler(client, args, InnerOnclientRedirect);
+
         ValueTask InnerOnclientRedirect(ILoginClient localClient, ClientRedirectedArgs localArgs)
         {
             var reservedRedirect = Options.ReservedRedirects
@@ -108,13 +110,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             return default;
         }
-
-        return ExecuteHandler(client, args, InnerOnclientRedirect);
     }
 
     public ValueTask OnCreateCharFinalize(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<CreateCharFinalizeArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnCreateCharFinalize);
 
         async ValueTask InnerOnCreateCharFinalize(ILoginClient localClient, CreateCharFinalizeArgs localArgs)
         {
@@ -145,13 +147,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             } else
                 localClient.SendLoginMessage(LoginMessageType.ClearNameMessage, "Unable to create character, bad request.");
         }
-
-        return ExecuteHandler(client, args, InnerOnCreateCharFinalize);
     }
 
     public ValueTask OnCreateCharRequest(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<CreateCharRequestArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnCreateCharRequest);
 
         async ValueTask InnerOnCreateCharRequest(ILoginClient localClient, CreateCharRequestArgs localArgs)
         {
@@ -172,25 +174,25 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 localClient.SendLoginMessage(GetLoginMessageType(result.Code), result.FailureMessage);
             }
         }
-
-        return ExecuteHandler(client, args, InnerOnCreateCharRequest);
     }
 
     public ValueTask OnHomepageRequest(ILoginClient client, in ClientPacket packet)
     {
+        return ExecuteHandler(client, InnerOnHomepageRequest);
+
         static ValueTask InnerOnHomepageRequest(ILoginClient localClient)
         {
             localClient.SendLoginControls(LoginControlsType.Homepage, "https://www.darkages.com");
 
             return default;
         }
-
-        return ExecuteHandler(client, InnerOnHomepageRequest);
     }
 
     public ValueTask OnLogin(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<LoginArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnLogin);
 
         async ValueTask InnerOnLogin(ILoginClient localClient, LoginArgs localArgs)
         {
@@ -229,13 +231,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             localClient.SendLoginMessage(LoginMessageType.Confirm);
             localClient.SendRedirect(redirect);
         }
-
-        return ExecuteHandler(client, args, InnerOnLogin);
     }
 
     public ValueTask OnMetaDataRequest(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<MetaDataRequestArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnMetaDataRequest);
 
         ValueTask InnerOnMetaDataRequest(ILoginClient localClient, MetaDataRequestArgs localArgs)
         {
@@ -245,25 +247,25 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             return default;
         }
-
-        return ExecuteHandler(client, args, InnerOnMetaDataRequest);
     }
 
     public ValueTask OnNoticeRequest(ILoginClient client, in ClientPacket packet)
     {
+        return ExecuteHandler(client, InnerOnNoticeRequest);
+
         ValueTask InnerOnNoticeRequest(ILoginClient localClient)
         {
             localClient.SendLoginNotice(true, Notice);
 
             return default;
         }
-
-        return ExecuteHandler(client, InnerOnNoticeRequest);
     }
 
     public ValueTask OnPasswordChange(ILoginClient client, in ClientPacket packet)
     {
         var args = PacketSerializer.Deserialize<PasswordChangeArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnPasswordChange);
 
         async ValueTask InnerOnPasswordChange(ILoginClient localClient, PasswordChangeArgs localArgs)
         {
@@ -291,8 +293,6 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             Logger.WithProperty(client)
                   .LogInformation("Changed password for aisling {@AislingName}", name);
         }
-
-        return ExecuteHandler(client, args, InnerOnPasswordChange);
     }
     #endregion
 

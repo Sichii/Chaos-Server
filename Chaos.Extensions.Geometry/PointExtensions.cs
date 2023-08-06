@@ -170,13 +170,6 @@ public static class PointExtensions
     {
         var allPoints = points.Cast<IPoint>().ToHashSet(PointEqualityComparer.Instance);
 
-        static IEnumerable<IPoint> GetNeighbors(IPoint point, HashSet<IPoint> localAllPoints)
-        {
-            foreach (var cardinalPoint in point.GenerateCardinalPoints())
-                if (localAllPoints.TryGetValue(cardinalPoint, out var adjacentDoor))
-                    yield return adjacentDoor;
-        }
-
         var shape = new HashSet<IPoint>(PointEqualityComparer.Instance)
         {
             start
@@ -195,6 +188,15 @@ public static class PointExtensions
 
                     discoveryQueue.Push(neighbor);
                 }
+
+        yield break;
+
+        static IEnumerable<IPoint> GetNeighbors(IPoint point, HashSet<IPoint> localAllPoints)
+        {
+            foreach (var cardinalPoint in point.GenerateCardinalPoints())
+                if (localAllPoints.TryGetValue(cardinalPoint, out var adjacentDoor))
+                    yield return adjacentDoor;
+        }
     }
 
     /// <summary>
