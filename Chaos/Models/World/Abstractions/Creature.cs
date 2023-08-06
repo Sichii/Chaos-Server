@@ -218,6 +218,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
+        if (count == 0)
+            count = 1;
+
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
             {

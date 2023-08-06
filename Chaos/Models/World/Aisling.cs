@@ -235,8 +235,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     /// <inheritdoc />
     public bool IsIgnoring(string name) => IgnoreList.Contains(name);
 
-    public void SendServerMessage(ServerMessageType serverMessageType, string message) =>
-        Client.SendServerMessage(serverMessageType, message);
+    public void SendServerMessage(ServerMessageType serverMessageType, string message)
+    {
+        if (message.Length < CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
+            Client.SendServerMessage(serverMessageType, message);
+        else
+            foreach (var msg in message.Chunk(CONSTANTS.MAX_SERVER_MESSAGE_LENGTH))
+                Client.SendServerMessage(serverMessageType, new string(msg));
+    }
 
     public void BeginObserving()
     {
