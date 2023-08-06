@@ -107,7 +107,7 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
             return false;
 
         Logger.WithProperty(aisling)
-              .LogInformation("Aisling {@AislingName} has lost {Amount:N0} experience", aisling, amount);
+              .LogInformation("Aisling {@AislingName} has lost {Amount:N0} experience", aisling.Name, amount);
 
         aisling.Client.SendAttributes(StatUpdateType.ExpGold);
 
