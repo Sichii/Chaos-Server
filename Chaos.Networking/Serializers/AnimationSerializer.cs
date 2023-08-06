@@ -19,7 +19,7 @@ public sealed record AnimationSerializer : ServerPacketSerializer<AnimationArgs>
     {
         if (args.TargetPoint.HasValue)
         {
-            writer.WriteUInt32(args.SourceId ?? 0);
+            writer.WriteUInt32(0); //TODO: explore what this does, setting to sourceId resulted in a random animation on the source
             writer.WriteUInt16(args.TargetAnimation);
             writer.WriteUInt16(args.AnimationSpeed);
             writer.WritePoint16(args.TargetPoint);
