@@ -1,8 +1,8 @@
-using System.Diagnostics;
 using Chaos.Collections;
-using Chaos.Extensions;
 using Chaos.IO.FileSystem;
 using Chaos.Models.Templates;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Boards;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
@@ -47,14 +47,15 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
 
                 if (saveInterval.IntervalElapsed)
                 {
-                    var start = Stopwatch.GetTimestamp();
+                    var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                                              .WithMetrics();
 
                     Logger.LogDebug("Performing save");
                     var boards = Cache.Values.ToList();
 
                     await Task.WhenAll(boards.Select(SaveAsync));
 
-                    Logger.LogDebug("Save completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
+                    metricsLogger.LogDebug("Save completed");
                 }
             } catch (OperationCanceledException)
             {
@@ -62,15 +63,20 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                 break;
             } catch (Exception e)
             {
-                Logger.LogError(e, "Exception while performing save");
+                Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                      .LogError(e, "Exception while performing save");
             }
 
-        Logger.LogInformation("Performing final save before shutdown");
+        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+              .LogInformation("Performing final save before shutdown");
+
+        var metricsLoggerA = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                                   .WithMetrics();
 
         var guildsToSave = Cache.Values.ToList();
         await Task.WhenAll(guildsToSave.Select(SaveAsync));
 
-        Logger.LogInformation("Final save completed");
+        metricsLoggerA.LogInformation("Final save completed");
     }
 
     /// <inheritdoc />
@@ -90,8 +96,11 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     /// <inheritdoc />
     protected override BulletinBoard LoadFromFile(string dir, string key)
     {
-        Logger.LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(BulletinBoard), key);
-        var start = Stopwatch.GetTimestamp();
+        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Load)
+              .LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(BulletinBoard), key);
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Load)
+                                  .WithMetrics();
 
         if (!Exists(key))
             throw new DirectoryNotFoundException($"Board configuration with key \"{key}\" does not exist");
@@ -114,11 +123,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         var ret = EntityRepository.LoadAndMap<BulletinBoard, BulletinBoardSchema>(path);
         ret.Script.Update(TimeSpan.Zero);
 
-        Logger.LogDebug(
-            "Loaded new {@TypeName} entry with {@Key}, took {@Elapsed}",
-            nameof(BulletinBoard),
-            key,
-            Stopwatch.GetElapsedTime(start));
+        metricsLogger.LogDebug("Loaded new {@TypeName} entry with {@Key}", nameof(BulletinBoard), key);
 
         return ret;
     }
@@ -126,10 +131,13 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     /// <inheritdoc />
     public override void Save(BulletinBoard obj)
     {
-        Logger.WithProperty(obj)
+        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+              .WithProperty(obj)
               .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(obj);
 
         try
         {
@@ -147,31 +155,27 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(obj)
-                  .LogDebug(
-                      "Saved {@TypeName} entry with key {@Key}, took {@Elapsed}",
-                      nameof(BulletinBoard),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogDebug("Saved {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
         } catch (Exception e)
         {
-            Logger.WithProperty(obj)
-                  .LogError(
-                      e,
-                      "Failed to save {@TypeName} entry with key {@Key} in {@Elapsed}",
-                      nameof(BulletinBoard),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(
+                e,
+                "Failed to save {@TypeName} entry with key {@Key}",
+                nameof(BulletinBoard),
+                obj.Key);
         }
     }
 
     /// <inheritdoc />
     public override async Task SaveAsync(BulletinBoard obj)
     {
-        Logger.WithProperty(obj)
+        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+              .WithProperty(obj)
               .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(obj);
 
         try
         {
@@ -189,21 +193,14 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(obj)
-                  .LogTrace(
-                      "Saved {@TypeName} entry with key {@Key}, took {@Elapsed}",
-                      nameof(BulletinBoard),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogTrace("Saved {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
         } catch (Exception e)
         {
-            Logger.WithProperty(obj)
-                  .LogError(
-                      e,
-                      "Failed to save {@TypeName} entry with key {@Key} in {@Elapsed}",
-                      nameof(BulletinBoard),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(
+                e,
+                "Failed to save {@TypeName} entry with key {@Key}",
+                nameof(BulletinBoard),
+                obj.Key);
         }
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Chaos.Models.Data;
-using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;

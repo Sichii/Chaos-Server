@@ -2,6 +2,8 @@ using System.Diagnostics;
 using Chaos;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Configuration;
@@ -68,7 +70,8 @@ var startFuncs = hostedServices
 await serverCtx.Token.WhenAllWithCancellation(startFuncs);
 await serverCtx.Token.WaitTillCanceled();
 
-logger.LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+logger.WithTopics(Topics.Actions.Disconnect)
+      .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
 
 //wait for everything to shut down
 await Task.Delay(5000);

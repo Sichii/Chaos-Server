@@ -5,12 +5,13 @@ using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Cryptography;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -85,7 +86,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             if (reservedRedirect != null)
             {
-                Logger.WithProperty(localClient)
+                Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Client, Topics.Actions.Redirect)
+                      .WithProperty(localClient)
                       .WithProperty(reservedRedirect)
                       .LogDebug("Received external redirect {@RedirectID}", reservedRedirect.Id);
 
@@ -93,7 +95,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 localClient.SendLoginNotice(false, Notice);
             } else if (RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
-                Logger.WithProperty(localClient)
+                Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Client, Topics.Actions.Redirect)
+                      .WithProperty(localClient)
                       .WithProperty(redirect)
                       .LogDebug("Received internal redirect {@RedirectId}", redirect.Id);
 
@@ -101,7 +104,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 localClient.SendLoginNotice(false, Notice);
             } else
             {
-                Logger.WithProperty(localClient)
+                Logger.WithTopics(
+                          Topics.Servers.LoginServer,
+                          Topics.Entities.Client,
+                          Topics.Actions.Redirect,
+                          Topics.Qualifiers.Cheating)
+                      .WithProperty(localClient)
                       .WithProperty(localArgs)
                       .LogWarning("{@ClientIp} tried to redirect with invalid redirect details", localClient.RemoteIp);
 
@@ -140,7 +148,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 await AislingStore.SaveAsync(aisling);
                 MailStore.Save(mailBox);
 
-                Logger.WithProperty(localClient)
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Create)
+                      .WithProperty(localClient)
                       .LogInformation("New character created with name {@Name}", aisling.Name);
 
                 localClient.SendLoginMessage(LoginMessageType.Confirm);
@@ -165,7 +174,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 localClient.SendLoginMessage(LoginMessageType.Confirm, string.Empty);
             } else
             {
-                Logger.WithProperty(localClient)
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Create)
+                      .WithProperty(localClient)
                       .LogDebug(
                           "Failed to create character with name {@Name} for reason {@Reason}",
                           localArgs.Name,
@@ -202,7 +212,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             if (!result.Success)
             {
-                Logger.WithProperty(localClient)
+                Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Login, Topics.Actions.Validation)
+                      .WithProperty(localClient)
                       .WithProperty(password)
                       .LogDebug("Failed to validate credentials for {@Name} for reason {@Reason}", name, result.FailureMessage);
 
@@ -211,7 +222,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 return;
             }
 
-            Logger.WithProperty(client)
+            Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Login, Topics.Actions.Validation)
+                  .WithProperty(client)
                   .LogDebug("Validated credentials for {@Name}", name);
 
             var redirect = new Redirect(
@@ -222,10 +234,15 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 localClient.Crypto.Seed,
                 name);
 
-            Logger.LogDebug(
-                "Redirecting {@ClientIp} to {@ServerIp}",
-                localClient.RemoteIp,
-                Options.WorldRedirect.Address.ToString());
+            Logger.WithTopics(
+                      Topics.Servers.LoginServer,
+                      Topics.Entities.Client,
+                      Topics.Actions.Login,
+                      Topics.Actions.Redirect)
+                  .LogDebug(
+                      "Redirecting {@ClientIp} to {@ServerIp}",
+                      localClient.RemoteIp,
+                      Options.WorldRedirect.Address.ToString());
 
             RedirectManager.Add(redirect);
             localClient.SendLoginMessage(LoginMessageType.Confirm);
@@ -279,7 +296,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
             if (!result.Success)
             {
-                Logger.WithProperty(client)
+                Logger.WithTopics(
+                          Topics.Entities.Client,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Update,
+                          Topics.Actions.Validation)
+                      .WithProperty(client)
                       .LogInformation(
                           "Failed to change password for aisling {@AislingName} for reason {@Reason}",
                           name,
@@ -290,7 +312,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 return;
             }
 
-            Logger.WithProperty(client)
+            Logger.WithTopics(
+                      Topics.Entities.Client,
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Update,
+                      Topics.Actions.Validation)
+                  .WithProperty(client)
                   .LogInformation("Changed password for aisling {@AislingName}", name);
         }
     }
@@ -303,10 +330,16 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         var handler = ClientHandlers[(byte)opCode];
 
         if (handler is not null)
-            Logger.WithProperty(client)
+            Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Packet, Topics.Actions.Processing)
+                  .WithProperty(client)
                   .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
         else
-            Logger.WithProperty(client)
+            Logger.WithTopics(
+                      Topics.Servers.LoginServer,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Processing,
+                      Topics.Qualifiers.Cheating)
+                  .WithProperty(client)
                   .WithProperty(packet.ToString(), "HexData")
                   .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
@@ -338,14 +371,17 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
+
+        Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Client, Topics.Actions.Connect)
+              .LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
 
         try
         {
             await FinalizeConnectionAsync(clientSocket);
         } catch (Exception e)
         {
-            Logger.LogError(e, "Failed to finalize connection");
+            Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Client, Topics.Actions.Connect)
+                  .LogError(e, "Failed to finalize connection");
         }
     }
 
@@ -355,7 +391,12 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         if (!await AccessManager.ShouldAllowAsync(ipAddress))
         {
-            Logger.LogDebug("Rejected connection from {@ClientIp}", ipAddress);
+            Logger.WithTopics(
+                      Topics.Servers.LoginServer,
+                      Topics.Entities.Client,
+                      Topics.Actions.Connect,
+                      Topics.Actions.Disconnect)
+                  .LogDebug("Rejected connection from {@ClientIp}", ipAddress);
 
             await clientSocket.DisconnectAsync(false);
 
@@ -364,12 +405,14 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         var client = ClientFactory.Create(clientSocket);
 
-        Logger.WithProperty(client)
+        Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Client, Topics.Actions.Connect)
+              .WithProperty(client)
               .LogInformation("Connection established with {@ClientIp}", client.RemoteIp);
 
         if (!ClientRegistry.TryAdd(client))
         {
-            Logger.WithProperty(client)
+            Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Client, Topics.Actions.Connect)
+                  .WithProperty(client)
                   .LogError("Somehow two clients got the same id");
 
             client.Disconnect();

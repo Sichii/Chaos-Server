@@ -1,4 +1,6 @@
 using Chaos.Common.Utilities;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -81,7 +83,12 @@ public sealed class StockService : BackgroundService, IStockService
             return;
 
         merchantStock.Restock(percent);
-        Logger.LogDebug("Manually restocked {@Key}", key);
+
+        Logger.WithTopics(
+                  Topics.Entities.Merchant,
+                  Topics.Qualifiers.Forced,
+                  Topics.Actions.Update)
+              .LogDebug("Manually restocked {@Key}", key);
     }
 
     /// <inheritdoc />
@@ -221,7 +228,8 @@ public sealed class StockService : BackgroundService, IStockService
             {
                 Restock(RestockPct);
 
-                Logger.LogDebug("Auto restocked {@Key}", Key);
+                Logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Update)
+                      .LogDebug("Auto restocked {@Key}", Key);
             }
         }
 

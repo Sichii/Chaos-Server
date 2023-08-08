@@ -1,9 +1,10 @@
 using Chaos.Common.Utilities;
 using Chaos.Definitions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
 using Humanizer;
@@ -81,7 +82,8 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
                 var phrase = WithdrawPhrases.PickRandom();
                 Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
 
-                Logger.WithProperty(source)
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Withdraw)
+                      .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation(
                           "Aisling {@AislingName} withdrew {Amount} {@ItemName} from the bank",

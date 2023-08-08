@@ -1,7 +1,8 @@
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
-using Chaos.Extensions;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Observers;
 using Humanizer;
 using Microsoft.Extensions.Logging;
@@ -73,7 +74,8 @@ public sealed class Exchange
         Aisling1.Client.SendExchangeStart(Aisling2);
         Aisling2.Client.SendExchangeStart(Aisling1);
 
-        Logger.WithProperty(this)
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Actions.Create)
+              .WithProperty(this)
               .LogDebug(
                   "Exchange {@ExchangeId} started between {@AislingName1} and {@AislingName2}",
                   ExchangeId,
@@ -113,7 +115,12 @@ public sealed class Exchange
             aisling.Inventory.Remove(slot);
             userItems.TryAddToNextSlot(item);
 
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Item,
+                      Topics.Actions.Add)
+                  .WithProperty(aisling)
                   .WithProperty(item)
                   .WithProperty(this)
                   .LogInformation(
@@ -167,7 +174,12 @@ public sealed class Exchange
         {
             userItems.TryAddToNextSlot(removedItem);
 
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Item,
+                      Topics.Actions.Add)
+                  .WithProperty(aisling)
                   .WithProperty(removedItem)
                   .WithProperty(this)
                   .LogInformation(
@@ -195,7 +207,8 @@ public sealed class Exchange
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
 
-        Logger.WithProperty(aisling)
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Actions.Canceled)
+              .WithProperty(aisling)
               .WithProperty(this)
               .LogDebug("Exchange {@ExchangeId} was canceled by aisling {@AislingName}", ExchangeId, aisling.Name);
 
@@ -214,7 +227,12 @@ public sealed class Exchange
     {
         aisling.TryGiveGold(gold);
 
-        Logger.WithProperty(aisling)
+        Logger.WithTopics(
+                  Topics.Entities.Aisling,
+                  Topics.Entities.Exchange,
+                  Topics.Entities.Gold,
+                  Topics.Actions.Accepted)
+              .WithProperty(aisling)
               .WithProperty(this)
               .LogInformation(
                   "Exchange {@ExchangeId} distributed {Amount} gold to {@AislingName}",
@@ -227,7 +245,12 @@ public sealed class Exchange
             items.Remove(item.Slot);
 
             if (aisling.Inventory.TryAddToNextSlot(item))
-                Logger.WithProperty(aisling)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Item,
+                          Topics.Actions.Accepted)
+                      .WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
                       .LogInformation(
@@ -236,7 +259,12 @@ public sealed class Exchange
                           item.DisplayName,
                           aisling.Name);
             else
-                Logger.WithProperty(aisling)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Item,
+                          Topics.Actions.Accepted)
+                      .WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
                       .LogError("Exchange {@ExchangeId} failed to distribute item {@ItemName}", ExchangeId, item.DisplayName);
@@ -283,7 +311,12 @@ public sealed class Exchange
         {
             InnerSetGold(aisling, amount);
 
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Gold,
+                      Topics.Actions.Update)
+                  .WithProperty(aisling)
                   .WithProperty(this)
                   .LogInformation(
                       "Aisling {@AislingName} set their gold amount to {GoldAmount} for exchange {@ExchangeId}",

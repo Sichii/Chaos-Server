@@ -1,10 +1,11 @@
 using System.Diagnostics;
 using Chaos.Common.Definitions;
-using Chaos.Extensions;
 using Chaos.Formulae;
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.LevelUp;
@@ -46,7 +47,8 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         {
             var stackTrace = new StackTrace(true).ToString();
 
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Add)
+                  .WithProperty(aisling)
                   .WithProperty(stackTrace)
                   .LogError("Tried to give {Amount:N0} experience to {@AislingName}", amount, aisling.Name);
 
@@ -61,7 +63,8 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
 
         aisling.SendActiveMessage($"You have gained {amount:N0} experience!");
 
-        Logger.WithProperty(aisling)
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Add)
+              .WithProperty(aisling)
               .LogInformation("Aisling {@AislingName} has gained {Amount:N0} experience", aisling.Name, amount);
 
         while (amount > 0)
@@ -93,7 +96,8 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         {
             var stackTrace = new StackTrace(true).ToString();
 
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Remove)
+                  .WithProperty(aisling)
                   .WithProperty(stackTrace)
                   .LogError("Tried to take {Amount:N0} experience from {@AislingName}", amount, aisling.Name);
 
@@ -106,7 +110,8 @@ public class DefaultExperienceDistributionScript : ScriptBase, IExperienceDistri
         if (!aisling.UserStatSheet.TrySubtractTotalExp(amount))
             return false;
 
-        Logger.WithProperty(aisling)
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Remove)
+              .WithProperty(aisling)
               .LogInformation("Aisling {@AislingName} has lost {Amount:N0} experience", aisling.Name, amount);
 
         aisling.Client.SendAttributes(StatUpdateType.ExpGold);

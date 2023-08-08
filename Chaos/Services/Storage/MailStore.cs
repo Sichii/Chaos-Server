@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using Chaos.Collections;
-using Chaos.Extensions;
 using Chaos.IO.FileSystem;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Boards;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
@@ -20,8 +20,11 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     /// <inheritdoc />
     protected override MailBox LoadFromFile(string dir, string key)
     {
-        Logger.LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(MailBox), key);
-        var start = Stopwatch.GetTimestamp();
+        Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Load)
+              .LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(MailBox), key);
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Load)
+                                  .WithMetrics();
 
         if (!Directory.Exists(dir))
             throw new InvalidOperationException($"Directory {dir} does not exist");
@@ -30,11 +33,7 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
 
         var ret = EntityRepository.LoadAndMap<MailBox, MailBoxSchema>(path);
 
-        Logger.LogDebug(
-            "Loaded new {@TypeName} entry with {@Key}, took {@Elapsed}",
-            nameof(MailBox),
-            key,
-            Stopwatch.GetElapsedTime(start));
+        metricsLogger.LogDebug("Loaded new {@TypeName} entry with {@Key}", nameof(MailBox), key);
 
         return ret;
     }
@@ -42,10 +41,13 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     /// <inheritdoc />
     public override void Save(MailBox obj)
     {
-        Logger.WithProperty(obj)
+        Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
+              .WithProperty(obj)
               .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(obj);
 
         try
         {
@@ -63,31 +65,27 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(obj)
-                  .LogDebug(
-                      "Saved {@TypeName} entry with key {@Key}, took {@Elapsed}",
-                      nameof(MailBox),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogDebug("Saved {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
         } catch (Exception e)
         {
-            Logger.WithProperty(obj)
-                  .LogCritical(
-                      e,
-                      "Failed to save {@TypeName} entry with key {@Key} in {@Elapsed}",
-                      nameof(MailBox),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(
+                e,
+                "Failed to save {@TypeName} entry with key {@Key}",
+                nameof(MailBox),
+                obj.Key);
         }
     }
 
     /// <inheritdoc />
     public override async Task SaveAsync(MailBox obj)
     {
-        Logger.WithProperty(obj)
+        Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
+              .WithProperty(obj)
               .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(obj);
 
         try
         {
@@ -105,21 +103,14 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(obj)
-                  .LogTrace(
-                      "Saved {@TypeName} entry with key {@Key}, took {@Elapsed}",
-                      nameof(MailBox),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogTrace("Saved {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
         } catch (Exception e)
         {
-            Logger.WithProperty(obj)
-                  .LogCritical(
-                      e,
-                      "Failed to save {@TypeName} entry with key {@Key} in {@Elapsed}",
-                      nameof(MailBox),
-                      obj.Key,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(
+                e,
+                "Failed to save {@TypeName} entry with key {@Key}",
+                nameof(MailBox),
+                obj.Key);
         }
     }
 }

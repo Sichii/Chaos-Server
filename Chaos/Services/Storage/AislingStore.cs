@@ -1,10 +1,10 @@
-using System.Diagnostics;
 using Chaos.Collections;
-using Chaos.Extensions;
 using Chaos.IO.FileSystem;
 using Chaos.Models.Legend;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Storage.Options;
@@ -48,14 +48,18 @@ public sealed class AislingStore : IAsyncStore<Aisling>
 
     public async Task<Aisling> LoadAsync(string name)
     {
-        Logger.LogDebug("Loading aisling {@AislingName}", name);
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Load)
+              .LogDebug("Loading aisling {@AislingName}", name);
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Load)
+                                  .WithMetrics();
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
 
         var aisling = await directory.SafeExecuteAsync(dir => InnerLoadAsync(name, dir));
 
-        Logger.WithProperty(aisling)
-              .LogDebug("Loaded aisling {@AislingName}", aisling.Name);
+        metricsLogger.WithProperty(aisling)
+                     .LogDebug("Loaded aisling {@AislingName}", aisling.Name);
 
         return aisling;
     }
@@ -66,10 +70,13 @@ public sealed class AislingStore : IAsyncStore<Aisling>
 
     public async Task SaveAsync(Aisling aisling)
     {
-        Logger.WithProperty(aisling)
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Save)
+              .WithProperty(aisling)
               .LogDebug("Saving {@AislingName}", aisling.Name);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(aisling);
 
         try
         {
@@ -85,16 +92,10 @@ public sealed class AislingStore : IAsyncStore<Aisling>
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(aisling)
-                  .LogDebug("Saved aisling {@AislingName}, took {@Elapsed}", aisling.Name, Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogDebug("Saved aisling {@AislingName}", aisling.Name);
         } catch (Exception e)
         {
-            Logger.WithProperty(aisling)
-                  .LogCritical(
-                      e,
-                      "Failed to save aisling {@AislingName} in {@Elapsed}",
-                      aisling.Name,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(e, "Failed to save aisling {@AislingName}", aisling.Name);
         }
     }
 

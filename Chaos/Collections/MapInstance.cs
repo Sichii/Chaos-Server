@@ -10,6 +10,8 @@ using Chaos.Models.Data;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MapScripts.Abstractions;
@@ -128,8 +130,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 HandleShardLimiters();
         } catch (Exception e)
         {
-            Logger.WithProperty(this)
-                  .LogCritical(e, "Failed to update map {@MapInstanceId}", InstanceId);
+            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                  .WithProperty(this)
+                  .LogError(e, "Failed to update map {@MapInstanceId}", InstanceId);
         }
     }
 
@@ -236,7 +239,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Destroy()
     {
-        Logger.WithProperty(this)
+        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Delete)
+              .WithProperty(this)
               .LogInformation("Shutting down map instance {@MapInstanceId}", InstanceId);
 
         Stop();

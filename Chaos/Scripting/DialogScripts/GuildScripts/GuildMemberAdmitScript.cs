@@ -1,10 +1,11 @@
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -94,7 +95,8 @@ public class GuildMemberAdmitScript : GuildScriptBase
 
         guild.AddMember(aislingToAdmit, source);
 
-        Logger.WithProperty(Subject)
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Admit)
+              .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)
               .WithProperty(guild)

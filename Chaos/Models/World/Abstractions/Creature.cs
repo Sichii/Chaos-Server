@@ -10,6 +10,8 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.CreatureScripts.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
@@ -207,7 +209,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             source.Client.SendAttributes(StatUpdateType.ExpGold);
             Script.OnGoldDroppedOn(source, amount);
 
-            Logger.WithProperty(source)
+            Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Gold, Topics.Actions.Drop)
+                  .WithProperty(source)
                   .LogInformation(
                       "Aisling {@AislingName} dropped {Amount} gold on creature {@CreatureName}",
                       source.Name,
@@ -224,7 +227,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
             {
-                Logger.WithProperty(source)
+                Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Item, Topics.Actions.Drop)
+                      .WithProperty(source)
                       .WithProperty(item)
                       .WithProperty(this)
                       .LogInformation(
@@ -398,7 +402,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                         await onTraverse();
                 } catch (Exception e)
                 {
-                    Logger.WithProperty(this)
+                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
+                          .WithProperty(this)
                           .WithProperty(currentMap)
                           .WithProperty(destinationMap)
                           .LogCritical(
@@ -428,7 +433,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         foreach (var groundItem in groundItems)
         {
-            Logger.WithProperty(this)
+            Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Item, Topics.Actions.Drop)
+                  .WithProperty(this)
                   .WithProperty(groundItem)
                   .LogInformation(
                       "{@CreatureType} {@CreatureName} dropped item {@ItemName} at {@Location}",
@@ -462,7 +468,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         MapInstance.AddObject(money, point);
 
-        Logger.WithProperty(this)
+        Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Gold, Topics.Actions.Drop)
+              .WithProperty(this)
               .WithProperty(money)
               .LogInformation(
                   "{@CreatureType} {@CreatureName} dropped {Amount} gold at {@Location}",

@@ -1,9 +1,10 @@
 using System.Net.Sockets;
 using Chaos.Cryptography.Abstractions;
-using Chaos.Extensions;
 using Chaos.Extensions.Networking;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -66,7 +67,12 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
-            Logger.WithProperty(this)
+            Logger.WithTopics(
+                      Topics.Servers.LobbyServer,
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
+                  .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);

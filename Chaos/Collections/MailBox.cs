@@ -1,10 +1,11 @@
 using System.Diagnostics;
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Board;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
@@ -44,7 +45,13 @@ public sealed class MailBox : BoardBase
         {
             deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "You lack the permission", false);
 
-            Logger.WithProperty(deletedBy)
+            Logger.WithTopics(
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Delete,
+                      Topics.Qualifiers.Cheating)
+                  .WithProperty(deletedBy)
                   .WithProperty(this)
                   .WithProperty(post)
                   .LogWarning(
@@ -62,7 +69,12 @@ public sealed class MailBox : BoardBase
 
         deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "Message deleted", true);
 
-        Logger.WithProperty(deletedBy)
+        Logger.WithTopics(
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Delete)
+              .WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogInformation(
@@ -92,7 +104,13 @@ public sealed class MailBox : BoardBase
         {
             highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "You lack the permission", false);
 
-            Logger.WithProperty(highlightedBy)
+            Logger.WithTopics(
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Highlight,
+                      Topics.Qualifiers.Cheating)
+                  .WithProperty(highlightedBy)
                   .WithProperty(this)
                   .WithProperty(post)
                   .LogWarning(
@@ -109,7 +127,12 @@ public sealed class MailBox : BoardBase
         Posts[postId] = post;
         highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Message highlighted", true);
 
-        Logger.WithProperty(highlightedBy)
+        Logger.WithTopics(
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Highlight)
+              .WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogInformation(
@@ -146,7 +169,12 @@ public sealed class MailBox : BoardBase
 
         addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "Message sent", true);
 
-        Logger.WithProperty(addedBy)
+        Logger.WithTopics(
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Add)
+              .WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogInformation(
@@ -170,7 +198,12 @@ public sealed class MailBox : BoardBase
 
         if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(
+                      Topics.Entities.MailBox,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Read,
+                      Topics.Qualifiers.Cheating)
+                  .WithProperty(aisling)
                   .WithProperty(this)
                   .LogWarning(
                       "{@AislingName} attempted to view {@MailboxOwnerName}'s mailbox without permission",
@@ -219,7 +252,12 @@ public sealed class MailBox : BoardBase
 
         if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
-            Logger.WithProperty(aisling)
+            Logger.WithTopics(
+                      Topics.Entities.MailBox,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Read,
+                      Topics.Qualifiers.Cheating)
+                  .WithProperty(aisling)
                   .WithProperty(this)
                   .WithProperty(post)
                   .LogWarning(
@@ -252,7 +290,12 @@ public sealed class MailBox : BoardBase
         if (!Posts.Values.Any(i => i.IsHighlighted))
             unhighlightedBy.Client.SendAttributes(StatUpdateType.Secondary);
 
-        Logger.WithProperty(unhighlightedBy)
+        Logger.WithTopics(
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Highlight)
+              .WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)
               .LogInformation(

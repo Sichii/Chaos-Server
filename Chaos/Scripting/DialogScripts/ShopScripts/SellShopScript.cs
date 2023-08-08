@@ -1,7 +1,8 @@
-using Chaos.Extensions;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
@@ -76,7 +77,12 @@ public class SellShopScript : DialogScriptBase
         switch (sellItemResult)
         {
             case ComplexActionHelper.SellItemResult.Success:
-                Logger.WithProperty(Subject)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Item,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Sell)
+                      .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(item)

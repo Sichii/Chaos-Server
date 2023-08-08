@@ -1,6 +1,7 @@
-using System.Diagnostics;
 using Chaos.Common.Abstractions;
 using Chaos.IO.FileSystem;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -90,29 +91,38 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
             try
             {
                 await saveTimer.WaitForNextTickAsync(stoppingToken);
-                var start = Stopwatch.GetTimestamp();
 
-                Logger.LogDebug("Performing save");
+                Logger.WithTopics(Topics.Actions.Save)
+                      .LogDebug("Performing save");
+
+                var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                          .WithMetrics();
+
                 var mailBoxes = Cache.Values.ToList();
 
                 await Task.WhenAll(mailBoxes.Select(SaveAsync));
 
-                Logger.LogDebug("Save completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
+                metricsLogger.LogDebug("Save completed");
             } catch (OperationCanceledException)
             {
                 //ignore
                 break;
             } catch (Exception e)
             {
-                Logger.LogCritical(e, "Exception while performing save");
+                Logger.WithTopics(Topics.Actions.Save)
+                      .LogCritical(e, "Exception while performing save");
             }
 
-        Logger.LogInformation("Performing final save before shutdown");
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogInformation("Performing final save before shutdown");
+
+        var metricsLoggerA = Logger.WithTopics(Topics.Actions.Save)
+                                   .WithMetrics();
 
         var guildsToSave = Cache.Values.ToList();
         await Task.WhenAll(guildsToSave.Select(SaveAsync));
 
-        Logger.LogInformation("Final save completed");
+        metricsLoggerA.LogInformation("Final save completed");
     }
 
     protected abstract T LoadFromFile(string dir, string key);

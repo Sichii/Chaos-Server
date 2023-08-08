@@ -1,8 +1,9 @@
-using System.Diagnostics;
 using Chaos.Cryptography;
 using Chaos.Definitions;
 using Chaos.Models.Map;
 using Chaos.Models.Templates;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Templates;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage;
@@ -43,8 +44,11 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
         var key = entry.Key.ToString();
         var keyActual = DeconstructKeyForType(key!);
 
-        Logger.LogDebug("Creating new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
-        var start = Stopwatch.GetTimestamp();
+        Logger.WithTopics(Topics.Entities.MapTemplate, Topics.Actions.Load)
+              .LogDebug("Creating new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MapTemplate, Topics.Actions.Load)
+                                  .WithMetrics();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
@@ -57,11 +61,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
 
         LocalLookup[key!] = ret;
 
-        Logger.LogDebug(
-            "Created new {@TypeName} entry with key {@Key}, took {@Elapsed}",
-            nameof(MapTemplate),
-            key,
-            Stopwatch.GetElapsedTime(start));
+        metricsLogger.LogDebug("Created new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
 
         return ret;
     }

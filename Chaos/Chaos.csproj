@@ -35,6 +35,7 @@
         <ProjectReference Include="..\Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.Messaging\Chaos.Messaging.csproj"/>
         <ProjectReference Include="..\Chaos.MetaData\Chaos.MetaData.csproj"/>
+        <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>
         <ProjectReference Include="..\Chaos.Schemas\Chaos.Schemas.csproj"/>
         <ProjectReference Include="..\Chaos.Networking\Chaos.Networking.csproj"/>
         <ProjectReference Include="..\Chaos.Pathfinding\Chaos.Pathfinding.csproj"/>

@@ -1,9 +1,10 @@
-using Chaos.Extensions;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -91,7 +92,12 @@ public class BuyShopScript : DialogScriptBase
         switch (buyItemResult)
         {
             case ComplexActionHelper.BuyItemResult.Success:
-                Logger.WithProperty(Subject)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Item,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Buy)
+                      .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
                       .WithProperty(item)

@@ -1,5 +1,6 @@
-using Chaos.Extensions;
 using Chaos.Networking.Options;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -29,7 +30,8 @@ public sealed class OptionsValidator : IValidateOptions<LobbyOptions>,
         {
             if (server.Description.Length > 18)
             {
-                Logger.WithProperty(server.Description)
+                Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Options, Topics.Actions.Validation)
+                      .WithProperty(server.Description)
                       .LogError(
                           "Value for {@OptionName} is too long, trimming it to 18 characters",
                           $"{nameof(LobbyOptions)}:{nameof(LobbyOptions.Servers)}:{nameof(LoginServerInfo.Description)}");
@@ -39,7 +41,8 @@ public sealed class OptionsValidator : IValidateOptions<LobbyOptions>,
 
             if (server.Name.Length > 9)
             {
-                Logger.WithProperty(server.Name)
+                Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Options, Topics.Actions.Validation)
+                      .WithProperty(server.Name)
                       .LogError(
                           "Value for {@OptionName} is too long, trimming it to 9 characters",
                           $"{nameof(LobbyOptions)}:{nameof(LobbyOptions.Servers)}:{nameof(LoginServerInfo.Name)}");

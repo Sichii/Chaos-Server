@@ -6,6 +6,8 @@ using Chaos.Models.Templates;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Models.WorldMap;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Aisling;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other.Abstractions;
@@ -219,7 +221,8 @@ public static class ServiceProviderExtensions
                 newMap.BaseInstanceId = oldMap.BaseInstanceId;
             } catch (Exception e)
             {
-                logger.WithProperty(oldMap)
+                logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
+                      .WithProperty(oldMap)
                       .LogError(e, "Failed to migrate map {@MapInstanceId} during reload", oldMap.InstanceId);
             }
     }
@@ -256,7 +259,8 @@ public static class ServiceProviderExtensions
                     merchantsToAdd.Add(newMerchant);
                 } catch (Exception e)
                 {
-                    logger.WithProperty(merchant)
+                    logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Reload)
+                          .WithProperty(merchant)
                           .WithProperty(mapInstance)
                           .LogError(
                               e,
@@ -303,7 +307,8 @@ public static class ServiceProviderExtensions
                     monstersToAdd.Add(newMonster);
                 } catch (Exception e)
                 {
-                    logger.WithProperty(monster)
+                    logger.WithTopics(Topics.Entities.Monster, Topics.Actions.Reload)
+                          .WithProperty(monster)
                           .WithProperty(mapInstance)
                           .LogError(
                               e,

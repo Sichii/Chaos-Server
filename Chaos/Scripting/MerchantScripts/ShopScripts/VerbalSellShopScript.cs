@@ -1,11 +1,12 @@
 using Chaos.Common.Utilities;
 using Chaos.Definitions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Utilities;
 using Humanizer;
@@ -92,7 +93,12 @@ public class VerbalSellShopScript : VerbalShopScriptBase
                         item.DisplayName.ToQuantity(amount),
                         totalCost));
 
-                Logger.WithProperty(source)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Item,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Sell)
+                      .WithProperty(source)
                       .WithProperty(item)
                       .WithProperty(SellShopSource)
                       .LogInformation(

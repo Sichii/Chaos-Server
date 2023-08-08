@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using Chaos.Collections;
-using Chaos.Extensions;
 using Chaos.IO.FileSystem;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Guilds;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
@@ -84,8 +84,11 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     /// <inheritdoc />
     protected override Guild LoadFromFile(string dir, string key)
     {
-        Logger.LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(Guild), key);
-        var start = Stopwatch.GetTimestamp();
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Load)
+              .LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(Guild), key);
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Load)
+                                  .WithMetrics();
 
         if (!Directory.Exists(dir))
             throw new InvalidOperationException($"Directory {dir} does not exist");
@@ -104,11 +107,7 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
 
         guild.Initialize(new[] { tier0, tier1, tier2, tier3 });
 
-        Logger.LogDebug(
-            "Loaded new {@TypeName} entry with {@Key}, took {@Elapsed}",
-            nameof(Guild),
-            key,
-            Stopwatch.GetElapsedTime(start));
+        metricsLogger.LogDebug("Loaded new {@TypeName} entry with {@Key}", nameof(Guild), key);
 
         return guild;
     }
@@ -116,10 +115,13 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     /// <inheritdoc />
     public override void Save(Guild obj)
     {
-        Logger.WithProperty(obj)
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+              .WithProperty(obj)
               .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(Guild), obj.Name);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(obj);
 
         try
         {
@@ -132,26 +134,23 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(obj)
-                  .LogDebug("Saved obj {@GuildName}, took {@Elapsed}", obj.Name, Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogDebug("Saved obj {@GuildName}", obj.Name);
         } catch (Exception e)
         {
-            Logger.WithProperty(obj)
-                  .LogCritical(
-                      e,
-                      "Failed to save obj {@GuildName} in {@Elapsed}",
-                      obj.Name,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(e, "Failed to save obj {@GuildName}", obj.Name);
         }
     }
 
     /// <inheritdoc />
     public override async Task SaveAsync(Guild obj)
     {
-        Logger.WithProperty(obj)
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+              .WithProperty(obj)
               .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(Guild), obj.Name);
 
-        var start = Stopwatch.GetTimestamp();
+        var metricsLogger = Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+                                  .WithMetrics()
+                                  .WithProperty(obj);
 
         try
         {
@@ -164,16 +163,10 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
                     Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
                 });
 
-            Logger.WithProperty(obj)
-                  .LogTrace("Saved obj {@GuildName}, took {@Elapsed}", obj.Name, Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogTrace("Saved obj {@GuildName}", obj.Name);
         } catch (Exception e)
         {
-            Logger.WithProperty(obj)
-                  .LogCritical(
-                      e,
-                      "Failed to save obj {@GuildName} in {@Elapsed}",
-                      obj.Name,
-                      Stopwatch.GetElapsedTime(start));
+            metricsLogger.LogError(e, "Failed to save obj {@GuildName}", obj.Name);
         }
     }
 }

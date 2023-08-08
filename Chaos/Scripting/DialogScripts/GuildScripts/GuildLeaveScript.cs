@@ -1,9 +1,10 @@
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
-using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -79,7 +80,8 @@ public class GuildLeaveScript : GuildScriptBase
                 "You can not leave the guild at this time. ((a GM has been notified of this issue))",
                 "generic_guild_members_initial");
 
-            Logger.WithProperty(Subject)
+            Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Leave)
+                  .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)
                   .WithProperty(guild)
@@ -88,7 +90,8 @@ public class GuildLeaveScript : GuildScriptBase
             return;
         }
 
-        Logger.WithProperty(Subject)
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Leave)
+              .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)
               .WithProperty(guild)

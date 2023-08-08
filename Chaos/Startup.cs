@@ -305,7 +305,23 @@ public sealed class Startup
                               {
                                   Key = obj.Key,
                                   Name = obj.Name,
-                                  Posts = obj.Count()
+                                  Posts = obj.Posts.Count
+                              });
+
+                          builder.RegisterObjectTransformation<MailBox>(
+                              obj => new
+                              {
+                                  Key = obj.Key,
+                                  Name = obj.Name,
+                                  Posts = obj.Posts.Count
+                              });
+
+                          builder.RegisterObjectTransformation<BulletinBoard>(
+                              obj => new
+                              {
+                                  Key = obj.Key,
+                                  Name = obj.Name,
+                                  Posts = obj.Posts.Count
                               });
 
                           builder.RegisterObjectTransformation<Post>(

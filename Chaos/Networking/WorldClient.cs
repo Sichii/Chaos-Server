@@ -17,6 +17,8 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities.Server;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -782,7 +784,13 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)
-            Logger.WithProperty(this)
+            Logger.WithTopics(
+                      Topics.Servers.WorldServer,
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
+                  .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
 
         return Server.HandlePacketAsync(this, in packet);

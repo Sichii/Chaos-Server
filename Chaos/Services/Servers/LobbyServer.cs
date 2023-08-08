@@ -4,10 +4,11 @@ using System.Net.Sockets;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Identity;
-using Chaos.Extensions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -87,10 +88,11 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
                         RedirectManager.Add(redirect);
 
-                        Logger.LogDebug(
-                            "Redirecting {@ClientIp} to {@ServerIp}",
-                            client.RemoteIp,
-                            serverInfo.Address.ToString());
+                        Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Client, Topics.Actions.Redirect)
+                              .LogDebug(
+                                  "Redirecting {@ClientIp} to {@ServerIp}",
+                                  client.RemoteIp,
+                                  serverInfo.Address.ToString());
 
                         client.SendRedirect(redirect);
                     } else
@@ -117,10 +119,16 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         var handler = ClientHandlers[(byte)opCode];
 
         if (handler is not null)
-            Logger.WithProperty(client)
+            Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Packet, Topics.Actions.Processing)
+                  .WithProperty(client)
                   .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
         else
-            Logger.WithProperty(client)
+            Logger.WithTopics(
+                      Topics.Servers.LobbyServer,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Processing,
+                      Topics.Qualifiers.Cheating)
+                  .WithProperty(client)
                   .WithProperty(packet.ToString(), "HexData")
                   .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
@@ -146,18 +154,22 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         serverSocket.BeginAccept(OnConnection, serverSocket);
 
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
-        Logger.LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
+
+        Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Client, Topics.Actions.Connect)
+              .LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
 
         var client = ClientFactory.Create(clientSocket);
 
-        Logger.WithProperty(client)
+        Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Client, Topics.Actions.Connect)
+              .WithProperty(client)
               .LogInformation("Connection established with {@ClientIp}", client.RemoteIp);
 
         if (!ClientRegistry.TryAdd(client))
         {
             var stackTrace = new StackTrace(true).ToString();
 
-            Logger.WithProperty(client.Id)
+            Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Client, Topics.Actions.Connect)
+                  .WithProperty(client.Id)
                   .WithProperty(stackTrace)
                   .LogError("Somehow, two clients got the same id");
 

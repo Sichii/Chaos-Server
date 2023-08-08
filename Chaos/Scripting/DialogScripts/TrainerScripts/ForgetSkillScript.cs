@@ -1,6 +1,7 @@
-using Chaos.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -45,7 +46,8 @@ public class ForgetSkillScript : DialogScriptBase
         }
 
         if (source.SkillBook.Remove(slot))
-            Logger.WithProperty(Subject)
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Skill, Topics.Actions.Forget)
+                  .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)
                   .WithProperty(skill)

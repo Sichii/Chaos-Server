@@ -1,43 +1,17 @@
-using System.Runtime.CompilerServices;
+using System.Collections;
+using System.Diagnostics;
 using Chaos.Extensions.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Chaos.Extensions;
-
-/// <summary>
-///     Provides extensions for <see cref="ILogger" />.
-/// </summary>
-public static class LoggerExtensions
-{
-    /// <summary>
-    ///     Adds a property to the log event.
-    /// </summary>
-    /// <param name="logger">The logger to add the property to</param>
-    /// <param name="value">The value of the property</param>
-    /// <param name="name">
-    ///     The name of the property (this will be auto populated to the variable name you pass in if you leave
-    ///     it blank
-    /// </param>
-    public static ILogger WithProperty(this ILogger logger, object value, [CallerArgumentExpression(nameof(value))] string name = "")
-    {
-        if (logger is not LogEvent logEvent)
-            logEvent = new LogEvent(logger);
-
-        if (name.EqualsI("this"))
-            name = value.GetType().Name;
-
-        if (!char.IsUpper(name[0]))
-            name = name.FirstUpper();
-
-        return logEvent.WithProperty(name, value);
-    }
-}
+namespace Chaos.NLog.Logging;
 
 internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, object>>
 {
     private readonly IList<KeyValuePair<string, object>> ExtraProperties;
     private readonly ILogger Logger;
+    private readonly ICollection<string> Topics;
     private IReadOnlyList<KeyValuePair<string, object>> LogValues = null!;
+    private long? StartTimeStamp;
 
     /// <inheritdoc />
     public int Count => LogValues.Count + ExtraProperties.Count;
@@ -46,6 +20,9 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
     {
         Logger = logger;
         ExtraProperties = new List<KeyValuePair<string, object>>();
+        Topics = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        ExtraProperties.Add(new KeyValuePair<string, object>("Topics", Topics));
     }
 
     /// <inheritdoc />
@@ -81,6 +58,11 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
         Func<TState, Exception?, string> formatter
     )
     {
+        if (StartTimeStamp.HasValue)
+            ExtraProperties.ReplaceBy(
+                kvp => kvp.Key.EqualsI("Metrics"),
+                new KeyValuePair<string, object>("Metrics", Stopwatch.GetElapsedTime(StartTimeStamp.Value)));
+
         LogValues = state as IReadOnlyList<KeyValuePair<string, object>> ?? new List<KeyValuePair<string, object>>();
 
         Logger.Log(
@@ -91,9 +73,35 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
             (_, e) => formatter(state, e));
     }
 
+    public ILogger WithMetrics()
+    {
+        StartTimeStamp = Stopwatch.GetTimestamp();
+        ExtraProperties.Add(new KeyValuePair<string, object>("Metrics", null!));
+
+        return this;
+    }
+
     public ILogger WithProperty(string name, object value)
     {
+        var type = value.GetType();
+
+        if (name.EqualsI("this"))
+            name = type.Name;
+
+        if (!char.IsUpper(name[0]))
+            name = name.FirstUpper();
+
         ExtraProperties.Add(new KeyValuePair<string, object>(name, value));
+
+        return WithTopic(type.Name);
+    }
+
+    public ILogger WithTopic(string topic)
+    {
+        if (!char.IsUpper(topic[0]))
+            topic = topic.FirstUpper();
+
+        Topics.Add(topic);
 
         return this;
     }

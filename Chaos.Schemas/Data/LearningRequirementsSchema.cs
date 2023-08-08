@@ -1,5 +1,3 @@
-using Chaos.Schemas.Aisling;
-
 namespace Chaos.Schemas.Data;
 
 /// <summary>

@@ -1,11 +1,12 @@
 using Chaos.Common.Utilities;
 using Chaos.Definitions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
@@ -58,7 +59,12 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
                 var phrase = BuyItemPhrases.PickRandom();
                 Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
 
-                Logger.WithProperty(source)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Item,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Buy)
+                      .WithProperty(source)
                       .WithProperty(itemToBuy)
                       .WithProperty(BuyShopSource)
                       .LogInformation(

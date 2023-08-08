@@ -1,4 +1,6 @@
 using System.Runtime.InteropServices;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Time.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -31,7 +33,8 @@ public sealed class UpdatableCollection : IDeltaUpdatable
                 obj.Update(delta);
             } catch (Exception e)
             {
-                Logger.LogError(e, "Error updating entity {@Entity}", obj);
+                Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                      .LogError(e, "Error updating entity {@Entity}", obj);
             }
 
         lock (this)

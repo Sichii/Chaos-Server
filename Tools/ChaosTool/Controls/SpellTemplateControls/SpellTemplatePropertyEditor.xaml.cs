@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
-using Chaos.Schemas.Aisling;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using ChaosTool.Definitions;

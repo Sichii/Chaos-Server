@@ -7,6 +7,8 @@ using Chaos.MetaData.MundaneMetadata;
 using Chaos.MetaData.NationMetaData;
 using Chaos.Models.Templates;
 using Chaos.Models.Templates.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.MetaData;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
@@ -55,7 +57,11 @@ public class MetaDataStore : IMetaDataStore
     /// <inheritdoc />
     public void Load()
     {
-        Logger.LogDebug("Generating metadata in parallel...");
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating metadata in parallel...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
 
         Parallel.Invoke(
             LoadNationDescriptionMetaData,
@@ -64,12 +70,16 @@ public class MetaDataStore : IMetaDataStore
             LoadEventMetaData,
             LoadMundaneIllustrationMeta);
 
-        Logger.LogInformation("Metadata generated");
+        metricsLogger.LogInformation("Metadata generated");
     }
 
     protected virtual void LoadAbilityMetaData()
     {
-        Logger.LogDebug("Generating ability metadata...");
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating ability metadata...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
 
         var skillTemplateCache = CacheProvider.GetCache<SkillTemplate>();
         var spellTemplateCache = CacheProvider.GetCache<SpellTemplate>();
@@ -150,12 +160,16 @@ public class MetaDataStore : IMetaDataStore
         foreach (var abilityMetaData in masterAbilityMetaData.Split())
             MetaData[abilityMetaData.Name] = abilityMetaData;
 
-        Logger.LogDebug("Ability metadata generated");
+        metricsLogger.LogDebug("Ability metadata generated");
     }
 
     protected virtual void LoadEventMetaData()
     {
-        Logger.LogDebug("Generating event metadata...");
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating event metadata...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
 
         var eventMetas = LoadMetaFromPath<EventMetaSchema>(Options.EventMetaPath);
         var eventMetaNodes = new EventMetaNodeCollection();
@@ -192,12 +206,16 @@ public class MetaDataStore : IMetaDataStore
         foreach (var eventMetaData in eventMetaNodes.Split())
             MetaData[eventMetaData.Name] = eventMetaData;
 
-        Logger.LogDebug("Event metadata generated");
+        metricsLogger.LogDebug("Event metadata generated");
     }
 
     protected virtual void LoadItemMetaData()
     {
-        Logger.LogDebug("Generating item metadata...");
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating item metadata...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
 
         var itemTemplateCache = CacheProvider.GetCache<ItemTemplate>();
         itemTemplateCache.ForceLoad();
@@ -238,7 +256,7 @@ public class MetaDataStore : IMetaDataStore
         foreach (var itemMetaData in itemMetaNodes.Split())
             MetaData[itemMetaData.Name] = itemMetaData;
 
-        Logger.LogDebug("Item metadata generated");
+        metricsLogger.LogDebug("Item metadata generated");
     }
 
     protected virtual IEnumerable<T> LoadMetaFromPath<T>(string path)
@@ -247,7 +265,8 @@ public class MetaDataStore : IMetaDataStore
 
         if (string.IsNullOrEmpty(path))
         {
-            Logger.LogWarning("Metadata path is empty, no {@TypeName} will be generated", typeName);
+            Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                  .LogWarning("Metadata path is empty, no {@TypeName} will be generated", typeName);
 
             return Enumerable.Empty<T>();
         }
@@ -259,10 +278,8 @@ public class MetaDataStore : IMetaDataStore
 
         if (!File.Exists(path))
         {
-            Logger.LogWarning(
-                "File not found at path {@MetaPath}, no {@TypeName} will be generated",
-                path,
-                typeName);
+            Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                  .LogWarning("File not found at path {@MetaPath}, no {@TypeName} will be generated", path, typeName);
 
             return Enumerable.Empty<T>();
         }
@@ -272,7 +289,11 @@ public class MetaDataStore : IMetaDataStore
 
     protected virtual void LoadMundaneIllustrationMeta()
     {
-        Logger.LogDebug("Generating mundane illustration metadata...");
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating mundane illustration metadata...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
 
         var mundaneIllustrationMetas = LoadMetaFromPath<MundaneIllustrationMetaSchema>(Options.MundaneIllustrationMetaPath);
         var metaData = new MundaneIllustrationMetaData();
@@ -281,17 +302,21 @@ public class MetaDataStore : IMetaDataStore
         {
             var node = new MundaneIllustrationMetaNode(mundaneIllustrationMeta.Name, mundaneIllustrationMeta.ImageName);
             metaData.AddNode(node);
-
-            Logger.LogDebug("Mundane illustration metadata generated");
         }
 
         metaData.Compress();
         MetaData[metaData.Name] = metaData;
+
+        metricsLogger.LogDebug("Mundane illustration metadata generated");
     }
 
     protected virtual void LoadNationDescriptionMetaData()
     {
-        Logger.LogDebug("Generating nation description metadata...");
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating nation description metadata...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
 
         var nations = Enum.GetValues<Nation>().OfType<Nation>();
         var nationDescriptionMetaData = new NationDescriptionMetaData();
@@ -305,6 +330,6 @@ public class MetaDataStore : IMetaDataStore
         nationDescriptionMetaData.Compress();
         MetaData[nationDescriptionMetaData.Name] = nationDescriptionMetaData;
 
-        Logger.LogDebug("Nation description metadata generated");
+        metricsLogger.LogDebug("Nation description metadata generated");
     }
 }

@@ -1,4 +1,6 @@
 using Chaos.Extensions.Common;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,9 +44,12 @@ public sealed class EffectFactory : IEffectFactory
         {
             var effectKey = EffectBase.GetEffectKey(type);
             EffectTypeCache.TryAdd(effectKey, type);
-            Logger.LogTrace("Loaded effect type with key {@EffectKey} for type {@Type}", effectKey, type.Name);
+
+            Logger.WithTopics(Topics.Entities.Effect, Topics.Actions.Load)
+                  .LogTrace("Loaded effect type with key {@EffectKey} for type {@Type}", effectKey, type.Name);
         }
 
-        Logger.LogInformation("{Count} effects loaded", EffectTypeCache.Count);
+        Logger.WithTopics(Topics.Entities.Effect, Topics.Actions.Load)
+              .LogInformation("{Count} effects loaded", EffectTypeCache.Count);
     }
 }

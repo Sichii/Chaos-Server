@@ -1,9 +1,10 @@
 using Chaos.Common.Utilities;
 using Chaos.Definitions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,8 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
                 var phrase = DepositPhrases.PickRandom();
                 Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
 
-                Logger.WithProperty(source)
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Deposit)
+                      .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation(
                           "Aisling {@AislingName} deposited {Amount} gold in the bank",
