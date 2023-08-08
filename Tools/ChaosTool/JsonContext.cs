@@ -24,8 +24,8 @@ namespace ChaosTool;
 public class JsonContext
 {
     private static readonly SerializationContext Context;
-    private static readonly TaskCompletionSource LoadingCompletion;
     private static readonly IServiceProvider Services;
+    private static TaskCompletionSource LoadingCompletion;
     private static bool IsInitialized;
     public static AislingRepository Aislings { get; private set; } = null!;
     public static DialogTemplateRepository DialogTemplates { get; private set; } = null!;
@@ -150,6 +150,16 @@ public class JsonContext
             SpellTemplates.LoadAsync());
 
         LoadingCompletion.TrySetResult();
+    }
+
+    internal static async Task ReloadAsync()
+    {
+        LoadingCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        LoadingTask = LoadingCompletion.Task;
+
+        CreateTables();
+
+        await LoadAsync();
     }
 
     public static Task SaveChangesAsync() =>

@@ -97,6 +97,8 @@ public partial class MainWindow : Window
         ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(Label), new FrameworkPropertyMetadata(500));
     }
 
+    private async void OnClickedReload(object sender, RoutedEventArgs e) => await JsonContext.ReloadAsync();
+
     private async void OnItemLoaded(object sender, EventArgs e)
     {
         Editor = (RoslynCodeEditor)sender;
@@ -163,6 +165,8 @@ public partial class MainWindow : Window
     {
         if (Editor == null)
             return;
+
+        await JsonContext.LoadingTask;
 
         var viewModel = (DocumentViewModel)Editor.DataContext;
 

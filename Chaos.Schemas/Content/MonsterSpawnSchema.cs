@@ -33,6 +33,7 @@ public sealed record MonsterSpawnSchema
     /// <summary>
     ///     The number of seconds between each trigger of this spawn
     /// </summary>
+    [JsonRequired]
     public int IntervalSecs { get; set; }
 
     /// <summary>
@@ -45,11 +46,13 @@ public sealed record MonsterSpawnSchema
     /// <summary>
     ///     The maximum number of monsters that can be on the map from this spawn
     /// </summary>
+    [JsonRequired]
     public int MaxAmount { get; set; }
 
     /// <summary>
     ///     The maximum number of monsters to create per interval of this spawn
     /// </summary>
+    [JsonRequired]
     public int MaxPerSpawn { get; set; }
 
     /// <summary>

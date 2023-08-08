@@ -1,16 +1,37 @@
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
+using Chaos.Geometry;
+using Chaos.Schemas.Content;
+using Chaos.Schemas.Templates;
 using ChaosTool.Model;
+using ChaosTool.Model.Tables;
 
 namespace ChaosTool.Controls.IntegrityCheckControls;
 
 public sealed partial class IntegrityCheckControl
 {
+    public ISet<string> BuyableItemsIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, DialogTemplateSchema> DialogTemplateIndex { get; set; } = null!;
+    public ISet<string> InUseMapTemplateIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, ItemTemplateSchema> ItemTemplateIndex { get; set; } = null!;
+    public ISet<string> LearnableSkillsIndex { get; set; } = null!;
+    public ISet<string> LearnableSpellsIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, LootTableSchema> LootTableIndex { get; set; } = null!;
     public MainWindow MainWindow { get; set; }
+    public IReadOnlyDictionary<string, MapInstanceRepository.MapInstanceComposite> MapInstanceIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, MapTemplateSchema> MapTemplateIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, MerchantTemplateSchema> MerchantTemplateIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, MonsterTemplateSchema> MonsterTemplateIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, ReactorTileTemplateSchema> ReactorTileTemplateIndex { get; set; } = null!;
+    public ISet<string> SellableItemsIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, SkillTemplateSchema> SkillTemplateIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, SpellTemplateSchema> SpellTemplateIndex { get; set; } = null!;
 
     public IntegrityCheckControl()
     {
@@ -18,43 +39,6 @@ public sealed partial class IntegrityCheckControl
 
         InitializeComponent();
     }
-
-    private async Task AddViolationAsync(string violation, RoutedEventHandler handler, bool insertToHead = false) =>
-        await Dispatcher.InvokeAsync(
-            () =>
-            {
-                var button = new Button
-                {
-                    Content = violation,
-                    Style = Application.Current.Resources["MaterialDesignFlatAccentBgButton"] as Style,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(
-                        10,
-                        3,
-                        10,
-                        3)
-                };
-
-                button.Click += handler;
-
-                if (insertToHead)
-                    IntegrityViolationsControl.Items.Insert(0, button);
-                else
-                    IntegrityViolationsControl.Items.Add(button);
-            });
-
-    /*
-    private void DetectMapInstanceViolationsAsync()
-    {
-        foreach (var wrapper in JsonContext.MapInstances.Objects)
-        {
-            var mapInstance = wrapper.Object.Instance;
-            var merchantSpawns = wrapper.Object.Merchants;
-            var monsterSpawns = wrapper.Object.Monsters;
-            var reactors = wrapper.Object.Reactors;
-        }
-    }*/
 
     private async Task DetectDialogTemplateViolationsAsync()
     {
@@ -65,7 +49,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.DialogTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -120,8 +104,7 @@ public sealed partial class IntegrityCheckControl
 
         return;
 
-        bool ValidateDialogKey(string key) => acceptableKeys.ContainsI(key)
-                                              || JsonContext.DialogTemplates.Any(t => t.TemplateKey.EqualsI(key));
+        bool ValidateDialogKey(string key) => acceptableKeys.ContainsI(key) || DialogTemplateIndex.ContainsKey(key);
     }
 
     private async Task DetectIntegrityViolationsAsync()
@@ -137,7 +120,8 @@ public sealed partial class IntegrityCheckControl
             DetectReactorTileTemplateViolationsAsync(),
             DetectMonsterTemplateViolationsAsync(),
             DetectMerchantTemplateViolationsAsync(),
-            DetectLootTableViolationsAsync());
+            DetectLootTableViolationsAsync(),
+            DetectMapInstanceViolationsAsync());
 
         if (IntegrityViolationsControl.Items.IsEmpty)
             await Dispatcher.InvokeAsync(
@@ -163,18 +147,10 @@ public sealed partial class IntegrityCheckControl
     {
         await Task.Yield();
 
-        var buyableItems = JsonContext.MerchantTemplates
-                                      .SelectMany(m => m.ItemsForSale.Select(i => i.ItemTemplateKey))
-                                      .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var sellableItems = JsonContext.MerchantTemplates
-                                       .SelectMany(m => m.ItemsToBuy)
-                                       .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
         foreach (var wrapper in JsonContext.ItemTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -195,16 +171,16 @@ public sealed partial class IntegrityCheckControl
                 await AddViolationAsync($"TemplateKey mismatch: {template.TemplateKey} != {expectedTemplateKey}", handler, true);
 
             //if the item is bought by a merchant
-            if (sellableItems.Contains(template.TemplateKey))
+            if (SellableItemsIndex.Contains(template.TemplateKey))
                 if (template.SellValue == 0)
                     await AddViolationAsync("Sellable item has sellValue of 0", handler);
 
             //if the item is sold by a merchant
-            if (buyableItems.Contains(template.TemplateKey))
+            if (BuyableItemsIndex.Contains(template.TemplateKey))
                 if (template.BuyCost == 0)
                     await AddViolationAsync("Buyable item has buyCost of 0", handler);
 
-            if (sellableItems.Contains(template.TemplateKey) && buyableItems.Contains(template.TemplateKey))
+            if (SellableItemsIndex.Contains(template.TemplateKey) && BuyableItemsIndex.Contains(template.TemplateKey))
                 if (template.SellValue > template.BuyCost)
                     await AddViolationAsync($"Sellable item has sellValue > buyCost: {template.SellValue} > {template.BuyCost}", handler);
         }
@@ -217,7 +193,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.LootTables.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -234,11 +210,11 @@ public sealed partial class IntegrityCheckControl
                     lootTableEditor.TemplatesView.ScrollIntoView(selected);
                 });
 
-            if (!template.Key.EqualsI(expectedTemplateKey))
-                await AddViolationAsync($"Key mismatch: {template.Key} != {expectedTemplateKey}", handler, true);
+            if (!template.Key.EqualsI(expectedKey))
+                await AddViolationAsync($"Key mismatch: {template.Key} != {expectedKey}", handler, true);
 
             foreach (var lootTableItem in template.LootDrops)
-                if (!JsonContext.ItemTemplates.Any(obs => obs.TemplateKey.EqualsI(lootTableItem.ItemTemplateKey)))
+                if (!ItemTemplateIndex.ContainsKey(lootTableItem.ItemTemplateKey))
                     await AddViolationAsync($"LootDrop.ItemTemplateKey not found: {lootTableItem.ItemTemplateKey}", handler);
         }
     }
@@ -250,7 +226,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.MapTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -269,6 +245,9 @@ public sealed partial class IntegrityCheckControl
 
             if (!template.TemplateKey.EqualsI(expectedTemplateKey))
                 await AddViolationAsync($"TemplateKey mismatch: {template.TemplateKey} != {expectedTemplateKey}", handler, true);
+
+            if (((template.Width == 0) || (template.Height == 0)) && InUseMapTemplateIndex.Contains(template.TemplateKey))
+                await AddViolationAsync("In-Use MapTemplate has 0 width or height", handler);
         }
     }
 
@@ -279,7 +258,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.MerchantTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -300,19 +279,24 @@ public sealed partial class IntegrityCheckControl
                 await AddViolationAsync($"TemplateKey mismatch: {template.TemplateKey} != {expectedTemplateKey}", handler, true);
 
             foreach (var itemForSale in template.ItemsForSale)
-                if (!JsonContext.ItemTemplates.Any(obs => obs.TemplateKey.EqualsI(itemForSale.ItemTemplateKey)))
+            {
+                if (!ItemTemplateIndex.ContainsKey(itemForSale.ItemTemplateKey))
                     await AddViolationAsync($"ItemForSale.ItemTemplateKey not found: {itemForSale.ItemTemplateKey}", handler);
 
+                if (itemForSale.Stock == 0)
+                    await AddViolationAsync("ItemForSale.Stock is 0 (use -1 for infinite)", handler);
+            }
+
             foreach (var itemToBuy in template.ItemsToBuy)
-                if (!JsonContext.ItemTemplates.Any(obs => obs.TemplateKey.EqualsI(itemToBuy)))
+                if (!ItemTemplateIndex.ContainsKey(itemToBuy))
                     await AddViolationAsync($"ItemToBuy.ItemTemplateKey not found: {itemToBuy}", handler);
 
             foreach (var skillToTeach in template.SkillsToTeach)
-                if (!JsonContext.SkillTemplates.Any(obs => obs.TemplateKey.EqualsI(skillToTeach)))
+                if (!SkillTemplateIndex.ContainsKey(skillToTeach))
                     await AddViolationAsync($"SkillToTeach.SkillTemplateKey not found: {skillToTeach}", handler);
 
             foreach (var spellToTeach in template.SpellsToTeach)
-                if (!JsonContext.SpellTemplates.Any(obs => obs.TemplateKey.EqualsI(spellToTeach)))
+                if (!SpellTemplateIndex.ContainsKey(spellToTeach))
                     await AddViolationAsync($"SpellToTeach.SpellTemplateKey not found: {spellToTeach}", handler);
         }
     }
@@ -324,7 +308,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.MonsterTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -345,15 +329,15 @@ public sealed partial class IntegrityCheckControl
                 await AddViolationAsync($"TemplateKey mismatch: {template.TemplateKey} != {expectedTemplateKey}", handler, true);
 
             foreach (var spellTemplateKey in template.SpellTemplateKeys)
-                if (!JsonContext.SpellTemplates.Any(obs => obs.TemplateKey.EqualsI(spellTemplateKey)))
+                if (!SpellTemplateIndex.ContainsKey(spellTemplateKey))
                     await AddViolationAsync($"Spells.SpellTemplateKey not found: {spellTemplateKey}", handler);
 
             foreach (var skillTemplateKey in template.SkillTemplateKeys)
-                if (!JsonContext.SkillTemplates.Any(obs => obs.TemplateKey.EqualsI(skillTemplateKey)))
+                if (!SkillTemplateIndex.ContainsKey(skillTemplateKey))
                     await AddViolationAsync($"Skills.SkillTemplateKey not found: {skillTemplateKey}", handler);
 
             foreach (var lootTableKey in template.LootTableKeys)
-                if (!JsonContext.LootTables.Any(obs => obs.Key.EqualsI(lootTableKey)))
+                if (!LootTableIndex.ContainsKey(lootTableKey))
                     await AddViolationAsync($"LootTables.LootTableKey not found: {lootTableKey}", handler);
         }
     }
@@ -365,7 +349,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.ReactorTileTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
                 (_, _) =>
@@ -394,7 +378,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.SkillTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
             var learningRequirements = template.LearningRequirements;
 
             var handler = new RoutedEventHandler(
@@ -420,17 +404,17 @@ public sealed partial class IntegrityCheckControl
 
             if (!learningRequirements.ItemRequirements.IsNullOrEmpty())
                 foreach (var itemRequirement in learningRequirements.ItemRequirements)
-                    if (!JsonContext.ItemTemplates.Any(obs => obs.TemplateKey.EqualsI(itemRequirement.ItemTemplateKey)))
+                    if (!ItemTemplateIndex.ContainsKey(itemRequirement.ItemTemplateKey))
                         await AddViolationAsync($"ItemRequirement.ItemTemplateKey not found: {itemRequirement.ItemTemplateKey}", handler);
 
             if (!learningRequirements.PrerequisiteSpellTemplateKeys.IsNullOrEmpty())
                 foreach (var prerequisiteSpellTemplateKey in learningRequirements.PrerequisiteSpellTemplateKeys)
-                    if (!JsonContext.SkillTemplates.Any(obs => obs.TemplateKey.EqualsI(prerequisiteSpellTemplateKey)))
+                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpellTemplateKey))
                         await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpellTemplateKey}", handler);
 
             if (!learningRequirements.PrerequisiteSkillTemplateKeys.IsNullOrEmpty())
                 foreach (var prerequisiteSkillTemplateKey in learningRequirements.PrerequisiteSkillTemplateKeys)
-                    if (!JsonContext.SkillTemplates.Any(obs => obs.TemplateKey.EqualsI(prerequisiteSkillTemplateKey)))
+                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkillTemplateKey))
                         await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkillTemplateKey}", handler);
         }
     }
@@ -442,7 +426,7 @@ public sealed partial class IntegrityCheckControl
         foreach (var wrapper in JsonContext.SpellTemplates.Objects)
         {
             var template = wrapper.Object;
-            var expectedTemplateKey = GetExpectedTemplateKey(wrapper);
+            var expectedTemplateKey = GetExpectedKey(wrapper);
             var learningRequirements = template.LearningRequirements;
 
             var handler = new RoutedEventHandler(
@@ -468,27 +452,310 @@ public sealed partial class IntegrityCheckControl
 
             if (!learningRequirements.ItemRequirements.IsNullOrEmpty())
                 foreach (var itemRequirement in learningRequirements.ItemRequirements)
-                    if (!JsonContext.ItemTemplates.Any(obs => obs.TemplateKey.EqualsI(itemRequirement.ItemTemplateKey)))
+                    if (!ItemTemplateIndex.ContainsKey(itemRequirement.ItemTemplateKey))
                         await AddViolationAsync($"ItemRequirement.ItemTemplateKey not found: {itemRequirement.ItemTemplateKey}", handler);
 
             if (!learningRequirements.PrerequisiteSpellTemplateKeys.IsNullOrEmpty())
                 foreach (var prerequisiteSpellTemplateKey in learningRequirements.PrerequisiteSpellTemplateKeys)
-                    if (!JsonContext.SpellTemplates.Any(obs => obs.TemplateKey.EqualsI(prerequisiteSpellTemplateKey)))
+                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpellTemplateKey))
                         await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpellTemplateKey}", handler);
 
             if (!learningRequirements.PrerequisiteSkillTemplateKeys.IsNullOrEmpty())
                 foreach (var prerequisiteSkillTemplateKey in learningRequirements.PrerequisiteSkillTemplateKeys)
-                    if (!JsonContext.SkillTemplates.Any(obs => obs.TemplateKey.EqualsI(prerequisiteSkillTemplateKey)))
+                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkillTemplateKey))
                         await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkillTemplateKey}", handler);
         }
     }
 
-    private string GetExpectedTemplateKey<T>(TraceWrapper<T> wrapper) => Path.GetFileNameWithoutExtension(wrapper.Path);
+    #region Utility
+    private async Task AddViolationAsync(string violation, RoutedEventHandler handler, bool insertToHead = false) =>
+        await Dispatcher.InvokeAsync(
+            () =>
+            {
+                var button = new Button
+                {
+                    Content = violation,
+                    Style = Application.Current.Resources["MaterialDesignFlatAccentBgButton"] as Style,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(
+                        10,
+                        3,
+                        10,
+                        3)
+                };
+
+                button.Click += handler;
+
+                if (insertToHead)
+                    IntegrityViolationsControl.Items.Insert(0, button);
+                else
+                    IntegrityViolationsControl.Items.Add(button);
+            });
+
+    private string GetExpectedKey<T>(TraceWrapper<T> wrapper) => Path.GetFileNameWithoutExtension(wrapper.Path);
 
     private async void IntegrityCheckBtn_OnClick(object sender, RoutedEventArgs e)
     {
         await JsonContext.LoadingTask;
 
+        ReBuildIndexes();
+
         await DetectIntegrityViolationsAsync().ConfigureAwait(false);
     }
+
+    private void ReBuildIndexes()
+    {
+        MapInstanceIndex = JsonContext.MapInstances.ToImmutableDictionary(mi => mi.Instance.InstanceId, StringComparer.OrdinalIgnoreCase);
+        MapTemplateIndex = JsonContext.MapTemplates.ToImmutableDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        MerchantTemplateIndex = JsonContext.MerchantTemplates.ToImmutableDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        MonsterTemplateIndex = JsonContext.MonsterTemplates.ToImmutableDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        ItemTemplateIndex = JsonContext.ItemTemplates.ToImmutableDictionary(it => it.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        SkillTemplateIndex = JsonContext.SkillTemplates.ToImmutableDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        SpellTemplateIndex = JsonContext.SpellTemplates.ToImmutableDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        DialogTemplateIndex = JsonContext.DialogTemplates.ToImmutableDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        LootTableIndex = JsonContext.LootTables.ToImmutableDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
+
+        ReactorTileTemplateIndex =
+            JsonContext.ReactorTileTemplates.ToImmutableDictionary(rt => rt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+
+        BuyableItemsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.ItemsForSale.Select(i => i.ItemTemplateKey))
+                                       .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        SellableItemsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.ItemsToBuy)
+                                        .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        LearnableSkillsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.SkillsToTeach)
+                                          .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        LearnableSpellsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.SpellsToTeach)
+                                          .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+
+        InUseMapTemplateIndex = JsonContext.MapInstances.Select(mi => mi.Instance.TemplateKey)
+                                           .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+    #endregion
+
+    #region MapInstances
+    private async Task DetectMapInstanceViolationsAsync()
+    {
+        await Task.Yield();
+
+        foreach (var wrapper in JsonContext.MapInstances.Objects)
+        {
+            var composite = wrapper.Object;
+            var mapInstance = composite.Instance;
+            var merchantSpawns = composite.Merchants;
+            var monsterSpawns = composite.Monsters;
+            var reactors = composite.Reactors;
+            var expectedInstanceId = GetExpectedKey(wrapper);
+
+            var instancePath = Path.Combine(wrapper.Path, "instance.json");
+            var merchantSpawnsPath = Path.Combine(wrapper.Path, "merchants.json");
+            var monsterSpawnsPath = Path.Combine(wrapper.Path, "monsters.json");
+            var reactorsPath = Path.Combine(wrapper.Path, "reactors.json");
+
+            var handler = new RoutedEventHandler(
+                (_, _) =>
+                {
+                    var info = new ProcessStartInfo(instancePath)
+                    {
+                        UseShellExecute = true
+                    };
+
+                    Process.Start(info);
+                });
+
+            if (!mapInstance.InstanceId.EqualsI(expectedInstanceId))
+                await AddViolationAsync($"InstanceId mismatch: {mapInstance.InstanceId} != {expectedInstanceId}", handler, true);
+
+            await DetectMapInstance_InstanceViolationsAsync(instancePath, mapInstance);
+            await DetectMapInstance_MerchantSpawnViolationsAsync(merchantSpawnsPath, composite, merchantSpawns);
+            await DetectMapInstance_MonsterSpawnViolationsAsync(monsterSpawnsPath, composite, monsterSpawns);
+            await DetectMapInstance_ReactorViolationsAsync(reactorsPath, composite, reactors);
+        }
+    }
+
+    private async Task DetectMapInstance_ReactorViolationsAsync(
+        string path,
+        MapInstanceRepository.MapInstanceComposite composite,
+        List<ReactorTileSchema> reactors
+    )
+    {
+        var handler = new RoutedEventHandler(
+            (_, _) =>
+            {
+                var info = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true
+                };
+
+                Process.Start(info);
+            });
+
+        if (!MapTemplateIndex.TryGetValue(composite.Instance.TemplateKey, out var template))
+            return;
+
+        var templateBounds = new Rectangle(
+            0,
+            0,
+            template.Width,
+            template.Height);
+
+        foreach (var reactor in reactors)
+        {
+            if (!templateBounds.Contains(reactor.Source))
+                await AddViolationAsync($"Reactor out of bounds: {reactor.Source}", handler);
+
+            if (reactor.OwnerMonsterTemplateKey is not null && !MonsterTemplateIndex.ContainsKey(reactor.OwnerMonsterTemplateKey))
+                await AddViolationAsync($"OwnerMonsterTemplateKey not found: {reactor.OwnerMonsterTemplateKey}", handler);
+        }
+    }
+
+    private async Task DetectMapInstance_InstanceViolationsAsync(string path, MapInstanceSchema mapInstance)
+    {
+        var handler = new RoutedEventHandler(
+            (_, _) =>
+            {
+                var info = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true
+                };
+
+                Process.Start(info);
+            });
+
+        if (!MapTemplateIndex.ContainsKey(mapInstance.TemplateKey))
+            await AddViolationAsync($"TemplateKey not found: {mapInstance.TemplateKey}", handler, true);
+
+        if (mapInstance is { MinimumLevel: not null, MaximumLevel: not null }
+            && (mapInstance.MinimumLevel > mapInstance.MaximumLevel))
+            await AddViolationAsync("MinimumLevel > MaximumLevel", handler);
+
+        var shardingOptions = mapInstance.ShardingOptions;
+
+        if (shardingOptions is null)
+            return;
+
+        if (shardingOptions.ShardingType == ShardingType.None)
+            await AddViolationAsync("ShardingType is None, remove sharding options", handler);
+        else
+        {
+            if (shardingOptions.Limit <= 0)
+                await AddViolationAsync("Invalid sharding limit", handler);
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (shardingOptions.ExitLocation is null)
+                await AddViolationAsync("Invalid sharding exit location", handler);
+            else
+            {
+                if (!MapInstanceIndex.TryGetValue(shardingOptions.ExitLocation.Map, out var mi))
+                    await AddViolationAsync($"Exit location mapInstance not found: {shardingOptions.ExitLocation.Map}", handler);
+                else if (!MapTemplateIndex.TryGetValue(mi.Instance.TemplateKey, out var mt))
+                    // ReSharper disable once RedundantJumpStatement
+                    return;
+                else if (!new Rectangle(
+                             0,
+                             0,
+                             mt.Width,
+                             mt.Height).Contains(shardingOptions.ExitLocation))
+                    await AddViolationAsync($"Exit location out of bounds: {shardingOptions.ExitLocation}", handler);
+            }
+        }
+    }
+
+    private async Task DetectMapInstance_MerchantSpawnViolationsAsync(
+        string path,
+        MapInstanceRepository.MapInstanceComposite composite,
+        IEnumerable<MerchantSpawnSchema> merchantSpawns
+    )
+    {
+        var handler = new RoutedEventHandler(
+            (_, _) =>
+            {
+                var info = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true
+                };
+
+                Process.Start(info);
+            });
+
+        foreach (var merchantSpawn in merchantSpawns)
+        {
+            if (!MerchantTemplateIndex.ContainsKey(merchantSpawn.MerchantTemplateKey))
+                await AddViolationAsync($"MerchantTemplateKey not found: {merchantSpawn.MerchantTemplateKey}", handler);
+
+            if (MapTemplateIndex.TryGetValue(composite.Instance.TemplateKey, out var template))
+            {
+                var templateBounds = new Rectangle(
+                    0,
+                    0,
+                    template.Width,
+                    template.Height);
+
+                if (!templateBounds.Contains(merchantSpawn.SpawnPoint))
+                    await AddViolationAsync("Merchant spawn point out of bounds", handler);
+
+                if (merchantSpawn.PathingBounds is not null && !templateBounds.Contains(merchantSpawn.PathingBounds))
+                    await AddViolationAsync("Merchant pathing bounds out of bounds", handler);
+
+                if (merchantSpawn.BlackList.Any(pt => !templateBounds.Contains(pt)))
+                    await AddViolationAsync("Merchant blacklisted point out of bounds", handler);
+            }
+        }
+    }
+
+    private async Task DetectMapInstance_MonsterSpawnViolationsAsync(
+        string path,
+        MapInstanceRepository.MapInstanceComposite composite,
+        IEnumerable<MonsterSpawnSchema> monsterSpawns
+    )
+    {
+        var handler = new RoutedEventHandler(
+            (_, _) =>
+            {
+                var info = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true
+                };
+
+                Process.Start(info);
+            });
+
+        foreach (var monsterSpawn in monsterSpawns)
+        {
+            if (!MonsterTemplateIndex.ContainsKey(monsterSpawn.MonsterTemplateKey))
+                await AddViolationAsync($"MonsterTemplateKey not found: {monsterSpawn.MonsterTemplateKey}", handler);
+
+            if (MapTemplateIndex.TryGetValue(composite.Instance.TemplateKey, out var template))
+            {
+                var templateBounds = new Rectangle(
+                    0,
+                    0,
+                    template.Width,
+                    template.Height);
+
+                if (monsterSpawn.SpawnArea is not null && !templateBounds.Contains(monsterSpawn.SpawnArea))
+                    await AddViolationAsync("Monster spawn area out of bounds", handler);
+
+                if (monsterSpawn.IntervalSecs <= 0)
+                    await AddViolationAsync($"Invalid monster spawn interval: {monsterSpawn.IntervalSecs}", handler);
+
+                if (monsterSpawn.MaxAmount <= 0)
+                    await AddViolationAsync($"Invalid monster spawn max amount: {monsterSpawn.MaxAmount}", handler);
+
+                if (monsterSpawn.MaxPerSpawn <= 0)
+                    await AddViolationAsync($"Invalid monster spawn max per spawn: {monsterSpawn.MaxPerSpawn}", handler);
+
+                if (monsterSpawn.BlackList.Any(pt => !templateBounds.Contains(pt)))
+                    await AddViolationAsync("Monster blacklisted point out of bounds", handler);
+
+                foreach (var extraLootTableKey in monsterSpawn.ExtraLootTableKeys)
+                    if (!LootTableIndex.ContainsKey(extraLootTableKey))
+                        await AddViolationAsync($"ExtraLootTableKey not found: {extraLootTableKey}", handler);
+            }
+        }
+    }
+    #endregion
 }

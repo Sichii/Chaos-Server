@@ -124,6 +124,15 @@
                         Content="➤"
                         Click="OnRunClicked"
                         Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                <Button Grid.Row="0"
+                        Height="Auto"
+                        Width="Auto"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="100,10,10,10"
+                        Content="Reload"
+                        Click="OnClickedReload"
+                        Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
                 <ScrollViewer Grid.Row="1"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Auto"
