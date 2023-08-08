@@ -533,7 +533,11 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public void SendServerMessage(ServerMessageType serverMessageType, string message)
     {
-        if (message.Length < CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
+        if ((message.Length < CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
+            || serverMessageType is ServerMessageType.WoodenBoard
+                                    or ServerMessageType.ScrollWindow
+                                    or ServerMessageType.NonScrollWindow
+                                    or ServerMessageType.UserOptions)
             Client.SendServerMessage(serverMessageType, message);
         else
             foreach (var msg in message.Chunk(CONSTANTS.MAX_SERVER_MESSAGE_LENGTH))

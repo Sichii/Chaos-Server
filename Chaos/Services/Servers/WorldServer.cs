@@ -279,7 +279,12 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         static ValueTask InnerOnChant(IWorldClient localClient, DisplayChantArgs localArgs)
         {
-            localClient.Aisling.Chant(localArgs.ChantMessage);
+            var message = localArgs.ChantMessage;
+
+            if (message.Length > CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
+                message = message[..CONSTANTS.MAX_SERVER_MESSAGE_LENGTH];
+
+            localClient.Aisling.Chant(message);
 
             return default;
         }
