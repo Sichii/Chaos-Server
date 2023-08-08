@@ -1,3 +1,4 @@
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace Chaos.NLog.Logging.Definitions;
 
 public static class Topics
@@ -100,9 +101,9 @@ public static class Topics
 
     public static class Qualifiers
     {
-        public static string Harassment => nameof(Harassment);
         public static string Cheating => nameof(Cheating);
         public static string Forced => nameof(Forced);
+        public static string Harassment => nameof(Harassment);
         public static string Raw => nameof(Raw);
     }
 
