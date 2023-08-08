@@ -255,7 +255,7 @@ public sealed class StringExtensionsTests
     {
         // Act
         var actual = strings.FuzzySearchBy(
-            _ => _,
+            s => s,
             str,
             minCoefficient,
             maxDistancePct,

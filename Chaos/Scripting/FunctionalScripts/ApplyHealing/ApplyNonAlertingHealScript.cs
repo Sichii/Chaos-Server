@@ -11,10 +11,8 @@ namespace Chaos.Scripting.FunctionalScripts.ApplyHealing;
 public class ApplyNonAlertingHealScript : ScriptBase, IApplyHealScript
 {
     /// <inheritdoc />
-    public IHealFormula HealFormula { get; set; }
+    public IHealFormula HealFormula { get; set; } = HealFormulae.Default;
     public static string Key { get; } = GetScriptKey(typeof(ApplyNonAlertingHealScript));
-
-    public ApplyNonAlertingHealScript() => HealFormula = HealFormulae.Default;
 
     /// <inheritdoc />
     public virtual void ApplyHeal(

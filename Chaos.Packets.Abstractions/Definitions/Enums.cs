@@ -62,7 +62,7 @@ public enum ClientOpCode : byte
     ///     OpCode used when a client requests the server to display an object<br />
     ///     Hex value: 0x0C
     /// </summary>
-    DisplayObjectRequest = 12,
+    DisplayEntityRequest = 12,
     /// <summary>
     ///     OpCode used when a client ignores or un-ignores another player, or requests a list of ignored players<br />
     ///     Hex value: 0x0D

@@ -31,7 +31,7 @@ public static partial class RegexCache
     [GeneratedRegex(@"^I (?:will )?buy (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex BuyItemRegex1();
 
-    [GeneratedRegex(@"^I (?:will )?deposit (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^I (?:will )?deposit (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex1();
 
     [GeneratedRegex(@"^I (?:will )?deposit (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
@@ -40,7 +40,7 @@ public static partial class RegexCache
     [GeneratedRegex(@"^I (?:will )?deposit (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex3();
 
-    [GeneratedRegex(@"^Take (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^Take (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex4();
 
     [GeneratedRegex(@"^Take (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
@@ -49,13 +49,13 @@ public static partial class RegexCache
     [GeneratedRegex(@"^Take my (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex6();
 
-    [GeneratedRegex(@"^How (?:many|much) (?<thing>.+) do I have", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^How (?:many|much) (?<thing>.+) do I have", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex ItemCheckRegex1();
 
-    [GeneratedRegex(@"^How (?:many|much) (?<thing>.+) I got", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^How (?:many|much) (?<thing>.+) I got", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex ItemCheckRegex2();
 
-    [GeneratedRegex(@"^I (?:will )?sell (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^I (?:will )?sell (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex SellItemRegex1();
 
     [GeneratedRegex(@"^I (?:will )?sell (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
@@ -64,7 +64,7 @@ public static partial class RegexCache
     [GeneratedRegex(@"^I (?:will )?sell (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex SellItemRegex3();
 
-    [GeneratedRegex(@"^I (?:will )?withdraw (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^I (?:will )?withdraw (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex1();
 
     [GeneratedRegex(@"^I (?:will )?withdraw (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
@@ -73,7 +73,7 @@ public static partial class RegexCache
     [GeneratedRegex(@"^I (?:will )?withdraw (?:(?<amount>\w+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex3();
 
-    [GeneratedRegex(@"^Give (?:me )?(?<amount>all) my (?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex("^Give (?:me )?(?<amount>all) my (?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex4();
 
     [GeneratedRegex(@"^Give (?:me )?(?<amount>\w+) of my (?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]

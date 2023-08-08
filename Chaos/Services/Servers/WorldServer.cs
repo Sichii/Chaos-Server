@@ -546,6 +546,31 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
+    public ValueTask OnDisplayEntityRequest(IWorldClient client, in ClientPacket clientPacket)
+    {
+        var args = PacketSerializer.Deserialize<DisplayEntityRequestArgs>(in clientPacket);
+
+        return ExecuteHandler(client, args, InnerOnDisplayEntityRequest);
+
+        ValueTask InnerOnDisplayEntityRequest(IWorldClient localClient, DisplayEntityRequestArgs localArgs)
+        {
+            var aisling = localClient.Aisling;
+            var mapInstance = aisling.MapInstance;
+
+            if (mapInstance.TryGetEntity<VisibleEntity>(localArgs.TargetId, out var obj)
+                && (!aisling.CanObserve(obj) || !aisling.CanSee(obj)))
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Qualifiers.Forced, Topics.Qualifiers.Cheating)
+                      .WithProperty(aisling)
+                      .WithProperty(obj)
+                      .LogWarning(
+                          "Aisling {@AislingName} attempted to forcefully display an entity {@EntityId} that they cannot see",
+                          aisling.Name,
+                          obj.Id);
+
+            return default;
+        }
+    }
+
     public ValueTask OnExchange(IWorldClient client, in ClientPacket clientPacket)
     {
         var args = PacketSerializer.Deserialize<ExchangeArgs>(in clientPacket);
@@ -681,7 +706,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (amount <= 0)
                 return default;
 
-            if (!map.TryGetObject<Creature>(targetId, out var target))
+            if (!map.TryGetEntity<Creature>(targetId, out var target))
                 return default;
 
             if (!localClient.Aisling.WithinRange(target, Options.TradeRange))
@@ -818,7 +843,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             (var sourceSlot, var targetId, var count) = localArgs;
             var map = localClient.Aisling.MapInstance;
 
-            if (!map.TryGetObject<Creature>(targetId, out var target))
+            if (!map.TryGetEntity<Creature>(targetId, out var target))
                 return default;
 
             if (!localClient.Aisling.WithinRange(target, Options.TradeRange))
@@ -1556,7 +1581,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ClientHandlers[(byte)ClientOpCode.Pickup] = OnPickup;
         ClientHandlers[(byte)ClientOpCode.ItemDrop] = OnItemDropped;
         ClientHandlers[(byte)ClientOpCode.ExitRequest] = OnExitRequest;
-        //ClientHandlers[(byte)ClientOpCode.DisplayObjectRequest] =
+        ClientHandlers[(byte)ClientOpCode.DisplayEntityRequest] = OnDisplayEntityRequest;
         ClientHandlers[(byte)ClientOpCode.Ignore] = OnIgnore;
         ClientHandlers[(byte)ClientOpCode.PublicMessage] = OnPublicMessage;
         ClientHandlers[(byte)ClientOpCode.UseSpell] = OnUseSpell;

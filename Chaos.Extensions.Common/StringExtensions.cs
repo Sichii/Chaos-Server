@@ -171,7 +171,7 @@ public static class StringExtensions
 
         return input switch
         {
-            "" => throw new ArgumentException($@"{nameof(input)} cannot be empty", nameof(input)),
+            "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
             _  => string.Concat(new ReadOnlySpan<char>(char.ToUpper(input[0])), input.AsSpan(1))
         };
     }

@@ -119,7 +119,7 @@ public sealed partial class SpellTemplateEditor
                                       Name = wrapper.Object.TemplateKey,
                                       Wrapper = wrapper
                                   })
-                              .OrderBy(_ => _, ListViewItemComparer.Instance);
+                              .OrderBy(i => i, ListViewItemComparer.Instance);
 
         ListViewItems.AddRange(objs);
     }

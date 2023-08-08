@@ -9,9 +9,9 @@ internal sealed class JoinStringCollectionConverter : IValueConverter
     public static readonly IValueConverter Instance = new JoinStringCollectionConverter();
 
     public object Convert(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     )
     {
@@ -22,9 +22,9 @@ internal sealed class JoinStringCollectionConverter : IValueConverter
     }
 
     public object ConvertBack(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) => throw new NotImplementedException();
 }

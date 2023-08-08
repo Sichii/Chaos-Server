@@ -333,7 +333,14 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Packet, Topics.Actions.Processing)
                   .WithProperty(client)
                   .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
-        else
+        else if (opCode is ClientOpCode.ExitRequest or ClientOpCode.RequestProfile)
+        {
+            //ignored
+            //these occasionally happen in the LoginServer for some unknown reason
+            //ExitRequest might be from a double click from exiting
+            //RequestProfile I have no idea tho
+        } else
+
             Logger.WithTopics(
                       Topics.Servers.LoginServer,
                       Topics.Entities.Packet,

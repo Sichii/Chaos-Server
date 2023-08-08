@@ -212,7 +212,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Click(uint id, Aisling source)
     {
-        if (TryGetObject<VisibleEntity>(id, out var obj))
+        if (TryGetEntity<VisibleEntity>(id, out var obj))
             if (obj.WithinRange(source) && source.CanObserve(obj))
                 obj.OnClicked(source);
     }
@@ -486,7 +486,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                                            .Take(amountOverLimit)
                                            .ToList();
 
-                var aislingsToRemove = groupsToRemove.SelectMany(_ => _)
+                var aislingsToRemove = groupsToRemove.SelectMany(l => l)
                                                      .ToList();
 
                 //for each timer that isnt for one of these aislings
@@ -710,7 +710,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             foreach (var aisling in Objects.WithinRange<Aisling>(animation.TargetPoint))
                 aisling.Client.SendAnimation(animation);
         else if (animation.TargetId.HasValue)
-            if (TryGetObject<Creature>(animation.TargetId.Value, out var target))
+            if (TryGetEntity<Creature>(animation.TargetId.Value, out var target))
                 foreach (var aisling in Objects.WithinRange<Aisling>(target)
                                                .ThatCanObserve(target))
                     aisling.Client.SendAnimation(animation);
@@ -745,7 +745,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Stop() => MapInstanceCtx.Cancel();
 
-    public bool TryGetObject<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
+    public bool TryGetEntity<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
 
     public async Task UpdateMapAsync(TimeSpan delta)
     {

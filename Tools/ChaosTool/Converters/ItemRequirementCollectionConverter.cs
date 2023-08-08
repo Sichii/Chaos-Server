@@ -10,9 +10,9 @@ public sealed class ItemRequirementCollectionConverter : IValueConverter
     public static readonly IValueConverter Instance = new ItemRequirementCollectionConverter();
 
     public object Convert(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     )
     {
@@ -23,9 +23,9 @@ public sealed class ItemRequirementCollectionConverter : IValueConverter
     }
 
     public object ConvertBack(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) => throw new NotImplementedException();
 }

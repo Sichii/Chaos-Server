@@ -61,7 +61,7 @@ public class AggroTargetingScript : MonsterScriptBase
         //if something is already aggro, ignore aggro range
         foreach (var kvp in AggroList.OrderByDescending(kvp => kvp.Value))
         {
-            if (!Map.TryGetObject<Creature>(kvp.Key, out var possibleTarget))
+            if (!Map.TryGetEntity<Creature>(kvp.Key, out var possibleTarget))
                 continue;
 
             if (!possibleTarget.IsAlive || !Subject.CanSee(possibleTarget) || !possibleTarget.WithinRange(Subject))

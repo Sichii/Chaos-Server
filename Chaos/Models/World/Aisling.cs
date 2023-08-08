@@ -909,7 +909,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                 return false;
 
             target = this;
-        } else if (!MapInstance.TryGetObject(targetId.Value, out target))
+        } else if (!MapInstance.TryGetEntity(targetId.Value, out target))
             return false;
 
         if (!CanUse(

@@ -118,7 +118,7 @@ public sealed partial class MerchantTemplateEditor
                                       Name = wrapper.Object.TemplateKey,
                                       Wrapper = wrapper
                                   })
-                              .OrderBy(_ => _, ListViewItemComparer.Instance);
+                              .OrderBy(i => i, ListViewItemComparer.Instance);
 
         ListViewItems.AddRange(objs);
     }

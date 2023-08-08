@@ -111,7 +111,7 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         }
     }
 
-    public string ToAmountString(int amount) => $@"{amount} {DisplayName}{(amount > 1 ? "s" : string.Empty)}";
+    public string ToAmountString(int amount) => $"{amount} {DisplayName}{(amount > 1 ? "s" : string.Empty)}";
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

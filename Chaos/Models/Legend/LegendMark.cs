@@ -29,5 +29,5 @@ public sealed record LegendMark(
 
     public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Key);
 
-    public override string ToString() => Count > 1 ? $@"{Text} ({Count}) - {Added.ToString()}" : $@"{Text} - {Added.ToString()}";
+    public override string ToString() => Count > 1 ? $"{Text} ({Count}) - {Added.ToString()}" : $"{Text} - {Added.ToString()}";
 }

@@ -44,6 +44,11 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ISoc
     ValueTask OnDialogResponse(TClient client, in ClientPacket clientPacket);
 
     /// <summary>
+    ///     Occurs when a client requests an object be re-sent
+    /// </summary>
+    ValueTask OnDisplayEntityRequest(TClient client, in ClientPacket clientPacket);
+
+    /// <summary>
     ///     Occurs when a client uses an emote
     /// </summary>
     ValueTask OnEmote(TClient client, in ClientPacket clientPacket);

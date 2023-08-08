@@ -177,5 +177,5 @@ public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable
     /// </summary>
     /// <param name="format">Optional string format guide.</param>
     public string ToString(string? format = null) =>
-        $@"Year {(!string.IsNullOrEmpty(format) ? DateTime.ToString(format) : DateTime.ToString(@"y, MMM d"))}{GetDaySuffix}";
+        $"Year {(!string.IsNullOrEmpty(format) ? DateTime.ToString(format) : DateTime.ToString("y, MMM d"))}{GetDaySuffix}";
 }

@@ -23,6 +23,7 @@ public class ShuffleBenchmark
 
         for (var i = 0; i < RandomizedIndexes.Length; i++)
         {
+            // ReSharper disable once UseDiscardAssignment
             var _ = Array[RandomizedIndexes[i]];
         }
     }

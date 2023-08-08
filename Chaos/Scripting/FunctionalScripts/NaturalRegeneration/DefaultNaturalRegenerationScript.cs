@@ -11,11 +11,9 @@ namespace Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
 // ReSharper disable once ClassCanBeSealed.Global
 public class DefaultNaturalRegenerationScript : ScriptBase, INaturalRegenerationScript
 {
-    public IRegenFormula RegenFormula { get; set; }
+    public IRegenFormula RegenFormula { get; set; } = RegenFormulae.Default;
     /// <inheritdoc />
     public static string Key { get; } = GetScriptKey(typeof(DefaultNaturalRegenerationScript));
-
-    public DefaultNaturalRegenerationScript() => RegenFormula = RegenFormulae.Default;
 
     /// <inheritdoc />
     public static INaturalRegenerationScript Create() => FunctionalScriptRegistry.Instance.Get<INaturalRegenerationScript>(Key);

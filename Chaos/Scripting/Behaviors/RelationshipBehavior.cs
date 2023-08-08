@@ -97,6 +97,7 @@ public class RelationshipBehavior
         if (source.Equals(target))
             return false;
 
+        // ReSharper disable once ConvertToConstant.Local
         var onPvpMap = false;
         var inGroup = source.Group?.Contains(target) ?? false;
 

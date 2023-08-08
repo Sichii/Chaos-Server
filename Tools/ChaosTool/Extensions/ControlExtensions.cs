@@ -96,7 +96,7 @@ internal static class ControlExtensions
 
         dataGrid.SelectedCells.Clear();
 
-        var item = dataGrid.Items[rowIndex];
+        var item = dataGrid.Items[rowIndex]!;
         // ReSharper disable once UseNegatedPatternMatching
         var row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
 

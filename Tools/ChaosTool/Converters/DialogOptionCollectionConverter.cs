@@ -10,9 +10,9 @@ internal sealed class DialogOptionCollectionConverter : IValueConverter
     public static readonly IValueConverter Instance = new DialogOptionCollectionConverter();
 
     public object Convert(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     )
     {
@@ -23,9 +23,9 @@ internal sealed class DialogOptionCollectionConverter : IValueConverter
     }
 
     public object ConvertBack(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) => throw new NotImplementedException();
 }

@@ -9,14 +9,8 @@ namespace Chaos.Messaging.Tests;
 
 public sealed class SubscriberDetailsTests
 {
-    private readonly Mock<IChannelSubscriber> MockChannelSubscriber1;
-    private readonly Mock<IChannelSubscriber> MockChannelSubscriber2;
-
-    public SubscriberDetailsTests()
-    {
-        MockChannelSubscriber1 = MockChannelSubscriber.Create();
-        MockChannelSubscriber2 = MockChannelSubscriber.Create();
-    }
+    private readonly Mock<IChannelSubscriber> MockChannelSubscriber1 = MockChannelSubscriber.Create();
+    private readonly Mock<IChannelSubscriber> MockChannelSubscriber2 = MockChannelSubscriber.Create();
 
     [Fact]
     public void GetHashCode_ShouldBeBasedOnSubscriber()

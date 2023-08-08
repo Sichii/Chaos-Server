@@ -506,7 +506,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 return false;
 
             target = this;
-        } else if (!MapInstance.TryGetObject(targetId.Value, out target))
+        } else if (!MapInstance.TryGetEntity(targetId.Value, out target))
             return false;
 
         if (!CanUse(

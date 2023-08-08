@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Chaos.Extensions.Common;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
@@ -23,6 +22,13 @@ public sealed partial class MapInstancePropertyEditor
 
         InitializeComponent();
     }
+
+    #region Tbox Validation
+    //private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
+
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
+        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    #endregion
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
@@ -109,13 +115,6 @@ public sealed partial class MapInstancePropertyEditor
 
         await JsonContext.MapInstances.SaveItemAsync(Wrapper);
     }
-    #endregion
-
-    #region Tbox Validation
-    private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Controls

@@ -8,9 +8,9 @@ namespace Chaos.Collections;
 
 public class Trackers : IDeltaUpdatable
 {
-    public CounterCollection Counters { get; init; }
-    public EnumCollection Enums { get; init; }
-    public FlagCollection Flags { get; init; }
+    public CounterCollection Counters { get; init; } = new();
+    public EnumCollection Enums { get; init; } = new();
+    public FlagCollection Flags { get; init; } = new();
     public Creature? LastDamagedBy { get; set; }
     public string? LastMapInstanceId { get; set; }
     public Location? LastPosition { get; set; }
@@ -21,15 +21,7 @@ public class Trackers : IDeltaUpdatable
     public Skill? LastUsedSkill { get; set; }
     public Spell? LastUsedSpell { get; set; }
     public DateTime? LastWalk { get; set; }
-    public TimedEventCollection TimedEvents { get; init; }
-
-    public Trackers()
-    {
-        Counters = new CounterCollection();
-        Enums = new EnumCollection();
-        Flags = new FlagCollection();
-        TimedEvents = new TimedEventCollection();
-    }
+    public TimedEventCollection TimedEvents { get; init; } = new();
 
     /// <inheritdoc />
     public void Update(TimeSpan delta) => TimedEvents.Update(delta);

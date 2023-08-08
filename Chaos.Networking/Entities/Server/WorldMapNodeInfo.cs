@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of a world map node in the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.WorldMap" /> packet
 /// </summary>
-public record WorldMapNodeInfo
+public sealed record WorldMapNodeInfo
 {
     /// <summary>
     ///     The unique id of the node (or checksum, depends how you want to use it)

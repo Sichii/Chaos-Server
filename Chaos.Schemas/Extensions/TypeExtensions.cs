@@ -1,6 +1,8 @@
 using System.Text;
 using Namotion.Reflection;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace Chaos.Schemas.Extensions;
 
 public static class TypeExtensions

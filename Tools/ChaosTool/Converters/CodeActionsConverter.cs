@@ -9,17 +9,17 @@ namespace ChaosTool.Converters;
 internal sealed class CodeActionsConverter : MarkupExtension, IValueConverter
 {
     public object Convert(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) =>
-        ((CodeAction)value).GetCodeActions();
+        ((CodeAction)value!).GetCodeActions();
 
     public object ConvertBack(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) =>
         throw new NotSupportedException();

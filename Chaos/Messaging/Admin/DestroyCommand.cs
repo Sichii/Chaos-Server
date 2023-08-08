@@ -17,7 +17,7 @@ public class DestroyCommand : ICommand<Aisling>
         if (args.TryGetNext<uint>(out var id))
         {
             //if the entity is not found or is an aisling
-            if (!source.MapInstance.TryGetObject<VisibleEntity>(id, out var obj) || obj is Aisling)
+            if (!source.MapInstance.TryGetEntity<VisibleEntity>(id, out var obj) || obj is Aisling)
                 source.SendOrangeBarMessage("Invalid entity.");
             else
                 source.MapInstance.RemoveObject(obj);

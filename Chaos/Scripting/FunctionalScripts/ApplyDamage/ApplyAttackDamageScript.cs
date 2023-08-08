@@ -10,10 +10,8 @@ namespace Chaos.Scripting.FunctionalScripts.ApplyDamage;
 
 public class ApplyAttackDamageScript : ScriptBase, IApplyDamageScript
 {
-    public IDamageFormula DamageFormula { get; set; }
+    public IDamageFormula DamageFormula { get; set; } = DamageFormulae.Default;
     public static string Key { get; } = GetScriptKey(typeof(ApplyAttackDamageScript));
-
-    public ApplyAttackDamageScript() => DamageFormula = DamageFormulae.Default;
 
     public virtual void ApplyDamage(
         Creature source,

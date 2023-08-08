@@ -32,7 +32,7 @@ public class DeathScript : MonsterScriptBase
         //if there are no contributor, try getting the highest aggro
         var rewardTarget = Subject.Contribution
                                   .OrderByDescending(kvp => kvp.Value)
-                                  .Select(kvp => Map.TryGetObject<Aisling>(kvp.Key, out var a) ? a : null)
+                                  .Select(kvp => Map.TryGetEntity<Aisling>(kvp.Key, out var a) ? a : null)
                                   .FirstOrDefault(a => a is not null);
 
         Aisling[]? rewardTargets = null;
@@ -42,8 +42,7 @@ public class DeathScript : MonsterScriptBase
                             .ThatAreWithinRange(rewardTarget)
                             .ToArray();
 
-        if (Subject.LootTable != null)
-            Subject.Items.AddRange(Subject.LootTable.GenerateLoot());
+        Subject.Items.AddRange(Subject.LootTable.GenerateLoot());
 
         var droppedGold = Subject.TryDropGold(Subject, Subject.Gold, out var money);
         var droppedITems = Subject.TryDrop(Subject, Subject.Items, out var groundItems);

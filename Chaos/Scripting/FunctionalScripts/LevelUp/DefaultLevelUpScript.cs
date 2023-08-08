@@ -10,11 +10,9 @@ namespace Chaos.Scripting.FunctionalScripts.LevelUp;
 
 public class DefaultLevelUpScript : ScriptBase, ILevelUpScript
 {
-    public ILevelUpFormula LevelUpFormula { get; set; }
+    public ILevelUpFormula LevelUpFormula { get; set; } = LevelUpFormulae.Default;
     /// <inheritdoc />
     public static string Key { get; } = GetScriptKey(typeof(DefaultLevelUpScript));
-
-    public DefaultLevelUpScript() => LevelUpFormula = LevelUpFormulae.Default;
 
     /// <inheritdoc />
     public static ILevelUpScript Create() => FunctionalScriptRegistry.Instance.Get<ILevelUpScript>(Key);
