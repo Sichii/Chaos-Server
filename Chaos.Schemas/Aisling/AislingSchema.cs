@@ -30,10 +30,6 @@ public sealed record AislingSchema
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public Direction Direction { get; set; }
     /// <summary>
-    ///     A collection of effects that are currently active on the aisling
-    /// </summary>
-    public ICollection<EffectSchema> Effects { get; set; } = Array.Empty<EffectSchema>();
-    /// <summary>
     ///     The sprite id of the aisling's face
     /// </summary>
     public int FaceSprite { get; set; }

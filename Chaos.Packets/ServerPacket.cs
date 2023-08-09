@@ -1,6 +1,5 @@
 using System.Text;
 using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Packets.Definitions;
 
 namespace Chaos.Packets;
 
@@ -75,7 +74,7 @@ public ref struct ServerPacket
     ///     Gets the hexadecimal string representation of the packet buffer.
     /// </summary>
     /// <returns>The hexadecimal string representation of the packet buffer.</returns>
-    public string GetHexString() => $"{OpCode}: {RegexCache.DOUBLE_BYTE_REGEX.Replace(Convert.ToHexString(Buffer), "$1 ")}";
+    public string GetHexString() => $"{OpCode}: {BitConverter.ToString(Buffer.ToArray()).Replace("-", " ")}";
 
     /// <summary>
     ///     Converts the packet data to an array of bytes.

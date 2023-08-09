@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <LangVersion>11</LangVersion>
+        <LangVersion>latest</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <TieredPGO>true</TieredPGO>
         <TieredCompilation>true</TieredCompilation>

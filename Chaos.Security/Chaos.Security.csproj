@@ -3,6 +3,7 @@
         <ProjectReference Include="..\Chaos.Common.Abstractions\Chaos.Common.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>
         <ProjectReference Include="..\Chaos.Security.Abstractions\Chaos.Security.Abstractions.csproj"/>
     </ItemGroup>
     <ItemGroup>

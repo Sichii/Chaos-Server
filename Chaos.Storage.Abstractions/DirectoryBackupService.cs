@@ -1,6 +1,7 @@
-using System.Diagnostics;
 using System.IO.Compression;
 using Chaos.IO.FileSystem;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -36,7 +37,8 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
 
         if (!directoryInfo.Exists)
         {
-            Logger.LogError("Failed to handle backup retention for path {@Directory} because it doesn't exist", directory);
+            Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                  .LogError("Failed to handle backup retention for path {@Directory} because it doesn't exist", directory);
 
             return default;
         }
@@ -47,7 +49,9 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
             if (fileInfo.CreationTimeUtc < deleteTime)
                 try
                 {
-                    Logger.LogTrace("Deleting backup {@Backup}", fileInfo.FullName);
+                    Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Delete)
+                          .LogTrace("Deleting backup {@Backup}", fileInfo.FullName);
+
                     fileInfo.Delete();
                 } catch
                 {
@@ -66,7 +70,8 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
 
             if (!directoryInfo.Exists)
             {
-                Logger.LogError("Failed to take backup for path {@SaveDir} because it doesn't exist", saveDirectory);
+                Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                      .LogError("Failed to take backup for path {@SaveDir} because it doesn't exist", saveDirectory);
 
                 return default;
             }
@@ -89,12 +94,15 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
             saveDirectory.SafeExecute(
                 saveDir =>
                 {
-                    Logger.LogTrace("Backing up directory {@SaveDir}", saveDirectory);
+                    Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                          .LogTrace("Backing up directory {@SaveDir}", saveDirectory);
+
                     ZipFile.CreateFromDirectory(saveDir, backupPath);
                 });
         } catch (Exception e)
         {
-            Logger.LogError(e, "Failed to take backup for path {@SaveDir}", saveDirectory);
+            Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                  .LogError(e, "Failed to take backup for path {@SaveDir}", saveDirectory);
         }
 
         return default;
@@ -114,9 +122,12 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
             try
             {
                 await backupTimer.WaitForNextTickAsync(stoppingToken);
-                var start = Stopwatch.GetTimestamp();
 
-                Logger.LogDebug("Performing backup");
+                Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                      .LogDebug("Performing backup");
+
+                var metricsLogger = Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                                          .WithMetrics();
 
                 await Parallel.ForEachAsync(
                     Directory.EnumerateDirectories(Options.Directory),
@@ -125,14 +136,16 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
 
                 await Parallel.ForEachAsync(Directory.EnumerateDirectories(Options.BackupDirectory), pOptions, HandleBackupRetentionAsync);
 
-                Logger.LogDebug("Backup completed, took {@Elapsed}", Stopwatch.GetElapsedTime(start));
+                metricsLogger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                             .LogDebug("Backup completed");
             } catch (OperationCanceledException)
             {
                 //ignore
                 return;
             } catch (Exception e)
             {
-                Logger.LogCritical(e, "Exception occurred while performing backup");
+                Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                      .LogError(e, "Exception occurred while performing backup");
             }
     }
 }

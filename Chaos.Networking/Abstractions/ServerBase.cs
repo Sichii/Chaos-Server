@@ -4,6 +4,8 @@ using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Entities.Client;
 using Chaos.Networking.Options;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -97,7 +99,9 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         Socket.Bind(endPoint);
         Socket.Listen(20);
         Socket.BeginAccept(OnConnection, Socket);
-        Logger.LogInformation("Listening on {@EndPoint}", endPoint.ToString());
+
+        Logger.WithTopics(Topics.Actions.Listening)
+              .LogInformation("Listening on {@EndPoint}", endPoint.ToString());
 
         await stoppingToken.WaitTillCanceled();
 
@@ -165,12 +169,13 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             await action(client, args);
         } catch (Exception e)
         {
-            Logger.LogError(
-                e,
-                "{@ClientType} failed to execute inner handler with args type {@ArgsType} ({@Args})",
-                client.GetType().Name,
-                args!.GetType().Name,
-                args);
+            Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+                  .LogError(
+                      e,
+                      "{@ClientType} failed to execute inner handler with args type {@ArgsType} ({@Args})",
+                      client.GetType().Name,
+                      args!.GetType().Name,
+                      args);
         }
     }
 
@@ -188,7 +193,8 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             await action(client);
         } catch (Exception e)
         {
-            Logger.LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
+            Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+                  .LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
         }
     }
 

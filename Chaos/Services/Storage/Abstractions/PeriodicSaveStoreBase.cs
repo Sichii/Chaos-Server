@@ -110,7 +110,7 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
             } catch (Exception e)
             {
                 Logger.WithTopics(Topics.Actions.Save)
-                      .LogCritical(e, "Exception while performing save");
+                      .LogError(e, "Exception while performing save");
             }
 
         Logger.WithTopics(Topics.Actions.Save)

@@ -6,6 +6,7 @@
         <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj"/>
         <ProjectReference Include="..\Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Chaos.Messaging.Tests"/>

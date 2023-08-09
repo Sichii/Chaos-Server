@@ -1,6 +1,8 @@
 using System.Runtime.Serialization;
 using System.Text.Json;
 using Chaos.Common.Utilities;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -32,7 +34,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
 
         var schema = JsonSerializerEx.Deserialize<TSchema>(path, JsonSerializerOptions);
 
@@ -47,7 +50,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading new {@TypeName} object from path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading new {@TypeName} object from path {@Path}", typeof(T).Name, path);
 
         var schema = JsonSerializerEx.Deserialize<TSchema>(path, JsonSerializerOptions);
 
@@ -64,7 +68,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading new {@TypeName} object from path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading new {@TypeName} object from path {@Path}", typeof(T).Name, path);
 
         var schema = await JsonSerializerEx.DeserializeAsync<TSchema>(path, JsonSerializerOptions);
 
@@ -82,7 +87,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
 
         var schemas = JsonSerializerEx.Deserialize<ICollection<TSchema>>(path, JsonSerializerOptions)!;
 
@@ -100,7 +106,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
 
         var schemas = await JsonSerializerEx.DeserializeAsync<ICollection<TSchema>>(path, JsonSerializerOptions);
 
@@ -124,7 +131,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
 
         var schema = await JsonSerializerEx.DeserializeAsync<TSchema>(path, JsonSerializerOptions);
 
@@ -139,7 +147,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
 
         var schemas = JsonSerializerEx.Deserialize<IEnumerable<TSchema>>(path, JsonSerializerOptions);
 
@@ -154,7 +163,8 @@ public sealed class EntityRepository : IEntityRepository
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Loading collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Load)
+              .LogTrace("Loading collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
 
         var schemas = await JsonSerializerEx.DeserializeAsync<IEnumerable<TSchema>>(path, JsonSerializerOptions);
 
@@ -171,7 +181,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
         JsonSerializerEx.Serialize(path, obj, JsonSerializerOptions);
     }
@@ -182,7 +193,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving {@TypeName} to path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving {@TypeName} to path {@Path}", typeof(T).Name, path);
 
         var schema = Mapper.Map<TSchema>(obj)!;
 
@@ -195,7 +207,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving {@TypeName} to path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving {@TypeName} to path {@Path}", typeof(T).Name, path);
 
         var schema = Mapper.Map<TSchema>(obj)!;
 
@@ -208,7 +221,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
 
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
@@ -221,7 +235,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
 
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
@@ -234,7 +249,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
         return JsonSerializerEx.SerializeAsync(path, obj, JsonSerializerOptions);
     }
@@ -245,7 +261,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
         JsonSerializerEx.Serialize(path, obj, JsonSerializerOptions);
     }
@@ -256,7 +273,8 @@ public sealed class EntityRepository : IEntityRepository
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
 
-        Logger.LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
+        Logger.WithTopics(Topics.Actions.Save)
+              .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
         return JsonSerializerEx.SerializeAsync(path, obj, JsonSerializerOptions);
     }

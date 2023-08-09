@@ -7,6 +7,8 @@ using Chaos.Cryptography.Abstractions;
 using Chaos.Extensions.Networking;
 using Chaos.IO.Memory;
 using Chaos.Networking.Entities.Server;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
@@ -199,14 +201,16 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                         var hex = BitConverter.ToString(buffer.ToArray()).Replace("-", " ");
                         var ascii = Encoding.ASCII.GetString(buffer);
 
-                        Logger.LogCritical(
-                            ex,
-                            "Exception while handling a packet for {@ClientType}. (Count: {Count}, Offset: {Offset}, BufferHex: {BufferHex}, BufferAscii: {BufferAscii})",
-                            GetType().Name,
-                            Count,
-                            offset,
-                            hex,
-                            ascii);
+                        Logger.WithTopics(Topics.Entities.Client, Topics.Entities.Packet, Topics.Actions.Processing)
+                              .WithProperty(this)
+                              .LogError(
+                                  ex,
+                                  "Exception while handling a packet for {@ClientType}. (Count: {Count}, Offset: {Offset}, BufferHex: {BufferHex}, BufferAscii: {BufferAscii})",
+                                  GetType().Name,
+                                  Count,
+                                  offset,
+                                  hex,
+                                  ascii);
                     }
 
                     InnerCatch();
@@ -256,7 +260,13 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         //no way to pass the packet in because its a ref struct
         //but we still want to avoid serializing the packet to a string if we aren't actually going to log it
         if (LogRawPackets)
-            Logger.LogTrace("[Snd] {Packet}", packet.ToString());
+            Logger.WithTopics(
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Send)
+                  .WithProperty(this)
+                  .LogTrace("[Snd] {Packet}", packet.ToString());
 
         packet.ShouldEncrypt = Crypto.ShouldEncrypt((byte)packet.OpCode);
 

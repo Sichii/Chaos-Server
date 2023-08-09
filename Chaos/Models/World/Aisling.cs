@@ -550,7 +550,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (!Script.CanTalk())
             return;
 
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Message)
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Message, Topics.Actions.Send)
               .WithProperty(this)
               .LogInformation(
                   "Aisling {@AislingName} sent {@Type} message {@Message}",

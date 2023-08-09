@@ -406,7 +406,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                           .WithProperty(this)
                           .WithProperty(currentMap)
                           .WithProperty(destinationMap)
-                          .LogCritical(
+                          .LogError(
                               e,
                               "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
                               Name,

@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using Chaos.Extensions.Common;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -73,7 +75,9 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
 
                     if (instance is not TScript tScript)
                     {
-                        Logger.LogError("Script obtained from key {@ScriptKey} is not of type {@TypeName}", scriptKey, TypeName);
+                        Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Create)
+                              .WithProperty(subject)
+                              .LogError("Script obtained from key {@ScriptKey} is not of type {@TypeName}", scriptKey, TypeName);
 
                         continue;
                     }
@@ -97,13 +101,15 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             var scriptKey = ScriptBase.GetScriptKey(type);
             ScriptTypeCache[scriptKey] = type;
 
-            Logger.LogTrace(
-                "Cached {@TypeName} of type {@Type} with key {@ScriptKey}",
-                TypeName,
-                type.Name,
-                scriptKey);
+            Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Load)
+                  .LogTrace(
+                      "Cached {@TypeName} of type {@Type} with key {@ScriptKey}",
+                      TypeName,
+                      type.Name,
+                      scriptKey);
         }
 
-        Logger.LogInformation("{Count} {@TScriptName}s loaded", ScriptTypeCache.Count, TypeName);
+        Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Load)
+              .LogInformation("{Count} {@TScriptName}s loaded", ScriptTypeCache.Count, TypeName);
     }
 }

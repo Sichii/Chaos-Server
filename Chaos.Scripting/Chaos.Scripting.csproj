@@ -5,6 +5,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>
         <ProjectReference Include="..\Chaos.Scripting.Abstractions\Chaos.Scripting.Abstractions.csproj"/>
     </ItemGroup>
 </Project>

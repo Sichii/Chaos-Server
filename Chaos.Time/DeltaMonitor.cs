@@ -1,3 +1,5 @@
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Time.Abstractions;
 using Microsoft.Extensions.Logging;
 
@@ -96,32 +98,35 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 
             //depending on how the loop is performing, log the output at different levels
             if ((average > MaxDelta) || (max > 250))
-                Logger.LogError(
-                    FORMAT,
-                    Name,
-                    average,
-                    median,
-                    upperPct,
-                    max,
-                    deltas.Count);
+                Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
+                      .LogError(
+                          FORMAT,
+                          Name,
+                          average,
+                          median,
+                          upperPct,
+                          max,
+                          deltas.Count);
             else if ((upperPct > MaxDelta / 2) || (max > 100))
-                Logger.LogWarning(
-                    FORMAT,
-                    Name,
-                    average,
-                    median,
-                    upperPct,
-                    max,
-                    deltas.Count);
+                Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
+                      .LogWarning(
+                          FORMAT,
+                          Name,
+                          average,
+                          median,
+                          upperPct,
+                          max,
+                          deltas.Count);
             else
-                Logger.LogTrace(
-                    FORMAT,
-                    Name,
-                    average,
-                    median,
-                    upperPct,
-                    max,
-                    deltas.Count);
+                Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
+                      .LogTrace(
+                          FORMAT,
+                          Name,
+                          average,
+                          median,
+                          upperPct,
+                          max,
+                          deltas.Count);
 
             return Task.CompletedTask;
         });

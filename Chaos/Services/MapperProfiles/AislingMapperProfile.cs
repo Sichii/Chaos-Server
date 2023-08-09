@@ -145,7 +145,6 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Titles = obj.Titles.ToList(),
             UserOptions = Mapper.Map<UserOptionsSchema>(obj.Options),
             IgnoreList = obj.IgnoreList.ToList(),
-            Effects = Array.Empty<EffectSchema>(),
             ChannelSettings = Mapper.MapMany<ChannelSettingsSchema>(obj.ChannelSettings).ToList()
         };
 

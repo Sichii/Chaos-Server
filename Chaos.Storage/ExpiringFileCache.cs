@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
 using Microsoft.Extensions.Caching.Memory;
@@ -86,7 +87,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     public void ForceLoad()
     {
-        Logger.LogInformation("Force loading {@TypeName} cache", typeof(T).Name);
+        Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
+              .LogInformation("Force loading {@TypeName} cache", typeof(T).Name);
 
         using var @lock = Sync.Enter();
 
@@ -143,11 +145,12 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
                 entry.Value = CreateFromEntry(entry);
             } catch (Exception e)
             {
-                Logger.LogError(
-                    e,
-                    "Failed to reload {@TypeName} with key {@Key}",
-                    typeof(T).Name,
-                    key);
+                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
+                      .LogError(
+                          e,
+                          "Failed to reload {@TypeName} with key {@Key}",
+                          typeof(T).Name,
+                          key);
                 //otherwise ignored
             }
 
@@ -175,8 +178,11 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var key = entry.Key.ToString();
         var keyActual = DeconstructKeyForType(key!);
 
-        Logger.LogDebug("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
-        var start = Stopwatch.GetTimestamp();
+        Logger.WithTopics(Topics.Actions.Create)
+              .LogDebug("Creating new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
+
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
 
         entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
@@ -187,11 +193,10 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
 
         LocalLookup[key!] = entity;
 
-        Logger.LogDebug(
-            "Created new {@TypeName} entry with key {@Key}, took {@Elapsed}",
+        metricsLogger.LogDebug(
+            "Created new {@TypeName} entry with key {@Key}",
             typeof(T).Name,
-            key,
-            Stopwatch.GetElapsedTime(start));
+            key);
 
         return entity;
     }

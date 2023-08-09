@@ -2,4 +2,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Packets.Abstractions\Chaos.Packets.Abstractions.csproj"/>
     </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Definitions\"/>
+    </ItemGroup>
 </Project>

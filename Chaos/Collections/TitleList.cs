@@ -6,7 +6,7 @@ namespace Chaos.Collections;
 public sealed class TitleList : SynchronizedList<string>
 {
     public TitleList(IEnumerable<string>? items = null)
-        : base(items?.Distinct(StringComparer.OrdinalIgnoreCase) ?? Array.Empty<string>()) { }
+        : base(items?.Distinct(StringComparer.OrdinalIgnoreCase) ?? Enumerable.Empty<string>()) { }
 
     /// <inheritdoc />
     public override void Add(string item)

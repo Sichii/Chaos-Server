@@ -10,6 +10,8 @@
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj"/>
+        <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>
         <ProjectReference Include="..\Chaos.TypeMapper.Abstractions\Chaos.TypeMapper.Abstractions.csproj"/>
     </ItemGroup>
+
 </Project>

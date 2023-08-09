@@ -990,8 +990,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             {
                 Logger.WithTopics(
                           Topics.Entities.Aisling,
-                          Topics.Actions.Message,
-                          Topics.Actions.Command)
+                          Topics.Entities.Message,
+                          Topics.Actions.Send,
+                          Topics.Entities.Command,
+                          Topics.Actions.Execute)
                       .WithProperty(localClient)
                       .LogDebug("Aisling {@AislingName} sent command {@Command}", localClient.Aisling, message);
 
@@ -1398,7 +1400,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             //let them waste their time typing for no reason
             if (targetAisling.IgnoreList.ContainsI(fromAisling.Name))
             {
-                Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Message, Topics.Qualifiers.Harassment)
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Message,
+                          Topics.Actions.Send,
+                          Topics.Qualifiers.Harassment)
                       .WithProperty(fromAisling)
                       .WithProperty(targetAisling)
                       .LogWarning(
@@ -1410,7 +1416,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 return default;
             }
 
-            Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Message)
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Message, Topics.Actions.Send)
                   .WithProperty(fromAisling)
                   .WithProperty(targetAisling)
                   .LogInformation(

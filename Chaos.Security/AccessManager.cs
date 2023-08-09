@@ -4,6 +4,8 @@ using System.Security.Cryptography;
 using System.Text;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
+using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Security.Abstractions;
 using Chaos.Security.Definitions;
 using Chaos.Security.Options;
@@ -91,9 +93,10 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         if (!result.Success)
         {
             if (result.Code == CredentialValidationResult.FailureCode.TooManyAttempts)
-                Logger.LogWarning(
-                    "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to change password",
-                    ipAddress.ToString());
+                Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Validation)
+                      .LogWarning(
+                          "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to change password",
+                          ipAddress.ToString());
 
             return result;
         }
@@ -165,9 +168,10 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         var result = await InnerValidateCredentialsAsync(ipAddress, name, password);
 
         if (result is { Success: false, Code: CredentialValidationResult.FailureCode.TooManyAttempts })
-            Logger.LogWarning(
-                "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to log in",
-                ipAddress.ToString());
+            Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Validation)
+                  .LogWarning(
+                      "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to log in",
+                      ipAddress.ToString());
 
         return result;
     }
