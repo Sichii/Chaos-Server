@@ -1,53 +1,51 @@
 using Chaos.Extensions.Common;
 using Seq.Api;
 using Seq.Api.Model.Signals;
+using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;
 
-public class SignalExpressionBuilder
+public sealed class SignalExpressionBuilder
 {
     private readonly TaskCompletionSource<List<SignalEntity>> AllSignals;
-    private readonly TaskCompletionSource<SignalExpressionPart> Promise;
+    private readonly AsyncFluentComposer<SignalExpressionPart> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private SignalExpressionBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        Promise = new TaskCompletionSource<SignalExpressionPart>(TaskCreationOptions.RunContinuationsAsynchronously);
+        AsyncComposer = AsyncFluentComposer<SignalExpressionPart>.Create(new SignalExpressionPart());
         AllSignals = new TaskCompletionSource<List<SignalEntity>>();
 
-        Promise.TrySetResult(new SignalExpressionPart());
-
         SeqConnection.Signals.ListAsync(shared: true)
-                     .ContinueWith(async task => AllSignals.SetResult(await task));
+                     .ContinueWith(async task => AllSignals.SetResult(await task), TaskContinuationOptions.ExecuteSynchronously);
     }
 
-    public Task<SignalExpressionPart> BuildAsync() => Promise.Task;
+    public Task<SignalExpressionPart> BuildAsync() => AsyncComposer.BuildAsync();
 
     public static SignalExpressionBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 
     public SignalExpressionBuilder WithKind(SignalExpressionKind kind)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Kind = kind);
+        AsyncComposer.Compose(expression => expression.Kind = kind);
 
         return this;
     }
 
     public SignalExpressionBuilder WithLeft(SignalExpressionPart left)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Left = left);
+        AsyncComposer.Compose(expression => expression.Left = left);
 
         return this;
     }
 
     public SignalExpressionBuilder WithLeftSignal(string signalTitle)
     {
-        Promise.Task.ContinueWith(
-            async creation =>
+        AsyncComposer.Compose(
+            async expression =>
             {
                 var allSignals = await AllSignals.Task;
                 var leftSignal = allSignals.First(s => s.Title.EqualsI(signalTitle));
-                var expression = await creation;
 
                 expression.Left = new SignalExpressionPart
                 {
@@ -61,19 +59,18 @@ public class SignalExpressionBuilder
 
     public SignalExpressionBuilder WithRight(SignalExpressionPart right)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Right = right);
+        AsyncComposer.Compose(expression => expression.Right = right);
 
         return this;
     }
 
     public SignalExpressionBuilder WithRightSignal(string signalTitle)
     {
-        Promise.Task.ContinueWith(
-            async creation =>
+        AsyncComposer.Compose(
+            async expression =>
             {
                 var allSignals = await AllSignals.Task;
                 var rightSignal = allSignals.First(s => s.Title.EqualsI(signalTitle));
-                var expression = await creation;
 
                 expression.Right = new SignalExpressionPart
                 {
@@ -87,12 +84,11 @@ public class SignalExpressionBuilder
 
     public SignalExpressionBuilder WithSignal(string signalTitle)
     {
-        Promise.Task.ContinueWith(
-            async creation =>
+        AsyncComposer.Compose(
+            async expression =>
             {
                 var allSignals = await AllSignals.Task;
                 var signal = allSignals.First(s => s.Title.EqualsI(signalTitle));
-                var expression = await creation;
 
                 expression.SignalId = signal.Id;
             });

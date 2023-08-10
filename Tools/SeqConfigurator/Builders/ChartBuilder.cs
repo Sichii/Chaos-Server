@@ -1,33 +1,35 @@
 using Seq.Api;
 using Seq.Api.Model.Dashboarding;
 using Seq.Api.Model.Signals;
+using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;
 
-public class ChartBuilder
+public sealed class ChartBuilder
 {
-    private readonly TaskCompletionSource<ChartPart> Promise;
+    private readonly AsyncFluentComposer<ChartPart> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private ChartBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        Promise = new TaskCompletionSource<ChartPart>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        Promise.SetResult(new ChartPart());
+        AsyncComposer = AsyncFluentComposer<ChartPart>.Create(new ChartPart());
     }
 
-    public Task<ChartPart> BuildAsync() => Promise.Task;
+    public Task<ChartPart> BuildAsync() => AsyncComposer.BuildAsync();
 
     public static ChartBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 
     public ChartBuilder WithDimensions(int columnCount = 6, int rowCount = 1)
     {
-        Promise.Task.ContinueWith(
-            async creation => (await creation).DisplayStyle = new ChartDisplayStylePart
+        AsyncComposer.Compose(
+            chartPart =>
             {
-                HeightRows = rowCount,
-                WidthColumns = columnCount
+                chartPart.DisplayStyle = new ChartDisplayStylePart
+                {
+                    HeightRows = rowCount,
+                    WidthColumns = columnCount
+                };
             });
 
         return this;
@@ -35,22 +37,20 @@ public class ChartBuilder
 
     public ChartBuilder WithQuery(params Action<ChartQueryBuilder>[] builderActions)
     {
-        var buildTasks = builderActions.Select(
-            action =>
+        AsyncComposer.Compose(
+            async chartPart =>
             {
-                var builder = ChartQueryBuilder.Create(SeqConnection);
-                action(builder);
+                var buildTasks = builderActions.Select(
+                    action =>
+                    {
+                        var builder = ChartQueryBuilder.Create(SeqConnection);
+                        action(builder);
 
-                return builder.BuildAsync();
-            });
+                        return builder.BuildAsync();
+                    });
 
-        var chartQueriesTask = Task.WhenAll(buildTasks);
+                var chartQueries = await Task.WhenAll(buildTasks);
 
-        Promise.Task.ContinueWith(
-            async creation =>
-            {
-                var chartPart = await creation;
-                var chartQueries = await chartQueriesTask;
                 chartPart.Queries.AddRange(chartQueries);
             });
 
@@ -64,17 +64,27 @@ public class ChartBuilder
 
     public ChartBuilder WithSignalExpression(Action<SignalExpressionBuilder> builderAction)
     {
-        var signalExpressionBuilder = SignalExpressionBuilder.Create(SeqConnection);
-        builderAction(signalExpressionBuilder);
+        AsyncComposer.Compose(
+            async chartPart =>
+            {
+                var signalExpressionBuilder = SignalExpressionBuilder.Create(SeqConnection);
+                builderAction(signalExpressionBuilder);
 
-        Promise.Task.ContinueWith(async creation => (await creation).SignalExpression = await signalExpressionBuilder.BuildAsync());
+                var signalExpression = await signalExpressionBuilder.BuildAsync();
+
+                chartPart.SignalExpression = signalExpression;
+            });
 
         return this;
     }
 
     public ChartBuilder WithTitle(string title)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Title = title);
+        AsyncComposer.Compose(
+            chartPart =>
+            {
+                chartPart.Title = title;
+            });
 
         return this;
     }

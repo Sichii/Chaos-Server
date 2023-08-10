@@ -1,37 +1,39 @@
 using Seq.Api;
 using Seq.Api.Model.Shared;
 using Seq.Api.Model.Signals;
+using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;
 
 public sealed class SignalBuilder
 {
-    private readonly TaskCompletionSource<SignalEntity> Promise;
+    private readonly AsyncFluentComposer<SignalEntity> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private SignalBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        Promise = new TaskCompletionSource<SignalEntity>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        SeqConnection.Signals.TemplateAsync()
-                     .ContinueWith(async task => Promise.SetResult(await task));
+        AsyncComposer = AsyncFluentComposer<SignalEntity>.Create(seqConnection.Signals.TemplateAsync());
     }
 
     public static SignalBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 
     public SignalBuilder IsShared()
     {
-        Promise.Task.ContinueWith(async creation => (await creation).OwnerId = null);
+        AsyncComposer.Compose(obj => obj.OwnerId = null);
 
         return this;
     }
 
-    public async Task SaveAsync() => await SeqConnection.Signals.AddAsync(await Promise.Task);
+    public async Task SaveAsync()
+    {
+        var signal = await AsyncComposer.BuildAsync();
+        await SeqConnection.Signals.AddAsync(signal);
+    }
 
     public SignalBuilder WithDescription(string description)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Description = description);
+        AsyncComposer.Compose(obj => obj.Description = description);
 
         return this;
     }
@@ -45,19 +47,18 @@ public sealed class SignalBuilder
             Description = filterDescription
         };
 
-        Promise.Task.ContinueWith(async creation => (await creation).Filters.Add(filterDescriptor));
+        AsyncComposer.Compose(obj => obj.Filters.Add(filterDescriptor));
 
         return this;
     }
 
     public SignalBuilder WithGrouping(SignalGrouping grouping, string? groupName = null)
     {
-        Promise.Task.ContinueWith(
-            async creation =>
+        AsyncComposer.Compose(
+            obj =>
             {
-                var signal = await creation;
-                signal.Grouping = grouping;
-                signal.ExplicitGroupName = groupName;
+                obj.Grouping = grouping;
+                obj.ExplicitGroupName = groupName;
             });
 
         return this;
@@ -65,7 +66,7 @@ public sealed class SignalBuilder
 
     public SignalBuilder WithTitle(string title)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Title = title);
+        AsyncComposer.Compose(obj => obj.Title = title);
 
         return this;
     }

@@ -1,59 +1,59 @@
 using Seq.Api;
 using Seq.Api.Model.Dashboarding;
 using Seq.Api.Model.Signals;
+using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;
 
-public class DashboardBuilder
+public sealed class DashboardBuilder
 {
-    private readonly TaskCompletionSource<DashboardEntity> Promise;
+    private readonly AsyncFluentComposer<DashboardEntity> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private DashboardBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        Promise = new TaskCompletionSource<DashboardEntity>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        SeqConnection.Dashboards.TemplateAsync()
-                     .ContinueWith(async task => Promise.SetResult(await task));
+        AsyncComposer = AsyncFluentComposer<DashboardEntity>.Create(seqConnection.Dashboards.TemplateAsync());
     }
 
     public static DashboardBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 
     public DashboardBuilder IsProtected()
     {
-        Promise.Task.ContinueWith(async creation => (await creation).IsProtected = true);
+        AsyncComposer.Compose(obj => obj.IsProtected = true);
 
         return this;
     }
 
     public DashboardBuilder IsShared()
     {
-        Promise.Task.ContinueWith(async creation => (await creation).OwnerId = null);
+        AsyncComposer.Compose(obj => obj.OwnerId = null);
 
         return this;
     }
 
-    public async Task SaveAsync() => await SeqConnection.Dashboards.AddAsync(await Promise.Task);
+    public async Task SaveAsync()
+    {
+        var dashboard = await AsyncComposer.BuildAsync();
+        await SeqConnection.Dashboards.AddAsync(dashboard);
+    }
 
     public DashboardBuilder WithCharts(params Action<ChartBuilder>[] builderActions)
     {
-        var buildTasks = builderActions.Select(
-            builderAction =>
+        AsyncComposer.Compose(
+            async dashboard =>
             {
-                var chartBuilder = ChartBuilder.Create(SeqConnection);
-                builderAction(chartBuilder);
+                var buildTasks = builderActions.Select(
+                    builderAction =>
+                    {
+                        var chartBuilder = ChartBuilder.Create(SeqConnection);
+                        builderAction(chartBuilder);
 
-                return chartBuilder.BuildAsync();
-            });
+                        return chartBuilder.BuildAsync();
+                    });
 
-        var chartTasks = Task.WhenAll(buildTasks);
+                var charts = await Task.WhenAll(buildTasks);
 
-        Promise.Task.ContinueWith(
-            async creation =>
-            {
-                var dashboard = await creation;
-                var charts = await chartTasks;
                 dashboard.Charts.AddRange(charts);
             });
 
@@ -66,18 +66,25 @@ public class DashboardBuilder
 
     public DashboardBuilder WithSignalExpression(Action<SignalExpressionBuilder> builderAction)
     {
-        var signalBuilder = SignalExpressionBuilder.Create(SeqConnection);
-        builderAction(signalBuilder);
-        var signalTask = signalBuilder.BuildAsync();
+        AsyncComposer.Compose(
+            async dashboard =>
+            {
+                var signalBuilder = SignalExpressionBuilder.Create(SeqConnection);
+                builderAction(signalBuilder);
 
-        Promise.Task.ContinueWith(async creation => (await creation).SignalExpression = await signalTask);
+                dashboard.SignalExpression = await signalBuilder.BuildAsync();
+            });
 
         return this;
     }
 
     public DashboardBuilder WithTitle(string title)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Title = title);
+        AsyncComposer.Compose(
+            obj =>
+            {
+                obj.Title = title;
+            });
 
         return this;
     }

@@ -1,23 +1,22 @@
 using Seq.Api;
 using Seq.Api.Model.Dashboarding;
 using Seq.Api.Model.Shared;
+using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;
 
-public class ChartQueryBuilder
+public sealed class ChartQueryBuilder
 {
-    private readonly TaskCompletionSource<ChartQueryPart> Promise;
+    private readonly AsyncFluentComposer<ChartQueryPart> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private ChartQueryBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        Promise = new TaskCompletionSource<ChartQueryPart>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        Promise.SetResult(new ChartQueryPart());
+        AsyncComposer = AsyncFluentComposer<ChartQueryPart>.Create(new ChartQueryPart());
     }
 
-    public Task<ChartQueryPart> BuildAsync() => Promise.Task;
+    public Task<ChartQueryPart> BuildAsync() => AsyncComposer.BuildAsync();
 
     public static ChartQueryBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 
@@ -30,11 +29,9 @@ public class ChartQueryBuilder
         MeasurementDisplayPalette palette = MeasurementDisplayPalette.Default
     )
     {
-        Promise.Task.ContinueWith(
-            async creation =>
+        AsyncComposer.Compose(
+            chartQuery =>
             {
-                var chartQuery = await creation;
-
                 chartQuery.DisplayStyle = new MeasurementDisplayStylePart
                 {
                     Type = type,
@@ -51,29 +48,41 @@ public class ChartQueryBuilder
 
     public ChartQueryBuilder WithGroupBy(params string[] groupByClauses)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).GroupBy.AddRange(groupByClauses));
+        AsyncComposer.Compose(
+            chartQuery =>
+            {
+                chartQuery.GroupBy.AddRange(groupByClauses);
+            });
 
         return this;
     }
 
     public ChartQueryBuilder WithLimit(int limit)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Limit = limit);
+        AsyncComposer.Compose(
+            chartQuery =>
+            {
+                chartQuery.Limit = limit;
+            });
 
         return this;
     }
 
     public ChartQueryBuilder WithOrderBy(params string[] orderByClauses)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).OrderBy.AddRange(orderByClauses));
+        AsyncComposer.Compose(
+            chartQuery =>
+            {
+                chartQuery.OrderBy.AddRange(orderByClauses);
+            });
 
         return this;
     }
 
     public ChartQueryBuilder WithSelect(params (string Label, string SelectClause)[] columns)
     {
-        Promise.Task.ContinueWith(
-            async creation =>
+        AsyncComposer.Compose(
+            chartQuery =>
             {
                 var measurements = columns.Select(
                     col => new ColumnPart
@@ -82,7 +91,7 @@ public class ChartQueryBuilder
                         Value = col.SelectClause
                     });
 
-                (await creation).Measurements.AddRange(measurements);
+                chartQuery.Measurements.AddRange(measurements);
             });
 
         return this;
@@ -90,17 +99,27 @@ public class ChartQueryBuilder
 
     public ChartQueryBuilder WithSignalExpression(Action<SignalExpressionBuilder> builder)
     {
-        var signalExpressionBuilder = SignalExpressionBuilder.Create(SeqConnection);
-        builder(signalExpressionBuilder);
+        AsyncComposer.Compose(
+            async chartQuery =>
+            {
+                var signalExpressionBuilder = SignalExpressionBuilder.Create(SeqConnection);
+                builder(signalExpressionBuilder);
 
-        Promise.Task.ContinueWith(async creation => (await creation).SignalExpression = await signalExpressionBuilder.BuildAsync());
+                var signalExpression = await signalExpressionBuilder.BuildAsync();
+
+                chartQuery.SignalExpression = signalExpression;
+            });
 
         return this;
     }
 
     public ChartQueryBuilder WithWhere(string whereClause)
     {
-        Promise.Task.ContinueWith(async creation => (await creation).Where = whereClause);
+        AsyncComposer.Compose(
+            chartQuery =>
+            {
+                chartQuery.Where = whereClause;
+            });
 
         return this;
     }
