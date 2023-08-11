@@ -239,15 +239,18 @@ public class MetaDataStore : IMetaDataStore
             if (!template.IsModifiable)
                 continue;
 
-            var prefixMutations = Options.PrefixMutators.SelectMany(mutator => mutator.Mutate(node));
+            var prefixMutations = Options.PrefixMutators.SelectMany(mutator => mutator.Mutate(node, template));
 
-            var suffixMutations = Options.SuffixMutators.SelectMany(mutator => mutator.Mutate(node));
+            var suffixMutations = Options.SuffixMutators.SelectMany(mutator => mutator.Mutate(node, template));
 
-            var prefixAndSuffixMutations = Options.PrefixMutators.SelectMany(mutator => mutator.Mutate(node))
+            var prefixAndSuffixMutations = Options.PrefixMutators.SelectMany(mutator => mutator.Mutate(node, template))
                                                   .SelectMany(
-                                                      mutated => Options.SuffixMutators.SelectMany(mutator => mutator.Mutate(mutated)));
+                                                      mutated => Options.SuffixMutators.SelectMany(
+                                                          mutator => mutator.Mutate(mutated, template)));
 
-            var allMutations = prefixMutations.Concat(suffixMutations).Concat(prefixAndSuffixMutations);
+            var allMutations = prefixMutations.Concat(suffixMutations)
+                                              .Concat(prefixAndSuffixMutations)
+                                              .DistinctBy(n => n.Name);
 
             foreach (var mutation in allMutations)
                 itemMetaNodes.AddNode(mutation);

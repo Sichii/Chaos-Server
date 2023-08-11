@@ -715,10 +715,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                   .WithProperty(this)
                   .WithProperty(groundItem)
                   .LogInformation(
-                      "Aisling {@AislingName} picked up item {@ItemName} from {@Location}",
+                      "Aisling {@AislingName} picked up {Amount} {@ItemName}",
                       Name,
-                      groundItem.Name,
-                      ILocation.ToString(groundItem));
+                      originalCount,
+                      groundItem.Name);
 
             MapInstance.RemoveObject(groundItem);
             item.Script.OnPickup(this, originalItem, originalCount);
@@ -747,10 +747,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                   .WithProperty(this)
                   .WithProperty(money)
                   .LogInformation(
-                      "Aisling {@AislingName} picked up {Amount} gold from {@Location}",
+                      "Aisling {@AislingName} picked up {Amount} gold",
                       Name,
-                      money.Amount,
-                      ILocation.ToString(money));
+                      money.Amount);
 
             MapInstance.RemoveObject(money);
 

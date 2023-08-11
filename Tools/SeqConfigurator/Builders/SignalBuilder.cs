@@ -7,13 +7,13 @@ namespace SeqConfigurator.Builders;
 
 public sealed class SignalBuilder
 {
-    private readonly AsyncFluentComposer<SignalEntity> AsyncComposer;
+    private readonly AsyncComposer<SignalEntity> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private SignalBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        AsyncComposer = AsyncFluentComposer<SignalEntity>.Create(seqConnection.Signals.TemplateAsync());
+        AsyncComposer = AsyncComposer<SignalEntity>.Create(seqConnection.Signals.TemplateAsync());
     }
 
     public static SignalBuilder Create(SeqConnection seqConnection) => new(seqConnection);
@@ -27,7 +27,7 @@ public sealed class SignalBuilder
 
     public async Task SaveAsync()
     {
-        var signal = await AsyncComposer.BuildAsync();
+        var signal = await AsyncComposer;
         await SeqConnection.Signals.AddAsync(signal);
     }
 

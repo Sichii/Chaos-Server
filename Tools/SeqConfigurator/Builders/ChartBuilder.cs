@@ -7,16 +7,16 @@ namespace SeqConfigurator.Builders;
 
 public sealed class ChartBuilder
 {
-    private readonly AsyncFluentComposer<ChartPart> AsyncComposer;
+    private readonly AsyncComposer<ChartPart> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private ChartBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        AsyncComposer = AsyncFluentComposer<ChartPart>.Create(new ChartPart());
+        AsyncComposer = AsyncComposer<ChartPart>.Create(new ChartPart());
     }
 
-    public Task<ChartPart> BuildAsync() => AsyncComposer.BuildAsync();
+    public Task<ChartPart> BuildAsync() => AsyncComposer.WaitAsync();
 
     public static ChartBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 

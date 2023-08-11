@@ -2,6 +2,7 @@ using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Definitions;
 using Chaos.MetaData;
 using Chaos.MetaData.ItemMetadata;
 using Chaos.Networking.Abstractions;
@@ -55,7 +56,18 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     {
         options.UseBaseDirectory(StagingDirectory.StagingDirectory);
         // ReSharper disable once ArrangeMethodOrOperatorBody
-        options.PrefixMutators.Add(MetaNodeMutator<ItemMetaNode>.Create(MagicPrefixScript.Mutate));
+        options.PrefixMutators.Add(ItemMetaNodeMutator.Create(MagicPrefixScript.Mutate));
+
+        //dyeable mutator
+        options.PrefixMutators.Add(
+            ItemMetaNodeMutator.Create(
+                (node, template) =>
+                {
+                    if (!template.IsDyeable)
+                        return Enumerable.Empty<ItemMetaNode>();
+
+                    return Enum.GetNames<DisplayColor>().Select(colorName => node with { Name = $"{colorName} {node.Name}" });
+                }));
         //add more mutators here
     }
 

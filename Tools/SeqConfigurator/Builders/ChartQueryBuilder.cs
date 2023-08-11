@@ -7,16 +7,16 @@ namespace SeqConfigurator.Builders;
 
 public sealed class ChartQueryBuilder
 {
-    private readonly AsyncFluentComposer<ChartQueryPart> AsyncComposer;
+    private readonly AsyncComposer<ChartQueryPart> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private ChartQueryBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        AsyncComposer = AsyncFluentComposer<ChartQueryPart>.Create(new ChartQueryPart());
+        AsyncComposer = AsyncComposer<ChartQueryPart>.Create(new ChartQueryPart());
     }
 
-    public Task<ChartQueryPart> BuildAsync() => AsyncComposer.BuildAsync();
+    public Task<ChartQueryPart> BuildAsync() => AsyncComposer.WaitAsync();
 
     public static ChartQueryBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 
@@ -52,6 +52,17 @@ public sealed class ChartQueryBuilder
             chartQuery =>
             {
                 chartQuery.GroupBy.AddRange(groupByClauses);
+            });
+
+        return this;
+    }
+
+    public ChartQueryBuilder WithHaving(string havingClause)
+    {
+        AsyncComposer.Compose(
+            chartQuery =>
+            {
+                chartQuery.Having = havingClause;
             });
 
         return this;

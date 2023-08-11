@@ -7,13 +7,13 @@ namespace SeqConfigurator.Builders;
 
 public sealed class DashboardBuilder
 {
-    private readonly AsyncFluentComposer<DashboardEntity> AsyncComposer;
+    private readonly AsyncComposer<DashboardEntity> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private DashboardBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        AsyncComposer = AsyncFluentComposer<DashboardEntity>.Create(seqConnection.Dashboards.TemplateAsync());
+        AsyncComposer = AsyncComposer<DashboardEntity>.Create(seqConnection.Dashboards.TemplateAsync());
     }
 
     public static DashboardBuilder Create(SeqConnection seqConnection) => new(seqConnection);
@@ -34,7 +34,7 @@ public sealed class DashboardBuilder
 
     public async Task SaveAsync()
     {
-        var dashboard = await AsyncComposer.BuildAsync();
+        var dashboard = await AsyncComposer;
         await SeqConnection.Dashboards.AddAsync(dashboard);
     }
 

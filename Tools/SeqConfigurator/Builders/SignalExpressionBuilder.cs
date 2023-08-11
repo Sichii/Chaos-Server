@@ -8,20 +8,20 @@ namespace SeqConfigurator.Builders;
 public sealed class SignalExpressionBuilder
 {
     private readonly TaskCompletionSource<List<SignalEntity>> AllSignals;
-    private readonly AsyncFluentComposer<SignalExpressionPart> AsyncComposer;
+    private readonly AsyncComposer<SignalExpressionPart> AsyncComposer;
     private readonly SeqConnection SeqConnection;
 
     private SignalExpressionBuilder(SeqConnection seqConnection)
     {
         SeqConnection = seqConnection;
-        AsyncComposer = AsyncFluentComposer<SignalExpressionPart>.Create(new SignalExpressionPart());
+        AsyncComposer = AsyncComposer<SignalExpressionPart>.Create(new SignalExpressionPart());
         AllSignals = new TaskCompletionSource<List<SignalEntity>>();
 
         SeqConnection.Signals.ListAsync(shared: true)
                      .ContinueWith(async task => AllSignals.SetResult(await task), TaskContinuationOptions.ExecuteSynchronously);
     }
 
-    public Task<SignalExpressionPart> BuildAsync() => AsyncComposer.BuildAsync();
+    public Task<SignalExpressionPart> BuildAsync() => AsyncComposer.WaitAsync();
 
     public static SignalExpressionBuilder Create(SeqConnection seqConnection) => new(seqConnection);
 

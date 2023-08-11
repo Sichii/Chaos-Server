@@ -1,6 +1,5 @@
 using Chaos.Common.Abstractions;
 using Chaos.MetaData.Abstractions;
-using Chaos.MetaData.ItemMetadata;
 
 namespace Chaos.Services.Storage.Options;
 
@@ -14,9 +13,9 @@ public sealed class MetaDataStoreOptions : IDirectoryBound
     ///     The path to the mundane illustration meta file
     /// </summary>
     public string MundaneIllustrationMetaPath { get; set; } = null!;
-    public ICollection<IMetaNodeMutator<ItemMetaNode>> PrefixMutators { get; } = new List<IMetaNodeMutator<ItemMetaNode>>();
+    public ICollection<IItemMetaNodeMutator> PrefixMutators { get; } = new List<IItemMetaNodeMutator>();
 
-    public ICollection<IMetaNodeMutator<ItemMetaNode>> SuffixMutators { get; } = new List<IMetaNodeMutator<ItemMetaNode>>();
+    public ICollection<IItemMetaNodeMutator> SuffixMutators { get; } = new List<IItemMetaNodeMutator>();
 
     /// <inheritdoc />
     public void UseBaseDirectory(string baseDirectory)
