@@ -7,9 +7,9 @@ namespace Chaos.MetaData.Abstractions;
 public abstract class MetaNodeCollection<TNode> where TNode: IMetaNode
 {
     /// <summary>
-    ///     The maximum size of a node collection
+    ///     The maximum size of a node collection, though I'm not sure exactly why
     /// </summary>
-    protected const ushort MAX_SIZE = (ushort)(ushort.MaxValue * 0.95);
+    protected const int MAX_SIZE = ushort.MaxValue * 2;
     /// <summary>
     ///     The nodes contained in the collection
     /// </summary>

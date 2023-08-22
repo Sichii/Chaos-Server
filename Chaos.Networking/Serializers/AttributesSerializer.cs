@@ -65,7 +65,7 @@ public sealed record AttributesSerializer : ServerPacketSerializer<AttributesArg
         if (args.StatUpdateType.HasFlag(StatUpdateType.Secondary))
         {
             writer.WriteByte(0); //dunno
-            writer.WriteBoolean(args.Blind);
+            writer.WriteByte((byte)(args.Blind ? 8 : 0));
             writer.WriteBytes(new byte[3]); //dunno
             writer.WriteByte((byte)(args.HasUnreadMail ? MailFlag.HasMail : MailFlag.None));
             writer.WriteByte((byte)args.OffenseElement);

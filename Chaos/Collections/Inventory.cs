@@ -441,6 +441,9 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (!obj.Template.Stackable)
             return false;
 
+        if (preferredSlot.HasValue && !IsValidSlot(preferredSlot.Value))
+            preferredSlot = null;
+
         if (obj.Count == 0)
             obj.Count = 1;
 

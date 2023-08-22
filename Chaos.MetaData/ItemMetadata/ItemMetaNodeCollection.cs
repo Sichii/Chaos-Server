@@ -16,7 +16,9 @@ public sealed class ItemMetaNodeCollection : MetaNodeCollection<ItemMetaNode>, I
 
         for (var i = 0; i < Nodes.Count; i++)
         {
-            if (size > MAX_SIZE)
+            var node = Nodes[i];
+
+            if (node.Length + size > MAX_SIZE)
             {
                 metadata.Compress();
 
@@ -26,7 +28,6 @@ public sealed class ItemMetaNodeCollection : MetaNodeCollection<ItemMetaNode>, I
                 size = 0;
             }
 
-            var node = Nodes[i];
             metadata.AddNode(node);
             size += node.Length;
         }

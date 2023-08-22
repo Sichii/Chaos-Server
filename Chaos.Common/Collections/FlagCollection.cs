@@ -86,12 +86,27 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
     {
         var flagType = typeof(T);
 
-        if (!flagType.IsFlagEnum())
-            throw new InvalidOperationException($"Enum of type {flagType.FullName} is not a flag enum. Use the enum collection.");
+        return HasFlag(flagType, flag);
+    }
 
-        if (Flags.TryGetValue(flagType, out var value))
+    /// <summary>
+    ///     Determines if the flag collection contains the specified flag
+    /// </summary>
+    /// <param name="type">the type of the flag</param>
+    /// <param name="value">The flag value to check for</param>
+    /// <returns>
+    ///     <c>true</c> if a flag of the given value was found, and that flag contains the value specified, otherwise
+    ///     <c>false</c>
+    /// </returns>
+    /// <exception cref="InvalidOperationException">Enum must have flag attribute</exception>
+    public bool HasFlag(Type type, Enum value)
+    {
+        if (!type.IsFlagEnum())
+            throw new InvalidOperationException($"Enum of type {type.FullName} is not a flag enum. Use the enum collection.");
+
+        if (Flags.TryGetValue(type, out var existingValue))
         {
-            var flagValue = Convert.ToUInt64(flag);
+            var flagValue = Convert.ToUInt64(existingValue);
 
             return (Convert.ToUInt64(value) & flagValue) == flagValue;
         }

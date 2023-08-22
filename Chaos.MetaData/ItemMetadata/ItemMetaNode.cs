@@ -38,7 +38,7 @@ public sealed record ItemMetaNode(string Name) : IMetaNode
     /// <summary>
     ///     The length of the serialized data
     /// </summary>
-    public int Length => 20 + Name.Length + Category.Length + Description.Length;
+    public int Length => 14 + Name.Length + Category.Length + Description.Length + Level.ToString().Length + Weight.ToString().Length;
 
     /// <inheritdoc />
     public void Serialize(ref SpanWriter writer)
@@ -46,9 +46,9 @@ public sealed record ItemMetaNode(string Name) : IMetaNode
         writer.WriteString8(Name); // 1 byte for length + length of string
         writer.WriteUInt16(5); // 2 bytes for property count
 
-        writer.WriteString16(Level.ToString()); // 2 bytes for length + 2 bytes for length of string
+        writer.WriteString16(Level.ToString()); // 2 bytes for length + length of string
         writer.WriteString16(((int)Class).ToString()); // 2 bytes for length + 1 byte for length of string
-        writer.WriteString16(Weight.ToString()); // 2 bytes for length + 3 bytes for length of string
+        writer.WriteString16(Weight.ToString()); // 2 bytes for length + length of string
         writer.WriteString16(Category); // 2 bytes for length + length of string
         writer.WriteString16(Description); // 2 bytes for length + length of string
     }

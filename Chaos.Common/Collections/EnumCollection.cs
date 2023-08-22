@@ -28,6 +28,39 @@ public sealed class EnumCollection : IEnumerable<KeyValuePair<Type, Enum>>
     public IEnumerator<KeyValuePair<Type, Enum>> GetEnumerator() => Enums.GetEnumerator();
 
     /// <summary>
+    ///     Determines if the enum collection contains the specified value
+    /// </summary>
+    /// <param name="value">The enum value to check for</param>
+    /// <typeparam name="T">The type of the enum</typeparam>
+    /// <returns>
+    ///     <c>true</c> if an enum of the given type was found, and is equal to the provided value, otherwise <c>false</c>
+    /// </returns>
+    public bool HasValue<T>(T value) where T: Enum => HasValue(typeof(T), value);
+
+    /// <summary>
+    ///     Determines if the enum collection contains the specified value
+    /// </summary>
+    /// <param name="type">The type of the enum</param>
+    /// <param name="value">The enum value to check for</param>
+    /// <returns>
+    ///     <c>true</c> if an enum of the given type was found, and is equal to the provided value, otherwise <c>false</c>
+    /// </returns>
+    public bool HasValue(Type type, Enum value)
+    {
+        if (type.IsFlagEnum())
+            throw new InvalidOperationException($"Enum of type {type.FullName} is a flag enum. Use the flag collection.");
+
+        if (Enums.TryGetValue(type, out var existingValue))
+        {
+            var enumValue = Convert.ToUInt64(existingValue);
+
+            return Convert.ToUInt64(value) == enumValue;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     ///     Removes the enum of the specified type
     /// </summary>
     /// <typeparam name="T">The type of the enum to remove</typeparam>

@@ -69,12 +69,12 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
         if (obj.Color.HasValue)
             item.Color = obj.Color.Value;
 
-        // ReSharper disable once MergeIntoPattern
-        if (obj.PanelSprite.HasValue && obj.DisplaySprite.HasValue)
+        if (obj is { PanelSprite: not null, DisplaySprite: not null })
             item.ItemSprite = new ItemSprite(obj.PanelSprite.Value, obj.DisplaySprite.Value);
 
-        if (!string.IsNullOrEmpty(obj.DisplayName))
-            item.DisplayName = obj.DisplayName;
+        item.CustomNameOverride = obj.CustomNameOverride;
+        item.Prefix = obj.Prefix;
+        item.Suffix = obj.Suffix;
 
         return item;
     }
@@ -93,7 +93,9 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
             Count = obj.Count,
             CurrentDurability = obj.CurrentDurability,
             Slot = obj.Slot,
-            DisplayName = obj.DisplayName == obj.Template.Name ? null : obj.DisplayName,
+            Prefix = obj.Prefix,
+            Suffix = obj.Suffix,
+            CustomNameOverride = obj.CustomNameOverride,
             Weight = obj.Weight == obj.Template.Weight ? null : obj.Weight,
             PanelSprite = obj.ItemSprite.PanelSprite == obj.Template.ItemSprite.PanelSprite ? null : obj.ItemSprite.PanelSprite,
             DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite

@@ -9,6 +9,7 @@ using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.ItemScripts.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+using Chaos.Utilities;
 
 namespace Chaos.Models.Panel;
 
@@ -17,16 +18,45 @@ namespace Chaos.Models.Panel;
 /// </summary>
 public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourceEntity
 {
-    public DisplayColor Color { get; set; }
+    private readonly NameComposer NameComposer;
+
+    public DisplayColor Color
+    {
+        get => NameComposer.Color;
+        set => NameComposer.SetColor(value);
+    }
+
     public int Count { get; set; }
     public int? CurrentDurability { get; set; }
-    public string DisplayName { get; set; }
+    public string? CustomDisplayName { get; set; }
+
+    public string? CustomNameOverride
+    {
+        get => NameComposer.CustomName;
+        set => NameComposer.SetCustomName(value);
+    }
+
     public ItemSprite ItemSprite { get; set; }
     public int Level { get; set; }
     public Attributes Modifiers { get; set; }
+
+    public string? Prefix
+    {
+        get => NameComposer.Prefix;
+        set => NameComposer.SetPrefix(value);
+    }
+
+    public string? Suffix
+    {
+        get => NameComposer.Suffix;
+        set => NameComposer.SetSuffix(value);
+    }
+
     public int Weight { get; set; }
     public IItemScript Script { get; }
+
     public override ItemTemplate Template { get; }
+    public string DisplayName => NameComposer.ComposedName;
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Item;
     /// <inheritdoc />
@@ -44,7 +74,7 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         : base(template, uniqueId, elapsedMs)
     {
         Template = template;
-        DisplayName = Template.Name;
+        NameComposer = new NameComposer(template.Name, template.IsDyeable);
         Color = template.Color;
         Count = 1;
         CurrentDurability = template.MaxDurability;
@@ -52,7 +82,6 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         Weight = template.Weight;
         Level = template.Level;
         ItemSprite = template.ItemSprite;
-        //default slot is 0
 
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);

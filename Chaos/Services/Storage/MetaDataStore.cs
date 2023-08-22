@@ -236,6 +236,10 @@ public class MetaDataStore : IMetaDataStore
             //add basic node
             itemMetaNodes.AddNode(node);
 
+            if (template.IsDyeable)
+                foreach (var color in Enum.GetNames<DisplayColor>())
+                    itemMetaNodes.AddNode(node with { Name = $"{color} {node.Name}" });
+
             if (!template.IsModifiable)
                 continue;
 
@@ -246,13 +250,18 @@ public class MetaDataStore : IMetaDataStore
             var prefixAndSuffixMutations = Options.PrefixMutators.SelectMany(mutator => mutator.Mutate(node, template))
                                                   .SelectMany(
                                                       mutated => Options.SuffixMutators.SelectMany(
-                                                          mutator => mutator.Mutate(mutated, template)));
+                                                          mutator => mutator.Mutate(mutated, template)))
+                                                  .ToList();
 
             var allMutations = prefixMutations.Concat(suffixMutations)
-                                              .Concat(prefixAndSuffixMutations)
-                                              .DistinctBy(n => n.Name);
+                                              .Concat(prefixAndSuffixMutations);
 
-            foreach (var mutation in allMutations)
+            if (template.IsDyeable)
+                allMutations = allMutations.SelectMany(
+                    mutated => Enum.GetNames<DisplayColor>()
+                                   .Select(colorName => mutated with { Name = $"{colorName} {mutated.Name}" }));
+
+            foreach (var mutation in allMutations.DistinctBy(n => n.Name))
                 itemMetaNodes.AddNode(mutation);
         }
 

@@ -13,8 +13,7 @@ public class MagicPrefixScript : ItemScriptBase, IEnchantmentScript
     public MagicPrefixScript(Item subject)
         : base(subject)
     {
-        if (!subject.DisplayName.StartsWithI("Magic"))
-            subject.DisplayName = $"Magic {subject.DisplayName}";
+        Subject.Prefix = "Magic";
 
         var attributes = new Attributes
         {

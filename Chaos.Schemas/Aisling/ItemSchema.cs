@@ -22,10 +22,12 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     If the item has durability this is it's current durability
     /// </summary>
     public int? CurrentDurability { get; set; }
+
     /// <summary>
-    ///     The display name for this item, if it's different than what is specified by it's template
+    ///     If specified, the custom name of the item. This name overrides prefix, suffix, and color
     /// </summary>
-    public string? DisplayName { get; set; }
+    public string? CustomNameOverride { get; set; }
+
     /// <summary>
     ///     The sprite to display for this item if it's different than what is specified by it's template
     /// </summary>
@@ -34,6 +36,16 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     The sprite to display for this item in the panel if it's different than what is specified by it's template
     /// </summary>
     public ushort? PanelSprite { get; set; }
+
+    /// <summary>
+    ///     If specified, the prefix of the item
+    /// </summary>
+    public string? Prefix { get; set; }
+
+    /// <summary>
+    ///     If specified, the suffix of the item
+    /// </summary>
+    public string? Suffix { get; set; }
     /// <summary>
     ///     The weight of this item if it's different than what is specified by it's template
     /// </summary>

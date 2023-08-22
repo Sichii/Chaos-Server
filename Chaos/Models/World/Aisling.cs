@@ -207,7 +207,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellThrottle = new ResettingCounter(WorldOptions.Instance.MaxSpellsPerSecond);
         SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond);
         ItemThrottle = new ResettingCounter(WorldOptions.Instance.MaxItemsPerSecond);
-        WalkCounter = new ResettingCounter(3, 5);
+        WalkCounter = new ResettingCounter(4, 2);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         ChannelSettings = new SynchronizedHashSet<ChannelSettings>();
         DialogHistory = new Stack<Dialog>();
@@ -986,8 +986,18 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         var startPoint = Point.From(this);
         var endPoint = this.DirectionalOffset(direction);
 
-        //admins can walk through creatures and walls
-        if (!IsAdmin && !MapInstance.IsWalkable(endPoint, Type))
+        //if admin, just check if we're within the map
+        if (IsAdmin)
+        {
+            if (!MapInstance.IsWithinMap(endPoint))
+            {
+                Refresh(true);
+
+                return;
+            }
+        }
+        //otherwise, check if the point is walkable
+        else if (!MapInstance.IsWalkable(endPoint, Type))
         {
             Refresh(true);
 

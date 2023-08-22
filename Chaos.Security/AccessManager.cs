@@ -315,11 +315,18 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <param name="name">The name to validate</param>
     private CredentialValidationResult ValidateUserNameRules(string name)
     {
-        if (!Options.ValidCharactersRegex.IsMatch(name))
+        if (Options.ValidCharactersRegex.Matches(name).Count != 1)
             return new CredentialValidationResult
             {
-                Code = CredentialValidationResult.FailureCode.UsernameNotAllowed,
+                Code = CredentialValidationResult.FailureCode.InvalidUsername,
                 FailureMessage = "Invalid characters detected in username"
+            };
+
+        if (Options.ValidFormatRegex.Matches(name).Count != 1)
+            return new CredentialValidationResult
+            {
+                Code = CredentialValidationResult.FailureCode.InvalidUsername,
+                FailureMessage = "Invalid format detected in username"
             };
 
         if (name.Length > Options.MaxUsernameLength)
