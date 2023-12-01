@@ -1,11 +1,37 @@
 using Chaos.Common.Definitions;
-using FluentAssertions;
-using Xunit;
+using Chaos.Testing.Infrastructure.Definitions;
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class EnumExtensionsTests
 {
+    [Fact]
+    public void GetFlags_ShouldReturnIndividualFlags()
+    {
+        // Arrange
+        const SampleFlag1 COMBINED_FLAGS = SampleFlag1.Value1 | SampleFlag1.Value3;
+
+        // Act
+        var flags = COMBINED_FLAGS.GetFlags()
+                                  .ToList();
+
+        // Assert
+        flags.Should()
+             .Contain(
+                 new[]
+                 {
+                     SampleFlag1.Value1,
+                     SampleFlag1.Value3
+                 });
+
+        flags.Should()
+             .NotContain(
+                 new[]
+                 {
+                     SampleFlag1.Value2
+                 });
+    }
+
     // ReSharper disable once ArrangeAttributes
     [Theory]
     [InlineData(EquipmentType.NotEquipment, EquipmentSlot.None)]
@@ -29,14 +55,14 @@ public sealed class EnumExtensionsTests
         EquipmentSlot.Accessory3)]
     public void ToEquipmentSlots_Should_Return_Correct_EquipmentSlots_For_EquipmentType(
         EquipmentType equipmentType,
-        params EquipmentSlot[] expectedSlots
-    )
+        params EquipmentSlot[] expectedSlots)
     {
         // Act
         var equipmentSlots = equipmentType.ToEquipmentSlots();
 
         // Assert
-        equipmentSlots.Should().BeEquivalentTo(expectedSlots);
+        equipmentSlots.Should()
+                      .BeEquivalentTo(expectedSlots);
     }
 
     [Fact]

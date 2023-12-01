@@ -44,10 +44,10 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             switch (script)
             {
-                case ICompositeScript<TScript> composite:
-                    return composite.GetScript<T>();
                 case T tScript:
                     return tScript;
+                case ICompositeScript<TScript> composite:
+                    return composite.GetScript<T>();
             }
 
         return default;
@@ -59,13 +59,13 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
         foreach (var script in Scripts)
             switch (script)
             {
+                case T tScript:
+                    yield return tScript;
+
+                    break;
                 case ICompositeScript<TScript> composite:
                     foreach (var subScript in composite.GetScripts<T>())
                         yield return subScript;
-
-                    break;
-                case T tScript:
-                    yield return tScript;
 
                     break;
             }

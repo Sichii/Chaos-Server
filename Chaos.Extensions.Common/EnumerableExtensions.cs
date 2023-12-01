@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Chaos.Extensions.Common;
@@ -11,8 +12,8 @@ public static class EnumerableExtensions
     /// <summary>
     ///     Determines if a sequence of strings contains a specific strings in a case insensitive manner.
     /// </summary>
-    public static bool ContainsI(this IEnumerable<string> enumerable, string str) =>
-        enumerable.Contains(str, StringComparer.OrdinalIgnoreCase);
+    public static bool ContainsI(this IEnumerable<string> enumerable, string str)
+        => enumerable.Contains(str, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Checks if a sequence is null or empty.
@@ -42,6 +43,7 @@ public static class EnumerableExtensions
             //only numbers that are greater than the seed will reach this statement
             if (current == seed)
                 current = number;
+
             //otherwise, if the number is less than the current number, take it
             //all numbers that reach this statement are greater than the seed
             else if (number < current)
@@ -71,6 +73,7 @@ public static class EnumerableExtensions
             //only numbers that are less than the seed will reach this statement
             if (current == seed)
                 current = number;
+
             //otherwise, if the number is greater than the current number, take it
             //all numbers that reach this statement are lower than the seed
             else if (number > current)
@@ -85,6 +88,7 @@ public static class EnumerableExtensions
     /// </summary>
     /// <param name="enumerable">The enumerable to iterate</param>
     /// <typeparam name="TReturn"></typeparam>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<TReturn> SafeCast<TReturn>(this IEnumerable enumerable)
     {
         if (enumerable is IEnumerable<TReturn> casted)
@@ -96,6 +100,7 @@ public static class EnumerableExtensions
     /// <summary>
     ///     Randomizes the order of the elements in a sequence
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "Impossible to test randomness without creating an occasionally failing test")]
     public static List<T> Shuffle<T>(this IEnumerable<T> objects)
     {
         var list = objects.ToList();
@@ -109,11 +114,13 @@ public static class EnumerableExtensions
     /// </summary>
     /// <param name="enumerable">The enumerable to cast and convert</param>
     /// <typeparam name="TReturn">The type to cast the IEnumerable to</typeparam>
+    [ExcludeFromCodeCoverage]
     public static List<TReturn> ToListCast<TReturn>(this IEnumerable enumerable)
     {
         if (enumerable is List<TReturn> list)
             return list;
 
-        return enumerable.SafeCast<TReturn>().ToList();
+        return enumerable.SafeCast<TReturn>()
+                         .ToList();
     }
 }

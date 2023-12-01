@@ -1,9 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Common.Services;
 
 /// <inheritdoc />
+[ExcludeFromCodeCoverage(Justification = "Wrapper around external code")]
 public sealed class Factory<T> : IFactory<T>
 {
     private readonly IServiceProvider Provider;

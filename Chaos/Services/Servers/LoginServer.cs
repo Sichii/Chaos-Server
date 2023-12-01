@@ -1,26 +1,14 @@
 using System.Net;
 using System.Net.Sockets;
 using Chaos.Collections;
-using Chaos.Common.Abstractions;
-using Chaos.Common.Definitions;
-using Chaos.Common.Identity;
-using Chaos.Cryptography;
-using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
 using Chaos.NLog.Logging.Definitions;
-using Chaos.NLog.Logging.Extensions;
-using Chaos.Packets;
-using Chaos.Packets.Abstractions;
-using Chaos.Packets.Abstractions.Definitions;
-using Chaos.Security.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
@@ -49,8 +37,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         IMetaDataStore metaDataStore,
         IAccessManager accessManager,
         IStore<MailBox> mailStore,
-        IFactory<MailBox> mailBoxFactory
-    )
+        IFactory<MailBox> mailBoxFactory)
         : base(
             redirectManager,
             packetSerializer,
@@ -81,8 +68,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         ValueTask InnerOnclientRedirect(ILoginClient localClient, ClientRedirectedArgs localArgs)
         {
-            var reservedRedirect = Options.ReservedRedirects
-                                          .FirstOrDefault(rr => (rr.Id == localArgs.Id) && rr.Name.EqualsI(localArgs.Name));
+            var reservedRedirect
+                = Options.ReservedRedirects.FirstOrDefault(rr => (rr.Id == localArgs.Id) && rr.Name.EqualsI(localArgs.Name));
 
             if (reservedRedirect != null)
             {
@@ -176,10 +163,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             {
                 Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Create)
                       .WithProperty(localClient)
-                      .LogDebug(
-                          "Failed to create character with name {@Name} for reason {@Reason}",
-                          localArgs.Name,
-                          result.FailureMessage);
+                      .LogDebug("Failed to create character with name {@Name} for reason {@Reason}", localArgs.Name, result.FailureMessage);
 
                 localClient.SendLoginMessage(GetLoginMessageType(result.Code), result.FailureMessage);
             }
@@ -239,10 +223,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                       Topics.Entities.Client,
                       Topics.Actions.Login,
                       Topics.Actions.Redirect)
-                  .LogDebug(
-                      "Redirecting {@ClientIp} to {@ServerIp}",
-                      localClient.RemoteIp,
-                      Options.WorldRedirect.Address.ToString());
+                  .LogDebug("Redirecting {@ClientIp} to {@ServerIp}", localClient.RemoteIp, Options.WorldRedirect.Address.ToString());
 
             RedirectManager.Add(redirect);
             localClient.SendLoginMessage(LoginMessageType.Confirm);
@@ -319,6 +300,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                       Topics.Actions.Validation)
                   .WithProperty(client)
                   .LogInformation("Changed password for aisling {@AislingName}", name);
+
+            localClient.SendLoginMessage(LoginMessageType.Confirm);
         }
     }
     #endregion
@@ -439,17 +422,18 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         ClientRegistry.TryRemove(client.Id, out _);
     }
 
-    private LoginMessageType GetLoginMessageType(CredentialValidationResult.FailureCode code) => code switch
-    {
-        CredentialValidationResult.FailureCode.InvalidUsername    => LoginMessageType.ClearNameMessage,
-        CredentialValidationResult.FailureCode.InvalidPassword    => LoginMessageType.ClearPswdMessage,
-        CredentialValidationResult.FailureCode.PasswordTooLong    => LoginMessageType.ClearPswdMessage,
-        CredentialValidationResult.FailureCode.PasswordTooShort   => LoginMessageType.ClearPswdMessage,
-        CredentialValidationResult.FailureCode.UsernameTooLong    => LoginMessageType.ClearNameMessage,
-        CredentialValidationResult.FailureCode.UsernameTooShort   => LoginMessageType.ClearNameMessage,
-        CredentialValidationResult.FailureCode.UsernameNotAllowed => LoginMessageType.ClearNameMessage,
-        CredentialValidationResult.FailureCode.TooManyAttempts    => LoginMessageType.ClearPswdMessage,
-        _                                                         => throw new ArgumentOutOfRangeException()
-    };
+    private LoginMessageType GetLoginMessageType(CredentialValidationResult.FailureCode code)
+        => code switch
+        {
+            CredentialValidationResult.FailureCode.InvalidUsername    => LoginMessageType.ClearNameMessage,
+            CredentialValidationResult.FailureCode.InvalidPassword    => LoginMessageType.ClearPswdMessage,
+            CredentialValidationResult.FailureCode.PasswordTooLong    => LoginMessageType.ClearPswdMessage,
+            CredentialValidationResult.FailureCode.PasswordTooShort   => LoginMessageType.ClearPswdMessage,
+            CredentialValidationResult.FailureCode.UsernameTooLong    => LoginMessageType.ClearNameMessage,
+            CredentialValidationResult.FailureCode.UsernameTooShort   => LoginMessageType.ClearNameMessage,
+            CredentialValidationResult.FailureCode.UsernameNotAllowed => LoginMessageType.ClearNameMessage,
+            CredentialValidationResult.FailureCode.TooManyAttempts    => LoginMessageType.ClearPswdMessage,
+            _                                                         => throw new ArgumentOutOfRangeException()
+        };
     #endregion
 }

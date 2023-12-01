@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Include="DALib"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.Client.Common\Chaos.Client.Common.csproj"/>
+    </ItemGroup>
+
+</Project>

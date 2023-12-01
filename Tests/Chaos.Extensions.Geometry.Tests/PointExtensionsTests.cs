@@ -1,7 +1,4 @@
-using Chaos.Geometry;
-using Chaos.Geometry.Abstractions.Definitions;
-using FluentAssertions;
-using Xunit;
+
 
 // ReSharper disable ArrangeAttributes
 
@@ -14,9 +11,11 @@ public sealed class PointExtensionsTests
     {
         var startingPoint = new Point(0, 0);
 
-        var points = startingPoint.ConalSearch(Direction.Up, 2).ToList();
+        var points = startingPoint.ConalSearch(Direction.Up, 2)
+                                  .ToList();
 
-        points.Should().HaveCount(8);
+        points.Should()
+              .HaveCount(8);
 
         points.Should()
               .BeEquivalentTo(
@@ -38,9 +37,11 @@ public sealed class PointExtensionsTests
     {
         var startingPoint = new Point(0, 0);
 
-        var points = startingPoint.ConalSearch(Direction.Up, 1).ToList();
+        var points = startingPoint.ConalSearch(Direction.Up, 1)
+                                  .ToList();
 
-        points.Should().HaveCount(3);
+        points.Should()
+              .HaveCount(3);
 
         points.Should()
               .BeEquivalentTo(
@@ -57,9 +58,11 @@ public sealed class PointExtensionsTests
     {
         var startingPoint = new Point(0, 0);
 
-        var points = startingPoint.ConalSearch(Direction.Up, 0).ToList();
+        var points = startingPoint.ConalSearch(Direction.Up, 0)
+                                  .ToList();
 
-        points.Should().BeEmpty();
+        points.Should()
+              .BeEmpty();
     }
 
     //@formatter:off
@@ -83,8 +86,7 @@ public sealed class PointExtensionsTests
         Direction direction,
         int distance,
         int expectedX,
-        int expectedY
-    )
+        int expectedY)
     {
         // Arrange
         var point = new Point(startX, startY);
@@ -94,7 +96,8 @@ public sealed class PointExtensionsTests
         var result = point.DirectionalOffset(direction, distance);
 
         // Assert
-        result.Should().Be(expectedOffsetPoint);
+        result.Should()
+              .Be(expectedOffsetPoint);
     }
 
     [Fact]
@@ -109,7 +112,8 @@ public sealed class PointExtensionsTests
         var action = new Action(() => point.DirectionalOffset(DIRECTION, DISTANCE));
 
         // Assert
-        action.Should().Throw<ArgumentOutOfRangeException>();
+        action.Should()
+              .Throw<ArgumentOutOfRangeException>();
     }
 
     //@formatter:off
@@ -129,15 +133,15 @@ public sealed class PointExtensionsTests
         int startY,
         int endX,
         int endY,
-        params Direction[] expected
-    )
+        params Direction[] expected)
     {
         var start = new Point(startX, startY);
         var end = new Point(endX, endY);
 
         var direction = start.DirectionalRelationTo(end);
 
-        expected.Should().Contain(direction);
+        expected.Should()
+                .Contain(direction);
     }
 
     //@formatter:off
@@ -160,8 +164,7 @@ public sealed class PointExtensionsTests
         int startY,
         int otherX,
         int otherY,
-        int expectedDistance
-    )
+        int expectedDistance)
     {
         // Arrange
         var point = new Point(startX, startY);
@@ -171,7 +174,8 @@ public sealed class PointExtensionsTests
         var result = point.DistanceFrom(otherPoint);
 
         // Assert
-        result.Should().Be(expectedDistance);
+        result.Should()
+              .Be(expectedDistance);
     }
 
     //@formatter:off
@@ -194,8 +198,7 @@ public sealed class PointExtensionsTests
         int startY,
         int otherX,
         int otherY,
-        float expectedDistance
-    )
+        float expectedDistance)
     {
         // Arrange
         var point = new Point(startX, startY);
@@ -205,7 +208,8 @@ public sealed class PointExtensionsTests
         var result = point.EuclideanDistanceFrom(otherPoint);
 
         // Assert
-        result.Should().BeApproximately(expectedDistance, 0.000001f);
+        result.Should()
+              .BeApproximately(expectedDistance, 0.000001f);
     }
 
     [Fact]
@@ -226,7 +230,12 @@ public sealed class PointExtensionsTests
         var result = points.FloodFill(startPoint);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { startPoint });
+        result.Should()
+              .BeEquivalentTo(
+                  new[]
+                  {
+                      startPoint
+                  });
     }
 
     [Fact]
@@ -254,7 +263,8 @@ public sealed class PointExtensionsTests
         var result = points.FloodFill(startPoint);
 
         // Assert
-        result.Should().BeEquivalentTo(points);
+        result.Should()
+              .BeEquivalentTo(points);
     }
 
     [Fact]
@@ -319,7 +329,12 @@ public sealed class PointExtensionsTests
         var result = points.FloodFill(startPoint);
 
         // Assert
-        result.Should().BeEquivalentTo(new[] { new Point(0, 0) });
+        result.Should()
+              .BeEquivalentTo(
+                  new[]
+                  {
+                      new Point(0, 0)
+                  });
     }
 
     [Fact]
@@ -332,7 +347,8 @@ public sealed class PointExtensionsTests
         var result = startPoint.GenerateCardinalPoints(Direction.Invalid);
 
         // Assert
-        result.Should().BeEmpty();
+        result.Should()
+              .BeEmpty();
     }
 
     [Theory]
@@ -342,8 +358,7 @@ public sealed class PointExtensionsTests
         int startY,
         Direction direction,
         int radius,
-        Point[] expectedPoints
-    )
+        Point[] expectedPoints)
     {
         // Arrange
         var startPoint = new Point(startX, startY);
@@ -352,7 +367,8 @@ public sealed class PointExtensionsTests
         var result = startPoint.GenerateCardinalPoints(direction, radius);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedPoints);
+        result.Should()
+              .BeEquivalentTo(expectedPoints);
     }
 
     [Fact]
@@ -373,7 +389,8 @@ public sealed class PointExtensionsTests
         var result = startPoint.GenerateCardinalPoints();
 
         // Assert
-        result.Should().BeEquivalentTo(expectedPoints);
+        result.Should()
+              .BeEquivalentTo(expectedPoints);
     }
 
     [Fact]
@@ -393,7 +410,8 @@ public sealed class PointExtensionsTests
         var result = startPoint.GenerateCardinalPoints(Direction.Up, 3);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedPoints);
+        result.Should()
+              .BeEquivalentTo(expectedPoints);
     }
 
     [Fact]
@@ -414,9 +432,33 @@ public sealed class PointExtensionsTests
     public static IEnumerable<object[]> GenerateCardinalPointsTestData()
     {
         yield return new object[]
-            { 0, 0, Direction.All, 1, new[] { new Point(0, 1), new Point(1, 0), new Point(0, -1), new Point(-1, 0) } };
+        {
+            0,
+            0,
+            Direction.All,
+            1,
+            new[]
+            {
+                new Point(0, 1),
+                new Point(1, 0),
+                new Point(0, -1),
+                new Point(-1, 0)
+            }
+        };
 
-        yield return new object[] { 2, 2, Direction.Up, 3, new[] { new Point(2, 1), new Point(2, 0), new Point(2, -1) } };
+        yield return new object[]
+        {
+            2,
+            2,
+            Direction.Up,
+            3,
+            new[]
+            {
+                new Point(2, 1),
+                new Point(2, 0),
+                new Point(2, -1)
+            }
+        };
     }
 
     [Fact]
@@ -429,35 +471,200 @@ public sealed class PointExtensionsTests
         var result = startPoint.GenerateIntercardinalPoints(Direction.Invalid);
 
         // Assert
-        result.Should().BeEmpty();
+        result.Should()
+              .BeEmpty();
     }
 
-    [Theory]
-    [MemberData(nameof(GenerateIntercardinalPointsTestData))]
-    public void GenerateIntercardinalPoints_ShouldGeneratePoints(
-        int startX,
-        int startY,
-        Direction direction,
-        int radius,
-        Point[] expectedPoints
-    )
+    [Fact]
+    public void GenerateIntercardinalPoints_WithDirectionAll_ReturnsExpectedPoints()
     {
-        // Arrange
-        var startPoint = new Point(startX, startY);
+        var start = new Point(0, 0);
 
-        // Act
-        var result = startPoint.GenerateIntercardinalPoints(direction, radius);
+        var result = start.GenerateIntercardinalPoints(Direction.All, 3)
+                          .ToList();
 
-        // Assert
-        result.Should().BeEquivalentTo(expectedPoints);
+        result.Count
+              .Should()
+              .Be(12);
+
+        result.Should()
+              .Contain(new Point(-1, -1));
+
+        result.Should()
+              .Contain(new Point(1, -1));
+
+        result.Should()
+              .Contain(new Point(1, 1));
+
+        result.Should()
+              .Contain(new Point(-1, 1));
+
+        result.Should()
+              .Contain(new Point(-2, -2));
+
+        result.Should()
+              .Contain(new Point(2, -2));
+
+        result.Should()
+              .Contain(new Point(2, 2));
+
+        result.Should()
+              .Contain(new Point(-2, 2));
+
+        result.Should()
+              .Contain(new Point(-3, -3));
+
+        result.Should()
+              .Contain(new Point(3, -3));
+
+        result.Should()
+              .Contain(new Point(3, 3));
+
+        result.Should()
+              .Contain(new Point(-3, 3));
     }
 
-    public static IEnumerable<object[]> GenerateIntercardinalPointsTestData()
+    [Fact]
+    public void GenerateIntercardinalPoints_WithDirectionDown_ReturnsExpectedPoints()
     {
-        yield return new object[]
-            { 0, 0, Direction.All, 1, new[] { new Point(-1, -1), new Point(1, -1), new Point(1, 1), new Point(-1, 1) } };
+        var start = new Point(0, 0);
 
-        yield return new object[] { 2, 2, Direction.Up, 2, new[] { new Point(1, 1), new Point(3, 1), new Point(0, 0), new Point(4, 0) } };
+        var result = start.GenerateIntercardinalPoints(Direction.Down, 5)
+                          .ToList();
+
+        result.Count
+              .Should()
+              .Be(10);
+
+        result.Should()
+              .Contain(new Point(1, 1));
+
+        result.Should()
+              .Contain(new Point(-1, 1));
+
+        result.Should()
+              .Contain(new Point(2, 2));
+
+        result.Should()
+              .Contain(new Point(-2, 2));
+
+        result.Should()
+              .Contain(new Point(3, 3));
+
+        result.Should()
+              .Contain(new Point(-3, 3));
+
+        result.Should()
+              .Contain(new Point(4, 4));
+
+        result.Should()
+              .Contain(new Point(-4, 4));
+
+        result.Should()
+              .Contain(new Point(5, 5));
+
+        result.Should()
+              .Contain(new Point(-5, 5));
+    }
+
+    [Fact]
+    public void GenerateIntercardinalPoints_WithDirectionInvalid_ReturnsNoPoints()
+    {
+        var start = new Point(0, 0);
+
+        var result = start.GenerateIntercardinalPoints(Direction.Invalid)
+                          .ToList();
+
+        result.Count
+              .Should()
+              .Be(0);
+    }
+
+    [Fact]
+    public void GenerateIntercardinalPoints_WithDirectionLeft_ReturnsExpectedPoints()
+    {
+        var start = new Point(0, 0);
+
+        var result = start.GenerateIntercardinalPoints(Direction.Left, 3)
+                          .ToList();
+
+        result.Count
+              .Should()
+              .Be(6);
+
+        result.Should()
+              .Contain(new Point(-1, -1));
+
+        result.Should()
+              .Contain(new Point(-1, 1));
+
+        result.Should()
+              .Contain(new Point(-2, -2));
+
+        result.Should()
+              .Contain(new Point(-2, 2));
+
+        result.Should()
+              .Contain(new Point(-3, -3));
+
+        result.Should()
+              .Contain(new Point(-3, 3));
+    }
+
+    [Fact]
+    public void GenerateIntercardinalPoints_WithDirectionRight_ReturnsExpectedPoints()
+    {
+        var start = new Point(0, 0);
+
+        var result = start.GenerateIntercardinalPoints(Direction.Right, 3)
+                          .ToList();
+
+        result.Count
+              .Should()
+              .Be(6);
+
+        result.Should()
+              .Contain(new Point(1, -1));
+
+        result.Should()
+              .Contain(new Point(1, 1));
+
+        result.Should()
+              .Contain(new Point(2, -2));
+
+        result.Should()
+              .Contain(new Point(2, 2));
+
+        result.Should()
+              .Contain(new Point(3, -3));
+
+        result.Should()
+              .Contain(new Point(3, 3));
+    }
+
+    [Fact]
+    public void GenerateIntercardinalPoints_WithDirectionUp_ReturnsExpectedPoints()
+    {
+        var start = new Point(0, 0);
+
+        var result = start.GenerateIntercardinalPoints(Direction.Up, 2)
+                          .ToList();
+
+        result.Count
+              .Should()
+              .Be(4);
+
+        result.Should()
+              .Contain(new Point(-1, -1));
+
+        result.Should()
+              .Contain(new Point(1, -1));
+
+        result.Should()
+              .Contain(new Point(-2, -2));
+
+        result.Should()
+              .Contain(new Point(2, -2));
     }
 
     [Theory]
@@ -468,20 +675,49 @@ public sealed class PointExtensionsTests
         var result = start.GetDirectPath(end);
 
         // Assert
-        result.Should().BeSubsetOf(expectedPath);
+        result.Should()
+              .BeSubsetOf(expectedPath);
     }
 
     public static IEnumerable<object[]> GetDirectPathTestData()
     {
-        yield return new object[] { new Point(0, 0), new Point(0, 0), new[] { new Point(0, 0) } };
+        yield return new object[]
+        {
+            new Point(0, 0),
+            new Point(0, 0),
+            new[]
+            {
+                new Point(0, 0)
+            }
+        };
 
         yield return new object[]
         {
-            new Point(0, 0), new Point(2, 2),
-            new[] { new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1), new Point(1, 2), new Point(2, 1), new Point(2, 2) }
+            new Point(0, 0),
+            new Point(2, 2),
+            new[]
+            {
+                new Point(0, 0),
+                new Point(0, 1),
+                new Point(1, 0),
+                new Point(1, 1),
+                new Point(1, 2),
+                new Point(2, 1),
+                new Point(2, 2)
+            }
         };
 
-        yield return new object[] { new Point(1, 1), new Point(3, 1), new[] { new Point(1, 1), new Point(2, 1), new Point(3, 1) } };
+        yield return new object[]
+        {
+            new Point(1, 1),
+            new Point(3, 1),
+            new[]
+            {
+                new Point(1, 1),
+                new Point(2, 1),
+                new Point(3, 1)
+            }
+        };
     }
 
     //@formatter:off
@@ -503,8 +739,7 @@ public sealed class PointExtensionsTests
         int otherX,
         int otherY,
         Direction direction,
-        bool expectedResult
-    )
+        bool expectedResult)
     {
         // Arrange
         var start = new Point(startX, startY);
@@ -514,7 +749,8 @@ public sealed class PointExtensionsTests
         var result = start.IsInterCardinalTo(other, direction);
 
         // Assert
-        result.Should().Be(expectedResult);
+        result.Should()
+              .Be(expectedResult);
     }
 
     //@formatter:off
@@ -530,8 +766,7 @@ public sealed class PointExtensionsTests
         int otherX,
         int otherY,
         int expectedOffsetX,
-        int expectedOffsetY
-    )
+        int expectedOffsetY)
     {
         // Arrange
         var point = new Point(startX, startY);
@@ -542,7 +777,8 @@ public sealed class PointExtensionsTests
         var result = point.OffsetTowards(other);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedOffset);
+        result.Should()
+              .BeEquivalentTo(expectedOffset);
     }
 
     [Fact]
@@ -551,13 +787,19 @@ public sealed class PointExtensionsTests
         // Arrange
         var point = new Point(0, 0);
         var other = new Point(5, 5);
-        var expectedOffsets = new[] { new Point(1, 0), new Point(0, 1) };
+
+        var expectedOffsets = new[]
+        {
+            new Point(1, 0),
+            new Point(0, 1)
+        };
 
         // Act
         var result = point.OffsetTowards(other);
 
         // Assert
-        expectedOffsets.Should().Contain(result);
+        expectedOffsets.Should()
+                       .Contain(result);
     }
 
     //@formatter:off
@@ -579,8 +821,7 @@ public sealed class PointExtensionsTests
         int startY,
         int endX,
         int endY,
-        params int[] expectedPoints
-    )
+        params int[] expectedPoints)
     {
         // Arrange
         var start = new Point(startX, startY);
@@ -590,7 +831,10 @@ public sealed class PointExtensionsTests
         var result = start.RayTraceTo(end);
 
         // Assert
-        result.Should().ContainInOrder(expectedPoints.Chunk(2).Select(pts => new Point(pts[0], pts[1])));
+        result.Should()
+              .ContainInOrder(
+                  expectedPoints.Chunk(2)
+                                .Select(pts => new Point(pts[0], pts[1])));
     }
 
     //@formatter:off
@@ -603,8 +847,7 @@ public sealed class PointExtensionsTests
         int startX,
         int startY,
         int maxRadius,
-        params int[] expectedPoints
-    )
+        params int[] expectedPoints)
     {
         // Arrange
         var start = new Point(startX, startY);
@@ -613,7 +856,10 @@ public sealed class PointExtensionsTests
         var result = start.SpiralSearch(maxRadius);
 
         // Assert
-        result.Should().ContainInOrder(expectedPoints.Chunk(2).Select(pts => new Point(pts[0], pts[1])));
+        result.Should()
+              .ContainInOrder(
+                  expectedPoints.Chunk(2)
+                                .Select(pts => new Point(pts[0], pts[1])));
     }
 
     //@formatter:off
@@ -626,15 +872,15 @@ public sealed class PointExtensionsTests
     public void WithDirectionBias_Should_Order_Points_Correctly(Direction direction, params int[] expectedOrder)
     {
         // Arrange
-        var points = expectedOrder
-                     .Chunk(2)
-                     .Select(pts => new Point(pts[0], pts[1]))
-                     .ToList();
+        var points = expectedOrder.Chunk(2)
+                                  .Select(pts => new Point(pts[0], pts[1]))
+                                  .ToList();
 
         // Act
         var result = points.WithDirectionBias(direction);
 
         // Assert
-        result.Should().ContainInOrder(points);
+        result.Should()
+              .ContainInOrder(points);
     }
 }

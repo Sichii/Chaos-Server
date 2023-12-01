@@ -2,20 +2,22 @@ name: Docs
 on:
   push:
     branches:
-      - master
+      - release/v*
   pull_request:
     branches:
-      - master
-  workflow_dispatch:
+      - release/v*
+
 jobs:
   publish-docs:
     if: github.repository == 'Sichii/Chaos-Server'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.x
+          dotnet-version: 8.x
 
       - run: dotnet tool install -g docfx --version 2.67.1
       - run: docfx docs/docfx.json

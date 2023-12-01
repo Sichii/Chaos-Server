@@ -107,8 +107,9 @@ public sealed class FlagCollection : IEnumerable<KeyValuePair<Type, Enum>>
         if (Flags.TryGetValue(type, out var existingValue))
         {
             var flagValue = Convert.ToUInt64(existingValue);
+            var valueToCheck = Convert.ToUInt64(value);
 
-            return (Convert.ToUInt64(value) & flagValue) == flagValue;
+            return (flagValue & valueToCheck) == valueToCheck;
         }
 
         return false;

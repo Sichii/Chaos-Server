@@ -1,11 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Version>1.0.0</Version>
+    </PropertyGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>
         <ProjectReference Include="..\Chaos.Time.Abstractions\Chaos.Time.Abstractions.csproj"/>
     </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
     </ItemGroup>
+
 </Project>

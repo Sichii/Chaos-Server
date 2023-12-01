@@ -2,11 +2,11 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <AssemblyName>ChaosTool</AssemblyName>
         <RootNamespace>ChaosTool</RootNamespace>
         <ApplicationIcon>..\..\Chaos\Resources\chaos.ico</ApplicationIcon>
+        <TargetFramework>net8.0-windows</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,4 +1,4 @@
-using Chaos.Common.Abstractions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Chaos.Extensions.Common;
 
@@ -13,5 +13,6 @@ public static class InterlockedObjectExtensions
     /// <param name="syncObj"></param>
     /// <typeparam name="T">The type to convert the returned object to</typeparam>
     /// <returns>An object of the specified type if an object exists and is of that type, otherwise <c>null</c></returns>
+    [ExcludeFromCodeCoverage(Justification = "Nothing to test, just a shorthand")]
     public static T? TryGet<T>(this IInterlockedObject<object> syncObj) where T: class => syncObj.Get() as T;
 }

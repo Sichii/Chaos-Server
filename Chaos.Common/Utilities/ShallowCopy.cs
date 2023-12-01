@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -21,15 +22,15 @@ public static class ShallowCopy<T>
             var properties = GetRecursiveProperties(typeof(T));
             var fields = GetRecursiveFields(typeof(T));
 
-            var propertyAssignments =
-                properties.Select(p => Expression.Assign(Expression.Property(targetEx, p), Expression.Property(fromEx, p)));
+            var propertyAssignments
+                = properties.Select(p => Expression.Assign(Expression.Property(targetEx, p), Expression.Property(fromEx, p)));
 
-            var fieldAssignments =
-                fields.Select(f => Expression.Assign(Expression.Field(targetEx, f), Expression.Field(fromEx, f)));
+            var fieldAssignments = fields.Select(f => Expression.Assign(Expression.Field(targetEx, f), Expression.Field(fromEx, f)));
 
             var assignmentBlock = Expression.Block(propertyAssignments.Concat(fieldAssignments));
 
-            AssignmentDelegate = Expression.Lambda<Action<T, T>>(assignmentBlock, fromEx, targetEx).Compile();
+            AssignmentDelegate = Expression.Lambda<Action<T, T>>(assignmentBlock, fromEx, targetEx)
+                                           .Compile();
         }
     }
 
@@ -49,6 +50,7 @@ public static class ShallowCopy<T>
     ///     Attempts to create a fresh instance of the object type,
     ///     and then shallow mergees all properties from the original object into the new one.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "Tested by Create(T)")]
     public static T Create(T fromObj, params object[] cTorArgs)
     {
         var instance = (T)Activator.CreateInstance(typeof(T), cTorArgs)!;
@@ -58,21 +60,29 @@ public static class ShallowCopy<T>
         return instance;
     }
 
-    private static IEnumerable<FieldInfo> GetRecursiveFields(Type type) => !type.IsInterface
-        ? type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-              .Where(f => f is { IsInitOnly: false, IsLiteral: false })
-        : new[] { type }.Concat(type.GetInterfaces())
-                        .SelectMany(i => i.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-                        .Where(f => f is { IsInitOnly: false, IsLiteral: false })
-                        .DistinctBy(p => p.Name);
+    private static IEnumerable<FieldInfo> GetRecursiveFields(Type type)
+        => !type.IsInterface
+            ? type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                  .Where(f => f is { IsInitOnly: false, IsLiteral: false })
+            : new[]
+                {
+                    type
+                }.Concat(type.GetInterfaces())
+                 .SelectMany(i => i.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+                 .Where(f => f is { IsInitOnly: false, IsLiteral: false })
+                 .DistinctBy(p => p.Name);
 
-    private static IEnumerable<PropertyInfo> GetRecursiveProperties(Type type) => !type.IsInterface
-        ? type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-              .Where(p => p is { CanRead: true, CanWrite: true })
-        : new[] { type }.Concat(type.GetInterfaces())
-                        .SelectMany(i => i.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-                        .Where(p => p is { CanRead: true, CanWrite: true })
-                        .DistinctBy(p => p.Name);
+    private static IEnumerable<PropertyInfo> GetRecursiveProperties(Type type)
+        => !type.IsInterface
+            ? type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                  .Where(p => p is { CanRead: true, CanWrite: true })
+            : new[]
+                {
+                    type
+                }.Concat(type.GetInterfaces())
+                 .SelectMany(i => i.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+                 .Where(p => p is { CanRead: true, CanWrite: true })
+                 .DistinctBy(p => p.Name);
 
     /// <summary>
     ///     Merges all (public/non-public) instanced properties from <paramref name="fromObj" /> into

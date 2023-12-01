@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -82,7 +80,7 @@ public static class StringExtensions
         Span<int> targetBigrams = stackalloc int[span2.Length * 2];
 
         //encode all target bigrams as single values
-        for (var i = 0; i < span2.Length - 1; i++)
+        for (var i = 0; i < (span2.Length - 1); i++)
         {
             var bigram = span2.Slice(i, 2);
             var encodedBigram = EncodeBigram(bigram, caseSensitive);
@@ -90,7 +88,7 @@ public static class StringExtensions
         }
 
         //for each bigram in the source, see if it exists in the target
-        for (var i = 0; i < span1.Length - 1; i++)
+        for (var i = 0; i < (span1.Length - 1); i++)
         {
             var bigram = span1.Slice(i, 2);
             var encodedBigram = EncodeBigram(bigram, caseSensitive);
@@ -172,7 +170,7 @@ public static class StringExtensions
         return input switch
         {
             "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
-            _  => string.Concat(new ReadOnlySpan<char>(char.ToUpper(input[0])), input.AsSpan(1))
+            _  => string.Concat(char.ToUpper(input[0]), input[1..])
         };
     }
 
@@ -180,7 +178,9 @@ public static class StringExtensions
     ///     Fixes line endings so that they match the line endings in DarkAges
     /// </summary>
     /// <param name="str">The string whose line endings to fix</param>
-    public static string FixLineEndings(this string str) => str.ReplaceLineEndings("\n").TrimEnd('\n');
+    public static string FixLineEndings(this string str)
+        => str.ReplaceLineEndings("\n")
+              .TrimEnd('\n');
 
     /// <summary>
     ///     Determines if any of the strings approximately match the specified string
@@ -201,17 +201,16 @@ public static class StringExtensions
         this IEnumerable<string> strings,
         string str,
         decimal minCoefficient = 0.666m,
-        decimal maxDistancePct
-            = 0.333m,
+        decimal maxDistancePct = 0.333m,
         int? maxDistance = null,
-        bool caseSensitive = false
-    ) => FuzzySearch(
-        strings,
-        str,
-        minCoefficient,
-        maxDistancePct,
-        maxDistance,
-        caseSensitive) is not null;
+        bool caseSensitive = false)
+        => FuzzySearch(
+            strings,
+            str,
+            minCoefficient,
+            maxDistancePct,
+            maxDistance,
+            caseSensitive) is not null;
 
     /// <summary>
     ///     Performs a fuzzy search on a sequence of strings and returns the best match
@@ -230,11 +229,9 @@ public static class StringExtensions
         this IEnumerable<string> strings,
         string str,
         decimal minCoefficient = 0.666m,
-        decimal maxDistancePct
-            = 0.333m,
+        decimal maxDistancePct = 0.333m,
         int? maxDistance = null,
-        bool caseSensitive = false
-    )
+        bool caseSensitive = false)
     {
         try
         {
@@ -244,23 +241,24 @@ public static class StringExtensions
             //filter out strings with coefficients below the minCoefficient
             //then calculate levenshtein distance for each string
             //filter out strings with distances above the maxDistance
-            var possibleMatches =
-                strings.Select(s => (String: s, Coefficient: s.CalculateSorensenCoefficient(str, caseSensitive)))
-                       .Where(x => x.Coefficient > minCoefficient)
-                       .Select(
-                           x => (x.String, x.Coefficient,
-                               Distance: x.String.CalculateLevenshteinDistance(str, caseSensitive)))
-                       .Where(
-                           x =>
-                           {
-                               //calculate the max acceptable levenshtein distance
-                               var length = Math.Max(x.String.Length, str.Length);
+            var possibleMatches = strings.Select(s => (String: s, Coefficient: s.CalculateSorensenCoefficient(str, caseSensitive)))
+                                         .Where(x => x.Coefficient > minCoefficient)
+                                         .Select(
+                                             x => (x.String, x.Coefficient,
+                                                 Distance: x.String.CalculateLevenshteinDistance(str, caseSensitive)))
+                                         .Where(
+                                             x =>
+                                             {
+                                                 //calculate the max acceptable levenshtein distance
+                                                 var length = Math.Max(x.String.Length, str.Length);
 
-                               var localMaxDistance = maxDistance ??= Math.Max(1, Convert.ToInt32(length * maxDistancePct));
+                                                 var localMaxDistance = maxDistance ??= Math.Max(
+                                                     1,
+                                                     Convert.ToInt32(length * maxDistancePct));
 
-                               return x.Distance <= localMaxDistance;
-                           })
-                       .ToList();
+                                                 return x.Distance <= localMaxDistance;
+                                             })
+                                         .ToList();
 
             //if no good match was found, return null
             if (!possibleMatches.Any())
@@ -270,13 +268,15 @@ public static class StringExtensions
             if (possibleMatches.Count == 1)
                 return possibleMatches[0].String;
 
-            return possibleMatches.MaxBy(CalculateHeuristic).String;
+            return possibleMatches.MaxBy(CalculateHeuristic)
+                                  .String;
 
             //based on the 2 values, calculate a heuristic to determine the best match
             decimal CalculateHeuristic((string String, decimal Coefficient, int Distance) x)
             {
                 //get the length of the longer string
                 var length = Math.Max(x.String.Length, str.Length);
+
                 //1 - the levenshtein distance as a percentage of the length of the longer string
                 //aka, lower levenshtein distances generate a higher heuristic
                 var distanceHeuristic = 1 - (decimal)x.Distance / length;
@@ -311,11 +311,9 @@ public static class StringExtensions
         Func<T, string> selector,
         string str,
         decimal minCoefficient = 0.666m,
-        decimal maxDistancePct
-            = 0.333m,
+        decimal maxDistancePct = 0.333m,
         int? maxDistance = null,
-        bool caseSensitive = false
-    )
+        bool caseSensitive = false)
     {
         items = caseSensitive ? items.DistinctBy(selector) : items.DistinctBy(selector, StringComparer.OrdinalIgnoreCase);
 
@@ -351,7 +349,9 @@ public static class StringExtensions
         //convert all parameters to strings and aggregate the length of the parameters
         for (var i = 0; i < parameters.Length; i++)
         {
-            var paramStr = parameters[i].ToString() ?? string.Empty;
+            var paramStr = parameters[i]
+                               .ToString()
+                           ?? string.Empty;
             paramsTotalLength += paramStr.Length;
             paramStrs[i] = paramStr;
         }
@@ -376,18 +376,21 @@ public static class StringExtensions
                     strIndex += 2;
 
                     break;
+
                 //handle start of placeholder
                 case '{':
                     startPhIndex = strIndex;
                     strIndex += 1;
 
                     break;
+
                 //handle double curly braces
                 case '}' when (nextIndex < strSpan.Length) && (strSpan[nextIndex] == '}'):
                     result[resIndex++] = '}';
                     strIndex += 2;
 
                     break;
+
                 //handle end of placeholder
                 case '}' when startPhIndex >= 0:
                     if (paramIndex >= paramStrs.Length)
@@ -396,12 +399,15 @@ public static class StringExtensions
                             nameof(parameters));
 
                     var parameterValue = paramStrs[paramIndex++];
-                    parameterValue.AsSpan().CopyTo(result[resIndex..]);
+
+                    parameterValue.AsSpan()
+                                  .CopyTo(result[resIndex..]);
                     resIndex += parameterValue.Length;
                     strIndex += 1;
                     startPhIndex = -1;
 
                     break;
+
                 //handle normal character
                 default:
                     if (startPhIndex < 0)
@@ -413,7 +419,8 @@ public static class StringExtensions
             }
         }
 
-        return result[..resIndex].ToString();
+        return result[..resIndex]
+            .ToString();
     }
 
     /// <summary>
@@ -431,8 +438,8 @@ public static class StringExtensions
     ///     returns the current
     ///     instance unchanged
     /// </returns>
-    public static string ReplaceI(this string str1, string oldValue, string newValue) =>
-        str1.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
+    public static string ReplaceI(this string str1, string oldValue, string newValue)
+        => str1.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Determines whether the beginning of this string instance matches the specified string when compared case

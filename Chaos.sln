@@ -40,6 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{B4F9246B
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Geometry.Tests", "Tests\Chaos.Geometry.Tests\Chaos.Geometry.Tests.csproj", "{E48BCA88-A7A6-469B-B34D-BD0411A04153}"
@@ -126,6 +127,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{D5DE58CA-F39A-4656-9890-DA737AC428E1}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\docs.yml = .github\workflows\docs.yml
+		.github\workflows\pack.yml = .github\workflows\pack.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Scripting.Abstractions.Tests", "Tests\Chaos.Scripting.Abstractions.Tests\Chaos.Scripting.Abstractions.Tests.csproj", "{02CBFCE5-FA7E-4695-982F-012AD3E102FE}"
@@ -147,12 +149,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Messaging.Tests", "Tests\Chaos.Messaging.Tests\Chaos.Messaging.Tests.csproj", "{A6A835CD-FBB6-4F60-98F1-5A067FC30A83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patches", "Patches", "{8BF03457-ABF0-42DD-9B2F-FF5DC0F8F7A2}"
+	ProjectSection(SolutionItems) = preProject
+		Patches\Directory.Build.props = Patches\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorPatch", "Patches\ColorPatch\ColorPatch.csproj", "{2FA91AB1-398B-47DD-841A-7BC6E3C5DF44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.NLog.Logging", "Chaos.NLog.Logging\Chaos.NLog.Logging.csproj", "{CD4139C9-A342-4798-9FD9-1E70A925D79F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqConfigurator", "Tools\SeqConfigurator\SeqConfigurator.csproj", "{CE846CC4-1585-4393-B845-D45864342AA4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chaos.Client", "Chaos.Client", "{6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}"
+	ProjectSection(SolutionItems) = preProject
+		Chaos.Client\Directory.Build.props = Chaos.Client\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client", "Chaos.Client\Chaos.Client\Chaos.Client.csproj", "{7FBF6EEB-8765-4148-8006-203B73022B7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client.Common", "Chaos.Client\Chaos.Client.Common\Chaos.Client.Common.csproj", "{4DF9A950-7387-4517-89ED-3493EFE5D02F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client.Data", "Chaos.Client\Chaos.Client.Data\Chaos.Client.Data.csproj", "{1B235C8D-75CB-4B3A-82C8-D5AA13C56811}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client.Rendering", "Chaos.Client\Chaos.Client.Rendering\Chaos.Client.Rendering.csproj", "{7550AC2E-309B-491D-AC7D-6A3945966478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -344,6 +362,22 @@ Global
 		{CE846CC4-1585-4393-B845-D45864342AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE846CC4-1585-4393-B845-D45864342AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE846CC4-1585-4393-B845-D45864342AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FBF6EEB-8765-4148-8006-203B73022B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FBF6EEB-8765-4148-8006-203B73022B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FBF6EEB-8765-4148-8006-203B73022B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FBF6EEB-8765-4148-8006-203B73022B7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DF9A950-7387-4517-89ED-3493EFE5D02F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DF9A950-7387-4517-89ED-3493EFE5D02F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DF9A950-7387-4517-89ED-3493EFE5D02F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DF9A950-7387-4517-89ED-3493EFE5D02F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B235C8D-75CB-4B3A-82C8-D5AA13C56811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B235C8D-75CB-4B3A-82C8-D5AA13C56811}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B235C8D-75CB-4B3A-82C8-D5AA13C56811}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B235C8D-75CB-4B3A-82C8-D5AA13C56811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7550AC2E-309B-491D-AC7D-6A3945966478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7550AC2E-309B-491D-AC7D-6A3945966478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7550AC2E-309B-491D-AC7D-6A3945966478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7550AC2E-309B-491D-AC7D-6A3945966478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -378,6 +412,10 @@ Global
 		{A6A835CD-FBB6-4F60-98F1-5A067FC30A83} = {FB65EF42-92F0-49AF-B22C-72B1725098DA}
 		{2FA91AB1-398B-47DD-841A-7BC6E3C5DF44} = {8BF03457-ABF0-42DD-9B2F-FF5DC0F8F7A2}
 		{CE846CC4-1585-4393-B845-D45864342AA4} = {698D32AB-9BC9-4B0A-B5DD-19D98C0358DB}
+		{7FBF6EEB-8765-4148-8006-203B73022B7B} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
+		{4DF9A950-7387-4517-89ED-3493EFE5D02F} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
+		{1B235C8D-75CB-4B3A-82C8-D5AA13C56811} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
+		{7550AC2E-309B-491D-AC7D-6A3945966478} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}

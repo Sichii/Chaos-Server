@@ -1,5 +1,8 @@
 // ReSharper disable once CheckNamespace
 
+using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -15,6 +18,7 @@ public static class TypeExtensions
     ///     <c>true</c> if the provided type is an enum and has the <see cref="FlagsAttribute" /> attribute, otherwise
     ///     <c>false</c>
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Tested by IsFlagEnum(Type)")]
     public static bool IsFlagEnum<T>() where T: Enum => IsFlagEnum(typeof(T));
 
     /// <summary>
@@ -24,13 +28,16 @@ public static class TypeExtensions
     ///     <c>true</c> if the provided type is an enum and has the <see cref="FlagsAttribute" /> attribute, otherwise
     ///     <c>false</c>
     /// </returns>
-    public static bool IsFlagEnum(this Type type) => type.IsEnum && type.GetCustomAttributes(typeof(FlagsAttribute), false).Any();
+    public static bool IsFlagEnum(this Type type)
+        => type.IsEnum
+           && type.GetCustomAttributes(typeof(FlagsAttribute), false)
+                  .Any();
 
     /// <summary>
     ///     Determines if a type is a primitive type.
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static bool IsPrimitive(this Type type) =>
-        (type == typeof(string)) || (type == typeof(decimal)) || type is { IsValueType: true, IsPrimitive: true };
+    public static bool IsPrimitive(this Type type)
+        => (type == typeof(string)) || (type == typeof(decimal)) || type is { IsValueType: true, IsPrimitive: true };
 }

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Converters;
 
@@ -13,6 +14,7 @@ public class StaticVars : IScriptVars
     ///     Gets or sets the value associated with the specified key.
     /// </summary>
     /// <param name="key"></param>
+    [ExcludeFromCodeCoverage(Justification = "Nothing test, just a wrapper")]
     public object this[string key]
     {
         get => Vars[key];
@@ -28,8 +30,8 @@ public class StaticVars : IScriptVars
     ///     Initializes a new instance of the StaticVars class with an optional initial set of key-value pairs.
     /// </summary>
     /// <param name="objs"></param>
-    public StaticVars(IDictionary<string, object>? objs = null) =>
-        Vars = new ConcurrentDictionary<string, object>(objs ?? new Dictionary<string, object>(), StringComparer.OrdinalIgnoreCase);
+    public StaticVars(IDictionary<string, object>? objs = null)
+        => Vars = new ConcurrentDictionary<string, object>(objs ?? new Dictionary<string, object>(), StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     public bool ContainsKey(string key) => Vars.ContainsKey(key);

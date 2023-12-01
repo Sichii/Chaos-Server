@@ -17,6 +17,13 @@ public sealed class TypeSwitchExpression<TResult>
     public TypeSwitchExpression<TResult> Case<T>(Func<TResult> func) => Case(typeof(T), func);
 
     /// <summary>
+    ///     Adds the specified value to the switch on the specified type
+    /// </summary>
+    /// <param name="value">The value to return</param>
+    /// <typeparam name="T">The type of this case</typeparam>
+    public TypeSwitchExpression<TResult> Case<T>(TResult value) => Case(typeof(T), () => value);
+
+    /// <summary>
     ///     Adds the specified action to the switch on the specified type
     /// </summary>
     /// <param name="type">The type of this case</param>
@@ -35,6 +42,17 @@ public sealed class TypeSwitchExpression<TResult>
     public TypeSwitchExpression<TResult> Default(Func<TResult> func)
     {
         DefaultCase = func;
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Adds the specified default value if no other cases are hit
+    /// </summary>
+    /// <param name="value">The value to return if no other cases are hit</param>
+    public TypeSwitchExpression<TResult> Default(TResult value)
+    {
+        DefaultCase = () => value;
 
         return this;
     }

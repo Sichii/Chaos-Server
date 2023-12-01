@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using Chaos.Extensions.Common;
@@ -16,7 +17,8 @@ public static class DeepClone
         var parameter = Expression.Parameter(typeof(object));
         var call = Expression.Call(parameter, typeof(object).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic)!);
 
-        CreateMemberwiseClone = Expression.Lambda<Func<object, object>>(call, parameter).Compile();
+        CreateMemberwiseClone = Expression.Lambda<Func<object, object>>(call, parameter)
+                                          .Compile();
     }
 
     private static void CopyFields(
@@ -25,8 +27,7 @@ public static class DeepClone
         object cloneObject,
         IReflect typeToReflect,
         BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-        Func<FieldInfo, bool>? filter = null
-    )
+        Func<FieldInfo, bool>? filter = null)
     {
         foreach (var fieldInfo in typeToReflect.GetFields(bindingFlags))
         {
@@ -52,9 +53,7 @@ public static class DeepClone
     /// <param name="fromObj">The object to clone</param>
     /// <typeparam name="T">The type of the object being cloned</typeparam>
     /// <returns>A deep cloned instance of the object, or null if the clone was unsuccessful</returns>
-    public static T? Create<T>(T fromObj) => (T?)InternalCopy(
-        fromObj!,
-        new Dictionary<object, object>(ReferenceEqualityComparer.Instance));
+    public static T? Create<T>(T fromObj) => (T?)InternalCopy(fromObj!, new Dictionary<object, object>(ReferenceEqualityComparer.Instance));
 
     /// <summary>
     ///     Creates a deep clone of the object.
@@ -63,6 +62,7 @@ public static class DeepClone
     /// <typeparam name="T">The type of the object being cloned</typeparam>
     /// <returns>A deep cloned instance of the object</returns>
     /// <exception cref="InvalidOperationException">Failed to create a deep clone of the object.</exception>
+    [ExcludeFromCodeCoverage(Justification = "Tested by Create<T>(T)")]
     public static T CreateRequired<T>(T fromObj)
     {
         var obj = Create(fromObj);
@@ -123,8 +123,7 @@ public static class DeepClone
         object originalObject,
         IDictionary<object, object> visited,
         object cloneObject,
-        Type typeToReflect
-    )
+        Type typeToReflect)
     {
         if (typeToReflect.BaseType != null)
         {

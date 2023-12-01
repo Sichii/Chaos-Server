@@ -1,8 +1,6 @@
 using System.Text;
 using Chaos.IO.Definitions;
 using Chaos.IO.Memory;
-using FluentAssertions;
-using Xunit;
 
 namespace Chaos.IO.Tests;
 
@@ -22,7 +20,9 @@ public sealed class SpanWriterTests
         writer.WriteBoolean(true);
 
         // Assert
-        buffer[0].Should().Be(1);
+        buffer[0]
+            .Should()
+            .Be(1);
     }
 
     [Fact]
@@ -37,7 +37,9 @@ public sealed class SpanWriterTests
         writer.WriteByte(0xAB);
 
         // Assert
-        buffer[0].Should().Be(0xAB);
+        buffer[0]
+            .Should()
+            .Be(0xAB);
     }
 
     [Fact]
@@ -76,7 +78,9 @@ public sealed class SpanWriterTests
         writer.WriteBytes(Array.Empty<byte>());
 
         // Assert
-        buffer[0].Should().Be(0);
+        buffer[0]
+            .Should()
+            .Be(0);
     }
 
     [Fact]
@@ -91,7 +95,8 @@ public sealed class SpanWriterTests
         writer.WriteData("ABC"u8.ToArray());
 
         // Assert
-        buffer.Should().Equal("ABC"u8.ToArray());
+        buffer.Should()
+              .Equal("ABC"u8.ToArray());
     }
 
     [Fact]
@@ -127,7 +132,8 @@ public sealed class SpanWriterTests
         writer.WriteData16(Array.Empty<byte>());
 
         // Assert
-        buffer.Should().Equal(0x00, 0x00);
+        buffer.Should()
+              .Equal(0x00, 0x00);
     }
 
     [Fact]
@@ -143,7 +149,9 @@ public sealed class SpanWriterTests
         writer.WriteData16(buffer[..LENGTH]);
 
         // Assert
-        writer.Position.Should().Be(ushort.MaxValue + 2); // 2 bytes for length, ushort.MaxValue for string
+        writer.Position
+              .Should()
+              .Be(ushort.MaxValue + 2); // 2 bytes for length, ushort.MaxValue for string
     }
 
     [Fact]
@@ -178,7 +186,8 @@ public sealed class SpanWriterTests
         writer.WriteData8(Array.Empty<byte>());
 
         // Assert
-        buffer.Should().Equal(0x00);
+        buffer.Should()
+              .Equal(0x00);
     }
 
     [Fact]
@@ -194,7 +203,9 @@ public sealed class SpanWriterTests
         writer.WriteData8(buffer[..LENGTH]);
 
         // Assert
-        writer.Position.Should().Be(byte.MaxValue + 1); // 1 byte for length, ushort.MaxValue for string
+        writer.Position
+              .Should()
+              .Be(byte.MaxValue + 1); // 1 byte for length, ushort.MaxValue for string
     }
 
     [Fact]
@@ -206,7 +217,14 @@ public sealed class SpanWriterTests
         var writer = new SpanWriter(Encoding, ref span);
 
         // Act
-        writer.WriteData(new byte[] { 0x01, 0x02, 0x03 }, true);
+        writer.WriteData(
+            new byte[]
+            {
+                0x01,
+                0x02,
+                0x03
+            },
+            true);
 
         // Assert
         buffer.Should()
@@ -229,7 +247,8 @@ public sealed class SpanWriterTests
         writer.WriteInt16(0x1234);
 
         // Assert
-        buffer.Should().Equal(0x12, 0x34);
+        buffer.Should()
+              .Equal(0x12, 0x34);
     }
 
     [Fact]
@@ -244,7 +263,8 @@ public sealed class SpanWriterTests
         writer.WriteInt16(0x1234);
 
         // Assert
-        buffer.Should().Equal(0x34, 0x12);
+        buffer.Should()
+              .Equal(0x34, 0x12);
     }
 
     [Fact]
@@ -319,7 +339,8 @@ public sealed class SpanWriterTests
         writer.WritePoint8(0x12, 0x34);
 
         // Assert
-        buffer.Should().Equal(0x12, 0x34);
+        buffer.Should()
+              .Equal(0x12, 0x34);
     }
 
     [Fact]
@@ -334,7 +355,9 @@ public sealed class SpanWriterTests
         writer.WriteSByte(-123);
 
         // Assert
-        buffer[0].Should().Be(0x85);
+        buffer[0]
+            .Should()
+            .Be(0x85);
     }
 
     [Fact]
@@ -349,7 +372,8 @@ public sealed class SpanWriterTests
         writer.WriteString("Hello, world");
 
         // Assert
-        buffer.Should().Equal(Encoding.GetBytes("Hello, world"));
+        buffer.Should()
+              .Equal(Encoding.GetBytes("Hello, world"));
     }
 
     [Fact]
@@ -368,7 +392,8 @@ public sealed class SpanWriterTests
               .Equal(
                   new byte[]
                   {
-                      0x00, 0x0D
+                      0x00,
+                      0x0D
                   }.Concat(Encoding.GetBytes("Hello, world!")));
     }
 
@@ -385,7 +410,9 @@ public sealed class SpanWriterTests
         writer.WriteString16(Encoding.GetString(buffer[..LENGTH]));
 
         // Assert
-        writer.Position.Should().Be(ushort.MaxValue + 2); // 2 bytes for length, ushort.MaxValue for string
+        writer.Position
+              .Should()
+              .Be(ushort.MaxValue + 2); // 2 bytes for length, ushort.MaxValue for string
     }
 
     [Fact]
@@ -421,7 +448,9 @@ public sealed class SpanWriterTests
         writer.WriteString8(Encoding.GetString(buffer[..LENGTH]));
 
         // Assert
-        writer.Position.Should().Be(byte.MaxValue + 1); // 1 byte for length, ushort.MaxValue for string
+        writer.Position
+              .Should()
+              .Be(byte.MaxValue + 1); // 1 byte for length, ushort.MaxValue for string
     }
 
     [Fact]
@@ -436,7 +465,8 @@ public sealed class SpanWriterTests
         writer.WriteUInt16(0x1234);
 
         // Assert
-        buffer.Should().Equal(0x12, 0x34);
+        buffer.Should()
+              .Equal(0x12, 0x34);
     }
 
     [Fact]
@@ -451,7 +481,8 @@ public sealed class SpanWriterTests
         writer.WriteUInt16(0x1234);
 
         // Assert
-        buffer.Should().Equal(0x34, 0x12);
+        buffer.Should()
+              .Equal(0x34, 0x12);
     }
 
     [Fact]
@@ -492,5 +523,73 @@ public sealed class SpanWriterTests
                   0x56,
                   0x34,
                   0x12);
+    }
+
+    [Fact]
+    public void WriteValue_ShouldWriteToBuffer()
+    {
+        // Arrange
+        var writer = new SpanWriter(Encoding);
+        const byte BYTE_VALUE = 10;
+        const sbyte SBYTE_VALUE = -10;
+        const ushort USHORT_VALUE = 100;
+        const short SHORT_VALUE = -100;
+        const uint UINT_VALUE = 1000;
+        const int INT_VALUE = -1000;
+        const bool BOOL_VALUE = true;
+        const byte X8 = 10;
+        const byte Y8 = 20;
+        const ushort X16 = 100;
+        const ushort Y16 = 200;
+
+        // Act
+        writer.WriteValue(BYTE_VALUE);
+        writer.WriteValue(SBYTE_VALUE);
+        writer.WriteValue(USHORT_VALUE);
+        writer.WriteValue(SHORT_VALUE);
+        writer.WriteValue(UINT_VALUE);
+        writer.WriteValue(INT_VALUE);
+        writer.WriteValue(BOOL_VALUE);
+        writer.WriteValue((x8: X8, y8: Y8));
+        writer.WriteValue((x16: X16, y16: Y16));
+
+        // Assert
+        var result = writer.ToSpan()
+                           .ToArray();
+
+        var expectedResult = new[]
+            {
+                BYTE_VALUE,
+                unchecked((byte)SBYTE_VALUE)
+            }.Concat(
+                 BitConverter.GetBytes(USHORT_VALUE)
+                             .Reverse())
+             .Concat(
+                 BitConverter.GetBytes(SHORT_VALUE)
+                             .Reverse())
+             .Concat(
+                 BitConverter.GetBytes(UINT_VALUE)
+                             .Reverse())
+             .Concat(
+                 BitConverter.GetBytes(INT_VALUE)
+                             .Reverse())
+             .Concat(
+                 BitConverter.GetBytes(BOOL_VALUE)
+                             .Reverse())
+             .Concat(
+                 new[]
+                 {
+                     X8,
+                     Y8
+                 })
+             .Concat(
+                 BitConverter.GetBytes(X16)
+                             .Reverse())
+             .Concat(
+                 BitConverter.GetBytes(Y16)
+                             .Reverse());
+
+        result.Should()
+              .ContainInOrder(expectedResult);
     }
 }

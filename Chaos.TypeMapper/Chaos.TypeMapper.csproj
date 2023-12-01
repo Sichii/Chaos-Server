@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-        <Nullable>enable</Nullable>
+        <Version>1.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\Chaos.TypeMapper.Abstractions\Chaos.TypeMapper.Abstractions.csproj"/>
     </ItemGroup>
+
 </Project>

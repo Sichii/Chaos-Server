@@ -1,7 +1,5 @@
 using Chaos.Collections.Common;
 using Chaos.Testing.Infrastructure.Definitions;
-using FluentAssertions;
-using Xunit;
 
 // ReSharper disable UnusedMember.Local
 
@@ -9,6 +7,53 @@ namespace Chaos.Common.Tests;
 
 public sealed class EnumCollectionTests
 {
+    [Fact]
+    public void HasValue_ShouldReturnFalse_WhenEnumTypeNotInCollection()
+    {
+        var result = new EnumCollection().HasValue(typeof(SampleEnum1), SampleEnum1.Value2);
+
+        result.Should()
+              .BeFalse();
+    }
+
+    [Fact]
+    public void HasValue_ShouldReturnFalse_WhenEnumValueDoesNotMatch()
+    {
+        // Arrange
+        var collection = new EnumCollection();
+        const SampleEnum1 ENUM_VALUE = SampleEnum1.Value1;
+        collection.Set(ENUM_VALUE);
+
+        var result = collection.HasValue(typeof(SampleEnum1), SampleEnum1.Value2);
+
+        result.Should()
+              .BeFalse();
+    }
+
+    [Fact]
+    public void HasValue_ShouldReturnTrue_WhenEnumValueMatches()
+    {
+        // Arrange
+        var collection = new EnumCollection();
+        const SampleEnum1 ENUM_VALUE = SampleEnum1.Value1;
+        collection.Set(ENUM_VALUE);
+
+        var result = collection.HasValue(typeof(SampleEnum1), SampleEnum1.Value1);
+
+        result.Should()
+              .BeTrue();
+    }
+
+    [Fact]
+    public void HasValue_ShouldThrowInvalidOperationException_ForFlagEnums()
+    {
+        Action action = () => new EnumCollection().HasValue(typeof(SampleFlag1), SampleFlag1.Value1);
+
+        action.Should()
+              .Throw<InvalidOperationException>()
+              .WithMessage("*flag enum*");
+    }
+
     [Fact]
     public void Remove_ShouldNotThrowException_WhenTypeDoesNotExist()
     {
@@ -19,7 +64,8 @@ public sealed class EnumCollectionTests
         var act = () => collection.Remove<SampleEnum1>();
 
         // Assert
-        act.Should().NotThrow();
+        act.Should()
+           .NotThrow();
     }
 
     [Fact]
@@ -33,7 +79,9 @@ public sealed class EnumCollectionTests
         collection.Remove<SampleEnum1>();
 
         // Assert
-        collection.TryGetValue<SampleEnum1>(out _).Should().BeFalse();
+        collection.TryGetValue<SampleEnum1>(out _)
+                  .Should()
+                  .BeFalse();
     }
 
     [Fact]
@@ -47,8 +95,12 @@ public sealed class EnumCollectionTests
         collection.Set(ENUM_VALUE);
 
         // Assert
-        collection.TryGetValue<SampleEnum1>(out var value).Should().BeTrue();
-        value.Should().Be(ENUM_VALUE);
+        collection.TryGetValue<SampleEnum1>(out var value)
+                  .Should()
+                  .BeTrue();
+
+        value.Should()
+             .Be(ENUM_VALUE);
     }
 
     [Fact]
@@ -77,7 +129,8 @@ public sealed class EnumCollectionTests
         var result = collection.TryGetValue<SampleEnum1>(out _);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -92,7 +145,10 @@ public sealed class EnumCollectionTests
         var result = collection.TryGetValue<SampleEnum1>(out var value);
 
         // Assert
-        result.Should().BeTrue();
-        value.Should().Be(ENUM_VALUE);
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be(ENUM_VALUE);
     }
 }

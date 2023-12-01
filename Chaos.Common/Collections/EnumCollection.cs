@@ -35,6 +35,7 @@ public sealed class EnumCollection : IEnumerable<KeyValuePair<Type, Enum>>
     /// <returns>
     ///     <c>true</c> if an enum of the given type was found, and is equal to the provided value, otherwise <c>false</c>
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Tested by HasValue(Type, Enum)")]
     public bool HasValue<T>(T value) where T: Enum => HasValue(typeof(T), value);
 
     /// <summary>

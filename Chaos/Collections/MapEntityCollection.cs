@@ -1,13 +1,6 @@
 using System.Diagnostics;
-using Chaos.Common.Utilities;
-using Chaos.Extensions;
-using Chaos.Extensions.Common;
-using Chaos.Extensions.Geometry;
-using Chaos.Geometry.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
-using Chaos.Time.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 
@@ -18,6 +11,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
+
     // ReSharper disable once NotAccessedField.Local
     private readonly ILogger Logger;
     private readonly HashSet<Merchant> Merchants;
@@ -33,8 +27,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         ILogger logger,
         int mapWidth,
         int mapHeight,
-        int walkableArea
-    )
+        int walkableArea)
     {
         Logger = logger;
         EntityLookup = new Dictionary<uint, MapEntity>();
@@ -60,22 +53,26 @@ public sealed class MapEntityCollection : IDeltaUpdatable
                 PointLookup[x, y] = new HashSet<MapEntity>(WorldEntity.IdComparer);
 
         //setup Values<T> cases
-        ValuesCases = new TypeSwitchExpression<IEnumerable>()
-                      .Case<Aisling>(() => Aislings)
-                      .Case<Monster>(() => Monsters)
-                      .Case<Merchant>(() => Merchants)
-                      .Case<GroundEntity>(() => GroundEntities)
-                      .Case<ReactorTile>(() => Reactors)
-                      .Case<Door>(() => Doors)
-                      .Case<Creature>(() => Aislings.Concat<Creature>(Monsters).Concat(Merchants))
-                      .Case<NamedEntity>(() => Aislings.Concat<NamedEntity>(Monsters).Concat(Merchants).Concat(GroundEntities))
-                      .Case<VisibleEntity>(
-                          () => Aislings.Concat<VisibleEntity>(Monsters).Concat(Merchants).Concat(GroundEntities).Concat(Doors))
-                      .Default(() => EntityLookup.Values);
+        ValuesCases = new TypeSwitchExpression<IEnumerable>().Case<Aisling>(Aislings)
+                                                             .Case<Monster>(Monsters)
+                                                             .Case<Merchant>(Merchants)
+                                                             .Case<GroundEntity>(GroundEntities)
+                                                             .Case<ReactorTile>(Reactors)
+                                                             .Case<Door>(Doors)
+                                                             .Case<Creature>(
+                                                                 () => Aislings.Concat<Creature>(Monsters)
+                                                                               .Concat(Merchants))
+                                                             .Case<NamedEntity>(
+                                                                 () => Aislings.Concat<NamedEntity>(Monsters)
+                                                                               .Concat(Merchants)
+                                                                               .Concat(GroundEntities))
+                                                             .Case<VisibleEntity>(
+                                                                 () => Aislings.Concat<VisibleEntity>(Monsters)
+                                                                               .Concat(Merchants)
+                                                                               .Concat(GroundEntities)
+                                                                               .Concat(Doors))
+                                                             .Default(EntityLookup.Values);
     }
-
-    /// <inheritdoc />
-    public void Update(TimeSpan delta) => Updatables.Update(delta);
 
     public void Add(uint id, MapEntity entity)
     {
@@ -122,11 +119,13 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         entities.Add(mapEntity);
     }
 
-    public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity =>
-        Bounds.Contains(point) ? PointLookup[point.X, point.Y].OfType<T>() : Enumerable.Empty<T>();
+    public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity
+        => Bounds.Contains(point)
+            ? PointLookup[point.X, point.Y]
+                .OfType<T>()
+            : Enumerable.Empty<T>();
 
-    public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity =>
-        points.SelectMany(AtPoint<T>);
+    public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => points.SelectMany(AtPoint<T>);
 
     public void Clear()
     {
@@ -218,6 +217,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         return false;
     }
 
+    /// <inheritdoc />
+    public void Update(TimeSpan delta) => Updatables.Update(delta);
+
     public IEnumerable<T> Values<T>() where T: MapEntity
     {
         var result = ValuesCases.Switch<T>();
@@ -273,7 +275,8 @@ public sealed class MapEntityCollection : IDeltaUpdatable
                         yield return t;
             }
         else //otherwise just check every entity of that type with a distance check
-            foreach (var entity in Values<T>().ThatAreWithinRange(point, range))
+            foreach (var entity in Values<T>()
+                         .ThatAreWithinRange(point, range))
                 yield return entity;
     }
 }

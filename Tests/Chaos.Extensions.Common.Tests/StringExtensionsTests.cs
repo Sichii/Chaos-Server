@@ -1,5 +1,4 @@
-using FluentAssertions;
-using Xunit;
+
 
 // ReSharper disable ArrangeAttributes
 
@@ -7,18 +6,140 @@ namespace Chaos.Extensions.Common.Tests;
 
 public sealed class StringExtensionsTests
 {
-    public static IEnumerable<object?[]> FuzzySearchTestData => new List<object?[]>
-    {
-        new object?[] { new[] { "kitten", "sitting", "mittens" }, "sitten", 0.6m, 0.33m, default(int?), true, "kitten" },
-        new object?[] { new[] { "kitten", "sitting", "mittens" }, "sitten", 0.6m, 0.33m, default(int?), false, "kitten" },
-        new object?[] { new[] { "kitten", "Sitting", "mittens" }, "sitteng", 0.6m, 0.33m, default(int?), true, "kitten" },
-        new object?[] { new[] { "kitten", "Sitting", "mittens" }, "sitteng", 0.6m, 0.33m, default(int?), false, "Sitting" },
-        new object?[] { new[] { "Written", "writing", "kitten" }, "ritten", 0.6m, 0.33m, default(int?), true, "Written" },
-        new object?[] { new[] { "Written", "writing", "kitten" }, "ritten", 0.6m, 0.33m, default(int?), false, "Written" },
-        new object?[] { new[] { "apple", "banana", "cherry" }, "peach", 0, 1, default(int?), true, "cherry" },
-        new object?[] { new[] { "apple", "banana", "cherry" }, "peach", 0, 1, default(int?), true, "cherry" },
-        new object?[] { Array.Empty<string>(), "peach", 0, 1, default(int?), true, default(string) }
-    };
+    public static IEnumerable<object?[]> FuzzySearchTestData
+        => new List<object?[]>
+        {
+            new object?[]
+            {
+                new[]
+                {
+                    "kitten",
+                    "sitting",
+                    "mittens"
+                },
+                "sitten",
+                0.6m,
+                0.33m,
+                default(int?),
+                true,
+                "kitten"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "kitten",
+                    "sitting",
+                    "mittens"
+                },
+                "sitten",
+                0.6m,
+                0.33m,
+                default(int?),
+                false,
+                "kitten"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "kitten",
+                    "Sitting",
+                    "mittens"
+                },
+                "sitteng",
+                0.6m,
+                0.33m,
+                default(int?),
+                true,
+                "kitten"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "kitten",
+                    "Sitting",
+                    "mittens"
+                },
+                "sitteng",
+                0.6m,
+                0.33m,
+                default(int?),
+                false,
+                "Sitting"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "Written",
+                    "writing",
+                    "kitten"
+                },
+                "ritten",
+                0.6m,
+                0.33m,
+                default(int?),
+                true,
+                "Written"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "Written",
+                    "writing",
+                    "kitten"
+                },
+                "ritten",
+                0.6m,
+                0.33m,
+                default(int?),
+                false,
+                "Written"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "apple",
+                    "banana",
+                    "cherry"
+                },
+                "peach",
+                0,
+                1,
+                default(int?),
+                true,
+                "cherry"
+            },
+            new object?[]
+            {
+                new[]
+                {
+                    "apple",
+                    "banana",
+                    "cherry"
+                },
+                "peach",
+                0,
+                1,
+                default(int?),
+                true,
+                "cherry"
+            },
+            new object?[]
+            {
+                Array.Empty<string>(),
+                "peach",
+                0,
+                1,
+                default(int?),
+                true,
+                default(string)
+            }
+        };
 
     //@formatter:off
     [Theory]
@@ -39,14 +160,14 @@ public sealed class StringExtensionsTests
         string string1,
         string string2,
         bool caseSensitive,
-        decimal expected
-    )
+        decimal expected)
     {
         // Act
         var actual = string1.CalculateSorensenCoefficient(string2, caseSensitive);
 
         // Assert
-        actual.Should().BeApproximately(expected, 0.0001m);
+        actual.Should()
+              .BeApproximately(expected, 0.0001m);
     }
 
     //@formatter:off
@@ -66,14 +187,14 @@ public sealed class StringExtensionsTests
         string str1,
         string str2,
         bool caseSensitive,
-        int expected
-    )
+        int expected)
     {
         // Act
         var actual = str1.CalculateLevenshteinDistance(str2, caseSensitive);
 
         // Assert
-        actual.Should().Be(expected);
+        actual.Should()
+              .Be(expected);
     }
 
     [Fact]
@@ -87,7 +208,8 @@ public sealed class StringExtensionsTests
         var result = STR.CenterAlign(WIDTH);
 
         // Assert
-        result.Should().BeEmpty(); // Expected result: ""
+        result.Should()
+              .BeEmpty(); // Expected result: ""
     }
 
     [Fact]
@@ -101,7 +223,8 @@ public sealed class StringExtensionsTests
         var result = STR.CenterAlign(WIDTH);
 
         // Assert
-        result.Should().Be("Hel"); // Expected result: "Hel"
+        result.Should()
+              .Be("Hel"); // Expected result: "Hel"
     }
 
     [Fact]
@@ -115,7 +238,8 @@ public sealed class StringExtensionsTests
         var result = STR.CenterAlign(WIDTH);
 
         // Assert
-        result.Should().Be("  Hello   "); // Expected result: "  Hello   "
+        result.Should()
+              .Be("  Hello   "); // Expected result: "  Hello   "
     }
 
     [Fact]
@@ -129,7 +253,8 @@ public sealed class StringExtensionsTests
         var result = STR.ContainsI(SUBSTRING);
 
         // Assert
-        result.Should().BeFalse(); // Expected result: false
+        result.Should()
+              .BeFalse(); // Expected result: false
     }
 
     [Fact]
@@ -143,7 +268,8 @@ public sealed class StringExtensionsTests
         var result = STR.ContainsI(SUBSTRING);
 
         // Assert
-        result.Should().BeTrue(); // Expected result: true
+        result.Should()
+              .BeTrue(); // Expected result: true
     }
 
     [Fact]
@@ -157,7 +283,8 @@ public sealed class StringExtensionsTests
         var result = STR.EndsWithI(SUBSTRING);
 
         // Assert
-        result.Should().BeFalse(); // Expected result: false
+        result.Should()
+              .BeFalse(); // Expected result: false
     }
 
     [Fact]
@@ -171,7 +298,8 @@ public sealed class StringExtensionsTests
         var result = STR.EndsWithI(SUBSTRING);
 
         // Assert
-        result.Should().BeTrue(); // Expected result: true
+        result.Should()
+              .BeTrue(); // Expected result: true
     }
 
     [Fact]
@@ -185,7 +313,8 @@ public sealed class StringExtensionsTests
         var result = STR1.EqualsI(STR2);
 
         // Assert
-        result.Should().BeFalse(); // Expected result: false
+        result.Should()
+              .BeFalse(); // Expected result: false
     }
 
     [Fact]
@@ -199,7 +328,8 @@ public sealed class StringExtensionsTests
         var result = STR1.EqualsI(STR2);
 
         // Assert
-        result.Should().BeTrue(); // Expected result: true
+        result.Should()
+              .BeTrue(); // Expected result: true
     }
 
     [Fact]
@@ -212,7 +342,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.FirstUpper();
 
         // Assert
-        result.Should().Be("Hello world"); // Expected result: "Hello world"
+        result.Should()
+              .Be("Hello world"); // Expected result: "Hello world"
     }
 
     [Fact]
@@ -225,7 +356,8 @@ public sealed class StringExtensionsTests
         Action action = () => INPUT.FirstUpper();
 
         // Assert
-        action.Should().Throw<ArgumentException>(); // Expected result: ArgumentException
+        action.Should()
+              .Throw<ArgumentException>(); // Expected result: ArgumentException
     }
 
     [Fact]
@@ -238,7 +370,80 @@ public sealed class StringExtensionsTests
         Action action = () => input!.FirstUpper();
 
         // Assert
-        action.Should().Throw<ArgumentNullException>(); // Expected result: ArgumentNullException
+        action.Should()
+              .Throw<ArgumentNullException>(); // Expected result: ArgumentNullException
+    }
+
+    [Theory]
+    [InlineData("Hello\r\nWorld", "Hello\nWorld")]
+    [InlineData("Hello\nWorld", "Hello\nWorld")]
+    [InlineData("Hello\rWorld", "Hello\nWorld")]
+    [InlineData("Hello\r\n\r\nWorld", "Hello\n\nWorld")]
+    [InlineData("Hello\r\nWorld\n", "Hello\nWorld")]
+    [InlineData("Hello\r\nWorld\r\n", "Hello\nWorld")]
+    public void FixLineEndings_ShouldReplaceLineEndingsCorrectly(string input, string expectedOutput)
+    {
+        // Act
+        var result = input.FixLineEndings();
+
+        // Assert
+        result.Should()
+              .Be(expectedOutput);
+    }
+
+    [Theory]
+    [InlineData(
+        new[]
+        {
+            "Hello World",
+            "Hi world",
+            "Greetings, World!"
+        },
+        "Helo World",
+        false,
+        true)]
+    [InlineData(
+        new[]
+        {
+            "apple",
+            "banana",
+            "cherry"
+        },
+        "Hello World",
+        false,
+        false)]
+    [InlineData(
+        new[]
+        {
+            "Hello World",
+            "HELLO WORLD",
+            "hello world"
+        },
+        "HELLO World",
+        true,
+        false)]
+    [InlineData(
+        new[]
+        {
+            "Hello World",
+            "HELLO WORLD",
+            "hello world"
+        },
+        "HELLO World",
+        false,
+        true)]
+    public void FuzzyContains_ShouldReturnExpectedResult_GivenVariousInputs(
+        string[] samples,
+        string searchTerm,
+        bool caseSensitive,
+        bool expected)
+    {
+        // Act
+        var result = samples.FuzzyContains(searchTerm, caseSensitive: caseSensitive);
+
+        // Assert
+        result.Should()
+              .Be(expected);
     }
 
     [Theory]
@@ -250,8 +455,7 @@ public sealed class StringExtensionsTests
         decimal maxDistancePct,
         int? maxDistance,
         bool caseSensitive,
-        string? expected
-    )
+        string? expected)
     {
         // Act
         var actual = strings.FuzzySearchBy(
@@ -263,7 +467,8 @@ public sealed class StringExtensionsTests
             caseSensitive);
 
         // Assert
-        actual.Should().Be(expected);
+        actual.Should()
+              .Be(expected);
     }
 
     [Theory]
@@ -275,8 +480,7 @@ public sealed class StringExtensionsTests
         decimal maxDistancePct,
         int? maxDistance,
         bool caseSensitive,
-        string? expected
-    )
+        string? expected)
     {
         // Act
         var actual = strings.FuzzySearch(
@@ -287,7 +491,8 @@ public sealed class StringExtensionsTests
             caseSensitive);
 
         // Assert
-        actual.Should().Be(expected);
+        actual.Should()
+              .Be(expected);
     }
 
     [Fact]
@@ -297,7 +502,9 @@ public sealed class StringExtensionsTests
         const string INPUT = "Hello, {One} and {Two}!";
 
         // Act and Assert
-        INPUT.Invoking(x => x.Inject("World")).Should().Throw<ArgumentException>();
+        INPUT.Invoking(x => x.Inject("World"))
+             .Should()
+             .Throw<ArgumentException>();
     }
 
     [Fact]
@@ -311,7 +518,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.Inject("World", "Universe");
 
         // Assert
-        result.Should().Be(EXPECTED);
+        result.Should()
+              .Be(EXPECTED);
     }
 
     [Fact]
@@ -325,7 +533,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.Inject();
 
         // Assert
-        result.Should().Be(EXPECTED);
+        result.Should()
+              .Be(EXPECTED);
     }
 
     [Fact]
@@ -338,7 +547,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.Inject();
 
         // Assert
-        result.Should().Be(INPUT);
+        result.Should()
+              .Be(INPUT);
     }
 
     [Fact]
@@ -352,7 +562,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.Inject("World");
 
         // Assert
-        result.Should().Be(EXPECTED);
+        result.Should()
+              .Be(EXPECTED);
     }
 
     [Fact]
@@ -367,7 +578,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.ReplaceI(OLD_VALUE, NEW_VALUE);
 
         // Assert
-        result.Should().Be("Hello World"); // Expected result: "Hello World"
+        result.Should()
+              .Be("Hello World"); // Expected result: "Hello World"
     }
 
     [Fact]
@@ -382,7 +594,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.ReplaceI(OLD_VALUE, NEW_VALUE);
 
         // Assert
-        result.Should().Be("Hi Hi World"); // Expected result: "Hi Hi World"
+        result.Should()
+              .Be("Hi Hi World"); // Expected result: "Hi Hi World"
     }
 
     [Fact]
@@ -396,7 +609,8 @@ public sealed class StringExtensionsTests
         var result = INPUT.StartsWithI(VALUE);
 
         // Assert
-        result.Should().BeFalse(); // Expected result: false
+        result.Should()
+              .BeFalse(); // Expected result: false
     }
 
     [Fact]
@@ -410,6 +624,7 @@ public sealed class StringExtensionsTests
         var result = INPUT.StartsWithI(VALUE);
 
         // Assert
-        result.Should().BeTrue(); // Expected result: true
+        result.Should()
+              .BeTrue(); // Expected result: true
     }
 }

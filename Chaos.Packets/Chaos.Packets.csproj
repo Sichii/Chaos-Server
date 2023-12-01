@@ -1,8 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Version>1.0.0</Version>
+    </PropertyGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Packets.Abstractions\Chaos.Packets.Abstractions.csproj"/>
     </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Definitions\"/>
-    </ItemGroup>
+
 </Project>

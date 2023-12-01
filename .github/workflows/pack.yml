@@ -1,0 +1,29 @@
+name: Build and Publish to NuGet
+
+on:
+  push:
+    branches:
+      - release/v*
+  pull_request:
+    branches:
+      - release/v*
+
+jobs:
+  build-and-publish:
+    if: github.repository == 'Sichii/Chaos-Server'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'  # Set your .NET Core version here
+
+      - name: Pack
+        run: dotnet pack --configuration Release -o nupkgs
+
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push "nupkgs/**/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "nupkgs/**/*.snupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate

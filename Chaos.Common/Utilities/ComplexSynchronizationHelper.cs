@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Synchronization;
 
@@ -26,8 +27,7 @@ public static class ComplexSynchronizationHelper
     public static async Task<IPolyDisposable> WaitAsync(
         TimeSpan overallTimeout,
         TimeSpan individualTimeout,
-        params FifoAutoReleasingSemaphoreSlim[] synchronizers
-    )
+        params FifoAutoReleasingSemaphoreSlim[] synchronizers)
     {
         synchronizers = synchronizers.Distinct()
                                      .ToArray();
@@ -61,6 +61,7 @@ public static class ComplexSynchronizationHelper
             }, Signature: \"{signature}\")");
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Just a wrapper class")]
     private sealed class CompositePolyDisposable : IPolyDisposable
     {
         private readonly List<IPolyDisposable> Dispoables;

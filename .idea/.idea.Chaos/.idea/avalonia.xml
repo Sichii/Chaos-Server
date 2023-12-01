@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="Chaos.Client/Chaos.Client/Controls/InitializationScreen.axaml" value="Chaos.Client/Chaos.Client/Chaos.Client.csproj" />
+        <entry key="Chaos.Client/Chaos.Client/Controls/MainWindow.axaml" value="Chaos.Client/Chaos.Client/Chaos.Client.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

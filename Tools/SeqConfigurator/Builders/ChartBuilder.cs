@@ -1,6 +1,3 @@
-using Seq.Api;
-using Seq.Api.Model.Dashboarding;
-using Seq.Api.Model.Signals;
 using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;
@@ -57,10 +54,10 @@ public sealed class ChartBuilder
         return this;
     }
 
-    public ChartBuilder WithSignalExpression(string signalId) => WithSignalExpression(
-        builder =>
-            builder.WithKind(SignalExpressionKind.Signal)
-                   .WithSignal(signalId));
+    public ChartBuilder WithSignalExpression(string signalId)
+        => WithSignalExpression(
+            builder => builder.WithKind(SignalExpressionKind.Signal)
+                              .WithSignal(signalId));
 
     public ChartBuilder WithSignalExpression(Action<SignalExpressionBuilder> builderAction)
     {

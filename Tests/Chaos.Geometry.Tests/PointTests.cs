@@ -1,7 +1,3 @@
-using Chaos.Geometry.Abstractions;
-using FluentAssertions;
-using Xunit;
-
 namespace Chaos.Geometry.Tests;
 
 public sealed class PointTests
@@ -17,8 +13,31 @@ public sealed class PointTests
         var point = new Point(X, Y);
 
         // Assert
-        point.X.Should().Be(X);
-        point.Y.Should().Be(Y);
+        point.X
+             .Should()
+             .Be(X);
+
+        point.Y
+             .Should()
+             .Be(Y);
+    }
+
+    [Fact]
+    public void Point_Deconstructor_CreatesPointWithGivenCoordinates()
+    {
+        // Arrange
+        const int X = 10;
+        const int Y = 20;
+
+        // Act
+        (var x, var y) = new Point(X, Y);
+
+        // Assert
+        x.Should()
+         .Be(X);
+
+        y.Should()
+         .Be(Y);
     }
 
     [Fact]
@@ -32,7 +51,8 @@ public sealed class PointTests
         var result = point.Equals(otherObject);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -46,7 +66,8 @@ public sealed class PointTests
         var result = point1.Equals(point2);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -62,7 +83,8 @@ public sealed class PointTests
         var result = point1.Equals(point2);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -75,8 +97,13 @@ public sealed class PointTests
         var newPoint = Point.From(originalPoint);
 
         // Assert
-        newPoint.X.Should().Be(originalPoint.X);
-        newPoint.Y.Should().Be(originalPoint.Y);
+        newPoint.X
+                .Should()
+                .Be(originalPoint.X);
+
+        newPoint.Y
+                .Should()
+                .Be(originalPoint.Y);
     }
 
     [Fact]
@@ -89,7 +116,8 @@ public sealed class PointTests
         var newPoint = Point.From(originalPoint);
 
         // Assert
-        newPoint.Should().BeEquivalentTo(originalPoint);
+        newPoint.Should()
+                .BeEquivalentTo(originalPoint);
     }
 
     [Fact]
@@ -104,8 +132,11 @@ public sealed class PointTests
         var hashCode2 = point.GetHashCode();
 
         // Assert
-        hashCode1.Should().Be(EXPECTED_HASH_CODE);
-        hashCode2.Should().Be(EXPECTED_HASH_CODE);
+        hashCode1.Should()
+                 .Be(EXPECTED_HASH_CODE);
+
+        hashCode2.Should()
+                 .Be(EXPECTED_HASH_CODE);
     }
 
     [Fact]
@@ -118,8 +149,11 @@ public sealed class PointTests
         var result = Point.TryParse(INPUT, out var point);
 
         // Assert
-        result.Should().BeFalse();
-        point.Should().Be(default(Point));
+        result.Should()
+              .BeFalse();
+
+        point.Should()
+             .Be(default(Point));
     }
 
     [Fact]
@@ -134,9 +168,16 @@ public sealed class PointTests
         var result = Point.TryParse(INPUT, out var point);
 
         // Assert
-        result.Should().BeTrue();
-        point.X.Should().Be(EXPECTED_X);
-        point.Y.Should().Be(EXPECTED_Y);
+        result.Should()
+              .BeTrue();
+
+        point.X
+             .Should()
+             .Be(EXPECTED_X);
+
+        point.Y
+             .Should()
+             .Be(EXPECTED_Y);
     }
 
     // CustomPoint class for testing Point.From method
