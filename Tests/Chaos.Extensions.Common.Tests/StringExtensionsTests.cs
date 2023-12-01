@@ -447,6 +447,78 @@ public sealed class StringExtensionsTests
     }
 
     [Theory]
+    [InlineData("Hello\r\nWorld", "Hello\nWorld")]
+    [InlineData("Hello\nWorld", "Hello\nWorld")]
+    [InlineData("Hello\rWorld", "Hello\nWorld")]
+    [InlineData("Hello\r\n\r\nWorld", "Hello\n\nWorld")]
+    [InlineData("Hello\r\nWorld\n", "Hello\nWorld")]
+    [InlineData("Hello\r\nWorld\r\n", "Hello\nWorld")]
+    public void FixLineEndings_ShouldReplaceLineEndingsCorrectly(string input, string expectedOutput)
+    {
+        // Act
+        var result = input.FixLineEndings();
+
+        // Assert
+        result.Should()
+              .Be(expectedOutput);
+    }
+
+    [Theory]
+    [InlineData(
+        new[]
+        {
+            "Hello World",
+            "Hi world",
+            "Greetings, World!"
+        },
+        "Helo World",
+        false,
+        true)]
+    [InlineData(
+        new[]
+        {
+            "apple",
+            "banana",
+            "cherry"
+        },
+        "Hello World",
+        false,
+        false)]
+    [InlineData(
+        new[]
+        {
+            "Hello World",
+            "HELLO WORLD",
+            "hello world"
+        },
+        "HELLO World",
+        true,
+        false)]
+    [InlineData(
+        new[]
+        {
+            "Hello World",
+            "HELLO WORLD",
+            "hello world"
+        },
+        "HELLO World",
+        false,
+        true)]
+    public void FuzzyContains_ShouldReturnExpectedResult_GivenVariousInputs(
+        string[] samples,
+        string searchTerm,
+        bool caseSensitive,
+        bool expected)
+    {
+        // Act
+        var result = samples.FuzzyContains(searchTerm, caseSensitive: caseSensitive);
+
+        // Assert
+        result.Should()
+              .Be(expected);
+    }
+
+    [Theory]
     [MemberData(nameof(FuzzySearchTestData))]
     public void FuzzySearchByTests(
         IEnumerable<string> strings,

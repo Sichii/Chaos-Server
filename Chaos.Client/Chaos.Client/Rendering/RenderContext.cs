@@ -6,7 +6,7 @@ public class RenderContext
 {
     private static readonly IMemoryCache MemoryCache = new MemoryCache(new MemoryCacheOptions());
 
-    public static RenderContext Instance { get; } = new();
-
     private RenderContext() { }
+
+    public static RenderContext Instance { get; } = new();
 }

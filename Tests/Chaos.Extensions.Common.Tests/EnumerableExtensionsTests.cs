@@ -177,4 +177,78 @@ public sealed class EnumerableExtensionsTests
         result.Should()
               .Be(expected);
     }
+
+    // ReSharper disable once ArrangeAttributes
+    [Theory]
+    [InlineData(
+        new[]
+        {
+            3,
+            8,
+            5,
+            2,
+            6,
+            1,
+            9
+        },
+        5,
+        6)]
+    [InlineData(
+        new[]
+        {
+            3,
+            2,
+            1
+        },
+        3,
+        3)]
+    public void NextHighest_ShouldReturnExpectedResult(int[] numbers, int seed, int expected)
+    {
+        // Arrange
+        var listNumbers = numbers.ToList();
+
+        // Act
+        var result = listNumbers.NextHighest(seed);
+
+        // Assert
+        result.Should()
+              .Be(expected);
+    }
+
+    // ReSharper disable once ArrangeAttributes
+    [Theory]
+    [InlineData(
+        new[]
+        {
+            3,
+            8,
+            5,
+            2,
+            6,
+            1,
+            9
+        },
+        5,
+        3)]
+    [InlineData(
+        new[]
+        {
+            3,
+            2,
+            1
+        },
+        3,
+        2)]
+    public void NextLowest_ShouldReturnExpectedResult(int[] numbers, int seed, int expected)
+    {
+        // Arrange
+        var listNumbers = numbers.ToList();
+
+        // Act
+        var result = listNumbers.NextLowest(seed);
+
+        // Assert
+        result.Should()
+              .Be(expected);
+    }
 }

@@ -1,5 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Testing.Infrastructure.Definitions;
+using FluentAssertions;
+using Xunit;
 
 namespace Chaos.Extensions.Common.Tests;
 
@@ -55,14 +57,14 @@ public sealed class EnumExtensionsTests
         EquipmentSlot.Accessory3)]
     public void ToEquipmentSlots_Should_Return_Correct_EquipmentSlots_For_EquipmentType(
         EquipmentType equipmentType,
-        params EquipmentSlot[] expectedSlots)
+        params EquipmentSlot[] expectedSlots
+    )
     {
         // Act
         var equipmentSlots = equipmentType.ToEquipmentSlots();
 
         // Assert
-        equipmentSlots.Should()
-                      .BeEquivalentTo(expectedSlots);
+        equipmentSlots.Should().BeEquivalentTo(expectedSlots);
     }
 
     [Fact]

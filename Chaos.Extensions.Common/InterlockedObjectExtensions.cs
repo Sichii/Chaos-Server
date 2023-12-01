@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Chaos.Common.Abstractions;
 
 namespace Chaos.Extensions.Common;
 

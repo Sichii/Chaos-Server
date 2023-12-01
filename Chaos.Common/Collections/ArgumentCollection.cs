@@ -33,8 +33,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
         arguments ??= Enumerable.Empty<string>();
 
         if (!string.IsNullOrEmpty(delimiter))
-            arguments = arguments.SelectMany(str => str.Split(delimiter))
-                                 .ToList();
+            arguments = arguments.SelectMany(str => str.Split(delimiter)).ToList();
 
         Arguments = arguments.ToList();
     }
@@ -49,9 +48,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     {
         Arguments = new List<string>();
 
-        foreach (var match in RegexCache.COMMAND_SPLIT_REGEX
-                                        .Matches(argumentStr)
-                                        .OfType<Match>())
+        foreach (var match in RegexCache.COMMAND_SPLIT_REGEX.Matches(argumentStr).OfType<Match>())
         {
             if (!match.Success)
                 continue;
@@ -67,9 +64,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </summary>
     /// <param name="argumentStr">A string containing arguments</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
-    public ArgumentCollection(string argumentStr, string delimiter)
-        => Arguments = argumentStr.Split(delimiter)
-                                  .ToList();
+    public ArgumentCollection(string argumentStr, string delimiter) => Arguments = argumentStr.Split(delimiter).ToList();
 
     /// <summary>
     ///     Creates an empty <see cref="ArgumentCollection" />
@@ -103,13 +98,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// <param name="argument">A string containing arguments</param>
     /// <param name="delimiter">The delimiter used to split the strings into arguments</param>
     [ExcludeFromCodeCoverage(Justification = "Nothing to test, just a shorthand")]
-    public void Add(string argument, string? delimiter)
-        => Add(
-            new[]
-            {
-                argument
-            },
-            delimiter);
+    public void Add(string argument, string? delimiter) => Add(new[] { argument }, delimiter);
 
     /// <summary>
     ///     Adds a string or argument to the end of the collection. The string will be parsed for arguments using the " " as a
@@ -119,9 +108,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// <param name="argument">A string containing arguments</param>
     public void Add(string argument)
     {
-        foreach (var match in RegexCache.COMMAND_SPLIT_REGEX
-                                        .Matches(argument)
-                                        .OfType<Match>())
+        foreach (var match in RegexCache.COMMAND_SPLIT_REGEX.Matches(argument).OfType<Match>())
         {
             if (!match.Success)
                 continue;

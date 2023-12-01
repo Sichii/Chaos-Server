@@ -41,10 +41,10 @@ public static class IntegerRandomizer
     /// <typeparam name="T">The type of object to return</typeparam>
     /// <returns>A random element from the specified collection if a choice is taken, otherwise <c>default</c></returns>
     [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
-    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, IEnumerable<int> weights)
-        => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
-                  .ToList()
-                  .PickRandomWeightedSingleOrDefault();
+    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, IEnumerable<int> weights) =>
+        choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
+               .ToList()
+               .PickRandomWeightedSingleOrDefault();
 
     /// <summary>
     ///     Randomly determins if a roll is successful or not.

@@ -294,6 +294,17 @@ public sealed class LocationTests
               .Be("TestMap:(5, 10)"); // Adjust this based on your actual expected format
     }
 
+    [Fact]
+    public void ToString_ReturnsExpectedFormat()
+    {
+        // Assuming ToString() outputs in the format: "Map: X,Y"
+        var location = new Location("TestMap", 5, 10);
+        var result = location.ToString();
+
+        result.Should()
+              .Be("TestMap:(5, 10)"); // Adjust this based on your actual expected format
+    }
+
     // CustomLocation class for testing Location.From method
     private sealed class MockLocation : ILocation
     {
