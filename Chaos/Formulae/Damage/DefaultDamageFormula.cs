@@ -37,8 +37,7 @@ public class DefaultDamageFormula : IDamageFormula
         Creature target,
         IScript script,
         int damage,
-        Element? elementOverride = null
-    )
+        Element? elementOverride = null)
     {
         ApplySkillSpellModifier(ref damage, script, source);
 
@@ -52,8 +51,8 @@ public class DefaultDamageFormula : IDamageFormula
 
     protected virtual void ApplyAcModifier(ref int damage, int defenderAc) => damage = Convert.ToInt32(damage * (1 + defenderAc / 100m));
 
-    protected virtual void ApplyElementalModifier(ref int damage, Element attackElement, Element defenseElement) =>
-        damage = Convert.ToInt32(damage * ElementalModifierLookup[(int)attackElement][(int)defenseElement]);
+    protected virtual void ApplyElementalModifier(ref int damage, Element attackElement, Element defenseElement)
+        => damage = Convert.ToInt32(damage * ElementalModifierLookup[(int)attackElement][(int)defenseElement]);
 
     protected virtual void ApplySkillSpellModifier(ref int damage, IScript source, Creature attacker)
     {
@@ -76,12 +75,13 @@ public class DefaultDamageFormula : IDamageFormula
         }
     }
 
-    protected virtual int GetDefenderAc(Creature defender) => defender switch
-    {
-        Aisling aisling => Math.Clamp(
-            aisling.UserStatSheet.EffectiveAc,
-            WorldOptions.Instance.MinimumAislingAc,
-            WorldOptions.Instance.MaximumAislingAc),
-        _ => Math.Clamp(defender.StatSheet.EffectiveAc, WorldOptions.Instance.MinimumMonsterAc, WorldOptions.Instance.MaximumMonsterAc)
-    };
+    protected virtual int GetDefenderAc(Creature defender)
+        => defender switch
+        {
+            Aisling aisling => Math.Clamp(
+                aisling.UserStatSheet.EffectiveAc,
+                WorldOptions.Instance.MinimumAislingAc,
+                WorldOptions.Instance.MaximumAislingAc),
+            _ => Math.Clamp(defender.StatSheet.EffectiveAc, WorldOptions.Instance.MinimumMonsterAc, WorldOptions.Instance.MaximumMonsterAc)
+        };
 }

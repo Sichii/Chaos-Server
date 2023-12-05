@@ -14,16 +14,16 @@ public class ComponentVars : StaticVars
 
     public virtual List<IPoint> GetAllPoints() => GetRequired<List<IPoint>>(CASCADE_ALL_POINTS_KEY);
 
-    public virtual TOptions GetOptions<TOptions>() =>
-        GetRequired<TOptions>(OPTIONS_KEY);
+    public virtual TOptions GetOptions<TOptions>() => GetRequired<TOptions>(OPTIONS_KEY);
 
-    public virtual IReadOnlyCollection<IPoint> GetPoints() =>
-        GetRequired<IReadOnlyCollection<IPoint>>(POINTS_KEY);
+    public virtual IReadOnlyCollection<IPoint> GetPoints() => GetRequired<IReadOnlyCollection<IPoint>>(POINTS_KEY);
 
     public virtual int GetStage() => GetRequired<int>(CASCADE_STAGE_KEY);
 
-    public virtual IReadOnlyCollection<T> GetTargets<T>() =>
-        GetRequired<IReadOnlyCollection<MapEntity>>(TARGETS_KEY).OfType<T>().ToList();
+    public virtual IReadOnlyCollection<T> GetTargets<T>()
+        => GetRequired<IReadOnlyCollection<MapEntity>>(TARGETS_KEY)
+           .OfType<T>()
+           .ToList();
 
     public virtual void SetAllPoints(List<IPoint> points) => Set(CASCADE_ALL_POINTS_KEY, points);
     public virtual void SetOptions(object options) => Set(OPTIONS_KEY, options);

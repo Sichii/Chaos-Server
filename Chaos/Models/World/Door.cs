@@ -15,8 +15,7 @@ public sealed class Door : VisibleEntity
         bool openRight,
         ushort sprite,
         MapInstance mapInstance,
-        IPoint point
-    )
+        IPoint point)
         : base(sprite, mapInstance, point)
     {
         Closed = true;
@@ -30,8 +29,9 @@ public sealed class Door : VisibleEntity
             mapInstance,
             doorTemplate.Point) { }
 
-    public IEnumerable<Door> GetCluster() => MapInstance.GetEntitiesWithinRange<Door>(this)
-                                                        .FloodFill(this);
+    public IEnumerable<Door> GetCluster()
+        => MapInstance.GetEntitiesWithinRange<Door>(this)
+                      .FloodFill(this);
 
     public override void HideFrom(Aisling aisling) { }
 
@@ -40,7 +40,8 @@ public sealed class Door : VisibleEntity
         if (!ShouldRegisterClick(source.Id))
             return;
 
-        var doorCluster = GetCluster().ToList();
+        var doorCluster = GetCluster()
+            .ToList();
 
         foreach (var door in doorCluster)
         {
@@ -52,8 +53,11 @@ public sealed class Door : VisibleEntity
             aisling.Client.SendDoors(doorCluster);
     }
 
-    public override bool ShouldRegisterClick(uint fromId) =>
-        !LastClicked.Any() || (DateTime.UtcNow.Subtract(LastClicked.Values.Max()).TotalMilliseconds > 1500);
+    public override bool ShouldRegisterClick(uint fromId)
+        => !LastClicked.Any()
+           || (DateTime.UtcNow.Subtract(LastClicked.Values.Max())
+                       .TotalMilliseconds
+               > 1500);
 
     public override void ShowTo(Aisling aisling) => aisling.Client.SendDoors(GetCluster());
 }

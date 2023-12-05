@@ -12,6 +12,7 @@ public interface IIdGenerator<out T> where T: INumber<T>
     ///     Retreive the next unique id
     /// </summary>
     T NextId { get; }
+
     /// <summary>
     ///     A shared instance of the IdGenerator
     /// </summary>

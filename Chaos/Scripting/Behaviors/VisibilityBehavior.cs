@@ -14,8 +14,8 @@ public class VisibilityBehavior
 
     private readonly ImmutableList<string> SeeTrueHiddenEffects = ImmutableList.Create(EffectBase.GetEffectKey(typeof(SeeTrueHideEffect)));
 
-    public virtual bool CanSee(Creature creature, VisibleEntity entity) =>
-        entity.Visibility switch
+    public virtual bool CanSee(Creature creature, VisibleEntity entity)
+        => entity.Visibility switch
         {
             VisibilityType.Normal     => true,
             VisibilityType.Hidden     => SeeHiddenEffects.Any(key => creature.Effects.Contains(key)),

@@ -14,6 +14,7 @@ public sealed record ConfirmClientWalkArgs : ISendArgs
     ///     The direction for the client to walk
     /// </summary>
     public Direction Direction { get; set; }
+
     /// <summary>
     ///     The point the client is supposed to be walking from
     /// </summary>

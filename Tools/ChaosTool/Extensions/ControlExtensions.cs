@@ -82,21 +82,21 @@ internal static class ControlExtensions
         this DataGrid dataGrid,
         int rowIndex,
         int columnIndex,
-        bool focus = true
-    )
+        bool focus = true)
     {
         if (!dataGrid.SelectionUnit.Equals(DataGridSelectionUnit.Cell))
             throw new ArgumentException("The SelectionUnit of the DataGrid must be set to Cell.");
 
-        if ((rowIndex < 0) || (rowIndex > dataGrid.Items.Count - 1))
+        if ((rowIndex < 0) || (rowIndex > (dataGrid.Items.Count - 1)))
             throw new ArgumentException($"{rowIndex} is an invalid row index.");
 
-        if ((columnIndex < 0) || (columnIndex > dataGrid.Columns.Count - 1))
+        if ((columnIndex < 0) || (columnIndex > (dataGrid.Columns.Count - 1)))
             throw new ArgumentException($"{columnIndex} is an invalid column index.");
 
         dataGrid.SelectedCells.Clear();
 
         var item = dataGrid.Items[rowIndex]!;
+
         // ReSharper disable once UseNegatedPatternMatching
         var row = dataGrid.ItemContainerGenerator.ContainerFromIndex(rowIndex) as DataGridRow;
 

@@ -12,18 +12,22 @@ public ref struct ServerPacket
     ///     The byte buffer containing the packet data.
     /// </summary>
     public Span<byte> Buffer;
+
     /// <summary>
     ///     The sequence number of the packet.
     /// </summary>
     public byte Sequence { get; set; }
+
     /// <summary>
     ///     Determines whether the packet should be encrypted.
     /// </summary>
-    public bool ShouldEncrypt { get; set; }
+    public bool IsEncrypted { get; set; }
+
     /// <summary>
     ///     The operation code of the server packet.
     /// </summary>
     public ServerOpCode OpCode { get; }
+
     /// <summary>
     ///     The signature byte of the packet.
     /// </summary>
@@ -38,7 +42,7 @@ public ref struct ServerPacket
         Sequence = 0;
         OpCode = ServerOpCode.ConnectionInfo;
         Buffer = new Span<byte>();
-        ShouldEncrypt = false;
+        IsEncrypted = false;
     }
 
     /// <summary>
@@ -51,7 +55,7 @@ public ref struct ServerPacket
         Sequence = 0;
         OpCode = opcode;
         Buffer = new Span<byte>();
-        ShouldEncrypt = false;
+        IsEncrypted = false;
     }
 
     /// <summary>
@@ -80,7 +84,9 @@ public ref struct ServerPacket
     ///     Converts the packet data to an array of bytes.
     /// </summary>
     /// <returns>An array of bytes representing the packet data.</returns>
-    public byte[] ToArray() => ToSpan().ToArray();
+    public byte[] ToArray()
+        => ToSpan()
+            .ToArray();
 
     /// <summary>
     ///     Converts the packet data to a memory block of bytes.
@@ -89,7 +95,7 @@ public ref struct ServerPacket
     public readonly Memory<byte> ToMemory()
     {
         //the length of the packet after the length portion of the header plus the packet tail (determined by encryption type)
-        var resultLength = Buffer.Length + (ShouldEncrypt ? 5 : 4) - 3;
+        var resultLength = Buffer.Length + (IsEncrypted ? 5 : 4) - 3;
         var memBuffer = new byte[resultLength + 3];
 
         //write packet header
@@ -113,7 +119,7 @@ public ref struct ServerPacket
     public Span<byte> ToSpan()
     {
         //the length of the packet after the length portion of the header plus the packet tail (determined by encryption type)
-        var resultLength = Buffer.Length + (ShouldEncrypt ? 5 : 4) - 3;
+        var resultLength = Buffer.Length + (IsEncrypted ? 5 : 4) - 3;
 
         var resultBuffer = new Span<byte>(new byte[resultLength + 3])
         {

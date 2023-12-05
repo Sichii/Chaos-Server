@@ -25,6 +25,7 @@ namespace Chaos;
 [JsonSerializable(typeof(TimedEventCollection.Event))]
 [JsonSerializable(typeof(EventMetaSchema))]
 [JsonSerializable(typeof(Animation))]
+
 //schemas
 [JsonSerializable(typeof(GuildSchema))]
 [JsonSerializable(typeof(GuildRankSchema))]
@@ -67,6 +68,7 @@ namespace Chaos;
 [JsonSerializable(typeof(BulletinBoardSchema))]
 [JsonSerializable(typeof(MailBoxSchema))]
 [JsonSerializable(typeof(PostSchema))]
+
 //collections
 [JsonSerializable(typeof(List<ItemSchema>))]
 [JsonSerializable(typeof(List<SkillSchema>))]
@@ -115,6 +117,7 @@ namespace Chaos;
 [JsonSerializable(typeof(Dictionary<string, int>))]
 [JsonSerializable(typeof(Dictionary<string, TimedEventCollection.Event>))]
 [JsonSerializable(typeof(HashSet<string>))]
+
 //enums
 [JsonSerializable(typeof(Stat))]
 [JsonSerializable(typeof(BodyAnimation))]
@@ -130,6 +133,7 @@ namespace Chaos;
 [JsonSerializable(typeof(EquipmentType?))]
 [JsonSerializable(typeof(LevelCircle?))]
 [JsonSerializable(typeof(Element?))]
+
 //numerics
 [JsonSerializable(typeof(byte))]
 [JsonSerializable(typeof(sbyte))]
@@ -153,12 +157,15 @@ namespace Chaos;
 [JsonSerializable(typeof(decimal?))]
 [JsonSerializable(typeof(float?))]
 [JsonSerializable(typeof(double?))]
+
 //other primitives
 [JsonSerializable(typeof(DateTime))]
 [JsonSerializable(typeof(TimeSpan))]
 [JsonSerializable(typeof(DateTime?))]
 [JsonSerializable(typeof(TimeSpan?))]
+
 //obj
 [JsonSerializable(typeof(object))]
+
 // ReSharper disable once ClassCanBeSealed.Global No it can not
 public partial class SerializationContext : JsonSerializerContext { }

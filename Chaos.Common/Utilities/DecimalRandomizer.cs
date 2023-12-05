@@ -40,10 +40,10 @@ public static class DecimalRandomizer
     /// <param name="weights">The weights of those choices</param>
     /// <typeparam name="T">The type of object to return</typeparam>
     /// <returns>A random element from the specified collection if a choice is taken, otherwise <c>default</c></returns>
-    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, IEnumerable<decimal> weights) =>
-        choices.Zip(weights, (choice, weight) => new KeyValuePair<T, decimal>(choice, weight))
-               .ToList()
-               .PickRandomWeightedSingleOrDefault();
+    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, IEnumerable<decimal> weights)
+        => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, decimal>(choice, weight))
+                  .ToList()
+                  .PickRandomWeightedSingleOrDefault();
 
     /// <summary>
     ///     Randomly determins if a roll is successful or not.

@@ -17,8 +17,7 @@ public class GuildRankManagementScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildRankManagementScript> logger
-    )
+        ILogger<GuildRankManagementScript> logger)
         : base(
             subject,
             clientRegistry,

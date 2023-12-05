@@ -48,8 +48,7 @@ public static class ShutdownUtility
         IClientRegistry<IWorldClient> clients,
         int mins,
         CancellationTokenSource serverCancellationTokenSource,
-        CancellationToken cancellationToken
-    )
+        CancellationToken cancellationToken)
     {
         var deltaTime = new DeltaTime();
         var periodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
@@ -79,7 +78,7 @@ public static class ShutdownUtility
 
             if (messageTimer.IntervalElapsed)
             {
-                serverCancellationTokenSource.Cancel();
+                await serverCancellationTokenSource.CancelAsync();
 
                 return;
             }

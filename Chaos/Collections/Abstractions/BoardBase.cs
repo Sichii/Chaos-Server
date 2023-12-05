@@ -22,8 +22,7 @@ public abstract class BoardBase : IEnumerable<Post>
         ushort boardId,
         string name,
         string key,
-        IEnumerable<Post>? posts = null
-    )
+        IEnumerable<Post>? posts = null)
     {
         BoardId = boardId;
         Name = name;
@@ -38,7 +37,10 @@ public abstract class BoardBase : IEnumerable<Post>
         if (posts is not null)
             foreach (var post in posts.OrderBy(p => p.CreationDate))
             {
-                var postActual = post with { PostId = PostIdGenerator.NextId };
+                var postActual = post with
+                {
+                    PostId = PostIdGenerator.NextId
+                };
 
                 Posts[postActual.PostId] = postActual;
             }
@@ -80,11 +82,10 @@ public abstract class BoardBase : IEnumerable<Post>
         string author,
         string subject,
         string message,
-        bool highlighted = false
-    );
+        bool highlighted = false);
 
-    protected virtual bool ShouldShowTo(uint clientId) => !LastShown.TryGetValue(clientId, out var lastShown)
-                                                          || (DateTime.UtcNow.Subtract(lastShown) > MINIMUM_SHOW_INTERVAL);
+    protected virtual bool ShouldShowTo(uint clientId)
+        => !LastShown.TryGetValue(clientId, out var lastShown) || (DateTime.UtcNow.Subtract(lastShown) > MINIMUM_SHOW_INTERVAL);
 
     public abstract void Show(Aisling aisling, short startPostId = short.MaxValue);
 

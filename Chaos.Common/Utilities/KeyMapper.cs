@@ -14,6 +14,7 @@ public class KeyMapper<T> where T: INumber<T>
     ///     The id generator used to generate ids for keys
     /// </summary>
     protected IIdGenerator<T> IdGenerator { get; }
+
     /// <summary>
     ///     The map of keys to ids
     /// </summary>

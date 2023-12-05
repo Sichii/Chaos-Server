@@ -14,14 +14,12 @@ public interface IReactorTileFactory
         bool shouldBlockPathfinding,
         ICollection<string> scriptKeys,
         IDictionary<string, IScriptVars> scriptVars,
-        Creature? owner = null
-    );
+        Creature? owner = null);
 
     ReactorTile Create(
         string templateKey,
         MapInstance mapInstance,
         IPoint point,
         ICollection<string>? extraScriptKeys = null,
-        Creature? owner = null
-    );
+        Creature? owner = null);
 }

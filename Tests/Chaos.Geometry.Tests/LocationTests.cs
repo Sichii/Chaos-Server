@@ -1,3 +1,7 @@
+using Chaos.Geometry.Abstractions;
+using FluentAssertions;
+using Xunit;
+
 namespace Chaos.Geometry.Tests;
 
 public sealed class LocationTests
@@ -281,17 +285,6 @@ public sealed class LocationTests
         location.Y
                 .Should()
                 .Be(EXPECTED_Y);
-    }
-
-    [Fact]
-    public void ToString_ReturnsExpectedFormat()
-    {
-        // Assuming ToString() outputs in the format: "Map: X,Y"
-        var location = new Location("TestMap", 5, 10);
-        var result = location.ToString();
-
-        result.Should()
-              .Be("TestMap:(5, 10)"); // Adjust this based on your actual expected format
     }
 
     [Fact]

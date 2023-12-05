@@ -75,7 +75,7 @@ public static class CircleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Radius >= circle.Center.DistanceFrom(other.Center) + other.Radius;
+        return circle.Radius >= (circle.Center.DistanceFrom(other.Center) + other.Radius);
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ public static class CircleExtensions
                 var xdc = x - centerX;
                 var ydc = y - centerY;
 
-                if (xdc * xdc + ydc * ydc <= radiusSqrd)
+                if ((xdc * xdc + ydc * ydc) <= radiusSqrd)
                 {
                     var xS = centerX - xdc;
                     var yS = centerY - ydc;
@@ -276,6 +276,6 @@ public static class CircleExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Center.EuclideanDistanceFrom(other.Center) <= circle.Radius + other.Radius;
+        return circle.Center.EuclideanDistanceFrom(other.Center) <= (circle.Radius + other.Radius);
     }
 }

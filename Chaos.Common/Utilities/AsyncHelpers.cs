@@ -121,7 +121,7 @@ public static class AsyncHelpers
             WorkItemsWaiting.Set();
         }
 
-        public override void Send(SendOrPostCallback d, object? state) =>
-            throw new NotSupportedException("We cannot send to our same thread");
+        public override void Send(SendOrPostCallback d, object? state)
+            => throw new NotSupportedException("We cannot send to our same thread");
     }
 }

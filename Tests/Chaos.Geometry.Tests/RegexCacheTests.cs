@@ -28,7 +28,9 @@ public sealed class RegexCacheTests
         var match = regex.Match(input);
 
         // Assert
-        match.Success.Should().BeFalse();
+        match.Success
+             .Should()
+             .BeFalse();
     }
 
     //@formatter:off
@@ -59,8 +61,7 @@ public sealed class RegexCacheTests
         string input,
         string expectedGroup1,
         string expectedGroup2,
-        string expectedGroup3
-    )
+        string expectedGroup3)
     {
         // Arrange
         var regex = RegexCache.LOCATION_REGEX;
@@ -69,10 +70,24 @@ public sealed class RegexCacheTests
         var match = regex.Match(input);
 
         // Assert
-        match.Success.Should().BeTrue();
-        match.Groups[1].Value.Should().Be(expectedGroup1);
-        match.Groups[2].Value.Should().Be(expectedGroup2);
-        match.Groups[3].Value.Should().Be(expectedGroup3);
+        match.Success
+             .Should()
+             .BeTrue();
+
+        match.Groups[1]
+             .Value
+             .Should()
+             .Be(expectedGroup1);
+
+        match.Groups[2]
+             .Value
+             .Should()
+             .Be(expectedGroup2);
+
+        match.Groups[3]
+             .Value
+             .Should()
+             .Be(expectedGroup3);
     }
 
     [Theory]
@@ -92,7 +107,9 @@ public sealed class RegexCacheTests
         var match = regex.Match(input);
 
         // Assert
-        match.Success.Should().BeFalse();
+        match.Success
+             .Should()
+             .BeFalse();
     }
 
     [Theory]
@@ -111,8 +128,18 @@ public sealed class RegexCacheTests
         var match = regex.Match(input);
 
         // Assert
-        match.Success.Should().BeTrue();
-        match.Groups[1].Value.Should().Be(expectedGroup1);
-        match.Groups[2].Value.Should().Be(expectedGroup2);
+        match.Success
+             .Should()
+             .BeTrue();
+
+        match.Groups[1]
+             .Value
+             .Should()
+             .Be(expectedGroup1);
+
+        match.Groups[2]
+             .Value
+             .Should()
+             .Be(expectedGroup2);
     }
 }

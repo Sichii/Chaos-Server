@@ -18,8 +18,12 @@ public sealed class AutoReleasingMonitorTests
             lockAcquired = true;
 
         // Assert
-        lockAcquired.Should().BeTrue();
-        monitor.IsEntered.Should().BeFalse();
+        lockAcquired.Should()
+                    .BeTrue();
+
+        monitor.IsEntered
+               .Should()
+               .BeFalse();
     }
 
     [Fact]
@@ -34,8 +38,12 @@ public sealed class AutoReleasingMonitorTests
             lockAcquired = true;
 
         // Assert
-        lockAcquired.Should().BeTrue();
-        monitor.IsEntered.Should().BeFalse();
+        lockAcquired.Should()
+                    .BeTrue();
+
+        monitor.IsEntered
+               .Should()
+               .BeFalse();
     }
 
     [Fact]
@@ -49,7 +57,9 @@ public sealed class AutoReleasingMonitorTests
         monitor.Exit();
 
         // Assert
-        monitor.IsEntered.Should().BeFalse();
+        monitor.IsEntered
+               .Should()
+               .BeFalse();
     }
 
     [Fact]
@@ -62,7 +72,8 @@ public sealed class AutoReleasingMonitorTests
         var disposeAction = () => disposable.Dispose();
 
         // Assert
-        disposeAction.Should().NotThrow();
+        disposeAction.Should()
+                     .NotThrow();
     }
 
     [Fact]
@@ -77,8 +88,12 @@ public sealed class AutoReleasingMonitorTests
             lockAcquired = true;
 
         // Assert
-        lockAcquired.Should().BeTrue();
-        monitor.IsEntered.Should().BeFalse();
+        lockAcquired.Should()
+                    .BeTrue();
+
+        monitor.IsEntered
+               .Should()
+               .BeFalse();
     }
 
     [Fact]
@@ -93,7 +108,10 @@ public sealed class AutoReleasingMonitorTests
         var executed = ThreadPool.QueueUserWorkItem(_ => subscription = monitor.TryEnter(100));
 
         // Assert
-        executed.Should().BeTrue();
-        subscription.Should().BeNull();
+        executed.Should()
+                .BeTrue();
+
+        subscription.Should()
+                    .BeNull();
     }
 }

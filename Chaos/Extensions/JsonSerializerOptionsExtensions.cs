@@ -30,6 +30,6 @@ public static class JsonSerializerOptionsExtensions
                                 .Compile();
     }
 
-    public static void SetTypeResolver(this JsonSerializerOptions options, IJsonTypeInfoResolver resolver) =>
-        SetTypeResolverAction(options, resolver);
+    public static void SetTypeResolver(this JsonSerializerOptions options, IJsonTypeInfoResolver resolver)
+        => SetTypeResolverAction(options, resolver);
 }

@@ -17,8 +17,8 @@ public sealed class CounterCollection : IEnumerable<KeyValuePair<string, int>>
     /// <summary>
     ///     Initializes a new instance of the CounterCollection class with an optional initial set of key-value pairs.
     /// </summary>
-    public CounterCollection(IEnumerable<KeyValuePair<string, int>>? enumerable = null) =>
-        Counters = new ConcurrentDictionary<string, int>(
+    public CounterCollection(IEnumerable<KeyValuePair<string, int>>? enumerable = null)
+        => Counters = new ConcurrentDictionary<string, int>(
             enumerable ?? Array.Empty<KeyValuePair<string, int>>(),
             StringComparer.OrdinalIgnoreCase);
 

@@ -12,8 +12,10 @@ public sealed record Location : ILocation, IEquatable<ILocation>
 {
     /// <inheritdoc />
     public string Map { get; init; }
+
     /// <inheritdoc />
     public int X { get; init; }
+
     /// <inheritdoc />
     public int Y { get; init; }
 
@@ -46,10 +48,7 @@ public sealed record Location : ILocation, IEquatable<ILocation>
         : this(map, point.X, point.Y) { }
 
     /// <inheritdoc />
-    public bool Equals(ILocation? other) => other is not null
-                                            && (X == other.X)
-                                            && (Y == other.Y)
-                                            && (Map == other.Map);
+    public bool Equals(ILocation? other) => other is not null && (X == other.X) && (Y == other.Y) && (Map == other.Map);
 
     /// <summary>
     ///     Deconstructs a location

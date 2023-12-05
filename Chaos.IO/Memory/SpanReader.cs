@@ -12,22 +12,27 @@ public ref struct SpanReader
 {
     private readonly Span<byte> Buffer;
     private readonly bool IsLittleEndian;
+
     /// <summary>
     ///     Gets the current position in the Span.
     /// </summary>
     public int Position { get; set; }
+
     /// <summary>
     ///     Gets the Encoding used for string operations.
     /// </summary>
     public Encoding Encoding { get; }
+
     /// <summary>
     ///     Gets the endianness of the data.
     /// </summary>
     public Endianness Endianness { get; }
+
     /// <summary>
     ///     Gets a value indicating whether the reader reached the end of the Span.
     /// </summary>
     public readonly bool EndOfSpan => Position >= Buffer.Length;
+
     /// <summary>
     ///     Gets the number of remaining bytes in the Span.
     /// </summary>
@@ -107,7 +112,8 @@ public ref struct SpanReader
         var start = Position;
         var end = Position += length;
 
-        return Buffer[start..end].ToArray();
+        return Buffer[start..end]
+            .ToArray();
     }
 
     /// <summary>

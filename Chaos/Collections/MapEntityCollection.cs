@@ -18,6 +18,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
+
     // ReSharper disable once NotAccessedField.Local
     private readonly ILogger Logger;
     private readonly HashSet<Merchant> Merchants;
@@ -33,8 +34,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         ILogger logger,
         int mapWidth,
         int mapHeight,
-        int walkableArea
-    )
+        int walkableArea)
     {
         Logger = logger;
         EntityLookup = new Dictionary<uint, MapEntity>();
@@ -66,10 +66,18 @@ public sealed class MapEntityCollection : IDeltaUpdatable
                                                              .Case<GroundEntity>(GroundEntities)
                                                              .Case<ReactorTile>(Reactors)
                                                              .Case<Door>(Doors)
-                                                             .Case<Creature>(() => Aislings.Concat<Creature>(Monsters).Concat(Merchants))
-                                                             .Case<NamedEntity>(() => Aislings.Concat<NamedEntity>(Monsters).Concat(Merchants).Concat(GroundEntities))
+                                                             .Case<Creature>(
+                                                                 () => Aislings.Concat<Creature>(Monsters)
+                                                                               .Concat(Merchants))
+                                                             .Case<NamedEntity>(
+                                                                 () => Aislings.Concat<NamedEntity>(Monsters)
+                                                                               .Concat(Merchants)
+                                                                               .Concat(GroundEntities))
                                                              .Case<VisibleEntity>(
-                                                                 () => Aislings.Concat<VisibleEntity>(Monsters).Concat(Merchants).Concat(GroundEntities).Concat(Doors))
+                                                                 () => Aislings.Concat<VisibleEntity>(Monsters)
+                                                                               .Concat(Merchants)
+                                                                               .Concat(GroundEntities)
+                                                                               .Concat(Doors))
                                                              .Default(EntityLookup.Values);
     }
 
@@ -121,11 +129,13 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         entities.Add(mapEntity);
     }
 
-    public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity =>
-        Bounds.Contains(point) ? PointLookup[point.X, point.Y].OfType<T>() : Enumerable.Empty<T>();
+    public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity
+        => Bounds.Contains(point)
+            ? PointLookup[point.X, point.Y]
+                .OfType<T>()
+            : Enumerable.Empty<T>();
 
-    public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity =>
-        points.SelectMany(AtPoint<T>);
+    public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => points.SelectMany(AtPoint<T>);
 
     public void Clear()
     {
@@ -256,7 +266,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
         //if we can expect to search significantly fewer entities by searching points
         //then search by point lookup
-        if (10 + area * avgEntitiesPerTile < entityCount)
+        if ((10 + area * avgEntitiesPerTile) < entityCount)
             foreach (var pt in point.SpiralSearch(range))
             {
                 if (!Bounds.Contains(pt))
@@ -272,7 +282,8 @@ public sealed class MapEntityCollection : IDeltaUpdatable
                         yield return t;
             }
         else //otherwise just check every entity of that type with a distance check
-            foreach (var entity in Values<T>().ThatAreWithinRange(point, range))
+            foreach (var entity in Values<T>()
+                         .ThatAreWithinRange(point, range))
                 yield return entity;
     }
 }

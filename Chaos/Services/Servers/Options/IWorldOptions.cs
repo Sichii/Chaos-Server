@@ -22,6 +22,7 @@ public interface IWorldOptions
     ///     service during startup.
     /// </summary>
     ChannelSettings[] DefaultChannels { get; }
+
     /// <summary>
     ///     This is the maximum distance from a player that they can drop items or gold on the ground. <br />
     ///     A value of -1 would effectively disable dropping items <br />
@@ -29,11 +30,13 @@ public interface IWorldOptions
     ///     A value of 12 would allow players to drop items anywhere in their viewport
     /// </summary>
     int DropRange { get; }
+
     /// <summary>
     ///     This is the template key of the merchant to display when a player presses F1. This is generally some kind of help
     ///     npc
     /// </summary>
     string F1MerchantTemplateKey { get; }
+
     /// <summary>
     ///     The number of minutes that ground items will remain on the ground before despawning. This includes items dropped by
     ///     players for any reason
@@ -59,11 +62,13 @@ public interface IWorldOptions
     ///     The default message color used for guild chat
     /// </summary>
     MessageColor GuildMessageColor { get; }
+
     /// <summary>
     ///     Default null.<br />If specified, locks loot drops to the reward target for this many seconds.<br />If null, loot
     ///     drops are not locked to the reward target.
     /// </summary>
     int? LootDropsLockToRewardTargetSecs { get; }
+
     /// <summary>
     ///     It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown
     ///     could become a huge
@@ -75,6 +80,7 @@ public interface IWorldOptions
     ///     If desired, this value can be set to 3 to emulate the original game
     /// </summary>
     int MaxActionsPerSecond { get; }
+
     /// <summary>
     ///     When players cast spells, each spell line takes approximately 1000ms to chant. The amount of time a spell will take
     ///     to cast can be
@@ -96,45 +102,54 @@ public interface IWorldOptions
     ///     A good range of values for this setting would be 500 - 1500, with lower values being more strict.
     /// </summary>
     int MaxChantTimeBurdenMs { get; }
+
     /// <summary>
     ///     This is the maximum amount of gold a player can hold in their inventory.
     /// </summary>
     int MaxGoldHeld { get; }
+
     /// <summary>
     ///     The maximum number of players that can be in a group together. If a group reaches this size, invites and invite
     ///     accepts will fail.
     /// </summary>
     int MaxGroupSize { get; }
+
     /// <summary>
     ///     This is the maximum amount of AC a player can have. damage formulas can be changed, but with the default damage
     ///     formula, higher AC =
     ///     more damage taken.
     /// </summary>
     int MaximumAislingAc { get; }
+
     /// <summary>
     ///     This is the maximum amount of AC a monster can have. damage formulas can be changed, but with the default damage
     ///     formula, higher AC =
     ///     more damage taken.
     /// </summary>
     int MaximumMonsterAc { get; }
+
     /// <summary>
     ///     The maximum number of items a player can use in a second
     /// </summary>
     int MaxItemsPerSecond { get; }
+
     /// <summary>
     ///     This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach
     ///     this level you will
     ///     stop gaining experience.
     /// </summary>
     int MaxLevel { get; }
+
     /// <summary>
     ///     The maximum number of skills a player can use in a second
     /// </summary>
     int MaxSkillsPerSecond { get; }
+
     /// <summary>
     ///     The maximum number of spells a player can use in a second
     /// </summary>
     int MaxSpellsPerSecond { get; }
+
     /// <summary>
     ///     This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage
     ///     formula, lower AC =
@@ -142,6 +157,7 @@ public interface IWorldOptions
     ///     With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.
     /// </summary>
     int MinimumAislingAc { get; }
+
     /// <summary>
     ///     This is the minimum amount of AC a monster can have. damage formulas can be changed, but with the default damage
     ///     formula, lower AC =
@@ -149,6 +165,7 @@ public interface IWorldOptions
     ///     With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.
     /// </summary>
     int MinimumMonsterAc { get; }
+
     /// <summary>
     ///     This is the maximum distance from a player that they pick up items or money from the ground.<br />
     ///     A value of -1 would effectively disable picking up items<br />
@@ -156,18 +173,22 @@ public interface IWorldOptions
     ///     A value of 12 would allow players to pick up items from anywhere in their viewport<br />
     /// </summary>
     int PickupRange { get; }
+
     /// <summary>
     ///     When this is enabled it will prevent players from utilizing refreshing(F5) to walk faster.
     /// </summary>
     bool ProhibitF5Walk { get; }
+
     /// <summary>
     ///     When this is enabled it will prevent players from utilizing item switching to walk faster.
     /// </summary>
     bool ProhibitItemSwitchWalk { get; }
+
     /// <summary>
     ///     When this is enabled it will prevent players from utilizing more nefarious methods to walk faster.
     /// </summary>
     bool ProhibitSpeedWalk { get; }
+
     /// <summary>
     ///     This is the quickest interval in milliseconds that players will be allowed to refresh their client. This will not
     ///     include refreshes
@@ -175,6 +196,7 @@ public interface IWorldOptions
     ///     would be 1000
     /// </summary>
     int RefreshIntervalMs { get; }
+
     /// <summary>
     ///     This is the amount of time in minutes between global character saves. This is on top of players automatically
     ///     saving when they log out.
@@ -184,6 +206,7 @@ public interface IWorldOptions
     ///     A good range of values would be anywhere from 0.5 - 10
     /// </summary>
     double SaveIntervalMins { get; }
+
     /// <summary>
     ///     This is the maximum distance from a player that they can initiate a trade with another player<br />
     ///     A value of -1 would effectively disable trading<br />

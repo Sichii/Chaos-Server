@@ -8,11 +8,12 @@ public sealed class DoorMapperProfile : IMapperProfile<Door, DoorInfo>
 {
     public Door Map(DoorInfo obj) => throw new NotImplementedException();
 
-    public DoorInfo Map(Door obj) => new()
-    {
-        X = obj.X,
-        Y = obj.Y,
-        Closed = obj.Closed,
-        OpenRight = obj.OpenRight
-    };
+    public DoorInfo Map(Door obj)
+        => new()
+        {
+            X = obj.X,
+            Y = obj.Y,
+            Closed = obj.Closed,
+            OpenRight = obj.OpenRight
+        };
 }

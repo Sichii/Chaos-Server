@@ -8,8 +8,10 @@ public sealed class HideEffect : EffectBase
 {
     /// <inheritdoc />
     protected override TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(2);
+
     /// <inheritdoc />
     public override byte Icon => 10;
+
     /// <inheritdoc />
     public override string Name => "Hide";
 

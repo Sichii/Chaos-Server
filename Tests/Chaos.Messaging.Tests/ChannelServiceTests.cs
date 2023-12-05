@@ -22,49 +22,62 @@ public sealed class ChannelServiceTests
         ChannelServiceOptions = Microsoft.Extensions.Options.Options.Create(
             new ChannelServiceOptions
             {
-                BlacklistedChannelNamePhrases = new[] { "Blacklisted" },
+                BlacklistedChannelNamePhrases = new[]
+                {
+                    "Blacklisted"
+                },
                 ChannelPrefix = "!",
                 MaxChannelNameLength = 20,
                 MinChannelNameLength = 3,
-                ReservedChannelNames = new[] { "Reserved" }
+                ReservedChannelNames = new[]
+                {
+                    "Reserved"
+                }
             });
 
         LoggerMock = MockLogger.Create<ChannelService>();
 
         SubscriberMock = MockChannelSubscriber.Create(
             "TestSubscriber",
-            mock => mock.Setup(s => s.IsIgnoring(It.IsAny<string>())).Returns(false));
+            mock => mock.Setup(s => s.IsIgnoring(It.IsAny<string>()))
+                        .Returns(false));
 
         ChannelService = new ChannelService(ChannelServiceOptions, LoggerMock.Object);
     }
 
     [Fact]
-    public void ContainsChannel_ShouldReturnFalseForNonExistentChannel() =>
-        ChannelService.ContainsChannel("!NonExistentChannel").Should().BeFalse();
+    public void ContainsChannel_ShouldReturnFalseForNonExistentChannel()
+        => ChannelService.ContainsChannel("!NonExistentChannel")
+                         .Should()
+                         .BeFalse();
 
     [Fact]
     public void GetSubscribers_ShouldReturnEmptyForNonExistentChannel()
     {
         var subscribers = ChannelService.GetSubscribers("!NonExistentChannel");
 
-        subscribers.Should().BeEmpty();
+        subscribers.Should()
+                   .BeEmpty();
     }
 
     [Fact]
-    public void IsChannel_ShouldReturnFalseIfDoesNotStartWithChannelPrefix() => ChannelService.IsChannel("Test").Should().BeFalse();
+    public void IsChannel_ShouldReturnFalseIfDoesNotStartWithChannelPrefix()
+        => ChannelService.IsChannel("Test")
+                         .Should()
+                         .BeFalse();
 
     [Fact]
-    public void IsChannel_ShouldReturnTrueIfStartsWithChannelPrefix() => ChannelService.IsChannel("!Test").Should().BeTrue();
+    public void IsChannel_ShouldReturnTrueIfStartsWithChannelPrefix()
+        => ChannelService.IsChannel("!Test")
+                         .Should()
+                         .BeTrue();
 
     [Fact]
     public void JoinChannel_ReservedChannelWithoutBypassValidation_ShouldFail()
     {
         ChannelService.JoinChannel(SubscriberMock.Object, "!Reserved");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage("Channel !Reserved not found"),
-                Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("Channel !Reserved not found"), Times.Once);
     }
 
     [Fact]
@@ -78,7 +91,10 @@ public sealed class ChannelServiceTests
 
         ChannelService.JoinChannel(SubscriberMock.Object, "!Test");
 
-        ChannelService.GetSubscribers("!Test").Contains(SubscriberMock.Object).Should().BeTrue();
+        ChannelService.GetSubscribers("!Test")
+                      .Contains(SubscriberMock.Object)
+                      .Should()
+                      .BeTrue();
     }
 
     [Fact]
@@ -86,10 +102,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.JoinChannel(SubscriberMock.Object, "!NonExistentChannel");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage("Channel !NonExistentChannel not found"),
-                Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("Channel !NonExistentChannel not found"), Times.Once);
     }
 
     [Fact]
@@ -104,7 +117,10 @@ public sealed class ChannelServiceTests
         ChannelService.JoinChannel(SubscriberMock.Object, "!Test");
         ChannelService.JoinChannel(SubscriberMock.Object, "!Test");
 
-        ChannelService.GetSubscribers("!Test").Count(subscriber => subscriber.Equals(SubscriberMock.Object)).Should().Be(1);
+        ChannelService.GetSubscribers("!Test")
+                      .Count(subscriber => subscriber.Equals(SubscriberMock.Object))
+                      .Should()
+                      .Be(1);
         SubscriberMock.Verify(s => s.SendMessage("You are already in channel !Test"), Times.Once);
     }
 
@@ -128,8 +144,15 @@ public sealed class ChannelServiceTests
         ChannelService.JoinChannel(SubscriberMock.Object, "!Reserved", true);
         ChannelService.JoinChannel(SubscriberMock.Object, "!Blacklisted", true);
 
-        ChannelService.GetSubscribers("!Reserved").Contains(SubscriberMock.Object).Should().BeTrue();
-        ChannelService.GetSubscribers("!Blacklisted").Contains(SubscriberMock.Object).Should().BeTrue();
+        ChannelService.GetSubscribers("!Reserved")
+                      .Contains(SubscriberMock.Object)
+                      .Should()
+                      .BeTrue();
+
+        ChannelService.GetSubscribers("!Blacklisted")
+                      .Contains(SubscriberMock.Object)
+                      .Should()
+                      .BeTrue();
     }
 
     [Fact]
@@ -137,10 +160,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.LeaveChannel(SubscriberMock.Object, "!NonExistentChannel");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage("Channel !NonExistentChannel not found"),
-                Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("Channel !NonExistentChannel not found"), Times.Once);
     }
 
     [Fact]
@@ -155,7 +175,10 @@ public sealed class ChannelServiceTests
         ChannelService.JoinChannel(SubscriberMock.Object, "!Test");
         ChannelService.LeaveChannel(SubscriberMock.Object, "!Test");
 
-        ChannelService.GetSubscribers("!Test").Contains(SubscriberMock.Object).Should().BeFalse();
+        ChannelService.GetSubscribers("!Test")
+                      .Contains(SubscriberMock.Object)
+                      .Should()
+                      .BeFalse();
     }
 
     [Fact]
@@ -169,7 +192,10 @@ public sealed class ChannelServiceTests
 
         ChannelService.LeaveChannel(SubscriberMock.Object, "!Test");
 
-        ChannelService.GetSubscribers("!Test").Contains(SubscriberMock.Object).Should().BeFalse();
+        ChannelService.GetSubscribers("!Test")
+                      .Contains(SubscriberMock.Object)
+                      .Should()
+                      .BeFalse();
         SubscriberMock.Verify(s => s.SendMessage("You are not in channel !Test"), Times.Once);
     }
 
@@ -181,11 +207,12 @@ public sealed class ChannelServiceTests
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
             nameTooLongStr,
-            MessageColor
-                .Default,
+            MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.ContainsChannel(nameTooLongStr).Should().BeFalse();
+        ChannelService.ContainsChannel(nameTooLongStr)
+                      .Should()
+                      .BeFalse();
         SubscriberMock.Verify(s => s.SendMessage("Channel name is too long"), Times.Once);
     }
 
@@ -198,7 +225,9 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.ContainsChannel("!a").Should().BeFalse();
+        ChannelService.ContainsChannel("!a")
+                      .Should()
+                      .BeFalse();
         SubscriberMock.Verify(s => s.SendMessage("Channel name is too short"), Times.Once);
     }
 
@@ -229,7 +258,9 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.ContainsChannel("!Test").Should().BeTrue();
+        ChannelService.ContainsChannel("!Test")
+                      .Should()
+                      .BeTrue();
     }
 
     [Fact]
@@ -241,7 +272,9 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.ContainsChannel("!Blacklisted").Should().BeFalse();
+        ChannelService.ContainsChannel("!Blacklisted")
+                      .Should()
+                      .BeFalse();
         SubscriberMock.Verify(s => s.SendMessage("Invalid channel name"), Times.Once);
     }
 
@@ -254,7 +287,9 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.ContainsChannel("!Reserved").Should().BeFalse();
+        ChannelService.ContainsChannel("!Reserved")
+                      .Should()
+                      .BeFalse();
         SubscriberMock.Verify(s => s.SendMessage("Invalid channel name"), Times.Once);
     }
 
@@ -267,7 +302,10 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.GetSubscribers("!Test").Contains(SubscriberMock.Object).Should().BeTrue();
+        ChannelService.GetSubscribers("!Test")
+                      .Contains(SubscriberMock.Object)
+                      .Should()
+                      .BeTrue();
     }
 
     [Fact]
@@ -275,10 +313,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.SendMessage(SubscriberMock.Object, "!NonExistentChannel", "Test message");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage("Channel !NonExistentChannel not found"),
-                Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("Channel !NonExistentChannel not found"), Times.Once);
     }
 
     [Fact]
@@ -292,10 +327,7 @@ public sealed class ChannelServiceTests
 
         ChannelService.SendMessage(SubscriberMock.Object, "!Test", "Test message");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage("You are not in that channel"),
-                Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("You are not in that channel"), Times.Once);
     }
 
     [Fact]
@@ -309,10 +341,9 @@ public sealed class ChannelServiceTests
 
         ChannelService.SendMessage(SubscriberMock.Object, "!Test", "Hello, world!");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage(It.Is<string>(str => str.ContainsI("Hello, world!") && str.ContainsI("Test"))),
-                Times.AtLeastOnce);
+        SubscriberMock.Verify(
+            s => s.SendMessage(It.Is<string>(str => str.ContainsI("Hello, world!") && str.ContainsI("Test"))),
+            Times.AtLeastOnce);
     }
 
     [Fact]
@@ -329,10 +360,9 @@ public sealed class ChannelServiceTests
 
         ChannelService.SendMessage(SubscriberMock.Object, "!Test", longMessage);
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage(It.Is<string>(str => str.ContainsI("Test") && str.ContainsI(expectedTruncatedMessage))),
-                Times.AtLeastOnce);
+        SubscriberMock.Verify(
+            s => s.SendMessage(It.Is<string>(str => str.ContainsI("Test") && str.ContainsI(expectedTruncatedMessage))),
+            Times.AtLeastOnce);
     }
 
     [Fact]
@@ -348,12 +378,11 @@ public sealed class ChannelServiceTests
 
         ChannelService.SendMessage(SubscriberMock.Object, "!Test", "Hello, world!");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage(
-                    It.Is<string>(
-                        str => str.ContainsI(MessageColor.Blue.ToPrefix()) && str.ContainsI("Test") && str.ContainsI("Hello, world!"))),
-                Times.AtLeastOnce);
+        SubscriberMock.Verify(
+            s => s.SendMessage(
+                It.Is<string>(
+                    str => str.ContainsI(MessageColor.Blue.ToPrefix()) && str.ContainsI("Test") && str.ContainsI("Hello, world!"))),
+            Times.AtLeastOnce);
     }
 
     [Fact]
@@ -367,12 +396,11 @@ public sealed class ChannelServiceTests
 
         ChannelService.SendMessage(SubscriberMock.Object, "!Test", "Hello, world!");
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage(
-                    It.Is<string>(
-                        str => str.ContainsI(MessageColor.Red.ToPrefix()) && str.ContainsI("Test") && str.ContainsI("Hello, world!"))),
-                Times.AtLeastOnce);
+        SubscriberMock.Verify(
+            s => s.SendMessage(
+                It.Is<string>(
+                    str => str.ContainsI(MessageColor.Red.ToPrefix()) && str.ContainsI("Test") && str.ContainsI("Hello, world!"))),
+            Times.AtLeastOnce);
     }
 
     [Fact]
@@ -384,20 +412,16 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.SetChannelColor(
-            SubscriberMock.Object,
-            "!Test",
-            MessageColor.Default);
+        ChannelService.SetChannelColor(SubscriberMock.Object, "!Test", MessageColor.Default);
 
-        SubscriberMock
-            .Verify(
-                s => s.SendMessage("You are not in channel !Test"),
-                Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("You are not in channel !Test"), Times.Once);
     }
 
     [Fact]
-    public void UnregisterChannel_ShouldFailForNonExistentChannel() =>
-        ChannelService.UnregisterChannel("!NonExistentChannel").Should().BeFalse();
+    public void UnregisterChannel_ShouldFailForNonExistentChannel()
+        => ChannelService.UnregisterChannel("!NonExistentChannel")
+                         .Should()
+                         .BeFalse();
 
     [Fact]
     public void UnregisterChannel_ShouldRemoveAllSubscribers()
@@ -408,9 +432,13 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.UnregisterChannel("!Test").Should().BeTrue();
+        ChannelService.UnregisterChannel("!Test")
+                      .Should()
+                      .BeTrue();
 
-        ChannelService.GetSubscribers("!Test").Should().BeEmpty();
+        ChannelService.GetSubscribers("!Test")
+                      .Should()
+                      .BeEmpty();
     }
 
     [Fact]
@@ -422,7 +450,12 @@ public sealed class ChannelServiceTests
             MessageColor.Default,
             (_, _) => { });
 
-        ChannelService.UnregisterChannel("!Test").Should().BeTrue();
-        ChannelService.ContainsChannel("!Test").Should().BeFalse();
+        ChannelService.UnregisterChannel("!Test")
+                      .Should()
+                      .BeTrue();
+
+        ChannelService.ContainsChannel("!Test")
+                      .Should()
+                      .BeFalse();
     }
 }

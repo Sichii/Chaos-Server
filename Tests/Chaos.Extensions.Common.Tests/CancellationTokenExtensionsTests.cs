@@ -15,12 +15,16 @@ public sealed class CancellationTokenExtensionsTests
         var waitingTask = cts.Token.WaitTillCanceled();
 
         //Assert
-        waitingTask.Status.Should().NotBe(TaskStatus.RanToCompletion, "because the waiting task should not have completed yet");
+        waitingTask.Status
+                   .Should()
+                   .NotBe(TaskStatus.RanToCompletion, "because the waiting task should not have completed yet");
 
         cts.Cancel();
         await waitingTask;
 
-        waitingTask.Status.Should().Be(TaskStatus.RanToCompletion, "because the waiting task should have completed");
+        waitingTask.Status
+                   .Should()
+                   .Be(TaskStatus.RanToCompletion, "because the waiting task should have completed");
     }
 
     [Fact]
@@ -33,11 +37,15 @@ public sealed class CancellationTokenExtensionsTests
         var whenAllTask = cts.Token.WhenAllWithCancellation(CancellationTokenExtensions.WaitTillCanceled);
 
         // Assert
-        whenAllTask.Status.Should().NotBe(TaskStatus.RanToCompletion, "because the waiting task should not have completed yet");
+        whenAllTask.Status
+                   .Should()
+                   .NotBe(TaskStatus.RanToCompletion, "because the waiting task should not have completed yet");
 
         cts.Cancel();
         await whenAllTask;
 
-        whenAllTask.Status.Should().Be(TaskStatus.RanToCompletion, "because the waiting task should have completed");
+        whenAllTask.Status
+                   .Should()
+                   .Be(TaskStatus.RanToCompletion, "because the waiting task should have completed");
     }
 }

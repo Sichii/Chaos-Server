@@ -90,8 +90,7 @@ public static class ComplexActionHelper
         IItemFactory itemFactory,
         ICloningService<Item> itemCloner,
         int amount,
-        int costPerItem
-    )
+        int costPerItem)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(fauxItem);
@@ -150,8 +149,7 @@ public static class ComplexActionHelper
         Aisling source,
         byte slot,
         int amount,
-        int costPerItem = 0
-    )
+        int costPerItem = 0)
     {
         ArgumentNullException.ThrowIfNull(source);
 
@@ -186,8 +184,7 @@ public static class ComplexActionHelper
         Aisling source,
         string itemName,
         int amount,
-        int costPerItem = 0
-    )
+        int costPerItem = 0)
     {
         if (amount < 1)
             return DepositItemResult.BadInput;
@@ -265,15 +262,17 @@ public static class ComplexActionHelper
         return RemoveManyItemsResult.Success;
     }
 
-    public static RemoveManyItemsResult RemoveManyItems(Aisling source, params Item[] items) =>
-        RemoveManyItems(source, items.Select(item => (item.DisplayName, item.Count)).ToArray());
+    public static RemoveManyItemsResult RemoveManyItems(Aisling source, params Item[] items)
+        => RemoveManyItems(
+            source,
+            items.Select(item => (item.DisplayName, item.Count))
+                 .ToArray());
 
     public static SellItemResult SellItem(
         Aisling source,
         byte slot,
         int amount,
-        int valuePerItem
-    )
+        int valuePerItem)
     {
         ArgumentNullException.ThrowIfNull(source);
 
@@ -305,8 +304,7 @@ public static class ComplexActionHelper
         Aisling source,
         string itemName,
         int amount,
-        int valuePerItem
-    )
+        int valuePerItem)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(itemName);

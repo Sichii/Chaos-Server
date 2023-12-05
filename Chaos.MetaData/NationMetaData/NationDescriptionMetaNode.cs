@@ -13,6 +13,7 @@ public sealed record NationDescriptionMetaNode : IMetaNode
     ///     The text that shows next to the nation heraldry in the profile
     /// </summary>
     public string Description { get; }
+
     /// <summary>
     ///     The name of the nation
     /// </summary>

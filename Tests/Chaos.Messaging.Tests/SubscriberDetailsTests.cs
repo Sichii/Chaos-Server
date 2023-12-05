@@ -17,7 +17,10 @@ public sealed class SubscriberDetailsTests
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object);
         var details2 = new SubscriberDetails(MockChannelSubscriber1.Object);
-        details1.GetHashCode().Should().Be(details2.GetHashCode());
+
+        details1.GetHashCode()
+                .Should()
+                .Be(details2.GetHashCode());
     }
 
     [Fact]
@@ -25,7 +28,10 @@ public sealed class SubscriberDetailsTests
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object);
         var details2 = new SubscriberDetails(MockChannelSubscriber2.Object);
-        details1.GetHashCode().Should().NotBe(details2.GetHashCode());
+
+        details1.GetHashCode()
+                .Should()
+                .NotBe(details2.GetHashCode());
     }
 
     [Fact]
@@ -33,7 +39,10 @@ public sealed class SubscriberDetailsTests
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Blue);
         var details2 = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Red);
-        details1.Equals(details2).Should().BeTrue();
+
+        details1.Equals(details2)
+                .Should()
+                .BeTrue();
     }
 
     [Fact]
@@ -41,7 +50,10 @@ public sealed class SubscriberDetailsTests
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object);
         var details2 = new SubscriberDetails(MockChannelSubscriber2.Object);
-        details1.Equals(details2).Should().BeFalse();
+
+        details1.Equals(details2)
+                .Should()
+                .BeFalse();
     }
 
     [Fact]
@@ -49,18 +61,29 @@ public sealed class SubscriberDetailsTests
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Blue);
         var details2 = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Red);
-        details1.Equals(details2).Should().BeTrue();
+
+        details1.Equals(details2)
+                .Should()
+                .BeTrue();
     }
 
     [Fact]
-    public void SubscriberDetails_ShouldNotBeEqualToNull() =>
-        new SubscriberDetails(MockChannelSubscriber1.Object).Equals(null).Should().BeFalse();
+    public void SubscriberDetails_ShouldNotBeEqualToNull()
+        => new SubscriberDetails(MockChannelSubscriber1.Object).Equals(null)
+                                                               .Should()
+                                                               .BeFalse();
 
     [Fact]
     public void SubscriberDetails_ShouldStoreProvidedValues()
     {
         var details = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Blue);
-        details.Subscriber.Should().BeSameAs(MockChannelSubscriber1.Object);
-        details.MessageColorOverride.Should().Be(MessageColor.Blue);
+
+        details.Subscriber
+               .Should()
+               .BeSameAs(MockChannelSubscriber1.Object);
+
+        details.MessageColorOverride
+               .Should()
+               .Be(MessageColor.Blue);
     }
 }

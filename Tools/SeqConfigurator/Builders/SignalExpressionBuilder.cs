@@ -17,7 +17,8 @@ public sealed class SignalExpressionBuilder
         AsyncComposer = AsyncComposer<SignalExpressionPart>.Create(new SignalExpressionPart());
         AllSignals = new TaskCompletionSource<List<SignalEntity>>();
 
-        SeqConnection.Signals.ListAsync(shared: true)
+        SeqConnection.Signals
+                     .ListAsync(shared: true)
                      .ContinueWith(async task => AllSignals.SetResult(await task), TaskContinuationOptions.ExecuteSynchronously);
     }
 

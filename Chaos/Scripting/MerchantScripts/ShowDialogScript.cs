@@ -18,15 +18,17 @@ public class ShowDialogScript : ConfigurableMerchantScriptBase, ShowDialogCompon
     }
 
     /// <inheritdoc />
-    public override void OnClicked(Aisling source) => new ComponentExecutor(source, source)
-                                                      .WithOptions(this)
-                                                      .Execute<ShowDialogComponent>();
+    public override void OnClicked(Aisling source)
+        => new ComponentExecutor(source, source).WithOptions(this)
+                                                .Execute<ShowDialogComponent>();
 
     #region ScriptVars
     /// <inheritdoc />
     public string? DialogKey { get; init; }
+
     /// <inheritdoc />
     public IDialogFactory DialogFactory { get; init; }
+
     /// <inheritdoc />
     public IDialogSourceEntity DialogSource { get; init; }
     #endregion

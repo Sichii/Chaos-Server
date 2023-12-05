@@ -11,6 +11,7 @@ public sealed record ItemRequirementSchema
     ///     The amount of this item required to learn the ability
     /// </summary>
     public int AmountRequired { get; set; } = 1;
+
     /// <summary>
     ///     The key of the item template required to learn the ability
     /// </summary>

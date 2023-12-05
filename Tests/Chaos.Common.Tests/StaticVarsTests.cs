@@ -13,15 +13,20 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
         var result = vars.ContainsKey("Key3");
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -31,15 +36,20 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
         var result = vars.ContainsKey("Key1");
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -49,15 +59,20 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
         var result = vars.Get<int>("Key3");
 
         // Assert
-        result.Should().Be(default);
+        result.Should()
+              .Be(default);
     }
 
     [Fact]
@@ -67,15 +82,20 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
         var result = vars.Get<string>("Key1");
 
         // Assert
-        result.Should().Be("Value1");
+        result.Should()
+              .Be("Value1");
     }
 
     [Fact]
@@ -85,15 +105,20 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
         var result = vars.GetRequired<string>("Key1");
 
         // Assert
-        result.Should().Be("Value1");
+        result.Should()
+              .Be("Value1");
     }
 
     [Fact]
@@ -103,8 +128,12 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
@@ -123,14 +152,18 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" }
+                {
+                    "Key1", "Value1"
+                }
             });
 
         // Act
         vars.Set("Key2", 123);
 
         // Assert
-        vars.Get<int>("Key2").Should().Be(123);
+        vars.Get<int>("Key2")
+            .Should()
+            .Be(123);
     }
 
     [Fact]
@@ -140,14 +173,20 @@ public sealed class StaticVarsTests
         var vars = new StaticVars(
             new Dictionary<string, object>
             {
-                { "Key1", "Value1" },
-                { "Key2", 123 }
+                {
+                    "Key1", "Value1"
+                },
+                {
+                    "Key2", 123
+                }
             });
 
         // Act
         vars.Set("Key2", 456);
 
         // Assert
-        vars.Get<int>("Key2").Should().Be(456);
+        vars.Get<int>("Key2")
+            .Should()
+            .Be(456);
     }
 }

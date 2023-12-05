@@ -10,8 +10,10 @@ public record ConnectionInfo : IConnectionInfo
 {
     /// <inheritdoc />
     public IPAddress Address { get; set; } = null!;
+
     /// <inheritdoc />
     public virtual string HostName { get; set; } = null!;
+
     /// <inheritdoc />
     public int Port { get; set; }
 }

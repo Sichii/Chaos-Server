@@ -15,12 +15,14 @@ public sealed class ZlibTests
         var buffer = Encoding.ASCII.GetBytes(ORIGINAL_DATA);
 
         // Act
-        ZLIB.Compress(ref buffer);
-        ZLIB.Decompress(ref buffer);
+        Zlib.Compress(ref buffer);
+        Zlib.Decompress(ref buffer);
 
         // Assert
         var decompressedString = Encoding.ASCII.GetString(buffer);
-        decompressedString.Should().Be(ORIGINAL_DATA);
+
+        decompressedString.Should()
+                          .Be(ORIGINAL_DATA);
     }
 
     [Fact]
@@ -32,12 +34,14 @@ public sealed class ZlibTests
         var readOnlySpan = new ReadOnlySpan<byte>(buffer);
 
         // Act
-        var compressedStream = ZLIB.Compress(readOnlySpan);
-        var decompressedStream = ZLIB.Decompress(compressedStream.ToArray());
+        var compressedStream = Zlib.Compress(readOnlySpan);
+        var decompressedStream = Zlib.Decompress(compressedStream.ToArray());
 
         // Assert
         var decompressedString = Encoding.ASCII.GetString(decompressedStream.ToArray());
-        decompressedString.Should().Be(ORIGINAL_DATA);
+
+        decompressedString.Should()
+                          .Be(ORIGINAL_DATA);
     }
 
     [Fact]
@@ -49,11 +53,13 @@ public sealed class ZlibTests
         var span = new Span<byte>(buffer);
 
         // Act
-        ZLIB.Compress(ref span);
-        ZLIB.Decompress(ref span);
+        Zlib.Compress(ref span);
+        Zlib.Decompress(ref span);
 
         // Assert
         var decompressedString = Encoding.ASCII.GetString(span.ToArray());
-        decompressedString.Should().Be(ORIGINAL_DATA);
+
+        decompressedString.Should()
+                          .Be(ORIGINAL_DATA);
     }
 }

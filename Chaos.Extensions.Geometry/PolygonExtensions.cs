@@ -66,7 +66,7 @@ public static class PolygonExtensions
             //long form version of pnpoly, allowing for fast fails
             if ((((iVertex.Y < point.Y) && (jVertex.Y >= point.Y)) || ((jVertex.Y < point.Y) && (iVertex.Y >= point.Y)))
                 && ((iVertex.X <= point.X) || (jVertex.X <= point.X)))
-                inside ^= iVertex.X + (point.Y - iVertex.Y) / (jVertex.Y - iVertex.Y) * (jVertex.X - iVertex.X) < point.X;
+                inside ^= (iVertex.X + (point.Y - iVertex.Y) / (jVertex.Y - iVertex.Y) * (jVertex.X - iVertex.X)) < point.X;
         }
 
         return inside;
@@ -81,18 +81,21 @@ public static class PolygonExtensions
     {
         var vertices = polygon.Vertices;
 
-        for (var i = 0; i < vertices.Count - 1; i++)
+        for (var i = 0; i < (vertices.Count - 1); i++)
         {
             var current = vertices[i];
             var next = vertices[i + 1];
 
             //skip the last point so the vertices are not included twice
-            foreach (var point in current.RayTraceTo(next).SkipLast(1))
+            foreach (var point in current.RayTraceTo(next)
+                                         .SkipLast(1))
                 yield return point;
         }
 
         //include the last point
-        foreach (var point in vertices[^1].RayTraceTo(vertices[0]).SkipLast(1))
+        foreach (var point in vertices[^1]
+                              .RayTraceTo(vertices[0])
+                              .SkipLast(1))
             yield return point;
     }
 }

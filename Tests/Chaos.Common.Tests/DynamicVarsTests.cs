@@ -17,7 +17,8 @@ public sealed class DynamicVarsTests
         var result = vars.ContainsKey("key");
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -26,7 +27,8 @@ public sealed class DynamicVarsTests
         // Arrange
         var collection = new Dictionary<string, JsonElement>
         {
-            ["key"] = JsonDocument.Parse("\"value\"").RootElement
+            ["key"] = JsonDocument.Parse("\"value\"")
+                                  .RootElement
         };
 
         var vars = new DynamicVars(collection, new JsonSerializerOptions());
@@ -35,7 +37,8 @@ public sealed class DynamicVarsTests
         var result = vars.ContainsKey("key");
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -51,10 +54,17 @@ public sealed class DynamicVarsTests
         var nullableValue = vars.Get<int?>("nullable");
 
         // Assert
-        intValue.Should().Be(0);
-        boolValue.Should().BeFalse();
-        dateTimeValue.Should().Be(DateTime.MinValue);
-        nullableValue.Should().BeNull();
+        intValue.Should()
+                .Be(0);
+
+        boolValue.Should()
+                 .BeFalse();
+
+        dateTimeValue.Should()
+                     .Be(DateTime.MinValue);
+
+        nullableValue.Should()
+                     .BeNull();
     }
 
     [Fact]
@@ -63,10 +73,14 @@ public sealed class DynamicVarsTests
         // Arrange
         var collection = new Dictionary<string, JsonElement>
         {
-            ["integer"] = JsonDocument.Parse("42").RootElement,
-            ["boolean"] = JsonDocument.Parse("true").RootElement,
-            ["dateTime"] = JsonDocument.Parse("\"2022-01-01T12:34:56\"").RootElement,
-            ["nullable"] = JsonDocument.Parse("null").RootElement
+            ["integer"] = JsonDocument.Parse("42")
+                                      .RootElement,
+            ["boolean"] = JsonDocument.Parse("true")
+                                      .RootElement,
+            ["dateTime"] = JsonDocument.Parse("\"2022-01-01T12:34:56\"")
+                                       .RootElement,
+            ["nullable"] = JsonDocument.Parse("null")
+                                       .RootElement
         };
 
         var options = new JsonSerializerOptions();
@@ -79,8 +93,11 @@ public sealed class DynamicVarsTests
         var nullableValue = vars.Get<int?>("nullable");
 
         // Assert
-        intValue.Should().Be(42);
-        boolValue.Should().BeTrue();
+        intValue.Should()
+                .Be(42);
+
+        boolValue.Should()
+                 .BeTrue();
 
         dateTimeValue.Should()
                      .Be(
@@ -92,7 +109,8 @@ public sealed class DynamicVarsTests
                              34,
                              56));
 
-        nullableValue.Should().BeNull();
+        nullableValue.Should()
+                     .BeNull();
     }
 
     [Fact]
@@ -101,10 +119,14 @@ public sealed class DynamicVarsTests
         // Arrange
         var collection = new Dictionary<string, JsonElement>
         {
-            ["integer"] = JsonDocument.Parse("42").RootElement,
-            ["boolean"] = JsonDocument.Parse("true").RootElement,
-            ["dateTime"] = JsonDocument.Parse("\"2022-01-01T12:34:56\"").RootElement,
-            ["nullable"] = JsonDocument.Parse("null").RootElement
+            ["integer"] = JsonDocument.Parse("42")
+                                      .RootElement,
+            ["boolean"] = JsonDocument.Parse("true")
+                                      .RootElement,
+            ["dateTime"] = JsonDocument.Parse("\"2022-01-01T12:34:56\"")
+                                       .RootElement,
+            ["nullable"] = JsonDocument.Parse("null")
+                                       .RootElement
         };
 
         var options = new JsonSerializerOptions();
@@ -117,8 +139,11 @@ public sealed class DynamicVarsTests
         var nullableValue = vars.GetRequired<int?>("nullable");
 
         // Assert
-        intValue.Should().Be(42);
-        boolValue.Should().BeTrue();
+        intValue.Should()
+                .Be(42);
+
+        boolValue.Should()
+                 .BeTrue();
 
         dateTimeValue.Should()
                      .Be(
@@ -130,7 +155,8 @@ public sealed class DynamicVarsTests
                              34,
                              56));
 
-        nullableValue.Should().BeNull();
+        nullableValue.Should()
+                     .BeNull();
     }
 
     [Fact]

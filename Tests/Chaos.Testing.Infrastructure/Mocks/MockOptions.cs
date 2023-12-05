@@ -8,7 +8,9 @@ public class MockOptions
     public static Mock<IOptions<T>> Create<T>(T value) where T: class, new()
     {
         var options = new Mock<IOptions<T>>();
-        options.Setup(o => o.Value).Returns(value);
+
+        options.Setup(o => o.Value)
+               .Returns(value);
 
         return options;
     }

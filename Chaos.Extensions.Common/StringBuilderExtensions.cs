@@ -19,8 +19,7 @@ public static class StringBuilderExtensions
         this StringBuilder builder,
         MessageColor messageColor,
         string message,
-        MessageColor? defaultColor = null
-    )
+        MessageColor? defaultColor = null)
     {
         builder.AppendColorPrefix(messageColor);
         builder.Append(message);
@@ -69,8 +68,7 @@ public static class StringBuilderExtensions
         this StringBuilder builder,
         MessageColor messageColor,
         string message,
-        MessageColor? defaultColor = null
-    )
+        MessageColor? defaultColor = null)
     {
         builder.AppendColorPrefix(messageColor);
         builder.AppendLineF(message);

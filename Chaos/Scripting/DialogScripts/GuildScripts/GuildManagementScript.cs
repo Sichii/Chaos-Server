@@ -17,8 +17,7 @@ public class GuildManagementScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildManagementScript> logger
-    )
+        ILogger<GuildManagementScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -39,8 +38,6 @@ public class GuildManagementScript : GuildScriptBase
                 ("Disband", "generic_guild_disband_initial"),
                 ("Leave", "generic_guild_leave_initial"));
         else
-            Subject.AddOptions(
-                ("Members", "generic_guild_members_initial"),
-                ("Leave", "generic_guild_leave_initial"));
+            Subject.AddOptions(("Members", "generic_guild_members_initial"), ("Leave", "generic_guild_leave_initial"));
     }
 }

@@ -12,18 +12,22 @@ public ref struct ClientPacket
     ///     The buffer containing the packet data
     /// </summary>
     public Span<byte> Buffer;
+
     /// <summary>
     ///     Whether or not the packet is encrypted
     /// </summary>
     public bool IsEncrypted { get; }
+
     /// <summary>
     ///     A value used to identify the type of packet and it's purpose
     /// </summary>
     public ClientOpCode OpCode { get; }
+
     /// <summary>
     ///     A value used to ensure packets are processed in the correct order
     /// </summary>
     public byte Sequence { get; }
+
     /// <summary>
     ///     A value used to identify the start of a packet's payload
     /// </summary>
@@ -72,7 +76,9 @@ public ref struct ClientPacket
     ///     Converts the packet data to a byte array.
     /// </summary>
     /// <returns>The packet data as a byte array.</returns>
-    public byte[] ToArray() => ToSpan().ToArray();
+    public byte[] ToArray()
+        => ToSpan()
+            .ToArray();
 
     /// <summary>
     ///     Converts the packet data to a <see cref="Memory{T}" /> instance.

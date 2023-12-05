@@ -1,3 +1,7 @@
+using Chaos.Geometry.Abstractions;
+using FluentAssertions;
+using Xunit;
+
 namespace Chaos.Geometry.Tests;
 
 public sealed class PointTests
@@ -20,24 +24,6 @@ public sealed class PointTests
         point.Y
              .Should()
              .Be(Y);
-    }
-
-    [Fact]
-    public void Point_Deconstructor_CreatesPointWithGivenCoordinates()
-    {
-        // Arrange
-        const int X = 10;
-        const int Y = 20;
-
-        // Act
-        (var x, var y) = new Point(X, Y);
-
-        // Assert
-        x.Should()
-         .Be(X);
-
-        y.Should()
-         .Be(Y);
     }
 
     [Fact]

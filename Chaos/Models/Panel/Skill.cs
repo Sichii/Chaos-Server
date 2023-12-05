@@ -22,8 +22,7 @@ public sealed class Skill : PanelEntityBase, IScripted<ISkillScript>
         IScriptProvider scriptProvider,
         ICollection<string>? extraScriptKeys = null,
         ulong? uniqueId = null,
-        int? elapsedMs = null
-    )
+        int? elapsedMs = null)
         : base(template, uniqueId, elapsedMs)
     {
         Template = template;

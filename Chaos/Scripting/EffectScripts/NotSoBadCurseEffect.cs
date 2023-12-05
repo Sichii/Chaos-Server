@@ -7,12 +7,14 @@ public class NotSoBadCurseEffect : NonOverwritableEffectBase
 {
     /// <inheritdoc />
     protected override TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(2);
+
     /// <inheritdoc />
     protected override Animation? Animation { get; } = new()
     {
         TargetAnimation = 45,
         AnimationSpeed = 100
     };
+
     /// <inheritdoc />
     protected override IReadOnlyCollection<string> ConflictingEffectNames { get; } = new[]
     {
@@ -21,10 +23,13 @@ public class NotSoBadCurseEffect : NonOverwritableEffectBase
         "Curse",
         "Not So Bad Curse"
     };
+
     /// <inheritdoc />
     public override byte Icon => 5;
+
     /// <inheritdoc />
     public override string Name => "Not So Bad Curse";
+
     /// <inheritdoc />
     protected override byte? Sound => 27;
 }

@@ -47,7 +47,8 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                     orderedPosts = orderedPosts.Where(p => p.PostId <= args.StartPostId.Value);
 
                 //only send up to 127 posts (i have no fucking clue why its sbyte.MaxValue)
-                var posts = orderedPosts.Take(sbyte.MaxValue).ToList();
+                var posts = orderedPosts.Take(sbyte.MaxValue)
+                                        .ToList();
 
                 writer.WriteSByte((sbyte)posts.Count);
 
@@ -90,7 +91,8 @@ public sealed record BoardSerializer : ServerPacketSerializer<BoardArgs>
                     orderedPosts = orderedPosts.Where(p => p.PostId <= args.StartPostId.Value);
 
                 //only send up to 127 posts (i have no fucking clue why its sbyte.MaxValue)
-                var posts = orderedPosts.Take(sbyte.MaxValue).ToList();
+                var posts = orderedPosts.Take(sbyte.MaxValue)
+                                        .ToList();
 
                 writer.WriteSByte((sbyte)posts.Count);
 

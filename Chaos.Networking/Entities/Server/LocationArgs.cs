@@ -12,6 +12,7 @@ public sealed record LocationArgs : ISendArgs
     ///     The X coordinate of the player
     /// </summary>
     public int X { get; set; }
+
     /// <summary>
     ///     The Y coordinate of the player
     /// </summary>

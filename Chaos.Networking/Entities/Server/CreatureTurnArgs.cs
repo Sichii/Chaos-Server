@@ -13,6 +13,7 @@ public sealed record CreatureTurnArgs : ISendArgs
     ///     The new direction the creature should face
     /// </summary>
     public Direction Direction { get; set; }
+
     /// <summary>
     ///     The id of the creature
     /// </summary>

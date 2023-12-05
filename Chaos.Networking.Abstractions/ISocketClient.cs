@@ -16,6 +16,7 @@ public interface ISocketClient
     ///     Handles encryption and decryption of packets
     /// </summary>
     ICrypto Crypto { get; set; }
+
     /// <summary>
     ///     Whether or not the client is connected
     /// </summary>
@@ -35,6 +36,7 @@ public interface ISocketClient
     ///     The remote endpoint of the client
     /// </summary>
     IPAddress RemoteIp { get; }
+
     /// <summary>
     ///     The socket that the client is connected to
     /// </summary>

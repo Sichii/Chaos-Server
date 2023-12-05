@@ -6,6 +6,7 @@ using Chaos.Extensions.Common;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class StringProcessorBenchmarks
 {
@@ -55,14 +56,13 @@ public class StringProcessorBenchmarks
     [Benchmark]
     public void Inject2LongString()
     {
-        var str =
-            LONG_STRING_FORMAT.Inject(
-                1,
-                2,
-                4,
-                1,
-                2,
-                4);
+        var str = LONG_STRING_FORMAT.Inject(
+            1,
+            2,
+            4,
+            1,
+            2,
+            4);
 
         if (!str.Equals(LONG_STRING_VALUE))
             throw new InvalidOperationException($"{str} is not {LONG_STRING_VALUE}");
@@ -71,11 +71,7 @@ public class StringProcessorBenchmarks
     [Benchmark]
     public void Inject2MediumString()
     {
-        var str =
-            MEDIUM_STRING_FORMAT.Inject(
-                1,
-                2,
-                4);
+        var str = MEDIUM_STRING_FORMAT.Inject(1, 2, 4);
 
         if (!str.Equals(MEDIUM_STRING_VALUE))
             throw new InvalidOperationException($"{str} is not {MEDIUM_STRING_VALUE}");

@@ -11,8 +11,10 @@ public sealed class ServerTable : IServerTable
 {
     /// <inheritdoc />
     public uint CheckSum { get; }
+
     /// <inheritdoc />
     public byte[] Data { get; }
+
     /// <inheritdoc />
     public Dictionary<byte, ILoginServerInfo> Servers { get; }
 
@@ -41,7 +43,7 @@ public sealed class ServerTable : IServerTable
         var data = spanWriter.ToSpan();
 
         CheckSum = Crc.Generate32(data);
-        ZLIB.Compress(ref data);
+        Zlib.Compress(ref data);
 
         Data = data.ToArray();
     }

@@ -12,10 +12,12 @@ public sealed class WorldMapSchema
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public byte FieldIndex { get; set; }
+
     /// <summary>
     ///     A collection of keys for the nodes that are displayed on this world map
     /// </summary>
     public ICollection<string> NodeKeys { get; set; } = Array.Empty<string>();
+
     /// <summary>
     ///     A unique id specific to this world map
     /// </summary>

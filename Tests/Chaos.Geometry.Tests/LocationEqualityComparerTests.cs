@@ -17,7 +17,8 @@ public sealed class LocationEqualityComparerTests
         var result = LocationEqualityComparer.Instance.Equals(location1, location2);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -31,7 +32,8 @@ public sealed class LocationEqualityComparerTests
         var result = LocationEqualityComparer.Instance.Equals(location1, location2);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -46,7 +48,8 @@ public sealed class LocationEqualityComparerTests
         var hashCode2 = LocationEqualityComparer.Instance.GetHashCode(location2);
 
         // Assert
-        hashCode1.Should().NotBe(hashCode2);
+        hashCode1.Should()
+                 .NotBe(hashCode2);
     }
 
     [Fact]
@@ -61,6 +64,7 @@ public sealed class LocationEqualityComparerTests
         var hashCode2 = LocationEqualityComparer.Instance.GetHashCode(location2);
 
         // Assert
-        hashCode1.Should().Be(hashCode2);
+        hashCode1.Should()
+                 .Be(hashCode2);
     }
 }

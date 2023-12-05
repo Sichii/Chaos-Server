@@ -30,8 +30,7 @@ public class MetaDataStore : IMetaDataStore
         ISimpleCacheProvider cacheProvider,
         IEntityRepository entityRepository,
         IOptions<MetaDataStoreOptions> options,
-        ILogger<MetaDataStore> logger
-    )
+        ILogger<MetaDataStore> logger)
     {
         MetaData = new ConcurrentDictionary<string, IMetaDataDescriptor>(StringComparer.OrdinalIgnoreCase);
         Options = options.Value;
@@ -43,8 +42,8 @@ public class MetaDataStore : IMetaDataStore
     }
 
     /// <inheritdoc />
-    public IMetaDataDescriptor Get(string name) =>
-        MetaData.TryGetValue(name, out var metaData)
+    public IMetaDataDescriptor Get(string name)
+        => MetaData.TryGetValue(name, out var metaData)
             ? metaData
             : throw new KeyNotFoundException($"MetaData with name \"{name}\" not found in cache");
 
@@ -134,7 +133,14 @@ public class MetaDataStore : IMetaDataStore
                 }
             }
 
-            var objs = new[] { req1, req2, req3, req4 }.Where(obj => obj is not null).ToList();
+            var objs = new[]
+                {
+                    req1,
+                    req2,
+                    req3,
+                    req4
+                }.Where(obj => obj is not null)
+                 .ToList();
 
             var node = new AbilityMetaNode(template.Name, template is SkillTemplate, template.Class ?? BaseClass.Peasant)
             {
@@ -147,9 +153,13 @@ public class MetaDataStore : IMetaDataStore
                 Wis = (byte)(reqs.RequiredStats?.Wis ?? 0),
                 Con = (byte)(reqs.RequiredStats?.Con ?? 0),
                 Dex = (byte)(reqs.RequiredStats?.Dex ?? 0),
-                PreReq1Name = objs.ElementAtOrDefault(0)?.Name,
+                PreReq1Name = objs.ElementAtOrDefault(0)
+                                  ?.Name,
+
                 //PreReq1Level = 0,
-                PreReq2Name = objs.ElementAtOrDefault(1)?.Name,
+                PreReq2Name = objs.ElementAtOrDefault(1)
+                                  ?.Name,
+
                 //PreReq2Level = 0,
                 Description = template.Description
             };
@@ -238,7 +248,11 @@ public class MetaDataStore : IMetaDataStore
 
             if (template.IsDyeable)
                 foreach (var color in Enum.GetNames<DisplayColor>())
-                    itemMetaNodes.AddNode(node with { Name = $"{color} {node.Name}" });
+                    itemMetaNodes.AddNode(
+                        node with
+                        {
+                            Name = $"{color} {node.Name}"
+                        });
 
             if (!template.IsModifiable)
                 continue;
@@ -247,7 +261,8 @@ public class MetaDataStore : IMetaDataStore
 
             var suffixMutations = Options.SuffixMutators.SelectMany(mutator => mutator.Mutate(node, template));
 
-            var prefixAndSuffixMutations = Options.PrefixMutators.SelectMany(mutator => mutator.Mutate(node, template))
+            var prefixAndSuffixMutations = Options.PrefixMutators
+                                                  .SelectMany(mutator => mutator.Mutate(node, template))
                                                   .SelectMany(
                                                       mutated => Options.SuffixMutators.SelectMany(
                                                           mutator => mutator.Mutate(mutated, template)))
@@ -259,7 +274,11 @@ public class MetaDataStore : IMetaDataStore
             if (template.IsDyeable)
                 allMutations = allMutations.SelectMany(
                     mutated => Enum.GetNames<DisplayColor>()
-                                   .Select(colorName => mutated with { Name = $"{colorName} {mutated.Name}" }));
+                                   .Select(
+                                       colorName => mutated with
+                                       {
+                                           Name = $"{colorName} {mutated.Name}"
+                                       }));
 
             foreach (var mutation in allMutations.DistinctBy(n => n.Name))
                 itemMetaNodes.AddNode(mutation);
@@ -330,7 +349,8 @@ public class MetaDataStore : IMetaDataStore
         var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
                                   .WithMetrics();
 
-        var nations = Enum.GetValues<Nation>().OfType<Nation>();
+        var nations = Enum.GetValues<Nation>()
+                          .OfType<Nation>();
         var nationDescriptionMetaData = new NationDescriptionMetaData();
 
         foreach (var nation in nations)

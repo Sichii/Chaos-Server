@@ -11,10 +11,7 @@ public sealed class SpellFactory : ISpellFactory
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public SpellFactory(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider
-    )
+    public SpellFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;

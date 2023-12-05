@@ -12,16 +12,19 @@ public sealed record MapTemplateSchema
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public byte Height { get; set; }
+
     /// <summary>
     ///     A collection of names of map scripts to attach to this map by default
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+
     /// <summary>
     ///     A unique id specific to this map template<br />
     ///     This must match the name of the folder containing this file
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; set; } = null!;
+
     /// <summary>
     ///     The width of the map
     /// </summary>

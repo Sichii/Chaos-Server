@@ -22,7 +22,8 @@ public sealed class ChaosDialogTypeExtensionsTests
         var dialogType = chaosDialogType.ToDialogType();
 
         // Assert
-        dialogType.Should().Be(expectedDialogType);
+        dialogType.Should()
+                  .Be(expectedDialogType);
     }
 
     [Fact]
@@ -59,7 +60,8 @@ public sealed class ChaosDialogTypeExtensionsTests
         var menuType = chaosDialogType.ToMenuType();
 
         // Assert
-        menuType.Should().Be(expectedMenuType);
+        menuType.Should()
+                .Be(expectedMenuType);
     }
 
     [Fact]

@@ -18,7 +18,8 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
 
     /// <inheritdoc />
     public AislingRepository(IEntityRepository entityRepository, IOptions<AislingStoreOptions> options)
-        : base(entityRepository, null) => Options = options.Value;
+        : base(entityRepository, null)
+        => Options = options.Value;
 
     public override void Add(string path, AislingComposite obj)
     {
@@ -28,9 +29,11 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
 
     /// <inheritdoc />
     /// <remarks>Must override here because AislingStoreOptions is not an IExpiringFileCacheOptions implementation</remarks>
-    protected override IEnumerable<string> GetPaths() =>
-        Directory.EnumerateDirectories(Options.Directory, "*", SearchOption.AllDirectories)
-                 .Where(src => Directory.EnumerateFiles(src).Any());
+    protected override IEnumerable<string> GetPaths()
+        => Directory.EnumerateDirectories(Options.Directory, "*", SearchOption.AllDirectories)
+                    .Where(
+                        src => Directory.EnumerateFiles(src)
+                                        .Any());
 
     /// <inheritdoc />
     protected override async Task<AislingComposite?> LoadFromFileAsync(string path)

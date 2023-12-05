@@ -14,8 +14,7 @@ public sealed class LootDropCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    )
+        CultureInfo culture)
     {
         if (value is not IEnumerable<LootDropSchema> dialogOptionSchemas)
             return string.Empty;
@@ -30,7 +29,6 @@ public sealed class LootDropCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    ) =>
-        throw new NotImplementedException();
+        CultureInfo culture)
+        => throw new NotImplementedException();
 }

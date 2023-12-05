@@ -14,10 +14,12 @@ public sealed record MetaDataArgs : ISendArgs
     ///     validate
     /// </summary>
     public ICollection<MetaDataInfo>? MetaDataCollection { get; set; }
+
     /// <summary>
     ///     If this request type is to give raw data of a meta file, this is the meta file data to send
     /// </summary>
     public MetaDataInfo? MetaDataInfo { get; set; }
+
     /// <summary>
     ///     The type of the meta file request
     /// </summary>

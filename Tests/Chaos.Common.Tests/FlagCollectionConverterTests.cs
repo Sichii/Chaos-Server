@@ -26,10 +26,19 @@ public sealed class FlagCollectionConverterTests
         var result = converter.Read(ref reader, typeof(FlagCollection), options);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeOfType<FlagCollection>();
-        result.HasFlag(ColorFlag.Red).Should().BeTrue();
-        result.HasFlag(SizeFlag.Small).Should().BeTrue();
+        result.Should()
+              .NotBeNull();
+
+        result.Should()
+              .BeOfType<FlagCollection>();
+
+        result.HasFlag(ColorFlag.Red)
+              .Should()
+              .BeTrue();
+
+        result.HasFlag(SizeFlag.Small)
+              .Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -52,6 +61,7 @@ public sealed class FlagCollectionConverterTests
         var resultJson = Encoding.UTF8.GetString(memoryStream.ToArray());
 
         // Assert
-        resultJson.Should().BeEquivalentToJson(EXPECTED_JSON);
+        resultJson.Should()
+                  .BeEquivalentToJson(EXPECTED_JSON);
     }
 }

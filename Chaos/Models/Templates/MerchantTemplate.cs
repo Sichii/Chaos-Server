@@ -16,15 +16,18 @@ public sealed record MerchantTemplate : ITemplate, IScripted
     public required int RestockIntervalHrs { get; init; }
 
     public required int RestockPct { get; init; }
+
     /// <inheritdoc />
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    public required IDictionary<string, IScriptVars> ScriptVars { get; init; } =
-        new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
+
+    public required IDictionary<string, IScriptVars> ScriptVars { get; init; }
+        = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
 
     public required ICollection<string> SkillsToTeach { get; init; }
 
     public required ICollection<string> SpellsToTeach { get; init; }
     public required ushort Sprite { get; init; }
+
     /// <inheritdoc />
     public required string TemplateKey { get; init; }
 

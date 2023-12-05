@@ -30,6 +30,7 @@ public sealed record ShardingOptionsSchema
     ///     The number of players or groups allowed per instance (based on Shardingtype)
     /// </summary>
     public int Limit { get; set; }
+
     /// <summary>
     ///     The conditions that lead to new shards of this instance being created
     /// </summary>

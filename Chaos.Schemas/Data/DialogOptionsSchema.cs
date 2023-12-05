@@ -12,6 +12,7 @@ public sealed record DialogOptionSchema
     /// </summary>
     [JsonRequired]
     public string DialogKey { get; set; } = null!;
+
     /// <summary>
     ///     The text displayed for this option
     /// </summary>

@@ -9,6 +9,7 @@ public sealed record BulletinBoardSchema
     ///     A collection of posts on this bulletin board
     /// </summary>
     public ICollection<PostSchema> Posts { get; set; } = Array.Empty<PostSchema>();
+
     /// <summary>
     ///     A key unique to this bulletin board.
     /// </summary>

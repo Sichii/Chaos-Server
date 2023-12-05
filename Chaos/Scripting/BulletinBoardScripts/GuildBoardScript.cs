@@ -24,6 +24,7 @@ public sealed class GuildBoardScript : ConfigurableBulletinBoardScriptBase
     private readonly TimeSpan PostRetentionTime;
     private readonly IIntervalTimer PostRetentionTimer;
     public string GuildName { get; init; } = null!;
+
     /// <summary>
     ///     The number of hours a post will last before being automatically deleted. Use -1 to never delete posts
     /// </summary>
@@ -38,8 +39,8 @@ public sealed class GuildBoardScript : ConfigurableBulletinBoardScriptBase
     }
 
     /// <inheritdoc />
-    public override bool AllowedToDelete(Aisling aisling, Post post) =>
-        aisling.Name.EqualsI(post.Author) || IsCouncil(aisling) || IsLeader(aisling);
+    public override bool AllowedToDelete(Aisling aisling, Post post)
+        => aisling.Name.EqualsI(post.Author) || IsCouncil(aisling) || IsLeader(aisling);
 
     /// <inheritdoc />
     public override bool AllowedToHighlight(Aisling aisling) => IsLeader(aisling);
@@ -50,33 +51,31 @@ public sealed class GuildBoardScript : ConfigurableBulletinBoardScriptBase
     /// <inheritdoc />
     public override bool AllowedToView(Aisling aisling) => IsMember(aisling);
 
-    private bool IsApplicant(Aisling aisling) =>
-        aisling.Guild is not null
-        && aisling.Guild.Name.EqualsI(GuildName)
-        && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
-        && (rank.Tier == 3);
+    private bool IsApplicant(Aisling aisling)
+        => aisling.Guild is not null
+           && aisling.Guild.Name.EqualsI(GuildName)
+           && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
+           && (rank.Tier == 3);
 
-    private bool IsCouncil(Aisling aisling) =>
-        aisling.Guild is not null
-        && aisling.Guild.Name.EqualsI(GuildName)
-        && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
-        && (rank.Tier == 1);
+    private bool IsCouncil(Aisling aisling)
+        => aisling.Guild is not null
+           && aisling.Guild.Name.EqualsI(GuildName)
+           && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
+           && (rank.Tier == 1);
 
-    private bool IsInGuild(Aisling aisling) =>
-        aisling.Guild is not null
-        && aisling.Guild.Name.EqualsI(GuildName);
+    private bool IsInGuild(Aisling aisling) => aisling.Guild is not null && aisling.Guild.Name.EqualsI(GuildName);
 
-    private bool IsLeader(Aisling aisling) =>
-        aisling.Guild is not null
-        && aisling.Guild.Name.EqualsI(GuildName)
-        && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
-        && (rank.Tier == 0);
+    private bool IsLeader(Aisling aisling)
+        => aisling.Guild is not null
+           && aisling.Guild.Name.EqualsI(GuildName)
+           && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
+           && (rank.Tier == 0);
 
-    private bool IsMember(Aisling aisling) =>
-        aisling.Guild is not null
-        && aisling.Guild.Name.EqualsI(GuildName)
-        && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
-        && (rank.Tier == 2);
+    private bool IsMember(Aisling aisling)
+        => aisling.Guild is not null
+           && aisling.Guild.Name.EqualsI(GuildName)
+           && aisling.Guild.TryGetRank(aisling.GuildRank!, out var rank)
+           && (rank.Tier == 2);
 
     /// <inheritdoc />
     public override bool ShouldRejectPost(Aisling aisling, Post post, [MaybeNullWhen(false)] out string reason)

@@ -12,6 +12,7 @@ namespace Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
 public class DefaultNaturalRegenerationScript : ScriptBase, INaturalRegenerationScript
 {
     public IRegenFormula RegenFormula { get; set; } = RegenFormulae.Default;
+
     /// <inheritdoc />
     public static string Key { get; } = GetScriptKey(typeof(DefaultNaturalRegenerationScript));
 

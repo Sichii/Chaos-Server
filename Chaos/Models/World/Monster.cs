@@ -35,8 +35,10 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
 
     /// <inheritdoc />
     public override IMonsterScript Script { get; }
+
     /// <inheritdoc />
     public override ISet<string> ScriptKeys { get; }
+
     public List<Skill> Skills { get; }
     public IIntervalTimer SkillTimer { get; }
     public List<Spell> Spells { get; }
@@ -45,6 +47,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     public MonsterTemplate Template { get; }
     public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
+
     /// <inheritdoc />
     public override int AssailIntervalMs => Template.AssailIntervalMs;
 
@@ -60,8 +63,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         IPoint point,
         ILogger<Monster> logger,
         IScriptProvider scriptProvider,
-        ICollection<string>? extraScriptKeys = null
-    )
+        ICollection<string>? extraScriptKeys = null)
         : base(
             template.Name,
             template.Sprite,
@@ -143,6 +145,8 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         else if (BlackList.IsNullOrEmpty())
             base.Wander(unwalkablePoints);
         else
-            base.Wander(unwalkablePoints!.Concat(BlackList).ToList());
+            base.Wander(
+                unwalkablePoints!.Concat(BlackList)
+                                 .ToList());
     }
 }

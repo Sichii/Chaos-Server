@@ -56,7 +56,9 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
         "How much money I got",
         "How much gold I got"
     };
+
     protected ILogger Logger { get; }
+
     protected static ICollection<string> MoneyTerms { get; } = new List<string>
     {
         "coins",
@@ -81,12 +83,14 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
 
     /// <inheritdoc />
     protected VerbalBankerScriptBase(Merchant subject, ILogger logger)
-        : base(subject) => Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     protected virtual bool IsClosestVerbalBankerTo(Aisling aisling)
     {
         //if we're checking, it means we're in range... it should be impossible to get no results
-        var closestVerbalBanker = aisling.MapInstance.GetEntities<Merchant>()
+        var closestVerbalBanker = aisling.MapInstance
+                                         .GetEntities<Merchant>()
                                          .Where(merchant => merchant.Script.Is<VerbalBankerScriptBase>())
                                          .OrderBy(x => x.DistanceFrom(aisling))
                                          .ThenBy(x => x.Creation)

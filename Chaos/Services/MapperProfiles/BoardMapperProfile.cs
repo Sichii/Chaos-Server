@@ -32,8 +32,7 @@ public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
         BulletinBoardKeyMapper keyMapper,
         ILoggerFactory loggerFactory,
         IScriptProvider scriptProvider,
-        ISimpleCache simpleCache
-    )
+        ISimpleCache simpleCache)
     {
         Mapper = mapper;
         KeyMapper = keyMapper;
@@ -46,65 +45,73 @@ public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
     public MailBox Map(MailBoxSchema obj) => new(obj.Key, LoggerFactory.CreateLogger<MailBox>(), Mapper.MapMany<Post>(obj.Posts));
 
     /// <inheritdoc />
-    public MailBoxSchema Map(MailBox obj) => new()
-    {
-        Key = obj.Key,
-        Posts = Mapper.MapMany<Post, PostSchema>(obj).ToList()
-    };
+    public MailBoxSchema Map(MailBox obj)
+        => new()
+        {
+            Key = obj.Key,
+            Posts = Mapper.MapMany<Post, PostSchema>(obj)
+                          .ToList()
+        };
 
     /// <inheritdoc />
     public BoardBase Map(BoardInfo obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    BoardInfo IMapperProfile<BoardBase, BoardInfo>.Map(BoardBase obj) => new()
-    {
-        BoardId = obj.BoardId,
-        Name = obj.Name,
-        Posts = Mapper.MapMany<Post, PostInfo>(obj).ToList()
-    };
+    BoardInfo IMapperProfile<BoardBase, BoardInfo>.Map(BoardBase obj)
+        => new()
+        {
+            BoardId = obj.BoardId,
+            Name = obj.Name,
+            Posts = Mapper.MapMany<Post, PostInfo>(obj)
+                          .ToList()
+        };
 
     /// <inheritdoc />
-    public Post Map(PostSchema obj) => new(
-        0,
-        obj.Author,
-        obj.Subject,
-        obj.Message,
-        obj.CreationDate,
-        obj.IsHighlighted);
+    public Post Map(PostSchema obj)
+        => new(
+            0,
+            obj.Author,
+            obj.Subject,
+            obj.Message,
+            obj.CreationDate,
+            obj.IsHighlighted);
 
     /// <inheritdoc />
     public Post Map(PostInfo obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    PostInfo IMapperProfile<Post, PostInfo>.Map(Post obj) => new()
-    {
-        PostId = obj.PostId,
-        Author = obj.Author,
-        Subject = obj.Subject,
-        Message = obj.Message,
-        CreationDate = obj.CreationDate,
-        IsHighlighted = obj.IsHighlighted
-    };
+    PostInfo IMapperProfile<Post, PostInfo>.Map(Post obj)
+        => new()
+        {
+            PostId = obj.PostId,
+            Author = obj.Author,
+            Subject = obj.Subject,
+            Message = obj.Message,
+            CreationDate = obj.CreationDate,
+            IsHighlighted = obj.IsHighlighted
+        };
 
     /// <inheritdoc />
-    public PostSchema Map(Post obj) => new()
-    {
-        Author = obj.Author,
-        Subject = obj.Subject,
-        Message = obj.Message,
-        CreationDate = obj.CreationDate,
-        IsHighlighted = obj.IsHighlighted
-    };
+    public PostSchema Map(Post obj)
+        => new()
+        {
+            Author = obj.Author,
+            Subject = obj.Subject,
+            Message = obj.Message,
+            CreationDate = obj.CreationDate,
+            IsHighlighted = obj.IsHighlighted
+        };
 
     /// <inheritdoc />
-    public BulletinBoardTemplate Map(BulletinBoardTemplateSchema obj) => new()
-    {
-        TemplateKey = obj.TemplateKey,
-        Id = KeyMapper.GetId(obj.TemplateKey),
-        Name = obj.Name,
-        ScriptKeys = obj.ScriptKeys.ToHashSet(StringComparer.OrdinalIgnoreCase),
-        ScriptVars = obj.ScriptVars.ToDictionary(kvp => kvp.Key, kvp => (IScriptVars)kvp.Value, StringComparer.OrdinalIgnoreCase)
-    };
+    public BulletinBoardTemplate Map(BulletinBoardTemplateSchema obj)
+        => new()
+        {
+            TemplateKey = obj.TemplateKey,
+            Id = KeyMapper.GetId(obj.TemplateKey),
+            Name = obj.Name,
+            ScriptKeys = obj.ScriptKeys.ToHashSet(StringComparer.OrdinalIgnoreCase),
+            ScriptVars = obj.ScriptVars.ToDictionary(kvp => kvp.Key, kvp => (IScriptVars)kvp.Value, StringComparer.OrdinalIgnoreCase)
+        };
 
     /// <inheritdoc />
     public BulletinBoardTemplateSchema Map(BulletinBoardTemplate obj) => throw new NotImplementedException();
@@ -125,9 +132,11 @@ public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
     }
 
     /// <inheritdoc />
-    public BulletinBoardSchema Map(BulletinBoard obj) => new()
-    {
-        TemplateKey = obj.Template.TemplateKey,
-        Posts = Mapper.MapMany<Post, PostSchema>(obj).ToList()
-    };
+    public BulletinBoardSchema Map(BulletinBoard obj)
+        => new()
+        {
+            TemplateKey = obj.Template.TemplateKey,
+            Posts = Mapper.MapMany<Post, PostSchema>(obj)
+                          .ToList()
+        };
 }

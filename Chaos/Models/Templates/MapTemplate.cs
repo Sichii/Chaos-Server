@@ -13,8 +13,10 @@ public sealed record MapTemplate : ITemplate, IScripted
     public ushort CheckSum { get; set; }
     public Dictionary<IPoint, DoorTemplate> Doors { get; set; } = new(PointEqualityComparer.Instance);
     public required byte Height { get; set; }
+
     /// <inheritdoc />
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
     public required string TemplateKey { get; init; } = null!;
     public required Tile[,] Tiles { get; set; } = new Tile[0, 0];
     public required byte Width { get; set; }

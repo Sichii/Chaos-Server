@@ -13,6 +13,7 @@ public sealed record LoginMessageArgs : ISendArgs
     ///     The type of login message to be used
     /// </summary>
     public LoginMessageType LoginMessageType { get; set; }
+
     /// <summary>
     ///     If the login message type can have a custom message, this will be the message displayed.
     /// </summary>

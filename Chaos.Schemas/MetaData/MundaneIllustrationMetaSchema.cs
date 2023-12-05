@@ -13,6 +13,7 @@ public sealed record MundaneIllustrationMetaSchema
     /// </summary>
     [JsonRequired]
     public string ImageName { get; set; } = null!;
+
     /// <summary>
     ///     The name of the merchant to show this illustration for
     /// </summary>

@@ -21,7 +21,9 @@ public sealed class DirectorySynchronizerTests
 
         Thread.Sleep(50);
 
-        DirectorySynchronizer.LockedDirectories.Should().Contain(DIRECTORY);
+        DirectorySynchronizer.LockedDirectories
+                             .Should()
+                             .Contain(DIRECTORY);
     }
 
     [Fact]
@@ -49,8 +51,12 @@ public sealed class DirectorySynchronizerTests
 
         await Task.WhenAll(t1, t2);
 
-        counter.Should().Be(2);
-        Stopwatch.GetElapsedTime(start).Should().BeGreaterThan(TimeSpan.FromMilliseconds(200));
+        counter.Should()
+               .Be(2);
+
+        Stopwatch.GetElapsedTime(start)
+                 .Should()
+                 .BeGreaterThan(TimeSpan.FromMilliseconds(200));
     }
 
     [Fact]
@@ -60,7 +66,8 @@ public sealed class DirectorySynchronizerTests
 
         var result = DIRECTORY.SafeExecute(_ => "success");
 
-        result.Should().Be("success");
+        result.Should()
+              .Be("success");
     }
 
     [Fact]
@@ -74,7 +81,9 @@ public sealed class DirectorySynchronizerTests
                 await Task.Delay(500); // Simulate a long-running operation
             });
 
-        DirectorySynchronizer.LockedDirectories.Should().Contain(DIRECTORY);
+        DirectorySynchronizer.LockedDirectories
+                             .Should()
+                             .Contain(DIRECTORY);
     }
 
     [Fact]
@@ -101,8 +110,11 @@ public sealed class DirectorySynchronizerTests
         await Task.WhenAll(task1, task2);
         var end = Stopwatch.GetElapsedTime(start);
 
-        counter.Should().Be(2, "each function should have incremented the counter once");
-        end.Should().BeGreaterThan(TimeSpan.FromMilliseconds(200), "the tasks should not have been executed concurrently");
+        counter.Should()
+               .Be(2, "each function should have incremented the counter once");
+
+        end.Should()
+           .BeGreaterThan(TimeSpan.FromMilliseconds(200), "the tasks should not have been executed concurrently");
     }
 
     [Fact]
@@ -112,6 +124,7 @@ public sealed class DirectorySynchronizerTests
 
         var result = await DIRECTORY.SafeExecuteAsync(_ => Task.FromResult("success"));
 
-        result.Should().Be("success");
+        result.Should()
+              .Be("success");
     }
 }

@@ -49,10 +49,12 @@ public sealed class AccessManager : BackgroundService, IAccessManager
             Directory.CreateDirectory(Options.Directory);
 
         if (!File.Exists(BlacklistPath))
-            File.Create(BlacklistPath).Dispose();
+            File.Create(BlacklistPath)
+                .Dispose();
 
         if (!File.Exists(WhitelistPath))
-            File.Create(WhitelistPath).Dispose();
+            File.Create(WhitelistPath)
+                .Dispose();
     }
 
     /// <inheritdoc />
@@ -62,7 +64,12 @@ public sealed class AccessManager : BackgroundService, IAccessManager
 
         var ipStr = ipAddress.ToString();
 
-        await File.AppendAllLinesAsync(BlacklistPath, new[] { ipStr });
+        await File.AppendAllLinesAsync(
+            BlacklistPath,
+            new[]
+            {
+                ipStr
+            });
 
         var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
         whiteList.RemoveAll(str => str.EqualsI(ipStr));
@@ -75,8 +82,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         IPAddress ipAddress,
         string name,
         string oldPassword,
-        string newPassword
-    )
+        string newPassword)
     {
         await using var sync = await CredentialSync.WaitAsync();
 
@@ -208,7 +214,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
             var now = DateTime.UtcNow;
 
             foreach ((var ip, var details) in FailureDetails.ToList())
-                if (now.Subtract(details.MostRecentFailureTime).TotalMinutes > Options.LockoutMins)
+                if (now.Subtract(details.MostRecentFailureTime)
+                       .TotalMinutes
+                    > Options.LockoutMins)
                     FailureDetails.TryRemove(ip, out _);
         }
     }
@@ -274,17 +282,17 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         };
     }
 
-    private async Task<bool> IsBlacklisted(IPAddress ipAddress) =>
-        await File.ReadLinesAsync(BlacklistPath)
-                  .Select(line => IPAddress.TryParse(line, out var ip) ? ip : null)
-                  .Where(obj => obj is not null)
-                  .ContainsAsync(ipAddress);
+    private async Task<bool> IsBlacklisted(IPAddress ipAddress)
+        => await File.ReadLinesAsync(BlacklistPath)
+                     .Select(line => IPAddress.TryParse(line, out var ip) ? ip : null)
+                     .Where(obj => obj is not null)
+                     .ContainsAsync(ipAddress);
 
-    private async Task<bool> IsWhitelisted(IPAddress ipAddress) =>
-        await File.ReadLinesAsync(WhitelistPath)
-                  .Select(line => IPAddress.TryParse(line, out var ip) ? ip : null)
-                  .Where(obj => obj is not null)
-                  .ContainsAsync(ipAddress);
+    private async Task<bool> IsWhitelisted(IPAddress ipAddress)
+        => await File.ReadLinesAsync(WhitelistPath)
+                     .Select(line => IPAddress.TryParse(line, out var ip) ? ip : null)
+                     .Where(obj => obj is not null)
+                     .ContainsAsync(ipAddress);
 
     /// <summary>
     ///     Validates a password against the rules specified in the configuration
@@ -315,14 +323,18 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <param name="name">The name to validate</param>
     private CredentialValidationResult ValidateUserNameRules(string name)
     {
-        if (Options.ValidCharactersRegex.Matches(name).Count != 1)
+        if (Options.ValidCharactersRegex.Matches(name)
+                   .Count
+            != 1)
             return new CredentialValidationResult
             {
                 Code = CredentialValidationResult.FailureCode.InvalidUsername,
                 FailureMessage = "Invalid characters detected in username"
             };
 
-        if (Options.ValidFormatRegex.Matches(name).Count != 1)
+        if (Options.ValidFormatRegex.Matches(name)
+                   .Count
+            != 1)
             return new CredentialValidationResult
             {
                 Code = CredentialValidationResult.FailureCode.InvalidUsername,
@@ -364,6 +376,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     private sealed class CredentialFailureDetails
     {
         internal required int FailureCount { get; set; }
+
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         internal required string IpAddress { get; init; }
         internal required DateTime MostRecentFailureTime { get; set; }

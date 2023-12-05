@@ -14,8 +14,8 @@ public static class MathEx
     /// <param name="max">The maximum value</param>
     /// <typeparam name="TNumber">The type of numeric to return</typeparam>
     /// <returns>The percentile <paramref name="current" /> is of <paramref name="max" /></returns>
-    public static TNumber CalculatePercent<TNumber>(int current, int max) where TNumber: INumber<TNumber> =>
-        (TNumber)Convert.ChangeType(current / (decimal)max * 100m, typeof(TNumber));
+    public static TNumber CalculatePercent<TNumber>(int current, int max) where TNumber: INumber<TNumber>
+        => (TNumber)Convert.ChangeType(current / (decimal)max * 100m, typeof(TNumber));
 
     /// <summary>
     ///     Calculates the percentage of a number
@@ -24,8 +24,8 @@ public static class MathEx
     /// <param name="percent">The percent to calculate</param>
     /// <typeparam name="TNumber">The type of numeric to return</typeparam>
     /// <returns>A number that is "<paramref name="percent" />" percent of <paramref name="num" /></returns>
-    public static TNumber GetPercentOf<TNumber>(int num, decimal percent) where TNumber: INumber<TNumber> =>
-        (TNumber)Convert.ChangeType(num / 100m * percent, typeof(TNumber));
+    public static TNumber GetPercentOf<TNumber>(int num, decimal percent) where TNumber: INumber<TNumber>
+        => (TNumber)Convert.ChangeType(num / 100m * percent, typeof(TNumber));
 
     /// <summary>
     ///     Scales a number from one range to another range.
@@ -45,8 +45,7 @@ public static class MathEx
         double min,
         double max,
         double newMin,
-        double newMax
-    )
+        double newMax)
     {
         if (min.Equals(max))
             throw new ArgumentOutOfRangeException(nameof(min), "Min and max cannot be the same value");
@@ -72,9 +71,7 @@ public static class MathEx
         T1 min,
         T1 max,
         T2 newMin,
-        T2 newMax
-    ) where T1: INumber<T1>
-      where T2: INumber<T2>
+        T2 newMax) where T1: INumber<T1> where T2: INumber<T2>
     {
         if (min.Equals(max))
             throw new ArgumentOutOfRangeException(nameof(min), "Min and max cannot be the same value");

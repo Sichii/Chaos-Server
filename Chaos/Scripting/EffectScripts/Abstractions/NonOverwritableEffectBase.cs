@@ -10,8 +10,8 @@ public abstract class NonOverwritableEffectBase : EffectBase
     protected abstract IReadOnlyCollection<string> ConflictingEffectNames { get; }
     protected abstract byte? Sound { get; }
 
-    protected virtual string GetAlreadyAffectedMessage(Creature target, IEffect existingEffect) =>
-        $"{target.Name} is already affected by {existingEffect.Name}";
+    protected virtual string GetAlreadyAffectedMessage(Creature target, IEffect existingEffect)
+        => $"{target.Name} is already affected by {existingEffect.Name}";
 
     /// <inheritdoc />
     public override void OnApplied()

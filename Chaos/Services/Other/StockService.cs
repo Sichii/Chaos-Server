@@ -48,8 +48,7 @@ public sealed class StockService : BackgroundService, IStockService
         string key,
         IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
         TimeSpan restockInterval,
-        int restockPercent
-    )
+        int restockPercent)
     {
         var merchantStock = new MerchantStock(
             key,
@@ -84,10 +83,7 @@ public sealed class StockService : BackgroundService, IStockService
 
         merchantStock.Restock(percent);
 
-        Logger.WithTopics(
-                  Topics.Entities.Merchant,
-                  Topics.Qualifiers.Forced,
-                  Topics.Actions.Update)
+        Logger.WithTopics(Topics.Entities.Merchant, Topics.Qualifiers.Forced, Topics.Actions.Update)
               .LogDebug("Manually restocked {@Key}", key);
     }
 
@@ -152,8 +148,8 @@ public sealed class StockService : BackgroundService, IStockService
             MaxStock = maxStock;
         }
 
-        internal void Restock(int percent) =>
-            InterlockedEx.SetValue(
+        internal void Restock(int percent)
+            => InterlockedEx.SetValue(
                 ref _currentStock,
                 () =>
                 {
@@ -203,8 +199,7 @@ public sealed class StockService : BackgroundService, IStockService
             IEnumerable<(string ItemTemplateKey, int MaxStock)> stock,
             TimeSpan restockInterval,
             int restockPct,
-            ILogger logger
-        )
+            ILogger logger)
         {
             Key = key;
             Logger = logger;

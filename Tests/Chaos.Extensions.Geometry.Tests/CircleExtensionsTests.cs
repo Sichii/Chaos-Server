@@ -20,8 +20,11 @@ public sealed class CircleExtensionsTests
         var intersectionPoint = circle.CalculateIntersectionEntryPoint(lineStart, lineEnd);
 
         // Assert
-        intersectionPoint.Should().NotBeNull();
-        intersectionPoint.Should().Be(expectedIntersectionPoint);
+        intersectionPoint.Should()
+                         .NotBeNull();
+
+        intersectionPoint.Should()
+                         .Be(expectedIntersectionPoint);
     }
 
     [Fact]
@@ -37,8 +40,11 @@ public sealed class CircleExtensionsTests
         var intersectionPoint = circle.CalculateIntersectionEntryPoint(lineStart, lineEnd);
 
         // Assert
-        intersectionPoint.Should().NotBeNull();
-        intersectionPoint.Should().Be(expectedIntersectionPoint);
+        intersectionPoint.Should()
+                         .NotBeNull();
+
+        intersectionPoint.Should()
+                         .Be(expectedIntersectionPoint);
     }
 
     [Fact]
@@ -53,7 +59,8 @@ public sealed class CircleExtensionsTests
         var intersectionPoint = circle.CalculateIntersectionEntryPoint(lineStart, lineEnd);
 
         // Assert
-        intersectionPoint.Should().BeNull();
+        intersectionPoint.Should()
+                         .BeNull();
     }
 
     [Fact]
@@ -62,7 +69,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 5);
         var other = new Circle(new Point(7, 7), 4);
 
-        circle.Contains(other).Should().BeFalse();
+        circle.Contains(other)
+              .Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -71,7 +80,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 3);
         var other = new Circle(new Point(5, 5), 5);
 
-        circle.Contains(other).Should().BeFalse();
+        circle.Contains(other)
+              .Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -82,7 +93,8 @@ public sealed class CircleExtensionsTests
 
         Action act = () => circle.Contains(other!);
 
-        act.Should().Throw<ArgumentNullException>();
+        act.Should()
+           .Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -93,7 +105,8 @@ public sealed class CircleExtensionsTests
 
         Action act = () => circle.Contains(point!);
 
-        act.Should().Throw<ArgumentNullException>();
+        act.Should()
+           .Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -102,7 +115,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 3);
         var point = new Point(5, 5);
 
-        circle.Contains(point).Should().BeTrue();
+        circle.Contains(point)
+              .Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -111,7 +126,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 5);
         var point = new Point(6, 6);
 
-        circle.Contains(point).Should().BeTrue();
+        circle.Contains(point)
+              .Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -120,7 +137,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 5);
         var point = new Point(5, 0);
 
-        circle.Contains(point).Should().BeTrue();
+        circle.Contains(point)
+              .Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -129,7 +148,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 3);
         var point = new Point(10, 10);
 
-        circle.Contains(point).Should().BeFalse();
+        circle.Contains(point)
+              .Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -137,7 +158,9 @@ public sealed class CircleExtensionsTests
     {
         var circle = new Circle(new Point(5, 5), 3);
 
-        circle.Contains(circle).Should().BeTrue();
+        circle.Contains(circle)
+              .Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -146,7 +169,9 @@ public sealed class CircleExtensionsTests
         var circle = new Circle(new Point(5, 5), 5);
         var other = new Circle(new Point(5, 5), 3);
 
-        circle.Contains(other).Should().BeTrue();
+        circle.Contains(other)
+              .Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -160,7 +185,8 @@ public sealed class CircleExtensionsTests
         var edgeDistance = circle.EdgeDistanceFrom(otherPoint);
 
         // Assert
-        edgeDistance.Should().BeGreaterThan(0);
+        edgeDistance.Should()
+                    .BeGreaterThan(0);
     }
 
     [Fact]
@@ -174,7 +200,8 @@ public sealed class CircleExtensionsTests
         var edgeDistance = circle.EdgeDistanceFrom(otherPoint);
 
         // Assert
-        edgeDistance.Should().Be(0);
+        edgeDistance.Should()
+                    .Be(0);
     }
 
     [Fact]
@@ -188,7 +215,8 @@ public sealed class CircleExtensionsTests
         var edgeDistance = circle.EdgeDistanceFrom(otherPoint);
 
         // Assert
-        edgeDistance.Should().Be(0);
+        edgeDistance.Should()
+                    .Be(0);
     }
 
     [Fact]
@@ -202,7 +230,8 @@ public sealed class CircleExtensionsTests
         var edgeToEdgeDistance = circle1.EdgeToEdgeDistanceFrom(circle2);
 
         // Assert
-        edgeToEdgeDistance.Should().BeGreaterThan(0);
+        edgeToEdgeDistance.Should()
+                          .BeGreaterThan(0);
     }
 
     [Fact]
@@ -216,7 +245,8 @@ public sealed class CircleExtensionsTests
         var edgeToEdgeDistance = circle1.EdgeToEdgeDistanceFrom(circle2);
 
         // Assert
-        edgeToEdgeDistance.Should().Be(0);
+        edgeToEdgeDistance.Should()
+                          .Be(0);
     }
 
     [Fact]
@@ -230,7 +260,8 @@ public sealed class CircleExtensionsTests
         var edgeToEdgeDistance = circle1.EdgeToEdgeDistanceFrom(circle2);
 
         // Assert
-        edgeToEdgeDistance.Should().Be(0);
+        edgeToEdgeDistance.Should()
+                          .Be(0);
     }
 
     [Fact]
@@ -308,9 +339,11 @@ public sealed class CircleExtensionsTests
     {
         var circle = new Circle(new Point(0, 0), 1);
 
-        var points = circle.GetPoints().ToList();
+        var points = circle.GetPoints()
+                           .ToList();
 
-        points.Should().HaveCount(5);
+        points.Should()
+              .HaveCount(5);
 
         points.Should()
               .BeEquivalentTo(
@@ -329,9 +362,11 @@ public sealed class CircleExtensionsTests
     {
         var circle = new Circle(new Point(0, 0), 2);
 
-        var points = circle.GetPoints().ToList();
+        var points = circle.GetPoints()
+                           .ToList();
 
-        points.Should().HaveCount(13);
+        points.Should()
+              .HaveCount(13);
 
         points.Should()
               .BeEquivalentTo(
@@ -358,10 +393,18 @@ public sealed class CircleExtensionsTests
     {
         var circle = new Circle(new Point(0, 0), 0);
 
-        var points = circle.GetPoints().ToList();
+        var points = circle.GetPoints()
+                           .ToList();
 
-        points.Should().HaveCount(1);
-        points.Should().BeEquivalentTo(new[] { new Point(0, 0) });
+        points.Should()
+              .HaveCount(1);
+
+        points.Should()
+              .BeEquivalentTo(
+                  new[]
+                  {
+                      new Point(0, 0)
+                  });
     }
 
     [Fact]
@@ -370,6 +413,7 @@ public sealed class CircleExtensionsTests
         // Arrange
         //circle should be smallish
         var circle = new Circle(new Point(0, 0), 5);
+
         //high enough it rules out probability
         //low enough it runs fast
         const int ITERATIONS = 10000;
@@ -380,7 +424,9 @@ public sealed class CircleExtensionsTests
 
             // Assert
             var distanceFromCenter = circle.Center.EuclideanDistanceFrom(randomPoint);
-            distanceFromCenter.Should().BeLessOrEqualTo(circle.Radius);
+
+            distanceFromCenter.Should()
+                              .BeLessOrEqualTo(circle.Radius);
         }
     }
 
@@ -398,7 +444,8 @@ public sealed class CircleExtensionsTests
             set.Add(circle.GetRandomPoint());
 
         // Assert
-        set.Should().HaveCount(25);
+        set.Should()
+           .HaveCount(25);
     }
 
     [Fact]
@@ -412,7 +459,8 @@ public sealed class CircleExtensionsTests
         var intersects = circle1.Intersects(circle2);
 
         // Assert
-        intersects.Should().BeFalse();
+        intersects.Should()
+                  .BeFalse();
     }
 
     [Fact]
@@ -426,7 +474,8 @@ public sealed class CircleExtensionsTests
         var intersects = circle1.Intersects(circle2);
 
         // Assert
-        intersects.Should().BeTrue();
+        intersects.Should()
+                  .BeTrue();
     }
 
     [Fact]
@@ -440,6 +489,7 @@ public sealed class CircleExtensionsTests
         var intersects = circle1.Intersects(circle2);
 
         // Assert
-        intersects.Should().BeTrue();
+        intersects.Should()
+                  .BeTrue();
     }
 }

@@ -26,8 +26,7 @@ public sealed class ChartQueryBuilder
         bool lineFillToZeroY = false,
         bool barOverlaySum = false,
         bool suppressLegend = false,
-        MeasurementDisplayPalette palette = MeasurementDisplayPalette.Default
-    )
+        MeasurementDisplayPalette palette = MeasurementDisplayPalette.Default)
     {
         AsyncComposer.Compose(
             chartQuery =>

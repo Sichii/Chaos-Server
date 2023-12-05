@@ -22,8 +22,13 @@ public sealed class FlagCollectionTests
         collection.AddFlag(FLAG_TO_ADD);
 
         // Assert
-        collection.HasFlag(INITIAL_FLAG).Should().BeTrue();
-        collection.HasFlag(FLAG_TO_ADD).Should().BeTrue();
+        collection.HasFlag(INITIAL_FLAG)
+                  .Should()
+                  .BeTrue();
+
+        collection.HasFlag(FLAG_TO_ADD)
+                  .Should()
+                  .BeTrue();
     }
 
     [Fact]
@@ -37,7 +42,9 @@ public sealed class FlagCollectionTests
         collection.AddFlag(FLAG);
 
         // Assert
-        collection.HasFlag(FLAG).Should().BeTrue();
+        collection.HasFlag(FLAG)
+                  .Should()
+                  .BeTrue();
     }
 
     [Fact]
@@ -68,7 +75,8 @@ public sealed class FlagCollectionTests
         var result = collection.GetFlag<SampleFlag1>();
 
         // Assert
-        result.Should().Be(FLAG);
+        result.Should()
+              .Be(FLAG);
     }
 
     [Fact]
@@ -112,7 +120,8 @@ public sealed class FlagCollectionTests
         var result = collection.HasFlag(FLAG);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -127,7 +136,8 @@ public sealed class FlagCollectionTests
         var result = collection.HasFlag(FLAG);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -157,7 +167,8 @@ public sealed class FlagCollectionTests
         var act = () => collection.RemoveFlag(ENUM_VALUE);
 
         // Assert
-        act.Should().NotThrow();
+        act.Should()
+           .NotThrow();
     }
 
     [Fact]
@@ -173,9 +184,17 @@ public sealed class FlagCollectionTests
         collection.RemoveFlag(FLAG_TO_REMOVE);
 
         // Assert
-        collection.HasFlag(SampleFlag1.Value1).Should().BeTrue();
-        collection.HasFlag(INITIAL_FLAG).Should().BeFalse();
-        collection.HasFlag(FLAG_TO_REMOVE).Should().BeFalse();
+        collection.HasFlag(SampleFlag1.Value1)
+                  .Should()
+                  .BeTrue();
+
+        collection.HasFlag(INITIAL_FLAG)
+                  .Should()
+                  .BeFalse();
+
+        collection.HasFlag(FLAG_TO_REMOVE)
+                  .Should()
+                  .BeFalse();
     }
 
     [Fact]
@@ -188,7 +207,8 @@ public sealed class FlagCollectionTests
         var result = collection.TryGetFlag<SampleFlag1>(out _);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -203,8 +223,11 @@ public sealed class FlagCollectionTests
         var result = collection.TryGetFlag<SampleFlag1>(out var value);
 
         // Assert
-        result.Should().BeTrue();
-        value.Should().Be(FLAG);
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be(FLAG);
     }
 
     [Fact]

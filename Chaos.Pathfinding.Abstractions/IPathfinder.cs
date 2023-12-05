@@ -28,8 +28,23 @@ public interface IPathfinder
         IPoint end,
         bool ignoreWalls,
         IReadOnlyCollection<IPoint> blocked,
-        int? limitRadius = null
-    );
+        int? limitRadius = null);
+
+    /// <summary>
+    ///     Finds a direction to walk towards the end point. No path is calculated.
+    /// </summary>
+    /// <param name="start">The point to start from</param>
+    /// <param name="end">The point to walk towards</param>
+    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
+    /// <param name="blocked">A collection of points to avoid</param>
+    /// <returns>
+    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to move
+    /// </returns>
+    Direction SimpleWalk(
+        IPoint start,
+        IPoint end,
+        bool ignoreWalls,
+        IReadOnlyCollection<IPoint> blocked);
 
     /// <summary>
     ///     Finds a valid direction to wander

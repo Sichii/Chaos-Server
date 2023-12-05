@@ -12,17 +12,15 @@ internal sealed class CodeActionsConverter : MarkupExtension, IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    ) =>
-        ((CodeAction)value!).GetCodeActions();
+        CultureInfo culture)
+        => ((CodeAction)value!).GetCodeActions();
 
     public object ConvertBack(
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    ) =>
-        throw new NotSupportedException();
+        CultureInfo culture)
+        => throw new NotSupportedException();
 
     public override object ProvideValue(IServiceProvider serviceProvider) => this;
 }

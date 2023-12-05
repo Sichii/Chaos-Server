@@ -11,10 +11,7 @@ public sealed class SkillFactory : ISkillFactory
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public SkillFactory(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider
-    )
+    public SkillFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;

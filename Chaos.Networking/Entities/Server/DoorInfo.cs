@@ -1,7 +1,8 @@
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of a door in the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Door" />
+///     Represents the serialization of a door in the
+///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Door" />
 ///     packet
 /// </summary>
 public sealed record DoorInfo
@@ -10,14 +11,17 @@ public sealed record DoorInfo
     ///     Whether or not the door is closed
     /// </summary>
     public bool Closed { get; set; }
+
     /// <summary>
     ///     Whether or not the door opens to the right
     /// </summary>
     public bool OpenRight { get; set; }
+
     /// <summary>
     ///     The X coordinate of the door
     /// </summary>
     public int X { get; set; }
+
     /// <summary>
     ///     The Y coordinate of the door
     /// </summary>

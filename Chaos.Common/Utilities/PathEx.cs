@@ -34,7 +34,8 @@ public static class PathEx
             return false;
 
         for (var i = 0; i < parentPathParts.Length; i++)
-            if (!parentPathParts[i].Equals(pathParts[i], StringComparison.OrdinalIgnoreCase))
+            if (!parentPathParts[i]
+                    .Equals(pathParts[i], StringComparison.OrdinalIgnoreCase))
                 return false;
 
         return true;

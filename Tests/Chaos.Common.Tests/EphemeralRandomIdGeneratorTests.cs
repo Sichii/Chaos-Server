@@ -16,7 +16,8 @@ public sealed class EphemeralRandomIdGeneratorTests
         var id = idGenerator.NextId;
 
         // Assert
-        id.Should().BeOfType(typeof(int));
+        id.Should()
+          .BeOfType(typeof(int));
     }
 
     [Fact]
@@ -26,10 +27,13 @@ public sealed class EphemeralRandomIdGeneratorTests
         var idGenerator = EphemeralRandomIdGenerator<int>.Shared;
 
         // Act
-        var ids = Enumerable.Range(1, 1000).Select(_ => idGenerator.NextId).ToList();
+        var ids = Enumerable.Range(1, 1000)
+                            .Select(_ => idGenerator.NextId)
+                            .ToList();
 
         // Assert
-        ids.Should().NotBeInAscendingOrder();
+        ids.Should()
+           .NotBeInAscendingOrder();
     }
 
     [Fact]
@@ -39,9 +43,12 @@ public sealed class EphemeralRandomIdGeneratorTests
         var idGenerator = EphemeralRandomIdGenerator<int>.Shared;
 
         // Act
-        var ids = Enumerable.Range(1, byte.MaxValue).Select(_ => idGenerator.NextId).ToList();
+        var ids = Enumerable.Range(1, byte.MaxValue)
+                            .Select(_ => idGenerator.NextId)
+                            .ToList();
 
         // Assert
-        ids.Should().OnlyHaveUniqueItems();
+        ids.Should()
+           .OnlyHaveUniqueItems();
     }
 }

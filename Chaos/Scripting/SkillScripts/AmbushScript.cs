@@ -19,7 +19,8 @@ public class AmbushScript : SkillScriptBase
         //get the 3 points in front of the source
         var endPoint = context.Source.DirectionalOffset(context.Source.Direction, 3);
 
-        var points = context.Source.GetDirectPath(endPoint)
+        var points = context.Source
+                            .GetDirectPath(endPoint)
                             .Skip(1);
 
         foreach (var point in points)
@@ -27,7 +28,8 @@ public class AmbushScript : SkillScriptBase
             if (context.TargetMap.IsWall(point) || context.TargetMap.IsBlockingReactor(point))
                 return;
 
-            var entity = context.TargetMap.GetEntitiesAtPoint<Creature>(point)
+            var entity = context.TargetMap
+                                .GetEntitiesAtPoint<Creature>(point)
                                 .TopOrDefault();
 
             if (entity != null)

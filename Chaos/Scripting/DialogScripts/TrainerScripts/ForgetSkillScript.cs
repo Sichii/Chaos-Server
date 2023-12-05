@@ -13,8 +13,8 @@ public class ForgetSkillScript : DialogScriptBase
 
     /// <inheritdoc />
     public ForgetSkillScript(Dialog subject, ILogger<ForgetSkillScript> logger)
-        : base(subject) =>
-        Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     /// <inheritdoc />
     public override void OnDisplaying(Aisling source)

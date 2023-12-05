@@ -24,8 +24,7 @@ public class PeriodicMessageTimer : IntervalTimer
         TimeSpan intervalTransitionTime,
         TimeSpan transitionedInterval,
         string messageFormat,
-        Action<string> messageAction
-    )
+        Action<string> messageAction)
         : base(length, false)
     {
         SubIntervalTimer = new IntervalTimer(subInterval, false);

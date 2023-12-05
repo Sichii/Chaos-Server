@@ -4,11 +4,17 @@ using Chaos.Extensions.Common;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class ShuffleBenchmark
 {
-    public int[] Array { get; } = Enumerable.Range(0, 100).Select(_ => Random.Shared.Next()).ToArray();
-    public int[] RandomizedIndexes { get; } = Enumerable.Range(0, 100).Select(i => i).ToArray();
+    public int[] Array { get; } = Enumerable.Range(0, 100)
+                                            .Select(_ => Random.Shared.Next())
+                                            .ToArray();
+
+    public int[] RandomizedIndexes { get; } = Enumerable.Range(0, 100)
+                                                        .Select(i => i)
+                                                        .ToArray();
 
     [Benchmark(Baseline = true)]
     public void OrderByShuffle()
@@ -32,6 +38,7 @@ public class ShuffleBenchmark
     public void ToListShuffle()
     {
         // ReSharper disable once UnusedVariable
-        var list = Array.AsEnumerable().Shuffle();
+        var list = Array.AsEnumerable()
+                        .Shuffle();
     }
 }

@@ -8,5 +8,6 @@ public sealed record SpellContext : ActivationContext
 
     /// <inheritdoc />
     public SpellContext(Creature source, Creature target, string? prompt = null)
-        : base(source, target) => Prompt = prompt;
+        : base(source, target)
+        => Prompt = prompt;
 }

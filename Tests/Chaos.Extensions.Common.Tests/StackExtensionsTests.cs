@@ -15,11 +15,14 @@ public sealed class StackExtensionsTests
         stack.Push(5);
 
         // Act
-        var result = stack.PopUntil(item => item % 2 == 0); // Predicate never satisfied
+        var result = stack.PopUntil(item => (item % 2) == 0); // Predicate never satisfied
 
         // Assert
-        result.Should().Be(default);
-        stack.Should().BeEmpty(); // The stack should be empty
+        result.Should()
+              .Be(default);
+
+        stack.Should()
+             .BeEmpty(); // The stack should be empty
     }
 
     [Fact]
@@ -32,8 +35,11 @@ public sealed class StackExtensionsTests
         var result = stack.PopUntil(_ => true); // Predicate always returns true
 
         // Assert
-        result.Should().Be(default);
-        stack.Should().BeEmpty(); // The stack should still be empty
+        result.Should()
+              .Be(default);
+
+        stack.Should()
+             .BeEmpty(); // The stack should still be empty
     }
 
     [Fact]
@@ -47,10 +53,13 @@ public sealed class StackExtensionsTests
         stack.Push(4);
 
         // Act
-        var result = stack.PopUntil(item => item % 2 == 0); // Find the first even number
+        var result = stack.PopUntil(item => (item % 2) == 0); // Find the first even number
 
         // Assert
-        result.Should().Be(4);
-        stack.Should().Equal(3, 2, 1); // The remaining items in the stack
+        result.Should()
+              .Be(4);
+
+        stack.Should()
+             .Equal(3, 2, 1); // The remaining items in the stack
     }
 }

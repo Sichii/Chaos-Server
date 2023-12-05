@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Chaos.Client.Data.Repositories;
 
-public class MapFileRepository : RepositoryBase
+public sealed class MapFileRepository : RepositoryBase
 {
     /// <inheritdoc />
     public MapFileRepository(IMemoryCache cache)

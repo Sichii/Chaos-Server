@@ -7,8 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Configuration;
 
-public sealed class OptionsValidator : IValidateOptions<LobbyOptions>,
-                                       IValidateOptions<ChaosOptions>
+public sealed class OptionsValidator : IValidateOptions<LobbyOptions>, IValidateOptions<ChaosOptions>
 {
     private readonly ILogger<OptionsValidator> Logger;
 

@@ -30,7 +30,10 @@ public class CascadingComponent<TTileScript> : IComponent where TTileScript: ICa
                 context.TargetMap,
                 point,
                 false,
-                new[] { scriptKey },
+                new[]
+                {
+                    scriptKey
+                },
                 options.CascadeScriptVars,
                 context.Source);
 

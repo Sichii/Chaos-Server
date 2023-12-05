@@ -35,9 +35,7 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
     {
         if (Subject.Owner == null)
             throw new Exception(
-                $@"{nameof(TrapScript)} script initialized for {Subject
-                } that has no owner. If this reactor was created through json, you must specify the optional parameter ""owningMonsterTemplateKey"". If this reactor was created through a script, you must specify the owner in the {
-                    nameof(IReactorTileFactory)}.{nameof(IReactorTileFactory.Create)}() call.");
+                $"""{nameof(TrapScript)} script initialized for {Subject} that has no owner. If this reactor was created through json, you must specify the optional parameter "owningMonsterTemplateKey". If this reactor was created through a script, you must specify the owner in the {nameof(IReactorTileFactory)}.{nameof(IReactorTileFactory.Create)}() call.""");
 
         Owner = subject.Owner!;
         EffectFactory = effectFactory;
@@ -58,15 +56,13 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
         if (!Filter.IsValidTarget(Owner, source))
             return;
 
-        var executed = new ComponentExecutor(Owner, source)
-                       .WithOptions(this)
-                       .ExecuteAndCheck<GetTargetsComponent<Creature>>()
-                       ?
-                       .Execute<SoundComponent>()
-                       .Execute<AnimationComponent>()
-                       .Execute<DamageComponent>()
-                       .Execute<ManaDrainComponent>()
-                       .Execute<ApplyEffectComponent>()
+        var executed = new ComponentExecutor(Owner, source).WithOptions(this)
+                                                           .ExecuteAndCheck<GetTargetsComponent<Creature>>()
+                                                           ?.Execute<SoundComponent>()
+                                                           .Execute<AnimationComponent>()
+                                                           .Execute<DamageComponent>()
+                                                           .Execute<ManaDrainComponent>()
+                                                           .Execute<ApplyEffectComponent>()
                        != null;
 
         if (executed && MaxTriggers.HasValue)
@@ -95,6 +91,7 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
     #region ScriptVars
     /// <inheritdoc />
     public TimeSpan? EffectDurationOverride { get; init; }
+
     public IEffectFactory EffectFactory { get; init; }
     public IApplyDamageScript ApplyDamageScript { get; init; }
     public AoeShape Shape { get; init; }

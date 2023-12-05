@@ -18,8 +18,7 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
         Creature target,
         IScript script,
         int damage,
-        Element? elementOverride = null
-    )
+        Element? elementOverride = null)
     {
         damage = DamageFormula.Calculate(
             source,
@@ -50,6 +49,7 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
                     monster.Script.OnDeath();
 
                 break;
+
             // ReSharper disable once UnusedVariable
             case Merchant merchant:
                 break;

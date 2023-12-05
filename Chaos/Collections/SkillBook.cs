@@ -10,7 +10,12 @@ public sealed class SkillBook : PanelBase<Skill>
         : base(
             PanelType.SkillBook,
             89,
-            new byte[] { 0, 36, 72 })
+            new byte[]
+            {
+                0,
+                36,
+                72
+            })
     {
         skills ??= Array.Empty<Skill>();
 

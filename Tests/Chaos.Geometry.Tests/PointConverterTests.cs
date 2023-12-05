@@ -18,7 +18,8 @@ public sealed class PointConverterTests
 
         var point = PointConverter.Instance.Read(ref utf8JsonReader, typeof(Point), null!);
 
-        point.Should().BeEquivalentTo(new Point(1, 2));
+        point.Should()
+             .BeEquivalentTo(new Point(1, 2));
     }
 
     [Fact]
@@ -39,8 +40,12 @@ public sealed class PointConverterTests
             ex = e;
         }
 
-        ex.Should().NotBeNull();
-        ex?.Message.Should().Be("Expected a string");
+        ex.Should()
+          .NotBeNull();
+
+        ex?.Message
+          .Should()
+          .Be("Expected a string");
     }
 
     [Fact]
@@ -61,8 +66,12 @@ public sealed class PointConverterTests
             ex = e;
         }
 
-        ex.Should().NotBeNull();
-        ex?.Message.Should().Be("Invalid string format for point. \"invalid\"");
+        ex.Should()
+          .NotBeNull();
+
+        ex?.Message
+          .Should()
+          .Be("Invalid string format for point. \"invalid\"");
     }
 
     [Fact]
@@ -78,6 +87,7 @@ public sealed class PointConverterTests
 
         var jsonString = Encoding.UTF8.GetString(memoryStream.ToArray());
 
-        jsonString.Should().Be("\"(1, 2)\"");
+        jsonString.Should()
+                  .Be("\"(1, 2)\"");
     }
 }

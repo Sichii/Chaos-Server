@@ -28,21 +28,24 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
     }
 
     /// <inheritdoc />
-    public MonsterSpawn Map(MonsterSpawnSchema obj) => new()
-    {
-        ExtraLootTables = obj.ExtraLootTableKeys.Select(key => SimpleCache.Get<LootTable>(key)).ToList(),
-        MaxAmount = obj.MaxAmount,
-        MonsterFactory = MonsterFactory,
-        MonsterTemplate = SimpleCache.Get<MonsterTemplate>(obj.MonsterTemplateKey),
-        MaxPerSpawn = obj.MaxPerSpawn,
-        ExtraScriptKeys = new HashSet<string>(obj.ExtraScriptKeys, StringComparer.OrdinalIgnoreCase),
-        SpawnArea = obj.SpawnArea!,
-        BlackList = obj.BlackList.ToListCast<IPoint>(),
-        Direction = obj.Direction,
-        SpawnTimer = obj.IntervalVariancePct.HasValue
-            ? new RandomizedIntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), obj.IntervalVariancePct.Value, startAsElapsed: false)
-            : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), false)
-    };
+    public MonsterSpawn Map(MonsterSpawnSchema obj)
+        => new()
+        {
+            ExtraLootTables = obj.ExtraLootTableKeys
+                                 .Select(key => SimpleCache.Get<LootTable>(key))
+                                 .ToList(),
+            MaxAmount = obj.MaxAmount,
+            MonsterFactory = MonsterFactory,
+            MonsterTemplate = SimpleCache.Get<MonsterTemplate>(obj.MonsterTemplateKey),
+            MaxPerSpawn = obj.MaxPerSpawn,
+            ExtraScriptKeys = new HashSet<string>(obj.ExtraScriptKeys, StringComparer.OrdinalIgnoreCase),
+            SpawnArea = obj.SpawnArea!,
+            BlackList = obj.BlackList.ToListCast<IPoint>(),
+            Direction = obj.Direction,
+            SpawnTimer = obj.IntervalVariancePct.HasValue
+                ? new RandomizedIntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), obj.IntervalVariancePct.Value, startAsElapsed: false)
+                : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), false)
+        };
 
     /// <inheritdoc />
     public MonsterSpawnSchema Map(MonsterSpawn obj) => throw new NotImplementedException();
@@ -72,7 +75,9 @@ public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterS
             TemplateKey = obj.TemplateKey,
             Type = obj.Type,
             WanderIntervalMs = obj.WanderIntervalMs,
-            LootTables = obj.LootTableKeys.Select(SimpleCache.Get<LootTable>).ToList(),
+            LootTables = obj.LootTableKeys
+                            .Select(SimpleCache.Get<LootTable>)
+                            .ToList(),
             ScriptVars = new Dictionary<string, IScriptVars>(
                 obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
                 StringComparer.OrdinalIgnoreCase)

@@ -19,8 +19,7 @@ public class GuildLeaveScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildLeaveScript> logger
-    )
+        ILogger<GuildLeaveScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -40,6 +39,7 @@ public class GuildLeaveScript : GuildScriptBase
 
                 break;
             }
+
             //occurs after you confirm you want to leave the guild
             case "generic_guild_leave_accepted":
             {

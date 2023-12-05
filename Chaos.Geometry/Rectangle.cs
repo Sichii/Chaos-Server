@@ -55,8 +55,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
         int left,
         int top,
         int width,
-        int height
-    )
+        int height)
     {
         Width = width;
         Height = height;
@@ -89,10 +88,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
         if (ReferenceEquals(this, other))
             return true;
 
-        return (Height == other.Height)
-               && (Left == other.Left)
-               && (Top == other.Top)
-               && (Width == other.Width);
+        return (Height == other.Height) && (Left == other.Left) && (Top == other.Top) && (Width == other.Width);
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -115,17 +111,18 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
         return Equals((IRectangle)obj);
     }
 
-    private IReadOnlyList<IPoint> GenerateVertices() => new List<IPoint>
-    {
-        new Point(Left, Top),
-        new Point(Right, Top),
-        new Point(Right, Bottom),
-        new Point(Left, Bottom)
-    };
+    private IReadOnlyList<IPoint> GenerateVertices()
+        => new List<IPoint>
+        {
+            new Point(Left, Top),
+            new Point(Right, Top),
+            new Point(Right, Bottom),
+            new Point(Left, Bottom)
+        };
 
     /// <inheritdoc />
-    public override int GetHashCode() =>
-        HashCode.Combine(
+    public override int GetHashCode()
+        => HashCode.Combine(
             Height,
             Left,
             Top,

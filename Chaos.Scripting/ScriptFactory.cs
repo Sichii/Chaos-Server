@@ -23,8 +23,7 @@ namespace Chaos.Scripting;
 ///     generated from the keys that
 ///     are supplied.
 /// </remarks>
-public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript
-                                                                                           where TScripted: IScripted
+public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript where TScripted: IScripted
 {
     private readonly Type CompositeType;
     private readonly ILogger<ScriptFactory<TScript, TScripted>> Logger;
@@ -46,7 +45,8 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
 
         LoadScriptTypes();
 
-        CompositeType = ScriptTypeCache.First(x => x.Key.StartsWithI("composite")).Value;
+        CompositeType = ScriptTypeCache.First(x => x.Key.StartsWithI("composite"))
+                                       .Value;
     }
 
     /// <inheritdoc />

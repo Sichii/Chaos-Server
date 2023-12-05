@@ -14,8 +14,8 @@ public class DepositGoldScript : DialogScriptBase
 
     /// <inheritdoc />
     public DepositGoldScript(Dialog subject, ILogger<DepositGoldScript> logger)
-        : base(subject) =>
-        Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     /// <inheritdoc />
     public override void OnDisplaying(Aisling source) => Subject.InjectTextParameters(source.Gold);
@@ -39,10 +39,7 @@ public class DepositGoldScript : DialogScriptBase
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
-                      .LogInformation(
-                          "Aisling {@AislingName} deposited {Amount} gold in the bank",
-                          source.Name,
-                          amount);
+                      .LogInformation("Aisling {@AislingName} deposited {Amount} gold in the bank", source.Name, amount);
 
                 break;
             case ComplexActionHelper.DepositGoldResult.DontHaveThatMany:

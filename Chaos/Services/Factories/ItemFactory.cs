@@ -11,10 +11,7 @@ public sealed class ItemFactory : IItemFactory
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public ItemFactory(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider
-    )
+    public ItemFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;

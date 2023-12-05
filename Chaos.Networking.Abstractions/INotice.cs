@@ -9,6 +9,7 @@ public interface INotice
     ///     A value that can be used to quickly verify the contents of the notice
     /// </summary>
     uint CheckSum { get; }
+
     /// <summary>
     ///     The notice's message in compressed form
     /// </summary>

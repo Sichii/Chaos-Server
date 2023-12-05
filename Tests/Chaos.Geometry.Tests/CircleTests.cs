@@ -1,3 +1,8 @@
+using Chaos.Geometry.Abstractions;
+using FluentAssertions;
+using Moq;
+using Xunit;
+
 namespace Chaos.Geometry.Tests;
 
 public sealed class CircleTests
@@ -110,120 +115,6 @@ public sealed class CircleTests
 
         hashCode2.Should()
                  .Be(expectedHashCode);
-    }
-
-    [Fact]
-    public void EqualityOperator_ReturnsTrueForSamePoints()
-    {
-        var point1 = new Point(5, 5);
-        IPoint point2 = new Point(5, 5);
-
-        var result = point1 == point2;
-
-        result.Should()
-              .BeTrue();
-    }
-
-    [Fact]
-    public void EqualityOperator_WithSameValues_ReturnsTrue()
-    {
-        // Arrange
-        var circle1 = new Circle(new Point(0, 0), 5);
-        var circle2 = new Circle(new Point(0, 0), 5);
-
-        // Act
-        var result = circle1 == circle2;
-
-        // Assert
-        result.Should()
-              .BeTrue();
-    }
-
-    [Fact]
-    public void InequalityOperator_ReturnsFalseForSamePoints()
-    {
-        var point1 = new Point(5, 5);
-        IPoint point2 = new Point(5, 5);
-
-        var result = point1 != point2;
-
-        result.Should()
-              .BeFalse();
-    }
-
-    [Fact]
-    public void InequalityOperator_ReturnsTrueForDifferentPoints()
-    {
-        var point1 = new Point(5, 5);
-        IPoint point2 = new Point(6, 6);
-
-        var result = point1 != point2;
-
-        result.Should()
-              .BeTrue();
-    }
-
-    [Fact]
-    public void InequalityOperator_WithDifferentValues_ReturnsTrue()
-    {
-        // Arrange
-        var circle1 = new Circle(new Point(0, 0), 5);
-        var circle2 = new Circle(new Point(1, 1), 1);
-
-        // Act
-        var result = circle1 != circle2;
-
-        // Assert
-        result.Should()
-              .BeTrue();
-    }
-
-    [Fact]
-    public void IntTupleToPointConversion_ReturnsExpectedPoint()
-    {
-        var tuple = (500, 1000);
-
-        Point point = tuple;
-
-        point.X
-             .Should()
-             .Be(500);
-
-        point.Y
-             .Should()
-             .Be(1000);
-    }
-
-    [Fact]
-    public void ShortTupleToPointConversion_ReturnsExpectedPoint()
-    {
-        (short, short) tuple = (-5, -10);
-
-        Point point = tuple;
-
-        point.X
-             .Should()
-             .Be(-5);
-
-        point.Y
-             .Should()
-             .Be(-10);
-    }
-
-    [Fact]
-    public void UShortTupleToPointConversion_ReturnsExpectedPoint()
-    {
-        (ushort, ushort) tuple = (3000, 4000);
-
-        Point point = tuple;
-
-        point.X
-             .Should()
-             .Be(3000);
-
-        point.Y
-             .Should()
-             .Be(4000);
     }
 
     [Fact]

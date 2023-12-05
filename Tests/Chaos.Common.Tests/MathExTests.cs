@@ -17,7 +17,8 @@ public sealed class MathExTests
         var result = MathEx.CalculatePercent<ulong>(CURRENT, MAX);
 
         // Assert
-        result.Should().Be(25);
+        result.Should()
+              .Be(25);
     }
 
     [Fact]
@@ -31,7 +32,8 @@ public sealed class MathExTests
         var result = MathEx.CalculatePercent<decimal>(CURRENT, MAX);
 
         // Assert
-        result.Should().Be(25.0m);
+        result.Should()
+              .Be(25.0m);
     }
 
     [Fact]
@@ -45,7 +47,8 @@ public sealed class MathExTests
         var result = MathEx.GetPercentOf<ulong>(NUM, PERCENT);
 
         // Assert
-        result.Should().Be(10);
+        result.Should()
+              .Be(10);
     }
 
     [Fact]
@@ -59,7 +62,8 @@ public sealed class MathExTests
         var result = MathEx.GetPercentOf<decimal>(NUM, PERCENT);
 
         // Assert
-        result.Should().Be(10.0m);
+        result.Should()
+              .Be(10.0m);
     }
 
     [Fact]
@@ -81,7 +85,8 @@ public sealed class MathExTests
             NEW_MAX);
 
         // Assert
-        result.Should().Be(5);
+        result.Should()
+              .Be(5);
     }
 
     [Fact]
@@ -103,7 +108,8 @@ public sealed class MathExTests
             NEW_MAX);
 
         // Assert
-        result.Should().Be(5.0m);
+        result.Should()
+              .Be(5.0m);
     }
 
     [Fact]
@@ -125,6 +131,7 @@ public sealed class MathExTests
             NEW_MAX);
 
         // Assert
-        result.Should().Be(5.0);
+        result.Should()
+              .Be(5.0);
     }
 }

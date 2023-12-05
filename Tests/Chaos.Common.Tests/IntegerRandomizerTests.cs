@@ -50,10 +50,17 @@ public sealed class IntegerRandomizerTests
         }
 
         // VerifySimpleLog that the result distribution roughly matches the weights
-        choice1Count.Should().BeInRange(10, 100);
-        choice2Count.Should().BeInRange(10, 900);
-        choice3Count.Should().BeInRange(10, 200);
-        nullCount.Should().BeGreaterThan(0);
+        choice1Count.Should()
+                    .BeInRange(10, 100);
+
+        choice2Count.Should()
+                    .BeInRange(10, 900);
+
+        choice3Count.Should()
+                    .BeInRange(10, 200);
+
+        nullCount.Should()
+                 .BeGreaterThan(0);
     }
 
     [Theory]
@@ -72,7 +79,8 @@ public sealed class IntegerRandomizerTests
         }
 
         // The success rate should be close to the successChance. Allow a 10% error margin.
-        (successCount * 100m / testCount).Should().BeApproximately(successChance, 10);
+        (successCount * 100m / testCount).Should()
+                                         .BeApproximately(successChance, 10);
     }
 
     [Theory]
@@ -84,7 +92,11 @@ public sealed class IntegerRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = IntegerRandomizer.RollDouble(maxPer);
-            result.Should().BeGreaterThan(0).And.BeLessOrEqualTo(maxPer * 2);
+
+            result.Should()
+                  .BeGreaterThan(0)
+                  .And
+                  .BeLessOrEqualTo(maxPer * 2);
         }
     }
 
@@ -98,7 +110,11 @@ public sealed class IntegerRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Negative);
-            result.Should().BeGreaterOrEqualTo(expectedMin).And.BeLessOrEqualTo(baseValue);
+
+            result.Should()
+                  .BeGreaterOrEqualTo(expectedMin)
+                  .And
+                  .BeLessOrEqualTo(baseValue);
         }
     }
 
@@ -112,7 +128,11 @@ public sealed class IntegerRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Positive);
-            result.Should().BeGreaterOrEqualTo(baseValue).And.BeLessOrEqualTo(expectedMax);
+
+            result.Should()
+                  .BeGreaterOrEqualTo(baseValue)
+                  .And
+                  .BeLessOrEqualTo(expectedMax);
         }
     }
 
@@ -126,7 +146,11 @@ public sealed class IntegerRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Negative);
-            result.Should().BeGreaterOrEqualTo(expectedMin).And.BeLessOrEqualTo(baseValue);
+
+            result.Should()
+                  .BeGreaterOrEqualTo(expectedMin)
+                  .And
+                  .BeLessOrEqualTo(baseValue);
         }
     }
 
@@ -140,7 +164,11 @@ public sealed class IntegerRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Positive);
-            result.Should().BeGreaterOrEqualTo(baseValue).And.BeLessOrEqualTo(expectedMax);
+
+            result.Should()
+                  .BeGreaterOrEqualTo(baseValue)
+                  .And
+                  .BeLessOrEqualTo(expectedMax);
         }
     }
 
@@ -153,7 +181,11 @@ public sealed class IntegerRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = IntegerRandomizer.RollSingle(max);
-            result.Should().BeGreaterThan(0).And.BeLessOrEqualTo(max);
+
+            result.Should()
+                  .BeGreaterThan(0)
+                  .And
+                  .BeLessOrEqualTo(max);
         }
     }
 }

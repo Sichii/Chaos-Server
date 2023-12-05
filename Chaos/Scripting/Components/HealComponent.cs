@@ -44,8 +44,7 @@ public class HealComponent : IComponent
         int? baseHeal = null,
         decimal? pctHpHeal = null,
         Stat? healStat = null,
-        decimal? healStatMultiplier = null
-    )
+        decimal? healStatMultiplier = null)
     {
         var finalHeal = baseHeal ?? 0;
 

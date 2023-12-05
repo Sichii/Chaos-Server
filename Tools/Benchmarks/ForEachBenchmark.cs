@@ -4,11 +4,13 @@ using BenchmarkDotNet.Attributes;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class ForEachBenchmark
 {
     public int[] Array { get; set; } = null!;
     public List<int> Collection { get; set; } = null!;
+
     [Params(
         100,
         1_000,
@@ -60,7 +62,8 @@ public class ForEachBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        Collection = Enumerable.Range(0, CollectionSize).ToList();
+        Collection = Enumerable.Range(0, CollectionSize)
+                               .ToList();
         Array = Collection.ToArray();
     }
 }

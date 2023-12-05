@@ -15,5 +15,6 @@ public sealed record LightLevelSerializer : ServerPacketSerializer<LightLevelArg
 
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, LightLevelArgs args) => writer.WriteByte((byte)args.LightLevel);
+
     //writer.WriteByte(1);
 }

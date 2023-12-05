@@ -22,8 +22,7 @@ public sealed class MonsterFactory : IMonsterFactory
         IScriptProvider scriptProvider,
         ILoggerFactory loggerFactory,
         ISkillFactory skillFactory,
-        ISpellFactory spellFactory
-    )
+        ISpellFactory spellFactory)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
@@ -37,8 +36,7 @@ public sealed class MonsterFactory : IMonsterFactory
         string templateKey,
         MapInstance mapInstance,
         IPoint point,
-        ICollection<string>? extraScriptKeys = null
-    )
+        ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
         var template = SimpleCache.Get<MonsterTemplate>(templateKey);

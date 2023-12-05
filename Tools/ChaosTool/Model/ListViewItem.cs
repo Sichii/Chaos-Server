@@ -28,8 +28,8 @@ public class ListViewItem<T, TControl> : IListViewItem where TControl: Control
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     protected bool SetField<TField>(ref TField field, TField value, [CallerMemberName] string? propertyName = null)
     {

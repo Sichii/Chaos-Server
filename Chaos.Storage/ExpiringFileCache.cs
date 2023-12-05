@@ -27,6 +27,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     ///     The set of paths that are used for loading data.
     /// </summary>
     protected SynchronizedHashSet<string> Paths { get; set; }
+
     /// <summary>
     ///     The memory cache used to store the data.
     /// </summary>
@@ -36,15 +37,18 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     ///     The store used to load and save objects that map to a different type when serialized
     /// </summary>
     protected IEntityRepository EntityRepository { get; }
+
     /// <summary>
     ///     The prefix used for cache keys.
     /// </summary>
     protected string KeyPrefix { get; }
+
     /// <summary>
     ///     Many different types of objects are stored in the memory cache, this lookup is used to store the data for this
     ///     specific type
     /// </summary>
     protected ConcurrentDictionary<string, T> LocalLookup { get; }
+
     /// <summary>
     ///     The logger instance for logging events in this cache.
     /// </summary>
@@ -67,8 +71,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         IMemoryCache cache,
         IEntityRepository entityRepository,
         IOptions<TOptions> options,
-        ILogger<ExpiringFileCache<T, TSchema, TOptions>> logger
-    )
+        ILogger<ExpiringFileCache<T, TSchema, TOptions>> logger)
     {
         Options = options.Value;
         Cache = cache;
@@ -151,6 +154,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
                           "Failed to reload {@TypeName} with key {@Key}",
                           typeof(T).Name,
                           key);
+
                 //otherwise ignored
             }
 
@@ -193,10 +197,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
 
         LocalLookup[key!] = entity;
 
-        metricsLogger.LogDebug(
-            "Created new {@TypeName} entry with key {@Key}",
-            typeof(T).Name,
-            key);
+        metricsLogger.LogDebug("Created new {@TypeName} entry with key {@Key}", typeof(T).Name, key);
 
         return entity;
     }
@@ -215,7 +216,9 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <exception cref="Exception"></exception>
     protected virtual string GetPathForKey(string key)
     {
-        var loadPath = Paths.FirstOrDefault(path => Path.GetFileNameWithoutExtension(path).EqualsI(key));
+        var loadPath = Paths.FirstOrDefault(
+            path => Path.GetFileNameWithoutExtension(path)
+                        .EqualsI(key));
 
         if (string.IsNullOrEmpty(loadPath))
             throw Options.SearchType switch
@@ -241,7 +244,9 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         {
             SearchType.Files => Directory.EnumerateFiles(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
             SearchType.Directories => Directory.EnumerateDirectories(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern)
-                                               .Where(src => Directory.EnumerateFiles(src).Any()),
+                                               .Where(
+                                                   src => Directory.EnumerateFiles(src)
+                                                                   .Any()),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -259,8 +264,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         object key,
         object? value,
         EvictionReason reason,
-        object? state
-    )
+        object? state)
     {
         //if we reload the cache, the localLookup values will automatically be replaced
         //but we dont want them to be remove by this callback

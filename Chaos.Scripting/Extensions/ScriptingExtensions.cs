@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
     /// <param name="services">The service collection to add the service to</param>
     /// <typeparam name="TScript">A type that inherits <see cref="Chaos.Scripting.Abstractions.IScript" /></typeparam>
     /// <typeparam name="TScripted">A type that inherits <see cref="Chaos.Scripting.Abstractions.IScripted" /></typeparam>
-    public static void AddScriptFactory<TScript, TScripted>(this IServiceCollection services) where TScript: IScript
-        where TScripted: IScripted =>
-        services.AddSingleton<IScriptFactory<TScript, TScripted>, ScriptFactory<TScript, TScripted>>();
+    public static void AddScriptFactory<TScript, TScripted>(this IServiceCollection services)
+        where TScript: IScript where TScripted: IScripted
+        => services.AddSingleton<IScriptFactory<TScript, TScripted>, ScriptFactory<TScript, TScripted>>();
 }

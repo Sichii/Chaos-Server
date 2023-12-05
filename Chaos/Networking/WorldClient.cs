@@ -43,8 +43,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         ICrypto crypto,
         IWorldServer<IWorldClient> server,
         IPacketSerializer packetSerializer,
-        ILogger<WorldClient> logger
-    )
+        ILogger<WorldClient> logger)
         : base(
             socket,
             crypto,
@@ -119,7 +118,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         var args = new BoardArgs
         {
             Type = BoardOrResponseType.BoardList,
-            Boards = Mapper.MapMany<BoardBase, BoardInfo>(boards).ToList()
+            Boards = Mapper.MapMany<BoardBase, BoardInfo>(boards)
+                           .ToList()
         };
 
         Send(args);
@@ -141,8 +141,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         uint id,
         BodyAnimation bodyAnimation,
         ushort speed,
-        byte? sound = null
-    )
+        byte? sound = null)
     {
         if (bodyAnimation is BodyAnimation.None)
             return;
@@ -289,7 +288,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
         var args = new DoorArgs
         {
-            Doors = Mapper.MapMany<DoorInfo>(doors).ToList()
+            Doors = Mapper.MapMany<DoorInfo>(doors)
+                          .ToList()
         };
 
         if (args.Doors.Any())
@@ -480,7 +480,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             {
                 CurrentYIndex = y,
                 Width = mapTemplate.Width,
-                MapData = mapTemplate.GetRowData(y).ToArray()
+                MapData = mapTemplate.GetRowData(y)
+                                     .ToArray()
             };
 
             Send(args);
@@ -539,8 +540,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         NotepadType type,
         byte height,
         byte width,
-        string? message
-    )
+        string? message)
     {
         var args = new NotepadArgs
         {
@@ -694,7 +694,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
             objects = objects.ThatAreObservedBy(Aisling);
 
         //split this into chunks so as not to crash the client
-        foreach (var chunk in objects.OrderBy(o => o.Creation).Chunk(5000))
+        foreach (var chunk in objects.OrderBy(o => o.Creation)
+                                     .Chunk(5000))
         {
             var args = new DisplayVisibleEntitiesArgs();
             var visibleArgs = new List<VisibleEntityInfo>();
@@ -760,6 +761,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
                 arg.Color = WorldListColor.WithinLevelRange;
 
             worldList.Add(arg);
+
             //TODO: check guild for color
         }
 
@@ -777,10 +779,9 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
+        var packet = new ClientPacket(ref span, Crypto.IsClientEncrypted(opCode));
 
-        if (isEncrypted)
+        if (packet.IsEncrypted)
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)

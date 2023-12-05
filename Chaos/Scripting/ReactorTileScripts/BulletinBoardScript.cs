@@ -12,8 +12,11 @@ public sealed class BulletinBoardScript : ConfigurableReactorTileScriptBase
 
     /// <inheritdoc />
     public BulletinBoardScript(ReactorTile subject, IStore<BulletinBoard> boardStore)
-        : base(subject) => BoardStore = boardStore;
+        : base(subject)
+        => BoardStore = boardStore;
 
     /// <inheritdoc />
-    public override void OnClicked(Aisling source) => BoardStore.Load(BoardKey).Show(source);
+    public override void OnClicked(Aisling source)
+        => BoardStore.Load(BoardKey)
+                     .Show(source);
 }

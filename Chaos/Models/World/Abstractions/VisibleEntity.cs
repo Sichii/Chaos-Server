@@ -48,8 +48,11 @@ public abstract class VisibleEntity : InteractableEntity
         }
     }
 
-    public virtual bool ShouldRegisterClick(uint fromId) =>
-        !LastClicked.TryGetValue(fromId, out var lastClick) || (DateTime.UtcNow.Subtract(lastClick).TotalMilliseconds > 500);
+    public virtual bool ShouldRegisterClick(uint fromId)
+        => !LastClicked.TryGetValue(fromId, out var lastClick)
+           || (DateTime.UtcNow.Subtract(lastClick)
+                       .TotalMilliseconds
+               > 500);
 
     public virtual void ShowTo(Aisling aisling) => aisling.Client.SendVisibleEntities(this);
 

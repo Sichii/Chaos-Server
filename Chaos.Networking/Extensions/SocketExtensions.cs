@@ -5,11 +5,7 @@ namespace Chaos.Extensions.Networking;
 
 internal static class SocketExtensions
 {
-    internal static void ReceiveAndForget(
-        this Socket socket,
-        SocketAsyncEventArgs args,
-        EventHandler<SocketAsyncEventArgs> completedEvent
-    )
+    internal static void ReceiveAndForget(this Socket socket, SocketAsyncEventArgs args, EventHandler<SocketAsyncEventArgs> completedEvent)
     {
         //if we receive true, it means the io operation is pending, and the completion will be raised on the args completed event
         var completedSynchronously = !socket.ReceiveAsync(args);

@@ -8,12 +8,14 @@ namespace Chaos.Time;
 ///     is set with an
 ///     amount of randomization as specified through configuration
 /// </summary>
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class RandomizedIntervalTimer : IntervalTimer
 {
     /// <summary>
     ///     The percent of randomization to apply to the <see cref="IntervalTimer.Interval" /> each time it elapses
     /// </summary>
+
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     protected int MaxRandomizationPct { get; set; }
 
@@ -25,6 +27,7 @@ public class RandomizedIntervalTimer : IntervalTimer
     /// <summary>
     ///     The type of randomization to apply to the interval
     /// </summary>
+
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     protected RandomizationType Type { get; set; }
 
@@ -39,8 +42,7 @@ public class RandomizedIntervalTimer : IntervalTimer
         TimeSpan interval,
         int maxRandomizationPct,
         RandomizationType type = RandomizationType.Balanced,
-        bool startAsElapsed = true
-    )
+        bool startAsElapsed = true)
         : base(interval, startAsElapsed)
     {
         MaxRandomizationPct = maxRandomizationPct;
@@ -76,6 +78,7 @@ public class RandomizedIntervalTimer : IntervalTimer
     public override void Update(TimeSpan delta)
     {
         IntervalElapsed = false;
+
         //add delta to elapsed
         Elapsed += delta;
 

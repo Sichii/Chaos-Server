@@ -13,11 +13,13 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     The color of this item if it's different that what is specified by it's template
     /// </summary>
     public DisplayColor? Color { get; set; }
+
     /// <summary>
     ///     The amount of this item in the stack
     /// </summary>
     [JsonRequired]
     public int Count { get; set; }
+
     /// <summary>
     ///     If the item has durability this is it's current durability
     /// </summary>
@@ -32,6 +34,7 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     The sprite to display for this item if it's different than what is specified by it's template
     /// </summary>
     public ushort? DisplaySprite { get; set; }
+
     /// <summary>
     ///     The sprite to display for this item in the panel if it's different than what is specified by it's template
     /// </summary>
@@ -46,6 +49,7 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     If specified, the suffix of the item
     /// </summary>
     public string? Suffix { get; set; }
+
     /// <summary>
     ///     The weight of this item if it's different than what is specified by it's template
     /// </summary>

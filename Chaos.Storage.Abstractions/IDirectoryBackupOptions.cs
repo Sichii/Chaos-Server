@@ -11,14 +11,17 @@ public interface IDirectoryBackupOptions : IDirectoryBound
     ///     The directory where backups are stored
     /// </summary>
     string BackupDirectory { get; }
+
     /// <summary>
     ///     The interval between backups in minutes
     /// </summary>
     int BackupIntervalMins { get; }
+
     /// <summary>
     ///     The number of days to retain backups
     /// </summary>
     int BackupRetentionDays { get; }
+
     /// <summary>
     ///     The directory where objects are stored
     /// </summary>

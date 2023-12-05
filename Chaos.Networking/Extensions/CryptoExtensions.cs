@@ -14,14 +14,14 @@ public static class CryptoExtensions
     /// </summary>
     /// <param name="crypto">This crypto service</param>
     /// <param name="packet">The packet to decrypt</param>
-    public static void Decrypt(this ICrypto crypto, ref ClientPacket packet) =>
-        crypto.Decrypt(ref packet.Buffer, (byte)packet.OpCode, packet.Sequence);
+    public static void Decrypt(this ICrypto crypto, ref ClientPacket packet)
+        => crypto.ServerDecrypt(ref packet.Buffer, (byte)packet.OpCode, packet.Sequence);
 
     /// <summary>
     ///     Encrypts a <see cref="ServerPacket" />
     /// </summary>
     /// <param name="crypto">This crypto service</param>
     /// <param name="packet">The packet to encrypt</param>
-    public static void Encrypt(this ICrypto crypto, ref ServerPacket packet) =>
-        crypto.Encrypt(ref packet.Buffer, (byte)packet.OpCode, packet.Sequence);
+    public static void Encrypt(this ICrypto crypto, ref ServerPacket packet)
+        => crypto.ServerEncrypt(ref packet.Buffer, (byte)packet.OpCode, packet.Sequence);
 }

@@ -41,7 +41,8 @@ public sealed partial class MapTemplatePropertyEditor
         template.Width = ParsePrimitive<byte>(WidthTbox.Text);
         template.Height = ParsePrimitive<byte>(HeightTbox.Text);
 
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -71,7 +72,9 @@ public sealed partial class MapTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.MapTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.MapTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -81,7 +84,9 @@ public sealed partial class MapTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.MapTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.MapTemplates
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
@@ -118,8 +123,8 @@ public sealed partial class MapTemplatePropertyEditor
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Controls

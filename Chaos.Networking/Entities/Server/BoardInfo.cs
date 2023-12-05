@@ -11,10 +11,12 @@ public sealed record BoardInfo
     ///     The id of the board
     /// </summary>
     public ushort BoardId { get; set; }
+
     /// <summary>
     ///     The name of the board
     /// </summary>
     public string Name { get; set; } = null!;
+
     /// <summary>
     ///     A collection representing the posts on the board
     /// </summary>

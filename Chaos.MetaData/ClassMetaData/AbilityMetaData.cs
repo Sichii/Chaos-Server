@@ -30,13 +30,11 @@ public sealed class AbilityMetaData : MetaDataBase<AbilityMetaNode>
 
         writer.WriteUInt16((ushort)nodeCount);
 
-        var skills = Nodes
-                     .Where(node => node.IsSkill)
-                     .ToList();
+        var skills = Nodes.Where(node => node.IsSkill)
+                          .ToList();
 
-        var spells = Nodes
-                     .Where(node => !node.IsSkill)
-                     .ToList();
+        var spells = Nodes.Where(node => !node.IsSkill)
+                          .ToList();
 
         SKILL_NODE.Serialize(ref writer);
 
@@ -56,7 +54,7 @@ public sealed class AbilityMetaData : MetaDataBase<AbilityMetaNode>
         var buffer = writer.ToSpan();
 
         CheckSum = Crc.Generate32(buffer);
-        ZLIB.Compress(ref buffer);
+        Zlib.Compress(ref buffer);
         Data = buffer.ToArray();
     }
 }

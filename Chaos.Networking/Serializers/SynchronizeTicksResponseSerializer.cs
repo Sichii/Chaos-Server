@@ -14,6 +14,6 @@ public sealed record SynchronizeTicksResponseSerializer : ServerPacketSerializer
     public override ServerOpCode ServerOpCode => ServerOpCode.SynchronizeTicks;
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, SynchronizeTicksResponseArgs responseArgs) =>
-        writer.WriteInt32(responseArgs.Ticks);
+    public override void Serialize(ref SpanWriter writer, SynchronizeTicksResponseArgs responseArgs)
+        => writer.WriteInt32(responseArgs.Ticks);
 }

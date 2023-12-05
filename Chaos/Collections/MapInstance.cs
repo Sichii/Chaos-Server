@@ -51,10 +51,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public MapTemplate Template { get; set; }
     public CancellationTokenSource MapInstanceCtx { get; }
     public List<MonsterSpawn> MonsterSpawns { get; }
+
     /// <inheritdoc />
     public IMapScript Script { get; }
+
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
+
     public FifoAutoReleasingSemaphoreSlim Sync { get; }
     public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
     public string LoadedFromInstanceId => BaseInstanceId ?? InstanceId;
@@ -69,8 +72,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         IAsyncStore<Aisling> aislingStore,
         CancellationTokenSource serverCtx,
         ILogger<MapInstance> logger,
-        ICollection<string>? extraScriptKeys = null
-    )
+        ICollection<string>? extraScriptKeys = null)
     {
         Name = name;
         InstanceId = instanceId;
@@ -78,7 +80,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Logger = logger;
         ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
-        var walkableArea = template.Height * template.Width - template.Tiles.Flatten().Count(t => t.IsWall);
+
+        var walkableArea = template.Height * template.Width
+                           - template.Tiles
+                                     .Flatten()
+                                     .Count(t => t.IsWall);
 
         Objects = new MapEntityCollection(
             logger,
@@ -173,9 +179,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if ((type == meType) || (type == moType) || type.IsAssignableFrom(cType))
             foreach (var creature in Objects.Values<Creature>())
             {
-                var objectsInRange = visibleObjects
-                                     .ThatAreWithinRange(creature)
-                                     .ToList();
+                var objectsInRange = visibleObjects.ThatAreWithinRange(creature)
+                                                   .ToList();
 
                 if (!objectsInRange.Any())
                     continue;
@@ -252,7 +257,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<ReactorTile> GetDistinctReactorsAtPoint(IPoint point)
     {
         //get reactors in order of oldest to newest
-        var reactors = GetEntitiesAtPoint<ReactorTile>(point).OrderBy(entity => entity.Creation);
+        var reactors = GetEntitiesAtPoint<ReactorTile>(point)
+            .OrderBy(entity => entity.Creation);
         var distinctTemplateKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         //returns all static reactor tiles, and only unique templated reactor tiles
@@ -267,11 +273,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public IEnumerable<T> GetEntitiesAtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => Objects.AtPoints<T>(points);
 
-    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity =>
-        Objects.WithinRange<T>(point, range);
+    public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity
+        => Objects.WithinRange<T>(point, range);
 
-    public IPoint GetRandomWalkablePoint(CreatureType creatureType = CreatureType.Normal) =>
-        Template.Bounds.GetRandomPoint(pt => IsWalkable(pt, creatureType));
+    public IPoint GetRandomWalkablePoint(CreatureType creatureType = CreatureType.Normal)
+        => Template.Bounds.GetRandomPoint(pt => IsWalkable(pt, creatureType));
 
     private void HandleSharding(Aisling aisling, IPoint point)
     {
@@ -292,8 +298,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     //non-absolute player limit will allow group members to go over the normal player limit
                     if (ShardingOptions.ShardingType == ShardingType.PlayerLimit)
                     {
-                        var shard = aisling.Group?
-                                           .Where(a => !a.Equals(aisling))
+                        var shard = aisling.Group
+                                           ?.Where(a => !a.Equals(aisling))
                                            .Select(m => m.MapInstance)
                                            .FirstOrDefault(
                                                m => m.InstanceId.EqualsI(InstanceId)
@@ -312,7 +318,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     //starting with this base instance, check each shard to see if there is an available spot
                     foreach (var instance in Shards.Values.Prepend(this))
                     {
-                        var playerCount = instance.Objects.Values<Aisling>().Count();
+                        var playerCount = instance.Objects
+                                                  .Values<Aisling>()
+                                                  .Count();
 
                         if (playerCount < ShardingOptions.Limit)
                         {
@@ -331,8 +339,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             case ShardingType.AbsoluteGroupLimit:
             {
                 //if any group member is already in this instance or a shard of this instance
-                var shard = aisling.Group?
-                                   .Where(a => !a.Equals(aisling))
+                var shard = aisling.Group
+                                   ?.Where(a => !a.Equals(aisling))
                                    .Select(m => m.MapInstance)
                                    .FirstOrDefault(
                                        m => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
@@ -352,7 +360,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     foreach (var instance in Shards.Values.Prepend(this))
                     {
                         //get the number of groups in this instance
-                        var groupCount = instance.Objects.Values<Aisling>()
+                        var groupCount = instance.Objects
+                                                 .Values<Aisling>()
                                                  .GroupBy(a => a.Group)
                                                  .Sum(grp => grp.Key == null ? grp.Count() : 1);
 
@@ -443,7 +452,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 //for each timer that has expired
                 //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key).ToList())
+                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
+                                                      .ToList())
                     if (kvp.Value.IntervalElapsed)
                     {
                         var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
@@ -467,9 +477,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                                              if (grp.Key == null)
                                                  return grp.Select(
                                                      m => new List<Aisling>
-                                                         { m });
+                                                     {
+                                                         m
+                                                     });
 
-                                             return new[] { grp.Where(m => m.MapInstance == this).ToList() };
+                                             return new[]
+                                             {
+                                                 grp.Where(m => m.MapInstance == this)
+                                                    .ToList()
+                                             };
                                          })
                                      .ToList();
 
@@ -514,7 +530,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 //for each timer that has expired
                 //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key).ToList())
+                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
+                                                      .ToList())
                     if (kvp.Value.IntervalElapsed)
                     {
                         var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
@@ -588,11 +605,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
-    public bool IsBlockingReactor(IPoint point) => Objects.AtPoint<ReactorTile>(point).Any(reactor => reactor.ShouldBlockPathfinding);
+    public bool IsBlockingReactor(IPoint point)
+        => Objects.AtPoint<ReactorTile>(point)
+                  .Any(reactor => reactor.ShouldBlockPathfinding);
 
-    public bool IsReactor(IPoint point) =>
-        Objects.AtPoint<ReactorTile>(point)
-               .Any();
+    public bool IsReactor(IPoint point)
+        => Objects.AtPoint<ReactorTile>(point)
+                  .Any();
 
     public bool IsWalkable(IPoint point, CreatureType creatureType)
     {
@@ -601,9 +620,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         return creatureType switch
         {
-            CreatureType.Normal => !IsWallToCreaturesOnly(point)
-                                   && !IsWall(point)
-                                   && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.Normal => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
             CreatureType.WalkThrough => !IsWallToCreaturesOnly(point)
                                         && IsWithinMap(point)
                                         && !creatures.Any(c => creatureType.WillCollideWith(c)),
@@ -623,12 +640,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if (Template.IsWall(point))
             return true;
 
-        var door = GetEntitiesAtPoint<Door>(point).FirstOrDefault();
+        var door = GetEntitiesAtPoint<Door>(point)
+            .FirstOrDefault();
 
         return door?.Closed ?? false;
     }
 
-    public bool IsWallToCreaturesOnly(IPoint point) => Objects.AtPoint<ReactorTile>(point).Any(rt => rt.ShouldBlockPathfinding);
+    public bool IsWallToCreaturesOnly(IPoint point)
+        => Objects.AtPoint<ReactorTile>(point)
+                  .Any(rt => rt.ShouldBlockPathfinding);
 
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 

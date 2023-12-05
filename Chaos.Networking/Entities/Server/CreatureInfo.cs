@@ -13,6 +13,7 @@ public sealed record CreatureInfo : VisibleEntityInfo
     ///     The type of the creature
     /// </summary>
     public CreatureType CreatureType { get; set; }
+
     /// <summary>
     ///     The direction the creature is facing
     /// </summary>

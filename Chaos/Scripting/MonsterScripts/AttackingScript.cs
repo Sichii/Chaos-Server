@@ -27,7 +27,9 @@ public class AttackingScript : MonsterScriptBase
 
         var lastWalk = Subject.Trackers.LastWalk ?? DateTime.MinValue;
 
-        if (DateTime.UtcNow.Subtract(lastWalk).TotalMilliseconds < Subject.EffectiveAssailIntervalMs)
+        if (DateTime.UtcNow.Subtract(lastWalk)
+                    .TotalMilliseconds
+            < Subject.EffectiveAssailIntervalMs)
             return;
 
         var attacked = false;

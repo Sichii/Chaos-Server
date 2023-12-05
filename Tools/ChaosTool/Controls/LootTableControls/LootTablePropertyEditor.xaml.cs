@@ -26,8 +26,8 @@ public sealed partial class LootTablePropertyEditor
     }
 
     #region Tbox Validation
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(KeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(KeyTbox, PathTbox);
     #endregion
 
     private void UserControl_Initialized(object sender, EventArgs e)
@@ -47,7 +47,8 @@ public sealed partial class LootTablePropertyEditor
         template.Key = KeyTbox.Text;
         template.Mode = ParsePrimitive<LootTableMode>(ModeCmbox.Text);
 
-        template.LootDrops = LootDropsViewItems.Select(ShallowCopy<LootDropSchema>.Create).ToList();
+        template.LootDrops = LootDropsViewItems.Select(ShallowCopy<LootDropSchema>.Create)
+                                               .ToList();
 
         ListItem.Name = template.Key;
     }
@@ -76,7 +77,9 @@ public sealed partial class LootTablePropertyEditor
     {
         try
         {
-            var existing = JsonContext.LootTables.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.LootTables
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -86,7 +89,9 @@ public sealed partial class LootTablePropertyEditor
                 return;
             }
 
-            existing = JsonContext.LootTables.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.LootTables
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.Key.EqualsI(KeyTbox.Text));
 
             if (existing is not null)

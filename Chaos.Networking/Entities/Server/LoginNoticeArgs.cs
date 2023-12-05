@@ -12,10 +12,12 @@ public sealed record LoginNoticeArgs : ISendArgs
     ///     The checksum of the notice
     /// </summary>
     public uint? CheckSum { get; set; }
+
     /// <summary>
     ///     The raw data of the notice
     /// </summary>
     public byte[]? Data { get; set; }
+
     /// <summary>
     ///     Whether or not this response also contains the full data of the login notice
     /// </summary>

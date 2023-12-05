@@ -14,14 +14,17 @@ public sealed record ItemMetaNode(string Name) : IMetaNode
     ///     The category of the item, used for bank sorting
     /// </summary>
     public string Category { get; set; } = "other";
+
     /// <summary>
     ///     The class that can equip the item
     /// </summary>
     public BaseClass Class { get; set; }
+
     /// <summary>
     ///     A short description of the item
     /// </summary>
     public string Description { get; set; } = string.Empty;
+
     /// <summary>
     ///     The level required to equip the item
     /// </summary>
@@ -31,14 +34,24 @@ public sealed record ItemMetaNode(string Name) : IMetaNode
     ///     The name of the item
     /// </summary>
     public string Name { get; init; } = Name;
+
     /// <summary>
     ///     The weight of the item
     /// </summary>
     public int Weight { get; set; }
+
     /// <summary>
     ///     The length of the serialized data
     /// </summary>
-    public int Length => 14 + Name.Length + Category.Length + Description.Length + Level.ToString().Length + Weight.ToString().Length;
+    public int Length
+        => 14
+           + Name.Length
+           + Category.Length
+           + Description.Length
+           + Level.ToString()
+                  .Length
+           + Weight.ToString()
+                   .Length;
 
     /// <inheritdoc />
     public void Serialize(ref SpanWriter writer)

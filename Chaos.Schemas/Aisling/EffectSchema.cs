@@ -12,6 +12,7 @@ public sealed record EffectSchema
     /// </summary>
     [JsonRequired]
     public string EffectKey { get; set; } = null!;
+
     /// <summary>
     ///     The amount of time in seconds that has elapsed towards the duration of this effect
     /// </summary>

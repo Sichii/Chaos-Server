@@ -25,6 +25,6 @@ public static class DictionaryExtensions
     ///     contains an element
     ///     with the specified key; otherwise, <c>false</c>
     /// </returns>
-    public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key, [MaybeNullWhen(false)] out TValue value) =>
-        dic.TryGetValue(key, out value) && dic.Remove(key);
+    public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key, [MaybeNullWhen(false)] out TValue value)
+        => dic.TryGetValue(key, out value) && dic.Remove(key);
 }

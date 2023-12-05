@@ -13,10 +13,17 @@ public sealed class ArgumentCollectionTests
         var argumentCollection = new ArgumentCollection();
 
         // Act
-        argumentCollection.Add(new[] { "arg1", "arg2", "arg3" });
+        argumentCollection.Add(
+            new[]
+            {
+                "arg1",
+                "arg2",
+                "arg3"
+            });
 
         // Assert
-        argumentCollection.Should().Equal("arg1", "arg2", "arg3");
+        argumentCollection.Should()
+                          .Equal("arg1", "arg2", "arg3");
     }
 
     [Fact]
@@ -30,7 +37,8 @@ public sealed class ArgumentCollectionTests
         };
 
         // Assert
-        argumentCollection.Should().Equal("arg1", "arg2", "arg3");
+        argumentCollection.Should()
+                          .Equal("arg1", "arg2", "arg3");
     }
 
     [Fact]
@@ -41,20 +49,27 @@ public sealed class ArgumentCollectionTests
         var argumentCollection = new ArgumentCollection("arg1,arg2,arg3", ",");
 
         // Assert
-        argumentCollection.Should().Equal("arg1", "arg2", "arg3");
+        argumentCollection.Should()
+                          .Equal("arg1", "arg2", "arg3");
     }
 
     [Fact]
     public void Constructor_WithArguments_ShouldInitializeCollectionWithArguments()
     {
         // Arrange
-        var arguments = new List<string> { "arg1", "arg2", "arg3" };
+        var arguments = new List<string>
+        {
+            "arg1",
+            "arg2",
+            "arg3"
+        };
 
         // Act
         var argumentCollection = new ArgumentCollection(arguments);
 
         // Assert
-        argumentCollection.Should().Equal(arguments);
+        argumentCollection.Should()
+                          .Equal(arguments);
     }
 
     [Fact]
@@ -68,7 +83,8 @@ public sealed class ArgumentCollectionTests
         var argumentCollection = new ArgumentCollection(ARGUMENT_STR, DELIMITER);
 
         // Assert
-        argumentCollection.Should().Equal("arg1", "arg2", "arg3");
+        argumentCollection.Should()
+                          .Equal("arg1", "arg2", "arg3");
     }
 
     [Fact]
@@ -81,7 +97,8 @@ public sealed class ArgumentCollectionTests
         var argumentCollection = new ArgumentCollection(ARGUMENT_STR);
 
         // Assert
-        argumentCollection.Should().Equal("arg1", "arg2", "arg3");
+        argumentCollection.Should()
+                          .Equal("arg1", "arg2", "arg3");
     }
 
     [Fact]
@@ -94,7 +111,8 @@ public sealed class ArgumentCollectionTests
         var count = argumentCollection.Count;
 
         // Assert
-        count.Should().Be(3);
+        count.Should()
+             .Be(3);
     }
 
     [Fact]
@@ -107,7 +125,8 @@ public sealed class ArgumentCollectionTests
         var result = argumentCollection.ToString();
 
         // Assert
-        result.Should().Be("\"arg1\" \"arg2\" \"arg3\" ");
+        result.Should()
+              .Be("\"arg1\" \"arg2\" \"arg3\" ");
     }
 
     [Fact]
@@ -120,8 +139,11 @@ public sealed class ArgumentCollectionTests
         var result = argumentCollection.TryGet<int>(0, out var value);
 
         // Assert
-        result.Should().BeFalse();
-        value.Should().Be(default);
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
     }
 
     [Fact]
@@ -134,8 +156,11 @@ public sealed class ArgumentCollectionTests
         var result = argumentCollection.TryGet<int>(1, out var value);
 
         // Assert
-        result.Should().BeFalse();
-        value.Should().Be(default);
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
     }
 
     [Fact]
@@ -148,8 +173,11 @@ public sealed class ArgumentCollectionTests
         var result = argumentCollection.TryGet<int>(0, out var value);
 
         // Assert
-        result.Should().BeTrue();
-        value.Should().Be(42);
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be(42);
     }
 
     [Fact]
@@ -162,8 +190,11 @@ public sealed class ArgumentCollectionTests
         var result = argumentCollection.TryGetNext<int>(out var value);
 
         // Assert
-        result.Should().BeFalse();
-        value.Should().Be(default);
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
     }
 
     [Fact]
@@ -177,8 +208,11 @@ public sealed class ArgumentCollectionTests
         var result = argumentCollection.TryGetNext<int>(out var value);
 
         // Assert
-        result.Should().BeFalse();
-        value.Should().Be(default);
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
     }
 
     [Fact]
@@ -193,11 +227,22 @@ public sealed class ArgumentCollectionTests
         var result3 = argumentCollection.TryGetNext<bool>(out var value3);
 
         // Assert
-        result1.Should().BeTrue();
-        value1.Should().Be(42);
-        result2.Should().BeTrue();
-        value2.Should().Be(3.14);
-        result3.Should().BeTrue();
-        value3.Should().Be(true);
+        result1.Should()
+               .BeTrue();
+
+        value1.Should()
+              .Be(42);
+
+        result2.Should()
+               .BeTrue();
+
+        value2.Should()
+              .Be(3.14);
+
+        result3.Should()
+               .BeTrue();
+
+        value3.Should()
+              .Be(true);
     }
 }

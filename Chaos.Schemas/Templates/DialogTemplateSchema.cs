@@ -14,16 +14,19 @@ public sealed record DialogTemplateSchema
     ///     Whether or not this dialog requires context passed to it from the previous dialog
     /// </summary>
     public bool Contextual { get; set; }
+
     /// <summary>
     ///     Defaults to null<br />
     ///     If specified and the <see cref="Type" /> is Normal, the dialog will have a next button that will take them to the
     ///     dialog with this template key
     /// </summary>
     public string? NextDialogKey { get; set; }
+
     /// <summary>
     ///     A collection of options that can be selected from this dialog that lead to other dialogs.
     /// </summary>
     public ICollection<DialogOptionSchema> Options { get; set; } = Array.Empty<DialogOptionSchema>();
+
     /// <summary>
     ///     Defaults to null<br />
     ///     If specified and the <see cref="Type" /> is not Normal, the dialog will have a previous button that will take them
@@ -41,8 +44,8 @@ public sealed record DialogTemplateSchema
     ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value
     ///     pair, and the value of that entry is a dictionary of propertyName-Value pairs
     /// </summary>
-    public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
-        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, DynamicVars> ScriptVars { get; set; }
+        = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     ///     A unique id specific to this template. This must match the file name

@@ -13,10 +13,12 @@ public sealed record PublicMessageArgs : ISendArgs
     ///     The message to be displayed
     /// </summary>
     public string Message { get; set; } = null!;
+
     /// <summary>
     ///     The type of message
     /// </summary>
     public PublicMessageType PublicMessageType { get; set; }
+
     /// <summary>
     ///     The id of the source of the message
     /// </summary>

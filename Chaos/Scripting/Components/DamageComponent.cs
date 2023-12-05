@@ -45,8 +45,7 @@ public class DamageComponent : IComponent
         int? baseDamage = null,
         decimal? pctHpDamage = null,
         Stat? damageStat = null,
-        decimal? damageStatMultiplier = null
-    )
+        decimal? damageStatMultiplier = null)
     {
         var finalDamage = baseDamage ?? 0;
 

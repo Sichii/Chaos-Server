@@ -33,30 +33,37 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     ///     An array of client handlers for handling incoming client packets.
     /// </summary>
     protected ClientHandler?[] ClientHandlers { get; }
+
     /// <summary>
     ///     The client registry for managing connected clients.
     /// </summary>
     protected IClientRegistry<T> ClientRegistry { get; }
+
     /// <summary>
     ///     The logger for logging server-related events.
     /// </summary>
     protected ILogger<ServerBase<T>> Logger { get; }
+
     /// <summary>
     ///     The server options for configuring the server instance.
     /// </summary>
     protected ServerOptions Options { get; }
+
     /// <summary>
     ///     The packet serializer for serializing and deserializing packets.
     /// </summary>
     protected IPacketSerializer PacketSerializer { get; }
+
     /// <summary>
     ///     The redirect manager for handling client redirects.
     /// </summary>
     protected IRedirectManager RedirectManager { get; }
+
     /// <summary>
     ///     The socket used for handling incoming connections.
     /// </summary>
     protected Socket Socket { get; }
+
     /// <summary>
     ///     A semaphore for synchronizing access to the server.
     /// </summary>
@@ -76,8 +83,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         IPacketSerializer packetSerializer,
         IClientRegistry<T> clientRegistry,
         IOptions<ServerOptions> options,
-        ILogger<ServerBase<T>> logger
-    )
+        ILogger<ServerBase<T>> logger)
     {
         Options = options.Value;
         RedirectManager = redirectManager;
@@ -173,8 +179,10 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
                   .LogError(
                       e,
                       "{@ClientType} failed to execute inner handler with args type {@ArgsType} ({@Args})",
-                      client.GetType().Name,
-                      args!.GetType().Name,
+                      client.GetType()
+                            .Name,
+                      args!.GetType()
+                           .Name,
                       args);
         }
     }
@@ -194,7 +202,11 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
-                  .LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
+                  .LogError(
+                      e,
+                      "{@ClientType} failed to execute inner handler",
+                      client.GetType()
+                            .Name);
         }
     }
 

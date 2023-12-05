@@ -23,7 +23,8 @@ public sealed class PrimitiveConverterTests
         var result = PrimitiveConverter.Convert(targetType, VALUE);
 
         // Assert
-        result.Should().Be(EXPECTED);
+        result.Should()
+              .Be(EXPECTED);
     }
 
     [Fact]
@@ -37,7 +38,8 @@ public sealed class PrimitiveConverterTests
         var result = PrimitiveConverter.Convert<int>(VALUE);
 
         // Assert
-        result.Should().Be(EXPECTED);
+        result.Should()
+              .Be(EXPECTED);
     }
 
     //@formatter:off
@@ -53,6 +55,7 @@ public sealed class PrimitiveConverterTests
         var result = PrimitiveConverter.Convert(targetType, value);
 
         // Assert
-        result.Should().BeOfType(targetType);
+        result.Should()
+              .BeOfType(targetType);
     }
 }

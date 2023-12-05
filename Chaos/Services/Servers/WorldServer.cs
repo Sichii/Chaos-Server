@@ -47,9 +47,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     private readonly IMetaDataStore MetaDataStore;
     private new WorldOptions Options { get; }
 
-    public IEnumerable<Aisling> Aislings => ClientRegistry
-                                            .Select(c => c.Aisling)
-                                            .Where(player => player != null!);
+    public IEnumerable<Aisling> Aislings
+        => ClientRegistry.Select(c => c.Aisling)
+                         .Where(player => player != null!);
 
     public WorldServer(
         IClientRegistry<IWorldClient> clientRegistry,
@@ -66,8 +66,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         IChannelService channelService,
         IStore<MailBox> mailStore,
         BulletinBoardKeyMapper bulletinBoardKeyMapper,
-        IStore<BulletinBoard> bulletinBoardStore
-    )
+        IStore<BulletinBoard> bulletinBoardStore)
         : base(
             redirectManager,
             packetSerializer,
@@ -589,7 +588,9 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (exchange == null)
                 return default;
 
-            if (exchange.GetOther(localClient.Aisling).Id != localArgs.OtherPlayerId)
+            if (exchange.GetOther(localClient.Aisling)
+                        .Id
+                != localArgs.OtherPlayerId)
                 return default;
 
             switch (localArgs.ExchangeRequestType)
@@ -661,10 +662,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                           Topics.Actions.Logout,
                           Topics.Actions.Redirect)
                       .WithProperty(localClient)
-                      .LogDebug(
-                          "Redirecting {@ClientIp} to {@ServerIp}",
-                          client.RemoteIp,
-                          Options.LoginRedirect.Address.ToString());
+                      .LogDebug("Redirecting {@ClientIp} to {@ServerIp}", client.RemoteIp, Options.LoginRedirect.Address.ToString());
 
                 localClient.SendRedirect(redirect);
             }
@@ -1508,8 +1506,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                   .LogError(
                       e,
                       "{@ClientType} failed to execute inner handler with args type {@ArgsType}",
-                      client.GetType().Name,
-                      args!.GetType().Name);
+                      client.GetType()
+                            .Name,
+                      args!.GetType()
+                           .Name);
         }
     }
 
@@ -1548,7 +1548,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                       Topics.Entities.Packet,
                       Topics.Actions.Processing)
                   .WithProperty(client)
-                  .LogError(e, "{@ClientType} failed to execute inner handler", client.GetType().Name);
+                  .LogError(
+                      e,
+                      "{@ClientType} failed to execute inner handler",
+                      client.GetType()
+                            .Name);
         }
     }
 
@@ -1556,6 +1560,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     {
         var opCode = packet.OpCode;
         var handler = ClientHandlers[(byte)opCode];
+
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var trackers = client.Aisling?.Trackers;
 
@@ -1669,6 +1674,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
         var client = (IWorldClient)sender!;
         var aisling = client.Aisling;
+
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = aisling?.MapInstance;
 
@@ -1717,51 +1723,53 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                       Topics.Entities.Aisling,
                       Topics.Actions.Disconnect)
                   .WithProperty(client)
+
                   // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
                   .LogError(ex, "Exception thrown while {@AislingName} was trying to disconnect", client.Aisling?.Name ?? "N/A");
         }
     }
 
-    private bool IsManualAction(ClientOpCode opCode) => opCode switch
-    {
-        ClientOpCode.ClientWalk            => true,
-        ClientOpCode.Pickup                => true,
-        ClientOpCode.ItemDrop              => true,
-        ClientOpCode.ExitRequest           => true,
-        ClientOpCode.Ignore                => true,
-        ClientOpCode.PublicMessage         => true,
-        ClientOpCode.UseSpell              => true,
-        ClientOpCode.ClientRedirected      => true,
-        ClientOpCode.Turn                  => true,
-        ClientOpCode.SpaceBar              => true,
-        ClientOpCode.WorldListRequest      => true,
-        ClientOpCode.Whisper               => true,
-        ClientOpCode.UserOptionToggle      => true,
-        ClientOpCode.UseItem               => true,
-        ClientOpCode.Emote                 => true,
-        ClientOpCode.SetNotepad            => true,
-        ClientOpCode.GoldDrop              => true,
-        ClientOpCode.ItemDroppedOnCreature => true,
-        ClientOpCode.GoldDroppedOnCreature => true,
-        ClientOpCode.RequestProfile        => true,
-        ClientOpCode.GroupRequest          => true,
-        ClientOpCode.ToggleGroup           => true,
-        ClientOpCode.SwapSlot              => true,
-        ClientOpCode.RequestRefresh        => true,
-        ClientOpCode.PursuitRequest        => true,
-        ClientOpCode.DialogResponse        => true,
-        ClientOpCode.BoardRequest          => true,
-        ClientOpCode.UseSkill              => true,
-        ClientOpCode.WorldMapClick         => true,
-        ClientOpCode.Click                 => true,
-        ClientOpCode.Unequip               => true,
-        ClientOpCode.RaiseStat             => true,
-        ClientOpCode.Exchange              => true,
-        ClientOpCode.BeginChant            => true,
-        ClientOpCode.Chant                 => true,
-        ClientOpCode.Profile               => true,
-        ClientOpCode.SocialStatus          => true,
-        _                                  => false
-    };
+    private bool IsManualAction(ClientOpCode opCode)
+        => opCode switch
+        {
+            ClientOpCode.ClientWalk            => true,
+            ClientOpCode.Pickup                => true,
+            ClientOpCode.ItemDrop              => true,
+            ClientOpCode.ExitRequest           => true,
+            ClientOpCode.Ignore                => true,
+            ClientOpCode.PublicMessage         => true,
+            ClientOpCode.UseSpell              => true,
+            ClientOpCode.ClientRedirected      => true,
+            ClientOpCode.Turn                  => true,
+            ClientOpCode.SpaceBar              => true,
+            ClientOpCode.WorldListRequest      => true,
+            ClientOpCode.Whisper               => true,
+            ClientOpCode.UserOptionToggle      => true,
+            ClientOpCode.UseItem               => true,
+            ClientOpCode.Emote                 => true,
+            ClientOpCode.SetNotepad            => true,
+            ClientOpCode.GoldDrop              => true,
+            ClientOpCode.ItemDroppedOnCreature => true,
+            ClientOpCode.GoldDroppedOnCreature => true,
+            ClientOpCode.RequestProfile        => true,
+            ClientOpCode.GroupRequest          => true,
+            ClientOpCode.ToggleGroup           => true,
+            ClientOpCode.SwapSlot              => true,
+            ClientOpCode.RequestRefresh        => true,
+            ClientOpCode.PursuitRequest        => true,
+            ClientOpCode.DialogResponse        => true,
+            ClientOpCode.BoardRequest          => true,
+            ClientOpCode.UseSkill              => true,
+            ClientOpCode.WorldMapClick         => true,
+            ClientOpCode.Click                 => true,
+            ClientOpCode.Unequip               => true,
+            ClientOpCode.RaiseStat             => true,
+            ClientOpCode.Exchange              => true,
+            ClientOpCode.BeginChant            => true,
+            ClientOpCode.Chant                 => true,
+            ClientOpCode.Profile               => true,
+            ClientOpCode.SocialStatus          => true,
+            _                                  => false
+        };
     #endregion
 }

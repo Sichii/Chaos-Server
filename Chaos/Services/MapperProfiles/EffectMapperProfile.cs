@@ -21,9 +21,10 @@ public class EffectMapperProfile : IMapperProfile<IEffect, EffectSchema>
     }
 
     /// <inheritdoc />
-    public EffectSchema Map(IEffect obj) => new()
-    {
-        EffectKey = EffectBase.GetEffectKey(obj.GetType()),
-        RemainingSecs = Convert.ToInt32(Math.Ceiling(obj.Remaining.TotalSeconds))
-    };
+    public EffectSchema Map(IEffect obj)
+        => new()
+        {
+            EffectKey = EffectBase.GetEffectKey(obj.GetType()),
+            RemainingSecs = Convert.ToInt32(Math.Ceiling(obj.Remaining.TotalSeconds))
+        };
 }

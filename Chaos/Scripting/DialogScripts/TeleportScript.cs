@@ -13,8 +13,8 @@ public class TeleportScript : DialogScriptBase
 
     /// <inheritdoc />
     public TeleportScript(Dialog subject, ISimpleCache simpleCache)
-        : base(subject) =>
-        SimpleCache = simpleCache;
+        : base(subject)
+        => SimpleCache = simpleCache;
 
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)

@@ -10,13 +10,14 @@ public class AnimationMapperProfile : IMapperProfile<Animation, AnimationArgs>
     public Animation Map(AnimationArgs obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public AnimationArgs Map(Animation obj) => new()
-    {
-        AnimationSpeed = obj.AnimationSpeed,
-        SourceAnimation = obj.SourceAnimation,
-        SourceId = obj.SourceId,
-        TargetAnimation = obj.TargetAnimation,
-        TargetId = obj.TargetId,
-        TargetPoint = obj.TargetPoint
-    };
+    public AnimationArgs Map(Animation obj)
+        => new()
+        {
+            AnimationSpeed = obj.AnimationSpeed,
+            SourceAnimation = obj.SourceAnimation,
+            SourceId = obj.SourceId,
+            TargetAnimation = obj.TargetAnimation,
+            TargetId = obj.TargetId,
+            TargetPoint = obj.TargetPoint
+        };
 }

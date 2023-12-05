@@ -9,8 +9,7 @@ public sealed record LegendMark(
     MarkIcon Icon,
     MarkColor Color,
     int Count,
-    GameTime Added
-)
+    GameTime Added)
 {
     public GameTime Added { get; set; } = Added;
     public int Count { get; set; } = Count;

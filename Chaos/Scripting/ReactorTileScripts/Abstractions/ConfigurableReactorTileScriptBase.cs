@@ -11,8 +11,8 @@ public abstract class ConfigurableReactorTileScriptBase : ConfigurableScriptBase
     protected MapInstance Map => Subject.MapInstance;
 
     protected ConfigurableReactorTileScriptBase(ReactorTile subject)
-        : base(subject, scriptKey => subject.ScriptVars[scriptKey]) =>
-        Point = Point.From(Subject);
+        : base(subject, scriptKey => subject.ScriptVars[scriptKey])
+        => Point = Point.From(Subject);
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

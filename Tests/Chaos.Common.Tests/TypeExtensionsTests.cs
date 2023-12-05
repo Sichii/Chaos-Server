@@ -19,7 +19,8 @@ public sealed class TypeExtensionsTests
         var result = enumType.IsFlagEnum();
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -32,7 +33,8 @@ public sealed class TypeExtensionsTests
         var result = nonEnumType.IsFlagEnum();
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -45,7 +47,8 @@ public sealed class TypeExtensionsTests
         var result = flagEnumType.IsFlagEnum();
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Theory]
@@ -58,7 +61,8 @@ public sealed class TypeExtensionsTests
         var result = type.IsPrimitive();
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Theory]
@@ -72,7 +76,8 @@ public sealed class TypeExtensionsTests
         var result = type.IsPrimitive();
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -85,6 +90,7 @@ public sealed class TypeExtensionsTests
         var result = stringType.IsPrimitive();
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 }

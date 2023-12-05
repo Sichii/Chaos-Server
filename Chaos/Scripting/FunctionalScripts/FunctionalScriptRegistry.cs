@@ -7,12 +7,14 @@ public sealed class FunctionalScriptRegistry : IScriptRegistry
 {
     private static readonly ConcurrentDictionary<string, Type> Scripts = new(StringComparer.OrdinalIgnoreCase);
     private readonly IServiceProvider Provider;
+
     /// <inheritdoc />
     public static IScriptRegistry Instance { get; private set; } = null!;
 
     public FunctionalScriptRegistry(IServiceProvider provider)
     {
         Provider = provider;
+
         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
         Instance ??= this;
     }

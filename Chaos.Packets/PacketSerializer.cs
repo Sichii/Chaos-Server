@@ -12,6 +12,7 @@ public sealed class PacketSerializer : IPacketSerializer
 {
     private readonly ConcurrentDictionary<Type, IClientPacketDeserializer> Deserializers;
     private readonly ConcurrentDictionary<Type, IServerPacketSerializer> Serializers;
+
     /// <inheritdoc />
     public Encoding Encoding { get; }
 
@@ -24,8 +25,7 @@ public sealed class PacketSerializer : IPacketSerializer
     public PacketSerializer(
         Encoding encoding,
         IDictionary<Type, IClientPacketDeserializer> deserializers,
-        IDictionary<Type, IServerPacketSerializer> serializers
-    )
+        IDictionary<Type, IServerPacketSerializer> serializers)
     {
         Encoding = encoding;
         Deserializers = new ConcurrentDictionary<Type, IClientPacketDeserializer>(deserializers);

@@ -12,8 +12,7 @@ public interface IApplyHealScript : IFunctionalScript
         Creature source,
         Creature target,
         IScript script,
-        int healing
-    );
+        int healing);
 
     static virtual IApplyHealScript Create() => throw new NotImplementedException("Override this method in your implementation");
 }

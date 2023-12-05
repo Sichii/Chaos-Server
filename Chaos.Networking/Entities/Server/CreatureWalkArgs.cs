@@ -19,6 +19,7 @@ public sealed record CreatureWalkArgs : ISendArgs
     ///     The point the creature is supposed to be walking from
     /// </summary>
     public IPoint OldPoint { get; set; } = null!;
+
     /// <summary>
     ///     The id of the creature
     /// </summary>

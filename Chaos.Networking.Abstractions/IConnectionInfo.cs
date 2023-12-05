@@ -11,10 +11,12 @@ public interface IConnectionInfo
     ///     The ip address to redirect to
     /// </summary>
     IPAddress Address { get; set; }
+
     /// <summary>
     ///     The hostname to redirect to
     /// </summary>
     string HostName { get; set; }
+
     /// <summary>
     ///     The port to redirect to
     /// </summary>

@@ -27,16 +27,17 @@ public class DefaultExperienceFormula : IExperienceFormula
         return 0;
     }
 
-    protected virtual decimal GetGroupSizeDeductions(ICollection<Aisling> group) => group.Count switch
-    {
-        1 => 0,
-        2 => 0,
-        3 => 0.20m,
-        4 => 0.30m,
-        5 => 0.40m,
-        6 => 0.50m,
-        _ => throw new ArgumentOutOfRangeException(nameof(group.Count), "Group size is too large.")
-    };
+    protected virtual decimal GetGroupSizeDeductions(ICollection<Aisling> group)
+        => group.Count switch
+        {
+            1 => 0,
+            2 => 0,
+            3 => 0.20m,
+            4 => 0.30m,
+            5 => 0.40m,
+            6 => 0.50m,
+            _ => throw new ArgumentOutOfRangeException(nameof(group.Count), "Group size is too large.")
+        };
 
     // ReSharper disable once ParameterTypeCanBeEnumerable.Global
     protected virtual decimal GetMonsterLevelDifferenceDeductions(ICollection<Aisling> group, Monster monster)

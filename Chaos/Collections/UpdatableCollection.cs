@@ -94,10 +94,25 @@ public sealed class UpdatableCollection : IDeltaUpdatable
         internal IDeltaUpdatable? Obj { get; init; }
         internal required ActionType Type { get; init; }
 
-        internal static PendingAction Add(IDeltaUpdatable obj) => new() { Obj = obj, Type = ActionType.Add };
+        internal static PendingAction Add(IDeltaUpdatable obj)
+            => new()
+            {
+                Obj = obj,
+                Type = ActionType.Add
+            };
 
-        internal static PendingAction Clear() => new() { Type = ActionType.Clear };
-        internal static PendingAction Remove(IDeltaUpdatable obj) => new() { Obj = obj, Type = ActionType.Remove };
+        internal static PendingAction Clear()
+            => new()
+            {
+                Type = ActionType.Clear
+            };
+
+        internal static PendingAction Remove(IDeltaUpdatable obj)
+            => new()
+            {
+                Obj = obj,
+                Type = ActionType.Remove
+            };
 
         internal enum ActionType
         {

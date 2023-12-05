@@ -18,8 +18,7 @@ public class ApplyAttackDamageScript : ScriptBase, IApplyDamageScript
         Creature target,
         IScript script,
         int damage,
-        Element? elementOverride = null
-    )
+        Element? elementOverride = null)
     {
         damage = DamageFormula.Calculate(
             source,

@@ -22,11 +22,7 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public ItemMapperProfile(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ITypeMapper mapper
-    )
+    public ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
@@ -35,20 +31,21 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
 
     public Item Map(ItemInfo obj) => throw new NotImplementedException();
 
-    ItemInfo IMapperProfile<Item, ItemInfo>.Map(Item obj) => new()
-    {
-        Color = obj.Color,
-        Cost = obj.Template.BuyCost,
-        Count = obj.Count < 0
-            ? throw new InvalidOperationException($"Item \"{obj.DisplayName}\" has negative count of {obj.Count}")
-            : Convert.ToUInt32(obj.Count),
-        CurrentDurability = obj.CurrentDurability ?? 0,
-        MaxDurability = obj.Template.MaxDurability ?? 0,
-        Name = obj.DisplayName,
-        Slot = obj.Slot,
-        Sprite = obj.ItemSprite.PanelSprite,
-        Stackable = obj.Template.Stackable
-    };
+    ItemInfo IMapperProfile<Item, ItemInfo>.Map(Item obj)
+        => new()
+        {
+            Color = obj.Color,
+            Cost = obj.Template.BuyCost,
+            Count = obj.Count < 0
+                ? throw new InvalidOperationException($"Item \"{obj.DisplayName}\" has negative count of {obj.Count}")
+                : Convert.ToUInt32(obj.Count),
+            CurrentDurability = obj.CurrentDurability ?? 0,
+            MaxDurability = obj.Template.MaxDurability ?? 0,
+            Name = obj.DisplayName,
+            Slot = obj.Slot,
+            Sprite = obj.ItemSprite.PanelSprite,
+            Stackable = obj.Template.Stackable
+        };
 
     public Item Map(ItemSchema obj)
     {
@@ -81,7 +78,9 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
 
     public ItemSchema Map(Item obj)
     {
-        var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var extraScriptKeys = obj.ScriptKeys
+                                 .Except(obj.Template.ScriptKeys)
+                                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var ret = new ItemSchema
         {
@@ -129,46 +128,48 @@ public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
     ItemDetails IMapperProfile<ItemDetails, ItemInfo>.Map(ItemInfo obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public ItemRequirement Map(ItemRequirementSchema obj) => new()
-    {
-        ItemTemplateKey = obj.ItemTemplateKey,
-        AmountRequired = obj.AmountRequired
-    };
+    public ItemRequirement Map(ItemRequirementSchema obj)
+        => new()
+        {
+            ItemTemplateKey = obj.ItemTemplateKey,
+            AmountRequired = obj.AmountRequired
+        };
 
     /// <inheritdoc />
     public ItemRequirementSchema Map(ItemRequirement obj) => throw new NotImplementedException();
 
-    public ItemTemplate Map(ItemTemplateSchema obj) => new()
-    {
-        TemplateKey = obj.TemplateKey,
-        Name = obj.Name,
-        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-        AccountBound = obj.AccountBound,
-        Color = obj.Color,
-        ItemSprite = new ItemSprite(obj.PanelSprite, obj.DisplaySprite ?? 0),
-        MaxDurability = obj.MaxDurability,
-        MaxStacks = obj.MaxStacks,
-        Modifiers = obj.Modifiers == null ? null : Mapper.Map<Attributes>(obj.Modifiers),
-        BuyCost = obj.BuyCost,
-        SellValue = obj.SellValue,
-        Weight = obj.Weight,
-        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
-        PanelSprite = obj.PanelSprite,
-        PantsColor = obj.PantsColor,
-        ScriptVars = new Dictionary<string, IScriptVars>(
-            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
-            StringComparer.OrdinalIgnoreCase),
-        Description = obj.Description,
-        IsDyeable = obj.IsDyeable,
-        IsModifiable = obj.IsModifiable,
-        Level = obj.Level,
-        Class = obj.Class,
-        RequiresMaster = obj.RequiresMaster,
-        AdvClass = obj.AdvClass,
-        Category = obj.Category,
-        EquipmentType = obj.EquipmentType,
-        Gender = obj.Gender
-    };
+    public ItemTemplate Map(ItemTemplateSchema obj)
+        => new()
+        {
+            TemplateKey = obj.TemplateKey,
+            Name = obj.Name,
+            ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+            AccountBound = obj.AccountBound,
+            Color = obj.Color,
+            ItemSprite = new ItemSprite(obj.PanelSprite, obj.DisplaySprite ?? 0),
+            MaxDurability = obj.MaxDurability,
+            MaxStacks = obj.MaxStacks,
+            Modifiers = obj.Modifiers == null ? null : Mapper.Map<Attributes>(obj.Modifiers),
+            BuyCost = obj.BuyCost,
+            SellValue = obj.SellValue,
+            Weight = obj.Weight,
+            Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+            PanelSprite = obj.PanelSprite,
+            PantsColor = obj.PantsColor,
+            ScriptVars = new Dictionary<string, IScriptVars>(
+                obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+                StringComparer.OrdinalIgnoreCase),
+            Description = obj.Description,
+            IsDyeable = obj.IsDyeable,
+            IsModifiable = obj.IsModifiable,
+            Level = obj.Level,
+            Class = obj.Class,
+            RequiresMaster = obj.RequiresMaster,
+            AdvClass = obj.AdvClass,
+            Category = obj.Category,
+            EquipmentType = obj.EquipmentType,
+            Gender = obj.Gender
+        };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();
 }

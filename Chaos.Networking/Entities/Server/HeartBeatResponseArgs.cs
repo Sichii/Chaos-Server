@@ -12,6 +12,7 @@ public sealed record HeartBeatResponseArgs : ISendArgs
     ///     The first byte of the heartbeat response. This should be the secone byte of the heartbeat request
     /// </summary>
     public byte First { get; set; }
+
     /// <summary>
     ///     The second byte of the heartbeat response. This should be the first byte of the heartbeat request
     /// </summary>

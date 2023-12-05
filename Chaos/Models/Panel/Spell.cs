@@ -22,8 +22,7 @@ public sealed class Spell : PanelEntityBase, IScripted<ISpellScript>
         IScriptProvider scriptProvider,
         ICollection<string>? extraScriptKeys = null,
         ulong? uniqueId = null,
-        int? elapsedMs = null
-    )
+        int? elapsedMs = null)
         : base(template, uniqueId, elapsedMs)
     {
         Template = template;

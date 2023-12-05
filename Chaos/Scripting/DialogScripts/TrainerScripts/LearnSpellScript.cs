@@ -26,8 +26,7 @@ public class LearnSpellScript : DialogScriptBase
         IItemFactory itemFactory,
         ISkillFactory skillFactory,
         ISpellFactory spellFactory,
-        ILogger<LearnSpellScript> logger
-    )
+        ILogger<LearnSpellScript> logger)
         : base(subject)
     {
         ItemFactory = itemFactory;
@@ -148,7 +147,9 @@ public class LearnSpellScript : DialogScriptBase
             return;
         }
 
-        var learningRequirementsStr = spell.Template.LearningRequirements?.BuildRequirementsString(ItemFactory, SkillFactory, SpellFactory)
+        var learningRequirementsStr = spell.Template
+                                           .LearningRequirements
+                                           ?.BuildRequirementsString(ItemFactory, SkillFactory, SpellFactory)
                                            .ToString();
 
         Subject.InjectTextParameters(spell.Template.Description ?? string.Empty, learningRequirementsStr ?? string.Empty);

@@ -21,8 +21,7 @@ public class GuildCreateScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildCreateScript> logger
-    )
+        ILogger<GuildCreateScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -42,6 +41,7 @@ public class GuildCreateScript : GuildScriptBase
 
                 break;
             }
+
             //occurs after you choose a guild name
             case "generic_guild_create_confirmation":
             {
@@ -49,6 +49,7 @@ public class GuildCreateScript : GuildScriptBase
 
                 break;
             }
+
             //occurs after you confirm the guild name and cost
             case "generic_guild_create_accepted":
             {

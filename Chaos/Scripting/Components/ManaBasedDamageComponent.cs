@@ -31,10 +31,7 @@ public class ManaBasedDamageComponent : IComponent
                 options.Element);
     }
 
-    protected virtual int CalculateDamage(
-        ActivationContext context,
-        IManaBasedDamageComponentOptions options
-    )
+    protected virtual int CalculateDamage(ActivationContext context, IManaBasedDamageComponentOptions options)
     {
         var baseDamage = options.BaseDamage ?? 0;
         var manaDamage = 0;

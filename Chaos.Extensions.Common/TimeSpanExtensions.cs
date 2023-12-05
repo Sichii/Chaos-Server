@@ -25,8 +25,7 @@ public static class TimeSpanExtensions
         bool showSeconds = true,
         bool showMinutes = true,
         bool showHours = true,
-        bool showDays = true
-    )
+        bool showDays = true)
     {
         var sb = new StringBuilder();
 
@@ -58,6 +57,7 @@ public static class TimeSpanExtensions
             if (timeSpan.Milliseconds > 0)
                 sb.Append($"{timeSpan.Milliseconds}ms ");
 
-        return sb.ToString().Trim();
+        return sb.ToString()
+                 .Trim();
     }
 }

@@ -15,6 +15,7 @@ public sealed record ReactorTileSchema
     ///     monster with no stats or scripts
     /// </summary>
     public string? OwnerMonsterTemplateKey { get; set; }
+
     /// <summary>
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>
@@ -25,8 +26,8 @@ public sealed record ReactorTileSchema
     ///     pair, and the value of
     ///     that entry is a dictionary of propertyName-Value pairs
     /// </summary>
-    public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
-        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, DynamicVars> ScriptVars { get; set; }
+        = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Whether or not this reactor should block monster pathfinding. If this is set to false, monsters and merchants will

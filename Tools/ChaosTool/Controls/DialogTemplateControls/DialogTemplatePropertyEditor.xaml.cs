@@ -64,8 +64,12 @@ public sealed partial class DialogTemplatePropertyEditor
         template.Contextual = ContextualCbox.IsChecked ?? false;
         template.TextBoxLength = ParsePrimitive<ushort?>(TextBoxLengthTbox.Text);
         template.TextBoxPrompt = string.IsNullOrEmpty(TextBoxPromptTbox.Text) ? null : TextBoxPromptTbox.Text.FixLineEndings();
-        template.Options = OptionsViewItems.Select(ShallowCopy<DialogOptionSchema>.Create).ToList();
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
+
+        template.Options = OptionsViewItems.Select(ShallowCopy<DialogOptionSchema>.Create)
+                                           .ToList();
+
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -81,6 +85,7 @@ public sealed partial class DialogTemplatePropertyEditor
         TemplateKeyTbox.IsEnabled = true;
 
         TypeCmbox.SelectedItem = SelectPrimitive(template.Type, TypeCmbox.ItemsSource);
+
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         TextTbox.Text = template.Text.FixLineEndings();
         NextDialogKeyTbox.Text = template.NextDialogKey;
@@ -104,7 +109,9 @@ public sealed partial class DialogTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.DialogTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.DialogTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -114,7 +121,9 @@ public sealed partial class DialogTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.DialogTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.DialogTemplates
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
@@ -151,8 +160,8 @@ public sealed partial class DialogTemplatePropertyEditor
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region DialogOptions Controls
@@ -236,7 +245,7 @@ public sealed partial class DialogTemplatePropertyEditor
         {
             removedId++;
 
-            if (OptionsViewItems.Count + 1 > removedId)
+            if ((OptionsViewItems.Count + 1) > removedId)
             {
                 OptionsViewItems.Insert(targetId, dropped);
                 OptionsViewItems.RemoveAt(removedId);

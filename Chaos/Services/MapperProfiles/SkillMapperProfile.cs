@@ -19,11 +19,7 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public SkillMapperProfile(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ITypeMapper mapper
-    )
+    public SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
@@ -32,13 +28,14 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
 
     public Skill Map(SkillInfo obj) => throw new NotImplementedException();
 
-    SkillInfo IMapperProfile<Skill, SkillInfo>.Map(Skill obj) => new()
-    {
-        Name = obj.Template.Name,
-        PanelName = obj.PanelDisplayName,
-        Slot = obj.Slot,
-        Sprite = obj.Template.PanelSprite
-    };
+    SkillInfo IMapperProfile<Skill, SkillInfo>.Map(Skill obj)
+        => new()
+        {
+            Name = obj.Template.Name,
+            PanelName = obj.PanelDisplayName,
+            Slot = obj.Slot,
+            Sprite = obj.Template.PanelSprite
+        };
 
     public Skill Map(SkillSchema obj)
     {
@@ -59,7 +56,9 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
 
     public SkillSchema Map(Skill obj)
     {
-        var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var extraScriptKeys = obj.ScriptKeys
+                                 .Except(obj.Template.ScriptKeys)
+                                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var ret = new SkillSchema
         {
@@ -73,24 +72,25 @@ public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
         return ret;
     }
 
-    public SkillTemplate Map(SkillTemplateSchema obj) => new()
-    {
-        TemplateKey = obj.TemplateKey,
-        Name = obj.Name,
-        IsAssail = obj.IsAssail,
-        PanelSprite = obj.PanelSprite,
-        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
-        ScriptVars = new Dictionary<string, IScriptVars>(
-            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
-            StringComparer.OrdinalIgnoreCase),
-        Description = obj.Description,
-        LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements),
-        Level = obj.Level,
-        Class = obj.Class,
-        AdvClass = obj.AdvClass,
-        RequiresMaster = obj.RequiresMaster
-    };
+    public SkillTemplate Map(SkillTemplateSchema obj)
+        => new()
+        {
+            TemplateKey = obj.TemplateKey,
+            Name = obj.Name,
+            IsAssail = obj.IsAssail,
+            PanelSprite = obj.PanelSprite,
+            ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+            Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+            ScriptVars = new Dictionary<string, IScriptVars>(
+                obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+                StringComparer.OrdinalIgnoreCase),
+            Description = obj.Description,
+            LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements),
+            Level = obj.Level,
+            Class = obj.Class,
+            AdvClass = obj.AdvClass,
+            RequiresMaster = obj.RequiresMaster
+        };
 
     public SkillTemplateSchema Map(SkillTemplate obj) => throw new NotImplementedException();
 }

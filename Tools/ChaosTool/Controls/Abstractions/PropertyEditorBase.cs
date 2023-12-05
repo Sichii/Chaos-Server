@@ -16,7 +16,12 @@ public abstract class PropertyEditorBase : UserControl
     protected virtual string GetPropertyDocs<T>(string? propertyName = null)
     {
         var type = typeof(T);
-        var opts = new XmlDocsOptions { FormattingMode = XmlDocsFormattingMode.None, ResolveExternalXmlDocs = false };
+
+        var opts = new XmlDocsOptions
+        {
+            FormattingMode = XmlDocsFormattingMode.None,
+            ResolveExternalXmlDocs = false
+        };
         var builder = new StringBuilder();
 
         if (string.IsNullOrEmpty(propertyName))
@@ -31,7 +36,8 @@ public abstract class PropertyEditorBase : UserControl
             builder.AppendLine(prop!.GetXmlDocsRemarks(opts));
         }
 
-        return builder.ToString().Trim();
+        return builder.ToString()
+                      .Trim();
     }
 
     protected virtual bool ValidatePreSave<T>(TraceWrapper<T> wrapper, TextBox pathTbox, TextBox templateKeyTbox)
@@ -61,7 +67,8 @@ public abstract class PropertyEditorBase : UserControl
             throw new InvalidOperationException($"{type.Name} is not an enum");
 
         if (underlyingType is not null)
-            return Enum.GetNames(type).Prepend(string.Empty);
+            return Enum.GetNames(type)
+                       .Prepend(string.Empty);
 
         return Enum.GetNames(type);
     }

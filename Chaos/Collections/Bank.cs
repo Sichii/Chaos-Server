@@ -19,12 +19,9 @@ public sealed class Bank : IEnumerable<Item>
         ItemCloner = null!;
     }
 
-    public Bank(
-        IEnumerable<Item>? items,
-        ICloningService<Item> itemCloner
-    )
-        : this(items) =>
-        ItemCloner = itemCloner;
+    public Bank(IEnumerable<Item>? items, ICloningService<Item> itemCloner)
+        : this(items)
+        => ItemCloner = itemCloner;
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

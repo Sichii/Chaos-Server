@@ -3,10 +3,6 @@
     <PropertyGroup>
         <Version>1.0.0</Version>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="zlib.net-mutliplatform"/>
-    </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <InternalsVisibleTo Include="Chaos.IO.Tests"/>

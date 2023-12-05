@@ -27,8 +27,7 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
         Merchant subject,
         ILogger<VerbalBuyShopScript> logger,
         IItemFactory itemFactory,
-        ICloningService<Item> itemCloner
-    )
+        ICloningService<Item> itemCloner)
         : base(subject, logger)
     {
         if (subject is not IBuyShopSource buyShopSource)

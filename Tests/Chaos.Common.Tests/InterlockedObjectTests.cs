@@ -18,7 +18,8 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.Get();
 
         // Assert
-        result.Should().BeSameAs(expected);
+        result.Should()
+              .BeSameAs(expected);
     }
 
     [Fact]
@@ -31,7 +32,8 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.Get();
 
         // Assert
-        result.Should().BeNull();
+        result.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -46,7 +48,9 @@ public sealed class InterlockedObjectTests
 
         // Assert
         var result = interlockedObject.Get();
-        result.Should().BeSameAs(expected);
+
+        result.Should()
+              .BeSameAs(expected);
     }
 
     [Fact]
@@ -62,8 +66,12 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.SetIfNull(newValue);
 
         // Assert
-        result.Should().BeFalse();
-        interlockedObject.Get().Should().BeSameAs(existing);
+        result.Should()
+              .BeFalse();
+
+        interlockedObject.Get()
+                         .Should()
+                         .BeSameAs(existing);
     }
 
     [Fact]
@@ -77,8 +85,12 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.SetIfNull(expected);
 
         // Assert
-        result.Should().BeTrue();
-        interlockedObject.Get().Should().BeSameAs(expected);
+        result.Should()
+              .BeTrue();
+
+        interlockedObject.Get()
+                         .Should()
+                         .BeSameAs(expected);
     }
 
     [Fact]
@@ -93,8 +105,12 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.TryRemove(existing);
 
         // Assert
-        result.Should().BeTrue();
-        interlockedObject.Get().Should().BeNull();
+        result.Should()
+              .BeTrue();
+
+        interlockedObject.Get()
+                         .Should()
+                         .BeNull();
     }
 
     [Fact]
@@ -110,8 +126,12 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.TryRemove(nonMatching);
 
         // Assert
-        result.Should().BeFalse();
-        interlockedObject.Get().Should().BeSameAs(existing);
+        result.Should()
+              .BeFalse();
+
+        interlockedObject.Get()
+                         .Should()
+                         .BeSameAs(existing);
     }
 
     [Fact]
@@ -127,8 +147,12 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.TryReplace(replacement, existing);
 
         // Assert
-        result.Should().BeTrue();
-        interlockedObject.Get().Should().BeSameAs(replacement);
+        result.Should()
+              .BeTrue();
+
+        interlockedObject.Get()
+                         .Should()
+                         .BeSameAs(replacement);
     }
 
     [Fact]
@@ -145,7 +169,11 @@ public sealed class InterlockedObjectTests
         var result = interlockedObject.TryReplace(replacement, nonMatching);
 
         // Assert
-        result.Should().BeFalse();
-        interlockedObject.Get().Should().BeSameAs(existing);
+        result.Should()
+              .BeFalse();
+
+        interlockedObject.Get()
+                         .Should()
+                         .BeSameAs(existing);
     }
 }

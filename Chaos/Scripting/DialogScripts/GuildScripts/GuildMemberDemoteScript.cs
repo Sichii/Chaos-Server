@@ -21,8 +21,7 @@ public class GuildMemberDemoteScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildMemberDemoteScript> logger
-    )
+        ILogger<GuildMemberDemoteScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -42,6 +41,7 @@ public class GuildMemberDemoteScript : GuildScriptBase
 
                 break;
             }
+
             //occurs after you confirm the guild member to demote
             case "generic_guild_members_demote_accepted":
             {
@@ -101,7 +101,8 @@ public class GuildMemberDemoteScript : GuildScriptBase
         }
 
         //grab the aisling to demote
-        var aislingToDemote = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
+        var aislingToDemote = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))
+                                            ?.Aisling;
 
         //ensure the aisling is online
         if (aislingToDemote is null)

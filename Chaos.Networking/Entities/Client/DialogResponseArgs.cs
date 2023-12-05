@@ -26,5 +26,4 @@ public sealed record DialogResponseArgs(
     ushort DialogId,
     DialogArgsType DialogArgsType,
     byte? Option,
-    List<string>? Args
-) : IReceiveArgs;
+    List<string>? Args) : IReceiveArgs;

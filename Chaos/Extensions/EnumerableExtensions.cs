@@ -11,16 +11,15 @@ namespace Chaos.Extensions;
 
 public static class EnumerableExtensions
 {
-    public static T? ClosestOrDefault<T>(this IEnumerable<T> objs, IPoint point) where T: MapEntity =>
-        objs.MinBy(o => o.DistanceFrom(point));
+    public static T? ClosestOrDefault<T>(this IEnumerable<T> objs, IPoint point) where T: MapEntity
+        => objs.MinBy(o => o.DistanceFrom(point));
 
-    public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, ICloningService<Item> itemCloner) => items
-        .GroupBy(i => i.DisplayName, (_, s) => s.ToSingleStack())
-        .SelectMany(i => i.FixStacks(itemCloner));
+    public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, ICloningService<Item> itemCloner)
+        => items.GroupBy(i => i.DisplayName, (_, s) => s.ToSingleStack())
+                .SelectMany(i => i.FixStacks(itemCloner));
 
     public static (ICollection<Aisling> Aislings, ICollection<Door> Doors, ICollection<VisibleEntity> OtherVisibles) PartitionBySendType(
-        this IEnumerable<VisibleEntity> visibleEntities
-    )
+        this IEnumerable<VisibleEntity> visibleEntities)
     {
         var aislings = new List<Aisling>();
         var doors = new List<Door>();
@@ -112,8 +111,8 @@ public static class EnumerableExtensions
 
     public static T? TopOrDefault<T>(this IEnumerable<T> objs) where T: WorldEntity => objs.MaxBy(o => o.Creation);
 
-    public static Item ToSingleStack(this IEnumerable<Item> items) =>
-        items.Aggregate(
+    public static Item ToSingleStack(this IEnumerable<Item> items)
+        => items.Aggregate(
             (item1, item2) =>
             {
                 item1.Count += item2.Count;

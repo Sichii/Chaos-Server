@@ -23,11 +23,16 @@ public sealed class ComplexSynchronizationHelperTests
         var result = await ComplexSynchronizationHelper.WaitAsync(overallTimeout, individualTimeout, synchronizers);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeAssignableTo<IPolyDisposable>();
+        result.Should()
+              .NotBeNull();
+
+        result.Should()
+              .BeAssignableTo<IPolyDisposable>();
 
         foreach (var synchronizer in synchronizers)
-            synchronizer.CurrentCount.Should().Be(0);
+            synchronizer.CurrentCount
+                        .Should()
+                        .Be(0);
     }
 
     [Fact]
@@ -48,6 +53,7 @@ public sealed class ComplexSynchronizationHelperTests
         Func<Task> action = async () => await ComplexSynchronizationHelper.WaitAsync(overallTimeout, individualTimeout, synchronizers);
 
         // Assert
-        await action.Should().ThrowAsync<TimeoutException>();
+        await action.Should()
+                    .ThrowAsync<TimeoutException>();
     }
 }

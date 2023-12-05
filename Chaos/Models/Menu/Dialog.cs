@@ -36,8 +36,10 @@ public sealed record Dialog : IScripted<IDialogScript>
     public string? TextBoxPrompt { get; set; }
     public ChaosDialogType Type { get; set; }
     public bool Contextual { get; }
+
     /// <inheritdoc />
     public IDialogScript Script { get; }
+
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
 
@@ -68,8 +70,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         IDialogSourceEntity dialogSource,
         IScriptProvider scriptProvider,
         IDialogFactory dialogFactory,
-        ICollection<string>? extraScriptKeys = null
-    )
+        ICollection<string>? extraScriptKeys = null)
         : this(template, dialogSource)
     {
         extraScriptKeys ??= Array.Empty<string>();
@@ -83,8 +84,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         IDialogSourceEntity dialogSource,
         IDialogFactory dialogFactory,
         ChaosDialogType type,
-        string text
-    )
+        string text)
     {
         Text = text;
         Type = type;
@@ -176,7 +176,10 @@ public sealed record Dialog : IScripted<IDialogScript>
         if (source.ActiveDialog.Get() != this)
             return;
 
-        var nextDialogKey = optionIndex.HasValue ? Options.ElementAtOrDefault(optionIndex.Value - 1)?.DialogKey : NextDialogKey;
+        var nextDialogKey = optionIndex.HasValue
+            ? Options.ElementAtOrDefault(optionIndex.Value - 1)
+                     ?.DialogKey
+            : NextDialogKey;
 
         if (!string.IsNullOrEmpty(nextDialogKey))
         {
@@ -288,13 +291,30 @@ public sealed record Dialog : IScripted<IDialogScript>
         if (index >= Options.Count)
             AddOption(optionText, dialogKey);
         else
-            Options.Insert(index, new DialogOption { OptionText = optionText, DialogKey = dialogKey });
+            Options.Insert(
+                index,
+                new DialogOption
+                {
+                    OptionText = optionText,
+                    DialogKey = dialogKey
+                });
     }
 
-    public void AddOption(string optionText, string dialogKey) =>
-        Options.Add(new DialogOption { OptionText = optionText, DialogKey = dialogKey });
+    public void AddOption(string optionText, string dialogKey)
+        => Options.Add(
+            new DialogOption
+            {
+                OptionText = optionText,
+                DialogKey = dialogKey
+            });
 
-    public void AddOptions(params (string OptionText, string DialogKey)[] options) => Options.AddRange(
-        options.Select(option => new DialogOption { OptionText = option.OptionText, DialogKey = option.DialogKey }));
+    public void AddOptions(params (string OptionText, string DialogKey)[] options)
+        => Options.AddRange(
+            options.Select(
+                option => new DialogOption
+                {
+                    OptionText = option.OptionText,
+                    DialogKey = option.DialogKey
+                }));
     #endregion
 }

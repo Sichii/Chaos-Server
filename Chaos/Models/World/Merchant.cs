@@ -32,9 +32,12 @@ public sealed class Merchant : Creature,
 
     /// <inheritdoc />
     public ICollection<Item> ItemsToBuy { get; }
+
     public override ILogger<Merchant> Logger { get; }
+
     /// <inheritdoc />
     public override IMerchantScript Script { get; }
+
     /// <inheritdoc />
     public override ISet<string> ScriptKeys { get; }
 
@@ -43,12 +46,14 @@ public sealed class Merchant : Creature,
 
     /// <inheritdoc />
     public ICollection<Spell> SpellsToTeach { get; }
+
     public override StatSheet StatSheet { get; }
     public IStockService StockService { get; }
     public MerchantTemplate Template { get; }
 
     public override CreatureType Type { get; }
     public IIntervalTimer WanderTimer { get; }
+
     /// <inheritdoc />
     public override int AssailIntervalMs => 500;
 
@@ -57,6 +62,7 @@ public sealed class Merchant : Creature,
 
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Creature;
+
     public override bool IsAlive => true;
 
     public Merchant(
@@ -69,8 +75,7 @@ public sealed class Merchant : Creature,
         IItemFactory itemFactory,
         IStockService stockService,
         IScriptProvider scriptProvider,
-        ICollection<string>? extraScriptKeys = null
-    )
+        ICollection<string>? extraScriptKeys = null)
         : base(
             template.Name,
             template.Sprite,
@@ -89,7 +94,8 @@ public sealed class Merchant : Creature,
         ScriptKeys.AddRange(extraScriptKeys);
         BlackList = new HashSet<IPoint>(PointEqualityComparer.Instance);
 
-        ItemsForSale = template.ItemsForSale.Select(
+        ItemsForSale = template.ItemsForSale
+                               .Select(
                                    kvp =>
                                    {
                                        var item = itemFactory.CreateFaux(kvp.Key);
@@ -98,9 +104,17 @@ public sealed class Merchant : Creature,
                                    })
                                .ToList();
 
-        ItemsToBuy = template.ItemsToBuy.Select(itemKey => itemFactory.CreateFaux(itemKey)).ToList();
-        SkillsToTeach = template.SkillsToTeach.Select(key => skillFactory.CreateFaux(key)).ToList();
-        SpellsToTeach = template.SpellsToTeach.Select(key => spellFactory.CreateFaux(key)).ToList();
+        ItemsToBuy = template.ItemsToBuy
+                             .Select(itemKey => itemFactory.CreateFaux(itemKey))
+                             .ToList();
+
+        SkillsToTeach = template.SkillsToTeach
+                                .Select(key => skillFactory.CreateFaux(key))
+                                .ToList();
+
+        SpellsToTeach = template.SpellsToTeach
+                                .Select(key => spellFactory.CreateFaux(key))
+                                .ToList();
 
         //register this merchant's stock with the stock service
         if (Template.ItemsForSale.Any())
@@ -129,8 +143,8 @@ public sealed class Merchant : Creature,
     void IBuyShopSource.Restock(int percent) => StockService.Restock(Template.TemplateKey, percent);
 
     /// <inheritdoc />
-    bool IBuyShopSource.TryDecrementStock(string itemTemplateKey, int amount) =>
-        StockService.TryDecrementStock(Template.TemplateKey, itemTemplateKey, amount);
+    bool IBuyShopSource.TryDecrementStock(string itemTemplateKey, int amount)
+        => StockService.TryDecrementStock(Template.TemplateKey, itemTemplateKey, amount);
 
     /// <inheritdoc />
     public bool TryGetItem(string itemName, [MaybeNullWhen(false)] out Item item)
@@ -175,6 +189,8 @@ public sealed class Merchant : Creature,
         else if (BlackList.IsNullOrEmpty())
             base.Wander(unwalkablePoints);
         else
-            base.Wander(unwalkablePoints!.Concat(BlackList).ToList());
+            base.Wander(
+                unwalkablePoints!.Concat(BlackList)
+                                 .ToList());
     }
 }

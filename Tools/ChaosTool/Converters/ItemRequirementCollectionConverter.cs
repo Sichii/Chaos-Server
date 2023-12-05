@@ -13,8 +13,7 @@ public sealed class ItemRequirementCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    )
+        CultureInfo culture)
     {
         if (value is not IEnumerable<ItemRequirementSchema> itemRequirementSchemas)
             return string.Empty;
@@ -26,6 +25,6 @@ public sealed class ItemRequirementCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    ) => throw new NotImplementedException();
+        CultureInfo culture)
+        => throw new NotImplementedException();
 }

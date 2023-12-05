@@ -19,6 +19,7 @@ public sealed record MerchantTemplateSchema
     ///     A collection of items(Item Template Keys) that this merchant will buy
     /// </summary>
     public ICollection<string> ItemsToBuy { get; set; } = Array.Empty<string>();
+
     /// <summary>
     ///     The name of this merchant as displayed to aislings
     /// </summary>
@@ -34,17 +35,19 @@ public sealed record MerchantTemplateSchema
     ///     Defaults to 100%. If this merchant sells items, this specifies the percentage of items that will be restocked
     /// </summary>
     public int RestockPct { get; set; } = 100;
+
     /// <summary>
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+
     /// <summary>
     ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value
     ///     pair, and the value of
     ///     that entry is a dictionary of propertyName-Value pairs
     /// </summary>
-    public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
-        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, DynamicVars> ScriptVars { get; set; }
+        = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     ///     A collection of skills (Skill Template Keys) that this merchant will teach
@@ -55,6 +58,7 @@ public sealed record MerchantTemplateSchema
     ///     A collection of spells (Spell Template Keys) that this merchant will teach
     /// </summary>
     public ICollection<string> SpellsToTeach { get; set; } = Array.Empty<string>();
+
     /// <summary>
     ///     The sprite id of the merchant minus the offset
     /// </summary>

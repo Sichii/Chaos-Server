@@ -16,8 +16,8 @@ public class WithdrawItemScript : DialogScriptBase
 
     /// <inheritdoc />
     public WithdrawItemScript(Dialog subject, ILogger<WithdrawItemScript> logger)
-        : base(subject) =>
-        Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     /// <inheritdoc />
     public override void OnDisplaying(Aisling source)
@@ -69,9 +69,7 @@ public class WithdrawItemScript : DialogScriptBase
 
     private void OnNextAmountRequest(Aisling source)
     {
-        if (!TryFetchArgs<string, int>(out var itemName, out var amount)
-            || (amount <= 0)
-            || !TryGetItem(source, itemName, out var item))
+        if (!TryFetchArgs<string, int>(out var itemName, out var amount) || (amount <= 0) || !TryGetItem(source, itemName, out var item))
         {
             Subject.ReplyToUnknownInput(source);
 

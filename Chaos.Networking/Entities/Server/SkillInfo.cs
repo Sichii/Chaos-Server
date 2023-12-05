@@ -21,6 +21,7 @@ public sealed record SkillInfo
     ///     The slot the skill is in
     /// </summary>
     public byte Slot { get; set; }
+
     /// <summary>
     ///     The sprite of the skill icon
     /// </summary>

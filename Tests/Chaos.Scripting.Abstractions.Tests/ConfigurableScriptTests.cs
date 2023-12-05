@@ -19,8 +19,13 @@ public sealed class ConfigurableScriptTests
         var script = new MockConfigurableScript(subject, scriptVars);
 
         // Assert
-        script.StringProp.Should().BeNull();
-        script.IntProp.Should().Be(0);
+        script.StringProp
+              .Should()
+              .BeNull();
+
+        script.IntProp
+              .Should()
+              .Be(0);
     }
 
     [Fact]
@@ -36,8 +41,13 @@ public sealed class ConfigurableScriptTests
         var script = new MockConfigurableScript(subject, scriptVars);
 
         // Assert
-        script.StringProp.Should().Be("TestValue");
-        script.IntProp.Should().Be(42);
+        script.StringProp
+              .Should()
+              .Be("TestValue");
+
+        script.IntProp
+              .Should()
+              .Be(42);
     }
 
     [Fact]
@@ -53,8 +63,13 @@ public sealed class ConfigurableScriptTests
         var script = new MockConfigurableScript(subject, _ => scriptVars);
 
         // Assert
-        script.StringProp.Should().Be("TestValue");
-        script.IntProp.Should().Be(42);
+        script.StringProp
+              .Should()
+              .Be("TestValue");
+
+        script.IntProp
+              .Should()
+              .Be(42);
     }
 
     [Fact]
@@ -70,6 +85,7 @@ public sealed class ConfigurableScriptTests
         #pragma warning restore CA1806
 
         // Assert
-        act.Should().Throw<NullReferenceException>();
+        act.Should()
+           .Throw<NullReferenceException>();
     }
 }

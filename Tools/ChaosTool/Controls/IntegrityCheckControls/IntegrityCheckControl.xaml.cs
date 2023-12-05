@@ -44,7 +44,11 @@ public sealed partial class IntegrityCheckControl
     {
         await Task.Yield();
 
-        var acceptableKeys = new[] { "top", "close" };
+        var acceptableKeys = new[]
+        {
+            "top",
+            "close"
+        };
 
         foreach (var wrapper in JsonContext.DialogTemplates.Objects)
         {
@@ -468,8 +472,8 @@ public sealed partial class IntegrityCheckControl
     }
 
     #region Utility
-    private async Task AddViolationAsync(string violation, RoutedEventHandler handler, bool insertToHead = false) =>
-        await Dispatcher.InvokeAsync(
+    private async Task AddViolationAsync(string violation, RoutedEventHandler handler, bool insertToHead = false)
+        => await Dispatcher.InvokeAsync(
             () =>
             {
                 var button = new Button
@@ -501,7 +505,8 @@ public sealed partial class IntegrityCheckControl
 
         ReBuildIndexes();
 
-        await DetectIntegrityViolationsAsync().ConfigureAwait(false);
+        await DetectIntegrityViolationsAsync()
+            .ConfigureAwait(false);
     }
 
     private void ReBuildIndexes()
@@ -516,22 +521,27 @@ public sealed partial class IntegrityCheckControl
         DialogTemplateIndex = JsonContext.DialogTemplates.ToImmutableDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
         LootTableIndex = JsonContext.LootTables.ToImmutableDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
 
-        ReactorTileTemplateIndex =
-            JsonContext.ReactorTileTemplates.ToImmutableDictionary(rt => rt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        ReactorTileTemplateIndex
+            = JsonContext.ReactorTileTemplates.ToImmutableDictionary(rt => rt.TemplateKey, StringComparer.OrdinalIgnoreCase);
 
-        BuyableItemsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.ItemsForSale.Select(i => i.ItemTemplateKey))
+        BuyableItemsIndex = JsonContext.MerchantTemplates
+                                       .SelectMany(mt => mt.ItemsForSale.Select(i => i.ItemTemplateKey))
                                        .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
-        SellableItemsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.ItemsToBuy)
+        SellableItemsIndex = JsonContext.MerchantTemplates
+                                        .SelectMany(mt => mt.ItemsToBuy)
                                         .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
-        LearnableSkillsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.SkillsToTeach)
+        LearnableSkillsIndex = JsonContext.MerchantTemplates
+                                          .SelectMany(mt => mt.SkillsToTeach)
                                           .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
-        LearnableSpellsIndex = JsonContext.MerchantTemplates.SelectMany(mt => mt.SpellsToTeach)
+        LearnableSpellsIndex = JsonContext.MerchantTemplates
+                                          .SelectMany(mt => mt.SpellsToTeach)
                                           .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
 
-        InUseMapTemplateIndex = JsonContext.MapInstances.Select(mi => mi.Instance.TemplateKey)
+        InUseMapTemplateIndex = JsonContext.MapInstances
+                                           .Select(mi => mi.Instance.TemplateKey)
                                            .ToImmutableHashSet(StringComparer.OrdinalIgnoreCase);
     }
     #endregion
@@ -579,8 +589,7 @@ public sealed partial class IntegrityCheckControl
     private async Task DetectMapInstance_ReactorViolationsAsync(
         string path,
         MapInstanceRepository.MapInstanceComposite composite,
-        List<ReactorTileSchema> reactors
-    )
+        List<ReactorTileSchema> reactors)
     {
         var handler = new RoutedEventHandler(
             (_, _) =>
@@ -628,8 +637,7 @@ public sealed partial class IntegrityCheckControl
         if (!MapTemplateIndex.ContainsKey(mapInstance.TemplateKey))
             await AddViolationAsync($"TemplateKey not found: {mapInstance.TemplateKey}", handler, true);
 
-        if (mapInstance is { MinimumLevel: not null, MaximumLevel: not null }
-            && (mapInstance.MinimumLevel > mapInstance.MaximumLevel))
+        if (mapInstance is { MinimumLevel: not null, MaximumLevel: not null } && (mapInstance.MinimumLevel > mapInstance.MaximumLevel))
             await AddViolationAsync("MinimumLevel > MaximumLevel", handler);
 
         var shardingOptions = mapInstance.ShardingOptions;
@@ -652,6 +660,7 @@ public sealed partial class IntegrityCheckControl
                 if (!MapInstanceIndex.TryGetValue(shardingOptions.ExitLocation.Map, out var mi))
                     await AddViolationAsync($"Exit location mapInstance not found: {shardingOptions.ExitLocation.Map}", handler);
                 else if (!MapTemplateIndex.TryGetValue(mi.Instance.TemplateKey, out var mt))
+
                     // ReSharper disable once RedundantJumpStatement
                     return;
                 else if (!new Rectangle(
@@ -667,8 +676,7 @@ public sealed partial class IntegrityCheckControl
     private async Task DetectMapInstance_MerchantSpawnViolationsAsync(
         string path,
         MapInstanceRepository.MapInstanceComposite composite,
-        IEnumerable<MerchantSpawnSchema> merchantSpawns
-    )
+        IEnumerable<MerchantSpawnSchema> merchantSpawns)
     {
         var handler = new RoutedEventHandler(
             (_, _) =>
@@ -709,8 +717,7 @@ public sealed partial class IntegrityCheckControl
     private async Task DetectMapInstance_MonsterSpawnViolationsAsync(
         string path,
         MapInstanceRepository.MapInstanceComposite composite,
-        IEnumerable<MonsterSpawnSchema> monsterSpawns
-    )
+        IEnumerable<MonsterSpawnSchema> monsterSpawns)
     {
         var handler = new RoutedEventHandler(
             (_, _) =>

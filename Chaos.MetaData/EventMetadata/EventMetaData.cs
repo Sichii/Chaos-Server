@@ -32,7 +32,7 @@ public sealed class EventMetaData : MetaDataBase<EventMetaNode>
 
         CheckSum = Crc.Generate32(buffer);
 
-        ZLIB.Compress(ref buffer);
+        Zlib.Compress(ref buffer);
         Data = buffer.ToArray();
     }
 }

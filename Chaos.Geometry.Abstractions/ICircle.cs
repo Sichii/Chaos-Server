@@ -9,6 +9,7 @@ public interface ICircle
     ///     The center point of the circle.
     /// </summary>
     IPoint Center { get; }
+
     /// <summary>
     ///     The radius of the circle.
     /// </summary>

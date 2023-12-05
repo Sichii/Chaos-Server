@@ -20,8 +20,7 @@ public class GuildMemberKickScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildMemberKickScript> logger
-    )
+        ILogger<GuildMemberKickScript> logger)
         : base(
             subject,
             clientRegistry,

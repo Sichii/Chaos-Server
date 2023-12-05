@@ -10,6 +10,7 @@ public sealed record Notice : INotice
 {
     /// <inheritdoc />
     public uint CheckSum { get; }
+
     /// <inheritdoc />
     public byte[] Data { get; }
 
@@ -23,7 +24,7 @@ public sealed record Notice : INotice
         var buffer = encoding.GetBytes(noticeMessage);
         CheckSum = Crc.Generate32(buffer);
 
-        ZLIB.Compress(ref buffer);
+        Zlib.Compress(ref buffer);
         Data = buffer;
     }
 }

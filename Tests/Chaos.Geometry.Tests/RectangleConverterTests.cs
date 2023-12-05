@@ -44,7 +44,8 @@ public sealed class RectangleConverterTests
             ex = e;
         }
 
-        ex.Should().NotBeNull();
+        ex.Should()
+          .NotBeNull();
     }
 
     [Fact]
@@ -65,6 +66,7 @@ public sealed class RectangleConverterTests
 
         var jsonString = Encoding.UTF8.GetString(memoryStream.ToArray());
 
-        jsonString.Should().Be("{\"Top\":1,\"Left\":2,\"Width\":3,\"Height\":4}");
+        jsonString.Should()
+                  .Be("{\"Top\":1,\"Left\":2,\"Width\":3,\"Height\":4}");
     }
 }

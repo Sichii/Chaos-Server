@@ -13,6 +13,7 @@ public sealed record LoginControlArgs : ISendArgs
     ///     The type of login controls to be used
     /// </summary>
     public LoginControlsType LoginControlsType { get; set; }
+
     /// <summary>
     ///     The payload to be sent to the client, but not necessarily displayed
     /// </summary>

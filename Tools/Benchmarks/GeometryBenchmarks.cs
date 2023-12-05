@@ -5,15 +5,18 @@ using Chaos.Geometry;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class GeometryBenchmarks
 {
     public Point CenterPoint = new(50, 50);
+
     [Params(
         3,
         6,
         9,
         13)]
+
     // ReSharper disable once UnassignedField.Global
     public int Range;
 

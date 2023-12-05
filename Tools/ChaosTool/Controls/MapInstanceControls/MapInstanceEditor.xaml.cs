@@ -74,8 +74,8 @@ public sealed partial class MapInstanceEditor
                                            .OfType<MapInstanceRepository.MapInstanceComposite>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
-                                               (rowValue, rowIndex) =>
-                                                   rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
+                                               (rowValue, rowIndex)
+                                                   => rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
                                            .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
 
                 if (searchResult.cellValue is null)
@@ -91,12 +91,11 @@ public sealed partial class MapInstanceEditor
 
             default:
             {
-                var searchResult = ListViewItems
-                                   .Select(listItem => listItem.Object.EnumerateProperties())
-                                   .SelectMany(
-                                       (rowValue, rowIndex) =>
-                                           rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
-                                   .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
+                var searchResult = ListViewItems.Select(listItem => listItem.Object.EnumerateProperties())
+                                                .SelectMany(
+                                                    (rowValue, rowIndex) => rowValue.Select(
+                                                        (cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
+                                                .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
 
                 if (searchResult.cellValue is null)
                     return;
@@ -113,7 +112,9 @@ public sealed partial class MapInstanceEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.MapInstances.Objects.Select(
+        var objs = JsonContext.MapInstances
+                              .Objects
+                              .Select(
                                   wrapper => new ListViewItem<MapInstanceRepository.MapInstanceComposite, MapInstancePropertyEditor>
                                   {
                                       Name = wrapper.Object.Instance.TemplateKey,
@@ -126,7 +127,8 @@ public sealed partial class MapInstanceEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<MapInstanceRepository.MapInstanceComposite, MapInstancePropertyEditor>>()
+        var selected = e.AddedItems
+                        .OfType<ListViewItem<MapInstanceRepository.MapInstanceComposite, MapInstancePropertyEditor>>()
                         .FirstOrDefault();
 
         if (selected is null)
@@ -163,7 +165,11 @@ public sealed partial class MapInstanceEditor
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
             DialogHost,
-            new OpenDirectoryDialogArguments { CurrentDirectory = fullBaseDir, CreateNewDirectoryEnabled = true });
+            new OpenDirectoryDialogArguments
+            {
+                CurrentDirectory = fullBaseDir,
+                CreateNewDirectoryEnabled = true
+            });
 
         if (result is null || result.Canceled)
             return;
@@ -172,7 +178,10 @@ public sealed partial class MapInstanceEditor
 
         var template = new MapInstanceRepository.MapInstanceComposite
         {
-            Instance = new MapInstanceSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) },
+            Instance = new MapInstanceSchema
+            {
+                TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH)
+            },
             Merchants = new List<MerchantSpawnSchema>(),
             Monsters = new List<MonsterSpawnSchema>(),
             Reactors = new List<ReactorTileSchema>()

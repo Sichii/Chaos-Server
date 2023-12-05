@@ -17,5 +17,4 @@ public sealed record ExchangeArgs(
     uint OtherPlayerId,
     byte? SourceSlot,
     byte? ItemCount,
-    int? GoldAmount
-) : IReceiveArgs;
+    int? GoldAmount) : IReceiveArgs;

@@ -11,6 +11,5 @@ public interface IDamageFormula
         Creature target,
         IScript script,
         int damage,
-        Element? elementOverride = null
-    );
+        Element? elementOverride = null);
 }

@@ -9,6 +9,7 @@ public sealed class GuildRank
     ///     The names of the members of this rank
     /// </summary>
     private readonly HashSet<string> MemberNames;
+
     /// <summary>
     ///     The name of the rank
     /// </summary>
@@ -42,8 +43,9 @@ public sealed class GuildRank
 
     public IEnumerable<string> GetMemberNames() => MemberNames;
 
-    public IEnumerable<Aisling> GetOnlineMembers(IEnumerable<IWorldClient> clientRegistry) =>
-        clientRegistry.Where(cli => MemberNames.Contains(cli.Aisling.Name)).Select(cli => cli.Aisling);
+    public IEnumerable<Aisling> GetOnlineMembers(IEnumerable<IWorldClient> clientRegistry)
+        => clientRegistry.Where(cli => MemberNames.Contains(cli.Aisling.Name))
+                         .Select(cli => cli.Aisling);
 
     public bool HasMember(string memberName) => MemberNames.Contains(memberName);
     public bool RemoveMember(string memberName) => MemberNames.Remove(memberName);

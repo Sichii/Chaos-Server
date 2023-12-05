@@ -15,13 +15,10 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
     public IExpiringFileCacheOptions? Options { get; }
     protected SynchronizedHashSet<string> Paths { get; }
 
-    public virtual string RootDirectory =>
-        Options?.Directory ?? throw new InvalidOperationException("If using a different options type, override this method");
+    public virtual string RootDirectory
+        => Options?.Directory ?? throw new InvalidOperationException("If using a different options type, override this method");
 
-    protected RepositoryBase(
-        IEntityRepository entityRepository,
-        IOptions<IExpiringFileCacheOptions>? options
-    )
+    protected RepositoryBase(IEntityRepository entityRepository, IOptions<IExpiringFileCacheOptions>? options)
     {
         EntityRepository = entityRepository;
         Options = options?.Value;
@@ -33,7 +30,9 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<T> GetEnumerator() => Objects.Select(wrapped => wrapped.Object).GetEnumerator();
+    public IEnumerator<T> GetEnumerator()
+        => Objects.Select(wrapped => wrapped.Object)
+                  .GetEnumerator();
 
     public abstract void Add(string path, T obj);
 
@@ -46,20 +45,14 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
         var searchPattern = Options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
         return (Options.SearchType switch
-            {
-                SearchType.Files => Directory.EnumerateFiles(
-                    Options.Directory,
-                    Options.FilePattern ?? string.Empty,
-                    searchPattern),
-                SearchType.Directories => Directory
-                                          .EnumerateDirectories(
-                                              Options.Directory,
-                                              Options.FilePattern ?? string.Empty,
-                                              searchPattern)
-                                          .Where(src => Directory.EnumerateFiles(src).Any()),
-                _ => throw new ArgumentOutOfRangeException()
-            })
-            .Select(Path.GetFullPath);
+        {
+            SearchType.Files => Directory.EnumerateFiles(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
+            SearchType.Directories => Directory.EnumerateDirectories(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern)
+                                               .Where(
+                                                   src => Directory.EnumerateFiles(src)
+                                                                   .Any()),
+            _ => throw new ArgumentOutOfRangeException()
+        }).Select(Path.GetFullPath);
     }
 
     internal virtual async Task LoadAsync()
@@ -99,9 +92,7 @@ public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
 
     public abstract void Remove(string name);
 
-    public virtual Task SaveChangesAsync() => Parallel.ForEachAsync(
-        Objects,
-        async (obj, _) => await SaveItemAsync(obj));
+    public virtual Task SaveChangesAsync() => Parallel.ForEachAsync(Objects, async (obj, _) => await SaveItemAsync(obj));
 
     public virtual async Task SaveItemAsync(TraceWrapper<T> wrapped)
     {

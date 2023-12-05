@@ -172,6 +172,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client.Data", "Chaos.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client.Rendering", "Chaos.Client\Chaos.Client.Rendering\Chaos.Client.Rendering.csproj", "{7550AC2E-309B-491D-AC7D-6A3945966478}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Client.Networking", "Chaos.Client\Chaos.Client.Networking\Chaos.Client.Networking.csproj", "{AE42439C-B822-46AB-A7CE-D71E76D73AEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -378,6 +380,10 @@ Global
 		{7550AC2E-309B-491D-AC7D-6A3945966478}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7550AC2E-309B-491D-AC7D-6A3945966478}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7550AC2E-309B-491D-AC7D-6A3945966478}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE42439C-B822-46AB-A7CE-D71E76D73AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE42439C-B822-46AB-A7CE-D71E76D73AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE42439C-B822-46AB-A7CE-D71E76D73AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE42439C-B822-46AB-A7CE-D71E76D73AEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -416,6 +422,7 @@ Global
 		{4DF9A950-7387-4517-89ED-3493EFE5D02F} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
 		{1B235C8D-75CB-4B3A-82C8-D5AA13C56811} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
 		{7550AC2E-309B-491D-AC7D-6A3945966478} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
+		{AE42439C-B822-46AB-A7CE-D71E76D73AEB} = {6142E3C5-DE1C-47EE-BC87-85BC09B0B4E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9D1AB2B-1092-4016-9968-D0B2416CB186}

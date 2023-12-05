@@ -24,8 +24,7 @@ public static class CommonExtensions
     public static OptionsBuilder<T> AddOptionsFromConfig<T>(
         this IServiceCollection services,
         string? subSection = null,
-        string? optionsSection = null
-    ) where T: class
+        string? optionsSection = null) where T: class
     {
         var path = optionsSection ?? typeof(T).Name;
 
@@ -43,9 +42,8 @@ public static class CommonExtensions
     /// <typeparam name="TI1">A base type of <typeparamref name="T" /></typeparam>
     /// <typeparam name="TI2">Another base type of <typeparamref name="T" /></typeparam>
     /// <typeparam name="T">An implementation of the previous two types</typeparam>
-    public static void AddSingleton<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2
-                                                                                   where TI1: class
-                                                                                   where TI2: class
+    public static void AddSingleton<TI1, TI2, T>(this IServiceCollection services)
+        where T: class, TI1, TI2 where TI1: class where TI2: class
     {
         services.AddSingleton<TI1, T>();
         services.AddSingleton<TI2, T>(p => (T)p.GetRequiredService<TI1>());

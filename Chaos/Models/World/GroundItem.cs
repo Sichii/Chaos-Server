@@ -12,6 +12,7 @@ namespace Chaos.Models.World;
 public sealed class GroundItem : GroundEntity, IDialogSourceEntity
 {
     public Item Item { get; set; }
+
     /// <inheritdoc />
     DisplayColor IDialogSourceEntity.Color => Item.Color;
 
@@ -23,8 +24,8 @@ public sealed class GroundItem : GroundEntity, IDialogSourceEntity
             item.DisplayName,
             item.ItemSprite.PanelSprite,
             mapInstance,
-            point) =>
-        Item = item;
+            point)
+        => Item = item;
 
     /// <inheritdoc />
     void IDialogSourceEntity.Activate(Aisling source) => Item.Script.OnUse(source);

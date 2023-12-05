@@ -100,7 +100,9 @@ public sealed class Exchange
             return;
         }
 
-        if (!otherUser.CanCarry(userItems.Prepend(item).ToArray()))
+        if (!otherUser.CanCarry(
+                userItems.Prepend(item)
+                         .ToArray()))
         {
             aisling.SendActiveMessage($"{otherUser.Name} is unable to carry that");
             otherUser.SendActiveMessage("You are unable to carry more");
@@ -155,9 +157,8 @@ public sealed class Exchange
             return;
         }
 
-        var hypotheticalItems = userItems
-                                .Select(i => (i, i.Count))
-                                .Append((item, amount));
+        var hypotheticalItems = userItems.Select(i => (i, i.Count))
+                                         .Append((item, amount));
 
         if (!otherUser.CanCarry(hypotheticalItems))
         {
@@ -273,8 +274,8 @@ public sealed class Exchange
 
     public Aisling GetOther(Aisling aisling) => aisling.Equals(Aisling1) ? Aisling2 : Aisling1;
 
-    private (int Gold, Inventory Items, bool Accepted) InnerGetVars(Aisling aisling) =>
-        aisling.Equals(Aisling1) ? (Aisling1Gold, Aisling1Items, Aisling1Accept) : (Aisling2Gold, Aisling2Items, Aisling2Accept);
+    private (int Gold, Inventory Items, bool Accepted) InnerGetVars(Aisling aisling)
+        => aisling.Equals(Aisling1) ? (Aisling1Gold, Aisling1Items, Aisling1Accept) : (Aisling2Gold, Aisling2Items, Aisling2Accept);
 
     private void InnerSetAccepted(Aisling aisling, bool accepted)
     {

@@ -31,18 +31,32 @@ public interface IPathfindingService
         IPoint end,
         bool ignoreWalls,
         IReadOnlyCollection<IPoint> blocked,
-        int? limitRadius = null
-    );
+        int? limitRadius = null);
 
     /// <summary>
     ///     Registers a grid with the pathfinding service
     /// </summary>
     /// <param name="key">The key used to locate the grid</param>
     /// <param name="gridDetails">Required details about the grid</param>
-    void RegisterGrid(
-        string key,
-        IGridDetails gridDetails
-    );
+    void RegisterGrid(string key, IGridDetails gridDetails);
+
+    /// <summary>
+    ///     Finds a direction to walk towards the end point. No path is calculated.
+    /// </summary>
+    /// <param name="gridKey">The key of the grid to find a path on</param>
+    /// <param name="start">The point to start from</param>
+    /// <param name="end">The point to walk towards</param>
+    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
+    /// <param name="blocked">A collection of points to avoid</param>
+    /// <returns>
+    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to move
+    /// </returns>
+    public Direction SimpleWalk(
+        string gridKey,
+        IPoint start,
+        IPoint end,
+        bool ignoreWalls,
+        IReadOnlyCollection<IPoint> blocked);
 
     /// <summary>
     ///     Finds a valid direction to wander
@@ -56,6 +70,5 @@ public interface IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
-        IReadOnlyCollection<IPoint> blocked
-    );
+        IReadOnlyCollection<IPoint> blocked);
 }

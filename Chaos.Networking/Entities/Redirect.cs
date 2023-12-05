@@ -9,16 +9,22 @@ public sealed record Redirect : IRedirect
 {
     /// <inheritdoc />
     public DateTime Created { get; }
+
     /// <inheritdoc />
     public IPEndPoint EndPoint { get; }
+
     /// <inheritdoc />
     public uint Id { get; }
+
     /// <inheritdoc />
     public byte[] Key { get; }
+
     /// <inheritdoc />
     public string Name { get; }
+
     /// <inheritdoc />
     public byte Seed { get; }
+
     /// <inheritdoc />
     public ServerType Type { get; }
 
@@ -37,8 +43,7 @@ public sealed record Redirect : IRedirect
         ServerType type,
         byte[] key,
         byte seed,
-        string? name = null
-    )
+        string? name = null)
     {
         Id = id;
         Type = type;

@@ -9,7 +9,11 @@ public static class TypeExtensions
 {
     public static string GetXmlDocs(this Type type, string? propertyName = null)
     {
-        var opts = new XmlDocsOptions { FormattingMode = XmlDocsFormattingMode.None, ResolveExternalXmlDocs = false };
+        var opts = new XmlDocsOptions
+        {
+            FormattingMode = XmlDocsFormattingMode.None,
+            ResolveExternalXmlDocs = false
+        };
         var builder = new StringBuilder();
 
         if (string.IsNullOrEmpty(propertyName))
@@ -24,6 +28,7 @@ public static class TypeExtensions
             builder.AppendLine(prop!.GetXmlDocsRemarks(opts));
         }
 
-        return builder.ToString().Trim();
+        return builder.ToString()
+                      .Trim();
     }
 }

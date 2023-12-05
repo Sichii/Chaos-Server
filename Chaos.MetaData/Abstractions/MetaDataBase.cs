@@ -14,8 +14,10 @@ public abstract class MetaDataBase<TNode> : MetaNodeCollection<TNode>, IMetaData
 {
     /// <inheritdoc />
     public uint CheckSum { get; set; }
+
     /// <inheritdoc />
     public byte[] Data { get; set; }
+
     /// <inheritdoc />
     public string Name { get; set; }
 
@@ -41,7 +43,7 @@ public abstract class MetaDataBase<TNode> : MetaNodeCollection<TNode>, IMetaData
         var buffer = writer.ToSpan();
 
         CheckSum = Crc.Generate32(buffer);
-        ZLIB.Compress(ref buffer);
+        Zlib.Compress(ref buffer);
         Data = buffer.ToArray();
     }
 }

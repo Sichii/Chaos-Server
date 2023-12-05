@@ -61,8 +61,8 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     public T? Get<T>(string key) => Get(typeof(T), key) is T t ? t : default;
 
     /// <inheritdoc />
-    public object? Get(Type type, string key) =>
-        ValueCache.GetOrAdd(
+    public object? Get(Type type, string key)
+        => ValueCache.GetOrAdd(
             key,
             static (k, v) => GetValue(
                 v.Type,
@@ -78,8 +78,8 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     public IEnumerator<KeyValuePair<string, JsonElement>> GetEnumerator() => Vars.GetEnumerator();
 
     /// <inheritdoc />
-    public T GetRequired<T>(string key) =>
-        Vars.TryGetValue(key, out var value)
+    public T GetRequired<T>(string key)
+        => Vars.TryGetValue(key, out var value)
             ? value.Deserialize<T>(JsonOptions)!
             : throw new KeyNotFoundException($"Required key \"{key}\" was not found while populating script variables");
 
@@ -87,8 +87,7 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
         Type type,
         string key,
         IDictionary<string, JsonElement> lookup,
-        JsonSerializerOptions jsonOptions
-    )
+        JsonSerializerOptions jsonOptions)
     {
         if (!lookup.TryGetValue(key, out var value))
             return default;

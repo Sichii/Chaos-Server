@@ -33,7 +33,8 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
         Members = new List<Aisling>
         {
-            sender, receiver
+            sender,
+            receiver
         };
 
         //create a group chat channel and add both members to it

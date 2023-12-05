@@ -19,14 +19,13 @@ public abstract class GroundEntity : NamedEntity
         string name,
         ushort sprite,
         MapInstance mapInstance,
-        IPoint point
-    )
+        IPoint point)
         : base(
             name,
             sprite,
             mapInstance,
-            point) =>
-        GroundTimer = new IntervalTimer(TimeSpan.FromMinutes(WorldOptions.Instance.GroundItemDespawnTimeMins), false);
+            point)
+        => GroundTimer = new IntervalTimer(TimeSpan.FromMinutes(WorldOptions.Instance.GroundItemDespawnTimeMins), false);
 
     public virtual bool CanPickUp(Aisling source) => Owners.IsNullOrEmpty() || source.IsAdmin || Owners!.Contains(source.Name);
 
@@ -36,7 +35,9 @@ public abstract class GroundEntity : NamedEntity
             return;
 
         LockTimer = new IntervalTimer(TimeSpan.FromSeconds(seconds), false);
-        Owners = aislings.Select(aisling => aisling.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        Owners = aislings.Select(aisling => aisling.Name)
+                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc />

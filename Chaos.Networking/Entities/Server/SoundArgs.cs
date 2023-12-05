@@ -11,6 +11,7 @@ public sealed record SoundArgs : ISendArgs
     ///     Whether or not the sound is a music track
     /// </summary>
     public bool IsMusic { get; set; }
+
     /// <summary>
     ///     The sound or music track index to play
     /// </summary>

@@ -73,8 +73,8 @@ public sealed partial class MapTemplateEditor
                                            .OfType<MapTemplateSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
-                                               (rowValue, rowIndex) =>
-                                                   rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
+                                               (rowValue, rowIndex)
+                                                   => rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
                                            .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
 
                 if (searchResult.cellValue is null)
@@ -90,12 +90,11 @@ public sealed partial class MapTemplateEditor
 
             default:
             {
-                var searchResult = ListViewItems
-                                   .Select(listItem => listItem.Object.EnumerateProperties())
-                                   .SelectMany(
-                                       (rowValue, rowIndex) =>
-                                           rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
-                                   .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
+                var searchResult = ListViewItems.Select(listItem => listItem.Object.EnumerateProperties())
+                                                .SelectMany(
+                                                    (rowValue, rowIndex) => rowValue.Select(
+                                                        (cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
+                                                .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
 
                 if (searchResult.cellValue is null)
                     return;
@@ -112,7 +111,9 @@ public sealed partial class MapTemplateEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.MapTemplates.Objects.Select(
+        var objs = JsonContext.MapTemplates
+                              .Objects
+                              .Select(
                                   wrapper => new ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>
                                   {
                                       Name = wrapper.Object.TemplateKey,
@@ -125,7 +126,9 @@ public sealed partial class MapTemplateEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems
+                        .OfType<ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>>()
+                        .FirstOrDefault();
 
         if (selected is null)
         {
@@ -161,14 +164,21 @@ public sealed partial class MapTemplateEditor
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
             DialogHost,
-            new OpenDirectoryDialogArguments { CurrentDirectory = fullBaseDir, CreateNewDirectoryEnabled = true });
+            new OpenDirectoryDialogArguments
+            {
+                CurrentDirectory = fullBaseDir,
+                CreateNewDirectoryEnabled = true
+            });
 
         if (result is null || result.Canceled)
             return;
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new MapTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var template = new MapTemplateSchema
+        {
+            TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH)
+        };
         var wrapper = new TraceWrapper<MapTemplateSchema>(path, template);
 
         var listItem = new ListViewItem<MapTemplateSchema, MapTemplatePropertyEditor>

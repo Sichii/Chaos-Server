@@ -10,10 +10,11 @@ public class MetaDataMapperProfile : IMapperProfile<IMetaDataDescriptor, MetaDat
     public IMetaDataDescriptor Map(MetaDataInfo obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public MetaDataInfo Map(IMetaDataDescriptor obj) => new()
-    {
-        Name = obj.Name,
-        CheckSum = obj.CheckSum,
-        Data = obj.Data
-    };
+    public MetaDataInfo Map(IMetaDataDescriptor obj)
+        => new()
+        {
+            Name = obj.Name,
+            CheckSum = obj.CheckSum,
+            Data = obj.Data
+        };
 }

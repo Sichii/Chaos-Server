@@ -24,9 +24,11 @@ public sealed class BankMapperProfile : IMapperProfile<Bank, BankSchema>
         return bank;
     }
 
-    public BankSchema Map(Bank obj) => new()
-    {
-        Gold = obj.Gold,
-        Items = Mapper.MapMany<ItemSchema>(obj).ToList()
-    };
+    public BankSchema Map(Bank obj)
+        => new()
+        {
+            Gold = obj.Gold,
+            Items = Mapper.MapMany<ItemSchema>(obj)
+                          .ToList()
+        };
 }

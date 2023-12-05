@@ -74,8 +74,8 @@ public sealed partial class ItemTemplateEditor
                                            .OfType<ItemTemplateSchema>()
                                            .Select(SchemaExtensions.EnumerateProperties)
                                            .SelectMany(
-                                               (rowValue, rowIndex) =>
-                                                   rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
+                                               (rowValue, rowIndex)
+                                                   => rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
                                            .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
 
                 if (searchResult.cellValue is null)
@@ -91,12 +91,11 @@ public sealed partial class ItemTemplateEditor
 
             default:
             {
-                var searchResult = ListViewItems
-                                   .Select(listItem => listItem.Object.EnumerateProperties())
-                                   .SelectMany(
-                                       (rowValue, rowIndex) =>
-                                           rowValue.Select((cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
-                                   .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
+                var searchResult = ListViewItems.Select(listItem => listItem.Object.EnumerateProperties())
+                                                .SelectMany(
+                                                    (rowValue, rowIndex) => rowValue.Select(
+                                                        (cellValue, columnIndex) => (cellValue, columnIndex, rowIndex)))
+                                                .FirstOrDefault(set => set.cellValue?.ContainsI(text) == true);
 
                 if (searchResult.cellValue is null)
                     return;
@@ -113,7 +112,9 @@ public sealed partial class ItemTemplateEditor
     #region ListView
     private void PopulateListView()
     {
-        var objs = JsonContext.ItemTemplates.Objects.Select(
+        var objs = JsonContext.ItemTemplates
+                              .Objects
+                              .Select(
                                   wrapper => new ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor>
                                   {
                                       Name = wrapper.Object.TemplateKey,
@@ -126,7 +127,9 @@ public sealed partial class ItemTemplateEditor
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selected = e.AddedItems.OfType<ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor>>().FirstOrDefault();
+        var selected = e.AddedItems
+                        .OfType<ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor>>()
+                        .FirstOrDefault();
 
         if (selected is null)
         {
@@ -162,14 +165,21 @@ public sealed partial class ItemTemplateEditor
 
         var result = await OpenDirectoryDialog.ShowDialogAsync(
             DialogHost,
-            new OpenDirectoryDialogArguments { CurrentDirectory = fullBaseDir, CreateNewDirectoryEnabled = true });
+            new OpenDirectoryDialogArguments
+            {
+                CurrentDirectory = fullBaseDir,
+                CreateNewDirectoryEnabled = true
+            });
 
         if (result is null || result.Canceled)
             return;
 
         path = Path.Combine(result.Directory, path);
 
-        var template = new ItemTemplateSchema { TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH) };
+        var template = new ItemTemplateSchema
+        {
+            TemplateKey = Path.GetFileNameWithoutExtension(TOOL_CONSTANTS.TEMP_PATH)
+        };
         var wrapper = new TraceWrapper<ItemTemplateSchema>(path, template);
 
         var listItem = new ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor>

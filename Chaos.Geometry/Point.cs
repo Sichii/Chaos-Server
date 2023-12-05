@@ -11,6 +11,7 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
 {
     /// <inheritdoc />
     public int X { get; init; }
+
     /// <inheritdoc />
     public int Y { get; init; }
 
@@ -85,9 +86,7 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     }
 
     /// <inheritdoc />
-    public bool Equals(IPoint? other) => other is not null
-                                         && (X == other.X)
-                                         && (Y == other.Y);
+    public bool Equals(IPoint? other) => other is not null && (X == other.X) && (Y == other.Y);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is IPoint other && Equals(other);
@@ -136,7 +135,5 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     }
 
     /// <inheritdoc />
-    public bool Equals(Point other) =>
-        (X == other.X)
-        && (Y == other.Y);
+    public bool Equals(Point other) => (X == other.X) && (Y == other.Y);
 }

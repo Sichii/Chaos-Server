@@ -19,8 +19,7 @@ public class GuildDisbandScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildDisbandScript> logger
-    )
+        ILogger<GuildDisbandScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -40,6 +39,7 @@ public class GuildDisbandScript : GuildScriptBase
 
                 break;
             }
+
             //occurs after you confirm you want to disband the guild
             case "generic_guild_disband_accepted":
             {

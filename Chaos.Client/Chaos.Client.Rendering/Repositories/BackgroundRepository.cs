@@ -7,7 +7,7 @@ using SkiaSharp;
 
 namespace Chaos.Client.Rendering.Repositories;
 
-public class BackgroundRepository : RepositoryBase
+public sealed class BackgroundRepository : RepositoryBase
 {
     private readonly PaletteLookup BgPaletteLookup;
     private bool SnowyTileset;
@@ -33,7 +33,8 @@ public class BackgroundRepository : RepositoryBase
             entry =>
             {
                 entry.SetPriority(CacheItemPriority.Normal)
-                     .SetSlidingExpiration(TimeSpan.FromMinutes(15));
+                     .SetSlidingExpiration(TimeSpan.FromMinutes(15))
+                     .RegisterPostEvictionCallback(HandleDisposableEntries);
 
                 id--;
 

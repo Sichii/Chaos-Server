@@ -20,11 +20,13 @@ public sealed record SpellTemplateSchema : PanelEntityTemplateSchema
     /// </summary>
     /// <remarks>this is a test</remarks>
     public LearningRequirementsSchema? LearningRequirements { get; set; }
+
     /// <summary>
     ///     Defaults to null<br />Should be specified with a spell type of "Prompt", this is the prompt the spell will offer
     ///     when used in game
     /// </summary>
     public string? Prompt { get; set; }
+
     /// <summary>
     ///     The way the spell is cast by the player
     /// </summary>

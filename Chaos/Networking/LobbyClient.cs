@@ -22,8 +22,7 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
         ICrypto crypto,
         ILobbyServer<ILobbyClient> server,
         IPacketSerializer packetSerializer,
-        ILogger<LobbyClient> logger
-    )
+        ILogger<LobbyClient> logger)
         : base(
             socket,
             crypto,
@@ -60,10 +59,9 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
+        var packet = new ClientPacket(ref span, Crypto.IsClientEncrypted(opCode));
 
-        if (isEncrypted)
+        if (packet.IsEncrypted)
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)

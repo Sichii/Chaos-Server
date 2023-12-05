@@ -17,15 +17,16 @@ public class ReactorTileMapperProfile : IMapperProfile<ReactorTile, ReactorTileS
     public ReactorTileSchema Map(ReactorTile obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public ReactorTileTemplate Map(ReactorTileTemplateSchema obj) => new()
-    {
-        TemplateKey = obj.TemplateKey,
-        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-        ScriptVars = new Dictionary<string, IScriptVars>(
-            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
-            StringComparer.OrdinalIgnoreCase),
-        ShouldBlockPathfinding = obj.ShouldBlockPathfinding
-    };
+    public ReactorTileTemplate Map(ReactorTileTemplateSchema obj)
+        => new()
+        {
+            TemplateKey = obj.TemplateKey,
+            ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+            ScriptVars = new Dictionary<string, IScriptVars>(
+                obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+                StringComparer.OrdinalIgnoreCase),
+            ShouldBlockPathfinding = obj.ShouldBlockPathfinding
+        };
 
     /// <inheritdoc />
     public ReactorTileTemplateSchema Map(ReactorTileTemplate obj) => throw new NotImplementedException();

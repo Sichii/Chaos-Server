@@ -15,7 +15,9 @@ public abstract record PanelEntityTemplateBase : ITemplate, IScripted
     public virtual required ushort PanelSprite { get; init; }
     public required bool RequiresMaster { get; init; }
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    public required IDictionary<string, IScriptVars> ScriptVars { get; init; } =
-        new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
+
+    public required IDictionary<string, IScriptVars> ScriptVars { get; init; }
+        = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
+
     public required string TemplateKey { get; init; }
 }

@@ -21,8 +21,7 @@ public class GuildMemberPromoteScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildMemberPromoteScript> logger
-    )
+        ILogger<GuildMemberPromoteScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -42,6 +41,7 @@ public class GuildMemberPromoteScript : GuildScriptBase
 
                 break;
             }
+
             //occurs after you confirm the guild member to promote
             case "generic_guild_members_promote_accepted":
             {
@@ -93,7 +93,8 @@ public class GuildMemberPromoteScript : GuildScriptBase
         }
 
         //grab the aisling to promote
-        var aislingToPromote = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
+        var aislingToPromote = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))
+                                             ?.Aisling;
 
         //ensure the aisling is online
         if (aislingToPromote is null)

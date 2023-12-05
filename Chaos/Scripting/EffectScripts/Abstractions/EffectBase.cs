@@ -26,6 +26,7 @@ public abstract class EffectBase : IEffect
 
     /// <inheritdoc />
     public string ScriptKey { get; }
+
     protected Aisling? AislingSource => Source as Aisling;
     protected Aisling? AislingSubject => Subject as Aisling;
 

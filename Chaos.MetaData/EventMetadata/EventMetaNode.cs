@@ -64,6 +64,7 @@ public sealed record EventMetaNode(string Name, int Page) : IMetaNode
     ///     The summary of the event
     /// </summary>
     public string? Summary { get; init; }
+
     /// <summary>
     ///     The name of the event
     /// </summary>

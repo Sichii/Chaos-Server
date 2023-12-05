@@ -19,7 +19,11 @@ public sealed class AutoReleasingSemaphoreSlimTests
 
         // Perform operations inside the semaphore
         // Assert
-        semaphoreAcquired.Should().BeTrue();
-        semaphore.CurrentCount.Should().Be(1);
+        semaphoreAcquired.Should()
+                         .BeTrue();
+
+        semaphore.CurrentCount
+                 .Should()
+                 .Be(1);
     }
 }

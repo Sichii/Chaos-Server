@@ -24,8 +24,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
         IMemoryCache cache,
         IEntityRepository entityRepository,
         IOptions<MapTemplateCacheOptions> options,
-        ILogger<ExpiringMapTemplateCache> logger
-    )
+        ILogger<ExpiringMapTemplateCache> logger)
         : base(
             cache,
             entityRepository,

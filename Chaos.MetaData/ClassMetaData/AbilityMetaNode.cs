@@ -40,62 +40,77 @@ public sealed record AbilityMetaNode(string Name, bool IsSkill, BaseClass Class)
     ///     The ability level required to learn the ability
     /// </summary>
     public int Ability { get; init; }
+
     /// <summary>
     ///     The constitution required to learn the ability
     /// </summary>
     public byte Con { get; init; }
+
     /// <summary>
     ///     A short description of the ability
     /// </summary>
     public string? Description { get; init; }
+
     /// <summary>
     ///     The dexterity required to learn the ability
     /// </summary>
     public byte Dex { get; init; }
+
     /// <summary>
     ///     The icon id used for the ability
     /// </summary>
     public ushort IconId { get; init; }
+
     /// <summary>
     ///     The intelligence required to learn the ability
     /// </summary>
     public byte Int { get; init; }
+
     /// <summary>
     ///     The numeric level required to use the ability
     /// </summary>
     public int Level { get; init; }
+
     /// <summary>
     ///     The level of the first pre-requisite ability needed to learn this ability
     /// </summary>
     public byte? PreReq1Level { get; init; }
+
     /// <summary>
     ///     The name of the first pre-requisite ability needed to learn this ability
     /// </summary>
     public string? PreReq1Name { get; init; }
+
     /// <summary>
     ///     The level of the second pre-requisite ability needed to learn this ability
     /// </summary>
     public byte? PreReq2Level { get; init; }
+
     /// <summary>
     ///     The name of the second pre-requisite ability needed to learn this ability
     /// </summary>
     public string? PreReq2Name { get; init; }
+
     /// <summary>
     ///     Whether or not you must be a master to learn the ability
     /// </summary>
     public bool RequiresMaster { get; init; }
+
     /// <summary>
     ///     The strength required to learn the ability
     /// </summary>
     public byte Str { get; init; }
+
     /// <summary>
     ///     The wisdom required to learn the ability
     /// </summary>
     public byte Wis { get; init; }
+
     /// <summary>
     ///     The class that can learn the ability
     /// </summary>
     public BaseClass Class { get; } = Class;
+
     /// <summary>
     ///     Whether or not the ability is a skill
     /// </summary>

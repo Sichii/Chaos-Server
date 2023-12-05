@@ -14,14 +14,17 @@ public sealed record UserIdArgs : ISendArgs
     ///     The character's primary class
     /// </summary>
     public BaseClass BaseClass { get; set; }
+
     /// <summary>
     ///     The character's direction
     /// </summary>
     public Direction Direction { get; set; }
+
     /// <summary>
     ///     The character's gender
     /// </summary>
     public Gender Gender { get; set; }
+
     /// <summary>
     ///     The character's id (this is used to attach the viewport to the character)
     /// </summary>

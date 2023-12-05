@@ -5,8 +5,11 @@ namespace Chaos.Models.Map;
 public readonly struct Tile : IEquatable<Tile>
 {
     public ushort Background { get; }
-    public bool IsWall => ((LeftForeground > 0) && ((Sotp[LeftForeground - 1] & 15) == 15))
-                          || ((RightForeground > 0) && ((Sotp[RightForeground - 1] & 15) == 15));
+
+    public bool IsWall
+        => ((LeftForeground > 0) && ((Sotp[LeftForeground - 1] & 15) == 15))
+           || ((RightForeground > 0) && ((Sotp[RightForeground - 1] & 15) == 15));
+
     public ushort LeftForeground { get; }
     public ushort RightForeground { get; }
 
@@ -24,10 +27,8 @@ public readonly struct Tile : IEquatable<Tile>
     }
 
     /// <inheritdoc />
-    public bool Equals(Tile other) =>
-        (Background == other.Background)
-        && (LeftForeground == other.LeftForeground)
-        && (RightForeground == other.RightForeground);
+    public bool Equals(Tile other)
+        => (Background == other.Background) && (LeftForeground == other.LeftForeground) && (RightForeground == other.RightForeground);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Tile other && Equals(other);

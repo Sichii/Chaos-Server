@@ -18,7 +18,7 @@ public sealed class ItemMetaNodeCollection : MetaNodeCollection<ItemMetaNode>, I
         {
             var node = Nodes[i];
 
-            if (node.Length + size > MAX_SIZE)
+            if ((node.Length + size) > MAX_SIZE)
             {
                 metadata.Compress();
 

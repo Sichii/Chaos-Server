@@ -74,13 +74,20 @@ public sealed partial class SpellTemplatePropertyEditor
         stats.Con = ParsePrimitive<int>(ConTbox.Text);
         stats.Dex = ParsePrimitive<int>(DexTbox.Text);
 
-        learningRequirements.ItemRequirements = ItemRequirementsViewItems.Select(ShallowCopy<ItemRequirementSchema>.Create).ToList();
-        learningRequirements.PrerequisiteSpellTemplateKeys = PrereqSpellTemplateKeysViewItems.ToStrings().ToList();
-        learningRequirements.PrerequisiteSkillTemplateKeys = PrereqSkillTemplateKeysViewItems.ToStrings().ToList();
+        learningRequirements.ItemRequirements = ItemRequirementsViewItems.Select(ShallowCopy<ItemRequirementSchema>.Create)
+                                                                         .ToList();
+
+        learningRequirements.PrerequisiteSpellTemplateKeys = PrereqSpellTemplateKeysViewItems.ToStrings()
+            .ToList();
+
+        learningRequirements.PrerequisiteSkillTemplateKeys = PrereqSkillTemplateKeysViewItems.ToStrings()
+            .ToList();
 
         template.CooldownMs = ParsePrimitive<int?>(CooldownMsTbox.Text);
         template.Description = string.IsNullOrEmpty(DescriptionTbox.Text) ? null : DescriptionTbox.Text.FixLineEndings();
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
+
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
 
         ListItem.Name = template.TemplateKey;
 
@@ -124,7 +131,9 @@ public sealed partial class SpellTemplatePropertyEditor
         ItemRequirementsViewItems.Clear();
 
         ItemRequirementsViewItems.AddRange(
-            learningRequirements?.ItemRequirements.Select(ShallowCopy<ItemRequirementSchema>.Create).ToList()
+            learningRequirements?.ItemRequirements
+                                .Select(ShallowCopy<ItemRequirementSchema>.Create)
+                                .ToList()
             ?? new List<ItemRequirementSchema>());
 
         PrereqSpellTemplateKeysViewItems.Clear();
@@ -145,7 +154,9 @@ public sealed partial class SpellTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.SpellTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.SpellTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -155,7 +166,9 @@ public sealed partial class SpellTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.SpellTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.SpellTemplates
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
@@ -192,9 +205,8 @@ public sealed partial class SpellTemplatePropertyEditor
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) => Validators.TemplateKeyMatchesFileName(
-        TemplateKeyTbox,
-        PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Controls
@@ -254,7 +266,7 @@ public sealed partial class SpellTemplatePropertyEditor
         ItemRequirementsViewItems.Remove(itemRequirement);
     }
 
-    private void AddItemRequirementBtn_Click(object sender, RoutedEventArgs e) =>
-        ItemRequirementsViewItems.Add(new ItemRequirementSchema());
+    private void AddItemRequirementBtn_Click(object sender, RoutedEventArgs e)
+        => ItemRequirementsViewItems.Add(new ItemRequirementSchema());
     #endregion
 }

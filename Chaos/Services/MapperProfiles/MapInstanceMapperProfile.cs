@@ -33,8 +33,7 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
         IShardGenerator shardGenerator,
         IAsyncStore<Aisling> aislingStore,
         CancellationTokenSource serverCtx,
-        ILoggerFactory loggerFactory
-    )
+        ILoggerFactory loggerFactory)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
@@ -49,15 +48,16 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
     public MapInstance Map(MapInfoArgs obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    MapInfoArgs IMapperProfile<MapInstance, MapInfoArgs>.Map(MapInstance obj) => new()
-    {
-        Name = obj.Name,
-        MapId = obj.Template.MapId,
-        Width = obj.Template.Width,
-        Height = obj.Template.Height,
-        CheckSum = obj.Template.CheckSum,
-        Flags = (byte)obj.Flags
-    };
+    MapInfoArgs IMapperProfile<MapInstance, MapInfoArgs>.Map(MapInstance obj)
+        => new()
+        {
+            Name = obj.Name,
+            MapId = obj.Template.MapId,
+            Width = obj.Template.Width,
+            Height = obj.Template.Height,
+            CheckSum = obj.Template.CheckSum,
+            Flags = (byte)obj.Flags
+        };
 
     public MapInstance Map(MapInstanceSchema obj)
     {
@@ -93,19 +93,20 @@ public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapIn
 
     public MapInstanceSchema Map(MapInstance obj) => throw new NotImplementedException();
 
-    public MapTemplate Map(MapTemplateSchema obj) => new()
-    {
-        Width = obj.Width,
-        Height = obj.Height,
-        Bounds = new Rectangle(
-            0,
-            0,
-            obj.Width,
-            obj.Height),
-        TemplateKey = obj.TemplateKey,
-        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-        Tiles = new Tile[obj.Width, obj.Height]
-    };
+    public MapTemplate Map(MapTemplateSchema obj)
+        => new()
+        {
+            Width = obj.Width,
+            Height = obj.Height,
+            Bounds = new Rectangle(
+                0,
+                0,
+                obj.Width,
+                obj.Height),
+            TemplateKey = obj.TemplateKey,
+            ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+            Tiles = new Tile[obj.Width, obj.Height]
+        };
 
     public MapTemplateSchema Map(MapTemplate obj) => throw new NotImplementedException();
 }

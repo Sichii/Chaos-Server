@@ -23,8 +23,7 @@ public interface IAccessManager
         IPAddress ipAddress,
         string name,
         string oldPassword,
-        string newPassword
-    );
+        string newPassword);
 
     /// <summary>
     ///     Saves a new name and password combination

@@ -13,6 +13,7 @@ public sealed record EquipmentArgs : ISendArgs
     ///     Details about the item being added to the equipment pane
     /// </summary>
     public ItemInfo Item { get; set; } = null!;
+
     /// <summary>
     ///     The equipment slot the item is being added to
     /// </summary>

@@ -22,8 +22,7 @@ public abstract class GuildScriptBase : DialogScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger logger
-    )
+        ILogger logger)
         : base(subject)
     {
         ClientRegistry = clientRegistry;

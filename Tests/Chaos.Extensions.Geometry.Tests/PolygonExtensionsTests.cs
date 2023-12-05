@@ -26,7 +26,8 @@ public sealed class PolygonExtensionsTests
         var result = polygon.Contains(point);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -48,7 +49,8 @@ public sealed class PolygonExtensionsTests
         var result = polygon.Contains(point);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -70,7 +72,8 @@ public sealed class PolygonExtensionsTests
         var result = polygon.Contains(point);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -110,6 +113,7 @@ public sealed class PolygonExtensionsTests
         var result = polygon.GetOutline();
 
         // Assert
-        result.Should().BeEquivalentTo(expectedPoints);
+        result.Should()
+              .BeEquivalentTo(expectedPoints);
     }
 }

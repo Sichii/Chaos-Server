@@ -17,7 +17,8 @@ public sealed class PathExTests
         var result = PathEx.IsSubPathOf(PATH, PARENT_PATH);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -31,7 +32,8 @@ public sealed class PathExTests
         var result = PathEx.IsSubPathOf(PATH, PARENT_PATH);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -45,7 +47,8 @@ public sealed class PathExTests
         var result = PathEx.IsSubPathOf(PATH, PARENT_PATH);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -59,7 +62,8 @@ public sealed class PathExTests
         var action = () => PathEx.IsSubPathOf(PATH, parentPath);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        action.Should()
+              .ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]
@@ -73,7 +77,8 @@ public sealed class PathExTests
         var action = () => PathEx.IsSubPathOf(PATH, parentPath);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        action.Should()
+              .ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]
@@ -87,7 +92,8 @@ public sealed class PathExTests
         var action = () => PathEx.IsSubPathOf(path, PARENT_PATH);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        action.Should()
+              .ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]
@@ -101,6 +107,7 @@ public sealed class PathExTests
         var action = () => PathEx.IsSubPathOf(path, PARENT_PATH);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        action.Should()
+              .ThrowExactly<ArgumentNullException>();
     }
 }

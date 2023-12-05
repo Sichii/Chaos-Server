@@ -9,6 +9,5 @@ public interface IHealFormula
         Creature source,
         Creature target,
         IScript script,
-        int healing
-    );
+        int healing);
 }

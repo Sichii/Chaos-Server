@@ -27,7 +27,8 @@ public class GetCascadingTargetsComponent<TEntity> : IConditionalComponent where
             if (direction == Direction.Invalid)
                 direction = context.SnapshotSourceDirection;
 
-            var tempAllPoints = options.Shape.ResolvePoints(
+            var tempAllPoints = options.Shape
+                                       .ResolvePoints(
                                            context.TargetPoint,
                                            options.Range,
                                            direction,
@@ -46,14 +47,16 @@ public class GetCascadingTargetsComponent<TEntity> : IConditionalComponent where
             allPoints = vars.GetAllPoints();
 
         //get the slice of points for the current stage
-        var stagePoints = options.Shape.ResolvePointsForRange(
+        var stagePoints = options.Shape
+                                 .ResolvePointsForRange(
                                      context.SnapshotTargetPoint,
                                      context.SnapshotSourceDirection,
                                      stage,
                                      allPoints)
                                  .ToList();
 
-        var targetEntities = context.TargetMap.GetEntitiesAtPoints<TEntity>(stagePoints)
+        var targetEntities = context.TargetMap
+                                    .GetEntitiesAtPoints<TEntity>(stagePoints)
                                     .WithFilter(context.Source, options.Filter)
                                     .ToList();
 

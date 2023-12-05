@@ -13,8 +13,7 @@ public static class AoeShapeExtensions
         int range = 1,
         Direction? direction = null,
         IRectangle? bounds = null,
-        bool excludeSource = false
-    )
+        bool excludeSource = false)
     {
         var sourcePoint = Point.From(source);
         IEnumerable<Point> points;
@@ -31,12 +30,14 @@ public static class AoeShapeExtensions
 
                 var endPoint = sourcePoint.DirectionalOffset(direction.Value, range);
 
-                points = sourcePoint.GetDirectPath(endPoint).Skip(1);
+                points = sourcePoint.GetDirectPath(endPoint)
+                                    .Skip(1);
 
                 break;
             }
             case AoeShape.AllAround:
-                points = sourcePoint.SpiralSearch(range).Skip(1);
+                points = sourcePoint.SpiralSearch(range)
+                                    .Skip(1);
 
                 break;
             case AoeShape.FrontalCone:
@@ -70,8 +71,7 @@ public static class AoeShapeExtensions
         IPoint source,
         Direction aoeDirection,
         int range,
-        IEnumerable<IPoint> allPossiblePoints
-    )
+        IEnumerable<IPoint> allPossiblePoints)
     {
         {
             switch (shape)

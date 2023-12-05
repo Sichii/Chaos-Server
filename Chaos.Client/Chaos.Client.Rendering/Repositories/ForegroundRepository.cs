@@ -7,7 +7,7 @@ using SkiaSharp;
 
 namespace Chaos.Client.Rendering.Repositories;
 
-public class ForegroundRepository : RepositoryBase
+public sealed class ForegroundRepository : RepositoryBase
 {
     private readonly PaletteLookup FgPaletteLookup;
 
@@ -27,7 +27,8 @@ public class ForegroundRepository : RepositoryBase
             entry =>
             {
                 entry.SetPriority(CacheItemPriority.Normal)
-                     .SetSlidingExpiration(TimeSpan.FromMinutes(15));
+                     .SetSlidingExpiration(TimeSpan.FromMinutes(15))
+                     .RegisterPostEvictionCallback(HandleDisposableEntries);
 
                 var palette = FgPaletteLookup.GetPaletteForId(id);
                 var hpf = HpfFile.FromArchive($"stc{id:D5}.hpf", DataContext.Archives.Ia);

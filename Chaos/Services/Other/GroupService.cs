@@ -174,7 +174,10 @@ public sealed class GroupService : IGroupService
     {
         private DateTime Creation = DateTime.UtcNow;
 
-        public bool Expired => DateTime.UtcNow.Subtract(Creation).TotalMinutes > 1;
+        public bool Expired
+            => DateTime.UtcNow.Subtract(Creation)
+                       .TotalMinutes
+               > 1;
 
         public bool Equals(GroupInvite? other)
         {

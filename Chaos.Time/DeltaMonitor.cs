@@ -29,8 +29,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
         string name,
         ILogger logger,
         TimeSpan logInterval,
-        double maxDelta
-    )
+        double maxDelta)
     {
         Name = name;
         Logger = logger;
@@ -62,72 +61,75 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     ///     Analyzes the recorded deltas and logs the results
     /// </summary>
     /// <param name="deltas"></param>
-    private void CheckStatistics(List<TimeSpan> deltas) => _ = Task.Run(
-        () =>
-        {
-            if (!BeginLogging)
+    private void CheckStatistics(List<TimeSpan> deltas)
+        => _ = Task.Run(
+            () =>
             {
-                BeginLogging = true;
+                if (!BeginLogging)
+                {
+                    BeginLogging = true;
+
+                    return Task.CompletedTask;
+                }
+
+                //sort the deltas from smallest to largest
+                deltas.Sort();
+
+                //gather various statistics about the deltas
+                var average = deltas.Average(d => d.TotalMilliseconds);
+
+                var max = deltas.Last()
+                                .TotalMilliseconds;
+                var count = deltas.Count;
+                var upperPct = deltas[(int)(count * 0.95)].TotalMilliseconds;
+
+                double median;
+
+                //median calculation
+                if ((count % 2) == 0)
+                {
+                    var first = deltas[count / 2];
+                    var second = deltas[count / 2 - 1];
+                    median = (first + second).TotalMilliseconds / 2;
+                } else
+                    median = deltas[count / 2].TotalMilliseconds;
+
+                //log output format
+                const string FORMAT
+                    = "Delta Monitor [{Name}] - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}ms, Max: {Max:N1}ms, Samples: {SampleCount}";
+
+                //depending on how the loop is performing, log the output at different levels
+                if ((average > MaxDelta) || (max > 250))
+                    Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
+                          .LogError(
+                              FORMAT,
+                              Name,
+                              average,
+                              median,
+                              upperPct,
+                              max,
+                              deltas.Count);
+                else if ((upperPct > (MaxDelta / 2)) || (max > 100))
+                    Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
+                          .LogWarning(
+                              FORMAT,
+                              Name,
+                              average,
+                              median,
+                              upperPct,
+                              max,
+                              deltas.Count);
+                else
+                    Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
+                          .LogTrace(
+                              FORMAT,
+                              Name,
+                              average,
+                              median,
+                              upperPct,
+                              max,
+                              deltas.Count);
 
                 return Task.CompletedTask;
-            }
-
-            //sort the deltas from smallest to largest
-            deltas.Sort();
-
-            //gather various statistics about the deltas
-            var average = deltas.Average(d => d.TotalMilliseconds);
-            var max = deltas.Last().TotalMilliseconds;
-            var count = deltas.Count;
-            var upperPct = deltas[(int)(count * 0.95)].TotalMilliseconds;
-
-            double median;
-
-            //median calculation
-            if (count % 2 == 0)
-            {
-                var first = deltas[count / 2];
-                var second = deltas[count / 2 - 1];
-                median = (first + second).TotalMilliseconds / 2;
-            } else
-                median = deltas[count / 2].TotalMilliseconds;
-
-            //log output format
-            const string FORMAT =
-                "Delta Monitor [{Name}] - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}ms, Max: {Max:N1}ms, Samples: {SampleCount}";
-
-            //depending on how the loop is performing, log the output at different levels
-            if ((average > MaxDelta) || (max > 250))
-                Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
-                      .LogError(
-                          FORMAT,
-                          Name,
-                          average,
-                          median,
-                          upperPct,
-                          max,
-                          deltas.Count);
-            else if ((upperPct > MaxDelta / 2) || (max > 100))
-                Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
-                      .LogWarning(
-                          FORMAT,
-                          Name,
-                          average,
-                          median,
-                          upperPct,
-                          max,
-                          deltas.Count);
-            else
-                Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
-                      .LogTrace(
-                          FORMAT,
-                          Name,
-                          average,
-                          median,
-                          upperPct,
-                          max,
-                          deltas.Count);
-
-            return Task.CompletedTask;
-        });
+            });
 }

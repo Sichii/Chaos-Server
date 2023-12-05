@@ -13,8 +13,13 @@ public sealed class PolygonTests
         var polygon = new Polygon();
 
         // Assert
-        polygon.Vertices.Should().NotBeNull();
-        polygon.Vertices.Should().BeEmpty();
+        polygon.Vertices
+               .Should()
+               .NotBeNull();
+
+        polygon.Vertices
+               .Should()
+               .BeEmpty();
     }
 
     [Fact]
@@ -32,8 +37,13 @@ public sealed class PolygonTests
         var polygon = new Polygon(vertices);
 
         // Assert
-        polygon.Vertices.Should().HaveCount(3);
-        polygon.Vertices.Should().ContainInOrder(vertices);
+        polygon.Vertices
+               .Should()
+               .HaveCount(3);
+
+        polygon.Vertices
+               .Should()
+               .ContainInOrder(vertices);
     }
 
     [Fact]
@@ -54,7 +64,8 @@ public sealed class PolygonTests
         var result = polygon.Equals(otherObject);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -82,7 +93,8 @@ public sealed class PolygonTests
         var result = polygon1.Equals(polygon2);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -110,8 +122,11 @@ public sealed class PolygonTests
         var result2 = polygon2.Equals(polygon1);
 
         // Assert
-        result1.Should().BeFalse();
-        result2.Should().BeFalse();
+        result1.Should()
+               .BeFalse();
+
+        result2.Should()
+               .BeFalse();
     }
 
     [Fact]
@@ -140,8 +155,11 @@ public sealed class PolygonTests
         var result2 = polygon2.Equals(polygon1);
 
         // Assert
-        result1.Should().BeFalse();
-        result2.Should().BeFalse();
+        result1.Should()
+               .BeFalse();
+
+        result2.Should()
+               .BeFalse();
     }
 
     [Fact]
@@ -162,7 +180,8 @@ public sealed class PolygonTests
         var result = polygon1.Equals(polygon2);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -191,8 +210,11 @@ public sealed class PolygonTests
         var result2 = polygon2.Equals(polygon1);
 
         // Assert
-        result1.Should().BeTrue();
-        result2.Should().BeTrue();
+        result1.Should()
+               .BeTrue();
+
+        result2.Should()
+               .BeTrue();
     }
 
     [Fact]
@@ -212,7 +234,8 @@ public sealed class PolygonTests
         var actualVertices = polygon.ToList();
 
         // Assert
-        actualVertices.Should().ContainInOrder(vertices);
+        actualVertices.Should()
+                      .ContainInOrder(vertices);
     }
 
     [Fact]
@@ -237,7 +260,10 @@ public sealed class PolygonTests
         var hashCode2 = polygon.GetHashCode();
 
         // Assert
-        hashCode1.Should().Be(expectedHashCode.ToHashCode());
-        hashCode2.Should().Be(expectedHashCode.ToHashCode());
+        hashCode1.Should()
+                 .Be(expectedHashCode.ToHashCode());
+
+        hashCode2.Should()
+                 .Be(expectedHashCode.ToHashCode());
     }
 }

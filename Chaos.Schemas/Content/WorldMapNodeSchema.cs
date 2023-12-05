@@ -13,16 +13,19 @@ public sealed record WorldMapNodeSchema
     /// </summary>
     [JsonRequired]
     public Location Destination { get; set; } = null!;
+
     /// <summary>
     ///     A unique id specific to this node
     /// </summary>
     [JsonRequired]
     public string NodeKey { get; set; } = null!;
+
     /// <summary>
     ///     The point on the screen this node will be rendered at
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public Point ScreenPosition { get; set; }
+
     /// <summary>
     ///     The text displayed next to this node
     /// </summary>

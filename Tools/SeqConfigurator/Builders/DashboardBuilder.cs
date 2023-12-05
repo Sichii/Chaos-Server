@@ -60,9 +60,10 @@ public sealed class DashboardBuilder
         return this;
     }
 
-    public DashboardBuilder WithSignalExpression(string signalTitle) => WithSignalExpression(
-        builder => builder.WithKind(SignalExpressionKind.Signal)
-                          .WithSignal(signalTitle));
+    public DashboardBuilder WithSignalExpression(string signalTitle)
+        => WithSignalExpression(
+            builder => builder.WithKind(SignalExpressionKind.Signal)
+                              .WithSignal(signalTitle));
 
     public DashboardBuilder WithSignalExpression(Action<SignalExpressionBuilder> builderAction)
     {

@@ -39,7 +39,9 @@ public sealed class AsyncComposer<T>
         return builder;
     }
 
-    public TaskAwaiter<T> GetAwaiter() => WaitAsync().GetAwaiter();
+    public TaskAwaiter<T> GetAwaiter()
+        => WaitAsync()
+            .GetAwaiter();
 
     public async Task<T> WaitAsync()
     {

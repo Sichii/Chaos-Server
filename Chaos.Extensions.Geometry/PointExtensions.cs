@@ -31,7 +31,8 @@ public static class PointExtensions
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction), "Direction cannot be invalid");
 
-        foreach (var edgePair in point.GenerateIntercardinalPoints(direction, maxDistance).Chunk(2))
+        foreach (var edgePair in point.GenerateIntercardinalPoints(direction, maxDistance)
+                                      .Chunk(2))
         {
             var edge1 = edgePair[0];
             var edge2 = edgePair[1];
@@ -82,8 +83,8 @@ public static class PointExtensions
     ///     to be facing
     ///     <paramref name="point" />
     /// </returns>
-    public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
-        where TPoint2: IPoint
+    public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other)
+        where TPoint1: IPoint where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -130,8 +131,7 @@ public static class PointExtensions
     /// <param name="point"></param>
     /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
     /// <returns>The distance between the two given points without moving diagonally</returns>
-    public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
-                                                                                        where TPoint2: IPoint
+    public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -168,7 +168,8 @@ public static class PointExtensions
     /// <returns>A sequence of all touching points contained within the given sequence starting with the given start point</returns>
     public static IEnumerable<T> FloodFill<T>(this IEnumerable<T> points, T start) where T: IPoint
     {
-        var allPoints = points.Cast<IPoint>().ToHashSet(PointEqualityComparer.Instance);
+        var allPoints = points.Cast<IPoint>()
+                              .ToHashSet(PointEqualityComparer.Instance);
 
         var shape = new HashSet<IPoint>(PointEqualityComparer.Instance)
         {
@@ -283,8 +284,7 @@ public static class PointExtensions
     public static IEnumerable<Point> GenerateIntercardinalPoints<TPoint>(
         this TPoint start,
         Direction direction = Direction.All,
-        int radius = 1
-    ) where TPoint: IPoint
+        int radius = 1) where TPoint: IPoint
     {
         if (direction == Direction.Invalid)
             yield break;
@@ -497,6 +497,35 @@ public static class PointExtensions
                 yield return currentPoint;
             }
         }
+    }
+
+    /// <summary>
+    ///     Orders points by their X or Y values, based on the direction given. The output of this method will always order
+    ///     points in the same order.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static IEnumerable<TPoint> WithConsistentDirectionBias<TPoint>(this IEnumerable<TPoint> points, Direction direction)
+        where TPoint: IPoint
+    {
+        ArgumentNullException.ThrowIfNull(points);
+
+        if (direction == Direction.Invalid)
+            throw new ArgumentOutOfRangeException(nameof(direction));
+
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        return direction switch
+        {
+            Direction.Up => points.OrderBy(p => p.Y)
+                                  .ThenBy(p => p.X),
+            Direction.Right => points.OrderByDescending(p => p.X)
+                                     .ThenBy(p => p.Y),
+            Direction.Down => points.OrderByDescending(p => p.Y)
+                                    .ThenBy(p => p.X),
+            Direction.Left => points.OrderBy(p => p.X)
+                                    .ThenBy(p => p.Y),
+            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+        };
     }
 
     /// <summary>

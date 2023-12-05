@@ -12,10 +12,9 @@ public abstract class NamedEntity : VisibleEntity, IDeltaUpdatable
         string name,
         ushort sprite,
         MapInstance mapInstance,
-        IPoint point
-    )
-        : base(sprite, mapInstance, point) =>
-        Name = name;
+        IPoint point)
+        : base(sprite, mapInstance, point)
+        => Name = name;
 
     /// <inheritdoc />
     public abstract void Update(TimeSpan delta);

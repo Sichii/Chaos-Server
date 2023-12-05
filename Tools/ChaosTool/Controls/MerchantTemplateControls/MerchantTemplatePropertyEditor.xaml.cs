@@ -58,11 +58,20 @@ public sealed partial class MerchantTemplatePropertyEditor
         template.RestockIntervalHrs = ParsePrimitive<int>(RestockIntervalHrsTbox.Text);
         template.WanderIntervalMs = ParsePrimitive<int>(WanderIntervalMsTbox.Text);
 
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
-        template.ItemsForSale = ItemsForSaleViewItems.Select(ShallowCopy<ItemDetailsSchema>.Create).ToList();
-        template.ItemsToBuy = ItemsToBuyViewItems.ToStrings().ToList();
-        template.SkillsToTeach = SkillsToTeachViewItems.ToStrings().ToList();
-        template.SpellsToTeach = SpellsToTeachViewItems.ToStrings().ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
+
+        template.ItemsForSale = ItemsForSaleViewItems.Select(ShallowCopy<ItemDetailsSchema>.Create)
+                                                     .ToList();
+
+        template.ItemsToBuy = ItemsToBuyViewItems.ToStrings()
+                                                 .ToList();
+
+        template.SkillsToTeach = SkillsToTeachViewItems.ToStrings()
+                                                       .ToList();
+
+        template.SpellsToTeach = SpellsToTeachViewItems.ToStrings()
+                                                       .ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -107,7 +116,9 @@ public sealed partial class MerchantTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.MerchantTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.MerchantTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -117,7 +128,9 @@ public sealed partial class MerchantTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.MerchantTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.MerchantTemplates
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
@@ -154,8 +167,8 @@ public sealed partial class MerchantTemplatePropertyEditor
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Controls

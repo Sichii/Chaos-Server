@@ -55,10 +55,7 @@ public abstract class EditorBase : UserControl
         sender.SelectAll();
     }
 
-    protected virtual void Hide_FindTBox(
-        TextBox sender,
-        RoutedEventArgs e
-    )
+    protected virtual void Hide_FindTBox(TextBox sender, RoutedEventArgs e)
     {
         e.Handled = true;
 

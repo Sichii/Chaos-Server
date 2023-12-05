@@ -11,6 +11,7 @@ public enum IpAccessMode
     ///     Allows all connections except those that are blacklisted
     /// </summary>
     Blacklist,
+
     /// <summary>
     ///     Disallows all connections except those that are whitelisted
     /// </summary>

@@ -12,8 +12,7 @@ internal sealed class JoinStringCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    )
+        CultureInfo culture)
     {
         if (value is not IEnumerable<string> list)
             return string.Empty;
@@ -25,6 +24,6 @@ internal sealed class JoinStringCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    ) => throw new NotImplementedException();
+        CultureInfo culture)
+        => throw new NotImplementedException();
 }

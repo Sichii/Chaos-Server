@@ -12,6 +12,7 @@ public class ApplyHealScript : ScriptBase, IApplyHealScript
 {
     /// <inheritdoc />
     public IHealFormula HealFormula { get; set; } = HealFormulae.Default;
+
     public static string Key { get; } = GetScriptKey(typeof(ApplyHealScript));
 
     /// <inheritdoc />
@@ -19,8 +20,7 @@ public class ApplyHealScript : ScriptBase, IApplyHealScript
         Creature source,
         Creature target,
         IScript script,
-        int healing
-    )
+        int healing)
     {
         healing = HealFormula.Calculate(
             source,

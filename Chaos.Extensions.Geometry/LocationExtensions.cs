@@ -25,6 +25,6 @@ public static class LocationExtensions
     ///     <c>true</c> if both <see cref="Chaos.Geometry.Abstractions.ILocation" />s are on the same map, otherwise
     ///     <c>false</c>
     /// </returns>
-    public static bool OnSameMapAs(this ILocation location, ILocation other) =>
-        location.Map.Equals(other.Map, StringComparison.OrdinalIgnoreCase);
+    public static bool OnSameMapAs(this ILocation location, ILocation other)
+        => location.Map.Equals(other.Map, StringComparison.OrdinalIgnoreCase);
 }

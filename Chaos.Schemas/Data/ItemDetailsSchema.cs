@@ -12,6 +12,7 @@ public sealed record ItemDetailsSchema
     /// </summary>
     [JsonRequired]
     public string ItemTemplateKey { get; set; } = null!;
+
     /// <summary>
     ///     The amount of this item the merchant has in stock
     /// </summary>

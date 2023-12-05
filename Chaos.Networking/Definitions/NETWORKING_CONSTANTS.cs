@@ -12,6 +12,7 @@ public static class NETWORKING_CONSTANTS
     ///     The offset value for a creature's sprite
     /// </summary>
     internal const ushort CREATURE_SPRITE_OFFSET = 16384;
+
     /// <summary>
     ///     The offset value for an item's sprite
     /// </summary>

@@ -20,8 +20,7 @@ public class GuildMemberAdmitScript : GuildScriptBase
         IClientRegistry<IWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
-        ILogger<GuildMemberAdmitScript> logger
-    )
+        ILogger<GuildMemberAdmitScript> logger)
         : base(
             subject,
             clientRegistry,
@@ -75,7 +74,8 @@ public class GuildMemberAdmitScript : GuildScriptBase
             return;
         }
 
-        var aislingToAdmit = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))?.Aisling;
+        var aislingToAdmit = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(name))
+                                           ?.Aisling;
 
         //ensure the player is online
         if (aislingToAdmit is null)

@@ -43,8 +43,7 @@ public sealed class ComponentExecutor
         return null;
     }
 
-    public ComponentExecutor Execute<TComponent>()
-        where TComponent: IComponent, new()
+    public ComponentExecutor Execute<TComponent>() where TComponent: IComponent, new()
     {
         var component = new TComponent();
         component.Execute(Context, Vars);

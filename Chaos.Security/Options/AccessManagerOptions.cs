@@ -48,6 +48,7 @@ public sealed class AccessManagerOptions : IDirectoryBound
     ///     The minimum number of characters allowed in a username
     /// </summary>
     public int MinUsernameLength { get; set; }
+
     /// <summary>
     ///     The mode in which that the access manager operates
     /// </summary>

@@ -22,8 +22,7 @@ public sealed class LocationExtensionsTests
         Direction direction,
         int distance,
         int expectedX,
-        int expectedY
-    )
+        int expectedY)
     {
         // Arrange
         var location = new Location(null!, startX, startY);
@@ -33,9 +32,17 @@ public sealed class LocationExtensionsTests
         var offsetLocation = new Location(location.Map, offsetPoint);
 
         // Assert
-        offsetLocation.Map.Should().BeNull();
-        offsetLocation.X.Should().Be(expectedX);
-        offsetLocation.Y.Should().Be(expectedY);
+        offsetLocation.Map
+                      .Should()
+                      .BeNull();
+
+        offsetLocation.X
+                      .Should()
+                      .Be(expectedX);
+
+        offsetLocation.Y
+                      .Should()
+                      .Be(expectedY);
     }
 
     [Fact]
@@ -50,7 +57,8 @@ public sealed class LocationExtensionsTests
         var act = () => LocationExtensions.EnsureSameMap(location1, location2);
 
         // Assert
-        act.Should().NotThrow<InvalidOperationException>();
+        act.Should()
+           .NotThrow<InvalidOperationException>();
     }
 
     [Fact]
@@ -84,7 +92,8 @@ public sealed class LocationExtensionsTests
         var result = location1.OnSameMapAs(location2);
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -99,6 +108,7 @@ public sealed class LocationExtensionsTests
         var result = location1.OnSameMapAs(location2);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 }

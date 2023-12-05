@@ -6,31 +6,33 @@ namespace Chaos.Collections;
 
 public sealed class UserOptions
 {
-    private string GetDescription(UserOption userOption) => userOption switch
-    {
-        UserOption.Option1 => typeof(UserOptions).GetDescription(nameof(ShowBodyAnimations)),
-        UserOption.Option2 => typeof(UserOptions).GetDescription(nameof(ListenToHitSounds)),
-        UserOption.Option3 => typeof(UserOptions).GetDescription(nameof(Option3)),
-        UserOption.Option4 => typeof(UserOptions).GetDescription(nameof(Option4)),
-        UserOption.Option5 => typeof(UserOptions).GetDescription(nameof(Option5)),
-        UserOption.Option6 => typeof(UserOptions).GetDescription(nameof(AllowExchange)),
-        UserOption.Option7 => string.Empty,
-        UserOption.Option8 => typeof(UserOptions).GetDescription(nameof(Option8)),
-        _                  => throw new ArgumentOutOfRangeException(nameof(userOption), userOption, null)
-    };
+    private string GetDescription(UserOption userOption)
+        => userOption switch
+        {
+            UserOption.Option1 => typeof(UserOptions).GetDescription(nameof(ShowBodyAnimations)),
+            UserOption.Option2 => typeof(UserOptions).GetDescription(nameof(ListenToHitSounds)),
+            UserOption.Option3 => typeof(UserOptions).GetDescription(nameof(Option3)),
+            UserOption.Option4 => typeof(UserOptions).GetDescription(nameof(Option4)),
+            UserOption.Option5 => typeof(UserOptions).GetDescription(nameof(Option5)),
+            UserOption.Option6 => typeof(UserOptions).GetDescription(nameof(AllowExchange)),
+            UserOption.Option7 => string.Empty,
+            UserOption.Option8 => typeof(UserOptions).GetDescription(nameof(Option8)),
+            _                  => throw new ArgumentOutOfRangeException(nameof(userOption), userOption, null)
+        };
 
-    private bool IsEnabled(UserOption userOption) => userOption switch
-    {
-        UserOption.Option1 => ShowBodyAnimations,
-        UserOption.Option2 => ListenToHitSounds,
-        UserOption.Option3 => Option3,
-        UserOption.Option4 => Option4,
-        UserOption.Option5 => Option5,
-        UserOption.Option6 => AllowExchange,
-        UserOption.Option7 => false,
-        UserOption.Option8 => Option8,
-        _                  => throw new ArgumentOutOfRangeException(nameof(userOption), userOption, null)
-    };
+    private bool IsEnabled(UserOption userOption)
+        => userOption switch
+        {
+            UserOption.Option1 => ShowBodyAnimations,
+            UserOption.Option2 => ListenToHitSounds,
+            UserOption.Option3 => Option3,
+            UserOption.Option4 => Option4,
+            UserOption.Option5 => Option5,
+            UserOption.Option6 => AllowExchange,
+            UserOption.Option7 => false,
+            UserOption.Option8 => Option8,
+            _                  => throw new ArgumentOutOfRangeException(nameof(userOption), userOption, null)
+        };
 
     /// <summary>
     ///     Toggles the given UserOption.
@@ -97,7 +99,8 @@ public sealed class UserOptions
         var options = new string[8];
 
         for (var i = 0; i < 8; i++)
-            options[i] = ToString((UserOption)i + 1).Remove(0, 1);
+            options[i] = ToString((UserOption)i + 1)
+                .Remove(0, 1);
 
         return $"0{string.Join("\t", options)}";
     }
@@ -110,16 +113,22 @@ public sealed class UserOptions
     #region F4 Options
     [Description("Show body animations")]
     public bool ShowBodyAnimations { get; set; } = true;
+
     [Description("Listen to hit sounds")]
     public bool ListenToHitSounds { get; set; } = true;
+
     [Description("Option 3")]
     public bool Option3 { get; set; } = true;
+
     [Description("Option 4")]
     public bool Option4 { get; set; } = true;
+
     [Description("Option 5")]
     public bool Option5 { get; set; } = true;
+
     [Description("Allow Exchanges")]
     public bool AllowExchange { get; set; } = true;
+
     [Description("Option 8")]
     public bool Option8 { get; set; } = true;
     #endregion

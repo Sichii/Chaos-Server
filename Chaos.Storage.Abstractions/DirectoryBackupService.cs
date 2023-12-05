@@ -9,13 +9,13 @@ using Microsoft.Extensions.Options;
 namespace Chaos.Storage.Abstractions;
 
 /// <inheritdoc cref="IDirectoryBackupService" />
-public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBackupService
-    where TOptions: class, IDirectoryBackupOptions
+public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBackupService where TOptions: class, IDirectoryBackupOptions
 {
     /// <summary>
     ///     The logger used to log events
     /// </summary>
     protected ILogger Logger { get; }
+
     /// <summary>
     ///     The options used to configure the store
     /// </summary>
@@ -112,7 +112,11 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var dop = Math.Max(1, Environment.ProcessorCount / 4);
-        var pOptions = new ParallelOptions { MaxDegreeOfParallelism = dop };
+
+        var pOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = dop
+        };
         var backupTimer = new PeriodicTimer(TimeSpan.FromMinutes(Options.BackupIntervalMins));
 
         if (!Directory.Exists(Options.BackupDirectory))
@@ -129,10 +133,7 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
                 var metricsLogger = Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
                                           .WithMetrics();
 
-                await Parallel.ForEachAsync(
-                    Directory.EnumerateDirectories(Options.Directory),
-                    pOptions,
-                    TakeBackupAsync);
+                await Parallel.ForEachAsync(Directory.EnumerateDirectories(Options.Directory), pOptions, TakeBackupAsync);
 
                 await Parallel.ForEachAsync(Directory.EnumerateDirectories(Options.BackupDirectory), pOptions, HandleBackupRetentionAsync);
 

@@ -12,7 +12,8 @@ public sealed class BulletinBoardListScript : ConfigurableReactorTileScriptBase
 
     /// <inheritdoc />
     public BulletinBoardListScript(ReactorTile subject, IStore<BulletinBoard> boardStore)
-        : base(subject) => BoardStore = boardStore;
+        : base(subject)
+        => BoardStore = boardStore;
 
     /// <inheritdoc />
     public override void OnClicked(Aisling source)

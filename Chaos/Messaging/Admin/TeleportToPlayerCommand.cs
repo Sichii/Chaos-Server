@@ -19,9 +19,8 @@ public class TeleportToPlayerCommand : ICommand<Aisling>
             return default;
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        var player = ClientRegistry
-                     .Select(c => c.Aisling)
-                     .FirstOrDefault(a => a.Name.EqualsI(playerName));
+        var player = ClientRegistry.Select(c => c.Aisling)
+                                   .FirstOrDefault(a => a.Name.EqualsI(playerName));
 
         if (player == null)
         {

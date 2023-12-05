@@ -27,7 +27,8 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     public void PostConfigure(string? name, IConnectionInfo options)
     {
         if (!string.IsNullOrEmpty(options.HostName))
-            options.Address = Dns.GetHostAddresses(options.HostName).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)!;
+            options.Address = Dns.GetHostAddresses(options.HostName)
+                                 .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)!;
     }
 
     /// <inheritdoc />
@@ -55,6 +56,7 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
     public void PostConfigure(string? name, MetaDataStoreOptions options)
     {
         options.UseBaseDirectory(StagingDirectory.StagingDirectory);
+
         // ReSharper disable once ArrangeMethodOrOperatorBody
         options.PrefixMutators.Add(ItemMetaNodeMutator.Create(MagicPrefixScript.Mutate));
 
@@ -66,8 +68,14 @@ public sealed class OptionsConfigurer : IPostConfigureOptions<IConnectionInfo>,
                     if (!template.IsDyeable)
                         return Enumerable.Empty<ItemMetaNode>();
 
-                    return Enum.GetNames<DisplayColor>().Select(colorName => node with { Name = $"{colorName} {node.Name}" });
+                    return Enum.GetNames<DisplayColor>()
+                               .Select(
+                                   colorName => node with
+                                   {
+                                       Name = $"{colorName} {node.Name}"
+                                   });
                 }));
+
         //add more mutators here
     }
 

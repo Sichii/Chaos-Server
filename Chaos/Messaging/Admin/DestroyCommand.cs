@@ -29,7 +29,8 @@ public class DestroyCommand : ICommand<Aisling>
         if (args.TryGetNext<string>(out var entityName))
         {
             //grab the closest entity with that name
-            var entity = source.MapInstance.GetEntities<NamedEntity>()
+            var entity = source.MapInstance
+                               .GetEntities<NamedEntity>()
                                .Where(entity => entity.Name.EqualsI(entityName))
                                .MinBy(entity => entity.DistanceFrom(source));
 

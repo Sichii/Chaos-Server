@@ -18,7 +18,8 @@ public sealed class SequentialIdGeneratorTests
         var id2 = idGenerator.NextId;
 
         // Assert
-        id2.Should().BeGreaterThan(id1);
+        id2.Should()
+           .BeGreaterThan(id1);
     }
 
     [Fact]
@@ -33,8 +34,11 @@ public sealed class SequentialIdGeneratorTests
         var id2 = idGenerator.NextId;
 
         // Assert
-        id1.Should().Be(START_ID + 1);
-        id2.Should().BeGreaterThan(id1);
+        id1.Should()
+           .Be(START_ID + 1);
+
+        id2.Should()
+           .BeGreaterThan(id1);
     }
 
     [Fact]
@@ -48,7 +52,10 @@ public sealed class SequentialIdGeneratorTests
         var id2 = idGenerator.NextId;
 
         // Assert
-        id1.Should().Be(1);
-        id2.Should().BeGreaterThan(id1);
+        id1.Should()
+           .Be(1);
+
+        id2.Should()
+           .BeGreaterThan(id1);
     }
 }

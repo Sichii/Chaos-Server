@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Chaos.Client.Data.Repositories;
 
-public class MetaFileRepository : RepositoryBase
+public sealed class MetaFileRepository : RepositoryBase
 {
     /// <inheritdoc />
     public MetaFileRepository(IMemoryCache cache)

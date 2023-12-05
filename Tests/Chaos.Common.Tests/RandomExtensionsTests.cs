@@ -138,7 +138,8 @@ public sealed class RandomExtensionsTests
             var result = Random.Shared.Next(minValue, maxValue);
 
             // Assert
-            result.Should().BeInRange(minValue, maxValue);
+            result.Should()
+                  .BeInRange(minValue, maxValue);
         }
     }
 
@@ -152,7 +153,8 @@ public sealed class RandomExtensionsTests
             var result = Random.Shared.Next<T>();
 
             // Assert
-            result.Should().BeInRange(minValue, maxValue);
+            result.Should()
+                  .BeInRange(minValue, maxValue);
         }
     }
 }

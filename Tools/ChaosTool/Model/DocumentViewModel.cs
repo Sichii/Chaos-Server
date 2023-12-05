@@ -41,9 +41,9 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
     public string? Text { get; set; }
 
-    private static MethodInfo HasSubmissionResult { get; } =
-        typeof(Compilation).GetMethod(nameof(HasSubmissionResult), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-        ?? throw new MissingMemberException(nameof(HasSubmissionResult));
+    private static MethodInfo HasSubmissionResult { get; }
+        = typeof(Compilation).GetMethod(nameof(HasSubmissionResult), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+          ?? throw new MissingMemberException(nameof(HasSubmissionResult));
 
     public DocumentViewModel? LastGoodPrevious
     {
@@ -60,9 +60,10 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
     public DocumentViewModel? Previous { get; }
 
-    private static PrintOptions PrintOptions { get; } =
-        new()
-            { MemberDisplayFormat = MemberDisplayFormat.SeparateLines };
+    private static PrintOptions PrintOptions { get; } = new()
+    {
+        MemberDisplayFormat = MemberDisplayFormat.SeparateLines
+    };
 
     public DocumentViewModel(RoslynHost host, DocumentViewModel? previous)
     {
@@ -81,7 +82,8 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
         try
         {
-            var result = await script.RunAsync().ConfigureAwait(true);
+            var result = await script.RunAsync()
+                                     .ConfigureAwait(true);
 
             if (result.Exception != null)
             {
@@ -102,8 +104,8 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
     internal void Initialize(DocumentId id) => Id = id;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
@@ -142,7 +144,8 @@ internal class DocumentViewModel : INotifyPropertyChanged
 
         IsReadOnly = true;
 
-        await ExecuteAsync(hasResult).ConfigureAwait(true);
+        await ExecuteAsync(hasResult)
+            .ConfigureAwait(true);
 
         return true;
     }

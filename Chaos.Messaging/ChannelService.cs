@@ -101,8 +101,7 @@ public sealed class ChannelService : IChannelService
         MessageColor defaultMessageColor,
         Action<IChannelSubscriber, string> sendMessageAction,
         bool bypassValidation = false,
-        string? channelNameOverride = null
-    )
+        string? channelNameOverride = null)
     {
         if (!IsChannel(channelName))
             channelName = $"{Options.ChannelPrefix}{channelName}";
@@ -176,6 +175,7 @@ public sealed class ChannelService : IChannelService
         //all other strings are just having their bytes copied into the span
         //the only allocation is the final string
         var spanWriter = new SpanWriter(Encoding.Default);
+
         //$"[{finalChannelName}] {senderName}: {message}";
 
         if (channelDetails.DefaultColor != MessageColor.Default)
@@ -217,6 +217,7 @@ public sealed class ChannelService : IChannelService
             {
                 //set the 3rd byte to the override color
                 buffer[2] = (byte)subDetails.MessageColorOverride;
+
                 //create a new string from the buffer and send it
                 channelDetails.SendMessageAction(subDetails.Subscriber, Encoding.Default.GetString(buffer));
             } else

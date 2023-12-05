@@ -48,11 +48,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     protected AutoReleasingMonitor Sync { get; }
     protected int TotalSlots { get; }
 
-    protected PanelBase(
-        PanelType panelType,
-        int length,
-        byte[] invalidSlots
-    )
+    protected PanelBase(PanelType panelType, int length, byte[] invalidSlots)
     {
         PaneType = panelType;
         Length = length;
@@ -110,9 +106,8 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         using (Sync.Enter())
             snapshot = Objects.ToList();
 
-        return snapshot
-               .Where((obj, index) => (obj != null) && IsValidSlot((byte)index))
-               .GetEnumerator()!;
+        return snapshot.Where((obj, index) => (obj != null) && IsValidSlot((byte)index))
+                       .GetEnumerator()!;
     }
 
     public virtual bool IsValidSlot(byte slot) => (slot > 0) && (slot < Length) && !InvalidSlots.Contains(slot);

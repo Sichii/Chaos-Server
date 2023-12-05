@@ -28,9 +28,8 @@ public sealed class ReactorTileFactory : IReactorTileFactory
         bool shouldBlockPathfinding,
         ICollection<string> scriptKeys,
         IDictionary<string, IScriptVars> scriptVars,
-        Creature? owner = null
-    ) =>
-        new(
+        Creature? owner = null)
+        => new(
             mapInstance,
             point,
             shouldBlockPathfinding,
@@ -45,8 +44,7 @@ public sealed class ReactorTileFactory : IReactorTileFactory
         MapInstance mapInstance,
         IPoint point,
         ICollection<string>? extraScriptKeys = null,
-        Creature? owner = null
-    )
+        Creature? owner = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
         var template = Cache.Get<ReactorTileTemplate>(templateKey);

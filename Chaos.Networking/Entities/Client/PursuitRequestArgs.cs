@@ -18,5 +18,4 @@ public sealed record PursuitRequestArgs(
     EntityType EntityType,
     uint EntityId,
     ushort PursuitId,
-    params string[]? Args
-) : IReceiveArgs;
+    params string[]? Args) : IReceiveArgs;

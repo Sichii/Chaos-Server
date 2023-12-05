@@ -14,5 +14,4 @@ public sealed record ClientRedirectedArgs(
     byte Seed,
     byte[] Key,
     string Name,
-    uint Id
-) : IReceiveArgs;
+    uint Id) : IReceiveArgs;

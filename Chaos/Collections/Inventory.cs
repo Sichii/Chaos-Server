@@ -17,7 +17,10 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         : base(
             PanelType.Inventory,
             60,
-            new byte[] { 0 })
+            new byte[]
+            {
+                0
+            })
     {
         ItemCloner = null!;
         items ??= Array.Empty<Item>();
@@ -28,8 +31,8 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
     /// <inheritdoc />
     public Inventory(ICloningService<Item> itemCloner, IEnumerable<Item>? items = null)
-        : this(items) =>
-        ItemCloner = itemCloner;
+        : this(items)
+        => ItemCloner = itemCloner;
 
     /// <inheritdoc />
     public override bool Contains(string name)
@@ -106,9 +109,8 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this
-                            .Where(item => item.DisplayName.EqualsI(name))
-                            .ToList();
+        var existingItems = this.Where(item => item.DisplayName.EqualsI(name))
+                                .ToList();
 
         if (!existingItems.Any())
             return false;
@@ -276,9 +278,8 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this
-                            .Where(item => item.Template.TemplateKey.EqualsI(templateKey))
-                            .ToList();
+        var existingItems = this.Where(item => item.Template.TemplateKey.EqualsI(templateKey))
+                                .ToList();
 
         if (!existingItems.Any())
             return false;
@@ -463,8 +464,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         }
 
         foreach (var item in items)
-            if (item!.DisplayName.Equals(obj.DisplayName, StringComparison.OrdinalIgnoreCase)
-                && (item.Count < item.Template.MaxStacks))
+            if (item!.DisplayName.Equals(obj.DisplayName, StringComparison.OrdinalIgnoreCase) && (item.Count < item.Template.MaxStacks))
             {
                 var incomingStacks = obj.Count;
                 var existingStacks = item.Count;

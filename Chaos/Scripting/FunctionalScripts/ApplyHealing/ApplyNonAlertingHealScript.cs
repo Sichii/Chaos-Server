@@ -12,6 +12,7 @@ public class ApplyNonAlertingHealScript : ScriptBase, IApplyHealScript
 {
     /// <inheritdoc />
     public IHealFormula HealFormula { get; set; } = HealFormulae.Default;
+
     public static string Key { get; } = GetScriptKey(typeof(ApplyNonAlertingHealScript));
 
     /// <inheritdoc />
@@ -19,8 +20,7 @@ public class ApplyNonAlertingHealScript : ScriptBase, IApplyHealScript
         Creature source,
         Creature target,
         IScript script,
-        int healing
-    )
+        int healing)
     {
         healing = HealFormula.Calculate(
             source,
@@ -42,6 +42,7 @@ public class ApplyNonAlertingHealScript : ScriptBase, IApplyHealScript
                 monster.StatSheet.AddHp(healing);
 
                 break;
+
             // ReSharper disable once UnusedVariable
             case Merchant merchant:
                 break;

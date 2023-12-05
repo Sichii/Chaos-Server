@@ -6,6 +6,7 @@ using Chaos.Common.Synchronization;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class LockBenchmarks
 {

@@ -7,7 +7,10 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.BoardRequest" />
 ///     packet
 /// </summary>
-/// <param name="BoardRequestType">The type of request being made by the client. This request type determines which properties are actually populated</param>
+/// <param name="BoardRequestType">
+///     The type of request being made by the client. This request type determines which
+///     properties are actually populated
+/// </param>
 /// <param name="BoardId">If populated, the board id relevant to the request</param>
 /// <param name="PostId">If populated, the id of the post being selected</param>
 /// <param name="StartPostId">If populated, the id of the post id to begin paging from (counts down from short.MaxValue)</param>
@@ -23,5 +26,4 @@ public sealed record BoardRequestArgs(
     string? To = null,
     string? Subject = null,
     string? Message = null,
-    BoardControls? Controls = null
-) : IReceiveArgs;
+    BoardControls? Controls = null) : IReceiveArgs;

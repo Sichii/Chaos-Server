@@ -21,7 +21,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadArgs();
 
         // Assert
-        result.Should().ContainInOrder("hello", "world");
+        result.Should()
+              .ContainInOrder("hello", "world");
     }
 
     [Fact]
@@ -35,35 +36,44 @@ public sealed class SpanReaderTests
         var result = reader.ReadArgs8();
 
         // Assert
-        result.Should().ContainInOrder("hello", "world");
+        result.Should()
+              .ContainInOrder("hello", "world");
     }
 
     [Fact]
     public void ReadBoolean_ShouldReturnBooleanValue()
     {
         // Arrange
-        var buffer = new byte[] { 0x01 };
+        var buffer = new byte[]
+        {
+            0x01
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadBoolean();
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
     public void ReadByte_ShouldReturnByteValue()
     {
         // Arrange
-        var buffer = new byte[] { 0xAB };
+        var buffer = new byte[]
+        {
+            0xAB
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadByte();
 
         // Assert
-        result.Should().Be(0xAB);
+        result.Should()
+              .Be(0xAB);
     }
 
     [Fact]
@@ -77,7 +87,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadBytes(5);
 
         // Assert
-        result.Should().Equal(Encoding.GetBytes("Hello"));
+        result.Should()
+              .Equal(Encoding.GetBytes("Hello"));
     }
 
     [Fact]
@@ -97,8 +108,11 @@ public sealed class SpanReaderTests
         }
 
         // Assert
-        ex.Should().NotBeNull();
-        ex?.Should().BeOfType<EndOfStreamException>();
+        ex.Should()
+          .NotBeNull();
+
+        ex?.Should()
+          .BeOfType<EndOfStreamException>();
     }
 
     [Fact]
@@ -112,7 +126,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadData();
 
         // Assert
-        result.Should().Equal(buffer);
+        result.Should()
+              .Equal(buffer);
     }
 
     [Fact]
@@ -126,7 +141,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadData16();
 
         // Assert
-        result.Should().Equal(Encoding.GetBytes("Hello, world!"));
+        result.Should()
+              .Equal(Encoding.GetBytes("Hello, world!"));
     }
 
     [Fact]
@@ -140,119 +156,167 @@ public sealed class SpanReaderTests
         var result = reader.ReadData8();
 
         // Assert
-        result.Should().Equal(Encoding.GetBytes("Hello, world!"));
+        result.Should()
+              .Equal(Encoding.GetBytes("Hello, world!"));
     }
 
     [Fact]
     public void ReadInt16_ShouldReturnInt16Value()
     {
         // Arrange
-        var buffer = new byte[] { 0x12, 0x34 };
+        var buffer = new byte[]
+        {
+            0x12,
+            0x34
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadInt16();
 
         // Assert
-        result.Should().Be(0x1234);
+        result.Should()
+              .Be(0x1234);
     }
 
     [Fact]
     public void ReadInt16_ShouldReturnInt16Value_LittleEndian()
     {
         // Arrange
-        var buffer = new byte[] { 0x34, 0x12 };
+        var buffer = new byte[]
+        {
+            0x34,
+            0x12
+        };
         var reader = new SpanReader(Encoding, buffer, Endianness.LittleEndian);
 
         // Act
         var result = reader.ReadInt16();
 
         // Assert
-        result.Should().Be(0x1234);
+        result.Should()
+              .Be(0x1234);
     }
 
     [Fact]
     public void ReadInt32_ShouldReturnInt32Value()
     {
         // Arrange
-        var buffer = new byte[] { 0x12, 0x34, 0x56, 0x78 };
+        var buffer = new byte[]
+        {
+            0x12,
+            0x34,
+            0x56,
+            0x78
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadInt32();
 
         // Assert
-        result.Should().Be(0x12345678);
+        result.Should()
+              .Be(0x12345678);
     }
 
     [Fact]
     public void ReadInt32_ShouldReturnInt32Value_LittleEndian()
     {
         // Arrange
-        var buffer = new byte[] { 0x78, 0x56, 0x34, 0x12 };
+        var buffer = new byte[]
+        {
+            0x78,
+            0x56,
+            0x34,
+            0x12
+        };
         var reader = new SpanReader(Encoding, buffer, Endianness.LittleEndian);
 
         // Act
         var result = reader.ReadInt32();
 
         // Assert
-        result.Should().Be(0x12345678);
+        result.Should()
+              .Be(0x12345678);
     }
 
     [Fact]
     public void ReadPoint16_ShouldReturnTupleOfUInt16()
     {
         // Arrange
-        var buffer = new byte[] { 0x12, 0x34, 0x56, 0x78 };
+        var buffer = new byte[]
+        {
+            0x12,
+            0x34,
+            0x56,
+            0x78
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadPoint16();
 
         // Assert
-        result.Should().Be((0x1234, 0x5678));
+        result.Should()
+              .Be((0x1234, 0x5678));
     }
 
     [Fact]
     public void ReadPoint16_ShouldReturnTupleOfUInt16_LittleEndian()
     {
         // Arrange
-        var buffer = new byte[] { 0x34, 0x12, 0x78, 0x56 };
+        var buffer = new byte[]
+        {
+            0x34,
+            0x12,
+            0x78,
+            0x56
+        };
         var reader = new SpanReader(Encoding, buffer, Endianness.LittleEndian);
 
         // Act
         var result = reader.ReadPoint16();
 
         // Assert
-        result.Should().Be((0x1234, 0x5678));
+        result.Should()
+              .Be((0x1234, 0x5678));
     }
 
     [Fact]
     public void ReadPoint8_ShouldReturnTupleOfByte()
     {
         // Arrange
-        var buffer = new byte[] { 0x12, 0x34 };
+        var buffer = new byte[]
+        {
+            0x12,
+            0x34
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadPoint8();
 
         // Assert
-        result.Should().Be((0x12, 0x34));
+        result.Should()
+              .Be((0x12, 0x34));
     }
 
     [Fact]
     public void ReadSByte_ShouldReturnSByteValue()
     {
         // Arrange
-        var buffer = new byte[] { 0xAB };
+        var buffer = new byte[]
+        {
+            0xAB
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadSByte();
 
         // Assert
-        result.Should().Be(-0x55);
+        result.Should()
+              .Be(-0x55);
     }
 
     [Fact]
@@ -266,7 +330,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadString();
 
         // Assert
-        result.Should().Be("Hello, world!");
+        result.Should()
+              .Be("Hello, world!");
     }
 
     [Fact]
@@ -280,7 +345,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadString();
 
         // Assert
-        result.Should().Be("Hello");
+        result.Should()
+              .Be("Hello");
     }
 
     [Fact]
@@ -294,7 +360,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadString16();
 
         // Assert
-        result.Should().Be("Hello, world!");
+        result.Should()
+              .Be("Hello, world!");
     }
 
     [Fact]
@@ -316,8 +383,11 @@ public sealed class SpanReaderTests
         }
 
         // Assert
-        exception.Should().NotBeNull();
-        exception.Should().BeOfType<EndOfStreamException>();
+        exception.Should()
+                 .NotBeNull();
+
+        exception.Should()
+                 .BeOfType<EndOfStreamException>();
     }
 
     [Fact]
@@ -331,7 +401,8 @@ public sealed class SpanReaderTests
         var result = reader.ReadString8();
 
         // Assert
-        result.Should().Be("Hello, world!");
+        result.Should()
+              .Be("Hello, world!");
     }
 
     [Fact]
@@ -353,63 +424,90 @@ public sealed class SpanReaderTests
         }
 
         // Assert
-        exception.Should().NotBeNull();
-        exception.Should().BeOfType<EndOfStreamException>();
+        exception.Should()
+                 .NotBeNull();
+
+        exception.Should()
+                 .BeOfType<EndOfStreamException>();
     }
 
     [Fact]
     public void ReadUInt16_ShouldReturnUInt16Value()
     {
         // Arrange
-        var buffer = new byte[] { 0x12, 0x34 };
+        var buffer = new byte[]
+        {
+            0x12,
+            0x34
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadUInt16();
 
         // Assert
-        result.Should().Be(0x1234);
+        result.Should()
+              .Be(0x1234);
     }
 
     [Fact]
     public void ReadUInt16_ShouldReturnUInt16Value_LittleEndian()
     {
         // Arrange
-        var buffer = new byte[] { 0x34, 0x12 };
+        var buffer = new byte[]
+        {
+            0x34,
+            0x12
+        };
         var reader = new SpanReader(Encoding, buffer, Endianness.LittleEndian);
 
         // Act
         var result = reader.ReadUInt16();
 
         // Assert
-        result.Should().Be(0x1234);
+        result.Should()
+              .Be(0x1234);
     }
 
     [Fact]
     public void ReadUInt32_ShouldReturnUInt32Value()
     {
         // Arrange
-        var buffer = new byte[] { 0x12, 0x34, 0x56, 0x78 };
+        var buffer = new byte[]
+        {
+            0x12,
+            0x34,
+            0x56,
+            0x78
+        };
         var reader = new SpanReader(Encoding, buffer);
 
         // Act
         var result = reader.ReadUInt32();
 
         // Assert
-        result.Should().Be(0x12345678);
+        result.Should()
+              .Be(0x12345678);
     }
 
     [Fact]
     public void ReadUInt32_ShouldReturnUInt32Value_LittleEndian()
     {
         // Arrange
-        var buffer = new byte[] { 0x78, 0x56, 0x34, 0x12 };
+        var buffer = new byte[]
+        {
+            0x78,
+            0x56,
+            0x34,
+            0x12
+        };
         var reader = new SpanReader(Encoding, buffer, Endianness.LittleEndian);
 
         // Act
         var result = reader.ReadUInt32();
 
         // Assert
-        result.Should().Be(0x12345678);
+        result.Should()
+              .Be(0x12345678);
     }
 }

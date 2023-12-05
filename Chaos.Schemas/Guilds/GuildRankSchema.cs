@@ -11,6 +11,7 @@ public sealed record GuildRankSchema
     ///     The members of this rank
     /// </summary>
     public ICollection<string> Members { get; set; } = Array.Empty<string>();
+
     /// <summary>
     ///     The name of the rank. This must be unique within the guild and match the file name
     /// </summary>

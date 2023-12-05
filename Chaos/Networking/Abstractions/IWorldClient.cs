@@ -30,8 +30,7 @@ public interface IWorldClient : ISocketClient
         uint id,
         BodyAnimation bodyAnimation,
         ushort speed,
-        byte? sound = null
-    );
+        byte? sound = null);
 
     void SendCancelCasting();
     void SendConfirmClientWalk(Point oldPoint, Direction direction);
@@ -67,8 +66,7 @@ public interface IWorldClient : ISocketClient
         NotepadType type,
         byte height,
         byte width,
-        string message
-    );
+        string message);
 
     void SendPost(Post post, bool isMail, bool enablePrevBtn = true);
 

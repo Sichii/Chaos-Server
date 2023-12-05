@@ -9,6 +9,7 @@ public interface IPoint
     ///     The X coordinate
     /// </summary>
     int X { get; }
+
     /// <summary>
     ///     The Y coordinate
     /// </summary>

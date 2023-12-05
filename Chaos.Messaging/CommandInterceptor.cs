@@ -17,8 +17,8 @@ namespace Chaos.Messaging;
 /// </summary>
 /// <typeparam name="T">The type of the object executing commands</typeparam>
 /// <typeparam name="TOptions">The type of the options object to use for this command interceptor</typeparam>
-public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> where T: ICommandSubject
-                                                                             where TOptions: class, ICommandInterceptorOptions
+public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T>
+    where T: ICommandSubject where TOptions: class, ICommandInterceptorOptions
 {
     private readonly Dictionary<string, CommandDescriptor> Commands;
     private readonly ILogger<CommandInterceptor<T, TOptions>> Logger;
@@ -28,11 +28,7 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
     /// <summary>
     ///     Creates a new instance of <see cref="CommandInterceptor{T, TOptions}" />
     /// </summary>
-    public CommandInterceptor(
-        IServiceProvider serviceProvider,
-        IOptions<TOptions> options,
-        ILogger<CommandInterceptor<T, TOptions>> logger
-    )
+    public CommandInterceptor(IServiceProvider serviceProvider, IOptions<TOptions> options, ILogger<CommandInterceptor<T, TOptions>> logger)
     {
         ServiceProvider = serviceProvider;
         Options = options.Value;
@@ -84,7 +80,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
                   .WithProperty(source)
                   .LogWarning(
                       "Non-Admin {@SourceType} {@SourceName} tried to execute admin command {@CommandStr}",
-                      source.GetType().Name,
+                      source.GetType()
+                            .Name,
                       source.Name,
                       commandStr);
 
@@ -101,7 +98,10 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
             if (commandName.EqualsI("help") || commandName.EqualsI("commands"))
             {
                 var helpStr = BuildHelpText(source);
-                commandParts = new ArgumentCollection(commandParts.Take(1).Append(helpStr));
+
+                commandParts = new ArgumentCollection(
+                    commandParts.Take(1)
+                                .Append(helpStr));
             }
 
             var commandArgs = new ArgumentCollection(commandParts.Skip(1));
@@ -114,7 +114,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
                       .WithProperty(source)
                       .LogInformation(
                           "{@SourceType} {@SourceName} executed {@CommandStr}",
-                          source.GetType().Name,
+                          source.GetType()
+                                .Name,
                           source.Name,
                           commandStr);
             }
@@ -127,7 +128,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
                   .LogError(
                       e,
                       "{@SourceType} {@SourceName} failed to execute {@Command}",
-                      source.GetType().Name,
+                      source.GetType()
+                            .Name,
                       source.Name,
                       commandStr);
         }
@@ -138,7 +140,8 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
 
     private string BuildHelpText(T source)
     {
-        var commands = Commands.Values.Where(
+        var commands = Commands.Values
+                               .Where(
                                    cmd =>
                                    {
                                        if (cmd.Details.RequiresAdmin)

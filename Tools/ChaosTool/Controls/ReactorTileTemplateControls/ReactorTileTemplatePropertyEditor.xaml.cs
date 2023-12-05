@@ -24,8 +24,8 @@ public sealed partial class ReactorTileTemplatePropertyEditor
     }
 
     #region Tbox Validation
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     private void UserControl_Initialized(object sender, EventArgs e)
@@ -44,7 +44,8 @@ public sealed partial class ReactorTileTemplatePropertyEditor
         template.TemplateKey = TemplateKeyTbox.Text;
         template.ShouldBlockPathfinding = ShouldBlockPathfindingCbox.IsChecked ?? false;
 
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -72,7 +73,9 @@ public sealed partial class ReactorTileTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.ReactorTileTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.ReactorTileTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -82,7 +85,9 @@ public sealed partial class ReactorTileTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.ReactorTileTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.ReactorTileTemplates
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)

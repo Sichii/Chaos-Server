@@ -21,10 +21,24 @@ public sealed class EnumerableConverterTests
         var result = converter.Read(ref reader, typeof(List<int>), options);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeOfType<List<int>>();
-        result.Count.Should().Be(3);
-        result.Should().BeEquivalentTo(new List<int> { 1, 2, 3 });
+        result.Should()
+              .NotBeNull();
+
+        result.Should()
+              .BeOfType<List<int>>();
+
+        result.Count
+              .Should()
+              .Be(3);
+
+        result.Should()
+              .BeEquivalentTo(
+                  new List<int>
+                  {
+                      1,
+                      2,
+                      3
+                  });
     }
 
     [Fact]
@@ -33,7 +47,13 @@ public sealed class EnumerableConverterTests
         // Arrange
         var converter = new EnumerableConverter<List<int>, int>();
         var options = new JsonSerializerOptions();
-        var enumerable = new List<int> { 1, 2, 3 };
+
+        var enumerable = new List<int>
+        {
+            1,
+            2,
+            3
+        };
         const string EXPECTED_JSON = "[1,2,3]";
 
         using var memoryStream = new MemoryStream();
@@ -45,6 +65,7 @@ public sealed class EnumerableConverterTests
         var resultJson = Encoding.UTF8.GetString(memoryStream.ToArray());
 
         // Assert
-        resultJson.Should().Be(EXPECTED_JSON);
+        resultJson.Should()
+                  .Be(EXPECTED_JSON);
     }
 }

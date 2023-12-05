@@ -11,18 +11,42 @@ public sealed class ArrayExtensionsTests
         // Arrange
         var multiDimensionalArray = new[,]
         {
-            { 1, 2, 3 },
-            { 4, 5, 6 },
-            { 7, 8, 9 }
+            {
+                1,
+                2,
+                3
+            },
+            {
+                4,
+                5,
+                6
+            },
+            {
+                7,
+                8,
+                9
+            }
         };
 
         // Act
-        var flattenedArray = multiDimensionalArray.Flatten().ToArray();
+        var flattenedArray = multiDimensionalArray.Flatten()
+                                                  .ToArray();
 
         // Assert
         flattenedArray.Should()
                       .BeEquivalentTo(
-                          new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
+                          new[]
+                          {
+                              1,
+                              2,
+                              3,
+                              4,
+                              5,
+                              6,
+                              7,
+                              8,
+                              9
+                          },
                           options => options.WithStrictOrdering(),
                           "because the array should be flattened left to right, top to bottom");
     }
@@ -33,18 +57,45 @@ public sealed class ArrayExtensionsTests
         // Arrange
         var jaggedArray = new[]
         {
-            new[] { 1, 2, 3 },
-            new[] { 4, 5, 6 },
-            new[] { 7, 8, 9 }
+            new[]
+            {
+                1,
+                2,
+                3
+            },
+            new[]
+            {
+                4,
+                5,
+                6
+            },
+            new[]
+            {
+                7,
+                8,
+                9
+            }
         };
 
         // Act
-        var flattenedArray = jaggedArray.Flatten().ToArray();
+        var flattenedArray = jaggedArray.Flatten()
+                                        .ToArray();
 
         // Assert
         flattenedArray.Should()
                       .BeEquivalentTo(
-                          new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
+                          new[]
+                          {
+                              1,
+                              2,
+                              3,
+                              4,
+                              5,
+                              6,
+                              7,
+                              8,
+                              9
+                          },
                           options => options.WithStrictOrdering(),
                           "because the array should be flattened left to right, top to bottom");
     }
@@ -53,13 +104,38 @@ public sealed class ArrayExtensionsTests
     public void ShuffleInPlace_Should_Randomize_Elements_In_List()
     {
         // Arrange
-        var list = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+        var list = new List<int>
+        {
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20
+        };
 
         // Act
         list.ShuffleInPlace();
 
         // Assert
-        list.Should().NotBeInAscendingOrder("because the elements should be shuffled");
-        list.Should().HaveCount(20, "because no elements should be added or removed");
+        list.Should()
+            .NotBeInAscendingOrder("because the elements should be shuffled");
+
+        list.Should()
+            .HaveCount(20, "because no elements should be added or removed");
     }
 }

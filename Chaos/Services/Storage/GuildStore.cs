@@ -105,7 +105,14 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
         var tier2 = EntityRepository.LoadAndMap<GuildRank, GuildRankSchema>(tier2Path);
         var tier3 = EntityRepository.LoadAndMap<GuildRank, GuildRankSchema>(tier3Path);
 
-        guild.Initialize(new[] { tier0, tier1, tier2, tier3 });
+        guild.Initialize(
+            new[]
+            {
+                tier0,
+                tier1,
+                tier2,
+                tier3
+            });
 
         metricsLogger.LogDebug("Loaded new {@TypeName} entry with {@Key}", nameof(Guild), key);
 

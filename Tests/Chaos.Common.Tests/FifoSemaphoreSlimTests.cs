@@ -33,7 +33,8 @@ public sealed class FifoSemaphoreSlimTests
                           }));
 
         // Assert
-        value.Should().Be(10);
+        value.Should()
+             .Be(10);
     }
 
     [Fact]
@@ -63,7 +64,8 @@ public sealed class FifoSemaphoreSlimTests
                           }));
 
         // Assert
-        value.Should().Be(10);
+        value.Should()
+             .Be(10);
     }
 
     [Fact]

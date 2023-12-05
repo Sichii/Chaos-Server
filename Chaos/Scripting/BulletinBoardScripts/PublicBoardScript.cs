@@ -24,6 +24,7 @@ public sealed class PublicBoardScript : ConfigurableBulletinBoardScriptBase
     private readonly TimeSpan PostRetentionTime;
     private readonly IIntervalTimer PostRetentionTimer;
     public ICollection<string> Moderators { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
     /// <summary>
     ///     The number of hours a post will last before being automatically deleted. Use -1 to never delete posts
     /// </summary>
@@ -38,8 +39,8 @@ public sealed class PublicBoardScript : ConfigurableBulletinBoardScriptBase
     }
 
     /// <inheritdoc />
-    public override bool AllowedToDelete(Aisling aisling, Post post) =>
-        aisling.Name.EqualsI(post.Author) || Moderators.ContainsI(aisling.Name);
+    public override bool AllowedToDelete(Aisling aisling, Post post)
+        => aisling.Name.EqualsI(post.Author) || Moderators.ContainsI(aisling.Name);
 
     /// <inheritdoc />
     public override bool AllowedToHighlight(Aisling aisling) => Moderators.ContainsI(aisling.Name);

@@ -32,6 +32,7 @@ public sealed record ClickDeserializer : ClientPacketDeserializer<ClickArgs>
                 targetPoint = reader.ReadPoint16();
 
                 break;
+
             //i have no idea, coords are in here somehow
             default:
                 throw new ArgumentOutOfRangeException(nameof(clickType), clickType, "Unknown enum value");

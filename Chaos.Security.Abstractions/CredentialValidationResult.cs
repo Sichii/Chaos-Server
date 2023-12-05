@@ -14,34 +14,42 @@ public sealed class CredentialValidationResult
         ///     The validation succeeded
         /// </summary>
         Success,
+
         /// <summary>
         ///     The validation failed because the provided username was invalid
         /// </summary>
         InvalidUsername,
+
         /// <summary>
         ///     The validation failed because the provided password was invalid
         /// </summary>
         InvalidPassword,
+
         /// <summary>
         ///     The validation failed because the provided password was too long
         /// </summary>
         PasswordTooLong,
+
         /// <summary>
         ///     The validation failed because the provided password was too short
         /// </summary>
         PasswordTooShort,
+
         /// <summary>
         ///     The validation failed because the provided username was too long
         /// </summary>
         UsernameTooLong,
+
         /// <summary>
         ///     The validation failed because the provided username was too short
         /// </summary>
         UsernameTooShort,
+
         /// <summary>
         ///     The validation failed because the provided username was not allowed
         /// </summary>
         UsernameNotAllowed,
+
         /// <summary>
         ///     The validation failed because the ip has failed validation too many times
         /// </summary>

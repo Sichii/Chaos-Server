@@ -9,6 +9,7 @@ public sealed record BankSchema
     ///     The amount of gold in the bank
     /// </summary>
     public uint Gold { get; set; }
+
     /// <summary>
     ///     A collection of items in the bank
     /// </summary>

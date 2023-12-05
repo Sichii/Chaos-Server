@@ -23,7 +23,8 @@ public class GetTargetsComponent<TEntity> : IConditionalComponent where TEntity:
         if (direction == Direction.Invalid)
             direction = context.Source.Direction;
 
-        var targetPoints = options.Shape.ResolvePoints(
+        var targetPoints = options.Shape
+                                  .ResolvePoints(
                                       context.TargetPoint,
                                       options.Range,
                                       direction,

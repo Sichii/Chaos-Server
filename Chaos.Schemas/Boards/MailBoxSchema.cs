@@ -9,6 +9,7 @@ public sealed record MailBoxSchema
     ///     A key unique to this mailbox.
     /// </summary>
     public string Key { get; set; } = null!;
+
     /// <summary>
     ///     A collection of posts in the mailbox
     /// </summary>

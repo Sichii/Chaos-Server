@@ -24,8 +24,9 @@ public sealed record BulletinBoardTemplateSchema
     ///     pair, and the value of
     ///     that entry is a dictionary of propertyName-Value pairs
     /// </summary>
-    public IDictionary<string, DynamicVars> ScriptVars { get; set; } =
-        new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, DynamicVars> ScriptVars { get; set; }
+        = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
+
     /// <summary>
     ///     A unique id specific to this template. This must match the file name
     /// </summary>

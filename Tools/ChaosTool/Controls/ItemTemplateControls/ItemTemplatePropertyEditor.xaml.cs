@@ -34,7 +34,9 @@ public sealed partial class ItemTemplatePropertyEditor
         ColorCmbox.ItemsSource = GetEnumNames<DisplayColor>();
         EquipmentTypeCmbox.ItemsSource = GetEnumNames<EquipmentType?>();
         GenderCmbox.ItemsSource = GetEnumNames<Gender?>();
-        PantsColorCmbox.ItemsSource = GetEnumNames<DisplayColor?>().Take(17); //0-15 + null
+
+        PantsColorCmbox.ItemsSource = GetEnumNames<DisplayColor?>()
+            .Take(17); //0-15 + null
         ClassCmbox.ItemsSource = GetEnumNames<BaseClass?>();
         AdvClassCmbox.ItemsSource = GetEnumNames<AdvClass?>();
 
@@ -141,7 +143,9 @@ public sealed partial class ItemTemplatePropertyEditor
         template.IsModifiable = IsModifiableCbox.IsChecked!.Value;
         template.Category = CategoryTbox.Text;
         template.Description = string.IsNullOrEmpty(DescriptionTbox.Text) ? null : DescriptionTbox.Text.FixLineEndings();
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
+
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -214,7 +218,9 @@ public sealed partial class ItemTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.ItemTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.ItemTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -224,7 +230,9 @@ public sealed partial class ItemTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.ItemTemplates.Objects.Where(wrapper => !ReferenceEquals(wrapper, Wrapper))
+            existing = JsonContext.ItemTemplates
+                                  .Objects
+                                  .Where(wrapper => !ReferenceEquals(wrapper, Wrapper))
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
@@ -261,8 +269,8 @@ public sealed partial class ItemTemplatePropertyEditor
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Control

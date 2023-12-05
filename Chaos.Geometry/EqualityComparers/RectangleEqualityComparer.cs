@@ -25,15 +25,12 @@ public sealed class RectangleEqualityComparer : IEqualityComparer<IRectangle>
         if (x.GetType() != y.GetType())
             return false;
 
-        return (x.Bottom == y.Bottom)
-               && (x.Left == y.Left)
-               && (x.Right == y.Right)
-               && (x.Top == y.Top);
+        return (x.Bottom == y.Bottom) && (x.Left == y.Left) && (x.Right == y.Right) && (x.Top == y.Top);
     }
 
     /// <inheritdoc />
-    public int GetHashCode(IRectangle obj) =>
-        HashCode.Combine(
+    public int GetHashCode(IRectangle obj)
+        => HashCode.Combine(
             obj.Bottom,
             obj.Left,
             obj.Right,

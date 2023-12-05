@@ -9,14 +9,17 @@ public sealed class ChannelServiceOptions
     ///     A collection of phrases that can not be used as part of a channel name
     /// </summary>
     public required string[] BlacklistedChannelNamePhrases { get; init; } = Array.Empty<string>();
+
     /// <summary>
     ///     The prefix used to identify channels
     /// </summary>
     public required string ChannelPrefix { get; init; }
+
     /// <summary>
     ///     The maximum length of a channel name
     /// </summary>
     public required int MaxChannelNameLength { get; init; }
+
     /// <summary>
     ///     The minimum length of a channel name
     /// </summary>

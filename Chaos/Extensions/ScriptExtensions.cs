@@ -10,11 +10,16 @@ public static class ScriptExtensions
         this TScripted scripted,
         Type scriptTypeToAdd,
         IScriptFactory<TScript, TScripted> scriptFactory,
-        IPanel<TScripted>? panelToUpdate = null
-    ) where TScripted: IScripted<TScript> where TScript: IScript
+        IPanel<TScripted>? panelToUpdate = null) where TScripted: IScripted<TScript> where TScript: IScript
     {
         var scriptKey = ScriptBase.GetScriptKey(scriptTypeToAdd);
-        var script = scriptFactory.CreateScript(new[] { scriptKey }, scripted);
+
+        var script = scriptFactory.CreateScript(
+            new[]
+            {
+                scriptKey
+            },
+            scripted);
         var scripts = script as IEnumerable<TScript>;
         var composite = (ICompositeScript<TScript>)scripted.Script;
 
@@ -30,8 +35,8 @@ public static class ScriptExtensions
             panelToUpdate.Update(panelEntity.Slot);
     }
 
-    public static TScript? As<TScript>(this IScript script) where TScript: IScript =>
-        script switch
+    public static TScript? As<TScript>(this IScript script) where TScript: IScript
+        => script switch
         {
             TScript typedScript              => typedScript,
             ICompositeScript compositeScript => compositeScript.GetScript<TScript>(),

@@ -51,7 +51,10 @@ public sealed class Mapper : ITypeMapper
         if (!objs.Any())
             yield break;
 
-        var mapper = ResolverMap.GetOrAdd((objs.First().GetType(), typeof(TResult)), ResolveMapper);
+        var mapper = ResolverMap.GetOrAdd(
+            (objs.First()
+                 .GetType(), typeof(TResult)),
+            ResolveMapper);
 
         foreach (var o in objs)
             yield return (TResult)mapper(o);
@@ -81,6 +84,7 @@ public sealed class Mapper : ITypeMapper
         var to = key.To;
 
         var mapperType = typeof(IMapperProfile<,>);
+
         //the mapper's type args could be in either order, so we need to check both orders
         var mapperType1 = mapperType.MakeGenericType(from, to);
         var mapperType2 = mapperType.MakeGenericType(to, from);
@@ -93,7 +97,9 @@ public sealed class Mapper : ITypeMapper
         {
             //the from type could be anything, so explore the from type's entire hierarchy
             //the to type must be what is specified above
-            var possibleFromTypes = from.GetInterfaces().Concat(from.GetBaseTypes()).Prepend(from);
+            var possibleFromTypes = from.GetInterfaces()
+                                        .Concat(from.GetBaseTypes())
+                                        .Prepend(from);
 
             //for each possible from type, check for mappers that use that from type and the specified to type
             foreach (var fromType in possibleFromTypes)
@@ -118,13 +124,15 @@ public sealed class Mapper : ITypeMapper
 
         //creates an expression that calls the mapper's Map method that takes an object of "From" type and returns an object of "To" type
         //taking in an Object, converting it to the "From" type, and then calling the Map method on the mapper
-        var genericInterfaceTypes = service.GetType().ExtractGenericInterfaces(typeof(IMapperProfile<,>));
+        var genericInterfaceTypes = service.GetType()
+                                           .ExtractGenericInterfaces(typeof(IMapperProfile<,>));
 
         //find the method with the correct signature
         var method = genericInterfaceTypes.SelectMany(iFaceType => iFaceType.GetMethods())
                                           .First(
                                               m => m.Name.EqualsI(nameof(IMapperProfile<object, object>.Map))
-                                                   && m.GetParameters().Any(p => p.ParameterType == from)
+                                                   && m.GetParameters()
+                                                       .Any(p => p.ParameterType == from)
                                                    && (m.ReturnType == to));
 
         //create an expression that takes an object, converts it, and then calls the map method

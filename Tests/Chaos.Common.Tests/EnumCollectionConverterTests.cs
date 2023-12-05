@@ -24,15 +24,29 @@ public sealed class EnumCollectionConverterTests
         var result = converter.Read(ref reader, typeof(EnumCollection), options);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeOfType<EnumCollection>();
-        result.Count().Should().Be(2);
+        result.Should()
+              .NotBeNull();
 
-        result.TryGetValue<SampleEnum1>(out var enumType1Value).Should().BeTrue();
-        enumType1Value.Should().Be(SampleEnum1.Value1);
+        result.Should()
+              .BeOfType<EnumCollection>();
 
-        result.TryGetValue<SampleEnum2>(out var enumType2Value).Should().BeTrue();
-        enumType2Value.Should().Be(SampleEnum2.Value2);
+        result.Count()
+              .Should()
+              .Be(2);
+
+        result.TryGetValue<SampleEnum1>(out var enumType1Value)
+              .Should()
+              .BeTrue();
+
+        enumType1Value.Should()
+                      .Be(SampleEnum1.Value1);
+
+        result.TryGetValue<SampleEnum2>(out var enumType2Value)
+              .Should()
+              .BeTrue();
+
+        enumType2Value.Should()
+                      .Be(SampleEnum2.Value2);
     }
 
     [Fact]
@@ -56,6 +70,7 @@ public sealed class EnumCollectionConverterTests
         var resultJson = Encoding.UTF8.GetString(memoryStream.ToArray());
 
         // Assert
-        resultJson.Should().BeEquivalentToJson(EXPECTED_JSON);
+        resultJson.Should()
+                  .BeEquivalentToJson(EXPECTED_JSON);
     }
 }

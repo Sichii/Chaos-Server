@@ -12,10 +12,12 @@ public sealed record CooldownArgs : ISendArgs
     ///     The cooldown of the ability in seconds
     /// </summary>
     public uint CooldownSecs { get; set; }
+
     /// <summary>
     ///     Whether or not the ability is a skill
     /// </summary>
     public bool IsSkill { get; set; }
+
     /// <summary>
     ///     The slot the ability is in
     /// </summary>

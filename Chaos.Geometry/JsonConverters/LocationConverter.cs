@@ -27,6 +27,6 @@ public sealed class LocationConverter : JsonConverter<Location>
     }
 
     /// <inheritdoc />
-    public override void Write(Utf8JsonWriter writer, Location value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(ILocation.ToString(value));
+    public override void Write(Utf8JsonWriter writer, Location value, JsonSerializerOptions options)
+        => writer.WriteStringValue(ILocation.ToString(value));
 }

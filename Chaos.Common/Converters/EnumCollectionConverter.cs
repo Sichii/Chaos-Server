@@ -51,7 +51,9 @@ public sealed class EnumCollectionConverter : JsonConverter<EnumCollection>
         foreach (var kvp in value)
         {
             var flagName = kvp.Key.Name;
-            var flagValue = Enum.ToObject(kvp.Key, kvp.Value).ToString();
+
+            var flagValue = Enum.ToObject(kvp.Key, kvp.Value)
+                                .ToString();
 
             serializedDictionary.Add(flagName, flagValue!);
         }

@@ -19,11 +19,7 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
     private readonly IScriptProvider ScriptProvider;
     private readonly ISimpleCache SimpleCache;
 
-    public SpellMapperProfile(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ITypeMapper mapper
-    )
+    public SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
     {
         SimpleCache = simpleCache;
         ScriptProvider = scriptProvider;
@@ -32,16 +28,17 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
 
     public Spell Map(SpellInfo obj) => throw new NotImplementedException();
 
-    SpellInfo IMapperProfile<Spell, SpellInfo>.Map(Spell obj) => new()
-    {
-        CastLines = obj.CastLines,
-        Name = obj.Template.Name,
-        PanelName = obj.PanelDisplayName,
-        Prompt = obj.Template.Prompt ?? string.Empty,
-        Slot = obj.Slot,
-        SpellType = obj.Template.SpellType,
-        Sprite = obj.Template.PanelSprite
-    };
+    SpellInfo IMapperProfile<Spell, SpellInfo>.Map(Spell obj)
+        => new()
+        {
+            CastLines = obj.CastLines,
+            Name = obj.Template.Name,
+            PanelName = obj.PanelDisplayName,
+            Prompt = obj.Template.Prompt ?? string.Empty,
+            Slot = obj.Slot,
+            SpellType = obj.Template.SpellType,
+            Sprite = obj.Template.PanelSprite
+        };
 
     public Spell Map(SpellSchema obj)
     {
@@ -62,7 +59,9 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
 
     public SpellSchema Map(Spell obj)
     {
-        var extraScriptKeys = obj.ScriptKeys.Except(obj.Template.ScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var extraScriptKeys = obj.ScriptKeys
+                                 .Except(obj.Template.ScriptKeys)
+                                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var ret = new SpellSchema
         {
@@ -76,26 +75,27 @@ public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
         return ret;
     }
 
-    public SpellTemplate Map(SpellTemplateSchema obj) => new()
-    {
-        TemplateKey = obj.TemplateKey,
-        Name = obj.Name,
-        ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-        CastLines = obj.CastLines,
-        Prompt = obj.Prompt,
-        SpellType = obj.SpellType,
-        Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
-        PanelSprite = obj.PanelSprite,
-        ScriptVars = new Dictionary<string, IScriptVars>(
-            obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
-            StringComparer.OrdinalIgnoreCase),
-        Description = obj.Description,
-        LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements),
-        Level = obj.Level,
-        Class = obj.Class,
-        AdvClass = obj.AdvClass,
-        RequiresMaster = obj.RequiresMaster
-    };
+    public SpellTemplate Map(SpellTemplateSchema obj)
+        => new()
+        {
+            TemplateKey = obj.TemplateKey,
+            Name = obj.Name,
+            ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
+            CastLines = obj.CastLines,
+            Prompt = obj.Prompt,
+            SpellType = obj.SpellType,
+            Cooldown = obj.CooldownMs == null ? null : TimeSpan.FromMilliseconds(obj.CooldownMs.Value),
+            PanelSprite = obj.PanelSprite,
+            ScriptVars = new Dictionary<string, IScriptVars>(
+                obj.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+                StringComparer.OrdinalIgnoreCase),
+            Description = obj.Description,
+            LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements),
+            Level = obj.Level,
+            Class = obj.Class,
+            AdvClass = obj.AdvClass,
+            RequiresMaster = obj.RequiresMaster
+        };
 
     public SpellTemplateSchema Map(SpellTemplate obj) => throw new NotImplementedException();
 }

@@ -32,7 +32,9 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => LogValues.Concat(ExtraProperties).GetEnumerator();
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        => LogValues.Concat(ExtraProperties)
+                    .GetEnumerator();
 
     /// <inheritdoc />
     public bool IsEnabled(LogLevel logLevel) => Logger.IsEnabled(logLevel);
@@ -55,8 +57,7 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
         EventId eventId,
         TState state,
         Exception? exception,
-        Func<TState, Exception?, string> formatter
-    )
+        Func<TState, Exception?, string> formatter)
     {
         if (StartTimeStamp.HasValue)
             ExtraProperties.ReplaceBy(

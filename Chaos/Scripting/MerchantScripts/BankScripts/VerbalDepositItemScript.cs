@@ -18,11 +18,7 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
     public VerbalDepositItemScript(Merchant subject, ILogger<VerbalDepositItemScript> logger)
         : base(subject, logger) { }
 
-    protected virtual void DepositItem(
-        Aisling source,
-        int amount,
-        string itemName
-    )
+    protected virtual void DepositItem(Aisling source, int amount, string itemName)
     {
         var result = ComplexActionHelper.DepositItem(source, itemName, amount);
 

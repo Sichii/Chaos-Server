@@ -12,7 +12,8 @@ public abstract class ReactorTileScriptBase : SubjectiveScriptBase<ReactorTile>,
 
     /// <inheritdoc />
     protected ReactorTileScriptBase(ReactorTile subject)
-        : base(subject) => Point = Point.From(Subject);
+        : base(subject)
+        => Point = Point.From(Subject);
 
     /// <inheritdoc />
     public virtual void OnClicked(Aisling source) { }

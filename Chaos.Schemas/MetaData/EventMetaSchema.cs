@@ -15,6 +15,7 @@ public sealed record EventMetaSchema
     /// </summary>
     [JsonRequired]
     public string Id { get; set; } = null!;
+
     /// <summary>
     ///     Default null<br />If set, this is the page that the event will show up on(starting at index of 1). If null, the
     ///     page will be determined by the event's lowest qualifying circle

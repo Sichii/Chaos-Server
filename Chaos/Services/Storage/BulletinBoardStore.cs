@@ -22,10 +22,9 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         IEntityRepository entityRepository,
         IOptions<BulletinBoardStoreOptions> options,
         ILogger<BulletinBoardStore> logger,
-        ISimpleCache simpleCache
-    )
-        : base(entityRepository, options, logger) =>
-        SimpleCache = simpleCache;
+        ISimpleCache simpleCache)
+        : base(entityRepository, options, logger)
+        => SimpleCache = simpleCache;
 
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

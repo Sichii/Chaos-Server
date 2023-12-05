@@ -22,8 +22,7 @@ public sealed class PointEqualityComparer : IEqualityComparer<IPoint>
         if (ReferenceEquals(y, null))
             return false;
 
-        return (x.X == y.X)
-               && (x.Y == y.Y);
+        return (x.X == y.X) && (x.Y == y.Y);
     }
 
     /// <inheritdoc />

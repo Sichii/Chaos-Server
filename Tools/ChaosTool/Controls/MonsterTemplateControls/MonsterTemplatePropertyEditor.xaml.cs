@@ -81,10 +81,17 @@ public sealed partial class MonsterTemplatePropertyEditor
         statSheet.Con = ParsePrimitive<int>(ConTbox.Text);
         statSheet.Dex = ParsePrimitive<int>(DexTbox.Text);
 
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
-        template.SpellTemplateKeys = SpellTemplateKeysViewItems.ToStrings().ToList();
-        template.SkillTemplateKeys = SkillTemplateKeysViewItems.ToStrings().ToList();
-        template.LootTableKeys = LootTableKeysViewItems.ToStrings().ToList();
+        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                 .ToList();
+
+        template.SpellTemplateKeys = SpellTemplateKeysViewItems.ToStrings()
+                                                               .ToList();
+
+        template.SkillTemplateKeys = SkillTemplateKeysViewItems.ToStrings()
+                                                               .ToList();
+
+        template.LootTableKeys = LootTableKeysViewItems.ToStrings()
+                                                       .ToList();
 
         ListItem.Name = template.TemplateKey;
     }
@@ -150,7 +157,9 @@ public sealed partial class MonsterTemplatePropertyEditor
     {
         try
         {
-            var existing = JsonContext.MonsterTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.MonsterTemplates
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -160,7 +169,9 @@ public sealed partial class MonsterTemplatePropertyEditor
                 return;
             }
 
-            existing = JsonContext.MonsterTemplates.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.MonsterTemplates
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)
@@ -197,8 +208,8 @@ public sealed partial class MonsterTemplatePropertyEditor
     #region Tbox Validation
     private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region ScriptKeys Controls

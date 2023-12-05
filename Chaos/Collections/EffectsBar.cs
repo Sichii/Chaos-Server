@@ -133,7 +133,9 @@ public sealed class EffectsBar : IEffectsBar
         foreach (var effect in Effects.Values)
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
 
-        var orderedEffects = Effects.Values.OrderBy(e => e.Remaining).ToList();
+        var orderedEffects = Effects.Values
+                                    .OrderBy(e => e.Remaining)
+                                    .ToList();
 
         //re-apply all effects sorted by ascending remaining duration
         foreach (var effect in orderedEffects)

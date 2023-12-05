@@ -14,8 +14,7 @@ public interface IApplyDamageScript : IFunctionalScript
         Creature target,
         IScript script,
         int damage,
-        Element? elementOverride = null
-    );
+        Element? elementOverride = null);
 
     static virtual IApplyDamageScript Create() => throw new NotImplementedException("Override this method in your implementation");
 }

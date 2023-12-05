@@ -10,7 +10,5 @@ public interface IPanelEntityFactory<out T> where T: PanelEntityBase
 }
 
 public interface IItemFactory : IPanelEntityFactory<Item> { }
-
 public interface ISkillFactory : IPanelEntityFactory<Skill> { }
-
 public interface ISpellFactory : IPanelEntityFactory<Spell> { }

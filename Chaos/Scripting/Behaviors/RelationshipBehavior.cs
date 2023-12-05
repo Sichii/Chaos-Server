@@ -5,31 +5,32 @@ namespace Chaos.Scripting.Behaviors;
 
 public class RelationshipBehavior
 {
-    public virtual bool IsFriendlyTo(Creature source, Creature target) => source switch
-    {
-        Aisling aisling => target switch
+    public virtual bool IsFriendlyTo(Creature source, Creature target)
+        => source switch
         {
-            Aisling other  => IsFriendlyTo(aisling, other),
-            Merchant other => IsFriendlyTo(aisling, other),
-            Monster other  => IsFriendlyTo(aisling, other),
-            _              => throw new ArgumentOutOfRangeException(nameof(target))
-        },
-        Merchant merchant => target switch
-        {
-            Aisling other  => IsFriendlyTo(merchant, other),
-            Merchant other => IsFriendlyTo(merchant, other),
-            Monster other  => IsFriendlyTo(merchant, other),
-            _              => throw new ArgumentOutOfRangeException(nameof(target))
-        },
-        Monster monster => target switch
-        {
-            Aisling other  => IsFriendlyTo(monster, other),
-            Merchant other => IsFriendlyTo(monster, other),
-            Monster other  => IsFriendlyTo(monster, other),
-            _              => throw new ArgumentOutOfRangeException(nameof(target))
-        },
-        _ => throw new ArgumentOutOfRangeException(nameof(source))
-    };
+            Aisling aisling => target switch
+            {
+                Aisling other  => IsFriendlyTo(aisling, other),
+                Merchant other => IsFriendlyTo(aisling, other),
+                Monster other  => IsFriendlyTo(aisling, other),
+                _              => throw new ArgumentOutOfRangeException(nameof(target))
+            },
+            Merchant merchant => target switch
+            {
+                Aisling other  => IsFriendlyTo(merchant, other),
+                Merchant other => IsFriendlyTo(merchant, other),
+                Monster other  => IsFriendlyTo(merchant, other),
+                _              => throw new ArgumentOutOfRangeException(nameof(target))
+            },
+            Monster monster => target switch
+            {
+                Aisling other  => IsFriendlyTo(monster, other),
+                Merchant other => IsFriendlyTo(monster, other),
+                Monster other  => IsFriendlyTo(monster, other),
+                _              => throw new ArgumentOutOfRangeException(nameof(target))
+            },
+            _ => throw new ArgumentOutOfRangeException(nameof(source))
+        };
 
     protected virtual bool IsFriendlyTo(Aisling source, Merchant target) => true;
 
@@ -66,31 +67,32 @@ public class RelationshipBehavior
 
     protected virtual bool IsFriendlyTo(Monster source, Monster target) => source.Equals(target);
 
-    public virtual bool IsHostileTo(Creature source, Creature target) => source switch
-    {
-        Aisling aisling => target switch
+    public virtual bool IsHostileTo(Creature source, Creature target)
+        => source switch
         {
-            Aisling other  => IsHostileTo(aisling, other),
-            Merchant other => IsHostileTo(aisling, other),
-            Monster other  => IsHostileTo(aisling, other),
-            _              => throw new ArgumentOutOfRangeException(nameof(target))
-        },
-        Merchant merchant => target switch
-        {
-            Aisling other  => IsHostileTo(merchant, other),
-            Merchant other => IsHostileTo(merchant, other),
-            Monster other  => IsHostileTo(merchant, other),
-            _              => throw new ArgumentOutOfRangeException(nameof(target))
-        },
-        Monster monster => target switch
-        {
-            Aisling other  => IsHostileTo(monster, other),
-            Merchant other => IsHostileTo(monster, other),
-            Monster other  => IsHostileTo(monster, other),
-            _              => throw new ArgumentOutOfRangeException(nameof(target))
-        },
-        _ => throw new ArgumentOutOfRangeException(nameof(source))
-    };
+            Aisling aisling => target switch
+            {
+                Aisling other  => IsHostileTo(aisling, other),
+                Merchant other => IsHostileTo(aisling, other),
+                Monster other  => IsHostileTo(aisling, other),
+                _              => throw new ArgumentOutOfRangeException(nameof(target))
+            },
+            Merchant merchant => target switch
+            {
+                Aisling other  => IsHostileTo(merchant, other),
+                Merchant other => IsHostileTo(merchant, other),
+                Monster other  => IsHostileTo(merchant, other),
+                _              => throw new ArgumentOutOfRangeException(nameof(target))
+            },
+            Monster monster => target switch
+            {
+                Aisling other  => IsHostileTo(monster, other),
+                Merchant other => IsHostileTo(monster, other),
+                Monster other  => IsHostileTo(monster, other),
+                _              => throw new ArgumentOutOfRangeException(nameof(target))
+            },
+            _ => throw new ArgumentOutOfRangeException(nameof(source))
+        };
 
     protected virtual bool IsHostileTo(Aisling source, Aisling target)
     {

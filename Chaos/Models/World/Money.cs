@@ -13,7 +13,8 @@ public sealed class Money : GroundEntity
             "Gold",
             GetSprite(amount),
             mapInstance,
-            point) => Amount = amount;
+            point)
+        => Amount = amount;
 
     public static ushort GetSprite(int amount)
     {

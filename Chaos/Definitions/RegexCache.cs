@@ -12,6 +12,7 @@ public static partial class RegexCache
         DepositRegex4(),
         DepositRegex5(),
         DepositRegex6());
+
     public static readonly ICollection<Regex> WITHDRAW_PATTERNS = ImmutableList.Create(
         WithdrawRegex1(),
         WithdrawRegex2(),
@@ -19,13 +20,14 @@ public static partial class RegexCache
         WithdrawRegex4(),
         WithdrawRegex5(),
         WithdrawRegex6());
-    public static readonly ICollection<Regex> ITEM_CHECK_PATTERNS = ImmutableList.Create(
-        ItemCheckRegex1(),
-        ItemCheckRegex2());
+
+    public static readonly ICollection<Regex> ITEM_CHECK_PATTERNS = ImmutableList.Create(ItemCheckRegex1(), ItemCheckRegex2());
+
     public static readonly ICollection<Regex> SELL_ITEM_PATTERNS = ImmutableList.Create(
         SellItemRegex1(),
         SellItemRegex2(),
         SellItemRegex3());
+
     public static readonly ICollection<Regex> BUY_ITEM_PATTERNS = ImmutableList.Create(BuyItemRegex1());
 
     [GeneratedRegex(@"^I (?:will )?buy (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]

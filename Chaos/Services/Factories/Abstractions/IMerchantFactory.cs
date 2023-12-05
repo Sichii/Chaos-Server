@@ -10,6 +10,5 @@ public interface IMerchantFactory
         string templateKey,
         MapInstance mapInstance,
         IPoint point,
-        ICollection<string>? extraScriptKeys = null
-    );
+        ICollection<string>? extraScriptKeys = null);
 }

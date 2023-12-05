@@ -106,7 +106,10 @@ public class JsonContext
         services.ConfigureOptions<OptionsValidator>();
 
         services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddSingleton<IStagingDirectory>(sp => sp.GetRequiredService<IOptions<ChaosOptions>>().Value);
+
+        services.AddSingleton<IStagingDirectory>(
+            sp => sp.GetRequiredService<IOptions<ChaosOptions>>()
+                    .Value);
 
         services.AddStorage();
 
@@ -162,8 +165,8 @@ public class JsonContext
         await LoadAsync();
     }
 
-    public static Task SaveChangesAsync() =>
-        Task.WhenAll(
+    public static Task SaveChangesAsync()
+        => Task.WhenAll(
             LootTables.SaveChangesAsync(),
             Aislings.SaveChangesAsync(),
             MapInstances.SaveChangesAsync(),

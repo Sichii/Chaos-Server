@@ -19,8 +19,11 @@ public sealed class TypeExtensionsTests
         var result = yetAnotherDerivedType.ExtractGenericBaseType(typeof(AnotherDerived<>));
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().Be(typeof(AnotherDerived<string>));
+        result.Should()
+              .NotBeNull();
+
+        result.Should()
+              .Be(typeof(AnotherDerived<string>));
     }
 
     [Fact]
@@ -33,8 +36,11 @@ public sealed class TypeExtensionsTests
         var result = derivedType.ExtractGenericBaseType(typeof(Base<>));
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().Be(typeof(Base<int>));
+        result.Should()
+              .NotBeNull();
+
+        result.Should()
+              .Be(typeof(Base<int>));
     }
 
     [Fact]
@@ -47,7 +53,8 @@ public sealed class TypeExtensionsTests
         var result = derivedType.ExtractGenericBaseType(typeof(AnotherDerived<>));
 
         // Assert
-        result.Should().BeNull();
+        result.Should()
+              .BeNull();
     }
 
     [Fact]
@@ -60,7 +67,8 @@ public sealed class TypeExtensionsTests
         var result = derivedType.ExtractGenericInterfaces(typeof(IAnotherDerived<>));
 
         // Assert
-        result.Should().BeEmpty();
+        result.Should()
+              .BeEmpty();
     }
 
     [Fact]
@@ -73,7 +81,8 @@ public sealed class TypeExtensionsTests
         var result = myClassType.ExtractGenericInterfaces(typeof(IAnotherDerived<>));
 
         // Assert
-        result.Should().BeEmpty();
+        result.Should()
+              .BeEmpty();
     }
 
     [Fact]
@@ -87,8 +96,11 @@ public sealed class TypeExtensionsTests
                                           .ToList();
 
         // Assert
-        result.Should().NotBeEmpty();
-        result.Should().Contain(typeof(IAnotherDerived<string>));
+        result.Should()
+              .NotBeEmpty();
+
+        result.Should()
+              .Contain(typeof(IAnotherDerived<string>));
     }
 
     [Fact]
@@ -102,8 +114,11 @@ public sealed class TypeExtensionsTests
                                 .ToList();
 
         // Assert
-        result.Should().NotBeEmpty();
-        result.Should().Contain(typeof(IBase<int>));
+        result.Should()
+              .NotBeEmpty();
+
+        result.Should()
+              .Contain(typeof(IBase<int>));
     }
 
     [Fact]
@@ -113,11 +128,15 @@ public sealed class TypeExtensionsTests
         var derivedType = typeof(YetAnotherDerived);
 
         // Act
-        var result = derivedType.GetBaseTypes().ToList();
+        var result = derivedType.GetBaseTypes()
+                                .ToList();
 
         // Assert
-        result.Should().NotBeEmpty();
-        result.Should().ContainInOrder(typeof(AnotherDerived<string>), typeof(Base<string>), typeof(object));
+        result.Should()
+              .NotBeEmpty();
+
+        result.Should()
+              .ContainInOrder(typeof(AnotherDerived<string>), typeof(Base<string>), typeof(object));
     }
 
     [Fact]
@@ -130,7 +149,8 @@ public sealed class TypeExtensionsTests
         var result = derivedType.HasBaseType(typeof(AnotherDerived<>));
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -143,7 +163,8 @@ public sealed class TypeExtensionsTests
         var result = derivedType.HasBaseType(typeof(Base<string>));
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -157,7 +178,8 @@ public sealed class TypeExtensionsTests
         var result = derivedType.HasBaseType(baseType);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -170,7 +192,8 @@ public sealed class TypeExtensionsTests
         var result = derivedType.HasBaseType(typeof(Base<>));
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -183,7 +206,8 @@ public sealed class TypeExtensionsTests
         var result = classType.HasInterface(typeof(IDerived));
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -196,7 +220,8 @@ public sealed class TypeExtensionsTests
         var result = classType.HasInterface(typeof(IBase<>));
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -209,7 +234,8 @@ public sealed class TypeExtensionsTests
         var result = classType.HasInterface(typeof(IBase<int>));
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -223,7 +249,8 @@ public sealed class TypeExtensionsTests
         var result = classType.HasInterface(interfaceType);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -236,7 +263,8 @@ public sealed class TypeExtensionsTests
         var result = nonCompilerGeneratedType.IsCompilerGenerated();
 
         // Assert
-        result.Should().BeFalse();
+        result.Should()
+              .BeFalse();
     }
 
     [Fact]
@@ -249,7 +277,8 @@ public sealed class TypeExtensionsTests
         var result = compilerGeneratedType.IsCompilerGenerated();
 
         // Assert
-        result.Should().BeTrue();
+        result.Should()
+              .BeTrue();
     }
 
     [Fact]
@@ -263,8 +292,11 @@ public sealed class TypeExtensionsTests
                                            .ToList();
 
         // Assert
-        implementations.Should().Contain(typeof(MyDerivedClass));
-        implementations.Should().NotContain(interfaceType);
+        implementations.Should()
+                       .Contain(typeof(MyDerivedClass));
+
+        implementations.Should()
+                       .NotContain(interfaceType);
     }
 
     [Fact]
@@ -278,8 +310,11 @@ public sealed class TypeExtensionsTests
                                       .ToList();
 
         // Assert
-        implementations.Should().Contain(typeof(MyDerivedClass));
-        implementations.Should().NotContain(baseType);
+        implementations.Should()
+                       .Contain(typeof(MyDerivedClass));
+
+        implementations.Should()
+                       .NotContain(baseType);
     }
 
     #region MockTypes

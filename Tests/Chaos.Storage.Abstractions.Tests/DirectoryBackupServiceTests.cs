@@ -34,9 +34,11 @@ public sealed class DirectoryBackupServiceTests : IDisposable
         Directory.CreateDirectory(Options.Value.BackupDirectory);
     }
 
-    public void Dispose() =>
-        // Clean up test directory after each test run
-        Directory.Delete(TestDirectory, true);
+    public void Dispose()
+        =>
+
+            // Clean up test directory after each test run
+            Directory.Delete(TestDirectory, true);
 
     [Fact]
     public async Task HandleBackupRetention_Should_Delete_Old_Backups()
@@ -51,7 +53,9 @@ public sealed class DirectoryBackupServiceTests : IDisposable
         await BackupService.HandleBackupRetentionAsync(Options.Value.BackupDirectory, token);
 
         // Assert
-        File.Exists(oldBackup).Should().BeFalse();
+        File.Exists(oldBackup)
+            .Should()
+            .BeFalse();
     }
 
     [Fact]
@@ -64,13 +68,16 @@ public sealed class DirectoryBackupServiceTests : IDisposable
         var backupFilePath = Path.Combine(backupDirectory, "backup.zip");
 
         // Create a backup file with today's date
-        await File.Create(backupFilePath).DisposeAsync();
+        await File.Create(backupFilePath)
+                  .DisposeAsync();
 
         // Act
         await BackupService.HandleBackupRetentionAsync(backupDirectory, token);
 
         // Assert
-        File.Exists(backupFilePath).Should().BeTrue("because the backup is within the retention period and should not be deleted");
+        File.Exists(backupFilePath)
+            .Should()
+            .BeTrue("because the backup is within the retention period and should not be deleted");
     }
 
     [Fact]
@@ -95,15 +102,20 @@ public sealed class DirectoryBackupServiceTests : IDisposable
 
         // Assert
         var backupFiles = Directory.GetFiles(backupDirectory, "*.zip", SearchOption.AllDirectories);
-        backupFiles.Should().NotBeEmpty();
+
+        backupFiles.Should()
+                   .NotBeEmpty();
 
         // Unzip the backup and verify its contents
         var backupPath = backupFiles.First();
         var extractPath = Path.Combine(TestDirectory, "Extracted");
         ZipFile.ExtractToDirectory(backupPath, extractPath);
 
-        (await File.ReadAllTextAsync(Path.Combine(extractPath, FILE1_NAME))).Should().Be(FILE1_CONTENT);
-        (await File.ReadAllTextAsync(Path.Combine(extractPath, FILE2_NAME))).Should().Be(FILE2_CONTENT);
+        (await File.ReadAllTextAsync(Path.Combine(extractPath, FILE1_NAME))).Should()
+                                                                            .Be(FILE1_CONTENT);
+
+        (await File.ReadAllTextAsync(Path.Combine(extractPath, FILE2_NAME))).Should()
+                                                                            .Be(FILE2_CONTENT);
     }
 
     [Fact]
@@ -117,6 +129,8 @@ public sealed class DirectoryBackupServiceTests : IDisposable
 
         // Assert
         var backupFiles = Directory.GetFiles(Options.Value.BackupDirectory, "*.zip");
-        backupFiles.Should().BeEmpty();
+
+        backupFiles.Should()
+                   .BeEmpty();
     }
 }

@@ -27,6 +27,6 @@ public sealed class PointConverter : JsonConverter<Point>
     }
 
     /// <inheritdoc />
-    public override void Write(Utf8JsonWriter writer, Point value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(IPoint.ToString(value));
+    public override void Write(Utf8JsonWriter writer, Point value, JsonSerializerOptions options)
+        => writer.WriteStringValue(IPoint.ToString(value));
 }

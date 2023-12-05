@@ -14,8 +14,8 @@ public class WithdrawGoldScript : DialogScriptBase
 
     /// <inheritdoc />
     public WithdrawGoldScript(Dialog subject, ILogger<WithdrawGoldScript> logger)
-        : base(subject) =>
-        Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     /// <inheritdoc />
     public override void OnDisplaying(Aisling source) => Subject.InjectTextParameters(source.Bank.Gold);
@@ -39,10 +39,7 @@ public class WithdrawGoldScript : DialogScriptBase
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
-                      .LogInformation(
-                          "Aisling {@AislingName} withdrew {Amount} gold from the bank",
-                          source,
-                          amount);
+                      .LogInformation("Aisling {@AislingName} withdrew {Amount} gold from the bank", source, amount);
 
                 break;
             case ComplexActionHelper.WithdrawGoldResult.TooMuchGold:

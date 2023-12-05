@@ -175,8 +175,8 @@ public record StatSheet : Attributes
 
     public decimal ManaPercent => Math.Clamp(CurrentMp / (decimal)EffectiveMaximumMp * 100, 0, 100);
 
-    public static StatSheet Maxed =>
-        new()
+    public static StatSheet Maxed
+        => new()
         {
             _currentHp = int.MaxValue,
             _currentMp = int.MaxValue,
@@ -212,23 +212,23 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _spellDamagePctMod, other.SpellDamagePct);
     }
 
-    public void AddHealthPct(int pct) => InterlockedEx.SetValue(
-        ref _currentHp,
-        () => (int)Math.Clamp(EffectiveMaximumHp * (pct + HealthPercent) / 100m, 0, EffectiveMaximumHp));
+    public void AddHealthPct(int pct)
+        => InterlockedEx.SetValue(
+            ref _currentHp,
+            () => (int)Math.Clamp(EffectiveMaximumHp * (pct + HealthPercent) / 100m, 0, EffectiveMaximumHp));
 
-    public void AddHp(int amount) => InterlockedEx.SetValue(
-        ref _currentHp,
-        () => (int)Math.Clamp(_currentHp + amount, 0, EffectiveMaximumHp));
+    public void AddHp(int amount)
+        => InterlockedEx.SetValue(ref _currentHp, () => (int)Math.Clamp(_currentHp + amount, 0, EffectiveMaximumHp));
 
     public void AddLevel(int amount = 1) => Interlocked.Add(ref _level, amount);
 
-    public void AddManaPct(int pct) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => (int)Math.Clamp(EffectiveMaximumMp * (pct + ManaPercent) / 100m, 0, EffectiveMaximumMp));
+    public void AddManaPct(int pct)
+        => InterlockedEx.SetValue(
+            ref _currentMp,
+            () => (int)Math.Clamp(EffectiveMaximumMp * (pct + ManaPercent) / 100m, 0, EffectiveMaximumMp));
 
-    public void AddMp(int amount) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => (int)Math.Clamp(_currentMp + amount, 0, EffectiveMaximumMp));
+    public void AddMp(int amount)
+        => InterlockedEx.SetValue(ref _currentMp, () => (int)Math.Clamp(_currentMp + amount, 0, EffectiveMaximumMp));
 
     public int CalculateEffectiveAssailInterval(int baseAssailIntervalMs)
     {
@@ -240,39 +240,43 @@ public record StatSheet : Attributes
         return Convert.ToInt32(baseAssailIntervalMs / (1 + modifier));
     }
 
-    public int GetBaseStat(Stat stat) => stat switch
-    {
-        Stat.STR => Str,
-        Stat.DEX => Dex,
-        Stat.INT => Int,
-        Stat.WIS => Wis,
-        Stat.CON => Con,
-        _        => throw new ArgumentOutOfRangeException()
-    };
+    public int GetBaseStat(Stat stat)
+        => stat switch
+        {
+            Stat.STR => Str,
+            Stat.DEX => Dex,
+            Stat.INT => Int,
+            Stat.WIS => Wis,
+            Stat.CON => Con,
+            _        => throw new ArgumentOutOfRangeException()
+        };
 
-    public int GetEffectiveStat(Stat stat) => stat switch
-    {
-        Stat.STR => EffectiveStr,
-        Stat.DEX => EffectiveDex,
-        Stat.INT => EffectiveInt,
-        Stat.WIS => EffectiveWis,
-        Stat.CON => EffectiveCon,
-        _        => throw new ArgumentOutOfRangeException()
-    };
+    public int GetEffectiveStat(Stat stat)
+        => stat switch
+        {
+            Stat.STR => EffectiveStr,
+            Stat.DEX => EffectiveDex,
+            Stat.INT => EffectiveInt,
+            Stat.WIS => EffectiveWis,
+            Stat.CON => EffectiveCon,
+            _        => throw new ArgumentOutOfRangeException()
+        };
 
     public void SetDefenseElement(Element element) => _defenseElement = element;
 
-    public void SetHealthPct(decimal pct) => InterlockedEx.SetValue(
-        ref _currentHp,
-        () => Convert.ToInt32(Math.Clamp(EffectiveMaximumHp * pct / 100m, 0, EffectiveMaximumHp)));
+    public void SetHealthPct(decimal pct)
+        => InterlockedEx.SetValue(
+            ref _currentHp,
+            () => Convert.ToInt32(Math.Clamp(EffectiveMaximumHp * pct / 100m, 0, EffectiveMaximumHp)));
 
     public void SetHp(int amount) => Interlocked.Exchange(ref _currentHp, amount);
 
     public void SetLevel(int level) => Interlocked.Exchange(ref _level, level);
 
-    public void SetManaPct(decimal pct) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => Convert.ToInt32(Math.Clamp(EffectiveMaximumMp * pct / 100m, 0, EffectiveMaximumMp)));
+    public void SetManaPct(decimal pct)
+        => InterlockedEx.SetValue(
+            ref _currentMp,
+            () => Convert.ToInt32(Math.Clamp(EffectiveMaximumMp * pct / 100m, 0, EffectiveMaximumMp)));
 
     public void SetMp(int amount) => Interlocked.Exchange(ref _currentMp, amount);
 
@@ -298,9 +302,10 @@ public record StatSheet : Attributes
         Interlocked.Add(ref _spellDamagePctMod, -other.SpellDamagePct);
     }
 
-    public void SubtractHealthPct(decimal pct) => InterlockedEx.SetValue(
-        ref _currentHp,
-        () => Convert.ToInt32(Math.Clamp(EffectiveMaximumHp * (HealthPercent - pct) / 100m, 0, EffectiveMaximumHp)));
+    public void SubtractHealthPct(decimal pct)
+        => InterlockedEx.SetValue(
+            ref _currentHp,
+            () => Convert.ToInt32(Math.Clamp(EffectiveMaximumHp * (HealthPercent - pct) / 100m, 0, EffectiveMaximumHp)));
 
     public void SubtractHp(int amount)
     {
@@ -310,9 +315,10 @@ public record StatSheet : Attributes
 
     public void SubtractLevel(int amount) => Interlocked.Add(ref _level, -amount);
 
-    public void SubtractManaPct(decimal pct) => InterlockedEx.SetValue(
-        ref _currentMp,
-        () => Convert.ToInt32(Math.Clamp(EffectiveMaximumMp * (ManaPercent - pct) / 100m, 0, EffectiveMaximumMp)));
+    public void SubtractManaPct(decimal pct)
+        => InterlockedEx.SetValue(
+            ref _currentMp,
+            () => Convert.ToInt32(Math.Clamp(EffectiveMaximumMp * (ManaPercent - pct) / 100m, 0, EffectiveMaximumMp)));
 
     public void SubtractMp(int amount)
     {

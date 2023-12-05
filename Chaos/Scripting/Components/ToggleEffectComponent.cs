@@ -18,9 +18,11 @@ public class ToggleEffectComponent : ApplyEffectComponent
         var targets = vars.GetTargets<Creature>();
 
         foreach (var target in targets)
+
             //if they have the effect, dispel it
             if (target.Effects.TryGetEffect(options.EffectKey, out var existingEffect))
                 target.Effects.Dispel(existingEffect.Name);
+
             //otherwise, give them the effect
             else
             {

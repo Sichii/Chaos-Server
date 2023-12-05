@@ -19,6 +19,7 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     ///     The amount of gold it costs to buy this item from a merchant
     /// </summary>
     public int BuyCost { get; set; }
+
     /// <summary>
     ///     The category of the item, used for bank or shop sorting
     /// </summary>
@@ -67,10 +68,12 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     ///     If specified, the max durability of the item
     /// </summary>
     public int? MaxDurability { get; set; }
+
     /// <summary>
     ///     The maximum number of this item that can be in a stack. If set to 1, the item will not be stackable
     /// </summary>
     public int MaxStacks { get; set; } = 1;
+
     /// <summary>
     ///     Defaults to null<br />
     ///     If specified, these are the stats this item grants when equipped

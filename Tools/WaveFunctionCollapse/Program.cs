@@ -7,16 +7,15 @@ using Microsoft.Extensions.DependencyInjection;
 using WaveFunctionCollapse;
 using ChaosTile = Chaos.Models.Map.Tile;
 
-var configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
-                    #if DEBUG
-                    .AddJsonFile("appsettings.local.json")
-                    #else
+var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                                              .AddJsonFile("appsettings.json")
+                                              #if DEBUG
+                                              .AddJsonFile("appsettings.local.json")
+                                              #else
                     //.AddJsonFile("appsettings.prod.json")
                     .AddJsonFile("appsettings.local.json")
-                    #endif
-                    .Build();
+                                              #endif
+                                              .Build();
 
 var services = new ServiceCollection();
 var startup = new Startup(configuration);

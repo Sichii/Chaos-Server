@@ -35,13 +35,16 @@ public static class MockLogger
         string message,
         string? exceptionMessage = null,
         Times? times = null,
-        params object[] args
-    ) =>
-        mockLogger.Verify(
+        params object[] args)
+        => mockLogger.Verify(
             l => l.Log(
                 logLevel,
                 It.IsAny<EventId>(),
-                It.Is<LogEvent>(e => !args.Any() || args.All(arg => e.Select(kvp => kvp.Value).Contains(arg))),
+                It.Is<LogEvent>(
+                    e => !args.Any()
+                         || args.All(
+                             arg => e.Select(kvp => kvp.Value)
+                                     .Contains(arg))),
                 It.Is<Exception>(e => VerifyException(e, exceptionMessage)),
                 It.Is<Func<LogEvent, Exception?, string>>(f => f(null!, null) == message)),
             times ?? Times.Once());
@@ -52,13 +55,16 @@ public static class MockLogger
         string message,
         Exception? exception,
         Times? times = null,
-        params object[] args
-    ) =>
-        mockLogger.Verify(
+        params object[] args)
+        => mockLogger.Verify(
             l => l.Log(
                 logLevel,
                 It.IsAny<EventId>(),
-                It.Is<LogEvent>(e => !args.Any() || args.All(arg => e.Select(kvp => kvp.Value).Contains(arg))),
+                It.Is<LogEvent>(
+                    e => !args.Any()
+                         || args.All(
+                             arg => e.Select(kvp => kvp.Value)
+                                     .Contains(arg))),
                 It.Is<Exception>(e => VerifyException(e, exception)),
                 It.Is<Func<LogEvent, Exception?, string>>(f => f(null!, exception) == message)),
             times ?? Times.Once());
@@ -68,8 +74,7 @@ public static class MockLogger
         LogLevel logLevel,
         string message,
         string? exceptionMessage = null,
-        Times? times = null
-    )
+        Times? times = null)
         => mockLogger.Verify(
             l => l.Log(
                 logLevel,

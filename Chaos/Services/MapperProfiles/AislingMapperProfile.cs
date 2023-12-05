@@ -40,8 +40,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
         ILoggerFactory loggerFactory,
         ICloningService<Item> itemCloner,
         IScriptProvider scriptProvider,
-        IStore<Guild> guildStore
-    )
+        IStore<Guild> guildStore)
     {
         Mapper = mapper;
         ItemCloner = itemCloner;
@@ -145,7 +144,8 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             Titles = obj.Titles.ToList(),
             UserOptions = Mapper.Map<UserOptionsSchema>(obj.Options),
             IgnoreList = obj.IgnoreList.ToList(),
-            ChannelSettings = Mapper.MapMany<ChannelSettingsSchema>(obj.ChannelSettings).ToList()
+            ChannelSettings = Mapper.MapMany<ChannelSettingsSchema>(obj.ChannelSettings)
+                                    .ToList()
         };
 
         return ret;
@@ -153,41 +153,42 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
 
     public Aisling Map(AttributesArgs obj) => throw new NotImplementedException();
 
-    AttributesArgs IMapperProfile<Aisling, AttributesArgs>.Map(Aisling obj) => new()
-    {
-        Ability = (byte)obj.UserStatSheet.Ability,
-        Ac = (sbyte)Math.Clamp(
-            obj.UserStatSheet.EffectiveAc,
-            WorldOptions.Instance.MinimumAislingAc,
-            WorldOptions.Instance.MaximumAislingAc),
-        Blind = obj.Script.IsBlind(),
-        Con = obj.UserStatSheet.EffectiveCon,
-        CurrentHp = (uint)Math.Clamp(obj.UserStatSheet.CurrentHp, 0, int.MaxValue),
-        CurrentMp = (uint)Math.Clamp(obj.UserStatSheet.CurrentMp, 0, int.MaxValue),
-        CurrentWeight = (short)obj.UserStatSheet.CurrentWeight,
-        DefenseElement = obj.UserStatSheet.DefenseElement,
-        Dex = obj.UserStatSheet.EffectiveDex,
-        Dmg = obj.UserStatSheet.EffectiveDmg,
-        GamePoints = (uint)obj.GamePoints,
-        Gold = (uint)obj.Gold,
-        Hit = obj.UserStatSheet.EffectiveHit,
-        Int = obj.UserStatSheet.EffectiveInt,
-        IsAdmin = obj.IsAdmin,
-        Level = (byte)obj.UserStatSheet.Level,
-        HasUnreadMail = obj.MailBox.Any(post => post.IsHighlighted),
-        MagicResistance = (byte)(obj.UserStatSheet.EffectiveMagicResistance / 10),
-        MaximumHp = obj.UserStatSheet.EffectiveMaximumHp,
-        MaximumMp = obj.UserStatSheet.EffectiveMaximumMp,
-        MaxWeight = (short)obj.UserStatSheet.MaxWeight,
-        OffenseElement = obj.UserStatSheet.OffenseElement,
-        Str = obj.UserStatSheet.EffectiveStr,
-        ToNextAbility = obj.UserStatSheet.ToNextAbility,
-        ToNextLevel = obj.UserStatSheet.ToNextLevel,
-        TotalAbility = obj.UserStatSheet.TotalAbility,
-        TotalExp = obj.UserStatSheet.TotalExp,
-        UnspentPoints = (byte)obj.UserStatSheet.UnspentPoints,
-        Wis = obj.UserStatSheet.EffectiveWis
-    };
+    AttributesArgs IMapperProfile<Aisling, AttributesArgs>.Map(Aisling obj)
+        => new()
+        {
+            Ability = (byte)obj.UserStatSheet.Ability,
+            Ac = (sbyte)Math.Clamp(
+                obj.UserStatSheet.EffectiveAc,
+                WorldOptions.Instance.MinimumAislingAc,
+                WorldOptions.Instance.MaximumAislingAc),
+            Blind = obj.Script.IsBlind(),
+            Con = obj.UserStatSheet.EffectiveCon,
+            CurrentHp = (uint)Math.Clamp(obj.UserStatSheet.CurrentHp, 0, int.MaxValue),
+            CurrentMp = (uint)Math.Clamp(obj.UserStatSheet.CurrentMp, 0, int.MaxValue),
+            CurrentWeight = (short)obj.UserStatSheet.CurrentWeight,
+            DefenseElement = obj.UserStatSheet.DefenseElement,
+            Dex = obj.UserStatSheet.EffectiveDex,
+            Dmg = obj.UserStatSheet.EffectiveDmg,
+            GamePoints = (uint)obj.GamePoints,
+            Gold = (uint)obj.Gold,
+            Hit = obj.UserStatSheet.EffectiveHit,
+            Int = obj.UserStatSheet.EffectiveInt,
+            IsAdmin = obj.IsAdmin,
+            Level = (byte)obj.UserStatSheet.Level,
+            HasUnreadMail = obj.MailBox.Any(post => post.IsHighlighted),
+            MagicResistance = (byte)(obj.UserStatSheet.EffectiveMagicResistance / 10),
+            MaximumHp = obj.UserStatSheet.EffectiveMaximumHp,
+            MaximumMp = obj.UserStatSheet.EffectiveMaximumMp,
+            MaxWeight = (short)obj.UserStatSheet.MaxWeight,
+            OffenseElement = obj.UserStatSheet.OffenseElement,
+            Str = obj.UserStatSheet.EffectiveStr,
+            ToNextAbility = obj.UserStatSheet.ToNextAbility,
+            ToNextLevel = obj.UserStatSheet.ToNextLevel,
+            TotalAbility = obj.UserStatSheet.TotalAbility,
+            TotalExp = obj.UserStatSheet.TotalExp,
+            UnspentPoints = (byte)obj.UserStatSheet.UnspentPoints,
+            Wis = obj.UserStatSheet.EffectiveWis
+        };
 
     public Aisling Map(DisplayAislingArgs obj) => throw new NotImplementedException();
 
@@ -211,6 +212,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
             //use overhelm color if it is dyeable or if it is not default
             if ((overHelm != null) && (overHelm.Template.IsDyeable || (overHelm.Color != DisplayColor.Default)))
                 headColor = overHelm.Color;
+
             //use helmet color if it is dyeable or if it is not default
             else if ((helmet != null) && (helmet.Template.IsDyeable || (helmet.Color != DisplayColor.Default)))
                 headColor = helmet.Color;
@@ -237,8 +239,7 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
                 Gender = obj.Gender,
                 GroupBoxText = null,
                 HeadColor = headColor,
-                HeadSprite = overHelm?.ItemSprite.DisplaySprite
-                             ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
+                HeadSprite = overHelm?.ItemSprite.DisplaySprite ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,
                 IsDead = obj.IsDead,
                 IsTransparent = obj.Visibility is VisibilityType.Hidden or VisibilityType.TrueHidden or VisibilityType.GmHidden,
@@ -259,64 +260,70 @@ public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema
 
     public Aisling Map(ProfileArgs obj) => throw new NotImplementedException();
 
-    ProfileArgs IMapperProfile<Aisling, ProfileArgs>.Map(Aisling obj) => new()
-    {
-        AdvClass = obj.UserStatSheet.AdvClass,
-        BaseClass = obj.UserStatSheet.BaseClass,
-        Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>)!,
-        GroupOpen = obj.Options.AllowGroup,
-        GuildName = obj.Guild?.Name,
-        GuildRank = obj.GuildRank,
-        Id = obj.Id,
-        LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend).ToList(),
-        Name = obj.Name,
-        Nation = obj.Nation,
-        Portrait = obj.Portrait,
-        ProfileText = obj.ProfileText,
-        SocialStatus = obj.Options.SocialStatus,
-        Title = obj.Titles.FirstOrDefault()
-    };
+    ProfileArgs IMapperProfile<Aisling, ProfileArgs>.Map(Aisling obj)
+        => new()
+        {
+            AdvClass = obj.UserStatSheet.AdvClass,
+            BaseClass = obj.UserStatSheet.BaseClass,
+            Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>)!,
+            GroupOpen = obj.Options.AllowGroup,
+            GuildName = obj.Guild?.Name,
+            GuildRank = obj.GuildRank,
+            Id = obj.Id,
+            LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend)
+                                .ToList(),
+            Name = obj.Name,
+            Nation = obj.Nation,
+            Portrait = obj.Portrait,
+            ProfileText = obj.ProfileText,
+            SocialStatus = obj.Options.SocialStatus,
+            Title = obj.Titles.FirstOrDefault()
+        };
 
     public Aisling Map(SelfProfileArgs obj) => throw new NotImplementedException();
 
-    SelfProfileArgs IMapperProfile<Aisling, SelfProfileArgs>.Map(Aisling obj) => new()
-    {
-        AdvClass = obj.UserStatSheet.AdvClass,
-        BaseClass = obj.UserStatSheet.BaseClass,
-        Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>),
-        GroupOpen = obj.Options.AllowGroup,
-        GroupString = obj.Group?.ToString(),
-        GuildName = obj.Guild?.Name,
-        GuildRank = obj.GuildRank,
-        IsMaster = obj.UserStatSheet.Master,
-        LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend).ToList(),
-        Name = obj.Name,
-        Nation = obj.Nation,
-        Portrait = obj.Portrait,
-        ProfileText = obj.ProfileText,
-        SpouseName = null, //TODO: when we implement marraige i guess
-        Title = obj.Titles.FirstOrDefault()
-    };
+    SelfProfileArgs IMapperProfile<Aisling, SelfProfileArgs>.Map(Aisling obj)
+        => new()
+        {
+            AdvClass = obj.UserStatSheet.AdvClass,
+            BaseClass = obj.UserStatSheet.BaseClass,
+            Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>),
+            GroupOpen = obj.Options.AllowGroup,
+            GroupString = obj.Group?.ToString(),
+            GuildName = obj.Guild?.Name,
+            GuildRank = obj.GuildRank,
+            IsMaster = obj.UserStatSheet.Master,
+            LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend)
+                                .ToList(),
+            Name = obj.Name,
+            Nation = obj.Nation,
+            Portrait = obj.Portrait,
+            ProfileText = obj.ProfileText,
+            SpouseName = null, //TODO: when we implement marraige i guess
+            Title = obj.Titles.FirstOrDefault()
+        };
 
     public Aisling Map(UserIdArgs obj) => throw new NotImplementedException();
 
-    UserIdArgs IMapperProfile<Aisling, UserIdArgs>.Map(Aisling obj) => new()
-    {
-        BaseClass = obj.UserStatSheet.BaseClass,
-        Direction = obj.Direction,
-        Gender = obj.Gender,
-        Id = obj.Id
-    };
+    UserIdArgs IMapperProfile<Aisling, UserIdArgs>.Map(Aisling obj)
+        => new()
+        {
+            BaseClass = obj.UserStatSheet.BaseClass,
+            Direction = obj.Direction,
+            Gender = obj.Gender,
+            Id = obj.Id
+        };
 
     public Aisling Map(WorldListMemberInfo obj) => throw new NotImplementedException();
 
-    WorldListMemberInfo IMapperProfile<Aisling, WorldListMemberInfo>.Map(Aisling obj) => new()
-    {
-        BaseClass = obj.UserStatSheet.BaseClass,
-        Color = WorldListColor.White,
-        IsMaster = obj.UserStatSheet.Master,
-        Name = obj.Name,
-        SocialStatus = obj.Options.SocialStatus,
-        Title = obj.Titles.FirstOrDefault()
-    };
+    WorldListMemberInfo IMapperProfile<Aisling, WorldListMemberInfo>.Map(Aisling obj)
+        => new()
+        {
+            BaseClass = obj.UserStatSheet.BaseClass,
+            Color = WorldListColor.White,
+            IsMaster = obj.UserStatSheet.Master,
+            Name = obj.Name,
+            SocialStatus = obj.Options.SocialStatus,
+            Title = obj.Titles.FirstOrDefault()
+        };
 }

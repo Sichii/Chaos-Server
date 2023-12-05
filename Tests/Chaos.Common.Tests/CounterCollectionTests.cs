@@ -16,7 +16,8 @@ public sealed class CounterCollectionTests
         var value = counterCollection.AddOrIncrement("key");
 
         // Assert
-        value.Should().Be(1);
+        value.Should()
+             .Be(1);
     }
 
     [Fact]
@@ -30,7 +31,8 @@ public sealed class CounterCollectionTests
         var value = counterCollection.AddOrIncrement("key");
 
         // Assert
-        value.Should().Be(6);
+        value.Should()
+             .Be(6);
     }
 
     [Fact]
@@ -48,15 +50,38 @@ public sealed class CounterCollectionTests
         var counterCollection = new CounterCollection(counters);
 
         // Assert
-        counterCollection.ContainsKey("key1").Should().BeTrue();
-        counterCollection.ContainsKey("key2").Should().BeTrue();
-        counterCollection.ContainsKey("key3").Should().BeTrue();
-        counterCollection.TryGetValue("key1", out var value1).Should().BeTrue();
-        counterCollection.TryGetValue("key2", out var value2).Should().BeTrue();
-        counterCollection.TryGetValue("key3", out var value3).Should().BeTrue();
-        value1.Should().Be(10);
-        value2.Should().Be(20);
-        value3.Should().Be(30);
+        counterCollection.ContainsKey("key1")
+                         .Should()
+                         .BeTrue();
+
+        counterCollection.ContainsKey("key2")
+                         .Should()
+                         .BeTrue();
+
+        counterCollection.ContainsKey("key3")
+                         .Should()
+                         .BeTrue();
+
+        counterCollection.TryGetValue("key1", out var value1)
+                         .Should()
+                         .BeTrue();
+
+        counterCollection.TryGetValue("key2", out var value2)
+                         .Should()
+                         .BeTrue();
+
+        counterCollection.TryGetValue("key3", out var value3)
+                         .Should()
+                         .BeTrue();
+
+        value1.Should()
+              .Be(10);
+
+        value2.Should()
+              .Be(20);
+
+        value3.Should()
+              .Be(30);
     }
 
     [Fact]
@@ -69,7 +94,8 @@ public sealed class CounterCollectionTests
         var containsKey = counterCollection.ContainsKey("key");
 
         // Assert
-        containsKey.Should().BeFalse();
+        containsKey.Should()
+                   .BeFalse();
     }
 
     [Fact]
@@ -83,7 +109,8 @@ public sealed class CounterCollectionTests
         var containsKey = counterCollection.ContainsKey("key");
 
         // Assert
-        containsKey.Should().BeTrue();
+        containsKey.Should()
+                   .BeTrue();
     }
 
     [Fact]
@@ -97,7 +124,8 @@ public sealed class CounterCollectionTests
         var isGreaterThanOrEqualTo = counterCollection.CounterGreaterThanOrEqualTo("key", 5);
 
         // Assert
-        isGreaterThanOrEqualTo.Should().BeFalse();
+        isGreaterThanOrEqualTo.Should()
+                              .BeFalse();
     }
 
     [Fact]
@@ -111,7 +139,8 @@ public sealed class CounterCollectionTests
         var isGreaterThanOrEqualTo = counterCollection.CounterGreaterThanOrEqualTo("key", 5);
 
         // Assert
-        isGreaterThanOrEqualTo.Should().BeTrue();
+        isGreaterThanOrEqualTo.Should()
+                              .BeTrue();
     }
 
     [Fact]
@@ -125,7 +154,8 @@ public sealed class CounterCollectionTests
         var isLessThanOrEqualTo = counterCollection.CounterLessThanOrEqualTo("key", 5);
 
         // Assert
-        isLessThanOrEqualTo.Should().BeFalse();
+        isLessThanOrEqualTo.Should()
+                           .BeFalse();
     }
 
     [Fact]
@@ -139,7 +169,8 @@ public sealed class CounterCollectionTests
         var isLessThanOrEqualTo = counterCollection.CounterLessThanOrEqualTo("key", 10);
 
         // Assert
-        isLessThanOrEqualTo.Should().BeTrue();
+        isLessThanOrEqualTo.Should()
+                           .BeTrue();
     }
 
     [Fact]
@@ -155,10 +186,17 @@ public sealed class CounterCollectionTests
         var counterList = counterCollection.ToList();
 
         // Assert
-        counterList.Should().HaveCount(3);
-        counterList.Should().Contain(new KeyValuePair<string, int>("key1", 1));
-        counterList.Should().Contain(new KeyValuePair<string, int>("key2", 3));
-        counterList.Should().Contain(new KeyValuePair<string, int>("key3", 5));
+        counterList.Should()
+                   .HaveCount(3);
+
+        counterList.Should()
+                   .Contain(new KeyValuePair<string, int>("key1", 1));
+
+        counterList.Should()
+                   .Contain(new KeyValuePair<string, int>("key2", 3));
+
+        counterList.Should()
+                   .Contain(new KeyValuePair<string, int>("key3", 5));
     }
 
     [Fact]
@@ -172,8 +210,12 @@ public sealed class CounterCollectionTests
         counterCollection.Remove("key", out var value);
 
         // Assert
-        value.Should().Be(10);
-        counterCollection.ContainsKey("key").Should().BeFalse();
+        value.Should()
+             .Be(10);
+
+        counterCollection.ContainsKey("key")
+                         .Should()
+                         .BeFalse();
     }
 
     [Fact]
@@ -186,8 +228,12 @@ public sealed class CounterCollectionTests
         counterCollection.Set("key", 5);
 
         // Assert
-        counterCollection.TryGetValue("key", out var value).Should().BeTrue();
-        value.Should().Be(5);
+        counterCollection.TryGetValue("key", out var value)
+                         .Should()
+                         .BeTrue();
+
+        value.Should()
+             .Be(5);
     }
 
     [Fact]
@@ -201,8 +247,12 @@ public sealed class CounterCollectionTests
         counterCollection.Set("key", 10);
 
         // Assert
-        counterCollection.TryGetValue("key", out var value).Should().BeTrue();
-        value.Should().Be(10);
+        counterCollection.TryGetValue("key", out var value)
+                         .Should()
+                         .BeTrue();
+
+        value.Should()
+             .Be(10);
     }
 
     [Fact]
@@ -216,8 +266,11 @@ public sealed class CounterCollectionTests
         var isSuccessful = counterCollection.TryDecrement("key", out var newValue);
 
         // Assert
-        isSuccessful.Should().BeTrue();
-        newValue.Should().Be(4);
+        isSuccessful.Should()
+                    .BeTrue();
+
+        newValue.Should()
+                .Be(4);
     }
 
     [Fact]
@@ -231,7 +284,8 @@ public sealed class CounterCollectionTests
         var isSuccessful = counterCollection.TryDecrement("key", out _);
 
         // Assert
-        isSuccessful.Should().BeFalse();
+        isSuccessful.Should()
+                    .BeFalse();
     }
 
     [Fact]
@@ -244,7 +298,8 @@ public sealed class CounterCollectionTests
         var isSuccessful = counterCollection.TryDecrement("key", out _);
 
         // Assert
-        isSuccessful.Should().BeFalse();
+        isSuccessful.Should()
+                    .BeFalse();
     }
 
     [Fact]
@@ -258,8 +313,11 @@ public sealed class CounterCollectionTests
         var isSuccessful = counterCollection.TryDecrement("key", 3, out var newValue);
 
         // Assert
-        isSuccessful.Should().BeTrue();
-        newValue.Should().Be(7);
+        isSuccessful.Should()
+                    .BeTrue();
+
+        newValue.Should()
+                .Be(7);
     }
 
     [Fact]
@@ -273,7 +331,8 @@ public sealed class CounterCollectionTests
         var isSuccessful = counterCollection.TryDecrement("key", 5, out _);
 
         // Assert
-        isSuccessful.Should().BeFalse();
+        isSuccessful.Should()
+                    .BeFalse();
     }
 
     [Fact]
@@ -286,6 +345,7 @@ public sealed class CounterCollectionTests
         var isSuccessful = counterCollection.TryDecrement("key", 5, out _);
 
         // Assert
-        isSuccessful.Should().BeFalse();
+        isSuccessful.Should()
+                    .BeFalse();
     }
 }

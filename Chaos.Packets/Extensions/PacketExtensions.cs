@@ -29,8 +29,8 @@ public static class PacketExtensions
     ///     the <see cref="Chaos.Packets.PacketSerializer" />
     ///     constructor.
     /// </remarks>
-    public static void AddPacketSerializer(this IServiceCollection serviceCollection) =>
-        serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>(
+    public static void AddPacketSerializer(this IServiceCollection serviceCollection)
+        => serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>(
             _ =>
             {
                 var serializers = LoadSerializersFromAssembly();

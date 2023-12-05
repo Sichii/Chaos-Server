@@ -15,6 +15,7 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
     ///     The underlying <see cref="System.Collections.Generic.List{T}" />
     /// </summary>
     protected readonly List<T> List;
+
     /// <summary>
     ///     The <see cref="AutoReleasingMonitor" /> used to synchronize access to the <see cref="List" />
     /// </summary>
@@ -29,6 +30,7 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
 
             return List[index];
         }
+
         set
         {
             using var @lock = Sync.Enter();

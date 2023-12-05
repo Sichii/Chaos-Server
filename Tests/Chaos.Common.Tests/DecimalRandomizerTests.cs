@@ -12,8 +12,17 @@ public sealed class DecimalRandomizerTests
     [Fact]
     public void PickRandomWeightedSingleOrDefault_ChoicesAndWeights_ShouldOccasionallyReturnNull()
     {
-        var choices = new List<string> { "A", "B" };
-        var weights = new List<decimal> { 0.5m, 0.5m };
+        var choices = new List<string>
+        {
+            "A",
+            "B"
+        };
+
+        var weights = new List<decimal>
+        {
+            0.5m,
+            0.5m
+        };
 
         var nullCount = 0;
 
@@ -26,7 +35,8 @@ public sealed class DecimalRandomizerTests
         }
 
         // Again, the exact number isn't too important.
-        nullCount.Should().BeInRange(1, 5000);
+        nullCount.Should()
+                 .BeInRange(1, 5000);
     }
 
     [Fact]
@@ -50,7 +60,8 @@ public sealed class DecimalRandomizerTests
 
         // The exact number here isn't too important; the point is that we expect 
         // some null values given enough iterations, but not too many.
-        nullCount.Should().BeInRange(1, 5000);
+        nullCount.Should()
+                 .BeInRange(1, 5000);
     }
 
     [Fact]
@@ -66,7 +77,8 @@ public sealed class DecimalRandomizerTests
                 break;
         }
 
-        success.Should().BeTrue();
+        success.Should()
+               .BeTrue();
     }
 
     [Fact]
@@ -78,7 +90,9 @@ public sealed class DecimalRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var roll = DecimalRandomizer.RollRange(BASE_VALUE, VARIANCE_PCT, RandomizationType.Balanced);
-            roll.Should().BeInRange(BASE_VALUE - VARIANCE_PCT * BASE_VALUE / 2, BASE_VALUE + VARIANCE_PCT * BASE_VALUE / 2);
+
+            roll.Should()
+                .BeInRange(BASE_VALUE - VARIANCE_PCT * BASE_VALUE / 2, BASE_VALUE + VARIANCE_PCT * BASE_VALUE / 2);
         }
     }
 
@@ -92,7 +106,9 @@ public sealed class DecimalRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = DecimalRandomizer.RollRange(baseValue, variancePct, RandomizationType.Negative);
-            result.Should().BeInRange(expectedMin, baseValue);
+
+            result.Should()
+                  .BeInRange(expectedMin, baseValue);
         }
     }
 
@@ -106,7 +122,9 @@ public sealed class DecimalRandomizerTests
         for (var i = 0; i < 1000; i++)
         {
             var result = DecimalRandomizer.RollRange(baseValue, variancePct, RandomizationType.Positive);
-            result.Should().BeInRange(baseValue, expectedMax);
+
+            result.Should()
+                  .BeInRange(baseValue, expectedMax);
         }
     }
 }

@@ -16,6 +16,7 @@ public class IntervalTimer : IIntervalTimer
     ///     The amount of time that must accumulate to set <see cref="IntervalElapsed" /> to true
     /// </summary>
     protected TimeSpan Interval { get; set; }
+
     /// <inheritdoc />
     public bool IntervalElapsed { get; protected set; }
 
@@ -55,6 +56,7 @@ public class IntervalTimer : IIntervalTimer
     public virtual void Update(TimeSpan delta)
     {
         IntervalElapsed = false;
+
         //add delta to elapsed
         Elapsed += delta;
 

@@ -14,7 +14,8 @@ public class DeathScript : MonsterScriptBase
 
     /// <inheritdoc />
     public DeathScript(Monster subject)
-        : base(subject) => ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
+        : base(subject)
+        => ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
 
     /// <inheritdoc />
     public override void OnDeath()
@@ -38,9 +39,12 @@ public class DeathScript : MonsterScriptBase
         Aisling[]? rewardTargets = null;
 
         if (rewardTarget != null)
-            rewardTargets = (rewardTarget.Group ?? (IEnumerable<Aisling>)new[] { rewardTarget })
-                            .ThatAreWithinRange(rewardTarget)
-                            .ToArray();
+            rewardTargets = (rewardTarget.Group
+                             ?? (IEnumerable<Aisling>)new[]
+                             {
+                                 rewardTarget
+                             }).ThatAreWithinRange(rewardTarget)
+                               .ToArray();
 
         Subject.Items.AddRange(Subject.LootTable.GenerateLoot());
 

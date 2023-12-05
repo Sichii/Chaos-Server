@@ -13,6 +13,7 @@ public sealed record GroupRequestArgs : ISendArgs
     ///     The type of the request
     /// </summary>
     public GroupRequestType GroupRequestType { get; set; }
+
     /// <summary>
     ///     The name of the source of the request
     /// </summary>

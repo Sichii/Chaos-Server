@@ -11,14 +11,15 @@ public class CreatureMapperProfile : IMapperProfile<Creature, CreatureInfo>
     public Creature Map(CreatureInfo obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public CreatureInfo Map(Creature obj) => new()
-    {
-        Id = obj.Id,
-        X = obj.X,
-        Y = obj.Y,
-        Sprite = obj.Visibility is not VisibilityType.Normal ? (ushort)492 : obj.Sprite,
-        CreatureType = obj.Type,
-        Direction = obj.Direction,
-        Name = obj.Name
-    };
+    public CreatureInfo Map(Creature obj)
+        => new()
+        {
+            Id = obj.Id,
+            X = obj.X,
+            Y = obj.Y,
+            Sprite = obj.Visibility is not VisibilityType.Normal ? (ushort)492 : obj.Sprite,
+            CreatureType = obj.Type,
+            Direction = obj.Direction,
+            Name = obj.Name
+        };
 }

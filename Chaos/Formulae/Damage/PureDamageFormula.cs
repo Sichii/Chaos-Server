@@ -13,6 +13,6 @@ public class PureDamageFormula : IDamageFormula
         Creature target,
         IScript script,
         int damage,
-        Element? elementOverride = null
-    ) => damage;
+        Element? elementOverride = null)
+        => damage;
 }

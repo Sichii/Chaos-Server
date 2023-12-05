@@ -16,6 +16,7 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
 
     /// <inheritdoc />
     public static IIdGenerator<T> Shared { get; }
+
     /// <inheritdoc />
     public T NextId => IdGenerator.NextId;
 

@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class LocalFunctionBenchmarks
 {

@@ -18,7 +18,8 @@ public sealed class LocationConverterTests
 
         var location = LocationConverter.Instance.Read(ref utf8JsonReader, typeof(Location), null!);
 
-        location.Should().BeEquivalentTo(new Location("Example", 1, 2));
+        location.Should()
+                .BeEquivalentTo(new Location("Example", 1, 2));
     }
 
     [Fact]
@@ -39,8 +40,12 @@ public sealed class LocationConverterTests
             ex = e;
         }
 
-        ex.Should().NotBeNull();
-        ex?.Message.Should().Be("Expected a string");
+        ex.Should()
+          .NotBeNull();
+
+        ex?.Message
+          .Should()
+          .Be("Expected a string");
     }
 
     [Fact]
@@ -61,8 +66,12 @@ public sealed class LocationConverterTests
             ex = e;
         }
 
-        ex.Should().NotBeNull();
-        ex?.Message.Should().Be("Invalid string format for location. \"invalid\"");
+        ex.Should()
+          .NotBeNull();
+
+        ex?.Message
+          .Should()
+          .Be("Invalid string format for location. \"invalid\"");
     }
 
     [Fact]
@@ -78,6 +87,7 @@ public sealed class LocationConverterTests
 
         var jsonString = Encoding.UTF8.GetString(memoryStream.ToArray());
 
-        jsonString.Should().Be("\"Example:(1, 2)\"");
+        jsonString.Should()
+                  .Be("\"Example:(1, 2)\"");
     }
 }

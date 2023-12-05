@@ -13,8 +13,7 @@ internal sealed class DialogOptionCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    )
+        CultureInfo culture)
     {
         if (value is not IEnumerable<DialogOptionSchema> dialogOptionSchemas)
             return string.Empty;
@@ -26,6 +25,6 @@ internal sealed class DialogOptionCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        CultureInfo culture
-    ) => throw new NotImplementedException();
+        CultureInfo culture)
+        => throw new NotImplementedException();
 }

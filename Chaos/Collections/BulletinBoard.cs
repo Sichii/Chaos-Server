@@ -16,10 +16,13 @@ namespace Chaos.Collections;
 public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
 {
     private readonly ILogger<BulletinBoard> Logger;
+
     /// <inheritdoc />
     public IBulletinBoardScript Script { get; }
+
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
+
     public BulletinBoardTemplate Template { get; }
 
     /// <inheritdoc />
@@ -27,8 +30,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         BulletinBoardTemplate template,
         ILogger<BulletinBoard> logger,
         IScriptProvider scriptProvider,
-        IEnumerable<Post> posts
-    )
+        IEnumerable<Post> posts)
         : base(
             template.Id,
             template.Name,
@@ -136,7 +138,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         }
 
         //highlight post
-        post = post with { IsHighlighted = true };
+        post = post with
+        {
+            IsHighlighted = true
+        };
         Posts[postId] = post;
         highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Post highlighted", true);
 
@@ -161,8 +166,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         string author,
         string subject,
         string message,
-        bool highlighted = false
-    )
+        bool highlighted = false)
     {
         using var @lock = Sync.Enter();
 
@@ -178,10 +182,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
                       Topics.Qualifiers.Cheating)
                   .WithProperty(addedBy)
                   .WithProperty(this)
-                  .LogWarning(
-                      "{@AislingName} attempted to post on board {@BoardName} without permission",
-                      addedBy.Name,
-                      Name);
+                  .LogWarning("{@AislingName} attempted to post on board {@BoardName} without permission", addedBy.Name, Name);
 
             return;
         }
@@ -260,10 +261,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
                       Topics.Qualifiers.Cheating)
                   .WithProperty(aisling)
                   .WithProperty(this)
-                  .LogWarning(
-                      "{@AislingName} attempted to view board {@BoardName} without permission",
-                      aisling.Name,
-                      Name);
+                  .LogWarning("{@AislingName} attempted to view board {@BoardName} without permission", aisling.Name, Name);
 
             return;
         }
@@ -341,7 +339,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         if (!post.IsHighlighted)
             return;
 
-        post = post with { IsHighlighted = false };
+        post = post with
+        {
+            IsHighlighted = false
+        };
 
         Posts[post.PostId] = post;
 

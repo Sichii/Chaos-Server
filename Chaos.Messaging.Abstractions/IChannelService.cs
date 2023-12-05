@@ -66,8 +66,7 @@ public interface IChannelService
         MessageColor defaultMessageColor,
         Action<IChannelSubscriber, string> sendMessageAction,
         bool bypassValidation = false,
-        string? channelNameOverride = null
-    );
+        string? channelNameOverride = null);
 
     /// <summary>
     ///     Sends a message to a channel

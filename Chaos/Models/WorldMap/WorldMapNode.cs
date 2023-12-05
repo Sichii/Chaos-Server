@@ -21,8 +21,7 @@ public sealed record WorldMapNode
         string nodeKey,
         Location destination,
         Point screenPosition,
-        string text
-    )
+        string text)
     {
         SimpleCache = simpleCache;
         Destination = destination;

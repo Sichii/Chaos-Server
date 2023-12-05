@@ -18,11 +18,7 @@ public sealed class Guild : IDedicatedChannel
     public string ChannelName { get; }
     public string Name { get; }
 
-    public Guild(
-        string name,
-        IChannelService channelService,
-        IClientRegistry<IWorldClient> clientRegistry
-    )
+    public Guild(string name, IChannelService channelService, IClientRegistry<IWorldClient> clientRegistry)
     {
         Name = name;
         ChannelName = $"!guild-{Name}";
@@ -82,7 +78,8 @@ public sealed class Guild : IDedicatedChannel
         JoinChannel(aisling);
         aisling.Client.SendSelfProfile();
 
-        foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
+        foreach (var member in GetOnlineMembers()
+                     .Where(member => !member.Equals(by)))
             member.SendActiveMessage($"{aisling.Name} has been admitted to the guild by {by.Name}");
     }
 
@@ -127,10 +124,12 @@ public sealed class Guild : IDedicatedChannel
         aisling.Client.SendSelfProfile();
 
         if (newRank.Tier < currentRank.Tier)
-            foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
+            foreach (var member in GetOnlineMembers()
+                         .Where(member => !member.Equals(by)))
                 member.SendActiveMessage($"{aisling.Name} has been promoted to {newRank.Name} by {by.Name}");
         else
-            foreach (var member in GetOnlineMembers().Where(member => !member.Equals(by)))
+            foreach (var member in GetOnlineMembers()
+                         .Where(member => !member.Equals(by)))
                 member.SendActiveMessage($"{aisling.Name} has been demoted to {newRank.Name} by {by.Name}");
     }
 
@@ -169,7 +168,8 @@ public sealed class Guild : IDedicatedChannel
         List<string> names;
 
         using (Sync.Enter())
-            names = GuildHierarchy.SelectMany(x => x.GetMemberNames()).ToList();
+            names = GuildHierarchy.SelectMany(x => x.GetMemberNames())
+                                  .ToList();
 
         return names;
     }
@@ -179,7 +179,8 @@ public sealed class Guild : IDedicatedChannel
         List<Aisling> onlineMembers;
 
         using (Sync.Enter())
-            onlineMembers = GuildHierarchy.SelectMany(x => x.GetOnlineMembers(ClientRegistry)).ToList();
+            onlineMembers = GuildHierarchy.SelectMany(x => x.GetOnlineMembers(ClientRegistry))
+                                          .ToList();
 
         return onlineMembers;
     }
@@ -188,7 +189,8 @@ public sealed class Guild : IDedicatedChannel
     {
         using var @lock = Sync.Enter();
 
-        return GuildHierarchy.Select(DeepClone.CreateRequired).ToList();
+        return GuildHierarchy.Select(DeepClone.CreateRequired)
+                             .ToList();
     }
 
     public bool HasMember(string memberName)
@@ -219,7 +221,9 @@ public sealed class Guild : IDedicatedChannel
             return false;
 
         rank.RemoveMember(memberName);
-        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(memberName))?.Aisling;
+
+        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(memberName))
+                                    ?.Aisling;
 
         if (aisling is not null)
         {

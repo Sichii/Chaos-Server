@@ -27,6 +27,9 @@ public class MagicPrefixScript : ItemScriptBase, IEnchantmentScript
     public static IEnumerable<ItemMetaNode> Mutate(ItemMetaNode node, ItemTemplate template)
     {
         if (!node.Name.StartsWithI("Magic"))
-            yield return node with { Name = $"Magic {node.Name}" };
+            yield return node with
+            {
+                Name = $"Magic {node.Name}"
+            };
     }
 }

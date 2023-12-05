@@ -47,10 +47,14 @@ public sealed class TableTests
     }
 
     [Fact]
-    public void Table_ShouldMatch_GeneratedTable16() =>
-        Tables.TABLE16.Should().BeEquivalentTo(GenerateTable16(), opt => opt.WithStrictOrdering());
+    public void Table_ShouldMatch_GeneratedTable16()
+        => Tables.TABLE16
+                 .Should()
+                 .BeEquivalentTo(GenerateTable16(), opt => opt.WithStrictOrdering());
 
     [Fact]
-    public void Table_ShouldMatch_GeneratedTable32() =>
-        Tables.TABLE32.Should().BeEquivalentTo(GenerateTable32(), opt => opt.WithStrictOrdering());
+    public void Table_ShouldMatch_GeneratedTable32()
+        => Tables.TABLE32
+                 .Should()
+                 .BeEquivalentTo(GenerateTable32(), opt => opt.WithStrictOrdering());
 }

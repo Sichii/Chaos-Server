@@ -27,16 +27,19 @@ public sealed record UserOptionsSchema
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public bool ListenToHitSounds { get; set; }
+
     /// <summary>
     ///     Option 3
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public bool Option3 { get; set; }
+
     /// <summary>
     ///     Option 4
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public bool Option4 { get; set; }
+
     /// <summary>
     ///     Option 5
     /// </summary>

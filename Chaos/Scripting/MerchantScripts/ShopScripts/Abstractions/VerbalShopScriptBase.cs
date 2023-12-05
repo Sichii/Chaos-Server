@@ -41,6 +41,7 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
         "{Name}, you're missing {AmountOfThing} for sale.",
         "{Name}, can't find your {AmountOfThing} for sale."
     };
+
     protected ILogger Logger { get; }
 
     protected static ICollection<string> NotEnoughGoldPhrases { get; } = new List<string>
@@ -72,12 +73,14 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
 
     /// <inheritdoc />
     protected VerbalShopScriptBase(Merchant subject, ILogger logger)
-        : base(subject) => Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     protected virtual bool IsClosestVerbalShopTo(Aisling aisling)
     {
         //if we're checking, it means we're in range... it should be impossible to get no results
-        var closestVerbalShop = aisling.MapInstance.GetEntities<Merchant>()
+        var closestVerbalShop = aisling.MapInstance
+                                       .GetEntities<Merchant>()
                                        .Where(merchant => merchant.Script.Is<VerbalShopScriptBase>())
                                        .OrderBy(x => x.DistanceFrom(aisling))
                                        .ThenBy(x => x.Creation)

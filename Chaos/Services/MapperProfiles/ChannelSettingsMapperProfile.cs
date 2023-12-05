@@ -10,9 +10,10 @@ public sealed class ChannelSettingsMapperProfile : IMapperProfile<ChannelSetting
     public ChannelSettings Map(ChannelSettingsSchema obj) => new(obj.ChannelName, obj.MessageColor);
 
     /// <inheritdoc />
-    public ChannelSettingsSchema Map(ChannelSettings obj) => new()
-    {
-        ChannelName = obj.ChannelName,
-        MessageColor = obj.MessageColor
-    };
+    public ChannelSettingsSchema Map(ChannelSettings obj)
+        => new()
+        {
+            ChannelName = obj.ChannelName,
+            MessageColor = obj.MessageColor
+        };
 }

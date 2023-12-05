@@ -61,12 +61,13 @@ public record ActivationContext : IActivationContext
     public MapInstance SourceMap => Source.MapInstance;
     public Point SourcePoint => Point.From(Source);
 
-    public MapInstance TargetMap => (Target as MapEntity)?.MapInstance
-                                    ?? SnapshotTargetMap
-                                    ?? throw new UnreachableException(
-                                        "Target map should always be populated. "
-                                        + "Either the target should be an entity with a map, "
-                                        + "or it should be a point that was passed in with a map in it's constructor");
+    public MapInstance TargetMap
+        => (Target as MapEntity)?.MapInstance
+           ?? SnapshotTargetMap
+           ?? throw new UnreachableException(
+               "Target map should always be populated. "
+               + "Either the target should be an entity with a map, "
+               + "or it should be a point that was passed in with a map in it's constructor");
 
     public Point TargetPoint => Point.From(Target);
 

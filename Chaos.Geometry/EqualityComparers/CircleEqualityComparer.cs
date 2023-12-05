@@ -25,8 +25,7 @@ public sealed class CircleEqualityComparer : IEqualityComparer<ICircle>
         if (x.GetType() != y.GetType())
             return false;
 
-        return PointEqualityComparer.Instance.Equals(x.Center, y.Center)
-               && (x.Radius == y.Radius);
+        return PointEqualityComparer.Instance.Equals(x.Center, y.Center) && (x.Radius == y.Radius);
     }
 
     /// <inheritdoc />

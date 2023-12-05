@@ -30,8 +30,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptions<LobbyOptions> options,
-        ILogger<LobbyServer> logger
-    )
+        ILogger<LobbyServer> logger)
         : base(
             redirectManager,
             packetSerializer,
@@ -89,10 +88,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
                         RedirectManager.Add(redirect);
 
                         Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Client, Topics.Actions.Redirect)
-                              .LogDebug(
-                                  "Redirecting {@ClientIp} to {@ServerIp}",
-                                  client.RemoteIp,
-                                  serverInfo.Address.ToString());
+                              .LogDebug("Redirecting {@ClientIp} to {@ServerIp}", client.RemoteIp, serverInfo.Address.ToString());
 
                         client.SendRedirect(redirect);
                     } else

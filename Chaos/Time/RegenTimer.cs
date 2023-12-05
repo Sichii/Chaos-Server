@@ -17,8 +17,7 @@ public sealed class RegenTimer : IntervalTimer
         Interval = CalculateInterval();
     }
 
-    private TimeSpan CalculateInterval() =>
-        TimeSpan.FromSeconds(NaturalRegenerationScript.RegenFormula.CalculateIntervalSecs(Creature));
+    private TimeSpan CalculateInterval() => TimeSpan.FromSeconds(NaturalRegenerationScript.RegenFormula.CalculateIntervalSecs(Creature));
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

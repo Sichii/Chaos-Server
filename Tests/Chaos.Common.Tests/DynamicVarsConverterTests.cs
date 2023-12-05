@@ -23,12 +23,28 @@ public sealed class DynamicVarsConverterTests
         var result = converter.Read(ref reader, typeof(DynamicVars), options);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Count().Should().Be(2);
-        result.ContainsKey("key1").Should().BeTrue();
-        result.ContainsKey("key2").Should().BeTrue();
-        result.Get<int>("key1").Should().Be(1);
-        result.Get<string>("key2").Should().Be("value2");
+        result.Should()
+              .NotBeNull();
+
+        result.Count()
+              .Should()
+              .Be(2);
+
+        result.ContainsKey("key1")
+              .Should()
+              .BeTrue();
+
+        result.ContainsKey("key2")
+              .Should()
+              .BeTrue();
+
+        result.Get<int>("key1")
+              .Should()
+              .Be(1);
+
+        result.Get<string>("key2")
+              .Should()
+              .Be("value2");
     }
 
     [Fact]
@@ -40,8 +56,10 @@ public sealed class DynamicVarsConverterTests
 
         var dic = new Dictionary<string, JsonElement>
         {
-            ["key1"] = JsonDocument.Parse("1").RootElement,
-            ["key2"] = JsonDocument.Parse("\"value2\"").RootElement
+            ["key1"] = JsonDocument.Parse("1")
+                                   .RootElement,
+            ["key2"] = JsonDocument.Parse("\"value2\"")
+                                   .RootElement
         };
 
         var vars = new DynamicVars(dic, new JsonSerializerOptions());
@@ -57,6 +75,7 @@ public sealed class DynamicVarsConverterTests
         var resultJson = Encoding.UTF8.GetString(memoryStream.ToArray());
 
         // Assert
-        resultJson.Should().BeEquivalentToJson(EXPECTED_JSON);
+        resultJson.Should()
+                  .BeEquivalentToJson(EXPECTED_JSON);
     }
 }

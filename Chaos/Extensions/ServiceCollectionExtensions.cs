@@ -93,11 +93,13 @@ public static class ServiceCollectionExtensions
 
         services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
 
-        services.AddSingleton<IStagingDirectory, ChaosOptions>(p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>().Value);
+        services.AddSingleton<IStagingDirectory, ChaosOptions>(
+            p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>()
+                  .Value);
     }
 
-    public static void AddFunctionalScriptRegistry(this IServiceCollection services) =>
-        services.AddSingleton<IScriptRegistry, FunctionalScriptRegistry>(
+    public static void AddFunctionalScriptRegistry(this IServiceCollection services)
+        => services.AddSingleton<IScriptRegistry, FunctionalScriptRegistry>(
             p =>
             {
                 var registry = new FunctionalScriptRegistry(p);
@@ -110,22 +112,22 @@ public static class ServiceCollectionExtensions
                 return registry;
             });
 
-    public static void AddJsonSerializerOptions(this IServiceCollection services) =>
-        services.AddOptions<JsonSerializerOptions>()
-                .Configure<ILogger<WarningJsonTypeInfoResolver>>(
-                    (options, logger) =>
-                    {
-                        if (!IsInitialized)
-                        {
-                            IsInitialized = true;
-                            var defaultResolver = new WarningJsonTypeInfoResolver(logger);
-                            var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
+    public static void AddJsonSerializerOptions(this IServiceCollection services)
+        => services.AddOptions<JsonSerializerOptions>()
+                   .Configure<ILogger<WarningJsonTypeInfoResolver>>(
+                       (options, logger) =>
+                       {
+                           if (!IsInitialized)
+                           {
+                               IsInitialized = true;
+                               var defaultResolver = new WarningJsonTypeInfoResolver(logger);
+                               var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
 
-                            JsonSerializerOptions.SetTypeResolver(combinedResoler);
-                        }
+                               JsonSerializerOptions.SetTypeResolver(combinedResoler);
+                           }
 
-                        ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
-                    });
+                           ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);
+                       });
 
     public static void AddLobbyServer(this IServiceCollection services)
     {
@@ -232,9 +234,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache, ISimpleCacheProvider, SimpleCache>();
     }
 
-    public static void AddTransient<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2
-                                                                                   where TI1: class
-                                                                                   where TI2: class
+    public static void AddTransient<TI1, TI2, T>(this IServiceCollection services)
+        where T: class, TI1, TI2 where TI1: class where TI2: class
     {
         services.AddTransient<TI1, T>();
         services.AddTransient<TI2, T>();

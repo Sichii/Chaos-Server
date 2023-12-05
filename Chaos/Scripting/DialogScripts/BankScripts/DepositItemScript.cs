@@ -14,8 +14,8 @@ public class DepositItemScript : DialogScriptBase
 
     /// <inheritdoc />
     public DepositItemScript(Dialog subject, ILogger<DepositItemScript> logger)
-        : base(subject) =>
-        Logger = logger;
+        : base(subject)
+        => Logger = logger;
 
     /// <inheritdoc />
     public override void OnDisplaying(Aisling source)
@@ -51,7 +51,10 @@ public class DepositItemScript : DialogScriptBase
         Subject.InjectTextParameters(item.DisplayName, total);
     }
 
-    private void OnDisplayingInitial(Aisling source) => Subject.Slots = source.Inventory.Select(obj => obj.Slot).ToList();
+    private void OnDisplayingInitial(Aisling source)
+        => Subject.Slots = source.Inventory
+                                 .Select(obj => obj.Slot)
+                                 .ToList();
 
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
@@ -69,9 +72,7 @@ public class DepositItemScript : DialogScriptBase
 
     private void OnNextAmountRequest(Aisling source)
     {
-        if (!TryFetchArgs<byte, int>(out var slot, out var amount)
-            || (amount <= 0)
-            || !source.Inventory.TryGetObject(slot, out var item))
+        if (!TryFetchArgs<byte, int>(out var slot, out var amount) || (amount <= 0) || !source.Inventory.TryGetObject(slot, out var item))
         {
             Subject.ReplyToUnknownInput(source);
 

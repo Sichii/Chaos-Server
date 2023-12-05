@@ -16,11 +16,19 @@ public sealed record RedirectSerializer : ServerPacketSerializer<RedirectArgs>
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, RedirectArgs args)
     {
-        writer.WriteBytes(args.Redirect.EndPoint.Address.GetAddressBytes().Reverse().ToArray());
+        writer.WriteBytes(
+            args.Redirect
+                .EndPoint
+                .Address
+                .GetAddressBytes()
+                .Reverse()
+                .ToArray());
         writer.WriteUInt16((ushort)args.Redirect.EndPoint.Port);
 
         var remaining = args.Redirect.Key.Length;
-        remaining += writer.Encoding.GetBytes(args.Redirect.Name).Length;
+
+        remaining += writer.Encoding.GetBytes(args.Redirect.Name)
+                           .Length;
         remaining += 7;
 
         writer.WriteByte((byte)remaining);

@@ -36,11 +36,13 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public abstract int AssailIntervalMs { get; }
     public abstract ILogger Logger { get; }
     public IIntervalTimer RegenTimer { get; }
+
     /// <inheritdoc />
     public abstract ICreatureScript Script { get; }
 
     /// <inheritdoc />
     public abstract ISet<string> ScriptKeys { get; }
+
     public abstract StatSheet StatSheet { get; }
     public abstract CreatureType Type { get; }
     public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
@@ -52,8 +54,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         string name,
         ushort sprite,
         MapInstance mapInstance,
-        IPoint point
-    )
+        IPoint point)
         : base(
             name,
             sprite,
@@ -91,6 +92,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             return;
 
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+
                                            //intentional... if you're observable but still invisible
                                            //we dont want the body animation to show
                                            .ThatCanSee(this))
@@ -155,9 +157,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Spell spell,
         Creature target,
         string? prompt,
-        [MaybeNullWhen(false)]
-        out SpellContext spellContext
-    )
+        [MaybeNullWhen(false)] out SpellContext spellContext)
     {
         spellContext = null;
 
@@ -311,6 +311,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public virtual void ShowHealth(byte? sound = null)
     {
         foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+
                                            //intentional... if you're observable but still invisible, health bar shouldnt show
                                            .ThatCanSee(this))
             aisling.Client.SendHealthBar(this, sound);
@@ -365,58 +366,59 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         IPoint destinationPoint,
         bool ignoreSharding = false,
         bool fromWolrdMap = false,
-        Func<Task>? onTraverse = null
-    ) =>
-        //run a task that will await entrancy into the destination map
-        //once synchronized, the creature will be added to the map
-        Task.Run(
-            async () =>
-            {
-                var currentMap = MapInstance;
+        Func<Task>? onTraverse = null)
+        =>
 
-                var aisling = this as Aisling;
-
-                if (aisling is not null)
-                    await aisling.Client.ReceiveSync.WaitAsync();
-
-                try
+            //run a task that will await entrancy into the destination map
+            //once synchronized, the creature will be added to the map
+            Task.Run(
+                async () =>
                 {
-                    await using var sync = await ComplexSynchronizationHelper.WaitAsync(
-                        TimeSpan.FromMilliseconds(500),
-                        TimeSpan.FromMilliseconds(3),
-                        currentMap.Sync,
-                        destinationMap.Sync);
+                    var currentMap = MapInstance;
 
-                    if (!fromWolrdMap && !currentMap.RemoveObject(this))
-                        return;
+                    var aisling = this as Aisling;
 
-                    if (currentMap.InstanceId != destinationMap.InstanceId)
-                        Trackers.LastMapInstanceId = currentMap.InstanceId;
+                    if (aisling is not null)
+                        await aisling.Client.ReceiveSync.WaitAsync();
 
-                    if (aisling is not null && ignoreSharding)
-                        destinationMap.AddAislingDirect(aisling, destinationPoint);
-                    else
-                        destinationMap.AddObject(this, destinationPoint);
+                    try
+                    {
+                        await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                            TimeSpan.FromMilliseconds(500),
+                            TimeSpan.FromMilliseconds(3),
+                            currentMap.Sync,
+                            destinationMap.Sync);
 
-                    if (onTraverse is not null)
-                        await onTraverse();
-                } catch (Exception e)
-                {
-                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
-                          .WithProperty(this)
-                          .WithProperty(currentMap)
-                          .WithProperty(destinationMap)
-                          .LogError(
-                              e,
-                              "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
-                              Name,
-                              currentMap.InstanceId,
-                              destinationMap.InstanceId);
-                } finally
-                {
-                    aisling?.Client.ReceiveSync.Release();
-                }
-            });
+                        if (!fromWolrdMap && !currentMap.RemoveObject(this))
+                            return;
+
+                        if (currentMap.InstanceId != destinationMap.InstanceId)
+                            Trackers.LastMapInstanceId = currentMap.InstanceId;
+
+                        if (aisling is not null && ignoreSharding)
+                            destinationMap.AddAislingDirect(aisling, destinationPoint);
+                        else
+                            destinationMap.AddObject(this, destinationPoint);
+
+                        if (onTraverse is not null)
+                            await onTraverse();
+                    } catch (Exception e)
+                    {
+                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
+                              .WithProperty(this)
+                              .WithProperty(currentMap)
+                              .WithProperty(destinationMap)
+                              .LogError(
+                                  e,
+                                  "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
+                                  Name,
+                                  currentMap.InstanceId,
+                                  destinationMap.InstanceId);
+                    } finally
+                    {
+                        aisling?.Client.ReceiveSync.Release();
+                    }
+                });
 
     public virtual bool TryDrop(IPoint point, IEnumerable<Item> items, [MaybeNullWhen(false)] out GroundItem[] groundItems)
     {
@@ -438,7 +440,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                   .WithProperty(groundItem)
                   .LogInformation(
                       "{@CreatureType} {@CreatureName} dropped item {@ItemName} at {@Location}",
-                      GetType().Name,
+                      GetType()
+                          .Name,
                       Name,
                       groundItem.Name,
                       ILocation.ToString(groundItem));
@@ -452,8 +455,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         return true;
     }
 
-    public virtual bool TryDrop(IPoint point, [MaybeNullWhen(false)] out GroundItem[] groundItems, params Item[] items) =>
-        TryDrop(point, items.AsEnumerable(), out groundItems);
+    public virtual bool TryDrop(IPoint point, [MaybeNullWhen(false)] out GroundItem[] groundItems, params Item[] items)
+        => TryDrop(point, items.AsEnumerable(), out groundItems);
 
     public virtual bool TryDropGold(IPoint point, int amount, [MaybeNullWhen(false)] out Money money)
     {
@@ -473,12 +476,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
               .WithProperty(money)
               .LogInformation(
                   "{@CreatureType} {@CreatureName} dropped {Amount} gold at {@Location}",
-                  GetType().Name,
+                  GetType()
+                      .Name,
                   Name,
                   money.Amount,
                   ILocation.ToString(money));
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(point).ToList())
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(point)
+                                           .ToList())
             reactor.OnGoldDroppedOn(this, money);
 
         return true;
@@ -576,10 +581,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             Helpers.HandleApproach(creature, this);
         }
 
-        foreach (var aisling in visibleAfter.Intersect(visibleBefore).OfType<Aisling>())
+        foreach (var aisling in visibleAfter.Intersect(visibleBefore)
+                                            .OfType<Aisling>())
             aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this).ToList())
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
+                                           .ToList())
             reactor.OnWalkedOn(this);
     }
 
@@ -633,6 +640,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual bool WillCollideWith(Creature other) => Type.WillCollideWith(other);
 
-    public virtual bool WithinLevelRange(Creature other) =>
-        LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);
+    public virtual bool WithinLevelRange(Creature other)
+        => LevelRangeFormulae.Default.WithinLevelRange(StatSheet.Level, other.StatSheet.Level);
 }

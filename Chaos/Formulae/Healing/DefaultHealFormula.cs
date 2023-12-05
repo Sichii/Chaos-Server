@@ -11,6 +11,6 @@ public class DefaultHealFormula : IHealFormula
         Creature source,
         Creature target,
         IScript script,
-        int healing
-    ) => healing;
+        int healing)
+        => healing;
 }

@@ -26,8 +26,8 @@ public sealed partial class MapInstancePropertyEditor
     #region Tbox Validation
     //private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
 
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e) =>
-        Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     private void UserControl_Initialized(object sender, EventArgs e)
@@ -45,7 +45,8 @@ public sealed partial class MapInstancePropertyEditor
         Wrapper.Path = PathTbox.Text;
         composite.Instance.TemplateKey = TemplateKeyTbox.Text;
 
-        composite.Instance.ScriptKeys = ScriptKeysViewItems.ToStrings().ToList();
+        composite.Instance.ScriptKeys = ScriptKeysViewItems.ToStrings()
+                                                           .ToList();
 
         ListItem.Name = composite.Instance.TemplateKey;
     }
@@ -72,7 +73,9 @@ public sealed partial class MapInstancePropertyEditor
     {
         try
         {
-            var existing = JsonContext.MapInstances.Objects.Where(wrapper => wrapper != Wrapper)
+            var existing = JsonContext.MapInstances
+                                      .Objects
+                                      .Where(wrapper => wrapper != Wrapper)
                                       .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
 
             if (existing is not null)
@@ -82,7 +85,9 @@ public sealed partial class MapInstancePropertyEditor
                 return;
             }
 
-            existing = JsonContext.MapInstances.Objects.Where(wrapper => wrapper != Wrapper)
+            existing = JsonContext.MapInstances
+                                  .Objects
+                                  .Where(wrapper => wrapper != Wrapper)
                                   .FirstOrDefault(wrapper => wrapper.Object.Instance.TemplateKey.EqualsI(TemplateKeyTbox.Text));
 
             if (existing is not null)

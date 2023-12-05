@@ -27,8 +27,7 @@ public sealed class MerchantFactory : IMerchantFactory
         IItemFactory itemFactory,
         ISkillFactory skillFactory,
         ISpellFactory spellFactory,
-        IStockService stockService
-    )
+        IStockService stockService)
     {
         LoggerFactory = loggerFactory;
         ScriptProvider = scriptProvider;
@@ -44,8 +43,7 @@ public sealed class MerchantFactory : IMerchantFactory
         string templateKey,
         MapInstance mapInstance,
         IPoint point,
-        ICollection<string>? extraScriptKeys = null
-    )
+        ICollection<string>? extraScriptKeys = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
         var template = SimpleCache.Get<MerchantTemplate>(templateKey);

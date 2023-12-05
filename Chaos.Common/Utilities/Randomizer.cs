@@ -73,8 +73,8 @@ public static class Randomizer
     /// <param name="weights">The weights of those choices</param>
     /// <typeparam name="T">The type of object to return</typeparam>
     /// <returns>A random element from the given choices</returns>
-    public static T PickRandomWeighted<T>(this IEnumerable<T> choices, IEnumerable<int> weights) =>
-        choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
-               .ToList()
-               .PickRandomWeighted();
+    public static T PickRandomWeighted<T>(this IEnumerable<T> choices, IEnumerable<int> weights)
+        => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
+                  .ToList()
+                  .PickRandomWeighted();
 }

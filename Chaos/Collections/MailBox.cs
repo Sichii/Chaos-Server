@@ -16,16 +16,13 @@ public sealed class MailBox : BoardBase
     private readonly ILogger<MailBox> Logger;
 
     /// <inheritdoc />
-    public MailBox(
-        string ownerName,
-        ILogger<MailBox> logger,
-        IEnumerable<Post>? posts = null
-    )
+    public MailBox(string ownerName, ILogger<MailBox> logger, IEnumerable<Post>? posts = null)
         : base(
             BOARD_ID,
             "Mail",
             ownerName,
-            posts) => Logger = logger;
+            posts)
+        => Logger = logger;
 
     /// <inheritdoc />
     public override bool Delete(Aisling deletedBy, short postId)
@@ -123,7 +120,10 @@ public sealed class MailBox : BoardBase
         }
 
         //highlight post
-        post = post with { IsHighlighted = true };
+        post = post with
+        {
+            IsHighlighted = true
+        };
         Posts[postId] = post;
         highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Message highlighted", true);
 
@@ -148,8 +148,7 @@ public sealed class MailBox : BoardBase
         string author,
         string subject,
         string message,
-        bool highlighted = false
-    )
+        bool highlighted = false)
     {
         using var @lock = Sync.Enter();
 
@@ -205,10 +204,7 @@ public sealed class MailBox : BoardBase
                       Topics.Qualifiers.Cheating)
                   .WithProperty(aisling)
                   .WithProperty(this)
-                  .LogWarning(
-                      "{@AislingName} attempted to view {@MailboxOwnerName}'s mailbox without permission",
-                      aisling.Name,
-                      Key);
+                  .LogWarning("{@AislingName} attempted to view {@MailboxOwnerName}'s mailbox without permission", aisling.Name, Key);
 
             return;
         }
@@ -282,7 +278,10 @@ public sealed class MailBox : BoardBase
         if (!post.IsHighlighted)
             return;
 
-        post = post with { IsHighlighted = false };
+        post = post with
+        {
+            IsHighlighted = false
+        };
 
         Posts[post.PostId] = post;
 

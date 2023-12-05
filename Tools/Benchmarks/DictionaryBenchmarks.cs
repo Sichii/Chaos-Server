@@ -5,18 +5,21 @@ using Bogus;
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+
 // ReSharper disable once ClassCanBeSealed.Global
 public class DictionaryBenchmarks
 {
     private readonly ConcurrentDictionary<string, string> ConcurrentDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> NormalDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> ValuesList = new();
+
     [Params(
         10,
         50,
         100,
         500,
         1000)]
+
     // ReSharper disable once UnassignedField.Global
     public int NumRecords;
 
@@ -24,7 +27,8 @@ public class DictionaryBenchmarks
     public void ConcurrentSelectBenchmark()
     {
         // ReSharper disable once UnusedVariable
-        var result = ConcurrentDictionary.Select(kvp => kvp.Value).ToList();
+        var result = ConcurrentDictionary.Select(kvp => kvp.Value)
+                                         .ToList();
     }
 
     [Benchmark]
@@ -45,7 +49,8 @@ public class DictionaryBenchmarks
     public void NormalSelectBenchmark()
     {
         // ReSharper disable once UnusedVariable
-        var result = NormalDictionary.Select(kvp => kvp.Value).ToList();
+        var result = NormalDictionary.Select(kvp => kvp.Value)
+                                     .ToList();
     }
 
     [Benchmark]
@@ -62,15 +67,13 @@ public class DictionaryBenchmarks
 
         var faker = new Faker();
 
-        var randomKeys = Enumerable
-                         .Range(0, NumRecords)
-                         .Select(_ => faker.Random.String2(3, 15) + faker.UniqueIndex)
-                         .ToList();
+        var randomKeys = Enumerable.Range(0, NumRecords)
+                                   .Select(_ => faker.Random.String2(3, 15) + faker.UniqueIndex)
+                                   .ToList();
 
-        var randomValues = Enumerable
-                           .Range(0, NumRecords)
-                           .Select(_ => faker.Random.String2(10, 20))
-                           .ToList();
+        var randomValues = Enumerable.Range(0, NumRecords)
+                                     .Select(_ => faker.Random.String2(10, 20))
+                                     .ToList();
 
         foreach ((var key, var value) in randomKeys.Zip(randomValues))
         {

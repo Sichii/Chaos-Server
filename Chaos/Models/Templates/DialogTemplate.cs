@@ -12,8 +12,10 @@ public sealed record DialogTemplate : ITemplate
     public required ICollection<DialogOption> Options { get; init; }
     public required string? PrevDialogKey { get; init; }
     public required ICollection<string> ScriptKeys { get; init; }
-    public required IDictionary<string, IScriptVars> ScriptVars { get; init; } =
-        new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
+
+    public required IDictionary<string, IScriptVars> ScriptVars { get; init; }
+        = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase);
+
     public required string TemplateKey { get; init; }
     public required string Text { get; init; }
     public required ushort? TextBoxLength { get; init; }

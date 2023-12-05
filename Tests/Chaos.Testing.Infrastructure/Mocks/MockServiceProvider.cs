@@ -24,7 +24,8 @@ public class MockServiceProvider
 
         public MockServiceProviderBuilder SetupService<T>(T service) where T: class
         {
-            Mock.Setup(sp => sp.GetService(typeof(T))).Returns(service);
+            Mock.Setup(sp => sp.GetService(typeof(T)))
+                .Returns(service);
 
             return this;
         }

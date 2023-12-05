@@ -11,6 +11,7 @@ public static class ObjectAssertionsExtensions
         var subjectElement = JsonSerializer.Deserialize<JsonElement>(assertions.Subject);
         var expectedElement = JsonSerializer.Deserialize<JsonElement>(expectedJson);
 
-        subjectElement.Should().BeEquivalentTo(expectedElement, obj => obj.ComparingByMembers<JsonElement>());
+        subjectElement.Should()
+                      .BeEquivalentTo(expectedElement, obj => obj.ComparingByMembers<JsonElement>());
     }
 }

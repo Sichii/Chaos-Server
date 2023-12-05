@@ -190,8 +190,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
             string eventId,
             TimeSpan duration,
             DateTime start,
-            bool autoConsume
-        )
+            bool autoConsume)
         {
             EventId = eventId;
             Duration = duration;

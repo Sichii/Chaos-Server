@@ -30,7 +30,8 @@ public sealed class PersistentIdGeneratorTests : IDisposable
         var id1 = generator.NextId;
 
         // Assert
-        id1.Should().Be(6);
+        id1.Should()
+           .Be(6);
     }
 
     [Fact]
@@ -44,7 +45,8 @@ public sealed class PersistentIdGeneratorTests : IDisposable
         var id2 = idGenerator.NextId;
 
         // Assert
-        id2.Should().BeGreaterThan(id1);
+        id2.Should()
+           .BeGreaterThan(id1);
     }
 
     [Fact]
@@ -60,6 +62,7 @@ public sealed class PersistentIdGeneratorTests : IDisposable
         var id2 = PersistentIdGenerator<int>.Shared.NextId;
 
         // Assert
-        id2.Should().BeGreaterThan(id1);
+        id2.Should()
+           .BeGreaterThan(id1);
     }
 }

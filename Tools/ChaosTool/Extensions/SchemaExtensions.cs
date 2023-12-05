@@ -206,9 +206,7 @@ internal static class SchemaExtensions
         yield return schema.RestockIntervalHrs.ToString();
         yield return schema.WanderIntervalMs.ToString();
 
-        yield return schema.ItemsForSale.To2LinesPerItem(
-            item => item.ItemTemplateKey,
-            item => item.Stock.ToString());
+        yield return schema.ItemsForSale.To2LinesPerItem(item => item.ItemTemplateKey, item => item.Stock.ToString());
 
         yield return schema.ItemsToBuy.ToLinePerString();
         yield return schema.SkillsToTeach.ToLinePerString();
@@ -222,8 +220,8 @@ internal static class SchemaExtensions
         yield break;
     }
 
-    internal static string To2LinesPerItem<T>(this IEnumerable<T> items, Func<T, string> selector1, Func<T, string> selector2) =>
-        string.Join(
+    internal static string To2LinesPerItem<T>(this IEnumerable<T> items, Func<T, string> selector1, Func<T, string> selector2)
+        => string.Join(
             $"{Environment.NewLine}{Environment.NewLine}",
             items.Select(item => $"{selector1(item)}{Environment.NewLine}{selector2(item)}"));
 

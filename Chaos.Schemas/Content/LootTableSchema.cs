@@ -14,10 +14,12 @@ public sealed record LootTableSchema
     /// </summary>
     [JsonRequired]
     public string Key { get; set; } = null!;
+
     /// <summary>
     ///     A collection of lootDrops. Every item in the list is calculated, allowing multiple drops
     /// </summary>
     public ICollection<LootDropSchema> LootDrops { get; set; } = Array.Empty<LootDropSchema>();
+
     /// <summary>
     ///     The mode in which the loot table is calculated
     /// </summary>

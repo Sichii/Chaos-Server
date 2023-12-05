@@ -19,7 +19,8 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString(showDays: false);
 
         // Assert
-        result.Should().Be("2 hours 3 mins 4 secs");
+        result.Should()
+              .Be("2 hours 3 mins 4 secs");
     }
 
     [Fact]
@@ -36,7 +37,8 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString(showHours: false);
 
         // Assert
-        result.Should().Be("2 days");
+        result.Should()
+              .Be("2 days");
     }
 
     [Fact]
@@ -53,7 +55,8 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString(showMinutes: false);
 
         // Assert
-        result.Should().Be("1 hour");
+        result.Should()
+              .Be("1 hour");
     }
 
     [Fact]
@@ -70,7 +73,8 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString(showSeconds: false);
 
         // Assert
-        result.Should().Be("45 mins");
+        result.Should()
+              .Be("45 mins");
     }
 
     [Fact]
@@ -83,7 +87,8 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString();
 
         // Assert
-        result.Should().Be(string.Empty);
+        result.Should()
+              .Be(string.Empty);
     }
 
     [Fact]
@@ -101,7 +106,8 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString(true);
 
         // Assert
-        result.Should().Be("10 secs 500ms");
+        result.Should()
+              .Be("10 secs 500ms");
     }
 
     [Fact]
@@ -118,6 +124,7 @@ public sealed class TimeSpanExtensionsTests
         var result = timeSpan.ToReadableString();
 
         // Assert
-        result.Should().Be("2 days 3 hours 15 mins 20 secs");
+        result.Should()
+              .Be("2 days 3 hours 15 mins 20 secs");
     }
 }

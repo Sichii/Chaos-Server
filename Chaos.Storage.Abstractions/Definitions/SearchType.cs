@@ -9,6 +9,7 @@ public enum SearchType
     ///     The search will return paths to files
     /// </summary>
     Files = 0,
+
     /// <summary>
     ///     The search will return directory paths
     /// </summary>

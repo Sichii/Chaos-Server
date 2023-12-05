@@ -11,6 +11,7 @@ public sealed record Animation
 
     public uint? TargetId { get; set; }
     public Point? TargetPoint { get; set; }
+
     /// <summary>
     ///     Static constructor for no animation.
     /// </summary>
@@ -19,26 +20,46 @@ public sealed record Animation
     /// <summary>
     ///     Returns a re-targeted animation based on a point. (Does not remove sourceAnimation)
     /// </summary>
-    public Animation GetPointAnimation(IPoint targetPoint, uint? sourceId = null) =>
-        this with { TargetPoint = Point.From(targetPoint), TargetId = null, SourceId = sourceId ?? SourceId };
+    public Animation GetPointAnimation(IPoint targetPoint, uint? sourceId = null)
+        => this with
+        {
+            TargetPoint = Point.From(targetPoint),
+            TargetId = null,
+            SourceId = sourceId ?? SourceId
+        };
 
     /// <summary>
     ///     Returns a re-target animation based on a point. Removes sourceAnimation.
     /// </summary>
-    public Animation GetPointEffectAnimation(IPoint targetPoint, uint? sourceId = null) =>
-        this with { TargetPoint = Point.From(targetPoint), TargetId = null, SourceId = sourceId ?? SourceId, SourceAnimation = 0 };
+    public Animation GetPointEffectAnimation(IPoint targetPoint, uint? sourceId = null)
+        => this with
+        {
+            TargetPoint = Point.From(targetPoint),
+            TargetId = null,
+            SourceId = sourceId ?? SourceId,
+            SourceAnimation = 0
+        };
 
     /// <summary>
     ///     Returns a re-targeted animation based on IDs. (Does not remove sourceAnimation)
     /// </summary>
-    public Animation GetTargetedAnimation(uint targetId, uint? sourceId = null) =>
-        this with { TargetPoint = null, TargetId = targetId, SourceId = sourceId ?? SourceId };
+    public Animation GetTargetedAnimation(uint targetId, uint? sourceId = null)
+        => this with
+        {
+            TargetPoint = null,
+            TargetId = targetId,
+            SourceId = sourceId ?? SourceId
+        };
 
     /// <summary>
     ///     Returns a re-targeted animation based on IDs. Removes sourceAnimation.
     /// </summary>
-    public Animation GetTargetedEffectAnimation(uint targetId, uint? sourceId = null) => this with
-    {
-        TargetPoint = null, TargetId = targetId, SourceId = sourceId ?? SourceId, SourceAnimation = 0
-    };
+    public Animation GetTargetedEffectAnimation(uint targetId, uint? sourceId = null)
+        => this with
+        {
+            TargetPoint = null,
+            TargetId = targetId,
+            SourceId = sourceId ?? SourceId,
+            SourceAnimation = 0
+        };
 }

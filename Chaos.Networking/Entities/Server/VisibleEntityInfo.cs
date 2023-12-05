@@ -10,10 +10,12 @@ public record VisibleEntityInfo : WorldEntityInfo
     ///     The sprite of the entity
     /// </summary>
     public ushort Sprite { get; set; }
+
     /// <summary>
     ///     The X coordinate of the entity
     /// </summary>
     public int X { get; set; }
+
     /// <summary>
     ///     The Y coordinate of the entity
     /// </summary>

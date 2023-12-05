@@ -23,12 +23,26 @@ public sealed class CounterCollectionConverterTests
         var result = converter.Read(ref reader, typeof(CounterCollection), options);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Count().Should().Be(2);
-        result.TryGetValue("counter1", out var counter1).Should().BeTrue();
-        result.TryGetValue("counter2", out var counter2).Should().BeTrue();
-        counter1.Should().Be(1);
-        counter2.Should().Be(2);
+        result.Should()
+              .NotBeNull();
+
+        result.Count()
+              .Should()
+              .Be(2);
+
+        result.TryGetValue("counter1", out var counter1)
+              .Should()
+              .BeTrue();
+
+        result.TryGetValue("counter2", out var counter2)
+              .Should()
+              .BeTrue();
+
+        counter1.Should()
+                .Be(1);
+
+        counter2.Should()
+                .Be(2);
     }
 
     [Fact]
@@ -51,6 +65,7 @@ public sealed class CounterCollectionConverterTests
         var resultJson = Encoding.UTF8.GetString(memoryStream.ToArray());
 
         // Assert
-        resultJson.Should().BeEquivalentToJson(EXPECTED_JSON);
+        resultJson.Should()
+                  .BeEquivalentToJson(EXPECTED_JSON);
     }
 }

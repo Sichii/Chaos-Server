@@ -13,7 +13,9 @@ public enum RandomizationType
 public enum Status : ulong
 {
     None = 0,
+
     Dead = 1
+
     //add more statuses here, double each time
 }
 
@@ -21,7 +23,9 @@ public enum Status : ulong
 public enum UserState : ulong
 {
     None = 0,
+
     IsChanting = 1
+
     //add more user states here, double each time
 }
 
@@ -63,10 +67,12 @@ public enum ServerType : byte
     ///     When you first open the client, you are in the lobby where you can choose a server to log in to
     /// </summary>
     Lobby = 0,
+
     /// <summary>
     ///     After choosing a server, you are redirected to a login server
     /// </summary>
     Login = 1,
+
     /// <summary>
     ///     After logging in, you are redirected to a world server.
     /// </summary>
@@ -83,6 +89,7 @@ public enum ServerTableRequestType : byte
     ///     This is the Id from the server table.
     /// </summary>
     ServerId = 0,
+
     /// <summary>
     ///     Requests the server table, which is a list of servers for the user to choose to join
     /// </summary>
@@ -98,6 +105,7 @@ public enum MetaDataRequestType : byte
     ///     The client is requesting the data for a specific metadata file
     /// </summary>
     DataByName = 0,
+
     /// <summary>
     ///     The client is requesting checksums of all metadata files, to ensure it has everything
     /// </summary>
@@ -115,65 +123,79 @@ public enum ServerMessageType : byte
     ///     Text appears blue, and appears in the top left
     /// </summary>
     Whisper = 0,
+
     /// <summary>
     ///     Text is only in the action bar, and will not show up in Shift+F
     /// </summary>
     OrangeBar1 = 1,
+
     /// <summary>
     ///     Text is only in the action bar, and will not show up in Shift+F
     /// </summary>
     OrangeBar2 = 2,
+
     /// <summary>
     ///     Texts appears in the action bar and Shift+F
     /// </summary>
     ActiveMessage = 3,
+
     /// <summary>
     ///     Text is only in the action bar, and will not show up in Shift+F
     /// </summary>
     OrangeBar3 = 4,
+
     /// <summary>
     ///     Text is only in the action bar, and will not show up in Shift+F.
     ///     In official this was used for admin world messages
     /// </summary>
     AdminMessage = 5,
+
     /// <summary>
     ///     Text is only in the action bar, and will not show up in Shift+F
     /// </summary>
     OrangeBar5 = 6,
+
     /// <summary>
     ///     <see cref="Chaos.Common.Definitions.UserOption" />s are sent via this text channel
     /// </summary>
     UserOptions = 7,
+
     /// <summary>
     ///     Pops open a window with a scroll bar.
     ///     In official this was used for Sense
     /// </summary>
     ScrollWindow = 8,
+
     /// <summary>
     ///     Pops open a window with no scroll bar.
     ///     In official this was used for perish lore
     /// </summary>
     NonScrollWindow = 9,
+
     /// <summary>
     ///     Pops open a window with a wooden boarder.
     ///     In official this was used for signposts and wooden boards
     /// </summary>
     WoodenBoard = 10,
+
     /// <summary>
     ///     Text appears in a puke-green color.
     ///     In official this was used for group chat
     /// </summary>
     GroupChat = 11,
+
     /// <summary>
     ///     Text appears in an olive-green color.
     ///     In official this was used for guild chat
     /// </summary>
     GuildChat = 12,
+
     /// <summary>
     ///     Closes opened pop-up windows. <see cref="ScrollWindow" />, <see cref="NonScrollWindow" />,
     ///     <see cref="WoodenBoard" />
     /// </summary>
     ClosePopup = 17,
+
     /// <summary>
     ///     Text appears white, and persists indefinitely until cleared in the top right corner
     /// </summary>
@@ -189,18 +211,22 @@ public enum LoginMessageType : byte
     ///     A generic confirmation window with an ok button
     /// </summary>
     Confirm = 0,
+
     /// <summary>
     ///     Clears the name field during character creation and presents a message with an ok button
     /// </summary>
     ClearNameMessage = 3,
+
     /// <summary>
     ///     Clears the password field during character creation and presents a message with an ok button
     /// </summary>
     ClearPswdMessage = 5,
+
     /// <summary>
     ///     Clears the name and password fields on the login screen and presents a message with an ok button
     /// </summary>
     CharacterDoesntExist = 14,
+
     /// <summary>
     ///     Clears the password fields on the login screen and presents a message with an ok button
     /// </summary>
@@ -227,10 +253,12 @@ public enum PublicMessageType : byte
     ///     Normal white chat message
     /// </summary>
     Normal = 0,
+
     /// <summary>
     ///     Yellow shout message
     /// </summary>
     Shout = 1,
+
     /// <summary>
     ///     Blue chant message
     /// </summary>
@@ -247,82 +275,102 @@ public enum MessageColor : byte
     ///     The default color, keep the existing color
     /// </summary>
     Default = 0,
+
     /// <summary>
     ///     "{=a"
     /// </summary>
     Gray = 97,
+
     /// <summary>
     ///     "{=b"
     /// </summary>
     Red = 98,
+
     /// <summary>
     ///     "{=c" This color does not work in public chat
     /// </summary>
     Yellow = 99,
+
     /// <summary>
     ///     "{=d"
     /// </summary>
     DarkGreen = 100,
+
     /// <summary>
     ///     "{=e" This color does not work in public chat
     /// </summary>
     Silver = 101,
+
     /// <summary>
     ///     "{=f"
     /// </summary>
     Blue = 102,
+
     /// <summary>
     ///     "{=g"
     /// </summary>
     Gainsboro = 103,
+
     /// <summary>
     ///     "{=i"
     /// </summary>
     SpanishGray = 105,
+
     /// <summary>
     ///     "{=j"
     /// </summary>
     Nickel = 106,
+
     /// <summary>
     ///     "{=k"
     /// </summary>
     Slate = 107,
+
     /// <summary>
     ///     "{=l"
     /// </summary>
     Charcoal = 108,
+
     /// <summary>
     ///     "{=m"
     /// </summary>
     DirtyBlack = 109,
+
     /// <summary>
     ///     "{=n"
     /// </summary>
     Black = 110,
+
     /// <summary>
     ///     "{=o"
     /// </summary>
     HotPink = 111,
+
     /// <summary>
     ///     "{=p"
     /// </summary>
     Purple = 112,
+
     /// <summary>
     ///     "{=q"
     /// </summary>
     NeonGreen = 113,
+
     /// <summary>
     ///     "{=s"
     /// </summary>
     Orange = 115,
+
     /// <summary>
     ///     "{=t"
     /// </summary>
     Brown = 116,
+
     /// <summary>
     ///     "{=u"
     /// </summary>
     White = 117,
+
     /// <summary>
     ///     "{=x"
     /// </summary>
@@ -622,23 +670,28 @@ public enum Nation : byte
 public enum StatUpdateType : byte
 {
     None = 0,
+
     /// <summary>
     ///     mail
     /// </summary>
     UnreadMail = 1,
     Unknown = 2,
+
     /// <summary>
     ///     Blind, Mail, Elements, Ressists, AC, DMG, HIT
     /// </summary>
     Secondary = 4,
+
     /// <summary>
     ///     Exp, Gold
     /// </summary>
     ExpGold = 8,
+
     /// <summary>
     ///     Current HP, Current MP
     /// </summary>
     Vitality = 16,
+
     /// <summary>
     ///     Level, Max HP/MP, Current stats, Weight, Unspent
     /// </summary>
@@ -1004,26 +1057,32 @@ public enum LevelCircle : byte
     ///     Levels 1-10
     /// </summary>
     One = 1,
+
     /// <summary>
     ///     Levels 11-40
     /// </summary>
     Two = 2,
+
     /// <summary>
     ///     Levels 41-70
     /// </summary>
     Three = 3,
+
     /// <summary>
     ///     Levels 71-98
     /// </summary>
     Four = 4,
+
     /// <summary>
     ///     Levels 99+
     /// </summary>
     Five = 5,
+
     /// <summary>
     ///     Master
     /// </summary>
     Six = 6,
+
     /// <summary>
     ///     Advanced Class
     /// </summary>

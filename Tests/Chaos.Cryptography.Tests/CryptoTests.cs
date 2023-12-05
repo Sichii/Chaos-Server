@@ -8,15 +8,28 @@ namespace Chaos.Cryptography.Tests;
 
 public sealed class CryptoTests
 {
-    private readonly Crypto Crypto = new(0, new byte[] { 1, 2, 3, 4, 5 });
+    private readonly Crypto Crypto = new(
+        0,
+        new byte[]
+        {
+            1,
+            2,
+            3,
+            4,
+            5
+        });
 
     [Fact]
     public void Should_GenerateKey_With_Valid_A_And_B()
     {
         var key = Crypto.GenerateKey(1, 2);
 
-        key.Should().NotBeNull();
-        key.Length.Should().Be(9);
+        key.Should()
+           .NotBeNull();
+
+        key.Length
+           .Should()
+           .Be(9);
     }
 
     [Fact]
@@ -24,8 +37,12 @@ public sealed class CryptoTests
     {
         var keySalts = Crypto.GenerateKeySalts("mySeed");
 
-        keySalts.Should().NotBeNull();
-        keySalts.Length.Should().Be(1024, "32 hashes of 32 characters each = 1024");
+        keySalts.Should()
+                .NotBeNull();
+
+        keySalts.Length
+                .Should()
+                .Be(1024, "32 hashes of 32 characters each = 1024");
     }
 
     [Fact]
@@ -33,8 +50,12 @@ public sealed class CryptoTests
     {
         var md5Hash = Crypto.GetMd5Hash("myValue");
 
-        md5Hash.Should().NotBeNull();
-        md5Hash.Length.Should().Be(32);
+        md5Hash.Should()
+               .NotBeNull();
+
+        md5Hash.Length
+               .Should()
+               .Be(32);
     }
 
     [Theory]
@@ -45,7 +66,8 @@ public sealed class CryptoTests
     {
         var actualType = Crypto.GetClientEncryptionType(opCode);
 
-        actualType.Should().Be(expectedType);
+        actualType.Should()
+                  .Be(expectedType);
     }
 
     [Theory]
@@ -54,9 +76,10 @@ public sealed class CryptoTests
     [InlineData(255, EncryptionType.MD5)]
     public void Should_Return_Valid_EncryptionType_From_ServerEncryptionType(byte opCode, EncryptionType expectedType)
     {
-        var actualType = Crypto.ServerEncryptionType(opCode);
+        var actualType = Crypto.GetServerEncryptionType(opCode);
 
-        actualType.Should().Be(expectedType);
+        actualType.Should()
+                  .Be(expectedType);
     }
 
     [Theory]
@@ -65,8 +88,10 @@ public sealed class CryptoTests
     [InlineData(3, true)]
     public void ShouldBeEncrypted_Should_Return_Correct_Value(byte opCode, bool expectedResult)
     {
-        var result = Crypto.ShouldBeEncrypted(opCode);
-        result.Should().Be(expectedResult);
+        var result = Crypto.IsClientEncrypted(opCode);
+
+        result.Should()
+              .Be(expectedResult);
     }
 
     [Theory]
@@ -75,7 +100,9 @@ public sealed class CryptoTests
     [InlineData(2, true)]
     public void ShouldEncrypt_Should_Return_Correct_Value(byte opCode, bool expectedResult)
     {
-        var result = Crypto.ShouldEncrypt(opCode);
-        result.Should().Be(expectedResult);
+        var result = Crypto.IsServerEncrypted(opCode);
+
+        result.Should()
+              .Be(expectedResult);
     }
 }

@@ -29,8 +29,7 @@ public sealed class MapGenerator
         string outputDirectory,
         IEnumerable<MapTemplate> mapPool,
         ICollection<ChaosTile>? sampleBackgrounds = null,
-        ICollection<ChaosTile>? sampleForegrounds = null
-    )
+        ICollection<ChaosTile>? sampleForegrounds = null)
     {
         OutputWidth = outputWidth;
         OutputHeight = outputHeight;
@@ -78,8 +77,7 @@ public sealed class MapGenerator
         var mostCommonBgId = tiles.Flatten()
                                   .GroupBy(t => t.Background)
                                   .Where(g => g.Key != 0)
-                                  .MaxBy(g => g.Count())!
-                                  .Key;
+                                  .MaxBy(g => g.Count())!.Key;
 
         for (var x = 0; x < tiles.GetLowerBound(0); x++)
             for (var y = 0; y < tiles.GetLowerBound(1); y++)
@@ -120,8 +118,11 @@ public sealed class MapGenerator
         for (var y = 0; y < height; y++)
             for (var x = 0; x < width; x++)
             {
-                var background = (int)tiles.Get(x, y).Value;
-                var foregroundCombined = (int)tiles.Get(x, y, 1).Value;
+                var background = (int)tiles.Get(x, y)
+                                           .Value;
+
+                var foregroundCombined = (int)tiles.Get(x, y, 1)
+                                                   .Value;
                 var leftForeground = (ushort)(foregroundCombined >> 16);
                 var rightForeground = (ushort)foregroundCombined;
 
@@ -144,7 +145,9 @@ public sealed class MapGenerator
                                   .Where(
                                       map =>
                                       {
-                                          var tiles = map.Tiles.Flatten().ToList();
+                                          var tiles = map.Tiles
+                                                         .Flatten()
+                                                         .ToList();
 
                                           foreach (var bs in SampleBackgrounds)
                                               if (tiles.All(t => t.Background != bs.Background))
@@ -166,7 +169,8 @@ public sealed class MapGenerator
 
             var tiles = map.Tiles;
 
-            if (tiles.Flatten().All(t => t.Background == 0))
+            if (tiles.Flatten()
+                     .All(t => t.Background == 0))
                 continue;
 
             ReplaceEmptyBackgrounds(tiles);

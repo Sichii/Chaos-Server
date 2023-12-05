@@ -12,12 +12,12 @@ using Microsoft.Extensions.Options;
 
 #pragma warning disable CS1591
 
-var configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
-                    .AddJsonFile("appsettings.local.json")
-                    //other configurations
-                    .Build();
+var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                                              .AddJsonFile("appsettings.json")
+                                              .AddJsonFile("appsettings.local.json")
+
+                                              //other configurations
+                                              .Build();
 
 var services = new ServiceCollection();
 
@@ -28,8 +28,11 @@ services.AddStorage();
 
 await using var provider = services.BuildServiceProvider();
 
-var jsonOptions = provider.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
-var itemTemplateCacheOptions = provider.GetRequiredService<IOptions<ItemTemplateCacheOptions>>().Value;
+var jsonOptions = provider.GetRequiredService<IOptions<JsonSerializerOptions>>()
+                          .Value;
+
+var itemTemplateCacheOptions = provider.GetRequiredService<IOptions<ItemTemplateCacheOptions>>()
+                                       .Value;
 var filePaths = Directory.EnumerateFiles(itemTemplateCacheOptions.Directory, "*.json", SearchOption.AllDirectories);
 
 foreach (var path in filePaths)

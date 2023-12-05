@@ -42,7 +42,8 @@ public static class ServiceProviderExtensions
         {
             await using var sync = await mapInstance.Sync.WaitAsync();
 
-            foreach (var groundItem in mapInstance.GetEntities<GroundItem>().ToList())
+            foreach (var groundItem in mapInstance.GetEntities<GroundItem>()
+                                                  .ToList())
             {
                 var schema = mapper.Map<ItemSchema>(groundItem.Item);
                 var item = mapper.Map<Item>(schema);
@@ -60,7 +61,9 @@ public static class ServiceProviderExtensions
                         exchange?.Cancel(aisling);
 
                         var inventorySchemas = mapper.MapMany<ItemSchema>(aisling.Inventory);
-                        var inventoryItems = mapper.MapMany<Item>(inventorySchemas).ToList();
+
+                        var inventoryItems = mapper.MapMany<Item>(inventorySchemas)
+                                                   .ToList();
 
                         foreach (var item in inventoryItems)
                         {
@@ -82,7 +85,9 @@ public static class ServiceProviderExtensions
                     case Monster monster:
                     {
                         var schemas = mapper.MapMany<ItemSchema>(monster.Items);
-                        var items = mapper.MapMany<Item>(schemas).ToList();
+
+                        var items = mapper.MapMany<Item>(schemas)
+                                          .ToList();
 
                         monster.Items.Clear();
                         monster.Items.AddRange(items);
@@ -145,7 +150,8 @@ public static class ServiceProviderExtensions
                 if (!monsterSpawn.ExtraLootTables.Any())
                     continue;
 
-                var lootTables = monsterSpawn.ExtraLootTables.Select(table => lootTableCache.Get(table.Key))
+                var lootTables = monsterSpawn.ExtraLootTables
+                                             .Select(table => lootTableCache.Get(table.Key))
                                              .ToList();
 
                 monsterSpawn.ExtraLootTables = lootTables;
@@ -187,7 +193,9 @@ public static class ServiceProviderExtensions
         await using var oldSync = await ComplexSynchronizationHelper.WaitAsync(
             TimeSpan.FromSeconds(10),
             TimeSpan.FromMilliseconds(50),
-            oldMaps.Values.Select(m => m.Sync).ToArray());
+            oldMaps.Values
+                   .Select(m => m.Sync)
+                   .ToArray());
 
         await mapTemplateCache.ReloadAsync();
         await mapCache.ReloadAsync();
@@ -197,7 +205,9 @@ public static class ServiceProviderExtensions
         await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
             TimeSpan.FromSeconds(10),
             TimeSpan.FromMilliseconds(50),
-            newMaps.Values.Select(m => m.Sync).ToArray());
+            newMaps.Values
+                   .Select(m => m.Sync)
+                   .ToArray());
 
         foreach (var oldMap in oldMaps.Values)
             try
@@ -242,7 +252,8 @@ public static class ServiceProviderExtensions
 
             var merchantsToAdd = new List<Merchant>();
 
-            foreach (var merchant in mapInstance.GetEntities<Merchant>().ToList())
+            foreach (var merchant in mapInstance.GetEntities<Merchant>()
+                                                .ToList())
                 try
                 {
                     var extraScriptKeys = merchant.ScriptKeys.Except(merchant.Template.ScriptKeys);
@@ -251,7 +262,10 @@ public static class ServiceProviderExtensions
                         merchant.Template.TemplateKey,
                         merchant.MapInstance,
                         merchant,
-                        merchant.Template.ScriptKeys.Concat(extraScriptKeys).ToHashSet(StringComparer.OrdinalIgnoreCase));
+                        merchant.Template
+                                .ScriptKeys
+                                .Concat(extraScriptKeys)
+                                .ToHashSet(StringComparer.OrdinalIgnoreCase));
 
                     newMerchant.Direction = merchant.Direction;
 
@@ -288,7 +302,8 @@ public static class ServiceProviderExtensions
 
             var monstersToAdd = new List<Monster>();
 
-            foreach (var monster in mapInstance.GetEntities<Monster>().ToList())
+            foreach (var monster in mapInstance.GetEntities<Monster>()
+                                               .ToList())
                 try
                 {
                     var newMonster = monsterFactory.Create(
@@ -340,7 +355,9 @@ public static class ServiceProviderExtensions
                     case Aisling aisling:
                     {
                         var schemas = mapper.MapMany<SkillSchema>(aisling.SkillBook);
-                        var skills = mapper.MapMany<Skill>(schemas).ToList();
+
+                        var skills = mapper.MapMany<Skill>(schemas)
+                                           .ToList();
 
                         foreach (var skill in skills)
                         {
@@ -355,7 +372,9 @@ public static class ServiceProviderExtensions
                     {
                         {
                             var schemas = mapper.MapMany<SkillSchema>(monster.Skills);
-                            var skills = mapper.MapMany<Skill>(schemas).ToList();
+
+                            var skills = mapper.MapMany<Skill>(schemas)
+                                               .ToList();
 
                             monster.Skills.Clear();
                             monster.Skills.AddRange(skills);
@@ -386,7 +405,9 @@ public static class ServiceProviderExtensions
                     case Aisling aisling:
                     {
                         var schemas = mapper.MapMany<SpellSchema>(aisling.SpellBook);
-                        var spells = mapper.MapMany<Spell>(schemas).ToList();
+
+                        var spells = mapper.MapMany<Spell>(schemas)
+                                           .ToList();
 
                         foreach (var spell in spells)
                         {
@@ -401,7 +422,9 @@ public static class ServiceProviderExtensions
                     {
                         {
                             var schemas = mapper.MapMany<SpellSchema>(monster.Spells);
-                            var spells = mapper.MapMany<Spell>(schemas).ToList();
+
+                            var spells = mapper.MapMany<Spell>(schemas)
+                                               .ToList();
 
                             monster.Spells.Clear();
                             monster.Spells.AddRange(spells);

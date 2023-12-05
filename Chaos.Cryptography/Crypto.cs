@@ -11,10 +11,13 @@ namespace Chaos.Cryptography;
 public sealed class Crypto : ICrypto
 {
     private readonly IReadOnlyList<byte> KeySalts;
+
     /// <inheritdoc />
     public byte[] Key { get; }
+
     /// <inheritdoc />
     public byte Seed { get; }
+
     private IReadOnlyList<byte> Salts => Tables.SALT_TABLE[Seed];
 
     /// <summary>
@@ -34,6 +37,16 @@ public sealed class Crypto : ICrypto
         Seed = seed;
         Key = key;
         KeySalts = string.IsNullOrEmpty(keySaltSeed) ? new byte[1024] : GenerateKeySalts(keySaltSeed);
+    }
+
+    public Crypto(byte seed, string keySaltSeed)
+    {
+        Seed = seed;
+        KeySalts = GenerateKeySalts(keySaltSeed);
+
+        var a = (ushort)Random.Shared.Next(256, ushort.MaxValue);
+        var b = (byte)Random.Shared.Next(100, byte.MaxValue);
+        Key = GenerateKey(a, b);
     }
 
     /// <inheritdoc />
@@ -60,23 +73,23 @@ public sealed class Crypto : ICrypto
 
     #region Utility
     /// <inheritdoc />
-    public string GetMd5Hash(string value) =>
-        BitConverter.ToString(MD5.HashData(Encoding.ASCII.GetBytes(value)))
-                    .Replace("-", string.Empty)
-                    .ToLower();
+    public string GetMd5Hash(string value)
+        => BitConverter.ToString(MD5.HashData(Encoding.ASCII.GetBytes(value)))
+                       .Replace("-", string.Empty)
+                       .ToLower();
     #endregion
 
     #region Client Encryption
     /// <summary>
     ///     Whether or not a packet with the given opcode sent from the client should be encrypted.
     /// </summary>
-    public bool ShouldBeEncrypted(byte opCode) => GetClientEncryptionType(opCode) != EncryptionType.None;
+    public bool IsClientEncrypted(byte opCode) => GetClientEncryptionType(opCode) != EncryptionType.None;
 
     /// <summary>
-    ///     Which type of encryption, if any, should be used with the given opcode on a packet sent from the client.
+    ///     Which type of encryption, if any, should be used with the given opcode on a packet sent from a client.
     /// </summary>
-    public EncryptionType GetClientEncryptionType(byte opCode) =>
-        opCode switch
+    public EncryptionType GetClientEncryptionType(byte opCode)
+        => opCode switch
         {
             0   => EncryptionType.None,
             16  => EncryptionType.None,
@@ -101,14 +114,118 @@ public sealed class Crypto : ICrypto
         };
 
     /// <summary>
-    ///     Encrypts a packet that's being sent to a client.
+    ///     Decrypts a packet that's been sent to a client
     /// </summary>
-    public void Encrypt(ref Span<byte> buffer, byte opCode, byte sequence)
+    public void ClientDecrypt(ref Span<byte> buffer, byte opCode, byte sequence)
+    {
+        byte[] thisKey;
+        var resultLength = buffer.Length - 3;
+        var a = (ushort)(((buffer[resultLength + 2] << 8) | buffer[resultLength]) ^ 25716);
+        var b = (byte)(buffer[resultLength + 1] ^ 36U);
+        var type = GetServerEncryptionType(opCode);
+
+        switch (type)
+        {
+            case EncryptionType.Normal:
+                thisKey = Key;
+
+                break;
+            case EncryptionType.MD5:
+                thisKey = GenerateKey(a, b);
+
+                break;
+            default:
+                return;
+        }
+
+        for (var index1 = 0; index1 < resultLength; ++index1)
+        {
+            var index2 = index1 / Key.Length % 256;
+            buffer[index1] ^= (byte)(Salts[index2] ^ (uint)thisKey[index1 % thisKey.Length]);
+
+            if (index2 != sequence)
+                buffer[index1] ^= Salts[sequence];
+        }
+
+        buffer = buffer[..resultLength];
+    }
+
+    /// <summary>
+    ///     Encrypts a packet that's being sent from a client
+    /// </summary>
+    public void ClientEncrypt(ref Span<byte> buffer, byte opcode, byte sequence)
+    {
+        if (opcode is 57 or 58)
+            EncryptDialog(ref buffer);
+
+        byte[] thisKey;
+        var a = (ushort)Random.Shared.Next(256, ushort.MaxValue);
+        var b = (byte)Random.Shared.Next(100, byte.MaxValue);
+        var type = GetClientEncryptionType(opcode);
+        var resultLength = buffer.Length + 8;
+        var position = buffer.Length + 1;
+        Span<byte> newBuffer;
+
+        switch (type)
+        {
+            case EncryptionType.Normal:
+                thisKey = Key;
+                newBuffer = new Span<byte>(new byte[resultLength]);
+                buffer.CopyTo(newBuffer);
+
+                break;
+            case EncryptionType.MD5:
+                thisKey = GenerateKey(a, b);
+                newBuffer = new Span<byte>(new byte[resultLength + 1]);
+                buffer.CopyTo(newBuffer);
+
+                newBuffer[position++] = opcode;
+
+                break;
+            default:
+                return;
+        }
+
+        for (var i = 0; i < position; ++i)
+        {
+            var saltIndex = i / Key.Length % 256;
+
+            newBuffer[i] ^= (byte)(Salts[saltIndex] ^ (uint)thisKey[i % thisKey.Length]);
+
+            if (saltIndex != sequence)
+                newBuffer[i] ^= Salts[sequence];
+        }
+
+        Span<byte> bytesToHash = stackalloc byte[position + 2];
+        bytesToHash[0] = opcode;
+        bytesToHash[1] = sequence;
+
+        newBuffer[..position]
+            .CopyTo(bytesToHash[2..]);
+
+        var hash = MD5.HashData(bytesToHash);
+
+        newBuffer[position++] = hash[13];
+        newBuffer[position++] = hash[3];
+        newBuffer[position++] = hash[11];
+        newBuffer[position++] = hash[7];
+
+        newBuffer[position++] = (byte)((a % 256) ^ 112);
+        newBuffer[position++] = (byte)(b ^ 35);
+        newBuffer[position] = (byte)(((a >> 8) % 256) ^ 116);
+
+        buffer = newBuffer;
+    }
+
+    /// <summary>
+    ///     Encrypts a packet that's being sent from a server
+    /// </summary>
+    public void ServerEncrypt(ref Span<byte> buffer, byte opCode, byte sequence)
     {
         IReadOnlyList<byte> thisKey;
         var a = (ushort)Random.Shared.Next(256, ushort.MaxValue);
         var b = (byte)Random.Shared.Next(100, byte.MaxValue);
-        var type = ServerEncryptionType(opCode);
+        var type = GetServerEncryptionType(opCode);
 
         switch (type)
         {
@@ -126,10 +243,10 @@ public sealed class Crypto : ICrypto
 
         for (var i = 0; i < buffer.Length; i++)
         {
-            var index = (byte)(i / Key.Length);
-            buffer[i] ^= (byte)(Salts[index] ^ thisKey[i % thisKey.Count]);
+            var i2 = (byte)(i / Key.Length);
+            buffer[i] ^= (byte)(Salts[i2] ^ thisKey[i % thisKey.Count]);
 
-            if (index != sequence)
+            if (i2 != sequence)
                 buffer[i] ^= Salts[sequence];
         }
 
@@ -145,9 +262,9 @@ public sealed class Crypto : ICrypto
     }
 
     /// <summary>
-    ///     Decrypts a packet that's been sent from a client.
+    ///     Decrypts a packet that's been sent to a server
     /// </summary>
-    public void Decrypt(ref Span<byte> buffer, byte opCode, byte sequence)
+    public void ServerDecrypt(ref Span<byte> buffer, byte opCode, byte sequence)
     {
         var length = buffer.Length - 7;
         IReadOnlyList<byte> thisKey;
@@ -173,23 +290,51 @@ public sealed class Crypto : ICrypto
 
         for (var i = 0; i < length; ++i)
         {
-            var index = (byte)(i / Key.Length);
-            buffer[i] ^= (byte)(Salts[index] ^ thisKey[i % thisKey.Count]);
+            var i2 = (byte)(i / Key.Length);
+            buffer[i] ^= (byte)(Salts[i2] ^ thisKey[i % thisKey.Count]);
 
-            if (index != sequence)
+            if (i2 != sequence)
                 buffer[i] ^= Salts[sequence];
         }
 
-        var slice = buffer[..length];
-        //overwrite ref
-        buffer = slice;
+        buffer = buffer[..length];
 
         if (opCode is 57 or 58)
             DecryptDialog(ref buffer);
     }
 
     /// <summary>
-    ///     Decrypts the dialog header of a packet sent from a client.
+    ///     Encrypts the dialog of a packet sent from a client
+    /// </summary>
+    public void EncryptDialog(ref Span<byte> buffer)
+    {
+        var newBuffer = new Span<byte>(new byte[buffer.Length + 6]);
+        buffer.CopyTo(buffer[6..]);
+
+        var checksum = Crc.Generate16(newBuffer[6..]);
+        newBuffer[0] = (byte)Random.Shared.Next();
+        newBuffer[1] = (byte)Random.Shared.Next();
+        newBuffer[2] = (byte)((newBuffer.Length - 4) / 256);
+        newBuffer[3] = (byte)((newBuffer.Length - 4) % 256);
+        newBuffer[4] = (byte)(checksum / 256);
+        newBuffer[5] = (byte)(checksum % 256);
+
+        var num1 = (newBuffer[2] << 8) | newBuffer[3];
+        var num2 = (byte)(newBuffer[1] ^ (uint)(byte)(newBuffer[0] - 45U));
+        var num3 = (byte)(num2 + 114U);
+        var num4 = (byte)(num2 + 40U);
+
+        newBuffer[2] ^= num3;
+        newBuffer[3] ^= (byte)((num3 + 1) % 256);
+
+        for (var index = 0; index < num1; ++index)
+            newBuffer[4 + index] ^= (byte)((num4 + index) % 256);
+
+        buffer = newBuffer;
+    }
+
+    /// <summary>
+    ///     Decrypts the dialog of a packet sent from a client.
     /// </summary>
     public void DecryptDialog(ref Span<byte> buffer)
     {
@@ -215,13 +360,13 @@ public sealed class Crypto : ICrypto
     /// <summary>
     ///     Whether or not a packet with the given opcode sent from the server should be encrypted.
     /// </summary>
-    public bool ShouldEncrypt(byte opCode) => ServerEncryptionType(opCode) != EncryptionType.None;
+    public bool IsServerEncrypted(byte opCode) => GetServerEncryptionType(opCode) != EncryptionType.None;
 
     /// <summary>
     ///     Which type of encryption, if any, should be used with the given opcode on a packet sent from the server.
     /// </summary>
-    public EncryptionType ServerEncryptionType(byte opCode) =>
-        opCode switch
+    public EncryptionType GetServerEncryptionType(byte opCode)
+        => opCode switch
         {
             0   => EncryptionType.None,
             3   => EncryptionType.None,

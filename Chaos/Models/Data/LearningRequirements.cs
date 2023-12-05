@@ -31,11 +31,7 @@ public sealed record LearningRequirements
     /// </summary>
     public required Stats? RequiredStats { get; init; }
 
-    public StringBuilder BuildRequirementsString(
-        IItemFactory itemFactory,
-        ISkillFactory skillFactory,
-        ISpellFactory spellFactory
-    )
+    public StringBuilder BuildRequirementsString(IItemFactory itemFactory, ISkillFactory skillFactory, ISpellFactory spellFactory)
     {
         var builder = new StringBuilder();
 
@@ -52,9 +48,17 @@ public sealed record LearningRequirements
         var max = Math.Max(PrerequisiteSkillTemplateKeys.Count, PrerequisiteSpellTemplateKeys.Count);
         max = Math.Max(max, ItemRequirements.Count);
 
-        var skillStrs = Enumerable.Range(0, max).Select(_ => string.Empty).ToList();
-        var spellStrs = Enumerable.Range(0, max).Select(_ => string.Empty).ToList();
-        var itemStrs = Enumerable.Range(0, max).Select(_ => string.Empty).ToList();
+        var skillStrs = Enumerable.Range(0, max)
+                                  .Select(_ => string.Empty)
+                                  .ToList();
+
+        var spellStrs = Enumerable.Range(0, max)
+                                  .Select(_ => string.Empty)
+                                  .ToList();
+
+        var itemStrs = Enumerable.Range(0, max)
+                                 .Select(_ => string.Empty)
+                                 .ToList();
 
         for (var i = 0; i < PrerequisiteSkillTemplateKeys.Count; i++)
         {

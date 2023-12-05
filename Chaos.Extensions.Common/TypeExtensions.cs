@@ -107,8 +107,7 @@ public static class TypeExtensions
     ///     Determines if a type is a compiler generated type.
     /// </summary>
     /// <returns><c>true</c> if the type is compiler generated, otherwise <c>false</c></returns>
-    public static bool IsCompilerGenerated(this Type type) =>
-        type.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
+    public static bool IsCompilerGenerated(this Type type) => type.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
 
     /// <summary>
     ///     Returns all constructable types that inherit from the specified type.

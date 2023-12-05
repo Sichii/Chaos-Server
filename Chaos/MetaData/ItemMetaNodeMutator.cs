@@ -9,8 +9,8 @@ public abstract class ItemMetaNodeMutator : IItemMetaNodeMutator
     /// <inheritdoc />
     public abstract IEnumerable<ItemMetaNode> Mutate(ItemMetaNode node, ItemTemplate template);
 
-    public static IItemMetaNodeMutator Create(Func<ItemMetaNode, ItemTemplate, IEnumerable<ItemMetaNode>> mutator) =>
-        new LambdaItemMutator(mutator);
+    public static IItemMetaNodeMutator Create(Func<ItemMetaNode, ItemTemplate, IEnumerable<ItemMetaNode>> mutator)
+        => new LambdaItemMutator(mutator);
 
     private sealed class LambdaItemMutator : ItemMetaNodeMutator
     {

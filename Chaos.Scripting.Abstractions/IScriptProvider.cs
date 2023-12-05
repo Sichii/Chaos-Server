@@ -16,6 +16,6 @@ public interface IScriptProvider
     ///     It is expected that the generated scripts be combined into an
     ///     <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" />
     /// </remarks>
-    TScript CreateScript<TScript, TScripted>(ICollection<string> scriptKeys, TScripted subject) where TScript: IScript
-        where TScripted: IScripted;
+    TScript CreateScript<TScript, TScripted>(ICollection<string> scriptKeys, TScripted subject)
+        where TScript: IScript where TScripted: IScripted;
 }

@@ -12,6 +12,7 @@ public enum Endianness
     ///     In other words, the bytes are ordered from the smallest to the largest, based on their significance.
     /// </summary>
     LittleEndian,
+
     /// <summary>
     ///     Big endian is a term used to describe the byte order of multi-byte data types in computer memory.
     ///     In big endian, the most significant byte (MSB) is stored at the lowest memory address,

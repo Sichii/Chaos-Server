@@ -33,7 +33,8 @@ public class GiveExpCommand : ICommand<Aisling>
 
         if (args.TryGetNext<string>(out var targetName) && args.TryGetNext(out amount))
         {
-            var target = ClientRegistry.Select(client => client.Aisling).FirstOrDefault(aisling => aisling.Name.EqualsI(targetName));
+            var target = ClientRegistry.Select(client => client.Aisling)
+                                       .FirstOrDefault(aisling => aisling.Name.EqualsI(targetName));
 
             if (target == null)
             {

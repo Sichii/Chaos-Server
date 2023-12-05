@@ -9,17 +9,50 @@ namespace Chaos.Extensions.Geometry.Tests;
 public sealed class DirectionExtensionsTests
 {
     [Theory]
-    [InlineData(Direction.Up, new[] { Direction.Up, Direction.Right, Direction.Down, Direction.Left })]
-    [InlineData(Direction.Right, new[] { Direction.Right, Direction.Down, Direction.Left, Direction.Up })]
-    [InlineData(Direction.Down, new[] { Direction.Down, Direction.Left, Direction.Up, Direction.Right })]
-    [InlineData(Direction.Left, new[] { Direction.Left, Direction.Up, Direction.Right, Direction.Down })]
+    [InlineData(
+        Direction.Up,
+        new[]
+        {
+            Direction.Up,
+            Direction.Right,
+            Direction.Down,
+            Direction.Left
+        })]
+    [InlineData(
+        Direction.Right,
+        new[]
+        {
+            Direction.Right,
+            Direction.Down,
+            Direction.Left,
+            Direction.Up
+        })]
+    [InlineData(
+        Direction.Down,
+        new[]
+        {
+            Direction.Down,
+            Direction.Left,
+            Direction.Up,
+            Direction.Right
+        })]
+    [InlineData(
+        Direction.Left,
+        new[]
+        {
+            Direction.Left,
+            Direction.Up,
+            Direction.Right,
+            Direction.Down
+        })]
     public void AsEnumerable_ShouldReturnAllDirectionsInClockwiseOrder(Direction startDirection, Direction[] expectedDirections)
     {
         // Act
         var directions = startDirection.AsEnumerable();
 
         // Assert
-        directions.Should().ContainInOrder(expectedDirections);
+        directions.Should()
+                  .ContainInOrder(expectedDirections);
     }
 
     [Theory]
@@ -34,8 +67,11 @@ public sealed class DirectionExtensionsTests
         (var side1, var side2) = direction.GetSideDirections();
 
         // Assert
-        side1.Should().Be(expectedSide1);
-        side2.Should().Be(expectedSide2);
+        side1.Should()
+             .Be(expectedSide1);
+
+        side2.Should()
+             .Be(expectedSide2);
     }
 
     [Theory]
@@ -50,6 +86,7 @@ public sealed class DirectionExtensionsTests
         var reverse = direction.Reverse();
 
         // Assert
-        reverse.Should().Be(expectedReverse);
+        reverse.Should()
+               .Be(expectedReverse);
     }
 }

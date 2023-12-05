@@ -11,7 +11,10 @@ public sealed class Equipment : PanelBase<Item>, IEquipment
         : base(
             PanelType.Equipment,
             19,
-            new byte[] { 0 })
+            new byte[]
+            {
+                0
+            })
     {
         items ??= Array.Empty<Item>();
 

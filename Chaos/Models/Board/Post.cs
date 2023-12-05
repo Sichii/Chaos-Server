@@ -6,5 +6,4 @@ public sealed record Post(
     string Subject,
     string Message,
     DateTime CreationDate,
-    bool IsHighlighted
-);
+    bool IsHighlighted);

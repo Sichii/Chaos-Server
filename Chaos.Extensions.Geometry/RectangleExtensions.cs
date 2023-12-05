@@ -52,17 +52,20 @@ public static class RectangleExtensions
     {
         var vertices = rect.Vertices;
 
-        for (var i = 0; i < vertices.Count - 1; i++)
+        for (var i = 0; i < (vertices.Count - 1); i++)
         {
             var current = vertices[i];
             var next = vertices[i + 1];
 
             //skip the last point so the vertices are not included twice
-            foreach (var point in current.GetDirectPath(next).SkipLast(1))
+            foreach (var point in current.GetDirectPath(next)
+                                         .SkipLast(1))
                 yield return point;
         }
 
-        foreach (var point in vertices[^1].GetDirectPath(vertices[0]).SkipLast(1))
+        foreach (var point in vertices[^1]
+                              .GetDirectPath(vertices[0])
+                              .SkipLast(1))
             yield return point;
     }
 
@@ -83,9 +86,8 @@ public static class RectangleExtensions
     ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
     /// <param name="rect">The rect to use as bounds</param>
-    public static Point GetRandomPoint(this IRectangle rect) => new(
-        rect.Left + Random.Shared.Next(rect.Width),
-        rect.Top + Random.Shared.Next(rect.Height));
+    public static Point GetRandomPoint(this IRectangle rect)
+        => new(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
 
     /// <summary>
     ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />

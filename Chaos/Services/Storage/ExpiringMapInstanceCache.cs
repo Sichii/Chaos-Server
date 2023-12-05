@@ -27,6 +27,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
     private readonly IMerchantFactory MerchantFactory;
     private readonly IMonsterFactory MonsterFactory;
     private readonly IPathfindingService PathfindingService;
+
     // ReSharper disable once NotAccessedField.Local
     private readonly Task PersistUsedMapsTask;
     private readonly PeriodicTimer PersistUsedMapsTimer;
@@ -41,8 +42,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         IPathfindingService pathfindingService,
         IReactorTileFactory reactorTileFactory,
         IOptions<MapInstanceCacheOptions> options,
-        ILogger<ExpiringMapInstanceCache> logger
-    )
+        ILogger<ExpiringMapInstanceCache> logger)
         : base(
             cache,
             entityRepository,
@@ -70,7 +70,8 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 //checks each map for aislings
                 //if the map has aislings on it, re-access the map to keep it in the cache
                 foreach (var mapInstance in LocalLookup.Values)
-                    if (mapInstance.GetEntities<Aisling>().Any())
+                    if (mapInstance.GetEntities<Aisling>()
+                                   .Any())
                         Get(mapInstance.InstanceId);
             } catch (Exception e)
             {
@@ -91,9 +92,11 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
     {
         //entryKey could be either a normal instanceId, or a shardId
         var entryKey = entry.Key.ToString();
+
         //if a load override is specified, entryKey is a shardId, and the loadInstanceId is the instance the shard is based on
         var loadInstanceId = loadFromFileKeyOverride ?? entryKey;
         var loadInstanceIdActual = DeconstructKeyForType(loadInstanceId!);
+
         //the deconstructed entryKey is the real instance id, whether it's a shard or not
         var entryKeyActual = DeconstructKeyForType(entryKey!);
         var shardId = string.IsNullOrEmpty(loadFromFileKeyOverride) ? null : entryKeyActual;
@@ -181,7 +184,10 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 merchantSpawn.ExtraScriptKeys);
 
             var pathingBoundsBlacklist = merchantSpawn.PathingBounds?.GetOutline() ?? Array.Empty<Point>();
-            merchant.BlackList = merchantSpawn.BlackList.Concat(pathingBoundsBlacklist.OfType<IPoint>()).ToList();
+
+            merchant.BlackList = merchantSpawn.BlackList
+                                              .Concat(pathingBoundsBlacklist.OfType<IPoint>())
+                                              .ToList();
             merchant.Direction = merchantSpawn.Direction ?? (Direction)Random.Shared.Next(4);
             mapInstance.SimpleAdd(merchant);
         }
@@ -205,8 +211,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         object key,
         object? value,
         EvictionReason reason,
-        object? state
-    )
+        object? state)
     {
         base.RemoveValueCallback(
             key,
@@ -243,6 +248,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
                       .WithProperty(mapInstance)
                       .LogError(e, "Failed to reload map instance with key {@Key}", key);
+
                 //otherwise ignored
             }
         }
@@ -269,7 +275,11 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
 
     private string ConstructShardKey(string key) => $"{key}___{Guid.NewGuid()}";
 
-    private string DeconstructShardKey(string key) => string.Join("___", key.Split("___").SkipLast(1));
+    private string DeconstructShardKey(string key)
+        => string.Join(
+            "___",
+            key.Split("___")
+               .SkipLast(1));
 
     private void ReconstructShardLookups()
     {

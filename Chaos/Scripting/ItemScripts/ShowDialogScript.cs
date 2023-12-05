@@ -19,9 +19,9 @@ public class ShowDialogScript : ConfigurableItemScriptBase, ShowDialogComponent.
     }
 
     /// <inheritdoc />
-    public override void OnUse(Aisling source) => new ComponentExecutor(source, source)
-                                                  .WithOptions(this)
-                                                  .Execute<ShowDialogComponent>();
+    public override void OnUse(Aisling source)
+        => new ComponentExecutor(source, source).WithOptions(this)
+                                                .Execute<ShowDialogComponent>();
 
     #region ScriptVars
     public string? DialogKey { get; init; }

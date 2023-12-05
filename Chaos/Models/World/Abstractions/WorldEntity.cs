@@ -19,8 +19,7 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
         if (ReferenceEquals(this, other))
             return true;
 
-        return (Id == other.Id)
-               && Creation.Equals(other.Creation);
+        return (Id == other.Id) && Creation.Equals(other.Creation);
     }
 
     public override bool Equals(object? obj)

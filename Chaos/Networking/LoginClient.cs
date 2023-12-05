@@ -27,8 +27,7 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
         ILoginServer<ILoginClient> server,
         IPacketSerializer packetSerializer,
         ILogger<LoginClient> logger,
-        ITypeMapper mapper
-    )
+        ITypeMapper mapper)
         : base(
             socket,
             crypto,
@@ -114,10 +113,9 @@ public sealed class LoginClient : SocketClientBase, ILoginClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var isEncrypted = Crypto.ShouldBeEncrypted(opCode);
-        var packet = new ClientPacket(ref span, isEncrypted);
+        var packet = new ClientPacket(ref span, Crypto.IsClientEncrypted(opCode));
 
-        if (isEncrypted)
+        if (packet.IsEncrypted)
             Crypto.Decrypt(ref packet);
 
         if (LogRawPackets)

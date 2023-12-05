@@ -76,15 +76,19 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public ResettingCounter ActionThrottle { get; }
     public IInterlockedObject<Dialog> ActiveDialog { get; }
     public IInterlockedObject<object> ActiveObject { get; }
+
     /// <inheritdoc />
     public override int AssailIntervalMs { get; }
+
     public ChantTimer ChantTimer { get; }
     public Stack<Dialog> DialogHistory { get; }
     public ResettingCounter ItemThrottle { get; }
     public override ILogger<Aisling> Logger { get; }
     public IIntervalTimer SaveTimer { get; }
+
     /// <inheritdoc />
     public override IAislingScript Script { get; }
+
     /// <inheritdoc />
     public override ISet<string> ScriptKeys { get; }
 
@@ -94,14 +98,18 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         {
             if (Trackers.LastRefresh.HasValue
                 && WorldOptions.Instance.ProhibitF5Walk
-                && (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value).TotalMilliseconds < 150))
+                && (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value)
+                            .TotalMilliseconds
+                    < 150))
                 return false;
 
             var lastEquipOrUnEquip = Trackers.LastEquipOrUnequip;
 
             if (lastEquipOrUnEquip.HasValue
                 && WorldOptions.Instance.ProhibitItemSwitchWalk
-                && (DateTime.UtcNow.Subtract(lastEquipOrUnEquip.Value).TotalMilliseconds < 150))
+                && (DateTime.UtcNow.Subtract(lastEquipOrUnEquip.Value)
+                            .TotalMilliseconds
+                    < 150))
                 return false;
 
             if ((Sprite == 0) && WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
@@ -126,9 +134,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Aisling;
-    public bool ShouldRefresh => !Trackers.LastRefresh.HasValue
-                                 || (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value).TotalMilliseconds
-                                     > WorldOptions.Instance.RefreshIntervalMs);
+
+    public bool ShouldRefresh
+        => !Trackers.LastRefresh.HasValue
+           || (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value)
+                       .TotalMilliseconds
+               > WorldOptions.Instance.RefreshIntervalMs);
 
     public override StatSheet StatSheet => UserStatSheet;
     public override CreatureType Type => CreatureType.Aisling;
@@ -140,15 +151,18 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         IFactory<Exchange> exchangeFactory,
         IScriptProvider scriptProvider,
         ILogger<Aisling> logger,
-        ICloningService<Item> itemCloner
-    )
+        ICloningService<Item> itemCloner)
         : this(name, mapInstance, point)
     {
         ExchangeFactory = exchangeFactory;
         Logger = logger;
         ItemCloner = itemCloner;
         SaveTimer = new IntervalTimer(TimeSpan.FromMinutes(WorldOptions.Instance.SaveIntervalMins), false);
-        ScriptKeys = new HashSet<string> { ScriptBase.GetScriptKey(typeof(DefaultAislingScript)) };
+
+        ScriptKeys = new HashSet<string>
+        {
+            ScriptBase.GetScriptKey(typeof(DefaultAislingScript))
+        };
         Script = scriptProvider.CreateScript<IAislingScript, Aisling>(ScriptKeys, this);
     }
 
@@ -159,8 +173,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         int hairStyle,
         DisplayColor hairColor,
         MapInstance mapInstance,
-        IPoint point
-    )
+        IPoint point)
         : this(name, mapInstance, point)
     {
         Name = name;
@@ -288,7 +301,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                      {
                          var col = grp.ToList();
 
-                         return (col.First().Item, Count: col.Sum(i => i.Count));
+                         return (col.First()
+                                    .Item, Count: col.Sum(i => i.Count));
                      }))
         {
             var weightlessAllowance = 0;
@@ -298,8 +312,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             {
                 //the number of existing stacks in our inventory
                 var numUniqueStacks = Inventory.Count(i => i.DisplayName.EqualsI(set.Item.DisplayName));
+
                 //the total count in all stacks of this item
                 var totalCount = Inventory.CountOf(set.Item.DisplayName);
+
                 //the maximum number of items we can have in all stacks of this item
                 var maxCount = set.Item.Template.MaxStacks * numUniqueStacks;
 
@@ -317,6 +333,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
             //separate each stack into it's most condensed possible form
             var maxStacks = set.Item.Template.MaxStacks;
+
             //the number of stacks we will actually need to add to the inventory
             var countActual = Math.Max(0, set.Count - weightlessAllowance);
             var estimatedStacks = (int)Math.Ceiling(countActual / (decimal)maxStacks);
@@ -324,7 +341,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             slotSum += estimatedStacks;
         }
 
-        return (UserStatSheet.CurrentWeight + weightSum <= UserStatSheet.MaxWeight) && (Inventory.AvailableSlots >= slotSum);
+        return ((UserStatSheet.CurrentWeight + weightSum) <= UserStatSheet.MaxWeight) && (Inventory.AvailableSlots >= slotSum);
     }
 
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
@@ -362,9 +379,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Spell spell,
         Creature target,
         string? prompt,
-        [MaybeNullWhen(false)]
-        out SpellContext spellContext
-    )
+        [MaybeNullWhen(false)] out SpellContext spellContext)
     {
         spellContext = null;
 
@@ -381,11 +396,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             out spellContext!);
     }
 
-    public bool CanUse(Item item) => Script.CanUseItem(item)
-                                     && ActionThrottle.CanIncrement
-                                     && ItemThrottle.CanIncrement
-                                     && item.CanUse()
-                                     && item.Script.CanUse(this);
+    public bool CanUse(Item item)
+        => Script.CanUseItem(item) && ActionThrottle.CanIncrement && ItemThrottle.CanIncrement && item.CanUse() && item.Script.CanUse(this);
 
     public void Equip(EquipmentType type, Item item)
     {
@@ -421,13 +433,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     /// </summary>
     /// <param name="class">The other baseClass</param>
     /// <returns><c>true</c> if the aisling's class contains <paramref name="class" />, otherwise <c>false</c></returns>
-    public bool HasClass(BaseClass @class) => @class is BaseClass.Peasant
-                                              || UserStatSheet.BaseClass switch
-                                              {
-                                                  //Diacht "is" all classes
-                                                  BaseClass.Diacht => true,
-                                                  _                => UserStatSheet.BaseClass == @class
-                                              };
+    public bool HasClass(BaseClass @class)
+        => @class is BaseClass.Peasant
+           || UserStatSheet.BaseClass switch
+           {
+               //Diacht "is" all classes
+               BaseClass.Diacht => true,
+               _                => UserStatSheet.BaseClass == @class
+           };
 
     public void Initialize(
         string name,
@@ -438,8 +451,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellBook spellBook,
         Collections.Legend legend,
         EffectsBar effects,
-        AislingTrackers aislingTrackers
-    )
+        AislingTrackers aislingTrackers)
     {
         Name = name;
         Bank = bank;
@@ -521,7 +533,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Client.SendDisplayAisling(this);
         Client.SendRefreshResponse();
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this).ToList())
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
+                                           .ToList())
             reactor.OnWalkedOn(this);
     }
 
@@ -567,10 +580,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         IPoint point,
         byte slot,
         [MaybeNullWhen(false)]
+
         // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
         out GroundItem[] groundItems,
-        int? amount = null
-    )
+        int? amount = null)
     {
         groundItems = null;
 
@@ -621,7 +634,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                   money.Amount,
                   ILocation.ToString(money));
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money).ToList())
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
+                                           .ToList())
             reactor.OnGoldDroppedOn(this, money);
 
         return true;
@@ -723,7 +737,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             MapInstance.RemoveObject(groundItem);
             item.Script.OnPickup(this, originalItem, originalCount);
 
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem).ToList())
+            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem)
+                                               .ToList())
                 reactor.OnItemPickedUpFrom(this, groundItem, originalCount);
 
             return true;
@@ -746,14 +761,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Pickup)
                   .WithProperty(this)
                   .WithProperty(money)
-                  .LogInformation(
-                      "Aisling {@AislingName} picked up {Amount} gold",
-                      Name,
-                      money.Amount);
+                  .LogInformation("Aisling {@AislingName} picked up {Amount} gold", Name, money.Amount);
 
             MapInstance.RemoveObject(money);
 
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money).ToList())
+            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
+                                               .ToList())
                 reactor.OnGoldPickedUpFrom(this, money);
         }
 
@@ -996,6 +1009,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                 return;
             }
         }
+
         //otherwise, check if the point is walkable
         else if (!MapInstance.IsWalkable(endPoint, Type))
         {
@@ -1059,6 +1073,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         //the client ignores doors greater than 12 spaces away
         //if a client viewport is offset due to walking issues, it could ignore doors we send specifically at a 12 space distance
         var doors = objsAfterWalk.Doors.Where(door => door.DistanceFrom(this) >= 10);
+
         //objsAfterWalk.Doors.Except(objsBeforeWalk.Doors, PointEqualityComparer.Instance)
         //             .Cast<Door>();
 
@@ -1078,7 +1093,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         Client.SendConfirmClientWalk(startPoint, direction);
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this).ToList())
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
+                                           .ToList())
             reactor.OnWalkedOn(this);
     }
 

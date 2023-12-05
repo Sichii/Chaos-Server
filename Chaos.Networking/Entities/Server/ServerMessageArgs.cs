@@ -13,6 +13,7 @@ public sealed record ServerMessageArgs : ISendArgs
     ///     The message to display
     /// </summary>
     public string Message { get; set; } = null!;
+
     /// <summary>
     ///     The type of message to display
     /// </summary>

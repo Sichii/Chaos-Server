@@ -141,9 +141,9 @@ public class SellShopScript : DialogScriptBase
         Subject.InjectTextParameters(amount, item.DisplayName, amount * item.Template.SellValue);
     }
 
-    private void OnDisplayingInitial(Aisling source) =>
-        Subject.Slots = source.Inventory
-                              .Where(SellShopSource.IsBuying)
-                              .Select(item => item.Slot)
-                              .ToList();
+    private void OnDisplayingInitial(Aisling source)
+        => Subject.Slots = source.Inventory
+                                 .Where(SellShopSource.IsBuying)
+                                 .Select(item => item.Slot)
+                                 .ToList();
 }

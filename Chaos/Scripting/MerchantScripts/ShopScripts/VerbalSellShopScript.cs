@@ -87,11 +87,7 @@ public class VerbalSellShopScript : VerbalShopScriptBase
             {
                 var phrase = SellItemPhrases.PickRandom();
 
-                Subject.Say(
-                    phrase.Inject(
-                        source.Name,
-                        item.DisplayName.ToQuantity(amount),
-                        totalCost));
+                Subject.Say(phrase.Inject(source.Name, item.DisplayName.ToQuantity(amount), totalCost));
 
                 Logger.WithTopics(
                           Topics.Entities.Aisling,

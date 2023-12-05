@@ -17,7 +17,8 @@ public static class ObjectExtensions
 
         if (member.Length > 0)
         {
-            var attributes = member[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var attributes = member[0]
+                .GetCustomAttributes(typeof(DescriptionAttribute), false);
 
             if (attributes.Length > 0)
                 return ((DescriptionAttribute)attributes[0]).Description;

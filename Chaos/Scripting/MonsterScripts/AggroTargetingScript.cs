@@ -16,9 +16,8 @@ public class AggroTargetingScript : MonsterScriptBase
 
     /// <inheritdoc />
     public AggroTargetingScript(Monster subject)
-        : base(subject) =>
-        TargetUpdateTimer =
-            new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(250, Subject.Template.SkillIntervalMs)));
+        : base(subject)
+        => TargetUpdateTimer = new IntervalTimer(TimeSpan.FromMilliseconds(Math.Min(250, Subject.Template.SkillIntervalMs)));
 
     /// <inheritdoc />
     public override void OnAttacked(Creature source, int damage, int? aggroOverride)
@@ -52,7 +51,8 @@ public class AggroTargetingScript : MonsterScriptBase
 
         Target = null;
 
-        if (!Map.GetEntities<Aisling>().Any())
+        if (!Map.GetEntities<Aisling>()
+                .Any())
             return;
 
         var isBlind = Subject.IsBlind;

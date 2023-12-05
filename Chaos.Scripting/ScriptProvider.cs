@@ -25,8 +25,8 @@ public sealed class ScriptProvider : IScriptProvider
     public ScriptProvider(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
     /// <inheritdoc />
-    public TScript CreateScript<TScript, TScripted>(ICollection<string> scriptKeys, TScripted subject) where TScript: IScript
-        where TScripted: IScripted
+    public TScript CreateScript<TScript, TScripted>(ICollection<string> scriptKeys, TScripted subject)
+        where TScript: IScript where TScripted: IScripted
     {
         var factory = ServiceProvider.GetRequiredService<IScriptFactory<TScript, TScripted>>();
 
