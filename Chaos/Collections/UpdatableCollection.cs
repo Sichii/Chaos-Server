@@ -6,20 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 
-public sealed class UpdatableCollection : IDeltaUpdatable
+public sealed class UpdatableCollection(ILogger logger) : IDeltaUpdatable
 {
-    private readonly ILogger Logger;
+    private readonly ILogger Logger = logger;
 
-    private readonly List<IDeltaUpdatable> Objs;
-    private readonly ConcurrentQueue<PendingAction> PendingActions;
+    private readonly List<IDeltaUpdatable> Objs = new();
+    private readonly ConcurrentQueue<PendingAction> PendingActions = new();
     private bool IsUpdating;
-
-    public UpdatableCollection(ILogger logger)
-    {
-        Logger = logger;
-        Objs = new List<IDeltaUpdatable>();
-        PendingActions = new ConcurrentQueue<PendingAction>();
-    }
 
     /// <inheritdoc />
     public void Update(TimeSpan delta)

@@ -7,10 +7,9 @@ using Chaos.Services.Factories.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("spawnMerchant", helpText: "<templateKey> <direction?>")]
-public class SpawnMerchantCommand : ICommand<Aisling>
+public class SpawnMerchantCommand(IMerchantFactory merchantFactory) : ICommand<Aisling>
 {
-    private readonly IMerchantFactory MerchantFactory;
-    public SpawnMerchantCommand(IMerchantFactory merchantFactory) => MerchantFactory = merchantFactory;
+    private readonly IMerchantFactory MerchantFactory = merchantFactory;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

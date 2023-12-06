@@ -3,11 +3,9 @@ using Chaos.Models.World;
 
 namespace Chaos.Observers;
 
-public sealed class SpellBookObserver : Abstractions.IObserver<Spell>
+public sealed class SpellBookObserver(Aisling aisling) : Abstractions.IObserver<Spell>
 {
-    private readonly Aisling Aisling;
-
-    public SpellBookObserver(Aisling aisling) => Aisling = aisling;
+    private readonly Aisling Aisling = aisling;
 
     public void OnAdded(Spell obj) => Aisling.Client.SendAddSpellToPane(obj);
 

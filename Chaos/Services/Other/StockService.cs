@@ -12,18 +12,11 @@ namespace Chaos.Services.Other;
 /// <summary>
 ///     Manages the item stock of merchants
 /// </summary>
-public sealed class StockService : BackgroundService, IStockService
+public sealed class StockService(ILogger<StockService> logger) : BackgroundService, IStockService
 {
-    private readonly DeltaTime DeltaTime;
-    private readonly ILogger<StockService> Logger;
-    private readonly ConcurrentDictionary<string, MerchantStock> Stock;
-
-    public StockService(ILogger<StockService> logger)
-    {
-        Logger = logger;
-        Stock = new ConcurrentDictionary<string, MerchantStock>(StringComparer.OrdinalIgnoreCase);
-        DeltaTime = new DeltaTime();
-    }
+    private readonly DeltaTime DeltaTime = new();
+    private readonly ILogger<StockService> Logger = logger;
+    private readonly ConcurrentDictionary<string, MerchantStock> Stock = new(StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     public int GetStock(string key, string itemTemplateKey)

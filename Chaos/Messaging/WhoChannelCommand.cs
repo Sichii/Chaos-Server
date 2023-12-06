@@ -5,11 +5,9 @@ using Chaos.Models.World;
 namespace Chaos.Messaging;
 
 [Command("whochannel", false, "<channelName>")]
-public class WhoChannelCommand : ICommand<Aisling>
+public class WhoChannelCommand(IChannelService channelService) : ICommand<Aisling>
 {
-    private readonly IChannelService ChannelService;
-
-    public WhoChannelCommand(IChannelService channelService) => ChannelService = channelService;
+    private readonly IChannelService ChannelService = channelService;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

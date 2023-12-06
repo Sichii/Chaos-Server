@@ -7,11 +7,9 @@ using Chaos.Storage.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("traverse", helpText: "<mapInstanceId> <xPos?> <yPos?>")]
-public sealed class TraverseMapCommand : ICommand<Aisling>
+public sealed class TraverseMapCommand(ISimpleCache cache) : ICommand<Aisling>
 {
-    private readonly ISimpleCache Cache;
-
-    public TraverseMapCommand(ISimpleCache cache) => Cache = cache;
+    private readonly ISimpleCache Cache = cache;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)

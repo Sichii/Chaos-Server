@@ -7,10 +7,9 @@ using Chaos.Networking.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("adminkick", helpText: "<name>")]
-public class AdminKickCommand : ICommand<Aisling>
+public class AdminKickCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry;
-    public AdminKickCommand(IClientRegistry<IWorldClient> clientRegistry) => ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

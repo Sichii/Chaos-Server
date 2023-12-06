@@ -6,16 +6,10 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Factories;
 
-public sealed class SkillFactory : ISkillFactory
+public sealed class SkillFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider) : ISkillFactory
 {
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public SkillFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-    }
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Skill Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {

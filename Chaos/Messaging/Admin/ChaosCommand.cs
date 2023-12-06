@@ -8,16 +8,10 @@ using Chaos.Utilities;
 namespace Chaos.Messaging.Admin;
 
 [Command("chaos", helpText: "<message> <mins>")]
-public class ChaosCommand : ICommand<Aisling>
+public class ChaosCommand(IServiceProvider serviceProvider, IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry;
-    private readonly IServiceProvider ServiceProvider;
-
-    public ChaosCommand(IServiceProvider serviceProvider, IClientRegistry<IWorldClient> clientRegistry)
-    {
-        ServiceProvider = serviceProvider;
-        ClientRegistry = clientRegistry;
-    }
+    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IServiceProvider ServiceProvider = serviceProvider;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

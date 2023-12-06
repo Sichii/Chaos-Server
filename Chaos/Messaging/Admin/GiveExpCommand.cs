@@ -9,16 +9,10 @@ using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 namespace Chaos.Messaging.Admin;
 
 [Command("giveExp", helpText: "<amount|targetName>")]
-public class GiveExpCommand : ICommand<Aisling>
+public class GiveExpCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry;
-    private readonly IExperienceDistributionScript ExperienceDistributionScript;
-
-    public GiveExpCommand(IClientRegistry<IWorldClient> clientRegistry)
-    {
-        ClientRegistry = clientRegistry;
-        ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
-    }
+    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IExperienceDistributionScript ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

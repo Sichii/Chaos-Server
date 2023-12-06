@@ -63,19 +63,9 @@ public static class JsonSerializerEx
     /// <param name="options">The serialization options to use</param>
     public static void Serialize(string path, object value, JsonSerializerOptions options)
     {
-        using var stream = File.Open(
-            path,
-            new FileStreamOptions
-            {
-                Access = FileAccess.ReadWrite,
-                Mode = FileMode.OpenOrCreate,
-                Options = FileOptions.SequentialScan,
-                Share = FileShare.ReadWrite
-            });
+        var json = JsonSerializer.Serialize(value, options);
 
-        stream.SetLength(0);
-
-        JsonSerializer.Serialize(stream, value, options);
+        FileEx.SafeWriteAllText(path, json);
     }
 
     /// <summary>
@@ -84,20 +74,10 @@ public static class JsonSerializerEx
     /// <param name="path">The path to serialize the object to</param>
     /// <param name="value">The object to be serialized</param>
     /// <param name="options">The serialization options to use</param>
-    public static async Task SerializeAsync(string path, object value, JsonSerializerOptions options)
+    public static Task SerializeAsync(string path, object value, JsonSerializerOptions options)
     {
-        await using var stream = File.Open(
-            path,
-            new FileStreamOptions
-            {
-                Access = FileAccess.ReadWrite,
-                Mode = FileMode.OpenOrCreate,
-                Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                Share = FileShare.ReadWrite
-            });
+        var json = JsonSerializer.Serialize(value, options);
 
-        stream.SetLength(0);
-
-        await JsonSerializer.SerializeAsync(stream, value, options);
+        return FileEx.SafeWriteAllTextAsync(path, json);
     }
 }

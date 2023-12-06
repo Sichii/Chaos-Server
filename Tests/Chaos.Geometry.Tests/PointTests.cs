@@ -185,15 +185,9 @@ public sealed class PointTests
     }
 
     // CustomPoint class for testing Point.From method
-    private sealed class MockPoint : IPoint
+    private sealed class MockPoint(int x, int y) : IPoint
     {
-        public int X { get; }
-        public int Y { get; }
-
-        public MockPoint(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
+        public int X { get; } = x;
+        public int Y { get; } = y;
     }
 }

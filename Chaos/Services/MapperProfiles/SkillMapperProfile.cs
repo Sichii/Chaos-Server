@@ -11,20 +11,12 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class SkillMapperProfile : IMapperProfile<Skill, SkillSchema>,
-                                         IMapperProfile<Skill, SkillInfo>,
-                                         IMapperProfile<SkillTemplate, SkillTemplateSchema>
+public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
+    : IMapperProfile<Skill, SkillSchema>, IMapperProfile<Skill, SkillInfo>, IMapperProfile<SkillTemplate, SkillTemplateSchema>
 {
-    private readonly ITypeMapper Mapper;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-        Mapper = mapper;
-    }
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Skill Map(SkillInfo obj) => throw new NotImplementedException();
 

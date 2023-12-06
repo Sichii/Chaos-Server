@@ -11,20 +11,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Other;
 
-public sealed class GroupService : IGroupService
+public sealed class GroupService(ILogger<GroupService> logger, IChannelService channelService) : IGroupService
 {
-    private readonly IChannelService ChannelService;
-    private readonly ILogger<GroupService> Logger;
-    private readonly HashSet<GroupInvite> PendingInvites;
-    private readonly AutoReleasingMonitor Sync;
-
-    public GroupService(ILogger<GroupService> logger, IChannelService channelService)
-    {
-        Logger = logger;
-        ChannelService = channelService;
-        PendingInvites = new HashSet<GroupInvite>();
-        Sync = new AutoReleasingMonitor();
-    }
+    private readonly IChannelService ChannelService = channelService;
+    private readonly ILogger<GroupService> Logger = logger;
+    private readonly HashSet<GroupInvite> PendingInvites = new();
+    private readonly AutoReleasingMonitor Sync = new();
 
     /// <inheritdoc />
     public void AcceptInvite(Aisling sender, Aisling receiver)

@@ -5,11 +5,8 @@ using Chaos.Scripting.ItemScripts.Abstractions;
 
 namespace Chaos.Scripting.ItemScripts;
 
-public class EquipmentScript : ConfigurableItemScriptBase
+public class EquipmentScript(Item subject) : ConfigurableItemScriptBase(subject)
 {
-    public EquipmentScript(Item subject)
-        : base(subject) { }
-
     public override void OnUse(Aisling source)
     {
         var template = Subject.Template;

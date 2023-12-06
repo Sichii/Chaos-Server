@@ -9,13 +9,12 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class DialogMapperProfile : IMapperProfile<Dialog, DialogArgs>,
-                                   IMapperProfile<Dialog, MenuArgs>,
-                                   IMapperProfile<DialogTemplate, DialogTemplateSchema>,
-                                   IMapperProfile<DialogOption, DialogOptionSchema>
+public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, DialogArgs>,
+                                                       IMapperProfile<Dialog, MenuArgs>,
+                                                       IMapperProfile<DialogTemplate, DialogTemplateSchema>,
+                                                       IMapperProfile<DialogOption, DialogOptionSchema>
 {
-    private readonly ITypeMapper Mapper;
-    public DialogMapperProfile(ITypeMapper mapper) => Mapper = mapper;
+    private readonly ITypeMapper Mapper = mapper;
 
     /// <inheritdoc />
     public Dialog Map(DialogArgs obj) => throw new NotImplementedException();

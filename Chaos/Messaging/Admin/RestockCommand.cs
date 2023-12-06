@@ -6,10 +6,9 @@ using Chaos.Services.Other.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("restock", helpText: "<shopName>")]
-public class RestockCommand : ICommand<Aisling>
+public class RestockCommand(IStockService stockService) : ICommand<Aisling>
 {
-    private readonly IStockService StockService;
-    public RestockCommand(IStockService stockService) => StockService = stockService;
+    private readonly IStockService StockService = stockService;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

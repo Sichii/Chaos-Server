@@ -5,11 +5,9 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class ItemCloningService : ICloningService<Item>
+public sealed class ItemCloningService(ITypeMapper mapper) : ICloningService<Item>
 {
-    private readonly ITypeMapper Mapper;
-
-    public ItemCloningService(ITypeMapper mapper) => Mapper = mapper;
+    private readonly ITypeMapper Mapper = mapper;
 
     public Item Clone(Item obj)
     {

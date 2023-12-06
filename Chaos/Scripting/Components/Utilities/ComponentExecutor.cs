@@ -6,22 +6,13 @@ using Chaos.Scripting.Components.Abstractions;
 
 namespace Chaos.Scripting.Components.Utilities;
 
-public sealed class ComponentExecutor
+public sealed class ComponentExecutor(ActivationContext context, ComponentVars vars)
 {
-    private readonly ComponentVars Vars;
-    private ActivationContext Context;
-
-    public ComponentExecutor(ActivationContext context, ComponentVars vars)
-    {
-        Context = context;
-        Vars = vars;
-    }
+    private readonly ComponentVars Vars = vars;
+    private ActivationContext Context = context;
 
     public ComponentExecutor(ComponentVars vars)
-    {
-        Vars = vars;
-        Context = new ActivationContext(null!, null!);
-    }
+        : this(new ActivationContext(null!, null!), vars) { }
 
     public ComponentExecutor(ActivationContext context)
         : this(context, new ComponentVars()) { }
@@ -30,10 +21,7 @@ public sealed class ComponentExecutor
         : this(new ActivationContext(source, target)) { }
 
     public ComponentExecutor()
-    {
-        Vars = new ComponentVars();
-        Context = new ActivationContext(null!, null!);
-    }
+        : this(new ActivationContext(null!, null!), new ComponentVars()) { }
 
     public ComponentExecutor? Check(Func<ComponentVars, bool> predicate)
     {

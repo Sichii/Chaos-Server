@@ -11,20 +11,12 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class SpellMapperProfile : IMapperProfile<Spell, SpellSchema>,
-                                         IMapperProfile<Spell, SpellInfo>,
-                                         IMapperProfile<SpellTemplate, SpellTemplateSchema>
+public sealed class SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
+    : IMapperProfile<Spell, SpellSchema>, IMapperProfile<Spell, SpellInfo>, IMapperProfile<SpellTemplate, SpellTemplateSchema>
 {
-    private readonly ITypeMapper Mapper;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-        Mapper = mapper;
-    }
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Spell Map(SpellInfo obj) => throw new NotImplementedException();
 

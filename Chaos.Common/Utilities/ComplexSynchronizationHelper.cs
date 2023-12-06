@@ -62,11 +62,9 @@ public static class ComplexSynchronizationHelper
     }
 
     [ExcludeFromCodeCoverage(Justification = "Just a wrapper class")]
-    private sealed class CompositePolyDisposable : IPolyDisposable
+    private sealed class CompositePolyDisposable(params IPolyDisposable[] disposables) : IPolyDisposable
     {
-        private readonly List<IPolyDisposable> Dispoables;
-
-        public CompositePolyDisposable(params IPolyDisposable[] disposables) => Dispoables = disposables.ToList();
+        private readonly List<IPolyDisposable> Dispoables = disposables.ToList();
 
         /// <inheritdoc />
         public void Dispose()

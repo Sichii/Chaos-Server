@@ -6,16 +6,10 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Factories;
 
-public sealed class SpellFactory : ISpellFactory
+public sealed class SpellFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider) : ISpellFactory
 {
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public SpellFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-    }
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {

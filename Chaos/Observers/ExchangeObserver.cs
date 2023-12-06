@@ -3,16 +3,10 @@ using Chaos.Models.World;
 
 namespace Chaos.Observers;
 
-public sealed class ExchangeObserver : Abstractions.IObserver<Item>
+public sealed class ExchangeObserver(Aisling owner, Aisling other) : Abstractions.IObserver<Item>
 {
-    private readonly Aisling Other;
-    private readonly Aisling Owner;
-
-    public ExchangeObserver(Aisling owner, Aisling other)
-    {
-        Owner = owner;
-        Other = other;
-    }
+    private readonly Aisling Other = other;
+    private readonly Aisling Owner = owner;
 
     public void OnAdded(Item obj)
     {

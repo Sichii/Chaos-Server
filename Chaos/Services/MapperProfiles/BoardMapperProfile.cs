@@ -14,32 +14,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class BoardMapperProfile : IMapperProfile<MailBox, MailBoxSchema>,
-                                  IMapperProfile<Post, PostSchema>,
-                                  IMapperProfile<BoardBase, BoardInfo>,
-                                  IMapperProfile<Post, PostInfo>,
-                                  IMapperProfile<BulletinBoardTemplate, BulletinBoardTemplateSchema>,
-                                  IMapperProfile<BulletinBoard, BulletinBoardSchema>
+public class BoardMapperProfile(
+    ITypeMapper mapper,
+    BulletinBoardKeyMapper keyMapper,
+    ILoggerFactory loggerFactory,
+    IScriptProvider scriptProvider,
+    ISimpleCache simpleCache) : IMapperProfile<MailBox, MailBoxSchema>,
+                                IMapperProfile<Post, PostSchema>,
+                                IMapperProfile<BoardBase, BoardInfo>,
+                                IMapperProfile<Post, PostInfo>,
+                                IMapperProfile<BulletinBoardTemplate, BulletinBoardTemplateSchema>,
+                                IMapperProfile<BulletinBoard, BulletinBoardSchema>
 {
-    private readonly BulletinBoardKeyMapper KeyMapper;
-    private readonly ILoggerFactory LoggerFactory;
-    private readonly ITypeMapper Mapper;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public BoardMapperProfile(
-        ITypeMapper mapper,
-        BulletinBoardKeyMapper keyMapper,
-        ILoggerFactory loggerFactory,
-        IScriptProvider scriptProvider,
-        ISimpleCache simpleCache)
-    {
-        Mapper = mapper;
-        KeyMapper = keyMapper;
-        LoggerFactory = loggerFactory;
-        ScriptProvider = scriptProvider;
-        SimpleCache = simpleCache;
-    }
+    private readonly BulletinBoardKeyMapper KeyMapper = keyMapper;
+    private readonly ILoggerFactory LoggerFactory = loggerFactory;
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     /// <inheritdoc />
     public MailBox Map(MailBoxSchema obj) => new(obj.Key, LoggerFactory.CreateLogger<MailBox>(), Mapper.MapMany<Post>(obj.Posts));

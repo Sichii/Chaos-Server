@@ -4,11 +4,9 @@ using Chaos.Models.World;
 
 namespace Chaos.Observers;
 
-public sealed class EquipmentObserver : Abstractions.IObserver<Item>
+public sealed class EquipmentObserver(Aisling aisling) : Abstractions.IObserver<Item>
 {
-    private readonly Aisling Aisling;
-
-    public EquipmentObserver(Aisling aisling) => Aisling = aisling;
+    private readonly Aisling Aisling = aisling;
 
     public void OnAdded(Item obj)
     {

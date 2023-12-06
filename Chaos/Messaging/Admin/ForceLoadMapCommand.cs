@@ -7,10 +7,9 @@ using Chaos.Storage.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("forceLoadMap", helpText: "<mapInstanceId|all>")]
-public class ForceLoadMapCommand : ICommand<Aisling>
+public class ForceLoadMapCommand(ISimpleCache<MapInstance> mapCache) : ICommand<Aisling>
 {
-    private readonly ISimpleCache<MapInstance> MapCache;
-    public ForceLoadMapCommand(ISimpleCache<MapInstance> mapCache) => MapCache = mapCache;
+    private readonly ISimpleCache<MapInstance> MapCache = mapCache;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

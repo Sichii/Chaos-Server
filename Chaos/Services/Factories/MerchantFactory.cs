@@ -10,33 +10,22 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public sealed class MerchantFactory : IMerchantFactory
+public sealed class MerchantFactory(
+    ILoggerFactory loggerFactory,
+    IScriptProvider scriptProvider,
+    ISimpleCache simpleCache,
+    IItemFactory itemFactory,
+    ISkillFactory skillFactory,
+    ISpellFactory spellFactory,
+    IStockService stockService) : IMerchantFactory
 {
-    private readonly IItemFactory ItemFactory;
-    private readonly ILoggerFactory LoggerFactory;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-    private readonly ISkillFactory SkillFactory;
-    private readonly ISpellFactory SpellFactory;
-    private readonly IStockService StockService;
-
-    public MerchantFactory(
-        ILoggerFactory loggerFactory,
-        IScriptProvider scriptProvider,
-        ISimpleCache simpleCache,
-        IItemFactory itemFactory,
-        ISkillFactory skillFactory,
-        ISpellFactory spellFactory,
-        IStockService stockService)
-    {
-        LoggerFactory = loggerFactory;
-        ScriptProvider = scriptProvider;
-        SimpleCache = simpleCache;
-        ItemFactory = itemFactory;
-        SkillFactory = skillFactory;
-        SpellFactory = spellFactory;
-        StockService = stockService;
-    }
+    private readonly IItemFactory ItemFactory = itemFactory;
+    private readonly ILoggerFactory LoggerFactory = loggerFactory;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
+    private readonly ISkillFactory SkillFactory = skillFactory;
+    private readonly ISpellFactory SpellFactory = spellFactory;
+    private readonly IStockService StockService = stockService;
 
     /// <inheritdoc />
     public Merchant Create(

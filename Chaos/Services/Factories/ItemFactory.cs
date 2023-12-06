@@ -6,16 +6,10 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Factories;
 
-public sealed class ItemFactory : IItemFactory
+public sealed class ItemFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider) : IItemFactory
 {
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public ItemFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-    }
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Item Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {

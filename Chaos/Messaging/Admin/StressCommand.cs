@@ -7,16 +7,10 @@ using Chaos.Services.Factories.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("stress", helpText: "<grounditems|monsters> <amount>")]
-public class StressCommand : ICommand<Aisling>
+public class StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFactory) : ICommand<Aisling>
 {
-    private readonly IItemFactory ItemFactory;
-    private readonly IMonsterFactory MonsterFactory;
-
-    public StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFactory)
-    {
-        ItemFactory = itemFactory;
-        MonsterFactory = monsterFactory;
-    }
+    private readonly IItemFactory ItemFactory = itemFactory;
+    private readonly IMonsterFactory MonsterFactory = monsterFactory;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

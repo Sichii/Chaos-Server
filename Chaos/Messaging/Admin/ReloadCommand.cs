@@ -9,16 +9,10 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Messaging.Admin;
 
 [Command("reload", helpText: "<skills|spells|items|monsters|merchants|maps|dialogs|worldMaps|loottables>")]
-public sealed class ReloadCommand : ICommand<Aisling>
+public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<ReloadCommand> logger) : ICommand<Aisling>
 {
-    private readonly ILogger<ReloadCommand> Logger;
-    private readonly IServiceProvider ServiceProvider;
-
-    public ReloadCommand(IServiceProvider serviceProvider, ILogger<ReloadCommand> logger)
-    {
-        ServiceProvider = serviceProvider;
-        Logger = logger;
-    }
+    private readonly ILogger<ReloadCommand> Logger = logger;
+    private readonly IServiceProvider ServiceProvider = serviceProvider;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling aisling, ArgumentCollection args)

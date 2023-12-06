@@ -7,11 +7,9 @@ using Chaos.Models.World;
 namespace Chaos.Messaging;
 
 [Command("setchannelcolor", false, "<channelName> <messageColor>")]
-public class SetChannelColorCommand : ICommand<Aisling>
+public class SetChannelColorCommand(IChannelService channelService) : ICommand<Aisling>
 {
-    private readonly IChannelService ChannelService;
-
-    public SetChannelColorCommand(IChannelService channelService) => ChannelService = channelService;
+    private readonly IChannelService ChannelService = channelService;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

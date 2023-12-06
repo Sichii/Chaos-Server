@@ -8,18 +8,11 @@ namespace Chaos.Models.World.Abstractions;
 /// <summary>
 ///     Represents an object that is visible.
 /// </summary>
-public abstract class VisibleEntity : InteractableEntity
+public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoint point) : InteractableEntity(mapInstance, point)
 {
-    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; }
-    public ushort Sprite { get; set; }
+    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; } = new();
+    public ushort Sprite { get; set; } = sprite;
     public VisibilityType Visibility { get; set; }
-
-    protected VisibleEntity(ushort sprite, MapInstance mapInstance, IPoint point)
-        : base(mapInstance, point)
-    {
-        Sprite = sprite;
-        LastClicked = new ConcurrentDictionary<uint, DateTime>();
-    }
 
     public void Display()
     {

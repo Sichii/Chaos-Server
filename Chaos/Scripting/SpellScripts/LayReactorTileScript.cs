@@ -10,14 +10,11 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripting.SpellScripts;
 
-public class LayReactorTileScript : ConfigurableSpellScriptBase,
-                                    AbilityComponent<MapEntity>.IAbilityComponentOptions,
-                                    LayReactorComponent.ILayReactorComponentOptions
+public class LayReactorTileScript(Spell subject, IReactorTileFactory reactorTileFactory) : ConfigurableSpellScriptBase(subject),
+                                                                                           AbilityComponent<MapEntity>.
+                                                                                           IAbilityComponentOptions,
+                                                                                           LayReactorComponent.ILayReactorComponentOptions
 {
-    public LayReactorTileScript(Spell subject, IReactorTileFactory reactorTileFactory)
-        : base(subject)
-        => ReactorTileFactory = reactorTileFactory;
-
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
         => new ComponentExecutor(context).WithOptions(this)
@@ -59,7 +56,7 @@ public class LayReactorTileScript : ConfigurableSpellScriptBase,
     public string? ReactorTileTemplateKey { get; init; }
 
     /// <inheritdoc />
-    public IReactorTileFactory ReactorTileFactory { get; init; }
+    public IReactorTileFactory ReactorTileFactory { get; init; } = reactorTileFactory;
 
     /// <inheritdoc />
     public int? ManaCost { get; init; }

@@ -3,7 +3,9 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Chaos.Common.Synchronization;
+using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
+using Chaos.IO.FileSystem;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Security.Abstractions;
@@ -115,7 +117,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         var newHash = ComputeHash(newPassword);
         var passwordPath = Path.Combine(Options.Directory, name, "password.txt");
 
-        await File.WriteAllTextAsync(passwordPath, newHash);
+        await passwordPath.SafeExecuteAsync(dir => FileEx.SafeWriteAllTextAsync(dir, newHash));
 
         return result;
     }
@@ -148,7 +150,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         var hash = ComputeHash(password);
 
         var passwordPath = Path.Combine(characterDir, "password.txt");
-        await File.WriteAllTextAsync(passwordPath, hash);
+
+        await passwordPath.SafeExecuteAsync(dir => FileEx.SafeWriteAllTextAsync(dir, hash));
 
         return CredentialValidationResult.SuccessResult;
     }

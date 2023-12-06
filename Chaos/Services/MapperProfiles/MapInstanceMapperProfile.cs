@@ -14,35 +14,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class MapInstanceMapperProfile : IMapperProfile<MapInstance, MapInstanceSchema>,
-                                               IMapperProfile<MapTemplate, MapTemplateSchema>,
-                                               IMapperProfile<MapInstance, MapInfoArgs>
+public sealed class MapInstanceMapperProfile(
+    ISimpleCache simpleCache,
+    IScriptProvider scriptProvider,
+    ITypeMapper mapper,
+    IShardGenerator shardGenerator,
+    IAsyncStore<Aisling> aislingStore,
+    CancellationTokenSource serverCtx,
+    ILoggerFactory loggerFactory) : IMapperProfile<MapInstance, MapInstanceSchema>,
+                                    IMapperProfile<MapTemplate, MapTemplateSchema>,
+                                    IMapperProfile<MapInstance, MapInfoArgs>
 {
-    private readonly IAsyncStore<Aisling> AislingStore;
-    private readonly ILoggerFactory LoggerFactory;
-    private readonly ITypeMapper Mapper;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly CancellationTokenSource ServerCtx;
-    private readonly IShardGenerator ShardGenerator;
-    private readonly ISimpleCache SimpleCache;
-
-    public MapInstanceMapperProfile(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ITypeMapper mapper,
-        IShardGenerator shardGenerator,
-        IAsyncStore<Aisling> aislingStore,
-        CancellationTokenSource serverCtx,
-        ILoggerFactory loggerFactory)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-        Mapper = mapper;
-        ShardGenerator = shardGenerator;
-        AislingStore = aislingStore;
-        ServerCtx = serverCtx;
-        LoggerFactory = loggerFactory;
-    }
+    private readonly IAsyncStore<Aisling> AislingStore = aislingStore;
+    private readonly ILoggerFactory LoggerFactory = loggerFactory;
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly CancellationTokenSource ServerCtx = serverCtx;
+    private readonly IShardGenerator ShardGenerator = shardGenerator;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     /// <inheritdoc />
     public MapInstance Map(MapInfoArgs obj) => throw new NotImplementedException();

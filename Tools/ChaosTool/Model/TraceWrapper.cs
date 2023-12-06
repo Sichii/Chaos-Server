@@ -1,13 +1,7 @@
 namespace ChaosTool.Model;
 
-public sealed class TraceWrapper<T>
+public sealed class TraceWrapper<T>(string path, T @object)
 {
-    public string Path { get; set; }
-    public T Object { get; }
-
-    public TraceWrapper(string path, T @object)
-    {
-        Path = path;
-        Object = @object;
-    }
+    public string Path { get; set; } = path;
+    public T Object { get; } = @object;
 }

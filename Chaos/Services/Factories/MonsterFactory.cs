@@ -9,27 +9,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 
-public sealed class MonsterFactory : IMonsterFactory
+public sealed class MonsterFactory(
+    ISimpleCache simpleCache,
+    IScriptProvider scriptProvider,
+    ILoggerFactory loggerFactory,
+    ISkillFactory skillFactory,
+    ISpellFactory spellFactory) : IMonsterFactory
 {
-    private readonly ILoggerFactory LoggerFactory;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-    private readonly ISkillFactory SkillFactory;
-    private readonly ISpellFactory SpellFactory;
-
-    public MonsterFactory(
-        ISimpleCache simpleCache,
-        IScriptProvider scriptProvider,
-        ILoggerFactory loggerFactory,
-        ISkillFactory skillFactory,
-        ISpellFactory spellFactory)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-        LoggerFactory = loggerFactory;
-        SkillFactory = skillFactory;
-        SpellFactory = spellFactory;
-    }
+    private readonly ILoggerFactory LoggerFactory = loggerFactory;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
+    private readonly ISkillFactory SkillFactory = skillFactory;
+    private readonly ISpellFactory SpellFactory = spellFactory;
 
     /// <inheritdoc />
     public Monster Create(

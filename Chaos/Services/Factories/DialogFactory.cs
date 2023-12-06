@@ -7,16 +7,10 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Factories;
 
-public sealed class DialogFactory : IDialogFactory
+public sealed class DialogFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider) : IDialogFactory
 {
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public DialogFactory(ISimpleCache simpleCache, IScriptProvider scriptProvider)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-    }
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     /// <inheritdoc />
     public Dialog Create(string templateKey, IDialogSourceEntity source, ICollection<string>? extraScriptKeys = null)

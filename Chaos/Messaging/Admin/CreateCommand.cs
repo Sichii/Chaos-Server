@@ -6,11 +6,9 @@ using Chaos.Services.Factories.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("create", helpText: "<itemTemplateKey> <amount?1>")]
-public class CreateCommand : ICommand<Aisling>
+public class CreateCommand(IItemFactory itemFactory) : ICommand<Aisling>
 {
-    private readonly IItemFactory ItemFactory;
-
-    public CreateCommand(IItemFactory itemFactory) => ItemFactory = itemFactory;
+    private readonly IItemFactory ItemFactory = itemFactory;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

@@ -4,19 +4,12 @@ using Chaos.Models.Data;
 
 namespace Chaos.Models.World.Abstractions;
 
-public abstract class MapEntity : WorldEntity, ILocation
+public abstract class MapEntity(MapInstance mapInstance, IPoint point) : WorldEntity, ILocation
 {
-    public MapInstance MapInstance { get; set; }
-    public int X { get; private set; }
-    public int Y { get; private set; }
+    public MapInstance MapInstance { get; set; } = mapInstance;
+    public int X { get; private set; } = point.X;
+    public int Y { get; private set; } = point.Y;
     string ILocation.Map => MapInstance.InstanceId;
-
-    protected MapEntity(MapInstance mapInstance, IPoint point)
-    {
-        MapInstance = mapInstance;
-        X = point.X;
-        Y = point.Y;
-    }
 
     public virtual void Animate(Animation animation, uint? sourceId = null)
     {

@@ -5,11 +5,9 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class EffectMapperProfile : IMapperProfile<IEffect, EffectSchema>
+public class EffectMapperProfile(IEffectFactory effectFactory) : IMapperProfile<IEffect, EffectSchema>
 {
-    private readonly IEffectFactory EffectFactory;
-
-    public EffectMapperProfile(IEffectFactory effectFactory) => EffectFactory = effectFactory;
+    private readonly IEffectFactory EffectFactory = effectFactory;
 
     /// <inheritdoc />
     public IEffect Map(EffectSchema obj)

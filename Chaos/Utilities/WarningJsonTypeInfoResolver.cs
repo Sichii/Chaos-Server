@@ -5,10 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Utilities;
 
-public sealed class WarningJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
+public sealed class WarningJsonTypeInfoResolver(ILogger<WarningJsonTypeInfoResolver> logger) : DefaultJsonTypeInfoResolver
 {
-    private readonly ILogger<WarningJsonTypeInfoResolver> Logger;
-    public WarningJsonTypeInfoResolver(ILogger<WarningJsonTypeInfoResolver> logger) => Logger = logger;
+    private readonly ILogger<WarningJsonTypeInfoResolver> Logger = logger;
 
     /// <inheritdoc />
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)

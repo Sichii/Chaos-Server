@@ -6,21 +6,14 @@ using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Models.World;
 
-public sealed class Door : VisibleEntity
+public sealed class Door(
+    bool openRight,
+    ushort sprite,
+    MapInstance mapInstance,
+    IPoint point) : VisibleEntity(sprite, mapInstance, point)
 {
-    public bool Closed { get; set; }
-    public bool OpenRight { get; }
-
-    public Door(
-        bool openRight,
-        ushort sprite,
-        MapInstance mapInstance,
-        IPoint point)
-        : base(sprite, mapInstance, point)
-    {
-        Closed = true;
-        OpenRight = openRight;
-    }
+    public bool Closed { get; set; } = true;
+    public bool OpenRight { get; } = openRight;
 
     public Door(DoorTemplate doorTemplate, MapInstance mapInstance)
         : this(

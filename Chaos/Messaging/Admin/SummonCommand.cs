@@ -8,10 +8,9 @@ using Chaos.Storage.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("summon", helpText: "<targetName>")]
-public class SummonCommand : ICommand<Aisling>
+public class SummonCommand(ISimpleCacheProvider cacheProvider) : ICommand<Aisling>
 {
-    private readonly ISimpleCacheProvider CacheProvider;
-    public SummonCommand(ISimpleCacheProvider cacheProvider) => CacheProvider = cacheProvider;
+    private readonly ISimpleCacheProvider CacheProvider = cacheProvider;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

@@ -7,16 +7,11 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class LootTableMapperProfile : IMapperProfile<LootTable, LootTableSchema>, IMapperProfile<LootDrop, LootDropSchema>
+public sealed class LootTableMapperProfile(IItemFactory itemFactory, ITypeMapper mapper)
+    : IMapperProfile<LootTable, LootTableSchema>, IMapperProfile<LootDrop, LootDropSchema>
 {
-    private readonly IItemFactory ItemFactory;
-    private readonly ITypeMapper Mapper;
-
-    public LootTableMapperProfile(IItemFactory itemFactory, ITypeMapper mapper)
-    {
-        ItemFactory = itemFactory;
-        Mapper = mapper;
-    }
+    private readonly IItemFactory ItemFactory = itemFactory;
+    private readonly ITypeMapper Mapper = mapper;
 
     /// <inheritdoc />
     public LootDrop Map(LootDropSchema obj)

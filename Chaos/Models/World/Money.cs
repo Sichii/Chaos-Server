@@ -4,17 +4,13 @@ using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Models.World;
 
-public sealed class Money : GroundEntity
+public sealed class Money(int amount, MapInstance mapInstance, IPoint point) : GroundEntity(
+    "Gold",
+    GetSprite(amount),
+    mapInstance,
+    point)
 {
-    public int Amount { get; }
-
-    public Money(int amount, MapInstance mapInstance, IPoint point)
-        : base(
-            "Gold",
-            GetSprite(amount),
-            mapInstance,
-            point)
-        => Amount = amount;
+    public int Amount { get; } = amount;
 
     public static ushort GetSprite(int amount)
     {

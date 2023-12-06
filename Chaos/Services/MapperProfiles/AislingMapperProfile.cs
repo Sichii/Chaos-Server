@@ -17,39 +17,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class AislingMapperProfile : IMapperProfile<Aisling, AislingSchema>,
-                                           IMapperProfile<Aisling, AttributesArgs>,
-                                           IMapperProfile<Aisling, DisplayAislingArgs>,
-                                           IMapperProfile<Aisling, ProfileArgs>,
-                                           IMapperProfile<Aisling, SelfProfileArgs>,
-                                           IMapperProfile<Aisling, UserIdArgs>,
-                                           IMapperProfile<Aisling, WorldListMemberInfo>
+public sealed class AislingMapperProfile(
+    ISimpleCache simpleCache,
+    ITypeMapper mapper,
+    IFactory<Exchange> exchangeFactory,
+    ILoggerFactory loggerFactory,
+    ICloningService<Item> itemCloner,
+    IScriptProvider scriptProvider,
+    IStore<Guild> guildStore) : IMapperProfile<Aisling, AislingSchema>,
+                                IMapperProfile<Aisling, AttributesArgs>,
+                                IMapperProfile<Aisling, DisplayAislingArgs>,
+                                IMapperProfile<Aisling, ProfileArgs>,
+                                IMapperProfile<Aisling, SelfProfileArgs>,
+                                IMapperProfile<Aisling, UserIdArgs>,
+                                IMapperProfile<Aisling, WorldListMemberInfo>
 {
-    private readonly IFactory<Exchange> ExchangeFactory;
-    private readonly IStore<Guild> GuildStore;
-    private readonly ICloningService<Item> ItemCloner;
-    private readonly ILoggerFactory LoggerFactory;
-    private readonly ITypeMapper Mapper;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public AislingMapperProfile(
-        ISimpleCache simpleCache,
-        ITypeMapper mapper,
-        IFactory<Exchange> exchangeFactory,
-        ILoggerFactory loggerFactory,
-        ICloningService<Item> itemCloner,
-        IScriptProvider scriptProvider,
-        IStore<Guild> guildStore)
-    {
-        Mapper = mapper;
-        ItemCloner = itemCloner;
-        ScriptProvider = scriptProvider;
-        GuildStore = guildStore;
-        ExchangeFactory = exchangeFactory;
-        SimpleCache = simpleCache;
-        LoggerFactory = loggerFactory;
-    }
+    private readonly IFactory<Exchange> ExchangeFactory = exchangeFactory;
+    private readonly IStore<Guild> GuildStore = guildStore;
+    private readonly ICloningService<Item> ItemCloner = itemCloner;
+    private readonly ILoggerFactory LoggerFactory = loggerFactory;
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Aisling Map(AislingSchema obj)
     {

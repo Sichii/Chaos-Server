@@ -299,17 +299,10 @@ public sealed class LocationTests
     }
 
     // CustomLocation class for testing Location.From method
-    private sealed class MockLocation : ILocation
+    private sealed class MockLocation(string map, int x, int y) : ILocation
     {
-        public string Map { get; }
-        public int X { get; }
-        public int Y { get; }
-
-        public MockLocation(string map, int x, int y)
-        {
-            Map = map;
-            X = x;
-            Y = y;
-        }
+        public string Map { get; } = map;
+        public int X { get; } = x;
+        public int Y { get; } = y;
     }
 }

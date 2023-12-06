@@ -4,11 +4,9 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class LearningRequirementMapperProfile : IMapperProfile<LearningRequirements, LearningRequirementsSchema>
+public class LearningRequirementMapperProfile(ITypeMapper mapper) : IMapperProfile<LearningRequirements, LearningRequirementsSchema>
 {
-    private readonly ITypeMapper Mapper;
-
-    public LearningRequirementMapperProfile(ITypeMapper mapper) => Mapper = mapper;
+    private readonly ITypeMapper Mapper = mapper;
 
     /// <inheritdoc />
     public LearningRequirements Map(LearningRequirementsSchema obj)

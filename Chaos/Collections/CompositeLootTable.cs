@@ -3,11 +3,9 @@ using Chaos.Models.Panel;
 
 namespace Chaos.Collections;
 
-public sealed class CompositeLootTable : ILootTable
+public sealed class CompositeLootTable(IEnumerable<ILootTable> lootTables) : ILootTable
 {
-    private readonly ICollection<ILootTable> LootTables;
-
-    public CompositeLootTable(IEnumerable<ILootTable> lootTables) => LootTables = lootTables.ToList();
+    private readonly ICollection<ILootTable> LootTables = lootTables.ToList();
 
     /// <inheritdoc />
     public IEnumerable<Item> GenerateLoot() => LootTables.SelectMany(table => table.GenerateLoot());

@@ -29,16 +29,10 @@ using NLog.Extensions.Logging;
 
 namespace Chaos;
 
-public sealed class Startup
+public sealed class Startup(IConfiguration configuration)
 {
-    public IConfiguration Configuration { get; set; }
-    public CancellationTokenSource ServerCtx { get; }
-
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-        ServerCtx = new CancellationTokenSource();
-    }
+    public IConfiguration Configuration { get; set; } = configuration;
+    public CancellationTokenSource ServerCtx { get; } = new();
 
     public void ConfigureServices(IServiceCollection services)
     {

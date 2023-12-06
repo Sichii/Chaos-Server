@@ -5,16 +5,10 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class BankMapperProfile : IMapperProfile<Bank, BankSchema>
+public sealed class BankMapperProfile(ICloningService<Item> cloningService, ITypeMapper mapper) : IMapperProfile<Bank, BankSchema>
 {
-    private readonly ICloningService<Item> CloningService;
-    private readonly ITypeMapper Mapper;
-
-    public BankMapperProfile(ICloningService<Item> cloningService, ITypeMapper mapper)
-    {
-        CloningService = cloningService;
-        Mapper = mapper;
-    }
+    private readonly ICloningService<Item> CloningService = cloningService;
+    private readonly ITypeMapper Mapper = mapper;
 
     public Bank Map(BankSchema obj)
     {

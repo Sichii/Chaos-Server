@@ -6,16 +6,10 @@ using Chaos.Services.Factories.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("learn", helpText: "<spell|skill> <templateKey>")]
-public class LearnCommand : ICommand<Aisling>
+public class LearnCommand(ISpellFactory spellFactory, ISkillFactory skillFactory) : ICommand<Aisling>
 {
-    private readonly ISkillFactory SkillFactory;
-    private readonly ISpellFactory SpellFactory;
-
-    public LearnCommand(ISpellFactory spellFactory, ISkillFactory skillFactory)
-    {
-        SpellFactory = spellFactory;
-        SkillFactory = skillFactory;
-    }
+    private readonly ISkillFactory SkillFactory = skillFactory;
+    private readonly ISpellFactory SpellFactory = spellFactory;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

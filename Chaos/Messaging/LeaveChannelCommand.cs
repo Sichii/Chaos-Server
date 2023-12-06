@@ -6,11 +6,9 @@ using Chaos.Models.World;
 namespace Chaos.Messaging;
 
 [Command("leavechannel", false, "<channelName>")]
-public class LeaveChannelCommand : ICommand<Aisling>
+public class LeaveChannelCommand(IChannelService channelService) : ICommand<Aisling>
 {
-    private readonly IChannelService ChannelService;
-
-    public LeaveChannelCommand(IChannelService channelService) => ChannelService = channelService;
+    private readonly IChannelService ChannelService = channelService;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

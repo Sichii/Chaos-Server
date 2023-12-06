@@ -6,11 +6,9 @@ using Chaos.Models.World;
 namespace Chaos.Messaging;
 
 [Command("joinchannel", false, "<channelName>")]
-public class JoinChannelCommand : ICommand<Aisling>
+public class JoinChannelCommand(IChannelService channelService) : ICommand<Aisling>
 {
-    private readonly IChannelService ChannelService;
-
-    public JoinChannelCommand(IChannelService channelService) => ChannelService = channelService;
+    private readonly IChannelService ChannelService = channelService;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

@@ -2,22 +2,15 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Utilities;
 
-public sealed class NameComposer
+public sealed class NameComposer(string baseName, bool isDyeable = false)
 {
-    private readonly string BaseName;
-    private readonly bool IsDyeable;
+    private readonly string BaseName = baseName;
+    private readonly bool IsDyeable = isDyeable;
     public DisplayColor Color { get; private set; }
-    public string ComposedName { get; private set; }
+    public string ComposedName { get; private set; } = baseName;
     public string? CustomName { get; private set; }
     public string? Prefix { get; private set; }
     public string? Suffix { get; private set; }
-
-    public NameComposer(string baseName, bool isDyeable = false)
-    {
-        BaseName = baseName;
-        ComposedName = baseName;
-        IsDyeable = isDyeable;
-    }
 
     public static implicit operator string(NameComposer composer) => composer.ComposedName;
     public static implicit operator NameComposer(string baseName) => new(baseName);

@@ -12,22 +12,16 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class ItemMapperProfile : IMapperProfile<Item, ItemSchema>,
-                                        IMapperProfile<Item, ItemInfo>,
-                                        IMapperProfile<ItemTemplate, ItemTemplateSchema>,
-                                        IMapperProfile<ItemRequirement, ItemRequirementSchema>,
-                                        IMapperProfile<ItemDetails, ItemInfo>
+public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
+    : IMapperProfile<Item, ItemSchema>,
+      IMapperProfile<Item, ItemInfo>,
+      IMapperProfile<ItemTemplate, ItemTemplateSchema>,
+      IMapperProfile<ItemRequirement, ItemRequirementSchema>,
+      IMapperProfile<ItemDetails, ItemInfo>
 {
-    private readonly ITypeMapper Mapper;
-    private readonly IScriptProvider ScriptProvider;
-    private readonly ISimpleCache SimpleCache;
-
-    public ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider scriptProvider, ITypeMapper mapper)
-    {
-        SimpleCache = simpleCache;
-        ScriptProvider = scriptProvider;
-        Mapper = mapper;
-    }
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     public Item Map(ItemInfo obj) => throw new NotImplementedException();
 

@@ -2,9 +2,7 @@
 
 namespace Chaos.Client.Abstractions;
 
-public abstract class RepositoryBase
+public abstract class RepositoryBase(IMemoryCache cache)
 {
-    protected IMemoryCache Cache { get; }
-
-    protected RepositoryBase(IMemoryCache cache) => Cache = cache;
+    protected IMemoryCache Cache { get; } = cache;
 }

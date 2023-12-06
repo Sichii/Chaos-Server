@@ -3,10 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Services.Storage;
 
-public sealed class SimpleCache : ISimpleCache, ISimpleCacheProvider
+public sealed class SimpleCache(IServiceProvider provider) : ISimpleCache, ISimpleCacheProvider
 {
-    private readonly IServiceProvider Provider;
-    public SimpleCache(IServiceProvider provider) => Provider = provider;
+    private readonly IServiceProvider Provider = provider;
 
     public TResult Get<TResult>(string key)
         => Provider.GetRequiredService<ISimpleCache<TResult>>()

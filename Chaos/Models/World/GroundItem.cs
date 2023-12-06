@@ -9,23 +9,21 @@ using Chaos.Models.World.Abstractions;
 
 namespace Chaos.Models.World;
 
-public sealed class GroundItem : GroundEntity, IDialogSourceEntity
+public sealed class GroundItem(Item item, MapInstance mapInstance, IPoint point)
+    : GroundEntity(
+          item.DisplayName,
+          item.ItemSprite.PanelSprite,
+          mapInstance,
+          point),
+      IDialogSourceEntity
 {
-    public Item Item { get; set; }
+    public Item Item { get; set; } = item;
 
     /// <inheritdoc />
     DisplayColor IDialogSourceEntity.Color => Item.Color;
 
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Item;
-
-    public GroundItem(Item item, MapInstance mapInstance, IPoint point)
-        : base(
-            item.DisplayName,
-            item.ItemSprite.PanelSprite,
-            mapInstance,
-            point)
-        => Item = item;
 
     /// <inheritdoc />
     void IDialogSourceEntity.Activate(Aisling source) => Item.Script.OnUse(source);

@@ -193,15 +193,12 @@ public partial class MainWindow : Window
     }
 
     // TODO: workaround for GetSolutionAnalyzerReferences bug (should be added once per Solution)
-    private sealed class CustomRoslynHost : RoslynHost
+    private sealed class CustomRoslynHost(
+        IEnumerable<Assembly>? additionalAssemblies = null,
+        RoslynHostReferences? references = null,
+        ImmutableArray<string>? disabledDiagnostics = null) : RoslynHost(additionalAssemblies, references, disabledDiagnostics)
     {
         private bool _addedAnalyzers;
-
-        public CustomRoslynHost(
-            IEnumerable<Assembly>? additionalAssemblies = null,
-            RoslynHostReferences? references = null,
-            ImmutableArray<string>? disabledDiagnostics = null)
-            : base(additionalAssemblies, references, disabledDiagnostics) { }
 
         /// <inheritdoc />
         protected override ParseOptions CreateDefaultParseOptions()

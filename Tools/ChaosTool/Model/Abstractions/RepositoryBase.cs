@@ -8,23 +8,16 @@ using Microsoft.Extensions.Options;
 
 namespace ChaosTool.Model.Abstractions;
 
-public abstract class RepositoryBase<T> : IEnumerable<T> where T: class
+public abstract class RepositoryBase<T>(IEntityRepository entityRepository, IOptions<IExpiringFileCacheOptions>? options) : IEnumerable<T>
+    where T: class
 {
-    protected IEntityRepository EntityRepository { get; }
-    public SynchronizedList<TraceWrapper<T>> Objects { get; }
-    public IExpiringFileCacheOptions? Options { get; }
-    protected SynchronizedHashSet<string> Paths { get; }
+    protected IEntityRepository EntityRepository { get; } = entityRepository;
+    public SynchronizedList<TraceWrapper<T>> Objects { get; } = new();
+    public IExpiringFileCacheOptions? Options { get; } = options?.Value;
+    protected SynchronizedHashSet<string> Paths { get; } = new(comparer: StringComparer.OrdinalIgnoreCase);
 
     public virtual string RootDirectory
         => Options?.Directory ?? throw new InvalidOperationException("If using a different options type, override this method");
-
-    protected RepositoryBase(IEntityRepository entityRepository, IOptions<IExpiringFileCacheOptions>? options)
-    {
-        EntityRepository = entityRepository;
-        Options = options?.Value;
-        Paths = new SynchronizedHashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
-        Objects = new SynchronizedList<TraceWrapper<T>>();
-    }
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

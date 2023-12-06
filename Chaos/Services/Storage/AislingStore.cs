@@ -18,24 +18,16 @@ namespace Chaos.Services.Storage;
 /// <summary>
 ///     Manages save files for Aislings
 /// </summary>
-public sealed class AislingStore : IAsyncStore<Aisling>
+public sealed class AislingStore(
+    IEntityRepository entityRepository,
+    IOptions<AislingStoreOptions> options,
+    ILogger<AislingStore> logger,
+    ICloningService<Item> itemCloningService) : IAsyncStore<Aisling>
 {
-    private readonly IEntityRepository EntityRepository;
-    private readonly ICloningService<Item> ItemCloningService;
-    private readonly ILogger<AislingStore> Logger;
-    private readonly AislingStoreOptions Options;
-
-    public AislingStore(
-        IEntityRepository entityRepository,
-        IOptions<AislingStoreOptions> options,
-        ILogger<AislingStore> logger,
-        ICloningService<Item> itemCloningService)
-    {
-        Logger = logger;
-        Options = options.Value;
-        ItemCloningService = itemCloningService;
-        EntityRepository = entityRepository;
-    }
+    private readonly IEntityRepository EntityRepository = entityRepository;
+    private readonly ICloningService<Item> ItemCloningService = itemCloningService;
+    private readonly ILogger<AislingStore> Logger = logger;
+    private readonly AislingStoreOptions Options = options.Value;
 
     /// <inheritdoc />
     public Task<bool> ExistsAsync(string key)

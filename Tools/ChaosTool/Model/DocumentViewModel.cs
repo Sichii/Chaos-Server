@@ -10,9 +10,9 @@ using RoslynPad.Roslyn;
 
 namespace ChaosTool.Model;
 
-internal class DocumentViewModel : INotifyPropertyChanged
+internal class DocumentViewModel(RoslynHost host, DocumentViewModel? previous) : INotifyPropertyChanged
 {
-    private readonly RoslynHost _host;
+    private readonly RoslynHost _host = host;
     private DocumentId? _id;
     private bool _isReadOnly;
     private string? _result;
@@ -58,18 +58,12 @@ internal class DocumentViewModel : INotifyPropertyChanged
         }
     }
 
-    public DocumentViewModel? Previous { get; }
+    public DocumentViewModel? Previous { get; } = previous;
 
     private static PrintOptions PrintOptions { get; } = new()
     {
         MemberDisplayFormat = MemberDisplayFormat.SeparateLines
     };
-
-    public DocumentViewModel(RoslynHost host, DocumentViewModel? previous)
-    {
-        _host = host;
-        Previous = previous;
-    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

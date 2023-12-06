@@ -10,16 +10,10 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Services.Factories;
 
-public sealed class ReactorTileFactory : IReactorTileFactory
+public sealed class ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCache cache) : IReactorTileFactory
 {
-    private readonly ISimpleCache Cache;
-    private readonly IScriptProvider ScriptProvider;
-
-    public ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCache cache)
-    {
-        ScriptProvider = scriptProvider;
-        Cache = cache;
-    }
+    private readonly ISimpleCache Cache = cache;
+    private readonly IScriptProvider ScriptProvider = scriptProvider;
 
     /// <inheritdoc />
     public ReactorTile Create(

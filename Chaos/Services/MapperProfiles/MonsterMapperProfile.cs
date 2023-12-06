@@ -13,19 +13,12 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public sealed class MonsterMapperProfile : IMapperProfile<MonsterSpawn, MonsterSpawnSchema>,
-                                           IMapperProfile<MonsterTemplate, MonsterTemplateSchema>
+public sealed class MonsterMapperProfile(IMonsterFactory monsterFactory, ISimpleCache simpleCache, ITypeMapper mapper)
+    : IMapperProfile<MonsterSpawn, MonsterSpawnSchema>, IMapperProfile<MonsterTemplate, MonsterTemplateSchema>
 {
-    private readonly ITypeMapper Mapper;
-    private readonly IMonsterFactory MonsterFactory;
-    private readonly ISimpleCache SimpleCache;
-
-    public MonsterMapperProfile(IMonsterFactory monsterFactory, ISimpleCache simpleCache, ITypeMapper mapper)
-    {
-        MonsterFactory = monsterFactory;
-        SimpleCache = simpleCache;
-        Mapper = mapper;
-    }
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly IMonsterFactory MonsterFactory = monsterFactory;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     /// <inheritdoc />
     public MonsterSpawn Map(MonsterSpawnSchema obj)

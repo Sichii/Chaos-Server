@@ -7,19 +7,13 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class WorldMapMapperProfile : IMapperProfile<WorldMap, WorldMapSchema>,
-                                     IMapperProfile<WorldMap, WorldMapArgs>,
-                                     IMapperProfile<WorldMapNode, WorldMapNodeSchema>,
-                                     IMapperProfile<WorldMapNode, WorldMapNodeInfo>
+public class WorldMapMapperProfile(ISimpleCache simpleCache, ITypeMapper mapper) : IMapperProfile<WorldMap, WorldMapSchema>,
+                                                                                   IMapperProfile<WorldMap, WorldMapArgs>,
+                                                                                   IMapperProfile<WorldMapNode, WorldMapNodeSchema>,
+                                                                                   IMapperProfile<WorldMapNode, WorldMapNodeInfo>
 {
-    private readonly ITypeMapper Mapper;
-    private readonly ISimpleCache SimpleCache;
-
-    public WorldMapMapperProfile(ISimpleCache simpleCache, ITypeMapper mapper)
-    {
-        SimpleCache = simpleCache;
-        Mapper = mapper;
-    }
+    private readonly ITypeMapper Mapper = mapper;
+    private readonly ISimpleCache SimpleCache = simpleCache;
 
     /// <inheritdoc />
     public WorldMap Map(WorldMapArgs obj) => throw new NotImplementedException();

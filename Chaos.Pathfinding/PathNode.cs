@@ -2,9 +2,9 @@ using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Pathfinding;
 
-internal sealed class PathNode : IEquatable<IPoint>, IPoint
+internal sealed class PathNode(int x, int y) : IEquatable<IPoint>, IPoint
 {
-    public bool Closed { get; set; }
+    public bool Closed { get; set; } = true;
 
     /// <summary>
     ///     The node is blacklisted. Blacklisted nodes are not to ever be opened, and you shouldn't walk onto them even if it's
@@ -25,17 +25,9 @@ internal sealed class PathNode : IEquatable<IPoint>, IPoint
 
     public bool Open { get; set; }
     public PathNode? Parent { get; set; }
-    public PathNode?[] Neighbors { get; }
-    public int X { get; }
-    public int Y { get; }
-
-    public PathNode(int x, int y)
-    {
-        X = x;
-        Y = y;
-        Neighbors = new PathNode?[4];
-        Closed = true;
-    }
+    public PathNode?[] Neighbors { get; } = new PathNode?[4];
+    public int X { get; } = x;
+    public int Y { get; } = y;
 
     public bool Equals(IPoint? other)
     {

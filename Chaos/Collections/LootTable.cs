@@ -7,13 +7,12 @@ using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Collections;
 
-public sealed class LootTable : ILootTable
+public sealed class LootTable(IItemFactory itemFactory) : ILootTable
 {
-    private readonly IItemFactory ItemFactory;
+    private readonly IItemFactory ItemFactory = itemFactory;
     public required string Key { get; init; }
     public required ICollection<LootDrop> LootDrops { get; init; } = Array.Empty<LootDrop>();
     public required LootTableMode Mode { get; init; }
-    public LootTable(IItemFactory itemFactory) => ItemFactory = itemFactory;
 
     public IEnumerable<Item> GenerateLoot()
     {
