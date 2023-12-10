@@ -15,12 +15,6 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
     public MapInstanceRepository(IEntityRepository entityRepository, IOptions<MapInstanceCacheOptions> options)
         : base(entityRepository, options) { }
 
-    public override void Add(string path, MapInstanceComposite obj)
-    {
-        var wrapper = new TraceWrapper<MapInstanceComposite>(path, obj);
-        Objects.Add(wrapper);
-    }
-
     /// <inheritdoc />
     protected override async Task<MapInstanceComposite?> LoadFromFileAsync(string path)
     {
@@ -59,9 +53,9 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
         }
     }
 
-    public override void Remove(string name)
+    public override void Remove(string originalPath)
     {
-        var wrapper = Objects.FirstOrDefault(wp => wp.Object.Instance.InstanceId.EqualsI(name));
+        var wrapper = Objects.FirstOrDefault(wp => wp.Object.Instance.InstanceId.EqualsI(originalPath));
 
         if (wrapper is null)
             return;

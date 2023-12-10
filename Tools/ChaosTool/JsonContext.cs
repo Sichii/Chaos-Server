@@ -1,19 +1,28 @@
+using System.Collections;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using AutoMapper;
 using Chaos;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.JsonConverters;
+using Chaos.Schemas.Content;
+using Chaos.Schemas.Data;
+using Chaos.Schemas.Templates;
 using Chaos.Services.Configuration;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
+using ChaosTool.Model;
+using ChaosTool.Model.Abstractions;
 using ChaosTool.Model.Tables;
+using ChaosTool.ViewModel;
+using ChaosTool.ViewModel.Observables;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,9 +34,26 @@ public class JsonContext
 {
     private static readonly SerializationContext Context;
     private static readonly IServiceProvider Services;
+
     private static TaskCompletionSource LoadingCompletion;
     private static bool IsInitialized;
-    public static AislingRepository Aislings { get; private set; } = null!;
+
+    private static readonly TypeSwitchExpression<IEnumerable> RepositoryExpression = new TypeSwitchExpression<IEnumerable>()
+                                                                                     .Case<DialogTemplateSchema>(() => DialogTemplates)
+                                                                                     .Case<ItemTemplateSchema>(() => ItemTemplates)
+                                                                                     .Case<LootTableSchema>(() => LootTables)
+                                                                                     .Case<MapInstanceRepository.MapInstanceComposite>(
+                                                                                         () => MapInstances)
+                                                                                     .Case<MapTemplateSchema>(() => MapTemplates)
+                                                                                     .Case<MerchantTemplateSchema>(() => MerchantTemplates)
+                                                                                     .Case<MonsterTemplateSchema>(() => MonsterTemplates)
+                                                                                     .Case<ReactorTileTemplateSchema>(
+                                                                                         () => ReactorTileTemplates)
+                                                                                     .Case<SkillTemplateSchema>(() => SkillTemplates)
+                                                                                     .Case<SpellTemplateSchema>(() => SpellTemplates)
+                                                                                     .Default(() => throw new ArgumentOutOfRangeException())
+                                                                                     .Freeze();
+
     public static DialogTemplateRepository DialogTemplates { get; private set; } = null!;
     public static ItemTemplateRepository ItemTemplates { get; private set; } = null!;
     public static Task LoadingTask { get; private set; }
@@ -39,6 +65,7 @@ public class JsonContext
     public static ReactorTileTemplateRepository ReactorTileTemplates { get; private set; } = null!;
     public static SkillTemplateRepository SkillTemplates { get; private set; } = null!;
     public static SpellTemplateRepository SpellTemplates { get; private set; } = null!;
+    public static AislingRepository Aislings { get; } = null!;
     public static string BaseDirectory { get; }
     public static JsonSerializerOptions JsonSerializerOptions { get; }
 
@@ -83,6 +110,7 @@ public class JsonContext
         var configuration = builder.Build();
         services.AddSingleton<IConfiguration>(configuration);
         services.AddTypeMapper();
+        AddStaticAutoMapper();
         services.AddTransient<IEntityRepository, EntityRepository>();
         services.AddLogging();
 
@@ -122,10 +150,148 @@ public class JsonContext
         CreateTables();
     }
 
+    private static void AddStaticAutoMapper()
+        => AutoMapperEx.Initialize(
+            cfg =>
+            {
+                //remove CRLF line endings and replace with LF
+                cfg.ValueTransformers.Add(
+                    new ValueTransformerConfiguration(typeof(string), (string? str) => str == null ? null : str.ReplaceLineEndings("\n")));
+
+                cfg.CreateMap<string, string>()
+                   .ConvertUsing(r => r);
+
+                cfg.CreateMap<string, BindableString>()
+                   .ForMember(l => l.String, c => c.MapFrom(l => l))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<StatsSchema, ObservableStats>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<AttributesSchema, ObservableAttributes>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<StatSheetSchema, ObservableStatSheet>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<DialogOptionSchema, ObservableDialogOption>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<ItemDetailsSchema, ObservableItemDetails>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<ItemRequirementSchema, ObservableItemRequirement>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<LearningRequirementsSchema, ObservableLearningRequirements>()
+                   .ForMember(l => l.RequiredStats, c => c.MapFrom(l => l.RequiredStats))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<LootDropSchema, ObservableLootDrop>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                //TOP LEVEL
+                cfg.CreateMap<DialogTemplateSchema, DialogTemplateViewModel>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<ItemTemplateSchema, ItemTemplateViewModel>()
+                   .ForMember(l => l.Modifiers, c => c.MapFrom(l => l.Modifiers))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<LootTableSchema, LootTableViewModel>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<MapTemplateSchema, MapTemplateViewModel>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<MerchantTemplateSchema, MerchantTemplateViewModel>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<MonsterTemplateSchema, MonsterTemplateViewModel>()
+                   .ForMember(l => l.StatSheet, c => c.MapFrom(l => l.StatSheet))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<ReactorTileTemplateSchema, ReactorTileTemplateViewModel>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<SkillTemplateSchema, SkillTemplateViewModel>()
+                   .ForMember(l => l.LearningRequirements, c => c.MapFrom(l => l.LearningRequirements))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<SpellTemplateSchema, SpellTemplateViewModel>()
+                   .ForMember(l => l.LearningRequirements, c => c.MapFrom(l => l.LearningRequirements))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                //TRACE WRAPPERS
+                cfg.CreateMap<TraceWrapper<DialogTemplateSchema>, DialogTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<ItemTemplateSchema>, ItemTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<LootTableSchema>, LootTableViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<MapTemplateSchema>, MapTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<MerchantTemplateSchema>, MerchantTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<MonsterTemplateSchema>, MonsterTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<ReactorTileTemplateSchema>, ReactorTileTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<SkillTemplateSchema>, SkillTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<SpellTemplateSchema>, SpellTemplateViewModel>()
+                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
+                   .IncludeMembers(l => l.Object)
+                   .ReverseMap();
+            });
+
     private static void CreateTables()
     {
         LootTables = ActivatorUtilities.CreateInstance<LootTableRepository>(Services);
-        Aislings = ActivatorUtilities.CreateInstance<AislingRepository>(Services);
+
+        //Aislings = ActivatorUtilities.CreateInstance<AislingRepository>(Services);
         MapInstances = ActivatorUtilities.CreateInstance<MapInstanceRepository>(Services);
         DialogTemplates = ActivatorUtilities.CreateInstance<DialogTemplateRepository>(Services);
         ItemTemplates = ActivatorUtilities.CreateInstance<ItemTemplateRepository>(Services);
@@ -137,11 +303,19 @@ public class JsonContext
         SpellTemplates = ActivatorUtilities.CreateInstance<SpellTemplateRepository>(Services);
     }
 
+    public static RepositoryBase<TSchema> GetRepository<TSchema>() where TSchema: class
+    {
+        var repository = RepositoryExpression.Switch<TSchema>();
+
+        return (RepositoryBase<TSchema>)repository!;
+    }
+
     internal static async Task LoadAsync()
     {
         await Task.WhenAll(
             LootTables.LoadAsync(),
-            Aislings.LoadAsync(),
+
+            //Aislings.LoadAsync(),
             MapInstances.LoadAsync(),
             DialogTemplates.LoadAsync(),
             ItemTemplates.LoadAsync(),

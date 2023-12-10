@@ -16,7 +16,8 @@ public static class CircleExtensions
     /// <param name="lineEnd">The end point of the line.</param>
     /// <returns>The first point of intersection between the line and the circle, or null if they do not intersect.</returns>
     public static Point? CalculateIntersectionEntryPoint<TCircle, TPoint>(this TCircle circle, TPoint lineStart, TPoint lineEnd)
-        where TCircle: ICircle where TPoint: IPoint
+        where TCircle: ICircle
+        where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
         ArgumentNullException.ThrowIfNull(lineStart);
@@ -86,7 +87,8 @@ public static class CircleExtensions
     /// <returns><c>true</c> if this circle contains the point, otherwise <c>false</c>.</returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">point</exception>
-    public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point) where TCircle: ICircle where TPoint: IPoint
+    public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point) where TCircle: ICircle
+                                                                                    where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -106,7 +108,8 @@ public static class CircleExtensions
     /// </returns>
     /// <exception cref="System.ArgumentNullException">circle</exception>
     /// <exception cref="System.ArgumentNullException">other</exception>
-    public static float EdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle where TPoint: IPoint
+    public static float EdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
+        where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
 

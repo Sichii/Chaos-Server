@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
@@ -23,11 +23,12 @@ namespace Chaos.Scripting;
 ///     generated from the keys that
 ///     are supplied.
 /// </remarks>
-public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript where TScripted: IScripted
+public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript
+                                                                                           where TScripted: IScripted
 {
     private readonly Type CompositeType;
     private readonly ILogger<ScriptFactory<TScript, TScripted>> Logger;
-    private readonly ConcurrentDictionary<string, Type> ScriptTypeCache;
+    private readonly FrozenDictionary<string, Type> ScriptTypeCache;
     private readonly IServiceProvider ServiceProvider;
     private readonly string TypeName;
 
@@ -38,12 +39,12 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
     /// <param name="serviceProvider">The application si container</param>
     public ScriptFactory(ILogger<ScriptFactory<TScript, TScripted>> logger, IServiceProvider serviceProvider)
     {
-        ScriptTypeCache = new ConcurrentDictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
         ServiceProvider = serviceProvider;
         TypeName = typeof(TScript).Name;
 
-        LoadScriptTypes();
+        ScriptTypeCache = LoadScriptTypes()
+            .ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         CompositeType = ScriptTypeCache.First(x => x.Key.StartsWithI("composite"))
                                        .Value;
@@ -91,15 +92,16 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
     /// <summary>
     ///     Loads all script types that implement the type this factory is for
     /// </summary>
-    private void LoadScriptTypes()
+    private Dictionary<string, Type> LoadScriptTypes()
     {
+        var ret = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         var scriptType = typeof(TScript);
         var types = scriptType.LoadImplementations();
 
         foreach (var type in types)
         {
             var scriptKey = ScriptBase.GetScriptKey(type);
-            ScriptTypeCache[scriptKey] = type;
+            ret[scriptKey] = type;
 
             Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Load)
                   .LogTrace(
@@ -110,6 +112,8 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
         }
 
         Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Load)
-              .LogInformation("{Count} {@TScriptName}s loaded", ScriptTypeCache.Count, TypeName);
+              .LogInformation("{Count} {@TScriptName}s loaded", ret.Count, TypeName);
+
+        return ret;
     }
 }

@@ -1,27 +1,27 @@
-<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.LootTableControls.LootTablePropertyEditor"
-                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                                 xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
-                                 xmlns:definitions="clr-namespace:ChaosTool.Definitions"
-                                 xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
-                                 mc:Ignorable="d"
-                                 d:DesignHeight="700"
-                                 d:DesignWidth="900"
-                                 MinHeight="700"
-                                 MinWidth="900"
-                                 HorizontalAlignment="Stretch"
-                                 Width="Auto"
-                                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-                                 Background="{DynamicResource MaterialDesignPaper}"
-                                 TextElement.FontWeight="Medium"
-                                 TextElement.FontSize="14"
-                                 FontFamily="{materialDesign:MaterialDesignFont}"
-                                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
-                                 Initialized="UserControl_Initialized"
-                                 Focusable="True">
+<UserControl x:Class="ChaosTool.Controls.LootTableControls.LootTablePropertyEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:definitions="clr-namespace:ChaosTool.Definitions"
+             xmlns:viewModel="clr-namespace:ChaosTool.ViewModel"
+             xmlns:observables="clr-namespace:ChaosTool.ViewModel.Observables"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance viewModel:LootTableViewModel, IsDesignTimeCreatable=True}"
+             MinHeight="700"
+             MinWidth="900"
+             HorizontalAlignment="Stretch"
+             Width="Auto"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             Initialized="UserControl_Initialized"
+             Focusable="True">
     <Grid Focusable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
@@ -34,22 +34,26 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!-- #region Labels -->
-        <Label Content="Path"
+        <Label Name="PathLbl"
+               Content="Path"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,19,10,0" />
-        <Label Content="Key"
+        <Label Name="KeyLbl"
+               Content="Key"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,79,10,0" />
-        <Label Content="Mode"
+        <Label Name="ModeLbl"
+               Content="Mode"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,109,10,0" />
-        <Label Grid.Column="1"
+        <Label Name="LootDropsLbl"
+               Grid.Column="1"
                Content="LootDrops"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
@@ -66,7 +70,8 @@
                  Margin="10,18,10,0"
                  TextWrapping="NoWrap"
                  MinWidth="200"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Path}" />
         <TextBox Grid.Column="1"
                  Name="KeyTbox"
                  HorizontalAlignment="Left"
@@ -75,6 +80,7 @@
                  TextWrapping="NoWrap"
                  MinWidth="160"
                  Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Key}"
                  TextChanged="TemplateKeyTbox_OnTextChanged" />
         <ComboBox Name="ModeCmbox"
                   Grid.Column="1"
@@ -82,7 +88,8 @@
                   Margin="10,108,130,0"
                   VerticalAlignment="Top"
                   MinWidth="120"
-                  Style="{StaticResource MaterialDesignComboBox}" />
+                  Style="{StaticResource MaterialDesignComboBox}"
+                  Text="{Binding Mode}" />
         <Grid Grid.Column="2"
               VerticalAlignment="Top"
               HorizontalAlignment="Left"
@@ -104,9 +111,10 @@
                       d:ItemsSource="{x:Static definitions:SampleData.LootDrops}"
                       materialDesign:RippleAssist.IsDisabled="True"
                       materialDesign:ListBoxItemAssist.ShowSelection="True"
-                      MaxHeight="400">
+                      MaxHeight="400"
+                      ItemsSource="{Binding LootDrops}">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type data:LootDropSchema}">
+                    <DataTemplate DataType="{x:Type observables:ObservableLootDrop}">
                         <Grid Background="Transparent"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Top">
@@ -127,7 +135,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=ItemTemplateKey}"
+                                     Text="{Binding ItemTemplateKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      materialDesign:HintAssist.Hint="ItemTemplateKey"
                                      Padding="3"
@@ -149,7 +157,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=DropChance}"
+                                     Text="{Binding DropChance}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      materialDesign:HintAssist.Hint="DropChance"
                                      Padding="3"
@@ -178,7 +186,8 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
                 Name="RevertBtn"
@@ -206,4 +215,4 @@
                                  MessageQueue="{materialDesign:MessageQueue}" />
         <!-- #endregion Footer -->
     </Grid>
-</abstractions:PropertyEditorBase>
+</UserControl>

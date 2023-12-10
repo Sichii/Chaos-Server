@@ -71,7 +71,8 @@ public static class MathEx
         T1 min,
         T1 max,
         T2 newMin,
-        T2 newMax) where T1: INumber<T1> where T2: INumber<T2>
+        T2 newMax) where T1: INumber<T1>
+                   where T2: INumber<T2>
     {
         if (min.Equals(max))
             throw new ArgumentOutOfRangeException(nameof(min), "Min and max cannot be the same value");

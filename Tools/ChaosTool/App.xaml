@@ -5,14 +5,29 @@
              xmlns:codeActions="clr-namespace:Microsoft.CodeAnalysis.CodeActions;assembly=Microsoft.CodeAnalysis.Workspaces"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:ChaosTool.Converters"
+             xmlns:viewModel="clr-namespace:ChaosTool.ViewModel"
+             xmlns:dialogTemplateControls="clr-namespace:ChaosTool.Controls.DialogTemplateControls"
+             xmlns:itemTemplateControls="clr-namespace:ChaosTool.Controls.ItemTemplateControls"
+             xmlns:lootTableControls="clr-namespace:ChaosTool.Controls.LootTableControls"
+             xmlns:mapTemplateControls="clr-namespace:ChaosTool.Controls.MapTemplateControls"
+             xmlns:monsterTemplateControls="clr-namespace:ChaosTool.Controls.MonsterTemplateControls"
+             xmlns:merchantTemplateControls="clr-namespace:ChaosTool.Controls.MerchantTemplateControls"
+             xmlns:reactorTileTemplateControls="clr-namespace:ChaosTool.Controls.ReactorTileTemplateControls"
+             xmlns:skillTemplateControls="clr-namespace:ChaosTool.Controls.SkillTemplateControls"
+             xmlns:spellTemplateControls="clr-namespace:ChaosTool.Controls.SpellTemplateControls"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="DeepPurple" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignDarkTheme.xaml" />
+                <materialDesign:BundledTheme BaseTheme="Dark"
+                                             PrimaryColor="Grey"
+                                             SecondaryColor="DeepPurple" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/MaterialDesignDarkTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <DrawingImage x:Key="Bulb">
@@ -25,6 +40,48 @@
                     </GeometryDrawing>
                 </DrawingImage.Drawing>
             </DrawingImage>
+
+            <!--#region CONVERTERS-->
+
+            <converters:NullablePrimitiveToStringConverter x:Key="NullablePrimitiveToStringConverter" />
+
+            <!--#region DATA TEMPLATES-->
+
+            <DataTemplate DataType="{x:Type viewModel:DialogTemplateViewModel}">
+                <dialogTemplateControls:DialogTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:ItemTemplateViewModel}">
+                <itemTemplateControls:ItemTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:LootTableViewModel}">
+                <lootTableControls:LootTablePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:MapTemplateViewModel}">
+                <mapTemplateControls:MapTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:MonsterTemplateViewModel}">
+                <monsterTemplateControls:MonsterTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:MerchantTemplateViewModel}">
+                <merchantTemplateControls:MerchantTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:ReactorTileTemplateViewModel}">
+                <reactorTileTemplateControls:ReactorTileTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:SkillTemplateViewModel}">
+                <skillTemplateControls:SkillTemplatePropertyEditor />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:SpellTemplateViewModel}">
+                <spellTemplateControls:SpellTemplatePropertyEditor />
+            </DataTemplate>
 
             <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFixCollection}"
                                       ItemsSource="{Binding Fixes, Mode=OneTime}">

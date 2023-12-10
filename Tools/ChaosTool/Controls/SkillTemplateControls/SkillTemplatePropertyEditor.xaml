@@ -1,26 +1,25 @@
-<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.SkillTemplateControls.SkillTemplatePropertyEditor"
-                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                                 xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
-                                 xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
-                                 xmlns:model="clr-namespace:ChaosTool.Model"
-                                 xmlns:definitions="clr-namespace:ChaosTool.Definitions"
-                                 mc:Ignorable="d"
-                                 d:DesignHeight="700"
-                                 d:DesignWidth="900"
-                                 HorizontalAlignment="Stretch"
-                                 Width="Auto"
-                                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-                                 Background="{DynamicResource MaterialDesignPaper}"
-                                 TextElement.FontWeight="Medium"
-                                 TextElement.FontSize="14"
-                                 FontFamily="{materialDesign:MaterialDesignFont}"
-                                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
-                                 Initialized="UserControl_Initialized"
-                                 Focusable="True">
+<UserControl x:Class="ChaosTool.Controls.SkillTemplateControls.SkillTemplatePropertyEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:definitions="clr-namespace:ChaosTool.Definitions"
+             xmlns:viewModel="clr-namespace:ChaosTool.ViewModel"
+             xmlns:observables="clr-namespace:ChaosTool.ViewModel.Observables"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance viewModel:SkillTemplateViewModel, IsDesignTimeCreatable=True}"
+             HorizontalAlignment="Stretch"
+             Width="Auto"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             Initialized="UserControl_Initialized"
+             Focusable="True">
     <Grid Focusable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
@@ -34,98 +33,117 @@
         </Grid.RowDefinitions>
         <!-- #region Labels -->
         <Label Content="Path"
+               Name="PathLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,19,10,0" />
         <Label Content="TemplateKey"
+               Name="TemplateKeyLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,79,10,0" />
         <Label Content="ScriptKeys"
+               Name="ScriptKeysLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,79,10,0"
                Grid.Column="2" />
         <Label Content="Name"
+               Name="NameLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,109,10,0" />
         <Label Content="PanelSprite"
+               Name="PanelSpriteLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,169,10,0" />
         <Label Content="Level"
+               Name="LevelLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,199,10,0" />
         <Label Content="Class"
+               Name="ClassLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,229,10,0" />
         <Label Content="AdvClass"
+               Name="AdvClassLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,259,10,0" />
         <Label Content="RequiresMaster"
+               Name="RequiresMasterLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,289,10,0" />
         <Label Content="RequiredGold"
+               Name="RequiredGoldLbl"
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="34,319,0,0" />
         <Label Content="Str"
+               Name="StrLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,349,10,0" />
         <Label Content="Int"
+               Name="IntLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,379,10,0" />
         <Label Content="Wis"
+               Name="WisLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,409,10,0" />
         <Label Content="Con"
+               Name="ConLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,439,10,0" />
         <Label Content="Dex"
+               Name="DexLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,469,10,0" />
         <Label Content="CooldownMs"
+               Name="CooldownMsLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,499,10,0" />
         <Label Content="Description"
+               Name="DescriptionLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,529,10,0" />
         <Label Content="Item&#10;Requirements"
+               Name="ItemRequirementsLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,76,10,0"
                Grid.Column="1" />
         <Label Content="Prerequisite&#10;SpellTemplateKeys"
+               Name="PrerequisiteSpellTemplateKeysLbl"
                HorizontalAlignment="Right"
                HorizontalContentAlignment="Right"
                VerticalAlignment="Top"
@@ -133,6 +151,7 @@
                Margin="0,466,10,0"
                Grid.Column="1" />
         <Label Content="Prerequisite&#10;SkillTemplateKeys"
+               Name="PrerequisiteSkillTemplateKeysLbl"
                HorizontalAlignment="Right"
                HorizontalContentAlignment="Right"
                VerticalAlignment="Top"
@@ -151,7 +170,8 @@
                  TextWrapping="NoWrap"
                  MinWidth="200"
                  Width="Auto"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Path}" />
         <TextBox Grid.Column="1"
                  Name="TemplateKeyTbox"
                  HorizontalAlignment="Left"
@@ -160,6 +180,7 @@
                  TextWrapping="NoWrap"
                  MinWidth="160"
                  Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding TemplateKey}"
                  TextChanged="TemplateKeyTbox_OnTextChanged" />
         <TextBox Grid.Column="1"
                  Name="NameTbox"
@@ -168,7 +189,8 @@
                  Margin="10,108,110,0"
                  TextWrapping="NoWrap"
                  MinWidth="160"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Name}" />
         <TextBox Grid.Column="1"
                  Name="PanelSpriteTbox"
                  HorizontalAlignment="Left"
@@ -177,7 +199,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding PanelSprite}" />
         <TextBox Grid.Column="1"
                  Name="LevelTbox"
                  HorizontalAlignment="Left"
@@ -186,27 +208,30 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding Level}" />
         <ComboBox Name="ClassCmbox"
                   Grid.Column="1"
                   HorizontalAlignment="Left"
                   Margin="10,228,75,0"
                   VerticalAlignment="Top"
                   MinWidth="120"
-                  Style="{StaticResource MaterialDesignComboBox}" />
+                  Style="{StaticResource MaterialDesignComboBox}"
+                  Text="{Binding Class, Converter={StaticResource NullablePrimitiveToStringConverter}}" />
         <ComboBox Name="AdvClassCmbox"
                   Grid.Column="1"
                   HorizontalAlignment="Left"
                   Margin="10,258,75,0"
                   MinWidth="120"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignComboBox}" />
+                  Style="{StaticResource MaterialDesignComboBox}"
+                  Text="{Binding AdvClass, Converter={StaticResource NullablePrimitiveToStringConverter}}" />
         <CheckBox Grid.Column="1"
                   Name="RequiresMasterCbox"
                   HorizontalAlignment="Left"
                   Margin="10,293,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
+                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  IsChecked="{Binding RequiresMaster}" />
         <TextBox Grid.Column="1"
                  Name="RequiredGoldTbox"
                  HorizontalAlignment="Left"
@@ -215,7 +240,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding LearningRequirements.RequiredGold, Converter={StaticResource NullablePrimitiveToStringConverter}}" />
         <TextBox Grid.Column="1"
                  Name="StrTbox"
                  HorizontalAlignment="Left"
@@ -224,7 +249,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding LearningRequirements.RequiredStats.Str}" />
         <TextBox Grid.Column="1"
                  Name="IntTbox"
                  HorizontalAlignment="Left"
@@ -233,7 +258,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding LearningRequirements.RequiredStats.Int}" />
         <TextBox Grid.Column="1"
                  Name="WisTbox"
                  HorizontalAlignment="Left"
@@ -242,7 +267,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding LearningRequirements.RequiredStats.Wis}" />
         <TextBox Grid.Column="1"
                  Name="ConTbox"
                  HorizontalAlignment="Left"
@@ -251,7 +276,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding LearningRequirements.RequiredStats.Con}" />
         <TextBox Grid.Column="1"
                  Name="DexTbox"
                  HorizontalAlignment="Left"
@@ -260,7 +285,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding LearningRequirements.RequiredStats.Dex}" />
         <TextBox Grid.Column="1"
                  Name="CooldownMsTbox"
                  HorizontalAlignment="Left"
@@ -269,7 +294,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding CooldownMs, Converter={StaticResource NullablePrimitiveToStringConverter}}" />
         <TextBox Grid.Column="1"
                  Name="DescriptionTbox"
                  HorizontalContentAlignment="Stretch"
@@ -283,7 +308,8 @@
                  materialDesign:TextFieldAssist.IncludeSpellingSuggestions="True"
                  materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
                  materialDesign:TextFieldAssist.CharacterCounterStyle="{StaticResource MaterialDesignCharacterCounterTextBlock}"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding Description}" />
         <Grid Grid.Column="2"
               VerticalAlignment="Top"
               Height="Auto"
@@ -301,12 +327,13 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.ItemRequirements}"
+                      ItemsSource="{Binding LearningRequirements.ItemRequirements}"
                       materialDesign:RippleAssist.IsDisabled="True"
                       materialDesign:ListBoxItemAssist.ShowSelection="True"
                       MaxHeight="400"
                       AllowDrop="True">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type data:ItemRequirementSchema}">
+                    <DataTemplate DataType="{x:Type observables:ObservableItemRequirement}">
                         <Grid Background="Transparent"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Top">
@@ -327,7 +354,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=ItemTemplateKey}"
+                                     Text="{Binding ItemTemplateKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      materialDesign:HintAssist.Hint="ItemTemplateKey"
                                      Padding="3"
@@ -349,7 +376,7 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=AmountRequired}"
+                                     Text="{Binding AmountRequired}"
                                      Style="{StaticResource MaterialDesignTextBox}"
                                      materialDesign:HintAssist.Hint="AmountRequired"
                                      Padding="3"
@@ -386,9 +413,10 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                      ItemsSource="{Binding LearningRequirements.PrerequisiteSpellTemplateKeys}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
+                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -449,9 +477,10 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                      ItemsSource="{Binding ScriptKeys}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
+                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -511,9 +540,10 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                      ItemsSource="{Binding LearningRequirements.PrerequisiteSkillTemplateKeys}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
+                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -565,7 +595,8 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
                 Name="RevertBtn"
@@ -592,6 +623,7 @@
                                  Margin="10, 10, 150, 10"
                                  MessageQueue="{materialDesign:MessageQueue}" />
         <Label Content="IsAssail"
+               Name="IsAssailLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
@@ -604,4 +636,4 @@
                   Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
         <!-- #endregion Footer -->
     </Grid>
-</abstractions:PropertyEditorBase>
+</UserControl>

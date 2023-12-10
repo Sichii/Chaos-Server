@@ -1,4 +1,4 @@
-using ChaosTool.Model;
+using ChaosTool.ViewModel;
 
 namespace ChaosTool.Extensions;
 

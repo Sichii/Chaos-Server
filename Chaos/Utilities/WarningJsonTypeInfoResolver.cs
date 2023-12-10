@@ -12,7 +12,7 @@ public sealed class WarningJsonTypeInfoResolver(ILogger<WarningJsonTypeInfoResol
     /// <inheritdoc />
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
-        if (!type.IsCompilerGenerated())
+        if (!type.IsCompilerGenerated() && type is { IsInterface: false, IsAbstract: false, IsGenericTypeDefinition: false })
             Logger.LogTrace(
                 "Used reflection to get type info for type {@Type}. Add this type to the {@SerializationContext}",
                 type.FullName,

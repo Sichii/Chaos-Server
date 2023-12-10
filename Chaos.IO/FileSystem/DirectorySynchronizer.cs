@@ -1,4 +1,4 @@
-using Chaos.Common.Collections.Synchronized;
+using Chaos.Collections.Synchronized;
 
 namespace Chaos.IO.FileSystem;
 

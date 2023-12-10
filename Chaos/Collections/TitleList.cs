@@ -1,4 +1,4 @@
-using Chaos.Common.Collections.Synchronized;
+using Chaos.Collections.Synchronized;
 using Chaos.Extensions.Common;
 
 namespace Chaos.Collections;

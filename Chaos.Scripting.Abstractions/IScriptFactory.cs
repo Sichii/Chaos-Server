@@ -5,7 +5,8 @@ namespace Chaos.Scripting.Abstractions;
 /// </summary>
 /// <typeparam name="TScript">The type of the script to generate</typeparam>
 /// <typeparam name="TScripted">The type of the subject of the script</typeparam>
-public interface IScriptFactory<out TScript, in TScripted> where TScript: IScript where TScripted: IScripted
+public interface IScriptFactory<out TScript, in TScripted> where TScript: IScript
+                                                           where TScripted: IScripted
 {
     /// <summary>
     ///     Creates a script with the scriptKeys for the given subject

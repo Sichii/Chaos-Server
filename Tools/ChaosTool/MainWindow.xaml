@@ -6,16 +6,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:integrityCheckControls="clr-namespace:ChaosTool.Controls.IntegrityCheckControls"
+        xmlns:dialogTemplateControls="clr-namespace:ChaosTool.Controls.DialogTemplateControls"
         xmlns:itemTemplateControls="clr-namespace:ChaosTool.Controls.ItemTemplateControls"
+        xmlns:lootTableControls="clr-namespace:ChaosTool.Controls.LootTableControls"
         xmlns:spellTemplateControls="clr-namespace:ChaosTool.Controls.SpellTemplateControls"
         xmlns:skillTemplateControls="clr-namespace:ChaosTool.Controls.SkillTemplateControls"
-        xmlns:dialogTemplateControls="clr-namespace:ChaosTool.Controls.DialogTemplateControls"
         xmlns:mapTemplateControls="clr-namespace:ChaosTool.Controls.MapTemplateControls"
         xmlns:reactorTileTemplateControls="clr-namespace:ChaosTool.Controls.ReactorTileTemplateControls"
         xmlns:monsterTemplateControls="clr-namespace:ChaosTool.Controls.MonsterTemplateControls"
         xmlns:merchantTemplateControls="clr-namespace:ChaosTool.Controls.MerchantTemplateControls"
-        xmlns:lootTableControls="clr-namespace:ChaosTool.Controls.LootTableControls"
+        xmlns:integrityCheckControls="clr-namespace:ChaosTool.Controls.IntegrityCheckControls"
         mc:Ignorable="d"
         Title="Chaos Tool"
         Width="1200"
@@ -33,7 +33,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <itemTemplateControls:ItemTemplateEditor x:Name="ItemTemplateEditor" />
+                <itemTemplateControls:ItemTemplateListView x:Name="ItemTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="Spells"
@@ -44,7 +44,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <spellTemplateControls:SpellTemplateEditor x:Name="SpellTemplateEditor" />
+                <spellTemplateControls:SpellTemplateListView x:Name="SpellTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="Skills"
@@ -52,7 +52,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <skillTemplateControls:SkillTemplateEditor x:Name="SkillTemplateEditor" />
+                <skillTemplateControls:SkillTemplateListView x:Name="SkillTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="Dialogs"
@@ -60,7 +60,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <dialogTemplateControls:DialogTemplateEditor x:Name="DialogTemplateEditor" />
+                <dialogTemplateControls:DialogTemplateListView x:Name="DialogTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="Maps"
@@ -68,7 +68,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <mapTemplateControls:MapTemplateEditor x:Name="MapTemplateEditor" />
+                <mapTemplateControls:MapTemplateListView x:Name="MapTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="ReactorTiles"
@@ -76,7 +76,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <reactorTileTemplateControls:ReactorTileTemplateEditor x:Name="ReactorTileTemplateEditor" />
+                <reactorTileTemplateControls:ReactorTileTemplateListView x:Name="ReactorTileTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="LootTables"
@@ -84,7 +84,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <lootTableControls:LootTableEditor x:Name="LootTableEditor" />
+                <lootTableControls:LootTableListView x:Name="LootTableListView" />
             </Grid>
         </TabItem>
         <TabItem Header="Monsters"
@@ -92,7 +92,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <monsterTemplateControls:MonsterTemplateEditor x:Name="MonsterTemplateEditor" />
+                <monsterTemplateControls:MonsterTemplateListView x:Name="MonsterTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="Merchants"
@@ -100,7 +100,7 @@
                  Style="{StaticResource MaterialDesignTabItem}"
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
-                <merchantTemplateControls:MerchantTemplateEditor x:Name="MerchantTemplateEditor" />
+                <merchantTemplateControls:MerchantTemplateListView x:Name="MerchantTemplateListView" />
             </Grid>
         </TabItem>
         <TabItem Header="BulkEdit"
@@ -139,15 +139,14 @@
                               VerticalAlignment="Stretch"
                               VerticalContentAlignment="Stretch"
                               PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
-                    <ItemsControl
-                        Name="Items"
-                        VerticalAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        Background="#FF303030"
-                        Foreground="White"
-                        Margin="0">
+                    <ItemsControl Name="Items"
+                                  VerticalAlignment="Stretch"
+                                  VerticalContentAlignment="Stretch"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Stretch"
+                                  Background="#FF303030"
+                                  Foreground="White"
+                                  Margin="0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <editor:RoslynCodeEditor Name="CodeEditor"

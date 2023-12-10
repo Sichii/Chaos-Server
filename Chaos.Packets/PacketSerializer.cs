@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Text;
 using Chaos.IO.Memory;
 using Chaos.Packets.Abstractions;
@@ -10,8 +10,8 @@ namespace Chaos.Packets;
 /// </summary>
 public sealed class PacketSerializer : IPacketSerializer
 {
-    private readonly ConcurrentDictionary<Type, IClientPacketDeserializer> Deserializers;
-    private readonly ConcurrentDictionary<Type, IServerPacketSerializer> Serializers;
+    private readonly FrozenDictionary<Type, IClientPacketDeserializer> Deserializers;
+    private readonly FrozenDictionary<Type, IServerPacketSerializer> Serializers;
 
     /// <inheritdoc />
     public Encoding Encoding { get; }
@@ -28,8 +28,8 @@ public sealed class PacketSerializer : IPacketSerializer
         IDictionary<Type, IServerPacketSerializer> serializers)
     {
         Encoding = encoding;
-        Deserializers = new ConcurrentDictionary<Type, IClientPacketDeserializer>(deserializers);
-        Serializers = new ConcurrentDictionary<Type, IServerPacketSerializer>(serializers);
+        Deserializers = deserializers.ToFrozenDictionary();
+        Serializers = serializers.ToFrozenDictionary();
     }
 
     /// <inheritdoc />

@@ -1,28 +1,27 @@
-<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.MerchantTemplateControls.MerchantTemplatePropertyEditor"
-                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                                 xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
-                                 xmlns:definitions="clr-namespace:ChaosTool.Definitions"
-                                 xmlns:model="clr-namespace:ChaosTool.Model"
-                                 xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
-                                 mc:Ignorable="d"
-                                 d:DesignHeight="700"
-                                 d:DesignWidth="900"
-                                 MinHeight="700"
-                                 MinWidth="900"
-                                 HorizontalAlignment="Stretch"
-                                 Width="Auto"
-                                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-                                 Background="{DynamicResource MaterialDesignPaper}"
-                                 TextElement.FontWeight="Medium"
-                                 TextElement.FontSize="14"
-                                 FontFamily="{materialDesign:MaterialDesignFont}"
-                                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
-                                 Initialized="UserControl_Initialized"
-                                 Focusable="True">
+<UserControl x:Class="ChaosTool.Controls.MerchantTemplateControls.MerchantTemplatePropertyEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:definitions="clr-namespace:ChaosTool.Definitions"
+             xmlns:viewModel="clr-namespace:ChaosTool.ViewModel"
+             xmlns:observables="clr-namespace:ChaosTool.ViewModel.Observables"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance viewModel:MerchantTemplateViewModel, IsDesignTimeCreatable=True}"
+             MinHeight="700"
+             MinWidth="900"
+             HorizontalAlignment="Stretch"
+             Width="Auto"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             Initialized="UserControl_Initialized"
+             Focusable="True">
     <Grid Focusable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
@@ -36,41 +35,49 @@
         </Grid.RowDefinitions>
         <!-- #region Labels -->
         <Label Content="Path"
+               Name="PathLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,19,10,0" />
         <Label Content="TemplateKey"
+               Name="TemplateKeyLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,79,10,0" />
         <Label Content="Name"
+               Name="NameLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,109,10,0" />
         <Label Content="Sprite"
+               Name="SpriteLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,139,10,0" />
         <Label Content="RestockPct"
+               Name="RestockPctLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,169,10,0" />
         <Label Content="RestockIntervalHrs"
+               Name="RestockIntervalHrsLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,199,10,0" />
         <Label Content="WanderIntervalMs"
+               Name="WanderIntervalMsLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,229,10,0" />
         <Label Content="ScriptKeys"
+               Name="ScriptKeysLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
@@ -83,12 +90,14 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0"
+                   Name="ItemsForSaleLbl"
                    Content="ItemsForSale"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Top"
                    Style="{StaticResource MaterialDesignLabel}"
                    Margin="0,0,0,0" />
             <Label Grid.Row="1"
+                   Name="ItemsToBuyLbl"
                    Content="ItemsToBuy"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Top"
@@ -104,18 +113,19 @@
             </Grid.RowDefinitions>
             <Label Grid.Row="0"
                    Content="SkillsToTeach"
+                   Name="SkillsToTeachLbl"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Top"
                    Style="{StaticResource MaterialDesignLabel}"
                    Margin="0,0,0,0" />
             <Label Grid.Row="1"
+                   Name="SpellsToTeachLbl"
                    Content="SpellsToTeach"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Top"
                    Style="{StaticResource MaterialDesignLabel}"
                    Margin="0,0,0,0" />
         </Grid>
-
 
         <!-- #endregion -->
         <!-- #region Input -->
@@ -128,7 +138,8 @@
                  Margin="10,18,10,0"
                  TextWrapping="NoWrap"
                  MinWidth="200"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Path}" />
         <TextBox Grid.Column="1"
                  Name="TemplateKeyTbox"
                  HorizontalAlignment="Left"
@@ -137,6 +148,7 @@
                  TextWrapping="NoWrap"
                  MinWidth="160"
                  Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding TemplateKey}"
                  TextChanged="TemplateKeyTbox_OnTextChanged" />
         <TextBox Grid.Column="1"
                  Name="NameTbox"
@@ -145,7 +157,8 @@
                  Margin="10,108,75,0"
                  TextWrapping="NoWrap"
                  MinWidth="160"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Name}" />
         <TextBox Grid.Column="1"
                  Name="SpriteTbox"
                  HorizontalAlignment="Left"
@@ -154,7 +167,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding Sprite}" />
         <TextBox Grid.Column="1"
                  Name="RestockPctTbox"
                  HorizontalAlignment="Left"
@@ -163,7 +176,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding RestockPct}" />
         <TextBox Grid.Column="1"
                  Name="RestockIntervalHrsTbox"
                  HorizontalAlignment="Left"
@@ -172,7 +185,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding RestockIntervalHrs}" />
         <TextBox Grid.Column="1"
                  Name="WanderIntervalMsTbox"
                  HorizontalAlignment="Left"
@@ -181,8 +194,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
-
+                 Text="{Binding WanderIntervalMs}" />
         <Grid Grid.Column="1"
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
@@ -201,9 +213,10 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                      ItemsSource="{Binding ScriptKeys}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
+                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -270,11 +283,12 @@
                           Style="{StaticResource MaterialDesignListView}"
                           materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                           d:ItemsSource="{x:Static definitions:SampleData.ItemDetails}"
+                          ItemsSource="{Binding ItemsForSale}"
                           materialDesign:RippleAssist.IsDisabled="True"
                           materialDesign:ListBoxItemAssist.ShowSelection="True"
                           MaxHeight="400">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type data:ItemDetailsSchema}">
+                        <DataTemplate DataType="{x:Type observables:ObservableItemDetails}">
                             <Grid Background="Transparent"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Top">
@@ -321,8 +335,7 @@
                                          Style="{StaticResource MaterialDesignTextBox}"
                                          materialDesign:HintAssist.Hint="StockAmount"
                                          Padding="3"
-                                         Margin="3, 0, 3, 3"
-                                         PreviewTextInput="TboxNumberValidator" />
+                                         Margin="3, 0, 3, 3" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -356,9 +369,10 @@
                           Style="{StaticResource MaterialDesignListView}"
                           materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                           d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                          ItemsSource="{Binding ItemsToBuy}"
                           Margin="0,0,5,0">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type model:BindableString}">
+                        <DataTemplate DataType="{x:Type viewModel:BindableString}">
                             <Grid HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Width="Auto">
@@ -428,9 +442,10 @@
                           Style="{StaticResource MaterialDesignListView}"
                           materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                           d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                          ItemsSource="{Binding SkillsToTeach}"
                           Margin="0,0,5,0">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type model:BindableString}">
+                        <DataTemplate DataType="{x:Type viewModel:BindableString}">
                             <Grid HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Width="Auto">
@@ -492,9 +507,10 @@
                           Style="{StaticResource MaterialDesignListView}"
                           materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                           d:ItemsSource="{x:Static definitions:SampleData.Strings}"
+                          ItemsSource="{Binding SpellsToTeach}"
                           Margin="0,0,5,0">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type model:BindableString}">
+                        <DataTemplate DataType="{x:Type viewModel:BindableString}">
                             <Grid HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Width="Auto">
@@ -547,7 +563,8 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
                 Name="RevertBtn"
@@ -575,4 +592,4 @@
                                  MessageQueue="{materialDesign:MessageQueue}" />
         <!-- #endregion Footer -->
     </Grid>
-</abstractions:PropertyEditorBase>
+</UserControl>

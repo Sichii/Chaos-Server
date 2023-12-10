@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Concurrent;
-using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
@@ -21,12 +20,13 @@ namespace Chaos.Storage;
 /// <typeparam name="T">The type of object stored in the cache</typeparam>
 /// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
 /// <typeparam name="TOptions"></typeparam>
-public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class where TOptions: class, IExpiringFileCacheOptions
+public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class
+                                                                       where TOptions: class, IExpiringFileCacheOptions
 {
     /// <summary>
     ///     The set of paths that are used for loading data.
     /// </summary>
-    protected SynchronizedHashSet<string> Paths { get; set; }
+    protected List<string> Paths { get; set; }
 
     /// <summary>
     ///     The memory cache used to store the data.
@@ -98,6 +98,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var pathEndings = Paths.Select(Path.GetFileNameWithoutExtension);
 
         foreach (var pathEnding in pathEndings)
+        {
             try
             {
                 Get(pathEnding!);
@@ -105,6 +106,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
             {
                 //ignored
             }
+        }
     }
 
     /// <inheritdoc />
@@ -236,7 +238,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    protected SynchronizedHashSet<string> LoadPaths()
+    protected List<string> LoadPaths()
     {
         var searchPattern = Options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
@@ -250,7 +252,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        return new SynchronizedHashSet<string>(paths, StringComparer.OrdinalIgnoreCase);
+        return paths.Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
     }
 
     /// <summary>

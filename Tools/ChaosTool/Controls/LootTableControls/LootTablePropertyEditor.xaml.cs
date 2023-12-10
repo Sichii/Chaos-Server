@@ -1,29 +1,22 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using Chaos.Common.Definitions;
-using Chaos.Common.Utilities;
-using Chaos.Extensions.Common;
 using Chaos.Schemas.Content;
-using Chaos.Schemas.Data;
 using ChaosTool.Definitions;
-using ChaosTool.Model;
+using ChaosTool.Extensions;
+using ChaosTool.Utility;
+using ChaosTool.ViewModel;
+using ChaosTool.ViewModel.Observables;
 
 namespace ChaosTool.Controls.LootTableControls;
 
 public sealed partial class LootTablePropertyEditor
 {
-    public ListViewItem<LootTableSchema, LootTablePropertyEditor> ListItem { get; }
-    public ObservableCollection<LootDropSchema> LootDropsViewItems { get; }
-    public TraceWrapper<LootTableSchema> Wrapper => ListItem.Wrapper;
+    private LootTableViewModel ViewModel
+        => DataContext as LootTableViewModel
+           ?? throw new InvalidOperationException($"DataContext is not of type {nameof(LootTableViewModel)}");
 
-    public LootTablePropertyEditor(ListViewItem<LootTableSchema, LootTablePropertyEditor> listItem)
-    {
-        ListItem = listItem;
-        LootDropsViewItems = new ObservableCollection<LootDropSchema>();
-
-        InitializeComponent();
-    }
+    public LootTablePropertyEditor() => InitializeComponent();
 
     #region Tbox Validation
     private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -32,96 +25,26 @@ public sealed partial class LootTablePropertyEditor
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
-        LootDropsView.ItemsSource = LootDropsViewItems;
-        ModeCmbox.ItemsSource = GetEnumNames<LootTableMode>();
+        ModeCmbox.ItemsSource = Helpers.GetEnumNames<LootTableMode>();
 
-        PopulateControlsFromItem();
+        KeyLbl.ToolTip = Helpers.GetPropertyDocs<LootTableSchema>(nameof(LootTableSchema.Key));
+        LootDropsLbl.ToolTip = Helpers.GetPropertyDocs<LootTableSchema>(nameof(LootTableSchema.LootDrops));
+        ModeLbl.ToolTip = Helpers.GetPropertyDocs<LootTableSchema>(nameof(LootTableSchema.Mode));
     }
-
-    #region Controls > Template > Controls
-    public void CopySelectionsToItem()
-    {
-        var template = Wrapper.Object;
-
-        Wrapper.Path = PathTbox.Text;
-        template.Key = KeyTbox.Text;
-        template.Mode = ParsePrimitive<LootTableMode>(ModeCmbox.Text);
-
-        template.LootDrops = LootDropsViewItems.Select(ShallowCopy<LootDropSchema>.Create)
-                                               .ToList();
-
-        ListItem.Name = template.Key;
-    }
-
-    public void PopulateControlsFromItem()
-    {
-        var template = Wrapper.Object;
-
-        PathTbox.Text = Wrapper.Path;
-
-        KeyTbox.IsEnabled = false;
-        KeyTbox.Text = template.Key;
-        KeyTbox.IsEnabled = true;
-
-        ModeCmbox.SelectedItem = SelectPrimitive(template.Mode, ModeCmbox.ItemsSource);
-
-        LootDropsViewItems.Clear();
-        LootDropsViewItems.AddRange(template.LootDrops.Select(ShallowCopy<LootDropSchema>.Create));
-    }
-    #endregion
 
     #region Buttons
-    private void RevertBtn_Click(object sender, RoutedEventArgs e) => PopulateControlsFromItem();
+    private void RevertBtn_Click(object sender, RoutedEventArgs e) => ViewModel.RejectChanges();
 
-    private async void SaveBtn_Click(object sender, RoutedEventArgs e)
+    private void SaveBtn_Click(object sender, RoutedEventArgs e) => ViewModel.AcceptChanges();
+
+    private void DeleteBtn_OnClick(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            var existing = JsonContext.LootTables
-                                      .Objects
-                                      .Where(wrapper => wrapper != Wrapper)
-                                      .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
+        var parentList = this.FindVisualParent<LootTableListView>();
 
-            if (existing is not null)
-            {
-                Snackbar.MessageQueue?.Enqueue($"Save failed. An item already exists at path \"{existing.Path}\"");
+        parentList?.Items.Remove(ViewModel);
 
-                return;
-            }
-
-            existing = JsonContext.LootTables
-                                  .Objects
-                                  .Where(wrapper => wrapper != Wrapper)
-                                  .FirstOrDefault(wrapper => wrapper.Object.Key.EqualsI(KeyTbox.Text));
-
-            if (existing is not null)
-            {
-                Snackbar.MessageQueue?.Enqueue(
-                    $"Save failed. An item already exists with key \"{existing.Object.Key}\" at path \"{existing.Path}\"");
-
-                return;
-            }
-
-            existing = JsonContext.LootTables.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Wrapper));
-
-            if (existing is null)
-                JsonContext.LootTables.Objects.Add(Wrapper);
-
-            if (!ValidatePreSave(Wrapper, PathTbox, KeyTbox))
-            {
-                Snackbar.MessageQueue?.Enqueue("Filename does not match the key");
-
-                return;
-            }
-
-            CopySelectionsToItem();
-            PopulateControlsFromItem();
-        } catch (Exception ex)
-        {
-            Snackbar.MessageQueue?.Enqueue(ex.ToString());
-        }
-
-        await JsonContext.LootTables.SaveItemAsync(Wrapper);
+        ViewModel.IsDeleted = true;
+        ViewModel.AcceptChanges();
     }
     #endregion
 
@@ -131,12 +54,12 @@ public sealed partial class LootTablePropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not LootDropSchema lootDrop)
+        if (button.DataContext is not ObservableLootDrop lootDrop)
             return;
 
-        LootDropsViewItems.Remove(lootDrop);
+        ViewModel.LootDrops.Remove(lootDrop);
     }
 
-    private void AddLootDropBtn_Click(object sender, RoutedEventArgs e) => LootDropsViewItems.Add(new LootDropSchema());
+    private void AddLootDropBtn_Click(object sender, RoutedEventArgs e) => ViewModel.LootDrops.Add(new ObservableLootDrop());
     #endregion
 }

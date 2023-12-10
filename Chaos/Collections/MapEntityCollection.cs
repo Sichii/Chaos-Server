@@ -56,8 +56,10 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         WalkableArea = walkableArea;
 
         for (var x = 0; x < mapWidth; x++)
+        {
             for (var y = 0; y < mapHeight; y++)
                 PointLookup[x, y] = new HashSet<MapEntity>(WorldEntity.IdComparer);
+        }
 
         //setup Values<T> cases
         ValuesCases = new TypeSwitchExpression<IEnumerable>().Case<Aisling>(Aislings)
@@ -78,7 +80,8 @@ public sealed class MapEntityCollection : IDeltaUpdatable
                                                                                .Concat(Merchants)
                                                                                .Concat(GroundEntities)
                                                                                .Concat(Doors))
-                                                             .Default(EntityLookup.Values);
+                                                             .Default(EntityLookup.Values)
+                                                             .Freeze();
     }
 
     /// <inheritdoc />

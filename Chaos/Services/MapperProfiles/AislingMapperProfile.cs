@@ -1,6 +1,6 @@
 using Chaos.Collections;
+using Chaos.Collections.Synchronized;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
 using Chaos.Definitions;
 using Chaos.Geometry.Abstractions;

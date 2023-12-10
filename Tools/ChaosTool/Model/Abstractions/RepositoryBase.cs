@@ -1,7 +1,8 @@
 using System.Collections;
 using System.IO;
 using System.Text.Json;
-using Chaos.Common.Collections.Synchronized;
+using Chaos.Collections.Synchronized;
+using Chaos.Extensions.Common;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,7 @@ public abstract class RepositoryBase<T>(IEntityRepository entityRepository, IOpt
     where T: class
 {
     protected IEntityRepository EntityRepository { get; } = entityRepository;
-    public SynchronizedList<TraceWrapper<T>> Objects { get; } = new();
+    public SynchronizedList<TraceWrapper<T>> Objects { get; } = [];
     public IExpiringFileCacheOptions? Options { get; } = options?.Value;
     protected SynchronizedHashSet<string> Paths { get; } = new(comparer: StringComparer.OrdinalIgnoreCase);
 
@@ -27,7 +28,15 @@ public abstract class RepositoryBase<T>(IEntityRepository entityRepository, IOpt
         => Objects.Select(wrapped => wrapped.Object)
                   .GetEnumerator();
 
-    public abstract void Add(string path, T obj);
+    public virtual TraceWrapper<T> Add(string path, T obj)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        var wrapped = new TraceWrapper<T>(path, obj);
+        Objects.Add(wrapped);
+
+        return wrapped;
+    }
 
     protected virtual IEnumerable<string> GetPaths()
     {
@@ -83,7 +92,18 @@ public abstract class RepositoryBase<T>(IEntityRepository entityRepository, IOpt
         }
     }
 
-    public abstract void Remove(string name);
+    public virtual void Remove(string originalPath)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(originalPath);
+
+        var wrapped = Objects.FirstOrDefault(wp => wp.Path.EqualsI(originalPath));
+
+        if (wrapped is null)
+            return;
+
+        File.Delete(wrapped.Path);
+        Objects.Remove(wrapped);
+    }
 
     public virtual Task SaveChangesAsync() => Parallel.ForEachAsync(Objects, async (obj, _) => await SaveItemAsync(obj));
 

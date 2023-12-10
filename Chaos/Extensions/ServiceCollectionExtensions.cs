@@ -234,8 +234,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISimpleCache, ISimpleCacheProvider, SimpleCache>();
     }
 
-    public static void AddTransient<TI1, TI2, T>(this IServiceCollection services)
-        where T: class, TI1, TI2 where TI1: class where TI2: class
+    public static void AddTransient<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2
+                                                                                   where TI1: class
+                                                                                   where TI2: class
     {
         services.AddTransient<TI1, T>();
         services.AddTransient<TI2, T>();

@@ -83,8 +83,8 @@ public static class PointExtensions
     ///     to be facing
     ///     <paramref name="point" />
     /// </returns>
-    public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other)
-        where TPoint1: IPoint where TPoint2: IPoint
+    public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
+        where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -131,7 +131,8 @@ public static class PointExtensions
     /// <param name="point"></param>
     /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
     /// <returns>The distance between the two given points without moving diagonally</returns>
-    public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint where TPoint2: IPoint
+    public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
+                                                                                        where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -330,8 +331,8 @@ public static class PointExtensions
     /// <param name="start">Starting point for the creation of the path</param>
     /// <param name="end">Ending point for the creation of the path</param>
     /// <remarks>Does not return the start point, only the points between the start and end, as well as the end point itself</remarks>
-    public static IEnumerable<Point> GetDirectPath<TPoint1, TPoint2>(this TPoint1 start, TPoint2 end)
-        where TPoint1: IPoint where TPoint2: IPoint
+    public static IEnumerable<Point> GetDirectPath<TPoint1, TPoint2>(this TPoint1 start, TPoint2 end) where TPoint1: IPoint
+        where TPoint2: IPoint
     {
         var current = Point.From(start);
         var endPoint = Point.From(end);
@@ -388,7 +389,8 @@ public static class PointExtensions
     /// <returns>
     ///     A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" />
     /// </returns>
-    public static Point OffsetTowards<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint where TPoint2: IPoint
+    public static Point OffsetTowards<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
+                                                                                           where TPoint2: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 

@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Chaos.Extensions.Common;
 using ChaosTool.Definitions;
-using ChaosTool.Model;
+using ChaosTool.ViewModel;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;

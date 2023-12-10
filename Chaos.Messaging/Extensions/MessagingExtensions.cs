@@ -43,7 +43,8 @@ public static class MessagingExtensions
     /// <typeparam name="T">The type of the command subject</typeparam>
     /// <typeparam name="TOptions">The type of the options object to use for this command interceptor</typeparam>
     public static void AddCommandInterceptor<T, TOptions>(this IServiceCollection services, string? optionsSubSection = null)
-        where T: ICommandSubject where TOptions: class, ICommandInterceptorOptions
+        where T: ICommandSubject
+        where TOptions: class, ICommandInterceptorOptions
     {
         services.AddOptionsFromConfig<TOptions>(optionsSubSection);
         services.AddSingleton<ICommandInterceptor<T>, CommandInterceptor<T, TOptions>>();

@@ -1,9 +1,9 @@
-// ReSharper disable once CheckNamespace
-
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Pathfinding;
 using Chaos.Pathfinding.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+
+// ReSharper disable once CheckNamespace
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.DependencyInjection;

@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
@@ -10,17 +11,17 @@ namespace Chaos.Services.Factories;
 
 public sealed class EffectFactory : IEffectFactory
 {
-    private readonly ConcurrentDictionary<string, Type> EffectTypeCache;
+    private readonly FrozenDictionary<string, Type> EffectTypeCache;
     private readonly ILogger<EffectFactory> Logger;
     private readonly IServiceProvider Provider;
 
     public EffectFactory(ILogger<EffectFactory> logger, IServiceProvider provider)
     {
-        EffectTypeCache = new ConcurrentDictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
         Provider = provider;
 
-        LoadEffectTypes();
+        EffectTypeCache = LoadEffectTypes()
+            .ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
     public IEffect Create(string effectKey)
@@ -36,20 +37,23 @@ public sealed class EffectFactory : IEffectFactory
         return effect;
     }
 
-    private void LoadEffectTypes()
+    private Dictionary<string, Type> LoadEffectTypes()
     {
+        var ret = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         var types = typeof(IEffect).LoadImplementations();
 
         foreach (var type in types)
         {
             var effectKey = EffectBase.GetEffectKey(type);
-            EffectTypeCache.TryAdd(effectKey, type);
+            ret.TryAdd(effectKey, type);
 
             Logger.WithTopics(Topics.Entities.Effect, Topics.Actions.Load)
                   .LogTrace("Loaded effect type with key {@EffectKey} for type {@Type}", effectKey, type.Name);
         }
 
         Logger.WithTopics(Topics.Entities.Effect, Topics.Actions.Load)
-              .LogInformation("{Count} effects loaded", EffectTypeCache.Count);
+              .LogInformation("{Count} effects loaded", ret.Count);
+
+        return ret;
     }
 }

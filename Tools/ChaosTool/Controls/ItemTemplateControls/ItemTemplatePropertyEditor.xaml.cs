@@ -1,14 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Chaos.Common.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
-using ChaosTool.Model;
+using ChaosTool.Utility;
+using ChaosTool.ViewModel;
 
 namespace ChaosTool.Controls.ItemTemplateControls;
 
@@ -17,263 +15,89 @@ namespace ChaosTool.Controls.ItemTemplateControls;
 /// </summary>
 public sealed partial class ItemTemplatePropertyEditor
 {
-    public ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor> ListItem { get; }
-    public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
-    public TraceWrapper<ItemTemplateSchema> Wrapper => ListItem.Wrapper;
+    private ItemTemplateViewModel ViewModel
+        => DataContext as ItemTemplateViewModel
+           ?? throw new InvalidOperationException($"DataContext is not of type {nameof(ItemTemplateViewModel)}");
 
-    public ItemTemplatePropertyEditor(ListViewItem<ItemTemplateSchema, ItemTemplatePropertyEditor> listItem)
-    {
-        ListItem = listItem;
-        ScriptKeysViewItems = new ObservableCollection<BindableString>();
-
-        InitializeComponent();
-    }
-
-    private void UserControl_Initialized(object sender, EventArgs e)
-    {
-        ColorCmbox.ItemsSource = GetEnumNames<DisplayColor>();
-        EquipmentTypeCmbox.ItemsSource = GetEnumNames<EquipmentType?>();
-        GenderCmbox.ItemsSource = GetEnumNames<Gender?>();
-
-        PantsColorCmbox.ItemsSource = GetEnumNames<DisplayColor?>()
-            .Take(17); //0-15 + null
-        ClassCmbox.ItemsSource = GetEnumNames<BaseClass?>();
-        AdvClassCmbox.ItemsSource = GetEnumNames<AdvClass?>();
-
-        ScriptKeysView.ItemsSource = ScriptKeysViewItems;
-
-        PopulateControlsFromItem();
-
-        TemplateKeyLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.TemplateKey));
-        NameLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Name));
-        PanelSpriteLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.PanelSprite));
-        DisplaySpriteLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.DisplaySprite));
-        ColorLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Color));
-        PantsColorLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.PantsColor));
-        MaxStacksLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.MaxStacks));
-        AccountBoundLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.AccountBound));
-        BuyCostLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.BuyCost));
-        SellValueLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.SellValue));
-        WeightLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Weight));
-        MaxDurabilityLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.MaxDurability));
-        ClassLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Class));
-        AdvClassLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.AdvClass));
-        LevelLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Level));
-        RequiresMasterLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.RequiresMaster));
-
-        AtkSpeedPctLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.AtkSpeedPct));
-        AcLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Ac));
-        MagicResistanceLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.MagicResistance));
-        HitLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Hit));
-        DmgLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Dmg));
-        FlatSkillDamageLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.FlatSkillDamage));
-        FlatSpellDamageLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.FlatSpellDamage));
-        SkillDamagePctLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.SkillDamagePct));
-        SpellDamagePctLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.SpellDamagePct));
-        StrLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Str));
-        IntLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Int));
-        WisLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Wis));
-        ConLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Con));
-        DexLbl.ToolTip = GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Dex));
-
-        CooldownMsLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.CooldownMs));
-        EquipmentTypeLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.EquipmentType));
-        GenderLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Gender));
-        IsDyeableLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.IsDyeable));
-        IsModifiableLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.IsModifiable));
-        CategoryLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Category));
-        DescriptionLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Description));
-        ScriptKeysLbl.ToolTip = GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.ScriptKeys));
-    }
-
-    #region Controls > Template > Controls
-    public void CopySelectionsToItem()
-    {
-        var template = Wrapper.Object;
-
-        Wrapper.Path = PathTbox.Text;
-        template.TemplateKey = TemplateKeyTbox.Text;
-        template.Name = NameTbox.Text;
-        template.PanelSprite = ParsePrimitive<ushort>(PanelSpriteTbox.Text);
-        template.DisplaySprite = ParsePrimitive<ushort?>(DisplaySpriteTbox.Text);
-        template.Color = ParsePrimitive<DisplayColor>(ColorCmbox.Text);
-        template.PantsColor = ParsePrimitive<DisplayColor?>(PantsColorCmbox.Text);
-        template.MaxStacks = ParsePrimitive<int>(MaxStacksTbox.Text);
-        template.AccountBound = AccountBoundCbox.IsChecked!.Value;
-        template.BuyCost = ParsePrimitive<int>(BuyCostTbox.Text);
-        template.SellValue = ParsePrimitive<int>(SellValueTbox.Text);
-        template.Weight = ParsePrimitive<byte>(WeightTbox.Text);
-        template.MaxDurability = ParsePrimitive<int?>(MaxDurabilityTbox.Text);
-        template.Class = ParsePrimitive<BaseClass?>(ClassCmbox.Text);
-        template.AdvClass = ParsePrimitive<AdvClass?>(AdvClassCmbox.Text);
-        template.Level = ParsePrimitive<int>(LevelTbox.Text);
-        template.RequiresMaster = RequiresMasterCbox.IsChecked!.Value;
-
-        var modifiers = new AttributesSchema
-        {
-            AtkSpeedPct = ParsePrimitive<int>(AtkSpeedPctTbox.Text),
-            Ac = ParsePrimitive<int>(AcTbox.Text),
-            MagicResistance = ParsePrimitive<int>(MagicResistanceTbox.Text),
-            Hit = ParsePrimitive<int>(HitTbox.Text),
-            Dmg = ParsePrimitive<int>(DmgTbox.Text),
-            FlatSkillDamage = ParsePrimitive<int>(FlatSkillDamageTbox.Text),
-            FlatSpellDamage = ParsePrimitive<int>(FlatSpellDamageTbox.Text),
-            SkillDamagePct = ParsePrimitive<int>(SkillDamagePctTbox.Text),
-            SpellDamagePct = ParsePrimitive<int>(SpellDamagePctTbox.Text),
-            MaximumHp = ParsePrimitive<int>(MaximumHpTbox.Text),
-            MaximumMp = ParsePrimitive<int>(MaximumMpTbox.Text),
-            Str = ParsePrimitive<int>(StrTbox.Text),
-            Int = ParsePrimitive<int>(IntTbox.Text),
-            Wis = ParsePrimitive<int>(WisTbox.Text),
-            Con = ParsePrimitive<int>(ConTbox.Text),
-            Dex = ParsePrimitive<int>(DexTbox.Text)
-        };
-
-        var defaultModifiers = new AttributesSchema();
-
-        //set modifiers if any modifier was set
-        //or there are existing modifiers(that arent also default) that we need to overwrite
-        if (!defaultModifiers.Equals(modifiers) || (template.Modifiers is not null && !defaultModifiers.Equals(template.Modifiers)))
-            template.Modifiers = modifiers;
-
-        template.CooldownMs = ParsePrimitive<int?>(CooldownMsTbox.Text);
-        template.EquipmentType = ParsePrimitive<EquipmentType?>(EquipmentTypeCmbox.Text);
-        template.Gender = ParsePrimitive<Gender?>(GenderCmbox.Text);
-        template.IsDyeable = IsDyeableCbox.IsChecked!.Value;
-        template.IsModifiable = IsModifiableCbox.IsChecked!.Value;
-        template.Category = CategoryTbox.Text;
-        template.Description = string.IsNullOrEmpty(DescriptionTbox.Text) ? null : DescriptionTbox.Text.FixLineEndings();
-
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
-                                                 .ToList();
-
-        ListItem.Name = template.TemplateKey;
-    }
-
-    public void PopulateControlsFromItem()
-    {
-        var template = Wrapper.Object;
-
-        PathTbox.Text = Wrapper.Path;
-
-        TemplateKeyTbox.IsEnabled = false;
-        TemplateKeyTbox.Text = template.TemplateKey;
-        TemplateKeyTbox.IsEnabled = true;
-
-        NameTbox.Text = template.Name;
-        PanelSpriteTbox.Text = template.PanelSprite.ToString();
-        DisplaySpriteTbox.Text = template.DisplaySprite?.ToString();
-        ColorCmbox.SelectedItem = SelectPrimitive(template.Color, ColorCmbox.ItemsSource);
-        PantsColorCmbox.SelectedItem = SelectPrimitive(template.PantsColor, PantsColorCmbox.ItemsSource);
-        MaxStacksTbox.Text = template.MaxStacks.ToString();
-        AccountBoundCbox.IsChecked = template.AccountBound;
-        BuyCostTbox.Text = template.BuyCost.ToString();
-        SellValueTbox.Text = template.SellValue.ToString();
-        WeightTbox.Text = template.Weight.ToString();
-        MaxDurabilityTbox.Text = template.MaxDurability?.ToString();
-        ClassCmbox.SelectedItem = SelectPrimitive(template.Class, ClassCmbox.ItemsSource);
-        AdvClassCmbox.SelectedItem = SelectPrimitive(template.AdvClass, AdvClassCmbox.ItemsSource);
-        LevelTbox.Text = template.Level.ToString();
-        RequiresMasterCbox.IsChecked = template.RequiresMaster;
-
-        var modifiers = template.Modifiers;
-
-        if (modifiers is not null)
-        {
-            AtkSpeedPctTbox.Text = modifiers.AtkSpeedPct.ToString();
-            AcTbox.Text = modifiers.Ac.ToString();
-            MagicResistanceTbox.Text = modifiers.MagicResistance.ToString();
-            HitTbox.Text = modifiers.Hit.ToString();
-            DmgTbox.Text = modifiers.Dmg.ToString();
-            FlatSkillDamageTbox.Text = modifiers.FlatSkillDamage.ToString();
-            FlatSpellDamageTbox.Text = modifiers.FlatSpellDamage.ToString();
-            SkillDamagePctTbox.Text = modifiers.SkillDamagePct.ToString();
-            SpellDamagePctTbox.Text = modifiers.SpellDamagePct.ToString();
-            MaximumHpTbox.Text = modifiers.MaximumHp.ToString();
-            MaximumMpTbox.Text = modifiers.MaximumMp.ToString();
-            StrTbox.Text = modifiers.Str.ToString();
-            IntTbox.Text = modifiers.Int.ToString();
-            WisTbox.Text = modifiers.Wis.ToString();
-            ConTbox.Text = modifiers.Con.ToString();
-            DexTbox.Text = modifiers.Dex.ToString();
-        }
-
-        CooldownMsTbox.Text = template.CooldownMs?.ToString();
-        EquipmentTypeCmbox.SelectedItem = SelectPrimitive(template.EquipmentType, EquipmentTypeCmbox.ItemsSource);
-        GenderCmbox.SelectedItem = SelectPrimitive(template.Gender, GenderCmbox.ItemsSource);
-        IsDyeableCbox.IsChecked = template.IsDyeable;
-        IsModifiableCbox.IsChecked = template.IsModifiable;
-        CategoryTbox.Text = template.Category;
-        DescriptionTbox.Text = template.Description?.FixLineEndings();
-
-        ScriptKeysViewItems.Clear();
-        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToBindableStrings());
-    }
-    #endregion
-
-    #region Buttons
-    private void RevertBtn_Click(object sender, RoutedEventArgs e) => PopulateControlsFromItem();
-
-    private async void SaveBtn_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var existing = JsonContext.ItemTemplates
-                                      .Objects
-                                      .Where(wrapper => wrapper != Wrapper)
-                                      .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
-
-            if (existing is not null)
-            {
-                Snackbar.MessageQueue?.Enqueue($"Save failed. An item already exists at path \"{existing.Path}\"");
-
-                return;
-            }
-
-            existing = JsonContext.ItemTemplates
-                                  .Objects
-                                  .Where(wrapper => !ReferenceEquals(wrapper, Wrapper))
-                                  .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
-
-            if (existing is not null)
-            {
-                Snackbar.MessageQueue?.Enqueue(
-                    $"Save failed. An item already exists with template key \"{existing.Object.TemplateKey}\" at path \"{existing.Path}\"");
-
-                return;
-            }
-
-            existing = JsonContext.ItemTemplates.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Wrapper));
-
-            if (existing is null)
-                JsonContext.ItemTemplates.Objects.Add(Wrapper);
-
-            if (!ValidatePreSave(Wrapper, PathTbox, TemplateKeyTbox))
-            {
-                Snackbar.MessageQueue?.Enqueue("Filename does not match the template key");
-
-                return;
-            }
-
-            CopySelectionsToItem();
-            PopulateControlsFromItem();
-        } catch (Exception ex)
-        {
-            Snackbar.MessageQueue?.Enqueue(ex.ToString());
-        }
-
-        await JsonContext.ItemTemplates.SaveItemAsync(Wrapper);
-    }
-    #endregion
+    public ItemTemplatePropertyEditor() => InitializeComponent();
 
     #region Tbox Validation
-    private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-
     private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
         => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
-    #region ScriptKeys Control
+    private void UserControl_Initialized(object sender, EventArgs e)
+    {
+        ColorCmbox.ItemsSource = Helpers.GetEnumNames<DisplayColor>();
+        EquipmentTypeCmbox.ItemsSource = Helpers.GetEnumNames<EquipmentType?>();
+        GenderCmbox.ItemsSource = Helpers.GetEnumNames<Gender?>();
+
+        PantsColorCmbox.ItemsSource = Helpers.GetEnumNames<DisplayColor?>()
+                                             .Take(17); //0-15 + null
+        ClassCmbox.ItemsSource = Helpers.GetEnumNames<BaseClass?>();
+        AdvClassCmbox.ItemsSource = Helpers.GetEnumNames<AdvClass?>();
+
+        TemplateKeyLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.TemplateKey));
+        NameLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Name));
+        PanelSpriteLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.PanelSprite));
+        DisplaySpriteLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.DisplaySprite));
+        ColorLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Color));
+        PantsColorLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.PantsColor));
+        MaxStacksLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.MaxStacks));
+        AccountBoundLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.AccountBound));
+        BuyCostLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.BuyCost));
+        SellValueLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.SellValue));
+        WeightLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Weight));
+        MaxDurabilityLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.MaxDurability));
+        ClassLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Class));
+        AdvClassLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.AdvClass));
+        LevelLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Level));
+        RequiresMasterLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.RequiresMaster));
+
+        AtkSpeedPctLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.AtkSpeedPct));
+        AcLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Ac));
+        MagicResistanceLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.MagicResistance));
+        HitLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Hit));
+        DmgLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Dmg));
+        FlatSkillDamageLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.FlatSkillDamage));
+        FlatSpellDamageLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.FlatSpellDamage));
+        SkillDamagePctLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.SkillDamagePct));
+        SpellDamagePctLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.SpellDamagePct));
+        StrLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Str));
+        IntLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Int));
+        WisLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Wis));
+        ConLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Con));
+        DexLbl.ToolTip = Helpers.GetPropertyDocs<AttributesSchema>(nameof(AttributesSchema.Dex));
+
+        CooldownMsLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.CooldownMs));
+        EquipmentTypeLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.EquipmentType));
+        GenderLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Gender));
+        IsDyeableLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.IsDyeable));
+        IsModifiableLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.IsModifiable));
+        CategoryLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Category));
+        DescriptionLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.Description));
+        ScriptKeysLbl.ToolTip = Helpers.GetPropertyDocs<ItemTemplateSchema>(nameof(ItemTemplateSchema.ScriptKeys));
+    }
+
+    #region Buttons
+    private void RevertBtn_Click(object sender, RoutedEventArgs e) => ViewModel.RejectChanges();
+
+    private void SaveBtn_Click(object sender, RoutedEventArgs e) => ViewModel.AcceptChanges();
+
+    private void DeleteBtn_OnClick(object sender, RoutedEventArgs e)
+    {
+        var parentList = this.FindVisualParent<ItemTemplateListView>();
+
+        parentList?.Items.Remove(ViewModel);
+
+        ViewModel.IsDeleted = true;
+        ViewModel.AcceptChanges();
+    }
+    #endregion
+
+    #region ScriptKeys Controls
+    private void AddScriptKeyBtn_Click(object sender, RoutedEventArgs e) => ViewModel.ScriptKeys.Add(new BindableString());
+
     private void DeleteScriptKeyBtn_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button)
@@ -282,9 +106,7 @@ public sealed partial class ItemTemplatePropertyEditor
         if (button.DataContext is not BindableString scriptKey)
             return;
 
-        ScriptKeysViewItems.Remove(scriptKey);
+        ViewModel.ScriptKeys.Remove(scriptKey);
     }
-
-    private void AddScriptKeyBtn_Click(object sender, RoutedEventArgs e) => ScriptKeysViewItems.Add(string.Empty);
     #endregion
 }

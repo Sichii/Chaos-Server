@@ -10,7 +10,8 @@ public static class ScriptExtensions
         this TScripted scripted,
         Type scriptTypeToAdd,
         IScriptFactory<TScript, TScripted> scriptFactory,
-        IPanel<TScripted>? panelToUpdate = null) where TScripted: IScripted<TScript> where TScript: IScript
+        IPanel<TScripted>? panelToUpdate = null) where TScripted: IScripted<TScript>
+                                                 where TScript: IScript
     {
         var scriptKey = ScriptBase.GetScriptKey(scriptTypeToAdd);
 
@@ -65,8 +66,8 @@ public static class ScriptExtensions
         return outScript is not null;
     }
 
-    public static void RemoveScript<TBaseScript, TScriptToRemove>(this IScripted<TBaseScript> scripted)
-        where TBaseScript: IScript where TScriptToRemove: TBaseScript
+    public static void RemoveScript<TBaseScript, TScriptToRemove>(this IScripted<TBaseScript> scripted) where TBaseScript: IScript
+        where TScriptToRemove: TBaseScript
     {
         if (!scripted.Script.Is<TScriptToRemove>(out var scriptToRemove))
             return;

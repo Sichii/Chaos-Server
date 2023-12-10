@@ -10,6 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper.Collection"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"/>
         <PackageReference Include="MaterialDesignExtensions"/>
         <PackageReference Include="MaterialDesignThemes"/>
         <PackageReference Include="Namotion.Reflection"/>
@@ -98,6 +100,11 @@
             <SubType>Designer</SubType>
         </Page>
         <Page Update="Controls\LootTableControls\LootTablePropertyEditor.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Controls\Abstractions\ViewModelListView.xaml">
             <Generator>MSBuild:Compile</Generator>
             <XamlRuntime>Wpf</XamlRuntime>
             <SubType>Designer</SubType>

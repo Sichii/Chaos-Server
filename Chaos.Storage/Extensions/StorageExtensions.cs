@@ -22,7 +22,9 @@ public static class StorageExtensions
     /// <param name="services">The <see cref="IServiceCollection" /> to add the services to.</param>
     /// <param name="optionsSubsection">The optional subsection name of the options to bind.</param>
     public static void AddExpiringCache<T, TSchema, TOptions>(this IServiceCollection services, string? optionsSubsection = null)
-        where T: class where TSchema: class where TOptions: class, IExpiringFileCacheOptions
+        where T: class
+        where TSchema: class
+        where TOptions: class, IExpiringFileCacheOptions
     {
         services.AddOptionsFromConfig<TOptions>(optionsSubsection); //bound
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<TOptions>>();
@@ -40,7 +42,9 @@ public static class StorageExtensions
     /// <param name="services">The <see cref="IServiceCollection" /> to add the services to.</param>
     /// <param name="optionsSubsection">The optional subsection name of the options to bind.</param>
     public static void AddExpiringCacheImpl<T, TImpl, TOptions>(this IServiceCollection services, string? optionsSubsection = null)
-        where T: class where TImpl: class, ISimpleCache<T> where TOptions: class, IExpiringFileCacheOptions
+        where T: class
+        where TImpl: class, ISimpleCache<T>
+        where TOptions: class, IExpiringFileCacheOptions
     {
         services.AddOptionsFromConfig<TOptions>(optionsSubsection); //bound
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<TOptions>>();

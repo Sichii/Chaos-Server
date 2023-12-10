@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+using System.Collections.Frozen;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis.Classification;
@@ -9,7 +9,7 @@ namespace ChaosTool.Definitions;
 internal sealed class DarkModeColors : IClassificationHighlightColors
 {
     private readonly HighlightingColor BraceHighlightBrush;
-    private readonly ImmutableDictionary<string, HighlightingColor> Colors;
+    private readonly FrozenDictionary<string, HighlightingColor> Colors;
     private readonly HighlightingColor CommentBrush;
     private readonly HighlightingColor EscapedStringBrush;
     private readonly HighlightingColor KeywordBrush;
@@ -144,17 +144,11 @@ internal sealed class DarkModeColors : IClassificationHighlightColors
              */
         };
 
-        Colors = colors.ToImmutableDictionary();
+        Colors = colors.ToFrozenDictionary();
     }
 
     /// <inheritdoc />
-    public HighlightingColor GetBrush(string classificationTypeName)
-    {
-        if (Colors.TryGetValue(classificationTypeName, out var color))
-            return color;
-
-        return DefaultBrush;
-    }
+    public HighlightingColor GetBrush(string classificationTypeName) => Colors.GetValueOrDefault(classificationTypeName, DefaultBrush);
 
     private static Color GetColor(string str) => (Color)ColorConverter.ConvertFromString(str);
 

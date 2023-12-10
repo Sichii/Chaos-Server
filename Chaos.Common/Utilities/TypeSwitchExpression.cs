@@ -1,13 +1,19 @@
+using System.Collections.Frozen;
+
 namespace Chaos.Common.Utilities;
 
 /// <summary>
 ///     A helper class that simulates switch-expression behavior on type objects
 /// </summary>
 /// <typeparam name="TResult">The return type of the switch expression</typeparam>
-public sealed class TypeSwitchExpression<TResult>
+public class TypeSwitchExpression<TResult>
 {
-    private readonly Dictionary<Type, Func<TResult>> Cases = new();
     private Func<TResult?> DefaultCase = () => throw new InvalidOperationException("No case was matched");
+
+    /// <summary>
+    ///     The cases to switch on
+    /// </summary>
+    protected virtual IDictionary<Type, Func<TResult>> Cases { get; } = new Dictionary<Type, Func<TResult>>();
 
     /// <summary>
     ///     Adds the specified action to the switch on the specified type
@@ -22,6 +28,13 @@ public sealed class TypeSwitchExpression<TResult>
     /// <param name="value">The value to return</param>
     /// <typeparam name="T">The type of this case</typeparam>
     public TypeSwitchExpression<TResult> Case<T>(TResult value) => Case(typeof(T), () => value);
+
+    /// <summary>
+    ///     Adds the specified value to the switch on the specified type
+    /// </summary>
+    /// <param name="value">The value to return</param>
+    /// <typeparam name="T">The type of this case</typeparam>
+    public TypeSwitchExpression<TResult> Case<T>(object value) => Case(typeof(T), () => (TResult)value);
 
     /// <summary>
     ///     Adds the specified action to the switch on the specified type
@@ -58,6 +71,23 @@ public sealed class TypeSwitchExpression<TResult>
     }
 
     /// <summary>
+    ///     Adds the specified default value if no other cases are hit
+    /// </summary>
+    /// <param name="value">The value to return if no other cases are hit</param>
+    public TypeSwitchExpression<TResult> Default(object value)
+    {
+        DefaultCase = () => (TResult)value;
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Freezes the cases so that no more can be added
+    /// </summary>
+    /// <returns>A frozen, optimized version of the type switch that is meant to be reused</returns>
+    public TypeSwitchExpression<TResult> Freeze() => new FrozenTypeSwitchExpression<TResult>(Cases);
+
+    /// <summary>
     ///     Executes the function associated with the specified type
     /// </summary>
     /// <param name="type">The type used to select the case to execute</param>
@@ -74,4 +104,15 @@ public sealed class TypeSwitchExpression<TResult>
     /// </summary>
     /// <typeparam name="T">The type used to select the case to execute</typeparam>
     public TResult? Switch<T>() => Switch(typeof(T));
+
+    /// <summary>
+    ///     A helper class that simulates switch-expression behavior on type objects. The cases are frozen and this object is
+    ///     meant to be reused.
+    /// </summary>
+    /// <typeparam name="T">The return type of the switch expression</typeparam>
+    private sealed class FrozenTypeSwitchExpression<T>(IDictionary<Type, Func<T>> cases) : TypeSwitchExpression<T>
+    {
+        /// <inheritdoc />
+        protected override IDictionary<Type, Func<T>> Cases { get; } = cases.ToFrozenDictionary();
+    }
 }

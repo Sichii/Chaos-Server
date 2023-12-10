@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using Chaos.Common.Definitions;
 using Chaos.MetaData.Abstractions;
 using Chaos.MetaData.ClassMetaData;
@@ -22,8 +23,10 @@ public class MetaDataStore : IMetaDataStore
 {
     private readonly ISimpleCacheProvider CacheProvider;
     private readonly IEntityRepository EntityRepository;
+
     private readonly ILogger<MetaDataStore> Logger;
-    private readonly ConcurrentDictionary<string, IMetaDataDescriptor> MetaData;
+
+    private readonly FrozenDictionary<string, IMetaDataDescriptor> MetaData;
     private readonly MetaDataStoreOptions Options;
 
     public MetaDataStore(
@@ -32,13 +35,13 @@ public class MetaDataStore : IMetaDataStore
         IOptions<MetaDataStoreOptions> options,
         ILogger<MetaDataStore> logger)
     {
-        MetaData = new ConcurrentDictionary<string, IMetaDataDescriptor>(StringComparer.OrdinalIgnoreCase);
         Options = options.Value;
         Logger = logger;
         CacheProvider = cacheProvider;
         EntityRepository = entityRepository;
 
-        Load();
+        MetaData = LoadMetaData()
+            .ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc />
@@ -51,28 +54,9 @@ public class MetaDataStore : IMetaDataStore
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<IMetaDataDescriptor> GetEnumerator() => MetaData.Values.GetEnumerator();
+    public IEnumerator<IMetaDataDescriptor> GetEnumerator() => ((IEnumerable<IMetaDataDescriptor>)MetaData.Values).GetEnumerator();
 
-    /// <inheritdoc />
-    public void Load()
-    {
-        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
-              .LogDebug("Generating metadata in parallel...");
-
-        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
-                                  .WithMetrics();
-
-        Parallel.Invoke(
-            LoadNationDescriptionMetaData,
-            LoadItemMetaData,
-            LoadAbilityMetaData,
-            LoadEventMetaData,
-            LoadMundaneIllustrationMeta);
-
-        metricsLogger.LogInformation("Metadata generated");
-    }
-
-    protected virtual void LoadAbilityMetaData()
+    protected virtual IEnumerable<IMetaDataDescriptor> LoadAbilityMetaData()
     {
         Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
               .LogDebug("Generating ability metadata...");
@@ -168,12 +152,12 @@ public class MetaDataStore : IMetaDataStore
         }
 
         foreach (var abilityMetaData in masterAbilityMetaData.Split())
-            MetaData[abilityMetaData.Name] = abilityMetaData;
+            yield return abilityMetaData;
 
         metricsLogger.LogDebug("Ability metadata generated");
     }
 
-    protected virtual void LoadEventMetaData()
+    protected virtual IEnumerable<IMetaDataDescriptor> LoadEventMetaData()
     {
         Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
               .LogDebug("Generating event metadata...");
@@ -214,12 +198,12 @@ public class MetaDataStore : IMetaDataStore
         }
 
         foreach (var eventMetaData in eventMetaNodes.Split())
-            MetaData[eventMetaData.Name] = eventMetaData;
+            yield return eventMetaData;
 
         metricsLogger.LogDebug("Event metadata generated");
     }
 
-    protected virtual void LoadItemMetaData()
+    protected virtual IEnumerable<IMetaDataDescriptor> LoadItemMetaData()
     {
         Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
               .LogDebug("Generating item metadata...");
@@ -285,9 +269,52 @@ public class MetaDataStore : IMetaDataStore
         }
 
         foreach (var itemMetaData in itemMetaNodes.Split())
-            MetaData[itemMetaData.Name] = itemMetaData;
+            yield return itemMetaData;
 
         metricsLogger.LogDebug("Item metadata generated");
+    }
+
+    public IDictionary<string, IMetaDataDescriptor> LoadMetaData()
+    {
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating metadata in parallel...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
+
+        var ret = new ConcurrentDictionary<string, IMetaDataDescriptor>();
+
+        //load metadata in parallel
+        Parallel.Invoke(
+            () =>
+            {
+                foreach (var metaData in LoadAbilityMetaData())
+                    ret.TryAdd(metaData.Name, metaData);
+            },
+            () =>
+            {
+                foreach (var metaData in LoadEventMetaData())
+                    ret.TryAdd(metaData.Name, metaData);
+            },
+            () =>
+            {
+                foreach (var metaData in LoadItemMetaData())
+                    ret.TryAdd(metaData.Name, metaData);
+            },
+            () =>
+            {
+                var metaData = LoadMundaneIllustrationMeta();
+                ret.TryAdd(metaData.Name, metaData);
+            },
+            () =>
+            {
+                var metaData = LoadNationDescriptionMetaData();
+                ret.TryAdd(metaData.Name, metaData);
+            });
+
+        metricsLogger.LogInformation("Metadata generated");
+
+        return ret;
     }
 
     protected virtual IEnumerable<T> LoadMetaFromPath<T>(string path)
@@ -318,7 +345,7 @@ public class MetaDataStore : IMetaDataStore
         return EntityRepository.LoadMany<T>(path);
     }
 
-    protected virtual void LoadMundaneIllustrationMeta()
+    protected virtual IMetaDataDescriptor LoadMundaneIllustrationMeta()
     {
         Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
               .LogDebug("Generating mundane illustration metadata...");
@@ -336,12 +363,13 @@ public class MetaDataStore : IMetaDataStore
         }
 
         metaData.Compress();
-        MetaData[metaData.Name] = metaData;
 
         metricsLogger.LogDebug("Mundane illustration metadata generated");
+
+        return metaData;
     }
 
-    protected virtual void LoadNationDescriptionMetaData()
+    protected virtual IMetaDataDescriptor LoadNationDescriptionMetaData()
     {
         Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
               .LogDebug("Generating nation description metadata...");
@@ -360,8 +388,9 @@ public class MetaDataStore : IMetaDataStore
         }
 
         nationDescriptionMetaData.Compress();
-        MetaData[nationDescriptionMetaData.Name] = nationDescriptionMetaData;
 
         metricsLogger.LogDebug("Nation description metadata generated");
+
+        return nationDescriptionMetaData;
     }
 }

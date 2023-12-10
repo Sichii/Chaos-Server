@@ -1,28 +1,29 @@
-<abstractions:PropertyEditorBase x:Class="ChaosTool.Controls.DialogTemplateControls.DialogTemplatePropertyEditor"
-                                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                                 xmlns:data="clr-namespace:Chaos.Schemas.Data;assembly=Chaos.Schemas"
-                                 xmlns:abstractions="clr-namespace:ChaosTool.Controls.Abstractions"
-                                 xmlns:definitions="clr-namespace:ChaosTool.Definitions"
-                                 xmlns:model="clr-namespace:ChaosTool.Model"
-                                 mc:Ignorable="d"
-                                 d:DesignHeight="700"
-                                 d:DesignWidth="900"
-                                 MinHeight="700"
-                                 MinWidth="900"
-                                 HorizontalAlignment="Stretch"
-                                 Width="Auto"
-                                 TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-                                 Background="{DynamicResource MaterialDesignPaper}"
-                                 TextElement.FontWeight="Medium"
-                                 TextElement.FontSize="14"
-                                 FontFamily="{materialDesign:MaterialDesignFont}"
-                                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
-                                 Initialized="UserControl_Initialized"
-                                 Focusable="True">
+<UserControl x:Class="ChaosTool.Controls.DialogTemplateControls.DialogTemplatePropertyEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:definitions="clr-namespace:ChaosTool.Definitions"
+             xmlns:viewModel="clr-namespace:ChaosTool.ViewModel"
+             xmlns:observables="clr-namespace:ChaosTool.ViewModel.Observables"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance viewModel:DialogTemplateViewModel, IsDesignTimeCreatable=True}"
+             MinHeight="700"
+             MinWidth="900"
+             HorizontalAlignment="Stretch"
+             Width="Auto"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="{materialDesign:MaterialDesignFont}"
+             Initialized="UserControl_Initialized"
+             Focusable="True"
+             PreviewMouseLeftButtonUp="Editor_PreviewMouseLeftButtonUp">
+
     <Grid Focusable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
@@ -114,7 +115,8 @@
                  Margin="10,18,10,0"
                  TextWrapping="NoWrap"
                  MinWidth="200"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding Path}" />
         <TextBox Grid.Column="1"
                  Name="TemplateKeyTbox"
                  HorizontalAlignment="Left"
@@ -123,13 +125,15 @@
                  TextWrapping="NoWrap"
                  MinWidth="160"
                  Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding TemplateKey}"
                  TextChanged="TemplateKeyTbox_OnTextChanged" />
         <ComboBox Name="TypeCmbox"
                   Grid.Column="1"
                   HorizontalAlignment="Left"
                   Margin="10,109,75,0"
                   VerticalAlignment="Top"
-                  MinWidth="120" />
+                  MinWidth="120"
+                  Text="{Binding Type}" />
         <TextBox Grid.Column="1"
                  Name="TextTbox"
                  HorizontalContentAlignment="Stretch"
@@ -145,7 +149,8 @@
                  materialDesign:TextFieldAssist.IncludeSpellingSuggestions="True"
                  materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
                  materialDesign:TextFieldAssist.CharacterCounterStyle="{StaticResource MaterialDesignCharacterCounterTextBlock}"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding Text}" />
         <TextBox Grid.Column="1"
                  Name="NextDialogKeyTbox"
                  HorizontalAlignment="Left"
@@ -153,7 +158,8 @@
                  Margin="10,288,75,0"
                  TextWrapping="NoWrap"
                  MinWidth="160"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding NextDialogKey}" />
         <TextBox Grid.Column="1"
                  Name="PrevDialogKeyTbox"
                  HorizontalAlignment="Left"
@@ -161,13 +167,15 @@
                  Margin="10,318,75,0"
                  TextWrapping="NoWrap"
                  MinWidth="160"
-                 Style="{StaticResource MaterialDesignTextBox}" />
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding PrevDialogKey}" />
         <CheckBox Grid.Column="1"
                   Name="ContextualCbox"
                   HorizontalAlignment="Left"
                   Margin="10,353,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" />
+                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  IsChecked="{Binding Contextual}" />
         <TextBox Grid.Column="1"
                  Name="TextBoxLengthTbox"
                  HorizontalAlignment="Left"
@@ -176,7 +184,7 @@
                  TextWrapping="NoWrap"
                  Width="80"
                  Style="{StaticResource MaterialDesignTextBox}"
-                 PreviewTextInput="TboxNumberValidator" />
+                 Text="{Binding TextBoxLength, Converter={StaticResource NullablePrimitiveToStringConverter}}" />
         <TextBox Grid.Column="1"
                  Name="TextBoxPromptTbox"
                  HorizontalContentAlignment="Stretch"
@@ -192,7 +200,8 @@
                  materialDesign:TextFieldAssist.IncludeSpellingSuggestions="True"
                  materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
                  materialDesign:TextFieldAssist.CharacterCounterStyle="{StaticResource MaterialDesignCharacterCounterTextBlock}"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding TextBoxPrompt}" />
         <Grid Grid.Column="2"
               VerticalAlignment="Top"
               Height="Auto"
@@ -213,25 +222,21 @@
                       materialDesign:RippleAssist.IsDisabled="True"
                       materialDesign:ListBoxItemAssist.ShowSelection="True"
                       MaxHeight="400"
-                      AllowDrop="True"
-                      PreviewMouseMove="ListBox_PreviewMouseMove">
+                      PreviewMouseMove="ListView_PreviewMouseMove"
+                      ItemsSource="{Binding Options}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="AllowDrop"
                                 Value="True" />
-                        <EventSetter Event="Drop"
-                                     Handler="ListViewItem_Drop" />
                         <EventSetter Event="PreviewMouseLeftButtonDown"
                                      Handler="ListViewItem_PreviewMouseLeftButtonDown" />
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type data:DialogOptionSchema}">
+                    <DataTemplate DataType="{x:Type observables:ObservableDialogOption}">
                         <Grid Background="Transparent"
                               HorizontalAlignment="Stretch"
-                              VerticalAlignment="Top"
-                              AllowDrop="True"
-                              Drop="ListViewItem_Drop">
+                              VerticalAlignment="Top">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
@@ -249,9 +254,9 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=OptionText}"
+                                     Text="{Binding OptionText}"
                                      Style="{StaticResource MaterialDesignTextBox}"
-                                     materialDesign:HintAssist.Hint="OptionText"
+                                     materialDesign:HintAssist.Hint="Text"
                                      Padding="3"
                                      Margin="3, 3, 3, 0" />
                             <Button x:Name="DeleteDialogOptionBtn"
@@ -271,9 +276,9 @@
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding Path=DialogKey}"
+                                     Text="{Binding DialogKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
-                                     materialDesign:HintAssist.Hint="DialogKey"
+                                     materialDesign:HintAssist.Hint="NextDialogKey"
                                      Padding="3"
                                      Margin="3, 0, 3, 3" />
                         </Grid>
@@ -309,9 +314,10 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      Margin="0,0,5,0">
+                      Margin="0,0,5,0"
+                      ItemsSource="{Binding ScriptKeys}">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type model:BindableString}">
+                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -363,7 +369,8 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
                 Name="RevertBtn"
@@ -391,4 +398,4 @@
                                  MessageQueue="{materialDesign:MessageQueue}" />
         <!-- #endregion Footer -->
     </Grid>
-</abstractions:PropertyEditorBase>
+</UserControl>

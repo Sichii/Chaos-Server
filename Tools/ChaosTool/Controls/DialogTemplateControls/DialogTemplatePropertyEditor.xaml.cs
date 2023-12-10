@@ -1,167 +1,67 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Chaos.Common.Definitions;
-using Chaos.Common.Utilities;
-using Chaos.Extensions.Common;
-using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
-using ChaosTool.Model;
+using ChaosTool.Utility;
+using ChaosTool.ViewModel;
+using ChaosTool.ViewModel.Observables;
 
 namespace ChaosTool.Controls.DialogTemplateControls;
 
-public sealed partial class DialogTemplatePropertyEditor
+public partial class DialogTemplatePropertyEditor
 {
+    private ListViewItem? DraggedItem;
     private Point DragPoint;
-    public ListViewItem<DialogTemplateSchema, DialogTemplatePropertyEditor> ListItem { get; }
-    public ObservableCollection<DialogOptionSchema> OptionsViewItems { get; }
-    public ObservableCollection<BindableString> ScriptKeysViewItems { get; }
-    public TraceWrapper<DialogTemplateSchema> Wrapper => ListItem.Wrapper;
+    private bool IsDragging;
+    private int OriginalIndex;
 
-    public DialogTemplatePropertyEditor(ListViewItem<DialogTemplateSchema, DialogTemplatePropertyEditor> listItem)
-    {
-        ListItem = listItem;
-        OptionsViewItems = new ObservableCollection<DialogOptionSchema>();
-        ScriptKeysViewItems = new ObservableCollection<BindableString>();
+    private DialogTemplateViewModel ViewModel
+        => DataContext as DialogTemplateViewModel
+           ?? throw new InvalidOperationException($"DataContext is not of type {nameof(DialogTemplateViewModel)}");
 
-        InitializeComponent();
-    }
+    public DialogTemplatePropertyEditor() { InitializeComponent(); }
+
+    #region Tbox Validation
+    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
+        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
+    #endregion
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
-        TypeCmbox.ItemsSource = GetEnumNames<ChaosDialogType>();
-        OptionsView.ItemsSource = OptionsViewItems;
-        ScriptKeysView.ItemsSource = ScriptKeysViewItems;
+        //set custom itemssources
+        TypeCmbox.ItemsSource = Helpers.GetEnumNames<ChaosDialogType>();
 
-        PopulateControlsFromItem();
-
-        TemplateKeyLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TemplateKey));
-        TypeLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Type));
-        TextLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Text));
-        NextDialogKeyLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.NextDialogKey));
-        PrevDialogKeyLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.PrevDialogKey));
-        ContextualLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Contextual));
-        TextBoxLengthLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TextBoxLength));
-        TextBoxPromptLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TextBoxPrompt));
-        OptionsLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Options));
-        ScriptKeysLbl.ToolTip = GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.ScriptKeys));
+        //tooltips
+        TemplateKeyLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TemplateKey));
+        TypeLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Type));
+        TextLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Text));
+        NextDialogKeyLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.NextDialogKey));
+        PrevDialogKeyLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.PrevDialogKey));
+        ContextualLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Contextual));
+        TextBoxLengthLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TextBoxLength));
+        TextBoxPromptLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TextBoxPrompt));
+        OptionsLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.Options));
+        ScriptKeysLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.ScriptKeys));
     }
-
-    #region Controls > Template > Controls
-    public void CopySelectionsToItem()
-    {
-        var template = Wrapper.Object;
-
-        Wrapper.Path = PathTbox.Text;
-        template.TemplateKey = TemplateKeyTbox.Text;
-        template.Type = ParsePrimitive<ChaosDialogType>(TypeCmbox.Text);
-        template.Text = TextTbox.Text.FixLineEndings();
-        template.NextDialogKey = string.IsNullOrWhiteSpace(NextDialogKeyTbox.Text) ? null : NextDialogKeyTbox.Text;
-        template.PrevDialogKey = string.IsNullOrWhiteSpace(PrevDialogKeyTbox.Text) ? null : PrevDialogKeyTbox.Text;
-        template.Contextual = ContextualCbox.IsChecked ?? false;
-        template.TextBoxLength = ParsePrimitive<ushort?>(TextBoxLengthTbox.Text);
-        template.TextBoxPrompt = string.IsNullOrEmpty(TextBoxPromptTbox.Text) ? null : TextBoxPromptTbox.Text.FixLineEndings();
-
-        template.Options = OptionsViewItems.Select(ShallowCopy<DialogOptionSchema>.Create)
-                                           .ToList();
-
-        template.ScriptKeys = ScriptKeysViewItems.ToStrings()
-                                                 .ToList();
-
-        ListItem.Name = template.TemplateKey;
-    }
-
-    public void PopulateControlsFromItem()
-    {
-        var template = Wrapper.Object;
-
-        PathTbox.Text = Wrapper.Path;
-
-        TemplateKeyTbox.IsEnabled = false;
-        TemplateKeyTbox.Text = template.TemplateKey;
-        TemplateKeyTbox.IsEnabled = true;
-
-        TypeCmbox.SelectedItem = SelectPrimitive(template.Type, TypeCmbox.ItemsSource);
-
-        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-        TextTbox.Text = template.Text.FixLineEndings();
-        NextDialogKeyTbox.Text = template.NextDialogKey;
-        PrevDialogKeyTbox.Text = template.PrevDialogKey;
-        ContextualCbox.IsChecked = template.Contextual;
-        TextBoxLengthTbox.Text = template.TextBoxLength?.ToString();
-        TextBoxPromptTbox.Text = template.TextBoxPrompt?.FixLineEndings();
-
-        OptionsViewItems.Clear();
-        OptionsViewItems.AddRange(template.Options.Select(ShallowCopy<DialogOptionSchema>.Create));
-
-        ScriptKeysViewItems.Clear();
-        ScriptKeysViewItems.AddRange(template.ScriptKeys.ToBindableStrings());
-    }
-    #endregion
 
     #region Buttons
-    private void RevertBtn_Click(object sender, RoutedEventArgs e) => PopulateControlsFromItem();
+    private void RevertBtn_Click(object sender, RoutedEventArgs e) => ViewModel.RejectChanges();
 
-    private async void SaveBtn_Click(object sender, RoutedEventArgs e)
+    private void SaveBtn_Click(object sender, RoutedEventArgs e) => ViewModel.AcceptChanges();
+
+    private void DeleteBtn_OnClick(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            var existing = JsonContext.DialogTemplates
-                                      .Objects
-                                      .Where(wrapper => wrapper != Wrapper)
-                                      .FirstOrDefault(wrapper => wrapper.Path.EqualsI(PathTbox.Text));
+        var parentList = this.FindVisualParent<DialogTemplateListView>();
 
-            if (existing is not null)
-            {
-                Snackbar.MessageQueue?.Enqueue($"Save failed. An item already exists at path \"{existing.Path}\"");
+        parentList?.Items.Remove(ViewModel);
 
-                return;
-            }
-
-            existing = JsonContext.DialogTemplates
-                                  .Objects
-                                  .Where(wrapper => wrapper != Wrapper)
-                                  .FirstOrDefault(wrapper => wrapper.Object.TemplateKey.EqualsI(TemplateKeyTbox.Text));
-
-            if (existing is not null)
-            {
-                Snackbar.MessageQueue?.Enqueue(
-                    $"Save failed. An item already exists with template key \"{existing.Object.TemplateKey}\" at path \"{existing.Path}\"");
-
-                return;
-            }
-
-            existing = JsonContext.DialogTemplates.Objects.FirstOrDefault(obj => ReferenceEquals(obj, Wrapper));
-
-            if (existing is null)
-                JsonContext.DialogTemplates.Objects.Add(Wrapper);
-
-            if (!ValidatePreSave(Wrapper, PathTbox, TemplateKeyTbox))
-            {
-                Snackbar.MessageQueue?.Enqueue("Filename does not match the template key");
-
-                return;
-            }
-
-            CopySelectionsToItem();
-            PopulateControlsFromItem();
-        } catch (Exception ex)
-        {
-            Snackbar.MessageQueue?.Enqueue(ex.ToString());
-        }
-
-        await JsonContext.DialogTemplates.SaveItemAsync(Wrapper);
+        ViewModel.IsDeleted = true;
+        ViewModel.AcceptChanges();
     }
-    #endregion
-
-    #region Tbox Validation
-    private void TboxNumberValidator(object sender, TextCompositionEventArgs e) => Validators.NumberValidationTextBox(sender, e);
-
-    private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)
-        => Validators.TemplateKeyMatchesFileName(TemplateKeyTbox, PathTbox);
     #endregion
 
     #region DialogOptions Controls
@@ -170,22 +70,22 @@ public sealed partial class DialogTemplatePropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not DialogOptionSchema schema)
+        if (button.DataContext is not ObservableDialogOption option)
             return;
 
-        OptionsViewItems.Remove(schema);
+        ViewModel.Options.Remove(option);
     }
 
     private void AddDialogOptionBtn_Click(object sender, RoutedEventArgs e)
     {
-        var options = new DialogOptionSchema();
+        var option = new ObservableDialogOption();
 
-        OptionsViewItems.Add(options);
+        ViewModel.Options.Add(option);
     }
     #endregion
 
     #region ScriptKeys Controls
-    private void AddScriptKeyBtn_Click(object sender, RoutedEventArgs e) => ScriptKeysViewItems.Add(string.Empty);
+    private void AddScriptKeyBtn_Click(object sender, RoutedEventArgs e) => ViewModel.ScriptKeys.Add(new BindableString());
 
     private void DeleteScriptKeyBtn_Click(object sender, RoutedEventArgs e)
     {
@@ -195,64 +95,166 @@ public sealed partial class DialogTemplatePropertyEditor
         if (button.DataContext is not BindableString scriptKey)
             return;
 
-        ScriptKeysViewItems.Remove(scriptKey);
+        ViewModel.ScriptKeys.Remove(scriptKey);
     }
     #endregion
 
     #region Drag Reorder
-    private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
+    private void ListView_PreviewMouseMove(object sender, MouseEventArgs e)
     {
-        var point = e.GetPosition(null);
+        if ((e.LeftButton != MouseButtonState.Pressed) || DraggedItem is null || sender is not ListView listView)
+        {
+            Mouse.SetCursor(Cursors.Arrow);
+
+            return;
+        }
+
+        var point = e.GetPosition(listView);
         var diff = DragPoint - point;
-
-        if (e.LeftButton != MouseButtonState.Pressed)
-            return;
-
-        if (sender is not ListView)
-            return;
 
         if ((Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance)
             && (Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance))
             return;
 
-        var parent = ((DependencyObject)e.OriginalSource).FindVisualParent<ListViewItem>();
+        IsDragging = true;
+        Mouse.SetCursor(Cursors.Hand);
 
-        if (parent is null)
-            return;
+        var closestIndex = GetClosestIndexToPoint(listView, point);
+        var aboveIndex = closestIndex - 1;
+        var belowIndex = closestIndex;
 
-        DragDrop.DoDragDrop(parent, parent.DataContext, DragDropEffects.Move);
-    }
-
-    private void ListViewItem_Drop(object sender, DragEventArgs e)
-    {
-        if (sender is not ListViewItem viewItem)
-            viewItem = ((DependencyObject)sender).FindVisualParent<ListViewItem>()!;
-
-        if (viewItem.DataContext is not DialogOptionSchema target)
-            return;
-
-        if (e.Data.GetData(typeof(DialogOptionSchema)) is not DialogOptionSchema dropped)
-            return;
-
-        var removedId = OptionsView.Items.IndexOf(dropped);
-        var targetId = OptionsView.Items.IndexOf(target);
-
-        if (removedId < targetId)
+        if (aboveIndex >= 0)
         {
-            OptionsViewItems.Insert(targetId + 1, dropped);
-            OptionsViewItems.RemoveAt(removedId);
-        } else
-        {
-            removedId++;
+            var aboveItem = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(aboveIndex);
 
-            if ((OptionsViewItems.Count + 1) > removedId)
+            if (aboveItem.BorderThickness
+                != new Thickness(
+                    0,
+                    0,
+                    0,
+                    2))
             {
-                OptionsViewItems.Insert(targetId, dropped);
-                OptionsViewItems.RemoveAt(removedId);
+                ClearBorders(listView);
+
+                aboveItem.BorderBrush = Brushes.LimeGreen;
+
+                aboveItem.BorderThickness = new Thickness(
+                    0,
+                    0,
+                    0,
+                    2);
+            }
+        } else if (belowIndex < listView.Items.Count)
+        {
+            var belowItem = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(belowIndex);
+
+            if (belowItem.BorderThickness
+                != new Thickness(
+                    0,
+                    2,
+                    0,
+                    0))
+            {
+                belowItem.BorderBrush = Brushes.LimeGreen;
+
+                belowItem.BorderThickness = new Thickness(
+                    0,
+                    2,
+                    0,
+                    0);
             }
         }
     }
 
-    private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragPoint = e.GetPosition(null);
+    private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListViewItem listViewItem)
+            return;
+
+        DragPoint = e.GetPosition(this);
+        DraggedItem = listViewItem;
+        OriginalIndex = OptionsView.Items.IndexOf(DraggedItem.DataContext);
+    }
+
+    private void Editor_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (IsDragging && DraggedItem is not null)
+        {
+            IsDragging = false;
+
+            var dropPoint = e.GetPosition(this);
+            var listView = this.FindVisualElementAtPoint<ListView>(dropPoint);
+
+            if (listView is not null && (listView == OptionsView))
+            {
+                var relativePoint = TranslatePoint(dropPoint, OptionsView);
+                var index = GetClosestIndexToPoint(listView, relativePoint);
+
+                //if the index is below the original index, we need to account for the fact that the item will be removed
+                if (index > OriginalIndex)
+                    index--;
+
+                if ((index >= 0) && (index < ViewModel.Options.Count))
+                    ViewModel.Options.Move(OriginalIndex, index);
+
+                ClearBorders(listView);
+            }
+        }
+
+        DragPoint = default;
+        DraggedItem = null;
+        IsDragging = false;
+        OriginalIndex = -1;
+    }
+
+    private void ClearBorders(ListView listView)
+    {
+        for (var i = 0; i < listView.Items.Count; i++)
+        {
+            var item = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(i);
+
+            if (item is null)
+                continue;
+
+            item.BorderBrush = Brushes.Transparent;
+
+            item.BorderThickness = new Thickness(
+                0,
+                1,
+                0,
+                1);
+        }
+    }
+
+    private int GetClosestIndexToPoint(ListView listView, Point listRelativePoint)
+    {
+        var index = -1;
+        var shortestDistance = double.MaxValue;
+        var bottom = new Point(0, listView.ActualHeight);
+
+        for (var i = 0; i < listView.Items.Count; i++)
+        {
+            var item = (ListViewItem)listView.ItemContainerGenerator.ContainerFromIndex(i);
+
+            if (item is null)
+                continue;
+
+            var topLeft = item.TranslatePoint(new Point(0, 0), listView);
+            var distance = (listRelativePoint - topLeft).Length;
+
+            if (shortestDistance > distance)
+            {
+                shortestDistance = distance;
+                index = i;
+            }
+        }
+
+        var distanceToBottom = (listRelativePoint - bottom).Length;
+
+        if (distanceToBottom < shortestDistance)
+            index = listView.Items.Count;
+
+        return index;
+    }
     #endregion
 }

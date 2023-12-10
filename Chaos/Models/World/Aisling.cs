@@ -1,9 +1,9 @@
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Collections.Common;
+using Chaos.Collections.Synchronized;
 using Chaos.Collections.Time;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Collections.Synchronized;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions;

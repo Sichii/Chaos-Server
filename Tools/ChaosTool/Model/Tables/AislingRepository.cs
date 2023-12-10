@@ -21,12 +21,6 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
         : base(entityRepository, null)
         => Options = options.Value;
 
-    public override void Add(string path, AislingComposite obj)
-    {
-        var wrapper = new TraceWrapper<AislingComposite>(path, obj);
-        Objects.Add(wrapper);
-    }
-
     /// <inheritdoc />
     /// <remarks>Must override here because AislingStoreOptions is not an IExpiringFileCacheOptions implementation</remarks>
     protected override IEnumerable<string> GetPaths()
@@ -98,15 +92,15 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
         }
     }
 
-    public override void Remove(string name)
+    public override void Remove(string originalPath)
     {
-        var wrapper = Objects.FirstOrDefault(wp => wp.Object.Aisling.Name.EqualsI(name));
+        var wrapped = Objects.FirstOrDefault(wp => wp.Path.EqualsI(originalPath));
 
-        if (wrapper is null)
+        if (wrapped is null)
             return;
 
-        Directory.Delete(wrapper.Path, true);
-        Objects.Remove(wrapper);
+        Directory.Delete(wrapped.Path, true);
+        Objects.Remove(wrapped);
     }
 
     public override async Task SaveItemAsync(TraceWrapper<AislingComposite> wrapped)

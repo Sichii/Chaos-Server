@@ -2,7 +2,8 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Synchronization;
 
-namespace Chaos.Common.Collections.Synchronized;
+// ReSharper disable once CheckNamespace
+namespace Chaos.Collections.Synchronized;
 
 /// <summary>
 ///     Wraps a <see cref="System.Collections.Generic.HashSet{T}" />, entering a lock for each of it's methods. Enumeration

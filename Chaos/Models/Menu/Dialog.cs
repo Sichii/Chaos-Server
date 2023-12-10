@@ -133,10 +133,12 @@ public sealed record Dialog : IScripted<IDialogScript>
             return;
 
         if (Text.EqualsI("skip"))
+        {
             if (!string.IsNullOrEmpty(NextDialogKey))
                 Next(source);
             else
                 Close(source);
+        }
     }
 
     public void InjectTextParameters(params object[] parameters) => Text = Text.Inject(parameters);

@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Reflection;
 using System.Text;
 using Chaos.Collections.Common;
@@ -17,10 +18,10 @@ namespace Chaos.Messaging;
 /// </summary>
 /// <typeparam name="T">The type of the object executing commands</typeparam>
 /// <typeparam name="TOptions">The type of the options object to use for this command interceptor</typeparam>
-public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T>
-    where T: ICommandSubject where TOptions: class, ICommandInterceptorOptions
+public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> where T: ICommandSubject
+                                                                             where TOptions: class, ICommandInterceptorOptions
 {
-    private readonly Dictionary<string, CommandDescriptor> Commands;
+    private readonly IDictionary<string, CommandDescriptor> Commands;
     private readonly ILogger<CommandInterceptor<T, TOptions>> Logger;
     private readonly TOptions Options;
     private readonly IServiceProvider ServiceProvider;
@@ -35,23 +36,17 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T>
         Logger = logger;
         Commands = new Dictionary<string, CommandDescriptor>(StringComparer.OrdinalIgnoreCase);
 
-        var commandTypes = typeof(ICommand<T>).LoadImplementations();
+        var descriptors = typeof(ICommand<T>).LoadImplementations()
+                                             .Select(type => (Type: type, Attributes: type.GetCustomAttributes<CommandAttribute>()))
+                                             .SelectMany(
+                                                 attributeInfo => attributeInfo.Attributes.Select(
+                                                     attribute => new CommandDescriptor
+                                                     {
+                                                         Type = attributeInfo.Type,
+                                                         Details = attribute
+                                                     }));
 
-        foreach (var type in commandTypes)
-        {
-            var attributes = type.GetCustomAttributes<CommandAttribute>();
-
-            foreach (var attribute in attributes)
-            {
-                var descriptor = new CommandDescriptor
-                {
-                    Details = attribute,
-                    Type = type
-                };
-
-                Commands.Add(attribute.CommandName, descriptor);
-            }
-        }
+        Commands = descriptors.ToFrozenDictionary(descriptor => descriptor.Details.CommandName);
     }
 
     /// <inheritdoc />

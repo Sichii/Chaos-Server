@@ -1,12 +1,18 @@
+using System.Collections.Frozen;
+
 namespace Chaos.Common.Utilities;
 
 /// <summary>
 ///     A helper class that simulates switch-case behavior on type objects
 /// </summary>
-public sealed class TypeSwitch
+public class TypeSwitch
 {
-    private readonly Dictionary<Type, Action> Cases = new();
     private Action DefaultCase = () => throw new InvalidOperationException("No case was matched");
+
+    /// <summary>
+    ///     The cases to switch on
+    /// </summary>
+    protected virtual IDictionary<Type, Action> Cases { get; } = new Dictionary<Type, Action>();
 
     /// <summary>
     ///     Adds the specified action to the switch on the specified type
@@ -55,4 +61,14 @@ public sealed class TypeSwitch
     /// </summary>
     /// <typeparam name="T">The type used to select the case to execute</typeparam>
     public void Switch<T>() => Switch(typeof(T));
+
+    /// <summary>
+    ///     A helper class that simulates switch-case behavior on type objects. The cases are frozen and this object is
+    ///     meant to be reused.
+    /// </summary>
+    private class FrozenTypeSwitch(IDictionary<Type, Action> cases) : TypeSwitch
+    {
+        /// <inheritdoc />
+        protected override IDictionary<Type, Action> Cases { get; } = cases.ToFrozenDictionary();
+    }
 }
