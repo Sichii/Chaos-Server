@@ -3,9 +3,7 @@ on:
   push:
     branches:
       - release/v*
-  pull_request:
-    branches:
-      - release/v*
+      - v*.*
 
 jobs:
   publish-docs:
@@ -19,7 +17,7 @@ jobs:
         with:
           dotnet-version: 8.x
 
-      - run: dotnet tool install -g docfx --version 2.67.1
+      - run: dotnet tool install -g docfx --version 2.74.1
       - run: docfx docs/docfx.json
 
       - name: Deploy

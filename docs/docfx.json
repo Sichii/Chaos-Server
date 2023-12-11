@@ -9,7 +9,10 @@
                 }
             ],
             "dest": "api",
-            "memberLayout": "separatePages"
+            "memberLayout": "separatePages",
+            "enumSortingOrder": "declaringOrder",
+            "coverTitle": "Chaos Docs",
+            "allowCompilationErrors": "true"
         }
     ],
     "build": {
@@ -51,7 +54,7 @@
         },
         "globalMetadataFiles": [],
         "fileMetadataFiles": [],
-        "template": ["default", "templates/singulinkfx"],
+        "template": ["default", "modern", "templates/material"],
         "postProcessors": [],
         "markdownEngineName": "markdig",
         "noLangKeyword": false,
