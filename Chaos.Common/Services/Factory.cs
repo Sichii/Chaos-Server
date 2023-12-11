@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Common.Services;
 

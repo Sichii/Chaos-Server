@@ -1,3 +1,6 @@
+using Seq.Api;
+using Seq.Api.Model.Dashboarding;
+using Seq.Api.Model.Signals;
 using SeqConfigurator.Utility;
 
 namespace SeqConfigurator.Builders;

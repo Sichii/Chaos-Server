@@ -1,3 +1,7 @@
+using Chaos.Geometry.Abstractions;
+using FluentAssertions;
+using Xunit;
+
 namespace Chaos.Geometry.Tests;
 
 public sealed class RectangleTests

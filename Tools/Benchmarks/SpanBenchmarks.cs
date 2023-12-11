@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using BenchmarkDotNet.Attributes;
 
 // ReSharper disable ClassCanBeSealed.Global
 

@@ -1,6 +1,8 @@
-
-
 // ReSharper disable ArrangeAttributes
+
+using Chaos.Geometry;
+using FluentAssertions;
+using Xunit;
 
 namespace Chaos.Extensions.Geometry.Tests;
 
