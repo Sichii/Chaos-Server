@@ -190,6 +190,10 @@ public class JsonContext
                    .PreserveReferences()
                    .ReverseMap();
 
+                cfg.CreateMap<AbilityRequirementSchema, ObservableAbilityRequirement>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
                 cfg.CreateMap<LearningRequirementsSchema, ObservableLearningRequirements>()
                    .ForMember(l => l.RequiredStats, c => c.MapFrom(l => l.RequiredStats))
                    .PreserveReferences()

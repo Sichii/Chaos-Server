@@ -6,8 +6,6 @@
         "itemTemplateKey": "apple"
       }
     ],
-    "prerequisiteSkillTemplateKeys": [],
-    "prerequisiteSpellTemplateKeys": [],
     "requiredGold": 10000,
     "requiredStats": {
       "con": 1,
@@ -15,7 +13,9 @@
       "int": 1,
       "str": 1,
       "wis": 2
-    }
+    },
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": []
   },
   "spellType": "NoTarget",
   "class": "Rogue",

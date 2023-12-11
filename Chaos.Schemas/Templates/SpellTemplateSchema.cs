@@ -22,6 +22,16 @@ public sealed record SpellTemplateSchema : PanelEntityTemplateSchema
     public LearningRequirementsSchema? LearningRequirements { get; set; }
 
     /// <summary>
+    ///     Whether or not the spell is capable of leveling up. If false, the spell will start at level 100
+    /// </summary>
+    public bool LevelsUp { get; set; }
+
+    /// <summary>
+    ///     Defaults to null<br />If set, this is the maximum level the spell can be leveled up to
+    /// </summary>
+    public byte? MaxLevel { get; set; }
+
+    /// <summary>
     ///     Defaults to null<br />Should be specified with a spell type of "Prompt", this is the prompt the spell will offer
     ///     when used in game
     /// </summary>

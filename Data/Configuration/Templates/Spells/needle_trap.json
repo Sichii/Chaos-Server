@@ -10,8 +10,6 @@
         "itemTemplateKey": "stick"
       }
     ],
-    "prerequisiteSkillTemplateKeys": [],
-    "prerequisiteSpellTemplateKeys": [],
     "requiredGold": 10000,
     "requiredStats": {
       "con": 1,
@@ -19,7 +17,9 @@
       "int": 2,
       "str": 1,
       "wis": 1
-    }
+    },
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": []
   },
   "prompt": "",
   "spellType": "NoTarget",

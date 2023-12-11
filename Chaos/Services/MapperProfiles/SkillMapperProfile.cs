@@ -32,6 +32,8 @@ public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider
     public Skill Map(SkillSchema obj)
     {
         var template = SimpleCache.Get<SkillTemplate>(obj.TemplateKey);
+        var maxLevel = template.LevelsUp ? obj.MaxLevel ?? template.MaxLevel : template.MaxLevel;
+        var level = template.LevelsUp ? obj.Level ?? 0 : maxLevel;
 
         var skill = new Skill(
             template,
@@ -40,7 +42,9 @@ public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider
             obj.UniqueId,
             obj.ElapsedMs)
         {
-            Slot = obj.Slot ?? 0
+            Slot = obj.Slot ?? 0,
+            MaxLevel = maxLevel,
+            Level = level
         };
 
         return skill;
@@ -58,7 +62,9 @@ public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
             ScriptKeys = extraScriptKeys.Any() ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
-            Slot = obj.Slot
+            Slot = obj.Slot,
+            Level = obj.Template.LevelsUp ? obj.Level : null,
+            MaxLevel = obj.Template.LevelsUp && (obj.MaxLevel != obj.Template.MaxLevel) ? obj.MaxLevel : null
         };
 
         return ret;
@@ -81,7 +87,9 @@ public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider
             Level = obj.Level,
             Class = obj.Class,
             AdvClass = obj.AdvClass,
-            RequiresMaster = obj.RequiresMaster
+            RequiresMaster = obj.RequiresMaster,
+            LevelsUp = obj.LevelsUp,
+            MaxLevel = obj.MaxLevel ?? 100
         };
 
     public SkillTemplateSchema Map(SkillTemplate obj) => throw new NotImplementedException();

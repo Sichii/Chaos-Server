@@ -16,15 +16,15 @@ public sealed class ObservableLearningRequirements : NotifyPropertyChangedBase
     }
 
     public ObservingCollection<ObservableItemRequirement> ItemRequirements { get; } = [];
-    public ObservingCollection<BindableString> PrerequisiteSkillTemplateKeys { get; } = [];
-    public ObservingCollection<BindableString> PrerequisiteSpellTemplateKeys { get; } = [];
+    public ObservingCollection<ObservableAbilityRequirement> PrerequisiteSkills { get; } = [];
+    public ObservingCollection<ObservableAbilityRequirement> PrerequisiteSpells { get; } = [];
     public ObservableStats RequiredStats { get; } = new();
 
     public ObservableLearningRequirements()
     {
         ItemRequirements.CollectionChanged += (_, _) => OnPropertyChanged(nameof(ItemRequirements));
-        PrerequisiteSkillTemplateKeys.CollectionChanged += (_, _) => OnPropertyChanged(nameof(PrerequisiteSkillTemplateKeys));
-        PrerequisiteSpellTemplateKeys.CollectionChanged += (_, _) => OnPropertyChanged(nameof(PrerequisiteSpellTemplateKeys));
+        PrerequisiteSkills.CollectionChanged += (_, _) => OnPropertyChanged(nameof(PrerequisiteSkills));
+        PrerequisiteSpells.CollectionChanged += (_, _) => OnPropertyChanged(nameof(PrerequisiteSpells));
         RequiredStats.PropertyChanged += (_, _) => OnPropertyChanged(nameof(RequiredStats));
     }
 
@@ -38,8 +38,8 @@ public sealed class ObservableLearningRequirements : NotifyPropertyChangedBase
 
         return (_requiredGold == other._requiredGold)
                && ItemRequirements.SequenceEqual(other.ItemRequirements)
-               && PrerequisiteSkillTemplateKeys.SequenceEqual(other.PrerequisiteSkillTemplateKeys)
-               && PrerequisiteSpellTemplateKeys.SequenceEqual(other.PrerequisiteSpellTemplateKeys)
+               && PrerequisiteSkills.SequenceEqual(other.PrerequisiteSkills)
+               && PrerequisiteSpells.SequenceEqual(other.PrerequisiteSpells)
                && RequiredStats.Equals(other.RequiredStats);
     }
 

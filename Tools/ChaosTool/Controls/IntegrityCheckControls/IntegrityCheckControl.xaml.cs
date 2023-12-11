@@ -428,15 +428,15 @@ public sealed partial class IntegrityCheckControl
                     if (!ItemTemplateIndex.ContainsKey(itemRequirement.ItemTemplateKey))
                         await AddViolationAsync($"ItemRequirement.ItemTemplateKey not found: {itemRequirement.ItemTemplateKey}", handler);
 
-            if (!learningRequirements.PrerequisiteSpellTemplateKeys.IsNullOrEmpty())
-                foreach (var prerequisiteSpellTemplateKey in learningRequirements.PrerequisiteSpellTemplateKeys)
-                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpellTemplateKey))
-                        await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpellTemplateKey}", handler);
+            if (!learningRequirements.PrerequisiteSpells.IsNullOrEmpty())
+                foreach (var prerequisiteSpell in learningRequirements.PrerequisiteSpells)
+                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpell.TemplateKey))
+                        await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpell.TemplateKey}", handler);
 
-            if (!learningRequirements.PrerequisiteSkillTemplateKeys.IsNullOrEmpty())
-                foreach (var prerequisiteSkillTemplateKey in learningRequirements.PrerequisiteSkillTemplateKeys)
-                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkillTemplateKey))
-                        await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkillTemplateKey}", handler);
+            if (!learningRequirements.PrerequisiteSkills.IsNullOrEmpty())
+                foreach (var prerequisiteSkill in learningRequirements.PrerequisiteSkills)
+                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkill.TemplateKey))
+                        await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkill.TemplateKey}", handler);
         }
     }
 
@@ -478,15 +478,15 @@ public sealed partial class IntegrityCheckControl
                     if (!ItemTemplateIndex.ContainsKey(itemRequirement.ItemTemplateKey))
                         await AddViolationAsync($"ItemRequirement.ItemTemplateKey not found: {itemRequirement.ItemTemplateKey}", handler);
 
-            if (!learningRequirements.PrerequisiteSpellTemplateKeys.IsNullOrEmpty())
-                foreach (var prerequisiteSpellTemplateKey in learningRequirements.PrerequisiteSpellTemplateKeys)
-                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpellTemplateKey))
-                        await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpellTemplateKey}", handler);
+            if (!learningRequirements.PrerequisiteSpells.IsNullOrEmpty())
+                foreach (var prerequisiteSpell in learningRequirements.PrerequisiteSpells)
+                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpell.TemplateKey))
+                        await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpell.TemplateKey}", handler);
 
-            if (!learningRequirements.PrerequisiteSkillTemplateKeys.IsNullOrEmpty())
-                foreach (var prerequisiteSkillTemplateKey in learningRequirements.PrerequisiteSkillTemplateKeys)
-                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkillTemplateKey))
-                        await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkillTemplateKey}", handler);
+            if (!learningRequirements.PrerequisiteSkills.IsNullOrEmpty())
+                foreach (var prerequisiteSkill in learningRequirements.PrerequisiteSkills)
+                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkill.TemplateKey))
+                        await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkill.TemplateKey}", handler);
         }
     }
 

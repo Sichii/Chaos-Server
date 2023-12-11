@@ -13,12 +13,12 @@ public sealed record LearningRequirementsSchema
     /// <summary>
     ///     The skills that must be learned before this ability can be learned
     /// </summary>
-    public ICollection<string> PrerequisiteSkillTemplateKeys { get; set; } = Array.Empty<string>();
+    public ICollection<AbilityRequirementSchema> PrerequisiteSkills { get; set; } = Array.Empty<AbilityRequirementSchema>();
 
     /// <summary>
     ///     The spells that must be learned before this ability can be learned
     /// </summary>
-    public ICollection<string> PrerequisiteSpellTemplateKeys { get; set; } = Array.Empty<string>();
+    public ICollection<AbilityRequirementSchema> PrerequisiteSpells { get; set; } = Array.Empty<AbilityRequirementSchema>();
 
     /// <summary>
     ///     The amount of gold required to learn this ability

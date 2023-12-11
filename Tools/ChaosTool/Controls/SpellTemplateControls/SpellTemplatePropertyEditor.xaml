@@ -155,28 +155,42 @@
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,589,10,0" />
+        <Label Content="LevelsUp"
+               Name="LevelsUpLbl"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,79,10,0"
+               Grid.Column="1" />
+        <Label Content="MaxLevel"
+               Name="MaxLevelLbl"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,109,10,0"
+               Grid.Column="1" />
         <Label Content="Item&#10;Requirements"
                Name="ItemRequirementsLbl"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,76,10,0"
+               Margin="0,316,10,0"
                Grid.Column="1" />
-        <Label Content="Prerequisite&#10;SpellTemplateKeys"
-               Name="PrerequisiteSpellTemplateKeysLbl"
+        <Label Content="Prerequisite&#10;Spells"
+               Name="PrerequisiteSpellsLbl"
                HorizontalAlignment="Right"
                HorizontalContentAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,466,10,0"
-               Grid.Column="1" />
-        <Label Content="Prerequisite&#10;SkillTemplateKeys"
-               Name="PrerequisiteSkillTemplateKeysLbl"
+               Margin="0,316,10,0"
+               Grid.Column="2" />
+        <Label Content="Prerequisite&#10;Skills"
+               Name="PrerequisiteSkillsLbl"
                HorizontalAlignment="Right"
                HorizontalContentAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,466,10,0"
+               Margin="0,486,10,0"
                Grid.Column="2" />
         <!-- #endregion -->
         <!-- #region Input -->
@@ -357,10 +371,26 @@
                  materialDesign:TextFieldAssist.CharacterCounterStyle="{StaticResource MaterialDesignCharacterCounterTextBlock}"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  Text="{Binding Description}" />
+        <CheckBox Grid.Column="2"
+                  Name="LevelsUpCbox"
+                  HorizontalAlignment="Left"
+                  Margin="10,83,0,0"
+                  VerticalAlignment="Top"
+                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  IsChecked="{Binding LevelsUp}" />
+        <TextBox Grid.Column="2"
+                 Name="MaxLevelTbox"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Margin="10,108,0,0"
+                 TextWrapping="NoWrap"
+                 Width="80"
+                 Style="{StaticResource MaterialDesignTextBox}"
+                 Text="{Binding MaxLevel, Converter={StaticResource NullablePrimitiveToStringConverter}}" />
         <Grid Grid.Column="2"
               VerticalAlignment="Top"
               Height="Auto"
-              Margin="0,79,100,0">
+              Margin="0,320,100,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -377,7 +407,7 @@
                       ItemsSource="{Binding LearningRequirements.ItemRequirements}"
                       materialDesign:RippleAssist.IsDisabled="True"
                       materialDesign:ListBoxItemAssist.ShowSelection="True"
-                      MaxHeight="400"
+                      MaxHeight="300"
                       AllowDrop="True">
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type observables:ObservableItemRequirement}">
@@ -443,16 +473,16 @@
                     Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
                     Click="AddItemRequirementBtn_Click" />
         </Grid>
-        <Grid Grid.Column="2"
+        <Grid Grid.Column="3"
               VerticalAlignment="Top"
               Height="Auto"
-              Margin="0,470,150,0">
+              Margin="0,320,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ListView Grid.Row="0"
-                      Name="PrereqSpellTemplateKeysView"
+                      Name="PrerequisiteSpellsView"
                       HorizontalContentAlignment="Stretch"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Top"
@@ -460,37 +490,58 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      ItemsSource="{Binding LearningRequirements.PrerequisiteSpellTemplateKeys}"
+                      ItemsSource="{Binding LearningRequirements.PrerequisiteSpells}"
+                      MaxHeight="140"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
+                    <DataTemplate DataType="{x:Type observables:ObservableAbilityRequirement}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.RowSpan="99"
+                                    Background="Transparent"
+                                    BorderBrush="White"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" />
+                            <TextBox Grid.Row="0"
                                      MaxLines="1"
                                      TextWrapping="NoWrap"
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding String}"
+                                     Text="{Binding TemplateKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
-                                     materialDesign:HintAssist.Hint="SpellTemplateKey"
+                                     materialDesign:HintAssist.Hint="TemplateKey"
                                      Padding="3"
-                                     Margin="3, 0, 3, 3" />
+                                     Margin="3, 3, 3, 0" />
                             <Button x:Name="DeleteSpellTemplateKeyBtn"
-                                    Grid.ColumnSpan="99"
+                                    Grid.RowSpan="99"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Stretch"
+                                    IsTabStop="False"
                                     MaxHeight="20"
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
                                     Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
                                     Click="DeleteSpellTemplateKeyBtn_Click" />
+                            <TextBox Grid.Row="1"
+                                     MaxLines="1"
+                                     TextWrapping="NoWrap"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Left"
+                                     Text="{Binding Level, Converter={StaticResource NullablePrimitiveToStringConverter}}"
+                                     Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="Level"
+                                     Padding="3"
+                                     Margin="3, 0, 3, 3" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -525,6 +576,7 @@
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
                       ItemsSource="{Binding ScriptKeys}"
+                      MaxHeight="200"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewModel:BindableString}">
@@ -573,13 +625,13 @@
         <Grid Grid.Column="3"
               VerticalAlignment="Top"
               Height="Auto"
-              Margin="0,470,0,0">
+              Margin="0,490,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ListView Grid.Row="0"
-                      x:Name="PrereqSkillTemplateKeysView"
+                      x:Name="PrerequisiteSkillsView"
                       HorizontalContentAlignment="Stretch"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Top"
@@ -587,37 +639,58 @@
                       Style="{StaticResource MaterialDesignListView}"
                       materialDesign:ScrollViewerAssist.BubbleVerticalScroll="True"
                       d:ItemsSource="{x:Static definitions:SampleData.Strings}"
-                      ItemsSource="{Binding LearningRequirements.PrerequisiteSkillTemplateKeys}"
+                      ItemsSource="{Binding LearningRequirements.PrerequisiteSkills}"
+                      MaxHeight="140"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
+                    <DataTemplate DataType="{x:Type observables:ObservableAbilityRequirement}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.RowSpan="99"
+                                    Background="Transparent"
+                                    BorderBrush="White"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch" />
+                            <TextBox Grid.Row="0"
                                      MaxLines="1"
                                      TextWrapping="NoWrap"
                                      VerticalAlignment="Top"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Left"
-                                     Text="{Binding String}"
+                                     Text="{Binding TemplateKey}"
                                      Style="{StaticResource MaterialDesignTextBox}"
-                                     materialDesign:HintAssist.Hint="SkillTemplateKey"
+                                     materialDesign:HintAssist.Hint="TemplateKey"
                                      Padding="3"
-                                     Margin="3, 0, 3, 3" />
+                                     Margin="3, 3, 3, 0" />
                             <Button x:Name="DeleteSkillTemplateKeyBtn"
-                                    Grid.ColumnSpan="99"
+                                    Grid.RowSpan="99"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Stretch"
+                                    IsTabStop="False"
                                     MaxHeight="20"
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
                                     Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
                                     Click="DeleteSkillTemplateKeyBtn_Click" />
+                            <TextBox Grid.Row="1"
+                                     MaxLines="1"
+                                     TextWrapping="NoWrap"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Left"
+                                     Text="{Binding Level, Converter={StaticResource NullablePrimitiveToStringConverter}}"
+                                     Style="{StaticResource MaterialDesignTextBox}"
+                                     materialDesign:HintAssist.Hint="Level"
+                                     Padding="3"
+                                     Margin="3, 0, 3, 3" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

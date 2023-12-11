@@ -142,13 +142,8 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         ClientHandlers[(byte)ClientOpCode.ServerTableRequest] = OnServerTableRequest;
     }
 
-    protected override void OnConnection(IAsyncResult ar)
+    protected override void OnConnected(Socket clientSocket)
     {
-        var serverSocket = (Socket)ar.AsyncState!;
-        var clientSocket = serverSocket.EndAccept(ar);
-
-        serverSocket.BeginAccept(OnConnection, serverSocket);
-
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 
         Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Client, Topics.Actions.Connect)

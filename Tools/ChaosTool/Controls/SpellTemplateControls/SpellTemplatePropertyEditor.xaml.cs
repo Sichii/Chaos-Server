@@ -42,19 +42,19 @@ public sealed partial class SpellTemplatePropertyEditor
         DexLbl.ToolTip = Helpers.GetPropertyDocs<StatsSchema>(nameof(SkillTemplateSchema.LearningRequirements.RequiredStats.Dex));
         CooldownMsLbl.ToolTip = Helpers.GetPropertyDocs<SkillTemplateSchema>(nameof(SkillTemplateSchema.CooldownMs));
         DescriptionLbl.ToolTip = Helpers.GetPropertyDocs<SkillTemplateSchema>(nameof(SkillTemplateSchema.Description));
+        LevelsUpLbl.ToolTip = Helpers.GetPropertyDocs<SkillTemplateSchema>(nameof(SkillTemplateSchema.LevelsUp));
+        MaxLevelLbl.ToolTip = Helpers.GetPropertyDocs<SkillTemplateSchema>(nameof(SkillTemplateSchema.MaxLevel));
 
         ItemRequirementsLbl.ToolTip
             = Helpers.GetPropertyDocs<LearningRequirementsSchema>(nameof(SkillTemplateSchema.LearningRequirements.ItemRequirements));
 
-        PrerequisiteSpellTemplateKeysLbl.ToolTip
-            = Helpers.GetPropertyDocs<LearningRequirementsSchema>(
-                nameof(SkillTemplateSchema.LearningRequirements.PrerequisiteSpellTemplateKeys));
+        PrerequisiteSpellsLbl.ToolTip
+            = Helpers.GetPropertyDocs<LearningRequirementsSchema>(nameof(SkillTemplateSchema.LearningRequirements.PrerequisiteSpells));
 
         ScriptKeysLbl.ToolTip = Helpers.GetPropertyDocs<SkillTemplateSchema>(nameof(SkillTemplateSchema.ScriptKeys));
 
-        PrerequisiteSkillTemplateKeysLbl.ToolTip
-            = Helpers.GetPropertyDocs<LearningRequirementsSchema>(
-                nameof(SkillTemplateSchema.LearningRequirements.PrerequisiteSkillTemplateKeys));
+        PrerequisiteSkillsLbl.ToolTip
+            = Helpers.GetPropertyDocs<LearningRequirementsSchema>(nameof(SkillTemplateSchema.LearningRequirements.PrerequisiteSkills));
     }
 
     #region Buttons
@@ -94,14 +94,14 @@ public sealed partial class SpellTemplatePropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not BindableString spellTemplateKey)
+        if (button.DataContext is not ObservableAbilityRequirement requiredSpell)
             return;
 
-        ViewModel.LearningRequirements.PrerequisiteSpellTemplateKeys.Remove(spellTemplateKey);
+        ViewModel.LearningRequirements.PrerequisiteSpells.Remove(requiredSpell);
     }
 
     private void AddSpellTemplateKeyBtn_Click(object sender, RoutedEventArgs e)
-        => ViewModel.LearningRequirements.PrerequisiteSpellTemplateKeys.Add(string.Empty);
+        => ViewModel.LearningRequirements.PrerequisiteSpells.Add(new ObservableAbilityRequirement());
     #endregion
 
     #region PrereqSpellTemplateKeys Controls
@@ -110,14 +110,14 @@ public sealed partial class SpellTemplatePropertyEditor
         if (sender is not Button button)
             return;
 
-        if (button.DataContext is not BindableString skillTemplateKey)
+        if (button.DataContext is not ObservableAbilityRequirement requiredSkill)
             return;
 
-        ViewModel.LearningRequirements.PrerequisiteSkillTemplateKeys.Remove(skillTemplateKey);
+        ViewModel.LearningRequirements.PrerequisiteSkills.Remove(requiredSkill);
     }
 
     private void AddSkillTemplateKeyBtn_Click(object sender, RoutedEventArgs e)
-        => ViewModel.LearningRequirements.PrerequisiteSkillTemplateKeys.Add(string.Empty);
+        => ViewModel.LearningRequirements.PrerequisiteSkills.Add(new ObservableAbilityRequirement());
     #endregion
 
     #region ItemRequirements Controls

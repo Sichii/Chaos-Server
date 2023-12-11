@@ -14,12 +14,12 @@ public sealed record LearningRequirements
     /// <summary>
     ///     The skills that must be learned before this ability can be learned
     /// </summary>
-    public required ICollection<string> PrerequisiteSkillTemplateKeys { get; init; } = Array.Empty<string>();
+    public required ICollection<AbilityRequirement> PrerequisiteSkills { get; init; } = Array.Empty<AbilityRequirement>();
 
     /// <summary>
     ///     The spells that must be learned before this ability can be learned
     /// </summary>
-    public required ICollection<string> PrerequisiteSpellTemplateKeys { get; init; } = Array.Empty<string>();
+    public required ICollection<AbilityRequirement> PrerequisiteSpells { get; init; } = Array.Empty<AbilityRequirement>();
 
     /// <summary>
     ///     The amount of gold required to learn this ability
@@ -45,7 +45,7 @@ public sealed record LearningRequirements
 
         builder.AppendLine();
 
-        var max = Math.Max(PrerequisiteSkillTemplateKeys.Count, PrerequisiteSpellTemplateKeys.Count);
+        var max = Math.Max(PrerequisiteSkills.Count, PrerequisiteSpells.Count);
         max = Math.Max(max, ItemRequirements.Count);
 
         var skillStrs = Enumerable.Range(0, max)
@@ -60,16 +60,18 @@ public sealed record LearningRequirements
                                  .Select(_ => string.Empty)
                                  .ToList();
 
-        for (var i = 0; i < PrerequisiteSkillTemplateKeys.Count; i++)
+        for (var i = 0; i < PrerequisiteSkills.Count; i++)
         {
-            var skill = skillFactory.CreateFaux(PrerequisiteSkillTemplateKeys.ElementAt(i));
-            skillStrs[i] = skill.Template.Name;
+            var req = PrerequisiteSkills.ElementAt(i);
+            var skill = skillFactory.CreateFaux(req.TemplateKey);
+            skillStrs[i] = $"{skill.Template.Name} {req.Level ?? skill.Template.MaxLevel}";
         }
 
-        for (var i = 0; i < PrerequisiteSpellTemplateKeys.Count; i++)
+        for (var i = 0; i < PrerequisiteSpells.Count; i++)
         {
-            var spell = spellFactory.CreateFaux(PrerequisiteSpellTemplateKeys.ElementAt(i));
-            spellStrs[i] = spell.Template.Name;
+            var req = PrerequisiteSpells.ElementAt(i);
+            var spell = spellFactory.CreateFaux(req.TemplateKey);
+            spellStrs[i] = $"{spell.Template.Name} {req.Level ?? spell.Template.MaxLevel}";
         }
 
         for (var i = 0; i < ItemRequirements.Count; i++)

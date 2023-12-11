@@ -97,17 +97,32 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
+    public override void Dispose()
+    {
+        try
+        {
+            Socket.Close();
+        } catch
+        {
+            //ignored
+        }
+
+        base.Dispose();
+    }
+
+    /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await Task.Yield();
 
         var endPoint = new IPEndPoint(IPAddress.Any, Options.Port);
         Socket.Bind(endPoint);
-        Socket.Listen(20);
-        Socket.BeginAccept(OnConnection, Socket);
+        Socket.Listen(100);
 
         Logger.WithTopics(Topics.Actions.Listening)
               .LogInformation("Listening on {@EndPoint}", endPoint.ToString());
+
+        Socket.BeginAccept(OnConnection, Socket);
 
         await stoppingToken.WaitTillCanceled();
 
@@ -123,19 +138,49 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
             ClientRegistry,
             (client, _) =>
             {
-                client.Disconnect();
+                try
+                {
+                    client.Disconnect();
+                } catch
+                {
+                    //ignored
+                }
 
                 return default;
             });
 
-        await Socket.DisconnectAsync(false, stoppingToken);
+        Dispose();
     }
 
     /// <summary>
     ///     Called when a new connection is accepted by the server.
     /// </summary>
-    /// <param name="ar">The asynchronous result of the operation.</param>
-    protected abstract void OnConnection(IAsyncResult ar);
+    /// <param name="clientSocket">The socket that connected to the server</param>
+    protected abstract void OnConnected(Socket clientSocket);
+
+    /// <summary>
+    ///     Called when a new connection is accepted by the server.
+    /// </summary>
+    /// <param name="ar">The result of the asynchronous connection operation</param>
+    protected virtual void OnConnection(IAsyncResult ar)
+    {
+        var serverSocket = (Socket)ar.AsyncState!;
+        Socket? clientSocket = null;
+
+        try
+        {
+            clientSocket = serverSocket.EndAccept(ar);
+        } catch
+        {
+            //ignored
+        } finally
+        {
+            serverSocket.BeginAccept(OnConnection, serverSocket);
+        }
+
+        if (clientSocket is not null && clientSocket.Connected)
+            OnConnected(clientSocket);
+    }
 
     #region Handlers
     /// <summary>

@@ -94,7 +94,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     public virtual void Dispose()
     {
         GC.SuppressFinalize(this);
-        Socket.Dispose();
+
+        try
+        {
+            Socket.Dispose();
+        } catch
+        {
+            //ignored
+        }
     }
 
     /// <inheritdoc />
@@ -306,7 +313,9 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         try
         {
-            Socket.Disconnect(false);
+            //shutdown the socket so that we dont receive any more data
+            //allow sending incase OnDisconnected sends something
+            Socket.Shutdown(SocketShutdown.Receive);
         } catch
         {
             //ignored
@@ -320,6 +329,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
             //ignored
         }
 
+        //will close/dispose the socket
         Dispose();
     }
     #endregion

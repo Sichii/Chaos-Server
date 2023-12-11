@@ -1633,13 +1633,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ClientHandlers[(byte)ClientOpCode.MetaDataRequest] = OnMetaDataRequest;
     }
 
-    protected override void OnConnection(IAsyncResult ar)
+    protected override void OnConnected(Socket clientSocket)
     {
-        var serverSocket = (Socket)ar.AsyncState!;
-        var clientSocket = serverSocket.EndAccept(ar);
-
-        serverSocket.BeginAccept(OnConnection, serverSocket);
-
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 
         Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Connect)

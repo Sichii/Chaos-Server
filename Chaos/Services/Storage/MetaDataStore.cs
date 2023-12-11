@@ -83,35 +83,39 @@ public class MetaDataStore : IMetaDataStore
             (string Name, byte Level)? req3 = null;
             (string Name, byte Level)? req4 = null;
 
-            switch (reqs.PrerequisiteSkillTemplateKeys.Count)
+            switch (reqs.PrerequisiteSkills.Count)
             {
                 case 2:
                 {
-                    var obj = skillTemplateCache.Get(reqs.PrerequisiteSkillTemplateKeys.ElementAt(1));
-                    req3 = (obj.Name, (byte)obj.Level);
+                    var requirement = reqs.PrerequisiteSkills.ElementAt(1);
+                    var obj = skillTemplateCache.Get(requirement.TemplateKey);
+                    req3 = (obj.Name, requirement.Level ?? obj.MaxLevel);
                     goto case 1;
                 }
                 case 1:
                 {
-                    var obj = skillTemplateCache.Get(reqs.PrerequisiteSkillTemplateKeys.ElementAt(0));
-                    req1 = (obj.Name, (byte)obj.Level);
+                    var requirement = reqs.PrerequisiteSkills.ElementAt(0);
+                    var obj = skillTemplateCache.Get(requirement.TemplateKey);
+                    req1 = (obj.Name, requirement.Level ?? obj.MaxLevel);
 
                     break;
                 }
             }
 
-            switch (reqs.PrerequisiteSpellTemplateKeys.Count)
+            switch (reqs.PrerequisiteSpells.Count)
             {
                 case 2:
                 {
-                    var obj = spellTemplateCache.Get(reqs.PrerequisiteSpellTemplateKeys.ElementAt(1));
-                    req4 = (obj.Name, (byte)obj.Level);
+                    var requirement = reqs.PrerequisiteSpells.ElementAt(1);
+                    var obj = spellTemplateCache.Get(requirement.TemplateKey);
+                    req4 = (obj.Name, requirement.Level ?? obj.MaxLevel);
                     goto case 1;
                 }
                 case 1:
                 {
-                    var obj = spellTemplateCache.Get(reqs.PrerequisiteSpellTemplateKeys.ElementAt(0));
-                    req2 = (obj.Name, (byte)obj.Level);
+                    var requirement = reqs.PrerequisiteSpells.ElementAt(0);
+                    var obj = spellTemplateCache.Get(requirement.TemplateKey);
+                    req2 = (obj.Name, requirement.Level ?? obj.MaxLevel);
 
                     break;
                 }
@@ -129,7 +133,7 @@ public class MetaDataStore : IMetaDataStore
             var node = new AbilityMetaNode(template.Name, template is SkillTemplate, template.Class ?? BaseClass.Peasant)
             {
                 Level = template.Level,
-                RequiresMaster = false, //TODO: may need to implement this in ItemTemplate.LearningRequirements
+                RequiresMaster = template.RequiresMaster,
                 Ability = 0,
                 IconId = template.PanelSprite,
                 Str = (byte)(reqs.RequiredStats?.Str ?? 0),
@@ -140,11 +144,13 @@ public class MetaDataStore : IMetaDataStore
                 PreReq1Name = objs.ElementAtOrDefault(0)
                                   ?.Name,
 
-                //PreReq1Level = 0,
+                PreReq1Level = objs.ElementAtOrDefault(0)
+                                   ?.Level,
                 PreReq2Name = objs.ElementAtOrDefault(1)
                                   ?.Name,
 
-                //PreReq2Level = 0,
+                PreReq2Level = objs.ElementAtOrDefault(1)
+                                   ?.Level,
                 Description = template.Description
             };
 

@@ -35,6 +35,8 @@ public sealed class SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider
     public Spell Map(SpellSchema obj)
     {
         var template = SimpleCache.Get<SpellTemplate>(obj.TemplateKey);
+        var maxLevel = template.LevelsUp ? obj.MaxLevel ?? template.MaxLevel : template.MaxLevel;
+        var level = template.LevelsUp ? obj.Level ?? 0 : maxLevel;
 
         var spell = new Spell(
             template,
@@ -43,7 +45,9 @@ public sealed class SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider
             obj.UniqueId,
             obj.ElapsedMs)
         {
-            Slot = obj.Slot ?? 0
+            Slot = obj.Slot ?? 0,
+            MaxLevel = maxLevel,
+            Level = level
         };
 
         return spell;
@@ -61,7 +65,9 @@ public sealed class SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
             ScriptKeys = extraScriptKeys.Any() ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
-            Slot = obj.Slot
+            Slot = obj.Slot,
+            Level = obj.Template.LevelsUp ? obj.Level : null,
+            MaxLevel = obj.Template.LevelsUp && (obj.MaxLevel != obj.Template.MaxLevel) ? obj.MaxLevel : null
         };
 
         return ret;
@@ -86,7 +92,9 @@ public sealed class SpellMapperProfile(ISimpleCache simpleCache, IScriptProvider
             Level = obj.Level,
             Class = obj.Class,
             AdvClass = obj.AdvClass,
-            RequiresMaster = obj.RequiresMaster
+            RequiresMaster = obj.RequiresMaster,
+            LevelsUp = obj.LevelsUp,
+            MaxLevel = obj.MaxLevel ?? 100
         };
 
     public SpellTemplateSchema Map(SpellTemplate obj) => throw new NotImplementedException();

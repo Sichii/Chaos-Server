@@ -1,40 +1,42 @@
 {
-    "isAssail": true,
-    "learningRequirements": {
-        "itemRequirements": [
-            {
-                "amountRequired": 20,
-                "itemTemplateKey": "apple"
-            }
-        ],
-        "prerequisiteSkillTemplateKeys": [],
-        "prerequisiteSpellTemplateKeys": [],
-        "requiredGold": 5000,
-        "requiredStats": {
-            "con": 1,
-            "dex": 1,
-            "int": 1,
-            "str": 2,
-            "wis": 1
-        }
+  "isAssail": true,
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 20,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "requiredGold": 5000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 1,
+      "str": 2,
+      "wis": 1
     },
-    "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
-    "level": 1,
-    "name": "Assail",
-    "panelSprite": 1,
-    "scriptKeys": ["damage"],
-    "scriptVars": {
-        "damage": {
-            "bodyAnimation": "assail",
-            "sound": 1,
-            "damageStat": "str",
-            "range": 1,
-            "shape": "front",
-            "excludeSourcePoint": true,
-            "damageStatMultiplier": 2,
-            "baseDamage": 3,
-            "filter": "hostileOnly, aliveOnly, othersOnly"
-        }
-    },
-    "templateKey": "assail"
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": []
+  },
+  "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
+  "level": 1,
+  "name": "Assail",
+  "panelSprite": 1,
+  "scriptKeys": [
+    "damage"
+  ],
+  "scriptVars": {
+    "damage": {
+      "bodyAnimation": "assail",
+      "sound": 1,
+      "damageStat": "str",
+      "range": 1,
+      "shape": "front",
+      "excludeSourcePoint": true,
+      "damageStatMultiplier": 2,
+      "baseDamage": 3,
+      "filter": "hostileOnly, aliveOnly, othersOnly"
+    }
+  },
+  "templateKey": "assail"
 }

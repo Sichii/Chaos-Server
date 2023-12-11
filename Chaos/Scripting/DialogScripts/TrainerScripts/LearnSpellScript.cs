@@ -259,25 +259,35 @@ public class LearnSpellScript : DialogScriptBase
             }
         }
 
-        foreach (var skillTemplateKey in requirements.PrerequisiteSkillTemplateKeys)
+        foreach (var requiredSkill in requirements.PrerequisiteSkills)
         {
-            var requiredSkill = SkillFactory.CreateFaux(skillTemplateKey);
-
-            if (!source.SkillBook.Contains(requiredSkill))
+            if (!source.SkillBook.TryGetObjectByTemplateKey(requiredSkill.TemplateKey, out var existingSkill))
             {
-                dialog.Reply(source, "Come back when you are more skillful.", "generic_learnspell_initial");
+                dialog.Reply(source, "Come back when you are more skillful.", "generic_learnskill_initial");
+
+                return false;
+            }
+
+            if (existingSkill.Level < requiredSkill.Level)
+            {
+                dialog.Reply(source, "Come back when you are more skillful.", "generic_learnskill_initial");
 
                 return false;
             }
         }
 
-        foreach (var spellTemplateKey in requirements.PrerequisiteSpellTemplateKeys)
+        foreach (var requiredSpell in requirements.PrerequisiteSpells)
         {
-            var requiredSpell = SpellFactory.CreateFaux(spellTemplateKey);
-
-            if (!source.SpellBook.Contains(requiredSpell))
+            if (!source.SpellBook.TryGetObjectByTemplateKey(requiredSpell.TemplateKey, out var existingSpell))
             {
-                dialog.Reply(source, "Come back when you are more knowledgeable.", "generic_learnspell_initial");
+                dialog.Reply(source, "Come back when you are more knowledgeable.", "generic_learnskill_initial");
+
+                return false;
+            }
+
+            if (existingSpell.Level < requiredSpell.Level)
+            {
+                dialog.Reply(source, "Come back when you are more knowledgeable.", "generic_learnskill_initial");
 
                 return false;
             }
