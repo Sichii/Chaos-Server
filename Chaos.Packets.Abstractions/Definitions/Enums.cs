@@ -231,6 +231,12 @@ public enum ClientOpCode : byte
     WorldMapClick = 63,
 
     /// <summary>
+    ///     OpCode used when a client experiences an exception caused by a bad packet<br />
+    ///     Hex value: 0x42
+    /// </summary>
+    ClientException = 66,
+
+    /// <summary>
     ///     OpCode used when a client clicks on an object<br />
     ///     Hex value: 0x43
     /// </summary>

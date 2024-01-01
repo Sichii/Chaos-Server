@@ -99,6 +99,8 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     /// <inheritdoc />
     public override void Dispose()
     {
+        GC.SuppressFinalize(this);
+
         try
         {
             Socket.Close();
@@ -188,6 +190,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     /// </summary>
     protected virtual void IndexHandlers()
     {
+        ClientHandlers[(byte)ClientOpCode.ClientException] = OnClientException;
         ClientHandlers[(byte)ClientOpCode.HeartBeat] = OnHeartBeatAsync;
         ClientHandlers[(byte)ClientOpCode.SequenceChange] = OnSequenceChangeAsync;
         ClientHandlers[(byte)ClientOpCode.SynchronizeTicks] = OnSynchronizeTicksAsync;
@@ -221,6 +224,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+                  .WithProperty(client)
                   .LogError(
                       e,
                       "{@ClientType} failed to execute inner handler with args type {@ArgsType} ({@Args})",
@@ -247,6 +251,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+                  .WithProperty(client)
                   .LogError(
                       e,
                       "{@ClientType} failed to execute inner handler",
@@ -269,6 +274,22 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     public ValueTask OnSequenceChangeAsync(T client, in ClientPacket packet)
     {
         client.SetSequence(packet.Sequence);
+
+        return default;
+    }
+
+    /// <inheritdoc />
+    public virtual ValueTask OnClientException(T client, in ClientPacket packet)
+    {
+        var args = PacketSerializer.Deserialize<ClientExceptionArgs>(in packet);
+
+        Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+              .WithProperty(client)
+              .LogError(
+                  "{@ClientType} encountered an exception: {@Exception}",
+                  client.GetType()
+                        .Name,
+                  args.ExceptionStr);
 
         return default;
     }

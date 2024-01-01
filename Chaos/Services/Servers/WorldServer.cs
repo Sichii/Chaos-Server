@@ -561,13 +561,12 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             var aisling = localClient.Aisling;
             var mapInstance = aisling.MapInstance;
 
-            if (mapInstance.TryGetEntity<VisibleEntity>(localArgs.TargetId, out var obj)
-                && (!aisling.CanObserve(obj) || !aisling.CanSee(obj)))
+            if (mapInstance.TryGetEntity<VisibleEntity>(localArgs.TargetId, out var obj) && !aisling.CanObserve(obj))
                 Logger.WithTopics(Topics.Entities.Aisling, Topics.Qualifiers.Forced, Topics.Qualifiers.Cheating)
                       .WithProperty(aisling)
                       .WithProperty(obj)
                       .LogWarning(
-                          "Aisling {@AislingName} attempted to forcefully display an entity {@EntityId} that they cannot see",
+                          "Aisling {@AislingName} attempted to forcefully display an entity {@EntityId} that they cannot observe",
                           aisling.Name,
                           obj.Id);
 

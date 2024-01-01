@@ -430,13 +430,33 @@ public sealed partial class IntegrityCheckControl
 
             if (!learningRequirements.PrerequisiteSpells.IsNullOrEmpty())
                 foreach (var prerequisiteSpell in learningRequirements.PrerequisiteSpells)
-                    if (!SpellTemplateIndex.ContainsKey(prerequisiteSpell.TemplateKey))
-                        await AddViolationAsync($"PrerequisiteSpellTemplateKey not found: {prerequisiteSpell.TemplateKey}", handler);
+                    if (!SpellTemplateIndex.TryGetValue(prerequisiteSpell.TemplateKey, out var spellTemplate))
+                        await AddViolationAsync($"PrerequisiteSpell not found: {prerequisiteSpell.TemplateKey}", handler);
+                    else if (prerequisiteSpell.Level.HasValue)
+                    {
+                        if (!spellTemplate.LevelsUp)
+                            await AddViolationAsync(
+                                $"Required level specified for non-leveling spell: {prerequisiteSpell.TemplateKey}",
+                                handler);
+
+                        if (prerequisiteSpell.Level > spellTemplate.MaxLevel)
+                            await AddViolationAsync($"Required level > max level: {prerequisiteSpell.TemplateKey}", handler);
+                    }
 
             if (!learningRequirements.PrerequisiteSkills.IsNullOrEmpty())
                 foreach (var prerequisiteSkill in learningRequirements.PrerequisiteSkills)
-                    if (!SkillTemplateIndex.ContainsKey(prerequisiteSkill.TemplateKey))
-                        await AddViolationAsync($"PrerequisiteSkillTemplateKey not found: {prerequisiteSkill.TemplateKey}", handler);
+                    if (!SkillTemplateIndex.TryGetValue(prerequisiteSkill.TemplateKey, out var skillTemplate))
+                        await AddViolationAsync($"PrerequisiteSkill not found: {prerequisiteSkill.TemplateKey}", handler);
+                    else if (prerequisiteSkill.Level.HasValue)
+                    {
+                        if (!skillTemplate.LevelsUp)
+                            await AddViolationAsync(
+                                $"Required level specified for non-leveling skill: {prerequisiteSkill.TemplateKey}",
+                                handler);
+
+                        if (prerequisiteSkill.Level > skillTemplate.MaxLevel)
+                            await AddViolationAsync($"Required level > max level: {prerequisiteSkill.TemplateKey}", handler);
+                    }
         }
     }
 

@@ -335,7 +335,6 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             //ExitRequest might be from a double click from exiting
             //RequestProfile I have no idea tho
         } else
-
             Logger.WithTopics(
                       Topics.Servers.LoginServer,
                       Topics.Entities.Packet,

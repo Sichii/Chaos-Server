@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\Chaos.Cryptography\Chaos.Cryptography.csproj"/>
-        <ProjectReference Include="..\..\Chaos.Packets\Chaos.Packets.csproj"/>
-    </ItemGroup>
-
-</Project>

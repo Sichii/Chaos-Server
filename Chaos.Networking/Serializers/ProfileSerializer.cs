@@ -53,10 +53,18 @@ public sealed record ProfileSerializer : ServerPacketSerializer<ProfileArgs>
 
         var remaining = args.Portrait.Length;
         remaining += args.ProfileText?.Length ?? 0;
-        remaining += 4;
 
-        writer.WriteUInt16((ushort)remaining);
-        writer.WriteData16(args.Portrait); //2 + length
-        writer.WriteString16(args.ProfileText ?? string.Empty); //2 + length
+        //if theres no portrait or profile data, just write 0
+        if (remaining == 0)
+            writer.WriteUInt16(0);
+        else //if there's data, write the length of the data + 4 for prefixes
+        {
+            writer.WriteUInt16((ushort)(remaining + 4));
+            writer.WriteData16(args.Portrait); //2 + length
+            writer.WriteString16(args.ProfileText ?? string.Empty); //2 + length
+        }
+
+        //nfi
+        writer.WriteByte(0);
     }
 }
