@@ -11,27 +11,42 @@ namespace Chaos.MetaData.ClassMetaData;
 ///     Each file has a name of SClass{Number} where Number is the byte representing the class the metadata file is for
 ///     <br />
 ///     <br />
-///     Peasant = 0, <br />
-///     Warrior = 1, <br />
-///     Rogue = 2, <br />
-///     Wizard = 3, <br />
-///     Priest = 4, <br />
-///     Monk = 5, <br />
+///     Peasant = 0,
 ///     <br />
-///     There is a node named "Skill" with no properties at the beginnin <br />
+///     Warrior = 1,
+///     <br />
+///     Rogue = 2,
+///     <br />
+///     Wizard = 3,
+///     <br />
+///     Priest = 4,
+///     <br />
+///     Monk = 5,
+///     <br />
+///     <br />
+///     There is a node named "Skill" with no properties at the beginnin
+///     <br />
 ///     after all the skills, there is a node "Skill_End" with 1 property, but that property is blank "00 01 00 00"
-///     followed by 3 more 00s "00
-///     00 00" <br />
+///     followed by 3 more 00s "00 00 00"
 ///     <br />
-///     then, there is a node "Spell" with 1 empty property "00 01 00 00" <br />
-///     then when spells finished, "Spell_End" with 1 empty property "00 01 00 00" <br />
 ///     <br />
-///     Node name = name of skill with rank <br />
-///     property 1 = {RequiredLevel}/{IsMaster}/{RequiredAbility} <br />
-///     property 2 = {SpriteId}/??/?? <br />
-///     property 3 = {Str}/{Int}/{Wis}/{Dex}/{Con} <br />
-///     property 4 = "{PreRequisite1}/{RequiredLevel}" <br />
-///     property 5 = "{PreRequisite1}/{RequiredLevel}"  - NOTE.. for no prereq, use "0/0" <br />
+///     then, there is a node "Spell" with 1 empty property "00 01 00 00"
+///     <br />
+///     then when spells finished, "Spell_End" with 1 empty property "00 01 00 00"
+///     <br />
+///     <br />
+///     Node name = name of skill with rank
+///     <br />
+///     property 1 = {RequiredLevel}/{IsMaster}/{RequiredAbility}
+///     <br />
+///     property 2 = {SpriteId}/??/??
+///     <br />
+///     property 3 = {Str}/{Int}/{Wis}/{Dex}/{Con}
+///     <br />
+///     property 4 = "{PreRequisite1}/{RequiredLevel}"
+///     <br />
+///     property 5 = "{PreRequisite1}/{RequiredLevel}"  - NOTE.. for no prereq, use "0/0"
+///     <br />
 ///     property 6 = {Description}
 /// </remarks>
 public sealed record AbilityMetaNode(string Name, bool IsSkill, BaseClass Class) : IMetaNode
@@ -39,7 +54,7 @@ public sealed record AbilityMetaNode(string Name, bool IsSkill, BaseClass Class)
     /// <summary>
     ///     The ability level required to learn the ability
     /// </summary>
-    public int Ability { get; init; }
+    public int AbilityLevel { get; init; }
 
     /// <summary>
     ///     The constitution required to learn the ability
@@ -127,7 +142,7 @@ public sealed record AbilityMetaNode(string Name, bool IsSkill, BaseClass Class)
         writer.WriteString8(Name);
         writer.WriteInt16(6);
 
-        writer.WriteString16($"{Level}/{Convert.ToByte(RequiresMaster)}/{Ability}");
+        writer.WriteString16($"{Level}/{Convert.ToByte(RequiresMaster)}/{AbilityLevel}");
         writer.WriteString16($"{IconId}/0/0");
         writer.WriteString16($"{Str}/{Int}/{Wis}/{Dex}/{Con}");
         writer.WriteString16($"{PreReq1Name ?? "0"}/{PreReq1Level ?? 0}");

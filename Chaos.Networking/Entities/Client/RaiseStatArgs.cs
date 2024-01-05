@@ -7,5 +7,10 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.RaiseStat" />
 ///     packet
 /// </summary>
-/// <param name="Stat">The stat the client is trying to raise</param>
-public sealed record RaiseStatArgs(Stat Stat) : IReceiveArgs;
+public sealed record RaiseStatArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The stat the client is trying to raise
+    /// </summary>
+    public required Stat Stat { get; set; }
+}

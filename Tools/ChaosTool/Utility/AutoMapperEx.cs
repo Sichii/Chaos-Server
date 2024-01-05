@@ -24,7 +24,7 @@ public static class AutoMapperEx
 
     public static void AssertConfigurationIsValid() => Configuration.AssertConfigurationIsValid();
 
-    public static void Initialize(Action<IMapperConfigurationExpression> config) { Initialize(new MapperConfiguration(config)); }
+    public static void Initialize(Action<IMapperConfigurationExpression> config) => Initialize(new MapperConfiguration(config));
 
     public static void Initialize(MapperConfiguration config)
     {

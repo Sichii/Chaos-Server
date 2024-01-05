@@ -22,7 +22,9 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
         => Options = options.Value;
 
     /// <inheritdoc />
-    /// <remarks>Must override here because AislingStoreOptions is not an IExpiringFileCacheOptions implementation</remarks>
+    /// <remarks>
+    ///     Must override here because AislingStoreOptions is not an IExpiringFileCacheOptions implementation
+    /// </remarks>
     protected override IEnumerable<string> GetPaths()
         => Directory.EnumerateDirectories(Options.Directory, "*", SearchOption.AllDirectories)
                     .Where(

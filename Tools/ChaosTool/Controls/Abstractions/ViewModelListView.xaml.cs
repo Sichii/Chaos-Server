@@ -11,7 +11,7 @@ namespace ChaosTool.Controls.Abstractions;
 public abstract partial class ViewModelListView : UserControl
 {
     public ObservableCollection<ViewModelBase> Items { get; } = [];
-    protected ViewModelListView() { InitializeComponent(); }
+    protected ViewModelListView() => InitializeComponent();
 
     protected abstract void AddButton_Click(object sender, RoutedEventArgs e);
 

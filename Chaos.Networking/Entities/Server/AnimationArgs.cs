@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Animation" />
 ///     packet
 /// </summary>
-public sealed record AnimationArgs : ISendArgs
+public sealed record AnimationArgs : IPacketSerializable
 {
     /// <summary>
     ///     The speed of the animation

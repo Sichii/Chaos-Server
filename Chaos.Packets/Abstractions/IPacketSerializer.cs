@@ -16,18 +16,27 @@ public interface IPacketSerializer
     ///     Deserializes the specified client packet into an instance of <typeparamref name="T" />.
     /// </summary>
     /// <typeparam name="T">
-    ///     The type of object to deserialize the packet into, which must implement <see cref="IReceiveArgs" />
-    ///     .
+    ///     The type of object to deserialize the packet into, which must implement <see cref="IPacketSerializable" /> .
     /// </typeparam>
-    /// <param name="packet">The client packet to deserialize.</param>
-    /// <returns>An instance of <typeparamref name="T" /> deserialized from the client packet.</returns>
-    T Deserialize<T>(in ClientPacket packet) where T: IReceiveArgs;
+    /// <param name="packet">
+    ///     The client packet to deserialize.
+    /// </param>
+    /// <returns>
+    ///     An instance of <typeparamref name="T" /> deserialized from the client packet.
+    /// </returns>
+    T Deserialize<T>(in Packet packet) where T: IPacketSerializable;
 
     /// <summary>
-    ///     Serializes the specified object implementing <see cref="ISendArgs" /> into a server packet.
+    ///     Serializes the specified object implementing <see cref="IPacketSerializable" /> into a server packet.
     /// </summary>
-    /// <typeparam name="T">The type of object to serialize, which must implement <see cref="ISendArgs" />.</typeparam>
-    /// <param name="obj">The object to serialize.</param>
-    /// <returns>A server packet representing the serialized <paramref name="obj" />.</returns>
-    ServerPacket Serialize<T>(T obj) where T: ISendArgs;
+    /// <typeparam name="T">
+    ///     The type of object to serialize, which must implement <see cref="IPacketSerializable" />.
+    /// </typeparam>
+    /// <param name="obj">
+    ///     The object to serialize.
+    /// </param>
+    /// <returns>
+    ///     A server packet representing the serialized <paramref name="obj" />.
+    /// </returns>
+    Packet Serialize<T>(T obj) where T: IPacketSerializable;
 }

@@ -5,7 +5,7 @@ namespace Chaos.Networking.Entities.Server;
 /// <summary>
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Sound" /> packet
 /// </summary>
-public sealed record SoundArgs : ISendArgs
+public sealed record SoundArgs : IPacketSerializable
 {
     /// <summary>
     ///     Whether or not the sound is a music track

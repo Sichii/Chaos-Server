@@ -22,9 +22,15 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <summary>
     ///     Creates a new location
     /// </summary>
-    /// <param name="map">The location's map</param>
-    /// <param name="x">The X coordinate</param>
-    /// <param name="y">The Y coordinate</param>
+    /// <param name="map">
+    ///     The location's map
+    /// </param>
+    /// <param name="x">
+    ///     The X coordinate
+    /// </param>
+    /// <param name="y">
+    ///     The Y coordinate
+    /// </param>
     public Location(string map, int x, int y)
     {
         X = x;
@@ -34,16 +40,24 @@ public sealed record Location : ILocation, IEquatable<ILocation>
 
     /// <summary>
     /// </summary>
-    /// <param name="map">The location's map</param>
-    /// <param name="point">The coordinate point</param>
+    /// <param name="map">
+    ///     The location's map
+    /// </param>
+    /// <param name="point">
+    ///     The coordinate point
+    /// </param>
     public Location(string map, Point point)
         : this(map, point.X, point.Y) { }
 
     /// <summary>
     ///     Creates a new location
     /// </summary>
-    /// <param name="map">The location's map</param>
-    /// <param name="point">The coordinate point</param>
+    /// <param name="map">
+    ///     The location's map
+    /// </param>
+    /// <param name="point">
+    ///     The coordinate point
+    /// </param>
     public Location(string map, IPoint point)
         : this(map, point.X, point.Y) { }
 
@@ -53,9 +67,12 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <summary>
     ///     Deconstructs a location
     /// </summary>
-    /// <param name="map"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
+    /// <param name="map">
+    /// </param>
+    /// <param name="x">
+    /// </param>
+    /// <param name="y">
+    /// </param>
     public void Deconstruct(out string map, out int x, out int y)
     {
         map = Map;
@@ -67,8 +84,11 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     ///     Creates a new <see cref="Chaos.Geometry.Location" /> from an existing
     ///     <see cref="Chaos.Geometry.Abstractions.ILocation" />
     /// </summary>
-    /// <param name="location">An implementation of ILocation</param>
-    /// <returns></returns>
+    /// <param name="location">
+    ///     An implementation of ILocation
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static Location From(ILocation location)
     {
         if (location is Location loc)
@@ -96,9 +116,12 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <summary>
     ///     Tries to parse a location from a string
     /// </summary>
-    /// <param name="str"></param>
-    /// <param name="location"></param>
-    /// <returns></returns>
+    /// <param name="str">
+    /// </param>
+    /// <param name="location">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool TryParse(string str, [MaybeNullWhen(false)] out Location location)
     {
         location = null;

@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.SynchronizeTicks" /> packet
 /// </summary>
-public sealed record SynchronizeTicksResponseArgs : ISendArgs
+public sealed record SynchronizeTicksResponseArgs : IPacketSerializable
 {
     /// <summary>
     ///     The Environment.TickCount of the server

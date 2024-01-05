@@ -20,13 +20,14 @@ public sealed class AutoReleasingMonitor
     /// <summary>
     ///     Creates a new instance of <see cref="AutoReleasingMonitor" />.
     /// </summary>
-    /// <param name="root">An optional existing object whose root to lock</param>
+    /// <param name="root">
+    ///     An optional existing object whose root to lock
+    /// </param>
     public AutoReleasingMonitor(object? root = null) => Root = root ?? new object();
 
     /// <summary>
-    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via
-    ///     <see cref="System.Threading.Monitor.Exit(object)" />
+    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />. Returns a disposable object that when disposed
+    ///     will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />
     /// </summary>
     public IDisposable Enter()
     {
@@ -36,10 +37,9 @@ public sealed class AutoReleasingMonitor
     }
 
     /// <summary>
-    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via
-    ///     <see cref="System.Threading.Monitor.Exit(object)" />.
-    ///     Will first check if the current thread owns the lock in order to avoid an exception.
+    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />. Returns a disposable object that when disposed
+    ///     will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />. Will first check if the current thread
+    ///     owns the lock in order to avoid an exception.
     /// </summary>
     public IDisposable EnterWithSafeExit()
     {
@@ -54,15 +54,17 @@ public sealed class AutoReleasingMonitor
     public void Exit() => Monitor.Exit(Root);
 
     /// <summary>
-    ///     The same as <see cref="System.Threading.Monitor.TryEnter(object, TimeSpan)" />.
-    ///     Returns a disposable object that when disposed will exit the lock via
-    ///     <see cref="System.Threading.Monitor.Exit(object)" />.
+    ///     The same as <see cref="System.Threading.Monitor.TryEnter(object, TimeSpan)" />. Returns a disposable object that
+    ///     when disposed will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />.
     /// </summary>
-    /// <param name="timeoutMs"></param>
+    /// <param name="timeoutMs">
+    /// </param>
     /// <returns>
-    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when
-    ///     disposed
-    ///     will exit the lock
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when disposed will exit
+    ///     the lock
     /// </returns>
     public IDisposable? TryEnter(int timeoutMs)
     {

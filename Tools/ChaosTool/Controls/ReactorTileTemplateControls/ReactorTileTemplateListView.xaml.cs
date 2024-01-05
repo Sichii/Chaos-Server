@@ -11,7 +11,7 @@ namespace ChaosTool.Controls.ReactorTileTemplateControls;
 
 public sealed class ReactorTileTemplateListView : ViewModelListView
 {
-    public ReactorTileTemplateListView() { InitializeComponent(); }
+    public ReactorTileTemplateListView() => InitializeComponent();
 
     /// <inheritdoc />
 

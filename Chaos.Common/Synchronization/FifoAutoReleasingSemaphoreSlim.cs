@@ -15,8 +15,12 @@ public sealed class FifoAutoReleasingSemaphoreSlim
     /// <summary>
     ///     Initializes a new instance of the <see cref="FifoAutoReleasingSemaphoreSlim" /> class.
     /// </summary>
-    /// <param name="initialCount">The initial count of the semaphore</param>
-    /// <param name="maxCount">The max count of the semaphore</param>
+    /// <param name="initialCount">
+    ///     The initial count of the semaphore
+    /// </param>
+    /// <param name="maxCount">
+    ///     The max count of the semaphore
+    /// </param>
     public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new FifoSemaphoreSlim(initialCount, maxCount);
 
     /// <summary>
@@ -34,9 +38,8 @@ public sealed class FifoAutoReleasingSemaphoreSlim
     }
 
     /// <summary>
-    ///     The same as <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim.WaitAsync()" />.
-    ///     Returns a disposable object that when disposed will release the internal
-    ///     <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.
+    ///     The same as <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim.WaitAsync()" />. Returns a disposable object
+    ///     that when disposed will release the internal <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.
     /// </summary>
     public async ValueTask<IPolyDisposable> WaitAsync()
     {
@@ -48,11 +51,12 @@ public sealed class FifoAutoReleasingSemaphoreSlim
     /// <summary>
     ///     Asynchronously waits to enter the semaphore with a timeout.
     /// </summary>
-    /// <param name="timeout">The amount of time to wait before giving up</param>
+    /// <param name="timeout">
+    ///     The amount of time to wait before giving up
+    /// </param>
     /// <returns>
     ///     If we enter the semaphore before the timeout elapses, this returns a disposable object that when disposed will
-    ///     release the
-    ///     semaphore, otherwise null
+    ///     release the semaphore, otherwise null
     /// </returns>
     public async ValueTask<IPolyDisposable?> WaitAsync(TimeSpan timeout)
     {
@@ -65,12 +69,21 @@ public sealed class FifoAutoReleasingSemaphoreSlim
     /// <summary>
     ///     Asynchronously waits to enter the semaphore with a timeout.
     /// </summary>
-    /// <param name="timeout">The amount of time to wait before giving up</param>
-    /// <param name="subscriptionTask">
-    ///     A task that, if the semaphore is acquired, will contain a disposable subscription to
-    ///     that semaphore
+    /// <param name="timeout">
+    ///     The amount of time to wait before giving up
     /// </param>
-    /// <returns><c>true</c> if the semaphore was successfully acquired before the timeout, otherwise <c>false</c></returns>
+    /// <param name="subscriptionTask">
+    ///     A task that, if the semaphore is acquired, will contain a disposable subscription to that semaphore
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the semaphore was successfully acquired before the timeout, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public ValueTask<bool> WaitAsync(TimeSpan timeout, out Task<IPolyDisposable> subscriptionTask)
     {
         var tcs = new TaskCompletionSource<IPolyDisposable>(TaskCreationOptions.RunContinuationsAsynchronously);

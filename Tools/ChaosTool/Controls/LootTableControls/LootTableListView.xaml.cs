@@ -11,7 +11,7 @@ namespace ChaosTool.Controls.LootTableControls;
 
 public sealed class LootTableListView : ViewModelListView
 {
-    public LootTableListView() { InitializeComponent(); }
+    public LootTableListView() => InitializeComponent();
 
     /// <inheritdoc />
 

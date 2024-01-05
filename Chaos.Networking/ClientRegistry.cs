@@ -5,7 +5,8 @@ namespace Chaos.Networking;
 /// <summary>
 ///     A registry that facilitates discovery of clients
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">
+/// </typeparam>
 public class ClientRegistry<T> : IClientRegistry<T> where T: ISocketClient
 {
     /// <summary>

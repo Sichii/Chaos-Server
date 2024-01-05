@@ -18,6 +18,8 @@ public interface IIntervalTimer : IDeltaUpdatable
     /// <summary>
     ///     Sets the origin of the timer, allowing you to base your interval off a specific timer
     /// </summary>
-    /// <param name="origin">The time to emulate that the timer has originally started</param>
+    /// <param name="origin">
+    ///     The time to emulate that the timer has originally started
+    /// </param>
     void SetOrigin(DateTime origin);
 }

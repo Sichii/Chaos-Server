@@ -38,7 +38,8 @@ public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, Di
             Color = obj.DialogSource.Color,
             Text = obj.Text,
             TextBoxLength = obj.TextBoxLength,
-            TextBoxPrompt = obj.TextBoxPrompt
+            TextBoxPrompt = obj.TextBoxPrompt,
+            ShouldIllustrate = true
         };
 
     /// <inheritdoc />

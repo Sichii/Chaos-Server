@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.ServerTable" />
 ///     packet
 /// </summary>
-public sealed record ServerTableArgs : ISendArgs
+public sealed record ServerTableArgs : IPacketSerializable
 {
     /// <summary>
     ///     The raw server table data

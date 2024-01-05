@@ -31,12 +31,24 @@ public sealed record Redirect : IRedirect
     /// <summary>
     ///     Creates a new <see cref="Redirect" />
     /// </summary>
-    /// <param name="id">The id of the redirect</param>
-    /// <param name="serverInfo">Info about the server being redirected to</param>
-    /// <param name="type">The type of redirect</param>
-    /// <param name="key">The encryption key to use when joining to the redirected server</param>
-    /// <param name="seed">The encryption seed to use when joining to the redirected server</param>
-    /// <param name="name">The name associated with the redirect</param>
+    /// <param name="id">
+    ///     The id of the redirect
+    /// </param>
+    /// <param name="serverInfo">
+    ///     Info about the server being redirected to
+    /// </param>
+    /// <param name="type">
+    ///     The type of redirect
+    /// </param>
+    /// <param name="key">
+    ///     The encryption key to use when joining to the redirected server
+    /// </param>
+    /// <param name="seed">
+    ///     The encryption seed to use when joining to the redirected server
+    /// </param>
+    /// <param name="name">
+    ///     The name associated with the redirect
+    /// </param>
     public Redirect(
         uint id,
         IConnectionInfo serverInfo,

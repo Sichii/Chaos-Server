@@ -7,6 +7,15 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Pickup" />
 ///     packet
 /// </summary>
-/// <param name="DestinationSlot">The slot the client is trying to pick up and item into</param>
-/// <param name="SourcePoint">The point from which the client is trying to pick up an item from</param>
-public sealed record PickupArgs(byte DestinationSlot, IPoint SourcePoint) : IReceiveArgs;
+public sealed record PickupArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The slot the client is trying to pick up and item into
+    /// </summary>
+    public required byte DestinationSlot { get; set; }
+
+    /// <summary>
+    ///     The point from which the client is trying to pick up an item from
+    /// </summary>
+    public required IPoint SourcePoint { get; set; }
+}

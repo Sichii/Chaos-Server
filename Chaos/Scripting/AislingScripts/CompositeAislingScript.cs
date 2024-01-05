@@ -28,7 +28,8 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    /// <param name="entity"></param>
+    /// <param name="entity">
+    /// </param>
     public virtual bool CanSee(VisibleEntity entity)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))

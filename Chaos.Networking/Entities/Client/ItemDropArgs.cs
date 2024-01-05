@@ -7,7 +7,20 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ItemDrop" />
 ///     packet
 /// </summary>
-/// <param name="SourceSlot">The slot of the item the client is trying to drop</param>
-/// <param name="DestinationPoint">The point the client is trying to drop the item on</param>
-/// <param name="Count">The amount of the item the client is trying to drop</param>
-public sealed record ItemDropArgs(byte SourceSlot, IPoint DestinationPoint, int Count) : IReceiveArgs;
+public sealed record ItemDropArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The amount of the item the client is trying to drop
+    /// </summary>
+    public required int Count { get; set; }
+
+    /// <summary>
+    ///     The point the client is trying to drop the item on
+    /// </summary>
+    public required IPoint DestinationPoint { get; set; }
+
+    /// <summary>
+    ///     The slot of the item the client is trying to drop
+    /// </summary>
+    public required byte SourceSlot { get; set; }
+}

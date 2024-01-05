@@ -49,7 +49,7 @@ public interface IWorldClient : ISocketClient
     void SendExchangeRequestAmount(byte slot);
     void SendExchangeSetGold(bool rightSide, int amount);
     void SendExchangeStart(Aisling fromAisling);
-    void SendForcedClientPacket(ref ClientPacket clientPacket);
+    void SendForcedClientPacket(ref Packet packet);
     void SendGroupRequest(GroupRequestType groupRequestType, string fromName);
     void SendHealthBar(Creature creature, byte? sound = null);
     void SendLightLevel(LightLevel lightLevel);

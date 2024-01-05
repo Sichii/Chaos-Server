@@ -13,14 +13,17 @@ public sealed class AutoReleasingSemaphoreSlim
     /// <summary>
     ///     Initializes a new instance of the <see cref="AutoReleasingSemaphoreSlim" /> class.
     /// </summary>
-    /// <param name="initialCount">The initial count of the semaphore</param>
-    /// <param name="maxCount">The max count of the semaphore</param>
+    /// <param name="initialCount">
+    ///     The initial count of the semaphore
+    /// </param>
+    /// <param name="maxCount">
+    ///     The max count of the semaphore
+    /// </param>
     public AutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new SemaphoreSlim(initialCount, maxCount);
 
     /// <summary>
-    ///     The same as <see cref="System.Threading.SemaphoreSlim.WaitAsync()" />.
-    ///     Returns a disposable object that when disposed will release the internal
-    ///     <see cref="System.Threading.SemaphoreSlim" />.
+    ///     The same as <see cref="System.Threading.SemaphoreSlim.WaitAsync()" />. Returns a disposable object that when
+    ///     disposed will release the internal <see cref="System.Threading.SemaphoreSlim" />.
     /// </summary>
     public async Task<IAsyncDisposable> WaitAsync()
     {

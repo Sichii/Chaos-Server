@@ -6,6 +6,15 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SynchronizeTicks" /> packet
 /// </summary>
-/// <param name="ServerTicks">The ticks the client thinks the server is using</param>
-/// <param name="ClientTicks">The ticks the client is using</param>
-public sealed record SynchronizeTicksArgs(uint ServerTicks, uint ClientTicks) : IReceiveArgs;
+public sealed record SynchronizeTicksArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The ticks the client is using
+    /// </summary>
+    public required uint ClientTicks { get; set; }
+
+    /// <summary>
+    ///     The ticks the client thinks the server is using
+    /// </summary>
+    public required uint ServerTicks { get; set; }
+}

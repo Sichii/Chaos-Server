@@ -78,7 +78,7 @@ public class BoardMapperProfile(
             Author = obj.Author,
             Subject = obj.Subject,
             Message = obj.Message,
-            CreationDate = obj.CreationDate,
+            CreationDate = new DateOnly(1, obj.CreationDate.Month, obj.CreationDate.Day),
             IsHighlighted = obj.IsHighlighted
         };
 

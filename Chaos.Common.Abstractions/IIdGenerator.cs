@@ -5,7 +5,9 @@ namespace Chaos.Common.Abstractions;
 /// <summary>
 ///     A generic class for generating unique identifiers.
 /// </summary>
-/// <typeparam name="T">The type of the id</typeparam>
+/// <typeparam name="T">
+///     The type of the id
+/// </typeparam>
 public interface IIdGenerator<out T> where T: INumber<T>
 {
     /// <summary>

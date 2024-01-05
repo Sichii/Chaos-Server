@@ -10,25 +10,34 @@ namespace Chaos.Schemas.Templates.Abstractions;
 public abstract record PanelEntityTemplateSchema
 {
     /// <summary>
-    ///     Defaults to null<br />
+    ///     The ability level required to use this entity
+    /// </summary>
+    public int AbilityLevel { get; set; }
+
+    /// <summary>
+    ///     Defaults to null
+    ///     <br />
     ///     If specified, this is the advanced class required to use this entity
     /// </summary>
     public AdvClass? AdvClass { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified, this is the base class required to use this entity
     /// </summary>
     public BaseClass? Class { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified, any on-use effect of this object will use this cooldown
     /// </summary>
     public int? CooldownMs { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     A brief description of this entity
     /// </summary>
     public string? Description { get; set; }
@@ -61,7 +70,8 @@ public abstract record PanelEntityTemplateSchema
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A collection of key-value pairs of key-value pairs<br />
+    ///     A collection of key-value pairs of key-value pairs
+    ///     <br />
     ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
     ///     propertyName-Value pairs
     /// </summary>

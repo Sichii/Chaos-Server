@@ -29,9 +29,15 @@ public sealed class Crypto : ICrypto
     /// <summary>
     ///     Creates a new instance of the Crypto class
     /// </summary>
-    /// <param name="seed">The seed used to salt to key</param>
-    /// <param name="key">The encryption key</param>
-    /// <param name="keySaltSeed">The seed used to generate key salts</param>
+    /// <param name="seed">
+    ///     The seed used to salt to key
+    /// </param>
+    /// <param name="key">
+    ///     The encryption key
+    /// </param>
+    /// <param name="keySaltSeed">
+    ///     The seed used to generate key salts
+    /// </param>
     public Crypto(byte seed, byte[] key, string? keySaltSeed = null)
     {
         Seed = seed;

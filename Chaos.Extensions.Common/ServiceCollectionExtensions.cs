@@ -13,9 +13,15 @@ public static class ServiceCollectionExtensions
     /// <summary>
     ///     Adds a simple factory wrapper for <typeparamref name="T" /> to the service collection.
     /// </summary>
-    /// <param name="services">This service collection</param>
-    /// <param name="argTypes">A collection of types required to construct an instance</param>
-    /// <typeparam name="T">The type to create</typeparam>
+    /// <param name="services">
+    ///     This service collection
+    /// </param>
+    /// <param name="argTypes">
+    ///     A collection of types required to construct an instance
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type to create
+    /// </typeparam>
     [ExcludeFromCodeCoverage(Justification = "Nothing to test, just a shorthand")]
     public static IServiceCollection AddSimpleFactory<T>(this IServiceCollection services, params Type[] argTypes) where T: class
     {
@@ -28,10 +34,18 @@ public static class ServiceCollectionExtensions
     /// <summary>
     ///     Adds a simple factory wrapper for <typeparamref name="T" /> to the service collection.
     /// </summary>
-    /// <param name="services">This service collection</param>
-    /// <param name="argTypes">A collection of types required to construct an instance</param>
-    /// <typeparam name="T">The type of the service to return</typeparam>
-    /// <typeparam name="TImpl">The implementation type of the service to create</typeparam>
+    /// <param name="services">
+    ///     This service collection
+    /// </param>
+    /// <param name="argTypes">
+    ///     A collection of types required to construct an instance
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of the service to return
+    /// </typeparam>
+    /// <typeparam name="TImpl">
+    ///     The implementation type of the service to create
+    /// </typeparam>
     [ExcludeFromCodeCoverage(Justification = "Nothing to test, just a shorthand")]
     public static IServiceCollection AddSimpleFactory<T, TImpl>(this IServiceCollection services, params Type[] argTypes) where T: class
     {

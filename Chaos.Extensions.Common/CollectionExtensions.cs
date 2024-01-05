@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -8,7 +10,9 @@ public static class CollectionExtensions
     /// <summary>
     ///     Adds multiple items to a collection.
     /// </summary>
-    /// <exception cref="ArgumentNullException">collection is null</exception>
+    /// <exception cref="ArgumentNullException">
+    ///     collection is null
+    /// </exception>
     public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> items)
     {
         ArgumentNullException.ThrowIfNull(collection);
@@ -20,13 +24,21 @@ public static class CollectionExtensions
     /// <summary>
     ///     Performs a binary search on the specified collection
     /// </summary>
-    /// <param name="collection">The collection the perform the search on</param>
-    /// <param name="item">The item to search for</param>
-    /// <param name="comparer">A comparer used to compare items</param>
-    /// <typeparam name="T">The underlying type of the collection and comparer</typeparam>
+    /// <param name="collection">
+    ///     The collection the perform the search on
+    /// </param>
+    /// <param name="item">
+    ///     The item to search for
+    /// </param>
+    /// <param name="comparer">
+    ///     A comparer used to compare items
+    /// </param>
+    /// <typeparam name="T">
+    ///     The underlying type of the collection and comparer
+    /// </typeparam>
     /// <returns>
-    ///     The index of the item if found, otherwise the bitwise complement of the next largest item.
-    ///     If no larger item is found, this will return the bitwise complement of the collection count
+    ///     The index of the item if found, otherwise the bitwise complement of the next largest item. If no larger item is
+    ///     found, this will return the bitwise complement of the collection count
     /// </returns>
     public static int BinarySearch<T>(this IList<T> collection, T item, IComparer<T> comparer)
     {
@@ -58,12 +70,47 @@ public static class CollectionExtensions
     }
 
     /// <summary>
+    ///     Checks if a collection is null or empty.
+    /// </summary>
+    /// <param name="collection">
+    ///     The enumerable to check
+    /// </param>
+    /// <typeparam name="T">
+    ///     The generic type of the enumerable
+    /// </typeparam>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the sequence is null or empty, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this ICollection<T>? collection)
+        => (collection == null) || (collection.Count == 0);
+
+    /// <summary>
     ///     Replaces an item in a collection with a new item
     /// </summary>
-    /// <param name="collection">This collection</param>
-    /// <param name="item">The item to replace</param>
-    /// <param name="newItem">The new item that replaces the old item</param>
-    /// <returns><c>true</c> if a matching item was found and replaced, otherwise <c>false</c></returns>
+    /// <param name="collection">
+    ///     This collection
+    /// </param>
+    /// <param name="item">
+    ///     The item to replace
+    /// </param>
+    /// <param name="newItem">
+    ///     The new item that replaces the old item
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a matching item was found and replaced, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public static bool Replace<T>(this IList<T> collection, T item, T newItem)
     {
         var index = collection.IndexOf(item);
@@ -79,10 +126,24 @@ public static class CollectionExtensions
     /// <summary>
     ///     Replaces an item in a collection with a new item
     /// </summary>
-    /// <param name="collection">This collection</param>
-    /// <param name="predicate">A predicate used to match to the item to be replaced</param>
-    /// <param name="newItem">The new item that replaces the old item</param>
-    /// <returns><c>true</c> if a matching item was found and replaced, otherwise <c>false</c></returns>
+    /// <param name="collection">
+    ///     This collection
+    /// </param>
+    /// <param name="predicate">
+    ///     A predicate used to match to the item to be replaced
+    /// </param>
+    /// <param name="newItem">
+    ///     The new item that replaces the old item
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a matching item was found and replaced, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public static bool ReplaceBy<T>(this IList<T> collection, Func<T, bool> predicate, T newItem)
     {
         var index = -1;

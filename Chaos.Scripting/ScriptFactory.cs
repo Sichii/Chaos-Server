@@ -11,17 +11,18 @@ namespace Chaos.Scripting;
 /// <summary>
 ///     A factory object that generates <see cref="Chaos.Scripting.Abstractions.IScript" />s
 /// </summary>
-/// <typeparam name="TScript">A type of script</typeparam>
-/// <typeparam name="TScripted">A type of scripted object</typeparam>
+/// <typeparam name="TScript">
+///     A type of script
+/// </typeparam>
+/// <typeparam name="TScripted">
+///     A type of scripted object
+/// </typeparam>
 /// <remarks>
 ///     This object requires that any given <see cref="Chaos.Scripting.Abstractions.IScript" /> type has an implemented
-///     <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> type.
-///     This script factory will utilize that composite script to compose multiple scripts into one. The script returned by
-///     this factory will
-///     always be the <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> implementation, and it will
-///     contain all of scripts
-///     generated from the keys that
-///     are supplied.
+///     <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> type. This script factory will utilize that
+///     composite script to compose multiple scripts into one. The script returned by this factory will always be the
+///     <see cref="Chaos.Scripting.Abstractions.ICompositeScript{TScript}" /> implementation, and it will contain all of
+///     scripts generated from the keys that are supplied.
 /// </remarks>
 public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, TScripted> where TScript: IScript
                                                                                            where TScripted: IScripted
@@ -35,8 +36,12 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ScriptFactory{TScript, TScripted}" /> class.
     /// </summary>
-    /// <param name="logger">The logger instance to use for this class</param>
-    /// <param name="serviceProvider">The application si container</param>
+    /// <param name="logger">
+    ///     The logger instance to use for this class
+    /// </param>
+    /// <param name="serviceProvider">
+    ///     The application si container
+    /// </param>
     public ScriptFactory(ILogger<ScriptFactory<TScript, TScripted>> logger, IServiceProvider serviceProvider)
     {
         Logger = logger;

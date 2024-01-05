@@ -14,12 +14,16 @@ namespace Chaos.Storage;
 
 /// <summary>
 ///     An <see cref="Chaos.Storage.Abstractions.ISimpleCache{TResult}" /> that loads data from a file and caches it. The
-///     data has a
-///     configurable expiration.
+///     data has a configurable expiration.
 /// </summary>
-/// <typeparam name="T">The type of object stored in the cache</typeparam>
-/// <typeparam name="TSchema">The type of object the files is initially deserialized into</typeparam>
-/// <typeparam name="TOptions"></typeparam>
+/// <typeparam name="T">
+///     The type of object stored in the cache
+/// </typeparam>
+/// <typeparam name="TSchema">
+///     The type of object the files is initially deserialized into
+/// </typeparam>
+/// <typeparam name="TOptions">
+/// </typeparam>
 public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSchema: class
                                                                        where TOptions: class, IExpiringFileCacheOptions
 {
@@ -166,19 +170,29 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <summary>
     ///     Constructs a cache key for the specified object type.
     /// </summary>
-    /// <param name="key">The key to be used for the cache entry.</param>
-    /// <returns>A constructed cache key.</returns>
+    /// <param name="key">
+    ///     The key to be used for the cache entry.
+    /// </param>
+    /// <returns>
+    ///     A constructed cache key.
+    /// </returns>
     protected virtual string ConstructKeyForType(string key) => KeyPrefix + key.ToLowerInvariant();
 
     /// <summary>
     ///     Searches the configured directory for an object matching the configured parameters that correlates to the provided
     ///     key
     /// </summary>
-    /// <param name="entry">The cache entry object</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    /// <exception cref="FileNotFoundException"></exception>
-    /// <exception cref="DirectoryNotFoundException"></exception>
+    /// <param name="entry">
+    ///     The cache entry object
+    /// </param>
+    /// <returns>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    /// <exception cref="FileNotFoundException">
+    /// </exception>
+    /// <exception cref="DirectoryNotFoundException">
+    /// </exception>
     protected virtual T CreateFromEntry(ICacheEntry entry)
     {
         var key = entry.Key.ToString();
@@ -207,15 +221,20 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <summary>
     ///     Deconstructs a cache key for the specified object type.
     /// </summary>
-    /// <param name="key">The key to deconstruct</param>
+    /// <param name="key">
+    ///     The key to deconstruct
+    /// </param>
     protected virtual string DeconstructKeyForType(string key) => key.Replace(KeyPrefix, string.Empty, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Loads the paths for the configured directory and returns it
     /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <param name="key">
+    /// </param>
+    /// <returns>
+    /// </returns>
+    /// <exception cref="Exception">
+    /// </exception>
     protected virtual string GetPathForKey(string key)
     {
         var loadPath = Paths.FirstOrDefault(
@@ -236,8 +255,10 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <summary>
     ///     Loads all potential paths from the configured directory
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <returns>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
     protected List<string> LoadPaths()
     {
         var searchPattern = Options.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
@@ -259,10 +280,14 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <summary>
     ///     Callback for when an entry is removed from the cache
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    /// <param name="reason"></param>
-    /// <param name="state"></param>
+    /// <param name="key">
+    /// </param>
+    /// <param name="value">
+    /// </param>
+    /// <param name="reason">
+    /// </param>
+    /// <param name="state">
+    /// </param>
     protected virtual void RemoveValueCallback(
         object key,
         object? value,

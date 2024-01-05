@@ -10,9 +10,15 @@ public static class FileEx
     /// <summary>
     ///     Writes all text to a file. Corruption will not occur if the write fails.
     /// </summary>
-    /// <param name="path">The path to write the text to</param>
-    /// <param name="text">The text to write</param>
-    /// <param name="createBackup">Whether or not to take a backup if a file already exists at the given path</param>
+    /// <param name="path">
+    ///     The path to write the text to
+    /// </param>
+    /// <param name="text">
+    ///     The text to write
+    /// </param>
+    /// <param name="createBackup">
+    ///     Whether or not to take a backup if a file already exists at the given path
+    /// </param>
     public static void SafeWriteAllText(string path, string text, bool createBackup = false)
     {
         var tempPath = path + ".temp";
@@ -30,9 +36,15 @@ public static class FileEx
     /// <summary>
     ///     Asynchronously writes all text to a file. Corruption will not occur if the write fails.
     /// </summary>
-    /// <param name="path">The path to write the text to</param>
-    /// <param name="text">The text to write</param>
-    /// <param name="createBackup">Whether or not to take a backup if a file already exists at the given path</param>
+    /// <param name="path">
+    ///     The path to write the text to
+    /// </param>
+    /// <param name="text">
+    ///     The text to write
+    /// </param>
+    /// <param name="createBackup">
+    ///     Whether or not to take a backup if a file already exists at the given path
+    /// </param>
     public static async Task SafeWriteAllTextAsync(string path, string text, bool createBackup = false)
     {
         var tempPath = path + ".temp";

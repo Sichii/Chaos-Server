@@ -18,48 +18,84 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     /// <summary>
     ///     Determines equality between a <see cref="Point" /> and any implementation of <see cref="IPoint" />
     /// </summary>
-    /// <param name="left">A concrete <see cref="Point" /></param>
-    /// <param name="right">Any implementation of <see cref="IPoint" /></param>
-    /// <returns><c>true</c> if both objects are on the same coordinates, otherwise <c>false</c></returns>
+    /// <param name="left">
+    ///     A concrete <see cref="Point" />
+    /// </param>
+    /// <param name="right">
+    ///     Any implementation of <see cref="IPoint" />
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if both objects are on the same coordinates, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public static bool operator ==(Point left, IPoint right) => left.Equals(right);
 
     /// <summary>
     ///     Implicitly converts a byte tuple to a <see cref="Point" />
     /// </summary>
-    /// <param name="tuple">A tuple of two bytes</param>
+    /// <param name="tuple">
+    ///     A tuple of two bytes
+    /// </param>
     public static implicit operator Point((byte X, byte Y) tuple) => new(tuple.X, tuple.Y);
 
     /// <summary>
     ///     Implicity converts a ushort tuple to a <see cref="Point" />
     /// </summary>
-    /// <param name="tuple">A tuple of two ushorts</param>
+    /// <param name="tuple">
+    ///     A tuple of two ushorts
+    /// </param>
     public static implicit operator Point((ushort X, ushort Y) tuple) => new(tuple.X, tuple.Y);
 
     /// <summary>
     ///     Implicitly converts a short tuple to a <see cref="Point" />
     /// </summary>
-    /// <param name="tuple">A tuple of two shorts</param>
+    /// <param name="tuple">
+    ///     A tuple of two shorts
+    /// </param>
     public static implicit operator Point((short X, short Y) tuple) => new(tuple.X, tuple.Y);
 
     /// <summary>
     ///     Implicitly converts an int tuple to a <see cref="Point" />
     /// </summary>
-    /// <param name="tuple">A tuple of two ints</param>
+    /// <param name="tuple">
+    ///     A tuple of two ints
+    /// </param>
     public static implicit operator Point((int X, int Y) tuple) => new(tuple.X, tuple.Y);
 
     /// <summary>
     ///     Determines inequality between a <see cref="Point" /> and any implementation of <see cref="IPoint" />
     /// </summary>
-    /// <param name="left">A concrete <see cref="Point" /></param>
-    /// <param name="right">Any implementation of <see cref="IPoint" /></param>
-    /// <returns><c>true</c> if both objects are on different coordinates, otherwise <c>false</c></returns>
+    /// <param name="left">
+    ///     A concrete <see cref="Point" />
+    /// </param>
+    /// <param name="right">
+    ///     Any implementation of <see cref="IPoint" />
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if both objects are on different coordinates, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public static bool operator !=(Point left, IPoint right) => !left.Equals(right);
 
     /// <summary>
     ///     Creates a new <see cref="Point" /> from an X and Y coordinate
     /// </summary>
-    /// <param name="x">An X coordinate</param>
-    /// <param name="y">A Y coordinate</param>
+    /// <param name="x">
+    ///     An X coordinate
+    /// </param>
+    /// <param name="y">
+    ///     A Y coordinate
+    /// </param>
     public Point(int x, int y)
     {
         X = x;
@@ -69,7 +105,9 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     /// <summary>
     ///     Creates a new <see cref="Point" /> from an existing <see cref="IPoint" />
     /// </summary>
-    /// <param name="point">Any implementation of <see cref="IPoint" /></param>
+    /// <param name="point">
+    ///     Any implementation of <see cref="IPoint" />
+    /// </param>
     private Point(IPoint point)
     {
         X = point.X;
@@ -94,7 +132,9 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     /// <summary>
     ///     Returns an immutable <see cref="Point" /> from an existing <see cref="IPoint" />
     /// </summary>
-    /// <param name="point">Any implementation of <see cref="IPoint" /></param>
+    /// <param name="point">
+    ///     Any implementation of <see cref="IPoint" />
+    /// </param>
     public static Point From(IPoint point)
     {
         if (point is Point pt)
@@ -112,9 +152,14 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     /// <summary>
     ///     Tries to parse a string into a <see cref="Point" />
     /// </summary>
-    /// <param name="str">The string to parse</param>
-    /// <param name="point">The output point from parsing the given string</param>
-    /// <returns></returns>
+    /// <param name="str">
+    ///     The string to parse
+    /// </param>
+    /// <param name="point">
+    ///     The output point from parsing the given string
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool TryParse(string str, out Point point)
     {
         point = new Point();

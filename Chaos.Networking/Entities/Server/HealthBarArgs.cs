@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.HealthBar" />
 ///     packet
 /// </summary>
-public sealed record HealthBarArgs : ISendArgs
+public sealed record HealthBarArgs : IPacketSerializable
 {
     /// <summary>
     ///     The percent of health to display in the bar

@@ -6,6 +6,15 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.HeartBeat" />
 ///     packet
 /// </summary>
-/// <param name="First">The first byte (the client expects these bytes in reverse for it's response)</param>
-/// <param name="Second">The second byte (the client expects these bytes in reverse for it's response)</param>
-public sealed record HeartBeatArgs(byte First, byte Second) : IReceiveArgs;
+public sealed record HeartBeatArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The first byte (the client expects these bytes in reverse for it's response)
+    /// </summary>
+    public required byte First { get; set; }
+
+    /// <summary>
+    ///     The second byte (the client expects these bytes in reverse for it's response)
+    /// </summary>
+    public required byte Second { get; set; }
+}

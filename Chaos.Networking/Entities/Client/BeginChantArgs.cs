@@ -6,5 +6,10 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.BeginChant" />
 ///     packet
 /// </summary>
-/// <param name="CastLineCount">The number of cast lines for the spell being chanted</param>
-public sealed record BeginChantArgs(byte CastLineCount) : IReceiveArgs;
+public sealed record BeginChantArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The number of cast lines for the spell being chanted
+    /// </summary>
+    public required byte CastLineCount { get; set; }
+}

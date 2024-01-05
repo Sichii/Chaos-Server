@@ -7,17 +7,17 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Profile" />
 ///     packet
 /// </summary>
-public sealed record ProfileArgs : ISendArgs
+public sealed record ProfileArgs : IPacketSerializable
 {
-    /// <summary>
-    ///     The character's secondary class
-    /// </summary>
-    public AdvClass AdvClass { get; set; }
-
     /// <summary>
     ///     The character's primary class
     /// </summary>
     public BaseClass BaseClass { get; set; }
+
+    /// <summary>
+    ///     The value to display in the client for the character's class
+    /// </summary>
+    public string DisplayClass { get; set; } = null!;
 
     /// <summary>
     ///     The character's equipment, by slot
@@ -47,7 +47,7 @@ public sealed record ProfileArgs : ISendArgs
     /// <summary>
     ///     The character's legend marks
     /// </summary>
-    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = new List<LegendMarkInfo>();
+    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = Array.Empty<LegendMarkInfo>();
 
     /// <summary>
     ///     The character's name

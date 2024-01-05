@@ -24,7 +24,9 @@ public sealed class Pathfinder : IPathfinder
     /// <summary>
     ///     Creates a new instance of <see cref="Pathfinder" />
     /// </summary>
-    /// <param name="gridDetails">Details of a pathfinding grid</param>
+    /// <param name="gridDetails">
+    ///     Details of a pathfinding grid
+    /// </param>
     public Pathfinder(IGridDetails gridDetails)
     {
         Width = gridDetails.Width;
@@ -61,13 +63,20 @@ public sealed class Pathfinder : IPathfinder
     /// <summary>
     ///     Finds a path from start to end, returning the next direction to walk to get there
     /// </summary>
-    /// <param name="start">The starting point</param>
-    /// <param name="end">Where to find a path to</param>
-    /// <param name="ignoreWalls">Whether or not to ignore walls</param>
-    /// <param name="blocked">A collection of extra unwalkable points such as creatures</param>
+    /// <param name="start">
+    ///     The starting point
+    /// </param>
+    /// <param name="end">
+    ///     Where to find a path to
+    /// </param>
+    /// <param name="ignoreWalls">
+    ///     Whether or not to ignore walls
+    /// </param>
+    /// <param name="blocked">
+    ///     A collection of extra unwalkable points such as creatures
+    /// </param>
     /// <param name="limitRadius">
-    ///     Specify a max radius to use for path calculation, this can help with performance by limiting
-    ///     node discovery
+    ///     Specify a max radius to use for path calculation, this can help with performance by limiting node discovery
     /// </param>
     public Direction Pathfind(
         IPoint start,

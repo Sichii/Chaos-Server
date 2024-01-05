@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.LightLevel" />
 ///     packet
 /// </summary>
-public sealed record LightLevelArgs : ISendArgs
+public sealed record LightLevelArgs : IPacketSerializable
 {
     /// <summary>
     ///     The light level to be used for the current map. This is basically like time of day.

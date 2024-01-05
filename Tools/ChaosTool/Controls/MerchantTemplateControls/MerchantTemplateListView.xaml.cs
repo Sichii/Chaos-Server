@@ -11,7 +11,7 @@ namespace ChaosTool.Controls.MerchantTemplateControls;
 
 public sealed class MerchantTemplateListView : ViewModelListView
 {
-    public MerchantTemplateListView() { InitializeComponent(); }
+    public MerchantTemplateListView() => InitializeComponent();
 
     /// <inheritdoc />
 

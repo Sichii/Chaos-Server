@@ -7,8 +7,7 @@ namespace Chaos.Collections.Synchronized;
 
 /// <summary>
 ///     Wraps a <see cref="System.Collections.Generic.HashSet{T}" />, entering a lock for each of it's methods. Enumeration
-///     will occur on a
-///     snapshot.
+///     will occur on a snapshot.
 /// </summary>
 /// <inheritdoc cref="System.Collections.Generic.HashSet{T}" />
 public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>

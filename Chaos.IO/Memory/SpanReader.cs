@@ -41,9 +41,15 @@ public ref struct SpanReader
     /// <summary>
     ///     Initializes a new instance of the <see cref="SpanReader" /> struct.
     /// </summary>
-    /// <param name="encoding">The encoding to use for string operations.</param>
-    /// <param name="buffer">The span of bytes to read from.</param>
-    /// <param name="endianness">The endianness of the data (default is BigEndian).</param>
+    /// <param name="encoding">
+    ///     The encoding to use for string operations.
+    /// </param>
+    /// <param name="buffer">
+    ///     The span of bytes to read from.
+    /// </param>
+    /// <param name="endianness">
+    ///     The endianness of the data (default is BigEndian).
+    /// </param>
     public SpanReader(Encoding encoding, in Span<byte> buffer, Endianness endianness = Endianness.BigEndian)
     {
         Buffer = buffer;
@@ -194,8 +200,7 @@ public ref struct SpanReader
 
     /// <summary>
     ///     Reads a string separated ending with a null terminator from the current position in the Span, or the rest of the
-    ///     Span if no null
-    ///     terminator is found.
+    ///     Span if no null terminator is found.
     /// </summary>
     public string ReadString()
     {

@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.PublicMessage" /> packet
 /// </summary>
-public sealed record PublicMessageArgs : ISendArgs
+public sealed record PublicMessageArgs : IPacketSerializable
 {
     /// <summary>
     ///     The message to be displayed

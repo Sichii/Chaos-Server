@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.HeartBeatResponse" /> packet
 /// </summary>
-public sealed record HeartBeatResponseArgs : ISendArgs
+public sealed record HeartBeatResponseArgs : IPacketSerializable
 {
     /// <summary>
     ///     The first byte of the heartbeat response. This should be the secone byte of the heartbeat request

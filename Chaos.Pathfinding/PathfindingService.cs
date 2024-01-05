@@ -18,7 +18,9 @@ public sealed class PathfindingService : IPathfindingService
     /// <summary>
     ///     Creates a new instance of <see cref="PathfindingService" />
     /// </summary>
-    /// <param name="memoryCache">A cache to store pathfinding grids in</param>
+    /// <param name="memoryCache">
+    ///     A cache to store pathfinding grids in
+    /// </param>
     public PathfindingService(IMemoryCache memoryCache)
     {
         GridDetails = new ConcurrentDictionary<string, IGridDetails>(StringComparer.OrdinalIgnoreCase);

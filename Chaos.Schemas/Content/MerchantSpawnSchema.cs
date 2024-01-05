@@ -16,8 +16,9 @@ public sealed record MerchantSpawnSchema
     public ICollection<IPoint> BlackList { get; set; } = Array.Empty<IPoint>();
 
     /// <summary>
-    ///     Default to null, causing merchants to spawn facing random directions<br />If specified, will spawn merchants facing
-    ///     in the specified direction
+    ///     Default to null, causing merchants to spawn facing random directions
+    ///     <br />
+    ///     If specified, will spawn merchants facing in the specified direction
     /// </summary>
     public Direction? Direction { get; set; }
 
@@ -33,7 +34,9 @@ public sealed record MerchantSpawnSchema
     public string MerchantTemplateKey { get; set; } = null!;
 
     /// <summary>
-    ///     Default null<br />If specified, the merchant will not path outside of these bounds
+    ///     Default null
+    ///     <br />
+    ///     If specified, the merchant will not path outside of these bounds
     /// </summary>
     public Rectangle? PathingBounds { get; set; }
 

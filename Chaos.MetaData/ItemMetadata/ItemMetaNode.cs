@@ -7,7 +7,8 @@ namespace Chaos.MetaData.ItemMetadata;
 /// <summary>
 ///     A node that stores metadata about an item
 /// </summary>
-/// <param name="Name"></param>
+/// <param name="Name">
+/// </param>
 public sealed record ItemMetaNode(string Name) : IMetaNode
 {
     /// <summary>

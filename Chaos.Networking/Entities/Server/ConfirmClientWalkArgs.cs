@@ -8,7 +8,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.ConfirmClientWalk" /> packet
 /// </summary>
-public sealed record ConfirmClientWalkArgs : ISendArgs
+public sealed record ConfirmClientWalkArgs : IPacketSerializable
 {
     /// <summary>
     ///     The direction for the client to walk

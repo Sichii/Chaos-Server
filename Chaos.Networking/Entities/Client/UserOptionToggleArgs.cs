@@ -7,5 +7,10 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.UserOptionToggle" /> packet
 /// </summary>
-/// <param name="UserOption">The option the client is trying to toggle</param>
-public sealed record UserOptionToggleArgs(UserOption UserOption) : IReceiveArgs;
+public sealed record UserOptionToggleArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The option the client is trying to toggle
+    /// </summary>
+    public required UserOption UserOption { get; set; }
+}

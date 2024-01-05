@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.RemoveObject" />
 ///     packet
 /// </summary>
-public sealed record RemoveObjectArgs : ISendArgs
+public sealed record RemoveObjectArgs : IPacketSerializable
 {
     /// <summary>
     ///     The id of the object to be removed

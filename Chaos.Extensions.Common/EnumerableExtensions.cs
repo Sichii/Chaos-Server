@@ -16,19 +16,17 @@ public static class EnumerableExtensions
         => enumerable.Contains(str, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    ///     Checks if a sequence is null or empty.
-    /// </summary>
-    /// <param name="enumerable">The enumerable to check</param>
-    /// <typeparam name="T">The generic type of the enumerable</typeparam>
-    /// <returns><c>true</c> if the sequence is null or empty, otherwise <c>false</c></returns>
-    public static bool IsNullOrEmpty<T>(this IEnumerable<T>? enumerable) => (enumerable == null) || !enumerable.Any();
-
-    /// <summary>
     ///     Finds the next highest number in a sequence from a given value
     /// </summary>
-    /// <param name="enumerable">The sequence to search</param>
-    /// <param name="seed">The starting value</param>
-    /// <typeparam name="T">A numeric type</typeparam>
+    /// <param name="enumerable">
+    ///     The sequence to search
+    /// </param>
+    /// <param name="seed">
+    ///     The starting value
+    /// </param>
+    /// <typeparam name="T">
+    ///     A numeric type
+    /// </typeparam>
     public static T NextHighest<T>(this IEnumerable<T> enumerable, T seed) where T: INumber<T>
     {
         var current = seed;
@@ -56,9 +54,15 @@ public static class EnumerableExtensions
     /// <summary>
     ///     Finds the next lowest number in a sequence from a given value
     /// </summary>
-    /// <param name="enumerable">The sequence to search</param>
-    /// <param name="seed">The starting value</param>
-    /// <typeparam name="T">A numeric type</typeparam>
+    /// <param name="enumerable">
+    ///     The sequence to search
+    /// </param>
+    /// <param name="seed">
+    ///     The starting value
+    /// </param>
+    /// <typeparam name="T">
+    ///     A numeric type
+    /// </typeparam>
     public static T NextLowest<T>(this IEnumerable<T> enumerable, T seed) where T: INumber<T>
     {
         var current = seed;
@@ -86,8 +90,11 @@ public static class EnumerableExtensions
     /// <summary>
     ///     Attempts to cast the IEnumerable to use a different generic type, otherwise checks each element for the given type
     /// </summary>
-    /// <param name="enumerable">The enumerable to iterate</param>
-    /// <typeparam name="TReturn"></typeparam>
+    /// <param name="enumerable">
+    ///     The enumerable to iterate
+    /// </param>
+    /// <typeparam name="TReturn">
+    /// </typeparam>
     [ExcludeFromCodeCoverage]
     public static IEnumerable<TReturn> SafeCast<TReturn>(this IEnumerable enumerable)
     {
@@ -112,8 +119,12 @@ public static class EnumerableExtensions
     /// <summary>
     ///     Casts the given IEnumerable and then converts it to a List
     /// </summary>
-    /// <param name="enumerable">The enumerable to cast and convert</param>
-    /// <typeparam name="TReturn">The type to cast the IEnumerable to</typeparam>
+    /// <param name="enumerable">
+    ///     The enumerable to cast and convert
+    /// </param>
+    /// <typeparam name="TReturn">
+    ///     The type to cast the IEnumerable to
+    /// </typeparam>
     [ExcludeFromCodeCoverage]
     public static List<TReturn> ToListCast<TReturn>(this IEnumerable enumerable)
     {

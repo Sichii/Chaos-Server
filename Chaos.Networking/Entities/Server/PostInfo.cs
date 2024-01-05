@@ -15,7 +15,7 @@ public sealed record PostInfo
     /// <summary>
     ///     The date the post was created
     /// </summary>
-    public DateTime CreationDate { get; set; }
+    public DateOnly CreationDate { get; set; }
 
     /// <summary>
     ///     Whether or not the post is highlighted

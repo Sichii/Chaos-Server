@@ -27,26 +27,30 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public string Category { get; set; } = null!;
 
     /// <summary>
-    ///     Defaults to None(lavender)<br />
+    ///     Defaults to None(lavender)
+    ///     <br />
     ///     The color of the item
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public DisplayColor Color { get; set; }
 
     /// <summary>
-    ///     Default null<br />
+    ///     Default null
+    ///     <br />
     ///     If specified, this is the sprite value used to display the item on the character when equipped
     /// </summary>
     public ushort? DisplaySprite { get; set; }
 
     /// <summary>
-    ///     Default null<br />
+    ///     Default null
+    ///     <br />
     ///     If specified, this is the type of equipment this item is
     /// </summary>
     public EquipmentType? EquipmentType { get; set; }
 
     /// <summary>
-    ///     Default null<br />
+    ///     Default null
+    ///     <br />
     ///     If specified, this is the gender required to use this item
     /// </summary>
     public Gender? Gender { get; set; }
@@ -64,7 +68,8 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public bool IsModifiable { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified, the max durability of the item
     /// </summary>
     public int? MaxDurability { get; set; }
@@ -75,13 +80,15 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public int MaxStacks { get; set; } = 1;
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified, these are the stats this item grants when equipped
     /// </summary>
     public AttributesSchema? Modifiers { get; set; }
 
     /// <summary>
-    ///     Default null<br />
+    ///     Default null
+    ///     <br />
     ///     If specified, this armor will have pants, and they will be this color
     /// </summary>
     public DisplayColor? PantsColor { get; set; }

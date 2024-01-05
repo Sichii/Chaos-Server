@@ -21,7 +21,9 @@ public sealed class ServerTable : IServerTable
     /// <summary>
     ///     Creates a new <see cref="ServerTable" /> instance
     /// </summary>
-    /// <param name="servers">A collection of server information used to create the server table</param>
+    /// <param name="servers">
+    ///     A collection of server information used to create the server table
+    /// </param>
     public ServerTable(ICollection<ILoginServerInfo> servers)
     {
         Servers = servers.ToDictionary(info => info.Id);

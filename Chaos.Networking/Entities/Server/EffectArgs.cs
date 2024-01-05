@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Effect" />
 ///     packet
 /// </summary>
-public sealed record EffectArgs : ISendArgs
+public sealed record EffectArgs : IPacketSerializable
 {
     /// <summary>
     ///     The color of the effect

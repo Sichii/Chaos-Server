@@ -5,8 +5,7 @@ namespace Chaos.Time;
 
 /// <summary>
 ///     A timers that utilizes a delta time value to increment elapsed time. Each time the interval elapses, a new interval
-///     is set with an
-///     amount of randomization as specified through configuration
+///     is set with an amount of randomization as specified through configuration
 /// </summary>
 
 // ReSharper disable once ClassCanBeSealed.Global
@@ -34,10 +33,18 @@ public class RandomizedIntervalTimer : IntervalTimer
     /// <summary>
     ///     Initializes a new instance of the <see cref="RandomizedIntervalTimer" /> class
     /// </summary>
-    /// <param name="interval">The base interval to use and randomize</param>
-    /// <param name="maxRandomizationPct">The percent to randomize the base interval by</param>
-    /// <param name="type">The type of randomization to use</param>
-    /// <param name="startAsElapsed">Whether or not to create the timer in an elapsed state</param>
+    /// <param name="interval">
+    ///     The base interval to use and randomize
+    /// </param>
+    /// <param name="maxRandomizationPct">
+    ///     The percent to randomize the base interval by
+    /// </param>
+    /// <param name="type">
+    ///     The type of randomization to use
+    /// </param>
+    /// <param name="startAsElapsed">
+    ///     Whether or not to create the timer in an elapsed state
+    /// </param>
     public RandomizedIntervalTimer(
         TimeSpan interval,
         int maxRandomizationPct,
@@ -63,8 +70,7 @@ public class RandomizedIntervalTimer : IntervalTimer
 
     /// <summary>
     ///     Sets the <see cref="RandomizedInterval" /> based on the <see cref="IntervalTimer.Interval" />,
-    ///     <see cref="RandomizationType" />, and
-    ///     <see cref="MaxRandomizationPct" />
+    ///     <see cref="RandomizationType" />, and <see cref="MaxRandomizationPct" />
     /// </summary>
     protected void SetRandomizedInterval()
     {

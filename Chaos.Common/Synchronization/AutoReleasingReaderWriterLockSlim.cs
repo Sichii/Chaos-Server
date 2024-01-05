@@ -25,12 +25,14 @@ public class AutoReleasingReaderWriterLockSlim
     /// <summary>
     ///     Creates a new instance of <see cref="AutoReleasingReaderWriterLockSlim" />.
     /// </summary>
-    /// <param name="root">An optional existing object whose root to lock</param>
+    /// <param name="root">
+    ///     An optional existing object whose root to lock
+    /// </param>
     public AutoReleasingReaderWriterLockSlim(ReaderWriterLockSlim? root = null) => Root = root ?? new ReaderWriterLockSlim();
 
     /// <summary>
-    ///     The same as <see cref="ReaderWriterLockSlim.EnterReadLock()" />.
-    ///     Returns a disposable object that when disposed will exit the lock />
+    ///     The same as <see cref="ReaderWriterLockSlim.EnterReadLock()" />. Returns a disposable object that when disposed
+    ///     will exit the lock />
     /// </summary>
     public IDisposable EnterReadLock()
     {
@@ -40,11 +42,11 @@ public class AutoReleasingReaderWriterLockSlim
     }
 
     /// <summary>
-    ///     The same as <see cref="ReaderWriterLockSlim.EnterUpgradeableReadLock()" />.
-    ///     Returns a disposable object that when disposed will exit the lock. You can also upgrade to a write lock via the
-    ///     returned object />
+    ///     The same as <see cref="ReaderWriterLockSlim.EnterUpgradeableReadLock()" />. Returns a disposable object that when
+    ///     disposed will exit the lock. You can also upgrade to a write lock via the returned object />
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// </returns>
     public IUpgradeableLockSubscription EnterUpgradeableReadLock()
     {
         Root.EnterUpgradeableReadLock();
@@ -53,10 +55,11 @@ public class AutoReleasingReaderWriterLockSlim
     }
 
     /// <summary>
-    ///     The same as <see cref="ReaderWriterLockSlim.EnterWriteLock()" />.
-    ///     Returns a disposable object that when disposed will exit the lock />
+    ///     The same as <see cref="ReaderWriterLockSlim.EnterWriteLock()" />. Returns a disposable object that when disposed
+    ///     will exit the lock />
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// </returns>
     public IDisposable EnterWriteLock()
     {
         Root.EnterWriteLock();
@@ -80,13 +83,18 @@ public class AutoReleasingReaderWriterLockSlim
     public void ExitWriteLock() => Root.ExitWriteLock();
 
     /// <summary>
-    ///     The same as <see cref="ReaderWriterLockSlim.TryEnterReadLock(TimeSpan)" />.
-    ///     Returns a disposable object that when disposed will exit the lock
-    /// </summary>
-    /// <param name="timeoutMs">The maximum amount of time to wait before giving up on entering the lock</param>
-    /// <returns>
-    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when
+    ///     The same as <see cref="ReaderWriterLockSlim.TryEnterReadLock(TimeSpan)" />. Returns a disposable object that when
     ///     disposed will exit the lock
+    /// </summary>
+    /// <param name="timeoutMs">
+    ///     The maximum amount of time to wait before giving up on entering the lock
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when disposed will exit
+    ///     the lock
     /// </returns>
     public IDisposable? TryEnterReadLock(int timeoutMs)
     {
@@ -97,13 +105,18 @@ public class AutoReleasingReaderWriterLockSlim
     }
 
     /// <summary>
-    ///     The same as <see cref="ReaderWriterLockSlim.TryEnterUpgradeableReadLock(TimeSpan)" />.
-    ///     Returns a disposable object that when disposed will exit the lock
+    ///     The same as <see cref="ReaderWriterLockSlim.TryEnterUpgradeableReadLock(TimeSpan)" />. Returns a disposable object
+    ///     that when disposed will exit the lock
     /// </summary>
-    /// <param name="timeoutMs">The maximum amount of time to wait before giving up on entering the lock</param>
+    /// <param name="timeoutMs">
+    ///     The maximum amount of time to wait before giving up on entering the lock
+    /// </param>
     /// <returns>
-    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when
-    ///     disposed will exit the lock
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when disposed will exit
+    ///     the lock
     /// </returns>
     public IDisposable? TryEnterUpgradeableReadLock(int timeoutMs)
     {
@@ -114,13 +127,18 @@ public class AutoReleasingReaderWriterLockSlim
     }
 
     /// <summary>
-    ///     The same as <see cref="ReaderWriterLockSlim.TryEnterWriteLock(TimeSpan)" />.
-    ///     Returns a disposable object that when disposed will exit the lock
-    /// </summary>
-    /// <param name="timeoutMs">The maximum amount of time to wait before giving up on entering the lock</param>
-    /// <returns>
-    ///     <c>null</c> if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when
+    ///     The same as <see cref="ReaderWriterLockSlim.TryEnterWriteLock(TimeSpan)" />. Returns a disposable object that when
     ///     disposed will exit the lock
+    /// </summary>
+    /// <param name="timeoutMs">
+    ///     The maximum amount of time to wait before giving up on entering the lock
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     if we failed to enter the lock, otherwise an <see cref="System.IDisposable" /> object that when disposed will exit
+    ///     the lock
     /// </returns>
     public IDisposable? TryEnterWriteLock(int timeoutMs)
     {

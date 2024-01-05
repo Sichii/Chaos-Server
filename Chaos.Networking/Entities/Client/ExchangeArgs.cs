@@ -7,14 +7,30 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Exchange" />
 ///     packet
 /// </summary>
-/// <param name="ExchangeRequestType">The type of action being requested</param>
-/// <param name="OtherPlayerId">The id of the player on the other side of the exchange</param>
-/// <param name="SourceSlot">If specified, the slot of the item being added</param>
-/// <param name="ItemCount">If specified, the count of the item being added</param>
-/// <param name="GoldAmount">If specified, the amount of gold being set in the exchange (set, not added!)</param>
-public sealed record ExchangeArgs(
-    ExchangeRequestType ExchangeRequestType,
-    uint OtherPlayerId,
-    byte? SourceSlot,
-    byte? ItemCount,
-    int? GoldAmount) : IReceiveArgs;
+public sealed record ExchangeArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The type of action being requested
+    /// </summary>
+    public required ExchangeRequestType ExchangeRequestType { get; set; }
+
+    /// <summary>
+    ///     If specified, the amount of gold being set in the exchange (set, not added!)
+    /// </summary>
+    public int? GoldAmount { get; set; }
+
+    /// <summary>
+    ///     If specified, the count of the item being added
+    /// </summary>
+    public byte? ItemCount { get; set; }
+
+    /// <summary>
+    ///     The id of the player on the other side of the exchange
+    /// </summary>
+    public uint OtherPlayerId { get; set; }
+
+    /// <summary>
+    ///     If specified, the slot of the item being added
+    /// </summary>
+    public byte? SourceSlot { get; set; }
+}

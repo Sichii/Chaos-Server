@@ -12,42 +12,56 @@ public static class PolygonExtensions
     ///     Determines whether the given <see cref="Chaos.Geometry.Abstractions.IPolygon" /> contains the given
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="polygon">The polygon to check</param>
-    /// <param name="point">The point to check</param>
-    /// <returns><c>true</c> if the polygon contains the point, otherwise <c>false</c></returns>
+    /// <param name="polygon">
+    ///     The polygon to check
+    /// </param>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the polygon contains the point, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     /// <remarks>
-    ///     This is a long-form implementation of pnpoly that allows for fast-path failures <br />
-    ///     https://wrfranklin.org/Research/Short_Notes/pnpoly.html <br />
+    ///     This is a long-form implementation of pnpoly that allows for fast-path failures
+    ///     <br />
+    ///     https://wrfranklin.org/Research/Short_Notes/pnpoly.html
+    ///     <br />
     ///     Vertices may be in either clock-wise or counter-clockwise order, but the vertices must be in one of those orders
     ///     <br />
-    ///     The shape may be either convex or concave <br />
-    ///     The shape may contains holes, but please read the above link for further details about that <br />
+    ///     The shape may be either convex or concave
     ///     <br />
-    ///     Copyright (c) 1970-2003, Wm. Randolph Franklin <br />
+    ///     The shape may contains holes, but please read the above link for further details about that
+    ///     <br />
+    ///     <br />
+    ///     Copyright (c) 1970-2003, Wm. Randolph Franklin
+    ///     <br />
     ///     <br />
     ///     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-    ///     documentation files (the
-    ///     "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
-    ///     modify, merge, publish,
-    ///     distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished
-    ///     to do so, subject
-    ///     to the following conditions:<br />
+    ///     documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+    ///     rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+    ///     permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    ///     <br />
     ///     <br />
     ///     Redistributions of source code must retain the above copyright notice, this list of conditions and the following
-    ///     disclaimers. <br />
+    ///     disclaimers.
+    ///     <br />
     ///     Redistributions in binary form must reproduce the above copyright notice in the documentation and/or other
-    ///     materials provided with the
-    ///     distribution. <br />
+    ///     materials provided with the distribution.
+    ///     <br />
     ///     The name of W. Randolph Franklin may not be used to endorse or promote products derived from this Software without
-    ///     specific prior
-    ///     written permission. <br />
+    ///     specific prior written permission.
+    ///     <br />
     ///     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-    ///     THE WARRANTIES OF
-    ///     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-    ///     HOLDERS BE LIABLE FOR
-    ///     ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-    ///     IN CONNECTION WITH
-    ///     THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    ///     THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    ///     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    ///     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    ///     SOFTWARE.
     /// </remarks>
     public static bool Contains<TPoint>(this IPolygon polygon, TPoint point) where TPoint: IPoint
     {
@@ -74,8 +88,7 @@ public static class PolygonExtensions
 
     /// <summary>
     ///     Lazily generates points along the outline of any kind of polygon. The vertices may be in clockwise or
-    ///     counter-clockwise order, but they
-    ///     must be in one of those orders
+    ///     counter-clockwise order, but they must be in one of those orders
     /// </summary>
     public static IEnumerable<Point> GetOutline(this IPolygon polygon)
     {

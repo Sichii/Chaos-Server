@@ -10,7 +10,8 @@ public static class ObjectExtensions
     /// <summary>
     ///     Gets the value of the Description attribute for the given member
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// </returns>
     public static string GetDescription(this Type type, object memberName)
     {
         var member = type.GetMember(memberName.ToString()!);

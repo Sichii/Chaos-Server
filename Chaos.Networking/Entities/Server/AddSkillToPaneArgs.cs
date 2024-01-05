@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddSkillToPane" /> packet
 /// </summary>
-public sealed record AddSkillToPaneArgs : ISendArgs
+public sealed record AddSkillToPaneArgs : IPacketSerializable
 {
     /// <summary>
     ///     The info of the skill to add to the client's inventory

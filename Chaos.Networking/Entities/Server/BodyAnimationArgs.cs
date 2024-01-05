@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.BodyAnimation" /> packet
 /// </summary>
-public sealed record BodyAnimationArgs : ISendArgs
+public sealed record BodyAnimationArgs : IPacketSerializable
 {
     /// <summary>
     ///     The speed of the animation

@@ -34,7 +34,11 @@ public abstract class ScriptBase : IScript, IEquatable<ScriptBase>
     /// <summary>
     ///     Generates a script key from a script type
     /// </summary>
-    /// <param name="type">A type object</param>
-    /// <returns>The name of the type without "Script" in it</returns>
+    /// <param name="type">
+    ///     A type object
+    /// </param>
+    /// <returns>
+    ///     The name of the type without "Script" in it
+    /// </returns>
     public static string GetScriptKey(Type type) => type.Name.ReplaceI("Script", string.Empty);
 }

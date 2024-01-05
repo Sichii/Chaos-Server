@@ -10,7 +10,9 @@ public static class DirectionExtensions
     /// <summary>
     ///     Starting with the direction provided, enumerates all directions in clockwise order
     /// </summary>
-    /// <param name="direction">The direction to start with</param>
+    /// <param name="direction">
+    ///     The direction to start with
+    /// </param>
     public static IEnumerable<Direction> AsEnumerable(this Direction direction)
     {
         if (direction == Direction.All)

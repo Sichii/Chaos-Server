@@ -64,10 +64,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <summary>
     ///     Initializes a new instance of the <see cref="SocketClientBase" /> class.
     /// </summary>
-    /// <param name="socket"></param>
-    /// <param name="crypto"></param>
-    /// <param name="packetSerializer"></param>
-    /// <param name="logger"></param>
+    /// <param name="socket">
+    /// </param>
+    /// <param name="crypto">
+    /// </param>
+    /// <param name="packetSerializer">
+    /// </param>
+    /// <param name="logger">
+    /// </param>
     protected SocketClientBase(
         Socket socket,
         ICrypto crypto,
@@ -110,15 +114,24 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <summary>
     ///     Asynchronously handles a span buffer as a packet
     /// </summary>
-    /// <param name="span"></param>
-    /// <returns></returns>
+    /// <param name="span">
+    /// </param>
+    /// <returns>
+    /// </returns>
     protected abstract ValueTask HandlePacketAsync(Span<byte> span);
 
     #region Actions
     /// <inheritdoc />
     public virtual void SendRedirect(IRedirect redirect)
     {
-        var args = new RedirectArgs(redirect);
+        var args = new RedirectArgs
+        {
+            EndPoint = redirect.EndPoint,
+            Seed = redirect.Seed,
+            Key = redirect.Key,
+            Name = redirect.Name,
+            Id = redirect.Id
+        };
 
         Send(args);
     }
@@ -141,7 +154,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
     public virtual void SendAcceptConnection()
     {
-        var packet = new ServerPacket(ServerOpCode.AcceptConnection);
+        var packet = new Packet(ServerOpCode.AcceptConnection);
         var writer = new SpanWriter(PacketSerializer.Encoding);
 
         writer.WriteByte(27);
@@ -267,14 +280,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     }
 
     /// <inheritdoc />
-    public virtual void Send<T>(T obj) where T: ISendArgs
+    public virtual void Send<T>(T obj) where T: IPacketSerializable
     {
         var packet = PacketSerializer.Serialize(obj);
         Send(ref packet);
     }
 
     /// <inheritdoc />
-    public virtual void Send(ref ServerPacket packet)
+    public virtual void Send(ref Packet packet)
     {
         if (!Connected)
             return;
@@ -290,7 +303,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                   .WithProperty(this)
                   .LogTrace("[Snd] {Packet}", packet.ToString());
 
-        packet.IsEncrypted = Crypto.IsServerEncrypted((byte)packet.OpCode);
+        packet.IsEncrypted = Crypto.IsServerEncrypted(packet.OpCode);
 
         if (packet.IsEncrypted)
         {

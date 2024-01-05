@@ -7,6 +7,15 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ClientWalk" />
 ///     packet
 /// </summary>
-/// <param name="Direction">The direction the client is walking</param>
-/// <param name="StepCount">The number of steps taken. this number rolls over when it caps out at 255.</param>
-public sealed record ClientWalkArgs(Direction Direction, byte StepCount) : IReceiveArgs;
+public sealed record ClientWalkArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The direction the client is walking
+    /// </summary>
+    public required Direction Direction { get; set; }
+
+    /// <summary>
+    ///     The number of steps taken. this number rolls over when it caps out at 255.
+    /// </summary>
+    public required byte StepCount { get; set; }
+}

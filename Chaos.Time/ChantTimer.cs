@@ -17,7 +17,9 @@ public sealed class ChantTimer : IDeltaUpdatable
     /// <summary>
     ///     Initializes a new instance of the <see cref="ChantTimer" /> class
     /// </summary>
-    /// <param name="maxTimeBurden">The maximum number of milliseconds the spell can be late before being canceled</param>
+    /// <param name="maxTimeBurden">
+    ///     The maximum number of milliseconds the spell can be late before being canceled
+    /// </param>
     public ChantTimer(int maxTimeBurden) => MaxTimeBurden = TimeSpan.FromMilliseconds(maxTimeBurden);
 
     /// <inheritdoc />
@@ -34,7 +36,9 @@ public sealed class ChantTimer : IDeltaUpdatable
     /// <summary>
     ///     Starts a chant with the given number of expected cast lines
     /// </summary>
-    /// <param name="castLines">The number of cast lines received from the client. This value is not to be fully trusted.</param>
+    /// <param name="castLines">
+    ///     The number of cast lines received from the client. This value is not to be fully trusted.
+    /// </param>
     public void Start(byte castLines)
     {
         Elapsed = TimeSpan.Zero;
@@ -45,10 +49,17 @@ public sealed class ChantTimer : IDeltaUpdatable
     /// <summary>
     ///     Validates that a spell chant was valid and was completed in approximately the expected amount of time.
     /// </summary>
-    /// <param name="castLines">The number of cast lines the spell should have had. This value is trustable.</param>
+    /// <param name="castLines">
+    ///     The number of cast lines the spell should have had. This value is trustable.
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if the spell cast is valid and finished in approximately the expected amount of time, otherwise
-    ///     <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the spell cast is valid and finished in approximately the expected amount of time, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     public bool Validate(byte castLines)
     {

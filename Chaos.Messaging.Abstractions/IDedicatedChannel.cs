@@ -23,7 +23,11 @@ public interface IDedicatedChannel
     /// <summary>
     ///     Sends a message to the channel
     /// </summary>
-    /// <param name="from">The subscriber the message is from</param>
-    /// <param name="message">The message to send</param>
+    /// <param name="from">
+    ///     The subscriber the message is from
+    /// </param>
+    /// <param name="message">
+    ///     The message to send
+    /// </param>
     void SendMessage(IChannelSubscriber from, string message);
 }

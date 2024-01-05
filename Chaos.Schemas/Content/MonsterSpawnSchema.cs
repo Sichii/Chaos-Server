@@ -15,8 +15,9 @@ public sealed record MonsterSpawnSchema
     public ICollection<Point> BlackList { get; set; } = Array.Empty<Point>();
 
     /// <summary>
-    ///     Default to null, causing monsters to spawn facing random directions<br />If specified, will spawn monsters facing
-    ///     in the specified direction
+    ///     Default to null, causing monsters to spawn facing random directions
+    ///     <br />
+    ///     If specified, will spawn monsters facing in the specified direction
     /// </summary>
     public Direction? Direction { get; set; }
 
@@ -37,9 +38,11 @@ public sealed record MonsterSpawnSchema
     public int IntervalSecs { get; set; }
 
     /// <summary>
-    ///     Defaults to 0<br />If specified, will randomize the interval by the percentage specified<br />Ex. With an interval
-    ///     of 60, and a
-    ///     Variance of 50, the spawn interval would vary from 45-75secs
+    ///     Defaults to 0
+    ///     <br />
+    ///     If specified, will randomize the interval by the percentage specified
+    ///     <br />
+    ///     Ex. With an interval of 60, and a Variance of 50, the spawn interval would vary from 45-75secs
     /// </summary>
     public int? IntervalVariancePct { get; set; }
 
@@ -62,7 +65,9 @@ public sealed record MonsterSpawnSchema
     public string MonsterTemplateKey { get; set; } = null!;
 
     /// <summary>
-    ///     Defaults to spawn on entire map<br />If specified, monsters will only spawn within the specified bounds
+    ///     Defaults to spawn on entire map
+    ///     <br />
+    ///     If specified, monsters will only spawn within the specified bounds
     /// </summary>
     public Rectangle? SpawnArea { get; set; }
 }

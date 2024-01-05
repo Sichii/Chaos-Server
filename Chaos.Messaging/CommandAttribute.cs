@@ -25,9 +25,15 @@ public sealed class CommandAttribute : Attribute
     /// <summary>
     ///     Creates a new instance of the <see cref="CommandAttribute" /> class.
     /// </summary>
-    /// <param name="commandName">The name of the command</param>
-    /// <param name="requiresAdmin">Whether or not the command requires admin privileges</param>
-    /// <param name="helpText">The help text of the command</param>
+    /// <param name="commandName">
+    ///     The name of the command
+    /// </param>
+    /// <param name="requiresAdmin">
+    ///     Whether or not the command requires admin privileges
+    /// </param>
+    /// <param name="helpText">
+    ///     The help text of the command
+    /// </param>
     public CommandAttribute(string commandName, bool requiresAdmin = true, string? helpText = null)
     {
         CommandName = commandName;

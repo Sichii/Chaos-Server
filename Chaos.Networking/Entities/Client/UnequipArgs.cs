@@ -7,5 +7,10 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Unequip" />
 ///     packet
 /// </summary>
-/// <param name="EquipmentSlot">The equipment slot of the item the client is trying to unequip</param>
-public sealed record UnequipArgs(EquipmentSlot EquipmentSlot) : IReceiveArgs;
+public sealed record UnequipArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The equipment slot of the item the client is trying to unequip
+    /// </summary>
+    public required EquipmentSlot EquipmentSlot { get; set; }
+}

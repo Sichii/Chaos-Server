@@ -60,53 +60,6 @@ public sealed class EnumerableExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
-    public void IsNullOrEmpty_Should_Return_False_When_Sequence_Is_Not_Null_Or_Empty()
-    {
-        // Arrange
-        var enumerable = new[]
-        {
-            1,
-            2,
-            3
-        };
-
-        // Act
-        var result = enumerable.IsNullOrEmpty();
-
-        // Assert
-        result.Should()
-              .BeFalse();
-    }
-
-    [Fact]
-    public void IsNullOrEmpty_Should_Return_True_When_Sequence_Is_Empty()
-    {
-        // Arrange
-        var enumerable = Enumerable.Empty<int>();
-
-        // Act
-        var result = enumerable.IsNullOrEmpty();
-
-        // Assert
-        result.Should()
-              .BeTrue();
-    }
-
-    [Fact]
-    public void IsNullOrEmpty_Should_Return_True_When_Sequence_Is_Null()
-    {
-        // Arrange
-        IEnumerable<int>? enumerable = null;
-
-        // Act
-        var result = enumerable.IsNullOrEmpty();
-
-        // Assert
-        result.Should()
-              .BeTrue();
-    }
-
     // ReSharper disable once ArrangeAttributes
     [Theory]
     [InlineData(

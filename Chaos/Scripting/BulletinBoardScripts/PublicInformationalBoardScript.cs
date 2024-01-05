@@ -12,11 +12,16 @@ namespace Chaos.Scripting.BulletinBoardScripts;
 ///     A board script that allows anyone to post.
 /// </summary>
 /// <remarks>
-///     Permissions: <br />
-///     Read: Anyone <br />
-///     Write: Moderator <br />
-///     Delete: Post Owner / Moderator <br />
-///     Highlight: Moderator <br />
+///     Permissions:
+///     <br />
+///     Read: Anyone
+///     <br />
+///     Write: Moderator
+///     <br />
+///     Delete: Post Owner / Moderator
+///     <br />
+///     Highlight: Moderator
+///     <br />
 ///     Retention: Configurable
 /// </remarks>
 public sealed class PublicInformationalBoardScript : ConfigurableBulletinBoardScriptBase

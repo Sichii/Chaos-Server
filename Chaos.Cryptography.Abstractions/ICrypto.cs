@@ -55,7 +55,9 @@ public interface ICrypto
     /// <summary>
     ///     Generates an md5 hash of the given string
     /// </summary>
-    /// <param name="value">The string to hash</param>
+    /// <param name="value">
+    ///     The string to hash
+    /// </param>
     string GetMd5Hash(string value);
 
     /// <summary>

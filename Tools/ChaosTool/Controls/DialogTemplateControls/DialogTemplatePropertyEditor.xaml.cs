@@ -23,7 +23,7 @@ public partial class DialogTemplatePropertyEditor
         => DataContext as DialogTemplateViewModel
            ?? throw new InvalidOperationException($"DataContext is not of type {nameof(DialogTemplateViewModel)}");
 
-    public DialogTemplatePropertyEditor() { InitializeComponent(); }
+    public DialogTemplatePropertyEditor() => InitializeComponent();
 
     #region Tbox Validation
     private void TemplateKeyTbox_OnTextChanged(object sender, TextChangedEventArgs e)

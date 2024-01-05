@@ -4,8 +4,8 @@ namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
 ///     Represents the serialization of a spell in the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddSpellToPane" />
-///     and <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Menu" /> packets
+///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddSpellToPane" /> and
+///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Menu" /> packets
 /// </summary>
 public sealed record SpellInfo
 {

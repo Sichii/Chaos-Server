@@ -21,10 +21,18 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     /// <summary>
     ///     Initializes a new instance of the <see cref="DeltaMonitor" /> class
     /// </summary>
-    /// <param name="name">The name of this instance</param>
-    /// <param name="logger">An object to log with</param>
-    /// <param name="logInterval">How often to log</param>
-    /// <param name="maxDelta">The maximum acceptable delta allowed before logging an error</param>
+    /// <param name="name">
+    ///     The name of this instance
+    /// </param>
+    /// <param name="logger">
+    ///     An object to log with
+    /// </param>
+    /// <param name="logInterval">
+    ///     How often to log
+    /// </param>
+    /// <param name="maxDelta">
+    ///     The maximum acceptable delta allowed before logging an error
+    /// </param>
     public DeltaMonitor(
         string name,
         ILogger logger,
@@ -54,13 +62,16 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     /// <summary>
     ///     Adds a recorded <see cref="System.TimeSpan" /> that represents how much time execution took
     /// </summary>
-    /// <param name="executionDelta">The amount of time the loop took to execute</param>
+    /// <param name="executionDelta">
+    ///     The amount of time the loop took to execute
+    /// </param>
     public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);
 
     /// <summary>
     ///     Analyzes the recorded deltas and logs the results
     /// </summary>
-    /// <param name="deltas"></param>
+    /// <param name="deltas">
+    /// </param>
     private void CheckStatistics(List<TimeSpan> deltas)
         => _ = Task.Run(
             () =>

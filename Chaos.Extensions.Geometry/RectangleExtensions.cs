@@ -12,10 +12,20 @@ public static class RectangleExtensions
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> contains another
     ///     <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
-    /// <param name="rect">The possibly outer rectangle</param>
-    /// <param name="other">The possible inner rectangle</param>
+    /// <param name="rect">
+    ///     The possibly outer rectangle
+    /// </param>
+    /// <param name="other">
+    ///     The possible inner rectangle
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if <paramref name="rect" /> fully encompasses <paramref name="other" />, otherwise <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if <paramref name="rect" /> fully encompasses <paramref name="other" />, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     public static bool Contains(this IRectangle rect, IRectangle other)
     {
@@ -30,10 +40,20 @@ public static class RectangleExtensions
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> contains an
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="rect">The rectangle to check</param>
-    /// <param name="point">The point to check</param>
+    /// <param name="rect">
+    ///     The rectangle to check
+    /// </param>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if <paramref name="point" /> is inside of the <paramref name="rect" />, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     public static bool Contains<TPoint>(this IRectangle rect, TPoint point) where TPoint: IPoint
     {
@@ -72,7 +92,9 @@ public static class RectangleExtensions
     /// <summary>
     ///     Lazily generates all points inside of the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
-    /// <param name="rect">The rectangle togenerate points for</param>
+    /// <param name="rect">
+    ///     The rectangle togenerate points for
+    /// </param>
     public static IEnumerable<Point> GetPoints(this IRectangle rect)
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -85,15 +107,21 @@ public static class RectangleExtensions
     /// <summary>
     ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
-    /// <param name="rect">The rect to use as bounds</param>
+    /// <param name="rect">
+    ///     The rect to use as bounds
+    /// </param>
     public static Point GetRandomPoint(this IRectangle rect)
         => new(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
 
     /// <summary>
     ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
-    /// <param name="rect">The rect to use as bounds</param>
-    /// <param name="predicate">A predicate the point must match</param>
+    /// <param name="rect">
+    ///     The rect to use as bounds
+    /// </param>
+    /// <param name="predicate">
+    ///     A predicate the point must match
+    /// </param>
     public static Point GetRandomPoint(this IRectangle rect, Func<Point, bool> predicate)
     {
         while (true)
@@ -109,11 +137,20 @@ public static class RectangleExtensions
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects another
     ///     <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
-    /// <param name="rect">A rectangle</param>
-    /// <param name="other">Another rectangle</param>
+    /// <param name="rect">
+    ///     A rectangle
+    /// </param>
+    /// <param name="other">
+    ///     Another rectangle
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if the rectangles intersect at any point or if either rect fully contains the other, otherwise
-    ///     <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the rectangles intersect at any point or if either rect fully contains the other, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     public static bool Intersects(this IRectangle rect, IRectangle other)
     {

@@ -37,7 +37,9 @@ public sealed class UserOptions
     /// <summary>
     ///     Toggles the given UserOption.
     /// </summary>
-    /// <param name="opt">Option to toggle.</param>
+    /// <param name="opt">
+    ///     Option to toggle.
+    /// </param>
     public void Toggle(UserOption opt)
     {
         switch (opt)

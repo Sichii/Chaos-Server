@@ -10,8 +10,9 @@ namespace Chaos.Models.Templates;
 public sealed record MonsterTemplate : ITemplate, IScripted
 {
     /// <summary>
-    ///     Defaults to 0<br />If specified, this will be aggressive and attack enemies if they come within the specified
-    ///     distance
+    ///     Defaults to 0
+    ///     <br />
+    ///     If specified, this will be aggressive and attack enemies if they come within the specified distance
     /// </summary>
     public required int AggroRange { get; set; }
 
@@ -51,7 +52,9 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     public required string Name { get; init; }
 
     /// <summary>
-    ///     A collection of names of monsters scripts to attach to this monster<br />TODO: scripts section
+    ///     A collection of names of monsters scripts to attach to this monster
+    ///     <br />
+    ///     TODO: scripts section
     /// </summary>
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -89,13 +92,16 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     public required StatSheet StatSheet { get; init; }
 
     /// <summary>
-    ///     A unique id specific to this monster template<br />Best practice is to match the name of the file
+    ///     A unique id specific to this monster template
+    ///     <br />
+    ///     Best practice is to match the name of the file
     /// </summary>
     public required string TemplateKey { get; init; }
 
     /// <summary>
-    ///     The monster's type<br />WhiteSquare has no additional functionality, it just appears as a white square on the tab
-    ///     map
+    ///     The monster's type
+    ///     <br />
+    ///     WhiteSquare has no additional functionality, it just appears as a white square on the tab map
     /// </summary>
     public required CreatureType Type { get; init; }
 

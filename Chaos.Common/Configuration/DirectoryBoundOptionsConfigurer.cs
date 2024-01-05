@@ -6,7 +6,9 @@ namespace Chaos.Common.Configuration;
 /// <summary>
 ///     Configures an options object that implements <see cref="IDirectoryBound" /> to use the staging directory
 /// </summary>
-/// <typeparam name="T">The type to configure</typeparam>
+/// <typeparam name="T">
+///     The type to configure
+/// </typeparam>
 public class DirectoryBoundOptionsConfigurer<T> : IPostConfigureOptions<T> where T: class, IDirectoryBound
 {
     /// <summary>

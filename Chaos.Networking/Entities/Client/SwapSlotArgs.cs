@@ -7,8 +7,23 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SwapSlot" />
 ///     packet
 /// </summary>
-/// <param name="PanelType">The panel of which objects are being swapped on</param>
-/// <param name="Slot1">The source slot</param>
-/// <param name="Slot2">The destination slot</param>
-/// <remarks>This packet is also use merely for moving objects, not just swapping</remarks>
-public sealed record SwapSlotArgs(PanelType PanelType, byte Slot1, byte Slot2) : IReceiveArgs;
+/// <remarks>
+///     This packet is also used merely for moving objects, not just swapping
+/// </remarks>
+public sealed record SwapSlotArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The panel of which objects are being swapped on
+    /// </summary>
+    public required PanelType PanelType { get; set; }
+
+    /// <summary>
+    ///     The source slot
+    /// </summary>
+    public required byte Slot1 { get; set; }
+
+    /// <summary>
+    ///     The destination slot
+    /// </summary>
+    public required byte Slot2 { get; set; }
+}

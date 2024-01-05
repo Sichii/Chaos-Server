@@ -18,16 +18,24 @@ namespace Chaos.Networking.Abstractions;
 /// <summary>
 ///     Represents a base class for server implementations.
 /// </summary>
-/// <typeparam name="T">The type of the socket client.</typeparam>
+/// <typeparam name="T">
+///     The type of the socket client.
+/// </typeparam>
 public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISocketClient
 {
     /// <summary>
     ///     Delegate for handling client packets.
     /// </summary>
-    /// <param name="client">The client sending the packet.</param>
-    /// <param name="packet">The client packet received.</param>
-    /// <returns>A ValueTask representing the asynchronous operation.</returns>
-    public delegate ValueTask ClientHandler(T client, in ClientPacket packet);
+    /// <param name="client">
+    ///     The client sending the packet.
+    /// </param>
+    /// <param name="packet">
+    ///     The client packet received.
+    /// </param>
+    /// <returns>
+    ///     A ValueTask representing the asynchronous operation.
+    /// </returns>
+    public delegate ValueTask ClientHandler(T client, in Packet packet);
 
     /// <summary>
     ///     An array of client handlers for handling incoming client packets.
@@ -72,11 +80,21 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     /// <summary>
     ///     Initializes a new instance of the <see cref="ServerBase{T}" /> class.
     /// </summary>
-    /// <param name="redirectManager">An instance of a redirect manager.</param>
-    /// <param name="packetSerializer">An instance of a packet serializer.</param>
-    /// <param name="clientRegistry">An instance of a client registry.</param>
-    /// <param name="options">Configuration options for the server.</param>
-    /// <param name="logger">A logger for the server.</param>
+    /// <param name="redirectManager">
+    ///     An instance of a redirect manager.
+    /// </param>
+    /// <param name="packetSerializer">
+    ///     An instance of a packet serializer.
+    /// </param>
+    /// <param name="clientRegistry">
+    ///     An instance of a client registry.
+    /// </param>
+    /// <param name="options">
+    ///     Configuration options for the server.
+    /// </param>
+    /// <param name="logger">
+    ///     A logger for the server.
+    /// </param>
     [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
     protected ServerBase(
         IRedirectManager redirectManager,
@@ -157,13 +175,17 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     /// <summary>
     ///     Called when a new connection is accepted by the server.
     /// </summary>
-    /// <param name="clientSocket">The socket that connected to the server</param>
+    /// <param name="clientSocket">
+    ///     The socket that connected to the server
+    /// </param>
     protected abstract void OnConnected(Socket clientSocket);
 
     /// <summary>
     ///     Called when a new connection is accepted by the server.
     /// </summary>
-    /// <param name="ar">The result of the asynchronous connection operation</param>
+    /// <param name="ar">
+    ///     The result of the asynchronous connection operation
+    /// </param>
     protected virtual void OnConnection(IAsyncResult ar)
     {
         var serverSocket = (Socket)ar.AsyncState!;
@@ -197,9 +219,9 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public virtual ValueTask HandlePacketAsync(T client, in ClientPacket packet)
+    public virtual ValueTask HandlePacketAsync(T client, in Packet packet)
     {
-        var handler = ClientHandlers[(byte)packet.OpCode];
+        var handler = ClientHandlers[packet.OpCode];
 
         if (handler is null)
             return default;
@@ -210,13 +232,21 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     /// <summary>
     ///     Executes an asynchronous action for a client within a sychronized context
     /// </summary>
-    /// <param name="client">The client to execute the action against</param>
-    /// <param name="args">The args deserialized from the packet</param>
-    /// <param name="action">The action that uses the args</param>
-    /// <typeparam name="TArgs">The type of the args that were deserialized</typeparam>
+    /// <param name="client">
+    ///     The client to execute the action against
+    /// </param>
+    /// <param name="args">
+    ///     The args deserialized from the packet
+    /// </param>
+    /// <param name="action">
+    ///     The action that uses the args
+    /// </param>
+    /// <typeparam name="TArgs">
+    ///     The type of the args that were deserialized
+    /// </typeparam>
     public virtual async ValueTask ExecuteHandler<TArgs>(T client, TArgs args, Func<T, TArgs, ValueTask> action)
     {
-        await using var @lock = await Sync.WaitAsync();
+        await using var @lock = await Sync.WaitAsync(TimeSpan.FromSeconds(1));
 
         try
         {
@@ -239,8 +269,12 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     /// <summary>
     ///     Executes an asynchronous action for a client within a sychronized context
     /// </summary>
-    /// <param name="client">The client to execute the action against</param>
-    /// <param name="action">The action to be executed</param>
+    /// <param name="client">
+    ///     The client to execute the action against
+    /// </param>
+    /// <param name="action">
+    ///     The action to be executed
+    /// </param>
     public virtual async ValueTask ExecuteHandler(T client, Func<T, ValueTask> action)
     {
         await using var @lock = await Sync.WaitAsync();
@@ -261,7 +295,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public virtual ValueTask OnHeartBeatAsync(T client, in ClientPacket packet)
+    public virtual ValueTask OnHeartBeatAsync(T client, in Packet packet)
     {
         _ = PacketSerializer.Deserialize<HeartBeatArgs>(in packet);
 
@@ -271,7 +305,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public ValueTask OnSequenceChangeAsync(T client, in ClientPacket packet)
+    public ValueTask OnSequenceChangeAsync(T client, in Packet packet)
     {
         client.SetSequence(packet.Sequence);
 
@@ -279,7 +313,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public virtual ValueTask OnClientException(T client, in ClientPacket packet)
+    public virtual ValueTask OnClientException(T client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ClientExceptionArgs>(in packet);
 
@@ -295,7 +329,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISo
     }
 
     /// <inheritdoc />
-    public virtual ValueTask OnSynchronizeTicksAsync(T client, in ClientPacket packet)
+    public virtual ValueTask OnSynchronizeTicksAsync(T client, in Packet packet)
     {
         _ = PacketSerializer.Deserialize<SynchronizeTicksArgs>(in packet);
 

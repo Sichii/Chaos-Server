@@ -323,7 +323,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         var args = new ExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.Accept,
-            PersistExchange = persistExchange
+            PersistExchange = persistExchange,
+            Message = "Exchange Accepted."
         };
 
         Send(args);
@@ -352,7 +353,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         var args = new ExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.Cancel,
-            RightSide = rightSide
+            RightSide = rightSide,
+            Message = "Exchange Canceled."
         };
 
         Send(args);
@@ -393,12 +395,12 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendForcedClientPacket(ref ClientPacket clientPacket)
+    public void SendForcedClientPacket(ref Packet packet)
     {
         var args = new ForceClientPacketArgs
         {
-            ClientOpCode = clientPacket.OpCode,
-            Data = clientPacket.Buffer.ToArray()
+            ClientOpCode = (ClientOpCode)packet.OpCode,
+            Data = packet.Buffer.ToArray()
         };
 
         Send(args);
@@ -750,7 +752,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
         var args = new WorldListArgs
         {
-            WorldList = worldList
+            CountryList = worldList
         };
 
         foreach (var aisling in orderedAislings)
@@ -764,6 +766,8 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
 
             //TODO: check guild for color
         }
+
+        args.WorldMemberCount = (ushort)worldList.Count;
 
         Send(args);
     }
@@ -779,7 +783,7 @@ public sealed class WorldClient : SocketClientBase, IWorldClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var packet = new ClientPacket(ref span, Crypto.IsClientEncrypted(opCode));
+        var packet = new Packet(ref span, Crypto.IsClientEncrypted(opCode));
 
         if (packet.IsEncrypted)
             Crypto.Decrypt(ref packet);

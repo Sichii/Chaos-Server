@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Attributes" />
 ///     packet
 /// </summary>
-public sealed record AttributesArgs : ISendArgs
+public sealed record AttributesArgs : IPacketSerializable
 {
     /// <summary>
     ///     The ability level of the character

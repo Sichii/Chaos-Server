@@ -34,8 +34,10 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <summary>
     ///     Creates a new instance of <see cref="AccessManager" />
     /// </summary>
-    /// <param name="options"></param>
-    /// <param name="logger"></param>
+    /// <param name="options">
+    /// </param>
+    /// <param name="logger">
+    /// </param>
     public AccessManager(IOptionsSnapshot<AccessManagerOptions> options, ILogger<AccessManager> logger)
     {
         Logger = logger;
@@ -188,7 +190,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <summary>
     ///     Computes a hash for the given password
     /// </summary>
-    /// <param name="password">The password to hash</param>
+    /// <param name="password">
+    ///     The password to hash
+    /// </param>
     private string ComputeHash(string password)
     {
         #pragma warning disable SYSLIB0045
@@ -227,11 +231,23 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <summary>
     ///     Validates a username and password combination
     /// </summary>
-    /// <param name="ipAddress">The ip address of the client</param>
-    /// <param name="name">The name to validate</param>
-    /// <param name="password">The password to validate</param>
+    /// <param name="ipAddress">
+    ///     The ip address of the client
+    /// </param>
+    /// <param name="name">
+    ///     The name to validate
+    /// </param>
+    /// <param name="password">
+    ///     The password to validate
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if the username exists, and the password specified matches the record, otherwise <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the username exists, and the password specified matches the record, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     private async Task<CredentialValidationResult> InnerValidateCredentialsAsync(IPAddress ipAddress, string name, string password)
     {
@@ -300,7 +316,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <summary>
     ///     Validates a password against the rules specified in the configuration
     /// </summary>
-    /// <param name="password">The password to validate</param>
+    /// <param name="password">
+    ///     The password to validate
+    /// </param>
     private CredentialValidationResult ValidatePasswordRules(string password)
     {
         if (password.Length < Options.MinPasswordLength)
@@ -323,7 +341,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// <summary>
     ///     Validates a username against the rules specified in the configuration
     /// </summary>
-    /// <param name="name">The name to validate</param>
+    /// <param name="name">
+    ///     The name to validate
+    /// </param>
     private CredentialValidationResult ValidateUserNameRules(string name)
     {
         if (Options.ValidCharactersRegex.Matches(name)

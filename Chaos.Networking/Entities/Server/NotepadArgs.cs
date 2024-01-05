@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Notepad" />
 ///     packet
 /// </summary>
-public sealed record NotepadArgs : ISendArgs
+public sealed record NotepadArgs : IPacketSerializable
 {
     /// <summary>
     ///     The height of the notepad

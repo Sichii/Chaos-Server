@@ -7,25 +7,43 @@ namespace Chaos.MetaData.EventMetadata;
 ///     A node that stores metadata about an event
 /// </summary>
 /// <remarks>
-///     events follow a structure like this <br />
+///     events follow a structure like this
 ///     <br />
-///     "01_start" <br />
-///     "01_title" <br />
-///     - {QuestName} <br />
-///     "01_id" <br />
-///     - {??} -- icon? or maybe legend mark id? <br />
-///     "01_qual" <br />
-///     - {circle} <br />
-///     - {classflag} <br />
-///     "01_sum" <br />
-///     - {Quest Summary} <br />
-///     "01_result" <br />
-///     - {??} -- icon after completing? <br />
-///     "01_sub" <br />
-///     - {maybe something to do with required pre-req quest} <br />
-///     "01_reward" <br />
-///     - {QuestRewards} <br />
-///     "01_end" <br />
+///     <br />
+///     "01_start"
+///     <br />
+///     "01_title"
+///     <br />
+///     - {QuestName}
+///     <br />
+///     "01_id"
+///     <br />
+///     - {??} -- icon? or maybe legend mark id?
+///     <br />
+///     "01_qual"
+///     <br />
+///     - {circle}
+///     <br />
+///     - {classflag}
+///     <br />
+///     "01_sum"
+///     <br />
+///     - {Quest Summary}
+///     <br />
+///     "01_result"
+///     <br />
+///     - {??} -- icon after completing?
+///     <br />
+///     "01_sub"
+///     <br />
+///     - {maybe something to do with required pre-req quest}
+///     <br />
+///     "01_reward"
+///     <br />
+///     - {QuestRewards}
+///     <br />
+///     "01_end"
+///     <br />
 /// </remarks>
 public sealed record EventMetaNode(string Name, int Page) : IMetaNode
 {

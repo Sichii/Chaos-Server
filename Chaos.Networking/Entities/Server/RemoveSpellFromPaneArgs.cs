@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.RemoveSpellFromPane" /> packet
 /// </summary>
-public sealed record RemoveSpellFromPaneArgs : ISendArgs
+public sealed record RemoveSpellFromPaneArgs : IPacketSerializable
 {
     /// <summary>
     ///     The slot of the spell to be removed

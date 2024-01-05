@@ -9,16 +9,22 @@ namespace Chaos.Networking.Deserializers;
 /// <summary>
 ///     Deserializes a buffer into <see cref="UserOptionToggleArgs" />
 /// </summary>
-public sealed record UserOptionToggleDeserializer : ClientPacketDeserializer<UserOptionToggleArgs>
+public sealed class UserOptionToggleConverter : PacketConverterBase<UserOptionToggleArgs>
 {
     /// <inheritdoc />
-    public override ClientOpCode ClientOpCode => ClientOpCode.UserOptionToggle;
+    public override byte OpCode => (byte)ClientOpCode.UserOptionToggle;
 
     /// <inheritdoc />
     public override UserOptionToggleArgs Deserialize(ref SpanReader reader)
     {
-        var userOption = (UserOption)reader.ReadByte();
+        var userOption = reader.ReadByte();
 
-        return new UserOptionToggleArgs(userOption);
+        return new UserOptionToggleArgs
+        {
+            UserOption = (UserOption)userOption
+        };
     }
+
+    /// <inheritdoc />
+    public override void Serialize(ref SpanWriter writer, UserOptionToggleArgs args) => writer.WriteByte((byte)args.UserOption);
 }

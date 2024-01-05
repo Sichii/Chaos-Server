@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Cooldown" />
 ///     packet
 /// </summary>
-public sealed record CooldownArgs : ISendArgs
+public sealed record CooldownArgs : IPacketSerializable
 {
     /// <summary>
     ///     The cooldown of the ability in seconds

@@ -11,25 +11,25 @@ public interface IServer<in TClient> : IHostedService where TClient: ISocketClie
     /// <summary>
     ///     A catch-all that will re-route a packet to the correct handler
     /// </summary>
-    ValueTask HandlePacketAsync(TClient client, in ClientPacket packet);
+    ValueTask HandlePacketAsync(TClient client, in Packet packet);
 
     /// <summary>
     ///     A client is notifying the server that it encountered an exception from a bad packet
     /// </summary>
-    ValueTask OnClientException(TClient client, in ClientPacket packet);
+    ValueTask OnClientException(TClient client, in Packet packet);
 
     /// <summary>
     ///     A client has sent a heartbeat(keep-alive) ping
     /// </summary>
-    ValueTask OnHeartBeatAsync(TClient client, in ClientPacket packet);
+    ValueTask OnHeartBeatAsync(TClient client, in Packet packet);
 
     /// <summary>
     ///     A client has requested to change the packet sequence number
     /// </summary>
-    ValueTask OnSequenceChangeAsync(TClient client, in ClientPacket packet);
+    ValueTask OnSequenceChangeAsync(TClient client, in Packet packet);
 
     /// <summary>
     ///     A client has sent it's Environment.Ticks value
     /// </summary>
-    ValueTask OnSynchronizeTicksAsync(TClient client, in ClientPacket packet);
+    ValueTask OnSynchronizeTicksAsync(TClient client, in Packet packet);
 }

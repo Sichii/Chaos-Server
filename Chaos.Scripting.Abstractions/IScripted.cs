@@ -12,7 +12,9 @@ public interface IScripted
 }
 
 /// <inheritdoc />
-/// <typeparam name="TScript">The type of script that will be loaded for this object</typeparam>
+/// <typeparam name="TScript">
+///     The type of script that will be loaded for this object
+/// </typeparam>
 public interface IScripted<out TScript> : IScripted where TScript: IScript
 {
     /// <summary>

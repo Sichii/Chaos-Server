@@ -7,17 +7,17 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Dialog" />
 ///     packet
 /// </summary>
-public sealed record DialogArgs : ISendArgs
+public sealed record DialogArgs : IPacketSerializable
 {
     /// <summary>
     ///     The color associated with the source of the dialog. (for items and aislings)
     /// </summary>
-    public required DisplayColor Color { get; set; }
+    public DisplayColor Color { get; set; }
 
     /// <summary>
     ///     The id of the dialog
     /// </summary>
-    public required ushort DialogId { get; set; }
+    public ushort DialogId { get; set; }
 
     /// <summary>
     ///     The type of dialog
@@ -27,22 +27,22 @@ public sealed record DialogArgs : ISendArgs
     /// <summary>
     ///     The entity type of the source of the dialog. (item, creature, aisling, etc)
     /// </summary>
-    public required EntityType EntityType { get; set; }
+    public EntityType EntityType { get; set; }
 
     /// <summary>
     ///     Whether or not the dialog has a next button
     /// </summary>
-    public required bool HasNextButton { get; set; }
+    public bool HasNextButton { get; set; }
 
     /// <summary>
     ///     Whether or not the dialog has a prev button
     /// </summary>
-    public required bool HasPreviousButton { get; set; }
+    public bool HasPreviousButton { get; set; }
 
     /// <summary>
     ///     The name of the source entity associated with the dialog
     /// </summary>
-    public required string Name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     /// <summary>
     ///     If the dialog has options, this is a collection of strings that represent selectable options in the dialog's menu
@@ -55,19 +55,24 @@ public sealed record DialogArgs : ISendArgs
     public ushort? PursuitId { get; set; }
 
     /// <summary>
-    ///     The id of the source entity associated with the dialog. This isn't really required for any practical purpose
+    ///     Whether or not the dialog should show an illustration of the source entity
+    /// </summary>
+    public bool ShouldIllustrate { get; set; }
+
+    /// <summary>
+    ///     The id of the source entity associated with the dialog. This isn't really for any practical purpose
     /// </summary>
     public uint? SourceId { get; set; }
 
     /// <summary>
     ///     The sprite of the source entity associated with the dialog
     /// </summary>
-    public required ushort Sprite { get; set; }
+    public ushort Sprite { get; set; }
 
     /// <summary>
     ///     The text of the dialog
     /// </summary>
-    public required string Text { get; set; } = null!;
+    public string Text { get; set; } = null!;
 
     /// <summary>
     ///     When the <see cref="DialogType" /> is DialogTextEntry, this will limit the length of the input text box

@@ -10,8 +10,10 @@ public static class ArrayExtensions
     /// <summary>
     ///     Performs the specified action on each element of the array.
     /// </summary>
-    /// <param name="array"></param>
-    /// <param name="action"></param>
+    /// <param name="array">
+    /// </param>
+    /// <param name="action">
+    /// </param>
     internal static void ForEach(this Array array, Action<Array, int[]> action)
     {
         if (array.LongLength == 0)

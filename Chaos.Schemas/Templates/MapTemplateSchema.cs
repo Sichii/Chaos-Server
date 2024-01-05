@@ -19,7 +19,8 @@ public sealed record MapTemplateSchema
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A unique id specific to this map template<br />
+    ///     A unique id specific to this map template
+    ///     <br />
     ///     This must match the name of the folder containing this file
     /// </summary>
     [JsonRequired]

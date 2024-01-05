@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 /// <summary>
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Menu" /> packet
 /// </summary>
-public sealed record MenuArgs : ISendArgs
+public sealed record MenuArgs : IPacketSerializable
 {
     /// <summary>
     ///     If this is a "WithArgs" menu type, this is the argument passed to the client with this dialog
@@ -47,6 +47,11 @@ public sealed record MenuArgs : ISendArgs
     ///     If the menu is part of a pursuit chain, this is the id of that pursuit
     /// </summary>
     public ushort PursuitId { get; set; }
+
+    /// <summary>
+    ///     Whether or not the menu should show an illustration of the source entity
+    /// </summary>
+    public bool ShouldIllustrate { get; set; }
 
     /// <summary>
     ///     If this menu type shows a list of skills to learn, this is the collection of skills that are available for learning

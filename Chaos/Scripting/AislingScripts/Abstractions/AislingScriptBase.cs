@@ -21,7 +21,8 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
     /// <inheritdoc />
     public virtual bool CanMove() => true;
 
-    /// <param name="entity"></param>
+    /// <param name="entity">
+    /// </param>
     /// <inheritdoc />
     public virtual bool CanSee(VisibleEntity entity) => true;
 

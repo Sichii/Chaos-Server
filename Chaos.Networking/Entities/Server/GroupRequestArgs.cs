@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.GroupRequest" />
 ///     packet
 /// </summary>
-public sealed record GroupRequestArgs : ISendArgs
+public sealed record GroupRequestArgs : IPacketSerializable
 {
     /// <summary>
     ///     The type of the request

@@ -15,8 +15,12 @@ public static class DirectorySynchronizer
     ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
     ///     the directory
     /// </summary>
-    /// <param name="directory">The directory to lock during execution</param>
-    /// <param name="action">The function to execute</param>
+    /// <param name="directory">
+    ///     The directory to lock during execution
+    /// </param>
+    /// <param name="action">
+    ///     The function to execute
+    /// </param>
     public static void SafeExecute(this string directory, Action<string> action)
     {
         SpinWait.SpinUntil(() => LockedDirectories.Add(directory));
@@ -34,8 +38,12 @@ public static class DirectorySynchronizer
     ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
     ///     the directory
     /// </summary>
-    /// <param name="directory">The directory to lock during execution</param>
-    /// <param name="function">The function to execute</param>
+    /// <param name="directory">
+    ///     The directory to lock during execution
+    /// </param>
+    /// <param name="function">
+    ///     The function to execute
+    /// </param>
     public static TResult SafeExecute<TResult>(this string directory, Func<string, TResult> function)
     {
         SpinWait.SpinUntil(() => LockedDirectories.Add(directory));
@@ -53,8 +61,12 @@ public static class DirectorySynchronizer
     ///     Asynchronously executes the specified function on the specified directory, ensuring that no other actions are being
     ///     performed on the directory
     /// </summary>
-    /// <param name="directory">The directory to lock during execution</param>
-    /// <param name="function">The function to execute</param>
+    /// <param name="directory">
+    ///     The directory to lock during execution
+    /// </param>
+    /// <param name="function">
+    ///     The function to execute
+    /// </param>
     public static async Task SafeExecuteAsync(this string directory, Func<string, Task> function)
     {
         while (!LockedDirectories.Add(directory))
@@ -73,8 +85,12 @@ public static class DirectorySynchronizer
     ///     Asynchronously executes the specified function on the specified directory, ensuring that no other actions are being
     ///     performed on the directory
     /// </summary>
-    /// <param name="directory">The directory to lock during execution</param>
-    /// <param name="function">The function to execute</param>
+    /// <param name="directory">
+    ///     The directory to lock during execution
+    /// </param>
+    /// <param name="function">
+    ///     The function to execute
+    /// </param>
     public static async Task<T> SafeExecuteAsync<T>(this string directory, Func<string, Task<T>> function)
     {
         while (!LockedDirectories.Add(directory))

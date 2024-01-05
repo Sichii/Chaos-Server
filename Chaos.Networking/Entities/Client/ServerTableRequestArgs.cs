@@ -7,9 +7,17 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ServerTableRequest" /> packet
 /// </summary>
-/// <param name="ServerTableRequestType">The type of request</param>
-/// <param name="ServerId">
-///     If specified, the id of the login server the client has chosen <br />
-///     Should only be used with the ServerTableRequestType.ServerId
-/// </param>
-public sealed record ServerTableRequestArgs(ServerTableRequestType ServerTableRequestType, byte? ServerId) : IReceiveArgs;
+public sealed record ServerTableRequestArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     If specified, the id of the login server the client has chosen
+    ///     <br />
+    ///     Should only be used with the ServerTableRequestType.ServerId
+    /// </summary>
+    public byte? ServerId { get; set; }
+
+    /// <summary>
+    ///     The type of request
+    /// </summary>
+    public required ServerTableRequestType ServerTableRequestType { get; set; }
+}

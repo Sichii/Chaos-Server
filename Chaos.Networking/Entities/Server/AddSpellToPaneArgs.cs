@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddSpellToPane" /> packet
 /// </summary>
-public sealed record AddSpellToPaneArgs : ISendArgs
+public sealed record AddSpellToPaneArgs : IPacketSerializable
 {
     /// <summary>
     ///     Details about the spell being added to the pane

@@ -6,6 +6,15 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SetNotepad" />
 ///     packet
 /// </summary>
-/// <param name="Slot">The slot of the object of which text is being written to</param>
-/// <param name="Message">The message the client is trying to write to the object</param>
-public sealed record SetNotepadArgs(byte Slot, string Message) : IReceiveArgs;
+public sealed record SetNotepadArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The message the client is trying to write to the object
+    /// </summary>
+    public required string Message { get; set; }
+
+    /// <summary>
+    ///     The slot of the object of which text is being written to
+    /// </summary>
+    public required byte Slot { get; set; }
+}

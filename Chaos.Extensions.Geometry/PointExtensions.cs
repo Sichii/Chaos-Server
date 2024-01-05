@@ -13,17 +13,25 @@ public static class PointExtensions
     /// <summary>
     ///     Lazily generates a sequence of points in a cone shape.
     /// </summary>
-    /// <param name="point">The starting point of the cone</param>
-    /// <param name="direction">The direction the cone is facing</param>
-    /// <param name="maxDistance">The maximum distance the cone extends from the starting point</param>
-    /// <returns>An enumeration of points in the shape of a cone</returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <param name="point">
+    ///     The starting point of the cone
+    /// </param>
+    /// <param name="direction">
+    ///     The direction the cone is facing
+    /// </param>
+    /// <param name="maxDistance">
+    ///     The maximum distance the cone extends from the starting point
+    /// </param>
+    /// <returns>
+    ///     An enumeration of points in the shape of a cone
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
     /// <remarks>
     ///     The <paramref name="maxDistance" /> is the maximum distance the cone extends from the starting point, however there
-    ///     will be points
-    ///     that are part of the cone that are farther than <paramref name="maxDistance" /> distance from the starting point.
-    ///     This is because the
-    ///     forward edges and the center of the cone both extend the same number of spaces in the given direction.
+    ///     will be points that are part of the cone that are farther than <paramref name="maxDistance" /> distance from the
+    ///     starting point. This is because the forward edges and the center of the cone both extend the same number of spaces
+    ///     in the given direction.
     /// </remarks>
     public static IEnumerable<Point> ConalSearch<TPoint>(this TPoint point, Direction direction, int maxDistance)
         where TPoint: struct, IPoint
@@ -46,14 +54,21 @@ public static class PointExtensions
     ///     Offsets an <see cref="Chaos.Geometry.Abstractions.IPoint" /> in the specified
     ///     <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> by the specified <paramref name="distance" />
     /// </summary>
-    /// <param name="point">The point to offset</param>
-    /// <param name="direction">The direction to offset to</param>
-    /// <param name="distance">The distance to offset by</param>
+    /// <param name="point">
+    ///     The point to offset
+    /// </param>
+    /// <param name="direction">
+    ///     The direction to offset to
+    /// </param>
+    /// <param name="distance">
+    ///     The distance to offset by
+    /// </param>
     /// <returns>
     ///     A new <see cref="Chaos.Geometry.Point" /> offset <paramref name="distance" /> number of tiles in
     ///     <paramref name="direction" />
     /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
     public static Point DirectionalOffset<TPoint>(this TPoint point, Direction direction, int distance = 1) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -76,12 +91,15 @@ public static class PointExtensions
     ///     Determines the directional relationship between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="point">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> whose relation to another to find</param>
-    /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to find the relation to</param>
+    /// <param name="point">
+    ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> whose relation to another to find
+    /// </param>
+    /// <param name="other">
+    ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to find the relation to
+    /// </param>
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> <paramref name="other" /> would need to face
-    ///     to be facing
-    ///     <paramref name="point" />
+    ///     to be facing <paramref name="point" />
     /// </returns>
     public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
         where TPoint2: IPoint
@@ -128,9 +146,14 @@ public static class PointExtensions
     ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
-    /// <returns>The distance between the two given points without moving diagonally</returns>
+    /// <param name="point">
+    /// </param>
+    /// <param name="other">
+    ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against
+    /// </param>
+    /// <returns>
+    ///     The distance between the two given points without moving diagonally
+    /// </returns>
     public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
                                                                                         where TPoint2: IPoint
     {
@@ -145,9 +168,14 @@ public static class PointExtensions
     ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="other">The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against</param>
-    /// <returns>The distance between the two given points allowing diagonal movement</returns>
+    /// <param name="point">
+    /// </param>
+    /// <param name="other">
+    ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against
+    /// </param>
+    /// <returns>
+    ///     The distance between the two given points allowing diagonal movement
+    /// </returns>
     public static float EuclideanDistanceFrom<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
@@ -163,10 +191,18 @@ public static class PointExtensions
     /// <summary>
     ///     Flood fills in a given point set starting at a given point
     /// </summary>
-    /// <param name="points">All possible points</param>
-    /// <param name="start">The starting point</param>
-    /// <typeparam name="T">An inheritor of IPoint</typeparam>
-    /// <returns>A sequence of all touching points contained within the given sequence starting with the given start point</returns>
+    /// <param name="points">
+    ///     All possible points
+    /// </param>
+    /// <param name="start">
+    ///     The starting point
+    /// </param>
+    /// <typeparam name="T">
+    ///     An inheritor of IPoint
+    /// </typeparam>
+    /// <returns>
+    ///     A sequence of all touching points contained within the given sequence starting with the given start point
+    /// </returns>
     public static IEnumerable<T> FloodFill<T>(this IEnumerable<T> points, T start) where T: IPoint
     {
         var allPoints = points.Cast<IPoint>()
@@ -203,18 +239,22 @@ public static class PointExtensions
 
     /// <summary>
     ///     Lazily generates an enumeration of points in a line from the user, with an option for distance and direction.
-    ///     Direction.All is
-    ///     optional. Direction.Invalid direction returns empty list.
+    ///     Direction.All is optional. Direction.Invalid direction returns empty list.
     /// </summary>
-    /// <param name="start"></param>
-    /// <param name="direction"></param>
-    /// <param name="radius">The max distance to generate points</param>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="radius" /> must be positive</exception>
+    /// <param name="start">
+    /// </param>
+    /// <param name="direction">
+    /// </param>
+    /// <param name="radius">
+    ///     The max distance to generate points
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     <paramref name="radius" /> must be positive
+    /// </exception>
     /// <remarks>
     ///     Assumes <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal direction
-    ///     "North", this
-    ///     method will generate points in all 4
-    ///     cardinal directions. Points will be generated 1 radius at a time, clock-wise.
+    ///     "North", this method will generate points in all 4 cardinal directions. Points will be generated 1 radius at a
+    ///     time, clock-wise.
     /// </remarks>
     /// <example>
     ///     <code>
@@ -245,22 +285,22 @@ public static class PointExtensions
 
     /// <summary>
     ///     Lazily generates an enumeration of diagonal points in relevance to the user, with an optional distance and
-    ///     direction.
-    ///     Direction.All is optional. Direction.Invalid direction returns an empty enumeration
+    ///     direction. Direction.All is optional. Direction.Invalid direction returns an empty enumeration
     /// </summary>
-    /// <param name="start"></param>
-    /// <param name="direction">The general direction to generate points for. See remarks.</param>
-    /// <param name="radius">The range in which to generate points</param>
+    /// <param name="start">
+    /// </param>
+    /// <param name="direction">
+    ///     The general direction to generate points for. See remarks.
+    /// </param>
+    /// <param name="radius">
+    ///     The range in which to generate points
+    /// </param>
     /// <remarks>
     ///     Assuming <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> is equivalent to the cardinal
-    ///     direction "North", this
-    ///     method will generate points in the
-    ///     inter-cardinal directions "North-East", "South-East", "South-West", and "North-West". Points will be generated 1
-    ///     radius at a time,
-    ///     clock-wise. Optionally, you can choose a cardinal <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" />
-    ///     to generate points
-    ///     for the 2 inter-cardinal directions that
-    ///     share the given cardinal direction.
+    ///     direction "North", this method will generate points in the inter-cardinal directions "North-East", "South-East",
+    ///     "South-West", and "North-West". Points will be generated 1 radius at a time, clock-wise. Optionally, you can choose
+    ///     a cardinal <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to generate points for the 2
+    ///     inter-cardinal directions that share the given cardinal direction.
     /// </remarks>
     /// <example>
     ///     <code>
@@ -328,9 +368,15 @@ public static class PointExtensions
     /// <summary>
     ///     Creates an enumerable list of points representing a path between two given points, and returns it.
     /// </summary>
-    /// <param name="start">Starting point for the creation of the path</param>
-    /// <param name="end">Ending point for the creation of the path</param>
-    /// <remarks>Does not return the start point, only the points between the start and end, as well as the end point itself</remarks>
+    /// <param name="start">
+    ///     Starting point for the creation of the path
+    /// </param>
+    /// <param name="end">
+    ///     Ending point for the creation of the path
+    /// </param>
+    /// <remarks>
+    ///     Does not return the start point, only the points between the start and end, as well as the end point itself
+    /// </remarks>
     public static IEnumerable<Point> GetDirectPath<TPoint1, TPoint2>(this TPoint1 start, TPoint2 end) where TPoint1: IPoint
         where TPoint2: IPoint
     {
@@ -350,12 +396,23 @@ public static class PointExtensions
     /// <summary>
     ///     Determines if this point is on either intercardinal diagonal in relation to another point, in the given direction
     /// </summary>
-    /// <param name="point">The point to test</param>
-    /// <param name="other">The point in which directions are based on</param>
-    /// <param name="direction">The direction between the 2 intercardinals to check</param>
+    /// <param name="point">
+    ///     The point to test
+    /// </param>
+    /// <param name="other">
+    ///     The point in which directions are based on
+    /// </param>
+    /// <param name="direction">
+    ///     The direction between the 2 intercardinals to check
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if this point is on an intercardinal diagonal in relation to the other point in the given
-    ///     direction, otherwise <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if this point is on an intercardinal diagonal in relation to the other point in the given direction, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     public static bool IsInterCardinalTo<TPoint>(this TPoint point, TPoint other, Direction direction) where TPoint: IPoint
     {
@@ -384,8 +441,11 @@ public static class PointExtensions
     ///     Offsets one <see cref="Chaos.Geometry.Abstractions.IPoint" /> towards another
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="other">The point to offset towards</param>
+    /// <param name="point">
+    /// </param>
+    /// <param name="other">
+    ///     The point to offset towards
+    /// </param>
     /// <returns>
     ///     A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" />
     /// </returns>
@@ -402,15 +462,20 @@ public static class PointExtensions
     }
 
     /// <summary>
-    ///     Lazily generates points between two points. <br />
+    ///     Lazily generates points between two points.
+    ///     <br />
     ///     https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
     /// </summary>
-    /// <param name="start">The starting point</param>
-    /// <param name="end">The ending point</param>
+    /// <param name="start">
+    ///     The starting point
+    /// </param>
+    /// <param name="end">
+    ///     The ending point
+    /// </param>
     /// <remarks>
     ///     This will enumerate all points between <paramref name="start" /> and <paramref name="end" /> as if a line had been
-    ///     drawn perfectly
-    ///     between the two points. Any point the line crosses over will be returned. <br />
+    ///     drawn perfectly between the two points. Any point the line crosses over will be returned.
+    ///     <br />
     /// </remarks>
     public static IEnumerable<Point> RayTraceTo<TPoint>(this TPoint start, TPoint end) where TPoint: IPoint
     {
@@ -447,14 +512,16 @@ public static class PointExtensions
 
     /// <summary>
     ///     Lazily generates points around a given point. The search expands outwards from the given point until it reaches the
-    ///     specified max
-    ///     distance
+    ///     specified max distance
     /// </summary>
-    /// <param name="point">The point to search around</param>
-    /// <param name="maxRadius">The maximum distance from the <paramref name="point" /> to search</param>
+    /// <param name="point">
+    ///     The point to search around
+    /// </param>
+    /// <param name="maxRadius">
+    ///     The maximum distance from the <paramref name="point" /> to search
+    /// </param>
     /// <remarks>
-    ///     The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> and searches
-    ///     clock-wise
+    ///     The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> and searches clock-wise
     /// </remarks>
     public static IEnumerable<Point> SpiralSearch<TPoint>(this TPoint point, int maxRadius = byte.MaxValue) where TPoint: IPoint
     {
@@ -505,8 +572,10 @@ public static class PointExtensions
     ///     Orders points by their X or Y values, based on the direction given. The output of this method will always order
     ///     points in the same order.
     /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentNullException">
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
     public static IEnumerable<TPoint> WithConsistentDirectionBias<TPoint>(this IEnumerable<TPoint> points, Direction direction)
         where TPoint: IPoint
     {
@@ -533,8 +602,10 @@ public static class PointExtensions
     /// <summary>
     ///     Orders points by their X or Y values, based on the direction given.
     /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentNullException">
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
     public static IEnumerable<TPoint> WithDirectionBias<TPoint>(this IEnumerable<TPoint> points, Direction direction) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(points);

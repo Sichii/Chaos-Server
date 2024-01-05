@@ -8,7 +8,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.DisplayAisling" /> packet
 /// </summary>
-public sealed record DisplayAislingArgs : ISendArgs
+public sealed record DisplayAislingArgs : IPacketSerializable
 {
     /// <summary>
     ///     The color of the accessory in the first accessory slot

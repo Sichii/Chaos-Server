@@ -134,7 +134,7 @@ public class MetaDataStore : IMetaDataStore
             {
                 Level = template.Level,
                 RequiresMaster = template.RequiresMaster,
-                Ability = 0,
+                AbilityLevel = template.AbilityLevel,
                 IconId = template.PanelSprite,
                 Str = (byte)(reqs.RequiredStats?.Str ?? 0),
                 Int = (byte)(reqs.RequiredStats?.Int ?? 0),

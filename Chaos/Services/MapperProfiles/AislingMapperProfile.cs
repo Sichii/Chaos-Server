@@ -231,6 +231,7 @@ public sealed class AislingMapperProfile(
                 HeadSprite = overHelm?.ItemSprite.DisplaySprite ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,
                 IsDead = obj.IsDead,
+                IsHidden = false, //"Hidden" people are unobservable, so this packet wont even be sent
                 IsTransparent = obj.Visibility is VisibilityType.Hidden or VisibilityType.TrueHidden or VisibilityType.GmHidden,
                 LanternSize = obj.LanternSize,
                 Name = obj.Name,
@@ -252,7 +253,11 @@ public sealed class AislingMapperProfile(
     ProfileArgs IMapperProfile<Aisling, ProfileArgs>.Map(Aisling obj)
         => new()
         {
-            AdvClass = obj.UserStatSheet.AdvClass,
+            DisplayClass = obj.UserStatSheet.AdvClass != AdvClass.None
+                ? obj.UserStatSheet.AdvClass.ToString()
+                : obj.UserStatSheet.Master
+                    ? "Master"
+                    : obj.UserStatSheet.BaseClass.ToString(),
             BaseClass = obj.UserStatSheet.BaseClass,
             Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>)!,
             GroupOpen = obj.Options.AllowGroup,
@@ -274,14 +279,19 @@ public sealed class AislingMapperProfile(
     SelfProfileArgs IMapperProfile<Aisling, SelfProfileArgs>.Map(Aisling obj)
         => new()
         {
-            AdvClass = obj.UserStatSheet.AdvClass,
+            DisplayClass = obj.UserStatSheet.AdvClass != AdvClass.None
+                ? obj.UserStatSheet.AdvClass.ToString()
+                : obj.UserStatSheet.Master
+                    ? "Master"
+                    : obj.UserStatSheet.BaseClass.ToString(),
             BaseClass = obj.UserStatSheet.BaseClass,
             Equipment = obj.Equipment.ToDictionary(i => (EquipmentSlot)i.Slot, Mapper.Map<ItemInfo>),
             GroupOpen = obj.Options.AllowGroup,
             GroupString = obj.Group?.ToString(),
             GuildName = obj.Guild?.Name,
             GuildRank = obj.GuildRank,
-            IsMaster = obj.UserStatSheet.Master,
+            EnableMasterAbilityMetaData = obj.UserStatSheet.Master,
+            EnableMasterQuestMetaData = obj.UserStatSheet.Master,
             LegendMarks = Mapper.MapMany<LegendMarkInfo>(obj.Legend)
                                 .ToList(),
             Name = obj.Name,
@@ -299,7 +309,6 @@ public sealed class AislingMapperProfile(
         {
             BaseClass = obj.UserStatSheet.BaseClass,
             Direction = obj.Direction,
-            Gender = obj.Gender,
             Id = obj.Id
         };
 

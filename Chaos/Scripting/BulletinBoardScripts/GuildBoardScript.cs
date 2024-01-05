@@ -12,11 +12,16 @@ namespace Chaos.Scripting.BulletinBoardScripts;
 ///     A board script for a guild
 /// </summary>
 /// <remarks>
-///     Permissions: <br />
-///     Read: InGuild <br />
-///     Write: Member+ <br />
-///     Delete: Post Owner / Council+ <br />
-///     Highlight: Leader <br />
+///     Permissions:
+///     <br />
+///     Read: InGuild
+///     <br />
+///     Write: Member+
+///     <br />
+///     Delete: Post Owner / Council+
+///     <br />
+///     Highlight: Leader
+///     <br />
 ///     Retention: Configurable
 /// </remarks>
 public sealed class GuildBoardScript : ConfigurableBulletinBoardScriptBase

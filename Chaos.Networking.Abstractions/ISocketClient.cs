@@ -66,17 +66,19 @@ public interface ISocketClient
     /// <summary>
     ///     Serializes an object and sends it to the client
     /// </summary>
-    /// <param name="obj">The object to be serialized and sent</param>
+    /// <param name="obj">
+    ///     The object to be serialized and sent
+    /// </param>
     /// <typeparam name="T">
-    ///     The type must inherit <see cref="Chaos.Packets.Abstractions.ISendArgs" />
-    ///     and have a <see cref="Chaos.Packets.Abstractions.IServerPacketSerializer{T}" /> created for it
+    ///     The type must inherit <see cref="Chaos.Packets.Abstractions.IPacketSerializable" /> and have a
+    ///     <see cref="IServerPacketConverter{T}" /> created for it
     /// </typeparam>
-    void Send<T>(T obj) where T: ISendArgs;
+    void Send<T>(T obj) where T: IPacketSerializable;
 
     /// <summary>
     ///     Sends a packet to the client
     /// </summary>
-    void Send(ref ServerPacket packet);
+    void Send(ref Packet packet);
 
     /// <summary>
     ///     Used when a client connects to response with a string
@@ -96,6 +98,7 @@ public interface ISocketClient
     /// <summary>
     ///     Used when a client requests to change the packet sequence
     /// </summary>
-    /// <param name="newSequence"></param>
+    /// <param name="newSequence">
+    /// </param>
     void SetSequence(byte newSequence);
 }

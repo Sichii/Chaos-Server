@@ -10,10 +10,10 @@ public interface ILobbyServer<in TClient> : IServer<TClient> where TClient: ISoc
     /// <summary>
     ///     Occurs when a client requests the details of available login servers
     /// </summary>
-    ValueTask OnServerTableRequest(TClient client, in ClientPacket packet);
+    ValueTask OnServerTableRequest(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client requests the encryption details, and a checksum of the details of available login servers
     /// </summary>
-    ValueTask OnVersion(TClient client, in ClientPacket packet);
+    ValueTask OnVersion(TClient client, in Packet packet);
 }

@@ -7,7 +7,9 @@ namespace Chaos.Common.Utilities;
 /// <summary>
 ///     Generic static helper for doing a shallow copy from one object to another.
 /// </summary>
-/// <typeparam name="T">The type of the object.</typeparam>
+/// <typeparam name="T">
+///     The type of the object.
+/// </typeparam>
 public static class ShallowCopy<T>
 {
     private static readonly Action<T, T> AssignmentDelegate;
@@ -35,8 +37,8 @@ public static class ShallowCopy<T>
     }
 
     /// <summary>
-    ///     Attempts to create a fresh instance of the object type,
-    ///     and then shallow mergees all properties from the original object into the new one.
+    ///     Attempts to create a fresh instance of the object type, and then shallow mergees all properties from the original
+    ///     object into the new one.
     /// </summary>
     public static T Create(T fromObj)
     {
@@ -47,8 +49,8 @@ public static class ShallowCopy<T>
     }
 
     /// <summary>
-    ///     Attempts to create a fresh instance of the object type,
-    ///     and then shallow mergees all properties from the original object into the new one.
+    ///     Attempts to create a fresh instance of the object type, and then shallow mergees all properties from the original
+    ///     object into the new one.
     /// </summary>
     [ExcludeFromCodeCoverage(Justification = "Tested by Create(T)")]
     public static T Create(T fromObj, params object[] cTorArgs)
@@ -86,13 +88,22 @@ public static class ShallowCopy<T>
 
     /// <summary>
     ///     Merges all (public/non-public) instanced properties from <paramref name="fromObj" /> into
-    ///     <paramref name="targetObj" /> <br />
+    ///     <paramref name="targetObj" />
+    ///     <br />
     ///     The first time this runs (for each type), an expression tree will be compiled and stored.
     /// </summary>
-    /// <param name="fromObj">The object to merge from.</param>
-    /// <param name="targetObj">The object to merge into.</param>
-    /// <exception cref="ArgumentNullException">fromObj</exception>
-    /// <exception cref="ArgumentNullException">targetObj</exception>
+    /// <param name="fromObj">
+    ///     The object to merge from.
+    /// </param>
+    /// <param name="targetObj">
+    ///     The object to merge into.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    ///     fromObj
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    ///     targetObj
+    /// </exception>
     public static void Merge(T fromObj, T targetObj)
     {
         if (fromObj is null)

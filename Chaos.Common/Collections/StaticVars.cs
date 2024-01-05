@@ -13,7 +13,8 @@ public class StaticVars : IScriptVars
     /// <summary>
     ///     Gets or sets the value associated with the specified key.
     /// </summary>
-    /// <param name="key"></param>
+    /// <param name="key">
+    /// </param>
     [ExcludeFromCodeCoverage(Justification = "Nothing test, just a wrapper")]
     public object this[string key]
     {
@@ -29,7 +30,8 @@ public class StaticVars : IScriptVars
     /// <summary>
     ///     Initializes a new instance of the StaticVars class with an optional initial set of key-value pairs.
     /// </summary>
-    /// <param name="objs"></param>
+    /// <param name="objs">
+    /// </param>
     public StaticVars(IDictionary<string, object>? objs = null)
         => Vars = new ConcurrentDictionary<string, object>(objs ?? new Dictionary<string, object>(), StringComparer.OrdinalIgnoreCase);
 

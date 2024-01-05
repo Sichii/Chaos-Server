@@ -8,6 +8,8 @@ public interface ISimpleCacheProvider
     /// <summary>
     ///     Gets a cache
     /// </summary>
-    /// <typeparam name="T">The type of object the cache stores</typeparam>
+    /// <typeparam name="T">
+    ///     The type of object the cache stores
+    /// </typeparam>
     ISimpleCache<T> GetCache<T>();
 }

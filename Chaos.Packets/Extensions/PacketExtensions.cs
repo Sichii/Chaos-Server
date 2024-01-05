@@ -18,72 +18,44 @@ public static class PacketExtensions
     ///     Adds <see cref="Chaos.Packets.PacketSerializer" /> as a singleton implementation of
     ///     <see cref="Chaos.Packets.Abstractions.IPacketSerializer" /> to the service collction
     /// </summary>
-    /// <param name="serviceCollection">The service collectionto add to</param>
+    /// <param name="serviceCollection">
+    ///     The service collectionto add to
+    /// </param>
     /// <remarks>
-    ///     This extension scans all loaded assemblies for types that implement of
-    ///     <see cref="Chaos.Packets.Abstractions.IClientPacketDeserializer" /> or
-    ///     <see cref="Chaos.Packets.Abstractions.IServerPacketSerializer" />. It initializes instances of all of these types
-    ///     through
-    ///     <see cref="System.Activator" />.<see cref="System.Activator.CreateInstance(Type)" /> and uses the types and objects
-    ///     as parameters for
-    ///     the <see cref="Chaos.Packets.PacketSerializer" />
-    ///     constructor.
+    ///     This extension scans all loaded assemblies for types that implement of <see cref="IPacketConverter" />. It
+    ///     initializes instances of all of these types through <see cref="System.Activator" />.
+    ///     <see cref="System.Activator.CreateInstance(Type)" /> and uses the types and objects as parameters for the
+    ///     <see cref="Chaos.Packets.PacketSerializer" /> constructor.
     /// </remarks>
     public static void AddPacketSerializer(this IServiceCollection serviceCollection)
         => serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>(
             _ =>
             {
-                var serializers = LoadSerializersFromAssembly();
-                var deserializers = LoadDeserializersFromAssembly();
-                var serializer = new PacketSerializer(Encoding.GetEncoding(949), deserializers, serializers);
+                var converters = LoadConvertersFromAssembly();
+                var serializer = new PacketSerializer(Encoding.GetEncoding(949), converters);
 
                 return serializer;
             });
 
-    private static Dictionary<Type, IClientPacketDeserializer> LoadDeserializersFromAssembly()
+    private static Dictionary<Type, IPacketConverter> LoadConvertersFromAssembly()
     {
-        var ret = new Dictionary<Type, IClientPacketDeserializer>();
+        var ret = new Dictionary<Type, IPacketConverter>();
 
-        var deserializers = typeof(IClientPacketDeserializer).LoadImplementations()
-                                                             .Select(
-                                                                 asmType => (IClientPacketDeserializer)Activator.CreateInstance(asmType)!)
-                                                             .ToArray();
+        var deserializers = typeof(IPacketConverter).LoadImplementations()
+                                                    .Select(asmType => (IPacketConverter)Activator.CreateInstance(asmType)!)
+                                                    .ToArray();
 
         foreach (var deserializer in deserializers)
         {
             var type = deserializer.GetType()
                                    .GetInterfaces()
                                    .Where(i => i.IsGenericType)
-                                   .First(i => i.GetGenericTypeDefinition() == typeof(IClientPacketDeserializer<>));
+                                   .First(i => i.GetGenericTypeDefinition() == typeof(IPacketConverter<>));
 
             var typeParam = type.GetGenericArguments()
                                 .First();
 
             ret.TryAdd(typeParam, deserializer);
-        }
-
-        return ret;
-    }
-
-    private static Dictionary<Type, IServerPacketSerializer> LoadSerializersFromAssembly()
-    {
-        var ret = new Dictionary<Type, IServerPacketSerializer>();
-
-        var serializers = typeof(IServerPacketSerializer).LoadImplementations()
-                                                         .Select(asmType => (IServerPacketSerializer)Activator.CreateInstance(asmType)!)
-                                                         .ToArray();
-
-        foreach (var serializer in serializers)
-        {
-            var type = serializer.GetType()
-                                 .GetInterfaces()
-                                 .Where(i => i.IsGenericType)
-                                 .First(i => i.GetGenericTypeDefinition() == typeof(IServerPacketSerializer<>));
-
-            var typeParam = type.GetGenericArguments()
-                                .First();
-
-            ret.TryAdd(typeParam, serializer);
         }
 
         return ret;

@@ -7,17 +7,27 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.SelfProfile" />
 ///     packet
 /// </summary>
-public sealed record SelfProfileArgs : ISendArgs
+public sealed record SelfProfileArgs : IPacketSerializable
 {
-    /// <summary>
-    ///     The character's secondary class
-    /// </summary>
-    public AdvClass? AdvClass { get; set; }
-
     /// <summary>
     ///     The character's primary class
     /// </summary>
     public BaseClass BaseClass { get; set; }
+
+    /// <summary>
+    ///     The value to display in the client for the character's class
+    /// </summary>
+    public string DisplayClass { get; set; } = null!;
+
+    /// <summary>
+    ///     Whether or not to show master ability metadata as learnable
+    /// </summary>
+    public bool EnableMasterAbilityMetaData { get; set; }
+
+    /// <summary>
+    ///     Whether or not to show master quest metadata as doable
+    /// </summary>
+    public bool EnableMasterQuestMetaData { get; set; }
 
     /// <summary>
     ///     The character's equipment, by slot
@@ -33,13 +43,19 @@ public sealed record SelfProfileArgs : ISendArgs
     ///     A string representing the character's group. Contains all group members in a specific format.
     /// </summary>
     /// <remarks>
-    ///     The format of this string is as follows: <br />
+    ///     The format of this string is as follows:
+    ///     <br />
     ///     <para>
-    ///         - Starts with "Group members" <br />
-    ///         - For each group member: <br />
-    ///         --- If leader: "\n* {LeaderName}" <br />
-    ///         --- Otherwise: "\n  {MemberName}" <br />
-    ///         - Ends with "Total {Count}" <br />
+    ///         - Starts with "Group members"
+    ///         <br />
+    ///         - For each group member:
+    ///         <br />
+    ///         --- If leader: "\n* {LeaderName}"
+    ///         <br />
+    ///         --- Otherwise: "\n  {MemberName}"
+    ///         <br />
+    ///         - Ends with "Total {Count}"
+    ///         <br />
     ///     </para>
     /// </remarks>
     /// <example>
@@ -58,14 +74,9 @@ public sealed record SelfProfileArgs : ISendArgs
     public string? GuildRank { get; set; }
 
     /// <summary>
-    ///     Whether or not the character is a Master
-    /// </summary>
-    public bool IsMaster { get; set; }
-
-    /// <summary>
     ///     The character's legend marks
     /// </summary>
-    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = new List<LegendMarkInfo>();
+    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = Array.Empty<LegendMarkInfo>();
 
     /// <summary>
     ///     The character's name

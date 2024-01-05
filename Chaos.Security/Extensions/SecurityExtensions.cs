@@ -18,10 +18,11 @@ public static class SecurityExtensions
     /// <summary>
     ///     Adds the <see cref="IAccessManager" /> to the service collection
     /// </summary>
-    /// <param name="services">The service collection to add the service to</param>
+    /// <param name="services">
+    ///     The service collection to add the service to
+    /// </param>
     /// <param name="subSection">
-    ///     The section where the <see cref="AccessManagerOptions" /> can be located
-    ///     in the config
+    ///     The section where the <see cref="AccessManagerOptions" /> can be located in the config
     /// </param>
     public static void AddSecurity(this IServiceCollection services, string subSection)
     {

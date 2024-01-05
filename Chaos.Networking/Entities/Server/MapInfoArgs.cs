@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.MapInfo" />
 ///     packet
 /// </summary>
-public sealed record MapInfoArgs : ISendArgs
+public sealed record MapInfoArgs : IPacketSerializable
 {
     /// <summary>
     ///     A checksum of the map data. If this value does not match what the client has, it will request the map data

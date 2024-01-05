@@ -8,12 +8,12 @@ namespace Chaos.Scripting.Abstractions;
 /// </summary>
 /// <remarks>
 ///     This kind of script accepts variables through it's <see cref="Chaos.Common.Abstractions.IScriptVars" /> parameter.
-///     It then scans the
-///     inheritance
-///     chain and populates all non-public, writable, instanced properties automatically with values from the
-///     <see cref="Chaos.Common.Abstractions.IScriptVars" />
+///     It then scans the inheritance chain and populates all non-public, writable, instanced properties automatically with
+///     values from the <see cref="Chaos.Common.Abstractions.IScriptVars" />
 /// </remarks>
-/// <typeparam name="T">The <see cref="Chaos.Scripting.Abstractions.IScripted" /> object this script is attached to</typeparam>
+/// <typeparam name="T">
+///     The <see cref="Chaos.Scripting.Abstractions.IScripted" /> object this script is attached to
+/// </typeparam>
 public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where T: IScripted
 {
     /// <summary>
@@ -24,8 +24,12 @@ public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConfigurableScriptBase{T}" /> class.
     /// </summary>
-    /// <param name="subject">The subject of this script. The object the script is attached to</param>
-    /// <param name="scriptVars">The configurable variables the script will use to execute</param>
+    /// <param name="subject">
+    ///     The subject of this script. The object the script is attached to
+    /// </param>
+    /// <param name="scriptVars">
+    ///     The configurable variables the script will use to execute
+    /// </param>
     protected ConfigurableScriptBase(T subject, IScriptVars scriptVars)
         : base(subject)
     {
@@ -37,9 +41,15 @@ public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConfigurableScriptBase{T}" /> class.
     /// </summary>
-    /// <param name="subject">The subject of this script. The object the script is attached to</param>
-    /// <param name="scriptVarsFactory">A function that produces the variables that this script will use to execute</param>
-    /// <exception cref="NullReferenceException">Thrown when the factory produces a null value</exception>
+    /// <param name="subject">
+    ///     The subject of this script. The object the script is attached to
+    /// </param>
+    /// <param name="scriptVarsFactory">
+    ///     A function that produces the variables that this script will use to execute
+    /// </param>
+    /// <exception cref="NullReferenceException">
+    ///     Thrown when the factory produces a null value
+    /// </exception>
     protected ConfigurableScriptBase(T subject, Func<string, IScriptVars> scriptVarsFactory)
         : base(subject)
     {

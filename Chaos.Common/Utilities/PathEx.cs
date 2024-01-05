@@ -8,13 +8,28 @@ public static class PathEx
     /// <summary>
     ///     Determines whether the specified path is a subpath of the given parent path.
     /// </summary>
-    /// <param name="path">The path to check if it's a subpath.</param>
-    /// <param name="parentPath">The parent path to compare against.</param>
+    /// <param name="path">
+    ///     The path to check if it's a subpath.
+    /// </param>
+    /// <param name="parentPath">
+    ///     The parent path to compare against.
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if the specified path is a subpath of the parent path; otherwise, <c>false</c>.
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the specified path is a subpath of the parent path; otherwise,
+    ///     <c>
+    ///         false
+    ///     </c>
+    ///     .
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    ///     Thrown when either <paramref name="path" /> or <paramref name="parentPath" /> is <c>null</c> or empty.
+    ///     Thrown when either <paramref name="path" /> or <paramref name="parentPath" /> is
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     or empty.
     /// </exception>
     /// <remarks>
     ///     This method performs a case-insensitive comparison of the path parts.

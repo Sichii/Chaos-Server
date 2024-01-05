@@ -157,6 +157,7 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             IsDyeable = obj.IsDyeable,
             IsModifiable = obj.IsModifiable,
             Level = obj.Level,
+            AbilityLevel = obj.AbilityLevel,
             Class = obj.Class,
             RequiresMaster = obj.RequiresMaster,
             AdvClass = obj.AdvClass,

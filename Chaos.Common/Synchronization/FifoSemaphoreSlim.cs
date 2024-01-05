@@ -16,13 +16,17 @@ public sealed class FifoSemaphoreSlim
     /// <summary>
     ///     Initializes a new instance of the <see cref="FifoSemaphoreSlim" /> class.
     /// </summary>
-    /// <param name="initialCount">The initial count of the semaphore</param>
-    /// <param name="maxCount">The max count of the semaphore</param>
+    /// <param name="initialCount">
+    ///     The initial count of the semaphore
+    /// </param>
+    /// <param name="maxCount">
+    ///     The max count of the semaphore
+    /// </param>
     public FifoSemaphoreSlim(int initialCount, int maxCount) => Sync = new SemaphoreSlim(initialCount, maxCount);
 
     /// <summary>
-    ///     Attempts to enter the semaphore. Sets the result on the next tcs in the queue,
-    ///     freeing the awaiter of the awaiter of the tcs task to do work while the semaphore is held by the caller
+    ///     Attempts to enter the semaphore. Sets the result on the next tcs in the queue, freeing the awaiter of the awaiter
+    ///     of the tcs task to do work while the semaphore is held by the caller
     /// </summary>
     private async void AcquireAndPop()
     {
@@ -51,11 +55,11 @@ public sealed class FifoSemaphoreSlim
 
     /// <summary>
     /// </summary>
-    /// <param name="timeout"></param>
+    /// <param name="timeout">
+    /// </param>
     /// <returns>
     ///     A task that will complete with a result of true if the current thread successfully entered the SemaphoreSlim,
-    ///     otherwise with a
-    ///     result of false
+    ///     otherwise with a result of false
     /// </returns>
     public async Task<bool> WaitAsync(TimeSpan timeout)
     {

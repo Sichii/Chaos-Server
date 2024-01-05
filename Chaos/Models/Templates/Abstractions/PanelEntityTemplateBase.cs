@@ -6,6 +6,7 @@ namespace Chaos.Models.Templates.Abstractions;
 
 public abstract record PanelEntityTemplateBase : ITemplate, IScripted
 {
+    public required int AbilityLevel { get; init; }
     public required AdvClass? AdvClass { get; init; }
     public required BaseClass? Class { get; init; }
     public required TimeSpan? Cooldown { get; init; }

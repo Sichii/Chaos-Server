@@ -7,7 +7,20 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.WorldMapClick" /> packet
 /// </summary>
-/// <param name="UniqueId">The checksum or unique id of the node the player has clicked on</param>
-/// <param name="MapId">The id of the map the node leads to</param>
-/// <param name="Point">The point on the map the node leads to</param>
-public sealed record WorldMapClickArgs(ushort UniqueId, ushort MapId, IPoint Point) : IReceiveArgs;
+public sealed record WorldMapClickArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The checksum or unique id of the node the player has clicked on
+    /// </summary>
+    public required ushort CheckSum { get; set; }
+
+    /// <summary>
+    ///     The id of the map the node leads to
+    /// </summary>
+    public required ushort MapId { get; set; }
+
+    /// <summary>
+    ///     The point on the map the node leads to
+    /// </summary>
+    public required IPoint Point { get; set; }
+}

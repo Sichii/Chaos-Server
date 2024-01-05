@@ -16,7 +16,8 @@ public sealed record DialogTemplateSchema
     public bool Contextual { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified and the <see cref="Type" /> is Normal, the dialog will have a next button that will take them to the
     ///     dialog with this template key
     /// </summary>
@@ -28,7 +29,8 @@ public sealed record DialogTemplateSchema
     public ICollection<DialogOptionSchema> Options { get; set; } = Array.Empty<DialogOptionSchema>();
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified and the <see cref="Type" /> is not Normal, the dialog will have a previous button that will take them
     ///     to the dialog with this template key
     /// </summary>
@@ -41,8 +43,10 @@ public sealed record DialogTemplateSchema
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value
-    ///     pair, and the value of that entry is a dictionary of propertyName-Value pairs
+    ///     A collection of key-value pairs of key-value pairs
+    ///     <br />
+    ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
+    ///     propertyName-Value pairs
     /// </summary>
     public IDictionary<string, DynamicVars> ScriptVars { get; set; }
         = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
@@ -54,20 +58,22 @@ public sealed record DialogTemplateSchema
     public string TemplateKey { get; set; } = null!;
 
     /// <summary>
-    ///     The text displayed on the dialog. This can be a string format with injectable parameters, but those parameters
-    ///     must be injected by a script
+    ///     The text displayed on the dialog. This can be a string format with injectable parameters, but those parameters must
+    ///     be injected by a script
     /// </summary>
     [JsonRequired]
     public string Text { get; set; } = null!;
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified and the <see cref="Type" /> is DialogTextEntry, this will limit the length of the input text box
     /// </summary>
     public ushort? TextBoxLength { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />
+    ///     Defaults to null
+    ///     <br />
     ///     If specified and the <see cref="Type" /> is DialogTextEntry, this will be the message displayed above the text box
     /// </summary>
     public string? TextBoxPrompt { get; set; }

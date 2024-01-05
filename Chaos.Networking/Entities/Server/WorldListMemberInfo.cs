@@ -19,7 +19,7 @@ public sealed record WorldListMemberInfo
     public WorldListColor Color { get; set; }
 
     /// <summary>
-    ///     Whether or not the character is the master
+    ///     Whether or not the character is a master
     /// </summary>
     public bool IsMaster { get; set; }
 

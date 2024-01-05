@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 /// <summary>
 ///     Represents the serialization of the <see cref="ServerOpCode.Board" /> packet
 /// </summary>
-public sealed record BoardArgs : ISendArgs
+public sealed record BoardArgs : IPacketSerializable
 {
     /// <summary>
     ///     If the type is to display a board, this is that board

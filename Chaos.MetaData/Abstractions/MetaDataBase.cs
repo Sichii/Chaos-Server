@@ -9,7 +9,9 @@ namespace Chaos.MetaData.Abstractions;
 /// <summary>
 ///     Represents a compressible collection of nodes
 /// </summary>
-/// <typeparam name="TNode">The type of node stored in the collection</typeparam>
+/// <typeparam name="TNode">
+///     The type of node stored in the collection
+/// </typeparam>
 public abstract class MetaDataBase<TNode> : MetaNodeCollection<TNode>, IMetaDataDescriptor where TNode: IMetaNode
 {
     /// <inheritdoc />

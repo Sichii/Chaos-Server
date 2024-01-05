@@ -6,7 +6,9 @@ namespace Chaos.Common.Identity;
 /// <summary>
 ///     A generic class for generating unique sequential numeric identifiers.
 /// </summary>
-/// <typeparam name="T">The numeric type to generate</typeparam>
+/// <typeparam name="T">
+///     The numeric type to generate
+/// </typeparam>
 public sealed class SequentialIdGenerator<T> : IIdGenerator<T> where T: INumber<T>
 {
     private T CurrentId;

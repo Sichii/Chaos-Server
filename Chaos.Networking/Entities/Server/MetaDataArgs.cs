@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.MetaData" />
 ///     packet
 /// </summary>
-public sealed record MetaDataArgs : ISendArgs
+public sealed record MetaDataArgs : IPacketSerializable
 {
     /// <summary>
     ///     If this request type is to validate checksums of all meta files, this is the collection of meta file details to

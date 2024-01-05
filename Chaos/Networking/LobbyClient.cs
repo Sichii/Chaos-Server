@@ -59,7 +59,7 @@ public sealed class LobbyClient : SocketClientBase, ILobbyClient
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
         var opCode = span[3];
-        var packet = new ClientPacket(ref span, Crypto.IsClientEncrypted(opCode));
+        var packet = new Packet(ref span, Crypto.IsClientEncrypted(opCode));
 
         if (packet.IsEncrypted)
             Crypto.Decrypt(ref packet);

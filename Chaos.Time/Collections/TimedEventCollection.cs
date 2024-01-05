@@ -22,7 +22,9 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// <summary>
     ///     Initializes a new instance of the <see cref="TimedEventCollection" /> class
     /// </summary>
-    /// <param name="events">Optional initial events to populate the collection with</param>
+    /// <param name="events">
+    ///     Optional initial events to populate the collection with
+    /// </param>
     public TimedEventCollection(IEnumerable<Event>? events = null)
     {
         events ??= Array.Empty<Event>();
@@ -71,14 +73,21 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// <summary>
     ///     Adds an event to the collection
     /// </summary>
-    /// <param name="eventId">The id of the event</param>
-    /// <param name="duration">The duration of the event</param>
-    /// <param name="autoConsume">
-    ///     Whether or not the event should be automatically removed from the collection when it has
-    ///     expired
+    /// <param name="eventId">
+    ///     The id of the event
     /// </param>
-    /// <exception cref="InvalidOperationException">An event with the same ID already exists</exception>
-    /// <exception cref="ArgumentException">Event ID cannot be null or empty</exception>
+    /// <param name="duration">
+    ///     The duration of the event
+    /// </param>
+    /// <param name="autoConsume">
+    ///     Whether or not the event should be automatically removed from the collection when it has expired
+    /// </param>
+    /// <exception cref="InvalidOperationException">
+    ///     An event with the same ID already exists
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///     Event ID cannot be null or empty
+    /// </exception>
     public void AddEvent(string eventId, TimeSpan duration, bool autoConsume = false)
     {
         using var sync = Sync.Enter();
@@ -95,12 +104,24 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// <summary>
     ///     Attempts to retreive an active event
     /// </summary>
-    /// <param name="eventId">The id of the event to check if is active</param>
-    /// <param name="event">If an event with the given id was found and is not completed, this will be that event</param>
+    /// <param name="eventId">
+    ///     The id of the event to check if is active
+    /// </param>
+    /// <param name="event">
+    ///     If an event with the given id was found and is not completed, this will be that event
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if an event was found with the given ID and that event was not completed, otherwise <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if an event was found with the given ID and that event was not completed, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
-    /// <remarks>Use this when you are checking for an event that has AutoConsume=true</remarks>
+    /// <remarks>
+    ///     Use this when you are checking for an event that has AutoConsume=true
+    /// </remarks>
     public bool HasActiveEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
     {
         using var sync = Sync.Enter();
@@ -114,11 +135,20 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// <summary>
     ///     Attempts to consume an event
     /// </summary>
-    /// <param name="eventId">The id of the event to consume</param>
-    /// <param name="event">If an event with the given Id was present and completed, this will be that event</param>
+    /// <param name="eventId">
+    ///     The id of the event to consume
+    /// </param>
+    /// <param name="event">
+    ///     If an event with the given Id was present and completed, this will be that event
+    /// </param>
     /// <returns>
-    ///     <c>true</c> if an event was found with the given ID and that event was in a completed state, otherwise
-    ///     <c>false</c>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if an event was found with the given ID and that event was in a completed state, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
     public bool TryConsumeEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
     {
@@ -181,10 +211,18 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimedEventCollection.Event" /> class
         /// </summary>
-        /// <param name="eventId">The unique id of the event</param>
-        /// <param name="duration">The duration of the event</param>
-        /// <param name="start">When the event started</param>
-        /// <param name="autoConsume">Whether or not the event should automatically be removed when it expires</param>
+        /// <param name="eventId">
+        ///     The unique id of the event
+        /// </param>
+        /// <param name="duration">
+        ///     The duration of the event
+        /// </param>
+        /// <param name="start">
+        ///     When the event started
+        /// </param>
+        /// <param name="autoConsume">
+        ///     Whether or not the event should automatically be removed when it expires
+        /// </param>
         [JsonConstructor]
         public Event(
             string eventId,
@@ -201,9 +239,15 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimedEventCollection.Event" /> class
         /// </summary>
-        /// <param name="eventId">The unique id of the event</param>
-        /// <param name="duration">The duration of the event</param>
-        /// <param name="autoConsume">Whether or not the event should automatically be removed when it expires</param>
+        /// <param name="eventId">
+        ///     The unique id of the event
+        /// </param>
+        /// <param name="duration">
+        ///     The duration of the event
+        /// </param>
+        /// <param name="autoConsume">
+        ///     Whether or not the event should automatically be removed when it expires
+        /// </param>
         public Event(string eventId, TimeSpan duration, bool autoConsume = false)
         {
             EventId = eventId;

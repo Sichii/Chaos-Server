@@ -3,7 +3,9 @@ namespace Chaos.MetaData.Abstractions;
 /// <summary>
 ///     Represents a collection of nodes
 /// </summary>
-/// <typeparam name="TNode">The type of node stored in the collection</typeparam>
+/// <typeparam name="TNode">
+///     The type of node stored in the collection
+/// </typeparam>
 public abstract class MetaNodeCollection<TNode> where TNode: IMetaNode
 {
     /// <summary>
@@ -24,6 +26,8 @@ public abstract class MetaNodeCollection<TNode> where TNode: IMetaNode
     /// <summary>
     ///     Adds a node to the collection
     /// </summary>
-    /// <param name="node">The node to add to the collection</param>
+    /// <param name="node">
+    ///     The node to add to the collection
+    /// </param>
     public void AddNode(TNode node) => Nodes.Add(node);
 }

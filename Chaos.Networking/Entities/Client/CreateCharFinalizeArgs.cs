@@ -7,7 +7,20 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.CreateCharFinalize" /> packet
 /// </summary>
-/// <param name="HairStyle">The hairstyle to use for the new character</param>
-/// <param name="Gender">The gender of the new character</param>
-/// <param name="HairColor">The color of the new character's hair</param>
-public sealed record CreateCharFinalizeArgs(byte HairStyle, Gender Gender, DisplayColor HairColor) : IReceiveArgs;
+public sealed record CreateCharFinalizeArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The gender of the new character
+    /// </summary>
+    public required Gender Gender { get; set; }
+
+    /// <summary>
+    ///     The color of the new character's hair
+    /// </summary>
+    public required DisplayColor HairColor { get; set; }
+
+    /// <summary>
+    ///     The hairstyle to use for the new character
+    /// </summary>
+    public required byte HairStyle { get; set; }
+}

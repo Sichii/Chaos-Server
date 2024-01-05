@@ -46,7 +46,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     }
 
     #region OnHandlers
-    public ValueTask OnVersion(ILobbyClient client, in ClientPacket packet)
+    public ValueTask OnVersion(ILobbyClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<VersionArgs>(in packet);
 
@@ -63,7 +63,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         }
     }
 
-    public ValueTask OnServerTableRequest(ILobbyClient client, in ClientPacket packet)
+    public ValueTask OnServerTableRequest(ILobbyClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ServerTableRequestArgs>(in packet);
 
@@ -71,12 +71,10 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
         ValueTask InnerOnServerTableRequest(ILobbyClient localClient, ServerTableRequestArgs localArgs)
         {
-            (var serverTableRequestType, var serverId) = localArgs;
-
-            switch (serverTableRequestType)
+            switch (localArgs.ServerTableRequestType)
             {
                 case ServerTableRequestType.ServerId:
-                    if (ServerTable.Servers.TryGetValue(serverId!.Value, out var serverInfo))
+                    if (ServerTable.Servers.TryGetValue(localArgs.ServerId!.Value, out var serverInfo))
                     {
                         var redirect = new Redirect(
                             EphemeralRandomIdGenerator<uint>.Shared.NextId,
@@ -92,7 +90,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
                         client.SendRedirect(redirect);
                     } else
-                        throw new InvalidOperationException($"Server id \"{serverId}\" requested, but does not exist.");
+                        throw new InvalidOperationException($"Server id \"{localArgs.ServerId}\" requested, but does not exist.");
 
                     break;
                 case ServerTableRequestType.RequestTable:
@@ -109,10 +107,10 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     #endregion
 
     #region Connection / Handler
-    public override ValueTask HandlePacketAsync(ILobbyClient client, in ClientPacket packet)
+    public override ValueTask HandlePacketAsync(ILobbyClient client, in Packet packet)
     {
         var opCode = packet.OpCode;
-        var handler = ClientHandlers[(byte)opCode];
+        var handler = ClientHandlers[opCode];
 
         if (handler is not null)
             Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Packet, Topics.Actions.Processing)

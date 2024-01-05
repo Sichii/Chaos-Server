@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.ConfirmExit" />
 ///     packet
 /// </summary>
-public sealed record ConfirmExitArgs : ISendArgs
+public sealed record ConfirmExitArgs : IPacketSerializable
 {
     /// <summary>
     ///     Whether or not the server is confirming that the client can exit

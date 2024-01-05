@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Location" />
 ///     packet
 /// </summary>
-public sealed record LocationArgs : ISendArgs
+public sealed record LocationArgs : IPacketSerializable
 {
     /// <summary>
     ///     The X coordinate of the player

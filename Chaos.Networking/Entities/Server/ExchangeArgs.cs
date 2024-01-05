@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Exchange" />
 ///     packet
 /// </summary>
-public sealed record ExchangeArgs : ISendArgs
+public sealed record ExchangeArgs : IPacketSerializable
 {
     /// <summary>
     ///     The index in the exchange window of the item being added (or updated)
@@ -46,6 +46,11 @@ public sealed record ExchangeArgs : ISendArgs
     public ushort? ItemSprite { get; set; }
 
     /// <summary>
+    ///     When the exchange is accepted or canceled, this is the message that will display
+    /// </summary>
+    public string? Message { get; set; }
+
+    /// <summary>
     ///     If trying to start an exchange, this is the id of the other aisling you are trying to start an exchange with
     /// </summary>
     public uint? OtherUserId { get; set; }
@@ -64,8 +69,8 @@ public sealed record ExchangeArgs : ISendArgs
     /// <summary>
     ///     Whether or not this packet is interacting with the right side of the exchange window. Keep in mind you will
     ///     interact with the right side when sending the results of one players actions on their side (the left) to the other
-    ///     player.
-    ///     Each player will see the other player's actions occur on the right side, and their own actions on their left side.
+    ///     player. Each player will see the other player's actions occur on the right side, and their own actions on their
+    ///     left side.
     /// </summary>
     public bool? RightSide { get; set; }
 }

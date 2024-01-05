@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.LoginNotice" />
 ///     packet
 /// </summary>
-public sealed record LoginNoticeArgs : ISendArgs
+public sealed record LoginNoticeArgs : IPacketSerializable
 {
     /// <summary>
     ///     The checksum of the notice

@@ -19,7 +19,9 @@ public sealed class Mapper : ITypeMapper
     /// <summary>
     ///     Initializes a new instance of the <see cref="Mapper" /> class.
     /// </summary>
-    /// <param name="provider">The service provider used by the application</param>
+    /// <param name="provider">
+    ///     The service provider used by the application
+    /// </param>
     public Mapper(IServiceProvider provider) => Provider = provider;
 
     /// <inheritdoc />

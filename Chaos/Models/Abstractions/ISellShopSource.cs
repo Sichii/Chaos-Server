@@ -12,7 +12,17 @@ public interface ISellShopSource : IDialogSourceEntity
     /// <summary>
     ///     Determines if the merchant will buy the specified item
     /// </summary>
-    /// <param name="item">The item to check</param>
-    /// <returns><c>true</c> if the merchant will buy the item, otherwise <c>false</c></returns>
+    /// <param name="item">
+    ///     The item to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the merchant will buy the item, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     bool IsBuying(Item item);
 }

@@ -7,7 +7,9 @@ namespace Chaos.Common.Identity;
 /// <summary>
 ///     A generic class for generating unique short-lived non-sequential numeric identifiers.
 /// </summary>
-/// <typeparam name="T">The numeric type to generate</typeparam>
+/// <typeparam name="T">
+///     The numeric type to generate
+/// </typeparam>
 public sealed class EphemeralRandomIdGenerator<T> : IIdGenerator<T> where T: INumber<T>
 {
     private const int HISTORY_SIZE = byte.MaxValue;

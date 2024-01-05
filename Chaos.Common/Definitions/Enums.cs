@@ -85,8 +85,8 @@ public enum ServerType : byte
 public enum ServerTableRequestType : byte
 {
     /// <summary>
-    ///     When a user chooses a server from the server list, the Id of that server is sent to us.
-    ///     This is the Id from the server table.
+    ///     When a user chooses a server from the server list, the Id of that server is sent to us. This is the Id from the
+    ///     server table.
     /// </summary>
     ServerId = 0,
 
@@ -145,8 +145,7 @@ public enum ServerMessageType : byte
     OrangeBar3 = 4,
 
     /// <summary>
-    ///     Text is only in the action bar, and will not show up in Shift+F.
-    ///     In official this was used for admin world messages
+    ///     Text is only in the action bar, and will not show up in Shift+F. In official this was used for admin world messages
     /// </summary>
     AdminMessage = 5,
 
@@ -161,32 +160,27 @@ public enum ServerMessageType : byte
     UserOptions = 7,
 
     /// <summary>
-    ///     Pops open a window with a scroll bar.
-    ///     In official this was used for Sense
+    ///     Pops open a window with a scroll bar. In official this was used for Sense
     /// </summary>
     ScrollWindow = 8,
 
     /// <summary>
-    ///     Pops open a window with no scroll bar.
-    ///     In official this was used for perish lore
+    ///     Pops open a window with no scroll bar. In official this was used for perish lore
     /// </summary>
     NonScrollWindow = 9,
 
     /// <summary>
-    ///     Pops open a window with a wooden boarder.
-    ///     In official this was used for signposts and wooden boards
+    ///     Pops open a window with a wooden boarder. In official this was used for signposts and wooden boards
     /// </summary>
     WoodenBoard = 10,
 
     /// <summary>
-    ///     Text appears in a puke-green color.
-    ///     In official this was used for group chat
+    ///     Text appears in a puke-green color. In official this was used for group chat
     /// </summary>
     GroupChat = 11,
 
     /// <summary>
-    ///     Text appears in an olive-green color.
-    ///     In official this was used for guild chat
+    ///     Text appears in an olive-green color. In official this was used for guild chat
     /// </summary>
     GuildChat = 12,
 
@@ -266,8 +260,7 @@ public enum PublicMessageType : byte
 }
 
 /// <summary>
-///     Byte codes for the characters used for each color in the pattern '{=a'.
-///     Used by many things.
+///     Byte codes for the characters used for each color in the pattern '{=a'. Used by many things.
 /// </summary>
 public enum MessageColor : byte
 {
@@ -380,8 +373,7 @@ public enum MessageColor : byte
 
 #region Legend
 /// <summary>
-///     A byte representing the icon of a legend mark.
-///     Used by ServerOpCode.Profile and ServerOpCode.SelfProfile
+///     A byte representing the icon of a legend mark. Used by ServerOpCode.Profile and ServerOpCode.SelfProfile
 /// </summary>
 public enum MarkIcon : byte
 {
@@ -397,8 +389,7 @@ public enum MarkIcon : byte
 }
 
 /// <summary>
-///     A byte representing the color of a legend mark.
-///     Used by ServerOpCode.Profile and ServerOpCode.SelfProfile
+///     A byte representing the color of a legend mark. Used by ServerOpCode.Profile and ServerOpCode.SelfProfile
 /// </summary>
 public enum MarkColor : byte
 {
@@ -432,8 +423,7 @@ public enum MarkColor : byte
 
 #region DisplayData
 /// <summary>
-///     A byte representing the color of hair and items.
-///     Used by many things.
+///     A byte representing the color of hair and items. Used by many things.
 /// </summary>
 public enum DisplayColor : byte
 {
@@ -515,8 +505,7 @@ public enum DisplayColor : byte
 }
 
 /// <summary>
-///     A byte representing the style a player's name is shown in.
-///     Used by ServerOpCode.DisplayAisling
+///     A byte representing the style a player's name is shown in. Used by ServerOpCode.DisplayAisling
 /// </summary>
 public enum NameTagStyle : byte
 {
@@ -527,8 +516,7 @@ public enum NameTagStyle : byte
 }
 
 /// <summary>
-///     A byte representing the size of the lantern effect around a player.
-///     Used by ServerOpCode.DisplayAisling
+///     A byte representing the size of the lantern effect around a player. Used by ServerOpCode.DisplayAisling
 /// </summary>
 public enum LanternSize : byte
 {
@@ -538,8 +526,7 @@ public enum LanternSize : byte
 }
 
 /// <summary>
-///     A byte representing the body position a player is in while using a rest cloak.
-///     Used by ServerOpCode.DisplayAisling
+///     A byte representing the body position a player is in while using a rest cloak. Used by ServerOpCode.DisplayAisling
 /// </summary>
 public enum RestPosition : byte
 {
@@ -550,8 +537,7 @@ public enum RestPosition : byte
 }
 
 /// <summary>
-///     A byte representing the color of the player's skin.
-///     Used by ServerOpCode.DisplayAisling
+///     A byte representing the color of the player's skin. Used by ServerOpCode.DisplayAisling
 /// </summary>
 public enum BodyColor : byte
 {
@@ -568,8 +554,7 @@ public enum BodyColor : byte
 }
 
 /// <summary>
-///     A byte representing the sprite used for a player's body.
-///     Used by ServerOpCode.DisplayAisling
+///     A byte representing the sprite used for a player's body. Used by ServerOpCode.DisplayAisling
 /// </summary>
 public enum BodySprite : byte
 {
@@ -588,8 +573,7 @@ public enum BodySprite : byte
 }
 
 /// <summary>
-///     A byte representing the gender of the player.
-///     Used by many things.
+///     A byte representing the gender of the player. Used by many things.
 /// </summary>
 [Flags]
 public enum Gender : byte
@@ -615,8 +599,7 @@ public enum Stat
 }
 
 /// <summary>
-///     A byte representing attack and defense elements on the Shift+G panel.
-///     Used by ServerOpCode.Attributes
+///     A byte representing attack and defense elements on the Shift+G panel. Used by ServerOpCode.Attributes
 /// </summary>
 public enum Element : byte
 {
@@ -633,8 +616,7 @@ public enum Element : byte
 }
 
 /// <summary>
-///     A byte representing which type of mail was received.
-///     Used by ServerOpCode.Attributes
+///     A byte representing which type of mail was received. Used by ServerOpCode.Attributes
 /// </summary>
 public enum MailFlag : byte
 {
@@ -643,8 +625,8 @@ public enum MailFlag : byte
 }
 
 /// <summary>
-///     A byte representing the nation emblem displayed in the player's profile.
-///     Used by ServerOpCode.Profile and ServerOpCode.SelfProfile
+///     A byte representing the nation emblem displayed in the player's profile. Used by ServerOpCode.Profile and
+///     ServerOpCode.SelfProfile
 /// </summary>
 public enum Nation : byte
 {
@@ -665,8 +647,7 @@ public enum Nation : byte
 }
 
 /// <summary>
-///     A flag representing what combination of stats are being sent to a user.
-///     Used by ServerOpCode.Attributes
+///     A flag representing what combination of stats are being sent to a user. Used by ServerOpCode.Attributes
 /// </summary>
 [Flags]
 public enum StatUpdateType : byte
@@ -707,8 +688,7 @@ public enum StatUpdateType : byte
 
 #region Profile
 /// <summary>
-///     A byte representing the 'temuair class' of an aisling.
-///     Used in many places.
+///     A byte representing the 'temuair class' of an aisling. Used in many places.
 /// </summary>
 public enum BaseClass : byte
 {
@@ -722,8 +702,7 @@ public enum BaseClass : byte
 }
 
 /// <summary>
-///     A byte representing the 'medenia class' of an aisling.
-///     Used in many places.
+///     A byte representing the 'medenia class' of an aisling. Used in many places.
 /// </summary>
 public enum AdvClass : byte
 {
@@ -736,8 +715,7 @@ public enum AdvClass : byte
 }
 
 /// <summary>
-///     A byte representing the slot of a piece of equipment.
-///     Used in many places.
+///     A byte representing the slot of a piece of equipment. Used in many places.
 /// </summary>
 public enum EquipmentSlot : byte
 {
@@ -787,8 +765,7 @@ public enum EquipmentType : byte
 
 #region Options
 /// <summary>
-///     A byte representing the social status of the user.
-///     Used by ServerOpCode.Profile, and ServerOpCode.WorldList
+///     A byte representing the social status of the user. Used by ServerOpCode.Profile, and ServerOpCode.WorldList
 /// </summary>
 public enum SocialStatus : byte
 {
@@ -803,8 +780,7 @@ public enum SocialStatus : byte
 }
 
 /// <summary>
-///     A byte representing an option on the client.
-///     Used by ClientOpCode.UserOptionToggle and ServerOpCode.ServerMessage
+///     A byte representing an option on the client. Used by ClientOpCode.UserOptionToggle and ServerOpCode.ServerMessage
 /// </summary>
 public enum UserOption
 {
@@ -822,8 +798,7 @@ public enum UserOption
 
 #region GuI
 /// <summary>
-///     A byte representing the color of a name in the world list.
-///     Used by ServerOpCode.WorldList
+///     A byte representing the color of a name in the world list. Used by ServerOpCode.WorldList
 /// </summary>
 public enum WorldListColor : byte
 {
@@ -833,8 +808,8 @@ public enum WorldListColor : byte
 }
 
 /// <summary>
-///     A byte representing the color an effect, for the purposes of showing it's remaining duration.
-///     Used by ServerOpCode.Effect
+///     A byte representing the color an effect, for the purposes of showing it's remaining duration. Used by
+///     ServerOpCode.Effect
 /// </summary>
 public enum EffectColor : byte
 {
@@ -848,8 +823,7 @@ public enum EffectColor : byte
 }
 
 /// <summary>
-///     A byte representing the type of a panel.
-///     Used by ClientOpCode.SwapSlot
+///     A byte representing the type of a panel. Used by ClientOpCode.SwapSlot
 /// </summary>
 public enum PanelType : byte
 {
@@ -860,8 +834,7 @@ public enum PanelType : byte
 }
 
 /// <summary>
-///     A byte representing the type of a merchant menu.
-///     Used by ServerOpCode.Menu
+///     A byte representing the type of a merchant menu. Used by ServerOpCode.Menu
 /// </summary>
 public enum MenuType : byte
 {
@@ -878,8 +851,8 @@ public enum MenuType : byte
 }
 
 /// <summary>
-///     A byte switch used to specify the type of additional args included in a dialog response.
-///     Used by ClientOpCode.DialogResponse
+///     A byte switch used to specify the type of additional args included in a dialog response. Used by
+///     ClientOpCode.DialogResponse
 /// </summary>
 public enum DialogArgsType : byte
 {
@@ -889,8 +862,7 @@ public enum DialogArgsType : byte
 }
 
 /// <summary>
-///     A byte switched used to specify the type of dialog.
-///     Used by ServerOpCode.Dialog
+///     A byte switched used to specify the type of dialog. Used by ServerOpCode.Dialog
 /// </summary>
 public enum DialogType : byte
 {
@@ -904,8 +876,7 @@ public enum DialogType : byte
 }
 
 /// <summary>
-///     A byte representing which button on a dialog window was pressed.
-///     Used by ClientOpCode.DialogResponse
+///     A byte representing which button on a dialog window was pressed. Used by ClientOpCode.DialogResponse
 /// </summary>
 public enum DialogResult : sbyte
 {
@@ -915,8 +886,7 @@ public enum DialogResult : sbyte
 }
 
 /// <summary>
-///     A byte representing the type of board being displayed.
-///     Used by ServerOpCode.BulletinBoard
+///     A byte representing the type of board being displayed. Used by ServerOpCode.BulletinBoard
 /// </summary>
 public enum BoardOrResponseType : byte
 {
@@ -931,8 +901,7 @@ public enum BoardOrResponseType : byte
 }
 
 /// <summary>
-///     A byte representing the type of request in association with a board.
-///     Used by ClientOpCode.BoardRequest
+///     A byte representing the type of request in association with a board. Used by ClientOpCode.BoardRequest
 /// </summary>
 public enum BoardRequestType : byte
 {
@@ -964,8 +933,7 @@ public enum NotepadType
 
 #region Skill/Spell
 /// <summary>
-///     A byte representing the type of a spell.
-///     Used by ServerOpCode.AddSpellToPane
+///     A byte representing the type of a spell. Used by ServerOpCode.AddSpellToPane
 /// </summary>
 public enum SpellType : byte
 {
@@ -980,8 +948,7 @@ public enum SpellType : byte
 }
 
 /// <summary>
-///     A byte representing the emote/body animation being sent.
-///     Used by ServerOpCode.BodyAnimation
+///     A byte representing the emote/body animation being sent. Used by ServerOpCode.BodyAnimation
 /// </summary>
 public enum BodyAnimation : byte
 {
@@ -1044,8 +1011,7 @@ public enum BodyAnimation : byte
 
 #region Game
 /// <summary>
-///     A byte switch used when receiving information about a click.
-///     Used by ClientOpCode.Click
+///     A byte switch used when receiving information about a click. Used by ClientOpCode.Click
 /// </summary>
 public enum ClickType : byte
 {
@@ -1092,8 +1058,8 @@ public enum LevelCircle : byte
 }
 
 /// <summary>
-///     A byte switch used when receiving information about an action performed on an exchange window.
-///     Used by ClientOpCode.Exchange
+///     A byte switch used when receiving information about an action performed on an exchange window. Used by
+///     ClientOpCode.Exchange
 /// </summary>
 public enum ExchangeRequestType : byte
 {
@@ -1106,8 +1072,7 @@ public enum ExchangeRequestType : byte
 }
 
 /// <summary>
-///     A byte switch used to specify the action performed on an exchange window.
-///     Used by ServerOpCode.Exchange
+///     A byte switch used to specify the action performed on an exchange window. Used by ServerOpCode.Exchange
 /// </summary>
 public enum ExchangeResponseType : byte
 {

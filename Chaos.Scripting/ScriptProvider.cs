@@ -5,14 +5,13 @@ namespace Chaos.Scripting;
 
 /// <summary>
 ///     Provides any kind of <see cref="Chaos.Scripting.Abstractions.IScript" /> implementation, as long as it has a
-///     <see cref="Chaos.Scripting.Abstractions.IScriptFactory{TScript,TScripted}" />
-///     implemented and added to the service provider
+///     <see cref="Chaos.Scripting.Abstractions.IScriptFactory{TScript,TScripted}" /> implemented and added to the service
+///     provider
 /// </summary>
 /// <remarks>
 ///     This provider merely looks up the <see cref="Chaos.Scripting.Abstractions.IScriptFactory{TScript,TScripted}" />
-///     used to generate a
-///     given <see cref="Chaos.Scripting.Abstractions.IScript" />
-///     type, and then requests that script from the factory.
+///     used to generate a given <see cref="Chaos.Scripting.Abstractions.IScript" /> type, and then requests that script
+///     from the factory.
 /// </remarks>
 public sealed class ScriptProvider : IScriptProvider
 {
@@ -21,7 +20,9 @@ public sealed class ScriptProvider : IScriptProvider
     /// <summary>
     ///     Initializes a new instance of the <see cref="ScriptProvider" /> class.
     /// </summary>
-    /// <param name="serviceProvider">The application si container</param>
+    /// <param name="serviceProvider">
+    ///     The application si container
+    /// </param>
     public ScriptProvider(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
     /// <inheritdoc />

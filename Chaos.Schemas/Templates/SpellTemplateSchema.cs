@@ -16,9 +16,13 @@ public sealed record SpellTemplateSchema : PanelEntityTemplateSchema
     public byte CastLines { get; set; }
 
     /// <summary>
-    ///     Default null<br />If set, these are the requirements for the spell to be learned
+    ///     Default null
+    ///     <br />
+    ///     If set, these are the requirements for the spell to be learned
     /// </summary>
-    /// <remarks>this is a test</remarks>
+    /// <remarks>
+    ///     this is a test
+    /// </remarks>
     public LearningRequirementsSchema? LearningRequirements { get; set; }
 
     /// <summary>
@@ -27,13 +31,16 @@ public sealed record SpellTemplateSchema : PanelEntityTemplateSchema
     public bool LevelsUp { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />If set, this is the maximum level the spell can be leveled up to
+    ///     Defaults to null
+    ///     <br />
+    ///     If set, this is the maximum level the spell can be leveled up to
     /// </summary>
     public byte? MaxLevel { get; set; }
 
     /// <summary>
-    ///     Defaults to null<br />Should be specified with a spell type of "Prompt", this is the prompt the spell will offer
-    ///     when used in game
+    ///     Defaults to null
+    ///     <br />
+    ///     Should be specified with a spell type of "Prompt", this is the prompt the spell will offer when used in game
     /// </summary>
     public string? Prompt { get; set; }
 

@@ -50,18 +50,32 @@ public static class DeepClone
     /// <summary>
     ///     Attemps to create a deep clone of the object.
     /// </summary>
-    /// <param name="fromObj">The object to clone</param>
-    /// <typeparam name="T">The type of the object being cloned</typeparam>
-    /// <returns>A deep cloned instance of the object, or null if the clone was unsuccessful</returns>
+    /// <param name="fromObj">
+    ///     The object to clone
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of the object being cloned
+    /// </typeparam>
+    /// <returns>
+    ///     A deep cloned instance of the object, or null if the clone was unsuccessful
+    /// </returns>
     public static T? Create<T>(T fromObj) => (T?)InternalCopy(fromObj!, new Dictionary<object, object>(ReferenceEqualityComparer.Instance));
 
     /// <summary>
     ///     Creates a deep clone of the object.
     /// </summary>
-    /// <param name="fromObj">The object to clone</param>
-    /// <typeparam name="T">The type of the object being cloned</typeparam>
-    /// <returns>A deep cloned instance of the object</returns>
-    /// <exception cref="InvalidOperationException">Failed to create a deep clone of the object.</exception>
+    /// <param name="fromObj">
+    ///     The object to clone
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of the object being cloned
+    /// </typeparam>
+    /// <returns>
+    ///     A deep cloned instance of the object
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     Failed to create a deep clone of the object.
+    /// </exception>
     [ExcludeFromCodeCoverage(Justification = "Tested by Create<T>(T)")]
     public static T CreateRequired<T>(T fromObj)
     {

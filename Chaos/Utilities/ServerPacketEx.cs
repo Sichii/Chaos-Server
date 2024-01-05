@@ -7,9 +7,9 @@ namespace Chaos.Utilities;
 
 public static class ServerPacketEx
 {
-    public static ServerPacket FromData(ServerOpCode opCode, Encoding encoding, params byte[] data)
+    public static Packet FromData(ServerOpCode opCode, Encoding encoding, params byte[] data)
     {
-        var packet = new ServerPacket(opCode);
+        var packet = new Packet(opCode);
 
         if (data.Length > 0)
         {

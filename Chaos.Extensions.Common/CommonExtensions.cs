@@ -14,13 +14,18 @@ public static class CommonExtensions
     /// <summary>
     ///     Adds an option object based on a configuration section to the service collection
     /// </summary>
-    /// <param name="services">The service collection to add the options object to</param>
-    /// <param name="subSection">If the section is not at the root level, supply the subsection here</param>
-    /// <param name="optionsSection">
-    ///     If the options section is not the same as the class name, supply the name of that section
-    ///     here
+    /// <param name="services">
+    ///     The service collection to add the options object to
     /// </param>
-    /// <typeparam name="T">The type of the options object</typeparam>
+    /// <param name="subSection">
+    ///     If the section is not at the root level, supply the subsection here
+    /// </param>
+    /// <param name="optionsSection">
+    ///     If the options section is not the same as the class name, supply the name of that section here
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of the options object
+    /// </typeparam>
     public static OptionsBuilder<T> AddOptionsFromConfig<T>(
         this IServiceCollection services,
         string? subSection = null,
@@ -38,10 +43,18 @@ public static class CommonExtensions
     /// <summary>
     ///     Adds a singleton service that can be retreived via multiple base types
     /// </summary>
-    /// <param name="services">The service collection to add to</param>
-    /// <typeparam name="TI1">A base type of <typeparamref name="T" /></typeparam>
-    /// <typeparam name="TI2">Another base type of <typeparamref name="T" /></typeparam>
-    /// <typeparam name="T">An implementation of the previous two types</typeparam>
+    /// <param name="services">
+    ///     The service collection to add to
+    /// </param>
+    /// <typeparam name="TI1">
+    ///     A base type of <typeparamref name="T" />
+    /// </typeparam>
+    /// <typeparam name="TI2">
+    ///     Another base type of <typeparamref name="T" />
+    /// </typeparam>
+    /// <typeparam name="T">
+    ///     An implementation of the previous two types
+    /// </typeparam>
     public static void AddSingleton<TI1, TI2, T>(this IServiceCollection services) where T: class, TI1, TI2
                                                                                    where TI1: class
                                                                                    where TI2: class

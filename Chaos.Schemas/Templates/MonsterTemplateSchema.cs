@@ -11,8 +11,9 @@ namespace Chaos.Schemas.Templates;
 public sealed record MonsterTemplateSchema
 {
     /// <summary>
-    ///     Defaults to 0<br />If specified, this will be aggressive and attack enemies if they come within the specified
-    ///     distance
+    ///     Defaults to 0
+    ///     <br />
+    ///     If specified, this will be aggressive and attack enemies if they come within the specified distance
     /// </summary>
     public int AggroRange { get; set; } = -1;
 
@@ -53,14 +54,17 @@ public sealed record MonsterTemplateSchema
     public string Name { get; set; } = null!;
 
     /// <summary>
-    ///     A collection of names of monsters scripts to attach to this monster<br />TODO: scripts section
+    ///     A collection of names of monsters scripts to attach to this monster
+    ///     <br />
+    ///     TODO: scripts section
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value
-    ///     pair, and the value of
-    ///     that entry is a dictionary of propertyName-Value pairs
+    ///     A collection of key-value pairs of key-value pairs
+    ///     <br />
+    ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
+    ///     propertyName-Value pairs
     /// </summary>
     public IDictionary<string, DynamicVars> ScriptVars { get; set; }
         = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
@@ -97,14 +101,17 @@ public sealed record MonsterTemplateSchema
     public StatSheetSchema StatSheet { get; set; } = null!;
 
     /// <summary>
-    ///     A unique id specific to this monster template<br />Best practice is to match the name of the file
+    ///     A unique id specific to this monster template
+    ///     <br />
+    ///     Best practice is to match the name of the file
     /// </summary>
     [JsonRequired]
     public string TemplateKey { get; set; } = null!;
 
     /// <summary>
-    ///     The monster's type<br />WhiteSquare has no additional functionality, it just appears as a white square on the tab
-    ///     map
+    ///     The monster's type
+    ///     <br />
+    ///     WhiteSquare has no additional functionality, it just appears as a white square on the tab map
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public CreatureType Type { get; set; }

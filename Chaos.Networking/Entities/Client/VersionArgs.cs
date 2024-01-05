@@ -6,5 +6,10 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Version" />
 ///     packet
 /// </summary>
-/// <param name="Version">The client version as a single number</param>
-public sealed record VersionArgs(ushort Version) : IReceiveArgs;
+public sealed record VersionArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The client version as a single number
+    /// </summary>
+    public required ushort Version { get; set; }
+}

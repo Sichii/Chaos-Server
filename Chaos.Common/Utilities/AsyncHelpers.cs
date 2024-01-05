@@ -3,8 +3,7 @@
 namespace Chaos.Common.Utilities;
 
 /// <summary>
-///     A utility class used to run tasks synchronously.
-///     Class was pulled from the microsoft unity mixed reality toolkit.
+///     A utility class used to run tasks synchronously. Class was pulled from the microsoft unity mixed reality toolkit.
 /// </summary>
 public static class AsyncHelpers
 {
@@ -46,7 +45,9 @@ public static class AsyncHelpers
     /// <summary>
     ///     Execute's an async Task method which has a T return type synchronously
     /// </summary>
-    /// <typeparam name="T">Return Type</typeparam>
+    /// <typeparam name="T">
+    ///     Return Type
+    /// </typeparam>
     /// <param name="task">
     ///     Task method to execute
     /// </param>

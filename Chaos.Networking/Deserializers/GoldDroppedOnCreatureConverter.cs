@@ -1,0 +1,35 @@
+using Chaos.IO.Memory;
+using Chaos.Networking.Entities.Client;
+using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
+
+namespace Chaos.Networking.Deserializers;
+
+/// <summary>
+///     Deserializes a buffer into <see cref="GoldDroppedOnCreatureArgs" />
+/// </summary>
+public sealed class GoldDroppedOnCreatureConverter : PacketConverterBase<GoldDroppedOnCreatureArgs>
+{
+    /// <inheritdoc />
+    public override byte OpCode => (byte)ClientOpCode.GoldDroppedOnCreature;
+
+    /// <inheritdoc />
+    public override GoldDroppedOnCreatureArgs Deserialize(ref SpanReader reader)
+    {
+        var amount = reader.ReadInt32();
+        var targetId = reader.ReadUInt32();
+
+        return new GoldDroppedOnCreatureArgs
+        {
+            Amount = amount,
+            TargetId = targetId
+        };
+    }
+
+    /// <inheritdoc />
+    public override void Serialize(ref SpanWriter writer, GoldDroppedOnCreatureArgs args)
+    {
+        writer.WriteInt32(args.Amount);
+        writer.WriteUInt32(args.TargetId);
+    }
+}

@@ -6,7 +6,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.MapData" />
 ///     packet
 /// </summary>
-public sealed record MapDataArgs : ISendArgs
+public sealed record MapDataArgs : IPacketSerializable
 {
     /// <summary>
     ///     Map data is sent in chunks, 1 row at a time. This is the current Y coordinate being sent

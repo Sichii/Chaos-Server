@@ -22,7 +22,8 @@ public static class StreamExtensions
     /// <summary>
     ///     Converts a <see cref="MemoryStream" /> to a <see cref="Span{T}" />
     /// </summary>
-    /// <param name="stream"></param>
+    /// <param name="stream">
+    /// </param>
     public static Span<byte> ToSpan(this MemoryStream stream)
     {
         if (stream.TryGetBuffer(out var segment))

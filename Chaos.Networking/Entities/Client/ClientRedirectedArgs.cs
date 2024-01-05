@@ -6,12 +6,25 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.ClientRedirected" /> packet
 /// </summary>
-/// <param name="Seed">The new encryption seed to be used</param>
-/// <param name="Key">The new encryption key to be used</param>
-/// <param name="Name">The name associated with the redirection. Can be a player name or something else</param>
-/// <param name="Id">The id of the redirect</param>
-public sealed record ClientRedirectedArgs(
-    byte Seed,
-    byte[] Key,
-    string Name,
-    uint Id) : IReceiveArgs;
+public sealed record ClientRedirectedArgs : IPacketSerializable
+{
+    /// <summary>
+    ///     The id of the redirect
+    /// </summary>
+    public required uint Id { get; set; }
+
+    /// <summary>
+    ///     The new encryption key to be used
+    /// </summary>
+    public required byte[] Key { get; set; }
+
+    /// <summary>
+    ///     The name associated with the redirection. Can be a player name or something else
+    /// </summary>
+    public required string Name { get; set; }
+
+    /// <summary>
+    ///     The new encryption seed to be used
+    /// </summary>
+    public required byte Seed { get; set; }
+}

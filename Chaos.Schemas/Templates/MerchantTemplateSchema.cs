@@ -42,9 +42,10 @@ public sealed record MerchantTemplateSchema
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    ///     A collection of key-value pairs of key-value pairs<br />Each script that has variables needs a scriptName-Value
-    ///     pair, and the value of
-    ///     that entry is a dictionary of propertyName-Value pairs
+    ///     A collection of key-value pairs of key-value pairs
+    ///     <br />
+    ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
+    ///     propertyName-Value pairs
     /// </summary>
     public IDictionary<string, DynamicVars> ScriptVars { get; set; }
         = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);

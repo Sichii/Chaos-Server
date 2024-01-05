@@ -85,6 +85,7 @@ public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider
             Description = obj.Description,
             LearningRequirements = obj.LearningRequirements == null ? null : Mapper.Map<LearningRequirements>(obj.LearningRequirements),
             Level = obj.Level,
+            AbilityLevel = obj.AbilityLevel,
             Class = obj.Class,
             AdvClass = obj.AdvClass,
             RequiresMaster = obj.RequiresMaster,

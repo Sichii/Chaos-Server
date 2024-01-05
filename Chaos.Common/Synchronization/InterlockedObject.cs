@@ -5,7 +5,9 @@ namespace Chaos.Common.Synchronization;
 /// <summary>
 ///     A threadsafe object wrapper
 /// </summary>
-/// <typeparam name="T">The type of the object to wrap</typeparam>
+/// <typeparam name="T">
+///     The type of the object to wrap
+/// </typeparam>
 public class InterlockedObject<T> : IInterlockedObject<T> where T: class
 {
     /// <summary>

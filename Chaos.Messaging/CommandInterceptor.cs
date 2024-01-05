@@ -16,8 +16,12 @@ namespace Chaos.Messaging;
 /// <summary>
 ///     A service used to handle the detection and execution of commands execute by an object of a given type
 /// </summary>
-/// <typeparam name="T">The type of the object executing commands</typeparam>
-/// <typeparam name="TOptions">The type of the options object to use for this command interceptor</typeparam>
+/// <typeparam name="T">
+///     The type of the object executing commands
+/// </typeparam>
+/// <typeparam name="TOptions">
+///     The type of the options object to use for this command interceptor
+/// </typeparam>
 public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> where T: ICommandSubject
                                                                              where TOptions: class, ICommandInterceptorOptions
 {
@@ -50,7 +54,9 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
     }
 
     /// <inheritdoc />
-    /// <remarks>async is intentional, so that the try/catch handles any exception that comes from executing the command</remarks>
+    /// <remarks>
+    ///     async is intentional, so that the try/catch handles any exception that comes from executing the command
+    /// </remarks>
     public async ValueTask HandleCommandAsync(T source, string commandStr)
     {
         var command = commandStr[1..];

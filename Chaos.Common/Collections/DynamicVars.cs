@@ -21,8 +21,12 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     /// <summary>
     ///     Initializes a new instance of the DynamicVars class with an optional initial set of key-value pairs.
     /// </summary>
-    /// <param name="collection">A collection of key-value pairs to initially populate the collection with</param>
-    /// <param name="options">The options to use when deserializing jsonElements</param>
+    /// <param name="collection">
+    ///     A collection of key-value pairs to initially populate the collection with
+    /// </param>
+    /// <param name="options">
+    ///     The options to use when deserializing jsonElements
+    /// </param>
     public DynamicVars(IDictionary<string, JsonElement> collection, JsonSerializerOptions options)
     {
         JsonOptions = options;
@@ -33,9 +37,15 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     /// <summary>
     ///     Initializes a new instance of the DynamicVars class with an optional initial set of key-value pairs.
     /// </summary>
-    /// <param name="collection">A collection of key-value pairs to initially populate the collection with</param>
-    /// <param name="valueCache">A collection of values that have already been converted from the vars</param>
-    /// <param name="options">The options to use when deserializing jsonElements</param>
+    /// <param name="collection">
+    ///     A collection of key-value pairs to initially populate the collection with
+    /// </param>
+    /// <param name="valueCache">
+    ///     A collection of values that have already been converted from the vars
+    /// </param>
+    /// <param name="options">
+    ///     The options to use when deserializing jsonElements
+    /// </param>
     public DynamicVars(IDictionary<string, JsonElement> collection, IDictionary<string, object?> valueCache, JsonSerializerOptions options)
     {
         JsonOptions = options;
@@ -46,7 +56,9 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     /// <summary>
     ///     Initializes a new instance of the DynamicVars class
     /// </summary>
-    /// <param name="options">The options to use when deserializing jsonElements</param>
+    /// <param name="options">
+    ///     The options to use when deserializing jsonElements
+    /// </param>
     public DynamicVars(JsonSerializerOptions options)
     {
         JsonOptions = options;
