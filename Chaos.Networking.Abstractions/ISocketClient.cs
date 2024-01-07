@@ -54,11 +54,6 @@ public interface ISocketClient
     void Disconnect();
 
     /// <summary>
-    ///     Determins whether or not the client is a loopback client or not (client is on same server as ip)
-    /// </summary>
-    bool IsLoopback();
-
-    /// <summary>
     ///     An event that is called when a client disconnects
     /// </summary>
     event EventHandler? OnDisconnected;
@@ -71,7 +66,7 @@ public interface ISocketClient
     /// </param>
     /// <typeparam name="T">
     ///     The type must inherit <see cref="Chaos.Packets.Abstractions.IPacketSerializable" /> and have a
-    ///     <see cref="IServerPacketConverter{T}" /> created for it
+    ///     <see cref="IPacketConverter{T}" /> created for it
     /// </typeparam>
     void Send<T>(T obj) where T: IPacketSerializable;
 
@@ -79,21 +74,6 @@ public interface ISocketClient
     ///     Sends a packet to the client
     /// </summary>
     void Send(ref Packet packet);
-
-    /// <summary>
-    ///     Used when a client connects to response with a string
-    /// </summary>
-    void SendAcceptConnection();
-
-    /// <summary>
-    ///     Used to response to a client heart beat
-    /// </summary>
-    void SendHeartBeat(byte first, byte second);
-
-    /// <summary>
-    ///     Used to redirect the client to another server
-    /// </summary>
-    void SendRedirect(IRedirect redirect);
 
     /// <summary>
     ///     Used when a client requests to change the packet sequence

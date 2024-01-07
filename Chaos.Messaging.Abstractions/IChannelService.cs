@@ -51,6 +51,26 @@ public interface IChannelService
     bool IsChannel(string str);
 
     /// <summary>
+    ///     Determines whether or not the subscriber is in the given channel
+    /// </summary>
+    /// <param name="subscriber">
+    ///     The subscriber to check for
+    /// </param>
+    /// <param name="channelName">
+    ///     The channel to check if the subscriber is in
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the given subscriber is in the specified channel, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    bool IsInChannel(IChannelSubscriber subscriber, string channelName);
+
+    /// <summary>
     ///     Joins a channel, allowing you to send and receive messages to/from it
     /// </summary>
     /// <param name="subscriber">
@@ -62,7 +82,7 @@ public interface IChannelService
     /// <param name="bypassValidation">
     ///     Whether or not to bypass validation of the channel name
     /// </param>
-    void JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false);
+    bool JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false);
 
     /// <summary>
     ///     Leaves a channel, preventing you from sending and receiving messages to/from it
@@ -97,7 +117,7 @@ public interface IChannelService
     /// <param name="channelNameOverride">
     ///     The name that will be displayed when sending and receiving from this channel (INTERNAL ONLY)
     /// </param>
-    void RegisterChannel(
+    bool RegisterChannel(
         IChannelSubscriber? subscriber,
         string channelName,
         MessageColor defaultMessageColor,

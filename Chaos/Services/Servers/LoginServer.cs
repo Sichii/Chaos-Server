@@ -411,7 +411,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         client.OnDisconnected += OnDisconnect;
 
         client.BeginReceive();
-        client.SendAcceptConnection();
+        client.SendAcceptConnection("CONNECTED SERVER");
     }
 
     private void OnDisconnect(object? sender, EventArgs e)

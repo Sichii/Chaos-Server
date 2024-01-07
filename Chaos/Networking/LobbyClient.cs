@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;
 
-public sealed class LobbyClient : SocketClientBase, ILobbyClient
+public sealed class LobbyClient : ServerClientBase, ILobbyClient
 {
     private readonly ILobbyServer<ILobbyClient> Server;
 

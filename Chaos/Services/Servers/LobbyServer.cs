@@ -170,7 +170,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         client.OnDisconnected += OnDisconnect;
 
         client.BeginReceive();
-        client.SendAcceptConnection();
+        client.SendAcceptConnection("CONNECTED SERVER");
     }
 
     private void OnDisconnect(object? sender, EventArgs e)

@@ -30,7 +30,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;
 
-public sealed class WorldClient : SocketClientBase, IWorldClient
+public sealed class WorldClient : ServerClientBase, IWorldClient
 {
     private readonly ITypeMapper Mapper;
     private readonly IWorldServer<IWorldClient> Server;

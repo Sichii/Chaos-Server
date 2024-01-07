@@ -1,8 +1,8 @@
 using Chaos.Collections.Common;
-using Chaos.Common.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
+using Chaos.Utilities;
 
 namespace Chaos.Messaging;
 
@@ -17,16 +17,27 @@ public class SetChannelColorCommand(IChannelService channelService) : ICommand<A
         if (!args.TryGetNext<string>(out var channelName))
             return default;
 
-        if (!args.TryGetNext<MessageColor>(out var messageColor))
+        if (!Helpers.TryGetMessageColor(args, out var messageColor))
             return default;
+
+        if (!ChannelService.IsInChannel(source, channelName))
+        {
+            source.SendMessage($"You are not in channel {channelName}");
+
+            return default;
+        }
 
         var channelSettings = source.ChannelSettings.FirstOrDefault(x => x.ChannelName.EqualsI(channelName));
 
         if (channelSettings is null)
+        {
+            source.SendMessage($"You are not in channel {channelName}");
+
             return default;
+        }
 
         channelSettings.MessageColor = messageColor;
-        ChannelService.SetChannelColor(source, channelName, messageColor);
+        ChannelService.SetChannelColor(source, channelName, messageColor.Value);
 
         return default;
     }

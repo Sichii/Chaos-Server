@@ -1,7 +1,7 @@
 using System.Text;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
-using Chaos.Common.Definitions;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
 using Chaos.Geometry.Abstractions;
@@ -21,6 +21,7 @@ using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -57,13 +58,8 @@ public sealed class Startup(IConfiguration configuration)
                     cs.RegisterChannel(
                         null,
                         defaultChannel.ChannelName,
-                        defaultChannel.MessageColor ?? MessageColor.Gainsboro,
-                        (sub, message) =>
-                        {
-                            var aisling = (Aisling)sub;
-                            aisling.SendServerMessage(ServerMessageType.ActiveMessage, message);
-                            aisling.Client.SendPublicMessage(uint.MaxValue, PublicMessageType.Shout, message);
-                        },
+                        defaultChannel.MessageColor ?? CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
+                        Helpers.DefaultChannelMessageHandler,
                         true);
             });
 

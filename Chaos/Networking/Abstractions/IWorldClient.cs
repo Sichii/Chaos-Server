@@ -14,7 +14,7 @@ using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Networking.Abstractions;
 
-public interface IWorldClient : ISocketClient
+public interface IWorldClient : IServerClient
 {
     Aisling Aisling { get; set; }
     void SendAddItemToPane(Item item);

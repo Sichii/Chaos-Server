@@ -199,7 +199,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
             if (typeof(T) == typeof(ArgumentCollection))
                 value = (T)(object)new ArgumentCollection(argument);
             else
-                value = PrimitiveConverter.Convert<T>(argument);
+                value = PrimitiveConverter.Convert<T?>(argument);
 
             // ReSharper disable once CompareNonConstrainedGenericWithNull
             return value != null;

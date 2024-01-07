@@ -46,31 +46,42 @@ public sealed class ChannelService : IChannelService
     public bool IsChannel(string str) => str.StartsWithI(Options.ChannelPrefix);
 
     /// <inheritdoc />
-    public void JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false)
+    public bool IsInChannel(IChannelSubscriber subscriber, string channelName)
+        => Channels.TryGetValue(channelName, out var channelDetails) && channelDetails.ContainsSubscriber(subscriber);
+
+    /// <inheritdoc />
+    public bool JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false)
     {
+        //if not bypassing validation, and the channel name is reserved
+        //say the channel doesnt exist
         if (!bypassValidation && Options.ReservedChannelNames.Any(channelName.ContainsI))
         {
             subscriber.SendMessage($"Channel {channelName} not found");
 
-            return;
+            return false;
         }
 
         if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
             subscriber.SendMessage($"Channel {channelName} not found");
 
-            return;
+            return false;
         }
 
-        if (channelDetails.AddSubscriber(subscriber))
+        if (!channelDetails.AddSubscriber(subscriber))
         {
-            Logger.WithTopics(Topics.Entities.Channel, Topics.Actions.Join)
-                  .WithProperty(subscriber)
-                  .LogDebug("{@SubscriberName} has joined channel {@ChannelName}", subscriber.Name, channelName);
-
-            subscriber.SendMessage($"You have joined channel {channelDetails.ChannelNameOverride ?? channelName}");
-        } else
             subscriber.SendMessage($"You are already in channel {channelDetails.ChannelNameOverride ?? channelName}");
+
+            return false;
+        }
+
+        Logger.WithTopics(Topics.Entities.Channel, Topics.Actions.Join)
+              .WithProperty(subscriber)
+              .LogDebug("{@SubscriberName} has joined channel {@ChannelName}", subscriber.Name, channelName);
+
+        subscriber.SendMessage($"You have joined channel {channelDetails.ChannelNameOverride ?? channelName}");
+
+        return true;
     }
 
     /// <inheritdoc />
@@ -78,7 +89,8 @@ public sealed class ChannelService : IChannelService
     {
         if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
-            subscriber.SendMessage($"Channel {channelName} not found");
+            //don't give away whether or not channels exist
+            subscriber.SendMessage($"You are not in {channelName}");
 
             return;
         }
@@ -95,7 +107,7 @@ public sealed class ChannelService : IChannelService
     }
 
     /// <inheritdoc />
-    public void RegisterChannel(
+    public bool RegisterChannel(
         IChannelSubscriber? subscriber,
         string channelName,
         MessageColor defaultMessageColor,
@@ -112,45 +124,49 @@ public sealed class ChannelService : IChannelService
             {
                 subscriber?.SendMessage("Invalid channel name");
 
-                return;
+                return false;
             }
 
             if (Options.ReservedChannelNames.Any(channelName.ContainsI))
             {
                 subscriber?.SendMessage("Invalid channel name");
 
-                return;
+                return false;
             }
 
             if (Channels.TryGetValue(channelName, out _))
             {
                 subscriber?.SendMessage("Channel already exists");
 
-                return;
+                return false;
             }
 
             if (Options.MaxChannelNameLength < channelName.Length)
             {
                 subscriber?.SendMessage("Channel name is too long");
 
-                return;
+                return false;
             }
 
             if (Options.MinChannelNameLength > channelName.Length)
             {
                 subscriber?.SendMessage("Channel name is too short");
 
-                return;
+                return false;
             }
         }
 
-        Channels.TryAdd(channelName, new ChannelDetails(defaultMessageColor, sendMessageAction, channelNameOverride));
+        //only log if this person successfully created the channel
+        //in a concurrent scenario this may return false due to someone else creating the channel first
+        if (Channels.TryAdd(channelName, new ChannelDetails(defaultMessageColor, sendMessageAction, channelNameOverride)))
+            Logger.WithTopics(Topics.Entities.Channel, Topics.Actions.Create)
+                  .LogInformation("Channel {@ChannelName} has been registered", channelName);
 
-        Logger.WithTopics(Topics.Entities.Channel, Topics.Actions.Create)
-              .LogInformation("Channel {@ChannelName} has been registered", channelName);
-
+        //either way, join the channel
         if (subscriber is not null)
             JoinChannel(subscriber, channelName, bypassValidation);
+
+        return true;
     }
 
     /// <inheritdoc />

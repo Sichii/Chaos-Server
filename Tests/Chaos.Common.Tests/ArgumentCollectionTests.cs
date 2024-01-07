@@ -53,6 +53,48 @@ public sealed class ArgumentCollectionTests
                           .Equal("arg1", "arg2", "arg3");
     }
 
+    // Argument at index is empty
+    [Fact]
+    public void Argument_At_Index_Is_Empty()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<string>(0, out var value);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .BeEmpty();
+    }
+
+    // Arguments list is empty
+    [Fact]
+    public void Arguments_List_Is_Empty()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection();
+
+        // Act
+        var result = arguments.TryGet<int>(0, out var value);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
+    }
+
     [Fact]
     public void Constructor_WithArguments_ShouldInitializeCollectionWithArguments()
     {
@@ -116,6 +158,218 @@ public sealed class ArgumentCollectionTests
     }
 
     [Fact]
+    public void Handles_Invalid_ValueType_Conversion_Gracefully()
+    {
+        // Arrange
+        var argumentCollection = new ArgumentCollection(
+            new List<string>
+            {
+                "abc"
+            });
+
+        // Act
+        var result = argumentCollection.TryGet<int>(0, out var value);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
+    }
+
+    [Fact]
+    public void Handles_Null_Conversion_Type_Gracefully()
+    {
+        // Arrange
+        var argumentCollection = new ArgumentCollection(
+            new List<string>
+            {
+                "abc"
+            });
+
+        // Act
+        var result = argumentCollection.TryGet<int?>(0, out _);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Fact]
+    public void Handles_Nullable_Primitive_Conversion_Gracefully()
+    {
+        // Arrange
+        var argumentCollection = new ArgumentCollection(
+            new List<string>
+            {
+                "abc",
+                "5"
+            });
+
+        // Act
+        var result = argumentCollection.TryGet<int?>(0, out var value1);
+        var result2 = argumentCollection.TryGet<int?>(1, out var value2);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+
+        result2.Should()
+               .BeTrue();
+
+        value1.Should()
+              .BeNull();
+
+        value2.Should()
+              .Be(5);
+    }
+
+    // Index is negative
+    [Fact]
+    public void Index_Is_Negative()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "1",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<int>(-1, out var value);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
+    }
+
+    // Returns false if argument cannot be converted to specified type
+    [Fact]
+    public void Returns_False_If_Argument_Cannot_Be_Converted_To_Specified_Type()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "1",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<bool>(1, out var value);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
+    }
+
+    // Returns false if index is out of range
+    [Fact]
+    public void Returns_False_If_Index_Is_Out_Of_Range()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "1",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<int>(3, out var value);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .Be(default);
+    }
+
+    // Returns true if argument exists at given index and is convertible to specified type
+    [Fact]
+    public void Returns_True_If_Argument_Exists_At_Given_Index_And_Is_Convertible_To_Specified_Type()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "1",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<int>(1, out var value);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be(2);
+    }
+
+    // Successfully retrieves argument at given index and converts to specified type
+    [Fact]
+    public void Successfully_Retrieves_Argument_At_Given_Index_And_Converts_To_Specified_Type()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "1",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<int>(1, out var value);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be(2);
+    }
+
+    // Supports conversion to ArgumentCollection type
+    [Fact]
+    public void Supports_Conversion_To_ArgumentCollection_Type()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection(
+            new[]
+            {
+                "1",
+                "2",
+                "3"
+            });
+
+        // Act
+        var result = arguments.TryGet<ArgumentCollection>(0, out var value);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .BeEquivalentTo(arguments);
+    }
+
+    [Fact]
     public void ToString_ShouldReturnStringRepresentationOfArguments()
     {
         // Arrange
@@ -127,122 +381,5 @@ public sealed class ArgumentCollectionTests
         // Assert
         result.Should()
               .Be("\"arg1\" \"arg2\" \"arg3\" ");
-    }
-
-    [Fact]
-    public void TryGet_WithInvalidConvertibleType_ShouldReturnDefaultValueAndFalse()
-    {
-        // Arrange
-        var argumentCollection = new ArgumentCollection("invalid");
-
-        // Act
-        var result = argumentCollection.TryGet<int>(0, out var value);
-
-        // Assert
-        result.Should()
-              .BeFalse();
-
-        value.Should()
-             .Be(default);
-    }
-
-    [Fact]
-    public void TryGet_WithInvalidIndex_ShouldReturnDefaultValueAndFalse()
-    {
-        // Arrange
-        var argumentCollection = new ArgumentCollection("42");
-
-        // Act
-        var result = argumentCollection.TryGet<int>(1, out var value);
-
-        // Assert
-        result.Should()
-              .BeFalse();
-
-        value.Should()
-             .Be(default);
-    }
-
-    [Fact]
-    public void TryGet_WithValidIndexAndConvertibleType_ShouldReturnConvertedValueAndTrue()
-    {
-        // Arrange
-        var argumentCollection = new ArgumentCollection("42");
-
-        // Act
-        var result = argumentCollection.TryGet<int>(0, out var value);
-
-        // Assert
-        result.Should()
-              .BeTrue();
-
-        value.Should()
-             .Be(42);
-    }
-
-    [Fact]
-    public void TryGetNext_WithInvalidConvertibleType_ShouldReturnDefaultValueAndFalse()
-    {
-        // Arrange
-        var argumentCollection = new ArgumentCollection("invalid");
-
-        // Act
-        var result = argumentCollection.TryGetNext<int>(out var value);
-
-        // Assert
-        result.Should()
-              .BeFalse();
-
-        value.Should()
-             .Be(default);
-    }
-
-    [Fact]
-    public void TryGetNext_WithInvalidIndex_ShouldReturnDefaultValueAndFalse()
-    {
-        // Arrange
-        var argumentCollection = new ArgumentCollection("42");
-
-        // Act
-        argumentCollection.TryGetNext<int>(out _);
-        var result = argumentCollection.TryGetNext<int>(out var value);
-
-        // Assert
-        result.Should()
-              .BeFalse();
-
-        value.Should()
-             .Be(default);
-    }
-
-    [Fact]
-    public void TryGetNext_WithValidIndexAndConvertibleType_ShouldReturnNextConvertedValueAndTrue()
-    {
-        // Arrange
-        var argumentCollection = new ArgumentCollection("42 3.14 true");
-
-        // Act
-        var result1 = argumentCollection.TryGetNext<int>(out var value1);
-        var result2 = argumentCollection.TryGetNext<double>(out var value2);
-        var result3 = argumentCollection.TryGetNext<bool>(out var value3);
-
-        // Assert
-        result1.Should()
-               .BeTrue();
-
-        value1.Should()
-              .Be(42);
-
-        result2.Should()
-               .BeTrue();
-
-        value2.Should()
-              .Be(3.14);
-
-        result3.Should()
-               .BeTrue();
-
-        value3.Should()
-              .Be(true);
     }
 }

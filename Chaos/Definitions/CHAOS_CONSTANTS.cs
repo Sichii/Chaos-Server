@@ -1,9 +1,12 @@
 using System.Collections.Frozen;
+using Chaos.Common.Definitions;
 
 namespace Chaos.Definitions;
 
 public static class CHAOS_CONSTANTS
 {
+    public static readonly MessageColor DEFAULT_CHANNEL_MESSAGE_COLOR = MessageColor.Gainsboro;
+
     public static readonly FrozenSet<ushort> DOOR_SPRITES = new ushort[]
     {
         1994,

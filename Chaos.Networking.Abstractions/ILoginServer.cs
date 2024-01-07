@@ -6,7 +6,7 @@ namespace Chaos.Networking.Abstractions;
 ///     Defines a pattern for a server that facilitates character creation, presentation of the EULA, and the ability to
 ///     log into a character or change a character's password
 /// </summary>
-public interface ILoginServer<in TClient> : IServer<TClient> where TClient: ISocketClient
+public interface ILoginServer<in TClient> : IServer<TClient> where TClient: IServerClient
 {
     /// <summary>
     ///     Occurs when a client is redirected to this login server. This redirect could have come from either a lobby server

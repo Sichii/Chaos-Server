@@ -21,7 +21,7 @@ namespace Chaos.Networking.Abstractions;
 /// <typeparam name="T">
 ///     The type of the socket client.
 /// </typeparam>
-public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISocketClient
+public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: IServerClient
 {
     /// <summary>
     ///     Delegate for handling client packets.

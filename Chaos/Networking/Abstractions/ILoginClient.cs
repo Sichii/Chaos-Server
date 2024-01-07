@@ -3,7 +3,7 @@ using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Networking.Abstractions;
 
-public interface ILoginClient : ISocketClient
+public interface ILoginClient : IServerClient
 {
     void SendLoginControls(LoginControlsType loginControlsType, string message);
     void SendLoginMessage(LoginMessageType loginMessageType, string? message = null);

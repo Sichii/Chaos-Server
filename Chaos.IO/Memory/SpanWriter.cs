@@ -216,7 +216,7 @@ public ref struct SpanWriter
     /// </param>
     public void WriteByte(byte value)
     {
-        GrowIfNeeded(1);
+        GrowIfNeeded(sizeof(byte));
         MemoryMarshal.Write(Buffer[Position..], in value);
         Position++;
     }
@@ -329,8 +329,6 @@ public ref struct SpanWriter
     {
         WriteUInt16(x);
         WriteUInt16(y);
-
-        //TODO: 00 0B 00 0B 00
     }
 
     /// <summary>

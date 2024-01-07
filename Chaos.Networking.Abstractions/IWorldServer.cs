@@ -7,7 +7,7 @@ namespace Chaos.Networking.Abstractions;
 /// </summary>
 /// <typeparam name="TClient">
 /// </typeparam>
-public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ISocketClient
+public interface IWorldServer<in TClient> : IServer<TClient> where TClient: IServerClient
 {
     /// <summary>
     ///     Occurs when a client begins casting a spell with cast lines
