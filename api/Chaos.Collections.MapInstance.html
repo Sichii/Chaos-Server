@@ -1,0 +1,414 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MapInstance
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MapInstance
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.2/apiSpec/new?filename=Chaos_Collections_MapInstance.md&amp;value=---%0Auid%3A%20Chaos.Collections.MapInstance%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Collections.MapInstance">
+
+
+
+  <h1 id="Chaos_Collections_MapInstance" data-uid="Chaos.Collections.MapInstance" class="text-break">
+    Class MapInstance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Collections/MapInstance.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Collections.html">Collections</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class MapInstance : IScripted&lt;IMapScript&gt;, IScripted, IDeltaUpdatable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MapInstance</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.IScripted-1.html">IScripted</a>&lt;<a class="xref" href="Chaos.Scripting.MapScripts.Abstractions.IMapScript.html">IMapScript</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.IScripted.html">IScripted</a></div>
+      <div><a class="xref" href="Chaos.Time.Abstractions.IDeltaUpdatable.html">IDeltaUpdatable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.AddScript.html#Chaos_Extensions_ScriptExtensions_AddScript__2___0_System_Type_Chaos_Scripting_Abstractions_IScriptFactory___1___0__Chaos_Collections_Abstractions_IPanel___0__">ScriptExtensions.AddScript&lt;TScripted, TScript&gt;(TScripted, Type, IScriptFactory&lt;TScript, TScripted&gt;, IPanel&lt;TScripted&gt;?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.RemoveScript.html#Chaos_Extensions_ScriptExtensions_RemoveScript__2_Chaos_Scripting_Abstractions_IScripted___0__">ScriptExtensions.RemoveScript&lt;TBaseScript, TScriptToRemove&gt;(IScripted&lt;TBaseScript&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.-ctor.html#Chaos_Collections_MapInstance__ctor_Chaos_Models_Templates_MapTemplate_Chaos_Storage_Abstractions_ISimpleCache_Chaos_Services_Storage_Abstractions_IShardGenerator_Chaos_Scripting_Abstractions_IScriptProvider_System_String_System_String_Chaos_Storage_Abstractions_IAsyncStore_Chaos_Models_World_Aisling__System_Threading_CancellationTokenSource_Microsoft_Extensions_Logging_ILogger_Chaos_Collections_MapInstance__System_Collections_Generic_ICollection_System_String__">MapInstance(MapTemplate, ISimpleCache, IShardGenerator, IScriptProvider, string, string, IAsyncStore&lt;Aisling&gt;, CancellationTokenSource, ILogger&lt;MapInstance&gt;, ICollection&lt;string&gt;?)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.BaseInstanceId.html#Chaos_Collections_MapInstance_BaseInstanceId">BaseInstanceId</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Flags.html#Chaos_Collections_MapInstance_Flags">Flags</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.InstanceId.html#Chaos_Collections_MapInstance_InstanceId">InstanceId</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsShard.html#Chaos_Collections_MapInstance_IsShard">IsShard</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.LoadedFromInstanceId.html#Chaos_Collections_MapInstance_LoadedFromInstanceId">LoadedFromInstanceId</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.MapInstanceCtx.html#Chaos_Collections_MapInstance_MapInstanceCtx">MapInstanceCtx</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.MaximumLevel.html#Chaos_Collections_MapInstance_MaximumLevel">MaximumLevel</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.MinimumLevel.html#Chaos_Collections_MapInstance_MinimumLevel">MinimumLevel</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.MonsterSpawns.html#Chaos_Collections_MapInstance_MonsterSpawns">MonsterSpawns</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Music.html#Chaos_Collections_MapInstance_Music">Music</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Name.html#Chaos_Collections_MapInstance_Name">Name</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Pathfinder.html#Chaos_Collections_MapInstance_Pathfinder">Pathfinder</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Script.html#Chaos_Collections_MapInstance_Script">Script</a></dt>
+    <dd><p>The attached script</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.ScriptKeys.html#Chaos_Collections_MapInstance_ScriptKeys">ScriptKeys</a></dt>
+    <dd><p>A unique collection of unique identifiers for the scripts attached to this object</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.ShardLimiterTimers.html#Chaos_Collections_MapInstance_ShardLimiterTimers">ShardLimiterTimers</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.ShardingOptions.html#Chaos_Collections_MapInstance_ShardingOptions">ShardingOptions</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Shards.html#Chaos_Collections_MapInstance_Shards">Shards</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Sync.html#Chaos_Collections_MapInstance_Sync">Sync</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Template.html#Chaos_Collections_MapInstance_Template">Template</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.AddAislingDirect.html#Chaos_Collections_MapInstance_AddAislingDirect_Chaos_Models_World_Aisling_Chaos_Geometry_Abstractions_IPoint_">AddAislingDirect(Aisling, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.AddObject.html#Chaos_Collections_MapInstance_AddObject_Chaos_Models_World_Abstractions_VisibleEntity_Chaos_Geometry_Abstractions_IPoint_">AddObject(VisibleEntity, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.AddObjects.html#Chaos_Collections_MapInstance_AddObjects__1_System_Collections_Generic_ICollection___0__">AddObjects&lt;T&gt;(ICollection&lt;T&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.AddSpawner.html#Chaos_Collections_MapInstance_AddSpawner_Chaos_Models_Data_MonsterSpawn_">AddSpawner(MonsterSpawn)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Click.html#Chaos_Collections_MapInstance_Click_Chaos_Geometry_Abstractions_IPoint_Chaos_Models_World_Aisling_">Click(IPoint, Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Click.html#Chaos_Collections_MapInstance_Click_System_UInt32_Chaos_Models_World_Aisling_">Click(uint, Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Destroy.html#Chaos_Collections_MapInstance_Destroy">Destroy()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.GetDistinctReactorsAtPoint.html#Chaos_Collections_MapInstance_GetDistinctReactorsAtPoint_Chaos_Geometry_Abstractions_IPoint_">GetDistinctReactorsAtPoint(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.GetEntitiesAtPoint.html#Chaos_Collections_MapInstance_GetEntitiesAtPoint__1_Chaos_Geometry_Abstractions_IPoint_">GetEntitiesAtPoint&lt;T&gt;(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.GetEntitiesAtPoints.html#Chaos_Collections_MapInstance_GetEntitiesAtPoints__1_System_Collections_Generic_IEnumerable_Chaos_Geometry_Abstractions_IPoint__">GetEntitiesAtPoints&lt;T&gt;(IEnumerable&lt;IPoint&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.GetEntitiesWithinRange.html#Chaos_Collections_MapInstance_GetEntitiesWithinRange__1_Chaos_Geometry_Abstractions_IPoint_System_Int32_">GetEntitiesWithinRange&lt;T&gt;(IPoint, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.GetEntities.html#Chaos_Collections_MapInstance_GetEntities__1">GetEntities&lt;T&gt;()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.GetRandomWalkablePoint.html#Chaos_Collections_MapInstance_GetRandomWalkablePoint_Chaos_Common_Definitions_CreatureType_">GetRandomWalkablePoint(CreatureType)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsBlockingReactor.html#Chaos_Collections_MapInstance_IsBlockingReactor_Chaos_Geometry_Abstractions_IPoint_">IsBlockingReactor(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsReactor.html#Chaos_Collections_MapInstance_IsReactor_Chaos_Geometry_Abstractions_IPoint_">IsReactor(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsWalkable.html#Chaos_Collections_MapInstance_IsWalkable_Chaos_Geometry_Abstractions_IPoint_Chaos_Common_Definitions_CreatureType_">IsWalkable(IPoint, CreatureType)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsWall.html#Chaos_Collections_MapInstance_IsWall_Chaos_Geometry_Abstractions_IPoint_">IsWall(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsWallToCreaturesOnly.html#Chaos_Collections_MapInstance_IsWallToCreaturesOnly_Chaos_Geometry_Abstractions_IPoint_">IsWallToCreaturesOnly(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.IsWithinMap.html#Chaos_Collections_MapInstance_IsWithinMap_Chaos_Geometry_Abstractions_IPoint_">IsWithinMap(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Morph.html#Chaos_Collections_MapInstance_Morph_System_String_">Morph(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.MoveEntity.html#Chaos_Collections_MapInstance_MoveEntity_Chaos_Models_World_Abstractions_MapEntity_Chaos_Geometry_Point_">MoveEntity(MapEntity, Point)</a></dt>
+    <dd><p>Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU
+ARE DOING.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.PlayMusic.html#Chaos_Collections_MapInstance_PlayMusic_System_Byte_">PlayMusic(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.PlaySound.html#Chaos_Collections_MapInstance_PlaySound_System_Byte_Chaos_Geometry_Abstractions_IPoint___">PlaySound(byte, params IPoint[])</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.RemoveObject.html#Chaos_Collections_MapInstance_RemoveObject_Chaos_Models_World_Abstractions_MapEntity_">RemoveObject(MapEntity)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.ShowAnimation.html#Chaos_Collections_MapInstance_ShowAnimation_Chaos_Models_Data_Animation_">ShowAnimation(Animation)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.SimpleAdd.html#Chaos_Collections_MapInstance_SimpleAdd_Chaos_Models_World_Abstractions_MapEntity_">SimpleAdd(MapEntity)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.StartAsync.html#Chaos_Collections_MapInstance_StartAsync">StartAsync()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Stop.html#Chaos_Collections_MapInstance_Stop">Stop()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.TryGetEntity.html#Chaos_Collections_MapInstance_TryGetEntity__1_System_UInt32___0__">TryGetEntity&lt;T&gt;(uint, out T)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.Update.html#Chaos_Collections_MapInstance_Update_System_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd><p>Updates the object with the given delta of elapsed time</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.MapInstance.UpdateMapAsync.html#Chaos_Collections_MapInstance_UpdateMapAsync_System_TimeSpan_">UpdateMapAsync(TimeSpan)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Collections/MapInstance.cs/#L28" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

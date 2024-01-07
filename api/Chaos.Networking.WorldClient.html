@@ -1,0 +1,495 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class WorldClient
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class WorldClient
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.2/apiSpec/new?filename=Chaos_Networking_WorldClient.md&amp;value=---%0Auid%3A%20Chaos.Networking.WorldClient%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Networking.WorldClient">
+
+
+
+  <h1 id="Chaos_Networking_WorldClient" data-uid="Chaos.Networking.WorldClient" class="text-break">
+    Class WorldClient
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Networking/WorldClient.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Networking.html">Networking</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class WorldClient : ServerClientBase, IDisposable, IWorldClient, IServerClient, ISocketClient</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.html">SocketClientBase</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.ServerClientBase.html">ServerClientBase</a></div>
+      <div><span class="xref">WorldClient</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.html">IWorldClient</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.IServerClient.html">IServerClient</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.html">ISocketClient</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerClientBase.SendAcceptConnection.html#Chaos_Networking_Abstractions_ServerClientBase_SendAcceptConnection_System_String_">ServerClientBase.SendAcceptConnection(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerClientBase.SendHeartBeat.html#Chaos_Networking_Abstractions_ServerClientBase_SendHeartBeat_System_Byte_System_Byte_">ServerClientBase.SendHeartBeat(byte, byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerClientBase.SendRedirect.html#Chaos_Networking_Abstractions_ServerClientBase_SendRedirect_Chaos_Networking_Abstractions_IRedirect_">ServerClientBase.SendRedirect(IRedirect)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Connected.html#Chaos_Networking_Abstractions_SocketClientBase_Connected">SocketClientBase.Connected</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Crypto.html#Chaos_Networking_Abstractions_SocketClientBase_Crypto">SocketClientBase.Crypto</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.LogRawPackets.html#Chaos_Networking_Abstractions_SocketClientBase_LogRawPackets">SocketClientBase.LogRawPackets</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Id.html#Chaos_Networking_Abstractions_SocketClientBase_Id">SocketClientBase.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.ReceiveSync.html#Chaos_Networking_Abstractions_SocketClientBase_ReceiveSync">SocketClientBase.ReceiveSync</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Socket.html#Chaos_Networking_Abstractions_SocketClientBase_Socket">SocketClientBase.Socket</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.RemoteIp.html#Chaos_Networking_Abstractions_SocketClientBase_RemoteIp">SocketClientBase.RemoteIp</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Dispose.html#Chaos_Networking_Abstractions_SocketClientBase_Dispose">SocketClientBase.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.OnDisconnected.html">SocketClientBase.OnDisconnected</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.SetSequence.html#Chaos_Networking_Abstractions_SocketClientBase_SetSequence_System_Byte_">SocketClientBase.SetSequence(byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.BeginReceive.html#Chaos_Networking_Abstractions_SocketClientBase_BeginReceive">SocketClientBase.BeginReceive()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Send.html#Chaos_Networking_Abstractions_SocketClientBase_Send__1___0_">SocketClientBase.Send&lt;T&gt;(T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Send.html#Chaos_Networking_Abstractions_SocketClientBase_Send_Chaos_Packets_Packet__">SocketClientBase.Send(ref Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.SocketClientBase.Disconnect.html#Chaos_Networking_Abstractions_SocketClientBase_Disconnect">SocketClientBase.Disconnect()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.WorldClientExtensions.SendDoors.html#Chaos_Extensions_WorldClientExtensions_SendDoors_Chaos_Networking_Abstractions_IWorldClient_Chaos_Models_World_Door___">WorldClientExtensions.SendDoors(IWorldClient, params Door[])</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.WorldClientExtensions.SendVisibleEntities.html#Chaos_Extensions_WorldClientExtensions_SendVisibleEntities_Chaos_Networking_Abstractions_IWorldClient_Chaos_Models_World_Abstractions_VisibleEntity___">WorldClientExtensions.SendVisibleEntities(IWorldClient, params VisibleEntity[])</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.AddScript.html#Chaos_Extensions_ScriptExtensions_AddScript__2___0_System_Type_Chaos_Scripting_Abstractions_IScriptFactory___1___0__Chaos_Collections_Abstractions_IPanel___0__">ScriptExtensions.AddScript&lt;TScripted, TScript&gt;(TScripted, Type, IScriptFactory&lt;TScript, TScripted&gt;, IPanel&lt;TScripted&gt;?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.-ctor.html#Chaos_Networking_WorldClient__ctor_System_Net_Sockets_Socket_Microsoft_Extensions_Options_IOptions_Chaos_ChaosOptions__Chaos_TypeMapper_Abstractions_ITypeMapper_Chaos_Cryptography_Abstractions_ICrypto_Chaos_Networking_Abstractions_IWorldServer_Chaos_Networking_Abstractions_IWorldClient__Chaos_Packets_Abstractions_IPacketSerializer_Microsoft_Extensions_Logging_ILogger_Chaos_Networking_WorldClient__">WorldClient(Socket, IOptions&lt;ChaosOptions&gt;, ITypeMapper, ICrypto, IWorldServer&lt;IWorldClient&gt;, IPacketSerializer, ILogger&lt;WorldClient&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.Aisling.html#Chaos_Networking_WorldClient_Aisling">Aisling</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.HandlePacketAsync.html#Chaos_Networking_WorldClient_HandlePacketAsync_System_Span_System_Byte__">HandlePacketAsync(Span&lt;byte&gt;)</a></dt>
+    <dd><p>Asynchronously handles a span buffer as a packet</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendAddItemToPane.html#Chaos_Networking_WorldClient_SendAddItemToPane_Chaos_Models_Panel_Item_">SendAddItemToPane(Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendAddSkillToPane.html#Chaos_Networking_WorldClient_SendAddSkillToPane_Chaos_Models_Panel_Skill_">SendAddSkillToPane(Skill)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendAddSpellToPane.html#Chaos_Networking_WorldClient_SendAddSpellToPane_Chaos_Models_Panel_Spell_">SendAddSpellToPane(Spell)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendAnimation.html#Chaos_Networking_WorldClient_SendAnimation_Chaos_Models_Data_Animation_">SendAnimation(Animation)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendAttributes.html#Chaos_Networking_WorldClient_SendAttributes_Chaos_Common_Definitions_StatUpdateType_">SendAttributes(StatUpdateType)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendBoard.html#Chaos_Networking_WorldClient_SendBoard_Chaos_Collections_Abstractions_BoardBase_System_Nullable_System_Int16__">SendBoard(BoardBase, short?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendBoardList.html#Chaos_Networking_WorldClient_SendBoardList_System_Collections_Generic_IEnumerable_Chaos_Collections_Abstractions_BoardBase__">SendBoardList(IEnumerable&lt;BoardBase&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendBoardResponse.html#Chaos_Networking_WorldClient_SendBoardResponse_Chaos_Common_Definitions_BoardOrResponseType_System_String_System_Boolean_">SendBoardResponse(BoardOrResponseType, string, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendBodyAnimation.html#Chaos_Networking_WorldClient_SendBodyAnimation_System_UInt32_Chaos_Common_Definitions_BodyAnimation_System_UInt16_System_Nullable_System_Byte__">SendBodyAnimation(uint, BodyAnimation, ushort, byte?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendCancelCasting.html#Chaos_Networking_WorldClient_SendCancelCasting">SendCancelCasting()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendConfirmClientWalk.html#Chaos_Networking_WorldClient_SendConfirmClientWalk_Chaos_Geometry_Point_Chaos_Geometry_Abstractions_Definitions_Direction_">SendConfirmClientWalk(Point, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendConfirmExit.html#Chaos_Networking_WorldClient_SendConfirmExit">SendConfirmExit()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendCooldown.html#Chaos_Networking_WorldClient_SendCooldown_Chaos_Models_Panel_Abstractions_PanelEntityBase_">SendCooldown(PanelEntityBase)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendCreatureTurn.html#Chaos_Networking_WorldClient_SendCreatureTurn_System_UInt32_Chaos_Geometry_Abstractions_Definitions_Direction_">SendCreatureTurn(uint, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendCreatureWalk.html#Chaos_Networking_WorldClient_SendCreatureWalk_System_UInt32_Chaos_Geometry_Point_Chaos_Geometry_Abstractions_Definitions_Direction_">SendCreatureWalk(uint, Point, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendDialog.html#Chaos_Networking_WorldClient_SendDialog_Chaos_Models_Menu_Dialog_">SendDialog(Dialog)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendDisplayAisling.html#Chaos_Networking_WorldClient_SendDisplayAisling_Chaos_Models_World_Aisling_System_Boolean_">SendDisplayAisling(Aisling, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendDoors.html#Chaos_Networking_WorldClient_SendDoors_System_Collections_Generic_IEnumerable_Chaos_Models_World_Door__System_Boolean_">SendDoors(IEnumerable&lt;Door&gt;, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendEffect.html#Chaos_Networking_WorldClient_SendEffect_Chaos_Common_Definitions_EffectColor_System_Byte_">SendEffect(EffectColor, byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendEquipment.html#Chaos_Networking_WorldClient_SendEquipment_Chaos_Models_Panel_Item_">SendEquipment(Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendExchangeAccepted.html#Chaos_Networking_WorldClient_SendExchangeAccepted_System_Boolean_">SendExchangeAccepted(bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendExchangeAddItem.html#Chaos_Networking_WorldClient_SendExchangeAddItem_System_Boolean_System_Byte_Chaos_Models_Panel_Item_">SendExchangeAddItem(bool, byte, Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendExchangeCancel.html#Chaos_Networking_WorldClient_SendExchangeCancel_System_Boolean_">SendExchangeCancel(bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendExchangeRequestAmount.html#Chaos_Networking_WorldClient_SendExchangeRequestAmount_System_Byte_">SendExchangeRequestAmount(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendExchangeSetGold.html#Chaos_Networking_WorldClient_SendExchangeSetGold_System_Boolean_System_Int32_">SendExchangeSetGold(bool, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendExchangeStart.html#Chaos_Networking_WorldClient_SendExchangeStart_Chaos_Models_World_Aisling_">SendExchangeStart(Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendForcedClientPacket.html#Chaos_Networking_WorldClient_SendForcedClientPacket_Chaos_Packets_Packet__">SendForcedClientPacket(ref Packet)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendGroupRequest.html#Chaos_Networking_WorldClient_SendGroupRequest_Chaos_Common_Definitions_GroupRequestType_System_String_">SendGroupRequest(GroupRequestType, string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendHealthBar.html#Chaos_Networking_WorldClient_SendHealthBar_Chaos_Models_World_Abstractions_Creature_System_Nullable_System_Byte__">SendHealthBar(Creature, byte?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendLightLevel.html#Chaos_Networking_WorldClient_SendLightLevel_Chaos_Common_Definitions_LightLevel_">SendLightLevel(LightLevel)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendLocation.html#Chaos_Networking_WorldClient_SendLocation">SendLocation()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendMapChangeComplete.html#Chaos_Networking_WorldClient_SendMapChangeComplete">SendMapChangeComplete()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendMapChangePending.html#Chaos_Networking_WorldClient_SendMapChangePending">SendMapChangePending()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendMapData.html#Chaos_Networking_WorldClient_SendMapData">SendMapData()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendMapInfo.html#Chaos_Networking_WorldClient_SendMapInfo">SendMapInfo()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendMapLoadComplete.html#Chaos_Networking_WorldClient_SendMapLoadComplete">SendMapLoadComplete()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendMetaData.html#Chaos_Networking_WorldClient_SendMetaData_Chaos_Common_Definitions_MetaDataRequestType_Chaos_Services_Storage_Abstractions_IMetaDataStore_System_String_">SendMetaData(MetaDataRequestType, IMetaDataStore, string?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendNotepad.html#Chaos_Networking_WorldClient_SendNotepad_System_Byte_Chaos_Common_Definitions_NotepadType_System_Byte_System_Byte_System_String_">SendNotepad(byte, NotepadType, byte, byte, string?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendPost.html#Chaos_Networking_WorldClient_SendPost_Chaos_Models_Board_Post_System_Boolean_System_Boolean_">SendPost(Post, bool, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendProfile.html#Chaos_Networking_WorldClient_SendProfile_Chaos_Models_World_Aisling_">SendProfile(Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendProfileRequest.html#Chaos_Networking_WorldClient_SendProfileRequest">SendProfileRequest()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendPublicMessage.html#Chaos_Networking_WorldClient_SendPublicMessage_System_UInt32_Chaos_Common_Definitions_PublicMessageType_System_String_">SendPublicMessage(uint, PublicMessageType, string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendRefreshResponse.html#Chaos_Networking_WorldClient_SendRefreshResponse">SendRefreshResponse()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendRemoveItemFromPane.html#Chaos_Networking_WorldClient_SendRemoveItemFromPane_System_Byte_">SendRemoveItemFromPane(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendRemoveObject.html#Chaos_Networking_WorldClient_SendRemoveObject_System_UInt32_">SendRemoveObject(uint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendRemoveSkillFromPane.html#Chaos_Networking_WorldClient_SendRemoveSkillFromPane_System_Byte_">SendRemoveSkillFromPane(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendRemoveSpellFromPane.html#Chaos_Networking_WorldClient_SendRemoveSpellFromPane_System_Byte_">SendRemoveSpellFromPane(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendSelfProfile.html#Chaos_Networking_WorldClient_SendSelfProfile">SendSelfProfile()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendServerMessage.html#Chaos_Networking_WorldClient_SendServerMessage_Chaos_Common_Definitions_ServerMessageType_System_String_">SendServerMessage(ServerMessageType, string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendSound.html#Chaos_Networking_WorldClient_SendSound_System_Byte_System_Boolean_">SendSound(byte, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendUnequip.html#Chaos_Networking_WorldClient_SendUnequip_Chaos_Common_Definitions_EquipmentSlot_">SendUnequip(EquipmentSlot)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendUserId.html#Chaos_Networking_WorldClient_SendUserId">SendUserId()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendVisibleEntities.html#Chaos_Networking_WorldClient_SendVisibleEntities_System_Collections_Generic_IEnumerable_Chaos_Models_World_Abstractions_VisibleEntity__System_Boolean_">SendVisibleEntities(IEnumerable&lt;VisibleEntity&gt;, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendWorldList.html#Chaos_Networking_WorldClient_SendWorldList_System_Collections_Generic_IEnumerable_Chaos_Models_World_Aisling__">SendWorldList(IEnumerable&lt;Aisling&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.WorldClient.SendWorldMap.html#Chaos_Networking_WorldClient_SendWorldMap_Chaos_Collections_WorldMap_">SendWorldMap(WorldMap)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Networking/WorldClient.cs/#L33" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

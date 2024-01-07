@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class GuildMemberRosterScript
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class GuildMemberRosterScript
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.2/apiSpec/new?filename=Chaos_Scripting_DialogScripts_GuildScripts_GuildMemberRosterScript.md&amp;value=---%0Auid%3A%20Chaos.Scripting.DialogScripts.GuildScripts.GuildMemberRosterScript%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Scripting.DialogScripts.GuildScripts.GuildMemberRosterScript">
+
+
+
+  <h1 id="Chaos_Scripting_DialogScripts_GuildScripts_GuildMemberRosterScript" data-uid="Chaos.Scripting.DialogScripts.GuildScripts.GuildMemberRosterScript" class="text-break">
+    Class GuildMemberRosterScript
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Scripting/DialogScripts/GuildScripts/GuildMemberRosterScript.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Scripting.html">Scripting</a>.<a class="xref" href="Chaos.Scripting.DialogScripts.html">DialogScripts</a>.<a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.html">GuildScripts</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class GuildMemberRosterScript : GuildScriptBase, IEquatable&lt;ScriptBase&gt;, IDialogScript, IScript</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.html">ScriptBase</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.SubjectiveScriptBase-1.html">SubjectiveScriptBase</a>&lt;<a class="xref" href="Chaos.Models.Menu.Dialog.html">Dialog</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.html">DialogScriptBase</a></div>
+      <div><a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.html">GuildScriptBase</a></div>
+      <div><span class="xref">GuildMemberRosterScript</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.html">ScriptBase</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.IDialogScript.html">IDialogScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.IScript.html">IScript</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.ClientRegistry.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_ClientRegistry">GuildScriptBase.ClientRegistry</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.GuildFactory.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_GuildFactory">GuildScriptBase.GuildFactory</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.GuildStore.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_GuildStore">GuildScriptBase.GuildStore</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.Logger.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_Logger">GuildScriptBase.Logger</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.CanBeDemoted.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_CanBeDemoted_Chaos_Collections_GuildRank_">GuildScriptBase.CanBeDemoted(GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.CanBePromoted.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_CanBePromoted_Chaos_Collections_GuildRank_">GuildScriptBase.CanBePromoted(GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.GuildExists.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_GuildExists_System_String_">GuildScriptBase.GuildExists(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.IsInferiorRank.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_IsInferiorRank_Chaos_Collections_GuildRank_Chaos_Collections_GuildRank_">GuildScriptBase.IsInferiorRank(GuildRank, GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.IsInGuild.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_IsInGuild_Chaos_Models_World_Aisling_Chaos_Collections_Guild__Chaos_Collections_GuildRank__">GuildScriptBase.IsInGuild(Aisling, out Guild, out GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.IsLeader.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_IsLeader_Chaos_Collections_GuildRank_">GuildScriptBase.IsLeader(GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.IsOfficer.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_IsOfficer_Chaos_Collections_GuildRank_">GuildScriptBase.IsOfficer(GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.Abstractions.GuildScriptBase.IsSuperiorRank.html#Chaos_Scripting_DialogScripts_GuildScripts_Abstractions_GuildScriptBase_IsSuperiorRank_Chaos_Collections_GuildRank_Chaos_Collections_GuildRank_">GuildScriptBase.IsSuperiorRank(GuildRank, GuildRank)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.OnDisplayed.html#Chaos_Scripting_DialogScripts_Abstractions_DialogScriptBase_OnDisplayed_Chaos_Models_World_Aisling_">DialogScriptBase.OnDisplayed(Aisling)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.OnNext.html#Chaos_Scripting_DialogScripts_Abstractions_DialogScriptBase_OnNext_Chaos_Models_World_Aisling_System_Nullable_System_Byte__">DialogScriptBase.OnNext(Aisling, byte?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.OnPrevious.html#Chaos_Scripting_DialogScripts_Abstractions_DialogScriptBase_OnPrevious_Chaos_Models_World_Aisling_">DialogScriptBase.OnPrevious(Aisling)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.TryFetchArg.html#Chaos_Scripting_DialogScripts_Abstractions_DialogScriptBase_TryFetchArg__1_System_Int32___0__">DialogScriptBase.TryFetchArg&lt;T&gt;(int, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.TryFetchArgs.html#Chaos_Scripting_DialogScripts_Abstractions_DialogScriptBase_TryFetchArgs__1___0__">DialogScriptBase.TryFetchArgs&lt;T&gt;(out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.DialogScripts.Abstractions.DialogScriptBase.TryFetchArgs.html#Chaos_Scripting_DialogScripts_Abstractions_DialogScriptBase_TryFetchArgs__2___0____1__">DialogScriptBase.TryFetchArgs&lt;T1, T2&gt;(out T1, out T2)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.SubjectiveScriptBase-1.Subject.html#Chaos_Scripting_Abstractions_SubjectiveScriptBase_1_Subject">SubjectiveScriptBase&lt;Dialog&gt;.Subject</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.ScriptKey.html#Chaos_Scripting_Abstractions_ScriptBase_ScriptKey">ScriptBase.ScriptKey</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.Equals.html#Chaos_Scripting_Abstractions_ScriptBase_Equals_Chaos_Scripting_Abstractions_ScriptBase_">ScriptBase.Equals(ScriptBase)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.Equals.html#Chaos_Scripting_Abstractions_ScriptBase_Equals_System_Object_">ScriptBase.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.GetHashCode.html#Chaos_Scripting_Abstractions_ScriptBase_GetHashCode">ScriptBase.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.GetScriptKey.html#Chaos_Scripting_Abstractions_ScriptBase_GetScriptKey_System_Type_">ScriptBase.GetScriptKey(Type)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.As.html#Chaos_Extensions_ScriptExtensions_As__1_Chaos_Scripting_Abstractions_IScript_">ScriptExtensions.As&lt;TScript&gt;(IScript)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.GetScripts.html#Chaos_Extensions_ScriptExtensions_GetScripts__1_Chaos_Scripting_Abstractions_IScript_">ScriptExtensions.GetScripts&lt;TScript&gt;(IScript)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.Is.html#Chaos_Extensions_ScriptExtensions_Is__1_Chaos_Scripting_Abstractions_IScript_">ScriptExtensions.Is&lt;TScript&gt;(IScript)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.Is.html#Chaos_Extensions_ScriptExtensions_Is__1_Chaos_Scripting_Abstractions_IScript___0__">ScriptExtensions.Is&lt;TScript&gt;(IScript, out TScript)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.AddScript.html#Chaos_Extensions_ScriptExtensions_AddScript__2___0_System_Type_Chaos_Scripting_Abstractions_IScriptFactory___1___0__Chaos_Collections_Abstractions_IPanel___0__">ScriptExtensions.AddScript&lt;TScripted, TScript&gt;(TScripted, Type, IScriptFactory&lt;TScript, TScripted&gt;, IPanel&lt;TScripted&gt;?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.GuildMemberRosterScript.-ctor.html#Chaos_Scripting_DialogScripts_GuildScripts_GuildMemberRosterScript__ctor_Chaos_Models_Menu_Dialog_Chaos_Networking_Abstractions_IClientRegistry_Chaos_Networking_Abstractions_IWorldClient__Chaos_Storage_Abstractions_IStore_Chaos_Collections_Guild__Chaos_Common_Abstractions_IFactory_Chaos_Collections_Guild__Microsoft_Extensions_Logging_ILogger_Chaos_Scripting_DialogScripts_GuildScripts_GuildMemberRosterScript__">GuildMemberRosterScript(Dialog, IClientRegistry&lt;IWorldClient&gt;, IStore&lt;Guild&gt;, IFactory&lt;Guild&gt;, ILogger&lt;GuildMemberRosterScript&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.DialogScripts.GuildScripts.GuildMemberRosterScript.OnDisplaying.html#Chaos_Scripting_DialogScripts_GuildScripts_GuildMemberRosterScript_OnDisplaying_Chaos_Models_World_Aisling_">OnDisplaying(Aisling)</a></dt>
+    <dd><p>Called when the dialog is about to be displayed, but has not yet been displayed. You can use this event to modify
+the dialog before it is displayed, such as injecting text parameters into the dialog's text</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Scripting/DialogScripts/GuildScripts/GuildMemberRosterScript.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

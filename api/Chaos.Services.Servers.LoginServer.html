@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class LoginServer
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class LoginServer
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.2/apiSpec/new?filename=Chaos_Services_Servers_LoginServer.md&amp;value=---%0Auid%3A%20Chaos.Services.Servers.LoginServer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Services.Servers.LoginServer">
+
+
+
+  <h1 id="Chaos_Services_Servers_LoginServer" data-uid="Chaos.Services.Servers.LoginServer" class="text-break">
+    Class LoginServer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Services/Servers/LoginServer.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Services.html">Services</a>.<a class="xref" href="Chaos.Services.Servers.html">Servers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class LoginServer : ServerBase&lt;ILoginClient&gt;, IDisposable, ILoginServer&lt;ILoginClient&gt;, IServer&lt;ILoginClient&gt;, IHostedService</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice">BackgroundService</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.html">ServerBase</a>&lt;<a class="xref" href="Chaos.Networking.Abstractions.ILoginClient.html">ILoginClient</a>&gt;</div>
+      <div><span class="xref">LoginServer</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.ILoginServer-1.html">ILoginServer</a>&lt;<a class="xref" href="Chaos.Networking.Abstractions.ILoginClient.html">ILoginClient</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.IServer-1.html">IServer</a>&lt;<a class="xref" href="Chaos.Networking.Abstractions.ILoginClient.html">ILoginClient</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.Dispose.html#Chaos_Networking_Abstractions_ServerBase_1_Dispose">ServerBase&lt;ILoginClient&gt;.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.ExecuteHandler.html#Chaos_Networking_Abstractions_ServerBase_1_ExecuteHandler__1__0___0_System_Func__0___0_System_Threading_Tasks_ValueTask__">ServerBase&lt;ILoginClient&gt;.ExecuteHandler&lt;TArgs&gt;(ILoginClient, TArgs, Func&lt;ILoginClient, TArgs, ValueTask&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.ExecuteHandler.html#Chaos_Networking_Abstractions_ServerBase_1_ExecuteHandler__0_System_Func__0_System_Threading_Tasks_ValueTask__">ServerBase&lt;ILoginClient&gt;.ExecuteHandler(ILoginClient, Func&lt;ILoginClient, ValueTask&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.OnHeartBeatAsync.html#Chaos_Networking_Abstractions_ServerBase_1_OnHeartBeatAsync__0_Chaos_Packets_Packet__">ServerBase&lt;ILoginClient&gt;.OnHeartBeatAsync(ILoginClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.OnSequenceChangeAsync.html#Chaos_Networking_Abstractions_ServerBase_1_OnSequenceChangeAsync__0_Chaos_Packets_Packet__">ServerBase&lt;ILoginClient&gt;.OnSequenceChangeAsync(ILoginClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.OnClientException.html#Chaos_Networking_Abstractions_ServerBase_1_OnClientException__0_Chaos_Packets_Packet__">ServerBase&lt;ILoginClient&gt;.OnClientException(ILoginClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ServerBase-1.OnSynchronizeTicksAsync.html#Chaos_Networking_Abstractions_ServerBase_1_OnSynchronizeTicksAsync__0_Chaos_Packets_Packet__">ServerBase&lt;ILoginClient&gt;.OnSynchronizeTicksAsync(ILoginClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice.startasync">BackgroundService.StartAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice.stopasync">BackgroundService.StopAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.hosting.backgroundservice.executetask">BackgroundService.ExecuteTask</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.ScriptExtensions.AddScript.html#Chaos_Extensions_ScriptExtensions_AddScript__2___0_System_Type_Chaos_Scripting_Abstractions_IScriptFactory___1___0__Chaos_Collections_Abstractions_IPanel___0__">ScriptExtensions.AddScript&lt;TScripted, TScript&gt;(TScripted, Type, IScriptFactory&lt;TScript, TScripted&gt;, IPanel&lt;TScripted&gt;?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.-ctor.html#Chaos_Services_Servers_LoginServer__ctor_Chaos_Storage_Abstractions_IAsyncStore_Chaos_Models_World_Aisling__Chaos_Networking_Abstractions_IClientRegistry_Chaos_Networking_Abstractions_ILoginClient__Chaos_Common_Abstractions_IFactory_Chaos_Networking_Abstractions_ILoginClient__Chaos_Storage_Abstractions_ISimpleCacheProvider_Chaos_Networking_Abstractions_IRedirectManager_Chaos_Packets_Abstractions_IPacketSerializer_Microsoft_Extensions_Options_IOptions_Chaos_Services_Servers_Options_LoginOptions__Microsoft_Extensions_Logging_ILogger_Chaos_Services_Servers_LoginServer__Chaos_Services_Storage_Abstractions_IMetaDataStore_Chaos_Security_Abstractions_IAccessManager_Chaos_Storage_Abstractions_IStore_Chaos_Collections_MailBox__Chaos_Common_Abstractions_IFactory_Chaos_Collections_MailBox__">LoginServer(IAsyncStore&lt;Aisling&gt;, IClientRegistry&lt;ILoginClient&gt;, IFactory&lt;ILoginClient&gt;, ISimpleCacheProvider, IRedirectManager, IPacketSerializer, IOptions&lt;LoginOptions&gt;, ILogger&lt;LoginServer&gt;, IMetaDataStore, IAccessManager, IStore&lt;MailBox&gt;, IFactory&lt;MailBox&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.CreateCharRequests.html#Chaos_Services_Servers_LoginServer_CreateCharRequests">CreateCharRequests</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.HandlePacketAsync.html#Chaos_Services_Servers_LoginServer_HandlePacketAsync_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">HandlePacketAsync(ILoginClient, in Packet)</a></dt>
+    <dd><p>A catch-all that will re-route a packet to the correct handler</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.IndexHandlers.html#Chaos_Services_Servers_LoginServer_IndexHandlers">IndexHandlers()</a></dt>
+    <dd><p>Initializes the client handlers for the server.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnClientRedirected.html#Chaos_Services_Servers_LoginServer_OnClientRedirected_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnClientRedirected(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client is redirected to this login server. This redirect could have come from either a lobby server
+or a world server</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnConnected.html#Chaos_Services_Servers_LoginServer_OnConnected_System_Net_Sockets_Socket_">OnConnected(Socket)</a></dt>
+    <dd><p>Called when a new connection is accepted by the server.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnCreateCharFinalize.html#Chaos_Services_Servers_LoginServer_OnCreateCharFinalize_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnCreateCharFinalize(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests to create a new character. This is the second step in the process and will contain
+appearance details</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnCreateCharRequest.html#Chaos_Services_Servers_LoginServer_OnCreateCharRequest_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnCreateCharRequest(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests to create a new character. This is the first step in the process and will only
+contain a name and password</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnHomepageRequest.html#Chaos_Services_Servers_LoginServer_OnHomepageRequest_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnHomepageRequest(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests the url of the homepage</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnLogin.html#Chaos_Services_Servers_LoginServer_OnLogin_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnLogin(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client provides credentials to log into the world</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnMetaDataRequest.html#Chaos_Services_Servers_LoginServer_OnMetaDataRequest_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnMetaDataRequest(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests either a metadata hash, or a full copy of the metadata</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnNoticeRequest.html#Chaos_Services_Servers_LoginServer_OnNoticeRequest_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnNoticeRequest(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests EULA details</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.LoginServer.OnPasswordChange.html#Chaos_Services_Servers_LoginServer_OnPasswordChange_Chaos_Networking_Abstractions_ILoginClient_Chaos_Packets_Packet__">OnPasswordChange(ILoginClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests to change a character's password</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.2/Chaos/Services/Servers/LoginServer.cs/#L27" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
