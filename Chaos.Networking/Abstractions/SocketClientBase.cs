@@ -59,6 +59,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
     private unsafe Span<byte> Buffer => new(MemoryHandle.Pointer, ushort.MaxValue);
 
+    private Memory<byte> Memory => MemoryOwner.Memory;
+
     /// <inheritdoc />
     public IPAddress RemoteIp => (Socket.RemoteEndPoint as IPEndPoint)?.Address!;
 
@@ -86,8 +88,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         //var buffer = new byte[ushort.MaxValue];
         MemoryOwner = MemoryPool<byte>.Shared.Rent(ushort.MaxValue);
-        MemoryHandle = MemoryOwner.Memory.Pin();
-
+        MemoryHandle = Memory.Pin();
         Logger = logger;
         PacketSerializer = packetSerializer;
 
@@ -152,7 +153,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         await Task.Yield();
 
         var args = new SocketAsyncEventArgs();
-        args.SetBuffer(MemoryOwner.Memory);
+        args.SetBuffer(Memory);
         args.Completed += ReceiveEventHandler;
         Socket.ReceiveAndForget(args, ReceiveEventHandler);
     }
@@ -238,7 +239,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                 Buffer.Slice(offset, Count)
                       .CopyTo(Buffer);
 
-            e.SetBuffer(MemoryOwner.Memory[Count..]);
+            e.SetBuffer(Memory[Count..]);
             Socket.ReceiveAndForget(e, ReceiveEventHandler);
         } catch (Exception)
         {

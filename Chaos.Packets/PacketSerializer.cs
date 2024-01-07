@@ -36,10 +36,10 @@ public sealed class PacketSerializer : IPacketSerializer
         var type = typeof(T);
         var reader = new SpanReader(Encoding, in packet.Buffer);
 
-        if (!Converters.TryGetValue(type, out var converter))
+        if (!Converters.TryGetValue(type, out var converter) || converter is not IPacketConverter<T> typedConverter)
             throw new InvalidOperationException($"No converter exists for type \"{type.FullName}\"");
 
-        return (T)converter.Deserialize(ref reader);
+        return typedConverter.Deserialize(ref reader);
     }
 
     /// <inheritdoc />
@@ -50,12 +50,12 @@ public sealed class PacketSerializer : IPacketSerializer
 
         var type = typeof(T);
 
-        if (!Converters.TryGetValue(type, out var converter))
+        if (!Converters.TryGetValue(type, out var converter) || converter is not IPacketConverter<T> typedConverter)
             throw new InvalidOperationException($"No converter exists for type \"{type.FullName}\"");
 
         var packet = new Packet(converter.OpCode);
         var writer = new SpanWriter(Encoding);
-        converter.Serialize(ref writer, obj);
+        typedConverter.Serialize(ref writer, obj);
 
         packet.Buffer = writer.ToSpan();
 

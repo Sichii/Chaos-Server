@@ -46,7 +46,7 @@ public static class Helpers
 
         //attempts to parse a message color through various means
         //first try directly parsing the enum name
-        if (!args.TryGetNext(out MessageColor msgColor))
+        if (!args.TryGetNext(out messageColor))
         {
             //next, try parsing a full color prefix or color code
             if (!args.TryGetNext<string>(out var colorPrefix))
@@ -55,11 +55,11 @@ public static class Helpers
             switch (colorPrefix.Length)
             {
                 case 3 when colorPrefix.StartsWithI("{="):
-                    msgColor = (MessageColor)(byte)char.ToLower(colorPrefix[2]);
+                    messageColor = (MessageColor)(byte)char.ToLower(colorPrefix[2]);
 
                     break;
                 case 1 when char.IsLetter(colorPrefix[0]):
-                    msgColor = (MessageColor)(byte)char.ToLower(colorPrefix[0]);
+                    messageColor = (MessageColor)(byte)char.ToLower(colorPrefix[0]);
 
                     break;
                 default:
@@ -67,8 +67,6 @@ public static class Helpers
             }
         }
 
-        messageColor = msgColor;
-
-        return true;
+        return messageColor != null;
     }
 }
