@@ -37,7 +37,7 @@ public class SpawnMonsterCommand(IMonsterFactory monsterFactory, ISimpleCache si
         if (args.TryGetNext<int>(out var aggroRange))
             monster.AggroRange = aggroRange;
 
-        source.MapInstance.AddObject(monster, source);
+        source.MapInstance.AddEntity(monster, source);
 
         return default;
     }

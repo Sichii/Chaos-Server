@@ -7,20 +7,20 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="ExchangeArgs" />
+///     Deserializes a buffer into <see cref="ClientExchangeArgs" />
 /// </summary>
-public sealed class ExchangeConverter : PacketConverterBase<ExchangeArgs>
+public sealed class ExchangeConverter : PacketConverterBase<ClientExchangeArgs>
 {
     /// <inheritdoc />
-    public override byte OpCode => (byte)ClientOpCode.Exchange;
+    public override byte OpCode => (byte)ClientOpCode.ClientExchange;
 
     /// <inheritdoc />
-    public override ExchangeArgs Deserialize(ref SpanReader reader)
+    public override ClientExchangeArgs Deserialize(ref SpanReader reader)
     {
         var exchangeRequestType = reader.ReadByte();
         var otherPlayerId = reader.ReadUInt32();
 
-        var args = new ExchangeArgs
+        var args = new ClientExchangeArgs
         {
             ExchangeRequestType = (ExchangeRequestType)exchangeRequestType,
             OtherPlayerId = otherPlayerId
@@ -69,7 +69,7 @@ public sealed class ExchangeConverter : PacketConverterBase<ExchangeArgs>
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, ExchangeArgs args)
+    public override void Serialize(ref SpanWriter writer, ClientExchangeArgs args)
     {
         writer.WriteByte((byte)args.ExchangeRequestType);
         writer.WriteUInt32(args.OtherPlayerId);

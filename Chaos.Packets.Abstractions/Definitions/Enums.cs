@@ -93,7 +93,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x0E
     /// </summary>
-    PublicMessage = 14,
+    SendPublicMessage = 14,
 
     /// <summary>
     ///     OpCode used when a client uses a spell
@@ -304,7 +304,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x4A
     /// </summary>
-    Exchange = 74,
+    ClientExchange = 74,
 
     /// <summary>
     ///     OpCode used when a client requests EULA details
@@ -468,7 +468,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x0E
     /// </summary>
-    RemoveObject = 14,
+    RemoveEntity = 14,
 
     /// <summary>
     ///     OpCode used to add an item to the client's inventory
@@ -692,7 +692,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x42
     /// </summary>
-    Exchange = 66,
+    ServerExchange = 66,
 
     /// <summary>
     ///     OpCode used to tell a client to cancel a spellcast
@@ -748,10 +748,10 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x63
     /// </summary>
-    GroupRequest = 99,
+    GroupInvite = 99,
 
     /// <summary>
-    ///     OpCode used to send a client data for the lobby
+    ///     OpCode used to send a client data for the login screen
     ///     <br />
     ///     Hex value: 0x66
     /// </summary>

@@ -22,26 +22,26 @@ public class DestroyAllCommand : ICommand<Aisling>
             case "money":
                 foreach (var money in map.GetEntities<Money>()
                                          .ToList())
-                    map.RemoveObject(money);
+                    map.RemoveEntity(money);
 
                 break;
             case "grounditems":
             case "items":
                 foreach (var groundItem in map.GetEntities<GroundItem>()
                                               .ToList())
-                    map.RemoveObject(groundItem);
+                    map.RemoveEntity(groundItem);
 
                 break;
             case "monsters":
                 foreach (var monster in map.GetEntities<Monster>()
                                            .ToList())
-                    map.RemoveObject(monster);
+                    map.RemoveEntity(monster);
 
                 break;
             case "merchants":
                 foreach (var merchant in map.GetEntities<Merchant>()
                                             .ToList())
-                    map.RemoveObject(merchant);
+                    map.RemoveEntity(merchant);
 
                 break;
         }

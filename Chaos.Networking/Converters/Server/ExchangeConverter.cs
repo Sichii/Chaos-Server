@@ -8,19 +8,19 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="ExchangeArgs" /> into a buffer
+///     Serializes a <see cref="ServerExchangeArgs" /> into a buffer
 /// </summary>
-public sealed class ExchangeConverter : PacketConverterBase<ExchangeArgs>
+public sealed class ExchangeConverter : PacketConverterBase<ServerExchangeArgs>
 {
     /// <inheritdoc />
-    public override byte OpCode => (byte)ServerOpCode.Exchange;
+    public override byte OpCode => (byte)ServerOpCode.ServerExchange;
 
     /// <inheritdoc />
-    public override ExchangeArgs Deserialize(ref SpanReader reader)
+    public override ServerExchangeArgs Deserialize(ref SpanReader reader)
     {
         var exchangeResponseType = reader.ReadByte();
 
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = (ExchangeResponseType)exchangeResponseType
         };
@@ -102,7 +102,7 @@ public sealed class ExchangeConverter : PacketConverterBase<ExchangeArgs>
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, ExchangeArgs args)
+    public override void Serialize(ref SpanWriter writer, ServerExchangeArgs args)
     {
         writer.WriteByte((byte)args.ExchangeResponseType);
 

@@ -389,7 +389,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                             currentMap.Sync,
                             destinationMap.Sync);
 
-                        if (!fromWolrdMap && !currentMap.RemoveObject(this))
+                        if (!fromWolrdMap && !currentMap.RemoveEntity(this))
                             return;
 
                         if (currentMap.InstanceId != destinationMap.InstanceId)
@@ -398,7 +398,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                         if (aisling is not null && ignoreSharding)
                             destinationMap.AddAislingDirect(aisling, destinationPoint);
                         else
-                            destinationMap.AddObject(this, destinationPoint);
+                            destinationMap.AddEntity(this, destinationPoint);
 
                         if (onTraverse is not null)
                             await onTraverse();
@@ -469,7 +469,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         money = new Money(amount, MapInstance, point);
 
-        MapInstance.AddObject(money, point);
+        MapInstance.AddEntity(money, point);
 
         Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Gold, Topics.Actions.Drop)
               .WithProperty(this)

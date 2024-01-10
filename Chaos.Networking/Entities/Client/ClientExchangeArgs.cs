@@ -1,13 +1,13 @@
 using Chaos.Common.Definitions;
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Exchange" />
-///     packet
+///     Represents the serialization of the <see cref="ClientOpCode.ClientExchange" /> packet
 /// </summary>
-public sealed record ExchangeArgs : IPacketSerializable
+public sealed record ClientExchangeArgs : IPacketSerializable
 {
     /// <summary>
     ///     The type of action being requested

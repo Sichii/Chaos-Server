@@ -633,7 +633,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             return false;
 
         money = new Money(amount, MapInstance, point);
-        MapInstance.AddObject(money, point);
+        MapInstance.AddEntity(money, point);
 
         Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Drop)
               .WithProperty(this)
@@ -744,7 +744,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                       originalCount,
                       groundItem.Name);
 
-            MapInstance.RemoveObject(groundItem);
+            MapInstance.RemoveEntity(groundItem);
             item.Script.OnPickup(this, originalItem, originalCount);
 
             foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem)
@@ -773,7 +773,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                   .WithProperty(money)
                   .LogInformation("Aisling {@AislingName} picked up {Amount} gold", Name, money.Amount);
 
-            MapInstance.RemoveObject(money);
+            MapInstance.RemoveEntity(money);
 
             foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
                                                .ToList())

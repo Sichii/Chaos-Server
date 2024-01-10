@@ -27,10 +27,12 @@ using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ProfileArgs = Chaos.Networking.Entities.Client.ProfileArgs;
+using UnequipArgs = Chaos.Networking.Entities.Client.UnequipArgs;
 
 namespace Chaos.Networking;
 
-public sealed class WorldClient : ServerClientBase, IWorldClient
+public sealed class WorldClient : ConnectedClientBase, IWorldClient
 {
     private readonly ITypeMapper Mapper;
     private readonly IWorldServer<IWorldClient> Server;
@@ -320,7 +322,7 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
 
     public void SendExchangeAccepted(bool persistExchange)
     {
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.Accept,
             PersistExchange = persistExchange,
@@ -332,7 +334,7 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
 
     public void SendExchangeAddItem(bool rightSide, byte index, Item item)
     {
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.AddItem,
             RightSide = rightSide,
@@ -350,7 +352,7 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
 
     public void SendExchangeCancel(bool rightSide)
     {
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.Cancel,
             RightSide = rightSide,
@@ -362,7 +364,7 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
 
     public void SendExchangeRequestAmount(byte slot)
     {
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.RequestAmount,
             FromSlot = slot
@@ -373,7 +375,7 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
 
     public void SendExchangeSetGold(bool rightSide, int amount)
     {
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.SetGold,
             RightSide = rightSide,
@@ -385,7 +387,7 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
 
     public void SendExchangeStart(Aisling fromAisling)
     {
-        var args = new ExchangeArgs
+        var args = new ServerExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.StartExchange,
             OtherUserId = fromAisling.Id,
@@ -601,21 +603,21 @@ public sealed class WorldClient : ServerClientBase, IWorldClient
         Send(ref packet);
     }
 
-    public void SendRemoveItemFromPane(byte slot)
+    public void SendRemoveEntity(uint id)
     {
-        var args = new RemoveItemFromPaneArgs
+        var args = new RemoveEntityArgs
         {
-            Slot = slot
+            SourceId = id
         };
 
         Send(args);
     }
 
-    public void SendRemoveObject(uint id)
+    public void SendRemoveItemFromPane(byte slot)
     {
-        var args = new RemoveObjectArgs
+        var args = new RemoveItemFromPaneArgs
         {
-            SourceId = id
+            Slot = slot
         };
 
         Send(args);

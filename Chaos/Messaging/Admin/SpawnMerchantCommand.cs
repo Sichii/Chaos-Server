@@ -22,7 +22,7 @@ public class SpawnMerchantCommand(IMerchantFactory merchantFactory) : ICommand<A
         if (args.TryGetNext<Direction>(out var direction))
             merchant.Direction = direction;
 
-        source.MapInstance.AddObject(merchant, source);
+        source.MapInstance.AddEntity(merchant, source);
 
         return default;
     }

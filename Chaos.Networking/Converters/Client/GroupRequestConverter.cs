@@ -7,20 +7,20 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="GroupRequestArgs" />
+///     Deserializes a buffer into <see cref="GroupInviteArgs" />
 /// </summary>
-public sealed class GroupRequestConverter : PacketConverterBase<GroupRequestArgs>
+public sealed class GroupRequestConverter : PacketConverterBase<GroupInviteArgs>
 {
     /// <inheritdoc />
     public override byte OpCode => (byte)ClientOpCode.GroupRequest;
 
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]
-    public override GroupRequestArgs Deserialize(ref SpanReader reader)
+    public override GroupInviteArgs Deserialize(ref SpanReader reader)
     {
         var groupRequestType = reader.ReadByte();
 
-        var args = new GroupRequestArgs
+        var args = new GroupInviteArgs
         {
             GroupRequestType = (GroupRequestType)groupRequestType
         };
@@ -50,7 +50,7 @@ public sealed class GroupRequestConverter : PacketConverterBase<GroupRequestArgs
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, GroupRequestArgs args)
+    public override void Serialize(ref SpanWriter writer, GroupInviteArgs args)
     {
         writer.WriteByte((byte)args.GroupRequestType);
 

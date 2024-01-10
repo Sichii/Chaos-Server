@@ -1,13 +1,13 @@
 using Chaos.Common.Definitions;
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Exchange" />
-///     packet
+///     Represents the serialization of the <see cref="ServerOpCode.ServerExchange" /> packet
 /// </summary>
-public sealed record ExchangeArgs : IPacketSerializable
+public sealed record ServerExchangeArgs : IPacketSerializable
 {
     /// <summary>
     ///     The index in the exchange window of the item being added (or updated)

@@ -7,16 +7,17 @@ using Microsoft.Extensions.Logging;
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
-///     Provides the ability to send and receive packets to and from a client over a socket, from a server
+///     Represents a client that is connected to an <see cref="IServer{T}" />. This class defines the methods used to
+///     communicate with the client.
 /// </summary>
-public abstract class ServerClientBase : SocketClientBase, IServerClient
+public abstract class ConnectedClientBase : SocketClientBase, IConnectedClient
 {
     /// <inheritdoc />
-    protected ServerClientBase(
+    protected ConnectedClientBase(
         Socket socket,
         ICrypto crypto,
         IPacketSerializer packetSerializer,
-        ILogger<ServerClientBase> logger)
+        ILogger<ConnectedClientBase> logger)
         : base(
             socket,
             crypto,

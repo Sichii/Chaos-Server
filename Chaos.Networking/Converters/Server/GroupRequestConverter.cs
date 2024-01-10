@@ -12,7 +12,7 @@ namespace Chaos.Networking.Converters.Server;
 public sealed class GroupRequestConverter : PacketConverterBase<GroupRequestArgs>
 {
     /// <inheritdoc />
-    public override byte OpCode => (byte)ServerOpCode.GroupRequest;
+    public override byte OpCode => (byte)ServerOpCode.GroupInvite;
 
     /// <inheritdoc />
     public override GroupRequestArgs Deserialize(ref SpanReader reader)

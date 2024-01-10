@@ -8,15 +8,15 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="ProfileArgs" /> into a buffer
+///     Serializes a <see cref="OtherProfileArgs" /> into a buffer
 /// </summary>
-public sealed class ProfileConverter : PacketConverterBase<ProfileArgs>
+public sealed class ProfileConverter : PacketConverterBase<OtherProfileArgs>
 {
     /// <inheritdoc />
     public override byte OpCode => (byte)ServerOpCode.Profile;
 
     /// <inheritdoc />
-    public override ProfileArgs Deserialize(ref SpanReader reader)
+    public override OtherProfileArgs Deserialize(ref SpanReader reader)
     {
         var id = reader.ReadUInt32();
 
@@ -71,7 +71,7 @@ public sealed class ProfileConverter : PacketConverterBase<ProfileArgs>
                 });
         }
 
-        var args = new ProfileArgs
+        var args = new OtherProfileArgs
         {
             Id = id,
             Equipment = equipment,
@@ -101,7 +101,7 @@ public sealed class ProfileConverter : PacketConverterBase<ProfileArgs>
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, ProfileArgs args)
+    public override void Serialize(ref SpanWriter writer, OtherProfileArgs args)
     {
         writer.WriteUInt32(args.Id);
 

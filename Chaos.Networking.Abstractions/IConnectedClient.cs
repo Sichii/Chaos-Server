@@ -1,10 +1,10 @@
 namespace Chaos.Networking.Abstractions;
 
 /// <summary>
-///     Defines a pattern for an object that has the ability to send and receive packets over a socket connection. Defines
-///     methods used by all types of server clients
+///     Defines a pattern for an object that represents a client connected to an <see cref="IServer{T}" />. This interface
+///     contains the definitions used to communicate with the client
 /// </summary>
-public interface IServerClient : ISocketClient
+public interface IConnectedClient : ISocketClient
 {
     /// <summary>
     ///     Used when a client connects to respond with a string

@@ -21,7 +21,7 @@ namespace Chaos.Networking.Abstractions;
 /// <typeparam name="T">
 ///     The type of the socket client.
 /// </typeparam>
-public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: IServerClient
+public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: IConnectedClient
 {
     /// <summary>
     ///     Delegate for handling client packets.
@@ -203,7 +203,11 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ISe
         }
 
         if (clientSocket is not null && clientSocket.Connected)
+        {
+            clientSocket.NoDelay = true;
+
             OnConnected(clientSocket);
+        }
     }
 
     #region Handlers

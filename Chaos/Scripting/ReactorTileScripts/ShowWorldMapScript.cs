@@ -31,7 +31,7 @@ public class ShowWorldMapScript : ConfigurableReactorTileScriptBase
         if (!aisling.ActiveObject.SetIfNull(worldMap))
             return;
 
-        aisling.MapInstance.RemoveObject(source);
+        aisling.MapInstance.RemoveEntity(source);
         aisling.Client.SendWorldMap(worldMap);
     }
 }

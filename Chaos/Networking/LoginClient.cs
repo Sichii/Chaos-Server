@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;
 
-public sealed class LoginClient : ServerClientBase, ILoginClient
+public sealed class LoginClient : ConnectedClientBase, ILoginClient
 {
     private readonly ITypeMapper Mapper;
     private readonly ILoginServer<ILoginClient> Server;

@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Client;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.GroupRequest" />
 ///     packet
 /// </summary>
-public sealed record GroupRequestArgs : IPacketSerializable
+public sealed record GroupInviteArgs : IPacketSerializable
 {
     /// <summary>
     ///     The type of the request
@@ -17,5 +17,5 @@ public sealed record GroupRequestArgs : IPacketSerializable
     /// <summary>
     ///     The name of the player the client is trying to send a group invite to
     /// </summary>
-    public string TargetName { get; set; }
+    public string TargetName { get; set; } = null!;
 }

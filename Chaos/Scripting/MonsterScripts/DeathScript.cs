@@ -20,7 +20,7 @@ public class DeathScript : MonsterScriptBase
     /// <inheritdoc />
     public override void OnDeath()
     {
-        if (!Map.RemoveObject(Subject))
+        if (!Map.RemoveEntity(Subject))
             return;
 
         //this code will set the reward target to the person at the top of the aggro list

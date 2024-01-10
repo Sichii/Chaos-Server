@@ -27,7 +27,7 @@ public sealed class AislingMapperProfile(
     IStore<Guild> guildStore) : IMapperProfile<Aisling, AislingSchema>,
                                 IMapperProfile<Aisling, AttributesArgs>,
                                 IMapperProfile<Aisling, DisplayAislingArgs>,
-                                IMapperProfile<Aisling, ProfileArgs>,
+                                IMapperProfile<Aisling, OtherProfileArgs>,
                                 IMapperProfile<Aisling, SelfProfileArgs>,
                                 IMapperProfile<Aisling, UserIdArgs>,
                                 IMapperProfile<Aisling, WorldListMemberInfo>
@@ -248,9 +248,9 @@ public sealed class AislingMapperProfile(
         }
     }
 
-    public Aisling Map(ProfileArgs obj) => throw new NotImplementedException();
+    public Aisling Map(OtherProfileArgs obj) => throw new NotImplementedException();
 
-    ProfileArgs IMapperProfile<Aisling, ProfileArgs>.Map(Aisling obj)
+    OtherProfileArgs IMapperProfile<Aisling, OtherProfileArgs>.Map(Aisling obj)
         => new()
         {
             DisplayClass = obj.UserStatSheet.AdvClass != AdvClass.None

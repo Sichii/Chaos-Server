@@ -72,6 +72,6 @@ public abstract class GroundEntity : NamedEntity
 
         //if the entity has been on the ground for longer than the configured time, destroy it
         if (GroundTimer.IntervalElapsed)
-            MapInstance.RemoveObject(this);
+            MapInstance.RemoveEntity(this);
     }
 }

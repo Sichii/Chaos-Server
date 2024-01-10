@@ -7,7 +7,7 @@ namespace Chaos.Networking.Entities.Server;
 ///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Profile" />
 ///     packet
 /// </summary>
-public sealed record ProfileArgs : IPacketSerializable
+public sealed record OtherProfileArgs : IPacketSerializable
 {
     /// <summary>
     ///     The character's primary class

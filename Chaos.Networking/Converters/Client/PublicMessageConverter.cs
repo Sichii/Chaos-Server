@@ -7,20 +7,20 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="PublicMessageArgs" />
+///     Deserializes a buffer into <see cref="SendPublicMessageArgs" />
 /// </summary>
-public sealed class PublicMessageConverter : PacketConverterBase<PublicMessageArgs>
+public sealed class PublicMessageConverter : PacketConverterBase<SendPublicMessageArgs>
 {
     /// <inheritdoc />
-    public override byte OpCode => (byte)ClientOpCode.PublicMessage;
+    public override byte OpCode => (byte)ClientOpCode.SendPublicMessage;
 
     /// <inheritdoc />
-    public override PublicMessageArgs Deserialize(ref SpanReader reader)
+    public override SendPublicMessageArgs Deserialize(ref SpanReader reader)
     {
         var publicMessageType = reader.ReadByte();
         var message = reader.ReadString8();
 
-        return new PublicMessageArgs
+        return new SendPublicMessageArgs
         {
             PublicMessageType = (PublicMessageType)publicMessageType,
             Message = message
@@ -28,7 +28,7 @@ public sealed class PublicMessageConverter : PacketConverterBase<PublicMessageAr
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, PublicMessageArgs args)
+    public override void Serialize(ref SpanWriter writer, SendPublicMessageArgs args)
     {
         writer.WriteByte((byte)args.PublicMessageType);
         writer.WriteString8(args.Message);

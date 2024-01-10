@@ -48,7 +48,7 @@ public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBas
 
         if (stage >= Stages)
         {
-            Subject.MapInstance.RemoveObject(Subject);
+            Subject.MapInstance.RemoveEntity(Subject);
 
             return false;
         }

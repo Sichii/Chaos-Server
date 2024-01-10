@@ -27,7 +27,7 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
                 HideFrom(aisling);
     }
 
-    public virtual void HideFrom(Aisling aisling) => aisling.Client.SendRemoveObject(Id);
+    public virtual void HideFrom(Aisling aisling) => aisling.Client.SendRemoveEntity(Id);
 
     public virtual void SetVisibility(VisibilityType newVisibilityType)
     {

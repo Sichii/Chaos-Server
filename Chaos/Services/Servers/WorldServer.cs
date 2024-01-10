@@ -574,11 +574,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnExchange(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<ExchangeArgs>(in packet);
+        var args = PacketSerializer.Deserialize<ClientExchangeArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnExchange);
 
-        ValueTask InnerOnExchange(IWorldClient localClient, ExchangeArgs localArgs)
+        ValueTask InnerOnExchange(IWorldClient localClient, ClientExchangeArgs localArgs)
         {
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
@@ -717,11 +717,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnGroupRequest(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<GroupRequestArgs>(in packet);
+        var args = PacketSerializer.Deserialize<GroupInviteArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnGroupRequest);
 
-        ValueTask InnerOnGroupRequest(IWorldClient localClient, GroupRequestArgs localArgs)
+        ValueTask InnerOnGroupRequest(IWorldClient localClient, GroupInviteArgs localArgs)
         {
             var target = Aislings.FirstOrDefault(user => user.Name.EqualsI(localArgs.TargetName));
 
@@ -960,11 +960,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnPublicMessage(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<PublicMessageArgs>(in packet);
+        var args = PacketSerializer.Deserialize<SendPublicMessageArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnPublicMessage);
 
-        async ValueTask InnerOnPublicMessage(IWorldClient localClient, PublicMessageArgs localArgs)
+        async ValueTask InnerOnPublicMessage(IWorldClient localClient, SendPublicMessageArgs localArgs)
         {
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
@@ -1582,7 +1582,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ClientHandlers[(byte)ClientOpCode.ExitRequest] = OnExitRequest;
         ClientHandlers[(byte)ClientOpCode.DisplayEntityRequest] = OnDisplayEntityRequest;
         ClientHandlers[(byte)ClientOpCode.Ignore] = OnIgnore;
-        ClientHandlers[(byte)ClientOpCode.PublicMessage] = OnPublicMessage;
+        ClientHandlers[(byte)ClientOpCode.SendPublicMessage] = OnPublicMessage;
         ClientHandlers[(byte)ClientOpCode.UseSpell] = OnUseSpell;
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
         ClientHandlers[(byte)ClientOpCode.Turn] = OnTurn;
@@ -1608,7 +1608,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ClientHandlers[(byte)ClientOpCode.Click] = OnClick;
         ClientHandlers[(byte)ClientOpCode.Unequip] = OnUnequip;
         ClientHandlers[(byte)ClientOpCode.RaiseStat] = OnRaiseStat;
-        ClientHandlers[(byte)ClientOpCode.Exchange] = OnExchange;
+        ClientHandlers[(byte)ClientOpCode.ClientExchange] = OnExchange;
         ClientHandlers[(byte)ClientOpCode.BeginChant] = OnBeginChant;
         ClientHandlers[(byte)ClientOpCode.Chant] = OnChant;
         ClientHandlers[(byte)ClientOpCode.Profile] = OnProfile;
@@ -1691,7 +1691,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 await SaveUserAsync(client.Aisling);
 
                 //remove aisling from map
-                mapInstance?.RemoveObject(client.Aisling);
+                mapInstance?.RemoveEntity(client.Aisling);
             }
         } catch (Exception ex)
         {
@@ -1715,7 +1715,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             ClientOpCode.ItemDrop              => true,
             ClientOpCode.ExitRequest           => true,
             ClientOpCode.Ignore                => true,
-            ClientOpCode.PublicMessage         => true,
+            ClientOpCode.SendPublicMessage     => true,
             ClientOpCode.UseSpell              => true,
             ClientOpCode.ClientRedirected      => true,
             ClientOpCode.Turn                  => true,
@@ -1742,7 +1742,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             ClientOpCode.Click                 => true,
             ClientOpCode.Unequip               => true,
             ClientOpCode.RaiseStat             => true,
-            ClientOpCode.Exchange              => true,
+            ClientOpCode.ClientExchange        => true,
             ClientOpCode.BeginChant            => true,
             ClientOpCode.Chant                 => true,
             ClientOpCode.Profile               => true,

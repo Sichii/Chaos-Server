@@ -1,13 +1,13 @@
 using Chaos.Common.Definitions;
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.PublicMessage" /> packet
+///     Represents the serialization of the <see cref="ClientOpCode.SendPublicMessage" /> packet
 /// </summary>
-public sealed record PublicMessageArgs : IPacketSerializable
+public sealed record SendPublicMessageArgs : IPacketSerializable
 {
     /// <summary>
     ///     The message the client is trying to send

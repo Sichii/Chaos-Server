@@ -215,7 +215,7 @@ public static class ServiceProviderExtensions
                 var newMap = mapCache.Get(oldMap.InstanceId);
 
                 foreach (var monster in newMap.GetEntities<Monster>())
-                    newMap.RemoveObject(monster);
+                    newMap.RemoveEntity(monster);
 
                 foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
                     newMap.SimpleAdd(groundEntity);
@@ -269,7 +269,7 @@ public static class ServiceProviderExtensions
 
                     newMerchant.Direction = merchant.Direction;
 
-                    merchant.MapInstance.RemoveObject(merchant);
+                    merchant.MapInstance.RemoveEntity(merchant);
                     merchantsToAdd.Add(newMerchant);
                 } catch (Exception e)
                 {
@@ -318,7 +318,7 @@ public static class ServiceProviderExtensions
                     newMonster.AggroRange = monster.AggroRange;
                     newMonster.LootTable = monster.LootTable;
 
-                    monster.MapInstance.RemoveObject(monster);
+                    monster.MapInstance.RemoveEntity(monster);
                     monstersToAdd.Add(newMonster);
                 } catch (Exception e)
                 {

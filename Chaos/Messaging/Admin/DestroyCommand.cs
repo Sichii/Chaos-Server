@@ -20,7 +20,7 @@ public class DestroyCommand : ICommand<Aisling>
             if (!source.MapInstance.TryGetEntity<VisibleEntity>(id, out var obj) || obj is Aisling)
                 source.SendOrangeBarMessage("Invalid entity.");
             else
-                source.MapInstance.RemoveObject(obj);
+                source.MapInstance.RemoveEntity(obj);
 
             return default;
         }
@@ -38,7 +38,7 @@ public class DestroyCommand : ICommand<Aisling>
             if (entity is null or Aisling)
                 source.SendOrangeBarMessage("Invalid entity.");
             else
-                source.MapInstance.RemoveObject(entity);
+                source.MapInstance.RemoveEntity(entity);
         }
 
         return default;

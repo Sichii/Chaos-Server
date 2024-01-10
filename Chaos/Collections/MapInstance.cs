@@ -144,7 +144,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void AddAislingDirect(Aisling aisling, IPoint point) => InnerAddObject(aisling, point);
 
-    public void AddObject(VisibleEntity visibleEntity, IPoint point)
+    public void AddEntity(VisibleEntity visibleEntity, IPoint point)
     {
         //shards cant shard, shardtype none means no sharding, non-aisling cant create shards
         if (IsShard
@@ -700,14 +700,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
-    public bool RemoveObject(MapEntity mapEntity)
+    public bool RemoveEntity(MapEntity mapEntity)
     {
         if (!Objects.Remove(mapEntity.Id))
             return false;
 
         if (mapEntity is VisibleEntity visibleObject)
             foreach (var aisling in Objects.WithinRange<Aisling>(visibleObject))
-                aisling.Client.SendRemoveObject(visibleObject.Id);
+                aisling.Client.SendRemoveEntity(visibleObject.Id);
 
         if (mapEntity is Creature creature)
         {

@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - release/v*
+      - develop
   pull_request:
     branches:
       - release/v*
+      - develop
 
 jobs:
   build-and-publish:

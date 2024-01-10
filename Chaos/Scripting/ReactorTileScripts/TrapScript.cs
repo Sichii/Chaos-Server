@@ -70,7 +70,7 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
             TriggerCount++;
 
             if (TriggerCount >= MaxTriggers)
-                Map.RemoveObject(Subject);
+                Map.RemoveEntity(Subject);
         }
     }
 
@@ -84,7 +84,7 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
             Timer.Update(delta);
 
             if (Timer.IntervalElapsed)
-                Map.RemoveObject(Subject);
+                Map.RemoveEntity(Subject);
         }
     }
 
