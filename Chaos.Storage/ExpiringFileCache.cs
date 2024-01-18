@@ -204,7 +204,9 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
                                   .WithMetrics();
 
-        entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
+        if (Options.Expires)
+            entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins!.Value));
+
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
 
         var path = GetPathForKey(keyActual);

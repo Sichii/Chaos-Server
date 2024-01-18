@@ -9,6 +9,21 @@ namespace Chaos.Extensions.Common;
 public static class TypeExtensions
 {
     /// <summary>
+    ///     Recursively enumerates all properties on a complex object, only returning the PropertyInfo objects of primitive or
+    ///     string properties
+    /// </summary>
+    public static IEnumerable<PropertyInfo> EnumerateProperties(this Type type)
+    {
+        foreach (var property in type.GetProperties())
+            if (property.PropertyType is { IsClass: true, IsValueType: false, IsPrimitive: false }
+                && (property.PropertyType != typeof(string)))
+                foreach (var nestedProperty in property.PropertyType.EnumerateProperties())
+                    yield return nestedProperty;
+            else
+                yield return property;
+    }
+
+    /// <summary>
     ///     Extracts the generic base type that use a generic type definition within the hierarchy of the type.
     /// </summary>
     /// <param name="type">

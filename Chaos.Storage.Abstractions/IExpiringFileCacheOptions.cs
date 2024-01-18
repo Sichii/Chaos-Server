@@ -6,7 +6,13 @@ namespace Chaos.Storage.Abstractions;
 public interface IExpiringFileCacheOptions : ISimpleFileCacheOptions
 {
     /// <summary>
-    ///     The amount of time an entry in the cache will go unused before it is removed
+    ///     Default null. The amount of time an entry in the cache will go unused before it is removed. (Only applies if
+    ///     Expires is set to true)
     /// </summary>
-    int ExpirationMins { get; init; }
+    int? ExpirationMins { get; set; }
+
+    /// <summary>
+    ///     Whether or not entities added to the cache will ever expire
+    /// </summary>
+    bool Expires { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -47,7 +47,10 @@
         <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj"/>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="AutoMapper.Collection"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"/>
         <PackageReference Include="Humanizer"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
         <PackageReference Include="System.Configuration.ConfigurationManager"/>
     </ItemGroup>
@@ -57,5 +60,8 @@
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="Site\Pages\Index.cshtml"/>
     </ItemGroup>
 </Project>

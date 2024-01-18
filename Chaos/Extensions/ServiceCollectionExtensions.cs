@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using AutoMapper.EquivalencyExpression;
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Configuration;
@@ -44,15 +45,16 @@ using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
+using Chaos.Site.Models;
+using Chaos.Site.Services;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ItemMapperProfile = Chaos.Site.Services.MapperProfiles.ItemMapperProfile;
+using SkillMapperProfile = Chaos.Site.Services.MapperProfiles.SkillMapperProfile;
+using SpellMapperProfile = Chaos.Site.Services.MapperProfiles.SpellMapperProfile;
 
 namespace Chaos.Extensions;
 
@@ -84,18 +86,24 @@ public static class ServiceCollectionExtensions
         JsonContext = new SerializationContext(JsonSerializerOptions);
     }
 
-    public static void AddChaosOptions(this IServiceCollection services, IConfiguration configuration)
+    public static void AddChaosOptions(this IServiceCollection services)
     {
-        services.AddSingleton(configuration);
         services.AddOptions();
         services.ConfigureOptions<OptionsConfigurer>();
         services.ConfigureOptions<OptionsValidator>();
 
-        services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<SiteOptions>(ConfigKeys.Options.Key);
 
         services.AddSingleton<IStagingDirectory, ChaosOptions>(
             p => p.GetRequiredService<IOptionsSnapshot<ChaosOptions>>()
                   .Value);
+    }
+
+    public static void AddChaosSite(this IServiceCollection services)
+    {
+        services.AddOptionsFromConfig<SiteOptions>(ConfigKeys.Options.Key);
+        services.AddRazorPages();
     }
 
     public static void AddFunctionalScriptRegistry(this IServiceCollection services)
@@ -133,7 +141,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IClientRegistry<ILobbyClient>, ClientRegistry<ILobbyClient>>();
 
-        services.AddOptionsFromConfig<LobbyOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<LobbyOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<ILobbyServer<ILobbyClient>, IHostedService, LobbyServer>();
     }
 
@@ -141,7 +149,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IClientRegistry<ILoginClient>, ClientRegistry<ILoginClient>>();
 
-        services.AddOptionsFromConfig<LoginOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<LoginOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<ILoginServer<ILoginClient>, IHostedService, LoginServer>();
     }
 
@@ -168,7 +176,23 @@ public static class ServiceCollectionExtensions
     public static void AddServerAuthentication(this IServiceCollection services)
     {
         services.AddSingleton<IRedirectManager, IHostedService, RedirectManager>();
-        services.AddSecurity(Startup.ConfigKeys.Options.Key);
+        services.AddSecurity(ConfigKeys.Options.Key);
+    }
+
+    public static void AddSiteDtoMappings(this IServiceCollection services)
+    {
+        services.AddSingleton<SkillMapperProfile>();
+        services.AddSingleton<SpellMapperProfile>();
+
+        services.AddAutoMapper(
+            (provider, cfg) =>
+            {
+                cfg.AddCollectionMappers();
+                cfg.AddProfile<ItemMapperProfile>();
+                cfg.AddProfile(provider.GetRequiredService<SkillMapperProfile>());
+                cfg.AddProfile(provider.GetRequiredService<SpellMapperProfile>());
+            },
+            Array.Empty<Type>());
     }
 
     public static void AddStorage(this IServiceCollection services)
@@ -176,59 +200,58 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IEntityRepository, EntityRepository>();
 
         //add mail store with backup service
-        services.AddOptionsFromConfig<MailStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<MailStoreOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<IStore<MailBox>, IHostedService, MailStore>();
         services.AddHostedService<DirectoryBackupService<MailStoreOptions>>();
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<MailStoreOptions>>();
 
         //add guild store with backup service
-        services.AddOptionsFromConfig<GuildStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<GuildStoreOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<IStore<Guild>, IHostedService, GuildStore>();
         services.AddHostedService<DirectoryBackupService<GuildStoreOptions>>();
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<GuildStoreOptions>>();
 
         //add bulletinboard store with backup service
-        services.AddOptionsFromConfig<BulletinBoardStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<BulletinBoardStoreOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<IStore<BulletinBoard>, IHostedService, BulletinBoardStore>();
         services.AddHostedService<DirectoryBackupService<BulletinBoardStoreOptions>>();
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<BulletinBoardStoreOptions>>();
 
         //add aisling store with backup service
-        services.AddOptionsFromConfig<AislingStoreOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<AislingStoreOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<IAsyncStore<Aisling>, AislingStore>();
         services.AddHostedService<DirectoryBackupService<AislingStoreOptions>>();
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<AislingStoreOptions>>();
 
         //add metadata store
-        services.AddOptionsFromConfig<MetaDataStoreOptions>(Startup.ConfigKeys.Options.Key); //bound
+        services.AddOptionsFromConfig<MetaDataStoreOptions>(ConfigKeys.Options.Key); //bound
         services.AddSingleton<IMetaDataStore, MetaDataStore>();
 
         //add bulletinboard key mapper service
         services.AddSingleton<BulletinBoardKeyMapper>();
 
         //add caches
-        services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCache<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCache<SpellTemplate, SpellTemplateSchema, SpellTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<ItemTemplate, ItemTemplateSchema, ItemTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddExpiringCache<SkillTemplate, SkillTemplateSchema, SkillTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddExpiringCache<SpellTemplate, SpellTemplateSchema, SpellTemplateCacheOptions>(ConfigKeys.Options.Key);
 
-        services.AddExpiringCache<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCache<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<MonsterTemplate, MonsterTemplateSchema, MonsterTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddExpiringCache<MerchantTemplate, MerchantTemplateSchema, MerchantTemplateCacheOptions>(ConfigKeys.Options.Key);
 
-        services.AddExpiringCache<LootTable, LootTableSchema, LootTableCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCache<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<LootTable, LootTableSchema, LootTableCacheOptions>(ConfigKeys.Options.Key);
+        services.AddExpiringCache<DialogTemplate, DialogTemplateSchema, DialogTemplateCacheOptions>(ConfigKeys.Options.Key);
 
-        services.AddExpiringCache<WorldMap, WorldMapSchema, WorldMapCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCache<WorldMapNode, WorldMapNodeSchema, WorldMapNodeCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<WorldMap, WorldMapSchema, WorldMapCacheOptions>(ConfigKeys.Options.Key);
+        services.AddExpiringCache<WorldMapNode, WorldMapNodeSchema, WorldMapNodeCacheOptions>(ConfigKeys.Options.Key);
 
         services.AddExpiringCache<BulletinBoardTemplate, BulletinBoardTemplateSchema, BulletinBoardTemplateCacheOptions>(
-            Startup.ConfigKeys.Options.Key);
+            ConfigKeys.Options.Key);
 
-        services.AddExpiringCache<ReactorTileTemplate, ReactorTileTemplateSchema, ReactorTileTemplateCacheOptions>(
-            Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCache<ReactorTileTemplate, ReactorTileTemplateSchema, ReactorTileTemplateCacheOptions>(ConfigKeys.Options.Key);
 
         //add custom cache implementations
-        services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(Startup.ConfigKeys.Options.Key);
-        services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddExpiringCacheImpl<MapTemplate, ExpiringMapTemplateCache, MapTemplateCacheOptions>(ConfigKeys.Options.Key);
+        services.AddExpiringCacheImpl<MapInstance, ExpiringMapInstanceCache, MapInstanceCacheOptions>(ConfigKeys.Options.Key);
 
         //add cache locator
         services.AddSingleton<ISimpleCache, ISimpleCacheProvider, SimpleCache>();
@@ -267,7 +290,27 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IGroupService, GroupService>();
         services.AddSingleton<IClientRegistry<IWorldClient>, WorldClientRegistry>();
 
-        services.AddOptionsFromConfig<WorldOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<WorldOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<IWorldServer<IWorldClient>, IHostedService, WorldServer>();
+    }
+
+    public static void ConfigureSite(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<NavigationService>();
+        builder.Services.AddSingleton<QueryService>();
+        builder.Services.AddSingleton<ItemDtoRepository>();
+        builder.Services.AddSingleton<SkillDtoRepository>();
+        builder.Services.AddSingleton<SpellDtoRepository>();
+        builder.Services.AddSiteDtoMappings();
+    }
+
+    public static async Task RunHostedServicesAsync(this IServiceProvider provider, CancellationToken cancellationToken)
+    {
+        var hostedServices = provider.GetServices<IHostedService>();
+
+        var startFuncs = hostedServices.Select<IHostedService, Func<CancellationToken, Task>>(s => s.StartAsync)
+                                       .ToArray();
+
+        await cancellationToken.WhenAllWithCancellation(startFuncs);
     }
 }

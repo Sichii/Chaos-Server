@@ -1,0 +1,34 @@
+@using Chaos.Site.Services
+@inject NavigationService NavigationService
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Head content -->
+    <title>Chaos-Browser</title>
+    <link rel="stylesheet" href="~/Site/wwwroot/styles/styles.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <ul class="nav-list">
+            @foreach (var item in NavigationService.GetNavLinks())
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="@item.Url">@item.Text</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</header>
+
+<main role="main">
+    @RenderBody()
+    @await RenderSectionAsync("Scripts", false)
+</main>
+
+<footer>
+    <!-- Footer content -->
+</footer>
+</body>
+</html>

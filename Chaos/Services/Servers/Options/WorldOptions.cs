@@ -1,6 +1,7 @@
 using Chaos.Common.Definitions;
 using Chaos.Models.Data;
 using Chaos.Networking.Options;
+using ConnectionInfo = Chaos.Networking.Options.ConnectionInfo;
 
 namespace Chaos.Services.Servers.Options;
 

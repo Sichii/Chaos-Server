@@ -22,7 +22,7 @@ public static class CryptoExtensions
         => crypto.ServerDecrypt(ref packet.Buffer, packet.OpCode, packet.Sequence);
 
     /// <summary>
-    ///     Encrypts a <see cref="ServerPacket" />
+    ///     Encrypts a <see cref="Packet" />
     /// </summary>
     /// <param name="crypto">
     ///     This crypto service

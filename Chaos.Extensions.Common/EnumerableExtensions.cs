@@ -88,6 +88,18 @@ public static class EnumerableExtensions
     }
 
     /// <summary>
+    ///     Orders the given enumerable by the given comparer
+    /// </summary>
+    public static IOrderedEnumerable<T> OrderBy<T>(this IEnumerable<T> enumerable, IComparer<T> comparer)
+        => enumerable.OrderBy(e => e, comparer);
+
+    /// <summary>
+    ///     Orders the given enumerable by the given comparer
+    /// </summary>
+    public static IOrderedEnumerable<T> OrderByDescending<T>(this IEnumerable<T> enumerable, IComparer<T> comparer)
+        => enumerable.OrderByDescending(e => e, comparer);
+
+    /// <summary>
     ///     Attempts to cast the IEnumerable to use a different generic type, otherwise checks each element for the given type
     /// </summary>
     /// <param name="enumerable">
@@ -115,6 +127,18 @@ public static class EnumerableExtensions
 
         return list;
     }
+
+    /// <summary>
+    ///     Orders the given enumerable by the given comparer
+    /// </summary>
+    public static IOrderedEnumerable<T> ThenBy<T>(this IOrderedEnumerable<T> orderedEnumerable, IComparer<T> comparer)
+        => orderedEnumerable.ThenBy(e => e, comparer);
+
+    /// <summary>
+    ///     Orders the given enumerable by the given comparer
+    /// </summary>
+    public static IOrderedEnumerable<T> ThenByDescending<T>(this IOrderedEnumerable<T> orderedEnumerable, IComparer<T> comparer)
+        => orderedEnumerable.ThenByDescending(e => e, comparer);
 
     /// <summary>
     ///     Casts the given IEnumerable and then converts it to a List

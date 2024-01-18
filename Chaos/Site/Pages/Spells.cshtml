@@ -1,0 +1,59 @@
+@page
+@using Chaos.Site.Pages
+@using Chaos.Site.Services
+@model Chaos.Site.Pages.Spells
+@inject SpellDtoRepository SpellDtos
+
+@{
+    ViewData["Title"] = "Items";
+}
+
+<!-- AG Grid container -->
+<div id="itemGrid" class="chaos-grid ag-theme-alpine-auto-dark"></div>
+
+
+@section Scripts {
+    <!-- AG Grid script -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script src="~/Site/wwwroot/Styles/chaos-api.js"></script>
+    <script>
+        const columnDefs = @Html.Raw(Spells.ColumnDefsJson);
+    
+        // AG Grid initialization and configuration
+        const gridOptions = {
+            autoSizeStrategy: {
+                type: 'fitCellContents'
+            },
+            rowModelType: 'infinite',
+            defaultColDef: {
+                sortable: true,
+                filter: true,
+                resizable: true,
+                flex: 1,
+                filterParams: {
+                    buttons: ['reset', 'apply'],
+                    closeOnApply: true,
+                    debounceMs: 200,
+                    defaultOption: 'equals',
+                    textFormatter: r => r
+                }
+            },
+            // specify the columns
+            columnDefs: columnDefs,
+            datasource: {
+                rowCount: @SpellDtos.Count(),
+                getRows: function (params) {
+                    getSpells(params)
+                        .then(result => {
+                            params.successCallback(result);
+                            grid.autoSizeAllColumns();
+                        });
+                },
+            }
+        };
+
+        const itemsGridElement = document.querySelector('#itemGrid');
+        let grid = agGrid.createGrid(itemsGridElement, gridOptions);
+        
+    </script>
+}

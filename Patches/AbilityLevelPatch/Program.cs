@@ -22,7 +22,8 @@ var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentD
 var services = new ServiceCollection();
 
 services.AddLogging();
-services.AddChaosOptions(configuration);
+services.AddSingleton<IConfiguration>(configuration);
+services.AddChaosOptions();
 services.AddJsonSerializerOptions();
 services.AddStorage();
 

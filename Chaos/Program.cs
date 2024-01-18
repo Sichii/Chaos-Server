@@ -1,76 +1,186 @@
 using System.Diagnostics;
+using System.Text;
+using System.Text.Json.Serialization;
 using Chaos;
+using Chaos.Collections;
+using Chaos.Collections.Abstractions;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.DependencyInjection;
+using Chaos.Geometry.Abstractions;
+using Chaos.Messaging;
+using Chaos.Messaging.Options;
+using Chaos.Models.Board;
+using Chaos.Models.Menu;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
+using Chaos.Networking.Abstractions;
+using Chaos.Networking.Entities;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
+using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
+using Chaos.Services.Other;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Chaos.Services.Storage;
+using Chaos.Services.Storage.Abstractions;
+using Chaos.Site.Utilities;
+using Chaos.Storage.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Options;
+using NLog;
+using NLog.Extensions.Logging;
 
-Environment.SetEnvironmentVariable("DOTNET_ReadyToRun", "0");
+var encodingProvider = CodePagesEncodingProvider.Instance;
+Encoding.RegisterProvider(encodingProvider);
 
 Process.GetCurrentProcess()
        .PriorityClass = ProcessPriorityClass.High;
 
-//Environment.SetEnvironmentVariable("DOTNET_GCHeapHardLimit", "0x1F400000");
+var currentDirectory = Directory.GetCurrentDirectory();
 
-var services = new ServiceCollection();
+var builder = WebApplication.CreateEmptyBuilder(
+    new WebApplicationOptions
+    {
+        ApplicationName = "Chaos",
+        Args = args,
+        ContentRootPath = currentDirectory,
+        WebRootPath = currentDirectory,
+        #if DEBUG
+        EnvironmentName = "Development"
+        #else
+        EnvironmentName = "Production"
+        #endif
+    });
 
-// @formatter:off
-var builder = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", false, true)
-                    .AddJsonFile("appsettings.logging.json", false, true)
-                    #if DEBUG
-                    .AddJsonFile("appsettings.local.json", false, true)
-                    #else
-                    .AddJsonFile("appsettings.prod.json", false, true)
-                    #endif
-                    ;
+#region AppSettings Configuration
+builder.Configuration
+       .SetBasePath(currentDirectory)
+       .AddJsonFile("appsettings.json", false, true)
+       .AddJsonFile("appsettings.logging.json", false, true)
+       #if DEBUG
+       .AddJsonFile("appsettings.local.json", false, true)
+    #else
+   .AddJsonFile("appsettings.prod.json", false, true)
+    #endif
+    ;
 
-var initialConfiguration = builder.Build();
+var useSeq = builder.Configuration.GetValue<bool>(ConfigKeys.Logging.UseSeq);
+var enableSite = builder.Configuration.GetValue<bool>(ConfigKeys.Options.SiteOptions.EnableSite);
 
-if(initialConfiguration.GetValue<bool>(Startup.ConfigKeys.Logging.UseSeq))
-    builder.AddJsonFile("appsettings.seq.json", false, true);
+if (useSeq)
+    builder.Configuration.AddJsonFile("appsettings.seq.json", false, true);
+#endregion
 
-var configuration = builder.Build();
-// @formatter:on
+#region Service Configuration
+var serverCtx = new CancellationTokenSource();
 
-var startup = new Startup(configuration);
+builder.Services.AddSingleton(serverCtx);
+builder.Services.AddChaosOptions();
 
-startup.ConfigureServices(services);
-var serverCtx = startup.ServerCtx;
+builder.Services.AddLogging(
+    logging =>
+    {
+        logging.ClearProviders();
+        logging.AddNLog();
+    });
 
+builder.Services.AddJsonSerializerOptions();
+builder.Services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
+
+builder.Services.AddChannelService(
+    ConfigKeys.Options.Key,
+    cs =>
+    {
+        foreach (var defaultChannel in WorldOptions.Instance.DefaultChannels)
+            cs.RegisterChannel(
+                null,
+                defaultChannel.ChannelName,
+                defaultChannel.MessageColor ?? CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
+                Helpers.DefaultChannelMessageHandler,
+                true);
+    });
+
+builder.Services.AddServerAuthentication();
+builder.Services.AddCryptography();
+builder.Services.AddPacketSerializer();
+builder.Services.AddPathfinding();
+builder.Services.AddStorage();
+builder.Services.AddScripting();
+builder.Services.AddFunctionalScriptRegistry();
+builder.Services.AddWorldFactories();
+builder.Services.AddTypeMapper();
+builder.Services.AddSingleton<IStockService, IHostedService, StockService>();
+
+builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(
+    p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
+
+builder.Services.AddLobbyServer();
+builder.Services.AddLoginserver();
+builder.Services.AddWorldServer();
+
+if (enableSite)
+{
+    builder.Services
+           .AddRazorPages(opts => opts.RootDirectory = "/Site/Pages")
+           .AddRazorRuntimeCompilation()
+           .AddJsonOptions(
+               opts =>
+               {
+                   var jsonSerializerOptions = opts.JsonSerializerOptions;
+
+                   jsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                   jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                   jsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
+                   jsonSerializerOptions.PropertyNamingPolicy = new LowerCaseNamingPolicy();
+               });
+
+    builder.Environment.WebRootPath = "Site/wwwroot";
+
+    builder.ConfigureSite();
+}
+#endregion
+
+#region WebHost Configuration
+builder.WebHost.UseKestrel();
+#endregion
+
+//build the app
+var app = builder.Build();
+
+#region App Configuration
+RegisterStructuredLoggingTransformations();
+
+//app configuration
+//initialize objects with a lot of cross-cutting concerns
+//this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
+_ = app.Services.GetRequiredService<IOptions<WorldOptions>>()
+       .Value;
+_ = app.Services.GetRequiredService<IScriptRegistry>();
+
+if (enableSite)
+{
+    app.UseDeveloperExceptionPage();
+    app.UseStaticFiles(new StaticFileOptions());
+    app.UseRouting();
+    app.MapRazorPages();
+}
+
+//intercept ctrl+c to gracefully shutdown
 Console.CancelKeyPress += (_, e) =>
 {
     e.Cancel = true;
     serverCtx.Cancel();
 };
+#endregion
 
-services.AddLobbyServer();
-services.AddLoginserver();
-services.AddWorldServer();
+//run the app
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-await using var provider = services.BuildServiceProvider();
-
-//initialize objects with a lot of cross-cutting concerns
-//this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
-_ = provider.GetRequiredService<IOptions<WorldOptions>>()
-            .Value;
-_ = provider.GetRequiredService<IScriptRegistry>();
-var logger = provider.GetRequiredService<ILogger<Program>>();
-
-var hostedServices = provider.GetServices<IHostedService>();
-
-var startFuncs = hostedServices.Select<IHostedService, Func<CancellationToken, Task>>(s => s.StartAsync)
-                               .ToArray();
-
-await serverCtx.Token.WhenAllWithCancellation(startFuncs);
+await app.RunAsync(serverCtx.Token);
 await serverCtx.Token.WaitTillCanceled();
 
 logger.WithTopics(Topics.Actions.Disconnect)
@@ -78,3 +188,256 @@ logger.WithTopics(Topics.Actions.Disconnect)
 
 //wait for everything to shut down
 await Task.Delay(5000);
+
+return;
+
+static void RegisterStructuredLoggingTransformations()
+    => LogManager.Setup()
+                 .SetupSerialization(
+                     builder =>
+                     {
+                         builder.RegisterObjectTransformation<ISocketClient>(
+                             client => new
+                             {
+                                 IpAddress = client.RemoteIp
+                             });
+
+                         builder.RegisterObjectTransformation<ILobbyClient>(
+                             client => new
+                             {
+                                 IpAddress = client.RemoteIp,
+                                 Type = "LobbyClient"
+                             });
+
+                         builder.RegisterObjectTransformation<ILoginClient>(
+                             client => new
+                             {
+                                 IpAddress = client.RemoteIp,
+                                 Type = "LoginClient"
+                             });
+
+                         builder.RegisterObjectTransformation<IWorldClient>(
+                             client => new
+                             {
+                                 IpAddress = client.RemoteIp,
+
+                                 // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                                 Id = client.Aisling?.Id,
+                                 Name = client.Aisling?.Name,
+                                 Location = client.Aisling is not null ? ILocation.ToString(client.Aisling) : null,
+                                 Type = "WorldClient"
+                             });
+
+                         builder.RegisterObjectTransformation<WorldEntity>(
+                             obj => new
+                             {
+                                 Type = obj.GetType()
+                                           .Name,
+                                 Id = obj.Id,
+                                 Creation = obj.Creation
+                             });
+
+                         builder.RegisterObjectTransformation<MapEntity>(
+                             obj => new
+                             {
+                                 Type = obj.GetType()
+                                           .Name,
+                                 Id = obj.Id,
+                                 Creation = obj.Creation,
+                                 Location = ILocation.ToString(obj)
+                             });
+
+                         builder.RegisterObjectTransformation<VisibleEntity>(
+                             obj => new
+                             {
+                                 Type = obj.GetType()
+                                           .Name,
+                                 Id = obj.Id,
+                                 Creation = obj.Creation,
+                                 Location = ILocation.ToString(obj),
+                                 Sprite = obj.Sprite
+                             });
+
+                         builder.RegisterObjectTransformation<NamedEntity>(
+                             obj => new
+                             {
+                                 Type = obj.GetType()
+                                           .Name,
+                                 Id = obj.Id,
+                                 Creation = obj.Creation,
+                                 Location = ILocation.ToString(obj),
+                                 Name = obj.Name
+                             });
+
+                         builder.RegisterObjectTransformation<Creature>(
+                             obj => new
+                             {
+                                 Type = obj.GetType()
+                                           .Name,
+                                 Id = obj.Id,
+                                 Location = ILocation.ToString(obj),
+                                 Name = obj.Name
+                             });
+
+                         builder.RegisterObjectTransformation<Aisling>(
+                             obj => new
+                             {
+                                 // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                                 IpAddress = obj.Client?.RemoteIp,
+                                 Id = (uint?)obj.Id,
+                                 Name = obj.Name,
+                                 Location = ILocation.ToString(obj)
+                             });
+
+                         builder.RegisterObjectTransformation<Monster>(
+                             obj => new
+                             {
+                                 Type = nameof(Monster),
+                                 Id = obj.Id,
+                                 Name = obj.Name,
+                                 TemplateKey = obj.Template.TemplateKey,
+                                 Location = ILocation.ToString(obj)
+                             });
+
+                         builder.RegisterObjectTransformation<Merchant>(
+                             obj => new
+                             {
+                                 Type = nameof(Merchant),
+                                 Id = obj.Id,
+                                 Name = obj.Name,
+                                 TemplateKey = obj.Template.TemplateKey,
+                                 Location = ILocation.ToString(obj)
+                             });
+
+                         builder.RegisterObjectTransformation<Money>(
+                             obj => new
+                             {
+                                 Type = nameof(Money),
+                                 Id = obj.Id,
+                                 Amount = obj.Amount,
+                                 Creation = obj.Creation,
+                                 Location = ILocation.ToString(obj)
+                             });
+
+                         builder.RegisterObjectTransformation<Item>(
+                             obj => new
+                             {
+                                 Uid = obj.UniqueId,
+                                 Name = obj.DisplayName,
+                                 TemplateKey = obj.Template.TemplateKey,
+                                 Count = obj.Count
+                             });
+
+                         builder.RegisterObjectTransformation<Spell>(
+                             obj => new
+                             {
+                                 Uid = obj.UniqueId,
+                                 Name = obj.Template.Name,
+                                 TemplateKey = obj.Template.TemplateKey
+                             });
+
+                         builder.RegisterObjectTransformation<Skill>(
+                             obj => new
+                             {
+                                 Uid = obj.UniqueId,
+                                 Name = obj.Template.Name,
+                                 TemplateKey = obj.Template.TemplateKey
+                             });
+
+                         builder.RegisterObjectTransformation<MapInstance>(
+                             obj => new
+                             {
+                                 InstanceId = obj.InstanceId,
+                                 BaseInstanceId = obj.BaseInstanceId,
+                                 TemplateKey = obj.Template.TemplateKey,
+                                 Name = obj.Name
+                             });
+
+                         builder.RegisterObjectTransformation<CommandDescriptor>(
+                             obj => new
+                             {
+                                 CommandName = obj.Details.CommandName,
+                                 RequiresAdmin = obj.Details.RequiresAdmin
+                             });
+
+                         builder.RegisterObjectTransformation<IEffect>(
+                             obj => new
+                             {
+                                 EffectKey = obj.ScriptKey,
+                                 Name = obj.Name
+                             });
+
+                         builder.RegisterObjectTransformation<Redirect>(
+                             obj => new
+                             {
+                                 Id = obj.Id,
+                                 Name = obj.Name,
+                                 Type = obj.Type,
+                                 Address = obj.EndPoint
+                             });
+
+                         builder.RegisterObjectTransformation<Guild>(obj => obj.Name);
+
+                         builder.RegisterObjectTransformation<GroundItem>(
+                             obj => new
+                             {
+                                 Type = nameof(GroundItem),
+                                 Id = obj.Id,
+                                 ItemUid = obj.Item.UniqueId,
+                                 ItemName = obj.Item.DisplayName,
+                                 ItemTemplateKey = obj.Item.Template.TemplateKey,
+                                 ItemCount = obj.Item.Count,
+                                 Creation = obj.Creation,
+                                 Location = ILocation.ToString(obj)
+                             });
+
+                         builder.RegisterObjectTransformation<Dialog>(
+                             obj => new
+                             {
+                                 TemplateKey = obj.Template.TemplateKey,
+                                 Type = obj.Template.Type,
+                                 Contextual = obj.Template.Contextual,
+                                 HasContext = obj.Context is not null,
+                                 HasMenuArgs = obj.MenuArgs.Any()
+                             });
+
+                         builder.RegisterObjectTransformation<Exchange>(
+                             obj => new
+                             {
+                                 obj.ExchangeId
+                             });
+
+                         builder.RegisterObjectTransformation<BoardBase>(
+                             obj => new
+                             {
+                                 Key = obj.Key,
+                                 Name = obj.Name,
+                                 Posts = obj.Posts.Count
+                             });
+
+                         builder.RegisterObjectTransformation<MailBox>(
+                             obj => new
+                             {
+                                 Key = obj.Key,
+                                 Name = obj.Name,
+                                 Posts = obj.Posts.Count
+                             });
+
+                         builder.RegisterObjectTransformation<BulletinBoard>(
+                             obj => new
+                             {
+                                 Key = obj.Key,
+                                 Name = obj.Name,
+                                 Posts = obj.Posts.Count
+                             });
+
+                         builder.RegisterObjectTransformation<Post>(
+                             obj => new
+                             {
+                                 PostId = obj.PostId,
+                                 Author = obj.Author,
+                                 Subject = obj.Subject,
+                                 Message = obj.Message,
+                                 Creation = obj.CreationDate
+                             });
+                     });

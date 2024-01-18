@@ -17,7 +17,6 @@ using Chaos.Services.Storage.Options;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
@@ -107,7 +106,9 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var metricsLogger = Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Load)
                                   .WithMetrics();
 
-        entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins));
+        if (Options.Expires)
+            entry.SetSlidingExpiration(TimeSpan.FromMinutes(Options.ExpirationMins!.Value));
+
         entry.RegisterPostEvictionCallback(RemoveValueCallback);
 
         var path = GetPathForKey(loadInstanceIdActual);

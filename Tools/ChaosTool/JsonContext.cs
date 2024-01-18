@@ -133,7 +133,7 @@ public class JsonContext
         services.ConfigureOptions<OptionsConfigurer>();
         services.ConfigureOptions<OptionsValidator>();
 
-        services.AddOptionsFromConfig<ChaosOptions>(Startup.ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key);
 
         services.AddSingleton<IStagingDirectory>(
             sp => sp.GetRequiredService<IOptions<ChaosOptions>>()
