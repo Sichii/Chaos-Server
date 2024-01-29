@@ -5,7 +5,6 @@ using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Factories;
 

@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Time.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 

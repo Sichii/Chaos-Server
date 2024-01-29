@@ -16,12 +16,18 @@ public sealed class Guild : IDedicatedChannel
     private readonly List<GuildRank> GuildHierarchy;
     private readonly AutoReleasingMonitor Sync;
     public string ChannelName { get; }
+    public string Guid { get; }
     public string Name { get; }
 
-    public Guild(string name, IChannelService channelService, IClientRegistry<IWorldClient> clientRegistry)
+    public Guild(
+        string name,
+        string guid,
+        IChannelService channelService,
+        IClientRegistry<IWorldClient> clientRegistry)
     {
         Name = name;
-        ChannelName = $"!guild-{Name}";
+        Guid = guid;
+        ChannelName = $"!guild-{Name}-{Guid}";
         ChannelService = channelService;
         ClientRegistry = clientRegistry;
         Sync = new AutoReleasingMonitor();

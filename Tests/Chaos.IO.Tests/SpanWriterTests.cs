@@ -220,12 +220,11 @@ public sealed class SpanWriterTests
 
         // Act
         writer.WriteData(
-            new byte[]
-            {
+            [
                 0x01,
                 0x02,
                 0x03
-            },
+            ],
             true);
 
         // Assert

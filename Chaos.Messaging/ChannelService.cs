@@ -36,6 +36,9 @@ public sealed class ChannelService : IChannelService
     /// <inheritdoc />
     public IEnumerable<IChannelSubscriber> GetSubscribers(string channelName)
     {
+        if (!IsChannel(channelName))
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
+
         if (!Channels.TryGetValue(channelName, out var channelDetails))
             return Enumerable.Empty<IChannelSubscriber>();
 
@@ -52,9 +55,12 @@ public sealed class ChannelService : IChannelService
     /// <inheritdoc />
     public bool JoinChannel(IChannelSubscriber subscriber, string channelName, bool bypassValidation = false)
     {
+        if (!IsChannel(channelName))
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
+
         //if not bypassing validation, and the channel name is reserved
         //say the channel doesnt exist
-        if (!bypassValidation && Options.ReservedChannelNames.Any(channelName.ContainsI))
+        if (!bypassValidation && Options.ReservedChannelNames.Any(channelName.EqualsI))
         {
             subscriber.SendMessage($"Channel {channelName} not found");
 
@@ -87,6 +93,9 @@ public sealed class ChannelService : IChannelService
     /// <inheritdoc />
     public void LeaveChannel(IChannelSubscriber subscriber, string channelName)
     {
+        if (!IsChannel(channelName))
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
+
         if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
             //don't give away whether or not channels exist
@@ -107,6 +116,15 @@ public sealed class ChannelService : IChannelService
     }
 
     /// <inheritdoc />
+    public string PrependPrefix(string channelName)
+    {
+        if (IsChannel(channelName))
+            return channelName;
+
+        return Options.ChannelPrefix + channelName;
+    }
+
+    /// <inheritdoc />
     public bool RegisterChannel(
         IChannelSubscriber? subscriber,
         string channelName,
@@ -116,7 +134,7 @@ public sealed class ChannelService : IChannelService
         string? channelNameOverride = null)
     {
         if (!IsChannel(channelName))
-            channelName = $"{Options.ChannelPrefix}{channelName}";
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
 
         if (!bypassValidation)
         {
@@ -127,7 +145,7 @@ public sealed class ChannelService : IChannelService
                 return false;
             }
 
-            if (Options.ReservedChannelNames.Any(channelName.ContainsI))
+            if (Options.ReservedChannelNames.Any(channelName.EqualsI))
             {
                 subscriber?.SendMessage("Invalid channel name");
 
@@ -172,6 +190,9 @@ public sealed class ChannelService : IChannelService
     /// <inheritdoc />
     public void SendMessage(IChannelSubscriber subscriber, string channelName, string message)
     {
+        if (!IsChannel(channelName))
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
+
         if (!Channels.TryGetValue(channelName, out var channelDetails))
         {
             subscriber.SendMessage($"Channel {channelName} not found");
@@ -244,6 +265,9 @@ public sealed class ChannelService : IChannelService
     /// <inheritdoc />
     public void SetChannelColor(IChannelSubscriber subscriber, string channelName, MessageColor messageColor)
     {
+        if (!IsChannel(channelName))
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
+
         if (!Channels.TryGetValue(channelName, out var channelDetails))
             return;
 
@@ -260,6 +284,9 @@ public sealed class ChannelService : IChannelService
     /// <inheritdoc />
     public bool UnregisterChannel(string channelName)
     {
+        if (!IsChannel(channelName))
+            throw new InvalidOperationException($"{channelName} is not a valid channel name");
+
         if (!Channels.TryGetValue(channelName, out var channel))
             return false;
 

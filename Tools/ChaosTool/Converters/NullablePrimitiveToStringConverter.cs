@@ -41,12 +41,11 @@ public class NullablePrimitiveToStringConverter : IValueConverter
         {
             var tryParse = targetType.GetMethod(
                 nameof(IParsable<int>.TryParse),
-                new[]
-                {
+                [
                     typeof(string),
                     typeof(IFormatProvider),
                     targetType.MakeByRefType()
-                });
+                ]);
 
             if (tryParse is null)
                 return null;

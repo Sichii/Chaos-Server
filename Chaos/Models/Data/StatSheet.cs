@@ -7,10 +7,10 @@ namespace Chaos.Models.Data;
 
 public record StatSheet : Attributes
 {
-    public int Ability
+    public int AbilityLevel
     {
-        get => _ability;
-        init => _ability = value;
+        get => _abilityLevel;
+        init => _abilityLevel = value;
     }
 
     public int AcMod
@@ -386,7 +386,7 @@ public record StatSheet : Attributes
 
     #region SharedAttributes
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    protected int _ability;
+    protected int _abilityLevel;
     protected int _currentHp;
     protected int _currentMp;
     protected int _level;

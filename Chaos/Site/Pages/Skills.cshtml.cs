@@ -1,5 +1,4 @@
 using System.Text.Json;
-using AutoMapper;
 using Chaos.Site.Models;
 using Chaos.Site.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +7,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Chaos.Site.Pages;
 
 [IgnoreAntiforgeryToken]
-public class Skills(SkillDtoRepository skillDtoRepository, QueryService queryService, IMapper mapper) : PageModel
+public class Skills(SkillDtoRepository skillDtoRepository, QueryService queryService) : PageModel
 {
-    private readonly IMapper Mapper = mapper;
     private readonly QueryService QueryService = queryService;
     private readonly SkillDtoRepository SkillDtoRepository = skillDtoRepository;
     public static string ColumnDefsJson { get; private set; }
@@ -47,8 +45,7 @@ public class Skills(SkillDtoRepository skillDtoRepository, QueryService querySer
     public JsonResult OnPostSkillPage([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(SkillDtoRepository, rowParams);
-        var ret = Mapper.Map<IEnumerable<SkillDto>>(query);
 
-        return new JsonResult(ret);
+        return new JsonResult(query);
     }
 }

@@ -33,3 +33,15 @@ async function getSpells(params) {
 
     return await response.json();
 }
+
+async function getMonsters(params) {
+    let response = await fetch(`/monsters?handler=MonsterPage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    });
+
+    return await response.json();
+}

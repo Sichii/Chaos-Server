@@ -55,6 +55,7 @@ using Microsoft.Extensions.Options;
 using ItemMapperProfile = Chaos.Site.Services.MapperProfiles.ItemMapperProfile;
 using SkillMapperProfile = Chaos.Site.Services.MapperProfiles.SkillMapperProfile;
 using SpellMapperProfile = Chaos.Site.Services.MapperProfiles.SpellMapperProfile;
+using MonsterMapperProfile = Chaos.Site.Services.MapperProfiles.MonsterMapperProfile;
 
 namespace Chaos.Extensions;
 
@@ -183,6 +184,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<SkillMapperProfile>();
         services.AddSingleton<SpellMapperProfile>();
+        services.AddSingleton<MonsterMapperProfile>();
 
         services.AddAutoMapper(
             (provider, cfg) =>
@@ -191,6 +193,7 @@ public static class ServiceCollectionExtensions
                 cfg.AddProfile<ItemMapperProfile>();
                 cfg.AddProfile(provider.GetRequiredService<SkillMapperProfile>());
                 cfg.AddProfile(provider.GetRequiredService<SpellMapperProfile>());
+                cfg.AddProfile(provider.GetRequiredService<MonsterMapperProfile>());
             },
             Array.Empty<Type>());
     }
@@ -301,6 +304,7 @@ public static class ServiceCollectionExtensions
         builder.Services.AddSingleton<ItemDtoRepository>();
         builder.Services.AddSingleton<SkillDtoRepository>();
         builder.Services.AddSingleton<SpellDtoRepository>();
+        builder.Services.AddSingleton<MonsterDtoRepository>();
         builder.Services.AddSiteDtoMappings();
     }
 

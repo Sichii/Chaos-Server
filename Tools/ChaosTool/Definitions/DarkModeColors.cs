@@ -144,7 +144,7 @@ internal sealed class DarkModeColors : IClassificationHighlightColors
              */
         };
 
-        Colors = colors.ToFrozenDictionary();
+        Colors = colors.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc />

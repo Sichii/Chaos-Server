@@ -10,7 +10,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.LevelUp;
 using Chaos.Services.Servers.Options;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 

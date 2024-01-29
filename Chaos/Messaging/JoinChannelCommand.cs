@@ -16,6 +16,8 @@ public class JoinChannelCommand(IChannelService channelService) : ICommand<Aisli
         if (!args.TryGetNext<string>(out var channelName))
             return default;
 
+        channelName = ChannelService.PrependPrefix(channelName);
+
         if (ChannelService.JoinChannel(source, channelName))
             source.ChannelSettings.Add(new ChannelSettings(channelName));
 

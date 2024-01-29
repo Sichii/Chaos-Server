@@ -8,7 +8,7 @@ public record StatSheetSchema : AttributesSchema
     /// <summary>
     ///     The creature's current ability
     /// </summary>
-    public int Ability { get; set; }
+    public int AbilityLevel { get; set; }
 
     /// <summary>
     ///     The creature's current hp

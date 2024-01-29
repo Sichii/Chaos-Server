@@ -95,7 +95,7 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
             MaximumMp = obj.MaximumMp,
             CurrentHp = obj.CurrentHp,
             CurrentMp = obj.CurrentMp,
-            Ability = obj.Ability,
+            AbilityLevel = obj.AbilityLevel,
             Level = obj.Level
         };
 
@@ -107,7 +107,7 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
             FlatSpellDamage = obj.FlatSpellDamage,
             SkillDamagePct = obj.SkillDamagePct,
             SpellDamagePct = obj.SpellDamagePct,
-            Ability = obj.Ability,
+            AbilityLevel = obj.AbilityLevel,
             Ac = obj.Ac,
             Con = obj.Con,
             CurrentHp = obj.CurrentHp,
@@ -145,7 +145,7 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
             MaximumMp = obj.MaximumMp,
             CurrentHp = obj.CurrentHp,
             CurrentMp = obj.CurrentMp,
-            Ability = obj.Ability,
+            AbilityLevel = obj.AbilityLevel,
             Level = obj.Level,
             ToNextAbility = obj.ToNextAbility,
             ToNextLevel = obj.ToNextLevel,
@@ -165,7 +165,7 @@ public sealed class AttributesMapperProfile : IMapperProfile<Attributes, Attribu
             FlatSpellDamage = obj.FlatSpellDamage,
             SkillDamagePct = obj.SkillDamagePct,
             SpellDamagePct = obj.SpellDamagePct,
-            Ability = obj.Ability,
+            AbilityLevel = obj.AbilityLevel,
             Ac = obj.Ac,
             AdvClass = obj.AdvClass,
             BaseClass = obj.BaseClass,

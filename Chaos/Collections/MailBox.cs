@@ -6,7 +6,6 @@ using Chaos.Models.Board;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 

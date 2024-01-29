@@ -7,7 +7,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.Other;
 

@@ -13,7 +13,7 @@ public class DictionaryEnumerationBenchmarks
     private readonly ConcurrentDictionary<string, string> ConcurrentDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> NormalDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> ValuesList = new();
-    private FrozenDictionary<string, string> FrozenDictionary;
+    private FrozenDictionary<string, string> FrozenDictionary = null!;
 
     [Params(1000)]
 

@@ -28,7 +28,7 @@ public sealed class PathfindingService : IPathfindingService
     }
 
     /// <inheritdoc />
-    public Direction Pathfind(
+    public Stack<IPoint> FindPath(
         string gridKey,
         IPoint start,
         IPoint end,
@@ -40,7 +40,7 @@ public sealed class PathfindingService : IPathfindingService
 
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.Pathfind(
+        return pathFinder!.FindPath(
             start,
             end,
             ignoreWalls,
@@ -49,29 +49,7 @@ public sealed class PathfindingService : IPathfindingService
     }
 
     /// <inheritdoc />
-    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key] = gridDetails;
-
-    /// <inheritdoc />
-    public Direction SimpleWalk(
-        string gridKey,
-        IPoint start,
-        IPoint end,
-        bool ignoreWalls,
-        IReadOnlyCollection<IPoint> blocked)
-    {
-        var lookupKey = ConstructKey(gridKey);
-
-        var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
-
-        return pathFinder!.SimpleWalk(
-            start,
-            end,
-            ignoreWalls,
-            blocked);
-    }
-
-    /// <inheritdoc />
-    public Direction Wander(
+    public Direction FindRandomDirection(
         string key,
         IPoint start,
         bool ignoreWalls,
@@ -82,8 +60,30 @@ public sealed class PathfindingService : IPathfindingService
         //not thread safe, but it should be fine if we occasionally create a duplicate pathfinder
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.Wander(start, ignoreWalls, blocked);
+        return pathFinder!.FindRandomDirection(start, ignoreWalls, blocked);
     }
+
+    /// <inheritdoc />
+    public Direction FindSimpleDirection(
+        string gridKey,
+        IPoint start,
+        IPoint end,
+        bool ignoreWalls,
+        IReadOnlyCollection<IPoint> blocked)
+    {
+        var lookupKey = ConstructKey(gridKey);
+
+        var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
+
+        return pathFinder!.FindSimpleDirection(
+            start,
+            end,
+            ignoreWalls,
+            blocked);
+    }
+
+    /// <inheritdoc />
+    public void RegisterGrid(string key, IGridDetails gridDetails) => GridDetails[key] = gridDetails;
 
     private string ConstructKey(string key) => $"{KEY_PREFIX}{key}".ToLowerInvariant();
 

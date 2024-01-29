@@ -20,6 +20,8 @@ public class SetChannelColorCommand(IChannelService channelService) : ICommand<A
         if (!Helpers.TryGetMessageColor(args, out var messageColor))
             return default;
 
+        channelName = ChannelService.PrependPrefix(channelName);
+
         if (!ChannelService.IsInChannel(source, channelName))
         {
             source.SendMessage($"You are not in channel {channelName}");

@@ -8,7 +8,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 

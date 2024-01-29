@@ -5,7 +5,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Site.Services;
 
-public class SpellDtoRepository : IEnumerable<SpellDto>
+public sealed class SpellDtoRepository : IEnumerable<SpellDto>
 {
     private List<SpellDto> SpellDtos { get; }
 

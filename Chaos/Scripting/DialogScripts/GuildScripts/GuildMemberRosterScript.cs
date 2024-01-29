@@ -7,7 +7,6 @@ using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 

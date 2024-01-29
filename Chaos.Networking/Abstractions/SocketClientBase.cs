@@ -55,14 +55,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     public FifoSemaphoreSlim ReceiveSync { get; }
 
     /// <inheritdoc />
+    public IPAddress RemoteIp { get; }
+
+    /// <inheritdoc />
     public Socket Socket { get; }
 
     private unsafe Span<byte> Buffer => new(MemoryHandle.Pointer, ushort.MaxValue);
 
     private Memory<byte> Memory => MemoryOwner.Memory;
-
-    /// <inheritdoc />
-    public IPAddress RemoteIp => (Socket.RemoteEndPoint as IPEndPoint)?.Address!;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SocketClientBase" /> class.
@@ -91,6 +91,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         MemoryHandle = Memory.Pin();
         Logger = logger;
         PacketSerializer = packetSerializer;
+        RemoteIp = (Socket.RemoteEndPoint as IPEndPoint)?.Address ?? IPAddress.None;
 
         var initialArgs = Enumerable.Range(0, 5)
                                     .Select(_ => CreateArgs());

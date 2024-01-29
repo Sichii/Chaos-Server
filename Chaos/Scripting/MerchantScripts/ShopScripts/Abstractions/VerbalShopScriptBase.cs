@@ -3,7 +3,6 @@ using Chaos.Extensions.Geometry;
 using Chaos.Models.World;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Utilities;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 

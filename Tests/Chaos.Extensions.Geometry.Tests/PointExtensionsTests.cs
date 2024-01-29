@@ -434,8 +434,8 @@ public sealed class PointExtensionsTests
 
     public static IEnumerable<object[]> GenerateCardinalPointsTestData()
     {
-        yield return new object[]
-        {
+        yield return
+        [
             0,
             0,
             Direction.All,
@@ -447,10 +447,10 @@ public sealed class PointExtensionsTests
                 new Point(0, -1),
                 new Point(-1, 0)
             }
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             2,
             2,
             Direction.Up,
@@ -461,7 +461,7 @@ public sealed class PointExtensionsTests
                 new Point(2, 0),
                 new Point(2, -1)
             }
-        };
+        ];
     }
 
     [Fact]
@@ -684,18 +684,18 @@ public sealed class PointExtensionsTests
 
     public static IEnumerable<object[]> GetDirectPathTestData()
     {
-        yield return new object[]
-        {
+        yield return
+        [
             new Point(0, 0),
             new Point(0, 0),
             new[]
             {
                 new Point(0, 0)
             }
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             new Point(0, 0),
             new Point(2, 2),
             new[]
@@ -708,10 +708,10 @@ public sealed class PointExtensionsTests
                 new Point(2, 1),
                 new Point(2, 2)
             }
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             new Point(1, 1),
             new Point(3, 1),
             new[]
@@ -720,7 +720,7 @@ public sealed class PointExtensionsTests
                 new Point(2, 1),
                 new Point(3, 1)
             }
-        };
+        ];
     }
 
     //@formatter:off

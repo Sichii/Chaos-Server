@@ -10,7 +10,6 @@ using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;

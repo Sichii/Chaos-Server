@@ -3,7 +3,6 @@ using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts.TrainerScripts;
 

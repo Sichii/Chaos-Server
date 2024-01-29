@@ -10,12 +10,11 @@ public sealed class SpellBook : PanelBase<Spell>
         : base(
             PanelType.SpellBook,
             90,
-            new byte[]
-            {
+            [
                 0,
                 36,
                 72
-            })
+            ])
     {
         spells ??= Array.Empty<Spell>();
 

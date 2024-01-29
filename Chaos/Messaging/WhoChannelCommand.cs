@@ -15,6 +15,8 @@ public class WhoChannelCommand(IChannelService channelService) : ICommand<Aislin
         if (!args.TryGetNext<string>(out var channelName))
             return default;
 
+        channelName = ChannelService.PrependPrefix(channelName);
+
         if (!ChannelService.IsInChannel(source, channelName))
         {
             source.SendMessage($"You are not in channel {channelName}");

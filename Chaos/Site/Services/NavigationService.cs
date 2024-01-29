@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Site.Services;
 
-public class NavigationService(IOptionsSnapshot<SiteOptions> options)
+public sealed class NavigationService(IOptionsSnapshot<SiteOptions> options)
 {
     private readonly SiteOptions Options = options.Value;
 
@@ -40,6 +40,14 @@ public class NavigationService(IOptionsSnapshot<SiteOptions> options)
                 {
                     Text = "Spells",
                     Url = "/Spells"
+                });
+
+        if (Options.ShowMonsters)
+            navLinks.Add(
+                new NavLink
+                {
+                    Text = "Monsters",
+                    Url = "/Monsters"
                 });
 
         return navLinks;

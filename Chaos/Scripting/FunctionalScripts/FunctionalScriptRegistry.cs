@@ -1,5 +1,4 @@
 using Chaos.Scripting.FunctionalScripts.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Scripting.FunctionalScripts;
 

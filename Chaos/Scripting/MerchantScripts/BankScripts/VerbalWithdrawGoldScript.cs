@@ -7,7 +7,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 

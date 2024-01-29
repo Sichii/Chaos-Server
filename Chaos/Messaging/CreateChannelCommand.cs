@@ -20,6 +20,8 @@ public class CreateChannelCommand(IChannelService channelService) : ICommand<Ais
 
         Helpers.TryGetMessageColor(args, out var messageColor);
 
+        channelName = ChannelService.PrependPrefix(channelName);
+
         if (ChannelService.ContainsChannel(channelName))
         {
             source.SendMessage($"Channel {channelName} already exists");

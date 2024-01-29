@@ -5,7 +5,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Site.Services;
 
-public class ItemDtoRepository : IEnumerable<ItemDto>
+public sealed class ItemDtoRepository : IEnumerable<ItemDto>
 {
     private List<ItemDto> ItemDtos { get; }
 

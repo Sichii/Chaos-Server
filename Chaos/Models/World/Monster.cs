@@ -16,7 +16,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Models.World;
 

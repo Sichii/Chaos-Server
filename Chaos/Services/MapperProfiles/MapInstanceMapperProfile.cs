@@ -10,7 +10,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 

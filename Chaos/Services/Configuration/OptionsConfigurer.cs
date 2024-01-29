@@ -3,23 +3,28 @@ using System.Net;
 using System.Net.Sockets;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
+using Chaos.Definitions;
+using Chaos.Messaging.Abstractions;
 using Chaos.MetaData;
 using Chaos.MetaData.ItemMetadata;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.ItemScripts.Enchantments;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Options;
+using Chaos.Utilities;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Configuration;
 
-public sealed class OptionsConfigurer(IStagingDirectory stagingDirectory) : IPostConfigureOptions<IConnectionInfo>,
-                                                                            IPostConfigureOptions<LobbyOptions>,
-                                                                            IPostConfigureOptions<LoginOptions>,
-                                                                            IPostConfigureOptions<WorldOptions>,
-                                                                            IPostConfigureOptions<MetaDataStoreOptions>
+public sealed class OptionsConfigurer(IStagingDirectory stagingDirectory, IChannelService channelService)
+    : IPostConfigureOptions<IConnectionInfo>,
+      IPostConfigureOptions<LobbyOptions>,
+      IPostConfigureOptions<LoginOptions>,
+      IPostConfigureOptions<WorldOptions>,
+      IPostConfigureOptions<MetaDataStoreOptions>
 
 {
+    private readonly IChannelService ChannelService = channelService;
     private readonly IStagingDirectory StagingDirectory = stagingDirectory;
 
     /// <inheritdoc />
@@ -83,6 +88,18 @@ public sealed class OptionsConfigurer(IStagingDirectory stagingDirectory) : IPos
     {
         PostConfigure(name, (IConnectionInfo)options);
         PostConfigure(name, options.LoginRedirect);
+
+        foreach (var settings in options.DefaultChannels)
+        {
+            settings.ChannelName = ChannelService.PrependPrefix(settings.ChannelName);
+
+            ChannelService.RegisterChannel(
+                null,
+                settings.ChannelName,
+                settings.MessageColor ?? CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
+                Helpers.DefaultChannelMessageHandler,
+                true);
+        }
 
         WorldOptions.Instance = options;
     }

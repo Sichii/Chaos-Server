@@ -4,7 +4,6 @@ using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions;
 using Chaos.Time;
 using Humanizer;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Utilities;
 

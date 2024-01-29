@@ -10,8 +10,8 @@ public class DictionaryLookupBenchmarks
 {
     private readonly ConcurrentDictionary<string, string> ConcurrentDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> NormalDictionary = new(StringComparer.OrdinalIgnoreCase);
-    private readonly List<string> ValuesList = new();
-    private FrozenDictionary<string, string> FrozenDictionary;
+    private readonly List<string> ValuesList = [];
+    private FrozenDictionary<string, string> FrozenDictionary = null!;
 
     // ReSharper disable once UnassignedField.Global
     [Params(1000)]

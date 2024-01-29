@@ -7,7 +7,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 
@@ -98,7 +97,11 @@ public class GuildCreateScript : GuildScriptBase
         Subject.InjectTextParameters(guildName);
 
         //create the guild, set the player as the leader, and save it
-        var newGuild = GuildFactory.Create(guildName);
+        var newGuild = GuildFactory.Create(
+            guildName,
+            Guid.NewGuid()
+                .ToString());
+
         newGuild.AddMember(source, source);
         newGuild.ChangeRank(source, 0, source);
         GuildStore.Save(newGuild);

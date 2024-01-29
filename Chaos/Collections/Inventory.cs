@@ -14,13 +14,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     ///     Used for character creation
     /// </summary>
     public Inventory(IEnumerable<Item>? items = null)
-        : base(
-            PanelType.Inventory,
-            60,
-            new byte[]
-            {
-                0
-            })
+        : base(PanelType.Inventory, 60, [0])
     {
         ItemCloner = null!;
         items ??= Array.Empty<Item>();

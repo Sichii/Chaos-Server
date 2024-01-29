@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using Chaos;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
-using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.DependencyInjection;
@@ -29,7 +28,6 @@ using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Site.Utilities;
 using Chaos.Storage.Abstractions;
-using Chaos.Utilities;
 using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Extensions.Logging;
@@ -90,20 +88,7 @@ builder.Services.AddLogging(
 
 builder.Services.AddJsonSerializerOptions();
 builder.Services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
-
-builder.Services.AddChannelService(
-    ConfigKeys.Options.Key,
-    cs =>
-    {
-        foreach (var defaultChannel in WorldOptions.Instance.DefaultChannels)
-            cs.RegisterChannel(
-                null,
-                defaultChannel.ChannelName,
-                defaultChannel.MessageColor ?? CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
-                Helpers.DefaultChannelMessageHandler,
-                true);
-    });
-
+builder.Services.AddChannelService(ConfigKeys.Options.Key);
 builder.Services.AddServerAuthentication();
 builder.Services.AddCryptography();
 builder.Services.AddPacketSerializer();

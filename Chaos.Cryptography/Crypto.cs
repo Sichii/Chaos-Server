@@ -45,6 +45,9 @@ public sealed class Crypto : ICrypto
         KeySalts = string.IsNullOrEmpty(keySaltSeed) ? new byte[1024] : GenerateKeySalts(keySaltSeed);
     }
 
+    /// <summary>
+    ///     Creates a new instance of the Crypto class
+    /// </summary>
     public Crypto(byte seed, string keySaltSeed)
     {
         Seed = seed;

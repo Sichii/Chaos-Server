@@ -50,7 +50,7 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
                                                          Details = attribute
                                                      }));
 
-        Commands = descriptors.ToFrozenDictionary(descriptor => descriptor.Details.CommandName);
+        Commands = descriptors.ToFrozenDictionary(descriptor => descriptor.Details.CommandName, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc />

@@ -1,5 +1,4 @@
 using System.Text.Json;
-using AutoMapper;
 using Chaos.Site.Models;
 using Chaos.Site.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Chaos.Site.Pages;
 
 [IgnoreAntiforgeryToken]
-public class Items(ItemDtoRepository itemDtoRepository, QueryService queryService, IMapper mapper) : PageModel
+public class Items(ItemDtoRepository itemDtoRepository, QueryService queryService) : PageModel
 {
     private readonly ItemDtoRepository ItemDtoRepository = itemDtoRepository;
-    private readonly IMapper Mapper = mapper;
     private readonly QueryService QueryService = queryService;
     public static string ColumnDefsJson { get; private set; }
 
@@ -47,8 +45,7 @@ public class Items(ItemDtoRepository itemDtoRepository, QueryService queryServic
     public JsonResult OnPostItemPage([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(ItemDtoRepository, rowParams);
-        var ret = Mapper.Map<IEnumerable<ItemDto>>(query);
 
-        return new JsonResult(ret);
+        return new JsonResult(query);
     }
 }

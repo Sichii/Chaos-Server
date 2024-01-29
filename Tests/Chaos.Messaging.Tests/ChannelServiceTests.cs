@@ -22,17 +22,11 @@ public sealed class ChannelServiceTests
         ChannelServiceOptions = Microsoft.Extensions.Options.Options.Create(
             new ChannelServiceOptions
             {
-                BlacklistedChannelNamePhrases = new[]
-                {
-                    "Blacklisted"
-                },
+                BlacklistedChannelNamePhrases = ["Blacklisted"],
                 ChannelPrefix = "!",
                 MaxChannelNameLength = 20,
                 MinChannelNameLength = 3,
-                ReservedChannelNames = new[]
-                {
-                    "Reserved"
-                }
+                ReservedChannelNames = ["Reserved"]
             });
 
         LoggerMock = MockLogger.Create<ChannelService>();

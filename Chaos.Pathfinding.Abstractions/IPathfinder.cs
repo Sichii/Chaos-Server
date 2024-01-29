@@ -26,15 +26,29 @@ public interface IPathfinder
     /// <param name="limitRadius">
     ///     Specify a max radius to use for path calculation, this can help with performance by limiting node discovery
     /// </param>
-    /// <returns>
-    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk to move to the next point in the path
-    /// </returns>
-    Direction Pathfind(
+    Stack<IPoint> FindPath(
         IPoint start,
         IPoint end,
         bool ignoreWalls,
         IReadOnlyCollection<IPoint> blocked,
         int? limitRadius = null);
+
+    /// <summary>
+    ///     Finds a valid direction to wander
+    /// </summary>
+    /// <param name="start">
+    ///     The current point
+    /// </param>
+    /// <param name="ignoreWalls">
+    ///     Whether or not to ignore walls
+    /// </param>
+    /// <param name="blocked">
+    ///     A collection of points to avoid
+    /// </param>
+    /// <returns>
+    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk
+    /// </returns>
+    Direction FindRandomDirection(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked);
 
     /// <summary>
     ///     Finds a direction to walk towards the end point. No path is calculated.
@@ -54,26 +68,9 @@ public interface IPathfinder
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to move
     /// </returns>
-    Direction SimpleWalk(
+    Direction FindSimpleDirection(
         IPoint start,
         IPoint end,
         bool ignoreWalls,
         IReadOnlyCollection<IPoint> blocked);
-
-    /// <summary>
-    ///     Finds a valid direction to wander
-    /// </summary>
-    /// <param name="start">
-    ///     The current point
-    /// </param>
-    /// <param name="ignoreWalls">
-    ///     Whether or not to ignore walls
-    /// </param>
-    /// <param name="blocked">
-    ///     A collection of points to avoid
-    /// </param>
-    /// <returns>
-    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk
-    /// </returns>
-    Direction Wander(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked);
 }

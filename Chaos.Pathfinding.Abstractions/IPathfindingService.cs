@@ -34,7 +34,7 @@ public interface IPathfindingService
     /// </returns>
     /// <returns>
     /// </returns>
-    Direction Pathfind(
+    Stack<IPoint> FindPath(
         string gridKey,
         IPoint start,
         IPoint end,
@@ -43,15 +43,28 @@ public interface IPathfindingService
         int? limitRadius = null);
 
     /// <summary>
-    ///     Registers a grid with the pathfinding service
+    ///     Finds a valid direction to wander
     /// </summary>
     /// <param name="key">
-    ///     The key used to locate the grid
+    ///     The key of the grid to perform pathfinding on
     /// </param>
-    /// <param name="gridDetails">
-    ///     Required details about the grid
+    /// <param name="start">
+    ///     The current point
     /// </param>
-    void RegisterGrid(string key, IGridDetails gridDetails);
+    /// <param name="ignoreWalls">
+    ///     Whether or not to ignore walls
+    /// </param>
+    /// <param name="blocked">
+    ///     A collection of points to avoid
+    /// </param>
+    /// <returns>
+    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk
+    /// </returns>
+    Direction FindRandomDirection(
+        string key,
+        IPoint start,
+        bool ignoreWalls,
+        IReadOnlyCollection<IPoint> blocked);
 
     /// <summary>
     ///     Finds a direction to walk towards the end point. No path is calculated.
@@ -74,7 +87,7 @@ public interface IPathfindingService
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to move
     /// </returns>
-    public Direction SimpleWalk(
+    public Direction FindSimpleDirection(
         string gridKey,
         IPoint start,
         IPoint end,
@@ -82,26 +95,13 @@ public interface IPathfindingService
         IReadOnlyCollection<IPoint> blocked);
 
     /// <summary>
-    ///     Finds a valid direction to wander
+    ///     Registers a grid with the pathfinding service
     /// </summary>
     /// <param name="key">
-    ///     The key of the grid to perform pathfinding on
+    ///     The key used to locate the grid
     /// </param>
-    /// <param name="start">
-    ///     The current point
+    /// <param name="gridDetails">
+    ///     Required details about the grid
     /// </param>
-    /// <param name="ignoreWalls">
-    ///     Whether or not to ignore walls
-    /// </param>
-    /// <param name="blocked">
-    ///     A collection of points to avoid
-    /// </param>
-    /// <returns>
-    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk
-    /// </returns>
-    Direction Wander(
-        string key,
-        IPoint start,
-        bool ignoreWalls,
-        IReadOnlyCollection<IPoint> blocked);
+    void RegisterGrid(string key, IGridDetails gridDetails);
 }

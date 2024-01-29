@@ -4,7 +4,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.DialogScripts.BankScripts;
 

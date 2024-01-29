@@ -14,12 +14,12 @@ public sealed class DeepCloneTests
         {
             IntValue = 1,
             StringValue = "Test",
-            IntList = new List<int>
-            {
+            IntList =
+            [
                 1,
                 2,
                 3
-            },
+            ],
             NestedClass = new MockClonable
             {
                 IntValue = 2
@@ -97,12 +97,12 @@ public sealed class DeepCloneTests
             {
                 IntValue = 1,
                 StringValue = "Test1",
-                IntList = new List<int>
-                {
+                IntList =
+                [
                     1,
                     2,
                     3
-                },
+                ],
                 NestedClass = new MockClonable
                 {
                     IntValue = 2
@@ -112,12 +112,12 @@ public sealed class DeepCloneTests
             {
                 IntValue = 2,
                 StringValue = "Test2",
-                IntList = new List<int>
-                {
+                IntList =
+                [
                     4,
                     5,
                     6
-                },
+                ],
                 NestedClass = new MockClonable
                 {
                     IntValue = 3

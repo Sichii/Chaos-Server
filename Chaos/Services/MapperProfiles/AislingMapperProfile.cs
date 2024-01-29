@@ -13,7 +13,6 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -145,7 +144,7 @@ public sealed class AislingMapperProfile(
     AttributesArgs IMapperProfile<Aisling, AttributesArgs>.Map(Aisling obj)
         => new()
         {
-            Ability = (byte)obj.UserStatSheet.Ability,
+            Ability = (byte)obj.UserStatSheet.AbilityLevel,
             Ac = (sbyte)Math.Clamp(
                 obj.UserStatSheet.EffectiveAc,
                 WorldOptions.Instance.MinimumAislingAc,

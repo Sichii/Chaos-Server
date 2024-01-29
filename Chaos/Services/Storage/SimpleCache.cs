@@ -1,5 +1,4 @@
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Chaos.Services.Storage;
 

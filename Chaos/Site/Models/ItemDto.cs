@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Site.Models;
 
-public class ItemDto
+public sealed class ItemDto
 {
     public int? AbilityLevel { get; set; }
     public int? Ac { get; set; }

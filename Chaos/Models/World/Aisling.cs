@@ -29,7 +29,6 @@ using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Models.World;
 
@@ -184,10 +183,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         HairColor = hairColor;
         UserStatSheet = UserStatSheet.NewCharacter;
 
-        Titles = new TitleList
-        {
-            string.Empty
-        };
+        Titles = [string.Empty];
 
         ChannelSettings.AddRange(WorldOptions.Instance.DefaultChannels.Select(x => new ChannelSettings(x.ChannelName)));
     }

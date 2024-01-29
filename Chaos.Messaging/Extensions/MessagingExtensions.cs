@@ -30,6 +30,7 @@ public static class MessagingExtensions
         Action<IChannelService>? configure = null)
     {
         services.AddOptionsFromConfig<ChannelServiceOptions>(optionsSubSection);
+        services.ConfigureOptions<ChannelServiceOptionsConfigurer>();
 
         services.AddSingleton<IChannelService, ChannelService>(
             sp =>

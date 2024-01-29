@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 
 namespace Chaos.Site.Models;
 
-public class SpellDto
+public sealed class SpellDto
 {
     public int? AbilityLevel { get; set; }
     public AdvClass? AdvClass { get; set; }

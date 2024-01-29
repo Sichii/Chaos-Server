@@ -29,8 +29,6 @@ public interface IChannelService
     /// </summary>
     /// <param name="channelName">
     /// </param>
-    /// <returns>
-    /// </returns>
     IEnumerable<IChannelSubscriber> GetSubscribers(string channelName);
 
     /// <summary>
@@ -94,6 +92,11 @@ public interface IChannelService
     ///     The name of the channel
     /// </param>
     void LeaveChannel(IChannelSubscriber subscriber, string channelName);
+
+    /// <summary>
+    ///     Prepends the channel prefix to the string if it is not already present
+    /// </summary>
+    string PrependPrefix(string channelName);
 
     /// <summary>
     ///     Registers a channel, allowing you to send and receive messages to/from it

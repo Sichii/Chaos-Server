@@ -5,7 +5,7 @@ using Chaos.Storage.Abstractions;
 
 namespace Chaos.Site.Services;
 
-public class SkillDtoRepository : IEnumerable<SkillDto>
+public sealed class SkillDtoRepository : IEnumerable<SkillDto>
 {
     private List<SkillDto> SkillDtos { get; }
 

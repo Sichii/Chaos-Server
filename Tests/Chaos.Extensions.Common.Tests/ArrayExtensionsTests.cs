@@ -57,18 +57,16 @@ public sealed class ArrayExtensionsTests
         // Arrange
         var jaggedArray = new[]
         {
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            },
-            new[]
-            {
+            ],
+            [
                 4,
                 5,
                 6
-            },
+            ],
             new[]
             {
                 7,

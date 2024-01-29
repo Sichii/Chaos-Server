@@ -25,10 +25,8 @@ using Chaos.Packets.Abstractions.Definitions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ProfileArgs = Chaos.Networking.Entities.Client.ProfileArgs;
-using UnequipArgs = Chaos.Networking.Entities.Client.UnequipArgs;
+using UnequipArgs = Chaos.Networking.Entities.Server.UnequipArgs;
 
 namespace Chaos.Networking;
 
@@ -572,7 +570,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendProfile(Aisling aisling)
     {
-        var args = Mapper.Map<ProfileArgs>(aisling);
+        var args = Mapper.Map<OtherProfileArgs>(aisling);
 
         Send(args);
     }

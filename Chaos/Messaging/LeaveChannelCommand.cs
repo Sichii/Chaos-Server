@@ -16,6 +16,8 @@ public class LeaveChannelCommand(IChannelService channelService) : ICommand<Aisl
         if (!args.TryGetNext<string>(out var channelName))
             return default;
 
+        channelName = ChannelService.PrependPrefix(channelName);
+
         source.ChannelSettings.Remove(new ChannelSettings(channelName));
         ChannelService.LeaveChannel(source, channelName);
 

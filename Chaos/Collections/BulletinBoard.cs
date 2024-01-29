@@ -9,7 +9,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.BulletinBoardScripts.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 

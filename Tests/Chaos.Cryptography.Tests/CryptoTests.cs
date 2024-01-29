@@ -10,14 +10,13 @@ public sealed class CryptoTests
 {
     private readonly Crypto Crypto = new(
         0,
-        new byte[]
-        {
+        [
             1,
             2,
             3,
             4,
             5
-        });
+        ]);
 
     [Fact]
     public void Should_GenerateKey_With_Valid_A_And_B()

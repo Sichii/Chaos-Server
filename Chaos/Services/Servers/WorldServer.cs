@@ -28,7 +28,6 @@ using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
@@ -1013,9 +1012,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             }
 
             //get args if the type is not a "menuWithArgs", this type should not have any new args
-            if (dialog.Type is not ChaosDialogType.MenuWithArgs && (localArgs.Args != null))
+            if (dialog.Type is not ChaosDialogType.MenuWithArgs)
             {
-                dialog.MenuArgs = new ArgumentCollection(dialog.MenuArgs.Append(localArgs.Args.Last()));
+                if (localArgs.Args != null)
+                    dialog.MenuArgs = new ArgumentCollection(dialog.MenuArgs.Append(localArgs.Args.Last()));
 
                 //handle SlotOrLength as an arg (since it is an arg)
                 if (localArgs.Slot.HasValue)
@@ -1157,11 +1157,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnUnequip(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<UnequipArgs>(in packet);
+        var args = PacketSerializer.Deserialize<UnequipRequestArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnUnequip);
 
-        static ValueTask InnerOnUnequip(IWorldClient localClient, UnequipArgs localArgs)
+        static ValueTask InnerOnUnequip(IWorldClient localClient, UnequipRequestArgs localArgs)
         {
             localClient.Aisling.UnEquip(localArgs.EquipmentSlot);
 

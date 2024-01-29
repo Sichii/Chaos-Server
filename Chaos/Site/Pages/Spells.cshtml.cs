@@ -1,5 +1,4 @@
 using System.Text.Json;
-using AutoMapper;
 using Chaos.Site.Models;
 using Chaos.Site.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +7,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Chaos.Site.Pages;
 
 [IgnoreAntiforgeryToken]
-public class Spells(SpellDtoRepository spellDtoRepository, QueryService queryService, IMapper mapper) : PageModel
+public class Spells(SpellDtoRepository spellDtoRepository, QueryService queryService) : PageModel
 {
-    private readonly IMapper Mapper = mapper;
     private readonly QueryService QueryService = queryService;
     private readonly SpellDtoRepository SpellDtoRepository = spellDtoRepository;
     public static string ColumnDefsJson { get; private set; }
@@ -47,8 +45,7 @@ public class Spells(SpellDtoRepository spellDtoRepository, QueryService querySer
     public JsonResult OnPostSpellPage([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(SpellDtoRepository, rowParams);
-        var ret = Mapper.Map<IEnumerable<SpellDto>>(query);
 
-        return new JsonResult(ret);
+        return new JsonResult(query);
     }
 }

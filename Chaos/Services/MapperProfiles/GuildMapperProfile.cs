@@ -13,7 +13,12 @@ public class GuildMapperProfile(IChannelService channelService, IClientRegistry<
     private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
-    public Guild Map(GuildSchema obj) => new(obj.Name, ChannelService, ClientRegistry);
+    public Guild Map(GuildSchema obj)
+        => new(
+            obj.Name,
+            obj.Guid,
+            ChannelService,
+            ClientRegistry);
 
     /// <inheritdoc />
     public GuildSchema Map(Guild obj)

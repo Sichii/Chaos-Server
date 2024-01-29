@@ -78,7 +78,7 @@ public sealed class Pathfinder : IPathfinder
     /// <param name="limitRadius">
     ///     Specify a max radius to use for path calculation, this can help with performance by limiting node discovery
     /// </param>
-    public Direction Pathfind(
+    public Stack<IPoint> FindPath(
         IPoint start,
         IPoint end,
         bool ignoreWalls,
@@ -88,32 +88,51 @@ public sealed class Pathfinder : IPathfinder
         //if we're standing on the end already
         //try to walk out from under it
         if (PointEqualityComparer.Instance.Equals(start, end))
-            return Wander(start, ignoreWalls, blocked);
+        {
+            var randomPoint = FindRandomPoint(start, ignoreWalls, blocked);
+
+            if (randomPoint.HasValue)
+                return new Stack<IPoint>([randomPoint.Value]);
+
+            return new Stack<IPoint>();
+        }
 
         if (start.DistanceFrom(end) == 1)
-            return end.DirectionalRelationTo(start);
+            return new Stack<IPoint>();
 
-        var nextPoint = FindOptimalPoint(
-            start,
-            end,
-            ignoreWalls,
-            blocked,
-            limitRadius);
+        using var @lock = Sync.Enter();
 
-        //failed to find path
-        //find a direction to walk(if any) via simple logic
-        if (nextPoint == null)
-            return SimpleWalk(
-                start,
-                end,
-                ignoreWalls,
-                blocked);
+        var blockedPoints = blocked.ToList();
+        List<Point>? subGrid = null;
 
-        return nextPoint.DirectionalRelationTo(start);
+        if (limitRadius.HasValue)
+            subGrid = start.SpiralSearch(limitRadius.Value)
+                           .ToList();
+
+        InitializeGrid(blockedPoints, subGrid);
+
+        var path = InnerFindPath(start, end, ignoreWalls);
+
+        PriortyQueue.Clear();
+
+        ResetGrid(blockedPoints, subGrid);
+
+        return path;
     }
 
     /// <inheritdoc />
-    public Direction SimpleWalk(
+    public Direction FindRandomDirection(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
+    {
+        var optimalPoint = FindRandomPoint(start, ignoreWalls, blocked);
+
+        if (!optimalPoint.HasValue)
+            return Direction.Invalid;
+
+        return optimalPoint.Value.DirectionalRelationTo(start);
+    }
+
+    /// <inheritdoc />
+    public Direction FindSimpleDirection(
         IPoint start,
         IPoint end,
         bool ignoreWalls,
@@ -133,99 +152,12 @@ public sealed class Pathfinder : IPathfinder
         return optimalPoint.Value.DirectionalRelationTo(start);
     }
 
-    /// <inheritdoc />
-    public Direction Wander(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
-    {
-        var optimalPoint = GetFirstWalkablePoint(
+    private Point? FindRandomPoint(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
+        => GetFirstWalkablePoint(
             start.GenerateCardinalPoints()
                  .Shuffle(),
             ignoreWalls,
             blocked);
-
-        if (!optimalPoint.HasValue)
-            return Direction.Invalid;
-
-        return optimalPoint.Value.DirectionalRelationTo(start);
-    }
-
-    private IPoint? FindOptimalPoint(
-        IPoint start,
-        IPoint end,
-        bool ignoreWalls,
-        IEnumerable<IPoint> blocked,
-        int? limitRadius = null)
-    {
-        using var @lock = Sync.Enter();
-
-        var blockedPoints = blocked.ToList();
-        List<Point>? subGrid = null;
-
-        if (limitRadius.HasValue)
-            subGrid = start.SpiralSearch(limitRadius.Value)
-                           .ToList();
-
-        InitializeGrid(blockedPoints, subGrid);
-
-        var path = FindPath(start, end, ignoreWalls);
-        var ret = path.FirstOrDefault();
-
-        PriortyQueue.Clear();
-
-        ResetGrid(blockedPoints, subGrid);
-
-        return ret;
-    }
-
-    private IEnumerable<IPoint> FindPath(IPoint start, IPoint end, bool ignoreWalls)
-    {
-        var startNode = PathNodes[start.X, start.Y];
-        var endNode = PathNodes[end.X, end.Y];
-        PriortyQueue.Enqueue(startNode, 0);
-
-        while (PriortyQueue.Count > 0)
-        {
-            var node = PriortyQueue.Dequeue();
-
-            if (node.Closed)
-                continue;
-
-            NeighborIndexes.ShuffleInPlace();
-
-            //for each undiscovered walkable neighbor, set it's parent and add it to the queue
-            for (var i = 0; i < 4; i++)
-            {
-                //get a random neighbor
-                var neighbor = node.Neighbors[NeighborIndexes[i]];
-
-                if ((neighbor == null) || neighbor.Closed || neighbor.Open)
-                    continue;
-
-                //if we locate the end, set parent and break out
-                //we're ok with this even if the end is inside a wall
-                if (neighbor.Equals(end))
-                {
-                    neighbor.Parent = node;
-
-                    return TracePath(endNode);
-                }
-
-                //don't re-add nodes we've already considered
-                //don't add walls unless ignoring walls
-                //dont add blocked nodes
-                if (!neighbor.IsWalkable(ignoreWalls))
-                    continue;
-
-                neighbor.Parent = node;
-                PriortyQueue.Enqueue(neighbor, neighbor.DistanceFrom(start) + neighbor.DistanceFrom(end));
-                neighbor.Open = true;
-            }
-
-            node.Closed = true;
-            node.Open = false;
-        }
-
-        return TracePath(endNode);
-    }
 
     private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
         => points.FirstOrDefault(
@@ -274,6 +206,57 @@ public sealed class Pathfinder : IPathfinder
                 PathNodes[point.X, point.Y].IsBlocked = true;
     }
 
+    private Stack<IPoint> InnerFindPath(IPoint start, IPoint end, bool ignoreWalls)
+    {
+        var startNode = PathNodes[start.X, start.Y];
+        var endNode = PathNodes[end.X, end.Y];
+        PriortyQueue.Enqueue(startNode, 0);
+
+        while (PriortyQueue.Count > 0)
+        {
+            var node = PriortyQueue.Dequeue();
+
+            if (node.Closed)
+                continue;
+
+            NeighborIndexes.ShuffleInPlace();
+
+            //for each undiscovered walkable neighbor, set it's parent and add it to the queue
+            for (var i = 0; i < 4; i++)
+            {
+                //get a random neighbor
+                var neighbor = node.Neighbors[NeighborIndexes[i]];
+
+                if ((neighbor == null) || neighbor.Closed || neighbor.Open)
+                    continue;
+
+                //if we locate the end, set parent and break out
+                //we're ok with this even if the end is inside a wall
+                if (neighbor.Equals(end))
+                {
+                    neighbor.Parent = node;
+
+                    return new Stack<IPoint>(GetParentChain(endNode));
+                }
+
+                //don't re-add nodes we've already considered
+                //don't add walls unless ignoring walls
+                //dont add blocked nodes
+                if (!neighbor.IsWalkable(ignoreWalls))
+                    continue;
+
+                neighbor.Parent = node;
+                PriortyQueue.Enqueue(neighbor, neighbor.DistanceFrom(start) + neighbor.DistanceFrom(end));
+                neighbor.Open = true;
+            }
+
+            node.Closed = true;
+            node.Open = false;
+        }
+
+        return new Stack<IPoint>(GetParentChain(endNode));
+    }
+
     private void ResetGrid(IEnumerable<IPoint> blocked, IEnumerable<Point>? subGrid = null)
     {
         //optimization to avoid boxing points
@@ -294,10 +277,6 @@ public sealed class Pathfinder : IPathfinder
             if (WithinGrid(point))
                 PathNodes[point.X, point.Y].IsBlocked = false;
     }
-
-    private IEnumerable<IPoint> TracePath(PathNode pathNode)
-        => GetParentChain(pathNode)
-            .Reverse();
 
     private bool WithinGrid<TPoint>(TPoint point) where TPoint: IPoint
         => (point.X >= 0) && (point.X < Width) && (point.Y >= 0) && (point.Y < Height);

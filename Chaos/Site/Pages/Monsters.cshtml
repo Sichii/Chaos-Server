@@ -1,0 +1,59 @@
+@page
+@using Chaos.Site.Pages
+@using Chaos.Site.Services
+@model Chaos.Site.Pages.Monsters
+@inject MonsterDtoRepository MonsterDtos
+
+@{
+    ViewData["Title"] = "Monsters";
+}
+
+<!-- AG Grid container -->
+<div id="MonsterGrid" class="chaos-grid ag-theme-alpine-auto-dark"></div>
+
+
+@section Scripts {
+    <!-- AG Grid script -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script src="~/Site/wwwroot/Styles/chaos-api.js"></script>
+    <script>
+        const columnDefs = @Html.Raw(Monsters.ColumnDefsJson);
+    
+        // AG Grid initialization and configuration
+        const gridOptions = {
+            autoSizeStrategy: {
+                type: 'fitCellContents'
+            },
+            rowModelType: 'infinite',
+            defaultColDef: {
+                sortable: true,
+                filter: true,
+                resizable: true,
+                flex: 1,
+                filterParams: {
+                    buttons: ['reset', 'apply'],
+                    closeOnApply: true,
+                    debounceMs: 200,
+                    defaultOption: 'equals',
+                    textFormatter: r => r
+                }
+            },
+            // specify the columns
+            columnDefs: columnDefs,
+            datasource: {
+                rowCount: @MonsterDtos.Count(),
+                getRows: function (params) {
+                    getMonsters(params)
+                        .then(result => {
+                            params.successCallback(result);
+                            grid.autoSizeAllColumns();
+                        });
+                },
+            }
+        };
+
+        const MonstersGridElement = document.querySelector('#MonsterGrid');
+        let grid = agGrid.createGrid(MonstersGridElement, gridOptions);
+        
+    </script>
+}

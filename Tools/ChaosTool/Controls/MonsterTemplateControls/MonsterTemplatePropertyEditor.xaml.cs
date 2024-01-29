@@ -40,7 +40,7 @@ public sealed partial class MonsterTemplatePropertyEditor
         MoveIntervalMsLbl.ToolTip = Helpers.GetPropertyDocs<MonsterTemplateSchema>(nameof(MonsterTemplateSchema.MoveIntervalMs));
         WanderIntervalMsLbl.ToolTip = Helpers.GetPropertyDocs<MonsterTemplateSchema>(nameof(MonsterTemplateSchema.WanderIntervalMs));
 
-        AbilityLbl.ToolTip = Helpers.GetPropertyDocs<StatSheetSchema>(nameof(MonsterTemplateSchema.StatSheet.Ability));
+        AbilityLbl.ToolTip = Helpers.GetPropertyDocs<StatSheetSchema>(nameof(MonsterTemplateSchema.StatSheet.AbilityLevel));
         LevelLbl.ToolTip = Helpers.GetPropertyDocs<StatSheetSchema>(nameof(MonsterTemplateSchema.StatSheet.Level));
         AtkSpeedPctLbl.ToolTip = Helpers.GetPropertyDocs<StatSheetSchema>(nameof(MonsterTemplateSchema.StatSheet.AtkSpeedPct));
         AcLbl.ToolTip = Helpers.GetPropertyDocs<StatSheetSchema>(nameof(MonsterTemplateSchema.StatSheet.Ac));

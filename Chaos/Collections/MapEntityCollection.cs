@@ -7,7 +7,6 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Time.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Collections;
 
@@ -65,6 +64,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         ValuesCases = new TypeSwitchExpression<IEnumerable>().Case<Aisling>(Aislings)
                                                              .Case<Monster>(Monsters)
                                                              .Case<Merchant>(Merchants)
+                                                             .Case<GroundItem>(() => GroundEntities.OfType<GroundItem>())
                                                              .Case<GroundEntity>(GroundEntities)
                                                              .Case<ReactorTile>(Reactors)
                                                              .Case<Door>(Doors)

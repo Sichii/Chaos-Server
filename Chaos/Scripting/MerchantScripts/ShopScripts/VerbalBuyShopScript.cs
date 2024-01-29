@@ -12,7 +12,6 @@ using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Humanizer;
-using Microsoft.Extensions.Logging;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts;
 
