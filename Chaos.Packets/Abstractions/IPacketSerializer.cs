@@ -29,14 +29,11 @@ public interface IPacketSerializer
     /// <summary>
     ///     Serializes the specified object implementing <see cref="IPacketSerializable" /> into a server packet.
     /// </summary>
-    /// <typeparam name="T">
-    ///     The type of object to serialize, which must implement <see cref="IPacketSerializable" />.
-    /// </typeparam>
     /// <param name="obj">
     ///     The object to serialize.
     /// </param>
     /// <returns>
     ///     A server packet representing the serialized <paramref name="obj" />.
     /// </returns>
-    Packet Serialize<T>(T obj) where T: IPacketSerializable;
+    Packet Serialize(IPacketSerializable obj);
 }

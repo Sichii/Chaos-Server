@@ -43,19 +43,18 @@ public sealed class PacketSerializer : IPacketSerializer
     }
 
     /// <inheritdoc />
-    public Packet Serialize<T>(T obj) where T: IPacketSerializable
+    public Packet Serialize(IPacketSerializable obj)
     {
-        if (obj is null)
-            throw new ArgumentNullException(nameof(obj));
+        ArgumentNullException.ThrowIfNull(obj);
 
-        var type = typeof(T);
+        var type = obj.GetType();
 
-        if (!Converters.TryGetValue(type, out var converter) || converter is not IPacketConverter<T> typedConverter)
+        if (!Converters.TryGetValue(type, out var converter))
             throw new InvalidOperationException($"No converter exists for type \"{type.FullName}\"");
 
         var packet = new Packet(converter.OpCode);
         var writer = new SpanWriter(Encoding);
-        typedConverter.Serialize(ref writer, obj);
+        converter.Serialize(ref writer, obj);
 
         packet.Buffer = writer.ToSpan();
 
