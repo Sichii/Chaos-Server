@@ -277,18 +277,28 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                   .WithProperty(this)
                   .LogTrace("[Snd] {Packet}", packet.ToString());
 
-        packet.IsEncrypted = Crypto.IsServerEncrypted(packet.OpCode);
+        packet.IsEncrypted = IsEncrypted(packet.OpCode);
 
         if (packet.IsEncrypted)
         {
             packet.Sequence = (byte)Interlocked.Increment(ref Sequence);
 
-            Crypto.Encrypt(ref packet);
+            Encrypt(ref packet);
         }
 
         var args = DequeueArgs(packet.ToMemory());
         Socket.SendAndForget(args, ReuseSocketAsyncEventArgs);
     }
+
+    /// <summary>
+    ///     Whether or not the packet with the specified opcode should be encrypted
+    /// </summary>
+    public abstract bool IsEncrypted(byte opCode);
+
+    /// <summary>
+    ///     Encrypts the packet
+    /// </summary>
+    public abstract void Encrypt(ref Packet packet);
 
     /// <inheritdoc />
     public virtual void Disconnect()
