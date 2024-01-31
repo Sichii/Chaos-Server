@@ -17,7 +17,6 @@ public sealed class ServerTableConverter : PacketConverterBase<ServerTableArgs>
     public override ServerTableArgs Deserialize(ref SpanReader reader)
     {
         var serverTable = reader.ReadData16();
-        _ = reader.ReadByte(); //LI: figure out what this is
 
         return new ServerTableArgs
         {
@@ -26,9 +25,5 @@ public sealed class ServerTableConverter : PacketConverterBase<ServerTableArgs>
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, ServerTableArgs args)
-    {
-        writer.WriteData16(args.ServerTable);
-        writer.WriteByte(2); //LI: figure out what this is
-    }
+    public override void Serialize(ref SpanWriter writer, ServerTableArgs args) => writer.WriteData16(args.ServerTable);
 }

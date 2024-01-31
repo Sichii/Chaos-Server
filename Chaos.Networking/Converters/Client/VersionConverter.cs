@@ -18,6 +18,8 @@ public sealed class VersionConverter : PacketConverterBase<VersionArgs>
     {
         var version = reader.ReadUInt16();
 
+        //4C 4B 00 TODO: what are these?
+
         return new VersionArgs
         {
             Version = version
@@ -25,5 +27,15 @@ public sealed class VersionConverter : PacketConverterBase<VersionArgs>
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, VersionArgs args) => writer.WriteUInt16(args.Version);
+    public override void Serialize(ref SpanWriter writer, VersionArgs args)
+    {
+        writer.WriteUInt16(args.Version);
+
+        writer.WriteBytes(
+            [
+                0x4C,
+                0x4B,
+                0x00
+            ]);
+    }
 }
