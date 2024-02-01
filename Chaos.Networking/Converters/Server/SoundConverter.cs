@@ -16,16 +16,24 @@ public sealed class SoundConverter : PacketConverterBase<SoundArgs>
     /// <inheritdoc />
     public override SoundArgs Deserialize(ref SpanReader reader)
     {
-        var isMusic = reader.ReadByte() == byte.MaxValue;
-        var sound = reader.ReadByte();
+        var indicatorOrIndex = reader.ReadByte();
 
-        if (isMusic)
+        if (indicatorOrIndex == byte.MaxValue)
+        {
+            var musicIndex = reader.ReadByte();
             _ = reader.ReadBytes(2); //LI: what is this for?
+
+            return new SoundArgs
+            {
+                IsMusic = true,
+                Sound = musicIndex
+            };
+        }
 
         return new SoundArgs
         {
-            IsMusic = isMusic,
-            Sound = sound
+            IsMusic = false,
+            Sound = indicatorOrIndex
         };
     }
 
