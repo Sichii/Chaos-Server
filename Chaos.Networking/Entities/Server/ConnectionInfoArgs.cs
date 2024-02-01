@@ -11,7 +11,7 @@ public sealed record ConnectionInfoArgs : IPacketSerializable
     /// <summary>
     ///     The encryption key that the client should use to encrypt packets
     /// </summary>
-    public byte[] Key { get; set; } = Array.Empty<byte>();
+    public string Key { get; set; } = string.Empty;
 
     /// <summary>
     ///     The seed that the client should use to encrypt packets

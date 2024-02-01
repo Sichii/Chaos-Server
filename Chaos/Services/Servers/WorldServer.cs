@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Collections.Common;
@@ -647,7 +648,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     EphemeralRandomIdGenerator<uint>.Shared.NextId,
                     Options.LoginRedirect,
                     ServerType.Login,
-                    localClient.Crypto.Key,
+                    Encoding.ASCII.GetString(localClient.Crypto.Key),
                     localClient.Crypto.Seed);
 
                 RedirectManager.Add(redirect);

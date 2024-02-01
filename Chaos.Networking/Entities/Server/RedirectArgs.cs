@@ -22,7 +22,7 @@ public sealed record RedirectArgs : IPacketSerializable
     /// <summary>
     ///     The key to use for encryption
     /// </summary>
-    public required byte[] Key { get; set; }
+    public required string Key { get; set; }
 
     /// <summary>
     ///     The string to use for salt generation for envryption

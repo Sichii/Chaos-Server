@@ -22,7 +22,7 @@ public sealed class RedirectConverter : PacketConverterBase<RedirectArgs>
 
         _ = reader.ReadByte(); //remaining bytes in packet
         var seed = reader.ReadByte();
-        var key = reader.ReadData8();
+        var key = reader.ReadString8();
         var name = reader.ReadString8();
         var id = reader.ReadUInt32();
 
@@ -59,7 +59,7 @@ public sealed class RedirectConverter : PacketConverterBase<RedirectArgs>
 
         writer.WriteByte((byte)remaining);
         writer.WriteByte(args.Seed); //1
-        writer.WriteData8(args.Key); //1 + length
+        writer.WriteString8(args.Key); //1 + length
         writer.WriteString8(args.Name); //1 + length
         writer.WriteUInt32(args.Id); //4
     }

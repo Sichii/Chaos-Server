@@ -16,7 +16,7 @@ public sealed record ClientRedirectedArgs : IPacketSerializable
     /// <summary>
     ///     The new encryption key to be used
     /// </summary>
-    public required byte[] Key { get; set; }
+    public required string Key { get; set; }
 
     /// <summary>
     ///     The name associated with the redirection. Can be a player name or something else

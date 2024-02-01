@@ -17,7 +17,7 @@ public sealed record Redirect : IRedirect
     public uint Id { get; }
 
     /// <inheritdoc />
-    public byte[] Key { get; }
+    public string Key { get; }
 
     /// <inheritdoc />
     public string Name { get; }
@@ -53,7 +53,7 @@ public sealed record Redirect : IRedirect
         uint id,
         IConnectionInfo serverInfo,
         ServerType type,
-        byte[] key,
+        string key,
         byte seed,
         string? name = null)
     {

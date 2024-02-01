@@ -1,3 +1,4 @@
+using System.Text;
 using Chaos.Cryptography.Abstractions.Definitions;
 using FluentAssertions;
 using Xunit;
@@ -10,13 +11,14 @@ public sealed class CryptoTests
 {
     private readonly Crypto Crypto = new(
         0,
-        [
-            1,
-            2,
-            3,
-            4,
-            5
-        ]);
+        Encoding.ASCII.GetString(
+            [
+                1,
+                2,
+                3,
+                4,
+                5
+            ]));
 
     [Fact]
     public void Should_GenerateKey_With_Valid_A_And_B()

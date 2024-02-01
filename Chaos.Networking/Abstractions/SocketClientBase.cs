@@ -60,7 +60,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
     public Socket Socket { get; }
 
-    private unsafe Span<byte> Buffer => new(MemoryHandle.Pointer, ushort.MaxValue);
+    private unsafe Span<byte> Buffer => new(MemoryHandle.Pointer, ushort.MaxValue * 4);
 
     private Memory<byte> Memory => MemoryOwner.Memory;
 
@@ -87,7 +87,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Crypto = crypto;
 
         //var buffer = new byte[ushort.MaxValue];
-        MemoryOwner = MemoryPool<byte>.Shared.Rent(ushort.MaxValue);
+        MemoryOwner = MemoryPool<byte>.Shared.Rent(ushort.MaxValue * 4);
         MemoryHandle = Memory.Pin();
         Logger = logger;
         PacketSerializer = packetSerializer;
@@ -281,7 +281,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         if (packet.IsEncrypted)
         {
-            packet.Sequence = (byte)Interlocked.Increment(ref Sequence);
+            packet.Sequence = (byte)(Interlocked.Increment(ref Sequence) - 1);
 
             Encrypt(ref packet);
         }

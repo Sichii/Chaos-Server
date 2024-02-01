@@ -26,7 +26,7 @@ public interface IRedirect
     /// <summary>
     ///     The cryptographic key used by the client
     /// </summary>
-    byte[] Key { get; }
+    string Key { get; }
 
     /// <summary>
     ///     The name of the client

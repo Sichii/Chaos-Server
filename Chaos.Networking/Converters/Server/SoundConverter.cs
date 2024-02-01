@@ -21,7 +21,6 @@ public sealed class SoundConverter : PacketConverterBase<SoundArgs>
         if (indicatorOrIndex == byte.MaxValue)
         {
             var musicIndex = reader.ReadByte();
-            _ = reader.ReadBytes(2); //LI: what is this for?
 
             return new SoundArgs
             {

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
@@ -221,7 +222,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
                 EphemeralRandomIdGenerator<uint>.Shared.NextId,
                 Options.WorldRedirect,
                 ServerType.World,
-                localClient.Crypto.Key,
+                Encoding.ASCII.GetString(localClient.Crypto.Key),
                 localClient.Crypto.Seed,
                 localArgs.Name);
 
