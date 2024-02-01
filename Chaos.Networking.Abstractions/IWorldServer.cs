@@ -17,7 +17,7 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     /// <summary>
     ///     Occurs when a client accesses a board or mail
     /// </summary>
-    ValueTask OnBoardRequest(TClient client, in Packet packet);
+    ValueTask OnBoardInteraction(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client uses an ability that has chant lines
@@ -42,12 +42,17 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     /// <summary>
     ///     Occurs when a client responds to a dialog
     /// </summary>
-    ValueTask OnDialogResponse(TClient client, in Packet packet);
+    ValueTask OnDialogInteraction(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client requests an object be re-sent
     /// </summary>
     ValueTask OnDisplayEntityRequest(TClient client, in Packet packet);
+
+    /// <summary>
+    ///     Occurs when a client responds to a request for profile data (portrait, text)
+    /// </summary>
+    ValueTask OnEditableProfile(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client uses an emote
@@ -57,7 +62,7 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     /// <summary>
     ///     Occurs when a client interacts with an exchange window
     /// </summary>
-    ValueTask OnExchange(TClient client, in Packet packet);
+    ValueTask OnExchangeInteraction(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client tries to log out
@@ -67,7 +72,7 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     /// <summary>
     ///     Occurs when a client drops gold on the ground
     /// </summary>
-    ValueTask OnGoldDropped(TClient client, in Packet packet);
+    ValueTask OnGoldDrop(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client drops gold on a creature
@@ -78,7 +83,7 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ///     Occurs when a client invites another player to a group, responds to a group invite, or creates or destroys a group
     ///     box
     /// </summary>
-    ValueTask OnGroupRequest(TClient client, in Packet packet);
+    ValueTask OnGroupInvite(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client ignores or un-ignores another player, or requests a list of ignored players
@@ -88,7 +93,7 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     /// <summary>
     ///     Occurs when a client drops an item on the ground
     /// </summary>
-    ValueTask OnItemDropped(TClient client, in Packet packet);
+    ValueTask OnItemDrop(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client drops an item on a creature
@@ -96,9 +101,19 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ValueTask OnItemDroppedOnCreature(TClient client, in Packet packet);
 
     /// <summary>
+    ///     Occurs when a client uses an item
+    /// </summary>
+    ValueTask OnItemUse(TClient client, in Packet packet);
+
+    /// <summary>
     ///     Occurs when a client requests tile data for the current map
     /// </summary>
     ValueTask OnMapDataRequest(TClient client, in Packet packet);
+
+    /// <summary>
+    ///     Occurs when a client responds to a merchant menu
+    /// </summary>
+    ValueTask OnMenuInteraction(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client requests metadata details or data
@@ -106,29 +121,19 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ValueTask OnMetaDataRequest(TClient client, in Packet packet);
 
     /// <summary>
+    ///     Occurs when a client toggles a user option
+    /// </summary>
+    ValueTask OnOptionToggle(TClient client, in Packet packet);
+
+    /// <summary>
     ///     Occurs when a client picks up an item from the ground
     /// </summary>
     ValueTask OnPickup(TClient client, in Packet packet);
 
     /// <summary>
-    ///     Occurs when a client responds to a request for profile data (portrait, text)
-    /// </summary>
-    ValueTask OnProfile(TClient client, in Packet packet);
-
-    /// <summary>
-    ///     Occurs when a client requests the profile of another player
-    /// </summary>
-    ValueTask OnProfileRequest(TClient client, in Packet packet);
-
-    /// <summary>
     ///     Occurs when a client sends a publicly visible message
     /// </summary>
     ValueTask OnPublicMessage(TClient client, in Packet packet);
-
-    /// <summary>
-    ///     Occurs when a client responds to a merchant menu
-    /// </summary>
-    ValueTask OnPursuitRequest(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client requests to raise a stat
@@ -141,6 +146,16 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ValueTask OnRefreshRequest(TClient client, in Packet packet);
 
     /// <summary>
+    ///     Occurs when a client requests the profile of another player
+    /// </summary>
+    ValueTask OnSelfProfileRequest(TClient client, in Packet packet);
+
+    /// <summary>
+    ///     Occurs when a client uses a skill
+    /// </summary>
+    ValueTask OnSkillUse(TClient client, in Packet packet);
+
+    /// <summary>
     ///     Occurs when a client changes their social status
     /// </summary>
     ValueTask OnSocialStatus(TClient client, in Packet packet);
@@ -149,6 +164,11 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ///     Occurs when a client presses their spacebar
     /// </summary>
     ValueTask OnSpacebar(TClient client, in Packet packet);
+
+    /// <summary>
+    ///     Occurs when a client uses a spell
+    /// </summary>
+    ValueTask OnSpellUse(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client swaps two panel objects
@@ -169,26 +189,6 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ///     Occurs when a client unequips an item
     /// </summary>
     ValueTask OnUnequip(TClient client, in Packet packet);
-
-    /// <summary>
-    ///     Occurs when a client uses an item
-    /// </summary>
-    ValueTask OnUseItem(TClient client, in Packet packet);
-
-    /// <summary>
-    ///     Occurs when a client toggles a user option
-    /// </summary>
-    ValueTask OnUserOptionToggle(TClient client, in Packet packet);
-
-    /// <summary>
-    ///     Occurs when a client uses a skill
-    /// </summary>
-    ValueTask OnUseSkill(TClient client, in Packet packet);
-
-    /// <summary>
-    ///     Occurs when a client uses a spell
-    /// </summary>
-    ValueTask OnUseSpell(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client sends a private message to the server

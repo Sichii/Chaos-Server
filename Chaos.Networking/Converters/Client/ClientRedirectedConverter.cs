@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="ClientRedirectedArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="ClientRedirectedArgs" />
 /// </summary>
 public sealed class ClientRedirectedConverter : PacketConverterBase<ClientRedirectedArgs>
 {

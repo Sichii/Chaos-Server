@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="MetaDataRequestArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="MetaDataRequestArgs" />
 /// </summary>
 public sealed class MetaDataRequestConverter : PacketConverterBase<MetaDataRequestArgs>
 {

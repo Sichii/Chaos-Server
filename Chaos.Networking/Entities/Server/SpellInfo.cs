@@ -1,11 +1,12 @@
 using Chaos.Common.Definitions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
 ///     Represents the serialization of a spell in the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddSpellToPane" /> and
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Menu" /> packets
+///     <see cref="ServerOpCode.DisplayMenu" /> packets
 /// </summary>
 public sealed record SpellInfo
 {

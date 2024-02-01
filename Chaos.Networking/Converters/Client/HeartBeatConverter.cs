@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="HeartBeatArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="HeartBeatArgs" />
 /// </summary>
 public sealed class HeartBeatConverter : PacketConverterBase<HeartBeatArgs>
 {

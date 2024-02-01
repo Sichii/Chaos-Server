@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="SelfProfileArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="SelfProfileArgs" />
 /// </summary>
 public sealed class SelfProfileConverter : PacketConverterBase<SelfProfileArgs>
 {

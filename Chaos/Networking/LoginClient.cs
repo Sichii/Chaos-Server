@@ -38,7 +38,7 @@ public sealed class LoginClient : ConnectedClientBase, ILoginClient
         Mapper = mapper;
     }
 
-    public void SendLoginControls(LoginControlsType loginControlsType, string message)
+    public void SendLoginControl(LoginControlsType loginControlsType, string message)
     {
         var args = new LoginControlArgs
         {

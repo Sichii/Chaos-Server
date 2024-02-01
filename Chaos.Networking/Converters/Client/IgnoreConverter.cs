@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="IgnoreArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="IgnoreArgs" />
 /// </summary>
 public sealed class IgnoreConverter : PacketConverterBase<IgnoreArgs>
 {

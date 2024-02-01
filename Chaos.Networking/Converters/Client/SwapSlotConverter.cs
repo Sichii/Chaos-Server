@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="SwapSlotArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="SwapSlotArgs" />
 /// </summary>
 public sealed class SwapSlotConverter : PacketConverterBase<SwapSlotArgs>
 {

@@ -38,11 +38,6 @@ public interface IClient : ISocketClient
     ValueTask OnAttributes(in Packet packet);
 
     /// <summary>
-    ///     The world server is sending the client details about a board interaction
-    /// </summary>
-    ValueTask OnBoard(in Packet packet);
-
-    /// <summary>
     ///     The world server is sending the client details used to animate a creature's body
     /// </summary>
     ValueTask OnBodyAnimation(in Packet packet);
@@ -55,12 +50,7 @@ public interface IClient : ISocketClient
     /// <summary>
     ///     The world server is sending the client a confirmation that the aisling's attempt to walk was successful
     /// </summary>
-    ValueTask OnConfirmClientWalk(in Packet packet);
-
-    /// <summary>
-    ///     The world server is sending the client a confirmation for it's request to exit the world
-    /// </summary>
-    ValueTask OnConfirmExit(in Packet packet);
+    ValueTask OnClientWalkResponse(in Packet packet);
 
     /// <summary>
     ///     The login server is sending the client encryption details and the server table hash
@@ -83,14 +73,44 @@ public interface IClient : ISocketClient
     ValueTask OnCreatureWalk(in Packet packet);
 
     /// <summary>
-    ///     The world server is sending the client details about a dialog interaction
-    /// </summary>
-    ValueTask OnDialog(in Packet packet);
-
-    /// <summary>
     ///     The world server is sending the client details about all visible aislings
     /// </summary>
     ValueTask OnDisplayAislings(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client details about a board interaction
+    /// </summary>
+    ValueTask OnDisplayBoard(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client details about a dialog interaction
+    /// </summary>
+    ValueTask OnDisplayDialog(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client details about an exchange interaction
+    /// </summary>
+    ValueTask OnDisplayExchage(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client a group invite
+    /// </summary>
+    ValueTask OnDisplayGroupInvite(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client details about a menu interaction
+    /// </summary>
+    ValueTask OnDisplayMenu(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client a public message
+    /// </summary>
+    ValueTask OnDisplayPublicMessage(in Packet packet);
+
+    /// <summary>
+    ///     The world server is sending the client details about an item being unequipped
+    /// </summary>
+    ValueTask OnDisplayUnequip(in Packet packet);
 
     /// <summary>
     ///     The world server is sending the client a collection of entities that are visible to the aisling
@@ -103,6 +123,11 @@ public interface IClient : ISocketClient
     ValueTask OnDoor(in Packet packet);
 
     /// <summary>
+    ///     The world server is sending the client a request for profile data
+    /// </summary>
+    ValueTask OnEditableProfileRequest(in Packet packet);
+
+    /// <summary>
     ///     The world server is sending the client details about an effect to display in the effect bar
     /// </summary>
     ValueTask OnEffect(in Packet packet);
@@ -113,14 +138,14 @@ public interface IClient : ISocketClient
     ValueTask OnEquipment(in Packet packet);
 
     /// <summary>
+    ///     The world server is sending the client a confirmation for it's request to exit the world
+    /// </summary>
+    ValueTask OnExitResponse(in Packet packet);
+
+    /// <summary>
     ///     The world server is sending the client data for a packet it wants the client to send back to it
     /// </summary>
     ValueTask OnForceClientPacket(in Packet packet);
-
-    /// <summary>
-    ///     The world server is sending the client a group invite
-    /// </summary>
-    ValueTask OnGroupInvite(in Packet packet);
 
     /// <summary>
     ///     The world server is sending the client details about a creature's health bar
@@ -145,7 +170,7 @@ public interface IClient : ISocketClient
     /// <summary>
     ///     The login server is sending the client some background data
     /// </summary>
-    ValueTask OnLoginControls(in Packet packet);
+    ValueTask OnLoginControl(in Packet packet);
 
     /// <summary>
     ///     The login server is sending the client a message
@@ -183,11 +208,6 @@ public interface IClient : ISocketClient
     ValueTask OnMapLoadComplete(in Packet packet);
 
     /// <summary>
-    ///     The world server is sending the client details about a menu interaction
-    /// </summary>
-    ValueTask OnMenu(in Packet packet);
-
-    /// <summary>
     ///     The login or world server is sending the client a request for metadata or checking it's current metadata
     /// </summary>
     ValueTask OnMetaData(in Packet packet);
@@ -200,17 +220,7 @@ public interface IClient : ISocketClient
     /// <summary>
     ///     The world server is sending the client details about another aisling's profile
     /// </summary>
-    ValueTask OnProfile(in Packet packet);
-
-    /// <summary>
-    ///     The world server is sending the client a request for profile data
-    /// </summary>
-    ValueTask OnProfileRequest(in Packet packet);
-
-    /// <summary>
-    ///     The world server is sending the client a public message
-    /// </summary>
-    ValueTask OnPublicMessage(in Packet packet);
+    ValueTask OnOtherProfile(in Packet packet);
 
     /// <summary>
     ///     The server is sending the client details about another server that the client needs to connect to
@@ -248,11 +258,6 @@ public interface IClient : ISocketClient
     ValueTask OnSelfProfile(in Packet packet);
 
     /// <summary>
-    ///     The world server is sending the client details about an exchange interaction
-    /// </summary>
-    ValueTask OnServerExchage(in Packet packet);
-
-    /// <summary>
     ///     The world server is sending the client a private message
     /// </summary>
     ValueTask OnServerMessage(in Packet packet);
@@ -271,11 +276,6 @@ public interface IClient : ISocketClient
     ///     The server is sending the client a value used to gauge latency
     /// </summary>
     ValueTask OnSynchronizeTicks(in Packet packet);
-
-    /// <summary>
-    ///     The world server is sending the client details about an item being unequipped
-    /// </summary>
-    ValueTask OnUnequip(in Packet packet);
 
     /// <summary>
     ///     The world server is sending the client it's id and some details about the aisling

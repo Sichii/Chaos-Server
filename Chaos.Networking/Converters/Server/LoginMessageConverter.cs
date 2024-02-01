@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="LoginMessageArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="LoginMessageArgs" />
 /// </summary>
 public sealed class LoginMessageConverter : PacketConverterBase<LoginMessageArgs>
 {

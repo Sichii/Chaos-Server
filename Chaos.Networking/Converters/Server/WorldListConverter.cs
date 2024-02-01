@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="WorldListArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="WorldListArgs" />
 /// </summary>
 public sealed class WorldListConverter : PacketConverterBase<WorldListArgs>
 {

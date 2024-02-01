@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="NotepadArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="NotepadArgs" />
 /// </summary>
 public sealed class NotepadConverter : PacketConverterBase<NotepadArgs>
 {

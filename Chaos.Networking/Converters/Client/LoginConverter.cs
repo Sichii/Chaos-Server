@@ -8,7 +8,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="LoginArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="LoginArgs" />
 /// </summary>
 public sealed class LoginConverter : PacketConverterBase<LoginArgs>
 {

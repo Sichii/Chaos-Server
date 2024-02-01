@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="CooldownArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="CooldownArgs" />
 /// </summary>
 public sealed class CooldownConverter : PacketConverterBase<CooldownArgs>
 {

@@ -24,9 +24,7 @@ using Chaos.Packets.Abstractions;
 using Chaos.Packets.Abstractions.Definitions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
-using Chaos.Utilities;
 using Microsoft.Extensions.Options;
-using UnequipArgs = Chaos.Networking.Entities.Server.UnequipArgs;
 
 namespace Chaos.Networking;
 
@@ -103,7 +101,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
     /// <inheritdoc />
     public void SendBoard(BoardBase boardBase, short? startPostId = null)
     {
-        var args = new BoardArgs
+        var args = new DisplayBoardArgs
         {
             Type = boardBase is MailBox ? BoardOrResponseType.MailBoard : BoardOrResponseType.PublicBoard,
             Board = Mapper.Map<BoardInfo>(boardBase),
@@ -115,7 +113,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendBoardList(IEnumerable<BoardBase> boards)
     {
-        var args = new BoardArgs
+        var args = new DisplayBoardArgs
         {
             Type = BoardOrResponseType.BoardList,
             Boards = Mapper.MapMany<BoardBase, BoardInfo>(boards)
@@ -127,7 +125,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendBoardResponse(BoardOrResponseType responseType, string message, bool success)
     {
-        var args = new BoardArgs
+        var args = new DisplayBoardArgs
         {
             Type = responseType,
             ResponseMessage = message,
@@ -162,26 +160,17 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendCancelCasting()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.CancelCasting, PacketSerializer.Encoding);
-        Send(ref packet);
-    }
-
-    public void SendConfirmClientWalk(Point oldPoint, Direction direction)
-    {
-        var args = new ConfirmClientWalkArgs
-        {
-            Direction = direction,
-            OldPoint = oldPoint
-        };
+        var args = new CancelCastingArgs();
 
         Send(args);
     }
 
-    public void SendConfirmExit()
+    public void SendClientWalkResponse(Point oldPoint, Direction direction)
     {
-        var args = new ConfirmExitArgs
+        var args = new ClientWalkResponseArgs
         {
-            ExitConfirmed = true
+            Direction = direction,
+            OldPoint = oldPoint
         };
 
         Send(args);
@@ -230,25 +219,6 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         Send(args);
     }
 
-    /// <inheritdoc />
-    public void SendDialog(Dialog dialog)
-    {
-        var dialogType = dialog.Type.ToDialogType();
-        var menuType = dialog.Type.ToMenuType();
-
-        if (dialogType != null)
-        {
-            var args = Mapper.Map<DialogArgs>(dialog);
-
-            Send(args);
-        } else if (menuType != null)
-        {
-            var args = Mapper.Map<MenuArgs>(dialog);
-
-            Send(args);
-        }
-    }
-
     public void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false)
     {
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
@@ -281,6 +251,58 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         Send(args);
     }
 
+    /// <inheritdoc />
+    public void SendDisplayDialog(Dialog dialog)
+    {
+        var dialogType = dialog.Type.ToDialogType();
+        var menuType = dialog.Type.ToMenuType();
+
+        if (dialogType != null)
+        {
+            var args = Mapper.Map<DisplayDialogArgs>(dialog);
+
+            Send(args);
+        } else if (menuType != null)
+        {
+            var args = Mapper.Map<DisplayMenuArgs>(dialog);
+
+            Send(args);
+        }
+    }
+
+    public void SendDisplayGroupInvite(GroupRequestType groupRequestType, string fromName)
+    {
+        var args = new DisplayGroupInviteArgs
+        {
+            GroupRequestType = groupRequestType,
+            SourceName = fromName
+        };
+
+        Send(args);
+    }
+
+    public void SendDisplayPublicMessage(uint sourceId, PublicMessageType publicMessageType, string message)
+    {
+        var args = new DisplayPublicMessageArgs
+        {
+            SourceId = sourceId,
+            PublicMessageType = publicMessageType,
+            Message = message
+        };
+
+        Send(args);
+    }
+
+    public void SendDisplayUnequip(EquipmentSlot equipmentSlot)
+    {
+        var args = new DisplayUnequipArgs
+        {
+            EquipmentSlot = equipmentSlot
+        };
+
+        Send(args);
+    }
+
     public void SendDoors(IEnumerable<Door> doors, bool ignoreObservability = false)
     {
         if (!ignoreObservability)
@@ -294,6 +316,13 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
         if (args.Doors.Any())
             Send(args);
+    }
+
+    public void SendEditableProfileRequest()
+    {
+        var args = new EditableProfileRequestArgs();
+
+        Send(args);
     }
 
     public void SendEffect(EffectColor effectColor, byte effectIcon)
@@ -320,7 +349,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendExchangeAccepted(bool persistExchange)
     {
-        var args = new ServerExchangeArgs
+        var args = new DisplayExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.Accept,
             PersistExchange = persistExchange,
@@ -332,7 +361,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendExchangeAddItem(bool rightSide, byte index, Item item)
     {
-        var args = new ServerExchangeArgs
+        var args = new DisplayExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.AddItem,
             RightSide = rightSide,
@@ -350,7 +379,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendExchangeCancel(bool rightSide)
     {
-        var args = new ServerExchangeArgs
+        var args = new DisplayExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.Cancel,
             RightSide = rightSide,
@@ -362,7 +391,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendExchangeRequestAmount(byte slot)
     {
-        var args = new ServerExchangeArgs
+        var args = new DisplayExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.RequestAmount,
             FromSlot = slot
@@ -373,7 +402,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendExchangeSetGold(bool rightSide, int amount)
     {
-        var args = new ServerExchangeArgs
+        var args = new DisplayExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.SetGold,
             RightSide = rightSide,
@@ -385,7 +414,7 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendExchangeStart(Aisling fromAisling)
     {
-        var args = new ServerExchangeArgs
+        var args = new DisplayExchangeArgs
         {
             ExchangeResponseType = ExchangeResponseType.StartExchange,
             OtherUserId = fromAisling.Id,
@@ -395,23 +424,22 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendForcedClientPacket(ref Packet packet)
+    public void SendExitResponse()
     {
-        var args = new ForceClientPacketArgs
+        var args = new ExitResponseArgs
         {
-            ClientOpCode = (ClientOpCode)packet.OpCode,
-            Data = packet.Buffer.ToArray()
+            ExitConfirmed = true
         };
 
         Send(args);
     }
 
-    public void SendGroupRequest(GroupRequestType groupRequestType, string fromName)
+    public void SendForceClientPacket(ref Packet packet)
     {
-        var args = new GroupRequestArgs
+        var args = new ForceClientPacketArgs
         {
-            GroupRequestType = groupRequestType,
-            SourceName = fromName
+            ClientOpCode = (ClientOpCode)packet.OpCode,
+            Data = packet.Buffer.ToArray()
         };
 
         Send(args);
@@ -452,24 +480,16 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendMapChangeComplete()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.MapChangeComplete, PacketSerializer.Encoding, new byte[2]);
+        var args = new MapChangeCompleteArgs();
 
-        Send(ref packet);
+        Send(args);
     }
 
     public void SendMapChangePending()
     {
-        var packet = ServerPacketEx.FromData(
-            ServerOpCode.MapChangePending,
-            PacketSerializer.Encoding,
-            3,
-            0,
-            0,
-            0,
-            0,
-            0);
+        var args = new MapChangePendingArgs();
 
-        Send(ref packet);
+        Send(args);
     }
 
     public void SendMapData()
@@ -499,9 +519,9 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendMapLoadComplete()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.MapLoadComplete, PacketSerializer.Encoding, 0);
+        var args = new MapLoadCompleteArgs();
 
-        Send(ref packet);
+        Send(args);
     }
 
     public void SendMetaData(MetaDataRequestType metaDataRequestType, IMetaDataStore metaDataStore, string? name = null)
@@ -556,9 +576,16 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         Send(args);
     }
 
+    public void SendOtherProfile(Aisling aisling)
+    {
+        var args = Mapper.Map<OtherProfileArgs>(aisling);
+
+        Send(args);
+    }
+
     public void SendPost(Post post, bool isMail, bool enablePrevBtn = true)
     {
-        var args = new BoardArgs
+        var args = new DisplayBoardArgs
         {
             Type = isMail ? BoardOrResponseType.MailPost : BoardOrResponseType.PublicPost,
             Post = Mapper.Map<PostInfo>(post),
@@ -568,37 +595,11 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         Send(args);
     }
 
-    public void SendProfile(Aisling aisling)
-    {
-        var args = Mapper.Map<OtherProfileArgs>(aisling);
-
-        Send(args);
-    }
-
-    public void SendProfileRequest()
-    {
-        var packet = ServerPacketEx.FromData(ServerOpCode.ProfileRequest, PacketSerializer.Encoding);
-
-        Send(ref packet);
-    }
-
-    public void SendPublicMessage(uint sourceId, PublicMessageType publicMessageType, string message)
-    {
-        var args = new PublicMessageArgs
-        {
-            SourceId = sourceId,
-            PublicMessageType = publicMessageType,
-            Message = message
-        };
-
-        Send(args);
-    }
-
     public void SendRefreshResponse()
     {
-        var packet = ServerPacketEx.FromData(ServerOpCode.RefreshResponse, PacketSerializer.Encoding);
+        var args = new RefreshResponseArgs();
 
-        Send(ref packet);
+        Send(args);
     }
 
     public void SendRemoveEntity(uint id)
@@ -668,16 +669,6 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         {
             Sound = sound,
             IsMusic = isMusic
-        };
-
-        Send(args);
-    }
-
-    public void SendUnequip(EquipmentSlot equipmentSlot)
-    {
-        var args = new UnequipArgs
-        {
-            EquipmentSlot = equipmentSlot
         };
 
         Send(args);

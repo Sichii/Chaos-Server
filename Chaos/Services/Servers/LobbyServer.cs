@@ -93,7 +93,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
                     break;
                 case ServerTableRequestType.RequestTable:
-                    client.SendServerTable(ServerTable);
+                    client.SendServerTableResponse(ServerTable);
 
                     break;
                 default:

@@ -6,24 +6,24 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="DisplayChantArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="ChantArgs" />
 /// </summary>
-public sealed class ChantConverter : PacketConverterBase<DisplayChantArgs>
+public sealed class ChantConverter : PacketConverterBase<ChantArgs>
 {
     /// <inheritdoc />
     public override byte OpCode => (byte)ClientOpCode.Chant;
 
     /// <inheritdoc />
-    public override DisplayChantArgs Deserialize(ref SpanReader reader)
+    public override ChantArgs Deserialize(ref SpanReader reader)
     {
         var chantMessage = reader.ReadString8();
 
-        return new DisplayChantArgs
+        return new ChantArgs
         {
             ChantMessage = chantMessage
         };
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, DisplayChantArgs args) => writer.WriteString8(args.ChantMessage);
+    public override void Serialize(ref SpanWriter writer, ChantArgs args) => writer.WriteString8(args.ChantMessage);
 }

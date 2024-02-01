@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="AnimationArgs" /> into a buffer
+///     Serializes a <see cref="AnimationArgs" /> into a bufferee cref="AnimationArgs" />
 /// </summary>
 public sealed class AnimationConverter : PacketConverterBase<AnimationArgs>
 {
@@ -57,7 +57,7 @@ public sealed class AnimationConverter : PacketConverterBase<AnimationArgs>
             writer.WriteUInt32(0);
             writer.WriteUInt16(args.TargetAnimation);
             writer.WriteUInt16(args.AnimationSpeed);
-            writer.WritePoint16(args.TargetPoint);
+            writer.WritePoint16(args.TargetPoint.Value);
         } else
         {
             writer.WriteUInt32(args.TargetId ?? 0);

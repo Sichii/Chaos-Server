@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="BodyAnimationArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="BodyAnimationArgs" />
 /// </summary>
 public sealed class BodyAnimationConverter : PacketConverterBase<BodyAnimationArgs>
 {

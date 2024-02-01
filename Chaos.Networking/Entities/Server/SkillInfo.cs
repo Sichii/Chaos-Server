@@ -1,9 +1,11 @@
+using Chaos.Packets.Abstractions.Definitions;
+
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
 ///     Represents the serialization of a skill in the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.AddSkillToPane" /> and
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Menu" /> packets
+///     <see cref="ServerOpCode.DisplayMenu" /> packets
 /// </summary>
 public sealed record SkillInfo
 {

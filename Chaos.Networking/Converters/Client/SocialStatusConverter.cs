@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="SocialStatusArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="SocialStatusArgs" />
 /// </summary>
 public sealed class SocialStatusConverter : PacketConverterBase<SocialStatusArgs>
 {

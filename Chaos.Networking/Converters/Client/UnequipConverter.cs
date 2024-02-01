@@ -7,25 +7,24 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="UnequipRequestArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="UnequipArgs" />
 /// </summary>
-public sealed class UnequipConverter : PacketConverterBase<UnequipRequestArgs>
+public sealed class UnequipConverter : PacketConverterBase<UnequipArgs>
 {
     /// <inheritdoc />
     public override byte OpCode => (byte)ClientOpCode.Unequip;
 
     /// <inheritdoc />
-    public override UnequipRequestArgs Deserialize(ref SpanReader reader)
+    public override UnequipArgs Deserialize(ref SpanReader reader)
     {
         var equipmentSlot = reader.ReadByte();
 
-        return new UnequipRequestArgs
+        return new UnequipArgs
         {
             EquipmentSlot = (EquipmentSlot)equipmentSlot
         };
     }
 
     /// <inheritdoc />
-    public override void Serialize(ref SpanWriter writer, UnequipRequestArgs requestArgs)
-        => writer.WriteByte((byte)requestArgs.EquipmentSlot);
+    public override void Serialize(ref SpanWriter writer, UnequipArgs args) => writer.WriteByte((byte)args.EquipmentSlot);
 }

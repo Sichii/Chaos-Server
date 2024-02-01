@@ -8,7 +8,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="EquipmentArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="EquipmentArgs" />
 /// </summary>
 public sealed class EquipmentConverter : PacketConverterBase<EquipmentArgs>
 {

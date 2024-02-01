@@ -8,7 +8,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="GoldDropArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="GoldDropArgs" />
 /// </summary>
 public sealed class GoldDropConverter : PacketConverterBase<GoldDropArgs>
 {

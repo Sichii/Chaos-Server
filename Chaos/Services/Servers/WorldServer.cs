@@ -109,7 +109,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     }
 
     #region Board Request
-    private bool TryGetBoard(IWorldClient client, BoardRequestArgs args, [MaybeNullWhen(false)] out BoardBase boardBase)
+    private bool TryGetBoard(IWorldClient client, BoardInteractionArgs args, [MaybeNullWhen(false)] out BoardBase boardBase)
     {
         boardBase = null;
 
@@ -149,13 +149,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     }
     #endregion
 
-    public ValueTask OnBoardRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnBoardInteraction(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<BoardRequestArgs>(in packet);
+        var args = PacketSerializer.Deserialize<BoardInteractionArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnBoardRequest);
+        return ExecuteHandler(client, args, InnerOnBoardInteraction);
 
-        ValueTask InnerOnBoardRequest(IWorldClient localClient, BoardRequestArgs localArgs)
+        ValueTask InnerOnBoardInteraction(IWorldClient localClient, BoardInteractionArgs localArgs)
         {
             switch (localArgs.BoardRequestType)
             {
@@ -271,11 +271,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnChant(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<DisplayChantArgs>(in packet);
+        var args = PacketSerializer.Deserialize<ChantArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnChant);
 
-        static ValueTask InnerOnChant(IWorldClient localClient, DisplayChantArgs localArgs)
+        static ValueTask InnerOnChant(IWorldClient localClient, ChantArgs localArgs)
         {
             var message = localArgs.ChantMessage;
 
@@ -412,7 +412,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 client.SendLightLevel(LightLevel.Lightest);
                 client.SendUserId();
                 aisling.MapInstance.AddAislingDirect(aisling, aisling);
-                client.SendProfileRequest();
+                client.SendEditableProfileRequest();
 
                 foreach (var channel in aisling.ChannelSettings)
                 {
@@ -480,13 +480,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnDialogResponse(IWorldClient client, in Packet packet)
+    public ValueTask OnDialogInteraction(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<DialogResponseArgs>(in packet);
+        var args = PacketSerializer.Deserialize<DialogInteractionArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnDialogResponse);
+        return ExecuteHandler(client, args, InnerOnDialogInteraction);
 
-        ValueTask InnerOnDialogResponse(IWorldClient localClient, DialogResponseArgs localArgs)
+        ValueTask InnerOnDialogInteraction(IWorldClient localClient, DialogInteractionArgs localArgs)
         {
             var dialog = localClient.Aisling.ActiveDialog.Get();
 
@@ -571,13 +571,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnExchange(IWorldClient client, in Packet packet)
+    public ValueTask OnExchangeInteraction(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<ClientExchangeArgs>(in packet);
+        var args = PacketSerializer.Deserialize<ExchangeInteractionArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnExchange);
+        return ExecuteHandler(client, args, InnerOnExchangeInteraction);
 
-        ValueTask InnerOnExchange(IWorldClient localClient, ClientExchangeArgs localArgs)
+        ValueTask InnerOnExchangeInteraction(IWorldClient localClient, ExchangeInteractionArgs localArgs)
         {
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
@@ -640,7 +640,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         ValueTask InnerOnExitRequest(IWorldClient localClient, ExitRequestArgs localArgs)
         {
             if (localArgs.IsRequest)
-                localClient.SendConfirmExit();
+                localClient.SendExitResponse();
             else
             {
                 var redirect = new Redirect(
@@ -667,13 +667,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnGoldDropped(IWorldClient client, in Packet packet)
+    public ValueTask OnGoldDrop(IWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<GoldDropArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnGoldDropped);
+        return ExecuteHandler(client, args, InnerOnGoldDrop);
 
-        ValueTask InnerOnGoldDropped(IWorldClient localClient, GoldDropArgs localArgs)
+        ValueTask InnerOnGoldDrop(IWorldClient localClient, GoldDropArgs localArgs)
         {
             var map = localClient.Aisling.MapInstance;
 
@@ -714,13 +714,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnGroupRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnGroupInvite(IWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<GroupInviteArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnGroupRequest);
+        return ExecuteHandler(client, args, InnerOnGroupInvite);
 
-        ValueTask InnerOnGroupRequest(IWorldClient localClient, GroupInviteArgs localArgs)
+        ValueTask InnerOnGroupInvite(IWorldClient localClient, GroupInviteArgs localArgs)
         {
             var target = Aislings.FirstOrDefault(user => user.Name.EqualsI(localArgs.TargetName));
 
@@ -805,13 +805,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnItemDropped(IWorldClient client, in Packet packet)
+    public ValueTask OnItemDrop(IWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ItemDropArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnItemDropped);
+        return ExecuteHandler(client, args, InnerOnItemDrop);
 
-        static ValueTask InnerOnItemDropped(IWorldClient localClient, ItemDropArgs localArgs)
+        static ValueTask InnerOnItemDrop(IWorldClient localClient, ItemDropArgs localArgs)
         {
             localClient.Aisling.TryDrop(
                 localArgs.DestinationPoint,
@@ -930,13 +930,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnProfile(IWorldClient client, in Packet packet)
+    public ValueTask OnEditableProfile(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<ProfileArgs>(in packet);
+        var args = PacketSerializer.Deserialize<EditableProfileArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnProfile);
+        return ExecuteHandler(client, args, InnerOnEditableProfile);
 
-        static ValueTask InnerOnProfile(IWorldClient localClient, ProfileArgs localArgs)
+        static ValueTask InnerOnEditableProfile(IWorldClient localClient, EditableProfileArgs localArgs)
         {
             localClient.Aisling.Portrait = localArgs.PortraitData;
             localClient.Aisling.ProfileText = localArgs.ProfileMessage;
@@ -945,7 +945,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnProfileRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnSelfProfileRequest(IWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnProfileRequest);
 
@@ -959,11 +959,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnPublicMessage(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<SendPublicMessageArgs>(in packet);
+        var args = PacketSerializer.Deserialize<PublicMessageArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnPublicMessage);
 
-        async ValueTask InnerOnPublicMessage(IWorldClient localClient, SendPublicMessageArgs localArgs)
+        async ValueTask InnerOnPublicMessage(IWorldClient localClient, PublicMessageArgs localArgs)
         {
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
@@ -985,13 +985,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnPursuitRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnMenuInteraction(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<PursuitRequestArgs>(in packet);
+        var args = PacketSerializer.Deserialize<MenuInteractionArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnPursuitRequest);
+        return ExecuteHandler(client, args, InnerOnMenuInteraction);
 
-        ValueTask InnerOnPursuitRequest(IWorldClient localClient, PursuitRequestArgs localArgs)
+        ValueTask InnerOnMenuInteraction(IWorldClient localClient, MenuInteractionArgs localArgs)
         {
             var dialog = localClient.Aisling.ActiveDialog.Get();
 
@@ -1157,11 +1157,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
     public ValueTask OnUnequip(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<UnequipRequestArgs>(in packet);
+        var args = PacketSerializer.Deserialize<UnequipArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnUnequip);
 
-        static ValueTask InnerOnUnequip(IWorldClient localClient, UnequipRequestArgs localArgs)
+        static ValueTask InnerOnUnequip(IWorldClient localClient, UnequipArgs localArgs)
         {
             localClient.Aisling.UnEquip(localArgs.EquipmentSlot);
 
@@ -1169,13 +1169,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnUseItem(IWorldClient client, in Packet packet)
+    public ValueTask OnItemUse(IWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ItemUseArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnUseItem);
+        return ExecuteHandler(client, args, InnerOnItemUse);
 
-        static ValueTask InnerOnUseItem(IWorldClient localClient, ItemUseArgs localArgs)
+        static ValueTask InnerOnItemUse(IWorldClient localClient, ItemUseArgs localArgs)
         {
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
@@ -1192,13 +1192,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnUserOptionToggle(IWorldClient client, in Packet packet)
+    public ValueTask OnOptionToggle(IWorldClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<UserOptionToggleArgs>(in packet);
+        var args = PacketSerializer.Deserialize<OptionToggleArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnUsrOptionToggle);
+        return ExecuteHandler(client, args, InnerOnOptionToggle);
 
-        static ValueTask InnerOnUsrOptionToggle(IWorldClient localClient, UserOptionToggleArgs localArgs)
+        static ValueTask InnerOnOptionToggle(IWorldClient localClient, OptionToggleArgs localArgs)
         {
             if (localArgs.UserOption == UserOption.Request)
             {
@@ -1214,13 +1214,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnUseSkill(IWorldClient client, in Packet packet)
+    public ValueTask OnSkillUse(IWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SkillUseArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnUseSkill);
+        return ExecuteHandler(client, args, InnerOnSkillUse);
 
-        static ValueTask InnerOnUseSkill(IWorldClient localClient, SkillUseArgs localArgs)
+        static ValueTask InnerOnSkillUse(IWorldClient localClient, SkillUseArgs localArgs)
         {
             localClient.Aisling.TryUseSkill(localArgs.SourceSlot);
 
@@ -1228,13 +1228,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnUseSpell(IWorldClient client, in Packet packet)
+    public ValueTask OnSpellUse(IWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SpellUseArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnUseSpell);
+        return ExecuteHandler(client, args, InnerOnSpellUse);
 
-        ValueTask InnerOnUseSpell(IWorldClient localClient, SpellUseArgs localArgs)
+        ValueTask InnerOnSpellUse(IWorldClient localClient, SpellUseArgs localArgs)
         {
             if (localClient.Aisling.SpellBook.TryGetObject(localArgs.SourceSlot, out var spell))
             {
@@ -1575,43 +1575,43 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         base.IndexHandlers();
 
         //ClientHandlers[(byte)ClientOpCode.] =
-        ClientHandlers[(byte)ClientOpCode.RequestMapData] = OnMapDataRequest;
+        ClientHandlers[(byte)ClientOpCode.MapDataRequest] = OnMapDataRequest;
         ClientHandlers[(byte)ClientOpCode.ClientWalk] = OnClientWalk;
         ClientHandlers[(byte)ClientOpCode.Pickup] = OnPickup;
-        ClientHandlers[(byte)ClientOpCode.ItemDrop] = OnItemDropped;
+        ClientHandlers[(byte)ClientOpCode.ItemDrop] = OnItemDrop;
         ClientHandlers[(byte)ClientOpCode.ExitRequest] = OnExitRequest;
         ClientHandlers[(byte)ClientOpCode.DisplayEntityRequest] = OnDisplayEntityRequest;
         ClientHandlers[(byte)ClientOpCode.Ignore] = OnIgnore;
-        ClientHandlers[(byte)ClientOpCode.SendPublicMessage] = OnPublicMessage;
-        ClientHandlers[(byte)ClientOpCode.UseSpell] = OnUseSpell;
+        ClientHandlers[(byte)ClientOpCode.PublicMessage] = OnPublicMessage;
+        ClientHandlers[(byte)ClientOpCode.SpellUse] = OnSpellUse;
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
         ClientHandlers[(byte)ClientOpCode.Turn] = OnTurn;
-        ClientHandlers[(byte)ClientOpCode.SpaceBar] = OnSpacebar;
+        ClientHandlers[(byte)ClientOpCode.Spacebar] = OnSpacebar;
         ClientHandlers[(byte)ClientOpCode.WorldListRequest] = OnWorldListRequest;
         ClientHandlers[(byte)ClientOpCode.Whisper] = OnWhisper;
-        ClientHandlers[(byte)ClientOpCode.UserOptionToggle] = OnUserOptionToggle;
-        ClientHandlers[(byte)ClientOpCode.UseItem] = OnUseItem;
+        ClientHandlers[(byte)ClientOpCode.OptionToggle] = OnOptionToggle;
+        ClientHandlers[(byte)ClientOpCode.ItemUse] = OnItemUse;
         ClientHandlers[(byte)ClientOpCode.Emote] = OnEmote;
-        ClientHandlers[(byte)ClientOpCode.GoldDrop] = OnGoldDropped;
+        ClientHandlers[(byte)ClientOpCode.GoldDrop] = OnGoldDrop;
         ClientHandlers[(byte)ClientOpCode.ItemDroppedOnCreature] = OnItemDroppedOnCreature;
         ClientHandlers[(byte)ClientOpCode.GoldDroppedOnCreature] = OnGoldDroppedOnCreature;
-        ClientHandlers[(byte)ClientOpCode.RequestProfile] = OnProfileRequest;
-        ClientHandlers[(byte)ClientOpCode.GroupRequest] = OnGroupRequest;
+        ClientHandlers[(byte)ClientOpCode.SelfProfileRequest] = OnSelfProfileRequest;
+        ClientHandlers[(byte)ClientOpCode.GroupInvite] = OnGroupInvite;
         ClientHandlers[(byte)ClientOpCode.ToggleGroup] = OnToggleGroup;
         ClientHandlers[(byte)ClientOpCode.SwapSlot] = OnSwapSlot;
-        ClientHandlers[(byte)ClientOpCode.RequestRefresh] = OnRefreshRequest;
-        ClientHandlers[(byte)ClientOpCode.PursuitRequest] = OnPursuitRequest;
-        ClientHandlers[(byte)ClientOpCode.DialogResponse] = OnDialogResponse;
-        ClientHandlers[(byte)ClientOpCode.BoardRequest] = OnBoardRequest;
-        ClientHandlers[(byte)ClientOpCode.UseSkill] = OnUseSkill;
+        ClientHandlers[(byte)ClientOpCode.RefreshRequest] = OnRefreshRequest;
+        ClientHandlers[(byte)ClientOpCode.MenuInteraction] = OnMenuInteraction;
+        ClientHandlers[(byte)ClientOpCode.DialogInteraction] = OnDialogInteraction;
+        ClientHandlers[(byte)ClientOpCode.BoardInteraction] = OnBoardInteraction;
+        ClientHandlers[(byte)ClientOpCode.SkillUse] = OnSkillUse;
         ClientHandlers[(byte)ClientOpCode.WorldMapClick] = OnWorldMapClick;
         ClientHandlers[(byte)ClientOpCode.Click] = OnClick;
         ClientHandlers[(byte)ClientOpCode.Unequip] = OnUnequip;
         ClientHandlers[(byte)ClientOpCode.RaiseStat] = OnRaiseStat;
-        ClientHandlers[(byte)ClientOpCode.ClientExchange] = OnExchange;
+        ClientHandlers[(byte)ClientOpCode.ExchangeInteraction] = OnExchangeInteraction;
         ClientHandlers[(byte)ClientOpCode.BeginChant] = OnBeginChant;
         ClientHandlers[(byte)ClientOpCode.Chant] = OnChant;
-        ClientHandlers[(byte)ClientOpCode.Profile] = OnProfile;
+        ClientHandlers[(byte)ClientOpCode.EditableProfile] = OnEditableProfile;
         ClientHandlers[(byte)ClientOpCode.SocialStatus] = OnSocialStatus;
         ClientHandlers[(byte)ClientOpCode.MetaDataRequest] = OnMetaDataRequest;
     }
@@ -1715,37 +1715,37 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             ClientOpCode.ItemDrop              => true,
             ClientOpCode.ExitRequest           => true,
             ClientOpCode.Ignore                => true,
-            ClientOpCode.SendPublicMessage     => true,
-            ClientOpCode.UseSpell              => true,
+            ClientOpCode.PublicMessage         => true,
+            ClientOpCode.SpellUse              => true,
             ClientOpCode.ClientRedirected      => true,
             ClientOpCode.Turn                  => true,
-            ClientOpCode.SpaceBar              => true,
+            ClientOpCode.Spacebar              => true,
             ClientOpCode.WorldListRequest      => true,
             ClientOpCode.Whisper               => true,
-            ClientOpCode.UserOptionToggle      => true,
-            ClientOpCode.UseItem               => true,
+            ClientOpCode.OptionToggle          => true,
+            ClientOpCode.ItemUse               => true,
             ClientOpCode.Emote                 => true,
             ClientOpCode.SetNotepad            => true,
             ClientOpCode.GoldDrop              => true,
             ClientOpCode.ItemDroppedOnCreature => true,
             ClientOpCode.GoldDroppedOnCreature => true,
-            ClientOpCode.RequestProfile        => true,
-            ClientOpCode.GroupRequest          => true,
+            ClientOpCode.SelfProfileRequest    => true,
+            ClientOpCode.GroupInvite           => true,
             ClientOpCode.ToggleGroup           => true,
             ClientOpCode.SwapSlot              => true,
-            ClientOpCode.RequestRefresh        => true,
-            ClientOpCode.PursuitRequest        => true,
-            ClientOpCode.DialogResponse        => true,
-            ClientOpCode.BoardRequest          => true,
-            ClientOpCode.UseSkill              => true,
+            ClientOpCode.RefreshRequest        => true,
+            ClientOpCode.MenuInteraction       => true,
+            ClientOpCode.DialogInteraction     => true,
+            ClientOpCode.BoardInteraction      => true,
+            ClientOpCode.SkillUse              => true,
             ClientOpCode.WorldMapClick         => true,
             ClientOpCode.Click                 => true,
             ClientOpCode.Unequip               => true,
             ClientOpCode.RaiseStat             => true,
-            ClientOpCode.ClientExchange        => true,
+            ClientOpCode.ExchangeInteraction   => true,
             ClientOpCode.BeginChant            => true,
             ClientOpCode.Chant                 => true,
-            ClientOpCode.Profile               => true,
+            ClientOpCode.EditableProfile       => true,
             ClientOpCode.SocialStatus          => true,
             _                                  => false
         };

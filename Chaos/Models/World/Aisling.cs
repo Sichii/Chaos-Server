@@ -483,7 +483,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             Script.OnClicked(source);
         } else
         {
-            source.Client.SendProfile(this);
+            source.Client.SendOtherProfile(this);
 
             LastClicked[source.Id] = DateTime.UtcNow;
             Script.OnClicked(source);
@@ -1097,7 +1097,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             if (!aisling.Equals(this))
                 aisling.Client.SendCreatureWalk(Id, startPoint, direction);
 
-        Client.SendConfirmClientWalk(startPoint, direction);
+        Client.SendClientWalkResponse(startPoint, direction);
 
         foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
                                            .ToList())

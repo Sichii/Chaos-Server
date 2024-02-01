@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="RemoveSpellFromPaneArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="RemoveSpellFromPaneArgs" />
 /// </summary>
 public sealed class RemoveSpellFromPaneConverter : PacketConverterBase<RemoveSpellFromPaneArgs>
 {

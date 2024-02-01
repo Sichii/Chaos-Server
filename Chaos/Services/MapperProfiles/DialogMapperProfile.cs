@@ -9,18 +9,18 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, DialogArgs>,
-                                                       IMapperProfile<Dialog, MenuArgs>,
+public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, DisplayDialogArgs>,
+                                                       IMapperProfile<Dialog, DisplayMenuArgs>,
                                                        IMapperProfile<DialogTemplate, DialogTemplateSchema>,
                                                        IMapperProfile<DialogOption, DialogOptionSchema>
 {
     private readonly ITypeMapper Mapper = mapper;
 
     /// <inheritdoc />
-    public Dialog Map(DialogArgs obj) => throw new NotImplementedException();
+    public Dialog Map(DisplayDialogArgs obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    DialogArgs IMapperProfile<Dialog, DialogArgs>.Map(Dialog obj)
+    DisplayDialogArgs IMapperProfile<Dialog, DisplayDialogArgs>.Map(Dialog obj)
         => new()
         {
             DialogId = 0,
@@ -43,10 +43,10 @@ public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, Di
         };
 
     /// <inheritdoc />
-    public Dialog Map(MenuArgs obj) => throw new NotImplementedException();
+    public Dialog Map(DisplayMenuArgs obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    MenuArgs IMapperProfile<Dialog, MenuArgs>.Map(Dialog obj)
+    DisplayMenuArgs IMapperProfile<Dialog, DisplayMenuArgs>.Map(Dialog obj)
         => new()
         {
             Args = obj.MenuArgs.LastOrDefault(),

@@ -9,7 +9,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="DisplayAislingArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="DisplayAislingArgs" />
 /// </summary>
 public sealed class DisplayAislingConverter : PacketConverterBase<DisplayAislingArgs>
 {

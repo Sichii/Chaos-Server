@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="ConnectionInfoArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="ConnectionInfoArgs" />
 /// </summary>
 public sealed class ConnectionInfoConverter : PacketConverterBase<ConnectionInfoArgs>
 {

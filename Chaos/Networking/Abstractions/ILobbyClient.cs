@@ -3,5 +3,5 @@ namespace Chaos.Networking.Abstractions;
 public interface ILobbyClient : IConnectedClient
 {
     void SendConnectionInfo(uint serverTableCheckSum);
-    void SendServerTable(IServerTable serverTable);
+    void SendServerTableResponse(IServerTable serverTable);
 }

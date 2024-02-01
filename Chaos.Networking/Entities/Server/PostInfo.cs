@@ -3,7 +3,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of a post in the <see cref="ServerOpCode.Board" /> packet
+///     Represents the serialization of a post in the <see cref="ServerOpCode.DisplayBoard" /> packet
 /// </summary>
 public sealed record PostInfo
 {

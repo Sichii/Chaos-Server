@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="LightLevelArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="LightLevelArgs" />
 /// </summary>
 public sealed class LightLevelConverter : PacketConverterBase<LightLevelArgs>
 {

@@ -364,7 +364,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         //separated to merchant replies show up below the text theyre responding to
         foreach (var aisling in creaturesWithinRange.OfType<Aisling>())
             if (!aisling.IgnoreList.Contains(Name))
-                aisling.Client.SendPublicMessage(Id, publicMessageType, sendMessage);
+                aisling.Client.SendDisplayPublicMessage(Id, publicMessageType, sendMessage);
 
         Trackers.LastTalk = DateTime.UtcNow;
 

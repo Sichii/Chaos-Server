@@ -1,11 +1,12 @@
 using Chaos.Common.Definitions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
 ///     Represents the serialization of a legend mark in the
 ///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.SelfProfile" /> and
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Profile" /> packets
+///     <see cref="ServerOpCode.OtherProfile" /> packets
 /// </summary>
 public sealed record LegendMarkInfo
 {

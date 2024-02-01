@@ -33,14 +33,17 @@ public interface IWorldClient : IConnectedClient
         byte? sound = null);
 
     void SendCancelCasting();
-    void SendConfirmClientWalk(Point oldPoint, Direction direction);
-    void SendConfirmExit();
+    void SendClientWalkResponse(Point oldPoint, Direction direction);
     void SendCooldown(PanelEntityBase panelEntityBase);
     void SendCreatureTurn(uint id, Direction direction);
     void SendCreatureWalk(uint id, Point startPoint, Direction direction);
-    void SendDialog(Dialog dialog);
     void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false);
+    void SendDisplayDialog(Dialog dialog);
+    void SendDisplayGroupInvite(GroupRequestType groupRequestType, string fromName);
+    void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);
+    void SendDisplayUnequip(EquipmentSlot equipmentSlot);
     void SendDoors(IEnumerable<Door> doors, bool ignoreObservability = false);
+    void SendEditableProfileRequest();
     void SendEffect(EffectColor effectColor, byte effectIcon);
     void SendEquipment(Item item);
     void SendExchangeAccepted(bool persistExchange);
@@ -49,8 +52,8 @@ public interface IWorldClient : IConnectedClient
     void SendExchangeRequestAmount(byte slot);
     void SendExchangeSetGold(bool rightSide, int amount);
     void SendExchangeStart(Aisling fromAisling);
-    void SendForcedClientPacket(ref Packet packet);
-    void SendGroupRequest(GroupRequestType groupRequestType, string fromName);
+    void SendExitResponse();
+    void SendForceClientPacket(ref Packet packet);
     void SendHealthBar(Creature creature, byte? sound = null);
     void SendLightLevel(LightLevel lightLevel);
     void SendLocation();
@@ -68,11 +71,9 @@ public interface IWorldClient : IConnectedClient
         byte width,
         string message);
 
-    void SendPost(Post post, bool isMail, bool enablePrevBtn = true);
+    void SendOtherProfile(Aisling aisling);
 
-    void SendProfile(Aisling aisling);
-    void SendProfileRequest();
-    void SendPublicMessage(uint id, PublicMessageType publicMessageType, string message);
+    void SendPost(Post post, bool isMail, bool enablePrevBtn = true);
     void SendRefreshResponse();
     void SendRemoveEntity(uint id);
     void SendRemoveItemFromPane(byte slot);
@@ -81,7 +82,6 @@ public interface IWorldClient : IConnectedClient
     void SendSelfProfile();
     void SendServerMessage(ServerMessageType serverMessageType, string message);
     void SendSound(byte sound, bool isMusic);
-    void SendUnequip(EquipmentSlot equipmentSlot);
     void SendUserId();
     void SendVisibleEntities(IEnumerable<VisibleEntity> objects, bool ignoreObservability = false);
     void SendWorldList(IEnumerable<Aisling> users);

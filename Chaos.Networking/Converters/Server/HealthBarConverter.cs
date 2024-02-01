@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="HealthBarArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="HealthBarArgs" />
 /// </summary>
 public sealed class HealthBarConverter : PacketConverterBase<HealthBarArgs>
 {

@@ -33,6 +33,7 @@ public sealed class DisplayVisibleEntitiesConverter : PacketConverterBase<Displa
                 case >= NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET:
                 {
                     var color = reader.ReadByte();
+                    _ = reader.ReadBytes(2); //LI: what is this for?
 
                     visibleObjects.Add(
                         new GroundItemInfo

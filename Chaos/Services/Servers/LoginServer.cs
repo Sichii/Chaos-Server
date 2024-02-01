@@ -33,7 +33,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     private readonly IStore<MailBox> MailStore;
     private readonly IMetaDataStore MetaDataStore;
     private readonly Notice Notice;
-    public ConcurrentDictionary<uint, CreateCharRequestArgs> CreateCharRequests { get; }
+    public ConcurrentDictionary<uint, CreateCharInitialArgs> CreateCharRequests { get; }
     private new LoginOptions Options { get; }
 
     public LoginServer(
@@ -65,7 +65,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         MailStore = mailStore;
         MailBoxFactory = mailBoxFactory;
         Notice = new Notice(options.Value.NoticeMessage);
-        CreateCharRequests = new ConcurrentDictionary<uint, CreateCharRequestArgs>();
+        CreateCharRequests = new ConcurrentDictionary<uint, CreateCharInitialArgs>();
 
         IndexHandlers();
     }
@@ -75,9 +75,9 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnclientRedirect);
+        return ExecuteHandler(client, args, InnerOnClientRedirect);
 
-        ValueTask InnerOnclientRedirect(ILoginClient localClient, ClientRedirectedArgs localArgs)
+        ValueTask InnerOnClientRedirect(ILoginClient localClient, ClientRedirectedArgs localArgs)
         {
             var reservedRedirect
                 = Options.ReservedRedirects.FirstOrDefault(rr => (rr.Id == localArgs.Id) && rr.Name.EqualsI(localArgs.Name));
@@ -154,13 +154,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnCreateCharRequest(ILoginClient client, in Packet packet)
+    public ValueTask OnCreateCharInitial(ILoginClient client, in Packet packet)
     {
-        var args = PacketSerializer.Deserialize<CreateCharRequestArgs>(in packet);
+        var args = PacketSerializer.Deserialize<CreateCharInitialArgs>(in packet);
 
-        return ExecuteHandler(client, args, InnerOnCreateCharRequest);
+        return ExecuteHandler(client, args, InnerOnCreateCharInitial);
 
-        async ValueTask InnerOnCreateCharRequest(ILoginClient localClient, CreateCharRequestArgs localArgs)
+        async ValueTask InnerOnCreateCharInitial(ILoginClient localClient, CreateCharInitialArgs localArgs)
         {
             var result = await AccessManager.SaveNewCredentialsAsync(localClient.RemoteIp, localArgs.Name, localArgs.Password);
 
@@ -185,7 +185,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         static ValueTask InnerOnHomepageRequest(ILoginClient localClient)
         {
-            localClient.SendLoginControls(LoginControlsType.Homepage, "https://www.darkages.com");
+            localClient.SendLoginControl(LoginControlsType.Homepage, "https://www.darkages.com");
 
             return default;
         }
@@ -319,7 +319,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
             Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Packet, Topics.Actions.Processing)
                   .WithProperty(client)
                   .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
-        else if (opCode is (byte)ClientOpCode.ExitRequest or (byte)ClientOpCode.RequestProfile)
+        else if (opCode is (byte)ClientOpCode.ExitRequest or (byte)ClientOpCode.SelfProfileRequest)
         {
             //ignored
             //these occasionally happen in the LoginServer for some unknown reason
@@ -345,7 +345,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
         base.IndexHandlers();
 
-        ClientHandlers[(byte)ClientOpCode.CreateCharRequest] = OnCreateCharRequest;
+        ClientHandlers[(byte)ClientOpCode.CreateCharInitial] = OnCreateCharInitial;
         ClientHandlers[(byte)ClientOpCode.CreateCharFinalize] = OnCreateCharFinalize;
         ClientHandlers[(byte)ClientOpCode.ClientRedirected] = OnClientRedirected;
         ClientHandlers[(byte)ClientOpCode.HomepageRequest] = OnHomepageRequest;

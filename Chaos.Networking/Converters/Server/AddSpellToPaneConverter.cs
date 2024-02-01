@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="AddSpellToPaneArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="AddSpellToPaneArgs" />
 /// </summary>
 public sealed class AddSpellToPaneConverter : PacketConverterBase<AddSpellToPaneArgs>
 {

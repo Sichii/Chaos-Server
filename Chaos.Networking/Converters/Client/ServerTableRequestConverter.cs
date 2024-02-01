@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="ServerTableRequestArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="ServerTableRequestArgs" />
 /// </summary>
 public sealed class ServerTableRequestConverter : PacketConverterBase<ServerTableRequestArgs>
 {

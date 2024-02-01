@@ -108,7 +108,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         Type = ChaosDialogType.CloseDialog;
         Options.Clear();
         NextDialogKey = null;
-        source.Client.SendDialog(this);
+        source.Client.SendDisplayDialog(this);
         source.ActiveDialog.TryRemove(this);
         source.DialogHistory.Clear();
     }
@@ -124,7 +124,7 @@ public sealed record Dialog : IScripted<IDialogScript>
             return;
 
         if (!Text.EqualsI("skip"))
-            source.Client.SendDialog(this);
+            source.Client.SendDisplayDialog(this);
 
         Script.OnDisplayed(source);
 

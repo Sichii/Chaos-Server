@@ -44,9 +44,9 @@ public sealed class LobbyClient : ConnectedClientBase, ILobbyClient
         Send(args);
     }
 
-    public void SendServerTable(IServerTable serverTable)
+    public void SendServerTableResponse(IServerTable serverTable)
     {
-        var args = new ServerTableArgs
+        var args = new ServerTableResponseArgs
         {
             ServerTable = serverTable.Data
         };

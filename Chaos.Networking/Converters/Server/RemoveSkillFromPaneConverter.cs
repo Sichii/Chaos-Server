@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="RemoveSkillFromPaneArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="RemoveSkillFromPaneArgs" />
 /// </summary>
 public sealed class RemoveSkillFromPaneConverter : PacketConverterBase<RemoveSkillFromPaneArgs>
 {

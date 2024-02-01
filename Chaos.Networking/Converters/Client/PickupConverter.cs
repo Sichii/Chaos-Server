@@ -8,7 +8,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="PickupArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="PickupArgs" />
 /// </summary>
 public sealed class PickupConverter : PacketConverterBase<PickupArgs>
 {

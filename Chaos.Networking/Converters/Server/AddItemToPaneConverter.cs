@@ -8,7 +8,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="AddItemToPaneArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="AddItemToPaneArgs" />
 /// </summary>
 public sealed class AddItemToPaneConverter : PacketConverterBase<AddItemToPaneArgs>
 {

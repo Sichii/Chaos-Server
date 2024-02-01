@@ -9,7 +9,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="CreatureWalkArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="CreatureWalkArgs" />
 /// </summary>
 public sealed class CreatureWalkConverter : PacketConverterBase<CreatureWalkArgs>
 {

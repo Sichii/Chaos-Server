@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="WhisperArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="WhisperArgs" />
 /// </summary>
 public sealed class WhisperConverter : PacketConverterBase<WhisperArgs>
 {

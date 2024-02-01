@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="MapDataArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="MapDataArgs" />
 /// </summary>
 public sealed class MapDataConverter : PacketConverterBase<MapDataArgs>
 {

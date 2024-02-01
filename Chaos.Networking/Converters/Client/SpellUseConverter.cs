@@ -6,12 +6,12 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="SpellUseArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="SpellUseArgs" />
 /// </summary>
 public sealed class SpellUseConverter : PacketConverterBase<SpellUseArgs>
 {
     /// <inheritdoc />
-    public override byte OpCode => (byte)ClientOpCode.UseSpell;
+    public override byte OpCode => (byte)ClientOpCode.SpellUse;
 
     /// <inheritdoc />
     public override SpellUseArgs Deserialize(ref SpanReader reader)

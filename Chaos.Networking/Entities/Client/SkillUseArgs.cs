@@ -1,10 +1,10 @@
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.UseSkill" />
-///     packet
+///     Represents the serialization of the <see cref="ClientOpCode.SkillUse" /> packet
 /// </summary>
 public sealed record SkillUseArgs : IPacketSerializable
 {

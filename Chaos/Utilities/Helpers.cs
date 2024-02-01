@@ -13,7 +13,7 @@ public static class Helpers
     {
         var aisling = (Aisling)subscriber;
         aisling.SendServerMessage(ServerMessageType.ActiveMessage, message);
-        aisling.Client.SendPublicMessage(uint.MaxValue, PublicMessageType.Shout, message);
+        aisling.Client.SendDisplayPublicMessage(uint.MaxValue, PublicMessageType.Shout, message);
     }
 
     public static void HandleApproach(Creature creature1, Creature creature2)

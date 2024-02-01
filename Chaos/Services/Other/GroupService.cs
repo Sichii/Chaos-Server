@@ -158,7 +158,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
             if (PendingInvites.TryGetValue(key, out var existingInvite))
                 existingInvite.Refresh();
 
-        receiver.Client.SendGroupRequest(GroupRequestType.FormalInvite, sender.Name);
+        receiver.Client.SendDisplayGroupInvite(GroupRequestType.FormalInvite, sender.Name);
     }
 
     private sealed record GroupInvite(string Sender, string Receiver)

@@ -6,12 +6,12 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="ItemUseArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="ItemUseArgs" />
 /// </summary>
 public sealed class ItemUseConverter : PacketConverterBase<ItemUseArgs>
 {
     /// <inheritdoc />
-    public override byte OpCode => (byte)ClientOpCode.UseItem;
+    public override byte OpCode => (byte)ClientOpCode.ItemUse;
 
     /// <inheritdoc />
     public override ItemUseArgs Deserialize(ref SpanReader reader)

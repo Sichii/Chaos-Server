@@ -7,7 +7,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="EffectArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="EffectArgs" />
 /// </summary>
 public sealed class EffectConverter : PacketConverterBase<EffectArgs>
 {

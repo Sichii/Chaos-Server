@@ -24,7 +24,7 @@ public interface ILoginServer<in TClient> : IServer<TClient> where TClient: ICon
     ///     Occurs when a client requests to create a new character. This is the first step in the process and will only
     ///     contain a name and password
     /// </summary>
-    ValueTask OnCreateCharRequest(TClient client, in Packet packet);
+    ValueTask OnCreateCharInitial(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client requests the url of the homepage

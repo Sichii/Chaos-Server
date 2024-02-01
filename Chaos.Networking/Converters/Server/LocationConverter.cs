@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Server;
 
 /// <summary>
-///     Serializes a <see cref="LocationArgs" /> into a buffer
+///     Provides serialization and deserialization logic for <see cref="LocationArgs" />
 /// </summary>
 public sealed class LocationConverter : PacketConverterBase<LocationArgs>
 {

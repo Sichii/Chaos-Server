@@ -1,10 +1,10 @@
 using Chaos.Packets.Abstractions;
+using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.SynchronizeTicks" /> packet
+///     Represents the serialization of the <see cref="ServerOpCode.SynchronizeTicksResponse" /> packet
 /// </summary>
 public sealed record SynchronizeTicksResponseArgs : IPacketSerializable
 {

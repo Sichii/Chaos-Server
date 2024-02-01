@@ -22,7 +22,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x02
     /// </summary>
-    CreateCharRequest = 2,
+    CreateCharInitial = 2,
 
     /// <summary>
     ///     OpCode used when a client provides credentials to log into the world
@@ -44,7 +44,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x05
     /// </summary>
-    RequestMapData = 5,
+    MapDataRequest = 5,
 
     /// <summary>
     ///     OpCode used when a client walks in a direction
@@ -93,14 +93,14 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x0E
     /// </summary>
-    SendPublicMessage = 14,
+    PublicMessage = 14,
 
     /// <summary>
     ///     OpCode used when a client uses a spell
     ///     <br />
     ///     Hex value: 0x0F
     /// </summary>
-    UseSpell = 15,
+    SpellUse = 15,
 
     /// <summary>
     ///     OpCode used when a client is redirected to this server
@@ -121,7 +121,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x13
     /// </summary>
-    SpaceBar = 19,
+    Spacebar = 19,
 
     /// <summary>
     ///     OpCode used when a client requests a list of all online players
@@ -142,14 +142,14 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x1B
     /// </summary>
-    UserOptionToggle = 27,
+    OptionToggle = 27,
 
     /// <summary>
     ///     OpCode used when a client uses an item
     ///     <br />
     ///     Hex value: 0x1A
     /// </summary>
-    UseItem = 28,
+    ItemUse = 28,
 
     /// <summary>
     ///     OpCode used when a client uses an emote
@@ -194,11 +194,11 @@ public enum ClientOpCode : byte
     GoldDroppedOnCreature = 42,
 
     /// <summary>
-    ///     OpCode used when a client requests the profile of another player
+    ///     OpCode used when a client requests their own profile
     ///     <br />
     ///     Hex value: 0x2D
     /// </summary>
-    RequestProfile = 45,
+    SelfProfileRequest = 45,
 
     /// <summary>
     ///     OpCode used when a client invites another player to a group, responds to a group invite, or creates or destroys a
@@ -206,7 +206,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x2E
     /// </summary>
-    GroupRequest = 46,
+    GroupInvite = 46,
 
     /// <summary>
     ///     OpCode used when a client toggles their group availability
@@ -227,35 +227,35 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x38
     /// </summary>
-    RequestRefresh = 56,
+    RefreshRequest = 56,
 
     /// <summary>
     ///     OpCode used when a client responds to a merchant menu
     ///     <br />
     ///     Hex value: 0x39
     /// </summary>
-    PursuitRequest = 57,
+    MenuInteraction = 57,
 
     /// <summary>
     ///     OpCode used when a client responds to a dialog
     ///     <br />
     ///     Hex value: 0x3A
     /// </summary>
-    DialogResponse = 58,
+    DialogInteraction = 58,
 
     /// <summary>
     ///     OpCode used when a client accesses a board or mail
     ///     <br />
     ///     Hex value: 0x3B
     /// </summary>
-    BoardRequest = 59,
+    BoardInteraction = 59,
 
     /// <summary>
     ///     OpCode used when a client uses a skill
     ///     <br />
     ///     Hex value: 0x3E
     /// </summary>
-    UseSkill = 62,
+    SkillUse = 62,
 
     /// <summary>
     ///     OpCode used when a client clicks on a world map node
@@ -304,7 +304,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x4A
     /// </summary>
-    ClientExchange = 74,
+    ExchangeInteraction = 74,
 
     /// <summary>
     ///     OpCode used when a client requests EULA details
@@ -332,7 +332,7 @@ public enum ClientOpCode : byte
     ///     <br />
     ///     Hex value: 0x4F
     /// </summary>
-    Profile = 79,
+    EditableProfile = 79,
 
     /// <summary>
     ///     OpCode used when a client requests the details of available login servers
@@ -447,7 +447,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x0B
     /// </summary>
-    ConfirmClientWalk = 11,
+    ClientWalkResponse = 11,
 
     /// <summary>
     ///     OpCode used to send a client another creature's walk
@@ -461,7 +461,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x0D
     /// </summary>
-    PublicMessage = 13,
+    DisplayPublicMessage = 13,
 
     /// <summary>
     ///     OpCode used to remove an object from the client's viewport
@@ -594,21 +594,21 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x2F
     /// </summary>
-    Menu = 47,
+    DisplayMenu = 47,
 
     /// <summary>
     ///     OpCode used to display a dialog to a client
     ///     <br />
     ///     Hex value: 0x30
     /// </summary>
-    Dialog = 48,
+    DisplayDialog = 48,
 
     /// <summary>
     ///     OpCode used to display a board to a client
     ///     <br />
     ///     Hex value: 0x31
     /// </summary>
-    Board = 49,
+    DisplayBoard = 49,
 
     /// <summary>
     ///     OpCode used to give details of nearby doors to a client
@@ -629,7 +629,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x34
     /// </summary>
-    Profile = 52,
+    OtherProfile = 52,
 
     /// <summary>
     ///     OpCode used to display the world list to a client
@@ -650,7 +650,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x38
     /// </summary>
-    Unequip = 56,
+    DisplayUnequip = 56,
 
     /// <summary>
     ///     OpCode used to send a client it's own profile
@@ -692,7 +692,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x42
     /// </summary>
-    ServerExchange = 66,
+    DisplayExchange = 66,
 
     /// <summary>
     ///     OpCode used to tell a client to cancel a spellcast
@@ -706,7 +706,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x49
     /// </summary>
-    ProfileRequest = 73,
+    EditableProfileRequest = 73,
 
     /// <summary>
     ///     OpCode used to force a client to send back a specified packet
@@ -720,14 +720,14 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x4C
     /// </summary>
-    ConfirmExit = 76,
+    ExitResponse = 76,
 
     /// <summary>
     ///     OpCode used to send a client a list of available servers
     ///     <br />
     ///     Hex value: 0x56
     /// </summary>
-    ServerTable = 86,
+    ServerTableResponse = 86,
 
     /// <summary>
     ///     OpCode used to signal a client that it has finished sending map data
@@ -748,14 +748,14 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x63
     /// </summary>
-    GroupInvite = 99,
+    DisplayGroupInvite = 99,
 
     /// <summary>
     ///     OpCode used to send a client data for the login screen
     ///     <br />
     ///     Hex value: 0x66
     /// </summary>
-    LoginControls = 102,
+    LoginControl = 102,
 
     /// <summary>
     ///     OpCode used to signal a client that it is changing maps
@@ -769,7 +769,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x68
     /// </summary>
-    SynchronizeTicks = 104,
+    SynchronizeTicksResponse = 104,
 
     /// <summary>
     ///     OpCode used to send metadata data to a client

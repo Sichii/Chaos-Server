@@ -23,7 +23,7 @@ public sealed class EquipmentObserver(Aisling aisling) : Abstractions.IObserver<
 
     public void OnRemoved(byte slot, Item obj)
     {
-        Aisling.Client.SendUnequip((EquipmentSlot)slot);
+        Aisling.Client.SendDisplayUnequip((EquipmentSlot)slot);
         Aisling.Display();
         Aisling.Client.SendSelfProfile();
 

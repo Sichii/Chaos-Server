@@ -6,7 +6,7 @@ using Chaos.Packets.Abstractions.Definitions;
 namespace Chaos.Networking.Converters.Client;
 
 /// <summary>
-///     Deserializes a buffer into <see cref="ItemDroppedOnCreatureArgs" />
+///     Provides packet serialization and deserialization logic for <see cref="ItemDroppedOnCreatureArgs" />
 /// </summary>
 public sealed class ItemDroppedOnCreatureConverter : PacketConverterBase<ItemDroppedOnCreatureArgs>
 {
