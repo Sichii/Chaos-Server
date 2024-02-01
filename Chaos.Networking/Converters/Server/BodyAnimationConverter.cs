@@ -27,7 +27,7 @@ public sealed class BodyAnimationConverter : PacketConverterBase<BodyAnimationAr
             SourceId = sourceId,
             BodyAnimation = (BodyAnimation)bodyAnimation,
             AnimationSpeed = animationSpeed,
-            Sound = reader.ReadByte() == byte.MaxValue ? null : sound
+            Sound = sound == byte.MaxValue ? null : sound
         };
     }
 
