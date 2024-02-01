@@ -318,7 +318,8 @@ public sealed class Crypto : ICrypto
     public void EncryptDialog(ref Span<byte> buffer)
     {
         var newBuffer = new Span<byte>(new byte[buffer.Length + 6]);
-        buffer.CopyTo(buffer[6..]);
+        buffer.CopyTo(newBuffer);
+        buffer.CopyTo(newBuffer[6..]);
 
         var checksum = Crc.Generate16(newBuffer[6..]);
         newBuffer[0] = (byte)Random.Shared.Next();
