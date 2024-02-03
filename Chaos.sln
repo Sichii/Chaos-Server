@@ -157,6 +157,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqConfigurator", "Tools\Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbilityLevelPatch", "Patches\AbilityLevelPatch\AbilityLevelPatch.csproj", "{590F83F8-C334-4659-8DD2-C8EF87A1C59D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chaos.Wpf", "Chaos.Wpf\Chaos.Wpf.csproj", "{1335854C-C791-41EA-9EA0-0EE699DF1E6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -343,6 +345,10 @@ Global
 		{590F83F8-C334-4659-8DD2-C8EF87A1C59D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{590F83F8-C334-4659-8DD2-C8EF87A1C59D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{590F83F8-C334-4659-8DD2-C8EF87A1C59D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1335854C-C791-41EA-9EA0-0EE699DF1E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1335854C-C791-41EA-9EA0-0EE699DF1E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1335854C-C791-41EA-9EA0-0EE699DF1E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1335854C-C791-41EA-9EA0-0EE699DF1E6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

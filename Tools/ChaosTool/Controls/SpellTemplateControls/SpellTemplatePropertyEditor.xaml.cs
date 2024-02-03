@@ -1,8 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
+using Chaos.Wpf.Observables;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Utility;
@@ -26,12 +28,12 @@ public sealed partial class SpellTemplatePropertyEditor
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
-        SpellTypeCmbox.ItemsSource = Helpers.GetEnumNames<SpellType>();
-        ClassCmbox.ItemsSource = Helpers.GetEnumNames<BaseClass?>();
-        AdvClassCmbox.ItemsSource = Helpers.GetEnumNames<AdvClass?>();
+        SpellTypeCmbox.ItemsSource = EnumExtensions.GetEnumNames<SpellType>();
+        ClassCmbox.ItemsSource = EnumExtensions.GetEnumNames<BaseClass?>();
+        AdvClassCmbox.ItemsSource = EnumExtensions.GetEnumNames<AdvClass?>();
 
-        ClassCmbox.ItemsSource = Helpers.GetEnumNames<BaseClass?>();
-        AdvClassCmbox.ItemsSource = Helpers.GetEnumNames<AdvClass?>();
+        ClassCmbox.ItemsSource = EnumExtensions.GetEnumNames<BaseClass?>();
+        AdvClassCmbox.ItemsSource = EnumExtensions.GetEnumNames<AdvClass?>();
 
         RequiredGoldLbl.ToolTip
             = Helpers.GetPropertyDocs<LearningRequirementsSchema>(nameof(SkillTemplateSchema.LearningRequirements.RequiredGold));

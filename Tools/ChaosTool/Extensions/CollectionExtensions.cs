@@ -1,4 +1,4 @@
-using ChaosTool.ViewModel;
+using Chaos.Wpf.Observables;
 
 namespace ChaosTool.Extensions;
 

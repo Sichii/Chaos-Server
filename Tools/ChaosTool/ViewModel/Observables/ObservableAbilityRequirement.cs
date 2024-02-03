@@ -1,4 +1,4 @@
-using ChaosTool.ViewModel.Abstractions;
+using Chaos.Wpf.Abstractions;
 
 namespace ChaosTool.ViewModel.Observables;
 

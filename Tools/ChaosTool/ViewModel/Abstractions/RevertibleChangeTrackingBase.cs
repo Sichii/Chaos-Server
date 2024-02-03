@@ -1,6 +1,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Chaos.Wpf.Abstractions;
 
 namespace ChaosTool.ViewModel.Abstractions;
 

@@ -8,6 +8,27 @@ namespace Chaos.Extensions.Common;
 public static class EnumExtensions
 {
     /// <summary>
+    ///     Gets the names of the enum values of the specified type
+    /// </summary>
+    public static IEnumerable<string> GetEnumNames<T>()
+    {
+        var type = typeof(T);
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        if (underlyingType is not null)
+            type = underlyingType;
+
+        if (!type.IsEnum)
+            throw new InvalidOperationException($"{type.Name} is not an enum");
+
+        if (underlyingType is not null)
+            return Enum.GetNames(type)
+                       .Prepend(string.Empty);
+
+        return Enum.GetNames(type);
+    }
+
+    /// <summary>
     ///     Gets the individual flag parts of a flag enum value />
     /// </summary>
     /// <param name="input">

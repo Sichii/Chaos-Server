@@ -1,8 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
+using Chaos.Wpf.Observables;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Utility;
@@ -25,7 +27,7 @@ public sealed partial class MonsterTemplatePropertyEditor
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
-        TypeCmbox.ItemsSource = Helpers.GetEnumNames<CreatureType>();
+        TypeCmbox.ItemsSource = EnumExtensions.GetEnumNames<CreatureType>();
 
         TemplateKeyLbl.ToolTip = Helpers.GetPropertyDocs<MonsterTemplateSchema>(nameof(MonsterTemplateSchema.TemplateKey));
         NameLbl.ToolTip = Helpers.GetPropertyDocs<MonsterTemplateSchema>(nameof(MonsterTemplateSchema.Name));

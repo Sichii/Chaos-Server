@@ -3,7 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Schemas.Templates;
+using Chaos.Wpf.Observables;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Utility;
@@ -33,7 +35,7 @@ public partial class DialogTemplatePropertyEditor
     private void UserControl_Initialized(object sender, EventArgs e)
     {
         //set custom itemssources
-        TypeCmbox.ItemsSource = Helpers.GetEnumNames<ChaosDialogType>();
+        TypeCmbox.ItemsSource = EnumExtensions.GetEnumNames<ChaosDialogType>();
 
         //tooltips
         TemplateKeyLbl.ToolTip = Helpers.GetPropertyDocs<DialogTemplateSchema>(nameof(DialogTemplateSchema.TemplateKey));

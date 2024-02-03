@@ -2,8 +2,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace ChaosTool.Utility;
+namespace Chaos.Wpf.Collections.ObjectModel;
 
+/// <summary>
+///     Represents a collection that provides notifications when an item is added, removed, or updated
+/// </summary>
 public sealed class ObservingCollection<T> : ObservableCollection<T> where T: INotifyPropertyChanged
 {
     /// <inheritdoc />

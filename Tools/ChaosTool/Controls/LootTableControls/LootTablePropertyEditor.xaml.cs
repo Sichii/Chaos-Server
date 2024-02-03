@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Chaos.Common.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Schemas.Content;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
@@ -25,7 +26,7 @@ public sealed partial class LootTablePropertyEditor
 
     private void UserControl_Initialized(object sender, EventArgs e)
     {
-        ModeCmbox.ItemsSource = Helpers.GetEnumNames<LootTableMode>();
+        ModeCmbox.ItemsSource = EnumExtensions.GetEnumNames<LootTableMode>();
 
         KeyLbl.ToolTip = Helpers.GetPropertyDocs<LootTableSchema>(nameof(LootTableSchema.Key));
         LootDropsLbl.ToolTip = Helpers.GetPropertyDocs<LootTableSchema>(nameof(LootTableSchema.LootDrops));

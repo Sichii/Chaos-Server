@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Chaos.Schemas.Templates;
+using Chaos.Wpf.Observables;
 using ChaosTool.Definitions;
 using ChaosTool.Extensions;
 using ChaosTool.Utility;

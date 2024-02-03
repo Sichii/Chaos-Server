@@ -1,5 +1,5 @@
-using ChaosTool.Utility;
-using ChaosTool.ViewModel.Abstractions;
+using Chaos.Wpf.Abstractions;
+using Chaos.Wpf.Collections.ObjectModel;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 

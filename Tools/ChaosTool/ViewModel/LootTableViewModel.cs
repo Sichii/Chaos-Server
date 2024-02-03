@@ -1,6 +1,6 @@
 using Chaos.Common.Definitions;
 using Chaos.Schemas.Content;
-using ChaosTool.Utility;
+using Chaos.Wpf.Collections.ObjectModel;
 using ChaosTool.ViewModel.Abstractions;
 using ChaosTool.ViewModel.Observables;
 

@@ -2,10 +2,14 @@ using System.Globalization;
 using System.Windows.Data;
 using Chaos.Extensions.Common;
 
-namespace ChaosTool.Converters;
+namespace Chaos.Wpf.Converters;
 
-public class NullablePrimitiveToStringConverter : IValueConverter
+/// <summary>
+///     Converts primitive types (including their nullable counterparts) to strings
+/// </summary>
+public sealed class NullablePrimitiveToStringConverter : IValueConverter
 {
+    /// <inheritdoc />
     public object? Convert(
         object? value,
         Type targetType,
@@ -13,6 +17,7 @@ public class NullablePrimitiveToStringConverter : IValueConverter
         CultureInfo culture)
         => value?.ToString();
 
+    /// <inheritdoc />
     public object? ConvertBack(
         object? value,
         Type targetType,

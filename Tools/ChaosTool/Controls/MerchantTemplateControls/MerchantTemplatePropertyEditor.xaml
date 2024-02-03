@@ -7,6 +7,7 @@
              xmlns:definitions="clr-namespace:ChaosTool.Definitions"
              xmlns:viewModel="clr-namespace:ChaosTool.ViewModel"
              xmlns:observables="clr-namespace:ChaosTool.ViewModel.Observables"
+             xmlns:wpfObservables="clr-namespace:Chaos.Wpf.Observables;assembly=Chaos.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="700"
              d:DesignWidth="900"
@@ -216,7 +217,7 @@
                       ItemsSource="{Binding ScriptKeys}"
                       Margin="0,0,5,0">
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewModel:BindableString}">
+                    <DataTemplate DataType="{x:Type wpfObservables:BindableString}">
                         <Grid HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Width="Auto">
@@ -372,7 +373,7 @@
                           ItemsSource="{Binding ItemsToBuy}"
                           Margin="0,0,5,0">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type viewModel:BindableString}">
+                        <DataTemplate DataType="{x:Type wpfObservables:BindableString}">
                             <Grid HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Width="Auto">
@@ -445,7 +446,7 @@
                           ItemsSource="{Binding SkillsToTeach}"
                           Margin="0,0,5,0">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type viewModel:BindableString}">
+                        <DataTemplate DataType="{x:Type wpfObservables:BindableString}">
                             <Grid HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Width="Auto">
@@ -510,7 +511,7 @@
                           ItemsSource="{Binding SpellsToTeach}"
                           Margin="0,0,5,0">
                     <ListView.ItemTemplate>
-                        <DataTemplate DataType="{x:Type viewModel:BindableString}">
+                        <DataTemplate DataType="{x:Type wpfObservables:BindableString}">
                             <Grid HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Width="Auto">

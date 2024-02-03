@@ -18,6 +18,7 @@ using Chaos.Services.Configuration;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
+using Chaos.Wpf.Observables;
 using ChaosTool.Model;
 using ChaosTool.Model.Abstractions;
 using ChaosTool.Model.Tables;

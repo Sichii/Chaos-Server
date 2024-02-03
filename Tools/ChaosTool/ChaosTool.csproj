@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Chaos.Wpf\Chaos.Wpf.csproj"/>
         <ProjectReference Include="..\..\Chaos\Chaos.csproj"/>
     </ItemGroup>
 

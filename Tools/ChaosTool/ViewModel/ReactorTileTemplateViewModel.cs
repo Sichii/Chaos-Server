@@ -1,6 +1,7 @@
 using Chaos.Collections.Common;
 using Chaos.Schemas.Templates;
-using ChaosTool.Utility;
+using Chaos.Wpf.Collections.ObjectModel;
+using Chaos.Wpf.Observables;
 using ChaosTool.ViewModel.Abstractions;
 
 namespace ChaosTool.ViewModel;

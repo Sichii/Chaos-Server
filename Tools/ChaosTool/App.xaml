@@ -15,6 +15,7 @@
              xmlns:reactorTileTemplateControls="clr-namespace:ChaosTool.Controls.ReactorTileTemplateControls"
              xmlns:skillTemplateControls="clr-namespace:ChaosTool.Controls.SkillTemplateControls"
              xmlns:spellTemplateControls="clr-namespace:ChaosTool.Controls.SpellTemplateControls"
+             xmlns:wpfConverters="clr-namespace:Chaos.Wpf.Converters;assembly=Chaos.Wpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -43,7 +44,7 @@
 
             <!--#region CONVERTERS-->
 
-            <converters:NullablePrimitiveToStringConverter x:Key="NullablePrimitiveToStringConverter" />
+            <wpfConverters:NullablePrimitiveToStringConverter x:Key="NullablePrimitiveToStringConverter" />
 
             <!--#region DATA TEMPLATES-->
 

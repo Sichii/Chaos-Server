@@ -1,6 +1,7 @@
 using Chaos.Collections.Common;
 using Chaos.Common.Definitions;
-using ChaosTool.Utility;
+using Chaos.Wpf.Collections.ObjectModel;
+using Chaos.Wpf.Observables;
 
 namespace ChaosTool.ViewModel.Abstractions;
 
