@@ -1,28 +1,25 @@
-using Chaos.Collections.Abstractions;
-using Chaos.Models.Panel.Abstractions;
 using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Extensions;
 
 public static class ScriptExtensions
 {
-    public static void AddScript<TScripted, TScript>(
+    public static void AddScript<TScripted, TScriptBase>(
         this TScripted scripted,
         Type scriptTypeToAdd,
-        IScriptFactory<TScript, TScripted> scriptFactory,
-        IPanel<TScripted>? panelToUpdate = null) where TScripted: IScripted<TScript>
-                                                 where TScript: IScript
+        IScriptProvider scriptProvider) where TScripted: IScripted<TScriptBase>
+                                                 where TScriptBase: IScript
     {
         var scriptKey = ScriptBase.GetScriptKey(scriptTypeToAdd);
 
-        var script = scriptFactory.CreateScript(
+        var script = scriptProvider.CreateScript<TScriptBase, TScripted>(
             new[]
             {
                 scriptKey
             },
             scripted);
-        var scripts = script as IEnumerable<TScript>;
-        var composite = (ICompositeScript<TScript>)scripted.Script;
+        var scripts = script as IEnumerable<TScriptBase>;
+        var composite = (ICompositeScript<TScriptBase>)scripted.Script;
 
         if (scripts is not null)
             foreach (var createdScript in scripts)
@@ -31,9 +28,6 @@ public static class ScriptExtensions
             composite.Add(script);
 
         scripted.ScriptKeys.Add(scriptKey);
-
-        if (scripted is PanelEntityBase panelEntity && panelToUpdate is not null)
-            panelToUpdate.Update(panelEntity.Slot);
     }
 
     public static TScript? As<TScript>(this IScript script) where TScript: IScript

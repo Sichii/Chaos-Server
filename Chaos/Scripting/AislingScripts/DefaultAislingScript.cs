@@ -1,6 +1,7 @@
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
+using Chaos.Formulae;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
@@ -137,5 +138,12 @@ public class DefaultAislingScript : AislingScriptBase
             } else if (Subject.Options.SocialStatus == SocialStatus.DayDreaming)
                 Subject.Options.SocialStatus = PreAfkSocialStatus;
         }
+    }
+
+    /// <inheritdoc />
+    public override void OnStatIncrease(Stat stat)
+    {
+        if (stat == Stat.STR)
+            Subject.UserStatSheet.SetMaxWeight(LevelUpFormulae.Default.CalculateMaxWeight(Subject));
     }
 }

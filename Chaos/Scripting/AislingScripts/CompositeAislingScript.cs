@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Chaos.Collections.Abstractions;
+using Chaos.Common.Definitions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
@@ -225,6 +226,15 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             script.OnPublicMessage(source, message);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public void OnStatIncrease(Stat stat)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnStatIncrease(stat);
     }
 
     /// <summary>

@@ -54,127 +54,142 @@ var builder = WebApplication.CreateEmptyBuilder(
         #endif
     });
 
-#region AppSettings Configuration
-builder.Configuration
-       .SetBasePath(currentDirectory)
-       .AddJsonFile("appsettings.json", false, true)
-       .AddJsonFile("appsettings.logging.json", false, true)
-       #if DEBUG
-       .AddJsonFile("appsettings.local.json", false, true)
-    #else
-   .AddJsonFile("appsettings.prod.json", false, true)
-    #endif
-    ;
-
-var useSeq = builder.Configuration.GetValue<bool>(ConfigKeys.Logging.UseSeq);
-var enableSite = builder.Configuration.GetValue<bool>(ConfigKeys.Options.SiteOptions.EnableSite);
-
-if (useSeq)
-    builder.Configuration.AddJsonFile("appsettings.seq.json", false, true);
-#endregion
-
-#region Service Configuration
-var serverCtx = new CancellationTokenSource();
-
-builder.Services.AddSingleton(serverCtx);
-builder.Services.AddChaosOptions();
-
-builder.Services.AddLogging(
-    logging =>
-    {
-        logging.ClearProviders();
-        logging.AddNLog();
-    });
-
-builder.Services.AddJsonSerializerOptions();
-builder.Services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
-builder.Services.AddChannelService(ConfigKeys.Options.Key);
-builder.Services.AddServerAuthentication();
-builder.Services.AddCryptography();
-builder.Services.AddPacketSerializer();
-builder.Services.AddPathfinding();
-builder.Services.AddStorage();
-builder.Services.AddScripting();
-builder.Services.AddFunctionalScriptRegistry();
-builder.Services.AddWorldFactories();
-builder.Services.AddTypeMapper();
-builder.Services.AddSingleton<IStockService, IHostedService, StockService>();
-
-builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(
-    p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
-
-builder.Services.AddLobbyServer();
-builder.Services.AddLoginserver();
-builder.Services.AddWorldServer();
-
-if (enableSite)
-{
-    builder.Services
-           .AddRazorPages(opts => opts.RootDirectory = "/Site/Pages")
-           .AddRazorRuntimeCompilation()
-           .AddJsonOptions(
-               opts =>
-               {
-                   var jsonSerializerOptions = opts.JsonSerializerOptions;
-
-                   jsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                   jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                   jsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
-                   jsonSerializerOptions.PropertyNamingPolicy = new LowerCaseNamingPolicy();
-               });
-
-    builder.Environment.WebRootPath = "Site/wwwroot";
-
-    builder.ConfigureSite();
-}
-#endregion
-
-#region WebHost Configuration
-builder.WebHost.UseKestrel();
-#endregion
+AddConfiguration(builder);
+ConfigureServices(builder);
+ConfigureHost(builder);
+RegisterStructuredLoggingTransformations();
 
 //build the app
 var app = builder.Build();
 
-#region App Configuration
-RegisterStructuredLoggingTransformations();
+ConfigureApp(app);
 
-//app configuration
-//initialize objects with a lot of cross-cutting concerns
-//this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
-_ = app.Services.GetRequiredService<IOptions<WorldOptions>>()
-       .Value;
-_ = app.Services.GetRequiredService<IScriptRegistry>();
-
-if (enableSite)
-{
-    app.UseDeveloperExceptionPage();
-    app.UseStaticFiles(new StaticFileOptions());
-    app.UseRouting();
-    app.MapRazorPages();
-}
-
-//intercept ctrl+c to gracefully shutdown
-Console.CancelKeyPress += (_, e) =>
-{
-    e.Cancel = true;
-    serverCtx.Cancel();
-};
-#endregion
-
-//run the app
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-
-await app.RunAsync(serverCtx.Token);
-await serverCtx.Token.WaitTillCanceled();
-
-logger.WithTopics(Topics.Actions.Disconnect)
-      .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+await RunApp(app);
 
 //wait for everything to shut down
 await Task.Delay(5000);
 
 return;
+
+static void AddConfiguration(WebApplicationBuilder builder)
+{
+    var currentDirectory = Directory.GetCurrentDirectory();
+
+    builder.Configuration
+           .SetBasePath(currentDirectory)
+           .AddJsonFile("appsettings.json", false, true)
+           .AddJsonFile("appsettings.logging.json", false, true)
+           #if DEBUG
+           .AddJsonFile("appsettings.local.json", false, true);
+    #else
+           .AddJsonFile("appsettings.prod.json", false, true);
+    #endif
+
+    var useSeq = builder.Configuration.GetValue<bool>(ConfigKeys.Logging.UseSeq);
+
+    if (useSeq)
+        builder.Configuration.AddJsonFile("appsettings.seq.json", false, true);
+}
+
+static async Task RunApp(WebApplication app)
+{
+    var serverCtx = app.Services.GetRequiredService<CancellationTokenSource>();
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+    await app.RunAsync(serverCtx.Token);
+    await serverCtx.Token.WaitTillCanceled();
+
+    logger.WithTopics(Topics.Actions.Disconnect)
+          .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+}
+
+static bool IsSiteEnabled(IConfiguration config) => config.GetValue<bool>(ConfigKeys.Options.SiteOptions.EnableSite);
+
+static void ConfigureApp(WebApplication app)
+{
+    var serverCtx = app.Services.GetRequiredService<CancellationTokenSource>();
+
+    //app configuration
+    //initialize objects with a lot of cross-cutting concerns
+    //this object is needed in a lot of places, some of which it doesnt make a lot of sense to have a service injected into
+    _ = app.Services.GetRequiredService<IOptions<WorldOptions>>()
+           .Value;
+    _ = app.Services.GetRequiredService<IScriptRegistry>();
+
+    if (IsSiteEnabled(app.Configuration))
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseStaticFiles(new StaticFileOptions());
+        app.UseRouting();
+        app.MapRazorPages();
+    }
+
+    //intercept ctrl+c to gracefully shutdown
+    Console.CancelKeyPress += (_, e) =>
+    {
+        e.Cancel = true;
+        serverCtx.Cancel();
+    };
+}
+
+static void ConfigureHost(WebApplicationBuilder builder) => builder.WebHost.UseKestrel();
+
+static void ConfigureServices(WebApplicationBuilder builder)
+{
+    var serverCtx = new CancellationTokenSource();
+
+    builder.Services.AddSingleton(serverCtx);
+    builder.Services.AddChaosOptions();
+
+    builder.Services.AddLogging(
+        logging =>
+        {
+            logging.ClearProviders();
+            logging.AddNLog();
+        });
+
+    builder.Services.AddJsonSerializerOptions();
+    builder.Services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
+    builder.Services.AddChannelService(ConfigKeys.Options.Key);
+    builder.Services.AddServerAuthentication();
+    builder.Services.AddCryptography();
+    builder.Services.AddPacketSerializer();
+    builder.Services.AddPathfinding();
+    builder.Services.AddStorage();
+    builder.Services.AddScripting();
+    builder.Services.AddFunctionalScriptRegistry();
+    builder.Services.AddWorldFactories();
+    builder.Services.AddTypeMapper();
+    builder.Services.AddSingleton<IStockService, IHostedService, StockService>();
+
+    builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(
+        p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
+
+    builder.Services.AddLobbyServer();
+    builder.Services.AddLoginserver();
+    builder.Services.AddWorldServer();
+
+    if (IsSiteEnabled(builder.Configuration))
+    {
+        builder.Services
+               .AddRazorPages(opts => opts.RootDirectory = "/Site/Pages")
+               .AddRazorRuntimeCompilation()
+               .AddJsonOptions(
+                   opts =>
+                   {
+                       var jsonSerializerOptions = opts.JsonSerializerOptions;
+
+                       jsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                       jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                       jsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
+                       jsonSerializerOptions.PropertyNamingPolicy = new LowerCaseNamingPolicy();
+                   });
+
+        builder.Environment.WebRootPath = "Site/wwwroot";
+
+        builder.ConfigureSite();
+    }
+}
 
 static void RegisterStructuredLoggingTransformations()
     => LogManager.Setup()

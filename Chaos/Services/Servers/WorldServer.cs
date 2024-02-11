@@ -11,7 +11,6 @@ using Chaos.Common.Synchronization;
 using Chaos.Cryptography;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
-using Chaos.Formulae;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
@@ -1040,9 +1039,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             if (localClient.Aisling.UserStatSheet.UnspentPoints > 0)
                 if (localClient.Aisling.UserStatSheet.IncrementStat(localArgs.Stat))
                 {
-                    if (localArgs.Stat == Stat.STR)
-                        localClient.Aisling.UserStatSheet.SetMaxWeight(LevelUpFormulae.Default.CalculateMaxWeight(localClient.Aisling));
-
+                    localClient.Aisling.Script.OnStatIncrease(localArgs.Stat);
                     localClient.SendAttributes(StatUpdateType.Full);
                 }
 
@@ -1686,7 +1683,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
 
                 //leave chat channels
                 foreach (var channel in aisling.ChannelSettings)
-                    ChannelService.LeaveChannel(aisling, channel.ChannelName);
+                    try
+                    {
+                        ChannelService.LeaveChannel(aisling, channel.ChannelName);
+                    } catch
+                    {
+                        //ignored
+                    }
 
                 //save aisling
                 await SaveUserAsync(client.Aisling);

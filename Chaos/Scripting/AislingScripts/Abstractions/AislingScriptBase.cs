@@ -1,5 +1,6 @@
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
+using Chaos.Common.Definitions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
@@ -79,6 +80,9 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
 
     /// <inheritdoc />
     public virtual void OnPublicMessage(Creature source, string message) { }
+
+    /// <inheritdoc />
+    public virtual void OnStatIncrease(Stat stat) { }
 
     /// <inheritdoc />
     public virtual void Update(TimeSpan delta) { }
