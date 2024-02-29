@@ -90,6 +90,11 @@ public sealed record AttributesArgs : IPacketSerializable
     public bool IsAdmin { get; set; }
 
     /// <summary>
+    ///     Whether or not the character is allowed to swim on water tiles
+    /// </summary>
+    public bool IsSwimming { get; set; }
+
+    /// <summary>
     ///     The level of the character
     /// </summary>
     public byte Level { get; set; }

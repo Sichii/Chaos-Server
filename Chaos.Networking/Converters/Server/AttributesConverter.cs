@@ -83,6 +83,9 @@ public sealed class AttributesConverter : PacketConverterBase<AttributesArgs>
         if (args.IsAdmin)
             updateType |= StatUpdateType.GameMasterA;
 
+        if (args.IsSwimming)
+            updateType |= StatUpdateType.Swimming;
+
         if (args.HasUnreadMail)
             updateType |= StatUpdateType.UnreadMail;
 

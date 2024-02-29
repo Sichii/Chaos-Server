@@ -162,6 +162,7 @@ public sealed class AislingMapperProfile(
             Hit = obj.UserStatSheet.EffectiveHit,
             Int = obj.UserStatSheet.EffectiveInt,
             IsAdmin = obj.IsAdmin,
+            IsSwimming = obj.MapInstance.Template.Tiles[obj.X, obj.Y].IsWater,
             Level = (byte)obj.UserStatSheet.Level,
             HasUnreadMail = obj.MailBox.Any(post => post.IsHighlighted),
             MagicResistance = (byte)(obj.UserStatSheet.EffectiveMagicResistance / 10),

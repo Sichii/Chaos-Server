@@ -1,3 +1,5 @@
+using Chaos.Common.Definitions;
+using Chaos.Definitions;
 using Chaos.Resources;
 
 namespace Chaos.Models.Map;
@@ -7,13 +9,21 @@ public readonly struct Tile(ushort background, ushort leftForeground, ushort rig
     public ushort Background { get; } = background;
 
     public bool IsWall
-        => ((LeftForeground > 0) && ((Sotp[LeftForeground - 1] & 15) == 15))
-           || ((RightForeground > 0) && ((Sotp[RightForeground - 1] & 15) == 15));
+        => ((LeftForeground > 0)
+            && Sotp[LeftForeground - 1]
+                .HasFlag(TileFlags.Wall))
+           || ((RightForeground > 0)
+               && Sotp[RightForeground - 1]
+                   .HasFlag(TileFlags.Wall));
+
+    public bool IsWater { get; } = CHAOS_CONSTANTS.WATER_TILE_IDS.Contains(background);
 
     public ushort LeftForeground { get; } = leftForeground;
     public ushort RightForeground { get; } = rightForeground;
 
-    public static byte[] Sotp { get; } = ResourceManager.Sotp;
+    public static TileFlags[] Sotp { get; } = ResourceManager.Sotp
+                                                             .Select(@byte => (TileFlags)@byte)
+                                                             .ToArray();
 
     public static bool operator ==(Tile left, Tile right) => left.Equals(right);
 

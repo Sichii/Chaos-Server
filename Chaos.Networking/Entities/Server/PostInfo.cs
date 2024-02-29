@@ -13,9 +13,9 @@ public sealed record PostInfo
     public string Author { get; set; } = null!;
 
     /// <summary>
-    ///     The date the post was created
+    ///     The day of the month the post was created
     /// </summary>
-    public DateOnly CreationDate { get; set; }
+    public int DayOfMonth { get; set; }
 
     /// <summary>
     ///     Whether or not the post is highlighted
@@ -26,6 +26,11 @@ public sealed record PostInfo
     ///     The body of the post
     /// </summary>
     public string Message { get; set; } = null!;
+
+    /// <summary>
+    ///     The month the post was created
+    /// </summary>
+    public int MonthOfYear { get; set; }
 
     /// <summary>
     ///     The id of the post

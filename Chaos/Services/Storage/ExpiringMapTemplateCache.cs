@@ -83,7 +83,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
 
                 mapTemplate.Tiles[x, y] = tile;
 
-                if (CHAOS_CONSTANTS.DOOR_SPRITES.Contains(leftForeground))
+                if (CHAOS_CONSTANTS.DOOR_TILE_IDS.Contains(leftForeground))
                     mapTemplate.Doors[point] = new DoorTemplate
                     {
                         Sprite = leftForeground,
@@ -91,7 +91,7 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
                         Closed = true,
                         Point = point
                     };
-                else if (CHAOS_CONSTANTS.DOOR_SPRITES.Contains(rightForeground))
+                else if (CHAOS_CONSTANTS.DOOR_TILE_IDS.Contains(rightForeground))
                     mapTemplate.Doors[point] = new DoorTemplate
                     {
                         Sprite = rightForeground,

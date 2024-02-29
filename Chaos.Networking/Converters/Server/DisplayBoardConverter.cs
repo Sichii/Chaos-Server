@@ -77,7 +77,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 {
                     PostId = postId,
                     Author = author,
-                    CreationDate = new DateOnly(1, month, day),
+                    MonthOfYear = month,
+                    DayOfMonth = day,
                     Subject = subject,
                     Message = message
                 };
@@ -113,7 +114,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                             IsHighlighted = isHighlighted,
                             PostId = postId,
                             Author = author,
-                            CreationDate = new DateOnly(1, month, day),
+                            MonthOfYear = month,
+                            DayOfMonth = day,
                             Subject = subject
                         });
                 }
@@ -137,7 +139,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 {
                     PostId = postId,
                     Author = author,
-                    CreationDate = new DateOnly(1, month, day),
+                    MonthOfYear = month,
+                    DayOfMonth = day,
                     Subject = subject,
                     Message = message
                 };
@@ -189,7 +192,7 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 writer.WriteString8(args.Board.Name);
 
                 //order posts newest to oldest
-                var orderedPosts = (IEnumerable<PostInfo>)args.Board.Posts.OrderByDescending(p => p.CreationDate);
+                var orderedPosts = (IEnumerable<PostInfo>)args.Board.Posts.OrderByDescending(p => p.PostId);
 
                 //if there's a StartPostId, only send posts with an id greater than or equal to it
                 if (args.StartPostId.HasValue)
@@ -206,8 +209,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                     writer.WriteBoolean(post.IsHighlighted);
                     writer.WriteInt16(post.PostId);
                     writer.WriteString8(post.Author);
-                    writer.WriteByte((byte)post.CreationDate.Month);
-                    writer.WriteByte((byte)post.CreationDate.Day);
+                    writer.WriteByte((byte)post.MonthOfYear);
+                    writer.WriteByte((byte)post.DayOfMonth);
                     writer.WriteString8(post.Subject);
                 }
 
@@ -219,8 +222,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 writer.WriteByte(0); //LI: what is this for?
                 writer.WriteInt16(args.Post!.PostId);
                 writer.WriteString8(args.Post.Author);
-                writer.WriteByte((byte)args.Post.CreationDate.Month);
-                writer.WriteByte((byte)args.Post.CreationDate.Day);
+                writer.WriteByte((byte)args.Post.MonthOfYear);
+                writer.WriteByte((byte)args.Post.DayOfMonth);
                 writer.WriteString8(args.Post.Subject);
                 writer.WriteString16(args.Post.Message);
 
@@ -250,8 +253,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                     writer.WriteBoolean(post.IsHighlighted);
                     writer.WriteInt16(post.PostId);
                     writer.WriteString8(post.Author);
-                    writer.WriteByte((byte)post.CreationDate.Month);
-                    writer.WriteByte((byte)post.CreationDate.Day);
+                    writer.WriteByte((byte)post.MonthOfYear);
+                    writer.WriteByte((byte)post.DayOfMonth);
                     writer.WriteString8(post.Subject);
                 }
 
@@ -263,8 +266,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 writer.WriteByte(0); //LI: what is this for?
                 writer.WriteInt16(args.Post!.PostId);
                 writer.WriteString8(args.Post.Author);
-                writer.WriteByte((byte)args.Post.CreationDate.Month);
-                writer.WriteByte((byte)args.Post.CreationDate.Day);
+                writer.WriteByte((byte)args.Post.MonthOfYear);
+                writer.WriteByte((byte)args.Post.DayOfMonth);
                 writer.WriteString8(args.Post.Subject);
                 writer.WriteString16(args.Post.Message);
 
