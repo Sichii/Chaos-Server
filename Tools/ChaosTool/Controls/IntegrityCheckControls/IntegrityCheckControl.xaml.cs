@@ -130,7 +130,9 @@ public sealed partial class IntegrityCheckControl
             DetectMonsterTemplateViolationsAsync(),
             DetectMerchantTemplateViolationsAsync(),
             DetectLootTableViolationsAsync(),
-            DetectMapInstanceViolationsAsync());
+            DetectMapInstanceViolationsAsync(),
+            DetectWorldMapNodeViolationsAsync(),
+            DetectWorldMapViolationsAsync());
 
         if (IntegrityViolationsControl.Items.IsEmpty)
             await Dispatcher.InvokeAsync(
