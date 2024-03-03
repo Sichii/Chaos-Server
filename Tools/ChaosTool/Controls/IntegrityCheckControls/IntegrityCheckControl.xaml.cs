@@ -33,6 +33,8 @@ public sealed partial class IntegrityCheckControl
     public ISet<string> SellableItemsIndex { get; set; } = null!;
     public IReadOnlyDictionary<string, SkillTemplateSchema> SkillTemplateIndex { get; set; } = null!;
     public IReadOnlyDictionary<string, SpellTemplateSchema> SpellTemplateIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, WorldMapSchema> WorldMapIndex { get; set; } = null!;
+    public IReadOnlyDictionary<string, WorldMapNodeSchema> WorldMapNodeIndex { get; set; } = null!;
 
     public IntegrityCheckControl()
     {
@@ -510,6 +512,97 @@ public sealed partial class IntegrityCheckControl
         }
     }
 
+    private async Task DetectWorldMapNodeViolationsAsync()
+    {
+        await Task.Yield();
+
+        var clientRect = new Rectangle(
+            0,
+            0,
+            640,
+            480);
+
+        foreach (var wrapper in JsonContext.WorldMapNodes.Objects)
+        {
+            var node = wrapper.Object;
+            var expectedNodeKey = GetExpectedKey(wrapper);
+
+            var handler = new RoutedEventHandler(
+                (_, _) =>
+                {
+                    var nodeListView = MainWindow.WorldMapNodeListView;
+                    MainWindow.SpellsTab.IsSelected = true;
+
+                    var selected = nodeListView.Items
+                                               .OfType<WorldMapNodeViewModel>()
+                                               .FirstOrDefault(obs => obs.NodeKey.EqualsI(node.NodeKey));
+
+                    if (selected is null)
+                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+
+                    nodeListView.ItemsView.SelectedItem = selected;
+                    nodeListView.ItemsView.ScrollIntoView(selected);
+                });
+
+            if (!node.NodeKey.EqualsI(expectedNodeKey))
+                await AddViolationAsync($"NodeKey mismatch: {node.NodeKey} != {expectedNodeKey}", handler, true);
+
+            if (!clientRect.Contains(node.ScreenPosition))
+                await AddViolationAsync("ScreenPosition out of bounds", handler);
+
+            if (!MapInstanceIndex.TryGetValue(node.Destination.Map, out var destinationMapInstance))
+                await AddViolationAsync($"Destination map not found: {node.Destination.Map}", handler);
+
+            if (destinationMapInstance is not null
+                && MapTemplateIndex.TryGetValue(destinationMapInstance.Instance.TemplateKey, out var destinationMapTemplate))
+            {
+                var bounds = new Rectangle(
+                    0,
+                    0,
+                    destinationMapTemplate.Width,
+                    destinationMapTemplate.Height);
+
+                if (!bounds.Contains(node.Destination))
+                    await AddViolationAsync("Destination out of bounds", handler);
+            }
+        }
+    }
+
+    private async Task DetectWorldMapViolationsAsync()
+    {
+        await Task.Yield();
+
+        foreach (var wrapper in JsonContext.WorldMaps.Objects)
+        {
+            var worldMap = wrapper.Object;
+            var expectdWorldMapKey = GetExpectedKey(wrapper);
+
+            var handler = new RoutedEventHandler(
+                (_, _) =>
+                {
+                    var worldMapListView = MainWindow.WorldMapListView;
+                    MainWindow.SpellsTab.IsSelected = true;
+
+                    var selected = worldMapListView.Items
+                                                   .OfType<WorldMapViewModel>()
+                                                   .FirstOrDefault(obs => obs.WorldMapKey.EqualsI(worldMap.WorldMapKey));
+
+                    if (selected is null)
+                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+
+                    worldMapListView.ItemsView.SelectedItem = selected;
+                    worldMapListView.ItemsView.ScrollIntoView(selected);
+                });
+
+            if (!worldMap.WorldMapKey.EqualsI(expectdWorldMapKey))
+                await AddViolationAsync($"WorldMapKey mismatch: {worldMap.WorldMapKey} != {expectdWorldMapKey}", handler, true);
+
+            foreach (var nodeKey in worldMap.NodeKeys)
+                if (!WorldMapNodeIndex.ContainsKey(nodeKey))
+                    await AddViolationAsync($"NodeKey not found: {nodeKey}", handler);
+        }
+    }
+
     #region Utility
     private async Task AddViolationAsync(string violation, RoutedEventHandler handler, bool insertToHead = false)
         => await Dispatcher.InvokeAsync(
@@ -559,6 +652,8 @@ public sealed partial class IntegrityCheckControl
         SpellTemplateIndex = JsonContext.SpellTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
         DialogTemplateIndex = JsonContext.DialogTemplates.ToFrozenDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
         LootTableIndex = JsonContext.LootTables.ToFrozenDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
+        WorldMapNodeIndex = JsonContext.WorldMapNodes.ToFrozenDictionary(wmn => wmn.NodeKey, StringComparer.OrdinalIgnoreCase);
+        WorldMapIndex = JsonContext.WorldMaps.ToFrozenDictionary(wm => wm.WorldMapKey, StringComparer.OrdinalIgnoreCase);
 
         ReactorTileTemplateIndex = JsonContext.ReactorTileTemplates.ToFrozenDictionary(
             rt => rt.TemplateKey,

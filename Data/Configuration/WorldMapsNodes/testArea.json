@@ -1,6 +1,6 @@
 {
-    "nodeKey": "testArea",
-    "destination": "testArea:(8, 15)",
-    "text": "Test Area",
-    "screenPosition": "(300, 100)"
+  "destination": "testArea:(8, 15)",
+  "nodeKey": "testArea",
+  "screenPosition": "(300, 10)",
+  "text": "Test Area"
 }

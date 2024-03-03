@@ -10,6 +10,7 @@ using Chaos.Common.Abstractions;
 using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.Extensions.DependencyInjection;
+using Chaos.Geometry;
 using Chaos.Geometry.JsonConverters;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
@@ -52,8 +53,12 @@ public class JsonContext
                                                                                          () => ReactorTileTemplates)
                                                                                      .Case<SkillTemplateSchema>(() => SkillTemplates)
                                                                                      .Case<SpellTemplateSchema>(() => SpellTemplates)
+                                                                                     .Case<WorldMapNodeSchema>(() => WorldMapNodes)
+                                                                                     .Case<WorldMapSchema>(() => WorldMaps)
                                                                                      .Default(() => throw new ArgumentOutOfRangeException())
                                                                                      .Freeze();
+
+    public static AislingRepository Aislings { get; private set; } = null!;
 
     public static DialogTemplateRepository DialogTemplates { get; private set; } = null!;
     public static ItemTemplateRepository ItemTemplates { get; private set; } = null!;
@@ -66,7 +71,8 @@ public class JsonContext
     public static ReactorTileTemplateRepository ReactorTileTemplates { get; private set; } = null!;
     public static SkillTemplateRepository SkillTemplates { get; private set; } = null!;
     public static SpellTemplateRepository SpellTemplates { get; private set; } = null!;
-    public static AislingRepository Aislings { get; } = null!;
+    public static WorldMapNodeRepository WorldMapNodes { get; private set; } = null!;
+    public static WorldMapRepository WorldMaps { get; private set; } = null!;
     public static string BaseDirectory { get; }
     public static JsonSerializerOptions JsonSerializerOptions { get; }
 
@@ -163,7 +169,16 @@ public class JsonContext
                    .ConvertUsing(r => r);
 
                 cfg.CreateMap<string, BindableString>()
-                   .ForMember(l => l.String, c => c.MapFrom(l => l))
+                   .ForMember(rhs => rhs.String, c => c.MapFrom(lhs => lhs))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<Point, ObservablePoint>();
+
+                cfg.CreateMap<ObservablePoint, Point>()
+                   .ConstructUsing(lhs => new Point(lhs.X, lhs.Y));
+
+                cfg.CreateMap<Location, ObservableLocation>()
                    .PreserveReferences()
                    .ReverseMap();
 
@@ -196,7 +211,7 @@ public class JsonContext
                    .ReverseMap();
 
                 cfg.CreateMap<LearningRequirementsSchema, ObservableLearningRequirements>()
-                   .ForMember(l => l.RequiredStats, c => c.MapFrom(l => l.RequiredStats))
+                   .ForMember(rhs => rhs.RequiredStats, c => c.MapFrom(lhs => lhs.RequiredStats))
                    .PreserveReferences()
                    .ReverseMap();
 
@@ -210,7 +225,7 @@ public class JsonContext
                    .ReverseMap();
 
                 cfg.CreateMap<ItemTemplateSchema, ItemTemplateViewModel>()
-                   .ForMember(l => l.Modifiers, c => c.MapFrom(l => l.Modifiers))
+                   .ForMember(rhs => rhs.Modifiers, c => c.MapFrom(lhs => lhs.Modifiers))
                    .PreserveReferences()
                    .ReverseMap();
 
@@ -227,7 +242,7 @@ public class JsonContext
                    .ReverseMap();
 
                 cfg.CreateMap<MonsterTemplateSchema, MonsterTemplateViewModel>()
-                   .ForMember(l => l.StatSheet, c => c.MapFrom(l => l.StatSheet))
+                   .ForMember(rhs => rhs.StatSheet, c => c.MapFrom(lhs => lhs.StatSheet))
                    .PreserveReferences()
                    .ReverseMap();
 
@@ -236,67 +251,84 @@ public class JsonContext
                    .ReverseMap();
 
                 cfg.CreateMap<SkillTemplateSchema, SkillTemplateViewModel>()
-                   .ForMember(l => l.LearningRequirements, c => c.MapFrom(l => l.LearningRequirements))
+                   .ForMember(rhs => rhs.LearningRequirements, c => c.MapFrom(lhs => lhs.LearningRequirements))
                    .PreserveReferences()
                    .ReverseMap();
 
                 cfg.CreateMap<SpellTemplateSchema, SpellTemplateViewModel>()
-                   .ForMember(l => l.LearningRequirements, c => c.MapFrom(l => l.LearningRequirements))
+                   .ForMember(rhs => rhs.LearningRequirements, c => c.MapFrom(lhs => lhs.LearningRequirements))
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<WorldMapNodeSchema, WorldMapNodeViewModel>()
+                   .PreserveReferences()
+                   .ReverseMap();
+
+                cfg.CreateMap<WorldMapSchema, WorldMapViewModel>()
                    .PreserveReferences()
                    .ReverseMap();
 
                 //TRACE WRAPPERS
                 cfg.CreateMap<TraceWrapper<DialogTemplateSchema>, DialogTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<ItemTemplateSchema>, ItemTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<LootTableSchema>, LootTableViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<MapTemplateSchema>, MapTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<MerchantTemplateSchema>, MerchantTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<MonsterTemplateSchema>, MonsterTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<ReactorTileTemplateSchema>, ReactorTileTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<SkillTemplateSchema>, SkillTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
 
                 cfg.CreateMap<TraceWrapper<SpellTemplateSchema>, SpellTemplateViewModel>()
-                   .ForMember(r => r.OriginalPath, c => c.MapFrom(l => l.Path))
-                   .IncludeMembers(l => l.Object)
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<WorldMapNodeSchema>, WorldMapNodeViewModel>()
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
+                   .ReverseMap();
+
+                cfg.CreateMap<TraceWrapper<WorldMapSchema>, WorldMapViewModel>()
+                   .ForMember(rhs => rhs.OriginalPath, c => c.MapFrom(lhs => lhs.Path))
+                   .IncludeMembers(lhs => lhs.Object)
                    .ReverseMap();
             });
 
     private static void CreateTables()
     {
         LootTables = ActivatorUtilities.CreateInstance<LootTableRepository>(Services);
-
-        //Aislings = ActivatorUtilities.CreateInstance<AislingRepository>(Services);
+        Aislings = ActivatorUtilities.CreateInstance<AislingRepository>(Services);
         MapInstances = ActivatorUtilities.CreateInstance<MapInstanceRepository>(Services);
         DialogTemplates = ActivatorUtilities.CreateInstance<DialogTemplateRepository>(Services);
         ItemTemplates = ActivatorUtilities.CreateInstance<ItemTemplateRepository>(Services);
@@ -306,6 +338,8 @@ public class JsonContext
         ReactorTileTemplates = ActivatorUtilities.CreateInstance<ReactorTileTemplateRepository>(Services);
         SkillTemplates = ActivatorUtilities.CreateInstance<SkillTemplateRepository>(Services);
         SpellTemplates = ActivatorUtilities.CreateInstance<SpellTemplateRepository>(Services);
+        WorldMapNodes = ActivatorUtilities.CreateInstance<WorldMapNodeRepository>(Services);
+        WorldMaps = ActivatorUtilities.CreateInstance<WorldMapRepository>(Services);
     }
 
     public static RepositoryBase<TSchema> GetRepository<TSchema>() where TSchema: class
@@ -319,8 +353,7 @@ public class JsonContext
     {
         await Task.WhenAll(
             LootTables.LoadAsync(),
-
-            //Aislings.LoadAsync(),
+            Aislings.LoadAsync(),
             MapInstances.LoadAsync(),
             DialogTemplates.LoadAsync(),
             ItemTemplates.LoadAsync(),
@@ -329,7 +362,9 @@ public class JsonContext
             MonsterTemplates.LoadAsync(),
             ReactorTileTemplates.LoadAsync(),
             SkillTemplates.LoadAsync(),
-            SpellTemplates.LoadAsync());
+            SpellTemplates.LoadAsync(),
+            WorldMapNodes.LoadAsync(),
+            WorldMaps.LoadAsync());
 
         LoadingCompletion.TrySetResult();
     }
@@ -356,5 +391,7 @@ public class JsonContext
             MonsterTemplates.SaveChangesAsync(),
             ReactorTileTemplates.SaveChangesAsync(),
             SkillTemplates.SaveChangesAsync(),
-            SpellTemplates.SaveChangesAsync());
+            SpellTemplates.SaveChangesAsync(),
+            WorldMapNodes.SaveChangesAsync(),
+            WorldMaps.SaveChangesAsync());
 }

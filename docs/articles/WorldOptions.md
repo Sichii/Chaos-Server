@@ -144,6 +144,15 @@ This is the level cap for players. Level formulas can be changed, but with the d
 level you will stop
 gaining experience.
 
+### ClearOrangeBarTimerSecs
+
+This is the amount of time in seconds after the last orange bar message was sent to an aisling where the server will
+clear the orange bar.
+
+### SleepAnimationTimerMins
+
+This is the amount of time in minutes after an aisling's last action where the server will play the sleep animation.
+
 ### MinimumAislingAc
 
 This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage formula,

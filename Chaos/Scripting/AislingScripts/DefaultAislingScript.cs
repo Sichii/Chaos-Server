@@ -7,6 +7,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.AislingScripts.Abstractions;
 using Chaos.Scripting.Behaviors;
+using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -16,6 +17,7 @@ namespace Chaos.Scripting.AislingScripts;
 public class DefaultAislingScript : AislingScriptBase
 {
     private readonly IStore<BulletinBoard> BoardStore;
+    private readonly IIntervalTimer ClearOrangeBarTimer;
     private readonly IStore<MailBox> MailStore;
     private readonly IIntervalTimer SleepAnimationTimer;
     private SocialStatus PreAfkSocialStatus { get; set; }
@@ -35,6 +37,7 @@ public class DefaultAislingScript : AislingScriptBase
         RelationshipBehavior = new RelationshipBehavior();
         BlindBehavior = new BlindBehavior();
         SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5), false);
+        ClearOrangeBarTimer = new IntervalTimer(TimeSpan.FromSeconds(WorldOptions.Instance.ClearOrangeBarTimerSecs), false);
     }
 
     /// <inheritdoc />
@@ -111,9 +114,17 @@ public class DefaultAislingScript : AislingScriptBase
     }
 
     /// <inheritdoc />
+    public override void OnStatIncrease(Stat stat)
+    {
+        if (stat == Stat.STR)
+            Subject.UserStatSheet.SetMaxWeight(LevelUpFormulae.Default.CalculateMaxWeight(Subject));
+    }
+
+    /// <inheritdoc />
     public override void Update(TimeSpan delta)
     {
         SleepAnimationTimer.Update(delta);
+        ClearOrangeBarTimer.Update(delta);
 
         if (SleepAnimationTimer.IntervalElapsed)
         {
@@ -122,7 +133,7 @@ public class DefaultAislingScript : AislingScriptBase
             var isAfk = !lastManualAction.HasValue
                         || (DateTime.UtcNow.Subtract(lastManualAction.Value)
                                     .TotalMinutes
-                            > 5);
+                            > WorldOptions.Instance.SleepAnimationTimerMins);
 
             if (isAfk)
             {
@@ -138,12 +149,28 @@ public class DefaultAislingScript : AislingScriptBase
             } else if (Subject.Options.SocialStatus == SocialStatus.DayDreaming)
                 Subject.Options.SocialStatus = PreAfkSocialStatus;
         }
-    }
 
-    /// <inheritdoc />
-    public override void OnStatIncrease(Stat stat)
-    {
-        if (stat == Stat.STR)
-            Subject.UserStatSheet.SetMaxWeight(LevelUpFormulae.Default.CalculateMaxWeight(Subject));
+        if (ClearOrangeBarTimer.IntervalElapsed)
+        {
+            var lastOrangeBarMessage = Subject.Trackers.LastOrangeBarMessage;
+            var now = DateTime.UtcNow;
+
+            //clear if
+            //an orange bar message has ever been sent
+            //and the last message was sent after the last clear
+            //and the time since the last message is greater than the clear timer
+            var shouldClear = lastOrangeBarMessage.HasValue
+                              && (lastOrangeBarMessage > Subject.Trackers.LastOrangeBarMessageClear)
+                              && (now.Subtract(lastOrangeBarMessage.Value)
+                                     .TotalSeconds
+                                  > WorldOptions.Instance.ClearOrangeBarTimerSecs);
+
+            if (shouldClear)
+            {
+                Subject.SendServerMessage(ServerMessageType.OrangeBar1, string.Empty);
+                Subject.Trackers.LastOrangeBarMessage = lastOrangeBarMessage;
+                Subject.Trackers.LastOrangeBarMessageClear = now;
+            }
+        }
     }
 }

@@ -651,6 +651,17 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendServerMessage(ServerMessageType serverMessageType, string message)
     {
+        if (serverMessageType is ServerMessageType.Whisper
+                                 or ServerMessageType.OrangeBar1
+                                 or ServerMessageType.OrangeBar2
+                                 or ServerMessageType.ActiveMessage
+                                 or ServerMessageType.OrangeBar3
+                                 or ServerMessageType.AdminMessage
+                                 or ServerMessageType.OrangeBar5
+                                 or ServerMessageType.GroupChat
+                                 or ServerMessageType.GuildChat)
+            Aisling.Trackers.LastOrangeBarMessage = DateTime.UtcNow;
+
         var args = new ServerMessageArgs
         {
             ServerMessageType = serverMessageType,

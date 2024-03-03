@@ -15,7 +15,9 @@
         xmlns:reactorTileTemplateControls="clr-namespace:ChaosTool.Controls.ReactorTileTemplateControls"
         xmlns:monsterTemplateControls="clr-namespace:ChaosTool.Controls.MonsterTemplateControls"
         xmlns:merchantTemplateControls="clr-namespace:ChaosTool.Controls.MerchantTemplateControls"
+        xmlns:worldMapNodeControls="clr-namespace:ChaosTool.Controls.WorldMapNodeControls"
         xmlns:integrityCheckControls="clr-namespace:ChaosTool.Controls.IntegrityCheckControls"
+        xmlns:worldMapControls="clr-namespace:ChaosTool.Controls.WorldMapControls"
         mc:Ignorable="d"
         Title="Chaos Tool"
         Width="1200"
@@ -101,6 +103,22 @@
                  materialDesign:TabAssist.HasUniformTabWidth="False">
             <Grid>
                 <merchantTemplateControls:MerchantTemplateListView x:Name="MerchantTemplateListView" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="WorldMapNodes"
+                 Name="WorldMapNodesTab"
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
+            <Grid>
+                <worldMapNodeControls:WorldMapNodeListView x:Name="WorldMapNodeListView" />
+            </Grid>
+        </TabItem>
+        <TabItem Header="WorldMaps"
+                 Name="WorldMapsTab"
+                 Style="{StaticResource MaterialDesignTabItem}"
+                 materialDesign:TabAssist.HasUniformTabWidth="False">
+            <Grid>
+                <worldMapControls:WorldMapListView x:Name="WorldMapListView" />
             </Grid>
         </TabItem>
         <TabItem Header="BulkEdit"

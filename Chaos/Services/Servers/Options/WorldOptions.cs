@@ -11,6 +11,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public required int AislingAssailIntervalMs { get; init; }
 
     /// <inheritdoc />
+    public int ClearOrangeBarTimerSecs { get; set; }
+
+    /// <inheritdoc />
     public required ChannelSettings[] DefaultChannels { get; set; } = Array.Empty<ChannelSettings>();
 
     /// <inheritdoc />
@@ -96,6 +99,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
 
     /// <inheritdoc />
     public required double SaveIntervalMins { get; init; }
+
+    /// <inheritdoc />
+    public int SleepAnimationTimerMins { get; set; }
 
     /// <inheritdoc />
     public required int TradeRange { get; init; }

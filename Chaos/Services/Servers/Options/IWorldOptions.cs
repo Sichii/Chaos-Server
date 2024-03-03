@@ -6,6 +6,17 @@ namespace Chaos.Services.Servers.Options;
 public interface IWorldOptions
 {
     /// <summary>
+    ///     This is the amount of time in seconds after the last orange bar message was sent to a player where the server will
+    ///     clear the orange bar
+    /// </summary>
+    int ClearOrangeBarTimerSecs { get; set; }
+
+    /// <summary>
+    ///     This is the amount of time in minutes after a player's last action where the server will play the sleep animation
+    /// </summary>
+    int SleepAnimationTimerMins { get; set; }
+
+    /// <summary>
     ///     All creatures have an AssailInterval. AssailInterval is essentially the cooldown in milliseconds for skills marked
     ///     as assails. This value ismodified by the AtkSpeedPct attribute and can be modified to be 3x faster or slower than
     ///     the base value. This property sets the base interval for all aislings.
