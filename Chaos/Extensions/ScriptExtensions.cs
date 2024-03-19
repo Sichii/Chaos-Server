@@ -1,3 +1,4 @@
+using Chaos.Extensions.Common;
 using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Extensions;
@@ -8,15 +9,18 @@ public static class ScriptExtensions
     {
         var scriptType = typeof(TScript);
         var scriptKey = ScriptBase.GetScriptKey(scriptType);
+
         var scriptedType = scripted.GetType();
 
-        var baseScriptType = scriptedType.GetGenericArguments()
+        var baseScriptType = scriptedType.ExtractGenericInterfaces(typeof(IScripted<>))
+                                         .Single()
+                                         .GetGenericArguments()
                                          .Single();
 
         var scriptProvider = AppContext.ScriptProvider;
 
         var method = scriptProvider.GetType()
-                                   .GetMethod(
+                                   .GetGenericMethod(
                                        nameof(IScriptProvider.CreateScript),
                                        [
                                            baseScriptType,
