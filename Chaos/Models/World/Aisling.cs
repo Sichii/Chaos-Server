@@ -610,11 +610,25 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                 return false;
 
             if (Inventory.RemoveQuantity(item.Slot, amount.Value, out var items))
-                return TryDrop(point, items.FixStacks(ItemCloner), out groundItems);
+                if (TryDrop(point, items.FixStacks(ItemCloner), out groundItems))
+                {
+                    if (item.Template.NoTrade)
+                        foreach (var groundItem in groundItems)
+                            groundItem.LockToAislings(int.MaxValue, this);
+
+                    return true;
+                }
         } else
         {
             if (Inventory.TryGetRemove(slot, out var droppedItem))
-                return TryDrop(point, out groundItems, droppedItem);
+                if (TryDrop(point, out groundItems, droppedItem))
+                {
+                    if (item.Template.NoTrade)
+                        foreach (var groundItem in groundItems)
+                            groundItem.LockToAislings(int.MaxValue, this);
+
+                    return true;
+                }
         }
 
         return false;

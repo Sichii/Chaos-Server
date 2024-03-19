@@ -20,6 +20,9 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
         : base(subject) { }
 
     /// <inheritdoc />
+    public virtual bool CanDropItemOn(Aisling source, Item item) => !(item.Template.AccountBound || item.Template.NoTrade);
+
+    /// <inheritdoc />
     public virtual bool CanMove() => true;
 
     /// <param name="entity">

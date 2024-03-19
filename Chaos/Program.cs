@@ -391,7 +391,8 @@ static void RegisterStructuredLoggingTransformations()
                                  ItemTemplateKey = obj.Item.Template.TemplateKey,
                                  ItemCount = obj.Item.Count,
                                  Creation = obj.Creation,
-                                 Location = ILocation.ToString(obj)
+                                 Location = ILocation.ToString(obj),
+                                 NoTrade = obj.Item.Template.NoTrade
                              });
 
                          builder.RegisterObjectTransformation<Dialog>(

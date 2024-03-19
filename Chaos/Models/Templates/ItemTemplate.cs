@@ -7,7 +7,6 @@ namespace Chaos.Models.Templates;
 public sealed record ItemTemplate : PanelEntityTemplateBase
 {
     public required bool AccountBound { get; init; }
-
     public required int BuyCost { get; init; }
     public required string Category { get; init; } = string.Empty;
     public required DisplayColor Color { get; init; }
@@ -19,6 +18,7 @@ public sealed record ItemTemplate : PanelEntityTemplateBase
     public required int? MaxDurability { get; init; }
     public required int MaxStacks { get; init; } = 1;
     public required Attributes? Modifiers { get; init; }
+    public required bool NoTrade { get; init; }
 
     public override required ushort PanelSprite
     {

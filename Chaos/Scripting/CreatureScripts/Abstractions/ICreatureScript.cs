@@ -8,6 +8,7 @@ namespace Chaos.Scripting.CreatureScripts.Abstractions;
 
 public interface ICreatureScript : IScript, IDeltaUpdatable
 {
+    bool CanDropItemOn(Aisling source, Item item);
     bool CanMove();
     bool CanSee(VisibleEntity entity);
     bool CanTalk();

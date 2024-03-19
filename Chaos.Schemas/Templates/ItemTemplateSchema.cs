@@ -87,6 +87,12 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public AttributesSchema? Modifiers { get; set; }
 
     /// <summary>
+    ///     Whether or not the item can be traded. If the item is not tradeable, it cannot be traded to other players via
+    ///     exchange or dropping. These items are still droppable, but are locked to the player that dropped it.
+    /// </summary>
+    public bool NoTrade { get; set; }
+
+    /// <summary>
     ///     Default null
     ///     <br />
     ///     If specified, this armor will have pants, and they will be this color

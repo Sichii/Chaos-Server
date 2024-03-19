@@ -243,6 +243,10 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (count == 0)
             count = 1;
 
+        if (source.Inventory.TryGetObject(slot, out var inventoryItem))
+            if (!Script.CanDropItemOn(source, inventoryItem))
+                return;
+
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
             {

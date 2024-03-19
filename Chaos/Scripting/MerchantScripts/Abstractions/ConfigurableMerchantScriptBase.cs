@@ -12,6 +12,9 @@ public abstract class ConfigurableMerchantScriptBase : ConfigurableScriptBase<Me
         : base(subject, scriptKey => subject.Template.ScriptVars[scriptKey]) { }
 
     /// <inheritdoc />
+    public virtual bool CanDropItemOn(Aisling source, Item item) => !(item.Template.AccountBound || item.Template.NoTrade);
+
+    /// <inheritdoc />
     public virtual bool CanMove() => true;
 
     /// <inheritdoc />

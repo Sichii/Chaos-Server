@@ -14,6 +14,16 @@ namespace Chaos.Scripting.AislingScripts;
 /// </summary>
 public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAislingScript
 {
+    /// <inheritdoc />
+    public virtual bool CanDropItemOn(Aisling source, Item item)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanDropItemOn(source, item))
+                return false;
+
+        return true;
+    }
+
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>

@@ -139,6 +139,7 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             Name = obj.Name,
             ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
             AccountBound = obj.AccountBound,
+            NoTrade = obj.NoTrade,
             Color = obj.Color,
             ItemSprite = new ItemSprite(obj.PanelSprite, obj.DisplaySprite ?? 0),
             MaxDurability = obj.MaxDurability,
