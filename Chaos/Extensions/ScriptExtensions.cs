@@ -4,28 +4,39 @@ namespace Chaos.Extensions;
 
 public static class ScriptExtensions
 {
-    public static void AddScript<TScripted, TScriptBase>(
-        this TScripted scripted,
-        Type scriptTypeToAdd,
-        IScriptProvider scriptProvider) where TScripted: IScripted<TScriptBase>
-                                                 where TScriptBase: IScript
+    public static void AddScript<TScript>(this IScripted<IScript> scripted)
     {
-        var scriptKey = ScriptBase.GetScriptKey(scriptTypeToAdd);
+        var scriptType = typeof(TScript);
+        var scriptKey = ScriptBase.GetScriptKey(scriptType);
+        var scriptedType = scripted.GetType();
 
-        var script = scriptProvider.CreateScript<TScriptBase, TScripted>(
-            new[]
-            {
-                scriptKey
-            },
-            scripted);
-        var scripts = script as IEnumerable<TScriptBase>;
-        var composite = (ICompositeScript<TScriptBase>)scripted.Script;
+        var baseScriptType = scriptedType.GetGenericArguments()
+                                         .Single();
 
-        if (scripts is not null)
-            foreach (var createdScript in scripts)
-                composite.Add(createdScript);
-        else
-            composite.Add(script);
+        var scriptProvider = AppContext.ScriptProvider;
+
+        var method = scriptProvider.GetType()
+                                   .GetMethod(
+                                       nameof(IScriptProvider.CreateScript),
+                                       [
+                                           baseScriptType,
+                                           scriptedType
+                                       ]);
+
+        var resultCompositeScript = (IEnumerable<IScript>)method!.Invoke(
+            scriptProvider,
+            [
+                new[]
+                {
+                    scriptKey
+                },
+                scripted
+            ])!;
+
+        var targetCompositeScript = (ICompositeScript)scripted.Script;
+
+        foreach (var script in resultCompositeScript)
+            targetCompositeScript.Add(script);
 
         scripted.ScriptKeys.Add(scriptKey);
     }
@@ -60,13 +71,12 @@ public static class ScriptExtensions
         return outScript is not null;
     }
 
-    public static void RemoveScript<TBaseScript, TScriptToRemove>(this IScripted<TBaseScript> scripted) where TBaseScript: IScript
-        where TScriptToRemove: TBaseScript
+    public static void RemoveScript<TScriptToRemove>(this IScripted<IScript> scripted) where TScriptToRemove: IScript
     {
         if (!scripted.Script.Is<TScriptToRemove>(out var scriptToRemove))
             return;
 
-        if (scripted.Script is ICompositeScript<TBaseScript> composite)
+        if (scripted.Script is ICompositeScript composite)
             composite.Remove(scriptToRemove);
     }
 }

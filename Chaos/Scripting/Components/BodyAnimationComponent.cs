@@ -12,11 +12,12 @@ public class BodyAnimationComponent : IComponent
     {
         var options = vars.GetOptions<IBodyAnimationComponentOptions>();
 
-        context.Source.AnimateBody(options.BodyAnimation);
+        context.Source.AnimateBody(options.BodyAnimation, options.AnimationSpeed ?? 25);
     }
 
     public interface IBodyAnimationComponentOptions
     {
+        ushort? AnimationSpeed { get; init; }
         BodyAnimation BodyAnimation { get; init; }
     }
 }

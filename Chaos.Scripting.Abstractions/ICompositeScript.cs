@@ -6,6 +6,14 @@ namespace Chaos.Scripting.Abstractions;
 public interface ICompositeScript
 {
     /// <summary>
+    ///     Adds a script to this script
+    /// </summary>
+    /// <param name="script">
+    ///     The script to add
+    /// </param>
+    void Add(object script);
+
+    /// <summary>
     ///     Gets a script of the specified type
     /// </summary>
     /// <typeparam name="T">
@@ -20,6 +28,14 @@ public interface ICompositeScript
     ///     The type of the script to retreive
     /// </typeparam>
     IEnumerable<T> GetScripts<T>();
+
+    /// <summary>
+    ///     Removes a script from this script
+    /// </summary>
+    /// <param name="script">
+    ///     The script to remove
+    /// </param>
+    void Remove(object script);
 }
 
 /// <inheritdoc cref="ICompositeScript" />

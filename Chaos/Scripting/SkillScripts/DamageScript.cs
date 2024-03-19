@@ -53,6 +53,9 @@ public class DamageScript : ConfigurableSkillScriptBase,
     public BodyAnimation BodyAnimation { get; init; }
 
     /// <inheritdoc />
+    public ushort? AnimationSpeed { get; init; }
+
+    /// <inheritdoc />
     public Animation? Animation { get; init; }
 
     /// <inheritdoc />

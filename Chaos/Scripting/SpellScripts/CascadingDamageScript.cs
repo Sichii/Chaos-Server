@@ -42,6 +42,9 @@ public class CascadingDamageScript : ConfigurableSpellScriptBase,
     public BodyAnimation BodyAnimation { get; init; }
 
     /// <inheritdoc />
+    public ushort? AnimationSpeed { get; init; }
+
+    /// <inheritdoc />
     public AoeShape Shape { get; init; }
 
     /// <inheritdoc />

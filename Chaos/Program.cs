@@ -31,6 +31,7 @@ using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Extensions.Logging;
+using AppContext = Chaos.AppContext;
 
 var encodingProvider = CodePagesEncodingProvider.Instance;
 Encoding.RegisterProvider(encodingProvider);
@@ -93,6 +94,8 @@ static void AddConfiguration(WebApplicationBuilder builder)
 
 static async Task RunApp(WebApplication app)
 {
+    AppContext.Provider = app.Services;
+
     var serverCtx = app.Services.GetRequiredService<CancellationTokenSource>();
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
