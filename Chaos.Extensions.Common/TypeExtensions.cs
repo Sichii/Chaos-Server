@@ -81,6 +81,19 @@ public static class TypeExtensions
     }
 
     /// <summary>
+    ///     Gets a generic method from a type
+    /// </summary>
+    public static MethodInfo? GetGenericMethod(this Type type, string methodName, Type[] genericTypes)
+    {
+        var method = type.GetMethod(methodName);
+
+        if (method == null)
+            return null;
+
+        return method.MakeGenericMethod(genericTypes);
+    }
+
+    /// <summary>
     ///     Determines whether a type inherits from the specified base type
     /// </summary>
     public static bool HasBaseType(this Type type, Type baseType)
