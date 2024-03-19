@@ -277,7 +277,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         //if there is no path, return
         if (path.Count == 0)
-            return;
+        {
+            var simpleDirection = MapInstance.Pathfinder.FindSimpleDirection(this,)
+        }
 
         var nextPoint = path.Pop();
         var direction = nextPoint.DirectionalRelationTo(this);

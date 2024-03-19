@@ -117,6 +117,19 @@ public sealed class Pathfinder : IPathfinder
 
         ResetGrid(blockedPoints, subGrid);
 
+        if (path.Count == 0)
+        {
+            var nextDirection = FindSimpleDirection(
+                start,
+                end,
+                ignoreWalls,
+                blocked);
+
+            var nextPoint = start.DirectionalOffset(nextDirection);
+
+            path.Push(nextPoint);
+        }
+
         return path;
     }
 
