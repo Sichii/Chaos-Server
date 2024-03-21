@@ -13,7 +13,10 @@ public static class ScriptExtensions
         var scriptedType = scripted.GetType();
 
         var baseScriptType = scriptedType.ExtractGenericInterfaces(typeof(IScripted<>))
-                                         .Single()
+                                         .First(
+                                             t => t.GetGenericArguments()
+                                                   .Length
+                                                  == 1)
                                          .GetGenericArguments()
                                          .Single();
 

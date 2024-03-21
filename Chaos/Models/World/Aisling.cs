@@ -1116,6 +1116,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
                                            .ToList())
             reactor.OnWalkedOn(this);
+
+        var startOnWater = MapInstance.Template.Tiles[startPosition.X, startPosition.Y].IsWater;
+        var endOnWater = MapInstance.Template.Tiles[endPoint.X, endPoint.Y].IsWater;
+
+        //if we transition between water / nonwater tiles
+        //send attributes to update the water walking status
+        if (startOnWater != endOnWater)
+            Client.SendAttributes(StatUpdateType.Full);
     }
 
     /// <inheritdoc />
