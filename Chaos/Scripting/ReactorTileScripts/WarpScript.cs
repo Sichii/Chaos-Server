@@ -1,5 +1,6 @@
 using Chaos.Collections;
 using Chaos.Extensions.Geometry;
+using Chaos.Geometry.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
@@ -29,9 +30,8 @@ public class WarpScript : ConfigurableReactorTileScriptBase
         if (source.StatSheet.Level < (targetMap.MinimumLevel ?? 0))
         {
             aisling?.SendOrangeBarMessage($"You must be at least level {targetMap.MinimumLevel} to enter this area.");
-
             var point = source.DirectionalOffset(source.Direction.Reverse());
-            source.WarpTo(point);
+            source.WarpTo(source.Trackers.LastPosition as IPoint ?? point);
 
             return;
         }
@@ -41,7 +41,7 @@ public class WarpScript : ConfigurableReactorTileScriptBase
             aisling?.SendOrangeBarMessage($"You must be at most level {targetMap.MaximumLevel} to enter this area.");
 
             var point = source.DirectionalOffset(source.Direction.Reverse());
-            source.WarpTo(point);
+            source.WarpTo(source.Trackers.LastPosition as IPoint ?? point);
 
             return;
         }

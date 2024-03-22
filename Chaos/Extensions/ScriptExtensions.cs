@@ -1,3 +1,4 @@
+using Chaos.Common.Comparers;
 using Chaos.Extensions.Common;
 using Chaos.Scripting.Abstractions;
 
@@ -13,10 +14,8 @@ public static class ScriptExtensions
         var scriptedType = scripted.GetType();
 
         var baseScriptType = scriptedType.ExtractGenericInterfaces(typeof(IScripted<>))
-                                         .First(
-                                             t => t.GetGenericArguments()
-                                                   .Length
-                                                  == 1)
+                                         .OrderBy(MostDerivedTypeComparer.Instance)
+                                         .First()
                                          .GetGenericArguments()
                                          .Single();
 

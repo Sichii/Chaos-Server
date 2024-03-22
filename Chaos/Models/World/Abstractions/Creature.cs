@@ -267,10 +267,10 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             }
     }
 
-    public void Pathfind(IPoint target, ICollection<IPoint>? unwalkablePoints = null)
+    public void Pathfind(IPoint target, int distance = 1, ICollection<IPoint>? unwalkablePoints = null)
     {
-        //if we're right next to the point, dont bother pathfinding
-        if (this.DistanceFrom(target) == 1)
+        //if we're within distance, no need to pathfind
+        if (this.DistanceFrom(target) <= distance)
             return;
 
         var path = FindPath(target, unwalkablePoints);
