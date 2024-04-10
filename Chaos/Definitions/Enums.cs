@@ -39,3 +39,10 @@ public enum VisibilityType
     TrueHidden,
     GmHidden
 }
+
+public enum VisionType
+{
+    Normal,
+    Blind,
+    TrueBlind
+}

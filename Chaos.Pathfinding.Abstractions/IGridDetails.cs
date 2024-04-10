@@ -8,11 +8,9 @@ namespace Chaos.Pathfinding.Abstractions;
 public interface IGridDetails
 {
     /// <summary>
-    ///     A collection of points in the grid that should never be pathed over
+    ///     A collection of points in the grid that represent blocking reactors
     /// </summary>
-
-    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-    ICollection<IPoint> Blacklist { get; }
+    ICollection<IPoint> BlockingReactors { get; }
 
     /// <summary>
     ///     The height of the grid

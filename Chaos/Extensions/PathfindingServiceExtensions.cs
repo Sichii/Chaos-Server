@@ -10,9 +10,9 @@ public static class PathfindingServiceExtensions
 {
     public static void RegisterGrid(this IPathfindingService pathfindingService, MapInstance mapInstance)
     {
-        var blackList = mapInstance.GetEntities<ReactorTile>()
-                                   .Where(rt => rt.ShouldBlockPathfinding)
-                                   .ToList<IPoint>();
+        var blockingReactors = mapInstance.GetEntities<ReactorTile>()
+                                          .Where(rt => rt.ShouldBlockPathfinding)
+                                          .ToList<IPoint>();
 
         var walls = new List<IPoint>();
 
@@ -29,7 +29,7 @@ public static class PathfindingServiceExtensions
                 Width = mapInstance.Template.Width,
                 Height = mapInstance.Template.Height,
                 Walls = walls,
-                Blacklist = blackList
+                BlockingReactors = blockingReactors
             });
     }
 }

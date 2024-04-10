@@ -43,7 +43,7 @@ public sealed class Skill : PanelEntityBase, IScripted<ISkillScript>
     }
 
     /// <inheritdoc />
-    public override void BeginCooldown(Creature creature)
+    public override void BeginCooldown(Creature creature, TimeSpan? customCooldown = null)
     {
         //don't send cooldowns for assails
         if (Template.IsAssail)
@@ -53,7 +53,7 @@ public sealed class Skill : PanelEntityBase, IScripted<ISkillScript>
             return;
         }
 
-        base.BeginCooldown(creature);
+        base.BeginCooldown(creature, customCooldown);
     }
 
     /// <inheritdoc />

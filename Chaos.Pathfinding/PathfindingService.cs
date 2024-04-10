@@ -33,6 +33,7 @@ public sealed class PathfindingService : IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
+        bool ignoreBlockingReactors,
         IReadOnlyCollection<IPoint> blocked,
         int? limitRadius = null)
     {
@@ -44,6 +45,7 @@ public sealed class PathfindingService : IPathfindingService
             start,
             end,
             ignoreWalls,
+            ignoreBlockingReactors,
             blocked,
             limitRadius);
     }
@@ -53,6 +55,7 @@ public sealed class PathfindingService : IPathfindingService
         string key,
         IPoint start,
         bool ignoreWalls,
+        bool ignoreBlockingReactors,
         IReadOnlyCollection<IPoint> blocked)
     {
         var lookupKey = ConstructKey(key);
@@ -60,7 +63,11 @@ public sealed class PathfindingService : IPathfindingService
         //not thread safe, but it should be fine if we occasionally create a duplicate pathfinder
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.FindRandomDirection(start, ignoreWalls, blocked);
+        return pathFinder!.FindRandomDirection(
+            start,
+            ignoreWalls,
+            ignoreBlockingReactors,
+            blocked);
     }
 
     /// <inheritdoc />
@@ -69,6 +76,7 @@ public sealed class PathfindingService : IPathfindingService
         IPoint start,
         IPoint end,
         bool ignoreWalls,
+        bool ignoreBlockingReactors,
         IReadOnlyCollection<IPoint> blocked)
     {
         var lookupKey = ConstructKey(gridKey);
@@ -79,6 +87,7 @@ public sealed class PathfindingService : IPathfindingService
             start,
             end,
             ignoreWalls,
+            ignoreBlockingReactors,
             blocked);
     }
 

@@ -31,6 +31,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public virtual bool IsDead { get; set; }
     public Status Status { get; set; }
     public Trackers Trackers { get; set; }
+
+    public VisionType Vision { get; protected set; }
     public Dictionary<uint, DateTime> ApproachTime { get; }
     public abstract int AssailIntervalMs { get; }
     public abstract ILogger Logger { get; }
@@ -107,6 +109,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (entity.Equals(this))
             return true;
 
+        if (Vision == VisionType.TrueBlind)
+            return false;
+
         switch (entity.Visibility)
         {
             case VisibilityType.Normal:
@@ -172,7 +177,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
-    public Stack<IPoint> FindPath(IPoint target, ICollection<IPoint>? unwalkablePoints = null)
+    public Stack<IPoint> FindPath(IPoint target, bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
     {
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
                                      .Where(door => door.Closed);
@@ -189,6 +194,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             this,
             target,
             Type == CreatureType.WalkThrough,
+            ignoreBlockingReactors,
             nearbyUnwalkablePoints,
             12);
     }
@@ -267,13 +273,17 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             }
     }
 
-    public void Pathfind(IPoint target, int distance = 1, ICollection<IPoint>? unwalkablePoints = null)
+    public void Pathfind(
+        IPoint target,
+        int distance = 1,
+        bool ignoreBlockingReactors = false,
+        ICollection<IPoint>? unwalkablePoints = null)
     {
         //if we're within distance, no need to pathfind
         if (this.DistanceFrom(target) <= distance)
             return;
 
-        var path = FindPath(target, unwalkablePoints);
+        var path = FindPath(target, ignoreBlockingReactors, unwalkablePoints);
 
         var nextPoint = path.Pop();
         var direction = nextPoint.DirectionalRelationTo(this);
@@ -316,6 +326,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         foreach (var creature in canObserveAfter.Except(canObserveBefore))
             creature.OnApproached(this);
     }
+
+    public virtual void SetVision(VisionType visionType) => Vision = visionType;
 
     public virtual void Shout(string message) => ShowPublicMessage(PublicMessageType.Shout, message);
 
@@ -601,7 +613,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             reactor.OnWalkedOn(this);
     }
 
-    public virtual void Wander(ICollection<IPoint>? unwalkablePoints = null)
+    public virtual void Wander(bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
     {
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
                                      .Where(door => door.Closed);
@@ -617,6 +629,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             MapInstance.InstanceId,
             this,
             Type == CreatureType.WalkThrough,
+            ignoreBlockingReactors,
             nearbyUnwalkablePoints);
 
         if (direction == Direction.Invalid)

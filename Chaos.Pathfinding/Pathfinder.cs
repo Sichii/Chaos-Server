@@ -47,9 +47,6 @@ public sealed class Pathfinder : IPathfinder
         foreach (var wall in gridDetails.Walls)
             PathNodes[wall.X, wall.Y].IsWall = true;
 
-        foreach (var point in gridDetails.Blacklist)
-            PathNodes[point.X, point.Y].IsBlackListed = true;
-
         //assign node neighbors
         foreach (var pathNode in PathNodes.Flatten())
             foreach (var point in pathNode.GenerateCardinalPoints())
@@ -72,6 +69,8 @@ public sealed class Pathfinder : IPathfinder
     /// <param name="ignoreWalls">
     ///     Whether or not to ignore walls
     /// </param>
+    /// <param name="ignoreBlockingReactors">
+    /// </param>
     /// <param name="blocked">
     ///     A collection of extra unwalkable points such as creatures
     /// </param>
@@ -82,6 +81,7 @@ public sealed class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
+        bool ignoreBlockingReactors,
         IReadOnlyCollection<IPoint> blocked,
         int? limitRadius = null)
     {
@@ -89,7 +89,11 @@ public sealed class Pathfinder : IPathfinder
         //try to walk out from under it
         if (PointEqualityComparer.Instance.Equals(start, end))
         {
-            var randomPoint = FindRandomPoint(start, ignoreWalls, blocked);
+            var randomPoint = FindRandomPoint(
+                start,
+                ignoreWalls,
+                ignoreBlockingReactors,
+                blocked);
 
             if (randomPoint.HasValue)
                 return new Stack<IPoint>([randomPoint.Value]);
@@ -97,7 +101,7 @@ public sealed class Pathfinder : IPathfinder
             return new Stack<IPoint>();
         }
 
-        if (start.DistanceFrom(end) == 1)
+        if (start.DistanceFrom(end) == 0)
             return new Stack<IPoint>();
 
         using var @lock = Sync.Enter();
@@ -111,7 +115,11 @@ public sealed class Pathfinder : IPathfinder
 
         InitializeGrid(blockedPoints, subGrid);
 
-        var path = InnerFindPath(start, end, ignoreWalls);
+        var path = InnerFindPath(
+            start,
+            end,
+            ignoreWalls,
+            ignoreBlockingReactors);
 
         PriortyQueue.Clear();
 
@@ -123,6 +131,7 @@ public sealed class Pathfinder : IPathfinder
                 start,
                 end,
                 ignoreWalls,
+                ignoreBlockingReactors,
                 blocked);
 
             var nextPoint = start.DirectionalOffset(nextDirection);
@@ -134,9 +143,17 @@ public sealed class Pathfinder : IPathfinder
     }
 
     /// <inheritdoc />
-    public Direction FindRandomDirection(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
+    public Direction FindRandomDirection(
+        IPoint start,
+        bool ignoreWalls,
+        bool ignoreBlockingReactors,
+        IReadOnlyCollection<IPoint> blocked)
     {
-        var optimalPoint = FindRandomPoint(start, ignoreWalls, blocked);
+        var optimalPoint = FindRandomPoint(
+            start,
+            ignoreWalls,
+            ignoreBlockingReactors,
+            blocked);
 
         if (!optimalPoint.HasValue)
             return Direction.Invalid;
@@ -149,6 +166,7 @@ public sealed class Pathfinder : IPathfinder
         IPoint start,
         IPoint end,
         bool ignoreWalls,
+        bool ignoreBlockingReactors,
         IReadOnlyCollection<IPoint> blocked)
     {
         var directionBias = end.DirectionalRelationTo(start);
@@ -157,7 +175,11 @@ public sealed class Pathfinder : IPathfinder
                           .Shuffle()
                           .WithConsistentDirectionBias(directionBias);
 
-        var optimalPoint = GetFirstWalkablePoint(points, ignoreWalls, blocked);
+        var optimalPoint = GetFirstWalkablePoint(
+            points,
+            ignoreWalls,
+            ignoreBlockingReactors,
+            blocked);
 
         if (!optimalPoint.HasValue)
             return Direction.Invalid;
@@ -165,18 +187,27 @@ public sealed class Pathfinder : IPathfinder
         return optimalPoint.Value.DirectionalRelationTo(start);
     }
 
-    private Point? FindRandomPoint(IPoint start, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
+    private Point? FindRandomPoint(
+        IPoint start,
+        bool ignoreWalls,
+        bool ignoreBlockingReactors,
+        IReadOnlyCollection<IPoint> blocked)
         => GetFirstWalkablePoint(
             start.GenerateCardinalPoints()
                  .Shuffle(),
             ignoreWalls,
+            ignoreBlockingReactors,
             blocked);
 
-    private Point? GetFirstWalkablePoint(IEnumerable<Point> points, bool ignoreWalls, IReadOnlyCollection<IPoint> blocked)
+    private Point? GetFirstWalkablePoint(
+        IEnumerable<Point> points,
+        bool ignoreWalls,
+        bool ignoreBlockingReactors,
+        IReadOnlyCollection<IPoint> blocked)
         => points.FirstOrDefault(
             point => WithinGrid(point)
                      && PathNodes[point.X, point.Y]
-                         .IsWalkable(ignoreWalls)
+                         .IsWalkable(ignoreWalls, ignoreBlockingReactors)
                      && !blocked.Contains(point, PointEqualityComparer.Instance));
 
     private IEnumerable<IPoint> GetParentChain(PathNode pathNode)
@@ -219,7 +250,11 @@ public sealed class Pathfinder : IPathfinder
                 PathNodes[point.X, point.Y].IsBlocked = true;
     }
 
-    private Stack<IPoint> InnerFindPath(IPoint start, IPoint end, bool ignoreWalls)
+    private Stack<IPoint> InnerFindPath(
+        IPoint start,
+        IPoint end,
+        bool ignoreWalls,
+        bool ignoreBlockingReactors)
     {
         var startNode = PathNodes[start.X, start.Y];
         var endNode = PathNodes[end.X, end.Y];
@@ -234,13 +269,14 @@ public sealed class Pathfinder : IPathfinder
 
             NeighborIndexes.ShuffleInPlace();
 
-            //for each undiscovered walkable neighbor, set it's parent and add it to the queue
+            //for each undiscovered walkable neighbor, set its parent and add it to the queue
             for (var i = 0; i < 4; i++)
             {
                 //get a random neighbor
                 var neighbor = node.Neighbors[NeighborIndexes[i]];
 
-                if ((neighbor == null) || neighbor.Closed || neighbor.Open)
+                //if it's a blocking reactor, and we haven't chosen to ignore them, skip it
+                if ((neighbor == null) || neighbor.Closed || neighbor.Open || (!ignoreBlockingReactors && neighbor.IsBlockingReactor))
                     continue;
 
                 //if we locate the end, set parent and break out
@@ -254,8 +290,9 @@ public sealed class Pathfinder : IPathfinder
 
                 //don't re-add nodes we've already considered
                 //don't add walls unless ignoring walls
-                //dont add blocked nodes
-                if (!neighbor.IsWalkable(ignoreWalls))
+                //don't add blocked nodes
+                //we can only ignore blocking reactors if it's the last point in the path
+                if (!neighbor.IsWalkable(ignoreWalls, false))
                     continue;
 
                 neighbor.Parent = node;
@@ -285,7 +322,7 @@ public sealed class Pathfinder : IPathfinder
                     PathNodes[point.X, point.Y]
                         .Reset();
 
-        //necessary incase a blocked point was specified outside the sub grid
+        //necessary in case a blocked point was specified outside the sub grid
         foreach (var point in blocked)
             if (WithinGrid(point))
                 PathNodes[point.X, point.Y].IsBlocked = false;

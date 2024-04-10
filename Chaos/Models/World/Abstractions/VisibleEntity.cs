@@ -12,7 +12,7 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
 {
     protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; } = new();
     public ushort Sprite { get; set; } = sprite;
-    public VisibilityType Visibility { get; set; }
+    public VisibilityType Visibility { get; protected set; }
 
     public void Display()
     {

@@ -19,6 +19,12 @@ internal sealed class PathNode(int x, int y) : IEquatable<IPoint>, IPoint
     public bool IsBlocked { get; set; }
 
     /// <summary>
+    ///     The node is a blocking reactor. Blocking reactors are opened, and can be ignored depending on the pathfinding
+    ///     request. Blocking reactors can only be walked on if it's the last point in the path
+    /// </summary>
+    public bool IsBlockingReactor { get; set; }
+
+    /// <summary>
     ///     The node is a wall. Walls are opened, and can be ignored depending on the pathfinding request
     /// </summary>
     public bool IsWall { get; set; }
@@ -53,7 +59,8 @@ internal sealed class PathNode(int x, int y) : IEquatable<IPoint>, IPoint
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
 
-    public bool IsWalkable(bool ignoreWalls) => !IsBlocked && (ignoreWalls || !IsWall);
+    public bool IsWalkable(bool ignoreWalls, bool ignoreBlockingReactors)
+        => !IsBlocked && (ignoreWalls || !IsWall) && (ignoreBlockingReactors || !IsBlockingReactor);
 
     public void Reset()
     {

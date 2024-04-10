@@ -7,7 +7,7 @@ namespace Chaos.Pathfinding;
 public sealed class GridDetails : IGridDetails
 {
     /// <inheritdoc />
-    public ICollection<IPoint> Blacklist { get; init; } = Array.Empty<IPoint>();
+    public ICollection<IPoint> BlockingReactors { get; init; } = Array.Empty<IPoint>();
 
     /// <inheritdoc />
     public int Height { get; init; }

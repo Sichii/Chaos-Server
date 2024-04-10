@@ -44,11 +44,11 @@ public abstract class PanelEntityBase : IDeltaUpdatable, IScripted
             Elapsed = null;
     }
 
-    public virtual void BeginCooldown(Creature creature)
+    public virtual void BeginCooldown(Creature creature, TimeSpan? customCooldown = null)
     {
         if (Cooldown is { Ticks: > 0 })
         {
-            Elapsed ??= TimeSpan.Zero;
+            Elapsed ??= customCooldown.HasValue ? Cooldown - customCooldown : TimeSpan.Zero;
 
             if (creature is Aisling aisling)
                 aisling.Client.SendCooldown(this);
@@ -56,4 +56,6 @@ public abstract class PanelEntityBase : IDeltaUpdatable, IScripted
     }
 
     public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
+
+    public virtual void SetTemporaryCooldown(TimeSpan temporaryCooldown) => Elapsed = Cooldown - temporaryCooldown;
 }

@@ -136,8 +136,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                  .WithProperty(this)
-                  .LogError(e, "Failed to update map {@MapInstanceId}", InstanceId);
+                  .LogError(e, "Failed to update map {@MapInstance}", this);
         }
     }
 
@@ -758,7 +757,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 return;
             }
 
-            await UpdateMapAsync(DeltaTime.GetDelta);
+            try
+            {
+                await UpdateMapAsync(DeltaTime.GetDelta);
+            } catch (Exception e)
+            {
+                Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                      .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
+            }
         }
     }
 

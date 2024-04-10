@@ -178,6 +178,9 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
 
     public void SendCooldown(PanelEntityBase panelEntityBase)
     {
+        if (panelEntityBase is Item)
+            return;
+
         if (!panelEntityBase.Cooldown.HasValue)
             return;
 

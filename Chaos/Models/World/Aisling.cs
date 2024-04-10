@@ -6,6 +6,7 @@ using Chaos.Collections.Time;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -348,6 +349,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (IsAdmin)
             return true;
 
+        if (Vision == VisionType.TrueBlind)
+            return false;
+
         return base.CanObserve(entity);
     }
 
@@ -561,6 +565,22 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         else
             foreach (var msg in message.Chunk(CONSTANTS.MAX_SERVER_MESSAGE_LENGTH))
                 Client.SendServerMessage(serverMessageType, new string(msg));
+    }
+
+    public override void SetVision(VisionType visionType)
+    {
+        if (visionType == Vision)
+            return;
+
+        var currentVisionType = Vision;
+
+        Vision = visionType;
+
+        //if we were TrueBlinded or are now TrueBlinded, we need to refresh
+        if (visionType is VisionType.TrueBlind || currentVisionType is VisionType.TrueBlind)
+            Client.Aisling.Refresh(true);
+        else
+            Client.SendAttributes(StatUpdateType.Secondary);
     }
 
     /// <inheritdoc />

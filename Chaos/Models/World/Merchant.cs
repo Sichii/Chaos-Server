@@ -181,14 +181,15 @@ public sealed class Merchant : Creature,
     }
 
     /// <inheritdoc />
-    public override void Wander(ICollection<IPoint>? unwalkablePoints = null)
+    public override void Wander(bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
     {
         if (unwalkablePoints.IsNullOrEmpty())
-            base.Wander(BlackList);
+            base.Wander(ignoreBlockingReactors, BlackList);
         else if (BlackList.IsNullOrEmpty())
-            base.Wander(unwalkablePoints);
+            base.Wander(ignoreBlockingReactors, unwalkablePoints);
         else
             base.Wander(
+                ignoreBlockingReactors,
                 unwalkablePoints!.Concat(BlackList)
                                  .ToList());
     }
