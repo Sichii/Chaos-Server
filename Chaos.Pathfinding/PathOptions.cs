@@ -31,5 +31,5 @@ public sealed record PathOptions : IPathOptions
     /// <summary>
     ///     Default path options.
     /// </summary>
-    public static PathOptions Default { get; } = new();
+    public static PathOptions Default => new();
 }
