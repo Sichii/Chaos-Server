@@ -8,6 +8,8 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.Templates;
 using Chaos.Models.World.Abstractions;
+using Chaos.Pathfinding;
+using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
@@ -181,16 +183,14 @@ public sealed class Merchant : Creature,
     }
 
     /// <inheritdoc />
-    public override void Wander(bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
+    public override void Wander(IPathOptions? pathOptions = null)
     {
-        if (unwalkablePoints.IsNullOrEmpty())
-            base.Wander(ignoreBlockingReactors, BlackList);
-        else if (BlackList.IsNullOrEmpty())
-            base.Wander(ignoreBlockingReactors, unwalkablePoints);
-        else
-            base.Wander(
-                ignoreBlockingReactors,
-                unwalkablePoints!.Concat(BlackList)
-                                 .ToList());
+        pathOptions ??= PathOptions.Default;
+
+        pathOptions.BlockedPoints = pathOptions.BlockedPoints
+                                               .Concat(BlackList)
+                                               .ToHashSet();
+
+        base.Wander(pathOptions);
     }
 }

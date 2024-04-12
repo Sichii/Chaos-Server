@@ -20,17 +20,8 @@ public interface IPathfindingService
     /// <param name="end">
     ///     The point to pathfind to
     /// </param>
-    /// <param name="ignoreWalls">
-    ///     Whether or not to ignore walls
-    /// </param>
-    /// <param name="ignoreBlockingReactors">
-    ///     Whether or not to ignore blocking reactors
-    /// </param>
-    /// <param name="blocked">
-    ///     A collection of points to avoid
-    /// </param>
-    /// <param name="limitRadius">
-    ///     Specify a max radius to use for path calculation, this can help with performance by limiting node discovery
+    /// <param name="pathOptions">
+    ///     Path generation options
     /// </param>
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk to move to the next point in the path
@@ -41,10 +32,7 @@ public interface IPathfindingService
         string gridKey,
         IPoint start,
         IPoint end,
-        bool ignoreWalls,
-        bool ignoreBlockingReactors,
-        IReadOnlyCollection<IPoint> blocked,
-        int? limitRadius = null);
+        IPathOptions? pathOptions = null);
 
     /// <summary>
     ///     Finds a valid direction to wander
@@ -55,24 +43,13 @@ public interface IPathfindingService
     /// <param name="start">
     ///     The current point
     /// </param>
-    /// <param name="ignoreWalls">
-    ///     Whether or not to ignore walls
-    /// </param>
-    /// <param name="ignoreBlockingReactors">
-    ///     Whether or not to ignore blocking reactors
-    /// </param>
-    /// <param name="blocked">
-    ///     A collection of points to avoid
+    /// <param name="pathOptions">
+    ///     Path generation options
     /// </param>
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk
     /// </returns>
-    Direction FindRandomDirection(
-        string key,
-        IPoint start,
-        bool ignoreWalls,
-        bool ignoreBlockingReactors,
-        IReadOnlyCollection<IPoint> blocked);
+    Direction FindRandomDirection(string key, IPoint start, IPathOptions? pathOptions = null);
 
     /// <summary>
     ///     Finds a direction to walk towards the end point. No path is calculated.
@@ -86,14 +63,8 @@ public interface IPathfindingService
     /// <param name="end">
     ///     The point to walk towards
     /// </param>
-    /// <param name="ignoreWalls">
-    ///     Whether or not to ignore walls
-    /// </param>
-    /// <param name="ignoreBlockingReactors">
-    ///     Whether or not to ignore blocking reactors
-    /// </param>
-    /// <param name="blocked">
-    ///     A collection of points to avoid
+    /// <param name="pathOptions">
+    ///     Path generation options
     /// </param>
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to move
@@ -102,9 +73,7 @@ public interface IPathfindingService
         string gridKey,
         IPoint start,
         IPoint end,
-        bool ignoreWalls,
-        bool ignoreBlockingReactors,
-        IReadOnlyCollection<IPoint> blocked);
+        IPathOptions? pathOptions = null);
 
     /// <summary>
     ///     Registers a grid with the pathfinding service

@@ -12,6 +12,8 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.Templates;
 using Chaos.Models.World.Abstractions;
+using Chaos.Pathfinding;
+using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Time;
@@ -137,16 +139,15 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void Wander(bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
+    public override void Wander(IPathOptions? pathOptions = null)
     {
-        if (unwalkablePoints.IsNullOrEmpty())
-            base.Wander(ignoreBlockingReactors, BlackList);
-        else if (BlackList.IsNullOrEmpty())
-            base.Wander(ignoreBlockingReactors, unwalkablePoints);
-        else
-            base.Wander(
-                ignoreBlockingReactors,
-                unwalkablePoints!.Concat(BlackList)
-                                 .ToList());
+        pathOptions ??= PathOptions.Default;
+        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+
+        pathOptions.BlockedPoints = pathOptions.BlockedPoints
+                                               .Concat(BlackList)
+                                               .ToHashSet();
+
+        base.Wander(pathOptions);
     }
 }

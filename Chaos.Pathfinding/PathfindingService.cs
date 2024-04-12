@@ -32,42 +32,24 @@ public sealed class PathfindingService : IPathfindingService
         string gridKey,
         IPoint start,
         IPoint end,
-        bool ignoreWalls,
-        bool ignoreBlockingReactors,
-        IReadOnlyCollection<IPoint> blocked,
-        int? limitRadius = null)
+        IPathOptions? pathOptions = null)
     {
         var lookupKey = ConstructKey(gridKey);
 
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.FindPath(
-            start,
-            end,
-            ignoreWalls,
-            ignoreBlockingReactors,
-            blocked,
-            limitRadius);
+        return pathFinder!.FindPath(start, end, pathOptions);
     }
 
     /// <inheritdoc />
-    public Direction FindRandomDirection(
-        string key,
-        IPoint start,
-        bool ignoreWalls,
-        bool ignoreBlockingReactors,
-        IReadOnlyCollection<IPoint> blocked)
+    public Direction FindRandomDirection(string key, IPoint start, IPathOptions? pathOptions = null)
     {
         var lookupKey = ConstructKey(key);
 
         //not thread safe, but it should be fine if we occasionally create a duplicate pathfinder
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.FindRandomDirection(
-            start,
-            ignoreWalls,
-            ignoreBlockingReactors,
-            blocked);
+        return pathFinder!.FindRandomDirection(start, pathOptions);
     }
 
     /// <inheritdoc />
@@ -75,20 +57,13 @@ public sealed class PathfindingService : IPathfindingService
         string gridKey,
         IPoint start,
         IPoint end,
-        bool ignoreWalls,
-        bool ignoreBlockingReactors,
-        IReadOnlyCollection<IPoint> blocked)
+        IPathOptions? pathOptions = null)
     {
         var lookupKey = ConstructKey(gridKey);
 
         var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
 
-        return pathFinder!.FindSimpleDirection(
-            start,
-            end,
-            ignoreWalls,
-            ignoreBlockingReactors,
-            blocked);
+        return pathFinder!.FindSimpleDirection(start, end, pathOptions);
     }
 
     /// <inheritdoc />

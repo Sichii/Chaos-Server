@@ -12,6 +12,8 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
+using Chaos.Pathfinding;
+using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.CreatureScripts.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
@@ -177,8 +179,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
-    public Stack<IPoint> FindPath(IPoint target, bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
+    public Stack<IPoint> FindPath(IPoint target, IPathOptions? pathOptions = null)
     {
+        pathOptions ??= PathOptions.Default;
+        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
                                      .Where(door => door.Closed);
 
@@ -186,17 +191,16 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                                          .ThatThisCollidesWith(this);
 
         var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
-                                                .Concat(unwalkablePoints ?? Array.Empty<IPoint>())
-                                                .ToList();
+                                                .Concat(pathOptions.BlockedPoints)
+                                                .ToHashSet();
+
+        pathOptions.BlockedPoints = nearbyUnwalkablePoints;
 
         return MapInstance.Pathfinder.FindPath(
             MapInstance.InstanceId,
             this,
             target,
-            Type == CreatureType.WalkThrough,
-            ignoreBlockingReactors,
-            nearbyUnwalkablePoints,
-            12);
+            pathOptions);
     }
 
     public virtual bool IsFriendlyTo(Creature other) => Script.IsFriendlyTo(other);
@@ -273,17 +277,16 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             }
     }
 
-    public void Pathfind(
-        IPoint target,
-        int distance = 1,
-        bool ignoreBlockingReactors = false,
-        ICollection<IPoint>? unwalkablePoints = null)
+    public void Pathfind(IPoint target, int distance = 1, IPathOptions? pathOptions = null)
     {
+        pathOptions ??= PathOptions.Default;
+        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+
         //if we're within distance, no need to pathfind
         if (this.DistanceFrom(target) <= distance)
             return;
 
-        var path = FindPath(target, ignoreBlockingReactors, unwalkablePoints);
+        var path = FindPath(target, pathOptions);
 
         var nextPoint = path.Pop();
         var direction = nextPoint.DirectionalRelationTo(this);
@@ -613,8 +616,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             reactor.OnWalkedOn(this);
     }
 
-    public virtual void Wander(bool ignoreBlockingReactors = false, ICollection<IPoint>? unwalkablePoints = null)
+    public virtual void Wander(IPathOptions? pathOptions = null)
     {
+        pathOptions ??= PathOptions.Default;
+        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
                                      .Where(door => door.Closed);
 
@@ -622,15 +628,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                                          .ThatThisCollidesWith(this);
 
         var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
-                                                .Concat(unwalkablePoints ?? Array.Empty<IPoint>())
-                                                .ToList();
+                                                .Concat(pathOptions.BlockedPoints)
+                                                .ToHashSet();
 
-        var direction = MapInstance.Pathfinder.FindRandomDirection(
-            MapInstance.InstanceId,
-            this,
-            Type == CreatureType.WalkThrough,
-            ignoreBlockingReactors,
-            nearbyUnwalkablePoints);
+        pathOptions.BlockedPoints = nearbyUnwalkablePoints;
+
+        var direction = MapInstance.Pathfinder.FindRandomDirection(MapInstance.InstanceId, this, pathOptions);
 
         if (direction == Direction.Invalid)
             return;
