@@ -6,10 +6,13 @@ namespace Chaos.Time;
 ///     A timer that runs a sequence of timers in order. When one timer has elapsed, the next timer begins elapsing. When
 ///     the last timer has elapsed, the first timer begins again.
 /// </summary>
-public class SequentialEventTimer : IIntervalTimer
+public class SequentialEventTimer : ISequentialTimer
 {
     private readonly List<IIntervalTimer> OrderedTimers;
     private int CurrentTimerIndex;
+
+    /// <inheritdoc />
+    public IIntervalTimer CurrentTimer => OrderedTimers[CurrentTimerIndex];
 
     /// <inheritdoc />
     public bool IntervalElapsed => OrderedTimers[CurrentTimerIndex].IntervalElapsed;
@@ -34,12 +37,15 @@ public class SequentialEventTimer : IIntervalTimer
     public void Update(TimeSpan delta)
     {
         var timer = OrderedTimers[CurrentTimerIndex];
-        timer.Update(delta);
 
         if (timer.IntervalElapsed)
             CurrentTimerIndex++;
 
         if (CurrentTimerIndex >= OrderedTimers.Count)
-            CurrentTimerIndex = 0;
+            Reset();
+
+        timer = OrderedTimers[CurrentTimerIndex];
+
+        timer.Update(delta);
     }
 }
