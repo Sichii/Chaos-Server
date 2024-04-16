@@ -16,7 +16,7 @@ public class PeriodicSequentialEventTimer : IIntervalTimer
     public bool IntervalElapsed => OrderedTimers[CurrentTimerIndex].IntervalElapsed;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SequentialEventTimer" /> class
+    ///     Initializes a new instance of the <see cref="PeriodicSequentialEventTimer" /> class
     /// </summary>
     public PeriodicSequentialEventTimer(params IIntervalTimer[] orderedTimers) => OrderedTimers = orderedTimers.ToList();
 
