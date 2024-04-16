@@ -62,7 +62,8 @@ public abstract class ConfigurableScriptBase<T> : SubjectiveScriptBase<T> where 
         }
 
         if (ScriptVars == null)
-            throw new NullReferenceException($"ScriptVars for script \"{GetType().FullName}\" were not found, and are required");
+            throw new NullReferenceException(
+                $"ScriptVars for script \"{GetType().FullName}\" were not found, and are required. If this script has no configurable variables, do not use a ConfigurableScript.");
 
         PopulateVars();
     }
