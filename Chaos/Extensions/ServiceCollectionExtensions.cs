@@ -101,12 +101,6 @@ public static class ServiceCollectionExtensions
                   .Value);
     }
 
-    public static void AddChaosSite(this IServiceCollection services)
-    {
-        services.AddOptionsFromConfig<SiteOptions>(ConfigKeys.Options.Key);
-        services.AddRazorPages();
-    }
-
     public static void AddFunctionalScriptRegistry(this IServiceCollection services)
         => services.AddSingleton<IScriptRegistry, FunctionalScriptRegistry>(
             p =>
@@ -130,9 +124,9 @@ public static class ServiceCollectionExtensions
                            {
                                IsInitialized = true;
                                var defaultResolver = new WarningJsonTypeInfoResolver(logger);
-                               var combinedResoler = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
+                               var combinedResolver = JsonTypeInfoResolver.Combine(JsonContext, defaultResolver);
 
-                               JsonSerializerOptions.SetTypeResolver(combinedResoler);
+                               JsonSerializerOptions.SetTypeResolver(combinedResolver);
                            }
 
                            ShallowCopy<JsonSerializerOptions>.Merge(JsonSerializerOptions, options);

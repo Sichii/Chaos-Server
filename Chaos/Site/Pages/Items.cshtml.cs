@@ -42,7 +42,7 @@ public class Items(ItemDtoRepository itemDtoRepository, QueryService queryServic
 
     public void OnGet() { }
 
-    public JsonResult OnPostItemPage([FromBody] GetRowsParams rowParams)
+    public JsonResult OnPostSearchItems([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(ItemDtoRepository, rowParams);
 

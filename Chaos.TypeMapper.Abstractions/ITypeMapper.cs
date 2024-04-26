@@ -33,18 +33,18 @@ public interface ITypeMapper
     /// <summary>
     ///     Manys multiple source objects of the same type to new instances of the destination type
     /// </summary>
-    /// <param name="obj">
+    /// <param name="objs">
     ///     The objects to convert
     /// </param>
     /// <typeparam name="TResult">
     ///     The type to convert the objects to
     /// </typeparam>
-    IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> obj);
+    IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> objs);
 
     /// <summary>
     ///     Manys multiple source objects of the same type to new instances of the destination type
     /// </summary>
-    /// <param name="obj">
+    /// <param name="objs">
     ///     The objects to convert
     /// </param>
     /// <typeparam name="T">
@@ -53,5 +53,5 @@ public interface ITypeMapper
     /// <typeparam name="TResult">
     ///     The type to convert the objects to
     /// </typeparam>
-    IEnumerable<TResult> MapMany<T, TResult>(IEnumerable<T> obj);
+    IEnumerable<TResult> MapMany<T, TResult>(IEnumerable<T> objs);
 }

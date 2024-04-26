@@ -135,7 +135,7 @@ static void ConfigureApp(WebApplication app)
     };
 }
 
-static void ConfigureHost(WebApplicationBuilder builder) => builder.WebHost.UseKestrel();
+static void ConfigureHost(WebApplicationBuilder builder) => builder.WebHost.UseKestrel(opts => opts.ListenAnyIP(5000));
 
 static void ConfigureServices(WebApplicationBuilder builder)
 {

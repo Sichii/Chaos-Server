@@ -46,30 +46,21 @@ public sealed class Mapper : ITypeMapper
     }
 
     /// <inheritdoc />
-    public IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> obj)
+    public IEnumerable<TResult> MapMany<TResult>(IEnumerable<object> objs)
     {
-        var objs = obj.ToList();
-
-        if (!objs.Any())
-            yield break;
-
-        var mapper = ResolverMap.GetOrAdd(
-            (objs.First()
-                 .GetType(), typeof(TResult)),
-            ResolveMapper);
+        Func<object, object>? mapper = null;
 
         foreach (var o in objs)
+        {
+            mapper ??= ResolverMap.GetOrAdd((o.GetType(), typeof(TResult)), ResolveMapper);
+
             yield return (TResult)mapper(o);
+        }
     }
 
     /// <inheritdoc />
-    public IEnumerable<TResult> MapMany<T, TResult>(IEnumerable<T> obj)
+    public IEnumerable<TResult> MapMany<T, TResult>(IEnumerable<T> objs)
     {
-        var objs = obj.ToList();
-
-        if (!objs.Any())
-            yield break;
-
         var mapper = ResolverMap.GetOrAdd((typeof(T), typeof(TResult)), ResolveMapper);
 
         foreach (var o in objs)

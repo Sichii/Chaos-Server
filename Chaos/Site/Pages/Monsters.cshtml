@@ -43,7 +43,7 @@
             datasource: {
                 rowCount: @MonsterDtos.Count(),
                 getRows: function (params) {
-                    getMonsters(params)
+                    searchMonsters(params)
                         .then(result => {
                             params.successCallback(result);
                             grid.autoSizeAllColumns();

@@ -42,7 +42,7 @@ public class Monsters(MonsterDtoRepository monsterDtoRepository, QueryService qu
 
     public void OnGet() { }
 
-    public JsonResult OnPostMonsterPage([FromBody] GetRowsParams rowParams)
+    public JsonResult OnPostSearchMonsters([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(MonsterDtoRepository, rowParams);
 

@@ -1,5 +1,5 @@
-async function getItems(params) {
-    let response = await fetch(`/items?handler=ItemPage`, {
+async function searchItems(params) {
+    let response = await fetch(`/items?handler=SearchItems`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -10,8 +10,8 @@ async function getItems(params) {
     return await response.json();
 }
 
-async function getSkills(params) {
-    let response = await fetch(`/skills?handler=SkillPage`, {
+async function searchSkills(params) {
+    let response = await fetch(`/skills?handler=SearchSkills`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -22,8 +22,8 @@ async function getSkills(params) {
     return await response.json();
 }
 
-async function getSpells(params) {
-    let response = await fetch(`/spells?handler=SpellPage`, {
+async function searchSpells(params) {
+    let response = await fetch(`/spells?handler=SearchSpells`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -34,8 +34,8 @@ async function getSpells(params) {
     return await response.json();
 }
 
-async function getMonsters(params) {
-    let response = await fetch(`/monsters?handler=MonsterPage`, {
+async function searchMonsters(params) {
+    let response = await fetch(`/monsters?handler=SearchMonsters`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

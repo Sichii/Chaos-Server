@@ -43,7 +43,7 @@
             datasource: {
                 rowCount: @ItemDtos.Count(),
                 getRows: function (params) {
-                    getItems(params)
+                    searchItems(params)
                         .then(result => {
                             params.successCallback(result);
                             grid.autoSizeAllColumns();

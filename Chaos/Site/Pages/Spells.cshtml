@@ -43,7 +43,7 @@
             datasource: {
                 rowCount: @SpellDtos.Count(),
                 getRows: function (params) {
-                    getSpells(params)
+                    searchSpells(params)
                         .then(result => {
                             params.successCallback(result);
                             grid.autoSizeAllColumns();

@@ -533,7 +533,7 @@ public sealed partial class IntegrityCheckControl
                 (_, _) =>
                 {
                     var nodeListView = MainWindow.WorldMapNodeListView;
-                    MainWindow.SpellsTab.IsSelected = true;
+                    MainWindow.WorldMapNodesTab.IsSelected = true;
 
                     var selected = nodeListView.Items
                                                .OfType<WorldMapNodeViewModel>()
@@ -583,7 +583,7 @@ public sealed partial class IntegrityCheckControl
                 (_, _) =>
                 {
                     var worldMapListView = MainWindow.WorldMapListView;
-                    MainWindow.SpellsTab.IsSelected = true;
+                    MainWindow.WorldMapsTab.IsSelected = true;
 
                     var selected = worldMapListView.Items
                                                    .OfType<WorldMapViewModel>()

@@ -43,7 +43,7 @@
             datasource: {
                 rowCount: @SkillDtos.Count(),
                 getRows: function (params) {
-                    getSkills(params)
+                    searchSkills(params)
                         .then(result => {
                             params.successCallback(result);
                             grid.autoSizeAllColumns();

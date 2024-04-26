@@ -42,7 +42,7 @@ public class Spells(SpellDtoRepository spellDtoRepository, QueryService querySer
 
     public void OnGet() { }
 
-    public JsonResult OnPostSpellPage([FromBody] GetRowsParams rowParams)
+    public JsonResult OnPostSearchSpells([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(SpellDtoRepository, rowParams);
 

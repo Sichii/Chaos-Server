@@ -42,7 +42,7 @@ public class Skills(SkillDtoRepository skillDtoRepository, QueryService querySer
 
     public void OnGet() { }
 
-    public JsonResult OnPostSkillPage([FromBody] GetRowsParams rowParams)
+    public JsonResult OnPostSearchSkills([FromBody] GetRowsParams rowParams)
     {
         var query = QueryService.CreateQuery(SkillDtoRepository, rowParams);
 
