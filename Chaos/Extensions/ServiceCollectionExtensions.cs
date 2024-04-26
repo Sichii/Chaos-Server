@@ -274,7 +274,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IEffectFactory, EffectFactory>();
 
-        services.AddSimpleFactory<Guild>(typeof(string));
+        services.AddSimpleFactory<Guild>(typeof(string), typeof(string));
         services.AddSimpleFactory<ILobbyClient, LobbyClient>(typeof(Socket));
         services.AddSimpleFactory<ILoginClient, LoginClient>(typeof(Socket));
         services.AddSimpleFactory<IWorldClient, WorldClient>(typeof(Socket));

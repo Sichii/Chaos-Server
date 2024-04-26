@@ -279,7 +279,7 @@ public sealed record Dialog : IScripted<IDialogScript>
 
     public string? GetOptionText(int optionIndex)
     {
-        var option = Options.ElementAtOrDefault(optionIndex);
+        var option = Options.ElementAtOrDefault(optionIndex - 1);
 
         return option?.OptionText;
     }

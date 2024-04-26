@@ -84,7 +84,7 @@ public class GuildMemberDemoteScript : GuildScriptBase
         var targetCurrentRank = guild.RankOf(name);
 
         //ensure the player to demote is not the same or higher rank (same or lower tier)
-        if (IsSuperiorRank(sourceRank, targetCurrentRank))
+        if (!IsSuperiorRank(sourceRank, targetCurrentRank))
         {
             Subject.Reply(source, $"You do not have permission to demote {name}", "generic_guild_members_initial");
 

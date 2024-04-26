@@ -46,7 +46,7 @@ public class GuildRankManagementScript : GuildScriptBase
         }
 
         foreach (var rank in guild.GetRanks())
-            Subject.AddOption(rank.Name, "generic_guild_ranks_manage");
+            Subject.AddOption(rank.Name, "generic_guild_ranks_modify");
     }
 
     /// <inheritdoc />
