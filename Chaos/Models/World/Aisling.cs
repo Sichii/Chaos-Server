@@ -219,7 +219,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond);
         ItemThrottle = new ResettingCounter(WorldOptions.Instance.MaxItemsPerSecond);
         WalkCounter = new ResettingCounter(4, 2);
-        TurnThrottle = new ResettingCounter(4);
+        TurnThrottle = new ResettingCounter(3);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         ChannelSettings = new SynchronizedHashSet<ChannelSettings>();
         DialogHistory = new Stack<Dialog>();
@@ -998,6 +998,21 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         return TryUseSpell(spell, targetId, prompt);
     }
 
+    /// <inheritdoc />
+    public override void Turn(Direction direction)
+    {
+        if (!Script.CanTurn() || !TurnThrottle.TryIncrement())
+            return;
+
+        Direction = direction;
+
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanObserve(this))
+            aisling.Client.SendCreatureTurn(Id, direction);
+
+        Trackers.LastTurn = DateTime.UtcNow;
+    }
+
     public void UnEquip(EquipmentSlot slot)
     {
         if (Inventory.IsFull)
@@ -1020,6 +1035,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SpellThrottle.Update(delta);
         SkillThrottle.Update(delta);
         ItemThrottle.Update(delta);
+        TurnThrottle.Update(delta);
         WalkCounter.Update(delta);
         ChantTimer.Update(delta);
         SaveTimer.Update(delta);
