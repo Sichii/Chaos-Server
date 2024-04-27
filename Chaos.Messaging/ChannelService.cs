@@ -207,6 +207,9 @@ public sealed class ChannelService : IChannelService
             return;
         }
 
+        //get channel name as it is stored
+        channelName = Channels.Keys.Single(key => key.EqualsI(channelName));
+
         //we do things like this to avoid allocating a bunch of extra strings
         //the string values here that are not stored in other objects should be intern()'d
         //all other strings are just having their bytes copied into the span

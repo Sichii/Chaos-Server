@@ -64,4 +64,14 @@
     <ItemGroup>
         <AdditionalFiles Include="Site\Pages\Index.cshtml"/>
     </ItemGroup>
+    <ItemGroup>
+        <None Remove="Site\wwwroot\Styles\chaos-api.js"/>
+        <Content Include="Site\wwwroot\Styles\chaos-api.js">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <None Remove="Site\wwwroot\Styles\styles.css"/>
+        <Content Include="Site\wwwroot\Styles\styles.css">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 </Project>

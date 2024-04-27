@@ -974,7 +974,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                           Topics.Entities.Command,
                           Topics.Actions.Execute)
                       .WithProperty(localClient)
-                      .LogDebug("Aisling {@AislingName} sent command {@Command}", localClient.Aisling, localArgs.Message);
+                      .WithProperty(localClient.Aisling)
+                      .LogDebug("Aisling {@AislingName} sent command {@Command}", localClient.Aisling.Name, localArgs.Message);
 
                 await CommandInterceptor.HandleCommandAsync(localClient.Aisling, localArgs.Message);
 
