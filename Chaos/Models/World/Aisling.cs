@@ -127,6 +127,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public ResettingCounter SkillThrottle { get; }
     public ResettingCounter SpellThrottle { get; }
+    public ResettingCounter TurnThrottle { get; }
     public ResettingCounter WalkCounter { get; }
 
     /// <inheritdoc />
@@ -218,6 +219,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SkillThrottle = new ResettingCounter(WorldOptions.Instance.MaxSkillsPerSecond);
         ItemThrottle = new ResettingCounter(WorldOptions.Instance.MaxItemsPerSecond);
         WalkCounter = new ResettingCounter(4, 2);
+        TurnThrottle = new ResettingCounter(4);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
         ChannelSettings = new SynchronizedHashSet<ChannelSettings>();
         DialogHistory = new Stack<Dialog>();
