@@ -41,20 +41,20 @@ public class JsonContext
     private static bool IsInitialized;
 
     private static readonly TypeSwitchExpression<IEnumerable> RepositoryExpression = new TypeSwitchExpression<IEnumerable>()
-                                                                                     .Case<DialogTemplateSchema>(() => DialogTemplates)
-                                                                                     .Case<ItemTemplateSchema>(() => ItemTemplates)
-                                                                                     .Case<LootTableSchema>(() => LootTables)
+                                                                                     .Case<DialogTemplateSchema>(() => DialogTemplates!)
+                                                                                     .Case<ItemTemplateSchema>(() => ItemTemplates!)
+                                                                                     .Case<LootTableSchema>(() => LootTables!)
                                                                                      .Case<MapInstanceRepository.MapInstanceComposite>(
-                                                                                         () => MapInstances)
-                                                                                     .Case<MapTemplateSchema>(() => MapTemplates)
-                                                                                     .Case<MerchantTemplateSchema>(() => MerchantTemplates)
-                                                                                     .Case<MonsterTemplateSchema>(() => MonsterTemplates)
+                                                                                        () => MapInstances!)
+                                                                                     .Case<MapTemplateSchema>(() => MapTemplates!)
+                                                                                     .Case<MerchantTemplateSchema>(() => MerchantTemplates!)
+                                                                                     .Case<MonsterTemplateSchema>(() => MonsterTemplates!)
                                                                                      .Case<ReactorTileTemplateSchema>(
-                                                                                         () => ReactorTileTemplates)
-                                                                                     .Case<SkillTemplateSchema>(() => SkillTemplates)
-                                                                                     .Case<SpellTemplateSchema>(() => SpellTemplates)
-                                                                                     .Case<WorldMapNodeSchema>(() => WorldMapNodes)
-                                                                                     .Case<WorldMapSchema>(() => WorldMaps)
+                                                                                        () => ReactorTileTemplates!)
+                                                                                     .Case<SkillTemplateSchema>(() => SkillTemplates!)
+                                                                                     .Case<SpellTemplateSchema>(() => SpellTemplates!)
+                                                                                     .Case<WorldMapNodeSchema>(() => WorldMapNodes!)
+                                                                                     .Case<WorldMapSchema>(() => WorldMaps!)
                                                                                      .Default(() => throw new ArgumentOutOfRangeException())
                                                                                      .Freeze();
 

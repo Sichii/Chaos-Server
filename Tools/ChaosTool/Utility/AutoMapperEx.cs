@@ -7,8 +7,8 @@ public static class AutoMapperEx
 
     private const string ALREADY_INITIALIZED = "Mapper already initialized. You must call Initialize once per application domain/process.";
 
-    private static IConfigurationProvider _configuration;
-    private static IMapper _instance;
+    private static IConfigurationProvider _configuration = null!;
+    private static IMapper _instance = null!;
 
     private static IConfigurationProvider Configuration
     {

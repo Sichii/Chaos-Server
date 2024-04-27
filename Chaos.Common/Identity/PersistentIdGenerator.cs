@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Text.Json;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Utilities;
 
 namespace Chaos.Common.Identity;
 
@@ -13,31 +14,63 @@ namespace Chaos.Common.Identity;
 /// </typeparam>
 public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<T>
 {
-    private static readonly string FilePath = $"PersistentId{typeof(T).Name}.json";
+    private static readonly string SharedName = $"PersistentId{typeof(T).Name}";
     private readonly IIdGenerator<T> IdGenerator;
+    private readonly string Name;
+
+    // ReSharper disable once NotAccessedField.Local
+    private readonly Task SaveTask;
+    private bool ShouldSave;
 
     /// <inheritdoc />
-    public static IIdGenerator<T> Shared { get; }
-
-    /// <inheritdoc />
-    public T NextId => IdGenerator.NextId;
-
-    static PersistentIdGenerator()
+    public T NextId
     {
-        if (!File.Exists(FilePath))
-            Shared = new PersistentIdGenerator<T>(T.Zero);
-        else
+        get
         {
-            var json = File.ReadAllText(FilePath);
-            var persistedValue = JsonSerializer.Deserialize<T>(json);
-            Shared = new PersistentIdGenerator<T>(persistedValue ?? T.Zero);
-        }
+            var ret = IdGenerator.NextId;
+            ShouldSave = true;
 
-        AppDomain.CurrentDomain.ProcessExit += (_, _) => File.WriteAllText(FilePath, JsonSerializer.Serialize(Shared.NextId));
+            return ret;
+        }
     }
+
+    /// <inheritdoc />
+    public static IIdGenerator<T> Shared { get; } = new PersistentIdGenerator<T>(SharedName);
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="PersistentIdGenerator{T}" /> class.
     /// </summary>
-    public PersistentIdGenerator(T persistedValue) => IdGenerator = new SequentialIdGenerator<T>(persistedValue);
+    public PersistentIdGenerator(string name, T? persistedValue = default)
+    {
+        Name = name;
+        var path = $"{Name}.json";
+
+        if (!File.Exists(path) || persistedValue is not null)
+            IdGenerator = new SequentialIdGenerator<T>(persistedValue);
+        else
+        {
+            var json = File.ReadAllText(path);
+            persistedValue = JsonSerializer.Deserialize<T>(json);
+            IdGenerator = new SequentialIdGenerator<T>(persistedValue ?? T.Zero);
+        }
+
+        SaveTask = PersistentSaveAsync();
+    }
+
+    private async Task PersistentSaveAsync()
+    {
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+        while (true)
+            try
+            {
+                await timer.WaitForNextTickAsync();
+
+                if (ShouldSave)
+                    await FileEx.SafeWriteAllTextAsync($"{Name}.json", NextId.ToString()!);
+            } catch
+            {
+                //ignored
+            }
+    }
 }

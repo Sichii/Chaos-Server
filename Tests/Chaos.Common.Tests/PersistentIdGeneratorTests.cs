@@ -24,7 +24,7 @@ public sealed class PersistentIdGeneratorTests : IDisposable
     public void NextId_ShouldGenerateNextSequentialId()
     {
         // Arrange
-        var generator = new PersistentIdGenerator<int>(5);
+        var generator = new PersistentIdGenerator<int>("Test", 5);
 
         // Act
         var id1 = generator.NextId;
