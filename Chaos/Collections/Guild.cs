@@ -9,7 +9,7 @@ using Chaos.Services.Servers.Options;
 
 namespace Chaos.Collections;
 
-public sealed class Guild : IDedicatedChannel
+public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 {
     private readonly IChannelService ChannelService;
     private readonly IClientRegistry<IWorldClient> ClientRegistry;
@@ -51,6 +51,18 @@ public sealed class Guild : IDedicatedChannel
             },
             true,
             "!guild");
+    }
+
+    /// <inheritdoc />
+    public bool Equals(Guild? other)
+    {
+        if (ReferenceEquals(null, other))
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Guid == other.Guid;
     }
 
     /// <inheritdoc />
@@ -169,6 +181,12 @@ public sealed class Guild : IDedicatedChannel
         ChannelService.UnregisterChannel(ChannelName);
     }
 
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is Guild other && Equals(other));
+
+    /// <inheritdoc />
+    public override int GetHashCode() => Guid.GetHashCode();
+
     public IEnumerable<string> GetMemberNames()
     {
         List<string> names;
@@ -272,6 +290,9 @@ public sealed class Guild : IDedicatedChannel
 
         return true;
     }
+
+    public static bool operator ==(Guild? left, Guild? right) => Equals(left, right);
+    public static bool operator !=(Guild? left, Guild? right) => !Equals(left, right);
 
     public GuildRank RankOf(string name)
     {

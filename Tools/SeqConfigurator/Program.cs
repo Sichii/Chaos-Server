@@ -125,11 +125,11 @@ Console.ReadLine();
 return;
 
 static void BuildDeltasChart(ChartBuilder chartBuilder)
-    => chartBuilder.WithTitle("Average Deltas")
+    => chartBuilder.WithTitle("Average of Median and Upper deltas")
                    .WithSignalExpression("DeltaMonitor")
                    .WithDimensions(12, 2)
                    .WithQuery(
-                       queryBuilder => queryBuilder.WithSelect(("UpperDelta", "mean(UpperPercentile)"), ("AvgDelta", "mean(Average)"))
+                       queryBuilder => queryBuilder.WithSelect(("UpperDelta", "mean(UpperPercentile)"), ("MedianDelta", "mean(Average)"))
                                                    .WithDisplayStyle(MeasurementDisplayType.Line, false, true));
 
 static void BuildAverageDeltasChart(ChartBuilder chartBuilder)

@@ -764,12 +764,16 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         {
             var arg = Mapper.Map<WorldListMemberInfo>(aisling);
 
+            if (aisling.IsAdmin)
+                continue;
+
             if (Aisling.WithinLevelRange(aisling))
                 arg.Color = WorldListColor.WithinLevelRange;
 
-            worldList.Add(arg);
+            if (aisling.Guild is not null && (aisling.Guild == Aisling.Guild))
+                arg.Color = WorldListColor.Guilded;
 
-            //TODO: check guild for color
+            worldList.Add(arg);
         }
 
         args.WorldMemberCount = (ushort)worldList.Count;
