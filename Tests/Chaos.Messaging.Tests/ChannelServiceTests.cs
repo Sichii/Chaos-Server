@@ -26,7 +26,7 @@ public sealed class ChannelServiceTests
                 ChannelPrefix = "!",
                 MaxChannelNameLength = 20,
                 MinChannelNameLength = 3,
-                ReservedChannelNames = ["Reserved"]
+                ReservedChannelNames = ["!Reserved"]
             });
 
         LoggerMock = MockLogger.Create<ChannelService>();
@@ -79,7 +79,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -104,7 +104,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -123,14 +123,14 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Reserved",
+            "!Reserved",
             MessageColor.Default,
             (_, _) => { },
             true);
 
         ChannelService.RegisterChannel(
             null,
-            "Blacklisted",
+            "!Blacklisted",
             MessageColor.Default,
             (_, _) => { },
             true);
@@ -154,7 +154,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.LeaveChannel(SubscriberMock.Object, "!NonExistentChannel");
 
-        SubscriberMock.Verify(s => s.SendMessage("Channel !NonExistentChannel not found"), Times.Once);
+        SubscriberMock.Verify(s => s.SendMessage("You are not in !NonExistentChannel"), Times.Once);
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -180,7 +180,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -215,7 +215,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "a",
+            "!a",
             MessageColor.Default,
             (_, _) => { });
 
@@ -230,13 +230,13 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -248,7 +248,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -262,7 +262,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Blacklisted",
+            "!Blacklisted",
             MessageColor.Default,
             (_, _) => { });
 
@@ -277,13 +277,14 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Reserved",
+            "!Reserved",
             MessageColor.Default,
             (_, _) => { });
 
         ChannelService.ContainsChannel("!Reserved")
                       .Should()
                       .BeFalse();
+
         SubscriberMock.Verify(s => s.SendMessage("Invalid channel name"), Times.Once);
     }
 
@@ -292,7 +293,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -315,7 +316,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -329,7 +330,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (subscriber, s) => subscriber.SendMessage(s));
 
@@ -345,12 +346,12 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (subscriber, s) => subscriber.SendMessage(s));
 
-        var longMessage = new string('a', CONSTANTS.MAX_SERVER_MESSAGE_LENGTH + 1);
-        var expectedTruncatedMessage = longMessage[..(CONSTANTS.MAX_SERVER_MESSAGE_LENGTH / 2)];
+        var longMessage = new string('a', CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH + 1);
+        var expectedTruncatedMessage = longMessage[..(CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH / 2)];
 
         ChannelService.SendMessage(SubscriberMock.Object, "!Test", longMessage);
 
@@ -364,7 +365,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Red,
             (subscriber, s) => subscriber.SendMessage(s));
 
@@ -384,7 +385,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Red,
             (subscriber, s) => subscriber.SendMessage(s));
 
@@ -402,7 +403,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -422,7 +423,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             SubscriberMock.Object,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 
@@ -440,7 +441,7 @@ public sealed class ChannelServiceTests
     {
         ChannelService.RegisterChannel(
             null,
-            "Test",
+            "!Test",
             MessageColor.Default,
             (_, _) => { });
 

@@ -35,5 +35,15 @@ public sealed class AislingTrackers : Trackers
     public DateTime? LastOrangeBarMessageClear { get; set; }
     public DateTime? LastRefresh { get; set; }
     public DateTime? LastUnequip { get; set; }
-    public DateTime? LastEquipOrUnequip => LastEquip > LastUnequip ? LastEquip : LastUnequip;
+
+    public DateTime? LastEquipOrUnequip
+    {
+        get
+        {
+            var le = LastEquip ?? DateTime.MinValue;
+            var lue = LastUnequip ?? DateTime.MinValue;
+
+            return le > lue ? le : lue;
+        }
+    }
 }

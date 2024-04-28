@@ -371,8 +371,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 throw new ArgumentOutOfRangeException(nameof(publicMessageType), publicMessageType, null);
         }
 
-        if (this is Aisling && (sendMessage.Length > CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH))
-            sendMessage = sendMessage[..CONSTANTS.MAX_PUBLIC_MESSAGE_LENGTH];
+        if (this is Aisling && (sendMessage.Length > CONSTANTS.MAX_MESSAGE_LINE_LENGTH))
+            sendMessage = sendMessage[..CONSTANTS.MAX_MESSAGE_LINE_LENGTH];
 
         creaturesWithinRange = creaturesWithinRange.ToList();
 

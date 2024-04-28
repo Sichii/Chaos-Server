@@ -27,7 +27,7 @@ public static class StreamExtensions
     public static Span<byte> ToSpan(this MemoryStream stream)
     {
         if (stream.TryGetBuffer(out var segment))
-            return segment.Array;
+            return segment.AsSpan();
 
         var buffer = new byte[stream.Length];
 

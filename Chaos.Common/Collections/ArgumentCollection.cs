@@ -197,7 +197,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
             var argument = Arguments[index];
 
             if (typeof(T) == typeof(ArgumentCollection))
-                value = (T)(object)new ArgumentCollection(argument);
+                value = (T)(object)new ArgumentCollection(Arguments[index..]);
             else
                 value = PrimitiveConverter.Convert<T?>(argument);
 

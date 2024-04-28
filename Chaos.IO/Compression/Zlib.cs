@@ -69,6 +69,7 @@ public static class Zlib
         using var decompressor = new ZLibStream(compressed, CompressionMode.Decompress);
 
         compressed.Write(buffer);
+        compressed.Seek(0, SeekOrigin.Begin);
         decompressor.CopyTo(decompressed);
 
         return decompressed;

@@ -279,8 +279,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         {
             var message = localArgs.ChantMessage;
 
-            if (message.Length > CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
-                message = message[..CONSTANTS.MAX_SERVER_MESSAGE_LENGTH];
+            if (message.Length > CONSTANTS.MAX_MESSAGE_LINE_LENGTH)
+                message = message[..CONSTANTS.MAX_MESSAGE_LINE_LENGTH];
 
             localClient.Aisling.Chant(message);
 
@@ -1369,7 +1369,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                     ServerMessageType.Whisper,
                     $"{MessageColor.SpanishGray.ToPrefix()}{targetAisling.Name} is daydreaming");
 
-            var maxLength = CONSTANTS.MAX_SERVER_MESSAGE_LENGTH - targetAisling.Name.Length - 4;
+            var maxLength = CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH - targetAisling.Name.Length - 4;
 
             if (localArgs.Message.Length > maxLength)
                 localArgs.Message = localArgs.Message[..maxLength];

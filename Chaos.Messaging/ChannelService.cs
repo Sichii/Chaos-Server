@@ -233,8 +233,8 @@ public sealed class ChannelService : IChannelService
 
         var buffer = spanWriter.ToSpan();
 
-        if (buffer.Length > CONSTANTS.MAX_SERVER_MESSAGE_LENGTH)
-            buffer = buffer[..CONSTANTS.MAX_SERVER_MESSAGE_LENGTH];
+        if (buffer.Length > CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH)
+            buffer = buffer[..CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH];
 
         var defaultMessage = Encoding.Default.GetString(buffer);
 

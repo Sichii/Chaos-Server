@@ -6,12 +6,12 @@ namespace Chaos.Common.Definitions;
 public static class CONSTANTS
 {
     /// <summary>
-    ///     The maximum length of a public message
+    ///     The maximum length of a single line of a message
     /// </summary>
-    public const int MAX_PUBLIC_MESSAGE_LENGTH = 67;
+    public const int MAX_MESSAGE_LINE_LENGTH = 67;
 
     /// <summary>
-    ///     The maximum length of a private message
+    ///     The maximum length of a message, all lines combined
     /// </summary>
-    public const int MAX_SERVER_MESSAGE_LENGTH = 68;
+    public const int MAX_COMPLETE_MESSAGE_LENGTH = 90;
 }
