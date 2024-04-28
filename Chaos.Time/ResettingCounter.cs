@@ -75,6 +75,6 @@ public sealed class ResettingCounter : IDeltaUpdatable
 
         var newCounter = Interlocked.Increment(ref Counter);
 
-        return newCounter < MaxCount;
+        return newCounter <= MaxCount;
     }
 }
