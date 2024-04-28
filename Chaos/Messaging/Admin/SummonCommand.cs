@@ -1,30 +1,28 @@
-using Chaos.Collections;
 using Chaos.Collections.Common;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
-using Chaos.Storage.Abstractions;
+using Chaos.Networking.Abstractions;
 
 namespace Chaos.Messaging.Admin;
 
 [Command("summon", helpText: "<targetName>")]
-public class SummonCommand(ISimpleCacheProvider cacheProvider) : ICommand<Aisling>
+public class SummonCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly ISimpleCacheProvider CacheProvider = cacheProvider;
+    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
-        if (!args.TryGetNext<string>(out var name))
+        if (!args.TryGetNext<string>(out var playerName))
             return default;
 
-        var mapCache = CacheProvider.GetCache<MapInstance>();
-
-        var aisling = mapCache.SelectMany(map => map.GetEntities<Aisling>())
-                              .FirstOrDefault(aisling => aisling.Name.EqualsI(name));
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        var aisling = ClientRegistry.Select(c => c.Aisling)
+                                    .FirstOrDefault(a => a.Name.EqualsI(playerName));
 
         if (aisling == null)
-            source.SendOrangeBarMessage($"{name} is not online");
+            source.SendOrangeBarMessage($"{aisling} is not online");
         else
             aisling.TraverseMap(source.MapInstance, source, true);
 

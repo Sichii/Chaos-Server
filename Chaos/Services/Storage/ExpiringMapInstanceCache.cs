@@ -301,7 +301,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
             var key = ConstructKeyForType(mapGroup.Key!);
 
             if (LocalLookup.TryGetValue(key, out var baseMapInstance))
-                baseMapInstance!.Shards = shardLookup;
+                baseMapInstance.Shards = shardLookup;
         }
     }
     #endregion
