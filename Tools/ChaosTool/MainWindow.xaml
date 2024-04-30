@@ -20,196 +20,198 @@
         xmlns:worldMapControls="clr-namespace:ChaosTool.Controls.WorldMapControls"
         mc:Ignorable="d"
         Title="Chaos Tool"
-        Width="1200"
-        Height="800"
+        MaxWidth="1400"
+        MaxHeight="800"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <TabControl HorizontalContentAlignment="Left">
-        <TabItem Header="Items"
-                 Name="ItemsTab"
-                 IsSelected="True"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <itemTemplateControls:ItemTemplateListView x:Name="ItemTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Spells"
-                 Name="SpellsTab"
-                 Width="Auto"
-                 Margin="0"
-                 Padding="0"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <spellTemplateControls:SpellTemplateListView x:Name="SpellTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Skills"
-                 Name="SkillsTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <skillTemplateControls:SkillTemplateListView x:Name="SkillTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Dialogs"
-                 Name="DialogsTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <dialogTemplateControls:DialogTemplateListView x:Name="DialogTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Maps"
-                 Name="MapTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <mapTemplateControls:MapTemplateListView x:Name="MapTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="ReactorTiles"
-                 Name="ReactorTileTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <reactorTileTemplateControls:ReactorTileTemplateListView x:Name="ReactorTileTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="LootTables"
-                 Name="LootTablesTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <lootTableControls:LootTableListView x:Name="LootTableListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Monsters"
-                 Name="MonsterTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <monsterTemplateControls:MonsterTemplateListView x:Name="MonsterTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Merchants"
-                 Name="MerchantTemplatesTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <merchantTemplateControls:MerchantTemplateListView x:Name="MerchantTemplateListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="WorldMapNodes"
-                 Name="WorldMapNodesTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <worldMapNodeControls:WorldMapNodeListView x:Name="WorldMapNodeListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="WorldMaps"
-                 Name="WorldMapsTab"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid>
-                <worldMapControls:WorldMapListView x:Name="WorldMapListView" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="BulkEdit"
-                 Style="{StaticResource MaterialDesignTabItem}"
-                 materialDesign:TabAssist.HasUniformTabWidth="False">
-            <Grid Name="MasterDockPanel"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Button Grid.Row="0"
-                        Height="Auto"
-                        Width="Auto"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Margin="10"
-                        Content="➤"
-                        Click="OnRunClicked"
-                        Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
-                <Button Grid.Row="0"
-                        Height="Auto"
-                        Width="Auto"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Margin="100,10,10,10"
-                        Content="Reload"
-                        Click="OnClickedReload"
-                        Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
-                <ScrollViewer Grid.Row="1"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto"
-                              VerticalAlignment="Stretch"
-                              VerticalContentAlignment="Stretch"
-                              PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
-                    <ItemsControl Name="Items"
+    <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+        <TabControl HorizontalContentAlignment="Left">
+            <TabItem Header="Items"
+                     Name="ItemsTab"
+                     IsSelected="True"
+                     Style="{StaticResource MaterialDesignTabItem}">
+                <Grid>
+                    <itemTemplateControls:ItemTemplateListView x:Name="ItemTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Spells"
+                     Name="SpellsTab"
+                     Width="Auto"
+                     Margin="0"
+                     Padding="0"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <spellTemplateControls:SpellTemplateListView x:Name="SpellTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Skills"
+                     Name="SkillsTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <skillTemplateControls:SkillTemplateListView x:Name="SkillTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Dialogs"
+                     Name="DialogsTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <dialogTemplateControls:DialogTemplateListView x:Name="DialogTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Maps"
+                     Name="MapTemplatesTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <mapTemplateControls:MapTemplateListView x:Name="MapTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="ReactorTiles"
+                     Name="ReactorTileTemplatesTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <reactorTileTemplateControls:ReactorTileTemplateListView x:Name="ReactorTileTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="LootTables"
+                     Name="LootTablesTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <lootTableControls:LootTableListView x:Name="LootTableListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Monsters"
+                     Name="MonsterTemplatesTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <monsterTemplateControls:MonsterTemplateListView x:Name="MonsterTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Merchants"
+                     Name="MerchantTemplatesTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <merchantTemplateControls:MerchantTemplateListView x:Name="MerchantTemplateListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="WorldMapNodes"
+                     Name="WorldMapNodesTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <worldMapNodeControls:WorldMapNodeListView x:Name="WorldMapNodeListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="WorldMaps"
+                     Name="WorldMapsTab"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid>
+                    <worldMapControls:WorldMapListView x:Name="WorldMapListView" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="BulkEdit"
+                     Style="{StaticResource MaterialDesignTabItem}"
+                     materialDesign:TabAssist.HasUniformTabWidth="False">
+                <Grid Name="MasterDockPanel"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0"
+                            Height="Auto"
+                            Width="Auto"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Margin="10"
+                            Content="➤"
+                            Click="OnRunClicked"
+                            Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                    <Button Grid.Row="0"
+                            Height="Auto"
+                            Width="Auto"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Margin="100,10,10,10"
+                            Content="Reload"
+                            Click="OnClickedReload"
+                            Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto"
                                   VerticalAlignment="Stretch"
                                   VerticalContentAlignment="Stretch"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Stretch"
-                                  Background="#FF303030"
-                                  Foreground="White"
-                                  Margin="0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <editor:RoslynCodeEditor Name="CodeEditor"
-                                                         Loaded="OnItemLoaded"
-                                                         FontFamily="Consolas"
-                                                         Margin="0"
-                                                         Padding="5"
-                                                         Background="#FF303030"
-                                                         Foreground="White"
-                                                         ContextActionsIcon="{StaticResource Bulb}"
-                                                         IsReadOnly="False"
-                                                         HorizontalScrollBarVisibility="Auto"
-                                                         VerticalScrollBarVisibility="Auto"
-                                                         ShowLineNumbers="True"
-                                                         IsBraceCompletionEnabled="True"
-                                                         VerticalAlignment="Stretch"
-                                                         VerticalContentAlignment="Stretch"
-                                                         LineNumbersForeground="DarkGray" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                                  PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
+                        <ItemsControl Name="Items"
+                                      VerticalAlignment="Stretch"
+                                      VerticalContentAlignment="Stretch"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Stretch"
+                                      Background="#FF303030"
+                                      Foreground="White"
+                                      Margin="0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <editor:RoslynCodeEditor Name="CodeEditor"
+                                                             Loaded="OnItemLoaded"
+                                                             FontFamily="Consolas"
+                                                             Margin="0"
+                                                             Padding="5"
+                                                             Background="#FF303030"
+                                                             Foreground="White"
+                                                             ContextActionsIcon="{StaticResource Bulb}"
+                                                             IsReadOnly="False"
+                                                             HorizontalScrollBarVisibility="Auto"
+                                                             VerticalScrollBarVisibility="Auto"
+                                                             ShowLineNumbers="True"
+                                                             IsBraceCompletionEnabled="True"
+                                                             VerticalAlignment="Stretch"
+                                                             VerticalContentAlignment="Stretch"
+                                                             LineNumbersForeground="DarkGray" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
 
-                <Label Grid.Row="2"
-                       Content="Output"
-                       Style="{StaticResource MaterialDesignLabel}" />
-                <TextBox Grid.Row="3"
-                         Name="Output"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         TextWrapping="Wrap"
-                         MinHeight="150"
-                         MaxHeight="250"
-                         Padding="5"
-                         HorizontalAlignment="Stretch"
-                         HorizontalContentAlignment="Left"
-                         IsReadOnly="True"
-                         IsReadOnlyCaretVisible="False" />
-            </Grid>
-        </TabItem>
-        <TabItem Header="Integrity"
-                 Name="IntegrityTab"
-                 Style="{StaticResource MaterialDesignTabItem}">
-            <Grid>
-                <integrityCheckControls:IntegrityCheckControl x:Name="IntegrityCheck" />
-            </Grid>
-        </TabItem>
-    </TabControl>
+                    <Label Grid.Row="2"
+                           Content="Output"
+                           Style="{StaticResource MaterialDesignLabel}" />
+                    <TextBox Grid.Row="3"
+                             Name="Output"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             TextWrapping="Wrap"
+                             MinHeight="150"
+                             MaxHeight="250"
+                             Padding="5"
+                             HorizontalAlignment="Stretch"
+                             HorizontalContentAlignment="Left"
+                             IsReadOnly="True"
+                             IsReadOnlyCaretVisible="False" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Integrity"
+                     Name="IntegrityTab"
+                     Style="{StaticResource MaterialDesignTabItem}">
+                <Grid>
+                    <integrityCheckControls:IntegrityCheckControl x:Name="IntegrityCheck" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </Window>

@@ -618,18 +618,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         return creatureType switch
         {
-            CreatureType.Normal => !IsWallToCreaturesOnly(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.WalkThrough => !IsWallToCreaturesOnly(point)
+            CreatureType.Normal => !IsBlockingReactor(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.WalkThrough => !IsBlockingReactor(point)
                                         && IsWithinMap(point)
                                         && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.Merchant => !IsWallToCreaturesOnly(point)
-                                     && !IsWall(point)
-                                     && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.WhiteSquare => !IsWallToCreaturesOnly(point)
-                                        && !IsWall(point)
-                                        && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.Aisling => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            _                    => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
+            CreatureType.Merchant    => !IsBlockingReactor(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.WhiteSquare => !IsBlockingReactor(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
     }
 
@@ -643,10 +639,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         return door?.Closed ?? false;
     }
-
-    public bool IsWallToCreaturesOnly(IPoint point)
-        => Objects.AtPoint<ReactorTile>(point)
-                  .Any(rt => rt.ShouldBlockPathfinding);
 
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 

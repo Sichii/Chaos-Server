@@ -578,9 +578,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var startPoint = Point.From(this);
         var endPoint = ((IPoint)this).DirectionalOffset(direction);
 
-        if (!MapInstance.IsWalkable(endPoint, Type))
-            return;
-
         var visibleBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                        .ToList();
 
