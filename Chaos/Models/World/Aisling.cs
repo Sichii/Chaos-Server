@@ -1051,8 +1051,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         base.Update(delta);
     }
 
-    public override void Walk(Direction direction)
+    public override void Walk(Direction direction, bool? ignoreBlockingReactors = null)
     {
+        ignoreBlockingReactors ??= true;
+
         if (!Script.CanMove() || ((direction != Direction) && !Script.CanTurn()) || !ShouldWalk)
         {
             Refresh(true);
@@ -1077,7 +1079,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         //otherwise, check if the point is walkable
-        else if (!MapInstance.IsWalkable(endPoint, Type))
+        else if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
         {
             Refresh(true);
 

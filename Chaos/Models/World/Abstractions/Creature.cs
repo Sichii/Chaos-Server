@@ -574,8 +574,10 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Trackers.LastTurn = DateTime.UtcNow;
     }
 
-    public virtual void Walk(Direction direction)
+    public virtual void Walk(Direction direction, bool? ignoreBlockingReactors = null)
     {
+        ignoreBlockingReactors ??= Type == CreatureType.Aisling;
+
         if (!Script.CanMove())
             return;
 
@@ -583,6 +585,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var startPosition = Location.From(this);
         var startPoint = Point.From(this);
         var endPoint = ((IPoint)this).DirectionalOffset(direction);
+
+        if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
+            return;
 
         var visibleBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                        .ToList();

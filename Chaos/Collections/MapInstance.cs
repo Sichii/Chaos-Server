@@ -611,19 +611,36 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         => Objects.AtPoint<ReactorTile>(point)
                   .Any();
 
-    public bool IsWalkable(IPoint point, CreatureType creatureType)
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature
+    /// </param>
+    /// <param name="ignoreBlockingReactors">
+    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
     {
+        ignoreBlockingReactors ??= creatureType == CreatureType.Aisling;
+
         var creatures = Objects.AtPoint<Creature>(point)
                                .ToList();
 
+        if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
+            return false;
+
         return creatureType switch
         {
-            CreatureType.Normal => !IsBlockingReactor(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.WalkThrough => !IsBlockingReactor(point)
-                                        && IsWithinMap(point)
-                                        && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.Merchant    => !IsBlockingReactor(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.WhiteSquare => !IsBlockingReactor(point) && !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.Normal      => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.WalkThrough => IsWithinMap(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.Merchant    => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
+            CreatureType.WhiteSquare => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
             CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
             _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
