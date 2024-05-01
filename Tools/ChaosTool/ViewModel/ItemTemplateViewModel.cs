@@ -18,6 +18,7 @@ public sealed class ItemTemplateViewModel : PanelTemplateViewModelBase<ItemTempl
     private bool _isModifiable;
     private int? _maxDurability;
     private int _maxStacks = 1;
+    private bool _noTrade;
     private DisplayColor? _pantsColor;
     private int _sellValue;
     private byte _weight;
@@ -86,6 +87,12 @@ public sealed class ItemTemplateViewModel : PanelTemplateViewModelBase<ItemTempl
     {
         get => _maxStacks;
         set => SetField(ref _maxStacks, value);
+    }
+
+    public bool NoTrade
+    {
+        get => _noTrade;
+        set => SetField(ref _noTrade, value);
     }
 
     public DisplayColor? PantsColor

@@ -1,6 +1,4 @@
-using Chaos.Common.Utilities;
 using Chaos.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.NLog.Logging.Definitions;
@@ -64,8 +62,12 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
         {
             case ComplexActionHelper.WithdrawGoldResult.Success:
             {
-                var phrase = WithdrawPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
+                RandomizedReply(
+                    Subject,
+                    WithdrawPhrases,
+                    source.Name,
+                    amount,
+                    "gold");
 
                 Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Withdraw)
                       .WithProperty(source)
@@ -82,8 +84,12 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
             }
             case ComplexActionHelper.WithdrawGoldResult.DontHaveThatMany:
             {
-                var phrase = DontHaveThatManyWithdrawPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
+                RandomizedReply(
+                    Subject,
+                    DontHaveThatManyWithdrawPhrases,
+                    source.Name,
+                    amount,
+                    "gold");
 
                 break;
             }

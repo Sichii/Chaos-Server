@@ -102,6 +102,10 @@ public class SellShopScript : DialogScriptBase
                 Subject.Reply(source, "You are carrying too much gold.", "generic_sellshop_initial");
 
                 return;
+            case ComplexActionHelper.SellItemResult.ItemDamaged:
+                Subject.Reply(source, "I don't want your junk, ask a smith to fix it.", "generic_sellshop_initial");
+
+                return;
             case ComplexActionHelper.SellItemResult.BadInput:
                 Subject.ReplyToUnknownInput(source);
 

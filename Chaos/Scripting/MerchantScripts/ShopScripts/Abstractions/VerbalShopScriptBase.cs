@@ -1,8 +1,11 @@
+using Chaos.Common.Utilities;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Models.World;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Utilities;
+using Humanizer;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 
@@ -41,6 +44,15 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
         "{Name}, can't find your {AmountOfThing} for sale."
     };
 
+    protected static ICollection<string> ItemDamagedSellPhrases { get; } = new List<string>
+    {
+        "{Name}, I dont want your {AmountOfThing}, ask a smith to fix it.",
+        "Sorry, {Name}. Your {AmountOfThing} won't sell in this condition.",
+        "{Name}, I can't accept your damaged {AmountOfThing}.",
+        "This isn't a charity, {Name}, I don't want your {AmountOfThing}.",
+        "Sorry, {Name}, I can't take your {AmountOfThing} in this condition."
+    };
+
     protected ILogger Logger { get; }
 
     protected static ICollection<string> NotEnoughGoldPhrases { get; } = new List<string>
@@ -75,6 +87,20 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
         : base(subject)
         => Logger = logger;
 
+    protected virtual string Humanize(
+        string template,
+        string name,
+        int amount,
+        string thing)
+    {
+        if (amount > 1)
+            template.ReplaceI("{AmountOfThing} is", "{AmountOfThing} are");
+        else
+            template.ReplaceI("{AmountOfThing} are", "{AmountOfThing} is");
+
+        return template.Inject(name, thing.ToQuantity(amount));
+    }
+
     protected virtual bool IsClosestVerbalShopTo(Aisling aisling)
     {
         //if we're checking, it means we're in range... it should be impossible to get no results
@@ -89,6 +115,28 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
             return true;
 
         return false;
+    }
+
+    protected virtual void RandomizedReply(
+        Merchant source,
+        ICollection<string> phrases,
+        string name,
+        int amount,
+        string thing,
+        int? goldAmount = null)
+    {
+        var phrase = phrases.PickRandom();
+
+        phrase = Humanize(
+            phrase,
+            name,
+            amount,
+            thing);
+
+        if (goldAmount.HasValue)
+            phrase = phrase.Inject(goldAmount.Value);
+
+        source.Say(phrase);
     }
 
     protected virtual void ReplyToUnknownInput(Aisling aisling) => Subject.Say(DialogString.UnknownInput);

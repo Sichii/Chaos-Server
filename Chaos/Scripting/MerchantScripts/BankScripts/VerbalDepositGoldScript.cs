@@ -1,6 +1,4 @@
-using Chaos.Common.Utilities;
 using Chaos.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.NLog.Logging.Definitions;
@@ -24,8 +22,12 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
         {
             case ComplexActionHelper.DepositGoldResult.Success:
             {
-                var phrase = DepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
+                RandomizedReply(
+                    Subject,
+                    DepositPhrases,
+                    source.Name,
+                    amount,
+                    "gold");
 
                 Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Deposit)
                       .WithProperty(source)
@@ -36,8 +38,12 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
             }
             case ComplexActionHelper.DepositGoldResult.DontHaveThatMany:
             {
-                var phrase = DontHaveThatManyDepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, $"{amount} gold"));
+                RandomizedReply(
+                    Subject,
+                    DontHaveThatManyDepositPhrases,
+                    source.Name,
+                    amount,
+                    "gold");
 
                 break;
             }

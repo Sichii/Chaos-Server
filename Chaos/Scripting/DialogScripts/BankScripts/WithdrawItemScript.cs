@@ -55,6 +55,22 @@ public class WithdrawItemScript : DialogScriptBase
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
+        if (!TryFetchArgs<string>(out var itemName) || !TryGetItem(source, itemName, out var item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        //if the bank only has 1 of the specified item, skip the amount request
+        if (item.Count == 1)
+        {
+            Subject.MenuArgs.Add("1");
+            OnNextAmountRequest(source);
+
+            return;
+        }
+
         switch (Subject.Template.TemplateKey.ToLower())
         {
             case "generic_withdrawitem_amountrequest":

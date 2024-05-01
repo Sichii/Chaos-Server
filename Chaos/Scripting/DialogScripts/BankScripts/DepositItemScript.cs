@@ -58,6 +58,22 @@ public class DepositItemScript : DialogScriptBase
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
+        if (!TryFetchArgs<byte>(out var slot) || !source.Inventory.TryGetObject(slot, out var item))
+        {
+            Subject.ReplyToUnknownInput(source);
+
+            return;
+        }
+
+        //if the inventory only has 1 of the specified item, skip the amount request
+        if (source.Inventory.CountOf(item.DisplayName) == 1)
+        {
+            Subject.MenuArgs.Add("1");
+            OnNextAmountRequest(source);
+
+            return;
+        }
+
         switch (Subject.Template.TemplateKey.ToLower())
         {
             case "generic_deposititem_amountrequest":
@@ -102,6 +118,10 @@ public class DepositItemScript : DialogScriptBase
             case ComplexActionHelper.DepositItemResult.NotEnoughGold:
                 //Subject.Reply(source, $"You don't have enough gold, you need {}");
                 //this script doesnt currently take into account deposit fees
+
+                return;
+            case ComplexActionHelper.DepositItemResult.ItemDamaged:
+                Subject.Reply(source, "That item is damaged, I don't want to be responsible for it.", "generic_deposititem_initial");
 
                 return;
             case ComplexActionHelper.DepositItemResult.BadInput:

@@ -1,4 +1,3 @@
-using Chaos.Common.Utilities;
 using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
@@ -9,7 +8,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Utilities;
-using Humanizer;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts;
 
@@ -84,9 +82,13 @@ public class VerbalSellShopScript : VerbalShopScriptBase
         {
             case ComplexActionHelper.SellItemResult.Success:
             {
-                var phrase = SellItemPhrases.PickRandom();
-
-                Subject.Say(phrase.Inject(source.Name, item.DisplayName.ToQuantity(amount), totalCost));
+                RandomizedReply(
+                    Subject,
+                    SellItemPhrases,
+                    source.Name,
+                    amount,
+                    item.DisplayName,
+                    totalCost);
 
                 Logger.WithTopics(
                           Topics.Entities.Aisling,
@@ -108,8 +110,23 @@ public class VerbalSellShopScript : VerbalShopScriptBase
             }
             case ComplexActionHelper.SellItemResult.DontHaveThatMany:
             {
-                var phrase = DontHaveThatManySellPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, item.DisplayName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    DontHaveThatManySellPhrases,
+                    source.Name,
+                    amount,
+                    item.DisplayName);
+
+                break;
+            }
+            case ComplexActionHelper.SellItemResult.ItemDamaged:
+            {
+                RandomizedReply(
+                    Subject,
+                    ItemDamagedSellPhrases,
+                    source.Name,
+                    amount,
+                    item.DisplayName);
 
                 break;
             }

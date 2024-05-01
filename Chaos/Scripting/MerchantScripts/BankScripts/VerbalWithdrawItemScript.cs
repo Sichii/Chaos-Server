@@ -1,4 +1,3 @@
-using Chaos.Common.Utilities;
 using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
@@ -7,7 +6,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
-using Humanizer;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
@@ -78,8 +76,12 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
         {
             case ComplexActionHelper.WithdrawItemResult.Success:
             {
-                var phrase = WithdrawPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    WithdrawPhrases,
+                    source.Name,
+                    amount,
+                    itemName);
 
                 Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Withdraw)
                       .WithProperty(source)
@@ -100,8 +102,12 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
             }
             case ComplexActionHelper.WithdrawItemResult.DontHaveThatMany:
             {
-                var phrase = DontHaveThatManyWithdrawPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    DontHaveThatManyWithdrawPhrases,
+                    source.Name,
+                    amount,
+                    itemName);
 
                 break;
             }

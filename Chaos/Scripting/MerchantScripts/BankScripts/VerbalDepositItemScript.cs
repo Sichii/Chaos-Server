@@ -1,4 +1,3 @@
-using Chaos.Common.Utilities;
 using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
@@ -7,7 +6,6 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
-using Humanizer;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
@@ -25,8 +23,12 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
         {
             case ComplexActionHelper.DepositItemResult.Success:
             {
-                var phrase = DepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    DepositPhrases,
+                    source.Name,
+                    amount,
+                    itemName);
 
                 Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Deposit)
                       .WithProperty(source)
@@ -41,14 +43,23 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
             }
             case ComplexActionHelper.DepositItemResult.DontHaveThatMany:
             {
-                var phrase = DontHaveThatManyDepositPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    DontHaveThatManyDepositPhrases,
+                    source.Name,
+                    amount,
+                    itemName);
 
                 break;
             }
             case ComplexActionHelper.DepositItemResult.NotEnoughGold:
             {
-                //TODO: gold fees not used in these samples
+                RandomizedReply(
+                    Subject,
+                    ItemDamagedDepositPhrases,
+                    source.Name,
+                    amount,
+                    itemName);
 
                 break;
             }

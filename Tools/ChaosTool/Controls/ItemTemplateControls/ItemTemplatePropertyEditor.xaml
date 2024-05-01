@@ -45,13 +45,20 @@
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
                Margin="0,319,10,0" />
+        <Label Name="NoTradeLbl"
+               Grid.Column="2"
+               Content="NoTrade"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Style="{StaticResource MaterialDesignLabel}"
+               Margin="0,229,9,0" />
         <Label Name="CategoryLbl"
                Grid.Column="2"
                Content="Category"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,229,9,0" />
+               Margin="0,259,9,0" />
         <Label Name="ColorLbl"
                Content="Color"
                HorizontalAlignment="Right"
@@ -241,7 +248,7 @@
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,349,10,0" />
+               Margin="0,379,10,0" />
         <Label Name="ClassLbl"
                Content="Class"
                HorizontalAlignment="Right"
@@ -297,7 +304,7 @@
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
                Style="{StaticResource MaterialDesignLabel}"
-               Margin="0,259,9,0" />
+               Margin="0,289,9,0" />
         <Label Content="Path"
                HorizontalAlignment="Right"
                VerticalAlignment="Top"
@@ -637,11 +644,18 @@
                   VerticalAlignment="Top"
                   Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
                   IsChecked="{Binding IsModifiable}" />
+        <CheckBox Grid.Column="3"
+                  x:Name="NoTradeCbox"
+                  HorizontalAlignment="Left"
+                  Margin="10,233,0,0"
+                  VerticalAlignment="Top"
+                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  IsChecked="{Binding NoTrade}" />
         <TextBox Grid.Column="3"
                  x:Name="CategoryTbox"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
-                 Margin="10,228,10,0"
+                 Margin="10,258,10,0"
                  TextWrapping="NoWrap"
                  MinWidth="120"
                  Style="{StaticResource MaterialDesignTextBox}"
@@ -651,7 +665,7 @@
                  HorizontalContentAlignment="Left"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Top"
-                 Margin="10,259,10,0"
+                 Margin="10,289,10,0"
                  TextWrapping="Wrap"
                  MaxLength="255"
                  Padding="3"
@@ -666,7 +680,7 @@
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
               Height="Auto"
-              Margin="0,348,0,0"
+              Margin="0,378,0,0"
               Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

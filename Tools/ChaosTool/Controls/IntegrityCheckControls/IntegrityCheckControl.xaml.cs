@@ -183,6 +183,11 @@ public sealed partial class IntegrityCheckControl
             if (!template.TemplateKey.EqualsI(expectedTemplateKey))
                 await AddViolationAsync($"TemplateKey mismatch: {template.TemplateKey} != {expectedTemplateKey}", handler, true);
 
+            if (template.EquipmentType.HasValue
+                && (template.EquipmentType.Value != EquipmentType.NotEquipment)
+                && (template.SellValue == 0))
+                await AddViolationAsync("Equippable item has sellValue of 0", handler);
+
             //if the item is bought by a merchant
             if (SellableItemsIndex.Contains(template.TemplateKey))
                 if (template.SellValue == 0)

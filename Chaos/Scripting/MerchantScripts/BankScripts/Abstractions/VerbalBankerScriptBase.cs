@@ -1,8 +1,11 @@
+using Chaos.Common.Utilities;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Models.World;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Utilities;
+using Humanizer;
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 
@@ -39,7 +42,7 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
 
     protected static ICollection<string> DontHaveThatManyWithdrawPhrases { get; } = new List<string>
     {
-        "{Name}, it appears you don't have {AmountOfThing} in your account.",
+        "{Name}, it appears you don't have {AmountOfThing} in your account.".Humanize(),
         "{Name}, {AmountOfThing} seems to exceed your balance.",
         "{Name}, you don't have {AmountOfThing} to withdraw.",
         "{Name}, you're missing {AmountOfThing} for withdrawal.",
@@ -54,6 +57,15 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
         "How much money do I have in my bank",
         "How much money I got",
         "How much gold I got"
+    };
+
+    protected static ICollection<string> ItemDamagedDepositPhrases { get; } = new List<string>
+    {
+        "{Name}, I can't be made responsible for your damaged {AmountOfThing}.",
+        "{Name}, your {AmountOfThing} is damaged. Deposit denied.",
+        "{Name}, your {AmountOfThing} isn't in depositable condition.",
+        "{Name}, fix your {AmountOfThing} before depositing it.",
+        "{Name}, I can't take your {AmountOfThing}. Ask a smith to fix it."
     };
 
     protected ILogger Logger { get; }
@@ -85,6 +97,20 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
         : base(subject)
         => Logger = logger;
 
+    protected virtual string Humanize(
+        string template,
+        string name,
+        int amount,
+        string thing)
+    {
+        if (amount > 1)
+            template.ReplaceI("{AmountOfThing} is", "{AmountOfThing} are");
+        else
+            template.ReplaceI("{AmountOfThing} are", "{AmountOfThing} is");
+
+        return template.Inject(name, thing.ToQuantity(amount));
+    }
+
     protected virtual bool IsClosestVerbalBankerTo(Aisling aisling)
     {
         //if we're checking, it means we're in range... it should be impossible to get no results
@@ -99,6 +125,28 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
             return true;
 
         return false;
+    }
+
+    protected virtual void RandomizedReply(
+        Merchant source,
+        ICollection<string> phrases,
+        string name,
+        int amount,
+        string thing,
+        int? goldAmount = null)
+    {
+        var phrase = phrases.PickRandom();
+
+        phrase = Humanize(
+            phrase,
+            name,
+            amount,
+            thing);
+
+        if (goldAmount.HasValue)
+            phrase = phrase.Inject(goldAmount.Value);
+
+        source.Say(phrase);
     }
 
     protected virtual void ReplyToUnknownInput(Aisling aisling) => Subject.Say(DialogString.UnknownInput);

@@ -1,4 +1,3 @@
-using Chaos.Common.Utilities;
 using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
@@ -11,7 +10,6 @@ using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
-using Humanizer;
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts;
 
@@ -54,8 +52,12 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
         {
             case ComplexActionHelper.BuyItemResult.Success:
             {
-                var phrase = BuyItemPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    BuyItemPhrases,
+                    source.Name,
+                    amount,
+                    itemToBuy.DisplayName);
 
                 Logger.WithTopics(
                           Topics.Entities.Aisling,
@@ -77,15 +79,23 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
             }
             case ComplexActionHelper.BuyItemResult.CantCarry:
             {
-                var phrase = CantCarryPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    CantCarryPhrases,
+                    source.Name,
+                    amount,
+                    itemToBuy.DisplayName);
 
                 break;
             }
             case ComplexActionHelper.BuyItemResult.NotEnoughGold:
             {
-                var phrase = NotEnoughGoldPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    NotEnoughGoldPhrases,
+                    source.Name,
+                    amount,
+                    itemToBuy.DisplayName);
 
                 break;
             }
@@ -97,8 +107,12 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
             }
             case ComplexActionHelper.BuyItemResult.NotEnoughStock:
             {
-                var phrase = OutOfStockPhrases.PickRandom();
-                Subject.Say(phrase.Inject(source.Name, itemToBuy.DisplayName.ToQuantity(amount)));
+                RandomizedReply(
+                    Subject,
+                    OutOfStockPhrases,
+                    source.Name,
+                    amount,
+                    itemToBuy.DisplayName);
 
                 break;
             }
