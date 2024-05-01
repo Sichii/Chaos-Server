@@ -1,7 +1,7 @@
 {
-  "accountBound": true,
   "buyCost": 1000,
   "category": "trinket",
+  "noTrade": true,
   "color": "Default",
   "gender": "Unisex",
   "maxStacks": 1,

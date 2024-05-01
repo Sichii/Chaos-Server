@@ -255,7 +255,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         if (source.Inventory.TryGetObject(slot, out var inventoryItem))
             if (!Script.CanDropItemOn(source, inventoryItem))
+            {
+                source.SendActiveMessage("You can't trade that item");
+
                 return;
+            }
 
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)

@@ -506,6 +506,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
+        if (source.Inventory.TryGetObject(slot, out var inventoryItem))
+            if (!Script.CanDropItemOn(source, inventoryItem))
+            {
+                source.SendActiveMessage("You can't trade that item");
+
+                return;
+            }
+
         if (!TryStartExchange(source, out var exchange))
             return;
 
