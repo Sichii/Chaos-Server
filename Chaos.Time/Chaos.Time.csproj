@@ -13,6 +13,7 @@
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+        <PackageReference Include="T-Digest.NET"/>
     </ItemGroup>
 
 </Project>

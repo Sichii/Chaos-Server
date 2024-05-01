@@ -2,6 +2,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Time.Abstractions;
 using Microsoft.Extensions.Logging;
+using TDigestNet;
 
 namespace Chaos.Time;
 
@@ -16,7 +17,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     private readonly string Name;
     private readonly IIntervalTimer Timer;
     private bool BeginLogging;
-    private List<TimeSpan> ExecutionDeltas;
+    private TDigest Digest;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DeltaMonitor" /> class
@@ -42,7 +43,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
         Name = name;
         Logger = logger;
         MaxDelta = maxDelta;
-        ExecutionDeltas = new List<TimeSpan>();
+        Digest = new TDigest();
         Timer = new IntervalTimer(logInterval, false);
         BeginLogging = false;
     }
@@ -54,8 +55,8 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 
         if (Timer.IntervalElapsed)
         {
-            CheckStatistics(ExecutionDeltas);
-            ExecutionDeltas = new List<TimeSpan>(ExecutionDeltas.Count);
+            PrintStatistics(Digest);
+            Digest = new TDigest();
         }
     }
 
@@ -65,14 +66,12 @@ public sealed class DeltaMonitor : IDeltaUpdatable
     /// <param name="executionDelta">
     ///     The amount of time the loop took to execute
     /// </param>
-    public void AddExecutionDelta(TimeSpan executionDelta) => ExecutionDeltas.Add(executionDelta);
+    public void DigestDelta(TimeSpan executionDelta) => Digest.Add(executionDelta.Ticks);
 
     /// <summary>
     ///     Analyzes the recorded deltas and logs the results
     /// </summary>
-    /// <param name="deltas">
-    /// </param>
-    private void CheckStatistics(List<TimeSpan> deltas)
+    private void PrintStatistics(TDigest digest)
         => _ = Task.Run(
             () =>
             {
@@ -83,27 +82,12 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                     return Task.CompletedTask;
                 }
 
-                //sort the deltas from smallest to largest
-                deltas.Sort();
-
                 //gather various statistics about the deltas
-                var average = deltas.Average(d => d.TotalMilliseconds);
-
-                var max = deltas.Last()
-                                .TotalMilliseconds;
-                var count = deltas.Count;
-                var upperPct = deltas[(int)(count * 0.95)].TotalMilliseconds;
-
-                double median;
-
-                //median calculation
-                if ((count % 2) == 0)
-                {
-                    var first = deltas[count / 2];
-                    var second = deltas[count / 2 - 1];
-                    median = (first + second).TotalMilliseconds / 2;
-                } else
-                    median = deltas[count / 2].TotalMilliseconds;
+                var average = digest.Average / TimeSpan.TicksPerMillisecond;
+                var max = digest.Max / TimeSpan.TicksPerMillisecond;
+                var count = digest.Count;
+                var upperPct = digest.Quantile(0.95) / TimeSpan.TicksPerMillisecond;
+                var median = digest.Quantile(0.5) / TimeSpan.TicksPerMillisecond;
 
                 //log output format
                 const string FORMAT
@@ -119,7 +103,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                               median,
                               upperPct,
                               max,
-                              deltas.Count);
+                              count);
                 else if ((upperPct > (MaxDelta / 2)) || (max > 100))
                     Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogWarning(
@@ -129,7 +113,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                               median,
                               upperPct,
                               max,
-                              deltas.Count);
+                              count);
                 else
                     Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogTrace(
@@ -139,7 +123,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                               median,
                               upperPct,
                               max,
-                              deltas.Count);
+                              count);
 
                 return Task.CompletedTask;
             });

@@ -780,6 +780,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         await Task.WhenAll(aislingsToSave.Select(AislingStore.SaveAsync));
 
         var elapsed = Stopwatch.GetElapsedTime(start);
-        DeltaMonitor.AddExecutionDelta(elapsed);
+        DeltaMonitor.DigestDelta(elapsed);
     }
 }
