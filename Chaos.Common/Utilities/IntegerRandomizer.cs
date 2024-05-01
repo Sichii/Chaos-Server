@@ -38,6 +38,30 @@ public static class IntegerRandomizer
     }
 
     /// <summary>
+    ///     Picks a random choice based on the common weight. Chances are NOT exhaustive. Only picks at most 1 item. Each item
+    ///     has the same chance to be picked.
+    /// </summary>
+    /// <param name="choices">
+    ///     A collection of choiced
+    /// </param>
+    /// <param name="commonWeight">
+    ///     The weight of each choice
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of object to return
+    /// </typeparam>
+    /// <returns>
+    ///     A random element from the specified collection if a choice is taken, otherwise
+    ///     <c>
+    ///         default
+    ///     </c>
+    /// </returns>
+    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, int commonWeight)
+        => choices.Select(x => new KeyValuePair<T, int>(x, commonWeight))
+                  .ToList()
+                  .PickRandomWeightedSingleOrDefault();
+
+    /// <summary>
     ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are
     ///     NOT exhaustive. Only picks at most 1 item.
     /// </summary>
