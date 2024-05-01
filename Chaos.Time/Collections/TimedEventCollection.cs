@@ -97,6 +97,11 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
         if (string.IsNullOrEmpty(timedEvent.EventId))
             throw new ArgumentException("Event ID cannot be null or empty", nameof(timedEvent));
 
+        //if we find an auto consuming event with the same ID that is completed, remove it
+        //this is because the update loop as not run and auto consumed the event yet
+        if (Events.TryGetValue(timedEvent.EventId, out var existingEvent) && existingEvent is { Completed: true, AutoConsume: true })
+            Events.Remove(timedEvent.EventId);
+
         if (!Events.TryAdd(timedEvent.EventId, timedEvent))
             throw new InvalidOperationException("An event with the same ID already exists");
     }
