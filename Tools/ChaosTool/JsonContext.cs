@@ -19,7 +19,9 @@ using Chaos.Services.Configuration;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
+using Chaos.Wpf.Collections.ObjectModel;
 using Chaos.Wpf.Observables;
+using ChaosTool.Converters;
 using ChaosTool.Model;
 using ChaosTool.Model.Abstractions;
 using ChaosTool.Model.Tables;
@@ -171,9 +173,16 @@ public class JsonContext
                 cfg.CreateMap<string, BindableString>()
                    .ForMember(rhs => rhs.String, c => c.MapFrom(lhs => lhs))
                    .PreserveReferences()
-                   .ReverseMap();
+                   .ReverseMap()
+                   .ConvertUsing(bs => bs.String);
 
                 cfg.CreateMap<Point, ObservablePoint>();
+
+               cfg.CreateMap(typeof(ObservingCollection<>), typeof(ICollection<>))
+                  .ConvertUsing(typeof(ObservingCollectionTypeConverter<,>));
+
+               cfg.CreateMap(typeof(ICollection<>), typeof(ObservingCollection<>))
+                  .ConvertUsing(typeof(ReverseObservingCollectionTypeConverter<,>));
 
                 cfg.CreateMap<ObservablePoint, Point>()
                    .ConstructUsing(lhs => new Point(lhs.X, lhs.Y));
