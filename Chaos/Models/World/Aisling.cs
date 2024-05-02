@@ -422,12 +422,15 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public void GiveItemOrSendToBank(Item item)
     {
-        if (!CanCarry(item) || !Inventory.TryAddToNextSlot(item))
-        {
-            Bank.Deposit(item);
+        var items = item.FixStacks(ItemCloner);
 
-            SendOrangeBarMessage($"{item.DisplayName} was sent to your bank as overflow");
-        }
+        foreach (var single in items)
+            if (!CanCarry(single) || !Inventory.TryAddToNextSlot(single))
+            {
+                Bank.Deposit(single);
+
+                SendOrangeBarMessage($"{single.DisplayName} was sent to your bank as overflow");
+            }
     }
 
     /// <summary>
