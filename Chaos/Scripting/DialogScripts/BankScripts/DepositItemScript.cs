@@ -47,6 +47,15 @@ public class DepositItemScript : DialogScriptBase
 
         var total = source.Inventory.CountOf(item.DisplayName);
 
+        if (total == 1)
+        {
+            Subject.MenuArgs.Add("1");
+
+            Subject.Next(source);
+
+            return;
+        }
+
         Subject.InjectTextParameters(item.DisplayName, total);
     }
 
@@ -58,22 +67,6 @@ public class DepositItemScript : DialogScriptBase
     /// <inheritdoc />
     public override void OnNext(Aisling source, byte? optionIndex = null)
     {
-        if (!TryFetchArgs<byte>(out var slot) || !source.Inventory.TryGetObject(slot, out var item))
-        {
-            Subject.ReplyToUnknownInput(source);
-
-            return;
-        }
-
-        //if the inventory only has 1 of the specified item, skip the amount request
-        if (source.Inventory.CountOf(item.DisplayName) == 1)
-        {
-            Subject.MenuArgs.Add("1");
-            OnNextAmountRequest(source);
-
-            return;
-        }
-
         switch (Subject.Template.TemplateKey.ToLower())
         {
             case "generic_deposititem_amountrequest":

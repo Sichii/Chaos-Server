@@ -126,6 +126,14 @@ public class SellShopScript : DialogScriptBase
 
         var total = source.Inventory.CountOf(item.DisplayName);
 
+        if (total == 1)
+        {
+            Subject.MenuArgs.Add("1");
+            Subject.Next(source);
+
+            return;
+        }
+
         Subject.InjectTextParameters(item.DisplayName, total);
     }
 
