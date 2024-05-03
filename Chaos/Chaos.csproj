@@ -73,5 +73,6 @@
         <Content Include="Site\wwwroot\Styles\styles.css">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Content Remove="PersistentIdUInt64.json"/>
     </ItemGroup>
 </Project>
